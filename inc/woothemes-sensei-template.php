@@ -477,5 +477,28 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		return $widget_args;
 	} // End sensei_recent_comments_widget_filter()
 	add_filter( 'widget_comments_args', 'sensei_recent_comments_widget_filter', 10, 1 );
+	
+	/**
+	 * sensei_course_archive_filter function.
+	 * 
+	 * @access public
+	 * @param array $query (default: array())
+	 * @return void
+	 */
+	function sensei_course_archive_filter( $query ) {
+		global $woothemes_sensei;
+		// Apply Filter only if on frontend and when course archive is running	
+		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
+		if ( ( $query->is_post_type_archive( 'course' ) || $query->is_page( $course_page_id ) ) && !is_admin() ) {
+			// Check for pagination settings
+   			if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) { 
+    			$amount = absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] );
+    		} else {
+    			$amount = $query->get( 'posts_per_page' );
+    		} // End If Statement
+    		$query->set( 'posts_per_page', $amount );
+		} // End If Statement
+	} // End sensei_course_archive_filter()
+	add_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 
 ?>
