@@ -1,0 +1,42 @@
+/*
+Plugin Name: Sensei
+Plugin URI: http://woothemes.com/
+Description: Sensei by WooThemes is the best Learning Management System ever!
+Version: 1.0.0
+Author: WooThemes
+Author URI: http://woothemes.com/
+License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+*/
+
+/*-----------------------------------------------------------------------------------*/
+/* Backend Global Stylesheet */
+/*-----------------------------------------------------------------------------------*/
+	
+/* Course Menu Icons */
+li.menu-icon-lesson .wp-menu-image img, li.menu-icon-course .wp-menu-image img { display: none; }
+#wpwrap li.menu-icon-course div.wp-menu-image  { background: url(../images/icon_course_16.png) no-repeat left top; width: 20px; height: 16px; margin-left: 7px; margin-top: 5px; }
+#wpwrap li.menu-icon-course.current div.wp-menu-image, #wpwrap li.menu-icon-course:hover div.wp-menu-image, #wpwrap li.menu-icon-course.wp-has-current-submenu div.wp-menu-image  { background-position: left -16px; }
+#icon-woothemes-sensei, #icon-post.icon32-posts-course, #icon-edit.icon32-posts-course { background: transparent url(../images/icon_course_32.png) no-repeat left top; }
+/* Lesson Menu Icons */
+li.menu-icon-lesson .wp-menu-image a img { display: none; }
+#wpwrap li.menu-icon-lesson div.wp-menu-image  { background: url(../images/icon_course_16.png) no-repeat left top; width: 20px; height: 16px; margin-left: 7px; margin-top: 5px; }
+#wpwrap li.menu-icon-lesson.current div.wp-menu-image, #wpwrap li.menu-icon-lesson:hover div.wp-menu-image, #wpwrap li.menu-icon-lesson.wp-has-current-submenu div.wp-menu-image  { background-position: left -16px; }
+#icon-woothemes-sensei, #icon-post.icon32-posts-lesson, #icon-edit.icon32-posts-lesson { background: transparent url(../images/icon_course_32.png) no-repeat left top; }
+/* Quiz Menu Icons */
+li.menu-icon-quiz .wp-menu-image a img { display: none; }
+#wpwrap li.menu-icon-quiz div.wp-menu-image  { background: url(../images/icon_course_16.png) no-repeat left top; width: 20px; height: 16px; margin-left: 7px; margin-top: 5px; }
+#wpwrap li.menu-icon-quiz.current div.wp-menu-image, #wpwrap li.menu-icon-quiz:hover div.wp-menu-image, #wpwrap li.menu-icon-quiz.wp-has-current-submenu div.wp-menu-image  { background-position: left -16px; }
+#icon-woothemes-sensei, #icon-post.icon32-posts-quiz, #icon-edit.icon32-posts-quiz { background: transparent url(../images/icon_course_32.png) no-repeat left top; }
+/* Question Menu Icons */
+li.menu-icon-question .wp-menu-image a img { display: none; }
+#wpwrap li.menu-icon-question div.wp-menu-image  { background: url(../images/icon_course_16.png) no-repeat left top; width: 20px; height: 16px; margin-left: 7px; margin-top: 5px; }
+#wpwrap li.menu-icon-question.current div.wp-menu-image, #wpwrap li.menu-icon-question:hover div.wp-menu-image, #wpwrap li.menu-icon-question.wp-has-current-submenu div.wp-menu-image  { background-position: left -16px; }
+#icon-woothemes-sensei, #icon-post.icon32-posts-question, #icon-edit.icon32-posts-question { background: transparent url(../images/icon_course_32.png) no-repeat left top; }
+/* Lesson Write Panel Styling */
+a.lesson_course_cancel { text-decoration: underline; }
+a.lesson_question_cancel { text-decoration: underline; }
+#lesson-info input[type=text] { margin-bottom: 10px; }
+#lesson-quiz input[type=text] { margin-bottom: 10px; }
+#lesson-course-details input, #lesson-course-details select { margin-bottom: 10px; }
+tr.question-quick-edit td { padding-bottom: 10px; }
+/* Course Write Panel Styling */

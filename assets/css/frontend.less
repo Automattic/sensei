@@ -1,0 +1,486 @@
+/*
+Plugin Name: Sensei
+Plugin URI: http://woothemes.com/
+Description: Sensei by WooThemes is the best Learning Management System ever!
+Version: 1.0.0
+Author: WooThemes
+Author URI: http://woothemes.com/
+License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+*/
+
+/*-----------------------------------------------------------------------------------*/
+/* Frontend Stylesheet */
+/*-----------------------------------------------------------------------------------*/
+
+@import "mixins";
+
+/* Font Awesome Icons */
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('../fonts/fontawesome-webfont.eot');
+  src: url('../fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/fontawesome-webfont.woff') format('woff'),
+    url('../fonts/fontawesome-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Courses */
+#main .course  {
+	.clearfix();
+	position: relative;
+	margin: 0 0 1.618em;
+	padding: 0 0 1em;
+	border-bottom: 1px solid #e2e2e2;
+	header h2  {
+		margin: 0;
+	}
+	.course-meta  {
+		position: absolute;
+		top: .202em;
+		right: 0;
+		.course-start  {
+			margin-top: .53em;
+		}
+		.status  {
+			padding: .382em 1em;
+			.border_radius(5px);
+			color: #fff;
+			font-weight: bold;
+			background: darken(@bg_dark, 5%);
+			&:before  {
+				.iconbefore();
+			}
+			&.completed  {
+				background: @success;
+				&:before  {
+					content: "\f00c";
+				}
+			}
+			&.in-progress  {
+				&:before  {
+					content: "\f110";
+				}
+			}
+			&.register  {
+				background: @error;
+				a  {
+					color: #fff;
+				}
+			}
+		}
+		.single_add_to_cart_button  {
+			font-size: 1em;
+			position: relative;
+			top: .2em;
+		}
+	}
+	.sensei-course-meta  {
+		font-style: italic;
+		font-size: .9em;
+		color: lighten(@color_body, 20%);
+		a  {
+			color: #555;
+		}
+		.course-price  {
+			position: absolute;
+			top: 0;
+			right: 0;
+			display: block;
+			font-style: normal;
+			font-weight: bold;
+			font-size: 2.244em;
+			color: darken(@color_body, 20%);
+			.border_radius(300px);
+		}
+	}
+	.entry-actions  {
+		span  {
+			margin: 0 1em 0 0;
+		}
+	}
+	.course-lessons  {
+		> header  {
+			margin: 2.244em 0 1.618em;
+			padding: 2.244em 0 0;
+			border-top: 2px solid @border_main;
+			.course-completion-rate  {
+				font-style: italic;
+			}
+			.meter  {
+				margin: 1em 0 3em;
+			}
+		}
+		.lesson  {
+			header  {
+				h2  {
+					margin: 0;
+				}
+			}
+			p.lesson-meta  {
+				font-style: italic;
+				font-size: .9em;
+				color: lighten(@color_body, 20%);
+				a  {
+					color: #555;
+				}
+				span {
+					padding-left: 15px;
+					&:first-child {
+						padding-left: 0px;
+					}
+				}
+				.lesson-status  {
+					position: absolute;
+					top: .53em;
+					right: 0;
+					font-style: normal;
+					&.complete  {
+						color: @success;
+						&:before  {
+							.iconbefore();
+							content: '\f00c';
+						}
+					}
+					&.in-progress  {
+						color: @color_body;
+						&:before  {
+							.iconbefore();
+							content: '\f110';
+						}
+					}
+				}
+			}
+		}
+	}
+}
+.single.logged-in #main .type-course  {
+	border: none;
+	header h1  {
+		margin-right: 150px;
+	}
+}
+
+.lesson  {
+	.lesson-meta  {
+		margin: 0 0 1.618em;
+	}
+}
+
+.lesson-course  {
+	font-style: italic;
+	color: lighten(@color_body, 20%);
+	font-size: .9em;
+	a:after  {
+		.iconafter();
+		content: '\f112';
+		margin-left: 3px;
+	}
+}
+
+.quiz  {
+	form  {
+		ol  {
+			margin: 0 0 1.618em 1.618em;
+			li  {
+				margin: 0 0 1em;
+				font-size: 1.1em;
+				font-weight: bold;
+				ul  {
+					margin: .53em 0;
+					li  {
+						margin: 0 0 .382em;
+						font-weight: normal;
+						font-size: 0.9em;
+						list-style: none;
+						input  {
+							margin: 0 .382em 0 0;
+						}
+						label  {
+							vertical-align: middle;
+						}
+					}
+				}
+			}
+		}
+		input.quiz-submit  {
+			margin-right: 10px;
+			&.complete  {
+				background: @success;
+			}
+			&.reset  {
+				background: @error;
+			}
+		}
+	}
+}
+
+
+div.course-container div.course { display: block; padding: 5px; }
+section.entry span.course-lesson-count { padding-left: 10px; }
+section.entry span.course-lesson-progress { padding-left: 10px; }
+section.entry span.course-price { padding-left: 10px; }
+
+/* My Courses */
+#my-courses  {
+	#loginform  {
+		label  {
+			font-weight: bold;
+			margin: 0 1em 0 0;
+		}
+		.login-username, .login-password  {
+			clear: both;
+		}
+		.login-remember  {
+			float: left;
+			margin: .2em 7.2em 0 0;
+			font-size: .9em;
+			label  {
+				font-weight: normal;
+			}
+		}
+	}
+}
+
+/* Course Archives */
+.course-container  {
+	margin: 0 0 4.236em;
+	.archive-header  {
+		border: none;
+		padding: 0;
+		h1  {
+			margin: 0;
+			padding: 0 0 .53em;
+			border: none;
+			font-size: 1.387em;
+			color: #333;
+			border-bottom: 2px solid @border_main;
+			width: 100%;
+		}
+	}
+	.navigation  {
+		float: right;
+		margin: -10px 0 0;
+		text-align: right;
+		a  {
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: 11px;
+		}
+	}
+}
+
+
+/* Tabber */
+.ui-tabs { position: relative; zoom: 1; } /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+.ui-tabs .ui-tabs-nav { margin: 0 0 10px!important; float: left; width: 100%; padding: .2em 0 0; }
+.ui-tabs .ui-tabs-nav li { list-style: none; float: left; position: relative; top: 1px; margin: 0 .2em 1px 0; border-bottom: 0 !important; padding: 0; white-space: nowrap; }
+.ui-tabs .ui-tabs-nav li a { float: left; padding: 5px 20px; font-weight: bold; color: #777; text-decoration: none; outline: none!important; line-height: 1; }
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected { margin-bottom: 0; padding-bottom: 1px; }
+.ui-tabs .ui-tabs-nav li.ui-state-hover a  { color: #555; }
+.ui-tabs .ui-tabs-nav li.ui-state-active a  { color: #333; background: #e2e2e2; border-radius: 100px; -moz-border-radius: 100px; -webkit-border-radius: 100px; }
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a { cursor: text; }
+.ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; }
+.ui-tabs .ui-tabs-panel { clear: both; display: block; border-width: 0; padding: 1em 0; background: none; }
+.ui-tabs .ui-tabs-hide { display: none !important; }
+
+/* Course Progress Bars */
+.meter { 
+    height: 25px;  /* Can be anything */
+    position: relative;
+    margin: 20px 0; /* Just for demo spacing */
+    background: darken(@bg_light, 5%);
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    clear: both;
+    > span {
+	    display: block;
+	    padding: 1px 10px 0 0;
+	    height: 100%;
+	    background-color: @success;
+	    position: relative;
+	    overflow: hidden;
+	    text-align: right;
+	    color: #fff;
+	    min-width: 45px;
+	    font-weight: bold;
+	    -moz-border-radius: 20px;
+	    -webkit-border-radius: 20px;
+	    border-radius: 20px;
+	    .borderbox;
+	}
+	&.orange > span {
+	    background: @bg_dark;
+	}
+	&.red > span {
+		background: @error;
+	}
+}
+
+.alignleft { 
+    float: left; 
+    margin:0 1.618em 1em 0; 
+}
+.alignright { 
+    float: right; 
+    margin:0 0 1em 1.618em; 
+}
+.aligncenter { 
+    display: block; 
+    text-align: center; 
+    margin:0 auto 1.618em; 
+}
+
+.nav-next, .nav-prev  {
+	width: auto!important;
+}
+
+/*-------------------------------------------------------------------------------------------*/
+/* 1. Info Boxes */
+/*-------------------------------------------------------------------------------------------*/
+body  {
+	p.woo-sc-box, div.woo-sc-box {
+		margin: 1.387em 0 1.618em 0;
+		padding: 1em 1.618em;
+		border:none!important;
+		.border_radius(5px);
+		&:before  {
+			.iconbefore();
+			font-size: 1.387em;
+			position: relative;
+			top: .1em;
+		}
+		&.medium { padding:18px 20px 18px 50px; font-size:1.1em; }
+		&.large { padding:25px 27px 25px 50px; font-size:1.2em; }
+		&.rounded { -webkit-border-radius: 15px; -moz-border-radius: 15px; border-radius: 15px; }
+		a  {
+			text-decoration: underline;
+			&:hover  {
+				text-decoration: none;
+			}
+		}
+		&.alert {
+			background:#ffd9c8;
+			&:before  {
+				content: '\f071';
+				color: @error;
+			}
+			a  {
+				color: darken(@error, 10%);
+				&:hover  {
+					color: darken(@error, 15%);
+				}
+			}
+		}
+		&.download, &.tick {
+			background: #edfcd5;
+			&:before  {
+				content: '\f019';
+				color: @success;
+			}
+			a  {
+				color: darken(@success, 10%);;
+				&:hover  {
+					color: darken(@success, 15%);
+				}
+			}
+		}
+		&.tick {
+			&:before  {
+				content: '\f00c';
+			}
+		}
+		&.info {
+			background:#eee;
+			&:before  {
+				content: '\f05a';
+			}
+			a  {
+				color: darken(@color_body, 10%);;
+				&:hover  {
+					color: darken(@color_body, 15%);
+				}
+			}
+		}
+		&.note {
+			background:#fef6d2;
+			&:before  {
+				content: '\f0f6';
+			}
+		}
+		&.normal {
+			background:#eee; padding:9px 15px;
+		}
+		.view-quiz  {
+			float: right;
+		}
+	}
+}
+
+body  {
+	a.button, 
+	a.comment-reply-link, 
+	#commentform #submit,
+	.submit,
+	input[type=submit],
+	input.button,
+	button.button {
+		display: inline-block;
+		padding: 5px 20px 4px;
+		border: none;
+		color: #fff;
+		text-align: center;
+		text-shadow: none;
+		text-decoration: none;
+		text-transform: uppercase;
+		font-weight: bold;
+		font-size: 11px;
+		font-family: inherit; /* Make inputs use the correct typeface instead of the browser default */
+		cursor: pointer; /* Inputs need pointers! */
+		overflow: visible; /* IE fix */
+		width:auto; /* IE fix */
+		line-height: 1.618em;
+		.borderbox;
+		white-space: nowrap;
+		
+		.border_radius(5px);	
+		background: @color_links;
+		-webkit-box-shadow: none;
+		   -moz-box-shadow: none;
+		        box-shadow: none;
+		
+		&:hover { text-decoration: none; background: darken(@color_links, 5%); }
+		&:active {
+			border-color: @color_links - #555;
+			-webkit-box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
+							0 1px 0 hsla(0, 100%, 100%, 1);
+			-moz-box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
+							0 1px 0 hsla(0, 100%, 100%, 1);
+			box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
+						0 1px 0 hsla(0, 100%, 100%, 1);
+		}
+		
+		&.large {
+			font-size:1.387em;
+		}
+		&.small {
+			font-size:.857em;
+		}
+		
+		&.course-complete  {
+			background: @success;
+			&:hover  {
+				background: darken(@success, 5%);
+			}
+		}
+		
+		&.course-delete  {
+			background: @error;
+			&:hover  {
+				background: darken(@error, 5%);
+			}
+		}
+		
+	}
+}

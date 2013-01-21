@@ -1,0 +1,287 @@
+/*
+Plugin Name: Sensei
+Plugin URI: http://woothemes.com/
+Description: Sensei by WooThemes is the best Learning Management System ever!
+Version: 1.0.0
+Author: WooThemes
+Author URI: http://woothemes.com/
+License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+*/
+/**
+ * Variables
+ */
+/**
+ * Functions
+ */
+/**
+ * Mixins
+ */
+/**
+ * Animations
+ */
+@-webkit-keyframes spin-360 {
+  from {
+    -webkit-transform: rotate(0);
+    /* Saf3.1+, Chrome */
+  
+    -moz-transform: rotate(0);
+    /* FF3.5+ */
+  
+    -ms-transform: rotate(0);
+    /* IE9 */
+  
+    -o-transform: rotate(0);
+    /* Opera 10.5 */
+    transform: rotate(0);
+    zoom: 1;
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+    /* Saf3.1+, Chrome */
+  
+    -moz-transform: rotate(180deg);
+    /* FF3.5+ */
+  
+    -ms-transform: rotate(180deg);
+    /* IE9 */
+  
+    -o-transform: rotate(180deg);
+    /* Opera 10.5 */
+    transform: rotate(180deg);
+    zoom: 1;
+  }
+  to {
+    -webkit-transform: rotate(0);
+    /* Saf3.1+, Chrome */
+  
+    -moz-transform: rotate(0);
+    /* FF3.5+ */
+  
+    -ms-transform: rotate(0);
+    /* IE9 */
+  
+    -o-transform: rotate(0);
+    /* Opera 10.5 */
+    transform: rotate(0);
+    zoom: 1;
+  }
+}
+/*-----------------------------------------------------------------------------------*/
+/* Backend Global Stylesheet */
+/*-----------------------------------------------------------------------------------*/
+/* Info Boxes */
+.info-box {
+  background: #F2F2F2;
+  border: 1px solid #CCCCCC;
+  position: relative;
+  left: -230px;
+  padding: 0.1em 1em;
+  margin-bottom: 1em;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+.info-box .title {
+  margin-top: 1em;
+}
+.info-box .success {
+  border-color: #E6DB55;
+  background-color: #ffffe0;
+}
+.info-box .error {
+  border-color: #cc0000;
+  background-color: #ffebe8;
+}
+/* Sensei Branding */
+#message.sensei-message {
+  padding: 13px 0 10px;
+  margin: 0 0 2em;
+  position: relative;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  background: #42A2CE;
+  border: 1px solid #2d87b0;
+  color: #fff;
+}
+#message.sensei-message:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
+#message.sensei-message .squeezer {
+  max-width: 960px;
+  margin: 0;
+  padding: 0 10px;
+  text-align: left;
+  overflow: hidden;
+}
+#message.sensei-message h4 {
+  float: left;
+  margin: 0 15px 0 0;
+  line-height: 36px;
+  font-size: 18px;
+  font-weight: normal;
+}
+#message.sensei-message .submit {
+  float: left;
+}
+#message.sensei-message li {
+  list-style: none outside;
+}
+#message.sensei-message .submit {
+  margin: 0;
+  padding: 0 0 2px;
+  line-height: 35px;
+}
+#message.sensei-message .submit a {
+  margin-right: 10px;
+  font-size: 16px;
+  padding: 2px 10px 0;
+  height: auto;
+  font-size: 16px !important;
+  line-height: 16px !important;
+  margin: 0 5px 0 0;
+  padding: 6px 15px;
+  vertical-align: middle;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #578824;
+  background: #71B02F;
+  -moz-box-shadow: inset 0 0 2px #ffffff, 0 1px 1px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: inset 0 0 2px #ffffff, 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 2px #ffffff, 0 1px 1px rgba(0, 0, 0, 0.1);
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+  -webkit-transition-duration: .3s;
+  -moz-transition-duration: .3s;
+  cursor: pointer;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", Verdana, "Bitstream Vera Sans", sans-serif;
+}
+#message.sensei-message .submit a.skip {
+  opacity: 0.6;
+  filter: alpha(opacity=@opacity * 100);
+}
+#message.sensei-message .submit a:hover,
+#message.sensei-message .submit a:active {
+  background-color: #f0a000;
+  border-color: #c87800;
+  -webkit-transition-duration: .3s;
+  outline: none;
+  opacity: 1;
+  filter: alpha(opacity=@opacity * 100);
+}
+#woothemes-sensei {
+  position: relative;
+}
+#woothemes-sensei .fl {
+  float: left;
+}
+#woothemes-sensei .fr {
+  float: right;
+}
+#woothemes-sensei .powered-by-woo {
+  position: absolute;
+  top: 12px;
+  z-index: 1;
+  right: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #afafaf;
+}
+#woothemes-sensei .powered-by-woo img {
+  vertical-align: middle;
+  margin: 0 0 0 10px!important;
+}
+#woothemes-sensei h2 span.version {
+  font-size: 0.4em;
+  font-weight: bold;
+  position: relative;
+  top: -4px;
+  left: 5px;
+  padding: 2px 5px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+#screen-meta-links .screen-meta-toggle {
+  z-index: 2;
+}
+/* Analysis */
+.sensei-analysis-wrap {
+  margin-left: 300px;
+  padding-top: 18px;
+}
+.sensei-analysis-wrap .sensei-analysis-sidebar {
+  display: inline;
+  width: 281px;
+  margin-left: -300px;
+  clear: both;
+  float: left;
+}
+.sensei-analysis-wrap .sensei-analysis-main {
+  float: left;
+  min-width: 100%;
+}
+.sensei-analysis-wrap table tr td {
+  padding: 10px 7px;
+}
+/* Lesson Info */
+#lesson-info .inside {
+  margin: 12px 0 8px;
+}
+#lesson-info label {
+  display: inline-block;
+  margin: 0 0 .53em;
+}
+#lesson-info .lesson-complexity-select {
+  width: 300px;
+  margin-bottom: 10px;
+  display: block;
+}
+#lesson-info textarea {
+  display: block;
+  width: 98%;
+  height: 60px;
+}
+#course-video-embed {
+  display: block;
+  width: 98%;
+  height: 60px;
+}
+#lesson-quiz .add_question_answer {
+  display: inline-block;
+  margin: 0 0 0 10px;
+}
+#lesson-quiz .add_question_answer.hidden {
+  display: none;
+}
+#lesson-quiz label {
+  display: inline-block;
+  margin: 0 0 .53em;
+}
+#lesson-quiz .save-note {
+  font-style: italic;
+}
+#lesson-quiz #add-question-metadata table tr td {
+  padding: 10px 7px;
+}
+#lesson-quiz table {
+  border-bottom: none;
+}
+#lesson-quiz tfoot {
+  display: none;
+}

@@ -1,4 +1,4 @@
-sensei
-======
+woothemes-sensei
+=========
 
-The WooThemes Sensei plugin.
+WooThemes Sensei Plugins

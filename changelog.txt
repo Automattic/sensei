@@ -1,0 +1,4 @@
+*** Sensei Changelog ***
+
+2013.01.21 - version 1.0.0
+ * First release. Woo!
