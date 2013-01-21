@@ -223,7 +223,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		    <?php } // End For Loop ?>
 		    <?php if ( 'activecourses' == esc_attr( $instance['component'] ) || 'completedcourses' == esc_attr( $instance['component'] ) ) {
 		    	$my_account_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
-		    	echo '<li class="my-account fix"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Account', 'woothemes-sensei').' <span class="meta-nav">→</span></a></li>';
+		    	echo '<li class="my-account fix"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Courses', 'woothemes-sensei').' <span class="meta-nav">→</span></a></li>';
 		    } // End If Statement ?>
 		</ul>
 		<?php } // End If Statement

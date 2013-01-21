@@ -169,7 +169,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
     	
     	$fields['course_author'] = array(
 								'name' => __( 'Display Course Author', 'woothemes-sensei' ), 
-								'description' => __( 'Output the Course Author on Course archive and My Account page.', 'woothemes-sensei' ), 
+								'description' => __( 'Output the Course Author on Course archive and My Courses page.', 'woothemes-sensei' ), 
 								'type' => 'checkbox', 
 								'default' => true, 
 								'section' => 'course-settings'

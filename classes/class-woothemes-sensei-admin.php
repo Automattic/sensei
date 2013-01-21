@@ -67,7 +67,7 @@ class WooThemes_Sensei_Admin {
 	/**
 	 * install_pages_output function.
 	 * 
-	 * Handles installation of the 2 pages needs for courses and my account
+	 * Handles installation of the 2 pages needs for courses and my courses
 	 *
 	 * @access public
 	 * @return void

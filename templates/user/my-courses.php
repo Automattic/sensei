@@ -102,7 +102,7 @@ if ( is_user_logged_in() ) {
 	    		// Remove all quiz user meta lessons
 	    		// Mark all quiz user meta lessons as complete
 	    		$dataset_changes = false;
-	    		if ( 0 < count($lesson_quizzes) )  { 
+	    		if ( isset( $lesson_quizzes ) && 0 < count($lesson_quizzes) )  { 
 	    			foreach ($course_lessons as $lesson_item){
 	    				// Check for lesson complete
 	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) ); 
@@ -302,7 +302,7 @@ if ( is_user_logged_in() ) {
 	    	<?php if ( '' != $active_html ) {
 	    		echo $active_html;
 	    	} else { ?>
-	    		<div class="woo-sc-box info"><?php _e( 'You have no active courses.', 'woothemes-sensei' ); ?></div>
+	    		<div class="woo-sc-box info"><?php _e( 'You have no active courses.', 'woothemes-sensei' ); ?> <a href="<?php echo get_post_type_archive_link( 'course' ); ?>"><?php _e( 'Start a Course!', 'woothemes-sensei' ); ?></a></div>
 	    	<?php } // End If Statement ?>
 	    	
 	    </div>

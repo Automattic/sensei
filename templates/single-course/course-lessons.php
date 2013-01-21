@@ -68,7 +68,7 @@ if ( 0 < $total_lessons ) {
     	   		 			$html .= '<span class="lesson-author">' . __( 'Author: ', 'woothemes-sensei' ) . '<a href="' . get_author_posts_url( absint( $lesson_item->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
     	   		 		} // End If Statement
     	   		 		if ( '' != $lesson_complexity ) { $html .= '<span class="lesson-complexity">' . __( 'Complexity: ', 'woothemes-sensei' ) . $lesson_complexity .'</span>'; }
-    	   		 	    if ( 0 < $lessons_completed ) { 
+    	   		 	    if ( '' != $user_lesson_end ) { 
                             $html .= '<span class="lesson-status complete">' . __( 'Complete', 'woothemes-sensei' ) .'</span>'; 
                         } else {
                             // Get Lesson Status

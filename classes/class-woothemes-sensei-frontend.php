@@ -74,7 +74,7 @@ class WooThemes_Sensei_Frontend {
 	 */
 	public function enqueue_scripts () {
 		global $woothemes_sensei;
-		// My Account tabs script
+		// My Courses tabs script
 		wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard.js' ), array( 'jquery-ui-tabs' ), '1.0.0', true );
 		wp_enqueue_script( $this->token . '-user-dashboard' );
 		// Load the general script
@@ -240,7 +240,7 @@ class WooThemes_Sensei_Frontend {
 	/**
 	 * sensei_nav_menu_items function.
 	 * 
-	 * Adds Courses, My Account, and Login Logout links to navigation menu.
+	 * Adds Courses, My Courses, and Login Logout links to navigation menu.
 	 *
 	 * @access public
 	 * @param mixed $items
@@ -273,13 +273,13 @@ class WooThemes_Sensei_Frontend {
 					} // End If Statement
 					$items .= '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">'.__('Lessons', 'woothemes-sensei').'</a></li>';
 				} // End If Statement
-				// My Account Page Link
+				// My Courses Page Link
 				if ( 0 < $my_account_page_id && is_user_logged_in() && !strstr( $items, get_permalink( $my_account_page_id ) ) ) {
 					$classes = '';
 					if ( is_page( $my_account_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Account', 'woothemes-sensei').'</a></li>';
+					$items .= '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Courses', 'woothemes-sensei').'</a></li>';
 				} // End If Statement
 				// Logout Link
 				$items .= '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">'.__('Logout', 'woothemes-sensei').'</a></li>';
@@ -300,13 +300,13 @@ class WooThemes_Sensei_Frontend {
 					} // End If Statement
 					$items .= '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">'.__('Lessons', 'woothemes-sensei').'</a></li>';
 				} // End If Statement
-				// My Account Page Link
+				// My Courses Page Link
 				if ( 0 < $my_account_page_id && is_user_logged_in() && !strstr( $items, get_permalink( $my_account_page_id ) ) ) {
 					$classes = '';
 					if ( is_page( $my_account_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Account', 'woothemes-sensei').'</a></li>';
+					$items .= '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Courses', 'woothemes-sensei').'</a></li>';
 				} // End If Statement
 				// Logout Link
 				if ( is_user_logged_in() && !strstr( $items, wp_logout_url( home_url() ) ) ) {
@@ -349,7 +349,7 @@ class WooThemes_Sensei_Frontend {
 				$menu_items[$key]->current = true;
 				$classes[] = 'current-menu-item';
 				$classes[] = 'current_page_item';	
-			// Set active state if this is the my account page link
+			// Set active state if this is the my courses page link
 			} elseif ( 0 < $my_account_page_id && is_page( $my_account_page_id ) && $my_account_page_id == $menu_item->object_id ) {
 				$menu_items[$key]->current = true;
 				$classes[] = 'current-menu-item';
