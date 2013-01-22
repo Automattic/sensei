@@ -31,7 +31,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - access_settings()
  */
 class WooThemes_Sensei {
-	public $updater;
 	public $admin;
 	public $frontend;
 	public $post_types;
@@ -60,7 +59,7 @@ class WooThemes_Sensei {
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( &$this, 'load_localisation' ), 0 );
 		// Installation
-		if ( is_admin() && ! defined('DOING_AJAX') ) $this->install();
+		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) $this->install();
 		// Run this on activation.
 		register_activation_hook( $this->file, array( &$this, 'activation' ) );
 		// Load the Utils class.
@@ -86,17 +85,12 @@ class WooThemes_Sensei {
 		if ( is_admin() ) {
 			// Load Admin Class
 			require_once( 'class-woothemes-sensei-admin.php' );
-			$this->admin = new WooThemes_Sensei_Admin($file);
+			$this->admin = new WooThemes_Sensei_Admin( $file );
 			$this->admin->token = $this->token;
 			// Load Analysis Reports
 			require_once( 'class-woothemes-sensei-analysis.php' );
-			$this->analysis = new WooThemes_Sensei_Analysis($file);
+			$this->analysis = new WooThemes_Sensei_Analysis( $file );
 			$this->analysis->token = $this->token;
-			// Load the updater class.
-			if ( ! class_exists( 'WooThemes_Plugin_Updater' ) ) require_once( 'class-woothemes-plugin-updater.php' );
-			$this->updater = new WooThemes_Plugin_Updater( $file );
-			$this->updater->api_key = 'e6f8e7acd8326aebd38fd122ad9d8ac0';
-			$this->updater->init();
 		} else {
 			// Load Frontend Class
 			require_once( 'class-woothemes-sensei-frontend.php' );
@@ -104,7 +98,7 @@ class WooThemes_Sensei {
 			$this->frontend->token = $this->token;
 			$this->frontend->init();
 			// Frontend Hooks
-			add_filter( 'template_include', array(&$this, 'template_loader') );
+			add_filter( 'template_include', array( &$this, 'template_loader' ) );
 		}
 		add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
 		add_action( 'after_setup_theme', array( &$this, 'ensure_post_thumbnails_support' ) );
@@ -115,15 +109,13 @@ class WooThemes_Sensei {
 	 * @return [type] [description]
 	 */
 	public function register_widgets () {
-		
 		// Course Component Widget
 		require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-course-component.php' );
-		register_widget("WooThemes_Sensei_Course_Component_Widget");
+		register_widget( 'WooThemes_Sensei_Course_Component_Widget' );
 		
 		// Lesson Component Widget
 		require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-lesson-component.php' );
-		register_widget("WooThemes_Sensei_Lesson_Component_Widget");
-
+		register_widget( 'WooThemes_Sensei_Lesson_Component_Widget' );
 	} // End register_widgets()
 
 	/**
@@ -166,7 +158,7 @@ class WooThemes_Sensei {
 	 * @access public
 	 * @return void
 	 */
-	function install() {
+	public function install () {
 		register_activation_hook( $this->file, array( &$this, 'activate_sensei' ) );
 		register_activation_hook( $this->file, 'flush_rewrite_rules' );
 	} // End install()
@@ -178,7 +170,7 @@ class WooThemes_Sensei {
 	 * @access public
 	 * @return void
 	 */
-	function activate_sensei() {
+	public function activate_sensei () {
 		update_option( 'skip_install_sensei_pages', 0 );
 		update_option( 'sensei_installed', 1 );
 	} // End activate_sensei()
@@ -212,13 +204,11 @@ class WooThemes_Sensei {
 	 * @param mixed $template
 	 * @return void
 	 */
-	function template_loader( $template ) {
-		
+	public function template_loader ( $template ) {
 		global $post;
 		
 		$find = array( 'woothemes-sensei.php' );
 		$file = '';
-		
 				
 		if ( is_single() && get_post_type() == 'course' ) {
 		
@@ -299,7 +289,7 @@ class WooThemes_Sensei {
 	 * @access public
 	 * @return void
 	 */
-	public function plugin_path() {
+	public function plugin_path () {
 		if ( $this->plugin_path ) return $this->plugin_path;
 
 		return $this->plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
@@ -313,8 +303,8 @@ class WooThemes_Sensei {
 	 * @param mixed $page
 	 * @return void
 	 */
-	public function get_page_id( $page ) {
-		$page = apply_filters('sensei_get_' . $page . '_page_id', get_option('sensei_' . $page . '_page_id'));
+	public function get_page_id ( $page ) {
+		$page = apply_filters( 'sensei_get_' . $page . '_page_id', get_option( 'sensei_' . $page . '_page_id' ) );
 		return ( $page ) ? $page : -1;
 	} // End get_page_id()
 	
@@ -326,7 +316,7 @@ class WooThemes_Sensei {
 	 * @param int $course_id (default: 0)
 	 * @return void
 	 */
-	public function woocommerce_course_update( $course_id = 0  ) {
+	public function woocommerce_course_update ( $course_id = 0  ) {
 		
 		global $current_user;
 		
@@ -468,9 +458,8 @@ class WooThemes_Sensei {
 	 * @access public
 	 * @return void
 	 */
-	public function access_settings() {
-		
-		if ( isset( $this->settings->settings[ 'access_permission' ] ) && $this->settings->settings[ 'access_permission' ] ) {
+	public function access_settings () {
+		if ( isset( $this->settings->settings['access_permission'] ) && $this->settings->settings['access_permission'] ) {
         	if ( is_user_logged_in() ) {
         		return true;
         	} else {
@@ -479,8 +468,6 @@ class WooThemes_Sensei {
         } else {
         	return true;
         } // End If Statement
-        
 	} // End access_settings()
-	
 } // End Class
 ?>

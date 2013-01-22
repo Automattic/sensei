@@ -1,4 +1,12 @@
 *** Sensei Changelog ***
 
+2013.01.22 - version 1.0.1
+ * /inc/woo-functions.php - Include the woo-functions file, for integration with the WooThemes Updater plugin.
+ * /classes/class-woothemes-sensei.php - Add "public" scope to methods missing a scope. Remove call to old plugin updater code.
+ * /classes/class-woothemes-plugin-updater.php - REMOVED.
+ * /lang/woothemes-sensei-en_GB.po - Added language translation file.
+ * /lang/woothemes-sensei-xx_XX.pot - Added language translation file template.
+ * woothemes-sensei.php - Include the woo-functions file.
+
 2013.01.21 - version 1.0.0
  * First release. Woo!
