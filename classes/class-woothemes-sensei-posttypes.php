@@ -97,7 +97,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_ui' => true, 
 		    'show_in_menu' => 'edit.php?post_type=lesson', 
 		    'query_var' => true,
-		    'rewrite' => array( 'slug' => 'course', 'with_front' => true, 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', 'course' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'capability_type' => 'post',
 		    'has_archive' => true, 
 		    'hierarchical' => false,
@@ -131,7 +131,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_ui' => true, 
 		    'show_in_menu' => true, 
 		    'query_var' => true,
-		    'rewrite' => array( 'slug' => 'lesson', 'with_front' => true, 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_slug', 'lesson' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'capability_type' => 'post',
 		    'has_archive' => true, 
 		    'hierarchical' => false,
@@ -161,7 +161,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_nav_menus' => false,
 		    'query_var' => true,
 		    'exclude_from_search' => true,
-		    'rewrite' => array( 'slug' => 'quiz', 'with_front' => true, 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_slug', 'quiz' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'capability_type' => 'post',
 		    'has_archive' => false, 
 		    'hierarchical' => false,
@@ -192,7 +192,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_nav_menus' => false,
 		    'query_var' => true,
 		    'exclude_from_search' => true,
-		    'rewrite' => array( 'slug' => 'question', 'with_front' => true, 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_slug', 'question' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'capability_type' => 'post',
 		    'has_archive' => true, 
 		    'hierarchical' => false,
@@ -232,7 +232,7 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true, /* TO DO - CHANGE TO FALSE WHEN GOING LIVE */
 			'query_var' => true,
 			'show_in_nav_menus' => false,
-			'rewrite' => array( 'slug' => 'quiz-type' )
+			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', 'quiz-type' ) ) )
 		);
 		
 		register_taxonomy( 'quiz-type', array( 'quiz' ), $args );
