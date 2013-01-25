@@ -83,7 +83,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 					'description'	=> __( 'Settings that apply to all Lessons.', 'woothemes-sensei' )
 				);
 		
-		if ( class_exists( 'woocommerce' ) ) {		
+		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() ) {		
 			$sections['woocommerce-settings'] = array(
 						'name' 			=> __( 'WooCommerce Settings', 'woothemes-sensei' ), 
 						'description'	=> __( 'Optional settings for WooCommerce functions.', 'woothemes-sensei' )
@@ -352,7 +352,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'required' => 0
 								);
 		
-		if ( class_exists( 'woocommerce' ) ) {
+		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() ) {
 			// WooCommerce Settings
     		$fields['woocommerce_enabled'] = array(
 									'name' => __( 'Enable WooCommerce Courses', 'woothemes-sensei' ), 

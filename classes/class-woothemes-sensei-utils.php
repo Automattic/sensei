@@ -35,7 +35,26 @@ class WooThemes_Sensei_Utils {
 		return esc_url( apply_filters( 'sensei_placeholder_thumbnail', $woothemes_sensei->plugin_url . 'assets/images/placeholder.png' ) );
 	} // End get_placeholder_image()
 
-	
+	/**
+	 * sensei_is_woocommerce_present function.
+	 * 
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public static function sensei_is_woocommerce_present() {
+		if ( class_exists( 'Woocommerce' ) ) {
+			return true;
+		} else {
+			$active_plugins = apply_filters( 'active_plugins', get_option('active_plugins' ) );
+			if ( in_array( 'woocommerce/woocommerce.php', $active_plugins ) ) {
+				return true;
+			} else {
+				return false;
+			} // End If Statement
+		} // End If Statement
+	} // End sensei_is_woocommerce_present()
+
 	/**
 	 * sensei_is_woocommerce_activated function.
 	 * 
@@ -45,7 +64,7 @@ class WooThemes_Sensei_Utils {
 	 */
 	public static function sensei_is_woocommerce_activated() {
 		global $woothemes_sensei;
-		if ( class_exists( 'woocommerce' ) && isset( $woothemes_sensei->settings->settings[ 'woocommerce_enabled' ] ) && $woothemes_sensei->settings->settings[ 'woocommerce_enabled' ] ) { return true; } else { return false; }
+		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() && isset( $woothemes_sensei->settings->settings[ 'woocommerce_enabled' ] ) && $woothemes_sensei->settings->settings[ 'woocommerce_enabled' ] ) { return true; } else { return false; }
 	} // End sensei_is_woocommerce_activated()
 	
 	/*-----------------------------------------------------------------------------------*/

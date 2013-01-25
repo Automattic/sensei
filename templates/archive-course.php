@@ -2,7 +2,7 @@
 /**
  * The Template for displaying course archives, including the course page template.
  *
- * Override this template by copying it to yourtheme/woocommerce/archive-course.php
+ * Override this template by copying it to yourtheme/sensei/archive-course.php
  *
  * @author 		WooThemes
  * @package 	Sensei/Templates
@@ -40,7 +40,7 @@ get_header(); ?>
 				
 			} else { ?>
 
-			<p><?php _e( 'No courses found which match your selection.', 'woocommerce' ); ?></p>
+			<p><?php _e( 'No courses found which match your selection.', 'woothemes-sensei' ); ?></p>
 			
 		<?php } ?>
 		

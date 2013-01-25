@@ -2,7 +2,7 @@
 /**
  * The Template for displaying lesson archives.
  *
- * Override this template by copying it to yourtheme/woocommerce/archive-lesson.php
+ * Override this template by copying it to yourtheme/sensei/archive-lesson.php
  *
  * @author 		WooThemes
  * @package 	Sensei/Templates
@@ -28,7 +28,7 @@ get_header(); ?>
 				$woothemes_sensei->frontend->sensei_get_template( 'loop-lesson.php' );
 			} else { ?>
 
-			<p><?php _e( 'No lessons found which match your selection.', 'woocommerce' ); ?></p>
+			<p><?php _e( 'No lessons found which match your selection.', 'woothemes-sensei' ); ?></p>
 			
 		<?php } ?>
 		
