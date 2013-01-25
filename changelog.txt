@@ -1,5 +1,12 @@
 *** Sensei Changelog ***
 
+2013.01.25 - version 1.0.2
+ * templates/archive-course.php - fixed localization typo
+ * templates/archive-lesson.php - fixed localization typo
+ * classes/class-woothemes-sensei-settings.php - fixed woocommerce detection code
+ * classes/class-woothemes-sensei-utils.php - fixed woocommerce detection code
+ * classes/class-woothemes-sensei-posttypes.php - added filters for content type slugs
+
 2013.01.22 - version 1.0.1
  * /inc/woo-functions.php - Include the woo-functions file, for integration with the WooThemes Updater plugin.
  * /classes/class-woothemes-sensei.php - Add "public" scope to methods missing a scope. Remove call to old plugin updater code.

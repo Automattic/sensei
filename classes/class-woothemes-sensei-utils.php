@@ -37,7 +37,7 @@ class WooThemes_Sensei_Utils {
 
 	/**
 	 * sensei_is_woocommerce_present function.
-	 * 
+	 * @since  1.0.2
 	 * @access public
 	 * @static
 	 * @return void
