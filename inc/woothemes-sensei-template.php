@@ -503,6 +503,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	/**
 	 * sensei_complete_lesson_button description
+	 * since 1.0.3
 	 * @return html
 	 */
 	function sensei_complete_lesson_button() {
@@ -519,15 +520,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	/**
 	 * sensei_reset_lesson_button description
+	 * since 1.0.3
 	 * @return html
 	 */
 	function sensei_reset_lesson_button() {
+		global $woothemes_sensei;
+		if ( isset( $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ] ) && $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ] ) {
 		?>
 		<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
             <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
             <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php _e( 'Reset Lesson', 'woothemes-sensei' ); ?>"/></span>
         </form>
 		<?php
+		} // End If Statement
 	} // End sensei_reset_lesson_button()
 
 ?>

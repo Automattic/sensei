@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - get_placeholder_image()
+ * - sensei_is_woocommerce_present()
  * - sensei_is_woocommerce_activated()
  * - sensei_log_Activity()
  * - sensei_check_for_activity()
@@ -59,6 +60,7 @@ class WooThemes_Sensei_Utils {
 	 * sensei_is_woocommerce_activated function.
 	 * 
 	 * @access public
+	 * since 1.0.2
 	 * @static
 	 * @return void
 	 */

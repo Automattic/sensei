@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * - __construct()
  * - setup_settings()
+ * - general_init()
  * - init_sections()
  * - init_fields()
  * - create_sections()
@@ -111,15 +112,23 @@ class WooThemes_Sensei_Settings_API {
 	public function setup_settings () {
 		add_action( 'admin_menu', array( &$this, 'register_settings_screen' ), 20 );
 		add_action( 'admin_init', array( &$this, 'settings_fields' ) );
-		
+		add_action( 'wp_loaded', array( &$this, 'general_init' ) );
+	} // End setup_settings()
+	
+	/**
+	 * general_init function
+	 * since 1.0.3
+	 * @return void
+	 */
+	public function general_init() {
 		$this->init_sections();
 		$this->init_fields();
 		$this->get_settings();
 		if ( $this->has_tabs == true ) {
 			$this->create_tabs();
-		}
-	} // End setup_settings()
-	
+		} // End If Statement
+	} // End general_init()
+
 	/**
 	 * init_sections function.
 	 * 

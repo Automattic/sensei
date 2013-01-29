@@ -1,5 +1,13 @@
 *** Sensei Changelog ***
 
+2013.01.29 - version 1.0.3
+ * classes/class-woothemes-sensei-settings-api.php - fix for conflict with Groups plugin
+ * classes/class-woothemes-sensei-settings.php - options to switch of js and css, and options for complete lesson button, reset lesson button, and to remove No Quiz warning message
+ * classes/class-woothemes-sensei-frontend.php - logic to switch of js and css
+ * templates/content-single-course.php - removed woocommerce after hook to prevent related products conflict
+ * templates/single-lesson/lesson-meta.php - added complete lesson and reset lesson buttons functions
+ * inc/woothemes-sensei-template.php - output functions for complete lesson and reset lesson buttons
+
 2013.01.25 - version 1.0.2
  * templates/archive-course.php - fixed localization typo
  * templates/archive-lesson.php - fixed localization typo
