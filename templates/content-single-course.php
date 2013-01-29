@@ -52,13 +52,3 @@ $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( arra
 	            <div class="nav-prev fl"><?php previous_post_link( '%link', '<span class="meta-nav">&larr;</span> %title' ); ?></div>
 	            <div class="nav-next fr"><?php next_post_link( '%link', '%title <span class="meta-nav">&rarr;</span>' ); ?></div>
 	        </nav><!-- #post-entries -->
-	<?php
-	/**
-	 * woocommerce_after_single_product hook
-	 *
-	 * @hooked woocommerce_show_messages - 10
-	 */
-	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
-		do_action( 'woocommerce_after_single_product' );
-	} // End If Statement
-	?>

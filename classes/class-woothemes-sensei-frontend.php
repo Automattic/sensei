@@ -74,11 +74,17 @@ class WooThemes_Sensei_Frontend {
 	 */
 	public function enqueue_scripts () {
 		global $woothemes_sensei;
-		// My Courses tabs script
-		wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard.js' ), array( 'jquery-ui-tabs' ), '1.0.0', true );
-		wp_enqueue_script( $this->token . '-user-dashboard' );
-		// Load the general script
-		wp_enqueue_script( 'woosensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend.js', array( 'jquery' ), '1.0.0' );
+		$disable_js = false;
+		if ( isset( $woothemes_sensei->settings->settings[ 'js_disable' ] ) ) {
+			$disable_js = $woothemes_sensei->settings->settings[ 'js_disable' ];
+		} // End If Statement
+		if ( !$disable_js ) {
+			// My Courses tabs script
+			wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard.js' ), array( 'jquery-ui-tabs' ), '1.0.0', true );
+			wp_enqueue_script( $this->token . '-user-dashboard' );
+			// Load the general script
+			wp_enqueue_script( 'woosensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend.js', array( 'jquery' ), '1.0.0' );
+		} // End If Statement
 		
 	} // End enqueue_scripts()
 
@@ -90,9 +96,14 @@ class WooThemes_Sensei_Frontend {
 	public function enqueue_styles () {
 		global $woothemes_sensei;
 
-		wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.0.0', 'screen' );
-		
-		wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
+		$disable_styles = false;
+		if ( isset( $woothemes_sensei->settings->settings[ 'styles_disable' ] ) ) {
+			$disable_styles = $woothemes_sensei->settings->settings[ 'styles_disable' ];
+		} // End If Statement
+		if ( !$disable_styles ) {
+			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.0.0', 'screen' );
+			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
+		} // End If Statement
 		        
 	} // End enqueue_styles()
 

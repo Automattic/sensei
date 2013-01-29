@@ -154,7 +154,23 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'default' => false, 
 								'section' => 'default-settings'
 								);
-														
+		
+		$fields['styles_disable'] = array(
+								'name' => __( 'Disable Sensei Styles', 'woothemes-sensei' ), 
+								'description' => __( 'Prevent the frontend stylesheets from loading. This will remove the default styles for all Sensei elements.', 'woothemes-sensei' ), 
+								'type' => 'checkbox', 
+								'default' => false, 
+								'section' => 'default-settings'
+								);
+
+		$fields['js_disable'] = array(
+								'name' => __( 'Disable Sensei Javascript', 'woothemes-sensei' ), 
+								'description' => __( 'Prevent the frontend javascript from loading. This affects the progress bars and the My Courses tabs.', 'woothemes-sensei' ), 
+								'type' => 'checkbox', 
+								'default' => false, 
+								'section' => 'default-settings'
+								);
+
     	// Course Settings
     	
     	$fields['course_completion'] = array(
@@ -299,7 +315,23 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'default' => true, 
 								'section' => 'lesson-settings'
 								);
-														
+		
+		$fields['lesson_complete_button'] = array(
+								'name' => __( 'Allow Lesson Complete Button', 'woothemes-sensei' ), 
+								'description' => __( 'This will allow learners to complete a Lesson without taking a Quiz. It will display the Complete Lesson button on the Lesson page.', 'woothemes-sensei' ), 
+								'type' => 'checkbox', 
+								'default' => false, 
+								'section' => 'lesson-settings'
+								);
+
+		$fields['lesson_no_quiz_notice'] = array(
+								'name' => __( 'Disable no Quiz warning', 'woothemes-sensei' ), 
+								'description' => __( 'This will disable the error notice when a Lesson has no Quiz on the Lesson page.', 'woothemes-sensei' ), 
+								'type' => 'checkbox', 
+								'default' => false, 
+								'section' => 'lesson-settings'
+								);
+
 		$fields['course_lesson_image_enable'] = array(
 								'name' => __( 'Course Lesson Images', 'woothemes-sensei' ), 
 								'description' => __( 'Output the Lesson Image on the Single Course Page.', 'woothemes-sensei' ), 
