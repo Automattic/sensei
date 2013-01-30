@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - woocommerce_course_update()
  * - check_user_permissions()
  * - access_settings()
+ * - sensei_woocommerce_complete_order()
  */
 class WooThemes_Sensei {
 	public $admin;
@@ -102,6 +103,9 @@ class WooThemes_Sensei {
 		}
 		add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
 		add_action( 'after_setup_theme', array( &$this, 'ensure_post_thumbnails_support' ) );
+		// WooCommerce Payment Actions
+		add_action( 'woocommerce_payment_complete' , array( &$this, 'sensei_woocommerce_complete_order' ) );
+		add_action( 'woocommerce_order_status_completed' , array( &$this, 'sensei_woocommerce_complete_order' ) );
 	} // End __construct()
 
 	/**
@@ -316,7 +320,7 @@ class WooThemes_Sensei {
 	 * @param int $course_id (default: 0)
 	 * @return void
 	 */
-	public function woocommerce_course_update ( $course_id = 0  ) {
+	public function woocommerce_course_update ( $course_id = 0, $order_user = array()  ) {
 		
 		global $current_user;
 		
@@ -324,20 +328,33 @@ class WooThemes_Sensei {
 		
 		// Get the product ID
 	 	$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
-	 	
-	 	$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
+	 		
+	 	// Check if in the admin
+		if ( is_admin() ) {
+			$user_login = $order_user['user_login'];
+			$user_email = $order_user['user_email'];
+			$user_url = $order_user['user_url'];
+			$user_id = $order_user['ID'];
+		} else {
+			$user_login = $current_user->user_login;
+			$user_email = $current_user->user_email;
+			$user_url = $current_user->user_url;
+			$user_id = $current_user->ID;
+		} // End If Statement
+		
+	 	$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_start' ) );
 	 	    	
-		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id ) && ( 0 < $wc_post_id ) && !$is_user_taking_course ) {
+		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && WooThemes_Sensei_Utils::sensei_customer_bought_product( $user_email, $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) && !$is_user_taking_course ) {
 			
 			$args = array(
 							    'post_id' => $course_id,
-							    'username' => $current_user->user_login,
-							    'user_email' => $current_user->user_email,
-							    'user_url' => $current_user->user_url,
+							    'username' => $user_login,
+							    'user_email' => $user_email,
+							    'user_url' => $user_url,
 							    'data' => 'Course started by the user',
 							    'type' => 'sensei_course_start', /* FIELD SIZE 20 */
 							    'parent' => 0,
-							    'user_id' => $current_user->ID
+							    'user_id' => $user_id
 							);
 			
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
@@ -469,5 +486,42 @@ class WooThemes_Sensei {
         	return true;
         } // End If Statement
 	} // End access_settings()
+
+	/**
+	 * sensei_woocommerce_complete_order description
+	 * since 1.0.3
+	 * @param  int $order_id WC order ID
+	 * @return void
+	 */
+	function sensei_woocommerce_complete_order( $order_id = 0 ) {
+		$order_user = array();
+		// Check for WooCommerce
+		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && 0 < $order_id ) {
+			// Get order object
+			$order = new WC_Order( $order_id );
+			$user = get_user_by('id', $order->user_id);
+			$order_user['ID'] = $user->ID;
+			$order_user['user_login'] = $user->user_login;
+			$order_user['user_email'] = $user->user_email;
+			$order_user['user_url'] = $user->user_url;
+			// Run through each product ordered
+			if (sizeof($order->get_items())>0) {
+				foreach($order->get_items() as $item) {
+					if (isset($item['variation_id']) && $item['variation_id'] > 0) {
+						$_product = new WC_Product_Variation( $item['variation_id'] );
+					} else {
+						$_product = new WC_Product( $item['id'] );
+					} // End If Statement
+					// Get courses that use the WC product
+					$courses = $this->post_types->course->get_product_courses( $_product->id );
+					// Loop and update those courses
+					foreach ($courses as $course_item){
+						$update_course = $this->woocommerce_course_update( $course_item->ID, $order_user );
+					} // End For Loop
+				} // End For Loop
+			} // End If Statement
+		} // End If Statement
+	} // End sensei_woocommerce_complete_order()
+
 } // End Class
 ?>

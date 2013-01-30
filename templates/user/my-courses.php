@@ -271,7 +271,7 @@ if ( is_user_logged_in() ) {
 	    					// Get the product ID
 	    					$wc_post_id = get_post_meta( absint( $course_item->ID ), '_course_woocommerce_product', true );
 	    					if ( 0 < $wc_post_id ) {
-	    						$course_purchased = sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id );
+	    						$course_purchased = WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id );
 	    					} // End If Statement
 	    				} // End If Statement
 	    				

@@ -706,5 +706,23 @@ class WooThemes_Sensei_Course {
 		
 	} // End course_author_lesson_count()
 	
+	public function get_product_courses( $product_id = 0 ) {
+
+		$posts_array = array();
+		// Check for WooCommerce
+		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && 0 < $product_id ) {
+			$post_args = array(	'post_type' 		=> 'course',
+								'numberposts' 		=> -1,
+								'meta_key'        	=> '_course_woocommerce_product',
+	    						'meta_value'      	=> $product_id,
+	    						'post_status'       => 'publish',
+								'suppress_filters' 	=> 0 
+								);
+			$posts_array = get_posts( $post_args );
+		} // End If Statement
+		return $posts_array;
+
+	} // End get_product_courses()
+
 } // End Class
 ?>
