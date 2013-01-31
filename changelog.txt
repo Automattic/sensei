@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2013.01.31 - version 1.0.5
+ * /inc/woo-functions.php - Add WooCommerce checks. Fixes compatibility when running Sensei and WooCommerce extensions, regarding updates.
+ * /inc/class-wc-dependencies.php - ADDED.
+
 2013.01.30 - version 1.0.4
  * classes/class-woothemes-sensei-course.php - added function to find product courses
  * classes/class-woothemes-sensei-utils.php - moved customer bought product function check
