@@ -384,6 +384,10 @@ class WooThemes_Sensei {
 		// Get User Meta
 	 	get_currentuserinfo();
       	
+      	if ( is_preview() ) {
+      		return true;
+      	} // End If Statement
+
       	$user_allowed = false;
 		
 		switch ( $page ) {
