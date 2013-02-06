@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.02.06 - version 1.0.6
+ * templates/content-single-lesson.php - Ensuring lesson content does not show until pre-requisite lesson is completed
+
 2013.01.31 - version 1.0.5
  * /inc/woo-functions.php - Add WooCommerce checks. Fixes compatibility when running Sensei and WooCommerce extensions, regarding updates.
  * /inc/class-wc-dependencies.php - ADDED.
