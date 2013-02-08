@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.02.06 - version 1.0.6.1
+ * templates/content-single-lesson.php - Fixing bug that prevented the lesson content from showing for some users
+
 2013.02.06 - version 1.0.6
  * templates/content-single-lesson.php - Ensuring lesson content does not show until pre-requisite lesson is completed
 
