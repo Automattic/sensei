@@ -31,7 +31,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	if ( ! is_admin() ) require_once( 'inc/woothemes-sensei-template.php' );
 	global $woothemes_sensei;
 	$woothemes_sensei = new WooThemes_Sensei( __FILE__ );
-	$woothemes_sensei->version = '1.0.5';
+	$woothemes_sensei->version = '1.0.7';
 
     /**
      * Plugin updates
