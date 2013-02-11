@@ -42,7 +42,7 @@ class WooThemes_Sensei {
 	public $version;
 	public $permissions_message;
 	private $file;
-	
+
 	/**
 	 * Constructor.
 	 * @param string $file The base file of the plugin.
@@ -116,7 +116,7 @@ class WooThemes_Sensei {
 		// Course Component Widget
 		require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-course-component.php' );
 		register_widget( 'WooThemes_Sensei_Course_Component_Widget' );
-		
+
 		// Lesson Component Widget
 		require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-lesson-component.php' );
 		register_widget( 'WooThemes_Sensei_Lesson_Component_Widget' );
@@ -154,11 +154,11 @@ class WooThemes_Sensei {
 	public function activation () {
 		$this->register_plugin_version();
 	} // End activation()
-	
-	
+
+
 	/**
 	 * install function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -166,11 +166,11 @@ class WooThemes_Sensei {
 		register_activation_hook( $this->file, array( &$this, 'activate_sensei' ) );
 		register_activation_hook( $this->file, 'flush_rewrite_rules' );
 	} // End install()
-	
-	
+
+
 	/**
 	 * activate_sensei function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -178,7 +178,7 @@ class WooThemes_Sensei {
 		update_option( 'skip_install_sensei_pages', 0 );
 		update_option( 'sensei_installed', 1 );
 	} // End activate_sensei()
-	
+
 	/**
 	 * Register the plugin's version.
 	 * @access public
@@ -199,23 +199,23 @@ class WooThemes_Sensei {
 	public function ensure_post_thumbnails_support () {
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) { add_theme_support( 'post-thumbnails' ); }
 	} // End ensure_post_thumbnails_support()
-	
-	
+
+
 	/**
 	 * template_loader function.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $template
 	 * @return void
 	 */
 	public function template_loader ( $template ) {
 		global $post;
-		
+
 		$find = array( 'woothemes-sensei.php' );
 		$file = '';
-				
+
 		if ( is_single() && get_post_type() == 'course' ) {
-		
+
 		    if ( $this->check_user_permissions( 'course-single' ) ) {
 				$file 	= 'single-course.php';
 		    	$find[] = $file;
@@ -226,9 +226,9 @@ class WooThemes_Sensei {
 				$find[] = $file;
 				$find[] = $this->template_url . $file;
 			} // End If Statement
-			
+
 		} elseif ( is_single() && get_post_type() == 'lesson' ) {
-			
+
 			if ( $this->check_user_permissions( 'lesson-single' ) ) {
 				$file 	= 'single-lesson.php';
 		    	$find[] = $file;
@@ -239,9 +239,9 @@ class WooThemes_Sensei {
 				$find[] = $file;
 				$find[] = $this->template_url . $file;
 			} // End If Statement
-		
+
 		} elseif ( is_single() && get_post_type() == 'quiz' ) {
-		
+
 		    if ( $this->check_user_permissions( 'quiz-single' ) ) {
 				$file 	= 'single-quiz.php';
 		    	$find[] = $file;
@@ -252,29 +252,29 @@ class WooThemes_Sensei {
 				$find[] = $file;
 				$find[] = $this->template_url . $file;
 			} // End If Statement
-		
+
 		} elseif ( is_tax( 'product_cat' ) || is_tax( 'product_tag' ) ) {
-		
+
 		    $term = get_queried_object();
-		
+
 		    $file 		= 'taxonomy-' . $term->taxonomy . '.php';
 		    $find[] 	= 'taxonomy-' . $term->taxonomy . '-' . $term->slug . '.php';
 		    $find[] 	= $this->template_url . 'taxonomy-' . $term->taxonomy . '-' . $term->slug . '.php';
 		    $find[] 	= $file;
 		    $find[] 	= $this->template_url . $file;
-		
+
 		} elseif ( is_post_type_archive( 'course' ) || is_page( $this->get_page_id( 'courses' ) ) ) {
-		
+
 		    $file 	= 'archive-course.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
-		
+
 		} elseif ( is_post_type_archive( 'lesson' ) ) {
-		
+
 		    $file 	= 'archive-lesson.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
-		
+
 		} // End If Statement
 
 		// Load the template file
@@ -285,11 +285,11 @@ class WooThemes_Sensei {
 
 		return $template;
 	} // End template_loader()
-	
-	
+
+
 	/**
 	 * plugin_path function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -299,10 +299,10 @@ class WooThemes_Sensei {
 		return $this->plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
 	} // End plugin_path()
 
-	
+
 	/**
 	 * get_page_id function.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $page
 	 * @return void
@@ -311,24 +311,24 @@ class WooThemes_Sensei {
 		$page = apply_filters( 'sensei_get_' . $page . '_page_id', get_option( 'sensei_' . $page . '_page_id' ) );
 		return ( $page ) ? $page : -1;
 	} // End get_page_id()
-	
-	
+
+
 	/**
 	 * woocommerce_course_update function.
-	 * 
+	 *
 	 * @access public
 	 * @param int $course_id (default: 0)
 	 * @return void
 	 */
 	public function woocommerce_course_update ( $course_id = 0, $order_user = array()  ) {
-		
+
 		global $current_user;
-		
+
 		$data_update = false;
-		
+
 		// Get the product ID
 	 	$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
-	 		
+
 	 	// Check if in the admin
 		if ( is_admin() ) {
 			$user_login = $order_user['user_login'];
@@ -341,11 +341,11 @@ class WooThemes_Sensei {
 			$user_url = $current_user->user_url;
 			$user_id = $current_user->ID;
 		} // End If Statement
-		
+
 	 	$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_start' ) );
-	 	    	
+
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && WooThemes_Sensei_Utils::sensei_customer_bought_product( $user_email, $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) && !$is_user_taking_course ) {
-			
+
 			$args = array(
 							    'post_id' => $course_id,
 							    'username' => $user_login,
@@ -356,24 +356,24 @@ class WooThemes_Sensei {
 							    'parent' => 0,
 							    'user_id' => $user_id
 							);
-			
+
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-			
+
 			$is_user_taking_course = false;
 			if ( $activity_logged ) {
 				$is_user_taking_course = true;
 			} // End If Statement
-			
+
 		} // End If Statement
-		
+
 		return $is_user_taking_course;
-		
+
 	} // End woocommerce_course_update()
-	
-	
+
+
 	/**
 	 * check_user_permissions function.
-	 * 
+	 *
 	 * @access public
 	 * @param string $page (default: '')
 	 * @param array $data (default: array())
@@ -383,16 +383,16 @@ class WooThemes_Sensei {
 		global $current_user, $post;
 		// Get User Meta
 	 	get_currentuserinfo();
-      	
+
       	if ( is_preview() ) {
       		return true;
       	} // End If Statement
 
       	$user_allowed = false;
-		
+
 		switch ( $page ) {
 			case 'course-single':
-				
+
 					// check for prerequisite course or lesson,
 					$course_prerequisite_id = get_post_meta( $post->ID, '_course_prerequisite', true);
 					$update_course = $this->woocommerce_course_update( $post->ID  );
@@ -413,12 +413,12 @@ class WooThemes_Sensei {
 						$prerequisite_complete = true;
 					} // End If Statement
 					// Handles restrictions
-					if ( !$prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) { 
+					if ( !$prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) {
 						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
 						$course_link = '<a href="' . get_permalink( $course_prerequisite_id ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 						$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link );
 					} else {
-						$user_allowed = true;	
+						$user_allowed = true;
 					} // End If Statement
 				break;
 			case 'lesson-single':
@@ -431,10 +431,10 @@ class WooThemes_Sensei {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
 					$course_link = '<a href="' . get_permalink( $lesson_course_id ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 					$wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
-					if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) { 
+					if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
 						$this->permissions_message['message'] = sprintf( __('Please purchase the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
 					} else {
-						$this->permissions_message['message'] = sprintf( __('Please sign up for the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );	
+						$this->permissions_message['message'] = sprintf( __('Please sign up for the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
 					} // End If Statement
 				} // End If Statement
 				break;
@@ -451,12 +451,12 @@ class WooThemes_Sensei {
 						$user_lesson_prerequisite_complete = true;
 					} // End If Statement
 					// Handle restrictions
-					if ( 0 < absint( $lesson_prerequisite_id ) && ( !$user_lesson_prerequisite_complete ) ) { 
+					if ( 0 < absint( $lesson_prerequisite_id ) && ( !$user_lesson_prerequisite_complete ) ) {
 						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
 						$lesson_link = '<a href="' . get_permalink( $lesson_prerequisite_id ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
 						$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this Quiz.', 'woothemes-sensei' ), $lesson_link );
 					} else {
-						$user_allowed = true;	
+						$user_allowed = true;
 					} // End If Statement
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
@@ -467,15 +467,15 @@ class WooThemes_Sensei {
 			default:
 				$user_allowed = true;
 				break;
-			
+
 		} // End Switch Statement
 		return $user_allowed;
 	} // End get_placeholder_image()
 
-	
+
 	/**
 	 * access_settings function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */

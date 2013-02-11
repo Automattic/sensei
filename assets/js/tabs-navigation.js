@@ -6,25 +6,25 @@ jQuery(document).ready( function($) {
 	});
 
 	jQuery( '#woothemes-sensei .subsubsub a.tab' ).click( function ( e ) {
-		
+
 		// Move the "current" CSS class.
 		jQuery( this ).parents( '.subsubsub' ).find( '.current' ).removeClass( 'current' );
 		jQuery( this ).addClass( 'current' );
-	
+
 		// If "All" is clicked, show all.
 		if ( jQuery( this ).hasClass( 'all' ) ) {
 			jQuery( '#woothemes-sensei h3, #woothemes-sensei form p, #woothemes-sensei table.form-table, p.submit' ).show();
-			
+
 			return false;
 		}
-		
+
 		// If the link is a tab, show only the specified tab.
 		var toShow = jQuery( this ).attr( 'href' );
 		// Remove the first occurance of # from the selected string (will be added manually below).
         toShow = toShow.replace( '#', '', toShow );
  		jQuery( '#woothemes-sensei h3, #woothemes-sensei form > p:not(".submit"), #woothemes-sensei table' ).hide();
 		jQuery( 'h3#' + toShow ).show().nextUntil( 'h3.section-heading', 'p, table, table p' ).show();
-		
+
 		return false;
 	});
 });

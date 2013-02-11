@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - sensei_customer_bought_product()
  */
 class WooThemes_Sensei_Utils {
-	
+
 
 	/**
 	 * Get the placeholder thumbnail image.
@@ -59,7 +59,7 @@ class WooThemes_Sensei_Utils {
 
 	/**
 	 * sensei_is_woocommerce_activated function.
-	 * 
+	 *
 	 * @access public
 	 * since 1.0.2
 	 * @static
@@ -69,15 +69,15 @@ class WooThemes_Sensei_Utils {
 		global $woothemes_sensei;
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() && isset( $woothemes_sensei->settings->settings[ 'woocommerce_enabled' ] ) && $woothemes_sensei->settings->settings[ 'woocommerce_enabled' ] ) { return true; } else { return false; }
 	} // End sensei_is_woocommerce_activated()
-	
+
 	/*-----------------------------------------------------------------------------------*/
 	/* Activity Log Functions */
 	/*-----------------------------------------------------------------------------------*/
-	
-	
+
+
 	/**
 	 * sensei_log_activity function.
-	 * 
+	 *
 	 * @access public
 	 * @param array $args (default: array())
 	 * @return void
@@ -99,7 +99,7 @@ class WooThemes_Sensei_Utils {
 					    'comment_approved' => 1,
 					);
 		// Custom Logic
-		
+
 		// Check if comment exists first
 		if ( isset( $args['action'] ) && 'update' == $args['action'] ) {
 			// Get existing comments ids
@@ -132,11 +132,11 @@ class WooThemes_Sensei_Utils {
 			return false;
 		} // End If Statement
 	} // End sensei_add_user_to_course()
-	
-	
+
+
 	/**
 	 * sensei_check_for_activity function.
-	 * 
+	 *
 	 * @access public
 	 * @param array $args (default: array())
 	 * @param bool $return_comments (default: false)
@@ -155,12 +155,12 @@ class WooThemes_Sensei_Utils {
 		} else {
 			return false;
 		} // End If Statement
-	} // End sensei_check_for_activity() 
-	
-	
+	} // End sensei_check_for_activity()
+
+
 	/**
 	 * sensei_activity_ids function.
-	 * 
+	 *
 	 * @access public
 	 * @param array $args (default: array())
 	 * @return void
@@ -184,12 +184,12 @@ class WooThemes_Sensei_Utils {
 			$post_ids = array_values( $post_ids );
 		} // End If Statement
 		return $post_ids;
-	} // End sensei_activity_ids() 
-	
-	
+	} // End sensei_activity_ids()
+
+
 	/**
 	 * sensei_delete_activities function.
-	 * 
+	 *
 	 * @access public
 	 * @param array $args (default: array())
 	 * @return void
@@ -207,31 +207,33 @@ class WooThemes_Sensei_Utils {
 		    		wp_cache_flush();
 		    	} // End If Statement
 		    } // End For Loop
-    	} // End If Statement	
+    	} // End If Statement
     	return $dataset_changes;
     } // End sensei_delete_activities()
-	
-	
+
+
 	/**
 	 * sensei_get_activity_value function.
-	 * 
+	 *
 	 * @access public
 	 * @param array $args (default: array())
 	 * @return void
 	 */
 	public function sensei_get_activity_value( $args = array() ) {
 		$activity_value = false;
-		// Get activities
-		$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $args['post_id'], 'user_id' => $args['user_id'], 'type' => $args['type'] ), true );
-		foreach ( $comments as $key => $value  ) {
-			// Get the activity value    
-		    if ( isset( $value->{$args['field']} ) && '' != $value->{$args['field']} ) {
-		    	$activity_value = $value->{$args['field']};
-		    } // End If Statement
-		} // End For Loop
+		if ( isset( $args['user_id'] ) && 0 < intval( $args['user_id'] ) ) {
+			// Get activities
+			$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $args['post_id'], 'user_id' => $args['user_id'], 'type' => $args['type'] ), true );
+			foreach ( $comments as $key => $value  ) {
+				// Get the activity value
+			    if ( isset( $value->{$args['field']} ) && '' != $value->{$args['field']} ) {
+			    	$activity_value = $value->{$args['field']};
+			    } // End If Statement
+			} // End For Loop
+		} // End If Statement
 		return $activity_value;
 	} // End sensei_get_activity_value()
-	
+
 	/**
 	 * sensei_customer_bought_product
 	 *
@@ -245,29 +247,29 @@ class WooThemes_Sensei_Utils {
 	 */
 	function sensei_customer_bought_product( $customer_email, $user_id, $product_id ) {
 		global $wpdb;
-	
+
 		$emails = array();
-	
+
 		if ( $user_id ) {
 			$user = get_user_by( 'id', $user_id );
 			$emails[] = $user->user_email;
 		}
-	
+
 		if ( is_email( $customer_email ) )
 			$emails[] = $customer_email;
-	
+
 		if ( sizeof( $emails ) == 0 )
 			return false;
-	
+
 		$orders = $wpdb->get_col( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE ( meta_key = '_billing_email' AND meta_value IN ( '" . implode( "','", array_unique( $emails ) ) . "' ) ) OR ( meta_key = '_customer_user' AND meta_value = %s AND meta_value > 0 )", $user_id ) );
-	
+
 		foreach ( $orders as $order_id ) {
-	
+
 			$items = maybe_unserialize( get_post_meta( $order_id, '_order_items', true ) );
 			$order = new WC_Order( $order_id );
-			
+
 			if ( $order->status == 'completed' ) {
-				
+
 				if ( $items ) {
 					foreach ( $items as $item ) {
 						if ( $item['id'] == $product_id || $item['variation_id'] == $product_id ) {
@@ -275,9 +277,9 @@ class WooThemes_Sensei_Utils {
 						} // End If Statement
 					} // End For Loop
 				} // End If Statement
-			
+
 			} // End If Statement
-			
+
 		} // End For Loop
 	} // End sensei_customer_bought_product()
 
