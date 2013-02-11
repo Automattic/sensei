@@ -113,7 +113,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		
 		$fields['access_permission'] = array(
 								'name' => __( 'Access Permissions', 'woothemes-sensei' ), 
-								'description' => __( 'Users must be logged in to take their courses.', 'woothemes-sensei' ), 
+								'description' => __( 'Users must be logged in to view course & lesson content.', 'woothemes-sensei' ), 
 								'type' => 'checkbox', 
 								'default' => true, 
 								'section' => 'default-settings'

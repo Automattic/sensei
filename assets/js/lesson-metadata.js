@@ -1,31 +1,31 @@
 jQuery(document).ready( function($) {
-	
+
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
 	 ***************************************************************************************************/
-	
+
 	/**
 	 * Validation of input fields - Add Course.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
-	jQuery.fn.validateCourseInput = function( action ) { 
- 		// Check for empty course titles    
+	jQuery.fn.validateCourseInput = function( action ) {
+ 		// Check for empty course titles
  	    if ( jQuery( '#course-title' ).val().replace(/^\s+|\s+$/g, "").length != 0 ) {
  	    	return true;
  	    } else {
  	    	return false;
  	    }
  	}
- 	
+
 	/**
 	 * Validation of input fields - Add, Edit Question.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
-	jQuery.fn.validateQuestionInput = function( action, jqueryObject ) { 
+	jQuery.fn.validateQuestionInput = function( action, jqueryObject ) {
  		// Validate Actions
  		if ( 'add' == action ) {
  			// Check for empty questions
@@ -35,7 +35,7 @@ jQuery(document).ready( function($) {
  	    		return false;
  	    	}
  	    } else if ( 'edit' == action ) {
- 			// Check for empty questions  
+ 			// Check for empty questions
  			var tableRowId = jqueryObject.parent('td').parent('tr').prev('tr').find('td:first').text();
  			if ( jQuery( '#question_' + tableRowId ).val().replace(/^\s+|\s+$/g, "").length != 0 ) {
  	    		return true;
@@ -47,40 +47,40 @@ jQuery(document).ready( function($) {
  			return false
  		}
  	}
-	
+
 	/**
 	 * Sets all Edit Question areas in the Questions table to hidden.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
-	jQuery.fn.resetQuestionTable = function() { 
+	jQuery.fn.resetQuestionTable = function() {
  	    jQuery( 'tr.question-quick-edit' ).each( function() {
 			if ( !jQuery(this).hasClass( 'hidden' ) ) {
 				jQuery(this).addClass('hidden');
 			}
 		});
  	}
- 	
+
  	/**
 	 * Resets the values of the Add Question form to nothing.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
- 	jQuery.fn.resetAddQuestionForm = function() { 
+ 	jQuery.fn.resetAddQuestionForm = function() {
  	    jQuery( '#add-new-question' ).children('input').each( function() {
 			jQuery(this).attr( 'value', '' );
 		});
  	}
- 	
+
  	/**
 	 * Updates the Number of Questions counter.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
- 	jQuery.fn.updateQuestionCount = function( increment, operator ) { 
+ 	jQuery.fn.updateQuestionCount = function( increment, operator ) {
  		// Get current value
  		var currentValue = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
  		var newValue = currentValue;
@@ -91,7 +91,7 @@ jQuery(document).ready( function($) {
  			newValue = currentValue + increment;
  		}
  		// Set new value
- 	    jQuery( '#question_counter' ).attr( 'value', newValue ); 
+ 	    jQuery( '#question_counter' ).attr( 'value', newValue );
  	    if ( newValue > 0 ) {
  	    	if ( !jQuery( '#no-questions-message' ).hasClass( 'hidden' ) ) {
  	    		jQuery( '#no-questions-message' ).addClass( 'hidden' );
@@ -100,11 +100,21 @@ jQuery(document).ready( function($) {
  	    	jQuery( '#no-questions-message' ).removeClass( 'hidden' );
  	    }
  	}
-	
+
+ 	/**
+	 * JS version of PHP htmlentities.
+	 *
+	 * @since 1.0.8
+	 * @access public
+	 */
+ 	jQuery.fn.htmlentities = function( str ) {
+ 		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	}
+
 	/***************************************************************************************************
 	 * 	2 - Lesson Quiz Functions.
 	 ***************************************************************************************************/
-	
+
 	/**
 	 * Add Quiz Click Event.
 	 *
@@ -116,11 +126,11 @@ jQuery(document).ready( function($) {
 		jQuery( '#add-quiz-metadata' ).show();
 		jQuery( '#add-quiz-main > p:first' ).hide();
 	});
-	
+
 	/***************************************************************************************************
 	 * 	3 - Course Functions.
 	 ***************************************************************************************************/
-	
+
 	/**
 	 * Add Course Click Event.
 	 *
@@ -132,7 +142,7 @@ jQuery(document).ready( function($) {
 		jQuery( '#lesson-course-actions' ).hide();
 		jQuery( '#lesson-course-details' ).removeClass( 'hidden' );
 	});
-	
+
 	/**
 	 * Cancel Events Click Event - add course.
 	 *
@@ -140,11 +150,11 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery( '#lesson-course-details p ' ).on( 'click', 'a.lesson_course_cancel', function() {
-		// Hide the add course panel and show the add course link 
+		// Hide the add course panel and show the add course link
 		jQuery( '#lesson-course-actions' ).show();
 		jQuery( '#lesson-course-details' ).addClass( 'hidden' );
-	});	
-	
+	});
+
 	/**
 	 * Save Course Click Event - Ajax.
 	 *
@@ -163,29 +173,29 @@ jQuery(document).ready( function($) {
 	 			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
 	 			dataToPost += '&course_title' + '=' + jQuery( '#course-title' ).attr( 'value' );
 	 			dataToPost += '&course_content' + '=' + jQuery( '#course-content' ).attr( 'value' );
-	 			dataToPost += '&action=add';	 			
+	 			dataToPost += '&action=add';
 	 			// Perform the AJAX call.
 	 			jQuery.post(
-	 				ajaxurl, 
-	 				{ 
-	 					action : 'lesson_add_course', 
+	 				ajaxurl,
+	 				{
+	 					action : 'lesson_add_course',
 	 					lesson_add_course_nonce : woo_localized_data.lesson_add_course_nonce,
 	 					data : dataToPost
 	 				},
-	 				function( response ) {			
+	 				function( response ) {
 	 					//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
 	 					//	jQuery( this ).css( 'visibility', 'hidden' );
 	 					//});
 	 					// Check for a course id
 	 					if ( 0 < response ) {
 	 						jQuery( '#lesson-course-actions' ).show();
-							jQuery( '#lesson-course-details' ).addClass( 'hidden' );	
-							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(jQuery( '#course-title' ).attr( 'value' ))); 
+							jQuery( '#lesson-course-details' ).addClass( 'hidden' );
+							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(jQuery( '#course-title' ).attr( 'value' )));
 							jQuery( '#lesson-course-options' ).val( response );
 	 					} else {
 	 						// TODO - course creation fail message
 	 					}
-	 				}	
+	 				}
 	 			);
 	 			return false; // TODO - move this below the next bracket when doing the ajax loader
 	 	//});
@@ -194,11 +204,11 @@ jQuery(document).ready( function($) {
 			// TODO - add error message
 		}
 	});
-	
+
 	/***************************************************************************************************
 	 * 	4 - Quiz Question Functions.
 	 ***************************************************************************************************/
-	
+
 	/**
 	 * Add Question Click Event.
 	 *
@@ -212,7 +222,7 @@ jQuery(document).ready( function($) {
 		jQuery.fn.resetQuestionTable();
 		jQuery( this ).removeAttr('style');
 	});
-	
+
 	/**
 	 * Edit Question Click Event.
 	 *
@@ -230,7 +240,7 @@ jQuery(document).ready( function($) {
 		jQuery( '#question_' + questionId ).parent('td').parent('tr').removeClass('hidden');
 		jQuery( '#question_' + questionId ).focus();
 	});
-	 
+
 	/**
 	 * Cancel Events Click Event - add question.
 	 *
@@ -243,7 +253,7 @@ jQuery(document).ready( function($) {
 		jQuery( '#add-new-question' ).addClass( 'hidden' );
 		jQuery.fn.resetQuestionTable();
 	});
-	
+
 	/**
 	 * Cancel Events Click Event - edit question.
 	 *
@@ -255,7 +265,7 @@ jQuery(document).ready( function($) {
 		var tableRowId = jQuery( this ).parent('td').parent('tr').prev('tr').find('td:first').text();
 		jQuery( '#question_' + tableRowId ).parent('td').parent('tr').addClass( 'hidden' );
 	});
-	
+
 	/**
 	 * Add Question Save Click Event - Ajax.
 	 *
@@ -267,7 +277,7 @@ jQuery(document).ready( function($) {
 	 	// Validate Inputs
 		var validInput = jQuery.fn.validateQuestionInput( 'add', jQuery(this) );
 		if ( validInput ) {
-			// Setup data to post	
+			// Setup data to post
 	 		dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 	 		dataToPost += '&action=add';
 	 		jQuery( '#add-new-question' ).children( 'input' ).each( function() {
@@ -275,13 +285,13 @@ jQuery(document).ready( function($) {
 	 		});
 	 		// Perform the AJAX call.
 	 		jQuery.post(
-	 		    ajaxurl, 
-	 		    { 
-	 		    	action : 'lesson_update_question', 
+	 		    ajaxurl,
+	 		    {
+	 		    	action : 'lesson_update_question',
 	 		    	lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
 	 		    	data : dataToPost
 	 		    },
-	 		    function( response ) {			
+	 		    function( response ) {
 	 		    	//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
 	 		    	//	jQuery( this ).css( 'visibility', 'hidden' );
 	 		    	//});
@@ -294,7 +304,7 @@ jQuery(document).ready( function($) {
 	 		    		jQuery.fn.updateQuestionCount( 1, '+' );
 	 		    		var tableCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
 	 		    		var questionId = response;
-	 		    		var addQuestionText = jQuery( '#add_question' ).attr( 'value' );
+	 		    		var addQuestionText = jQuery.fn.htmlentities( jQuery( '#add_question' ).attr( 'value' ) );
 	 		    		var addQuestionRightText = jQuery( '#add_question_right_answer' ).attr( 'value' );
 	 		    		var arrayCounter = 0;
 	 		    		var addQuestionWrongText = new Array();
@@ -303,10 +313,10 @@ jQuery(document).ready( function($) {
 	 		    			arrayCounter++;
 	 		    		});
 	 		    		// TODO - Localize the english labels for translation
-	 		    		jQuery( '#add-question-metadata table tbody' ).append('<tr><td class="table-count hidden">' + tableCount + '</td><td>' + addQuestionText + '</td><td><a title="Edit Question" href="#question_' + tableCount + '" class="question_table_edit">Edit</a>&nbsp;&nbsp;&nbsp;<a title="Delete Question" href="#add-question-metadata" class="question_table_delete">Delete</a></td></tr><tr class="question-quick-edit hidden"><td colspan="3"><label>Question ' + tableCount + '</label> <input type="text" id="question_' + tableCount + '" name="question" value="' + addQuestionText + '" size="25" class="widefat"><label>Right Answer</label> <input type="text" id="question_' + tableCount + '_right_answer" name="question_right_answer" value="' + addQuestionRightText + '" size="25" class="widefat"><label>Wrong Answers</label> <input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[0] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[1] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[2] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[3] + '" size="25" class="widefat"><input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '"><a title="Save Question" href="#add-question-metadata" class="question_table_save button-primary">Save</a></td></tr>');		
+	 		    		jQuery( '#add-question-metadata table tbody' ).append('<tr><td class="table-count hidden">' + tableCount + '</td><td>' + addQuestionText + '</td><td><a title="Edit Question" href="#question_' + tableCount + '" class="question_table_edit">Edit</a>&nbsp;&nbsp;&nbsp;<a title="Delete Question" href="#add-question-metadata" class="question_table_delete">Delete</a></td></tr><tr class="question-quick-edit hidden"><td colspan="3"><label>Question ' + tableCount + '</label> <input type="text" id="question_' + tableCount + '" name="question" value="' + addQuestionText + '" size="25" class="widefat"><label>Right Answer</label> <input type="text" id="question_' + tableCount + '_right_answer" name="question_right_answer" value="' + addQuestionRightText + '" size="25" class="widefat"><label>Wrong Answers</label> <input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[0] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[1] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[2] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[3] + '" size="25" class="widefat"><input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '"><a title="Save Question" href="#add-question-metadata" class="question_table_save button-primary">Save</a></td></tr>');
 			    		jQuery.fn.resetAddQuestionForm();
 	 		    	}
-	 		    }	
+	 		    }
 	 		);
 	 		return false; // TODO - move this below the next bracket when doing the ajax loader
 	 	} else {
@@ -314,7 +324,7 @@ jQuery(document).ready( function($) {
 			// TODO - add error message
 		}
 	});
-	
+
 	/**
 	 * Edit Question Save Click Event - Ajax.
 	 *
@@ -338,13 +348,13 @@ jQuery(document).ready( function($) {
 	 			tableRowId = jQuery( this ).parent('td').parent('tr').prev('tr').find('td:first').text();
 	 			// Perform the AJAX call.
 	 			jQuery.post(
-	 				ajaxurl, 
-	 				{ 
-	 					action : 'lesson_update_question', 
+	 				ajaxurl,
+	 				{
+	 					action : 'lesson_update_question',
 	 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
 	 					data : dataToPost
 	 				},
-	 				function( response ) {			
+	 				function( response ) {
 	 					//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
 	 					//	jQuery( this ).css( 'visibility', 'hidden' );
 	 					//});
@@ -354,11 +364,11 @@ jQuery(document).ready( function($) {
 	 							if ( jQuery(this).text() == tableRowId ) {
 	 								jQuery(this).next('td').text( jQuery( '#question_' + tableRowId ).attr('value') );
 	 							}
-	 							
+
 	 						});
 	 						jQuery( '#question_' + tableRowId ).parent('td').parent('tr').addClass( 'hidden' );
 	 					}
-	 				}	
+	 				}
 	 			);
 	 			return false; // TODO - move this below the next bracket when doing the ajax loader
 	 	//});
@@ -367,8 +377,8 @@ jQuery(document).ready( function($) {
 			jQuery( '#question_' + tableRowId ).focus();
 			// TODO - add error message
 		}
-	});	
-	
+	});
+
 	/**
 	 * Delete Question Click Event - Ajax.
 	 *
@@ -395,18 +405,18 @@ jQuery(document).ready( function($) {
 	 			tableRowId = jQuery( this ).parent('td').parent('tr').find('td:first').text();
 	 			// Perform the AJAX call.
 	 			jQuery.post(
-	 				ajaxurl, 
-	 				{ 
-	 					action : 'lesson_update_question', 
+	 				ajaxurl,
+	 				{
+	 					action : 'lesson_update_question',
 	 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
 	 					data : dataToPost
 	 				},
-	 				function( response ) {			
+	 				function( response ) {
 	 					//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
 	 					//	jQuery( this ).css( 'visibility', 'hidden' );
 	 					//});
 	 					if ( response ) {
-	 						// Remove the html element for the deleted question			
+	 						// Remove the html element for the deleted question
 	 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
 	 							if ( jQuery(this).text() == tableRowId ) {
 	 								jQuery(this).parent('tr').next('tr').remove();
@@ -416,10 +426,10 @@ jQuery(document).ready( function($) {
 	 						jQuery.fn.updateQuestionCount( 1, '-' );
 	 						// TODO - renumber function for reuse when adding
 	 					}
-	 				}	
+	 				}
 	 			);
 	 			return false; // TODO - move this below the next bracket when doing the ajax loader
 	 	//});
 		}
-	});	
+	});
 });
