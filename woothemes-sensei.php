@@ -3,7 +3,7 @@
 Plugin Name: Sensei
 Plugin URI: http://woothemes.com/
 Description: Sensei by WooThemes is the best Learning Management System ever!
-Version: 1.0.7
+Version: 1.0.8
 Author: WooThemes
 Author URI: http://woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -11,7 +11,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /*  Copyright 2013  WooThemes  (email : info@woothemes.com)
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
+    it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
@@ -23,7 +23,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-	
+
 	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	require_once( 'classes/class-woothemes-sensei.php' );
@@ -31,7 +31,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	if ( ! is_admin() ) require_once( 'inc/woothemes-sensei-template.php' );
 	global $woothemes_sensei;
 	$woothemes_sensei = new WooThemes_Sensei( __FILE__ );
-	$woothemes_sensei->version = '1.0.7';
+	$woothemes_sensei->version = '1.0.8';
 
     /**
      * Plugin updates

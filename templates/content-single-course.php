@@ -9,7 +9,7 @@
  * @version     1.0.0
  */
 global $woothemes_sensei, $post, $current_user;
-	 	
+
 // Get User Meta
 get_currentuserinfo();
 // Check if the user is taking the course
@@ -27,25 +27,25 @@ $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( arra
 	?>
 
         	<article <?php post_class( array( 'course', 'post' ) ); ?>>
-				
+
 				<?php
     			// Image
     			echo  $woothemes_sensei->post_types->course->course_image( $post->ID );
     			?>
-    					
+
                 <header>
-                
+
 	                <h1><?php the_title(); ?></h1>
-	                
+
                 </header>
-                
+
                 <section class="entry fix">
                 	<?php if ( is_user_logged_in() && $is_user_taking_course ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
                 </section>
-					
+
 				<?php course_single_meta(); ?>
 	 			<?php course_single_lessons(); ?>
-	 			                
+
             </article><!-- .post -->
 
 	        <nav id="post-entries" class="fix">

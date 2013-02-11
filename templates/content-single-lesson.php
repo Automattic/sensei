@@ -11,16 +11,16 @@
  global $woothemes_sensei, $post, $current_user;
 ?>
         	<article <?php post_class( array( 'lesson', 'post' ) ); ?>>
-				
+
 				<?php
 				// Image
     			echo $woothemes_sensei->post_types->lesson->lesson_image( $post->ID );
     			?>
-    			
+
                 <header>
-                
+
 	                <h1><?php the_title(); ?></h1>
-	                
+
                 </header>
 
                 <?php
@@ -36,7 +36,7 @@
 				if ( '' != $user_prerequisite_lesson_end ) {
 				    $user_lesson_prerequisite_complete = true;
 				}
-				
+
 				if ( $lesson_prerequisite > 0 ) {
 					$view_lesson = false;
                     if ( ( isset( $user_lesson_prerequisite_complete ) && $user_lesson_prerequisite_complete ) ) {
@@ -66,7 +66,7 @@
 
 				?>
 
-				                
+
             </article><!-- .post -->
 
 	        <nav id="post-entries" class="fix">

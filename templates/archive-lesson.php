@@ -21,19 +21,19 @@ get_header(); ?>
 		 */
 		do_action('sensei_before_main_content');
 	?>
-		
-		<?php 
-			
+
+		<?php
+
 			if ( have_posts() ) {
 				$woothemes_sensei->frontend->sensei_get_template( 'loop-lesson.php' );
 			} else { ?>
 
 			<p><?php _e( 'No lessons found which match your selection.', 'woothemes-sensei' ); ?></p>
-			
+
 		<?php } ?>
-		
+
 		<?php do_action('sensei_pagination'); ?>
-		
+
 	<?php
 		/**
 		 * sensei_after_main_content hook
@@ -51,5 +51,5 @@ get_header(); ?>
 		 */
 		do_action('sensei_sidebar');
 	?>
-	
+
 <?php get_footer(); ?>

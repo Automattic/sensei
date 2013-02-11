@@ -1,15 +1,16 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei v1.0.3\n"
+"Project-Id-Version: Sensei v1.0.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-01-29 08:49:23+0000\n"
+"PO-Revision-Date: 2013-02-11 11:33:54+0000\n"
 "Last-Translator: Matt <matt@woothemes.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
 "X-Poedit-Language: English\n"
 "X-Poedit-Country: UNITED KINGDOM\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -76,7 +77,7 @@ msgid "<strong>Sensei has been installed</strong> &#8211; You're ready to start 
 msgstr ""
 
 #: classes/class-woothemes-sensei-admin.php:218
-#: classes/class-woothemes-sensei.php:80
+#: classes/class-woothemes-sensei.php:81
 #@ sensei
 #@ woothemes-sensei
 msgid "Settings"
@@ -770,11 +771,6 @@ msgstr ""
 msgid "Access Permissions"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:116
-#@ woothemes-sensei
-msgid "Users must be logged in to take their courses."
-msgstr ""
-
 #: classes/class-woothemes-sensei-settings.php:123
 #@ woothemes-sensei
 msgid "Add Nav Menu Links"
@@ -1067,61 +1063,61 @@ msgstr ""
 msgid "Select a Page:"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:57
+#: classes/class-woothemes-sensei.php:58
 #@ woothemes-sensei
 msgid "Permission Denied"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:79
+#: classes/class-woothemes-sensei.php:80
 #@ woothemes-sensei
 msgid "Sensei Settings"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:396
-#: classes/class-woothemes-sensei.php:410
-#: classes/class-woothemes-sensei.php:434
-#: classes/class-woothemes-sensei.php:441
+#: classes/class-woothemes-sensei.php:417
+#: classes/class-woothemes-sensei.php:431
+#: classes/class-woothemes-sensei.php:455
+#: classes/class-woothemes-sensei.php:462
 #@ woothemes-sensei
 msgid "Restricted Access"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:397
-#: classes/class-woothemes-sensei.php:411
-#: classes/class-woothemes-sensei.php:442
+#: classes/class-woothemes-sensei.php:418
+#: classes/class-woothemes-sensei.php:432
+#: classes/class-woothemes-sensei.php:463
 #@ woothemes-sensei
 msgid "course"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:398
+#: classes/class-woothemes-sensei.php:419
 #, php-format
 #@ woothemes-sensei
 msgid "Please complete the previous %1$s before taking this course."
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:414
+#: classes/class-woothemes-sensei.php:435
 #, php-format
 #@ woothemes-sensei
 msgid "Please purchase the %1$s before starting this Lesson."
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:416
+#: classes/class-woothemes-sensei.php:437
 #, php-format
 #@ woothemes-sensei
 msgid "Please sign up for the %1$s before starting this Lesson."
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:435
+#: classes/class-woothemes-sensei.php:456
 #@ woothemes-sensei
 msgid "lesson"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:436
+#: classes/class-woothemes-sensei.php:457
 #, php-format
 #@ woothemes-sensei
 msgid "Please complete the previous %1$s before taking this Quiz."
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:443
+#: classes/class-woothemes-sensei.php:464
 #, php-format
 #@ woothemes-sensei
 msgid "Please sign up for the %1$s before taking this Quiz."
@@ -1308,6 +1304,7 @@ msgstr ""
 msgid "You must first complete %1$s before taking this Lesson's Quiz"
 msgstr ""
 
+#: templates/content-single-lesson.php:63
 #: templates/single-lesson/lesson-meta.php:213
 #, php-format
 #@ woothemes-sensei
@@ -1553,13 +1550,13 @@ msgstr ""
 msgid "This will disable the error notice when a Lesson has no Quiz on the Lesson page."
 msgstr ""
 
-#: inc/woothemes-sensei-template.php:515
+#: inc/woothemes-sensei-template.php:465
 #: templates/single-lesson/lesson-meta.php:48
 #@ woothemes-sensei
 msgid "Complete Lesson"
 msgstr ""
 
-#: inc/woothemes-sensei-template.php:532
+#: inc/woothemes-sensei-template.php:482
 #: templates/single-lesson/lesson-meta.php:118
 #@ woothemes-sensei
 msgid "Reset Lesson"
@@ -1568,5 +1565,16 @@ msgstr ""
 #: templates/single-lesson/lesson-meta.php:131
 #@ woothemes-sensei
 msgid "Lesson Reset Successfully."
+msgstr ""
+
+#: templates/content-single-lesson.php:63
+#, php-format
+#@ woothemes-sensei
+msgid "You must first complete %1$s before viewing this Lesson"
+msgstr ""
+
+#: classes/class-woothemes-sensei-settings.php:116
+#@ woothemes-sensei
+msgid "Users must be logged in to view course & lesson content."
 msgstr ""
 

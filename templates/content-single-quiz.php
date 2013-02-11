@@ -12,16 +12,15 @@
         	<article <?php post_class(); ?>>
 
                 <header>
-                
+
 	                <h1><?php the_title(); ?></h1>
-	                
+
                 </header>
-                
+
                 <section class="entry fix">
                 	<?php the_content(); ?>
                 	<?php quiz_questions(); ?>
 				</section>
-				                
+
             </article><!-- .post -->
 
-	        

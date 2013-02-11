@@ -18,7 +18,7 @@ get_header(); ?>
 		 */
 		do_action('sensei_before_main_content');
 		?>
-	
+
 		<?php while ( have_posts() ) : the_post(); ?>
 
 			<?php $woothemes_sensei->frontend->sensei_get_template_part( 'content', 'single-course' ); ?>
@@ -32,7 +32,7 @@ get_header(); ?>
 		 */
 		do_action('sensei_after_main_content');
 		?>
-	
+
 		<?php
 		/**
 		 * sensei_sidebar hook
@@ -41,5 +41,5 @@ get_header(); ?>
 		 */
 		do_action('sensei_sidebar');
 		?>
-	
+
 <?php get_footer(); ?>

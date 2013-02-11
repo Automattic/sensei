@@ -10,7 +10,7 @@
  */
 
 global $post, $woothemes_sensei, $current_user;
-    
+
 // Get the meta info
 $lesson_video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
 $lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
@@ -30,26 +30,26 @@ if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sen
 
     $lesson_quiz_id = 0;
 
-    if ( 0 < count($lesson_quizzes) )  { 
+    if ( 0 < count($lesson_quizzes) )  {
         foreach ($lesson_quizzes as $quiz_item){
             $lesson_quiz_id = $quiz_item->ID;
         } // End For Loop
     } // End If Statement
 
     $sanitized_submit = esc_html( $_POST['quiz_complete'] );
-    
+
     if ( ! is_array($user_quizzes) ) {
         $user_quizzes = array();
-    } // End If Statement   
-    
+    } // End If Statement
+
     $answers_array = array();
-            
+
     switch ($sanitized_submit) {
         case __( 'Complete Lesson', 'woothemes-sensei' ):
-            
+
             // Manual Grade
             $grade = 100;
-            
+
             // Save Quiz Answers
             $args = array(
                                 'post_id' => $lesson_quiz_id,
@@ -62,9 +62,9 @@ if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sen
                                 'user_id' => $current_user->ID,
                                 'action' => 'update'
                             );
-            
+
             $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-            
+
             if ( $activity_logged ) {
                 // Save Quiz Grade
                 $args = array(
@@ -113,7 +113,7 @@ if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sen
             } else {
                 // Something broke
             } // End If Statement
-            
+
             break;
         case __( 'Reset Lesson', 'woothemes-sensei' ):
             // Remove existing user quiz meta
@@ -122,20 +122,20 @@ if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sen
             // Check for quiz grade
             $delete_grades = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
             // Check for quiz answers
-            $delete_answers = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_answers' ) ); 
+            $delete_answers = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_answers' ) );
             // Check for lesson complete
-            $delete_lesson_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) ); 
+            $delete_lesson_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
             // Check for course complete
             $course_id = get_post_meta( $post->ID, '_lesson_course' ,true );
-            $delete_course_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) ); 
+            $delete_course_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
             $messages = '<div class="woo-sc-box note">' . __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) . '</div>';
             break;
         default:
             // Nothing
             break;
-        
+
     } // End Switch Statement
-    
+
 } // End If Statement
 
 // Check the lesson is complete
@@ -155,24 +155,24 @@ $html = '';
 // Check that the course has been started
 if ( ! WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) { ?>
     <section class="lesson-meta">
-    	
+
     	<header>
-    		
+
     		<a href="<?php echo esc_url( get_permalink( $lesson_course_id->ID ) ); ?>" title="<?php echo esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ); ?>"><?php _e( 'Please Sign Up for the course before starting the lesson.', 'woothemes-sensei' ); ?></a>
-    		
+
     	</header>
-    	
+
     </section>
-    
+
 <?php } else {
-    
+
     if ( 'http' == substr( $lesson_video_embed, 0, 4) ) {
         // V2 - make width and height a setting for video embed
         $lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed )/*, array( 'width' => 100 , 'height' => 100)*/ );
     } // End If Statement
     ?>
     <section class="lesson-meta">
-        
+
         <div class="video"><?php echo html_entity_decode($lesson_video_embed); ?></div>
         <?php echo $messages; ?>
         <?php
@@ -199,7 +199,7 @@ if ( ! WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $l
                                                 'meta_key'          => '_quiz_id',
                                                 'meta_value'        => $quiz_item->ID,
                                                 'post_status'       => 'any',
-                                                'suppress_filters'  => 0 
+                                                'suppress_filters'  => 0
                                             );
                         $questions_array = get_posts( $question_args );
                         $question_count = count( $questions_array );
@@ -208,7 +208,7 @@ if ( ! WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $l
                         if ( $lesson_prerequisite > 0) {
                             if ( isset( $user_lesson_prerequisite_complete ) && $user_lesson_prerequisite_complete ) { ?>
                                 <a class="button" href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'Take the Lesson Quiz', 'woothemes-sensei' ) ); ?>"><?php _e( 'Take the Lesson Quiz',    'woothemes-sensei' ); ?></a>
-                                <?php sensei_complete_lesson_button(); ?>   
+                                <?php sensei_complete_lesson_button(); ?>
                             <?php } else {
                                 echo sprintf( __( 'You must first complete %1$s before taking this Lesson\'s Quiz', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_prerequisite ) ) . '" title="' . esc_attr(  sprintf( __( 'You must first complete: %1$s', 'woothemes-sensei' ), get_the_title( $lesson_prerequisite ) ) ) . '">' . get_the_title( $lesson_prerequisite ). '</a>' );
                             } // End If Statement
@@ -231,7 +231,7 @@ if ( ! WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $l
         	</header>
         <?php } // End If Statement ?>
     </section>
-    
+
     <section class="lesson-course">
     	<?php _e( 'Back to ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( get_permalink( $lesson_course_id ) ); ?>" title="<?php echo esc_attr( __( 'Back to the course', 'woothemes-sensei' ) ); ?>"><?php echo get_the_title( $lesson_course_id ); ?></a>
     </section>

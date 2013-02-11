@@ -46,5 +46,5 @@ get_header(); ?>
 		 */
 		do_action('sensei_sidebar');
 	?>
-	
+
 <?php get_footer(); ?>

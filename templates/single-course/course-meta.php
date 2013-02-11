@@ -10,7 +10,7 @@
  */
 
 global $post, $current_user, $woocommerce;
-	 	
+
 // Get User Meta
 get_currentuserinfo();
 // Check if the user is taking the course
@@ -32,9 +32,9 @@ if ( isset( $_POST['course_start'] ) && wp_verify_nonce( $_POST[ 'woothemes_sens
 	$is_user_taking_course = false;
 	if ( $activity_logged ) {
 		$is_user_taking_course = true;
-	} // End If Statement	
+	} // End If Statement
 } // End If Statement
-    
+
 // Get the meta info
 $course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
 if ( 'http' == substr( $course_video_embed, 0, 4) ) {
@@ -45,20 +45,20 @@ if ( 'http' == substr( $course_video_embed, 0, 4) ) {
 $wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
 
 if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
-	echo '<div class="woo-sc-box info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-contents" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );	
+	echo '<div class="woo-sc-box info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-contents" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
 }
 ?>
 
 
 <section class="course-meta">
-    
+
     <?php if ( is_user_logged_in() && ! $is_user_taking_course ) {
     	// Get the product ID
     	$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
-    	// Check for woocommerce	
-    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) { 
-    		sensei_wc_add_to_cart($post->ID); 
-    	} else { 
+    	// Check for woocommerce
+    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+    		sensei_wc_add_to_cart($post->ID);
+    	} else {
     		sensei_start_course_form($post->ID);
     	} // End If Statement
     } elseif ( is_user_logged_in() ) {
@@ -108,15 +108,15 @@ if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
     <?php } else {
     	// Get the product ID
     	$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
-    	// Check for woocommerce	
-    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) { 
-    		sensei_wc_add_to_cart($post->ID); 
+    	// Check for woocommerce
+    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+    		sensei_wc_add_to_cart($post->ID);
     	} else {
     		// User needs to register
     		wp_register( '<div class="status register">', '</div>' );
     	} // End If Statement
     } // End If Statement ?>
-    
+
 </section>
 
 <div class="course-video"><?php echo html_entity_decode($course_video_embed); ?></div>

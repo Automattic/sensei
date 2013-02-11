@@ -21,31 +21,31 @@ get_header(); ?>
 		 */
 		do_action('sensei_before_main_content');
 	?>
-		
-		<?php 
-			
+
+		<?php
+
 			if ( have_posts() ) {
 				// Handle pagiation
 				$paged = $wp_query->get( 'paged' );
 				if ( ! $paged || $paged < 2 ) {
 					// This is not a paginated page (or it's simply the first page of a paginated page/post)
-					do_shortcode( '[newcourses]' ); 
-					do_shortcode( '[featuredcourses]' ); 
-					do_shortcode( '[freecourses]' ); 
-					do_shortcode( '[paidcourses]' ); 
+					do_shortcode( '[newcourses]' );
+					do_shortcode( '[featuredcourses]' );
+					do_shortcode( '[freecourses]' );
+					do_shortcode( '[paidcourses]' );
 				} else {
 					// This is a paginated page.
 					$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
 				} // End If Statement
-				
+
 			} else { ?>
 
 			<p><?php _e( 'No courses found which match your selection.', 'woothemes-sensei' ); ?></p>
-			
+
 		<?php } ?>
-		
+
 		<?php do_action('sensei_pagination'); ?>
-		
+
 	<?php
 		/**
 		 * sensei_after_main_content hook
@@ -63,5 +63,5 @@ get_header(); ?>
 		 */
 		do_action('sensei_sidebar');
 	?>
-	
+
 <?php get_footer(); ?>
