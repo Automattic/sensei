@@ -1,6 +1,10 @@
 *** Sensei Changelog ***
 
 2013.02.11 - version 1.0.8
+ * assets/js/lesson-metadata.js - added htmlentities function for backend validation on raw HTML input
+ * classes/class-woothemes-sensei-utils.php - validation for not logged in user data
+ * classes/class-woothemes-sensei-settings.php - rewording of setting for access permissions
+ * classes/* - stripped trailing spaces
  * templates/* - stripped trailing spaces
 
 2013.02.08 - version 1.0.7
