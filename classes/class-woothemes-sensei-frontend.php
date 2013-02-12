@@ -39,7 +39,7 @@ class WooThemes_Sensei_Frontend {
 	 * @return  void
 	 */
 	public function __construct () {
-		
+
 		// Template output actions
 		add_action( 'sensei_before_main_content', array( &$this, 'sensei_output_content_wrapper' ), 10 );
 		add_action( 'sensei_after_main_content', array( &$this, 'sensei_output_content_wrapper_end' ), 10 );
@@ -64,7 +64,7 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	public function init () {
-		
+
 	} // End init()
 
 	/**
@@ -85,7 +85,7 @@ class WooThemes_Sensei_Frontend {
 			// Load the general script
 			wp_enqueue_script( 'woosensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend.js', array( 'jquery' ), '1.0.0' );
 		} // End If Statement
-		
+
 	} // End enqueue_scripts()
 
 	/**
@@ -104,13 +104,13 @@ class WooThemes_Sensei_Frontend {
 			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.0.0', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
 		} // End If Statement
-		        
+
 	} // End enqueue_styles()
 
-	
+
 	/**
 	 * sensei_get_template_part function.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $slug
 	 * @param string $name (default: '')
@@ -119,27 +119,27 @@ class WooThemes_Sensei_Frontend {
 	function sensei_get_template_part( $slug, $name = '' ) {
 		global $woothemes_sensei;
 		$template = '';
-	
+
 		// Look in yourtheme/slug-name.php and yourtheme/sensei/slug-name.php
 		if ( $name )
 			$template = locate_template( array ( "{$slug}-{$name}.php", "{$woothemes_sensei->template_url}{$slug}-{$name}.php" ) );
-	
+
 		// Get default slug-name.php
 		if ( !$template && $name && file_exists( $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php" ) )
 			$template = $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php";
-	
+
 		// If template file doesn't exist, look in yourtheme/slug.php and yourtheme/sensei/slug.php
 		if ( !$template )
 			$template = locate_template( array ( "{$slug}.php", "{$woothemes_sensei->template_url}{$slug}.php" ) );
-	
+
 		if ( $template )
 			load_template( $template, false );
 	} // End sensei_get_template_part()
-	
-	
+
+
 	/**
 	 * sensei_get_template function.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $template_name
 	 * @param array $args (default: array())
@@ -149,23 +149,23 @@ class WooThemes_Sensei_Frontend {
 	 */
 	function sensei_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
 		global $woothemes_sensei;
-	
+
 		if ( $args && is_array($args) )
 			extract( $args );
-	
+
 		$located = $this->sensei_locate_template( $template_name, $template_path, $default_path );
-	
+
 		do_action( 'sensei_before_template_part', $template_name, $template_path, $located );
-	
+
 		include( $located );
-	
+
 		do_action( 'sensei_after_template_part', $template_name, $template_path, $located );
 	} // End sensei_get_template()
-	
-	
+
+
 	/**
 	 * sensei_locate_template function.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $template_name
 	 * @param string $template_path (default: '')
@@ -174,10 +174,10 @@ class WooThemes_Sensei_Frontend {
 	 */
 	function sensei_locate_template( $template_name, $template_path = '', $default_path = '' ) {
 		global $woothemes_sensei;
-	
+
 		if ( ! $template_path ) $template_path = $woothemes_sensei->template_url;
 		if ( ! $default_path ) $default_path = $woothemes_sensei->plugin_path() . '/templates/';
-	
+
 		// Look within passed path within the theme - this is priority
 		$template = locate_template(
 			array(
@@ -185,19 +185,19 @@ class WooThemes_Sensei_Frontend {
 				$template_name
 			)
 		);
-	
+
 		// Get default template
 		if ( ! $template )
 			$template = $default_path . $template_name;
-	
+
 		// Return what we found
 		return apply_filters('sensei_locate_template', $template, $template_name, $template_path);
 	} // End sensei_locate_template()
 
-	
+
 	/**
 	 * sensei_output_content_wrapper function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -205,21 +205,21 @@ class WooThemes_Sensei_Frontend {
 		$this->sensei_get_template( 'wrappers/wrapper-start.php' );
 	} // End sensei_output_content_wrapper()
 
-	
+
 	/**
 	 * sensei_output_content_wrapper_end function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
 	function sensei_output_content_wrapper_end() {
 		$this->sensei_get_template( 'wrappers/wrapper-end.php' );
 	} // End sensei_output_content_wrapper_end()
-	
-	
+
+
 	/**
 	 * sensei_output_content_pagination function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -250,7 +250,7 @@ class WooThemes_Sensei_Frontend {
 
 	/**
 	 * sensei_nav_menu_items function.
-	 * 
+	 *
 	 * Adds Courses, My Courses, and Login Logout links to navigation menu.
 	 *
 	 * @access public
@@ -263,7 +263,7 @@ class WooThemes_Sensei_Frontend {
 		$add_menu_items = $woothemes_sensei->settings->settings[ 'menu_items' ];
 		// If setting is enabled
 		if ( isset($add_menu_items) && $add_menu_items) {
-		
+
 			$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
 			$my_account_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
 			// Check for WooCommerce and Logged in User
@@ -327,16 +327,16 @@ class WooThemes_Sensei_Frontend {
 					$items .= '<li class="login"><a href="'. wp_login_url( home_url() ) .'">'.__('Login', 'woothemes-sensei').'</a></li>';
 				} // End If Statement
 			} // End If Statement
-		
+
 		} // End If Statement
-		
+
 	    return $items;
 	} // End sensei_nav_menu_items()
 
-	
+
 	/**
 	 * sensei_nav_menu_item_classes function.
-	 * 
+	 *
 	 * Fix active class in nav for shop page.
 	 *
 	 * @access public
@@ -345,33 +345,33 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_nav_menu_item_classes( $menu_items, $args ) {
-	
+
 		global $woothemes_sensei;
 		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
 		$my_account_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
-		
+
 		foreach ( (array) $menu_items as $key => $menu_item ) {
-	
+
 			$classes = (array) $menu_item->classes;
-			
+
 			// Handle Singular Pages
 			$post_types = array( 'course', 'lesson', 'quiz', 'question' );
 			if ( 0 < $course_page_id && ( is_page( $course_page_id ) || is_singular( $post_types ) ) && $course_page_id == $menu_item->object_id ) {
 				$menu_items[$key]->current = true;
 				$classes[] = 'current-menu-item';
-				$classes[] = 'current_page_item';	
+				$classes[] = 'current_page_item';
 			// Set active state if this is the my courses page link
 			} elseif ( 0 < $my_account_page_id && is_page( $my_account_page_id ) && $my_account_page_id == $menu_item->object_id ) {
 				$menu_items[$key]->current = true;
 				$classes[] = 'current-menu-item';
 				$classes[] = 'current_page_item';
-	
+
 			} // End If Statement
-	
+
 			$menu_items[$key]->classes = array_unique( $classes );
-	
+
 		} // End For Loop
-	
+
 		return $menu_items;
 	} // End sensei_nav_menu_item_classes()
 
@@ -381,9 +381,9 @@ class WooThemes_Sensei_Frontend {
 	    // Handle Search Classes for Courses, Lessons, and WC Products
 	    if ( isset( $post->post_type ) && ( ( 'course' == $post->post_type ) || ( 'lesson' == $post->post_type ) || ( 'product' == $post->post_type ) ) ) {
 	    	$classes[] = 'post';
-		} // End If Statement	    
+		} // End If Statement
 	    return $classes;
 	} // End sensei_search_results_classes()
-	
+
 } // End Class
 ?>

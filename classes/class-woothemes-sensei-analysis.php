@@ -23,14 +23,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WooThemes_Sensei_Analysis {
 	public $token;
 	public $name;
-	
+
 	/**
 	 * Constructor
 	 * @since  1.0.0
 	 * @return  void
 	 */
 	public function __construct () {
-	
+
 		$this->name = 'Analysis';
 		// Admin functions
 		if ( is_admin() ) {
@@ -40,32 +40,32 @@ class WooThemes_Sensei_Analysis {
 		} // End If Statement
 
 	} // End __construct()
-	
-	
+
+
 	/**
 	 * analysis_admin_menu function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
 	public function analysis_admin_menu() {
 	    global $menu, $woocommerce;
-	
+
 	    if ( current_user_can( 'manage_options' ) )
-	    
+
 	    $analysis_page = add_submenu_page('edit.php?post_type=lesson', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( &$this, 'analysis_page' ) );
-	
+
 	} // End analysis_admin_menu()
 
-	
+
 	/**
 	 * analysis_page function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
 	public function analysis_page() {
-		
+
 		global $woothemes_sensei;
 		// Get the data required
 		$users = get_users();
@@ -178,7 +178,7 @@ class WooThemes_Sensei_Analysis {
 											<td class="total_row">' . ( count( $user_courses_started ) - count( $user_courses_ended ) ) . '</td>
 											<td class="total_row">' . count( $user_courses_ended ) . '</td>
 											<td class="total_row">' . $user_average_grade . '%</td>
-											</tr>';					
+											</tr>';
 									} // End For Loop
 								?>
 							<tr>
@@ -209,17 +209,17 @@ class WooThemes_Sensei_Analysis {
 
 						<br class="clear">
 					</div>
-					
+
 				</div>
 			</div>
-			
+
 		</div><!--/#woothemes-sensei-->
-		
+
 		<?php do_action( 'analysis_after_container' ); ?>
-		
-	<?php 
+
+	<?php
 	} // End analysis_page()
-	
+
 	/**
 	 * enqueue_scripts function.
 	 *
@@ -231,7 +231,7 @@ class WooThemes_Sensei_Analysis {
 	public function enqueue_scripts () {
 		global $woothemes_sensei;
 		// None for now
-		
+
 	} // End enqueue_scripts()
 
 	/**
@@ -250,6 +250,6 @@ class WooThemes_Sensei_Analysis {
 
 	} // End enqueue_styles()
 
-	
+
 } // End Class
 ?>

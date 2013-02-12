@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * var $fields
  * var $errors
  * var $settings_version
- * 
+ *
  * public $has_range
  * public $has_imageselector
  *
@@ -80,10 +80,10 @@ class WooThemes_Sensei_Settings_API {
 	public $has_tabs;
 	private $tabs;
 	public $settings_version;
-	
+
 	/**
 	 * __construct function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -102,10 +102,10 @@ class WooThemes_Sensei_Settings_API {
 		$this->tabs = array();
 		$this->settings_version = '';
 	} // End __construct()
-	
+
 	/**
 	 * setup_settings function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -114,7 +114,7 @@ class WooThemes_Sensei_Settings_API {
 		add_action( 'admin_init', array( &$this, 'settings_fields' ) );
 		add_action( 'wp_loaded', array( &$this, 'general_init' ) );
 	} // End setup_settings()
-	
+
 	/**
 	 * general_init function
 	 * since 1.0.3
@@ -131,7 +131,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * init_sections function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -139,10 +139,10 @@ class WooThemes_Sensei_Settings_API {
 		// Override this function in your class and assign the array of sections to $this->sections.
 		_e( 'Override init_sections() in your class.', 'woothemes-sensei' );
 	} // End init_sections()
-	
+
 	/**
 	 * init_fields function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -153,7 +153,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * settings_tabs function.
-	 * 
+	 *
 	 * @access public
 	 * @since  1.1.0
 	 * @return void
@@ -163,17 +163,17 @@ class WooThemes_Sensei_Settings_API {
 
 		if ( count( $this->tabs ) > 0 ) {
 			$html = '';
-			
+
 			$html .= '<ul id="settings-sections" class="subsubsub hide-if-no-js">' . "\n";
 
 			$sections = array(
 						'all' => array( 'href' => '#all', 'name' => __( 'All', 'woothemes-sensei' ), 'class' => 'current all tab' )
 					);
-					
+
 			foreach ( $this->tabs as $k => $v ) {
 				$sections[$k] = array( 'href' => '#' . esc_attr( $k ), 'name' => esc_attr( $v['name'] ), 'class' => 'tab' );
 			}
-			
+
 			$count = 1;
 			foreach ( $sections as $k => $v ) {
 				$count++;
@@ -192,7 +192,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * create_tabs function.
-	 * 
+	 *
 	 * @access private
 	 * @since  1.1.0
 	 * @return void
@@ -210,7 +210,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * create_sections function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -221,17 +221,17 @@ class WooThemes_Sensei_Settings_API {
 			}
 		}
 	} // End create_sections()
-	
+
 	/**
 	 * create_fields function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
 	public function create_fields () {
 		if ( count( $this->sections ) > 0 ) {
 			// $this->parse_fields( $this->fields );
-			
+
 			foreach ( $this->fields as $k => $v ) {
 				$method = $this->determine_method( $v, 'form' );
 				$name = $v['name'];
@@ -243,25 +243,25 @@ class WooThemes_Sensei_Settings_API {
 			}
 		}
 	} // End create_fields()
-	
+
 	/**
 	 * determine_method function.
-	 * 
+	 *
 	 * @access protected
 	 * @param array $data
 	 * @return array or string
 	 */
 	protected function determine_method ( $data, $type = 'form' ) {
 		$method = '';
-		
+
 		if ( ! in_array( $type, array( 'form', 'validate', 'check' ) ) ) { return; }
-		
+
 		// Check for custom functions.
 		if ( isset( $data[$type] ) ) {
 			if ( function_exists( $data[$type] ) ) {
 				$method = $data[$type];
 			}
-			
+
 			if ( $method == '' && method_exists( $this, $data[$type] ) ) {
 				if ( $type == 'form' ) {
 					$method = array( &$this, $data[$type] );
@@ -270,7 +270,7 @@ class WooThemes_Sensei_Settings_API {
 				}
 			}
 		}
-		
+
 		if ( $method == '' && method_exists ( $this, $type . '_field_' . $data['type'] ) ) {
 			if ( $type == 'form' ) {
 				$method = array( &$this, $type . '_field_' . $data['type'] );
@@ -278,11 +278,11 @@ class WooThemes_Sensei_Settings_API {
 				$method = $type . '_field_' . $data['type'];
 			}
 		}
-		
+
 		if ( $method == '' && function_exists ( $this->token . '_' . $type . '_field_' . $data['type'] ) ) {
 			$method = $this->token . '_' . $type . '_field_' . $data['type'];
 		}
-		
+
 		if ( $method == '' ) {
 			if ( $type == 'form' ) {
 				$method = array( &$this, $type . '_field_text' );
@@ -290,13 +290,13 @@ class WooThemes_Sensei_Settings_API {
 				$method = $type . '_field_text';
 			}
 		}
-		
+
 		return $method;
 	} // End determine_method()
-	
+
 	/**
 	 * parse_fields function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $fields
@@ -308,17 +308,17 @@ class WooThemes_Sensei_Settings_API {
 				if ( ! isset( $this->sections[$v['section']]['fields'] ) ) {
 					$this->sections[$v['section']]['fields'] = array();
 				}
-				
+
 				$this->sections[$v['section']]['fields'][$k] = $v;
 			} else {
 				$this->remaining_fields[$k] = $v;
 			}
 		}
 	} // End parse_fields()
-	
+
 	/**
 	 * register_settings_screen function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @return void
@@ -327,7 +327,7 @@ class WooThemes_Sensei_Settings_API {
 		global $woothemes_sensei;
 
 		$hook = add_submenu_page( 'edit.php?post_type=slide', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( &$this, 'settings_screen' ) );
-		
+
 		$this->hook = $hook;
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
@@ -336,10 +336,10 @@ class WooThemes_Sensei_Settings_API {
 			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
 		}
 	} // End register_settings_screen()
-	
+
 	/**
 	 * settings_screen function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -361,10 +361,10 @@ class WooThemes_Sensei_Settings_API {
 </div><!--/#woothemes-sensei-->
 <?php
 	} // End settings_screen()
-	
+
 	/**
 	 * get_settings function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -372,7 +372,7 @@ class WooThemes_Sensei_Settings_API {
 		if ( ! is_array( $this->settings ) ) {
 			$this->settings = get_option( $this->token, array() );
 		}
-		
+
 		foreach ( $this->fields as $k => $v ) {
 			if ( ! isset( $this->settings[$k] ) && isset( $v['default'] ) ) {
 				$this->settings[$k] = $v['default'];
@@ -381,13 +381,13 @@ class WooThemes_Sensei_Settings_API {
 				$this->settings[$k] = 0;
 			}
 		}
-		
+
 		return $this->settings;
 	} // End get_settings()
-	
+
 	/**
 	 * settings_fields function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -396,10 +396,10 @@ class WooThemes_Sensei_Settings_API {
 		$this->create_sections();
 		$this->create_fields();
 	} // End settings_fields()
-	
+
 	/**
 	 * settings_errors function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @return void
@@ -407,10 +407,10 @@ class WooThemes_Sensei_Settings_API {
 	public function settings_errors () {
 		echo settings_errors( $this->token . '-errors' );
 	} // End settings_errors()
-	
+
 	/**
 	 * section_description function.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -419,10 +419,10 @@ class WooThemes_Sensei_Settings_API {
 			echo wpautop( esc_html( $this->sections[$section['id']]['description'] ) );
 		}
 	} // End section_description_main()
-	
+
 	/**
 	 * form_field_text function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $args
@@ -436,10 +436,10 @@ class WooThemes_Sensei_Settings_API {
 			echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
 		}
 	} // End form_field_text()
-	
+
 	/**
 	 * form_field_checkbox function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $args
@@ -458,10 +458,10 @@ class WooThemes_Sensei_Settings_API {
 			echo esc_html( $args['data']['description'] ) . '</label>' . "\n";
 		}
 	} // End form_field_text()
-	
+
 	/**
 	 * form_field_textarea function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $args
@@ -475,10 +475,10 @@ class WooThemes_Sensei_Settings_API {
 			echo '<p><span class="description">' . esc_html( $args['data']['description'] ) . '</span></p>' . "\n";
 		}
 	} // End form_field_textarea()
-	
+
 	/**
 	 * form_field_select function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $args
@@ -486,7 +486,7 @@ class WooThemes_Sensei_Settings_API {
 	 */
 	public function form_field_select ( $args ) {
 		$options = $this->get_settings();
-		
+
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '';
 			$html .= '<select id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']">' . "\n";
@@ -495,16 +495,16 @@ class WooThemes_Sensei_Settings_API {
 				}
 			$html .= '</select>' . "\n";
 			echo $html;
-			
+
 			if ( isset( $args['data']['description'] ) ) {
 				echo '<p><span class="description">' . esc_html( $args['data']['description'] ) . '</span></p>' . "\n";
 			}
 		}
 	} // End form_field_select()
-	
+
 	/**
 	 * form_field_radio function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $args
@@ -512,23 +512,23 @@ class WooThemes_Sensei_Settings_API {
 	 */
 	public function form_field_radio ( $args ) {
 		$options = $this->get_settings();
-		
+
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '';
 			foreach ( $args['data']['options'] as $k => $v ) {
 				$html .= '<input type="radio" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $options[$args['key']] ), $k, false ) . ' /> ' . $v . '<br />' . "\n";
 			}
 			echo $html;
-			
+
 			if ( isset( $args['data']['description'] ) ) {
 				echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
 			}
 		}
 	} // End form_field_radio()
-	
+
 	/**
 	 * form_field_multicheck function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $args
@@ -536,7 +536,7 @@ class WooThemes_Sensei_Settings_API {
 	 */
 	public function form_field_multicheck ( $args ) {
 		$options = $this->get_settings();
-		
+
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '<div class="multicheck-container" style="height: 100px; overflow-y: auto;">' . "\n";
 			foreach ( $args['data']['options'] as $k => $v ) {
@@ -547,7 +547,7 @@ class WooThemes_Sensei_Settings_API {
 			}
 			$html .= '</div>' . "\n";
 			echo $html;
-			
+
 			if ( isset( $args['data']['description'] ) ) {
 				echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
 			}
@@ -556,7 +556,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * form_field_range function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $args
@@ -564,7 +564,7 @@ class WooThemes_Sensei_Settings_API {
 	 */
 	public function form_field_range ( $args ) {
 		$options = $this->get_settings();
-		
+
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '';
 			$html .= '<select id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" class="range-input">' . "\n";
@@ -573,7 +573,7 @@ class WooThemes_Sensei_Settings_API {
 				}
 			$html .= '</select>' . "\n";
 			echo $html;
-			
+
 			if ( isset( $args['data']['description'] ) ) {
 				echo '<p><span class="description">' . esc_html( $args['data']['description'] ) . '</span></p>' . "\n";
 			}
@@ -582,7 +582,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * form_field_images function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $args
@@ -590,14 +590,14 @@ class WooThemes_Sensei_Settings_API {
 	 */
 	public function form_field_images ( $args ) {
 		$options = $this->get_settings();
-		
+
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '';
 			foreach ( $args['data']['options'] as $k => $v ) {
 				$html .= '<input type="radio" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $options[$args['key']] ), $k, false ) . ' /> ' . $v . '<br />' . "\n";
 			}
 			echo $html;
-			
+
 			if ( isset( $args['data']['description'] ) ) {
 				echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
 			}
@@ -606,7 +606,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * form_field_info function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $args
@@ -631,7 +631,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * validate_fields function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param array $input
@@ -640,11 +640,11 @@ class WooThemes_Sensei_Settings_API {
 	 */
 	public function validate_fields ( $input ) {
 		$options = $this->get_settings();
-		
+
 		foreach ( $this->fields as $k => $v ) {
 			// Make sure checkboxes are present even when false.
 			if ( $v['type'] == 'checkbox' && ! isset( $input[$k] ) ) { $input[$k] = false; }
-			
+
 			if ( isset( $input[$k] ) ) {
 				// Perform checks on required fields.
 				if ( isset( $v['required'] ) && ( $v['required'] == true ) ) {
@@ -688,15 +688,15 @@ class WooThemes_Sensei_Settings_API {
 				}
 			}
 		}
-		
+
 		// Parse error messages into the Settings API.
 		$this->parse_errors();
 		return $options;
 	} // End validate_fields()
-	
+
 	/**
 	 * validate_field_text function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param string $input
@@ -705,10 +705,10 @@ class WooThemes_Sensei_Settings_API {
 	public function validate_field_text ( $input ) {
 		return trim( esc_attr( $input ) );
 	} // End validate_field_text()
-	
+
 	/**
 	 * validate_field_checkbox function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param string $input
@@ -721,10 +721,10 @@ class WooThemes_Sensei_Settings_API {
 			return (bool)$input;
 		}
 	} // End validate_field_checkbox()
-	
+
 	/**
 	 * validate_field_multicheck function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param string $input
@@ -732,15 +732,15 @@ class WooThemes_Sensei_Settings_API {
 	 */
 	public function validate_field_multicheck ( $input ) {
 		$input = (array) $input;
-		
+
 		$input = array_map( 'esc_attr', $input );
-		
+
 		return $input;
 	} // End validate_field_multicheck()
-	
+
 	/**
 	 * validate_field_range function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param string $input
@@ -754,7 +754,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * validate_field_url function.
-	 * 
+	 *
 	 * @access public
 	 * @since 1.0.0
 	 * @param string $input
@@ -778,7 +778,7 @@ class WooThemes_Sensei_Settings_API {
 
 	/**
 	 * add_error function.
-	 * 
+	 *
 	 * @access protected
 	 * @since 1.0.0
 	 * @param string $key
@@ -793,7 +793,7 @@ class WooThemes_Sensei_Settings_API {
 		}
 		$this->errors[$key] = $message;
 	} // End add_error()
-	
+
 	protected function parse_errors () {
 		if ( count ( $this->errors ) > 0 ) {
 			foreach ( $this->errors as $k => $v ) {
@@ -804,7 +804,7 @@ class WooThemes_Sensei_Settings_API {
 			add_settings_error( $this->token . '-errors', $this->token, $message, 'updated' );
 		}
 	} // End parse_errors()
-	
+
 	/**
 	 * get_array_field_types function.
 	 *

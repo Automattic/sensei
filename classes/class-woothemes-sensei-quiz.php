@@ -27,6 +27,6 @@ class WooThemes_Sensei_Quiz {
 	public function __construct () {
 		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type' );
 	} // End __construct()
-	
+
 } // End Class
 ?>

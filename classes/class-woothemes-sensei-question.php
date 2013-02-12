@@ -27,6 +27,6 @@ class WooThemes_Sensei_Question {
 	public function __construct () {
 		$this->meta_fields = array( 'question_right_answer', 'question_wrong_answers' );
 	} // End __construct()
-	
+
 } // End Class
 ?>
