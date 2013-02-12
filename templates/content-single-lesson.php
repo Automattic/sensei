@@ -9,6 +9,11 @@
  * @version     1.0.0
  */
  global $woothemes_sensei, $post, $current_user;
+ // Content Access Permissions
+ $access_permission = false;
+ if ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && !$woothemes_sensei->settings->settings['access_permission'] ) {
+ 	$access_permission = true;
+ } // End If Statement
 ?>
         	<article <?php post_class( array( 'lesson', 'post' ) ); ?>>
 
@@ -51,10 +56,10 @@
 				if( $view_lesson ) { ?>
 
 				<section class="entry fix">
-                	<?php the_content(); ?>
+                	<?php if ( $access_permission || is_user_logged_in() ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
 				</section>
 
-				<?php lesson_single_meta(); ?>
+				<?php if ( $access_permission || is_user_logged_in() ) { lesson_single_meta(); } ?>
 
 				<?php
 

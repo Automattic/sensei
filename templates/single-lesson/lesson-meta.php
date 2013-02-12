@@ -176,7 +176,7 @@ if ( ! WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $l
         <div class="video"><?php echo html_entity_decode($lesson_video_embed); ?></div>
         <?php echo $messages; ?>
         <?php
-        if ( 0 < count($lesson_quizzes) )  { ?>
+        if ( 0 < count($lesson_quizzes) && is_user_logged_in() )  { ?>
         	<header>
             <?php $no_quiz_count = 0; ?>
         	<?php foreach ($lesson_quizzes as $quiz_item){
