@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2013.02.12 - version 1.0.9
+ * templates/content-single-lesson.php - Fix for access permissions setting logic
+ * templates/single-lesson/lesson-mega.php - Fix for access permissions setting logic
+ * templates/single-quiz/quiz-questions.php - Fix for access permissions setting logic
+
 2013.02.11 - version 1.0.8
  * assets/js/lesson-metadata.js - added htmlentities function for backend validation on raw HTML input
  * classes/class-woothemes-sensei-utils.php - validation for not logged in user data
