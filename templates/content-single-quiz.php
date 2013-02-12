@@ -24,3 +24,4 @@
 
             </article><!-- .post -->
 
+            <?php do_action('sensei_pagination'); ?>

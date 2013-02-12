@@ -1,5 +1,17 @@
 *** Sensei Changelog ***
 
+2013.02.21 - version 1.1.0
+ * classes/class-woothemes-sensei-frontend.php - logic for additional lesson pagination
+ * inc/woothemes-sensei-template.php - added function to get the next and previous lessons
+ * templates/content-no-permissions.php - pagination modification
+ * templates/content-single-course.php - pagination modification, course access permissions fix
+ * templates/content-single-lesson.php - pagination modification
+ * templates/content-single-quiz.php - pagination modification
+ * templates/wrappers/pagination-lesson.php - added file for lesson pagination
+ * templates/wrappers/pagination-posts.php - added file for default pagination
+ * templates/wrappers/pagination-quiz.php - added file for quiz lesson pagination
+
+
 2013.02.12 - version 1.0.9
  * templates/content-single-lesson.php - Fix for access permissions setting logic
  * templates/single-lesson/lesson-mega.php - Fix for access permissions setting logic

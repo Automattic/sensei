@@ -230,6 +230,12 @@ class WooThemes_Sensei_Frontend {
 		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
 		if ( ( is_post_type_archive( 'course' ) || ( is_page( $course_page_id ) ) ) && ( isset( $paged ) && 0 == $paged ) ) {
 			// Do NOT show the pagination
+		} elseif( is_singular('course') ) {
+			$this->sensei_get_template( 'wrappers/pagination-posts.php' );
+		} elseif( is_singular('lesson') ) {
+			$this->sensei_get_template( 'wrappers/pagination-lesson.php' );
+		} elseif( is_singular('quiz') ) {
+			$this->sensei_get_template( 'wrappers/pagination-quiz.php' );
 		} else {
 			$this->sensei_get_template( 'wrappers/pagination.php' );
 		} // End If Statement

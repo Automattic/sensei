@@ -485,4 +485,32 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		} // End If Statement
 	} // End sensei_reset_lesson_button()
 
+	function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
+		global $woothemes_sensei;
+		$return_values = array();
+		$return_values['prev_lesson'] = 0;
+		$return_values['next_lesson'] = 0;
+		if ( 0 < $lesson_id ) {
+			// Get the List of Lessons in the Course
+			$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $lesson_course_id );
+			// Index the Lessons
+			if ( 0 < count( $course_lessons ) ) {
+				$found_index = false;
+				foreach ($course_lessons as $lesson_item){
+					if ( $found_index && $return_values['next_lesson'] == 0 ) {
+						$return_values['next_lesson'] = $lesson_item->ID;
+					} // End If Statement
+					if ( $lesson_item->ID == $lesson_id ) {
+						// Is the current post
+						$found_index = true;
+					} // End If Statement
+					if ( !$found_index ) {
+						$return_values['prev_lesson'] = $lesson_item->ID;
+					} // End If Statement
+				} // End For Loop
+			} // End If Statement
+		} // End If Statement
+		return $return_values;
+	} // End sensei_get_prev_next_lessons()
 ?>
