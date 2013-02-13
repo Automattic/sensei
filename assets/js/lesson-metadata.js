@@ -171,6 +171,7 @@ jQuery(document).ready( function($) {
 	 			var dataToPost = '';
 	 			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
 	 			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
+	 			dataToPost += '&course_category' + '=' + jQuery( '#course-category-options' ).val();
 	 			dataToPost += '&course_title' + '=' + jQuery( '#course-title' ).attr( 'value' );
 	 			dataToPost += '&course_content' + '=' + jQuery( '#course-content' ).attr( 'value' );
 	 			dataToPost += '&action=add';
@@ -192,6 +193,7 @@ jQuery(document).ready( function($) {
 							jQuery( '#lesson-course-details' ).addClass( 'hidden' );
 							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(jQuery( '#course-title' ).attr( 'value' )));
 							jQuery( '#lesson-course-options' ).val( response );
+							jQuery( '#lesson-course-options' ).trigger( 'liszt:updated' );
 	 					} else {
 	 						// TODO - course creation fail message
 	 					}
@@ -432,4 +434,15 @@ jQuery(document).ready( function($) {
 	 	//});
 		}
 	});
+
+	/***************************************************************************************************
+	 * 	5 - Load Chosen Dropdowns.
+	 ***************************************************************************************************/
+
+	jQuery( '#lesson-prerequisite-options' ).chosen();
+	jQuery( '#lesson-course-options' ).chosen();
+	jQuery( '#course-prerequisite-options' ).chosen();
+	jQuery( '#course-woocommerce-product-options' ).chosen();
+	jQuery( '#course-category-options' ).chosen();
+
 });

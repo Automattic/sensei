@@ -113,13 +113,16 @@ class WooThemes_Sensei {
 	 * @return [type] [description]
 	 */
 	public function register_widgets () {
-		// Course Component Widget
-		require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-course-component.php' );
-		register_widget( 'WooThemes_Sensei_Course_Component_Widget' );
-
-		// Lesson Component Widget
-		require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-lesson-component.php' );
-		register_widget( 'WooThemes_Sensei_Lesson_Component_Widget' );
+		// Widget List
+		$widget_list = apply_filters( 'sensei_registered_widgets_list', array( 	'course-component' 	=> 'Course_Component',
+																				'lesson-component' 	=> 'Lesson_Component',
+																				'course-categories' => 'Course_Categories',
+																				'category-courses' 	=> 'Category_Courses' )
+									);
+		foreach ( $widget_list as $key => $value ) {
+			require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-' . $key . '.php' );
+			register_widget( 'WooThemes_Sensei_' . $value . '_Widget' );
+		} // End For Loop
 	} // End register_widgets()
 
 	/**
@@ -266,6 +269,12 @@ class WooThemes_Sensei {
 		} elseif ( is_post_type_archive( 'course' ) || is_page( $this->get_page_id( 'courses' ) ) ) {
 
 		    $file 	= 'archive-course.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
+		} elseif( is_tax( 'course-category' ) ) {
+
+			$file 	= 'taxonomy-course-category.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 

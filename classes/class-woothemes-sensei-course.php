@@ -364,6 +364,7 @@ class WooThemes_Sensei_Course {
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
 			$new_columns['course-woocommerce-product'] = _x( 'WooCommerce Product', 'column name', 'woothemes-sensei' );
 		} // End If Statement
+		$new_columns['course-category'] = _x( 'Category', 'column name', 'woothemes-sensei' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
@@ -398,6 +399,14 @@ class WooThemes_Sensei_Course {
 					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true);
 					if ( 0 < absint( $course_woocommerce_product_id ) ) { echo '<a href="' . esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_woocommerce_product_id ) ) ) ) . '">' . get_the_title( absint( $course_woocommerce_product_id ) ) . '</a>'; }
 				} // End If Statement
+			break;
+
+			case 'course-category':
+				$output = get_the_term_list( $id, 'course-category', '', ', ', '' );
+				if ( '' == $output ) {
+					$output = __( 'None', 'woothemes-sensei' );
+				} // End If Statement
+				echo $output;
 			break;
 
 			default:

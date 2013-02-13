@@ -15,11 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
+ * - sensei_admin_menu_items()
  * - load_posttype_objects()
  * - setup_course_post_type()
  * - setup_lesson_post_type()
  * - setup_quiz_post_type()
  * - setup_question_post_type()
+ * - setup_course_category_taxonomy()
  * - setup_quiz_type_taxonomy()
  * - setup_post_type_labels_base()
  * - create_post_type_labels()
@@ -46,6 +48,7 @@ class WooThemes_Sensei_PostTypes {
 		add_action( 'init', array( &$this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( &$this, 'setup_question_post_type' ), 100 );
 		// Setup Taxonomies
+		add_action( 'init', array( &$this, 'setup_course_category_taxonomy' ), 100 );
 		add_action( 'init', array( &$this, 'setup_quiz_type_taxonomy' ), 100 );
 		// Load Post Type Objects
 		$this->load_posttype_objects( array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) );
@@ -57,8 +60,28 @@ class WooThemes_Sensei_PostTypes {
 				add_filter( 'post_updated_messages', array( &$this, 'setup_post_type_messages' ) );
 			} // End If Statement
 		} // End If Statement
+
+		// Menu functions
+		if ( is_admin() ) {
+			add_action('admin_menu', array( &$this, 'sensei_admin_menu_items' ), 10);
+		} // End If Statement
+
 	} // End __construct()
 
+	/**
+	 * sensei_admin_menu_items function.
+	 * @since  1.1.0
+	 * @access public
+	 * @return void
+	 */
+	public function sensei_admin_menu_items() {
+	    global $menu;
+
+	    if ( current_user_can( 'manage_options' ) ) {
+	    	$course_category = add_submenu_page('edit.php?post_type=lesson', __('Course Categories', 'woothemes-sensei'),  __('Course Categories', 'woothemes-sensei') , 'manage_categories', 'edit-tags.php?taxonomy=course-category&post_type=course' );
+	    } // End If Statement
+
+	} // End sensei_admin_menu_items()
 
 	/**
 	 * load_posttype_objects function.
@@ -203,6 +226,40 @@ class WooThemes_Sensei_PostTypes {
 
 		register_post_type( 'question', $args );
 	} // End setup_question_post_type()
+
+	/**
+	 * Setup the "course category" taxonomy, linked to the "course" post type.
+	 * @since  1.1.0
+	 * @return void
+	 */
+	public function setup_course_category_taxonomy () {
+		// "Course Categories" Custom Taxonomy
+		$labels = array(
+			'name' => _x( 'Course Categories', 'taxonomy general name', 'woothemes-sensei' ),
+			'singular_name' => _x( 'Course Category', 'taxonomy singular name', 'woothemes-sensei' ),
+			'search_items' =>  __( 'Search Course Categories', 'woothemes-sensei' ),
+			'all_items' => __( 'All Course Categories', 'woothemes-sensei' ),
+			'parent_item' => __( 'Parent Course Category', 'woothemes-sensei' ),
+			'parent_item_colon' => __( 'Parent Course Category:', 'woothemes-sensei' ),
+			'edit_item' => __( 'Edit Course Category', 'woothemes-sensei' ),
+			'update_item' => __( 'Update Course Category', 'woothemes-sensei' ),
+			'add_new_item' => __( 'Add New Course Category', 'woothemes-sensei' ),
+			'new_item_name' => __( 'New Course Category Name', 'woothemes-sensei' ),
+			'menu_name' => __( 'Course Categories', 'woothemes-sensei' ),
+			'popular_items' => null // Hides the "Popular" section above the "add" form in the admin.
+		);
+
+		$args = array(
+			'hierarchical' => true,
+			'labels' => $labels,
+			'show_ui' => true, /* TO DO - CHANGE TO FALSE WHEN GOING LIVE */
+			'query_var' => true,
+			'show_in_nav_menus' => false,
+			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', 'course-category' ) ) )
+		);
+
+		register_taxonomy( 'course-category', array( 'course' ), $args );
+	} // End setup_course_category_taxonomy()
 
 	/**
 	 * Setup the "quiz type" taxonomy, linked to the "quiz" post type.

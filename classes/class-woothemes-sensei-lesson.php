@@ -146,7 +146,7 @@ class WooThemes_Sensei_Lesson {
 		$html = '';
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select name="lesson_prerequisite" class="widefat">' . "\n";
+			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="widefat">' . "\n";
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -378,7 +378,11 @@ class WooThemes_Sensei_Lesson {
 						// Default
 						$html .= '<input type="hidden" name="course_woocommerce_product" id="course-woocommerce-product-options" value="-" />';
 					}
-					// Save the course action button
+					// Course Category
+  					$html .= '<label>' . __( 'Course Category' , 'woothemes-sensei' ) . '</label> ';
+  					$cat_args = array( 'echo' => false, 'hierarchical' => true, 'show_option_none' => __( 'None', 'woothemes-sensei' ), 'taxonomy' => 'course-category', 'orderby' => 'name', 'id' => 'course-category-options', 'name' => 'course_category', 'class' => 'widefat' );
+					$html .= wp_dropdown_categories(apply_filters('widget_course_categories_dropdown_args', $cat_args)) . "\n";
+  					// Save the course action button
   					$html .= '<a title="' . esc_attr( __( 'Save Course', 'woothemes-sensei' ) ) . '" href="#add-course-metadata" class="lesson_course_save button button-highlighted">' . esc_html( __( 'Add Course', 'woothemes-sensei' ) ) . '</a>';
 					$html .= '&nbsp;&nbsp;&nbsp;';
 					// Cancel action link
@@ -622,6 +626,7 @@ class WooThemes_Sensei_Lesson {
 		global $woothemes_sensei;
 		// Load the lessons script
 		wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.0.0' );
+		wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.0.0' );
 		$translation_strings = array();
 		$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ) );
 		$data = array_merge( $translation_strings, $ajax_vars );
@@ -759,6 +764,7 @@ class WooThemes_Sensei_Lesson {
 		$course_content = '';
 		$course_title = '';
 		$course_prerequisite = 0;
+		$course_category = 0;
 		if ( isset( $data[ 'course_id' ] ) && ( 0 < absint( $data[ 'course_id' ] ) ) ) {
 			$course_id = absint( $data[ 'course_id' ] );
 		} // End If Statement
@@ -789,6 +795,7 @@ class WooThemes_Sensei_Lesson {
   		    // Check for prerequisite courses & product id
   		    $course_prerequisite_id = absint( $data[ 'course_prerequisite' ] );
   		    $course_woocommerce_product_id = absint( $data[ 'course_woocommerce_product' ] );
+  		    $course_category_id = absint( $data[ 'course_category' ] );
   		    if ( 0 == $course_woocommerce_product_id ) { $course_woocommerce_product_id = '-'; }
   		    // Insert or Update the Lesson Quiz
 		    if ( 0 < $course_id ) {
@@ -796,10 +803,16 @@ class WooThemes_Sensei_Lesson {
 		    	$course_id = wp_update_post($post_type_args);
 		    	update_post_meta( $course_id, '_course_prerequisite', $course_prerequisite_id );
 		    	update_post_meta( $course_id, '_course_woocommerce_product', $course_woocommerce_product_id );
+		    	if ( 0 < $course_category_id ) {
+		    		wp_set_object_terms( $course_id, $course_category_id, 'course-category' );
+		    	} // End If Statement
 		    } else {
 		    	$course_id = wp_insert_post($post_type_args);
 		    	add_post_meta( $course_id, '_course_prerequisite', $course_prerequisite_id );
 		    	add_post_meta( $course_id, '_course_woocommerce_product', $course_woocommerce_product_id );
+		    	if ( 0 < $course_category_id ) {
+		    		wp_set_object_terms( $course_id, $course_category_id, 'course-category' );
+		    	} // End If Statement
 		    } // End If Statement
 		} // End If Statement
   		// Check that the insert or update saved by testing the post id

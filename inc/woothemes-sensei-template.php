@@ -82,7 +82,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
    		$more_link_text = esc_html( $woothemes_sensei->settings->settings[ 'course_archive_more_link_text' ] );
    		$html = '<div class="navigation"><div class="nav-next"><a href="' . esc_url( add_query_arg( array( 'paged' => '2', 'action' => $type ), $course_pagination_link ) ). '">' . sprintf( __( '%1$s', 'woothemes-sensei' ), $more_link_text ) . ' <span class="meta-nav">→</span></a></div><div class="nav-previous"></div></div>';
 
-   		return $html;
+   		return apply_filters( 'course_archive_next_link', $html );
 	} // End sensei_course_archive_next_link()
 
 
@@ -96,6 +96,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	function sensei_course_archive_header( $query_type = '') {
 
 		$html = '';
+
+		if ( is_tax( 'course-category' ) ) {
+			global $wp_query;
+			$taxonomy_obj = $wp_query->get_queried_object();
+			$term_id = $taxonomy_obj->term_id;
+			$taxonomy_short_name = $taxonomy_obj->taxonomy;
+			$taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
+			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
+			return apply_filters( 'course_category_archive_title', '<h1>' . $title . '</h>' );
+		} // End If Statement
 
 		switch ( $query_type ) {
 			case 'newcourses':
@@ -116,7 +126,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 		} // End Switch Statement
 
-		return $html;
+		return apply_filters( 'course_archive_title', $html );
 	} // sensei_course_archive_header()
 
 
