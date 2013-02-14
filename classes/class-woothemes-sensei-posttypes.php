@@ -252,7 +252,7 @@ class WooThemes_Sensei_PostTypes {
 		$args = array(
 			'hierarchical' => true,
 			'labels' => $labels,
-			'show_ui' => true, /* TO DO - CHANGE TO FALSE WHEN GOING LIVE */
+			'show_ui' => true, 
 			'query_var' => true,
 			'show_in_nav_menus' => false,
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', 'course-category' ) ) )
@@ -286,7 +286,7 @@ class WooThemes_Sensei_PostTypes {
 		$args = array(
 			'hierarchical' => false,
 			'labels' => $labels,
-			'show_ui' => true, /* TO DO - CHANGE TO FALSE WHEN GOING LIVE */
+			'show_ui' => true, /* TO DO - future releases */
 			'query_var' => true,
 			'show_in_nav_menus' => false,
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', 'quiz-type' ) ) )
