@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.02.14 - version 1.0.10
+ * /assets/css/frontend.css - Fixed buttons and shortcodes styles that were conflicting with theme styles.
+
 2013.02.12 - version 1.0.9
  * templates/content-single-lesson.php - Fix for access permissions setting logic
  * templates/single-lesson/lesson-mega.php - Fix for access permissions setting logic
