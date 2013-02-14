@@ -109,7 +109,7 @@ class WooThemes_Sensei_Lesson {
 		$html .= '<input type="text" id="lesson-length" name="lesson_length" value="' . esc_attr( $lesson_length ) . '" size="25" class="widefat" />';
 		// Lesson Complexity
 		$html .= '<label for="lesson_complexity">' . __( 'Lesson Complexity', 'woothemes-sensei' ) . '</label>';
-		$html .= '<select name="lesson_complexity" class="widefat lesson-complexity-select">' . "\n";
+		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="widefat lesson-complexity-select">' . "\n";
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 			foreach ($complexity_array as $key => $value){
 				$html .= '<option value="' . esc_attr( $key ) . '"' . selected( $key, $lesson_complexity, false ) . '>' . esc_html( $value ) . '</option>' . "\n";

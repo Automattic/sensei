@@ -218,6 +218,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 
 div.course-container div.course { display: block; padding: 5px; }
 section.entry span.course-lesson-count { padding-left: 10px; }
+section.entry span.course-category { padding-left: 10px; }
 section.entry span.course-lesson-progress { padding-left: 10px; }
 section.entry span.course-price { padding-left: 10px; }
 
@@ -285,7 +286,7 @@ section.entry span.course-price { padding-left: 10px; }
 .ui-tabs .ui-tabs-hide { display: none !important; }
 
 /* Course Progress Bars */
-.meter { 
+.meter {
     height: 25px;  /* Can be anything */
     position: relative;
     margin: 20px 0; /* Just for demo spacing */
@@ -318,18 +319,18 @@ section.entry span.course-price { padding-left: 10px; }
 	}
 }
 
-.alignleft { 
-    float: left; 
-    margin:0 1.618em 1em 0; 
+.alignleft {
+    float: left;
+    margin:0 1.618em 1em 0;
 }
-.alignright { 
-    float: right; 
-    margin:0 0 1em 1.618em; 
+.alignright {
+    float: right;
+    margin:0 0 1em 1.618em;
 }
-.aligncenter { 
-    display: block; 
-    text-align: center; 
-    margin:0 auto 1.618em; 
+.aligncenter {
+    display: block;
+    text-align: center;
+    margin:0 auto 1.618em;
 }
 
 .nav-next, .nav-prev  {
@@ -419,8 +420,8 @@ body  {
 }
 
 body  {
-	a.button, 
-	a.comment-reply-link, 
+	a.button,
+	a.comment-reply-link,
 	#commentform #submit,
 	.submit,
 	input[type=submit],
@@ -443,13 +444,13 @@ body  {
 		line-height: 1.618em;
 		.borderbox;
 		white-space: nowrap;
-		
-		.border_radius(5px);	
+
+		.border_radius(5px);
 		background: @color_links;
 		-webkit-box-shadow: none;
 		   -moz-box-shadow: none;
 		        box-shadow: none;
-		
+
 		&:hover { text-decoration: none; background: darken(@color_links, 5%); }
 		&:active {
 			border-color: @color_links - #555;
@@ -460,27 +461,27 @@ body  {
 			box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
 						0 1px 0 hsla(0, 100%, 100%, 1);
 		}
-		
+
 		&.large {
 			font-size:1.387em;
 		}
 		&.small {
 			font-size:.857em;
 		}
-		
+
 		&.course-complete  {
 			background: @success;
 			&:hover  {
 				background: darken(@success, 5%);
 			}
 		}
-		
+
 		&.course-delete  {
 			background: @error;
 			&:hover  {
 				background: darken(@error, 5%);
 			}
 		}
-		
+
 	}
 }

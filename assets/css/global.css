@@ -39,6 +39,7 @@ a.lesson_question_cancel { text-decoration: underline; }
 #lesson-quiz input[type=text] { margin-bottom: 10px; }
 #lesson-course-details input, #lesson-course-details select { margin-bottom: 10px; }
 tr.question-quick-edit td { padding-bottom: 10px; }
+#add-quiz-main button.add_quiz { margin-left: 5px; }
 /* Chosen styling */
-#lesson-prerequisite-options, #lesson-course-options, #course-category-options, #course-prerequisite-options, #course-woocommerce-product-options { width: 256px; margin-bottom: 10px; }
+div.chzn-container { width: 256px !important; margin-bottom: 10px; display: block;}
 /* Course Write Panel Styling */

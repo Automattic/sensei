@@ -439,6 +439,7 @@ jQuery(document).ready( function($) {
 	 * 	5 - Load Chosen Dropdowns.
 	 ***************************************************************************************************/
 
+	jQuery( '#lesson-complexity-options' ).chosen();
 	jQuery( '#lesson-prerequisite-options' ).chosen();
 	jQuery( '#lesson-course-options' ).chosen();
 	jQuery( '#course-prerequisite-options' ).chosen();
