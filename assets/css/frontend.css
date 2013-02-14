@@ -475,3 +475,254 @@ section.entry span.course-price {
 /*-------------------------------------------------------------------------------------------*/
 /* 1. Info Boxes */
 /*-------------------------------------------------------------------------------------------*/
+body p.woo-sc-box,
+body div.woo-sc-box {
+  margin: 1.387em 0 1.618em 0;
+  padding: 1em 1.618em;
+  border: none!important;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+body p.woo-sc-box:before,
+body div.woo-sc-box:before {
+  font-family: 'FontAwesome';
+  display: inline-block;
+  font-size: 100%;
+  margin-right: .618em;
+  font-weight: normal;
+  line-height: 1em;
+  width: 1em;
+  font-size: 1.387em;
+  position: relative;
+  top: .1em;
+}
+body p.woo-sc-box.medium,
+body div.woo-sc-box.medium {
+  padding: 18px 20px 18px 50px;
+  font-size: 1.1em;
+}
+body p.woo-sc-box.large,
+body div.woo-sc-box.large {
+  padding: 25px 27px 25px 50px;
+  font-size: 1.2em;
+}
+body p.woo-sc-box.rounded,
+body div.woo-sc-box.rounded {
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+}
+body p.woo-sc-box a,
+body div.woo-sc-box a {
+  text-decoration: underline;
+}
+body p.woo-sc-box a:hover,
+body div.woo-sc-box a:hover {
+  text-decoration: none;
+}
+body p.woo-sc-box.alert,
+body div.woo-sc-box.alert {
+  background: #ffd9c8;
+}
+body p.woo-sc-box.alert:before,
+body div.woo-sc-box.alert:before {
+  content: '\f071';
+  color: #ed6c6c;
+}
+body p.woo-sc-box.alert a,
+body div.woo-sc-box.alert a {
+  color: #e73f3f;
+}
+body p.woo-sc-box.alert a:hover,
+body div.woo-sc-box.alert a:hover {
+  color: #e52828;
+}
+body p.woo-sc-box.download,
+body div.woo-sc-box.download,
+body p.woo-sc-box.tick,
+body div.woo-sc-box.tick {
+  background: #edfcd5;
+}
+body p.woo-sc-box.download:before,
+body div.woo-sc-box.download:before,
+body p.woo-sc-box.tick:before,
+body div.woo-sc-box.tick:before {
+  content: '\f019';
+  color: #63a95f;
+}
+body p.woo-sc-box.download a,
+body div.woo-sc-box.download a,
+body p.woo-sc-box.tick a,
+body div.woo-sc-box.tick a {
+  color: #4e8b4a;
+}
+body p.woo-sc-box.download a:hover,
+body div.woo-sc-box.download a:hover,
+body p.woo-sc-box.tick a:hover,
+body div.woo-sc-box.tick a:hover {
+  color: #457a42;
+}
+body p.woo-sc-box.tick:before,
+body div.woo-sc-box.tick:before {
+  content: '\f00c';
+}
+body p.woo-sc-box.info,
+body div.woo-sc-box.info {
+  background: #eee;
+}
+body p.woo-sc-box.info:before,
+body div.woo-sc-box.info:before {
+  content: '\f05a';
+}
+body p.woo-sc-box.info a,
+body div.woo-sc-box.info a {
+  color: #3b3b3b;
+}
+body p.woo-sc-box.info a:hover,
+body div.woo-sc-box.info a:hover {
+  color: #2f2f2f;
+}
+body p.woo-sc-box.note,
+body div.woo-sc-box.note {
+  background: #fef6d2;
+}
+body p.woo-sc-box.note:before,
+body div.woo-sc-box.note:before {
+  content: '\f0f6';
+}
+body p.woo-sc-box.normal,
+body div.woo-sc-box.normal {
+  background: #eee;
+  padding: 9px 15px;
+}
+body p.woo-sc-box .view-quiz,
+body div.woo-sc-box .view-quiz {
+  float: right;
+}
+body a.button,
+body a.comment-reply-link,
+body #commentform #submit,
+body .submit,
+body input[type=submit],
+body input.button,
+body button.button {
+  display: inline-block;
+  padding: 5px 20px 4px;
+  border: none;
+  color: #fff;
+  text-align: center;
+  text-shadow: none;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 11px;
+  font-family: inherit;
+  /* Make inputs use the correct typeface instead of the browser default */
+
+  cursor: pointer;
+  /* Inputs need pointers! */
+
+  overflow: visible;
+  width: auto;
+  /* IE fix */
+
+  line-height: 1.618em;
+  -webkit-box-sizing: border-box;
+  /* Safari/Chrome, other WebKit */
+
+  -moz-box-sizing: border-box;
+  /* Firefox, other Gecko */
+
+  box-sizing: border-box;
+  /* Opera/IE 8+ */
+
+  white-space: nowrap;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  background: #52a8e8;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+body a.button:hover,
+body a.comment-reply-link:hover,
+body #commentform #submit:hover,
+body .submit:hover,
+body input[type=submit]:hover,
+body input.button:hover,
+body button.button:hover {
+  text-decoration: none;
+  background: #3b9de5;
+}
+body a.button:active,
+body a.comment-reply-link:active,
+body #commentform #submit:active,
+body .submit:active,
+body input[type=submit]:active,
+body input.button:active,
+body button.button:active {
+  border-color: #005393;
+  -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 #ffffff;
+  -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 #ffffff;
+  box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 #ffffff;
+}
+body a.button.large,
+body a.comment-reply-link.large,
+body #commentform #submit.large,
+body .submit.large,
+body input[type=submit].large,
+body input.button.large,
+body button.button.large {
+  font-size: 1.387em;
+}
+body a.button.small,
+body a.comment-reply-link.small,
+body #commentform #submit.small,
+body .submit.small,
+body input[type=submit].small,
+body input.button.small,
+body button.button.small {
+  font-size: .857em;
+}
+body a.button.course-complete,
+body a.comment-reply-link.course-complete,
+body #commentform #submit.course-complete,
+body .submit.course-complete,
+body input[type=submit].course-complete,
+body input.button.course-complete,
+body button.button.course-complete {
+  background: #63a95f;
+}
+body a.button.course-complete:hover,
+body a.comment-reply-link.course-complete:hover,
+body #commentform #submit.course-complete:hover,
+body .submit.course-complete:hover,
+body input[type=submit].course-complete:hover,
+body input.button.course-complete:hover,
+body button.button.course-complete:hover {
+  background: #579b53;
+}
+body a.button.course-delete,
+body a.comment-reply-link.course-delete,
+body #commentform #submit.course-delete,
+body .submit.course-delete,
+body input[type=submit].course-delete,
+body input.button.course-delete,
+body button.button.course-delete {
+  background: #ed6c6c;
+}
+body a.button.course-delete:hover,
+body a.comment-reply-link.course-delete:hover,
+body #commentform #submit.course-delete:hover,
+body .submit.course-delete:hover,
+body input[type=submit].course-delete:hover,
+body input.button.course-delete:hover,
+body button.button.course-delete:hover {
+  background: #ea5555;
+}
