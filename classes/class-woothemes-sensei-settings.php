@@ -90,7 +90,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 					);
 		} // End If Statement
 
-		$this->sections = $sections;
+		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
 
 	} // End init_sections()
 
@@ -412,7 +412,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		} // End If Statement
 
-		$this->fields = $fields;
+		$this->fields = apply_filters( 'sensei_settings_fields', $fields );
 
 	} // End init_fields()
 
