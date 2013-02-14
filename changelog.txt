@@ -1,16 +1,29 @@
 *** Sensei Changelog ***
 
 2013.02.21 - version 1.1.0
+ * assets/chosen/* - added chosen library for improved dropdown usability
+ * assets/css/frontend.css - frontend course category meta styling
+ * assets/css/global.css - admin chosen drop down styling, admin add question button styling
+ * assets/js/lesson-metadata.js - js to set select inputs to use chosen library for Courses, Lessons, and Settings admin area
+ * classes/class-woothemes-sensei-admin.php - register chosen styles
+ * classes/class-woothemes-sensei-course.php - added Course Category column to the write panel and quick edit
  * classes/class-woothemes-sensei-frontend.php - logic for additional lesson pagination
- * inc/woothemes-sensei-template.php - added function to get the next and previous lessons
+ * classes/class-woothemes-sensei-lesson.php - added Course Category to Ajax Course add, register chosen js
+ * classes/class-woothemes-sensei-posttypes.php - register new Course Category taxonomy for Courses post type, add menu item for Course Category write panel
+ * classes/class-woothemes-sensei.php - register new widgets, refactor widget register logic, logic for Course Category taxonomy archive templater loader
+ * inc/woothemes-sensei-template.php - added function to get the next and previous lessons, added Course Category archive header logic to template function
  * templates/content-no-permissions.php - pagination modification
  * templates/content-single-course.php - pagination modification, course access permissions fix
  * templates/content-single-lesson.php - pagination modification
  * templates/content-single-quiz.php - pagination modification
+ * templates/loop-course.php - added Course Category meta info
+ * templates/taxonomy-course-category.php - template file for new Course Category taxonomy terms
+ * templates/user/my-courses.php - added Course Category meta info
  * templates/wrappers/pagination-lesson.php - added file for lesson pagination
  * templates/wrappers/pagination-posts.php - added file for default pagination
  * templates/wrappers/pagination-quiz.php - added file for quiz lesson pagination
-
+ * widgets/widget-woothemes-sensei-category-courses.php - added file to display Courses from a specific Category
+ * widgets/widget-woothemes-sensei-course-categories.php - added file to display a list of Course Categories
 
 2013.02.12 - version 1.0.9
  * templates/content-single-lesson.php - Fix for access permissions setting logic
