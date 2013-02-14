@@ -439,11 +439,21 @@ jQuery(document).ready( function($) {
 	 * 	5 - Load Chosen Dropdowns.
 	 ***************************************************************************************************/
 
+	// Lessons Write Panel
 	jQuery( '#lesson-complexity-options' ).chosen();
 	jQuery( '#lesson-prerequisite-options' ).chosen();
 	jQuery( '#lesson-course-options' ).chosen();
 	jQuery( '#course-prerequisite-options' ).chosen();
 	jQuery( '#course-woocommerce-product-options' ).chosen();
 	jQuery( '#course-category-options' ).chosen();
+	// Courses Write Panel
+	jQuery( '#course-woocommerce-product-options' ).chosen();
+	jQuery( '#course-prerequisite-options' ).chosen();
+	// Sensei Settings Panel
+	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {
+		if ( !jQuery( this ).hasClass( 'range-input' ) ) {
+			jQuery( this ).chosen();
+		} // End If Statement
+	});
 
 });
