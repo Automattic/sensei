@@ -101,12 +101,23 @@ class WooThemes_Sensei {
 			// Frontend Hooks
 			add_filter( 'template_include', array( &$this, 'template_loader' ) );
 		}
+		// Force WooCommerce Required Settings
+		$this->set_woocommerce_functionality();
 		add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
 		add_action( 'after_setup_theme', array( &$this, 'ensure_post_thumbnails_support' ) );
 		// WooCommerce Payment Actions
 		add_action( 'woocommerce_payment_complete' , array( &$this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_order_status_completed' , array( &$this, 'sensei_woocommerce_complete_order' ) );
 	} // End __construct()
+
+	/**
+	 * Setup required WooCommerce settings
+	 * @return void
+	 */
+	public function set_woocommerce_functionality() {
+		// Disable guest checkout as we need a valid user to store data for
+		update_option( 'woocommerce_enable_guest_checkout', false );
+	} // End set_woocommerce_functionality()
 
 	/**
 	 * Register the widgets.
