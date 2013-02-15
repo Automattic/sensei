@@ -126,6 +126,9 @@ class WooThemes_Sensei_Utils {
 		} // End If Statement
 		// Manually Flush the Cache
 		wp_cache_flush();
+
+		// TODO - add action here for dev's to hook in to
+
 		if ( 0 < $comment_id ) {
 			return true;
 		} else {

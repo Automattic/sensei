@@ -417,7 +417,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     	    $wc_post_id = get_post_meta( $post_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
     	    	// Get the product
-    	    	$product = new WC_Product( $wc_post_id );
+    	    	$product = sensei_get_woocommerce_product_object( $wc_post_id );
     	    	if ( $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
     	    		<span class="course-price"><?php echo $product->get_price_html(); ?></span>
     	    	<?php } // End If Statement
@@ -495,6 +495,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		} // End If Statement
 	} // End sensei_reset_lesson_button()
 
+	/**
+	 * sensei_get_prev_next_lessons Returns the next and previous Lessons in the Course
+	 * since 1.0.9
+	 * @param  integer $lesson_id
+	 * @return array $return_values
+	 */
 	function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
 		global $woothemes_sensei;
 		$return_values = array();
@@ -523,4 +529,29 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		} // End If Statement
 		return $return_values;
 	} // End sensei_get_prev_next_lessons()
+
+	/**
+	 * sensei_get_woocommerce_product_object Returns the WooCommerce Product Object for pre and post 2.0 installations
+	 * @param  integer $wc_product_id Product ID or Variation ID
+	 * @param  string  $product_type  '' or 'variation'
+	 * @return woocommerce product object $wc_product_object
+	 */
+	function sensei_get_woocommerce_product_object( $wc_product_id = 0, $product_type = '' ) {
+		$wc_product_object = false;
+		if ( 0 < intval( $wc_product_id ) ) {
+			// Get the product
+			if ( function_exists( 'get_product' ) ) {
+				$wc_product_object = get_product( $wc_product_id ); // Post WC 2.0
+			} else {
+				// Pre WC 2.0
+				if ( 'variation' == $product_type ) {
+					$wc_product_object = new WC_Product_Variation( $wc_product_id );
+				} else {
+					$wc_product_object = new WC_Product( $wc_product_id );
+				} // End If Statement
+			} // End If Statement
+		} // End If Statement
+		return $wc_product_object;
+	} // End sensei_get_woocommerce_product_object()
+
 ?>

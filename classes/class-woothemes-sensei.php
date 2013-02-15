@@ -520,11 +520,14 @@ class WooThemes_Sensei {
 			// Run through each product ordered
 			if (sizeof($order->get_items())>0) {
 				foreach($order->get_items() as $item) {
+					$product_type = '';
 					if (isset($item['variation_id']) && $item['variation_id'] > 0) {
-						$_product = new WC_Product_Variation( $item['variation_id'] );
+						$item_id = $item['variation_id'];
+						$product_type = 'variation';
 					} else {
-						$_product = new WC_Product( $item['id'] );
+						$item_id = $item['id'];
 					} // End If Statement
+					$_product = sensei_get_woocommerce_product_object( $item_id, $product_type );
 					// Get courses that use the WC product
 					$courses = $this->post_types->course->get_product_courses( $_product->id );
 					// Loop and update those courses

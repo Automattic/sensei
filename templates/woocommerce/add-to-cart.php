@@ -22,7 +22,7 @@ if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user
     // based on simple.php in WC templates/single-product/add-to-cart/
     if ( 0 < $wc_post_id ) {
     	// Get the product
-    	$product = new WC_Product( $wc_post_id );
+        $product = sensei_get_woocommerce_product_object( $wc_post_id );
     	if ( $product->is_purchasable() ) {
     		// Check Product Availability
     		$availability = $product->get_availability();
