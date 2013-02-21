@@ -316,6 +316,14 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'section' => 'lesson-settings'
 								);
 
+		$fields['quiz_randomize_questions'] = array(
+								'name' => __( 'Randomize Quiz Questions', 'woothemes-sensei' ),
+								'description' => __( 'This will randomize the order the questions appear for a Quiz.', 'woothemes-sensei' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'lesson-settings'
+								);
+
 		$fields['lesson_complete_button'] = array(
 								'name' => __( 'Allow Lesson Complete Button', 'woothemes-sensei' ),
 								'description' => __( 'This will allow learners to complete a Lesson without taking a Quiz. It will display the Complete Lesson button on the Lesson page.', 'woothemes-sensei' ),
