@@ -32,6 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WooThemes_Sensei_PostTypes {
 	public $token;
 	public $slider_labels;
+	public $role_caps;
 
 	/**
 	 * Constructor
@@ -51,9 +52,11 @@ class WooThemes_Sensei_PostTypes {
 		add_action( 'init', array( &$this, 'setup_course_category_taxonomy' ), 100 );
 		add_action( 'init', array( &$this, 'setup_quiz_type_taxonomy' ), 100 );
 		// Load Post Type Objects
-		$this->load_posttype_objects( array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) );
+		$default_post_types = array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) ;
+		$this->load_posttype_objects( $default_post_types );
 		// Admin functions
 		if ( is_admin() ) {
+			$this->set_role_cap_defaults( $default_post_types );
 			global $pagenow;
 			if ( ( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) ) {
 				add_filter( 'enter_title_here', array( &$this, 'enter_title_here' ), 10 );
@@ -121,7 +124,32 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_menu' => 'edit.php?post_type=lesson',
 		    'query_var' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', 'course' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
-		    'capability_type' => 'post',
+		    'map_meta_cap' => true,
+		    'capability_type' => 'course',
+		    // 'capabilities' => array(
+						// 				// meta caps (don't assign these to roles)
+						// 				'edit_post'              => 'edit_course',
+						// 				'read_post'              => 'read_course',
+						// 				'delete_post'            => 'delete_course',
+
+						// 				// primitive/meta caps
+						// 				'create_posts'           => 'create_courses',
+
+						// 				// primitive caps used outside of map_meta_cap()
+						// 				'edit_posts'             => 'edit_courses',
+						// 				'edit_others_posts'      => 'edit_others_courses',
+						// 				'publish_posts'          => 'publish_courses',
+						// 				'read_private_posts'     => 'read_private_courses',
+
+						// 				// primitive caps used inside of map_meta_cap()
+						// 				'read'                   => 'read',
+						// 				'delete_posts'           => 'delete_courses',
+						// 				'delete_private_posts'   => 'delete_private_courses',
+						// 				'delete_published_posts' => 'delete_published_courses',
+						// 				'delete_others_posts'    => 'delete_others_courses',
+						// 				'edit_private_posts'     => 'edit_private_courses',
+						// 				'edit_published_posts'   => 'edit_published_courses'
+						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
@@ -155,7 +183,32 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_menu' => true,
 		    'query_var' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_slug', 'lesson' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
-		    'capability_type' => 'post',
+		    'map_meta_cap' => true,
+		    'capability_type' => 'lesson',
+		    // 'capabilities' => array(
+						// 				// meta caps (don't assign these to roles)
+						// 				'edit_post'              => 'edit_lesson',
+						// 				'read_post'              => 'read_lesson',
+						// 				'delete_post'            => 'delete_lesson',
+
+						// 				// primitive/meta caps
+						// 				'create_posts'           => 'create_lessons',
+
+						// 				// primitive caps used outside of map_meta_cap()
+						// 				'edit_posts'             => 'edit_lessons',
+						// 				'edit_others_posts'      => 'edit_others_lessons',
+						// 				'publish_posts'          => 'publish_lessons',
+						// 				'read_private_posts'     => 'read_private_lessons',
+
+						// 				// primitive caps used inside of map_meta_cap()
+						// 				'read'                   => 'read',
+						// 				'delete_posts'           => 'delete_lessons',
+						// 				'delete_private_posts'   => 'delete_private_lessons',
+						// 				'delete_published_posts' => 'delete_published_lessons',
+						// 				'delete_others_posts'    => 'delete_others_lessons',
+						// 				'edit_private_posts'     => 'edit_private_lessons',
+						// 				'edit_published_posts'   => 'edit_published_lessons'
+						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
@@ -185,7 +238,8 @@ class WooThemes_Sensei_PostTypes {
 		    'query_var' => true,
 		    'exclude_from_search' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_slug', 'quiz' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
-		    'capability_type' => 'post',
+		    'map_meta_cap' => true,
+		    'capability_type' => 'quiz',
 		    'has_archive' => false,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
@@ -216,7 +270,8 @@ class WooThemes_Sensei_PostTypes {
 		    'query_var' => true,
 		    'exclude_from_search' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_slug', 'question' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
-		    'capability_type' => 'post',
+		    'map_meta_cap' => true,
+		    'capability_type' => 'question',
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 10, // Below "Pages"
@@ -252,7 +307,7 @@ class WooThemes_Sensei_PostTypes {
 		$args = array(
 			'hierarchical' => true,
 			'labels' => $labels,
-			'show_ui' => true, 
+			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => false,
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', 'course-category' ) ) )
@@ -404,6 +459,70 @@ class WooThemes_Sensei_PostTypes {
 		return $title;
 	} // End enter_title_here()
 
+	/**
+	 * Assigns the defaults for each user role capabilities.
+	 *
+	 * @since  1.1.0
+	 * @access public
+	 * @return void
+	 */
+	public function set_role_cap_defaults( $post_types = array() ) {
+
+		foreach ( $post_types as $post_type_item => $post_type_name ) {
+			// Super Admin
+			$this->role_caps[] =  array(	'administrator' 	=> array( 	'edit_' . $post_type_item,
+																			'read_' . $post_type_item,
+																			'delete_' . $post_type_item,
+																			'create_' . $post_type_item . 's',
+																			'edit_' . $post_type_item . 's',
+																			'edit_others_' . $post_type_item . 's',
+																			'publish_' . $post_type_item . 's',
+																			'read_private_' . $post_type_item . 's',
+																			'read',
+																			'delete_' . $post_type_item . 's',
+																			'delete_private_' . $post_type_item . 's',
+																			'delete_published_' . $post_type_item . 's',
+																			'delete_others_' . $post_type_item . 's',
+																			'edit_private_' . $post_type_item . 's',
+																			'edit_published_' . $post_type_item . 's' ),
+											'editor' 			=> array(	'edit_' . $post_type_item,
+																			'read_' . $post_type_item,
+																			'delete_' . $post_type_item,
+																			'create_' . $post_type_item . 's',
+																		 	'edit_' . $post_type_item . 's',
+																			'edit_others_' . $post_type_item . 's',
+																			'publish_' . $post_type_item . 's',
+																			'read_private_' . $post_type_item . 's',
+																			'read',
+																			'delete_' . $post_type_item . 's',
+																			'delete_private_' . $post_type_item . 's',
+																			'delete_published_' . $post_type_item . 's',
+																			'delete_others_' . $post_type_item . 's',
+																			'edit_private_' . $post_type_item . 's',
+																			'edit_published_' . $post_type_item . 's' ),
+											'author' 			=> array( 	'edit_' . $post_type_item,
+																			'read_' . $post_type_item,
+																			'delete_' . $post_type_item,
+																			'create_' . $post_type_item . 's',
+																			'edit_' . $post_type_item . 's',
+																			'publish_' . $post_type_item . 's',
+																			'read',
+																			'delete_' . $post_type_item . 's',
+																			'delete_published_' . $post_type_item . 's',
+																			'edit_published_' . $post_type_item . 's' ),
+											'contributor' 		=> array( 	'edit_' . $post_type_item,
+																			'read_' . $post_type_item,
+																			'delete_' . $post_type_item,
+																			'create_' . $post_type_item . 's',
+																			'edit_' . $post_type_item . 's',
+																			'read',
+																			'delete_' . $post_type_item . 's' ),
+											'subscriber' 		=> array( 	'read' )
+
+										);
+		} // End For Loop
+
+	} // End set_role_cap_defaults()
 
 } // End Class
 ?>

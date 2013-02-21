@@ -332,63 +332,65 @@ class WooThemes_Sensei_Lesson {
 				} // End If Statement
 			$html .= '</select>' . "\n";
 			// Course Actions Panel
-			$html .= '<div id="lesson-course-actions">';
-				$html .= '<p>';
-					// Add a course action link
-					$html .= '<a id="lesson-course-add" href="#course-add" class="lesson-add-course">+ ' . __('Add New Course') . '</a>';
-				$html .= '</p>';
-			$html .= '</div>';
-			// Add a course input fields
-			$html .= '<div id="lesson-course-details" class="hidden">';
-				$html .= '<p>';
-					// Course Title input
-					$html .= '<label>' . __( 'Course Title' , 'woothemes-sensei' ) . '</label> ';
-  					$html .= '<input type="text" id="course-title" name="course_title" value="" size="25" class="widefat" />';
-  					// Course Description input
-  					$html .= '<label>' . __( 'Description' , 'woothemes-sensei' ) . '</label> ';
-  					$html .= '<textarea rows="10" cols="40" id="course-content" name="course_content" value="" size="300" class="widefat"></textarea>';
-  					// Course Prerequisite
-  					$html .= '<label>' . __( 'Course Prerequisite' , 'woothemes-sensei' ) . '</label> ';
-  					$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="widefat">' . "\n";
-						$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-						foreach ($posts_array as $post_item){
-							$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
-						} // End For Loop
-					$html .= '</select>' . "\n";
-					// Course Product
-  					if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
-  						// Get the Products
-						$select_course_woocommerce_product = get_post_meta( $post_item->ID, '_course_woocommerce_product', true );
-
-						$product_args = array(	'post_type' 		=> 'product',
-												'numberposts' 		=> -1,
-												'orderby'         	=> 'title',
-    											'order'           	=> 'DESC',
-    											'suppress_filters' 	=> 0
-												);
-						$products_array = get_posts( $product_args );
-						$html .= '<label>' . __( 'WooCommerce Product' , 'woothemes-sensei' ) . '</label> ';
-  						$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
-							$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-							foreach ($products_array as $products_item){
-								$html .= '<option value="' . esc_attr( absint( $products_item->ID ) ) . '">' . esc_html( $products_item->post_title ) . '</option>' . "\n";
+			if ( current_user_can( 'publish_courses' )) {
+				$html .= '<div id="lesson-course-actions">';
+					$html .= '<p>';
+						// Add a course action link
+						$html .= '<a id="lesson-course-add" href="#course-add" class="lesson-add-course">+ ' . __('Add New Course', 'woothemes-sensei' ) . '</a>';
+					$html .= '</p>';
+				$html .= '</div>';
+				// Add a course input fields
+				$html .= '<div id="lesson-course-details" class="hidden">';
+					$html .= '<p>';
+						// Course Title input
+						$html .= '<label>' . __( 'Course Title' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="course-title" name="course_title" value="" size="25" class="widefat" />';
+	  					// Course Description input
+	  					$html .= '<label>' . __( 'Description' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<textarea rows="10" cols="40" id="course-content" name="course_content" value="" size="300" class="widefat"></textarea>';
+	  					// Course Prerequisite
+	  					$html .= '<label>' . __( 'Course Prerequisite' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="widefat">' . "\n";
+							$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+							foreach ($posts_array as $post_item){
+								$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 							} // End For Loop
 						$html .= '</select>' . "\n";
-					} else {
-						// Default
-						$html .= '<input type="hidden" name="course_woocommerce_product" id="course-woocommerce-product-options" value="-" />';
-					}
-					// Course Category
-  					$html .= '<label>' . __( 'Course Category' , 'woothemes-sensei' ) . '</label> ';
-  					$cat_args = array( 'echo' => false, 'hierarchical' => true, 'show_option_none' => __( 'None', 'woothemes-sensei' ), 'taxonomy' => 'course-category', 'orderby' => 'name', 'id' => 'course-category-options', 'name' => 'course_category', 'class' => 'widefat' );
-					$html .= wp_dropdown_categories(apply_filters('widget_course_categories_dropdown_args', $cat_args)) . "\n";
-  					// Save the course action button
-  					$html .= '<a title="' . esc_attr( __( 'Save Course', 'woothemes-sensei' ) ) . '" href="#add-course-metadata" class="lesson_course_save button button-highlighted">' . esc_html( __( 'Add Course', 'woothemes-sensei' ) ) . '</a>';
-					$html .= '&nbsp;&nbsp;&nbsp;';
-					// Cancel action link
-					$html .= '<a href="#course-add-cancel" class="lesson_course_cancel">' . __( 'Cancel', 'woothemes-sensei' ) . '</a>';
-				$html .= '</p>';
-			$html .= '</div>';
+						// Course Product
+	  					if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+	  						// Get the Products
+							$select_course_woocommerce_product = get_post_meta( $post_item->ID, '_course_woocommerce_product', true );
+
+							$product_args = array(	'post_type' 		=> 'product',
+													'numberposts' 		=> -1,
+													'orderby'         	=> 'title',
+	    											'order'           	=> 'DESC',
+	    											'suppress_filters' 	=> 0
+													);
+							$products_array = get_posts( $product_args );
+							$html .= '<label>' . __( 'WooCommerce Product' , 'woothemes-sensei' ) . '</label> ';
+	  						$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
+								$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+								foreach ($products_array as $products_item){
+									$html .= '<option value="' . esc_attr( absint( $products_item->ID ) ) . '">' . esc_html( $products_item->post_title ) . '</option>' . "\n";
+								} // End For Loop
+							$html .= '</select>' . "\n";
+						} else {
+							// Default
+							$html .= '<input type="hidden" name="course_woocommerce_product" id="course-woocommerce-product-options" value="-" />';
+						}
+						// Course Category
+	  					$html .= '<label>' . __( 'Course Category' , 'woothemes-sensei' ) . '</label> ';
+	  					$cat_args = array( 'echo' => false, 'hierarchical' => true, 'show_option_none' => __( 'None', 'woothemes-sensei' ), 'taxonomy' => 'course-category', 'orderby' => 'name', 'id' => 'course-category-options', 'name' => 'course_category', 'class' => 'widefat' );
+						$html .= wp_dropdown_categories(apply_filters('widget_course_categories_dropdown_args', $cat_args)) . "\n";
+	  					// Save the course action button
+	  					$html .= '<a title="' . esc_attr( __( 'Save Course', 'woothemes-sensei' ) ) . '" href="#add-course-metadata" class="lesson_course_save button button-highlighted">' . esc_html( __( 'Add Course', 'woothemes-sensei' ) ) . '</a>';
+						$html .= '&nbsp;&nbsp;&nbsp;';
+						// Cancel action link
+						$html .= '<a href="#course-add-cancel" class="lesson_course_cancel">' . __( 'Cancel', 'woothemes-sensei' ) . '</a>';
+					$html .= '</p>';
+				$html .= '</div>';
+			} // End If Statement
 		// Output the HTML
 		echo $html;
 	} // End lesson_course_meta_box_content()

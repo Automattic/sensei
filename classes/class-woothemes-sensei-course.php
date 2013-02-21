@@ -114,14 +114,21 @@ class WooThemes_Sensei_Course {
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_woocommerce_product, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 				} // End For Loop
 			$html .= '</select>' . "\n";
-
-			$html .= '<p>' . "\n";
-				$html .= '<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Add a Product', 'woothemes-sensei' ) . '</a>' . "\n";
-			$html .= '</p>'."\n";
+			if ( current_user_can( 'publish_product' )) {
+				$html .= '<p>' . "\n";
+					$html .= '<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Add a Product', 'woothemes-sensei' ) . '</a>' . "\n";
+				$html .= '</p>'."\n";
+			} // End If Statement
 		} else {
-			$html .= '<p>' . "\n";
-				$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . '&nbsp;<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Please add some first', 'woothemes-sensei' ) . '</a>' . "\n";
-			$html .= '</p>'."\n";
+			if ( current_user_can( 'publish_product' )) {
+				$html .= '<p>' . "\n";
+					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . '&nbsp;<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Please add some first', 'woothemes-sensei' ) . '</a>' . "\n";
+				$html .= '</p>'."\n";
+			} else {
+				$html .= '<p>' . "\n";
+					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . "\n";
+				$html .= '</p>'."\n";
+			} // End If Statement
 		} // End If Statement
 
 		echo $html;

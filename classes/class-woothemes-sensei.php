@@ -106,11 +106,31 @@ class WooThemes_Sensei {
 		// WooCommerce Payment Actions
 		add_action( 'woocommerce_payment_complete' , array( &$this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_order_status_completed' , array( &$this, 'sensei_woocommerce_complete_order' ) );
+		// Run Upgrades once the WP functions have loaded
+		if ( is_admin() ) {
+			add_action( 'wp_loaded', array( &$this, 'run_upgrades' ), 10 );
+		} // End If Statement
 	} // End __construct()
 
 	/**
+	 * run_upgrades runs upgrades on sensei
+	 * @since  1.1.0
+	 * @return void
+	 */
+	public function run_upgrades() {
+		// Run updates if administrator
+		if ( current_user_can( 'manage_options' ) ) {
+			require_once( 'class-woothemes-sensei-updates.php' );
+			$this->updates = new WooThemes_Sensei_Updates( &$this );
+			$this->updates->update();
+		} // End If Statement
+	} // End run_upgrades()
+
+	/**
 	 * Register the widgets.
-	 * @return [type] [description]
+	 * @access public
+	 * @since  1.0.0
+	 * @return void
 	 */
 	public function register_widgets () {
 		// Widget List

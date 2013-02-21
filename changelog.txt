@@ -6,11 +6,12 @@
  * assets/css/global.css - admin chosen drop down styling, admin add question button styling
  * assets/js/lesson-metadata.js - js to set select inputs to use chosen library for Courses, Lessons, and Settings admin area
  * classes/class-woothemes-sensei-admin.php - register chosen styles
- * classes/class-woothemes-sensei-course.php - added Course Category column to the write panel and quick edit
+ * classes/class-woothemes-sensei-course.php - added Course Category column to the write panel and quick edit, added permissions for WooCommerce adding of products
  * classes/class-woothemes-sensei-frontend.php - logic for additional lesson pagination
- * classes/class-woothemes-sensei-lesson.php - added Course Category to Ajax Course add, register chosen js
- * classes/class-woothemes-sensei-posttypes.php - register new Course Category taxonomy for Courses post type, add menu item for Course Category write panel
- * classes/class-woothemes-sensei.php - register new widgets, refactor widget register logic, logic for Course Category taxonomy archive templater loader
+ * classes/class-woothemes-sensei-lesson.php - added Course Category to Ajax Course add, register chosen js, added permissions for adding of Courses
+ * classes/class-woothemes-sensei-posttypes.php - register new Course Category taxonomy for Courses post type, add menu item for Course Category write panel, added meta caps for future post types permissions
+ * classes/class-woothemes-sensei-updates.php - new Class for running Sensei upgrade functions
+ * classes/class-woothemes-sensei.php - register new widgets, refactor widget register logic, logic for Course Category taxonomy archive templater loader, added upgrade function actions
  * inc/woothemes-sensei-template.php - added function to get the next and previous lessons, added Course Category archive header logic to template function
  * templates/content-no-permissions.php - pagination modification
  * templates/content-single-course.php - pagination modification, course access permissions fix
