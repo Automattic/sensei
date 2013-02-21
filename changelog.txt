@@ -4,7 +4,7 @@
  * assets/chosen/* - added chosen library for improved dropdown usability
  * assets/css/frontend.css - frontend course category meta styling
  * assets/css/global.css - admin chosen drop down styling, admin add question button styling
- * assets/js/lesson-metadata.js - js to set select inputs to use chosen library for Courses, Lessons, and Settings admin area
+ * assets/js/lesson-metadata.js - js to set select inputs to use chosen library for Courses, Lessons, and Settings admin area, allow HTML in question title and answers
  * classes/class-woothemes-sensei-admin.php - register chosen styles
  * classes/class-woothemes-sensei-course.php - added Course Category column to the write panel and quick edit, added permissions for WooCommerce adding of products
  * classes/class-woothemes-sensei-frontend.php - logic for additional lesson pagination

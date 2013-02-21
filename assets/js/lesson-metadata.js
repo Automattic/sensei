@@ -307,11 +307,11 @@ jQuery(document).ready( function($) {
 	 		    		var tableCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
 	 		    		var questionId = response;
 	 		    		var addQuestionText = jQuery.fn.htmlentities( jQuery( '#add_question' ).attr( 'value' ) );
-	 		    		var addQuestionRightText = jQuery( '#add_question_right_answer' ).attr( 'value' );
+	 		    		var addQuestionRightText = jQuery.fn.htmlentities( jQuery( '#add_question_right_answer' ).attr( 'value' ) );
 	 		    		var arrayCounter = 0;
 	 		    		var addQuestionWrongText = new Array();
 	 		    		jQuery( '#add-new-question input[name="question_wrong_answers[]"]' ).each( function() {
-	 		    			addQuestionWrongText[arrayCounter] = jQuery(this).attr( 'value' );
+	 		    			addQuestionWrongText[arrayCounter] = jQuery.fn.htmlentities( jQuery(this).attr( 'value' ) );
 	 		    			arrayCounter++;
 	 		    		});
 	 		    		// TODO - Localize the english labels for translation
