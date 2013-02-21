@@ -478,25 +478,94 @@ class WooThemes_Sensei_Course {
 									);
 				break;
 			case 'freecourses':
+				// Sub Query to get all WooCommerce Products that have Zero price
+				$args = array(
+							   'post_type' => 'product',
+							   'posts_per_page' => -1,
+							   'meta_query' => array(
+							   							'relation' => 'OR',
+													    array(
+													        'key' => '_regular_price',
+													        'value' => '0',
+													        'compare' => '='
+													       ),
+													    array(
+													        'key' => '_sale_price',
+													        'value' => '0',
+													        'compare' => '='
+													       )
+													)
+								);
+ 				$posts = get_posts($args);
+ 				$free_wc_posts = array();
+ 				foreach ( $posts as $post_item ) {
+ 					array_push( $free_wc_posts , $post_item->ID );
+ 				} // End For Loop
 				$post_args = array(	'post_type' 		=> 'course',
 									'orderby'         	=> 'date',
     								'order'           	=> 'DESC',
     								'post_status'      	=> 'publish',
-    								'meta_value'		=> '-', /* WC */
-    								'meta_key' 			=> '_course_woocommerce_product',
-    								'meta_compare' 		=> '=',
+    								'meta_query' => array(
+							   							'relation' => 'OR',
+													    array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => '-',
+													        'compare' => '='
+													       ),
+													    array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => $free_wc_posts,
+													        'compare' => 'IN'
+													       )
+													),
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
 									);
 				break;
 			case 'paidcourses':
+				// Sub Query to get all WooCommerce Products that have price greater than zero
+				$args = array(
+							   'post_type' => 'product',
+							   'posts_per_page' => -1,
+							   'meta_query' => array(
+							   							'relation' => 'AND',
+													    array(
+													        'key' => '_regular_price',
+													        'value' => '0',
+													        'compare' => '>',
+													        'type' => 'NUMERIC'
+													       ),
+													    array(
+													        'key' => '_sale_price',
+													        'value' => '0',
+													        'compare' => '>',
+													        'type' => 'NUMERIC'
+													       )
+													)
+								);
+ 				$posts = get_posts($args);
+ 				$paid_wc_posts = array();
+ 				foreach ( $posts as $post_item ) {
+ 					array_push( $paid_wc_posts , $post_item->ID );
+ 				} // End For Loop
 				$post_args = array(	'post_type' 		=> 'course',
 									'orderby'         	=> 'date',
     								'order'           	=> 'DESC',
     								'post_status'      	=> 'publish',
-    								'meta_value' 		=> '0',
-    								'meta_key' 			=> '_course_woocommerce_product',
-    								'meta_compare' 		=> '>',
+    								'meta_query' => array(
+							   							'relation' => 'AND',
+													    array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => '0',
+													        'compare' => '>',
+													        'type' => 'NUMERIC'
+													       ),
+													    array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => $paid_wc_posts,
+													        'compare' => 'IN'
+													       )
+													),
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
 									);

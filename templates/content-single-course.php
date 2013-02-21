@@ -38,18 +38,14 @@ if ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && !$wo
     			echo  $woothemes_sensei->post_types->course->course_image( $post->ID );
     			?>
 
-                <header>
-
-	                <h1><?php the_title(); ?></h1>
-
-                </header>
+                <?php do_action( 'sensei_course_single_title' ); ?>
 
                 <section class="entry fix">
                 	<?php if ( ( is_user_logged_in() && $is_user_taking_course ) || ( $access_permission ) ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
                 </section>
 
-				<?php course_single_meta(); ?>
-	 			<?php course_single_lessons(); ?>
+                <?php do_action( 'sensei_course_single_meta' ); ?>
+                <?php do_action( 'sensei_course_single_lessons' ); ?>
 
             </article><!-- .post -->
 

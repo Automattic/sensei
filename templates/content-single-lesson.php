@@ -22,11 +22,7 @@
     			echo $woothemes_sensei->post_types->lesson->lesson_image( $post->ID );
     			?>
 
-                <header>
-
-	                <h1><?php the_title(); ?></h1>
-
-                </header>
+                <?php do_action( 'sensei_lesson_single_title' ); ?>
 
                 <?php
 
@@ -59,7 +55,9 @@
                 	<?php if ( $access_permission || is_user_logged_in() ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
 				</section>
 
-				<?php if ( $access_permission || is_user_logged_in() ) { lesson_single_meta(); } ?>
+				<?php if ( $access_permission || is_user_logged_in() ) {
+					do_action( 'sensei_lesson_single_meta' );
+				} ?>
 
 				<?php
 

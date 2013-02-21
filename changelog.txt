@@ -6,17 +6,17 @@
  * assets/css/global.css - admin chosen drop down styling, admin add question button styling
  * assets/js/lesson-metadata.js - js to set select inputs to use chosen library for Courses, Lessons, and Settings admin area, allow HTML in question title and answers
  * classes/class-woothemes-sensei-admin.php - register chosen styles
- * classes/class-woothemes-sensei-course.php - added Course Category column to the write panel and quick edit, added permissions for WooCommerce adding of products
- * classes/class-woothemes-sensei-frontend.php - logic for additional lesson pagination
+ * classes/class-woothemes-sensei-course.php - added Course Category column to the write panel and quick edit, added permissions for WooCommerce adding of products, modified course query for paid and free products to check the actual prices of the products
+ * classes/class-woothemes-sensei-frontend.php - logic for additional lesson pagination, additional hooks for frontend output
  * classes/class-woothemes-sensei-lesson.php - added Course Category to Ajax Course add, register chosen js, added permissions for adding of Courses
  * classes/class-woothemes-sensei-posttypes.php - register new Course Category taxonomy for Courses post type, add menu item for Course Category write panel, added meta caps for future post types permissions
  * classes/class-woothemes-sensei-updates.php - new Class for running Sensei upgrade functions
  * classes/class-woothemes-sensei.php - register new widgets, refactor widget register logic, logic for Course Category taxonomy archive templater loader, added upgrade function actions
  * inc/woothemes-sensei-template.php - added function to get the next and previous lessons, added Course Category archive header logic to template function
  * templates/content-no-permissions.php - pagination modification
- * templates/content-single-course.php - pagination modification, course access permissions fix
- * templates/content-single-lesson.php - pagination modification
- * templates/content-single-quiz.php - pagination modification
+ * templates/content-single-course.php - pagination modification, course access permissions fix, added frontend hooks for output
+ * templates/content-single-lesson.php - pagination modification, added frontend hooks for output
+ * templates/content-single-quiz.php - pagination modification, added frontend hooks for output
  * templates/loop-course.php - added Course Category meta info
  * templates/taxonomy-course-category.php - template file for new Course Category taxonomy terms
  * templates/user/my-courses.php - added Course Category meta info
