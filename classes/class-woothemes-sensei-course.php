@@ -483,18 +483,11 @@ class WooThemes_Sensei_Course {
 							   'post_type' => 'product',
 							   'posts_per_page' => -1,
 							   'meta_query' => array(
-							   							'relation' => 'OR',
-													    array(
-													        'key' => '_regular_price',
+							   							array(
+													        'key' => '_price',
 													        'value' => '0',
 													        'compare' => '=',
-													        'type' => 'DECIMAL'
-													       ),
-													    array(
-													        'key' => '_sale_price',
-													        'value' => '0',
-													        'compare' => '=',
-													        'type' => 'DECIMAL'
+													        'type' => 'NUMERIC'
 													       )
 													)
 								);
@@ -540,18 +533,11 @@ class WooThemes_Sensei_Course {
 							   'post_type' => 'product',
 							   'posts_per_page' => -1,
 							   'meta_query' => array(
-							   							'relation' => 'OR',
-													    array(
-													        'key' => '_regular_price',
+							   							array(
+													        'key' => '_price',
 													        'value' => '0',
 													        'compare' => '>',
-													        'type' => 'DECIMAL'
-													       ),
-													    array(
-													        'key' => '_sale_price',
-													        'value' => '0',
-													        'compare' => '>',
-													        'type' => 'DECIMAL'
+													        'type' => 'NUMERIC'
 													       )
 													)
 								);
