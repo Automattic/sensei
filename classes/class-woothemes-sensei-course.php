@@ -487,12 +487,14 @@ class WooThemes_Sensei_Course {
 													    array(
 													        'key' => '_regular_price',
 													        'value' => '0',
-													        'compare' => '='
+													        'compare' => '=',
+													        'type' => 'DECIMAL'
 													       ),
 													    array(
 													        'key' => '_sale_price',
 													        'value' => '0',
-													        'compare' => '='
+													        'compare' => '=',
+													        'type' => 'DECIMAL'
 													       )
 													)
 								);
@@ -501,11 +503,15 @@ class WooThemes_Sensei_Course {
  				foreach ( $posts as $post_item ) {
  					array_push( $free_wc_posts , $post_item->ID );
  				} // End For Loop
-				$post_args = array(	'post_type' 		=> 'course',
+ 				$post_args = array(	'post_type' 		=> 'course',
 									'orderby'         	=> 'date',
     								'order'           	=> 'DESC',
     								'post_status'      	=> 'publish',
-    								'meta_query' => array(
+    								'exclude'			=> $excludes,
+    								'suppress_filters' 	=> 0
+									);
+ 				if ( 0 < count( $free_wc_posts ) ) {
+ 					$post_args['meta_query'] = array(
 							   							'relation' => 'OR',
 													    array(
 													        'key' => '_course_woocommerce_product',
@@ -517,10 +523,16 @@ class WooThemes_Sensei_Course {
 													        'value' => $free_wc_posts,
 													        'compare' => 'IN'
 													       )
-													),
-    								'exclude'			=> $excludes,
-    								'suppress_filters' 	=> 0
-									);
+													);
+ 				} else {
+ 					$post_args['meta_query'] = array(
+							   							array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => '-',
+													        'compare' => '='
+													       )
+													);
+ 				}
 				break;
 			case 'paidcourses':
 				// Sub Query to get all WooCommerce Products that have price greater than zero
@@ -528,18 +540,18 @@ class WooThemes_Sensei_Course {
 							   'post_type' => 'product',
 							   'posts_per_page' => -1,
 							   'meta_query' => array(
-							   							'relation' => 'AND',
+							   							'relation' => 'OR',
 													    array(
 													        'key' => '_regular_price',
 													        'value' => '0',
 													        'compare' => '>',
-													        'type' => 'NUMERIC'
+													        'type' => 'DECIMAL'
 													       ),
 													    array(
 													        'key' => '_sale_price',
 													        'value' => '0',
 													        'compare' => '>',
-													        'type' => 'NUMERIC'
+													        'type' => 'DECIMAL'
 													       )
 													)
 								);
@@ -552,7 +564,11 @@ class WooThemes_Sensei_Course {
 									'orderby'         	=> 'date',
     								'order'           	=> 'DESC',
     								'post_status'      	=> 'publish',
-    								'meta_query' => array(
+    								'exclude'			=> $excludes,
+    								'suppress_filters' 	=> 0
+									);
+				if ( 0 < count( $paid_wc_posts) ) {
+ 					$post_args['meta_query'] = array(
 							   							'relation' => 'AND',
 													    array(
 													        'key' => '_course_woocommerce_product',
@@ -565,10 +581,15 @@ class WooThemes_Sensei_Course {
 													        'value' => $paid_wc_posts,
 													        'compare' => 'IN'
 													       )
-													),
-    								'exclude'			=> $excludes,
-    								'suppress_filters' 	=> 0
-									);
+													);
+ 				} else {
+ 					$post_args['meta_query'] = array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => '0',
+													        'compare' => '>',
+													        'type' => 'NUMERIC'
+													       );
+ 				}
 				break;
 			case 'featuredcourses':
 				$post_args = array(	'post_type' 		=> 'course',

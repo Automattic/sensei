@@ -31,7 +31,7 @@ class WooThemes_Sensei_Updates {
 	 * @since  1.1.0
 	 * @return  void
 	 */
-	public function __construct ( $parent ) {
+	public function __construct ( &$parent ) {
 		// Setup object data
 		$this->parent = $parent;
 		$this->upgrades_run = get_option( $this->token . '-upgrades', array() );
