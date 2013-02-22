@@ -34,7 +34,7 @@ class WooThemes_Sensei_Updates {
 	public function __construct ( $parent ) {
 		// Setup object data
 		$this->parent = $parent;
-		$this->upgrades_run = get_option( $token . '-upgrades', array() );
+		$this->upgrades_run = get_option( $this->token . '-upgrades', array() );
 		// The list of upgrades to run
 		$this->legacy = array( 	'1.0.0' => array(),
 								'1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' ),
@@ -42,7 +42,7 @@ class WooThemes_Sensei_Updates {
 												)
 							);
 		$this->legacy = apply_filters( 'sensei_upgrade_functions', $this->legacy, $this->legacy );
-		$this->version = get_option( $token . '-version' );
+		$this->version = get_option( $this->token . '-version' );
 	} // End __construct()
 
 	/**
@@ -77,7 +77,7 @@ class WooThemes_Sensei_Updates {
 				} // End For Loop
 			} // End If Statement
 		} // End For Loop
-		update_option( $token . '-upgrades', $this->upgrades_run );
+		update_option( $this->token . '-upgrades', $this->upgrades_run );
 		return true;
 	} // End update()
 
