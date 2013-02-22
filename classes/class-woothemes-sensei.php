@@ -117,8 +117,43 @@ class WooThemes_Sensei {
 	public function set_woocommerce_functionality() {
 		// Disable guest checkout as we need a valid user to store data for
 		update_option( 'woocommerce_enable_guest_checkout', false );
+
+		// Make orders with virtual products to complete rather then stay processing
+		add_filter( 'woocommerce_payment_complete_order_status', array( $this, 'virtual_order_payment_complete' ), 10, 2 );
+
 	} // End set_woocommerce_functionality()
 
+	/**
+	 * Change order status with virtual products to completed
+	 * @param string $order_status
+	 * @param int $order_id
+	 * @return string
+	 **/
+	public function virtual_order_payment_complete( $order_status, $order_id ) {
+		$order = new WC_Order( $order_id );
+
+		if ( $order_status == 'processing' && ( $order->status == 'on-hold' || $order->status == 'pending' || $order->status == 'failed' ) ) {
+			$virtual_order = true;
+
+			if ( count( $order->get_items() ) > 0 ) {
+				foreach( $order->get_items() as $item ) {
+					if ( $item['id'] > 0 ) {
+						$_product = $order->get_product_from_item( $item );
+						if ( ! $_product->is_virtual() ) {
+							$virtual_order = false;
+							break;
+						}
+					}
+				}
+			}
+
+			// virtual order, mark as completed
+			if ( $virtual_order ) {
+				return 'completed';
+			}
+		}
+		return $order_status;
+	}
 	/**
 	 * Register the widgets.
 	 * @return [type] [description]
