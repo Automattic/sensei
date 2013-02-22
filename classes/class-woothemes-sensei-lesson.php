@@ -1005,14 +1005,14 @@ class WooThemes_Sensei_Lesson {
 	 * @param string $post_status (default: 'publish')
 	 * @return void
 	 */
-	public function lesson_quiz_questions( $quiz_id = 0, $post_status = 'publish' ) {
+	public function lesson_quiz_questions( $quiz_id = 0, $post_status = 'publish', $orderby = 'ID', $order = 'ASC' ) {
 
 		$posts_array = array();
 
 		$post_args = array(	'post_type' 		=> 'question',
 							'numberposts' 		=> -1,
-							'orderby'         	=> 'ID',
-    						'order'           	=> 'ASC',
+							'orderby'         	=> $orderby,
+    						'order'           	=> $order,
     						'meta_key'        	=> '_quiz_id',
     						'meta_value'      	=> $quiz_id,
     						'post_status'		=> $post_status,

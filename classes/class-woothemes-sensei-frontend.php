@@ -198,7 +198,7 @@ class WooThemes_Sensei_Frontend {
 			$template = $default_path . $template_name;
 
 		// Return what we found
-		return apply_filters('sensei_locate_template', $template, $template_name, $template_path);
+		return apply_filters( 'sensei_locate_template', $template, $template_name, $template_path );
 	} // End sensei_locate_template()
 
 

@@ -174,7 +174,7 @@ if ( ! WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $l
     <section class="lesson-meta">
 
         <div class="video"><?php echo html_entity_decode($lesson_video_embed); ?></div>
-        <?php echo $messages; ?>
+        <?php echo ( isset( $message ) ) ? $messages : ''; ?>
         <?php
         if ( 0 < count($lesson_quizzes) && is_user_logged_in() )  { ?>
         	<header>

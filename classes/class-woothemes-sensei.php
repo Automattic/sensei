@@ -15,6 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
+ * - run_upgrades()
+ * - set_woocommerce_functionality()
+ * - virtual_order_payment_complete
  * - register_widgets()
  * - load_localisation()
  * - load_plugin_textdomain()
@@ -101,6 +104,8 @@ class WooThemes_Sensei {
 			// Frontend Hooks
 			add_filter( 'template_include', array( &$this, 'template_loader' ) );
 		}
+		// Force WooCommerce Required Settings
+		$this->set_woocommerce_functionality();
 		add_action( 'widgets_init', array( &$this, 'register_widgets' ) );
 		add_action( 'after_setup_theme', array( &$this, 'ensure_post_thumbnails_support' ) );
 		// WooCommerce Payment Actions
@@ -125,6 +130,53 @@ class WooThemes_Sensei {
 			$this->updates->update();
 		} // End If Statement
 	} // End run_upgrades()
+
+	/**
+	 * Setup required WooCommerce settings
+	 * @since  1.1.0
+	 * @return void
+	 */
+	public function set_woocommerce_functionality() {
+		// Disable guest checkout as we need a valid user to store data for
+		update_option( 'woocommerce_enable_guest_checkout', false );
+
+		// Make orders with virtual products to complete rather then stay processing
+		add_filter( 'woocommerce_payment_complete_order_status', array( $this, 'virtual_order_payment_complete' ), 10, 2 );
+
+	} // End set_woocommerce_functionality()
+
+	/**
+	 * Change order status with virtual products to completed
+	 * @since  1.1.0
+	 * @param string $order_status
+	 * @param int $order_id
+	 * @return string
+	 **/
+	public function virtual_order_payment_complete( $order_status, $order_id ) {
+		$order = new WC_Order( $order_id );
+
+		if ( $order_status == 'processing' && ( $order->status == 'on-hold' || $order->status == 'pending' || $order->status == 'failed' ) ) {
+			$virtual_order = true;
+
+			if ( count( $order->get_items() ) > 0 ) {
+				foreach( $order->get_items() as $item ) {
+					if ( $item['id'] > 0 ) {
+						$_product = $order->get_product_from_item( $item );
+						if ( ! $_product->is_virtual() ) {
+							$virtual_order = false;
+							break;
+						} // End If Statement
+					} // End If Statement
+				} // End For Loop
+			} // End If Statement
+
+			// virtual order, mark as completed
+			if ( $virtual_order ) {
+				return 'completed';
+			} // End If Statement
+		} // End If Statement
+		return $order_status;
+	}
 
 	/**
 	 * Register the widgets.

@@ -11,8 +11,16 @@
 
 global $post, $woothemes_sensei, $current_user;
 
-// Get Quiz Questions
-$lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post->ID );
+// See if we must randomize questions
+$random_quiz_questions = $woothemes_sensei->settings->settings[ 'quiz_randomize_questions' ];
+if ( isset( $random_quiz_questions ) && ( $random_quiz_questions ) ) {
+    // Get Quiz Questions
+    $lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post->ID, 'publish', 'rand', '' );
+} else {
+    // Get Quiz Questions
+    $lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post->ID );
+}
+
 $grade = 0;
 
 // Setup Action Messages
