@@ -26,7 +26,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 
 	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-	require_once( 'classes/class-woothemes-sensei.php' );
+    require_once( 'classes/class-woothemes-sensei.php' );
     require_once( 'inc/woo-functions.php' );
 	if ( ! is_admin() ) require_once( 'inc/woothemes-sensei-template.php' );
 	global $woothemes_sensei;
