@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.02.25 - version 1.0.11
+ * /assets/css/frontend.css - Adjusted 'Complete Lesson' button margin on the Lessons page.
+
 2013.02.14 - version 1.0.10
  * /assets/css/frontend.css - Fixed buttons and shortcodes styles that were conflicting with theme styles.
 

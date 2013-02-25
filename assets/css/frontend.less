@@ -205,16 +205,26 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		}
 		input.quiz-submit  {
 			margin-right: 10px;
-			&.complete  {
-				background: @success;
-			}
-			&.reset  {
-				background: @error;
-			}
 		}
 	}
 }
 
+.quiz, .lesson  {
+	input.quiz-submit  {
+	    &.complete  {
+	    	background: @success;
+	    }
+	    &.reset  {
+	    	background: @error;
+	    }
+	}	
+}
+
+.lesson  {
+	input.quiz-submit  {
+		margin-top: 1em;
+	}
+}
 
 div.course-container div.course { display: block; padding: 5px; }
 section.entry span.course-lesson-count { padding-left: 10px; }

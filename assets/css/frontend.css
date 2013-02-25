@@ -280,11 +280,16 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 .quiz form input.quiz-submit {
   margin-right: 10px;
 }
-.quiz form input.quiz-submit.complete {
+.quiz input.quiz-submit.complete,
+.lesson input.quiz-submit.complete {
   background: #63a95f;
 }
-.quiz form input.quiz-submit.reset {
+.quiz input.quiz-submit.reset,
+.lesson input.quiz-submit.reset {
   background: #ed6c6c;
+}
+.lesson input.quiz-submit {
+  margin-top: 1em;
 }
 div.course-container div.course {
   display: block;
