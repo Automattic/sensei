@@ -2,6 +2,8 @@
 
 2013.02.25 - version 1.0.11
  * /assets/css/frontend.css - Adjusted 'Complete Lesson' button margin on the Lessons page.
+ * /templates/single-lesson/lesson-meta.php - fixed missing class on Take the Lesson Quiz link.
+ * /templates/single-quiz/quiz-questions.php - fixed logic bug for showing the current status of the completed quiz.
 
 2013.02.14 - version 1.0.10
  * /assets/css/frontend.css - Fixed buttons and shortcodes styles that were conflicting with theme styles.
