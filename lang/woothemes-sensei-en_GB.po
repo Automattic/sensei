@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei v1.0.8\n"
+"Project-Id-Version: Sensei v1.0.11\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-02-11 11:33:54+0000\n"
+"PO-Revision-Date: 2013-02-26 09:18:58+0000\n"
 "Last-Translator: Matt <matt@woothemes.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -892,7 +892,7 @@ msgid "Output the Course Image on the Single Course Page."
 msgstr ""
 
 #: classes/class-woothemes-sensei-settings.php:249
-#: classes/class-woothemes-sensei-settings.php:370
+#: classes/class-woothemes-sensei-settings.php:378
 #@ woothemes-sensei
 msgid "Image Width - Single"
 msgstr ""
@@ -903,7 +903,7 @@ msgid "The width in pixels of the featured image for the Course single post page
 msgstr ""
 
 #: classes/class-woothemes-sensei-settings.php:258
-#: classes/class-woothemes-sensei-settings.php:379
+#: classes/class-woothemes-sensei-settings.php:387
 #@ woothemes-sensei
 msgid "Image Height - Single"
 msgstr ""
@@ -978,87 +978,87 @@ msgstr ""
 msgid "This will enable to Reset button for a Quiz."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:336
+#: classes/class-woothemes-sensei-settings.php:344
 #@ woothemes-sensei
 msgid "Course Lesson Images"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:337
+#: classes/class-woothemes-sensei-settings.php:345
 #@ woothemes-sensei
 msgid "Output the Lesson Image on the Single Course Page."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:344
+#: classes/class-woothemes-sensei-settings.php:352
 #@ woothemes-sensei
 msgid "Image Width - Course Lessons"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:345
+#: classes/class-woothemes-sensei-settings.php:353
 #@ woothemes-sensei
 msgid "The width in pixels of the featured image for the Lessons on the Course Single page."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:353
+#: classes/class-woothemes-sensei-settings.php:361
 #@ woothemes-sensei
 msgid "Image Height - Course Lessons"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:354
+#: classes/class-woothemes-sensei-settings.php:362
 #@ woothemes-sensei
 msgid "The height in pixels of the featured image for the Lessons on the Course Single page."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:362
+#: classes/class-woothemes-sensei-settings.php:370
 #@ woothemes-sensei
 msgid "Single Lesson Images"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:363
+#: classes/class-woothemes-sensei-settings.php:371
 #@ woothemes-sensei
 msgid "Output the Lesson Image on the Single Lesson Page."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:371
+#: classes/class-woothemes-sensei-settings.php:379
 #@ woothemes-sensei
 msgid "The width in pixels of the featured image for the Lessons single post page."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:380
+#: classes/class-woothemes-sensei-settings.php:388
 #@ woothemes-sensei
 msgid "The height in pixels of the featured image for the Lessons single post page."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:390
+#: classes/class-woothemes-sensei-settings.php:398
 #@ woothemes-sensei
 msgid "Enable WooCommerce Courses"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:391
+#: classes/class-woothemes-sensei-settings.php:399
 #@ woothemes-sensei
 msgid "Use WooCommerce to sell Courses by linking a Product to a Course."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:398
+#: classes/class-woothemes-sensei-settings.php:406
 #@ woothemes-sensei
 msgid "Free Courses Panel"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:399
+#: classes/class-woothemes-sensei-settings.php:407
 #@ woothemes-sensei
 msgid "Output the Free Courses Panel on the Course Archive Page."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:406
+#: classes/class-woothemes-sensei-settings.php:414
 #@ woothemes-sensei
 msgid "Paid Courses Panel"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:407
+#: classes/class-woothemes-sensei-settings.php:415
 #@ woothemes-sensei
 msgid "Output the Paid Courses Panel on the Course Archive Page."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:474
+#: classes/class-woothemes-sensei-settings.php:482
 #@ woothemes
 msgid "Select a Page:"
 msgstr ""
@@ -1073,51 +1073,51 @@ msgstr ""
 msgid "Sensei Settings"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:417
-#: classes/class-woothemes-sensei.php:431
-#: classes/class-woothemes-sensei.php:455
-#: classes/class-woothemes-sensei.php:462
+#: classes/class-woothemes-sensei.php:463
+#: classes/class-woothemes-sensei.php:477
+#: classes/class-woothemes-sensei.php:501
+#: classes/class-woothemes-sensei.php:508
 #@ woothemes-sensei
 msgid "Restricted Access"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:418
-#: classes/class-woothemes-sensei.php:432
-#: classes/class-woothemes-sensei.php:463
+#: classes/class-woothemes-sensei.php:464
+#: classes/class-woothemes-sensei.php:478
+#: classes/class-woothemes-sensei.php:509
 #@ woothemes-sensei
 msgid "course"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:419
+#: classes/class-woothemes-sensei.php:465
 #, php-format
 #@ woothemes-sensei
 msgid "Please complete the previous %1$s before taking this course."
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:435
+#: classes/class-woothemes-sensei.php:481
 #, php-format
 #@ woothemes-sensei
 msgid "Please purchase the %1$s before starting this Lesson."
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:437
+#: classes/class-woothemes-sensei.php:483
 #, php-format
 #@ woothemes-sensei
 msgid "Please sign up for the %1$s before starting this Lesson."
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:456
+#: classes/class-woothemes-sensei.php:502
 #@ woothemes-sensei
 msgid "lesson"
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:457
+#: classes/class-woothemes-sensei.php:503
 #, php-format
 #@ woothemes-sensei
 msgid "Please complete the previous %1$s before taking this Quiz."
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:464
+#: classes/class-woothemes-sensei.php:510
 #, php-format
 #@ woothemes-sensei
 msgid "Please sign up for the %1$s before taking this Quiz."
@@ -1304,7 +1304,7 @@ msgstr ""
 msgid "You must first complete %1$s before taking this Lesson's Quiz"
 msgstr ""
 
-#: templates/content-single-lesson.php:63
+#: templates/content-single-lesson.php:68
 #: templates/single-lesson/lesson-meta.php:213
 #, php-format
 #@ woothemes-sensei
@@ -1317,7 +1317,7 @@ msgid "There is no Quiz for this Lesson yet. Check back soon."
 msgstr ""
 
 #: templates/single-lesson/lesson-meta.php:236
-#: templates/single-quiz/quiz-questions.php:273
+#: templates/single-quiz/quiz-questions.php:289
 #@ woothemes-sensei
 msgid "Back to "
 msgstr ""
@@ -1327,58 +1327,59 @@ msgstr ""
 msgid "Back to the course"
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:56
-#: templates/single-quiz/quiz-questions.php:260
+#: templates/single-quiz/quiz-questions.php:64
+#: templates/single-quiz/quiz-questions.php:275
 #@ woothemes-sensei
 msgid "Complete Quiz"
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:138
-#: templates/single-quiz/quiz-questions.php:261
+#: templates/single-quiz/quiz-questions.php:146
+#: templates/single-quiz/quiz-questions.php:276
 #@ woothemes-sensei
 msgid "Save Quiz"
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:160
+#: templates/single-quiz/quiz-questions.php:168
 #@ woothemes-sensei
 msgid "Quiz Saved Successfully."
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:162
-#: templates/single-quiz/quiz-questions.php:264
+#: templates/single-quiz/quiz-questions.php:170
+#: templates/single-quiz/quiz-questions.php:279
 #@ woothemes-sensei
 msgid "Reset Quiz"
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:175
+#: templates/single-quiz/quiz-questions.php:183
 #@ woothemes-sensei
 msgid "Quiz Reset Successfully."
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:211
+#: templates/single-quiz/quiz-questions.php:221
 #, php-format
 #@ woothemes-sensei
 msgid "Congratulations! You have passed this Quiz achieving %d%%"
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:213
+#: templates/single-quiz/quiz-questions.php:223
+#: templates/single-quiz/quiz-questions.php:228
 #, php-format
 #@ woothemes-sensei
 msgid "You require %1$d%% to pass this Quiz. Your grade is %2$d%%"
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:216
+#: templates/single-quiz/quiz-questions.php:230
 #, php-format
 #@ woothemes-sensei
 msgid "You require %1$d%% to pass this Quiz."
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:268
+#: templates/single-quiz/quiz-questions.php:284
 #@ woothemes-sensei
 msgid "There are no questions for this Quiz yet. Check back soon."
 msgstr ""
 
-#: templates/single-quiz/quiz-questions.php:273
+#: templates/single-quiz/quiz-questions.php:289
 #@ woothemes-sensei
 msgid "Back to the lesson"
 msgstr ""
@@ -1530,22 +1531,22 @@ msgstr ""
 msgid "Prevent the frontend javascript from loading. This affects the progress bars and the My Courses tabs."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:320
+#: classes/class-woothemes-sensei-settings.php:328
 #@ woothemes-sensei
 msgid "Allow Lesson Complete Button"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:321
+#: classes/class-woothemes-sensei-settings.php:329
 #@ woothemes-sensei
 msgid "This will allow learners to complete a Lesson without taking a Quiz. It will display the Complete Lesson button on the Lesson page."
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:328
+#: classes/class-woothemes-sensei-settings.php:336
 #@ woothemes-sensei
 msgid "Disable no Quiz warning"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:329
+#: classes/class-woothemes-sensei-settings.php:337
 #@ woothemes-sensei
 msgid "This will disable the error notice when a Lesson has no Quiz on the Lesson page."
 msgstr ""
@@ -1567,7 +1568,7 @@ msgstr ""
 msgid "Lesson Reset Successfully."
 msgstr ""
 
-#: templates/content-single-lesson.php:63
+#: templates/content-single-lesson.php:68
 #, php-format
 #@ woothemes-sensei
 msgid "You must first complete %1$s before viewing this Lesson"
@@ -1575,6 +1576,21 @@ msgstr ""
 
 #: classes/class-woothemes-sensei-settings.php:116
 #@ woothemes-sensei
-msgid "Users must be logged in to view course & lesson content."
+msgid "Users must be logged in to view Course, Lesson, and Quiz content."
+msgstr ""
+
+#: classes/class-woothemes-sensei-settings.php:320
+#@ woothemes-sensei
+msgid "Randomize Quiz Questions"
+msgstr ""
+
+#: classes/class-woothemes-sensei-settings.php:321
+#@ woothemes-sensei
+msgid "This will randomize the order the questions appear for a Quiz."
+msgstr ""
+
+#: templates/single-quiz/quiz-questions.php:217
+#@ woothemes-sensei
+msgid "You must be logged in to take this Quiz."
 msgstr ""
 
