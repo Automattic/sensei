@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.03.04 - version 1.2.0
+ * In development
+
 2013.03.04 - version 1.1.0
  * assets/chosen/* - added chosen library for improved dropdown usability
  * assets/css/frontend.css - frontend course category meta styling
