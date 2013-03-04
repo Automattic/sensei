@@ -40,6 +40,7 @@ if ( 0 < $total_lessons ) {
     	$lessons_completed = 0;
     	foreach ($course_lessons as $lesson_item){
 
+            $user_lesson_end = '';
     	    if ( is_user_logged_in() ) {
     	    	// Check if Lesson is complete
     	    	$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );

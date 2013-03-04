@@ -141,7 +141,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	function shortcode_all_courses( $atts, $content = null ) {
 
    		global $woothemes_sensei;
-	 	$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   		ob_start();
+		$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+		$content = ob_get_clean();
+		return $content;
 
 	} // End shortcode_all_courses()
 
@@ -160,7 +163,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		$shortcode_override = 'newcourses';
 
-   		$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   		ob_start();
+		$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+		$content = ob_get_clean();
+		return $content;
 
 	} // End shortcode_new_courses()
 
@@ -180,9 +186,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_featured_enable' ] ) && $woothemes_sensei->settings->settings[ 'course_archive_featured_enable' ] ) {
    			$shortcode_override = 'featuredcourses';
-   			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   			ob_start();
+			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+			$content = ob_get_clean();
    		} // End If Statement
-
+   		return $content;
 	} // End shortcode_featured_courses()
 
 
@@ -200,9 +208,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_free_enable' ] ) && $woothemes_sensei->settings->settings[ 'course_archive_free_enable' ] ) {
    			$shortcode_override = 'freecourses';
-   			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   			ob_start();
+			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+			$content = ob_get_clean();
+			return $content;
    		} // End If Statement
-
+   		return $content;
 	} // End shortcode_free_courses()
 
 
@@ -220,9 +231,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_paid_enable' ] ) && $woothemes_sensei->settings->settings[ 'course_archive_paid_enable' ] ) {
    			$shortcode_override = 'paidcourses';
-   			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   			ob_start();
+			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+			$content = ob_get_clean();
+			return $content;
    		} // End If Statement
-
+   		return $content;
 	} // End shortcode_paid_courses()
 
 
@@ -240,7 +254,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		$shortcode_override = 'usercourses'; // V2 - use this when creating the author archive page
 
+   		ob_start();
    		$woothemes_sensei->frontend->sensei_get_template( 'user/my-courses.php' );
+   		$content = ob_get_clean();
+   		return $content;
+
 	} // End shortcode_user_courses()
 
 	/***************************************************************************************************
