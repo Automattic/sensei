@@ -82,7 +82,7 @@ class WooThemes_Sensei_Utils {
 	 * @param array $args (default: array())
 	 * @return void
 	 */
-	public function sensei_log_activity( $args = array() ) {
+	public static function sensei_log_activity( $args = array() ) {
 		// Setup & Prep Data
 		$time = current_time('mysql');
 		// Args
@@ -126,6 +126,9 @@ class WooThemes_Sensei_Utils {
 		} // End If Statement
 		// Manually Flush the Cache
 		wp_cache_flush();
+
+		// TODO - add action here for dev's to hook in to
+
 		if ( 0 < $comment_id ) {
 			return true;
 		} else {
@@ -142,7 +145,7 @@ class WooThemes_Sensei_Utils {
 	 * @param bool $return_comments (default: false)
 	 * @return void
 	 */
-	public function sensei_check_for_activity( $args = array(), $return_comments = false ) {
+	public static function sensei_check_for_activity( $args = array(), $return_comments = false ) {
 		// Get comments
 		$comments = get_comments( $args );
 		// Return comments
@@ -165,7 +168,7 @@ class WooThemes_Sensei_Utils {
 	 * @param array $args (default: array())
 	 * @return void
 	 */
-	public function sensei_activity_ids( $args = array() ) {
+	public static function sensei_activity_ids( $args = array() ) {
 		// Get comments
 		$comments = get_comments( $args );
 		$post_ids = array();
@@ -194,7 +197,7 @@ class WooThemes_Sensei_Utils {
 	 * @param array $args (default: array())
 	 * @return void
 	 */
-	public function sensei_delete_activities( $args = array() ) {
+	public static function sensei_delete_activities( $args = array() ) {
 		$dataset_changes = false;
 		// If activity exists
 		if ( WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $args['post_id'], 'user_id' => $args['user_id'], 'type' => $args['type'] ) ) ) {
@@ -219,7 +222,7 @@ class WooThemes_Sensei_Utils {
 	 * @param array $args (default: array())
 	 * @return void
 	 */
-	public function sensei_get_activity_value( $args = array() ) {
+	public static function sensei_get_activity_value( $args = array() ) {
 		$activity_value = false;
 		if ( isset( $args['user_id'] ) && 0 < intval( $args['user_id'] ) ) {
 			// Get activities
@@ -245,7 +248,7 @@ class WooThemes_Sensei_Utils {
 	 * @param int $product_id
 	 * @return bool
 	 */
-	function sensei_customer_bought_product( $customer_email, $user_id, $product_id ) {
+	public static function sensei_customer_bought_product( $customer_email, $user_id, $product_id ) {
 		global $wpdb;
 
 		$emails = array();

@@ -171,6 +171,7 @@ jQuery(document).ready( function($) {
 	 			var dataToPost = '';
 	 			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
 	 			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
+	 			dataToPost += '&course_category' + '=' + jQuery( '#course-category-options' ).val();
 	 			dataToPost += '&course_title' + '=' + jQuery( '#course-title' ).attr( 'value' );
 	 			dataToPost += '&course_content' + '=' + jQuery( '#course-content' ).attr( 'value' );
 	 			dataToPost += '&action=add';
@@ -192,6 +193,7 @@ jQuery(document).ready( function($) {
 							jQuery( '#lesson-course-details' ).addClass( 'hidden' );
 							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(jQuery( '#course-title' ).attr( 'value' )));
 							jQuery( '#lesson-course-options' ).val( response );
+							jQuery( '#lesson-course-options' ).trigger( 'liszt:updated' );
 	 					} else {
 	 						// TODO - course creation fail message
 	 					}
@@ -305,11 +307,11 @@ jQuery(document).ready( function($) {
 	 		    		var tableCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
 	 		    		var questionId = response;
 	 		    		var addQuestionText = jQuery.fn.htmlentities( jQuery( '#add_question' ).attr( 'value' ) );
-	 		    		var addQuestionRightText = jQuery( '#add_question_right_answer' ).attr( 'value' );
+	 		    		var addQuestionRightText = jQuery.fn.htmlentities( jQuery( '#add_question_right_answer' ).attr( 'value' ) );
 	 		    		var arrayCounter = 0;
 	 		    		var addQuestionWrongText = new Array();
 	 		    		jQuery( '#add-new-question input[name="question_wrong_answers[]"]' ).each( function() {
-	 		    			addQuestionWrongText[arrayCounter] = jQuery(this).attr( 'value' );
+	 		    			addQuestionWrongText[arrayCounter] = jQuery.fn.htmlentities( jQuery(this).attr( 'value' ) );
 	 		    			arrayCounter++;
 	 		    		});
 	 		    		// TODO - Localize the english labels for translation
@@ -432,4 +434,26 @@ jQuery(document).ready( function($) {
 	 	//});
 		}
 	});
+
+	/***************************************************************************************************
+	 * 	5 - Load Chosen Dropdowns.
+	 ***************************************************************************************************/
+
+	// Lessons Write Panel
+	jQuery( '#lesson-complexity-options' ).chosen();
+	jQuery( '#lesson-prerequisite-options' ).chosen();
+	jQuery( '#lesson-course-options' ).chosen();
+	jQuery( '#course-prerequisite-options' ).chosen();
+	jQuery( '#course-woocommerce-product-options' ).chosen();
+	jQuery( '#course-category-options' ).chosen();
+	// Courses Write Panel
+	jQuery( '#course-woocommerce-product-options' ).chosen();
+	jQuery( '#course-prerequisite-options' ).chosen();
+	// Sensei Settings Panel
+	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {
+		if ( !jQuery( this ).hasClass( 'range-input' ) ) {
+			jQuery( this ).chosen();
+		} // End If Statement
+	});
+
 });

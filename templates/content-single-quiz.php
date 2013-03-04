@@ -11,16 +11,13 @@
 ?>
         	<article <?php post_class(); ?>>
 
-                <header>
-
-	                <h1><?php the_title(); ?></h1>
-
-                </header>
+                <?php do_action( 'sensei_quiz_single_title' ); ?>
 
                 <section class="entry fix">
                 	<?php the_content(); ?>
-                	<?php quiz_questions(); ?>
+                	<?php do_action( 'sensei_quiz_questions' ); ?>
 				</section>
 
             </article><!-- .post -->
 
+            <?php do_action('sensei_pagination'); ?>

@@ -108,20 +108,27 @@ class WooThemes_Sensei_Course {
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select name="course_woocommerce_product" class="widefat">' . "\n";
+			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
 			$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_woocommerce_product, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 				} // End For Loop
 			$html .= '</select>' . "\n";
-
-			$html .= '<p>' . "\n";
-				$html .= '<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Add a Product', 'woothemes-sensei' ) . '</a>' . "\n";
-			$html .= '</p>'."\n";
+			if ( current_user_can( 'publish_product' )) {
+				$html .= '<p>' . "\n";
+					$html .= '<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Add a Product', 'woothemes-sensei' ) . '</a>' . "\n";
+				$html .= '</p>'."\n";
+			} // End If Statement
 		} else {
-			$html .= '<p>' . "\n";
-				$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . '&nbsp;<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Please add some first', 'woothemes-sensei' ) . '</a>' . "\n";
-			$html .= '</p>'."\n";
+			if ( current_user_can( 'publish_product' )) {
+				$html .= '<p>' . "\n";
+					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . '&nbsp;<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Please add some first', 'woothemes-sensei' ) . '</a>' . "\n";
+				$html .= '</p>'."\n";
+			} else {
+				$html .= '<p>' . "\n";
+					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . "\n";
+				$html .= '</p>'."\n";
+			} // End If Statement
 		} // End If Statement
 
 		echo $html;
@@ -153,7 +160,7 @@ class WooThemes_Sensei_Course {
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select name="course_prerequisite" class="widefat">' . "\n";
+			$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="widefat">' . "\n";
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -364,6 +371,7 @@ class WooThemes_Sensei_Course {
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
 			$new_columns['course-woocommerce-product'] = _x( 'WooCommerce Product', 'column name', 'woothemes-sensei' );
 		} // End If Statement
+		$new_columns['course-category'] = _x( 'Category', 'column name', 'woothemes-sensei' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
@@ -398,6 +406,14 @@ class WooThemes_Sensei_Course {
 					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true);
 					if ( 0 < absint( $course_woocommerce_product_id ) ) { echo '<a href="' . esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_woocommerce_product_id ) ) ) ) . '">' . get_the_title( absint( $course_woocommerce_product_id ) ) . '</a>'; }
 				} // End If Statement
+			break;
+
+			case 'course-category':
+				$output = get_the_term_list( $id, 'course-category', '', ', ', '' );
+				if ( '' == $output ) {
+					$output = __( 'None', 'woothemes-sensei' );
+				} // End If Statement
+				echo $output;
 			break;
 
 			default:
@@ -462,28 +478,104 @@ class WooThemes_Sensei_Course {
 									);
 				break;
 			case 'freecourses':
-				$post_args = array(	'post_type' 		=> 'course',
+				// Sub Query to get all WooCommerce Products that have Zero price
+				$args = array(
+							   'post_type' => 'product',
+							   'posts_per_page' => -1,
+							   'meta_query' => array(
+							   							array(
+													        'key' => '_price',
+													        'value' => '0',
+													        'compare' => '=',
+													        'type' => 'NUMERIC'
+													       )
+													)
+								);
+ 				$posts = get_posts($args);
+ 				$free_wc_posts = array();
+ 				foreach ( $posts as $post_item ) {
+ 					array_push( $free_wc_posts , $post_item->ID );
+ 				} // End For Loop
+ 				$post_args = array(	'post_type' 		=> 'course',
 									'orderby'         	=> 'date',
     								'order'           	=> 'DESC',
     								'post_status'      	=> 'publish',
-    								'meta_value'		=> '-', /* WC */
-    								'meta_key' 			=> '_course_woocommerce_product',
-    								'meta_compare' 		=> '=',
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
 									);
+ 				if ( 0 < count( $free_wc_posts ) ) {
+ 					$post_args['meta_query'] = array(
+							   							'relation' => 'OR',
+													    array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => '-',
+													        'compare' => '='
+													       ),
+													    array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => $free_wc_posts,
+													        'compare' => 'IN'
+													       )
+													);
+ 				} else {
+ 					$post_args['meta_query'] = array(
+							   							array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => '-',
+													        'compare' => '='
+													       )
+													);
+ 				}
 				break;
 			case 'paidcourses':
+				// Sub Query to get all WooCommerce Products that have price greater than zero
+				$args = array(
+							   'post_type' => 'product',
+							   'posts_per_page' => -1,
+							   'meta_query' => array(
+							   							array(
+													        'key' => '_price',
+													        'value' => '0',
+													        'compare' => '>',
+													        'type' => 'NUMERIC'
+													       )
+													)
+								);
+ 				$posts = get_posts($args);
+ 				$paid_wc_posts = array();
+ 				foreach ( $posts as $post_item ) {
+ 					array_push( $paid_wc_posts , $post_item->ID );
+ 				} // End For Loop
 				$post_args = array(	'post_type' 		=> 'course',
 									'orderby'         	=> 'date',
     								'order'           	=> 'DESC',
     								'post_status'      	=> 'publish',
-    								'meta_value' 		=> '0',
-    								'meta_key' 			=> '_course_woocommerce_product',
-    								'meta_compare' 		=> '>',
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
 									);
+				if ( 0 < count( $paid_wc_posts) ) {
+ 					$post_args['meta_query'] = array(
+							   							'relation' => 'AND',
+													    array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => '0',
+													        'compare' => '>',
+													        'type' => 'NUMERIC'
+													       ),
+													    array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => $paid_wc_posts,
+													        'compare' => 'IN'
+													       )
+													);
+ 				} else {
+ 					$post_args['meta_query'] = array(
+													        'key' => '_course_woocommerce_product',
+													        'value' => '0',
+													        'compare' => '>',
+													        'type' => 'NUMERIC'
+													       );
+ 				}
 				break;
 			case 'featuredcourses':
 				$post_args = array(	'post_type' 		=> 'course',

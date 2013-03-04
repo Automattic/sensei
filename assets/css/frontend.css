@@ -298,6 +298,9 @@ div.course-container div.course {
 section.entry span.course-lesson-count {
   padding-left: 10px;
 }
+section.entry span.course-category {
+  padding-left: 10px;
+}
 section.entry span.course-lesson-progress {
   padding-left: 10px;
 }

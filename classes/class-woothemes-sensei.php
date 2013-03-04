@@ -15,6 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
+ * - run_upgrades()
+ * - set_woocommerce_functionality()
+ * - virtual_order_payment_complete
  * - register_widgets()
  * - load_localisation()
  * - load_plugin_textdomain()
@@ -108,10 +111,29 @@ class WooThemes_Sensei {
 		// WooCommerce Payment Actions
 		add_action( 'woocommerce_payment_complete' , array( &$this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_order_status_completed' , array( &$this, 'sensei_woocommerce_complete_order' ) );
+		// Run Upgrades once the WP functions have loaded
+		if ( is_admin() ) {
+			add_action( 'wp_loaded', array( &$this, 'run_upgrades' ), 10 );
+		} // End If Statement
 	} // End __construct()
 
 	/**
+	 * run_upgrades runs upgrades on sensei
+	 * @since  1.1.0
+	 * @return void
+	 */
+	public function run_upgrades() {
+		// Run updates if administrator
+		if ( current_user_can( 'manage_options' ) ) {
+			require_once( 'class-woothemes-sensei-updates.php' );
+			$this->updates = new WooThemes_Sensei_Updates( $this );
+			$this->updates->update();
+		} // End If Statement
+	} // End run_upgrades()
+
+	/**
 	 * Setup required WooCommerce settings
+	 * @since  1.1.0
 	 * @return void
 	 */
 	public function set_woocommerce_functionality() {
@@ -125,6 +147,7 @@ class WooThemes_Sensei {
 
 	/**
 	 * Change order status with virtual products to completed
+	 * @since  1.1.0
 	 * @param string $order_status
 	 * @param int $order_id
 	 * @return string
@@ -142,30 +165,36 @@ class WooThemes_Sensei {
 						if ( ! $_product->is_virtual() ) {
 							$virtual_order = false;
 							break;
-						}
-					}
-				}
-			}
+						} // End If Statement
+					} // End If Statement
+				} // End For Loop
+			} // End If Statement
 
 			// virtual order, mark as completed
 			if ( $virtual_order ) {
 				return 'completed';
-			}
-		}
+			} // End If Statement
+		} // End If Statement
 		return $order_status;
 	}
+
 	/**
 	 * Register the widgets.
-	 * @return [type] [description]
+	 * @access public
+	 * @since  1.0.0
+	 * @return void
 	 */
 	public function register_widgets () {
-		// Course Component Widget
-		require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-course-component.php' );
-		register_widget( 'WooThemes_Sensei_Course_Component_Widget' );
-
-		// Lesson Component Widget
-		require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-lesson-component.php' );
-		register_widget( 'WooThemes_Sensei_Lesson_Component_Widget' );
+		// Widget List
+		$widget_list = apply_filters( 'sensei_registered_widgets_list', array( 	'course-component' 	=> 'Course_Component',
+																				'lesson-component' 	=> 'Lesson_Component',
+																				'course-categories' => 'Course_Categories',
+																				'category-courses' 	=> 'Category_Courses' )
+									);
+		foreach ( $widget_list as $key => $value ) {
+			require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-' . $key . '.php' );
+			register_widget( 'WooThemes_Sensei_' . $value . '_Widget' );
+		} // End For Loop
 	} // End register_widgets()
 
 	/**
@@ -312,6 +341,12 @@ class WooThemes_Sensei {
 		} elseif ( is_post_type_archive( 'course' ) || is_page( $this->get_page_id( 'courses' ) ) ) {
 
 		    $file 	= 'archive-course.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
+		} elseif( is_tax( 'course-category' ) ) {
+
+			$file 	= 'taxonomy-course-category.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
@@ -557,11 +592,14 @@ class WooThemes_Sensei {
 			// Run through each product ordered
 			if (sizeof($order->get_items())>0) {
 				foreach($order->get_items() as $item) {
+					$product_type = '';
 					if (isset($item['variation_id']) && $item['variation_id'] > 0) {
-						$_product = new WC_Product_Variation( $item['variation_id'] );
+						$item_id = $item['variation_id'];
+						$product_type = 'variation';
 					} else {
-						$_product = new WC_Product( $item['id'] );
+						$item_id = $item['id'];
 					} // End If Statement
+					$_product = sensei_get_woocommerce_product_object( $item_id, $product_type );
 					// Get courses that use the WC product
 					$courses = $this->post_types->course->get_product_courses( $_product->id );
 					// Loop and update those courses

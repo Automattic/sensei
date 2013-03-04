@@ -11,7 +11,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /*-----------------------------------------------------------------------------------*/
 /* Backend Global Stylesheet */
 /*-----------------------------------------------------------------------------------*/
-	
+
 /* Course Menu Icons */
 li.menu-icon-lesson .wp-menu-image img, li.menu-icon-course .wp-menu-image img { display: none; }
 #wpwrap li.menu-icon-course div.wp-menu-image  { background: url(../images/icon_course_16.png) no-repeat left top; width: 20px; height: 16px; margin-left: 7px; margin-top: 5px; }
@@ -39,4 +39,9 @@ a.lesson_question_cancel { text-decoration: underline; }
 #lesson-quiz input[type=text] { margin-bottom: 10px; }
 #lesson-course-details input, #lesson-course-details select { margin-bottom: 10px; }
 tr.question-quick-edit td { padding-bottom: 10px; }
+#add-quiz-main button.add_quiz { margin-left: 5px; }
+/* Chosen styling */
+div.chzn-container { width: 256px !important; margin-bottom: 10px; display: block;}
+div.chzn-drop { width: 254px !important; }
+div.chzn-search input { width: 246px !important; }
 /* Course Write Panel Styling */

@@ -45,6 +45,13 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_after_main_content', array( &$this, 'sensei_output_content_wrapper_end' ), 10 );
 		add_action( 'sensei_pagination', array( &$this, 'sensei_output_content_pagination' ), 10 );
 		add_action( 'sensei_comments', array( &$this, 'sensei_output_comments' ), 10 );
+		add_action( 'sensei_course_single_meta', 'course_single_meta', 10 );
+		add_action( 'sensei_course_single_lessons', 'course_single_lessons', 10 );
+		add_action( 'sensei_lesson_single_meta', 'lesson_single_meta', 10 );
+		add_action( 'sensei_quiz_questions', 'quiz_questions', 10 );
+		add_action( 'sensei_course_single_title', array( &$this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_lesson_single_title', array( &$this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_quiz_single_title', array( &$this, 'sensei_single_title' ), 10 );
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();
@@ -230,6 +237,12 @@ class WooThemes_Sensei_Frontend {
 		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
 		if ( ( is_post_type_archive( 'course' ) || ( is_page( $course_page_id ) ) ) && ( isset( $paged ) && 0 == $paged ) ) {
 			// Do NOT show the pagination
+		} elseif( is_singular('course') ) {
+			$this->sensei_get_template( 'wrappers/pagination-posts.php' );
+		} elseif( is_singular('lesson') ) {
+			$this->sensei_get_template( 'wrappers/pagination-lesson.php' );
+		} elseif( is_singular('quiz') ) {
+			$this->sensei_get_template( 'wrappers/pagination-quiz.php' );
 		} else {
 			$this->sensei_get_template( 'wrappers/pagination.php' );
 		} // End If Statement
@@ -384,6 +397,15 @@ class WooThemes_Sensei_Frontend {
 		} // End If Statement
 	    return $classes;
 	} // End sensei_search_results_classes()
+
+	/**
+	 * sensei_single_title output for single page title
+	 * @since  1.1.0
+	 * @return void
+	 */
+	function sensei_single_title() {
+		?><header><h1><?php the_title(); ?></h1></header><?php
+	} // End sensei_single_title()
 
 } // End Class
 ?>

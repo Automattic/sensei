@@ -82,7 +82,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
    		$more_link_text = esc_html( $woothemes_sensei->settings->settings[ 'course_archive_more_link_text' ] );
    		$html = '<div class="navigation"><div class="nav-next"><a href="' . esc_url( add_query_arg( array( 'paged' => '2', 'action' => $type ), $course_pagination_link ) ). '">' . sprintf( __( '%1$s', 'woothemes-sensei' ), $more_link_text ) . ' <span class="meta-nav">→</span></a></div><div class="nav-previous"></div></div>';
 
-   		return $html;
+   		return apply_filters( 'course_archive_next_link', $html );
 	} // End sensei_course_archive_next_link()
 
 
@@ -96,6 +96,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	function sensei_course_archive_header( $query_type = '') {
 
 		$html = '';
+
+		if ( is_tax( 'course-category' ) ) {
+			global $wp_query;
+			$taxonomy_obj = $wp_query->get_queried_object();
+			$term_id = $taxonomy_obj->term_id;
+			$taxonomy_short_name = $taxonomy_obj->taxonomy;
+			$taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
+			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
+			return apply_filters( 'course_category_archive_title', '<h1>' . $title . '</h>' );
+		} // End If Statement
 
 		switch ( $query_type ) {
 			case 'newcourses':
@@ -116,7 +126,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 		} // End Switch Statement
 
-		return $html;
+		return apply_filters( 'course_archive_title', $html );
 	} // sensei_course_archive_header()
 
 
@@ -131,7 +141,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	function shortcode_all_courses( $atts, $content = null ) {
 
    		global $woothemes_sensei;
-	 	$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   		ob_start();
+		$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+		$content = ob_get_clean();
+		return $content;
 
 	} // End shortcode_all_courses()
 
@@ -150,7 +163,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		$shortcode_override = 'newcourses';
 
-   		$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   		ob_start();
+		$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+		$content = ob_get_clean();
+		return $content;
 
 	} // End shortcode_new_courses()
 
@@ -170,9 +186,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_featured_enable' ] ) && $woothemes_sensei->settings->settings[ 'course_archive_featured_enable' ] ) {
    			$shortcode_override = 'featuredcourses';
-   			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   			ob_start();
+			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+			$content = ob_get_clean();
    		} // End If Statement
-
+   		return $content;
 	} // End shortcode_featured_courses()
 
 
@@ -190,9 +208,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_free_enable' ] ) && $woothemes_sensei->settings->settings[ 'course_archive_free_enable' ] ) {
    			$shortcode_override = 'freecourses';
-   			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   			ob_start();
+			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+			$content = ob_get_clean();
+			return $content;
    		} // End If Statement
-
+   		return $content;
 	} // End shortcode_free_courses()
 
 
@@ -210,9 +231,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_paid_enable' ] ) && $woothemes_sensei->settings->settings[ 'course_archive_paid_enable' ] ) {
    			$shortcode_override = 'paidcourses';
-   			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+   			ob_start();
+			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
+			$content = ob_get_clean();
+			return $content;
    		} // End If Statement
-
+   		return $content;
 	} // End shortcode_paid_courses()
 
 
@@ -230,7 +254,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
    		$shortcode_override = 'usercourses'; // V2 - use this when creating the author archive page
 
+   		ob_start();
    		$woothemes_sensei->frontend->sensei_get_template( 'user/my-courses.php' );
+   		$content = ob_get_clean();
+   		return $content;
+
 	} // End shortcode_user_courses()
 
 	/***************************************************************************************************
@@ -407,7 +435,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     	    $wc_post_id = get_post_meta( $post_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
     	    	// Get the product
-    	    	$product = new WC_Product( $wc_post_id );
+    	    	$product = sensei_get_woocommerce_product_object( $wc_post_id );
     	    	if ( $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
     	    		<span class="course-price"><?php echo $product->get_price_html(); ?></span>
     	    	<?php } // End If Statement
@@ -484,5 +512,64 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		<?php
 		} // End If Statement
 	} // End sensei_reset_lesson_button()
+
+	/**
+	 * sensei_get_prev_next_lessons Returns the next and previous Lessons in the Course
+	 * since 1.0.9
+	 * @param  integer $lesson_id
+	 * @return array $return_values
+	 */
+	function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
+		global $woothemes_sensei;
+		$return_values = array();
+		$return_values['prev_lesson'] = 0;
+		$return_values['next_lesson'] = 0;
+		if ( 0 < $lesson_id ) {
+			// Get the List of Lessons in the Course
+			$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $lesson_course_id );
+			// Index the Lessons
+			if ( 0 < count( $course_lessons ) ) {
+				$found_index = false;
+				foreach ($course_lessons as $lesson_item){
+					if ( $found_index && $return_values['next_lesson'] == 0 ) {
+						$return_values['next_lesson'] = $lesson_item->ID;
+					} // End If Statement
+					if ( $lesson_item->ID == $lesson_id ) {
+						// Is the current post
+						$found_index = true;
+					} // End If Statement
+					if ( !$found_index ) {
+						$return_values['prev_lesson'] = $lesson_item->ID;
+					} // End If Statement
+				} // End For Loop
+			} // End If Statement
+		} // End If Statement
+		return $return_values;
+	} // End sensei_get_prev_next_lessons()
+
+	/**
+	 * sensei_get_woocommerce_product_object Returns the WooCommerce Product Object for pre and post 2.0 installations
+	 * @param  integer $wc_product_id Product ID or Variation ID
+	 * @param  string  $product_type  '' or 'variation'
+	 * @return woocommerce product object $wc_product_object
+	 */
+	function sensei_get_woocommerce_product_object( $wc_product_id = 0, $product_type = '' ) {
+		$wc_product_object = false;
+		if ( 0 < intval( $wc_product_id ) ) {
+			// Get the product
+			if ( function_exists( 'get_product' ) ) {
+				$wc_product_object = get_product( $wc_product_id ); // Post WC 2.0
+			} else {
+				// Pre WC 2.0
+				if ( 'variation' == $product_type ) {
+					$wc_product_object = new WC_Product_Variation( $wc_product_id );
+				} else {
+					$wc_product_object = new WC_Product( $wc_product_id );
+				} // End If Statement
+			} // End If Statement
+		} // End If Statement
+		return $wc_product_object;
+	} // End sensei_get_woocommerce_product_object()
 
 ?>

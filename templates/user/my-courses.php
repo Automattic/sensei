@@ -169,6 +169,9 @@ if ( is_user_logged_in() ) {
 				$lessons_completed++;
 			} // End If Statement
 	    } // End For Loop
+	    // Get Course Categories
+	    $category_output = get_the_term_list( $course_item->ID, 'course-category', '', ', ', '' );
+	    // Build Output
 	    if ( absint( $lessons_completed ) == absint( count( $course_lessons ) ) && ( 0 < absint( count( $course_lessons ) ) ) && ( 0 < absint( $lessons_completed ) ) ) {
 	    	// Course is complete
 	    	$complete_html .= '<article class="' . join( ' ', get_post_class( array( 'course', 'post' ), $course_item->ID ) ) . '">';
@@ -195,6 +198,10 @@ if ( is_user_logged_in() ) {
 
 	    		    	// Lesson count for this author
 	    		    	$complete_html .= '<span class="course-lesson-count">' . $woothemes_sensei->post_types->course->course_author_lesson_count( $course_item->post_author, absint( $course_item->ID ) ) . '&nbsp;' . __( 'Lectures', 'woothemes-sensei' ) . '</span>';
+	    		    	// Course Categories
+	    		    	if ( '' != $category_output ) {
+	    		    		$complete_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';
+	    		    	} // End If Statement
 
 					$complete_html .= '</p>';
 
@@ -238,6 +245,10 @@ if ( is_user_logged_in() ) {
 							$lesson_count = 1;
 						} // End If Statement
 	    		    	$active_html .= '<span class="course-lesson-count">' . $lesson_count . '&nbsp;' . __( 'Lectures', 'woothemes-sensei' ) . '</span>';
+	    		    	// Course Categories
+	    		    	if ( '' != $category_output ) {
+	    		    		$active_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';
+	    		    	} // End If Statement
 						$active_html .= '<span class="course-lesson-progress">' . sprintf( __( '%1$d of %2$d Chapters completed', 'woothemes-sensei' ) , $lessons_completed, $lesson_count  ) . '</span>';
 
 	    		    $active_html .= '</p>';

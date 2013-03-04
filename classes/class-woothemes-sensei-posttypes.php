@@ -15,11 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
+ * - sensei_admin_menu_items()
  * - load_posttype_objects()
  * - setup_course_post_type()
  * - setup_lesson_post_type()
  * - setup_quiz_post_type()
  * - setup_question_post_type()
+ * - setup_course_category_taxonomy()
  * - setup_quiz_type_taxonomy()
  * - setup_post_type_labels_base()
  * - create_post_type_labels()
@@ -30,6 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WooThemes_Sensei_PostTypes {
 	public $token;
 	public $slider_labels;
+	public $role_caps;
 
 	/**
 	 * Constructor
@@ -46,19 +49,42 @@ class WooThemes_Sensei_PostTypes {
 		add_action( 'init', array( &$this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( &$this, 'setup_question_post_type' ), 100 );
 		// Setup Taxonomies
+		add_action( 'init', array( &$this, 'setup_course_category_taxonomy' ), 100 );
 		add_action( 'init', array( &$this, 'setup_quiz_type_taxonomy' ), 100 );
 		// Load Post Type Objects
-		$this->load_posttype_objects( array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) );
+		$default_post_types = array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) ;
+		$this->load_posttype_objects( $default_post_types );
 		// Admin functions
 		if ( is_admin() ) {
+			$this->set_role_cap_defaults( $default_post_types );
 			global $pagenow;
 			if ( ( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) ) {
 				add_filter( 'enter_title_here', array( &$this, 'enter_title_here' ), 10 );
 				add_filter( 'post_updated_messages', array( &$this, 'setup_post_type_messages' ) );
 			} // End If Statement
 		} // End If Statement
+
+		// Menu functions
+		if ( is_admin() ) {
+			add_action('admin_menu', array( &$this, 'sensei_admin_menu_items' ), 10);
+		} // End If Statement
+
 	} // End __construct()
 
+	/**
+	 * sensei_admin_menu_items function.
+	 * @since  1.1.0
+	 * @access public
+	 * @return void
+	 */
+	public function sensei_admin_menu_items() {
+	    global $menu;
+
+	    if ( current_user_can( 'manage_options' ) ) {
+	    	$course_category = add_submenu_page('edit.php?post_type=lesson', __('Course Categories', 'woothemes-sensei'),  __('Course Categories', 'woothemes-sensei') , 'manage_categories', 'edit-tags.php?taxonomy=course-category&post_type=course' );
+	    } // End If Statement
+
+	} // End sensei_admin_menu_items()
 
 	/**
 	 * load_posttype_objects function.
@@ -98,7 +124,32 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_menu' => 'edit.php?post_type=lesson',
 		    'query_var' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', 'course' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
-		    'capability_type' => 'post',
+		    'map_meta_cap' => true,
+		    'capability_type' => 'course',
+		    // 'capabilities' => array(
+						// 				// meta caps (don't assign these to roles)
+						// 				'edit_post'              => 'edit_course',
+						// 				'read_post'              => 'read_course',
+						// 				'delete_post'            => 'delete_course',
+
+						// 				// primitive/meta caps
+						// 				'create_posts'           => 'create_courses',
+
+						// 				// primitive caps used outside of map_meta_cap()
+						// 				'edit_posts'             => 'edit_courses',
+						// 				'edit_others_posts'      => 'edit_others_courses',
+						// 				'publish_posts'          => 'publish_courses',
+						// 				'read_private_posts'     => 'read_private_courses',
+
+						// 				// primitive caps used inside of map_meta_cap()
+						// 				'read'                   => 'read',
+						// 				'delete_posts'           => 'delete_courses',
+						// 				'delete_private_posts'   => 'delete_private_courses',
+						// 				'delete_published_posts' => 'delete_published_courses',
+						// 				'delete_others_posts'    => 'delete_others_courses',
+						// 				'edit_private_posts'     => 'edit_private_courses',
+						// 				'edit_published_posts'   => 'edit_published_courses'
+						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
@@ -132,7 +183,32 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_menu' => true,
 		    'query_var' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_slug', 'lesson' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
-		    'capability_type' => 'post',
+		    'map_meta_cap' => true,
+		    'capability_type' => 'lesson',
+		    // 'capabilities' => array(
+						// 				// meta caps (don't assign these to roles)
+						// 				'edit_post'              => 'edit_lesson',
+						// 				'read_post'              => 'read_lesson',
+						// 				'delete_post'            => 'delete_lesson',
+
+						// 				// primitive/meta caps
+						// 				'create_posts'           => 'create_lessons',
+
+						// 				// primitive caps used outside of map_meta_cap()
+						// 				'edit_posts'             => 'edit_lessons',
+						// 				'edit_others_posts'      => 'edit_others_lessons',
+						// 				'publish_posts'          => 'publish_lessons',
+						// 				'read_private_posts'     => 'read_private_lessons',
+
+						// 				// primitive caps used inside of map_meta_cap()
+						// 				'read'                   => 'read',
+						// 				'delete_posts'           => 'delete_lessons',
+						// 				'delete_private_posts'   => 'delete_private_lessons',
+						// 				'delete_published_posts' => 'delete_published_lessons',
+						// 				'delete_others_posts'    => 'delete_others_lessons',
+						// 				'edit_private_posts'     => 'edit_private_lessons',
+						// 				'edit_published_posts'   => 'edit_published_lessons'
+						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
@@ -162,7 +238,8 @@ class WooThemes_Sensei_PostTypes {
 		    'query_var' => true,
 		    'exclude_from_search' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_slug', 'quiz' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
-		    'capability_type' => 'post',
+		    'map_meta_cap' => true,
+		    'capability_type' => 'quiz',
 		    'has_archive' => false,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
@@ -193,7 +270,8 @@ class WooThemes_Sensei_PostTypes {
 		    'query_var' => true,
 		    'exclude_from_search' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_slug', 'question' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
-		    'capability_type' => 'post',
+		    'map_meta_cap' => true,
+		    'capability_type' => 'question',
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 10, // Below "Pages"
@@ -203,6 +281,40 @@ class WooThemes_Sensei_PostTypes {
 
 		register_post_type( 'question', $args );
 	} // End setup_question_post_type()
+
+	/**
+	 * Setup the "course category" taxonomy, linked to the "course" post type.
+	 * @since  1.1.0
+	 * @return void
+	 */
+	public function setup_course_category_taxonomy () {
+		// "Course Categories" Custom Taxonomy
+		$labels = array(
+			'name' => _x( 'Course Categories', 'taxonomy general name', 'woothemes-sensei' ),
+			'singular_name' => _x( 'Course Category', 'taxonomy singular name', 'woothemes-sensei' ),
+			'search_items' =>  __( 'Search Course Categories', 'woothemes-sensei' ),
+			'all_items' => __( 'All Course Categories', 'woothemes-sensei' ),
+			'parent_item' => __( 'Parent Course Category', 'woothemes-sensei' ),
+			'parent_item_colon' => __( 'Parent Course Category:', 'woothemes-sensei' ),
+			'edit_item' => __( 'Edit Course Category', 'woothemes-sensei' ),
+			'update_item' => __( 'Update Course Category', 'woothemes-sensei' ),
+			'add_new_item' => __( 'Add New Course Category', 'woothemes-sensei' ),
+			'new_item_name' => __( 'New Course Category Name', 'woothemes-sensei' ),
+			'menu_name' => __( 'Course Categories', 'woothemes-sensei' ),
+			'popular_items' => null // Hides the "Popular" section above the "add" form in the admin.
+		);
+
+		$args = array(
+			'hierarchical' => true,
+			'labels' => $labels,
+			'show_ui' => true,
+			'query_var' => true,
+			'show_in_nav_menus' => false,
+			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', 'course-category' ) ) )
+		);
+
+		register_taxonomy( 'course-category', array( 'course' ), $args );
+	} // End setup_course_category_taxonomy()
 
 	/**
 	 * Setup the "quiz type" taxonomy, linked to the "quiz" post type.
@@ -229,7 +341,7 @@ class WooThemes_Sensei_PostTypes {
 		$args = array(
 			'hierarchical' => false,
 			'labels' => $labels,
-			'show_ui' => true, /* TO DO - CHANGE TO FALSE WHEN GOING LIVE */
+			'show_ui' => true, /* TO DO - future releases */
 			'query_var' => true,
 			'show_in_nav_menus' => false,
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', 'quiz-type' ) ) )
@@ -347,6 +459,70 @@ class WooThemes_Sensei_PostTypes {
 		return $title;
 	} // End enter_title_here()
 
+	/**
+	 * Assigns the defaults for each user role capabilities.
+	 *
+	 * @since  1.1.0
+	 * @access public
+	 * @return void
+	 */
+	public function set_role_cap_defaults( $post_types = array() ) {
+
+		foreach ( $post_types as $post_type_item => $post_type_name ) {
+			// Super Admin
+			$this->role_caps[] =  array(	'administrator' 	=> array( 	'edit_' . $post_type_item,
+																			'read_' . $post_type_item,
+																			'delete_' . $post_type_item,
+																			'create_' . $post_type_item . 's',
+																			'edit_' . $post_type_item . 's',
+																			'edit_others_' . $post_type_item . 's',
+																			'publish_' . $post_type_item . 's',
+																			'read_private_' . $post_type_item . 's',
+																			'read',
+																			'delete_' . $post_type_item . 's',
+																			'delete_private_' . $post_type_item . 's',
+																			'delete_published_' . $post_type_item . 's',
+																			'delete_others_' . $post_type_item . 's',
+																			'edit_private_' . $post_type_item . 's',
+																			'edit_published_' . $post_type_item . 's' ),
+											'editor' 			=> array(	'edit_' . $post_type_item,
+																			'read_' . $post_type_item,
+																			'delete_' . $post_type_item,
+																			'create_' . $post_type_item . 's',
+																		 	'edit_' . $post_type_item . 's',
+																			'edit_others_' . $post_type_item . 's',
+																			'publish_' . $post_type_item . 's',
+																			'read_private_' . $post_type_item . 's',
+																			'read',
+																			'delete_' . $post_type_item . 's',
+																			'delete_private_' . $post_type_item . 's',
+																			'delete_published_' . $post_type_item . 's',
+																			'delete_others_' . $post_type_item . 's',
+																			'edit_private_' . $post_type_item . 's',
+																			'edit_published_' . $post_type_item . 's' ),
+											'author' 			=> array( 	'edit_' . $post_type_item,
+																			'read_' . $post_type_item,
+																			'delete_' . $post_type_item,
+																			'create_' . $post_type_item . 's',
+																			'edit_' . $post_type_item . 's',
+																			'publish_' . $post_type_item . 's',
+																			'read',
+																			'delete_' . $post_type_item . 's',
+																			'delete_published_' . $post_type_item . 's',
+																			'edit_published_' . $post_type_item . 's' ),
+											'contributor' 		=> array( 	'edit_' . $post_type_item,
+																			'read_' . $post_type_item,
+																			'delete_' . $post_type_item,
+																			'create_' . $post_type_item . 's',
+																			'edit_' . $post_type_item . 's',
+																			'read',
+																			'delete_' . $post_type_item . 's' ),
+											'subscriber' 		=> array( 	'read' )
+
+										);
+		} // End For Loop
+
+	} // End set_role_cap_defaults()
 
 } // End Class
 ?>
