@@ -27,6 +27,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - sensei_output_comments()
  * - sensei_nav_menu_items()
  * - sensei_nav_menu_item_classes()
+ * - sensei_search_results_classes()
+ * - sensei_single_title()
+ * - sensei_course_image()
+ * - sensei_lesson_image()
+ * - sensei_course_archive_header()
+ * - sensei_course_archive_course_title()
  */
 class WooThemes_Sensei_Frontend {
 	public $token;
@@ -52,6 +58,10 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_course_single_title', array( &$this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_lesson_single_title', array( &$this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_quiz_single_title', array( &$this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_course_image', array( &$this, 'sensei_course_image' ), 10, 3 );
+		add_action( 'sensei_lesson_image', array( &$this, 'sensei_lesson_image' ), 10, 3 );
+		add_action( 'sensei_course_archive_header', array( &$this, 'sensei_course_archive_header' ), 10, 3 );
+		add_action( 'sensei_course_archive_course_title', array( &$this, 'sensei_course_archive_course_title' ), 10, 1 );
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();
@@ -406,6 +416,85 @@ class WooThemes_Sensei_Frontend {
 	function sensei_single_title() {
 		?><header><h1><?php the_title(); ?></h1></header><?php
 	} // End sensei_single_title()
+
+	/**
+	 * sensei_course_image output for course image
+	 * @since  1.2.0
+	 * @return void
+	 */
+	function sensei_course_image( $course_id, $width = '100', $height = '100' ) {
+    	echo $this->course->course_image( $course_id, $width, $height );
+	} // End sensei_course_image()
+
+	/**
+	 * sensei_lesson_image output for lesson image
+	 * @since  1.2.0
+	 * @return void
+	 */
+	function sensei_lesson_image( $lesson_id, $width = '100', $height = '100' ) {
+		echo $this->lesson->lesson_image( $lesson_id, $width, $height );
+	} // End sensei_lesson_image()
+
+	/**
+	 * sensei_course_archive_header function.
+	 *
+	 * @access public
+	 * @since  1.2.0
+	 * @param string $query_type (default: '')
+	 * @return void
+	 */
+	function sensei_course_archive_header( $query_type = '', $before_html = '<header class="archive-header"><h1>', $after_html = '</h1></header>' ) {
+
+		$html = '';
+
+		if ( is_tax( 'course-category' ) ) {
+			global $wp_query;
+			$taxonomy_obj = $wp_query->get_queried_object();
+			$term_id = $taxonomy_obj->term_id;
+			$taxonomy_short_name = $taxonomy_obj->taxonomy;
+			$taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
+			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
+			echo apply_filters( 'course_category_archive_title', $before_html . $title . $after_html );
+			return;
+		} // End If Statement
+
+		switch ( $query_type ) {
+			case 'newcourses':
+				$html .= $before_html . __( 'New Courses', 'woothemes-sensei' ) . $after_html;
+				break;
+			case 'featuredcourses':
+				$html .= $before_html . __( 'Featured Courses', 'woothemes-sensei' ) . $after_html;
+				break;
+			case 'freecourses':
+				$html .= $before_html . __( 'Free Courses', 'woothemes-sensei' ) . $after_html;
+				break;
+			case 'paidcourses':
+				$html .= $before_html . __( 'Paid Courses', 'woothemes-sensei' ) . $after_html;
+				break;
+			default:
+				$html .= $before_html . __( 'Courses', 'woothemes-sensei' ) . $after_html;
+				break;
+
+		} // End Switch Statement
+
+		echo apply_filters( 'course_archive_title', $html );
+	} // sensei_course_archive_header()
+
+	/**
+	 * sensei_course_archive_course_title output for course archive page individual course title
+	 * @since  1.2.0
+	 * @return void
+	 */
+	function sensei_course_archive_course_title( $post_item ) {
+		if ( isset( $post_item->ID ) && ( 0 < $post_item->ID ) ) {
+			$post_id = absint( $post_item->ID );
+    		$post_title = $post_item->post_title;
+		} else {
+			$post_id = get_the_ID();
+    		$post_title = get_the_title();
+		} // End If Statement
+		?><header><h2><a href="<?php echo get_permalink( $post_id ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a></h2></header><?php
+	} // End sensei_course_archive_course_title()
 
 } // End Class
 ?>

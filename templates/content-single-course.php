@@ -33,10 +33,7 @@ if ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && !$wo
 
         	<article <?php post_class( array( 'course', 'post' ) ); ?>>
 
-				<?php
-    			// Image
-    			echo  $woothemes_sensei->post_types->course->course_image( $post->ID );
-    			?>
+				<?php do_action( 'sensei_course_image', $post->ID ); ?>
 
                 <?php do_action( 'sensei_course_single_title' ); ?>
 

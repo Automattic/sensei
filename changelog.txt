@@ -1,7 +1,19 @@
 *** Sensei Changelog ***
 
-2013.03.04 - version 1.2.0
+2013.03.05 - version 1.2.0
  * In development
+ * /classes/class-woothemes-sensei-frontend.php - new hooks for frontend use
+ * /inc/woothemes-sensei-template.php - removes old functions
+ * /templates/archive-course.php - fixes shortcode issues on paginated pages
+ * /templates/content-no-permissions.php - uses new frontend hooks
+ * /templates/content-single-course.php - uses new frontend hooks
+ * /templates/content-single-lesson.php - uses new frontend hooks
+ * /templates/content-loop-course.php - uses new frontend hooks
+ * /templates/content-loop-lesson.php - uses new frontend hooks
+ * /templates/content-taxonomy-course-category.php - uses new frontend hooks
+ * /widgets/widget-woothemes-sensei-category-courses.php - uses new frontend hooks
+ * /widgets/widget-woothemes-sensei-course-component.php - uses new frontend hooks
+ * /widgets/widget-woothemes-sensei-lesson-component.php - uses new frontend hooks
 
 2013.03.04 - version 1.1.0
  * assets/chosen/* - added chosen library for improved dropdown usability

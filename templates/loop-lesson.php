@@ -34,11 +34,10 @@ global $woothemes_sensei, $post, $wp_query;
  			?>
 
 			<article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ); ?>">
-    			<?php
-    			// Image
-    			echo  $woothemes_sensei->post_types->lesson->lesson_image( $post_id );
-    			?>
-    			<header>
+
+                <?php do_action( 'sensei_lesson_image', $post_id ); ?>
+
+                <header>
     				<h2><a href="<?php echo get_permalink( $post_id ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a></h2>
     			</header>
 
