@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei v1.1.0\n"
+"Project-Id-Version: Sensei v1.1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-03-04 07:38:21+0000\n"
+"PO-Revision-Date: 2013-03-10 21:05:29+0000\n"
 "Last-Translator: Matt <matt@woothemes.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1562,13 +1562,13 @@ msgstr ""
 msgid "This will disable the error notice when a Lesson has no Quiz on the Lesson page."
 msgstr ""
 
-#: inc/woothemes-sensei-template.php:493
+#: inc/woothemes-sensei-template.php:494
 #: templates/single-lesson/lesson-meta.php:48
 #@ woothemes-sensei
 msgid "Complete Lesson"
 msgstr ""
 
-#: inc/woothemes-sensei-template.php:510
+#: inc/woothemes-sensei-template.php:511
 #: templates/single-lesson/lesson-meta.php:118
 #@ woothemes-sensei
 msgid "Reset Lesson"
