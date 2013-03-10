@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2013.03.10 - version 1.1.1
+ * classes/class-woothemes-sensei.php - modify function call to use global object, added new product object function
+ * inc/woothemes-sensei-template.php - modify function call to use global object, removed old function
+ * templates/woocommerce/add-to-cart.php - modify function call to use global object
+
 2013.03.04 - version 1.1.0
  * assets/chosen/* - added chosen library for improved dropdown usability
  * assets/css/frontend.css - frontend course category meta styling

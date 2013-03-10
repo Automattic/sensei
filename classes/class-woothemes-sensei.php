@@ -574,7 +574,7 @@ class WooThemes_Sensei {
 
 	/**
 	 * sensei_woocommerce_complete_order description
-	 * since 1.0.3
+	 * @since 1.0.3
 	 * @param  int $order_id WC order ID
 	 * @return void
 	 */
@@ -599,7 +599,7 @@ class WooThemes_Sensei {
 					} else {
 						$item_id = $item['id'];
 					} // End If Statement
-					$_product = sensei_get_woocommerce_product_object( $item_id, $product_type );
+					$_product = $this->sensei_get_woocommerce_product_object( $item_id, $product_type );
 					// Get courses that use the WC product
 					$courses = $this->post_types->course->get_product_courses( $_product->id );
 					// Loop and update those courses
@@ -610,6 +610,31 @@ class WooThemes_Sensei {
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_woocommerce_complete_order()
+
+	/**
+	 * sensei_get_woocommerce_product_object Returns the WooCommerce Product Object for pre and post 2.0 installations
+	 * @since  1.1.1
+	 * @param  integer $wc_product_id Product ID or Variation ID
+	 * @param  string  $product_type  '' or 'variation'
+	 * @return woocommerce product object $wc_product_object
+	 */
+	function sensei_get_woocommerce_product_object( $wc_product_id = 0, $product_type = '' ) {
+		$wc_product_object = false;
+		if ( 0 < intval( $wc_product_id ) ) {
+			// Get the product
+			if ( function_exists( 'get_product' ) ) {
+				$wc_product_object = get_product( $wc_product_id ); // Post WC 2.0
+			} else {
+				// Pre WC 2.0
+				if ( 'variation' == $product_type ) {
+					$wc_product_object = new WC_Product_Variation( $wc_product_id );
+				} else {
+					$wc_product_object = new WC_Product( $wc_product_id );
+				} // End If Statement
+			} // End If Statement
+		} // End If Statement
+		return $wc_product_object;
+	} // End sensei_get_woocommerce_product_object()
 
 } // End Class
 ?>
