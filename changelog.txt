@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2013.03.11 - version 1.1.2
+ * classes/class-woothemes-sensei-utils.php - fix to check if product was purchased
+ * classes/class-woothemes-sensei.php - fix for checking product id
+
 2013.03.10 - version 1.1.1
  * classes/class-woothemes-sensei.php - modify function call to use global object, added new product object function
  * inc/woothemes-sensei-template.php - modify function call to use global object, removed old function

@@ -160,7 +160,7 @@ class WooThemes_Sensei {
 
 			if ( count( $order->get_items() ) > 0 ) {
 				foreach( $order->get_items() as $item ) {
-					if ( $item['id'] > 0 ) {
+					if ( $item['product_id'] > 0 ) {
 						$_product = $order->get_product_from_item( $item );
 						if ( ! $_product->is_virtual() ) {
 							$virtual_order = false;
@@ -597,7 +597,7 @@ class WooThemes_Sensei {
 						$item_id = $item['variation_id'];
 						$product_type = 'variation';
 					} else {
-						$item_id = $item['id'];
+						$item_id = $item['product_id'];
 					} // End If Statement
 					$_product = $this->sensei_get_woocommerce_product_object( $item_id, $product_type );
 					// Get courses that use the WC product
