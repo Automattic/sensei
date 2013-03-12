@@ -297,7 +297,7 @@ class WooThemes_Sensei_Frontend {
 					if ( is_page( $course_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= '<li class="courses' . $classes . '"><a href="'. get_permalink( $course_page_id ) .'">'.__('Courses', 'woothemes-sensei').'</a></li>';
+					$items .= apply_filters( 'sensei_course_page_menu_link', '<li class="courses' . $classes . '"><a href="'. get_permalink( $course_page_id ) .'">'.__('Courses', 'woothemes-sensei').'</a></li>' );
 				} // End If Statement
 				// Lesson Archive Link
 				if ( !strstr( $items, get_post_type_archive_link( 'lesson' ) ) ) {
@@ -305,7 +305,7 @@ class WooThemes_Sensei_Frontend {
 					if ( is_post_type_archive( 'lesson' ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">'.__('Lessons', 'woothemes-sensei').'</a></li>';
+					$items .= apply_filters( 'sensei_lesson_archive_page_menu_link', '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">'.__('Lessons', 'woothemes-sensei').'</a></li>' );
 				} // End If Statement
 				// My Courses Page Link
 				if ( 0 < $my_account_page_id && is_user_logged_in() && !strstr( $items, get_permalink( $my_account_page_id ) ) ) {
@@ -313,10 +313,10 @@ class WooThemes_Sensei_Frontend {
 					if ( is_page( $my_account_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Courses', 'woothemes-sensei').'</a></li>';
+					$items .= apply_filters( 'sensei_my_account_page_menu_link', '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Courses', 'woothemes-sensei').'</a></li>' );
 				} // End If Statement
 				// Logout Link
-				$items .= '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">'.__('Logout', 'woothemes-sensei').'</a></li>';
+				$items .= apply_filters( 'sensei_logout_menu_link', '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">'.__('Logout', 'woothemes-sensei').'</a></li>' );
 			} else {
 				// Course Page Link
 				if ( 0 < $course_page_id && !strstr( $items, get_permalink( $course_page_id ) ) ) {
@@ -324,7 +324,7 @@ class WooThemes_Sensei_Frontend {
 					if ( is_page( $course_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= '<li class="courses' . $classes . '"><a href="'. get_permalink( $course_page_id ) .'">'.__('Courses', 'woothemes-sensei').'</a></li>';
+					$items .= apply_filters( 'sensei_course_page_menu_link', '<li class="courses' . $classes . '"><a href="'. get_permalink( $course_page_id ) .'">'.__('Courses', 'woothemes-sensei').'</a></li>' );
 				} // End If Statement
 				// Lesson Archive Link
 				if ( !strstr( $items, get_post_type_archive_link( 'lesson' ) ) ) {
@@ -332,7 +332,7 @@ class WooThemes_Sensei_Frontend {
 					if ( is_post_type_archive( 'lesson' ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">'.__('Lessons', 'woothemes-sensei').'</a></li>';
+					$items .= apply_filters( 'sensei_lesson_archive_page_menu_link', '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">'.__('Lessons', 'woothemes-sensei').'</a></li>' );
 				} // End If Statement
 				// My Courses Page Link
 				if ( 0 < $my_account_page_id && is_user_logged_in() && !strstr( $items, get_permalink( $my_account_page_id ) ) ) {
@@ -340,20 +340,20 @@ class WooThemes_Sensei_Frontend {
 					if ( is_page( $my_account_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Courses', 'woothemes-sensei').'</a></li>';
+					$items .= apply_filters( 'sensei_my_account_page_menu_link', '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Courses', 'woothemes-sensei').'</a></li>' );
 				} // End If Statement
 				// Logout Link
 				if ( is_user_logged_in() && !strstr( $items, wp_logout_url( home_url() ) ) ) {
-					$items .= '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">'.__('Logout', 'woothemes-sensei').'</a></li>';
+					$items .= apply_filters( 'sensei_logout_menu_link', '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">'.__('Logout', 'woothemes-sensei').'</a></li>' );
 				} else {
 					// Login Link
-					$items .= '<li class="login"><a href="'. wp_login_url( home_url() ) .'">'.__('Login', 'woothemes-sensei').'</a></li>';
+					$items .= apply_filters( 'sensei_login_menu_link', '<li class="login"><a href="'. wp_login_url( home_url() ) .'">'.__('Login', 'woothemes-sensei').'</a></li>' );
 				} // End If Statement
 			} // End If Statement
 
 		} // End If Statement
 
-	    return $items;
+	    return apply_filters( 'sensei_custom_menu_links', $items );
 	} // End sensei_nav_menu_items()
 
 
