@@ -33,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - check_user_permissions()
  * - access_settings()
  * - sensei_woocommerce_complete_order()
+ * - load_class()
  */
 class WooThemes_Sensei {
 	public $admin;
@@ -67,14 +68,14 @@ class WooThemes_Sensei {
 		// Run this on activation.
 		register_activation_hook( $this->file, array( &$this, 'activation' ) );
 		// Load the Utils class.
-		require_once( 'class-woothemes-sensei-utils.php' );
+		$this->load_class( 'utils' );
 		// Setup post types.
-		require_once( 'class-woothemes-sensei-posttypes.php' );
+		$this->load_class( 'posttypes' );
 		$this->post_types = new WooThemes_Sensei_PostTypes();
 		$this->post_types->token = 'woothemes-sensei-posttypes';
 		// Setup settings screen.
-		require_once( 'class-woothemes-sensei-settings-api.php' );
-		require_once( 'class-woothemes-sensei-settings.php' );
+		$this->load_class( 'settings-api' );
+		$this->load_class( 'settings' );
 		$this->settings = new WooThemes_Sensei_Settings();
 		$this->settings->token = 'woothemes-sensei-settings';
 		// Setup Admin Settings data
@@ -88,16 +89,16 @@ class WooThemes_Sensei {
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
-			require_once( 'class-woothemes-sensei-admin.php' );
+			$this->load_class( 'admin' );
 			$this->admin = new WooThemes_Sensei_Admin( $file );
 			$this->admin->token = $this->token;
 			// Load Analysis Reports
-			require_once( 'class-woothemes-sensei-analysis.php' );
+			$this->load_class( 'analysis' );
 			$this->analysis = new WooThemes_Sensei_Analysis( $file );
 			$this->analysis->token = $this->token;
 		} else {
 			// Load Frontend Class
-			require_once( 'class-woothemes-sensei-frontend.php' );
+			$this->load_class( 'frontend' );
 			$this->frontend = new WooThemes_Sensei_Frontend();
 			$this->frontend->token = $this->token;
 			$this->frontend->init();
@@ -125,7 +126,7 @@ class WooThemes_Sensei {
 	public function run_upgrades() {
 		// Run updates if administrator
 		if ( current_user_can( 'manage_options' ) ) {
-			require_once( 'class-woothemes-sensei-updates.php' );
+			$this->load_class( 'updates' );
 			$this->updates = new WooThemes_Sensei_Updates( $this );
 			$this->updates->update();
 		} // End If Statement
@@ -610,6 +611,17 @@ class WooThemes_Sensei {
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_woocommerce_complete_order()
+
+	/**
+	 * load_class loads in class files
+	 * @since  1.1.3
+	 * @return void
+	 */
+	public function load_class( $class_name = '' ) {
+		if ( '' != $class_name && '' != $this->token ) {
+			require_once( 'class-' . $this->token . '-' . $class_name . '.php' );
+		} // End If Statement
+	} // End load_class()
 
 } // End Class
 ?>

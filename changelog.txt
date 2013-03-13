@@ -2,7 +2,12 @@
 
 2013.03.05 - version 1.2.0
  * In development
+ * /classes/class-woothemes-sensei.php - refactor for loading of classes
+ * /classes/class-woothemes-sensei-analysis.php - refactor to use List Tables class
+ * /classes/class-woothemes-sensei-analysis-overview.php - new class to handle Analysis Overview
  * /classes/class-woothemes-sensei-frontend.php - new hooks for frontend use
+ * /classes/class-woothemes-sensei-list-table.php - new list table class to handle data tables
+ * /classes/class-woothemes-sensei-posttypes.php - refactor for loading of classes
  * /inc/woothemes-sensei-template.php - removes old functions
  * /templates/archive-course.php - fixes shortcode issues on paginated pages
  * /templates/content-no-permissions.php - uses new frontend hooks
