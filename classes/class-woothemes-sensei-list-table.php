@@ -46,6 +46,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		$this->token = $token;
 		$this->columns = array();
 		$this->sortable_columns = array();
+		$this->hidden_columns = array();
 		$this->per_page = 10;
 		parent::__construct( array(
 									'singular'=> 'wp_list_table_' . $this->token, // Singular label
@@ -143,7 +144,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public function prepare_items() {
 		// Register Columns
 		$columns = $this->get_columns();
-		$hidden = array();
+		$hidden = $this->hidden_columns;
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array($columns, $hidden, $sortable);
 		// Get Table Data and build Pagination

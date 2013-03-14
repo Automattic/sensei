@@ -97,7 +97,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			} // End If Statement
 			$user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
 			// Output the users data
-			array_push( $return_array, array( 	'user_login' => $user_item->user_login,
+			array_push( $return_array, array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a>',
 												'user_registered' => $user_item->user_registered,
 												'user_active_courses' => ( count( $user_courses_started ) - count( $user_courses_ended ) ),
 												'user_completed_courses' => count( $user_courses_ended ),
