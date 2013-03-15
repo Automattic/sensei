@@ -181,7 +181,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			if ( 0 < intval( $title_keyword_count ) ) {
 				// Course Completions
 				$course_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_item->ID, 'type' => 'sensei_course_end' ), true );
-				$course_completions = intval( count( $completions ) );
+				$course_completions = intval( count( $course_completions ) );
 				// Course Students
 				$course_students = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_item->ID, 'type' => 'sensei_course_start' ), true );
 				$course_students = intval( count( $course_students ) );

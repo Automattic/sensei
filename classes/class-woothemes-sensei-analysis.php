@@ -318,7 +318,7 @@ class WooThemes_Sensei_Analysis {
 	 */
 	public function analysis_headers( $args = array( 'nav' => 'default' ) ) {
 		$function = 'analysis_' . $args['nav'] . '_nav';
-		call_user_method( $function, $this );
+		$this->$function();
 	} // End analysis_headers()
 
 	/**

@@ -138,7 +138,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 	 * @return void
 	 */
 	public function no_items() {
-  		_e( 'No learners found.', 'woothemes-sensei' );
+  		_e( 'No courses found.', 'woothemes-sensei' );
 	} // End no_items()
 
 	public function course_data_table_header() {
