@@ -72,6 +72,7 @@ class WooThemes_Sensei_Analysis {
 		$woothemes_sensei->load_class( 'analysis-overview' );
 		$woothemes_sensei->load_class( 'analysis-user-profile' );
 		$woothemes_sensei->load_class( 'analysis-course' );
+		$woothemes_sensei->load_class( 'analysis-lesson' );
 	} // End load_data_table_files()
 
 	/**
@@ -82,12 +83,20 @@ class WooThemes_Sensei_Analysis {
 	 */
 	public function analysis_page() {
 		global $woothemes_sensei;
-		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) && isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
+		if ( isset( $_GET['lesson_id'] ) && 0 < intval( $_GET['lesson_id'] ) ) {
+			$this->analysis_lesson_users_view();
+		} elseif ( isset( $_GET['user'] ) && -1 == intval( $_GET['user'] ) && isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
+			$this->analysis_course_users_view();
+		} elseif ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) && isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
 			$this->analysis_user_course_view();
 		} elseif( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
 			$this->analysis_course_view();
 		} elseif ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 			$this->analysis_user_profile_view();
+		} elseif( isset( $_GET['course_id'] ) && -1 == intval( $_GET['course_id'] ) ) {
+			$this->analysis_default_view( 'courses' );
+		} elseif( isset( $_GET['lesson_id'] ) && -1 == intval( $_GET['lesson_id'] ) ) {
+			$this->analysis_default_view( 'lessons' );
 		} else {
 			$this->analysis_default_view();
 		} // End If Statement
@@ -98,11 +107,11 @@ class WooThemes_Sensei_Analysis {
 	 * @since  1.1.3
 	 * @return void
 	 */
-	public function analysis_default_view() {
+	public function analysis_default_view( $type = '' ) {
 		global $woothemes_sensei;
 		// Load Analysis data
 		$this->load_data_table_files();
-		$sensei_analysis_overview = new WooThemes_Sensei_Analysis_Overview_List_Table();
+		$sensei_analysis_overview = new WooThemes_Sensei_Analysis_Overview_List_Table( $type );
 		$sensei_analysis_overview->prepare_items();
 		$sensei_analysis_overview->load_stats();
 		// Wrappers
@@ -205,6 +214,58 @@ class WooThemes_Sensei_Analysis {
 	} // End analysis_user_course_view()
 
 	/**
+	 * analysis_course_users_view user individual course view for analysis page
+	 * @since  1.1.3
+	 * @return void
+	 */
+	public function analysis_course_users_view() {
+		global $woothemes_sensei;
+		// Load Analysis data
+		$this->load_data_table_files();
+		$sensei_analysis_course_users = new WooThemes_Sensei_Analysis_Course_List_Table( intval( $_GET['course_id'] ), -1 );
+		$sensei_analysis_course_users->prepare_items();
+		$sensei_analysis_course_users->load_stats();
+		// Wrappers
+		do_action( 'analysis_before_container' );
+		do_action( 'analysis_wrapper_container', 'top' );
+		$this->analysis_headers( array( 'nav' => 'course_users' ) );
+		?><div id="poststuff" class="sensei-analysis-wrap course-profile">
+				<div class="sensei-analysis-main">
+					<?php $sensei_analysis_course_users->display(); ?>
+				</div>
+			</div>
+		<?php
+		do_action( 'analysis_wrapper_container', 'bottom' );
+		do_action( 'analysis_after_container' );
+	} // End analysis_course_users_view()
+
+	/**
+	 * analysis_lesson_users_view user individual course view for analysis page
+	 * @since  1.1.3
+	 * @return void
+	 */
+	public function analysis_lesson_users_view() {
+		global $woothemes_sensei;
+		// Load Analysis data
+		$this->load_data_table_files();
+		$sensei_analysis_lesson_users = new WooThemes_Sensei_Analysis_Lesson_List_Table( intval( $_GET['lesson_id'] ) );
+		$sensei_analysis_lesson_users->prepare_items();
+		$sensei_analysis_lesson_users->load_stats();
+		// Wrappers
+		do_action( 'analysis_before_container' );
+		do_action( 'analysis_wrapper_container', 'top' );
+		$this->analysis_headers( array( 'nav' => 'lesson_users' ) );
+		?><div id="poststuff" class="sensei-analysis-wrap course-profile">
+				<div class="sensei-analysis-main">
+					<?php $sensei_analysis_lesson_users->display(); ?>
+				</div>
+			</div>
+		<?php
+		do_action( 'analysis_wrapper_container', 'bottom' );
+		do_action( 'analysis_after_container' );
+	} // End analysis_lesson_users_view()
+
+	/**
 	 * enqueue_scripts function.
 	 *
 	 * @description Load in JavaScripts where necessary.
@@ -277,10 +338,12 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_default_nav() {
 		global $woothemes_sensei;
 		?><?php screen_icon( 'woothemes-sensei' ); ?>
-			<h2><?php echo esc_html( $this->name ); ?></h2>
+			<h2><?php echo esc_html( $this->name ); ?><?php if ( isset( $_GET['course_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . __( 'Courses', 'woothemes-sensei' ); } ?><?php if ( isset( $_GET['lesson_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . __( 'Courses', 'woothemes-sensei' ); } ?></h2>
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<ul class="subsubsub">
-				<li><a href="admin.php?page=sensei_analysis" class="current"><?php _e( 'Overview', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis' ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( !isset( $_GET['course_id'] ) && !isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Overview', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['course_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Courses', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis', 'lesson_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Lessons', 'woothemes-sensei' ); ?></a></li>
 			</ul>
 			<br class="clear"><?php
 	}
@@ -312,6 +375,31 @@ class WooThemes_Sensei_Analysis {
 		if ( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
 			?><?php screen_icon( 'woothemes-sensei' ); ?>
 			<h2><?php echo esc_html( $this->name ) . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ); ?></h2>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<br class="clear"><?php
+		} // End If Statement
+	}
+
+	public function analysis_course_users_nav() {
+		global $woothemes_sensei;
+		if ( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
+			?><?php screen_icon( 'woothemes-sensei' ); ?>
+			<h2><?php echo esc_html( $this->name ) . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ); ?></h2>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<br class="clear"><?php
+		} // End If Statement
+	}
+
+	public function analysis_lesson_users_nav() {
+		global $woothemes_sensei;
+		if ( isset( $_GET['lesson_id'] ) && 0 < intval( $_GET['lesson_id'] ) ) {
+			$course_id = intval( get_post_meta( intval( $_GET['lesson_id'] ), '_lesson_course', true ) );
+			$course_title = '';
+			if ( 0 < $course_id ) {
+				$course_title = '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( $course_id );
+			} // End If Statement
+			?><?php screen_icon( 'woothemes-sensei' ); ?>
+			<h2><?php echo esc_html( $this->name ) . $course_title . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['lesson_id'] ) ); ?></h2>
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<br class="clear"><?php
 		} // End If Statement
