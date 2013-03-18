@@ -1,10 +1,14 @@
 *** Sensei Changelog ***
 
 2013.03.18 - version 1.2.0
+ * /assets/css/settings.css - styling changes for Analysis
  * /classes/class-woothemes-sensei.php - refactor for loading of classes
- * /classes/class-woothemes-sensei-analysis.php - refactor to use List Tables class
+ * /classes/class-woothemes-sensei-analysis.php - refactor to use List Tables class, output functions for new Analysis areas, added export capability for Analysis tables
+ * /classes/class-woothemes-sensei-analysis-course.php - new class to handle Analysis Courses
+ * /classes/class-woothemes-sensei-analysis-lesson.php - new class to handle Analysis Lessons
  * /classes/class-woothemes-sensei-analysis-overview.php - new class to handle Analysis Overview
- * /classes/class-woothemes-sensei-frontend.php - new hooks for frontend use
+ * /classes/class-woothemes-sensei-analysis-user-profile.php - new class to handle Analysis User Overview
+ * /classes/class-woothemes-sensei-frontend.php - new hooks for frontend use, filters for custom nav menu items
  * /classes/class-woothemes-sensei-list-table.php - new list table class to handle data tables
  * /classes/class-woothemes-sensei-posttypes.php - refactor for loading of classes
  * /inc/woothemes-sensei-template.php - removes old functions
