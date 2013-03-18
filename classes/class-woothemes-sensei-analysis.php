@@ -86,12 +86,16 @@ class WooThemes_Sensei_Analysis {
 	 */
 	public function load_data_table_files() {
 		global $woothemes_sensei;
-		// Load Analysis Reports
-		$woothemes_sensei->load_class( 'list-table' );
-		$woothemes_sensei->load_class( 'analysis-overview' );
-		$woothemes_sensei->load_class( 'analysis-user-profile' );
-		$woothemes_sensei->load_class( 'analysis-course' );
-		$woothemes_sensei->load_class( 'analysis-lesson' );
+		// Load Analysis Classes
+		$classes_to_load = array(	'list-table',
+									'analysis-overview',
+									'analysis-user-profile',
+									'analysis-course',
+									'analysis-lesson'
+									);
+		foreach ( $classes_to_load as $class_file ) {
+			$woothemes_sensei->load_class( $class_file );
+		} // End For Loop
 	} // End load_data_table_files()
 
 	/**
