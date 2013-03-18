@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Sensei Analysis User Profile List Table Class
  *
- * All functionality pertaining to the Admin Analysis Overview Data Table in Sensei.
+ * All functionality pertaining to the Admin Analysis User Profile Data Table in Sensei.
  *
  * @package WordPress
  * @subpackage Sensei
@@ -19,17 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - load_stats()
  * - stats_boxes()
  * - no_items()
+ * - data_table_header()
  */
 class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Table {
-	public $token;
 	public $user_id;
-	public $user_count;
-	public $total_courses;
-	public $total_lessons;
-	public $total_average_grade;
-	public $total_courses_started;
-	public $total_courses_ended;
-	public $average_courses_per_learner;
 
 	/**
 	 * Constructor
@@ -60,7 +53,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 			'course_grade'
 		);
 		// Actions
-		add_action( 'sensei_before_list_table', array( &$this, 'course_data_table_header' ) );
+		add_action( 'sensei_before_list_table', array( &$this, 'data_table_header' ) );
 	} // End __construct()
 
 	/**
@@ -124,6 +117,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 
 	/**
 	 * stats_boxes loads which stats boxes to render
+	 * @since  1.1.3
 	 * @return $stats_to_render array of stats boxes and values
 	 */
 	public function stats_boxes () {
@@ -141,7 +135,12 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
   		_e( 'No courses found.', 'woothemes-sensei' );
 	} // End no_items()
 
-	public function course_data_table_header() {
+	/**
+	 * course_data_table_header output for table heading
+	 * @since  1.1.3
+	 * @return void
+	 */
+	public function data_table_header() {
 		echo '<strong>' . __( 'Courses', 'woothemes-sensei' ) . '</strong>';
 	}
 
