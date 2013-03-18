@@ -388,7 +388,7 @@ class WooThemes_Sensei_PostTypes {
 		    'not_found' =>  sprintf( __( 'No %s found', 'woothemes-sensei' ), strtolower( $plural ) ),
 		    'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'woothemes-sensei' ), strtolower( $plural ) ),
 		    'parent_item_colon' => '',
-		    'menu_name' => $menu
+		    'menu_name' => sprintf( __( '%s', 'woothemes-sensei' ), $menu )
 		  );
 
 		return $labels;

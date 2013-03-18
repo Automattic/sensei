@@ -386,12 +386,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 * @return void
 	 */
 	function sensei_simple_course_price( $post_id ) {
+		global $woothemes_sensei;
 		//WooCommerce Pricing
     	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
     	    $wc_post_id = get_post_meta( $post_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
     	    	// Get the product
-    	    	$product = sensei_get_woocommerce_product_object( $wc_post_id );
+    	    	$product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
     	    	if ( $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
     	    		<span class="course-price"><?php echo $product->get_price_html(); ?></span>
     	    	<?php } // End If Statement
@@ -503,29 +504,5 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		} // End If Statement
 		return $return_values;
 	} // End sensei_get_prev_next_lessons()
-
-	/**
-	 * sensei_get_woocommerce_product_object Returns the WooCommerce Product Object for pre and post 2.0 installations
-	 * @param  integer $wc_product_id Product ID or Variation ID
-	 * @param  string  $product_type  '' or 'variation'
-	 * @return woocommerce product object $wc_product_object
-	 */
-	function sensei_get_woocommerce_product_object( $wc_product_id = 0, $product_type = '' ) {
-		$wc_product_object = false;
-		if ( 0 < intval( $wc_product_id ) ) {
-			// Get the product
-			if ( function_exists( 'get_product' ) ) {
-				$wc_product_object = get_product( $wc_product_id ); // Post WC 2.0
-			} else {
-				// Pre WC 2.0
-				if ( 'variation' == $product_type ) {
-					$wc_product_object = new WC_Product_Variation( $wc_product_id );
-				} else {
-					$wc_product_object = new WC_Product( $wc_product_id );
-				} // End If Statement
-			} // End If Statement
-		} // End If Statement
-		return $wc_product_object;
-	} // End sensei_get_woocommerce_product_object()
 
 ?>

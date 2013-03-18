@@ -264,18 +264,20 @@ class WooThemes_Sensei_Utils {
 		if ( sizeof( $emails ) == 0 )
 			return false;
 
-		$orders = $wpdb->get_col( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE ( meta_key = '_billing_email' AND meta_value IN ( '" . implode( "','", array_unique( $emails ) ) . "' ) ) OR ( meta_key = '_customer_user' AND meta_value = %s AND meta_value > 0 )", $user_id ) );
-
+		$orders = get_posts( array(
+		    'numberposts' => -1,
+		    'meta_key'    => '_customer_user',
+		    'meta_value'  => $user_id,
+		    'post_type'   => 'shop_order',
+		    'post_status' => 'publish'
+		) );
+		
 		foreach ( $orders as $order_id ) {
-
-			$items = maybe_unserialize( get_post_meta( $order_id, '_order_items', true ) );
-			$order = new WC_Order( $order_id );
-
+			$order = new WC_Order( $order_id->ID );
 			if ( $order->status == 'completed' ) {
-
-				if ( $items ) {
-					foreach ( $items as $item ) {
-						if ( $item['id'] == $product_id || $item['variation_id'] == $product_id ) {
+				if (sizeof($order->get_items())>0) {
+					foreach($order->get_items() as $item) {
+						if ( $item['product_id'] == $product_id || $item['variation_id'] == $product_id ) {
 							return true;
 						} // End If Statement
 					} // End For Loop
