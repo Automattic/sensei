@@ -41,6 +41,7 @@ class WooThemes_Sensei_Analysis {
 			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
 			add_action( 'analysis_wrapper_container', array( &$this, 'wrapper_container'  ) );
+			add_action( 'admin_init', array( &$this, 'report_download_page' ) );
 		} // End If Statement
 
 	} // End __construct()
@@ -404,6 +405,61 @@ class WooThemes_Sensei_Analysis {
 			<br class="clear"><?php
 		} // End If Statement
 	}
+
+    public function report_download_page() {
+        if ( isset( $_GET['report_id'] ) && '' != $_GET['report_id'] ) {
+        	switch ( $_GET['report_id'] ) {
+				case 'courses-overview':
+				case 'lessons-overview':
+				case 'user-overview':
+					$header_setting = $_GET['report_id'];
+					$report_object_setting = 'Overview';
+				break;
+				default :
+				break;
+			} // End Switch Statement
+			if ( '' != $header_setting && '' != $report_object_setting ) {
+				$this->report_set_headers( $header_setting );
+				$report_array = $this->report_load_object( $report_object_setting );
+				$this->report_write_download( $report_array );
+            } // End If Statement
+            exit;
+        } // End If Statement
+    }
+
+    public function report_set_headers( $filename ) {
+    	header( 'Content-Type: text/csv' );
+        header( 'Content-Disposition: attachment;filename=' . $filename . '.csv');
+    }
+
+    public function report_load_object( $type = '' ) {
+    	$report_array = array();
+    	if ( '' != $type ) {
+    		$this->load_data_table_files();
+    		$class_name = 'WooThemes_Sensei_Analysis_' . $type . '_List_Table';
+			$sensei_analysis_overview_report = new $class_name();
+			switch ( $_GET['report_id'] ) {
+				case 'courses-overview':
+					$sensei_analysis_overview_report->type = 'courses';
+				break;
+				case 'lessons-overview':
+					$sensei_analysis_overview_report->type = 'lessons';
+				break;
+				default :
+				break;
+			} // End Switch Statement
+			$report_array = $sensei_analysis_overview_report->build_data_array( true );
+    	} // End If Statement
+    	return $report_array;
+    }
+
+    public function report_write_download( $report_array = array() ) {
+    	$fp = fopen('php://output', 'w');
+        foreach ($report_array as $row) {
+            fputcsv($fp, $row);
+        } // End For Loop
+        fclose($fp);
+    }
 
 } // End Class
 ?>

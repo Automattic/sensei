@@ -92,6 +92,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				);
 			break;
 		} // End Switch Statement
+		// Actions
+		add_action( 'sensei_before_list_table', array( &$this, 'overview_data_table_header' ) );
+
 	} // End __construct()
 
 	/**
@@ -100,13 +103,13 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 	 * @since  1.1.3
 	 * @return array
 	 */
-	public function build_data_array() {
+	public function build_data_array( $raw = false ) {
 
 		global $woothemes_sensei;
 
 		$return_array = array();
 		// Get the data required
-		$args_array = array();
+		$args_array = array( 'raw' => $raw );
 		if ( isset( $_POST['s'] ) && '' != esc_html( $_POST['s'] ) ) {
 			$args_array['search'] = esc_html( $_POST['s'] );
 		} // End If Statement
@@ -153,12 +156,17 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			} // End If Statement
 			$user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
 			// Output the users data
-			array_push( $return_array, array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a>',
+			if ( $args_array['raw'] ) {
+				$user_login = $user_item->user_login;
+			} else {
+				$user_login = '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a>';
+				$user_average_grade = $user_average_grade . '%';
+			} // End If Statement
+			array_push( $return_array, array( 	'user_login' => $user_login,
 												'user_registered' => $user_item->user_registered,
 												'user_active_courses' => ( count( $user_courses_started ) - count( $user_courses_ended ) ),
 												'user_completed_courses' => count( $user_courses_ended ),
-												'user_average_grade' => $user_average_grade . '%',
-
+												'user_average_grade' => $user_average_grade
 			 								)
 						);
 		} // End For Loop
@@ -188,7 +196,12 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				// Course Lessons
 				$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $course_item->ID );
 				$course_lessons = intval( count( $course_lessons ) );
-				array_push( $return_array, array( 	'course_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => $course_item->ID ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$course_item->post_title.'</a>',
+				if ( $args_array['raw'] ) {
+					$course_title = $course_item->post_title;
+				} else {
+					$course_title = '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => $course_item->ID ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$course_item->post_title.'</a>';
+				} // End If Statement
+				array_push( $return_array, array( 	'course_title' => $course_title,
 													'course_students' => $course_students,
 													'course_lessons' => $course_lessons,
 													'course_completions' => $course_completions
@@ -236,11 +249,33 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				// Lesson Completions
 				$lesson_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_item->ID, 'type' => 'sensei_lesson_end' ), true );
 				$lesson_completions = intval( count( $lesson_completions ) );
-				array_push( $return_array, array( 	'lesson_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'lesson_id' => $lesson_item->ID ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$lesson_item->post_title.'</a>',
-													'lesson_course' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => $course_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$course_title.'</a>',
+				// Lesson Grades
+				$lesson_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_quiz_id, 'type' => 'sensei_quiz_grade' ), true );
+				$total_grade_count = 0;
+				$total_grade_total = 0.00;
+				// Calculate the average quiz grade
+				foreach ( $lesson_grades as $lesson_quiz_key => $lesson_quiz_value ) {
+				    $total_grade_total = $total_grade_total + doubleval( $lesson_quiz_value->comment_content );
+				    $total_grade_count++;
+				} // End For Loop
+				// Handle Division by Zero
+				if ( 0 == $total_grade_count ) {
+					$total_grade_count = 1;
+				} // End If Statement
+				$lesson_average_grade = abs( round( doubleval( $total_grade_total / $total_grade_count ), 2 ) );
+				if ( $args_array['raw'] ) {
+					$lesson_title = $lesson_item->post_title;
+					$lesson_course = $course_title;
+				} else {
+					$lesson_title = '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'lesson_id' => $lesson_item->ID ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$lesson_item->post_title.'</a>';
+					$lesson_course = '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => $course_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$course_title.'</a>';
+					$lesson_average_grade = $lesson_average_grade . '%';
+				} // End If Statement
+				array_push( $return_array, array( 	'lesson_title' => $lesson_title,
+													'lesson_course' => $lesson_course,
 													'lesson_students' => $lesson_students,
 													'lesson_completions' => $lesson_completions,
-													'lesson_average_grade' => 0
+													'lesson_average_grade' => $lesson_average_grade
 				 								)
 							);
 			} // End If Statement
@@ -302,6 +337,22 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 	public function no_items() {
   		_e( 'No learners found.', 'woothemes-sensei' );
 	} // End no_items()
+
+	public function overview_data_table_header() {
+		switch ( $this->type ) {
+			case 'courses':
+				$report_id = 'courses-overview';
+			break;
+			case 'lessons':
+				$report_id = 'lessons-overview';
+			break;
+			default :
+				$report_id = 'user-overview';
+			break;
+		} // End Switch Statement
+
+		echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'report_id' => $report_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">' . __( 'Export', 'woothemes-sensei' ) . '</a>';
+	}
 
 } // End Class
 ?>
