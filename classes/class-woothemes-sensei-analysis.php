@@ -32,7 +32,6 @@ class WooThemes_Sensei_Analysis {
 	 * @return  void
 	 */
 	public function __construct ( $file ) {
-
 		$this->name = 'Analysis';
 		$this->file = $file;
 		// Admin functions
@@ -43,13 +42,12 @@ class WooThemes_Sensei_Analysis {
 			add_action( 'analysis_wrapper_container', array( &$this, 'wrapper_container'  ) );
 			add_action( 'admin_init', array( &$this, 'report_download_page' ) );
 		} // End If Statement
-
 	} // End __construct()
 
 
 	/**
 	 * analysis_admin_menu function.
-	 *
+	 * @since  1.0.0
 	 * @access public
 	 * @return void
 	 */
@@ -64,6 +62,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * load_data_table_files loads required files for Analysis
+	 * @since  1.1.3
 	 * @return void
 	 */
 	public function load_data_table_files() {
@@ -78,7 +77,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_page function.
-	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @return void
 	 */
@@ -112,9 +111,7 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 		// Load Analysis data
 		$this->load_data_table_files();
-		$sensei_analysis_overview = new WooThemes_Sensei_Analysis_Overview_List_Table( $type );
-		$sensei_analysis_overview->prepare_items();
-		$sensei_analysis_overview->load_stats();
+		$sensei_analysis_overview = $this->load_data_object( 'Overview', $type );
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
@@ -145,9 +142,7 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 		// Load Analysis data
 		$this->load_data_table_files();
-		$sensei_analysis_user_profile = new WooThemes_Sensei_Analysis_User_Profile_List_Table( intval( $_GET['user'] ) );
-		$sensei_analysis_user_profile->prepare_items();
-		$sensei_analysis_user_profile->load_stats();
+		$sensei_analysis_user_profile = $this->load_data_object( 'User_Profile', intval( $_GET['user'] ) );
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
@@ -171,9 +166,7 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 		// Load Analysis data
 		$this->load_data_table_files();
-		$sensei_analysis_course = new WooThemes_Sensei_Analysis_Course_List_Table( intval( $_GET['course_id'] ) );
-		$sensei_analysis_course->prepare_items();
-		$sensei_analysis_course->load_stats();
+		$sensei_analysis_course = $this->load_data_object( 'Course', intval( $_GET['course_id'] ) );
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
@@ -197,9 +190,7 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 		// Load Analysis data
 		$this->load_data_table_files();
-		$sensei_analysis_user_course = new WooThemes_Sensei_Analysis_Course_List_Table( intval( $_GET['course_id'] ), intval( $_GET['user'] ) );
-		$sensei_analysis_user_course->prepare_items();
-		$sensei_analysis_user_course->load_stats();
+		$sensei_analysis_user_course = $this->load_data_object( 'Course', intval( $_GET['course_id'] ), intval( $_GET['user'] ) );
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
@@ -223,9 +214,7 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 		// Load Analysis data
 		$this->load_data_table_files();
-		$sensei_analysis_course_users = new WooThemes_Sensei_Analysis_Course_List_Table( intval( $_GET['course_id'] ), -1 );
-		$sensei_analysis_course_users->prepare_items();
-		$sensei_analysis_course_users->load_stats();
+		$sensei_analysis_course_users = $this->load_data_object( 'Course', intval( $_GET['course_id'] ), -1 );
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
@@ -249,9 +238,7 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 		// Load Analysis data
 		$this->load_data_table_files();
-		$sensei_analysis_lesson_users = new WooThemes_Sensei_Analysis_Lesson_List_Table( intval( $_GET['lesson_id'] ) );
-		$sensei_analysis_lesson_users->prepare_items();
-		$sensei_analysis_lesson_users->load_stats();
+		$sensei_analysis_lesson_users = $this->load_data_object( 'Lesson', intval( $_GET['lesson_id'] ) );
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
@@ -265,6 +252,26 @@ class WooThemes_Sensei_Analysis {
 		do_action( 'analysis_wrapper_container', 'bottom' );
 		do_action( 'analysis_after_container' );
 	} // End analysis_lesson_users_view()
+
+	/**
+	 * load_data_object creates new instance of class
+	 * @param  string  $name          Name of class
+	 * @param  integer $data          constructor arguments
+	 * @param  undefined  $optional_data optional constructor arguments
+	 * @return object                 class instance object
+	 */
+	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
+		// Load Analysis data
+		$object_name = 'WooThemes_Sensei_Analysis_' . $name . '_List_Table';
+		if ( is_null($optional_data) ) {
+			$sensei_analysis_object = new $object_name( $data );
+		} else {
+			$sensei_analysis_object = new $object_name( $data, $optional_data );
+		}
+		$sensei_analysis_object->prepare_items();
+		$sensei_analysis_object->load_stats();
+		return $sensei_analysis_object;
+	} // End load_data_object()
 
 	/**
 	 * enqueue_scripts function.
@@ -347,7 +354,7 @@ class WooThemes_Sensei_Analysis {
 				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis', 'lesson_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Lessons', 'woothemes-sensei' ); ?></a></li>
 			</ul>
 			<br class="clear"><?php
-	}
+	} // End analysis_default_nav()
 
 	public function analysis_user_profile_nav() {
 		global $woothemes_sensei;
@@ -358,7 +365,7 @@ class WooThemes_Sensei_Analysis {
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<br class="clear"><?php
 		} // End If Statement
-	}
+	} // End analysis_user_profile_nav()
 
 	public function analysis_user_course_nav() {
 		global $woothemes_sensei;
@@ -369,7 +376,7 @@ class WooThemes_Sensei_Analysis {
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<br class="clear"><?php
 		} // End If Statement
-	}
+	} // End analysis_user_course_nav()
 
 	public function analysis_course_nav() {
 		global $woothemes_sensei;
@@ -379,7 +386,7 @@ class WooThemes_Sensei_Analysis {
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<br class="clear"><?php
 		} // End If Statement
-	}
+	} // End analysis_course_nav()
 
 	public function analysis_course_users_nav() {
 		global $woothemes_sensei;
@@ -389,7 +396,7 @@ class WooThemes_Sensei_Analysis {
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<br class="clear"><?php
 		} // End If Statement
-	}
+	} // End analysis_course_users_nav()
 
 	public function analysis_lesson_users_nav() {
 		global $woothemes_sensei;
@@ -404,8 +411,13 @@ class WooThemes_Sensei_Analysis {
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<br class="clear"><?php
 		} // End If Statement
-	}
+	} // End analysis_lesson_users_nav()
 
+	/**
+	 * report_download_page handles CSV export request
+	 * @since  1.1.3
+	 * @return void
+	 */
     public function report_download_page() {
         if ( isset( $_GET['report_id'] ) && '' != $_GET['report_id'] ) {
         	switch ( $_GET['report_id'] ) {
@@ -425,13 +437,25 @@ class WooThemes_Sensei_Analysis {
             } // End If Statement
             exit;
         } // End If Statement
-    }
+    } // End report_download_page()
 
-    public function report_set_headers( $filename ) {
+    /**
+     * report_set_headers sets headers for reporting export
+     * @since  1.1.3
+     * @param  string $filename name of report file
+     * @return void
+     */
+    public function report_set_headers( $filename = '' ) {
     	header( 'Content-Type: text/csv' );
         header( 'Content-Disposition: attachment;filename=' . $filename . '.csv');
-    }
+    } // End report_set_headers()
 
+    /**
+     * report_load_object loads the right object for reporting
+     * @since  1.1.3
+     * @param  string $type object name
+     * @return array data array for reporting output
+     */
     public function report_load_object( $type = '' ) {
     	$report_array = array();
     	if ( '' != $type ) {
@@ -451,15 +475,21 @@ class WooThemes_Sensei_Analysis {
 			$report_array = $sensei_analysis_overview_report->build_data_array( true );
     	} // End If Statement
     	return $report_array;
-    }
+    } // End report_load_object()
 
+    /**
+     * report_write_download write array data to CSV
+     * @since  1.1.3
+     * @param  array  $report_array data array
+     * @return void
+     */
     public function report_write_download( $report_array = array() ) {
     	$fp = fopen('php://output', 'w');
         foreach ($report_array as $row) {
             fputcsv($fp, $row);
         } // End For Loop
         fclose($fp);
-    }
+    } // End report_write_download()
 
 } // End Class
 ?>
