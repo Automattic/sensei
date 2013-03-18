@@ -1,7 +1,6 @@
 *** Sensei Changelog ***
 
-2013.03.05 - version 1.2.0
- * In development
+2013.03.18 - version 1.2.0
  * /classes/class-woothemes-sensei.php - refactor for loading of classes
  * /classes/class-woothemes-sensei-analysis.php - refactor to use List Tables class
  * /classes/class-woothemes-sensei-analysis-overview.php - new class to handle Analysis Overview

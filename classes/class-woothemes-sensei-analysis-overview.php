@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @subpackage Sensei
  * @category Core
  * @author WooThemes
- * @since 1.1.3
+ * @since 1.2.0
  *
  * TABLE OF CONTENTS
  *
@@ -36,7 +36,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
 	/**
 	 * Constructor
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return  void
 	 */
 	public function __construct ( $type = '' ) {
@@ -102,7 +102,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 	/**
 	 * build_data_array builds the data for use in the table
 	 * Overloads the parent method
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return array
 	 */
 	public function build_data_array( $raw = false ) {
@@ -130,7 +130,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
 	/**
 	 * overview_users loads users overview data
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @param  array $args_array arguments for data
 	 * @return array $return_array data for table
 	 */
@@ -179,7 +179,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
 	/**
 	 * overview_courses loads course overview data
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @param  array $args_array arguments for data
 	 * @return array $return_array data for table
 	 */
@@ -226,7 +226,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
 	/**
 	 * overview_lessons loads lessons overview data
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @param  array $args_array arguments for data
 	 * @return array $return_array data for table
 	 */
@@ -305,7 +305,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
 	/**
 	 * load_stats loads stats into object
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function load_stats() {
@@ -335,7 +335,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
 	/**
 	 * stats_boxes loads which stats boxes to render
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return $stats_to_render array of stats boxes and values
 	 */
 	public function stats_boxes () {
@@ -352,7 +352,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 	/**
 	 * no_items sets output when no items are found
 	 * Overloads the parent method
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function no_items() {
@@ -361,7 +361,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
 	/**
 	 * data_table_header output for table heading
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function data_table_header() {

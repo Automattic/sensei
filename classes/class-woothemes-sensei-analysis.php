@@ -81,7 +81,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * load_data_table_files loads required files for Analysis
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function load_data_table_files() {
@@ -127,7 +127,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_default_view default view for analysis page
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_default_view( $type = '' ) {
@@ -158,7 +158,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_user_profile_view user profile view for analysis page
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_user_profile_view() {
@@ -182,7 +182,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_course_view individual course view for analysis page
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_course_view() {
@@ -206,7 +206,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_user_course_view user individual course view for analysis page
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_user_course_view() {
@@ -230,7 +230,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_course_users_view user individual course view for analysis page
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_course_users_view() {
@@ -254,7 +254,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_lesson_users_view user individual course view for analysis page
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_lesson_users_view() {
@@ -328,7 +328,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * render_stats_box outputs stats boxes
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @param  $title string title of stat
 	 * @param  $data string stats data
 	 * @return void
@@ -344,7 +344,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_headers outputs analysis general headers
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_headers( $args = array( 'nav' => 'default' ) ) {
@@ -354,7 +354,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * wrapper_container wrapper for analysis area
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @param $which string
 	 * @return void
 	 */
@@ -368,7 +368,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_default_nav default nav area for analysis
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_default_nav() {
@@ -386,7 +386,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_user_profile_nav nav area for analysis user profile
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_user_profile_nav() {
@@ -402,7 +402,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_user_course_nav nav area for analysis user course
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_user_course_nav() {
@@ -418,7 +418,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_course_nav nav area for analysis courses
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_course_nav() {
@@ -433,7 +433,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_course_users_nav nav area for analysis course users
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_course_users_nav() {
@@ -448,7 +448,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * analysis_lesson_users_nav nav area for analysis lesson users
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function analysis_lesson_users_nav() {
@@ -468,7 +468,7 @@ class WooThemes_Sensei_Analysis {
 
 	/**
 	 * report_download_page handles CSV export request
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
     public function report_download_page() {
@@ -496,7 +496,7 @@ class WooThemes_Sensei_Analysis {
 
     /**
      * report_set_headers sets headers for reporting export
-     * @since  1.1.3
+     * @since  1.2.0
      * @param  string $filename name of report file
      * @return void
      */
@@ -507,7 +507,7 @@ class WooThemes_Sensei_Analysis {
 
     /**
      * report_load_object loads the right object for reporting
-     * @since  1.1.3
+     * @since  1.2.0
      * @param  string $type object name
      * @return array data array for reporting output
      */
@@ -534,7 +534,7 @@ class WooThemes_Sensei_Analysis {
 
     /**
      * report_write_download write array data to CSV
-     * @since  1.1.3
+     * @since  1.2.0
      * @param  array  $report_array data array
      * @return void
      */

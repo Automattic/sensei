@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @subpackage Sensei
  * @category Core
  * @author WooThemes
- * @since 1.1.3
+ * @since 1.2.0
  *
  * TABLE OF CONTENTS
  *
@@ -26,7 +26,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 
 	/**
 	 * Constructor
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return  void
 	 */
 	public function __construct ( $user_id = 0 ) {
@@ -59,7 +59,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 	/**
 	 * build_data_array builds the data for use in the table
 	 * Overloads the parent method
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return array
 	 */
 	public function build_data_array() {
@@ -108,7 +108,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 
 	/**
 	 * load_stats loads stats into object
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function load_stats() {
@@ -117,7 +117,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 
 	/**
 	 * stats_boxes loads which stats boxes to render
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return $stats_to_render array of stats boxes and values
 	 */
 	public function stats_boxes () {
@@ -128,7 +128,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 	/**
 	 * no_items sets output when no items are found
 	 * Overloads the parent method
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function no_items() {
@@ -137,7 +137,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 
 	/**
 	 * course_data_table_header output for table heading
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function data_table_header() {

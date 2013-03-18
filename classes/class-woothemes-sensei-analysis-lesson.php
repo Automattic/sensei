@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @subpackage Sensei
  * @category Core
  * @author WooThemes
- * @since 1.1.3
+ * @since 1.2.0
  *
  * TABLE OF CONTENTS
  *
@@ -28,7 +28,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 
 	/**
 	 * Constructor
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return  void
 	 */
 	public function __construct ( $lesson_id = 0 ) {
@@ -58,7 +58,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 	/**
 	 * build_data_array builds the data for use in the table
 	 * Overloads the parent method
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return array
 	 */
 	public function build_data_array() {
@@ -105,7 +105,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 
 	/**
 	 * load_stats loads stats into object
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function load_stats() {
@@ -124,7 +124,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 	/**
 	 * no_items sets output when no items are found
 	 * Overloads the parent method
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function no_items() {
@@ -133,7 +133,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 
 	/**
 	 * data_table_header output for table heading
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function data_table_header() {
@@ -142,7 +142,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 
 	/**
 	 * data_table_footer output for table footer
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function data_table_footer() {

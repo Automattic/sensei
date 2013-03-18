@@ -526,7 +526,7 @@ class WooThemes_Sensei_PostTypes {
 
 	/**
 	 * load_class loads in class files
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function load_class( $class_name = '' ) {

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @subpackage Sensei
  * @category Core
  * @author WooThemes
- * @since 1.1.3
+ * @since 1.2.0
  *
  * TABLE OF CONTENTS
  *
@@ -38,7 +38,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * Constructor
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return  void
 	 */
 	public function __construct ( $token ) {
@@ -59,7 +59,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * extra_tablenav adds extra markup in the toolbars before or after the list
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @param string $which, helps you decide if you add the markup after (bottom) or before (top) the list
 	 */
 	public function extra_tablenav( $which ) {
@@ -75,7 +75,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * table_search_form outputs search form for table
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function table_search_form() {
@@ -87,7 +87,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * get_columns Define the columns that are going to be used in the table
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	public function get_columns() {
@@ -96,7 +96,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * get_sortable_columns Decide which columns to activate the sorting functionality on
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return array $sortable, the array of columns that can be sorted by the user
 	 */
 	public function get_sortable_columns() {
@@ -105,7 +105,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * build_data_array build the data array for output
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return array
 	 */
 	public function build_data_array() {
@@ -114,7 +114,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * array_sort_reorder handle sorting of table data
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @param  array $return_array data to be ordered
 	 * @return array $return_array ordered data
 	 */
@@ -138,7 +138,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * Prepare the table with different parameters, pagination, columns and table elements
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function prepare_items() {
@@ -163,7 +163,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	/**
 	 * Display the rows of records in the table
 	 * Overloads the parent method
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return echo the markup of the rows
 	 */
 	public function display_rows() {
@@ -194,7 +194,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * sort_array_by_key sorts array by key
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @param  $array by ref
 	 * @param  $key string column name in array
 	 * @return void
@@ -216,7 +216,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	/**
 	 * column_default handles default column output
 	 * Overloads the parent method
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @param  $item array of columns
 	 * @param  $column_name string column name
 	 * @return string output
@@ -232,7 +232,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	/**
 	 * no_items sets output when no items are found
 	 * Overloads the parent method
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function no_items() {
@@ -241,7 +241,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * get_bulk_actions sets the bulk actions list
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return array action list
 	 */
 	public function get_bulk_actions() {
@@ -250,7 +250,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 
 	/**
 	 * bulk_actions output for the bulk actions area
-	 * @since  1.1.3
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function bulk_actions() {
