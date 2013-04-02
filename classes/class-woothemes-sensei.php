@@ -86,6 +86,7 @@ class WooThemes_Sensei {
 			$this->settings->page_slug	= 'woothemes-sensei-settings';
 		} // End If Statement
 		$this->settings->setup_settings();
+		$this->settings->get_settings();
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
