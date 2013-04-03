@@ -1,14 +1,16 @@
 *** Sensei Changelog ***
 
-2013.03.18 - version 1.2.0
+2013.04.04 - version 1.2.0
  * /assets/css/settings.css - styling changes for Analysis
- * /classes/class-woothemes-sensei.php - refactor for loading of classes
+ * /classes/class-woothemes-sensei.php - refactor for loading of classes, added subscriptions hooks
  * /classes/class-woothemes-sensei-analysis.php - refactor to use List Tables class, output functions for new Analysis areas, added export capability for Analysis tables
  * /classes/class-woothemes-sensei-analysis-course.php - new class to handle Analysis Courses
  * /classes/class-woothemes-sensei-analysis-lesson.php - new class to handle Analysis Lessons
  * /classes/class-woothemes-sensei-analysis-overview.php - new class to handle Analysis Overview
  * /classes/class-woothemes-sensei-analysis-user-profile.php - new class to handle Analysis User Overview
+ * /classes/class-woothemes-sensei-course.php - add filter for course placeholder image, handle product_variation post type
  * /classes/class-woothemes-sensei-frontend.php - new hooks for frontend use, filters for custom nav menu items
+ * /classes/class-woothemes-sensei-lesson.php - add filter for lesson placeholder image
  * /classes/class-woothemes-sensei-list-table.php - new list table class to handle data tables
  * /classes/class-woothemes-sensei-posttypes.php - refactor for loading of classes
  * /inc/woothemes-sensei-template.php - removes old functions
@@ -19,6 +21,7 @@
  * /templates/content-loop-course.php - uses new frontend hooks
  * /templates/content-loop-lesson.php - uses new frontend hooks
  * /templates/content-taxonomy-course-category.php - uses new frontend hooks
+ * /templates/woocommerce/add-to-cart.php - handle product_variation post type
  * /widgets/widget-woothemes-sensei-category-courses.php - uses new frontend hooks
  * /widgets/widget-woothemes-sensei-course-component.php - uses new frontend hooks
  * /widgets/widget-woothemes-sensei-lesson-component.php - uses new frontend hooks

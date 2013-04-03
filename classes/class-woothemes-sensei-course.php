@@ -94,7 +94,7 @@ class WooThemes_Sensei_Course {
 
 		$select_course_woocommerce_product = get_post_meta( $post->ID, '_course_woocommerce_product', true );
 
-		$post_args = array(	'post_type' 		=> 'product',
+		$post_args = array(	'post_type' 		=> array( 'product', 'product_variation' ),
 							'numberposts' 		=> -1,
 							'orderby'         	=> 'title',
     						'order'           	=> 'DESC',
@@ -111,7 +111,13 @@ class WooThemes_Sensei_Course {
 			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
 			$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
-					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_woocommerce_product, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
+					if ( 'product_variation' == $post_item->post_type ) {
+						$product_object = get_product( $post_item->ID );
+						$product_name = '&nbsp;&nbsp;&nbsp;' . ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
+					} else {
+						$product_name = $post_item->post_title;
+					}
+					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_woocommerce_product, false ) . '>' . esc_html( $product_name ) . '</option>' . "\n";
 				} // End For Loop
 			$html .= '</select>' . "\n";
 			if ( current_user_can( 'publish_product' )) {
@@ -404,7 +410,15 @@ class WooThemes_Sensei_Course {
 			case 'course-woocommerce-product':
 				if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
 					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true);
-					if ( 0 < absint( $course_woocommerce_product_id ) ) { echo '<a href="' . esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_woocommerce_product_id ) ) ) ) . '">' . get_the_title( absint( $course_woocommerce_product_id ) ) . '</a>'; }
+					if ( 0 < absint( $course_woocommerce_product_id ) ) { 
+						if ( 'product_variation' == get_post_type( $course_woocommerce_product_id ) ) {
+							$product_object = get_product( $course_woocommerce_product_id );
+							$product_name = $product_object->parent->post->post_title . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
+						} else {
+							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
+						} // End If Statement
+						echo '<a href="' . esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $product_name ) ) . '">' . $product_name . '</a>'; 
+					} // End If Statement
 				} // End If Statement
 			break;
 
@@ -675,7 +689,7 @@ class WooThemes_Sensei_Course {
  			if ( '' == $img_url ) {
  				// Display Image Placeholder if none
 				if ( $woothemes_sensei->settings->settings[ 'placeholder_images_enable' ] ) {
-					$img_url = '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />';
+					$img_url = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
 				} // End If Statement
  			} // End If Statement
 
