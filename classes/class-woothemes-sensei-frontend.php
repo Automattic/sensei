@@ -453,7 +453,7 @@ class WooThemes_Sensei_Frontend {
 			$term_id = $taxonomy_obj->term_id;
 			$taxonomy_short_name = $taxonomy_obj->taxonomy;
 			$taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
-			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
+			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes-sensei' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
 			echo apply_filters( 'course_category_archive_title', $before_html . $title . $after_html );
 			return;
 		} // End If Statement

@@ -410,14 +410,14 @@ class WooThemes_Sensei_Course {
 			case 'course-woocommerce-product':
 				if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
 					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true);
-					if ( 0 < absint( $course_woocommerce_product_id ) ) { 
+					if ( 0 < absint( $course_woocommerce_product_id ) ) {
 						if ( 'product_variation' == get_post_type( $course_woocommerce_product_id ) ) {
 							$product_object = get_product( $course_woocommerce_product_id );
 							$product_name = $product_object->parent->post->post_title . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
 						} else {
 							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
 						} // End If Statement
-						echo '<a href="' . esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $product_name ) ) . '">' . $product_name . '</a>'; 
+						echo '<a href="' . esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $product_name ) ) . '">' . $product_name . '</a>';
 					} // End If Statement
 				} // End If Statement
 			break;

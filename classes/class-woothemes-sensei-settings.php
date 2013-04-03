@@ -479,7 +479,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		$pages_dropdown = str_replace( '</select>', '', $pages_dropdown );
 		$pages_split = explode( '</option>', $pages_dropdown );
 
-		$page_items[] = __( 'Select a Page:', 'woothemes' );
+		$page_items[] = __( 'Select a Page:', 'woothemes-sensei' );
 
 		foreach ( $pages_split as $k => $v ) {
 		    $id = '';

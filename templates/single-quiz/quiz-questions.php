@@ -117,7 +117,7 @@ if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sen
 										    'username' => $current_user->user_login,
 										    'user_email' => $current_user->user_email,
 										    'user_url' => $current_user->user_url,
-										    'data' => 'Lesson completed and passed by the user',
+										    'data' => __( 'Lesson completed and passed by the user', 'woothemes-sensei' ),
 										    'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
 										    'parent' => 0,
 										    'user_id' => $current_user->ID
@@ -131,7 +131,7 @@ if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sen
 					    			    'username' => $current_user->user_login,
 					    			    'user_email' => $current_user->user_email,
 					    			    'user_url' => $current_user->user_url,
-					    			    'data' => 'Lesson completed by the user',
+					    			    'data' => __( 'Lesson completed by the user', 'woothemes-sensei' ),
 					    			    'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
 					    			    'parent' => 0,
 					    			    'user_id' => $current_user->ID

@@ -436,7 +436,7 @@ class WooThemes_Sensei {
 							    'username' => $user_login,
 							    'user_email' => $user_email,
 							    'user_url' => $user_url,
-							    'data' => 'Course started by the user',
+							    'data' => __('Course started by the user', 'woothemes-sensei' ),
 							    'type' => 'sensei_course_start', /* FIELD SIZE 20 */
 							    'parent' => 0,
 							    'user_id' => $user_id

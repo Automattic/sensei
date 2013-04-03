@@ -223,7 +223,7 @@ class WooThemes_Sensei_Lesson {
 		if ( isset( $_POST[ 'quiz_id' ] ) && ( 0 < absint( $_POST[ 'quiz_id' ] ) ) ) {
 			$quiz_id = absint( $_POST[ 'quiz_id' ] );
 		} // End If Statement
-		$post_title = $_POST[ 'post_title' ] . ' ' . __( 'Quiz', 'wootheme-sensei' );
+		$post_title = $_POST[ 'post_title' ] . ' ' . __( 'Quiz', 'woothemes-sensei' );
 		$post_author = $_POST[ 'post_author' ];
 		$post_status = $_POST[ 'post_status' ];
 		$post_type = 'quiz';
