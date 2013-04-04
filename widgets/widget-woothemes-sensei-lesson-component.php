@@ -199,7 +199,7 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 		    	$lesson_course_id = get_post_meta( $post_id, '_lesson_course', true );
 		    ?>
 		    	<li class="fix">
-		    		<?php echo $woothemes_sensei->post_types->lesson->lesson_image( $post_id ); ?>
+		    		<?php do_action( 'sensei_lesson_image', $post_id ); ?>
 		    		<a href="<?php echo get_permalink( $post_id ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a>
 		    		<br />
 		    		<?php if ( isset( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) && ( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) ) { ?>

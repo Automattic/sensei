@@ -23,7 +23,7 @@ if ( isset( $_POST['course_start'] ) && wp_verify_nonce( $_POST[ 'woothemes_sens
 					    'username' => $current_user->user_login,
 					    'user_email' => $current_user->user_email,
 					    'user_url' => $current_user->user_url,
-					    'data' => 'Course started by the user',
+					    'data' => __( 'Course started by the user', 'woothemes-sensei' ),
 					    'type' => 'sensei_course_start', /* FIELD SIZE 20 */
 					    'parent' => 0,
 					    'user_id' => $current_user->ID
@@ -85,7 +85,7 @@ if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
 								    'username' => $current_user->user_login,
 								    'user_email' => $current_user->user_email,
 								    'user_url' => $current_user->user_url,
-								    'data' => 'Course completed by the user',
+								    'data' => __( 'Course completed by the user', 'woothemes-sensei' ),
 								    'type' => 'sensei_course_end', /* FIELD SIZE 20 */
 								    'parent' => 0,
 								    'user_id' => $current_user->ID,

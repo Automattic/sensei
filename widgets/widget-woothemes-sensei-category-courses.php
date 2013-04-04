@@ -191,7 +191,7 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 		    	$author_id = $post_item->post_author;
 		    ?>
 		    	<li class="fix">
-		    		<?php echo $woothemes_sensei->post_types->course->course_image( $post_id ); ?>
+		    		<?php do_action( 'sensei_course_image', $post_id ); ?>
 		    		<a href="<?php echo get_permalink( $post_id ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a>
 		    		<br />
 		    		<?php if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) { ?>

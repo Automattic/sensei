@@ -37,11 +37,7 @@ if ( ! $paged || $paged < 2 ) {
 
     	<section id="main-course" class="course-container">
 
-    	    <header class="archive-header">
-
-    	    	<?php echo sensei_course_archive_header( $query_type ); ?>
-
-    	    </header>
+    	    <?php do_action( 'sensei_course_archive_header', $query_type ); ?>
 
     	    <div class="fix"></div>
 
@@ -58,13 +54,10 @@ if ( ! $paged || $paged < 2 ) {
                 $category_output = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
     			?>
     			<article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), $post_id ) ); ?>">
-    				<?php
-    				// Image
-    				echo $woothemes_sensei->post_types->course->course_image( $post_id );
-    				?>
-    				<header>
-    					<h2><a href="<?php echo get_permalink( $post_id ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a></h2>
-    				</header>
+
+                    <?php do_action( 'sensei_course_image', $post_id ); ?>
+
+    				<?php do_action( 'sensei_course_archive_course_title', $post_item ); ?>
 
     				<section class="entry">
     					<p class="sensei-course-meta">
@@ -104,31 +97,23 @@ if ( ! $paged || $paged < 2 ) {
 
 		<section id="main-course" class="course-container">
 
-    	    <header class="archive-header">
-
-    	    	<?php echo sensei_course_archive_header( $query_type ); ?>
-
-    	    </header>
+    	    <?php do_action( 'sensei_course_archive_header', $query_type ); ?>
 
     	    <div class="fix"></div>
 
     	    <?php while ( have_posts() ) { the_post();
     			// Meta data
     			$post_id = get_the_ID();
-    			$post_title = get_the_title();
     			$author_display_name = get_the_author();
     			$author_id = get_the_author_meta('ID');
                 $category_output = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
  			?>
 
 			<article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ); ?>">
-    			<?php
-    			// Image
-    			echo  $woothemes_sensei->post_types->course->course_image( $post_id );
-    			?>
-    			<header>
-    				<h2><a href="<?php echo get_permalink( $post_id ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a></h2>
-    			</header>
+
+                <?php do_action( 'sensei_course_image', $post_id ); ?>
+
+    			<?php do_action( 'sensei_course_archive_course_title' ); ?>
 
     			<section class="entry">
                     <p class="sensei-course-meta">

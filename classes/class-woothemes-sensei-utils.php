@@ -146,8 +146,11 @@ class WooThemes_Sensei_Utils {
 	 * @return void
 	 */
 	public static function sensei_check_for_activity( $args = array(), $return_comments = false ) {
+		global $woothemes_sensei;
+		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		// Get comments
 		$comments = get_comments( $args );
+		add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		// Return comments
 		if ( $return_comments ) {
 			return $comments;
@@ -169,6 +172,8 @@ class WooThemes_Sensei_Utils {
 	 * @return void
 	 */
 	public static function sensei_activity_ids( $args = array() ) {
+		global $woothemes_sensei;
+		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		// Get comments
 		$comments = get_comments( $args );
 		$post_ids = array();
@@ -186,6 +191,7 @@ class WooThemes_Sensei_Utils {
 			$post_ids = array_unique( $post_ids );
 			$post_ids = array_values( $post_ids );
 		} // End If Statement
+		add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		return $post_ids;
 	} // End sensei_activity_ids()
 
@@ -200,11 +206,11 @@ class WooThemes_Sensei_Utils {
 	public static function sensei_delete_activities( $args = array() ) {
 		$dataset_changes = false;
 		// If activity exists
-		if ( WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $args['post_id'], 'user_id' => $args['user_id'], 'type' => $args['type'] ) ) ) {
-    		// Remove activity from log
-    	    $comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $args['post_id'], 'user_id' => $args['user_id'], 'type' => $args['type'] ), true );
+		if ( WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $args['post_id'] ), 'user_id' => intval( $args['user_id'] ), 'type' => $args['type'] ) ) ) {
+			// Remove activity from log
+    	    $comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $args['post_id'] ), 'user_id' => intval( $args['user_id'] ), 'type' => $args['type'] ), true );
     	    foreach ( $comments as $key => $value  ) {
-		    	if ( isset( $value->comment_ID ) && 0 < $value->comment_ID ) {
+    	    	if ( isset( $value->comment_ID ) && 0 < $value->comment_ID ) {
 		    		$dataset_changes = wp_delete_comment( $value->comment_ID, true );
 		    		// Manually flush the cache
 		    		wp_cache_flush();
@@ -223,6 +229,8 @@ class WooThemes_Sensei_Utils {
 	 * @return void
 	 */
 	public static function sensei_get_activity_value( $args = array() ) {
+		global $woothemes_sensei;
+		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		$activity_value = false;
 		if ( isset( $args['user_id'] ) && 0 < intval( $args['user_id'] ) ) {
 			// Get activities
@@ -234,6 +242,7 @@ class WooThemes_Sensei_Utils {
 			    } // End If Statement
 			} // End For Loop
 		} // End If Statement
+		add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		return $activity_value;
 	} // End sensei_get_activity_value()
 

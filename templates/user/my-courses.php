@@ -33,7 +33,7 @@ if ( is_user_logged_in() ) {
 								    'username' => $current_user->user_login,
 								    'user_email' => $current_user->user_email,
 								    'user_url' => $current_user->user_url,
-								    'data' => 'Course completed by the user',
+								    'data' => __( 'Course completed by the user', 'woothemes-sensei' ),
 								    'type' => 'sensei_course_end', /* FIELD SIZE 20 */
 								    'parent' => 0,
 								    'user_id' => $current_user->ID,
@@ -53,7 +53,7 @@ if ( is_user_logged_in() ) {
 						    		    'username' => $current_user->user_login,
 						    		    'user_email' => $current_user->user_email,
 						    		    'user_url' => $current_user->user_url,
-						    		    'data' => 'Lesson completed by the user',
+						    		    'data' => __( 'Lesson completed by the user', 'woothemes-sensei' ),
 						    		    'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
 						    		    'parent' => 0,
 						    		    'user_id' => $current_user->ID

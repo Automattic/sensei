@@ -1,5 +1,33 @@
 *** Sensei Changelog ***
 
+2013.04.04 - version 1.2.0
+ * /assets/css/settings.css - styling changes for Analysis
+ * /assets/js/lesson-metadata.js - fix for media upload button not firing
+ * /classes/class-woothemes-sensei.php - refactor for loading of classes, added subscriptions hooks, added logic for woocommerce order cancellation
+ * /classes/class-woothemes-sensei-analysis.php - refactor to use List Tables class, output functions for new Analysis areas, added export capability for Analysis tables
+ * /classes/class-woothemes-sensei-analysis-course.php - new class to handle Analysis Courses
+ * /classes/class-woothemes-sensei-analysis-lesson.php - new class to handle Analysis Lessons
+ * /classes/class-woothemes-sensei-analysis-overview.php - new class to handle Analysis Overview
+ * /classes/class-woothemes-sensei-analysis-user-profile.php - new class to handle Analysis User Overview
+ * /classes/class-woothemes-sensei-course.php - add filter for course placeholder image, handle product_variation post type
+ * /classes/class-woothemes-sensei-frontend.php - new hooks for frontend use, filters for custom nav menu items
+ * /classes/class-woothemes-sensei-lesson.php - add filter for lesson placeholder image
+ * /classes/class-woothemes-sensei-list-table.php - new list table class to handle data tables
+ * /classes/class-woothemes-sensei-posttypes.php - refactor for loading of classes
+ * /classes/class-woothemes-sensei-utils.php - refactor for removing of comment_clause filters for checking sensei activity
+ * /inc/woothemes-sensei-template.php - removes old functions, recent comments widget fix
+ * /templates/archive-course.php - fixes shortcode issues on paginated pages
+ * /templates/content-no-permissions.php - uses new frontend hooks
+ * /templates/content-single-course.php - uses new frontend hooks
+ * /templates/content-single-lesson.php - uses new frontend hooks
+ * /templates/content-loop-course.php - uses new frontend hooks
+ * /templates/content-loop-lesson.php - uses new frontend hooks
+ * /templates/content-taxonomy-course-category.php - uses new frontend hooks
+ * /templates/woocommerce/add-to-cart.php - handle product_variation post type
+ * /widgets/widget-woothemes-sensei-category-courses.php - uses new frontend hooks
+ * /widgets/widget-woothemes-sensei-course-component.php - uses new frontend hooks
+ * /widgets/widget-woothemes-sensei-lesson-component.php - uses new frontend hooks
+
 2013.03.11 - version 1.1.2
  * classes/class-woothemes-sensei-utils.php - fix to check if product was purchased
  * classes/class-woothemes-sensei.php - fix for checking product id

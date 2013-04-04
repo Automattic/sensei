@@ -29,10 +29,10 @@ get_header(); ?>
 				$paged = $wp_query->get( 'paged' );
 				if ( ! $paged || $paged < 2 ) {
 					// This is not a paginated page (or it's simply the first page of a paginated page/post)
-					do_shortcode( '[newcourses]' );
-					do_shortcode( '[featuredcourses]' );
-					do_shortcode( '[freecourses]' );
-					do_shortcode( '[paidcourses]' );
+					echo do_shortcode( '[newcourses]' );
+					echo do_shortcode( '[featuredcourses]' );
+					echo do_shortcode( '[freecourses]' );
+					echo do_shortcode( '[paidcourses]' );
 				} else {
 					// This is a paginated page.
 					$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );

@@ -15,10 +15,8 @@ global $woothemes_sensei;
                 <?php
                 if ( is_singular( 'course' ) ) { ?>
                 	<article <?php post_class( array( 'course', 'post' ) ); ?>>
-						<?php
-    					// Image
-    					echo  $woothemes_sensei->post_types->course->course_image( $post->ID );
-    					?>
+
+                        <?php do_action( 'sensei_course_image', $post->ID ); ?>
 
             		    <header>
 

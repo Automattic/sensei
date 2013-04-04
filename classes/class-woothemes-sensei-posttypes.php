@@ -28,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - setup_post_type_messages()
  * - create_post_type_messages()
  * - enter_title_here()
+ * - load_class()
  */
 class WooThemes_Sensei_PostTypes {
 	public $token;
@@ -96,9 +97,8 @@ class WooThemes_Sensei_PostTypes {
 	public function load_posttype_objects( $posttypes = array() ) {
 
 		foreach ( $posttypes as $posttype_token => $posttype_name ) {
-
 			// Load the files
-			require_once( 'class-woothemes-sensei-'.$posttype_token.'.php' );
+			$this->load_class( $posttype_token );
 			$class_name = 'WooThemes_Sensei_' . $posttype_name;
 			$this->$posttype_token = new $class_name();
 			$this->$posttype_token->token = $posttype_token;
@@ -388,7 +388,7 @@ class WooThemes_Sensei_PostTypes {
 		    'not_found' =>  sprintf( __( 'No %s found', 'woothemes-sensei' ), strtolower( $plural ) ),
 		    'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'woothemes-sensei' ), strtolower( $plural ) ),
 		    'parent_item_colon' => '',
-		    'menu_name' => $menu
+		    'menu_name' => sprintf( __( '%s', 'woothemes-sensei' ), $menu )
 		  );
 
 		return $labels;
@@ -523,6 +523,17 @@ class WooThemes_Sensei_PostTypes {
 		} // End For Loop
 
 	} // End set_role_cap_defaults()
+
+	/**
+	 * load_class loads in class files
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function load_class( $class_name = '' ) {
+		if ( '' != $class_name ) {
+			require_once( 'class-woothemes-sensei-' . $class_name . '.php' );
+		} // End If Statement
+	} // End load_class()
 
 } // End Class
 ?>

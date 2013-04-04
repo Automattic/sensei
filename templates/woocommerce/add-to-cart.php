@@ -4,8 +4,8 @@
  *
  * Override this template by copying it to yourtheme/sensei/woocommerce/add-to-cart.php
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
+ * @author      WooThemes
+ * @package     Sensei/Templates
  * @version     1.0.0
  */
 
@@ -21,22 +21,28 @@ if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user
 <?php } else {
     // based on simple.php in WC templates/single-product/add-to-cart/
     if ( 0 < $wc_post_id ) {
-    	// Get the product
+        // Get the product
         $product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
-    	if ( $product->is_purchasable() ) {
-    		// Check Product Availability
-    		$availability = $product->get_availability();
-    		if ($availability['availability']) {
-    			echo apply_filters( 'woocommerce_stock_html', '<p class="stock '.$availability['class'].'">'.$availability['availability'].'</p>', $availability['availability'] );
-    		} // End If Statement
-    		// Check for stock
-    		if ( $product->is_in_stock() ) { ?>
-    			<form action="<?php echo esc_url( $product->add_to_cart_url() ); ?>" class="cart" method="post" enctype="multipart/form-data">
-    				<?php if (! sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
-    					<button type="submit" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></button>
-    		 		<?php } // End If Statement ?>
-    		 	</form>
-    		 <?php } // End If Statement
-    	} // End If Statement
+        if ( $product->is_purchasable() ) {
+            // Check Product Availability
+            $availability = $product->get_availability();
+            if ($availability['availability']) {
+                echo apply_filters( 'woocommerce_stock_html', '<p class="stock '.$availability['class'].'">'.$availability['availability'].'</p>', $availability['availability'] );
+            } // End If Statement
+            // Check for stock
+            if ( $product->is_in_stock() ) { ?>
+                <form action="<?php echo esc_url( $product->add_to_cart_url() ); ?>" class="cart" method="post" enctype="multipart/form-data">
+                    <?php if (! sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
+                        <?php if ( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) { ?>
+                            <input type="hidden" name="variation_id" value="<?php echo $product->variation_id; ?>" />
+                            <input type="hidden" name="product_id" value="<?php echo esc_attr( $product->id ); ?>" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <input type="hidden" name="attribute_package" id="package" value="<?php echo $product->variation_data['attribute_package']; ?>" />
+                        <?php } ?>
+                        <button type="submit" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></button>
+                    <?php } // End If Statement ?>
+                </form>
+             <?php } // End If Statement
+        } // End If Statement
     } // End If Statement
 } // End If Statement ?>

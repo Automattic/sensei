@@ -16,35 +16,57 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * - __construct()
  * - analysis_admin_menu()
+ * - load_data_table_files()
  * - analysis_page()
+ * - analysis_default_view()
+ * - analysis_user_profile_view()
+ * - analysis_course_view()
+ * - analysis_user_course_view()
+ * - analysis_course_users_view()
+ * - analysis_lesson_users_view()
+ * - load_data_object()
  * - enqueue_scripts()
  * - enqueue_styles()
+ * - render_stats_box()
+ * - analysis_headers()
+ * - analysis_default_nav()
+ * - analysis_user_profile_nav()
+ * - analysis_user_course_nav()
+ * - analysis_course_nav()
+ * - analysis_course_users_nav()
+ * - analysis_lesson_users_nav()
+ * - report_download_page()
+ * - report_set_headers()
+ * - report_load_object()
+ * - report_write_download()
  */
 class WooThemes_Sensei_Analysis {
 	public $token;
 	public $name;
+	public $file;
 
 	/**
 	 * Constructor
 	 * @since  1.0.0
 	 * @return  void
 	 */
-	public function __construct () {
-
+	public function __construct ( $file ) {
 		$this->name = 'Analysis';
+		$this->file = $file;
 		// Admin functions
 		if ( is_admin() ) {
-			add_action('admin_menu', array( &$this, 'analysis_admin_menu' ), 10);
+			add_action( 'admin_menu', array( &$this, 'analysis_admin_menu' ), 10);
 			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+			add_action( 'analysis_wrapper_container', array( &$this, 'wrapper_container'  ) );
+			add_action( 'admin_init', array( &$this, 'report_download_page' ) );
 		} // End If Statement
-
 	} // End __construct()
 
 
 	/**
 	 * analysis_admin_menu function.
-	 *
+	 * @since  1.0.0
 	 * @access public
 	 * @return void
 	 */
@@ -57,168 +79,222 @@ class WooThemes_Sensei_Analysis {
 
 	} // End analysis_admin_menu()
 
+	/**
+	 * load_data_table_files loads required files for Analysis
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function load_data_table_files() {
+		global $woothemes_sensei;
+		// Load Analysis Classes
+		$classes_to_load = array(	'list-table',
+									'analysis-overview',
+									'analysis-user-profile',
+									'analysis-course',
+									'analysis-lesson'
+									);
+		foreach ( $classes_to_load as $class_file ) {
+			$woothemes_sensei->load_class( $class_file );
+		} // End For Loop
+	} // End load_data_table_files()
 
 	/**
 	 * analysis_page function.
-	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @return void
 	 */
 	public function analysis_page() {
-
 		global $woothemes_sensei;
-		// Get the data required
-		$users = get_users();
-		$total_courses = $woothemes_sensei->post_types->course->course_count();
-		$total_lessons = $woothemes_sensei->post_types->lesson->lesson_count();
-		$total_quiz_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'type' => 'sensei_quiz_grade' ), true );
-		$total_grade_count = 0;
-		$total_grade_total = 0.00;
-		// Calculate the average quiz grade
-		foreach ( $total_quiz_grades as $total_quiz_key => $total_quiz_value ) {
-		    $total_grade_total = $total_grade_total + doubleval( $total_quiz_value->comment_content );
-		    $total_grade_count++;
-		} // End For Loop
-		// Handle Division by Zero
-		if ( 0 == $total_grade_count ) {
-			$total_grade_count = 1;
+		if ( isset( $_GET['lesson_id'] ) && 0 < intval( $_GET['lesson_id'] ) ) {
+			$this->analysis_lesson_users_view();
+		} elseif ( isset( $_GET['user'] ) && -1 == intval( $_GET['user'] ) && isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
+			$this->analysis_course_users_view();
+		} elseif ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) && isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
+			$this->analysis_user_course_view();
+		} elseif( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
+			$this->analysis_course_view();
+		} elseif ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
+			$this->analysis_user_profile_view();
+		} elseif( isset( $_GET['course_id'] ) && -1 == intval( $_GET['course_id'] ) ) {
+			$this->analysis_default_view( 'courses' );
+		} elseif( isset( $_GET['lesson_id'] ) && -1 == intval( $_GET['lesson_id'] ) ) {
+			$this->analysis_default_view( 'lessons' );
+		} else {
+			$this->analysis_default_view();
 		} // End If Statement
-		$total_average_grade = abs( round( doubleval( $total_grade_total / $total_grade_count ), 2 ) );
-		$total_courses_started = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'type' => 'sensei_course_start' ), true );
-		$total_courses_ended = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'type' => 'sensei_course_end' ), true );
-		?>
-		<?php do_action( 'analysis_before_container' ); ?>
-		<div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
-			<?php screen_icon( 'woothemes-sensei' ); ?>
-			<h2><?php echo esc_html( $this->name ); ?></h2>
-			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
-			<ul class="subsubsub">
-				<li><a href="admin.php?page=sensei_analysis" class="current">Overview</a></li>
-			</ul>
-			<br class="clear">
-			<div id="poststuff" class="sensei-analysis-wrap">
+	} // End analysis_page()
+
+	/**
+	 * analysis_default_view default view for analysis page
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_default_view( $type = '' ) {
+		global $woothemes_sensei;
+		// Load Analysis data
+		$this->load_data_table_files();
+		$sensei_analysis_overview = $this->load_data_object( 'Overview', $type );
+		// Wrappers
+		do_action( 'analysis_before_container' );
+		do_action( 'analysis_wrapper_container', 'top' );
+		$this->analysis_headers();
+		?><div id="poststuff" class="sensei-analysis-wrap">
 				<div class="sensei-analysis-sidebar">
-					<div class="postbox">
-						<h3><span>Total Courses</span></h3>
-						<div class="inside">
-							<p class="stat"><?php echo $total_courses; ?></p>
-						</div>
-					</div>
-					<div class="postbox">
-						<h3><span>Total Lessons</span></h3>
-						<div class="inside">
-							<p class="stat"><?php echo $total_lessons; ?></p>
-						</div>
-					</div>
-					<div class="postbox">
-						<h3><span>Total Learners</span></h3>
-						<div class="inside">
-							<p class="stat"><?php echo count( $users ); ?></p>
-						</div>
-					</div>
-					<div class="postbox">
-						<h3><span>Average Courses per Learner</span></h3>
-						<div class="inside">
-							<p class="stat"><?php echo abs( round( doubleval( count( $total_courses_started ) / count( $users ) ), 2 ) ); ?></p>
-						</div>
-					</div>
-					<div class="postbox">
-						<h3><span>Average Grade</span></h3>
-						<div class="inside">
-							<p class="stat"><?php echo $total_average_grade; ?>%</p>
-						</div>
-					</div>
-					<div class="postbox">
-						<h3><span>Total Completed Courses</span></h3>
-						<div class="inside">
-							<p class="stat"><?php echo count( $total_courses_ended ); ?></p>
-						</div>
-					</div>
+					<?php
+					foreach ( $sensei_analysis_overview->stats_boxes() as $key => $value ) {
+						$this->render_stats_box( esc_html( $key ), esc_html( $value ) );
+					} // End For Loop
+					?>
 				</div>
 				<div class="sensei-analysis-main">
-					<table class="widefat">
-						<thead>
-							<tr>
-								<th><?php _e('User', 'woothemes-sensei'); ?></th>
-								<th class="total_row"><?php _e('Date Registered', 'woothemes-sensei'); ?></th>
-								<th class="total_row"><?php _e('Active Courses', 'woothemes-sensei'); ?></th>
-								<th class="total_row"><?php _e('Completed Courses', 'woothemes-sensei'); ?></th>
-								<th class="total_row"><?php _e('Average Grade', 'woothemes-sensei'); ?></th>
-							</tr>
-						</thead>
-						<tfoot>
-								<?php
-									$user_offset = 0;
-									if ( isset( $_GET['user_offset'] ) && 0 <= abs( intval( $_GET['user_offset'] ) ) ) {
-										$user_offset = abs( intval( $_GET['user_offset'] ) );
-									} // End If Statement
-									$user_length = 15;
-									$output_counter = 0;
-									foreach ( array_slice($users, $user_offset, $user_length, true) as $user_key => $user_item ) {
-										$output_counter++;
-										$user_courses_started = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_course_start' ), true );
-										$user_courses_ended = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_course_end' ), true );
-										$user_quiz_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_quiz_grade' ), true );
-										// Calculate the average grade for the user
-										$grade_count = 0;
-										$grade_total = 0.00;
-										foreach ( $user_quiz_grades as $quiz_key => $quiz_value ) {
-											$grade_total = $grade_total + doubleval( $quiz_value->comment_content );
-											$grade_count++;
-										} // End For Loop
-										// Handle Division by Zero
-										if ( 0 == $grade_count ) {
-											$grade_count = 1;
-										} // End If Statement
-										$user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
-										// Output the users data
-										echo '<tr>
-											<td>' . $user_item->user_login . '</td>
-											<td class="total_row">' . $user_item->user_registered . '</td>
-											<td class="total_row">' . ( count( $user_courses_started ) - count( $user_courses_ended ) ) . '</td>
-											<td class="total_row">' . count( $user_courses_ended ) . '</td>
-											<td class="total_row">' . $user_average_grade . '%</td>
-											</tr>';
-									} // End For Loop
-								?>
-							<tr>
-								<th><?php _e('User', 'woothemes-sensei'); ?></th>
-								<th class="total_row"><?php _e('Date Registered', 'woothemes-sensei'); ?></th>
-								<th class="total_row"><?php _e('Active Courses', 'woothemes-sensei'); ?></th>
-								<th class="total_row"><?php _e('Completed Courses', 'woothemes-sensei'); ?></th>
-								<th class="total_row"><?php _e('Average Grade', 'woothemes-sensei'); ?></th>
-							</tr>
-						</tfoot>
-					</table>
-					<div class="tablenav bottom">
-						<div class="alignleft actions"></div>
-						<div class="alignleft actions"></div>
-						<div class="tablenav-pages">
-							<span class="displaying-num"><?php echo sprintf( __( '%s items', 'woothemes-sensei' ), count( $users ) ); ?></span>
-							<span class="pagination-links">
-								<?php if ( 0 < $user_offset ) { ?>
-									<a class="first-page disabled" title="Go to the first page" href="<?php echo esc_url( 'admin.php?page=sensei_analysis' ); ?>">«</a>
-									<a class="prev-page" title="Go to the previous page" href="<?php echo esc_url( 'admin.php?page=sensei_analysis&user_offset=' . ( $user_offset - $user_length )  ); ?>">‹</a>
-								<?php } ?>
-								<span class="paging-input"><?php echo ( 1 + intval( ( $user_offset / $user_length ) ) ) ?> of <span class="total-pages"><?php echo ( 1 + intval( ( count( $users ) / $user_length ) ) ) ?></span></span>
-								<?php if ( $user_length == $output_counter && ( count( $users ) > ( $user_offset + $user_length ) ) ) { ?>
-									<a class="next-page" title="Go to the next page" href="<?php echo esc_url( 'admin.php?page=sensei_analysis&user_offset=' . ( $user_offset + $user_length )  ); ?>">›</a>
-									<a class="last-page" title="Go to the last page" href="<?php echo esc_url( 'admin.php?page=sensei_analysis&user_offset=' . ( (  intval( ( count( $users ) / $user_length ) ) ) * $user_length )  ); ?>">»</a>
-							</span><?php } ?>
-						</div>
-
-						<br class="clear">
-					</div>
-
+					<?php $sensei_analysis_overview->display(); ?>
 				</div>
 			</div>
+		<?php
+		do_action( 'analysis_wrapper_container', 'bottom' );
+		do_action( 'analysis_after_container' );
+	} // End analysis_default_view()
 
-		</div><!--/#woothemes-sensei-->
+	/**
+	 * analysis_user_profile_view user profile view for analysis page
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_user_profile_view() {
+		global $woothemes_sensei;
+		// Load Analysis data
+		$this->load_data_table_files();
+		$sensei_analysis_user_profile = $this->load_data_object( 'User_Profile', intval( $_GET['user'] ) );
+		// Wrappers
+		do_action( 'analysis_before_container' );
+		do_action( 'analysis_wrapper_container', 'top' );
+		$this->analysis_headers( array( 'nav' => 'user_profile' ) );
+		?><div id="poststuff" class="sensei-analysis-wrap user-profile">
+				<div class="sensei-analysis-main">
+					<?php $sensei_analysis_user_profile->display(); ?>
+				</div>
+			</div>
+		<?php
+		do_action( 'analysis_wrapper_container', 'bottom' );
+		do_action( 'analysis_after_container' );
+	} // End analysis_user_profile_view()
 
-		<?php do_action( 'analysis_after_container' ); ?>
+	/**
+	 * analysis_course_view individual course view for analysis page
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_course_view() {
+		global $woothemes_sensei;
+		// Load Analysis data
+		$this->load_data_table_files();
+		$sensei_analysis_course = $this->load_data_object( 'Course', intval( $_GET['course_id'] ) );
+		// Wrappers
+		do_action( 'analysis_before_container' );
+		do_action( 'analysis_wrapper_container', 'top' );
+		$this->analysis_headers( array( 'nav' => 'course' ) );
+		?><div id="poststuff" class="sensei-analysis-wrap course-profile">
+				<div class="sensei-analysis-main">
+					<?php $sensei_analysis_course->display(); ?>
+				</div>
+			</div>
+		<?php
+		do_action( 'analysis_wrapper_container', 'bottom' );
+		do_action( 'analysis_after_container' );
+	} // End analysis_course_view()
 
-	<?php
-	} // End analysis_page()
+	/**
+	 * analysis_user_course_view user individual course view for analysis page
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_user_course_view() {
+		global $woothemes_sensei;
+		// Load Analysis data
+		$this->load_data_table_files();
+		$sensei_analysis_user_course = $this->load_data_object( 'Course', intval( $_GET['course_id'] ), intval( $_GET['user'] ) );
+		// Wrappers
+		do_action( 'analysis_before_container' );
+		do_action( 'analysis_wrapper_container', 'top' );
+		$this->analysis_headers( array( 'nav' => 'user_course' ) );
+		?><div id="poststuff" class="sensei-analysis-wrap course-profile">
+				<div class="sensei-analysis-main">
+					<?php $sensei_analysis_user_course->display(); ?>
+				</div>
+			</div>
+		<?php
+		do_action( 'analysis_wrapper_container', 'bottom' );
+		do_action( 'analysis_after_container' );
+	} // End analysis_user_course_view()
+
+	/**
+	 * analysis_course_users_view user individual course view for analysis page
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_course_users_view() {
+		global $woothemes_sensei;
+		// Load Analysis data
+		$this->load_data_table_files();
+		$sensei_analysis_course_users = $this->load_data_object( 'Course', intval( $_GET['course_id'] ), -1 );
+		// Wrappers
+		do_action( 'analysis_before_container' );
+		do_action( 'analysis_wrapper_container', 'top' );
+		$this->analysis_headers( array( 'nav' => 'course_users' ) );
+		?><div id="poststuff" class="sensei-analysis-wrap course-profile">
+				<div class="sensei-analysis-main">
+					<?php $sensei_analysis_course_users->display(); ?>
+				</div>
+			</div>
+		<?php
+		do_action( 'analysis_wrapper_container', 'bottom' );
+		do_action( 'analysis_after_container' );
+	} // End analysis_course_users_view()
+
+	/**
+	 * analysis_lesson_users_view user individual course view for analysis page
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_lesson_users_view() {
+		global $woothemes_sensei;
+		// Load Analysis data
+		$this->load_data_table_files();
+		$sensei_analysis_lesson_users = $this->load_data_object( 'Lesson', intval( $_GET['lesson_id'] ) );
+		// Wrappers
+		do_action( 'analysis_before_container' );
+		do_action( 'analysis_wrapper_container', 'top' );
+		$this->analysis_headers( array( 'nav' => 'lesson_users' ) );
+		?><div id="poststuff" class="sensei-analysis-wrap course-profile">
+				<div class="sensei-analysis-main">
+					<?php $sensei_analysis_lesson_users->display(); ?>
+				</div>
+			</div>
+		<?php
+		do_action( 'analysis_wrapper_container', 'bottom' );
+		do_action( 'analysis_after_container' );
+	} // End analysis_lesson_users_view()
+
+	/**
+	 * load_data_object creates new instance of class
+	 * @param  string  $name          Name of class
+	 * @param  integer $data          constructor arguments
+	 * @param  undefined  $optional_data optional constructor arguments
+	 * @return object                 class instance object
+	 */
+	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
+		// Load Analysis data
+		$object_name = 'WooThemes_Sensei_Analysis_' . $name . '_List_Table';
+		if ( is_null($optional_data) ) {
+			$sensei_analysis_object = new $object_name( $data );
+		} else {
+			$sensei_analysis_object = new $object_name( $data, $optional_data );
+		}
+		$sensei_analysis_object->prepare_items();
+		$sensei_analysis_object->load_stats();
+		return $sensei_analysis_object;
+	} // End load_data_object()
 
 	/**
 	 * enqueue_scripts function.
@@ -250,6 +326,225 @@ class WooThemes_Sensei_Analysis {
 
 	} // End enqueue_styles()
 
+	/**
+	 * render_stats_box outputs stats boxes
+	 * @since  1.2.0
+	 * @param  $title string title of stat
+	 * @param  $data string stats data
+	 * @return void
+	 */
+	public function render_stats_box( $title, $data ) {
+		?><div class="postbox">
+			<h3><span><?php echo $title; ?></span></h3>
+			<div class="inside">
+				<p class="stat"><?php echo $data; ?></p>
+			</div>
+		</div><?php
+	} // End render_stats_box()
+
+	/**
+	 * analysis_headers outputs analysis general headers
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_headers( $args = array( 'nav' => 'default' ) ) {
+		$function = 'analysis_' . $args['nav'] . '_nav';
+		$this->$function();
+	} // End analysis_headers()
+
+	/**
+	 * wrapper_container wrapper for analysis area
+	 * @since  1.2.0
+	 * @param $which string
+	 * @return void
+	 */
+	public function wrapper_container( $which ) {
+		if ( 'top' == $which ) {
+			?><div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>"><?php
+		} elseif ( 'bottom' == $which ) {
+			?></div><!--/#woothemes-sensei--><?php
+		} // End If Statement
+	} // End wrapper_container()
+
+	/**
+	 * analysis_default_nav default nav area for analysis
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_default_nav() {
+		global $woothemes_sensei;
+		?><?php screen_icon( 'woothemes-sensei' ); ?>
+			<h2><?php echo esc_html( $this->name ); ?><?php if ( isset( $_GET['course_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . __( 'Courses', 'woothemes-sensei' ); } ?><?php if ( isset( $_GET['lesson_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . __( 'Lessons', 'woothemes-sensei' ); } ?></h2>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<ul class="subsubsub">
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis' ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( !isset( $_GET['course_id'] ) && !isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Overview', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['course_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Courses', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis', 'lesson_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Lessons', 'woothemes-sensei' ); ?></a></li>
+			</ul>
+			<br class="clear"><?php
+	} // End analysis_default_nav()
+
+	/**
+	 * analysis_user_profile_nav nav area for analysis user profile
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_user_profile_nav() {
+		global $woothemes_sensei;
+		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
+			$user_data = get_userdata( $_GET['user']  );
+			?><?php screen_icon( 'woothemes-sensei' ); ?>
+			<h2><?php echo esc_html( $this->name ) . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . $user_data->display_name; ?></h2>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<br class="clear"><?php
+		} // End If Statement
+	} // End analysis_user_profile_nav()
+
+	/**
+	 * analysis_user_course_nav nav area for analysis user course
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_user_course_nav() {
+		global $woothemes_sensei;
+		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
+			$user_data = get_userdata( $_GET['user']  );
+			?><?php screen_icon( 'woothemes-sensei' ); ?>
+			<h2><?php echo esc_html( $this->name ) . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . $user_data->display_name . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ); ?></h2>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<br class="clear"><?php
+		} // End If Statement
+	} // End analysis_user_course_nav()
+
+	/**
+	 * analysis_course_nav nav area for analysis courses
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_course_nav() {
+		global $woothemes_sensei;
+		if ( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
+			?><?php screen_icon( 'woothemes-sensei' ); ?>
+			<h2><?php echo esc_html( $this->name ) . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ); ?></h2>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<br class="clear"><?php
+		} // End If Statement
+	} // End analysis_course_nav()
+
+	/**
+	 * analysis_course_users_nav nav area for analysis course users
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_course_users_nav() {
+		global $woothemes_sensei;
+		if ( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
+			?><?php screen_icon( 'woothemes-sensei' ); ?>
+			<h2><?php echo esc_html( $this->name ) . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ); ?></h2>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<br class="clear"><?php
+		} // End If Statement
+	} // End analysis_course_users_nav()
+
+	/**
+	 * analysis_lesson_users_nav nav area for analysis lesson users
+	 * @since  1.2.0
+	 * @return void
+	 */
+	public function analysis_lesson_users_nav() {
+		global $woothemes_sensei;
+		if ( isset( $_GET['lesson_id'] ) && 0 < intval( $_GET['lesson_id'] ) ) {
+			$course_id = intval( get_post_meta( intval( $_GET['lesson_id'] ), '_lesson_course', true ) );
+			$course_title = '';
+			if ( 0 < $course_id ) {
+				$course_title = '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( $course_id );
+			} // End If Statement
+			?><?php screen_icon( 'woothemes-sensei' ); ?>
+			<h2><?php echo esc_html( $this->name ) . $course_title . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['lesson_id'] ) ); ?></h2>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<br class="clear"><?php
+		} // End If Statement
+	} // End analysis_lesson_users_nav()
+
+	/**
+	 * report_download_page handles CSV export request
+	 * @since  1.2.0
+	 * @return void
+	 */
+    public function report_download_page() {
+        // Check if is a report
+        if ( isset( $_GET['report_id'] ) && '' != $_GET['report_id'] ) {
+        	switch ( $_GET['report_id'] ) {
+				case 'courses-overview':
+				case 'lessons-overview':
+				case 'user-overview':
+					$header_setting = $_GET['report_id'];
+					$report_object_setting = 'Overview';
+				break;
+				default :
+				break;
+			} // End Switch Statement
+			// Handles headers and generates download file
+			if ( '' != $header_setting && '' != $report_object_setting ) {
+				$this->report_set_headers( $header_setting );
+				$report_array = $this->report_load_object( $report_object_setting );
+				$this->report_write_download( $report_array );
+            } // End If Statement
+            exit;
+        } // End If Statement
+    } // End report_download_page()
+
+    /**
+     * report_set_headers sets headers for reporting export
+     * @since  1.2.0
+     * @param  string $filename name of report file
+     * @return void
+     */
+    public function report_set_headers( $filename = '' ) {
+    	header( 'Content-Type: text/csv' );
+        header( 'Content-Disposition: attachment;filename=' . $filename . '.csv');
+    } // End report_set_headers()
+
+    /**
+     * report_load_object loads the right object for reporting
+     * @since  1.2.0
+     * @param  string $type object name
+     * @return array data array for reporting output
+     */
+    public function report_load_object( $type = '' ) {
+    	$report_array = array();
+    	if ( '' != $type ) {
+    		$this->load_data_table_files();
+    		$class_name = 'WooThemes_Sensei_Analysis_' . $type . '_List_Table';
+			$sensei_analysis_overview_report = new $class_name();
+			switch ( $_GET['report_id'] ) {
+				case 'courses-overview':
+					$sensei_analysis_overview_report->type = 'courses';
+				break;
+				case 'lessons-overview':
+					$sensei_analysis_overview_report->type = 'lessons';
+				break;
+				default :
+				break;
+			} // End Switch Statement
+			$report_array = $sensei_analysis_overview_report->build_data_array( true );
+    	} // End If Statement
+    	return $report_array;
+    } // End report_load_object()
+
+    /**
+     * report_write_download write array data to CSV
+     * @since  1.2.0
+     * @param  array  $report_array data array
+     * @return void
+     */
+    public function report_write_download( $report_array = array() ) {
+    	$fp = fopen('php://output', 'w');
+        foreach ($report_array as $row) {
+            fputcsv($fp, $row);
+        } // End For Loop
+        fclose($fp);
+    } // End report_write_download()
 
 } // End Class
 ?>

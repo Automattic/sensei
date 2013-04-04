@@ -27,11 +27,7 @@ get_header(); ?>
 			if ( have_posts() ) { ?>
 				<section id="main-course" class="course-container">
 
-		    	    <header class="archive-header">
-
-		    	    	<?php echo sensei_course_archive_header(); ?>
-
-		    	    </header>
+		    	    <?php do_action( 'sensei_course_archive_header', $query_type ); ?>
 
 		    	    <div class="fix"></div>
 
@@ -45,10 +41,9 @@ get_header(); ?>
 		 			?>
 
 					<article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ); ?>">
-		    			<?php
-		    			// Image
-		    			echo  $woothemes_sensei->post_types->course->course_image( $post_id );
-		    			?>
+
+		    			<?php do_action( 'sensei_course_image', $post_id ); ?>
+
 		    			<header>
 		    				<h2><a href="<?php echo get_permalink( $post_id ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a></h2>
 		    			</header>

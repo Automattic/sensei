@@ -17,10 +17,7 @@
 ?>
         	<article <?php post_class( array( 'lesson', 'post' ) ); ?>>
 
-				<?php
-				// Image
-    			echo $woothemes_sensei->post_types->lesson->lesson_image( $post->ID );
-    			?>
+				<?php do_action( 'sensei_lesson_image', $post->ID ); ?>
 
                 <?php do_action( 'sensei_lesson_single_title' ); ?>
 

@@ -87,50 +87,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
 	/**
-	 * sensei_course_archive_header function.
-	 *
-	 * @access public
-	 * @param string $query_type (default: '')
-	 * @return void
-	 */
-	function sensei_course_archive_header( $query_type = '') {
-
-		$html = '';
-
-		if ( is_tax( 'course-category' ) ) {
-			global $wp_query;
-			$taxonomy_obj = $wp_query->get_queried_object();
-			$term_id = $taxonomy_obj->term_id;
-			$taxonomy_short_name = $taxonomy_obj->taxonomy;
-			$taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
-			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
-			return apply_filters( 'course_category_archive_title', '<h1>' . $title . '</h>' );
-		} // End If Statement
-
-		switch ( $query_type ) {
-			case 'newcourses':
-				$html .= '<h1>' . __( 'New Courses', 'woothemes-sensei' ) . '</h1>';
-				break;
-			case 'featuredcourses':
-				$html .= '<h1>' . __( 'Featured Courses', 'woothemes-sensei' ) . '</h1>';
-				break;
-			case 'freecourses':
-				$html .= '<h1>' . __( 'Free Courses', 'woothemes-sensei' ) . '</h1>';
-				break;
-			case 'paidcourses':
-				$html .= '<h1>' . __( 'Paid Courses', 'woothemes-sensei' ) . '</h1>';
-				break;
-			default:
-				$html .= '<h1>' . __( 'Courses', 'woothemes-sensei' ) . '</h1>';
-				break;
-
-		} // End Switch Statement
-
-		return apply_filters( 'course_archive_title', $html );
-	} // sensei_course_archive_header()
-
-
-	/**
 	 * shortcode_all_courses function.
 	 *
 	 * @access public

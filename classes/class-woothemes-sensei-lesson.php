@@ -223,7 +223,7 @@ class WooThemes_Sensei_Lesson {
 		if ( isset( $_POST[ 'quiz_id' ] ) && ( 0 < absint( $_POST[ 'quiz_id' ] ) ) ) {
 			$quiz_id = absint( $_POST[ 'quiz_id' ] );
 		} // End If Statement
-		$post_title = $_POST[ 'post_title' ] . ' ' . __( 'Quiz', 'wootheme-sensei' );
+		$post_title = $_POST[ 'post_title' ] . ' ' . __( 'Quiz', 'woothemes-sensei' );
 		$post_author = $_POST[ 'post_author' ];
 		$post_status = $_POST[ 'post_status' ];
 		$post_type = 'quiz';
@@ -1065,7 +1065,7 @@ class WooThemes_Sensei_Lesson {
  		} else {
  			// Display Image Placeholder if none
 			if ( $woothemes_sensei->settings->settings[ 'placeholder_images_enable' ] ) {
-				$img_url = '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />';
+				$img_url = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
 			} // End If Statement
 		} // End If Statement
 		$html .= '<a href="' . get_permalink( $lesson_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . $img_url . '</a>';

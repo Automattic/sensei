@@ -5,6 +5,15 @@ jQuery(document).ready( function($) {
 	 ***************************************************************************************************/
 
 	/**
+	 * exists checks if selector exists
+	 * @since  1.2.0
+	 * @return boolean
+	 */
+	jQuery.fn.exists = function() {
+		return this.length>0;
+	}
+
+	/**
 	 * Validation of input fields - Add Course.
 	 *
 	 * @since 1.0.0
@@ -440,15 +449,14 @@ jQuery(document).ready( function($) {
 	 ***************************************************************************************************/
 
 	// Lessons Write Panel
-	jQuery( '#lesson-complexity-options' ).chosen();
-	jQuery( '#lesson-prerequisite-options' ).chosen();
-	jQuery( '#lesson-course-options' ).chosen();
-	jQuery( '#course-prerequisite-options' ).chosen();
-	jQuery( '#course-woocommerce-product-options' ).chosen();
-	jQuery( '#course-category-options' ).chosen();
+	if ( jQuery( '#lesson-complexity-options' ).exists() ) { jQuery( '#lesson-complexity-options' ).chosen(); }
+	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) { jQuery( '#lesson-prerequisite-options' ).chosen(); }
+	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).chosen(); }
+	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).chosen(); }
+	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).chosen(); }
 	// Courses Write Panel
-	jQuery( '#course-woocommerce-product-options' ).chosen();
-	jQuery( '#course-prerequisite-options' ).chosen();
+	if ( jQuery( '#course-woocommerce-product-options' ).exists() && '-' != jQuery( '#course-woocommerce-product-options' ).val() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
+	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).chosen(); }
 	// Sensei Settings Panel
 	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {
 		if ( !jQuery( this ).hasClass( 'range-input' ) ) {
