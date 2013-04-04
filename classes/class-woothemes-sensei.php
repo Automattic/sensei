@@ -33,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - check_user_permissions()
  * - access_settings()
  * - sensei_woocommerce_complete_order()
+ * - sensei_woocommerce_cancel_order()
  * - load_class()
  * - sensei_activate_subscription()
  */
@@ -114,6 +115,7 @@ class WooThemes_Sensei {
 		// WooCommerce Payment Actions
 		add_action( 'woocommerce_payment_complete' , array( &$this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_order_status_completed' , array( &$this, 'sensei_woocommerce_complete_order' ) );
+		add_action( 'woocommerce_order_status_cancelled' , array( &$this, 'sensei_woocommerce_cancel_order' ) );
 		add_action( 'subscriptions_activated_for_order', array( &$this, 'sensei_activate_subscription' ) );
 		// Run Upgrades once the WP functions have loaded
 		if ( is_admin() ) {
@@ -614,6 +616,59 @@ class WooThemes_Sensei {
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_woocommerce_complete_order()
+
+	/**
+	 * sensei_woocommerce_cancel_order runs when an order is cancelled
+	 * @since  1.2.0
+	 * @param  integer $order_id order ID
+	 * @return void
+	 */
+	public function sensei_woocommerce_cancel_order( $order_id ) {
+		$order = new WC_Order( $order_id );
+		$user = get_user_by('id', $order->user_id);
+		$order_user['ID'] = $user->ID;
+		$order_user['user_login'] = $user->user_login;
+		$order_user['user_email'] = $user->user_email;
+		$order_user['user_url'] = $user->user_url;
+		// Run through each product ordered
+		if (sizeof($order->get_items())>0) {
+			foreach($order->get_items() as $item) {
+				$product_type = '';
+				if (isset($item['variation_id']) && $item['variation_id'] > 0) {
+					$item_id = $item['variation_id'];
+					$product_type = 'variation';
+				} else {
+					$item_id = $item['product_id'];
+				} // End If Statement
+				$_product = $this->sensei_get_woocommerce_product_object( $item_id, $product_type );
+				// Get courses that use the WC product
+				$courses = array();
+				$courses = $this->post_types->course->get_product_courses( $item_id );
+				// Loop and update those courses
+				foreach ($courses as $course_item){
+					// Check and Remove course from courses user meta
+					$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_item->ID, 'user_id' => $order_user['ID'], 'type' => 'sensei_course_start' ) );
+		    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_item->ID, 'user_id' => $order_user['ID'], 'type' => 'sensei_course_end' ) );
+					// Get all course lessons
+	    			$course_lessons = $this->post_types->course->course_lessons( $course_item->ID );
+	    			foreach ($course_lessons as $lesson_item){
+	    				// Check for lesson complete
+	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $order_user['ID'], 'type' => 'sensei_lesson_end' ) );
+	    				// Lesson Quiz Meta
+	        			$lesson_quizzes = $this->post_types->lesson->lesson_quizzes( $lesson_item->ID );
+	        			if ( 0 < count($lesson_quizzes) )  {
+	        				foreach ($lesson_quizzes as $quiz_item){
+	        					// Check for quiz answers
+	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $order_user['ID'], 'type' => 'sensei_quiz_answers' ) );
+	    						// Check for quiz grade
+	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $order_user['ID'], 'type' => 'sensei_quiz_grade' ) );
+	    					} // End For Loop
+	    				} // End If Statement
+	    			} // End For Loop
+				} // End For Loop
+			} // End For Loop
+		} // End If Statement
+	} // End sensei_woocommerce_cancel_order()
 
 	/**
 	 * sensei_get_woocommerce_product_object Returns the WooCommerce Product Object for pre and post 2.0 installations

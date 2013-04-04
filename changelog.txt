@@ -2,7 +2,7 @@
 
 2013.04.04 - version 1.2.0
  * /assets/css/settings.css - styling changes for Analysis
- * /classes/class-woothemes-sensei.php - refactor for loading of classes, added subscriptions hooks
+ * /classes/class-woothemes-sensei.php - refactor for loading of classes, added subscriptions hooks, added logic for woocommerce order cancellation
  * /classes/class-woothemes-sensei-analysis.php - refactor to use List Tables class, output functions for new Analysis areas, added export capability for Analysis tables
  * /classes/class-woothemes-sensei-analysis-course.php - new class to handle Analysis Courses
  * /classes/class-woothemes-sensei-analysis-lesson.php - new class to handle Analysis Lessons
@@ -13,7 +13,8 @@
  * /classes/class-woothemes-sensei-lesson.php - add filter for lesson placeholder image
  * /classes/class-woothemes-sensei-list-table.php - new list table class to handle data tables
  * /classes/class-woothemes-sensei-posttypes.php - refactor for loading of classes
- * /inc/woothemes-sensei-template.php - removes old functions
+ * /classes/class-woothemes-sensei-utils.php - refactor for removing of comment_clause filters for checking sensei activity
+ * /inc/woothemes-sensei-template.php - removes old functions, recent comments widget fix
  * /templates/archive-course.php - fixes shortcode issues on paginated pages
  * /templates/content-no-permissions.php - uses new frontend hooks
  * /templates/content-single-course.php - uses new frontend hooks

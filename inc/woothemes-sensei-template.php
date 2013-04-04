@@ -408,7 +408,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 * @return void
 	 */
 	function sensei_recent_comments_widget_filter( $widget_args = array() ) {
-		$widget_args = array( 'post_type' => array( 'post', 'page' ) );
+		if ( ! isset( $widget_args['post_type'] ) ) $widget_args['post_type'] = array( 'post', 'page' );
 		return $widget_args;
 	} // End sensei_recent_comments_widget_filter()
 	add_filter( 'widget_comments_args', 'sensei_recent_comments_widget_filter', 10, 1 );
