@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
    				$query_type = esc_html( $_GET[ 'action' ] );
    			} // End If Statement
 
-   			switch ($query_type) {
+   			switch ( $query_type ) {
 				case 'newcourses':
 					set_query_var( 'orderby', 'date' );
 					set_query_var( 'order', 'DESC' );

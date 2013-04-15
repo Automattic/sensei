@@ -223,9 +223,9 @@ class WooThemes_Sensei_Lesson {
 		if ( isset( $_POST[ 'quiz_id' ] ) && ( 0 < absint( $_POST[ 'quiz_id' ] ) ) ) {
 			$quiz_id = absint( $_POST[ 'quiz_id' ] );
 		} // End If Statement
-		$post_title = $_POST[ 'post_title' ] . ' ' . __( 'Quiz', 'woothemes-sensei' );
-		$post_author = $_POST[ 'post_author' ];
-		$post_status = $_POST[ 'post_status' ];
+		$post_title = esc_html( $_POST[ 'post_title' ] ) . ' ' . __( 'Quiz', 'woothemes-sensei' );
+		$post_author = esc_html( $_POST[ 'post_author' ] );
+		$post_status = esc_html( $_POST[ 'post_status' ] );
 		$post_type = 'quiz';
 		$post_content = '';
 		if ( isset( $_POST[ 'quiz_passmark' ] ) && ( 0 < absint( $_POST[ 'quiz_passmark' ] ) ) ) {
@@ -307,7 +307,7 @@ class WooThemes_Sensei_Lesson {
 		} // End If Statement
 		// Handle preselected course
 		if ( isset( $_GET[ 'course_id' ] ) && ( 0 < absint( $_GET[ 'course_id' ] ) ) ) {
-			$select_lesson_prerequisite = $_GET[ 'course_id' ];
+			$select_lesson_prerequisite = absint( $_GET[ 'course_id' ] );
 		} // End If Statement
 		// Get the Lesson Posts
 		$post_args = array(	'post_type' 		=> 'course',
@@ -451,7 +451,7 @@ class WooThemes_Sensei_Lesson {
 				// Quiz Meta data
 				$html .= '<p>';
 					// Quiz Pass Percentage
-					$html .= '<input type="hidden" name="quiz_id" id="quiz_id" value="' . $quiz_id . '" />';
+					$html .= '<input type="hidden" name="quiz_id" id="quiz_id" value="' . esc_attr( $quiz_id ) . '" />';
 					$html .= '<label for="quiz_passmark">' . __( 'Quiz passmark percentage' , 'woothemes-sensei' ) . '</label> ';
   					$html .= '<input type="text" id="quiz_passmark" name="quiz_passmark" value="' . esc_attr( $lesson_quiz_passmark ) . '" size="25" class="widefat" />';
 				$html .= '</p>';
@@ -508,7 +508,7 @@ class WooThemes_Sensei_Lesson {
 								</tfoot>
 								<tbody>';
 					if ( 0 < $post_count) { $message_class = "hidden"; }
-					$html .= '<tr id="no-questions-message" class="' . $message_class . '">';
+					$html .= '<tr id="no-questions-message" class="' . esc_attr( $message_class ) . '">';
 						$html .= '<td colspan="3">' . __( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
 					$html .= '</tr>';
 					// Existing questions
@@ -557,7 +557,7 @@ class WooThemes_Sensei_Lesson {
 					// Build the default table - V2 refactor this into a generic function for use with the above output
 					$post_count = 0;
 					// Build Questions Table
-					$html .= '<input type="hidden" name="question_counter" id="question_counter" value="' . $post_count . '" />';
+					$html .= '<input type="hidden" name="question_counter" id="question_counter" value="' . esc_attr( $post_count ) . '" />';
 					// Table headers
 					$html .= '<table class="widefat">
 								<thead>
@@ -576,7 +576,7 @@ class WooThemes_Sensei_Lesson {
 								</tfoot>
 								<tbody>';
 					if ( 0 < $post_count) { $message_class = "hidden"; }
-					$html .= '<tr id="no-questions-message" class="' . $message_class . '">';
+					$html .= '<tr id="no-questions-message" class="' . esc_attr( $message_class ) . '">';
 						$html .= '<td colspan="3">' . __( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
 					$html .= '</tr>';
 					$html .= '</tbody>
@@ -695,7 +695,7 @@ class WooThemes_Sensei_Lesson {
 		global $current_user;
 		//Add nonce security to the request
 		if ( isset($_POST['lesson_add_course_nonce']) ) {
-			$nonce = $_POST['lesson_add_course_nonce'];
+			$nonce = esc_html( $_POST['lesson_add_course_nonce'] );
 		} // End If Statement
 		if ( ! wp_verify_nonce( $nonce, 'lesson_add_course_nonce' ) ) {
 			die('');
@@ -723,7 +723,7 @@ class WooThemes_Sensei_Lesson {
 		global $current_user;
 		//Add nonce security to the request
 		if ( isset($_POST['lesson_update_question_nonce']) ) {
-			$nonce = $_POST['lesson_update_question_nonce'];
+			$nonce = esc_html( $_POST['lesson_update_question_nonce'] );
 		} // End If Statement
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_nonce' ) ) {
 			die('');

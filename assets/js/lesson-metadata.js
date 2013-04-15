@@ -158,7 +158,7 @@ jQuery(document).ready( function($) {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	jQuery( '#lesson-course-details p ' ).on( 'click', 'a.lesson_course_cancel', function() {
+	jQuery( '#lesson-course-details p' ).on( 'click', 'a.lesson_course_cancel', function() {
 		// Hide the add course panel and show the add course link
 		jQuery( '#lesson-course-actions' ).show();
 		jQuery( '#lesson-course-details' ).addClass( 'hidden' );
@@ -170,7 +170,7 @@ jQuery(document).ready( function($) {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	jQuery( '#lesson-course-details p ' ).on( 'click', 'a.lesson_course_save', function() {
+	jQuery( '#lesson-course-details p' ).on( 'click', 'a.lesson_course_save', function() {
 	 	// Validate Inputs
 	 	var validInput = jQuery.fn.validateCourseInput();
 		if ( validInput ) {
