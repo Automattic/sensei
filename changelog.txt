@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.04.12 - version 1.2.1
+ * filename.php - message
+
 2013.04.04 - version 1.2.0
  * /assets/css/settings.css - styling changes for Analysis
  * /assets/js/lesson-metadata.js - fix for media upload button not firing

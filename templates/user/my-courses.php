@@ -16,131 +16,12 @@ get_currentuserinfo();
 
 // Check if the user is logged in
 if ( is_user_logged_in() ) {
-	// Error messages
-	$messages = '';
 	// Handle completion of a course
-	if ( isset( $_POST['course_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_course_noonce' ], 'woothemes_sensei_complete_course_noonce' ) ) {
-	    $sanitized_submit = esc_html( $_POST['course_complete'] );
-	    $sanitized_course_id = absint( esc_html( $_POST['course_complete_id'] ) );
-		// Handle submit data
-	    switch ($sanitized_submit) {
-	    	case __( 'Mark as Complete', 'woothemes-sensei' ):
-
-	    		$dataset_changes = false;
-	    		// Save Course Data Answers
-	    		$args = array(
-								    'post_id' => $sanitized_course_id,
-								    'username' => $current_user->user_login,
-								    'user_email' => $current_user->user_email,
-								    'user_url' => $current_user->user_url,
-								    'data' => __( 'Course completed by the user', 'woothemes-sensei' ),
-								    'type' => 'sensei_course_end', /* FIELD SIZE 20 */
-								    'parent' => 0,
-								    'user_id' => $current_user->ID,
-								    'action' => 'update'
-								);
-				$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-				$dataset_changes = true;
-
-				if ( $activity_logged ) {
-					// Get all course lessons
-	    			$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $sanitized_course_id );
-	    			// Mark all quiz user meta lessons as complete
-	    			foreach ($course_lessons as $lesson_item){
-	    				// Mark lesson as complete
-						$args = array(
-						    		    'post_id' => $lesson_item->ID,
-						    		    'username' => $current_user->user_login,
-						    		    'user_email' => $current_user->user_email,
-						    		    'user_url' => $current_user->user_url,
-						    		    'data' => __( 'Lesson completed by the user', 'woothemes-sensei' ),
-						    		    'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
-						    		    'parent' => 0,
-						    		    'user_id' => $current_user->ID
-						    		);
-						$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-
-						if ( $activity_logged ) {
-							// Lesson Quiz Meta
-	        				$lesson_quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson_item->ID );
-	        				if ( 0 < count($lesson_quizzes) )  {
-	        					foreach ($lesson_quizzes as $quiz_item){
-									// Mark quiz grade as passed
-									$args = array(
-									    		    'post_id' => $quiz_item->ID,
-									    		    'username' => $current_user->user_login,
-									    		    'user_email' => $current_user->user_email,
-									    		    'user_url' => $current_user->user_url,
-									    		    'data' => '100',
-									    		    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
-									    		    'parent' => 0,
-									    		    'user_id' => $current_user->ID
-									    		);
-									$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-								} // End For Loop
-							} // End If Statement
-						} // End If Statement
-					} // End For Loop
-	    		} // End If Statement
-
-				// Success message
-	    		if ( $dataset_changes ) {
-	    			$messages = sprintf( __( '%1$s marked as complete.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) );
-	    		} // End If Statement
-
-	    		break;
-	    	case __( 'Delete Course', 'woothemes-sensei' ):
-
-	    		$dataset_changes = false;
-	    		// Check for quiz grade
-	    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
-	    		// Check and Remove course from courses user meta
-	    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $sanitized_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
-	    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $sanitized_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
-	    		// Get all course lessons
-	    		$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $sanitized_course_id );
-	    		// Remove all quiz user meta lessons
-	    		// Mark all quiz user meta lessons as complete
-	    		$dataset_changes = false;
-	    		if ( isset( $lesson_quizzes ) && 0 < count($lesson_quizzes) )  {
-	    			foreach ($course_lessons as $lesson_item){
-	    				// Check for lesson complete
-	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
-	    				// Lesson Quiz Meta
-	        			$lesson_quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson_item->ID );
-	        			if ( 0 < count($lesson_quizzes) )  {
-	        				foreach ($lesson_quizzes as $quiz_item){
-	        					// Check for quiz answers
-	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_answers' ) );
-	    						// Check for quiz grade
-	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
-	    					} // End For Loop
-	    				} // End If Statement
-	    			} // End For Loop
-	    		} // End If Statement
-	    		// Success message
-	    		if ( $dataset_changes ) {
-	    			$messages = sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) );
-	    		} // End If Statement
-	    		break;
-	    	default:
-	    		// Nothing
-	    		break;
-	    } // End Switch Statement
-	} // End If Statement
+	do_action( 'sensei_complete_course' );
 	?>
-
 	<section id="main-course" class="course-container">
+	<?php do_action( 'sensei_frontend_messages' ); ?>
 	<?php
-	// Output messages
-	if ( '' != $messages ) { ?>
-	    <header class="archive-header">
-	    	<div class="woo-sc-box tick"><?php echo esc_html( $messages ); ?></div>
-	    </header>
-
-	    <div class="fix"></div>
-	<?php } // End If Statement
-
 	// Logic for Active and Completed Courses
 	if ( isset( $woothemes_sensei->settings->settings[ 'my_course_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'my_course_amount' ] ) ) ) {
 		$amount = absint( $woothemes_sensei->settings->settings[ 'my_course_amount' ] );
@@ -331,12 +212,6 @@ if ( is_user_logged_in() ) {
 	</div>
 
 	</section>
-<?php } else { ?>
-	<div id="my-courses">
-		<?php
-		// Display Login Form and Registration Link
-		wp_login_form( array( 'redirect' => get_permalink() ) );
-		wp_register();
-		?>
-	</div>
-<?php } // End If Statement ?>
+<?php } else { 
+	do_action( 'sensei_login_form' );
+} // End If Statement ?>

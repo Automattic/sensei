@@ -8,38 +8,34 @@
  * @package 	Sensei/Templates
  * @version     1.0.0
  */
-global $woothemes_sensei;
-get_header(); ?>
+get_header();
 
-		<?php
-		/**
-		 * sensei_before_main_content hook
-		 *
-		 */
-		do_action('sensei_before_main_content');
-		?>
+/**
+ * sensei_before_main_content hook
+ *
+ * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
+ */
+do_action( 'sensei_before_main_content' );
 
-		<?php while ( have_posts() ) : the_post(); ?>
+/**
+ * sensei_single_main_content hook
+ *
+ * @hooked sensei_single_main_content - 10 (outputs main content)
+ */
+do_action( 'sensei_single_main_content' );
 
-			<?php $woothemes_sensei->frontend->sensei_get_template_part( 'content', 'single-course' ); ?>
+/**
+ * sensei_after_main_content hook
+ *
+ * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)
+ */
+do_action( 'sensei_after_main_content' );
 
-		<?php endwhile; // end of the loop. ?>
+/**
+ * sensei_sidebar hook
+ *
+ * @hooked sensei_get_sidebar - 10
+ */
+do_action( 'sensei_sidebar' );
 
-		<?php
-		/**
-		 * sensei_after_main_content hook
-		 *
-		 */
-		do_action('sensei_after_main_content');
-		?>
-
-		<?php
-		/**
-		 * sensei_sidebar hook
-		 *
-		 * @hooked sensei_get_sidebar - 10
-		 */
-		do_action('sensei_sidebar');
-		?>
-
-<?php get_footer(); ?>
+get_footer(); ?>

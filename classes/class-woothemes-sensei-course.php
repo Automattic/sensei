@@ -812,6 +812,13 @@ class WooThemes_Sensei_Course {
 
 	} // End course_author_lesson_count()
 
+	/**
+	 * get_product_courses function.
+	 *
+	 * @access public
+	 * @param int $product_id (default: 0)
+	 * @return void
+	 */
 	public function get_product_courses( $product_id = 0 ) {
 
 		$posts_array = array();
@@ -829,6 +836,15 @@ class WooThemes_Sensei_Course {
 		return $posts_array;
 
 	} // End get_product_courses()
+
+	/**
+	 * single_course_lesson_data sets up frontend data for single course lesson output
+	 * @since  1.2.1
+	 * @return [type] [description]
+	 */
+	public function single_course_lesson_data() {
+
+	} // End single_course_lesson_data()
 
 } // End Class
 ?>
