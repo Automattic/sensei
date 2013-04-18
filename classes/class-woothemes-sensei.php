@@ -61,7 +61,7 @@ class WooThemes_Sensei {
 		$this->plugin_url = trailingslashit( plugins_url( '', $plugin = $file ) );
 		$this->plugin_path = trailingslashit( dirname( $file ) );
 		$this->template_url	= apply_filters( 'sensei_template_url', 'sensei/' );
-		$this->permissions_message = array( 'title' => __( 'Permission Denied', 'woothemes-sensei' ), 'message' => 'Unfortunately you do not have permissions to access this page.' );
+		$this->permissions_message = array( 'title' => __( 'Permission Denied', 'woothemes-sensei' ), 'message' => __( 'Unfortunately you do not have permissions to access this page.', 'woothemes-sensei' ) );
 		// Localisation
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( &$this, 'load_localisation' ), 0 );
@@ -502,7 +502,7 @@ class WooThemes_Sensei {
 					// Handles restrictions
 					if ( !$prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) {
 						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
-						$course_link = '<a href="' . get_permalink( $course_prerequisite_id ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+						$course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 						$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link );
 					} else {
 						$user_allowed = true;
@@ -516,7 +516,7 @@ class WooThemes_Sensei {
 					$user_allowed = true;
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
-					$course_link = '<a href="' . get_permalink( $lesson_course_id ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+					$course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 					$wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
 					if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
 						$this->permissions_message['message'] = sprintf( __('Please purchase the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
@@ -540,14 +540,14 @@ class WooThemes_Sensei {
 					// Handle restrictions
 					if ( 0 < absint( $lesson_prerequisite_id ) && ( !$user_lesson_prerequisite_complete ) ) {
 						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
-						$lesson_link = '<a href="' . get_permalink( $lesson_prerequisite_id ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
+						$lesson_link = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
 						$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this Quiz.', 'woothemes-sensei' ), $lesson_link );
 					} else {
 						$user_allowed = true;
 					} // End If Statement
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
-					$course_link = '<a href="' . get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+					$course_link = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 					$this->permissions_message['message'] = sprintf( __('Please sign up for the %1$s before taking this Quiz.', 'woothemes-sensei' ), $course_link );
 				} // End If Statement
 				break;

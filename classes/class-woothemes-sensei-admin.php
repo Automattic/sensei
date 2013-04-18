@@ -133,7 +133,7 @@ class WooThemes_Sensei_Admin {
 		if ( $option_value > 0 && get_post( $option_value ) )
 			return;
 
-		$page_found = $wpdb->get_var("SELECT ID FROM " . $wpdb->posts . " WHERE post_name = '$slug' LIMIT 1;");
+		$page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM " . $wpdb->posts . " WHERE post_name = %s LIMIT 1;", $slug ) );
 		if ( $page_found ) :
 			if ( ! $option_value )
 				update_option( $option, $page_found );

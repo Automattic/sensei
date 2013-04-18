@@ -392,7 +392,7 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_user_profile_nav() {
 		global $woothemes_sensei;
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
-			$user_data = get_userdata( $_GET['user']  );
+			$user_data = get_userdata( intval( $_GET['user'] ) );
 			?><?php screen_icon( 'woothemes-sensei' ); ?>
 			<h2><?php echo esc_html( $this->name ) . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . $user_data->display_name; ?></h2>
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
@@ -408,7 +408,7 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_user_course_nav() {
 		global $woothemes_sensei;
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
-			$user_data = get_userdata( $_GET['user']  );
+			$user_data = get_userdata( intval( $_GET['user'] ) );
 			?><?php screen_icon( 'woothemes-sensei' ); ?>
 			<h2><?php echo esc_html( $this->name ) . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . $user_data->display_name . '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ); ?></h2>
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
@@ -474,11 +474,11 @@ class WooThemes_Sensei_Analysis {
     public function report_download_page() {
         // Check if is a report
         if ( isset( $_GET['report_id'] ) && '' != $_GET['report_id'] ) {
-        	switch ( $_GET['report_id'] ) {
+        	switch ( esc_html( $_GET['report_id'] ) ) {
 				case 'courses-overview':
 				case 'lessons-overview':
 				case 'user-overview':
-					$header_setting = $_GET['report_id'];
+					$header_setting = esc_html( $_GET['report_id'] );
 					$report_object_setting = 'Overview';
 				break;
 				default :
@@ -517,7 +517,7 @@ class WooThemes_Sensei_Analysis {
     		$this->load_data_table_files();
     		$class_name = 'WooThemes_Sensei_Analysis_' . $type . '_List_Table';
 			$sensei_analysis_overview_report = new $class_name();
-			switch ( $_GET['report_id'] ) {
+			switch ( esc_html( $_GET['report_id'] ) ) {
 				case 'courses-overview':
 					$sensei_analysis_overview_report->type = 'courses';
 				break;
