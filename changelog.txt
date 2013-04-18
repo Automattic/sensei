@@ -1,7 +1,30 @@
 *** Sensei Changelog ***
 
 2013.04.12 - version 1.2.1
- * filename.php - message
+ * /assets/js/lesson-metadata.js - security improvements
+ * /classes/class-woothemes-sensei-admin.php,
+ 	/classes/class-woothemes-sensei-analysis.php,
+ 	/classes/class-woothemes-sensei-course.php,
+ 	/classes/class-woothemes-sensei-lesson.php,
+ 	/classes/class-woothemes-sensei.php - security improvements
+ * /classes/class-woothemes-sensei-frontend.php - improved template hooks
+ * /inc/woothemes-sensei-template.php - improved template hooks
+ * /templates/archive-course.php,
+ 	/templates/archive-lesson.php,
+ 	/templates/loop-lesson.php,
+ 	/templates/no-permissions.php,
+ 	/templates/single-course.php,
+ 	/templates/single-course/course-meta.php,
+ 	/templates/single-lesson.php,
+ 	/templates/single-lesson/lesson-meta.php,
+ 	/templates/single-quiz.php,
+ 	/templates/single-quiz/quiz-questions.php,
+ 	/templates/taxonomy-course-category.php,
+ 	/templates/user/my-courses.php - improved template hooks
+ * /widgets/widget-woothemes-sensei-category-courses.php,
+ 	/widgets/widget-woothemes-sensei-course-categories.php,
+ 	/widgets/widget-woothemes-sensei-course-component.php,
+ 	/widgets/widget-woothemes-sensei-lesson-component.php - security improvements
 
 2013.04.04 - version 1.2.0
  * /assets/css/settings.css - styling changes for Analysis
