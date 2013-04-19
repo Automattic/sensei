@@ -6,7 +6,6 @@ jQuery(document).ready( function($) {
 	});
 
 	jQuery( '#woothemes-sensei .subsubsub a.tab' ).click( function ( e ) {
-
 		// Move the "current" CSS class.
 		jQuery( this ).parents( '.subsubsub' ).find( '.current' ).removeClass( 'current' );
 		jQuery( this ).addClass( 'current' );
@@ -14,7 +13,6 @@ jQuery(document).ready( function($) {
 		// If "All" is clicked, show all.
 		if ( jQuery( this ).hasClass( 'all' ) ) {
 			jQuery( '#woothemes-sensei h3, #woothemes-sensei form p, #woothemes-sensei table.form-table, p.submit' ).show();
-
 			return false;
 		}
 
@@ -22,8 +20,8 @@ jQuery(document).ready( function($) {
 		var toShow = jQuery( this ).attr( 'href' );
 		// Remove the first occurance of # from the selected string (will be added manually below).
         toShow = toShow.replace( '#', '', toShow );
- 		jQuery( '#woothemes-sensei h3, #woothemes-sensei form > p:not(".submit"), #woothemes-sensei table' ).hide();
-		jQuery( 'h3#' + toShow ).show().nextUntil( 'h3.section-heading', 'p, table, table p' ).show();
+ 		jQuery( '#woothemes-sensei h3, #woothemes-sensei form > p:not(".submit"), #woothemes-sensei table' ).hide(); // Hide all sections.
+		jQuery( 'h3#' + toShow ).show().nextUntil( 'h3.section-heading', 'p, table, table p' ).show(); // Show the appropriate section.
 
 		return false;
 	});
