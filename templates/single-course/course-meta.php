@@ -9,6 +9,8 @@
  * @version     1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $post, $current_user, $woocommerce;
 
 // Get User Meta

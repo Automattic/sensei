@@ -8,6 +8,9 @@
  * @package 	Sensei/Templates
  * @version     1.0.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $woothemes_sensei;
 ?>
         	<article <?php post_class(); ?>>

@@ -9,6 +9,8 @@
  * @version     1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $woothemes_sensei, $post, $wp_query;
 ?>
 
@@ -23,7 +25,7 @@ global $woothemes_sensei, $post, $wp_query;
     	    <?php while ( have_posts() ) { the_post();
     			// Meta data
     			$post_id = get_the_ID(); ?>
-                <article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ); ?>">
+                <article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ) ); ?>">
 
                     <?php do_action( 'sensei_lesson_image', $post_id ); ?>
                     <?php do_action( 'sensei_lesson_archive_lesson_title' ); ?>
