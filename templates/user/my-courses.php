@@ -9,6 +9,8 @@
  * @version     1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $woothemes_sensei, $post, $current_user, $wp_query;
 
 // Get User Meta
@@ -63,7 +65,7 @@ if ( is_user_logged_in() ) {
 	    		// Title
 	    		$complete_html .= '<header>';
 
-	    		    $complete_html .= '<h2><a href="' . get_permalink( absint( $course_item->ID ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
+	    		    $complete_html .= '<h2><a href="' . esc_url( get_permalink( absint( $course_item->ID ) ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
 
 	    		$complete_html .= '</header>';
 
@@ -74,7 +76,7 @@ if ( is_user_logged_in() ) {
 	    		    	// Author
 	    		    	$user_info = get_userdata( absint( $course_item->post_author ) );
 	    		    	if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) {
-	    		    		$complete_html .= '<span class="course-author">' . __( 'by ', 'woothemes-sensei' ) . '<a href="' . get_author_posts_url( absint( $course_item->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+	    		    		$complete_html .= '<span class="course-author">' . __( 'by ', 'woothemes-sensei' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
 	    		    	} // End If Statement
 
 	    		    	// Lesson count for this author
@@ -98,7 +100,7 @@ if ( is_user_logged_in() ) {
 
 	    } else {
 
-	    	$active_html .= '<article class="' . join( ' ', get_post_class( array( 'course', 'post' ), $course_item->ID ) ) . '">';
+	    	$active_html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_item->ID ) ) ) . '">';
 
 	    	    // Image
 	    		$active_html .= $woothemes_sensei->post_types->course->course_image( absint( $course_item->ID ) );
@@ -106,7 +108,7 @@ if ( is_user_logged_in() ) {
 	    		// Title
 	    		$active_html .= '<header>';
 
-	    		    $active_html .= '<h2><a href="' . get_permalink( absint( $course_item->ID ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
+	    		    $active_html .= '<h2><a href="' . esc_url( get_permalink( absint( $course_item->ID ) ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
 
 	    		$active_html .= '</header>';
 
@@ -117,7 +119,7 @@ if ( is_user_logged_in() ) {
 	    		    	// Author
 	    		    	$user_info = get_userdata( absint( $course_item->post_author ) );
 	    		    	if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) {
-	    		    		$active_html .= '<span class="course-author"><a href="' . get_author_posts_url( absint( $course_item->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . __( 'by ', 'woothemes-sensei' ) . esc_html( $user_info->display_name ) . '</a></span>';
+	    		    		$active_html .= '<span class="course-author"><a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . __( 'by ', 'woothemes-sensei' ) . esc_html( $user_info->display_name ) . '</a></span>';
 	    		    	} // End If Statement
 	    		    	// Lesson count for this author
 	    		    	$lesson_count = $woothemes_sensei->post_types->course->course_author_lesson_count( $course_item->post_author, absint( $course_item->ID ) );
@@ -142,7 +144,7 @@ if ( is_user_logged_in() ) {
 
 	    		   	/* if ( 0 == $progress_percentage ) { $progress_percentage = 5; } */
 
-	    		   	$active_html .= '<div class="meter' . $class . '"><span style="width: ' . $progress_percentage . '%">' . $progress_percentage . '%</span></div>';
+	    		   	$active_html .= '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' . $progress_percentage . '%">' . $progress_percentage . '%</span></div>';
 
 	    		$active_html .= '</section>';
 

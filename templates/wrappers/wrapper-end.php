@@ -7,6 +7,8 @@
  * @version     1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 $template = get_option('template');
 
 switch( $template ) {
