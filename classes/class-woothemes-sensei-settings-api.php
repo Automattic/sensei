@@ -417,11 +417,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End section_description_main()
 
 	/**
-	 * form_field_text function.
-	 *
+	 * Generate text input field.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $args
+	 * @since  1.0.0
+	 * @param  array $args
 	 * @return void
 	 */
 	public function form_field_text ( $args ) {
@@ -434,11 +433,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End form_field_text()
 
 	/**
-	 * form_field_checkbox function.
-	 *
+	 * Generate checkbox field.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $args
+	 * @since  1.0.0
+	 * @param  array $args
 	 * @return void
 	 */
 	public function form_field_checkbox ( $args ) {
@@ -456,11 +454,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End form_field_text()
 
 	/**
-	 * form_field_textarea function.
-	 *
+	 * Generate textarea field.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $args
+	 * @since  1.0.0
+	 * @param  array $args
 	 * @return void
 	 */
 	public function form_field_textarea ( $args ) {
@@ -473,11 +470,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End form_field_textarea()
 
 	/**
-	 * form_field_select function.
-	 *
+	 * Generate select box field.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $args
+	 * @since  1.0.0
+	 * @param  array $args
 	 * @return void
 	 */
 	public function form_field_select ( $args ) {
@@ -499,11 +495,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End form_field_select()
 
 	/**
-	 * form_field_radio function.
-	 *
+	 * Generate radio button field.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $args
+	 * @since  1.0.0
+	 * @param  array $args
 	 * @return void
 	 */
 	public function form_field_radio ( $args ) {
@@ -523,11 +518,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End form_field_radio()
 
 	/**
-	 * form_field_multicheck function.
-	 *
+	 * Generate multicheck field.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $args
+	 * @since  1.0.0
+	 * @param  array $args
 	 * @return void
 	 */
 	public function form_field_multicheck ( $args ) {
@@ -551,11 +545,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End form_field_multicheck()
 
 	/**
-	 * form_field_range function.
-	 *
+	 * Generate range field.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $args
+	 * @since  1.0.0
+	 * @param  array $args
 	 * @return void
 	 */
 	public function form_field_range ( $args ) {
@@ -577,11 +570,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End form_field_range()
 
 	/**
-	 * form_field_images function.
-	 *
+	 * Generate image-based selector form field.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $args
+	 * @since  1.0.0
+	 * @param  array $args
 	 * @return void
 	 */
 	public function form_field_images ( $args ) {
@@ -601,11 +593,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End form_field_images()
 
 	/**
-	 * form_field_info function.
-	 *
+	 * Generate information box field.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $args
+	 * @since  1.0.0
+	 * @param  array $args
 	 * @return void
 	 */
 	public function form_field_info ( $args ) {
@@ -626,12 +617,11 @@ class WooThemes_Sensei_Settings_API {
 	} // End form_field_info()
 
 	/**
-	 * validate_fields function.
-	 *
+	 * Validate registered settings fields.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $input
-	 * @uses $this->parse_errors()
+	 * @since  1.0.0
+	 * @param  array $input
+	 * @uses   $this->parse_errors()
 	 * @return array $options
 	 */
 	public function validate_fields ( $input ) {
@@ -691,11 +681,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End validate_fields()
 
 	/**
-	 * validate_field_text function.
-	 *
+	 * Validate text fields.
 	 * @access public
-	 * @since 1.0.0
-	 * @param string $input
+	 * @since  1.0.0
+	 * @param  string $input
 	 * @return string
 	 */
 	public function validate_field_text ( $input ) {
@@ -703,11 +692,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End validate_field_text()
 
 	/**
-	 * validate_field_checkbox function.
-	 *
+	 * Validate checkbox fields.
 	 * @access public
-	 * @since 1.0.0
-	 * @param string $input
+	 * @since  1.0.0
+	 * @param  string $input
 	 * @return string
 	 */
 	public function validate_field_checkbox ( $input ) {
@@ -719,11 +707,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End validate_field_checkbox()
 
 	/**
-	 * validate_field_multicheck function.
-	 *
+	 * Validate multicheck fields.
 	 * @access public
-	 * @since 1.0.0
-	 * @param string $input
+	 * @since  1.0.0
+	 * @param  string $input
 	 * @return string
 	 */
 	public function validate_field_multicheck ( $input ) {
@@ -735,11 +722,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End validate_field_multicheck()
 
 	/**
-	 * validate_field_range function.
-	 *
+	 * Validate range fields.
 	 * @access public
-	 * @since 1.0.0
-	 * @param string $input
+	 * @since  1.0.0
+	 * @param  string $input
 	 * @return string
 	 */
 	public function validate_field_range ( $input ) {
@@ -749,11 +735,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End validate_field_range()
 
 	/**
-	 * validate_field_url function.
-	 *
+	 * Validate URL fields.
 	 * @access public
-	 * @since 1.0.0
-	 * @param string $input
+	 * @since  1.0.0
+	 * @param  string $input
 	 * @return string
 	 */
 	public function validate_field_url ( $input ) {
@@ -761,7 +746,7 @@ class WooThemes_Sensei_Settings_API {
 	} // End validate_field_url()
 
 	/**
-	 * check_field_text function.
+	 * Check and validate the input from text fields.
 	 * @param  string $input String of the value to be validated.
 	 * @since  1.1.0
 	 * @return boolean Is the value valid?
@@ -773,12 +758,11 @@ class WooThemes_Sensei_Settings_API {
 	} // End check_field_text()
 
 	/**
-	 * add_error function.
-	 *
+	 * Log an error internally, for processing later using $this->parse_errors().
 	 * @access protected
-	 * @since 1.0.0
-	 * @param string $key
-	 * @param array $data
+	 * @since  1.0.0
+	 * @param  string $key
+	 * @param  array $data
 	 * @return void
 	 */
 	protected function add_error ( $key, $data ) {
@@ -790,6 +774,12 @@ class WooThemes_Sensei_Settings_API {
 		$this->errors[$key] = $message;
 	} // End add_error()
 
+	/**
+	 * Parse logged errors.
+	 * @access  protected
+	 * @since   1.0.0
+	 * @return  void
+	 */
 	protected function parse_errors () {
 		if ( count ( $this->errors ) > 0 ) {
 			foreach ( $this->errors as $k => $v ) {
@@ -812,11 +802,9 @@ class WooThemes_Sensei_Settings_API {
 	} // End get_array_field_types()
 
 	/**
-	 * enqueue_scripts function.
-	 *
-	 * @description Load in JavaScripts where necessary.
+	 * Load in JavaScripts where necessary.
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function enqueue_scripts () {
@@ -837,11 +825,9 @@ class WooThemes_Sensei_Settings_API {
 	} // End enqueue_scripts()
 
 	/**
-	 * enqueue_styles function.
-	 *
-	 * @description Load in CSS styles where necessary.
+	 * Load in CSS styles where necessary.
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function enqueue_styles () {
@@ -854,11 +840,9 @@ class WooThemes_Sensei_Settings_API {
 	} // End enqueue_styles()
 
 	/**
-	 * enqueue_field_styles function.
-	 *
-	 * @description Load in CSS styles where necessary.
+	 * Load in CSS styles for field types where necessary.
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function enqueue_field_styles () {
