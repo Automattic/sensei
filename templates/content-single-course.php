@@ -8,6 +8,9 @@
  * @package 	Sensei/Templates
  * @version     1.0.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $woothemes_sensei, $post, $current_user;
 
 // Get User Meta

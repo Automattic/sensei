@@ -7,6 +7,8 @@
  * @version     1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $wp_query;
 ?>
 <?php if ( $wp_query->max_num_pages > 1 ) : ?>

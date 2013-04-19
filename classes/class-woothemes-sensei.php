@@ -160,7 +160,7 @@ class WooThemes_Sensei {
 	 **/
 	public function virtual_order_payment_complete( $order_status, $order_id ) {
 		$order = new WC_Order( $order_id );
-
+		if ( ! isset ( $order ) ) return;
 		if ( $order_status == 'processing' && ( $order->status == 'on-hold' || $order->status == 'pending' || $order->status == 'failed' ) ) {
 			$virtual_order = true;
 
@@ -411,6 +411,8 @@ class WooThemes_Sensei {
 
 		global $current_user;
 
+		if ( ! isset( $current_user ) ) return;
+
 		$data_update = false;
 
 		// Get the product ID
@@ -468,6 +470,9 @@ class WooThemes_Sensei {
 	 */
 	public function check_user_permissions ( $page = '', $data = array() ) {
 		global $current_user, $post;
+
+		if ( ! isset( $current_user ) ) return;
+
 		// Get User Meta
 	 	get_currentuserinfo();
 
@@ -713,33 +718,35 @@ class WooThemes_Sensei {
 	 * @return void
 	 */
 	public function sensei_activate_subscription(  $order_id = 0 ) {
-		$order = new WC_Order( $order_id );
-		$user = get_user_by('id', $order->user_id);
-		$order_user['ID'] = $user->ID;
-		$order_user['user_login'] = $user->user_login;
-		$order_user['user_email'] = $user->user_email;
-		$order_user['user_url'] = $user->user_url;
-		// Run through each product ordered
-		if (sizeof($order->get_items())>0) {
-			foreach($order->get_items() as $item) {
-				$product_type = '';
-				if (isset($item['variation_id']) && $item['variation_id'] > 0) {
-					$item_id = $item['variation_id'];
-					$product_type = 'subscription_variation';
-				} else {
-					$item_id = $item['product_id'];
-				} // End If Statement
-				$_product = $this->sensei_get_woocommerce_product_object( $item_id, $product_type );
-				// Get courses that use the WC product
-				$courses = array();
-				if ( $product_type == 'subscription_variation' ) {
-					$courses = $this->post_types->course->get_product_courses( $item_id );
-				} // End If Statement
-				// Loop and update those courses
-				foreach ($courses as $course_item){
-					$update_course = $this->woocommerce_course_update( $course_item->ID, $order_user );
+		if ( 0 < intval( $order_id ) ) {
+			$order = new WC_Order( $order_id );
+			$user = get_user_by('id', $order->user_id);
+			$order_user['ID'] = $user->ID;
+			$order_user['user_login'] = $user->user_login;
+			$order_user['user_email'] = $user->user_email;
+			$order_user['user_url'] = $user->user_url;
+			// Run through each product ordered
+			if (sizeof($order->get_items())>0) {
+				foreach($order->get_items() as $item) {
+					$product_type = '';
+					if (isset($item['variation_id']) && $item['variation_id'] > 0) {
+						$item_id = $item['variation_id'];
+						$product_type = 'subscription_variation';
+					} else {
+						$item_id = $item['product_id'];
+					} // End If Statement
+					$_product = $this->sensei_get_woocommerce_product_object( $item_id, $product_type );
+					// Get courses that use the WC product
+					$courses = array();
+					if ( $product_type == 'subscription_variation' ) {
+						$courses = $this->post_types->course->get_product_courses( $item_id );
+					} // End If Statement
+					// Loop and update those courses
+					foreach ($courses as $course_item){
+						$update_course = $this->woocommerce_course_update( $course_item->ID, $order_user );
+					} // End For Loop
 				} // End For Loop
-			} // End For Loop
+			} // End If Statement
 		} // End If Statement
 	} // End sensei_activate_subscription()
 

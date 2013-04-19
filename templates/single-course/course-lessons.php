@@ -9,6 +9,8 @@
  * @version     1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $post, $woothemes_sensei, $current_user;
 
 $html = '';
@@ -56,7 +58,7 @@ if ( 0 < $total_lessons ) {
     	    $user_info = get_userdata( absint( $lesson_item->post_author ) );
     	    if ( '' != $lesson_item->post_excerpt ) { $lesson_excerpt = $lesson_item->post_excerpt; } else { $lesson_excerpt = $lesson_item->post_content; }
 
-    	    $html .= '<article class="' . join( ' ', get_post_class( array( 'course', 'post' ), $lesson_item->ID ) ) . '">';
+    	    $html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $lesson_item->ID ) ) ) . '">';
 
     			$html .= '<header>';
 
