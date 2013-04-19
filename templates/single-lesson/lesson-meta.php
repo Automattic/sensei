@@ -9,9 +9,11 @@
  * @version     1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $post, $woothemes_sensei, $current_user;
 // Get the meta info
-$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
+$lesson_course_id = absint( get_post_meta( $post->ID, '_lesson_course', true ) );
 // Get User Meta
 get_currentuserinfo();
 // Complete Lesson Logic

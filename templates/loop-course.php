@@ -9,6 +9,8 @@
  * @version     1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $woothemes_sensei, $post, $wp_query, $shortcode_override, $course_excludes;
 // Handle Query Type
 $query_type = '';
@@ -53,7 +55,7 @@ if ( ! $paged || $paged < 2 ) {
     			$author_id = $post_item->post_author;
                 $category_output = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
     			?>
-    			<article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), $post_id ) ); ?>">
+    			<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $post_id ) ) ); ?>">
 
                     <?php do_action( 'sensei_course_image', $post_id ); ?>
 
@@ -109,7 +111,7 @@ if ( ! $paged || $paged < 2 ) {
                 $category_output = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
  			?>
 
-			<article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ); ?>">
+			<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ) ); ?>">
 
                 <?php do_action( 'sensei_course_image', $post_id ); ?>
 
