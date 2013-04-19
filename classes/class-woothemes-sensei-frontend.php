@@ -123,7 +123,7 @@ class WooThemes_Sensei_Frontend {
 		if ( isset( $woothemes_sensei->settings->settings[ 'js_disable' ] ) ) {
 			$disable_js = $woothemes_sensei->settings->settings[ 'js_disable' ];
 		} // End If Statement
-		if ( !$disable_js ) {
+		if ( ! $disable_js ) {
 			// My Courses tabs script
 			wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard.js' ), array( 'jquery-ui-tabs' ), '1.0.0', true );
 			wp_enqueue_script( $this->token . '-user-dashboard' );
@@ -145,7 +145,7 @@ class WooThemes_Sensei_Frontend {
 		if ( isset( $woothemes_sensei->settings->settings[ 'styles_disable' ] ) ) {
 			$disable_styles = $woothemes_sensei->settings->settings[ 'styles_disable' ];
 		} // End If Statement
-		if ( !$disable_styles ) {
+		if ( ! $disable_styles ) {
 			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.0.0', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
 		} // End If Statement
@@ -170,7 +170,7 @@ class WooThemes_Sensei_Frontend {
 			$template = locate_template( array ( "{$slug}-{$name}.php", "{$woothemes_sensei->template_url}{$slug}-{$name}.php" ) );
 
 		// Get default slug-name.php
-		if ( !$template && $name && file_exists( $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php" ) )
+		if ( ! $template && $name && file_exists( $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php" ) )
 			$template = $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php";
 
 		// If template file doesn't exist, look in yourtheme/slug.php and yourtheme/sensei/slug.php
@@ -486,7 +486,7 @@ class WooThemes_Sensei_Frontend {
 		if ( is_tax( 'course-category' ) ) {
 			global $wp_query;
 			$taxonomy_obj = $wp_query->get_queried_object();
-			$term_id = $taxonomy_obj->term_id;
+			$term_id = intval( $taxonomy_obj->term_id );
 			$taxonomy_short_name = $taxonomy_obj->taxonomy;
 			$taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
 			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes-sensei' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
@@ -973,7 +973,7 @@ class WooThemes_Sensei_Frontend {
 		    		// Check for lesson complete
 		    		$delete_lesson_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_lesson, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
 		    		// Check for course complete
-		    		$course_id = get_post_meta( $quiz_lesson, '_lesson_course' ,true );
+		    		$course_id = absint( get_post_meta( $quiz_lesson, '_lesson_course' ,true ) );
 		    		$delete_course_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
 		    		$this->messages = '<div class="woo-sc-box note">' . __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) . '</div>';
 		    		break;
@@ -1227,13 +1227,13 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_lesson_meta( $post_id = 0 ) {
 		global $woothemes_sensei;
 		if ( 0 < intval( $post_id ) ) {
-		$lesson_course_id = get_post_meta( $post_id, '_lesson_course', true );
+		$lesson_course_id = absint( get_post_meta( $post_id, '_lesson_course', true ) );
 		?><section class="entry">
             <p class="sensei-course-meta">
 			    <?php if ( isset( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) && ( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) ) { ?>
 			    <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
 			    <?php } ?>
-                <?php if ( 0 < $lesson_course_id ) { ?>
+                <?php if ( 0 < intval( $lesson_course_id ) ) { ?>
                 <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'woothemes-sensei' ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
                 <?php } ?>
             </p>
@@ -1273,9 +1273,9 @@ class WooThemes_Sensei_Frontend {
 
 			<?php if ( is_user_logged_in() && ! $woothemes_sensei->frontend->data->is_user_taking_course ) {
 		    	// Get the product ID
-		    	$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
+		    	$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
 		    	// Check for woocommerce
-		    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+		    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < intval( $wc_post_id ) ) ) {
 		    		sensei_wc_add_to_cart($post->ID);
 		    	} else {
 		    		sensei_start_course_form($post->ID);
@@ -1326,9 +1326,9 @@ class WooThemes_Sensei_Frontend {
 		    	<?php } ?>
 		    <?php } else {
 		    	// Get the product ID
-		    	$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
+		    	$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
 		    	// Check for woocommerce
-		    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+		    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < intval( $wc_post_id ) ) ) {
 		    		sensei_wc_add_to_cart($post->ID);
 		    	} else {
 		    		// User needs to register
@@ -1354,10 +1354,12 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_woocommerce_in_cart_message() {
 		global $post, $woocommerce;
-		$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
+		$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
 
-		if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
-			echo '<div class="woo-sc-box info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-contents" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
+		if ( 0 < intval( $wc_post_id ) ) {
+			if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
+				echo '<div class="woo-sc-box info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-contents" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
+			} // End If Statement
 		} // End If Statement
 
 	} // End sensei_woocommerce_in_cart_message()

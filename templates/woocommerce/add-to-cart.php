@@ -9,9 +9,12 @@
  * @version     1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $post, $current_user, $woocommerce, $woothemes_sensei;
 
 $wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
+if ( 0 < intval( $wc_post_id ) ) exit;
 
 // Get User Meta
 get_currentuserinfo();
@@ -23,6 +26,7 @@ if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user
     if ( 0 < $wc_post_id ) {
         // Get the product
         $product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
+        if ( ! isset ( $product ) ) exit;
         if ( $product->is_purchasable() ) {
             // Check Product Availability
             $availability = $product->get_availability();
