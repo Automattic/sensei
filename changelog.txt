@@ -4,9 +4,9 @@
  * /assets/js/lesson-metadata.js - security improvements
  * /classes/class-woothemes-sensei-admin.php,
  	/classes/class-woothemes-sensei-analysis.php,
- 	/classes/class-woothemes-sensei-course.php,
  	/classes/class-woothemes-sensei-lesson.php,
  	/classes/class-woothemes-sensei.php - security improvements
+ * /classes/class-woothemes-sensei-course.php - security improvements, fix for course image output
  * /classes/class-woothemes-sensei-frontend.php - improved template hooks
  * /inc/woothemes-sensei-template.php - improved template hooks
  * /templates/archive-course.php,

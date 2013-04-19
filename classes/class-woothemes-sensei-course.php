@@ -670,21 +670,19 @@ class WooThemes_Sensei_Course {
    			$img_url = get_the_post_thumbnail( $course_id, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
  		} else {
 
- 			if ( !is_singular('course') ) {
- 				// Check for a Lesson Image
- 				$course_lessons = $this->course_lessons( $course_id );
+			// Check for a Lesson Image
+			$course_lessons = $this->course_lessons( $course_id );
 
- 				foreach ($course_lessons as $lesson_item){
- 					if ( has_post_thumbnail( $lesson_item->ID ) ) {
- 						// Get Featured Image
-   						$img_url = get_the_post_thumbnail( $lesson_item->ID, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
-   						if ( '' != $img_url ) {
-   							break;
-   						} // End If Statement
+			foreach ($course_lessons as $lesson_item){
+				if ( has_post_thumbnail( $lesson_item->ID ) ) {
+					// Get Featured Image
+					$img_url = get_the_post_thumbnail( $lesson_item->ID, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
+					if ( '' != $img_url ) {
+						break;
+					} // End If Statement
 
- 					} // End If Statement
- 				} // End For Loop
- 			} // End If Statement
+				} // End If Statement
+			} // End For Loop
 
  			if ( '' == $img_url ) {
  				// Display Image Placeholder if none
