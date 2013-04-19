@@ -27,8 +27,9 @@ class WooThemes_Sensei_Updates {
 
 	/**
 	 * Constructor.
-	 * @param string $parent The main Sensei object by Ref.
-	 * @since  1.1.0
+	 * @access  public
+	 * @since   1.1.0
+	 * @param   string $parent The main Sensei object by Ref.
 	 * @return  void
 	 */
 	public function __construct ( &$parent ) {
@@ -52,7 +53,7 @@ class WooThemes_Sensei_Updates {
 	 * @access public
 	 * @return boolean
 	 */
-	public function update( $type = 'auto' ) {
+	public function update ( $type = 'auto' ) {
 		// Run through all functions
 		foreach ( $this->legacy as $key => $value ) {
 			if ( !in_array( $key, $this->upgrades_run ) ) {
@@ -91,7 +92,7 @@ class WooThemes_Sensei_Updates {
 	public function assign_role_caps() {
 		$success = false;
 		foreach ( $this->parent->post_types->role_caps as $role_cap_set  ) {
-			foreach ( $role_cap_set as $role_key => $capabilities_array) {
+			foreach ( $role_cap_set as $role_key => $capabilities_array ) {
 				/* Get the role. */
 				$role =& get_role( $role_key );
 				foreach ( $capabilities_array as $cap_name  ) {

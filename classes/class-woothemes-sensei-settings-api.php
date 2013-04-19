@@ -14,15 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * TABLE OF CONTENTS
  *
- * var $token
- * var $page_slug
- * var $name
- * var $menu_label
- * var $settings
- * var $sections
- * var $fields
- * var $errors
- * var $settings_version
+ * public $token
+ * public $page_slug
+ * public $name
+ * public $menu_label
+ * public $settings
+ * public $sections
+ * public $fields
+ * public $errors
+ * public $settings_version
  *
  * public $has_range
  * public $has_imageselector
@@ -82,9 +82,9 @@ class WooThemes_Sensei_Settings_API {
 	public $settings_version;
 
 	/**
-	 * __construct function.
-	 *
+	 * Constructor.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function __construct () {
@@ -104,21 +104,22 @@ class WooThemes_Sensei_Settings_API {
 	} // End __construct()
 
 	/**
-	 * setup_settings function.
-	 *
+	 * Setup the settings screen and necessary functions.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function setup_settings () {
-		add_action( 'admin_menu', array( &$this, 'register_settings_screen' ), 20 );
-		add_action( 'admin_init', array( &$this, 'settings_fields' ) );
-		add_action( 'wp_loaded', array( &$this, 'general_init' ) );
+		add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 20 );
+		add_action( 'admin_init', array( $this, 'settings_fields' ) );
+		add_action( 'wp_loaded', array( $this, 'general_init' ) );
 	} // End setup_settings()
 
 	/**
-	 * general_init function
-	 * since 1.0.3
-	 * @return void
+	 * Initialise settings sections, settings fields and create tabs, if applicable.
+	 * @access  public
+	 * @since   1.0.3
+	 * @return  void
 	 */
 	public function general_init() {
 		$this->init_sections();
@@ -130,9 +131,9 @@ class WooThemes_Sensei_Settings_API {
 	} // End general_init()
 
 	/**
-	 * init_sections function.
-	 *
+	 * Register the settings sections.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function init_sections () {
@@ -141,9 +142,9 @@ class WooThemes_Sensei_Settings_API {
 	} // End init_sections()
 
 	/**
-	 * init_fields function.
-	 *
+	 * Register the settings fields.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function init_fields () {
@@ -152,8 +153,7 @@ class WooThemes_Sensei_Settings_API {
 	} // End init_fields()
 
 	/**
-	 * settings_tabs function.
-	 *
+	 * Construct and output HTML markup for the settings tabs.
 	 * @access public
 	 * @since  1.1.0
 	 * @return void
@@ -191,8 +191,7 @@ class WooThemes_Sensei_Settings_API {
 	} // End settings_tabs()
 
 	/**
-	 * create_tabs function.
-	 *
+	 * Create settings tabs based on the settings sections.
 	 * @access private
 	 * @since  1.1.0
 	 * @return void
@@ -209,23 +208,23 @@ class WooThemes_Sensei_Settings_API {
 	} // End create_tabs()
 
 	/**
-	 * create_sections function.
-	 *
+	 * Create settings sections.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function create_sections () {
 		if ( count( $this->sections ) > 0 ) {
 			foreach ( $this->sections as $k => $v ) {
-				add_settings_section( $k, $v['name'], array( &$this, 'section_description' ), $this->token );
+				add_settings_section( $k, $v['name'], array( $this, 'section_description' ), $this->token );
 			}
 		}
 	} // End create_sections()
 
 	/**
-	 * create_fields function.
-	 *
+	 * Create settings fields.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function create_fields () {
@@ -245,10 +244,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End create_fields()
 
 	/**
-	 * determine_method function.
-	 *
+	 * Determine the method to use for outputting a field, validating a field or checking a field.
 	 * @access protected
-	 * @param array $data
+	 * @since  1.0.0
+	 * @param  array $data
 	 * @return array or string
 	 */
 	protected function determine_method ( $data, $type = 'form' ) {
@@ -264,7 +263,7 @@ class WooThemes_Sensei_Settings_API {
 
 			if ( $method == '' && method_exists( $this, $data[$type] ) ) {
 				if ( $type == 'form' ) {
-					$method = array( &$this, $data[$type] );
+					$method = array( $this, $data[$type] );
 				} else {
 					$method = $data[$type];
 				}
@@ -273,7 +272,7 @@ class WooThemes_Sensei_Settings_API {
 
 		if ( $method == '' && method_exists ( $this, $type . '_field_' . $data['type'] ) ) {
 			if ( $type == 'form' ) {
-				$method = array( &$this, $type . '_field_' . $data['type'] );
+				$method = array( $this, $type . '_field_' . $data['type'] );
 			} else {
 				$method = $type . '_field_' . $data['type'];
 			}
@@ -285,7 +284,7 @@ class WooThemes_Sensei_Settings_API {
 
 		if ( $method == '' ) {
 			if ( $type == 'form' ) {
-				$method = array( &$this, $type . '_field_text' );
+				$method = array( $this, $type . '_field_text' );
 			} else {
 				$method = $type . '_field_text';
 			}
@@ -295,11 +294,10 @@ class WooThemes_Sensei_Settings_API {
 	} // End determine_method()
 
 	/**
-	 * parse_fields function.
-	 *
+	 * Parse the fields into an array index on the sections property.
 	 * @access public
-	 * @since 1.0.0
-	 * @param array $fields
+	 * @since  1.0.0
+	 * @param  array $fields
 	 * @return void
 	 */
 	public function parse_fields ( $fields ) {
@@ -317,8 +315,7 @@ class WooThemes_Sensei_Settings_API {
 	} // End parse_fields()
 
 	/**
-	 * register_settings_screen function.
-	 *
+	 * Register the settings screen within the WordPress admin.
 	 * @access public
 	 * @since 1.0.0
 	 * @return void
@@ -326,7 +323,7 @@ class WooThemes_Sensei_Settings_API {
 	public function register_settings_screen () {
 		global $woothemes_sensei;
 
-		$hook = add_submenu_page( 'edit.php?post_type=slide', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( &$this, 'settings_screen' ) );
+		$hook = add_submenu_page( 'edit.php?post_type=slide', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
 
 		$this->hook = $hook;
 
@@ -338,9 +335,9 @@ class WooThemes_Sensei_Settings_API {
 	} // End register_settings_screen()
 
 	/**
-	 * settings_screen function.
-	 *
+	 * The markup for the settings screen.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function settings_screen () {
@@ -363,9 +360,9 @@ class WooThemes_Sensei_Settings_API {
 	} // End settings_screen()
 
 	/**
-	 * get_settings function.
-	 *
+	 * Retrieve the settings from the database.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function get_settings () {
@@ -386,22 +383,21 @@ class WooThemes_Sensei_Settings_API {
 	} // End get_settings()
 
 	/**
-	 * settings_fields function.
-	 *
+	 * Register the settings fields.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function settings_fields () {
-		register_setting( $this->token, $this->token, array( &$this, 'validate_fields' ) );
+		register_setting( $this->token, $this->token, array( $this, 'validate_fields' ) );
 		$this->create_sections();
 		$this->create_fields();
 	} // End settings_fields()
 
 	/**
-	 * settings_errors function.
-	 *
+	 * Display settings errors.
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function settings_errors () {
@@ -409,9 +405,9 @@ class WooThemes_Sensei_Settings_API {
 	} // End settings_errors()
 
 	/**
-	 * section_description function.
-	 *
+	 * Display the description for a settings section.
 	 * @access public
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function section_description ( $section ) {
@@ -806,11 +802,9 @@ class WooThemes_Sensei_Settings_API {
 	} // End parse_errors()
 
 	/**
-	 * get_array_field_types function.
-	 *
-	 * @description Return an array of field types expecting an array value returned.
+	 * Return an array of field types expecting an array value returned.
 	 * @access protected
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	protected function get_array_field_types () {
@@ -828,17 +822,17 @@ class WooThemes_Sensei_Settings_API {
 	public function enqueue_scripts () {
 		global $woothemes_sensei;
 		if ( $this->has_range ) {
-			wp_enqueue_script( 'woothemes-sensei-settings-ranges', $woothemes_sensei->plugin_url . 'assets/js/ranges.js', array( 'jquery-ui-slider' ), '1.0.0' );
+			wp_enqueue_script( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/js/ranges.js' ), array( 'jquery-ui-slider' ), '1.2.1' );
 		}
 
-		wp_register_script( 'woothemes-sensei-settings-imageselectors', $woothemes_sensei->plugin_url . 'assets/js/image-selectors.js', array( 'jquery' ), '1.0.0' );
+		wp_register_script( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/js/image-selectors.js' ), array( 'jquery' ), '1.2.1' );
 
 		if ( $this->has_imageselector ) {
 			wp_enqueue_script( 'woothemes-sensei-settings-imageselectors' );
 		}
 
 		if ( $this->has_tabs ) {
-			wp_enqueue_script( 'woothemes-sensei-settings-tabs-navigation', $woothemes_sensei->plugin_url . 'assets/js/tabs-navigation.js', array( 'jquery' ), '1.0.0' );
+			wp_enqueue_script( 'woothemes-sensei-settings-tabs-navigation', esc_url( $woothemes_sensei->plugin_url . 'assets/js/tabs-navigation.js' ), array( 'jquery' ), '1.0.0' );
 		}
 	} // End enqueue_scripts()
 
@@ -854,7 +848,7 @@ class WooThemes_Sensei_Settings_API {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.0.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.0.0' );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()
@@ -871,10 +865,10 @@ class WooThemes_Sensei_Settings_API {
 		global $woothemes_sensei;
 
 		if ( $this->has_range ) {
-			wp_enqueue_style( 'woothemes-sensei-settings-ranges', $woothemes_sensei->plugin_url . 'assets/css/ranges.css', '', '1.0.0' );
+			wp_enqueue_style( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/css/ranges.css' ), '', '1.0.0' );
 		}
 
-		wp_register_style( 'woothemes-sensei-settings-imageselectors', $woothemes_sensei->plugin_url . 'assets/css/image-selectors.css', '', '1.0.0' );
+		wp_register_style( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/css/image-selectors.css' ), '', '1.0.0' );
 
 		if ( $this->has_imageselector ) {
 			wp_enqueue_style( 'woothemes-sensei-settings-imageselectors' );
