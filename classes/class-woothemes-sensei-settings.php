@@ -24,10 +24,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 	/**
-	 * __construct function.
-	 *
+	 * Constructor.
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function __construct () {
@@ -36,36 +35,31 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 	} // End __construct()
 
 	/**
-	 * register_settings_screen function.
-	 *
+	 * Register the settings screen within the WordPress admin.
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function register_settings_screen () {
 		global $woothemes_sensei;
 		$this->settings_version = $woothemes_sensei->version; // Use the global plugin version on this settings screen.
-
-		$hook = add_submenu_page( 'edit.php?post_type=lesson', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( &$this, 'settings_screen' ) );
-
+		$hook = add_submenu_page( 'edit.php?post_type=lesson', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
 		$this->hook = $hook;
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
-			add_action( 'admin_notices', array( &$this, 'settings_errors' ) );
-			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+			add_action( 'admin_notices', array( $this, 'settings_errors' ) );
+			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 		}
 	} // End register_settings_screen()
 
 	/**
-	 * init_sections function.
-	 *
+	 * Add settings sections.
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @return void
 	 */
 	public function init_sections () {
-
 		$sections = array();
 
 		$sections['default-settings'] = array(
@@ -91,15 +85,13 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		} // End If Statement
 
 		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
-
 	} // End init_sections()
 
 	/**
-	 * init_fields function.
-	 *
+	 * Add settings fields.
 	 * @access public
-	 * @since 1.0.0
-	 * @uses  Sensei_Utils::get_slider_types()
+	 * @since  1.0.0
+	 * @uses   Sensei_Utils::get_slider_types()
 	 * @return void
 	 */
 	public function init_fields () {
@@ -107,7 +99,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		$pages_array = $this->pages_array();
 		$posts_per_page_array = array( '0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20' );
-		$complete_settings = array( 'passed' => 'Passed', 'complete' => 'Completed' );
+		$complete_settings = array( 'passed' => __( 'Passed', 'woothemes-sensei' ), 'complete' => __( 'Completed', 'woothemes-sensei' ) );
 
 	    $fields = array();
 
@@ -452,23 +444,23 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 	/**
 	 * Add contextual help to the settings screen.
-	 * @access public
+	 * @access  public
 	 * @since   1.0.0
-	 * @return   void
+	 * @return  void
 	 */
 	public function add_contextual_help () {
-
+		// TODO
 	}  // End add_contextual_help()
 
 
 	/**
-	 * pages_array function.
-	 *
+	 * Return an array of pages.
 	 * @access private
+	 * @since  1.0.0
 	 * @return void
 	 */
 	private function pages_array() {
-
+		// REFACTOR - Transform this into a field type instead.
 		// Setup an array of portfolio gallery terms for a dropdown.
 		$args = array( 'echo' => 0, 'hierarchical' => 1, 'sort_column' => 'post_title', 'sort_order' => 'ASC' );
 		$pages_dropdown = wp_dropdown_pages( $args );
@@ -495,8 +487,6 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		$pages_array = $page_items;
 
 		return $pages_array;
-
 	} // End pages_array()
-
 } // End Class
 ?>

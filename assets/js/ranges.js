@@ -4,13 +4,13 @@ jQuery(document).ready( function($) {
 		var idValue = jQuery( this ).attr( 'id' );
 
 		if ( idValue ) {
-			var select = jQuery( this );
+			var select = jQuery( this ); // The select element being targeted.
+			var selectedValue = select.val(); // The currently selected value.
+			var numberOfOptions = jQuery( this ).find( 'option' ).length; // The number of options in the current select element.
+			var sliderValue = jQuery( '<div></div>' ).addClass( 'slider-value' ); // A jQuery object to create the slider value display. To be filled below.
 
-			var selectedValue = select.val();
-
-			var numberOfOptions = jQuery( this ).find( 'option' ).length;
-
-			var slider = jQuery( '<div class="slider"></div>' ).insertAfter( select ).slider({
+			// Initialize the slider.
+			var slider = jQuery( '<div></div>' ).addClass( 'slider' ).insertAfter( select ).slider({
 				min: 1,
 				max: parseInt( numberOfOptions ),
 				range: 'min',
@@ -21,12 +21,13 @@ jQuery(document).ready( function($) {
 				}
 			});
 
-			slider.after( '<div class="slider-value">' + selectedValue + '</div>' );
+			sliderValue.text( selectedValue ); // Fill the slider value element with the correct slider value.
+			slider.after( sliderValue ); // Insert the slider value display.
+			select.hide(); // Hide the select element.
 
-			select.hide();
-
+			// When the select element changes, update the slider value. The select element is changed by the slider.
 			select.change(function() {
-				slider.slider( "value", this.selectedIndex + 1 );
+				slider.slider( 'value', this.selectedIndex + 1 );
 				jQuery( this ).parents( 'td' ).find( '.slider-value' ).text( jQuery( this ).val() );
 			});
 		}
