@@ -1268,10 +1268,10 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_course_start()
 
 	public function sensei_course_meta() {
-		global $woothemes_sensei, $post;
+		global $woothemes_sensei, $post, $current_user;
 		?><section class="course-meta">
-
-			<?php if ( is_user_logged_in() && ! $woothemes_sensei->frontend->data->is_user_taking_course ) {
+			<?php $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ); ?>
+			<?php if ( is_user_logged_in() && ! $is_user_taking_course ) {
 		    	// Get the product ID
 		    	$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
 		    	// Check for woocommerce
