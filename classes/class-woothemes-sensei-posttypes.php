@@ -170,7 +170,10 @@ class WooThemes_Sensei_PostTypes {
 		global $woothemes_sensei;
 
 		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' );
-		$allow_comments = $woothemes_sensei->settings->settings[ 'lesson_comments' ];
+		$allow_comments = false;
+		if ( isset( $woothemes_sensei->settings->settings[ 'lesson_comments' ] ) ) {
+			$allow_comments = $woothemes_sensei->settings->settings[ 'lesson_comments' ];
+		} // End If Statement
 		if ( $allow_comments ) {
 			array_push( $supports_array, 'comments' );
 		} // End If Statement

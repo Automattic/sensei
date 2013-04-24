@@ -23,6 +23,11 @@ switch( $template ) {
 		echo '<div id="primary" class="site-content"><div id="content" role="main">';
 		break;
 
+	// IF Canvas
+	case 'canvas' :
+		echo '<div id="content" class="col-full"><div id="main-sidebar-container"><div id="main">';
+		break;	
+
 	// Default
 	default :
 		echo '<div id="content" class="page col-full"><div id="main" class="col-left">';

@@ -31,6 +31,22 @@ switch( $template ) {
 	<?php
 		break;
 
+	// IF Canvas
+	case 'canvas' :
+	?>
+	</div><!-- /#main -->
+	            <?php woo_main_after(); ?>
+
+	            <?php get_sidebar(); ?>
+
+			</div><!-- /#main-sidebar-container -->
+
+			<?php get_sidebar('alt'); ?>
+
+	    </div><!-- /#content -->
+	<?php
+		break;
+
 	// Default
 	default :
 	?>
