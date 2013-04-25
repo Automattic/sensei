@@ -1,13 +1,15 @@
 *** Sensei Changelog ***
 
-2013.04.12 - version 1.2.1
+2013.04.25 - version 1.2.1
  * /assets/js/lesson-metadata.js - security improvements
  * /classes/class-woothemes-sensei-admin.php,
  	/classes/class-woothemes-sensei-analysis.php,
  	/classes/class-woothemes-sensei-lesson.php,
  	/classes/class-woothemes-sensei.php - security improvements
- * /classes/class-woothemes-sensei-course.php - security improvements, fix for course image output
- * /classes/class-woothemes-sensei-frontend.php - improved template hooks
+ * /classes/class-woothemes-sensei-course.php - security improvements, fix for course image output, fix for trashed variations
+ * /classes/class-woothemes-sensei-frontend.php - improved template hooks, fix for WC add to cart url
+ * /classes/class-woothemes-sensei-posttypes.php - fix for lesson_comments setting
+ * /classes/class-woothemes-sensei-utils.php - fix for comments_clauses filter
  * /inc/woothemes-sensei-template.php - improved template hooks
  * /templates/archive-course.php,
  	/templates/archive-lesson.php,
@@ -21,6 +23,8 @@
  	/templates/single-quiz/quiz-questions.php,
  	/templates/taxonomy-course-category.php,
  	/templates/user/my-courses.php - improved template hooks
+ * /templates/wrappers/wrapper-end.php,
+ 	/templates/wrappers/wrapper-start.php - added support for Canvas styling
  * /widgets/widget-woothemes-sensei-category-courses.php,
  	/widgets/widget-woothemes-sensei-course-categories.php,
  	/widgets/widget-woothemes-sensei-course-component.php,

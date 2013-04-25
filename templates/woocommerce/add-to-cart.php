@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 global $post, $current_user, $woocommerce, $woothemes_sensei;
 
 $wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
-if ( 0 < intval( $wc_post_id ) ) exit;
 
 // Get User Meta
 get_currentuserinfo();

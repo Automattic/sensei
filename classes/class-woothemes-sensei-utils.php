@@ -142,10 +142,14 @@ class WooThemes_Sensei_Utils {
 	 */
 	public static function sensei_check_for_activity ( $args = array(), $return_comments = false ) {
 		global $woothemes_sensei;
-		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		if ( is_admin() ) {
+			remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		} // End If Statement
 		// Get comments
 		$comments = get_comments( $args );
-		add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		if ( is_admin() ) {
+			add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		} // End If Statement
 		// Return comments
 		if ( $return_comments ) {
 			return $comments;
@@ -168,7 +172,9 @@ class WooThemes_Sensei_Utils {
 	 */
 	public static function sensei_activity_ids ( $args = array() ) {
 		global $woothemes_sensei;
-		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		if ( is_admin() ) {
+			remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		} // End If Statement
 		// Get comments
 		$comments = get_comments( $args );
 		$post_ids = array();
@@ -186,7 +192,9 @@ class WooThemes_Sensei_Utils {
 			$post_ids = array_unique( $post_ids );
 			$post_ids = array_values( $post_ids );
 		} // End If Statement
-		add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		if ( is_admin() ) {
+			add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		} // End If Statement
 		return $post_ids;
 	} // End sensei_activity_ids()
 
@@ -225,7 +233,9 @@ class WooThemes_Sensei_Utils {
 	 */
 	public static function sensei_get_activity_value ( $args = array() ) {
 		global $woothemes_sensei;
-		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		if ( is_admin() ) {
+			remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		} // End If Statement
 		$activity_value = false;
 		if ( isset( $args['user_id'] ) && 0 < intval( $args['user_id'] ) ) {
 			// Get activities
@@ -237,7 +247,9 @@ class WooThemes_Sensei_Utils {
 			    } // End If Statement
 			} // End For Loop
 		} // End If Statement
-		add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		if ( is_admin() ) {
+			add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+		} // End If Statement
 		return $activity_value;
 	} // End sensei_get_activity_value()
 

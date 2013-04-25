@@ -365,6 +365,7 @@ class WooThemes_Sensei_Lesson {
 													'numberposts' 		=> -1,
 													'orderby'         	=> 'title',
 	    											'order'           	=> 'DESC',
+	    											'post_status'		=> array( 'publish', 'private', 'draft' ),
 	    											'suppress_filters' 	=> 0
 													);
 							$products_array = get_posts( $product_args );

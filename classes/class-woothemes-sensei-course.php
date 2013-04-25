@@ -99,6 +99,7 @@ class WooThemes_Sensei_Course {
 							'orderby'         	=> 'title',
     						'order'           	=> 'DESC',
     						'exclude' 			=> $post->ID,
+    						'post_status'		=> array( 'publish', 'private', 'draft' ),
 							'suppress_filters' 	=> 0
 							);
 		$posts_array = get_posts( $post_args );
@@ -495,6 +496,7 @@ class WooThemes_Sensei_Course {
 				// Sub Query to get all WooCommerce Products that have Zero price
 				$args = array(
 							   'post_type' => 'product',
+							   'post_status' => 'publish',
 							   'posts_per_page' => -1,
 							   'meta_query' => array(
 							   							array(
@@ -545,6 +547,7 @@ class WooThemes_Sensei_Course {
 				// Sub Query to get all WooCommerce Products that have price greater than zero
 				$args = array(
 							   'post_type' => 'product',
+							   'post_status' => 'publish',
 							   'posts_per_page' => -1,
 							   'meta_query' => array(
 							   							array(

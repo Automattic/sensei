@@ -1358,7 +1358,7 @@ class WooThemes_Sensei_Frontend {
 
 		if ( 0 < intval( $wc_post_id ) ) {
 			if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
-				echo '<div class="woo-sc-box info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-contents" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
+				echo '<div class="woo-sc-box info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
 			} // End If Statement
 		} // End If Statement
 
