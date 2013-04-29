@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2013.04.29 - version 1.2.2
+ * /classes/class-woothemes-sensei-frontend.php - fix for get_comments_number filter
+ * /classes/class-woothemes-sensei.php - fix for access permissions settings
+ * /templates/single-lesson/lesson-meta.php - fix for access permissions settings
+
 2013.04.25 - version 1.2.1
  * /assets/js/lesson-metadata.js - security improvements
  * /classes/class-woothemes-sensei-admin.php,

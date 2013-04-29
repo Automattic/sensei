@@ -527,6 +527,8 @@ class WooThemes_Sensei {
 				$update_course = $this->woocommerce_course_update( $lesson_course_id  );
 				if ( $this->access_settings() && WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) {
 					$user_allowed = true;
+				} elseif( $this->access_settings() ) {
+					$user_allowed = true;
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
 					$course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
@@ -558,6 +560,8 @@ class WooThemes_Sensei {
 					} else {
 						$user_allowed = true;
 					} // End If Statement
+				} elseif( $this->access_settings() ) {
+					$user_allowed = true;
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
 					$course_link = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';

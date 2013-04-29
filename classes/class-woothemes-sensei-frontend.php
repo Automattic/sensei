@@ -90,6 +90,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_course_meta_video', array( &$this, 'sensei_course_meta_video' ), 10 );
 		add_action( 'sensei_woocommerce_in_cart_message', array( &$this, 'sensei_woocommerce_in_cart_message' ), 10 );
 		add_action( 'sensei_course_start', array( &$this, 'sensei_course_start' ), 10 );
+		add_filter( 'get_comments_number', array( &$this, 'sensei_lesson_comment_count' ), 2 );
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();
@@ -1104,6 +1105,12 @@ class WooThemes_Sensei_Frontend {
         	    } // End If Statement
         	} // End For Loop ?>
         	</header>
+        <?php } elseif( 0 < count($lesson_quizzes) && $woothemes_sensei->access_settings() ) { ?>
+        	<header>
+        		<?php foreach ($lesson_quizzes as $quiz_item){ ?>
+        		<a class="button" href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>"><?php _e( 'View the Lesson Quiz',    'woothemes-sensei' ); ?></a>
+        		<?php } // End For Loop ?>
+        	</header>
         <?php } // End If Statement
 	} // End sensei_lesson_quiz_meta()
 
@@ -1363,6 +1370,16 @@ class WooThemes_Sensei_Frontend {
 		} // End If Statement
 
 	} // End sensei_woocommerce_in_cart_message()
+
+	public function sensei_lesson_comment_count( $count, $post_id ) {
+		global $post, $current_user;
+		if ( is_singular( 'lesson' ) ) {
+			$lesson_comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end'/*, 'user_id' => $current_user->ID*/ ), true );
+			return $count - intval( count( $lesson_comments ) );
+		} else {
+			return $count;
+		} // End If Statement
+	} // End sensei_lesson_comment_count()
 
 } // End Class
 ?>
