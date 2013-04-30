@@ -90,7 +90,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_course_meta_video', array( &$this, 'sensei_course_meta_video' ), 10 );
 		add_action( 'sensei_woocommerce_in_cart_message', array( &$this, 'sensei_woocommerce_in_cart_message' ), 10 );
 		add_action( 'sensei_course_start', array( &$this, 'sensei_course_start' ), 10 );
-		add_filter( 'get_comments_number', array( &$this, 'sensei_lesson_comment_count' ), 2 );
+		add_filter( 'get_comments_number', array( &$this, 'sensei_lesson_comment_count' ), 1 );
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();
@@ -1371,7 +1371,7 @@ class WooThemes_Sensei_Frontend {
 
 	} // End sensei_woocommerce_in_cart_message()
 
-	public function sensei_lesson_comment_count( $count, $post_id ) {
+	public function sensei_lesson_comment_count( $count ) {
 		global $post, $current_user;
 		if ( is_singular( 'lesson' ) ) {
 			$lesson_comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end'/*, 'user_id' => $current_user->ID*/ ), true );
