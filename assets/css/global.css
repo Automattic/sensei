@@ -40,6 +40,7 @@ a.lesson_question_cancel { text-decoration: underline; }
 #lesson-course-details input, #lesson-course-details select { margin-bottom: 10px; }
 tr.question-quick-edit td { padding-bottom: 10px; }
 #add-quiz-main button.add_quiz { margin-left: 5px; }
+select.question-type-select { margin-bottom: 10px; }
 /* Chosen styling */
 div.chzn-container { width: 256px !important; margin-bottom: 10px; display: block;}
 div.chzn-drop { width: 254px !important; }

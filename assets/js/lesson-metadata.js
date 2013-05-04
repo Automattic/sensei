@@ -226,6 +226,79 @@ jQuery(document).ready( function($) {
 	 * @since 1.0.0
 	 * @access public
 	 */
+	jQuery( '#add-question-actions' ).on( 'change', 'select.question-type-select', function() {
+		// Prep and Display add question panel and hide the add question button
+		// jQuery( this ).addClass('hidden');
+		// jQuery( '#add-new-question' ).removeClass( 'hidden' );
+		// jQuery.fn.resetQuestionTable();
+		// jQuery( this ).removeAttr('style');
+		var questionType = jQuery(this).val();
+		switch ( questionType ) {
+			case 'multiple-choice':
+				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
+				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
+			break;
+			case 'boolean':
+				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).show();
+				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
+			break;
+			case 'gap-fill':
+				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).show();
+				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
+			break;
+			case 'essay-paste':
+				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).show();
+				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
+			break;
+			case 'multi-line':
+				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).show();
+				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
+			break;
+			case 'single-line':
+				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).show();
+			break;
+			default :
+				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
+				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
+				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
+			break;
+		} // End Switch Statement
+	});
+
+	/**
+	 * Change Question Type Event.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	jQuery( '#add-question-actions' ).on( 'click', 'button.add_question_answer', function() {
 		// Prep and Display add question panel and hide the add question button
 		jQuery( this ).addClass('hidden');

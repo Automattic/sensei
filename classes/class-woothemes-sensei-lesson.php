@@ -594,18 +594,62 @@ class WooThemes_Sensei_Lesson {
 				$html .= '</p>';
 				// Add Question form
 				$html .= '<div id="add-new-question" class="hidden">';
-					// Question
-					$html .= '<label>' . __( 'Question'  , 'woothemes-sensei' ) . '</label> ';
-  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" />'; // V2 - additional validation on this field
-  					// Right Answer
-					$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
-  					$html .= '<input type="text" id="add_question_right_answer" name="question_right_answer" value="" size="25" class="widefat" />';
-					// Wrong Answers - V2 make dynamic
-					$html .= '<label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
-  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
-  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
-  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
-  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
+					// Question Type
+					$html .= '<label>' . __( 'Question Type'  , 'woothemes-sensei' ) . '</label> ';
+					$html .= '<select id="add-question-type-options" name="question_type" class="widefat question-type-select">' . "\n";
+						$question_types_array = array( 'multiple-choice' => 'Multiple Choice', 'boolean' => 'True/False', 'gap-fill' => 'Gap Fill', 'essay-paste' => 'Essay Paste', 'multi-line' => 'Multi Line Reply', 'single-line' => 'Single Line Reply' );
+						$question_type = '';
+						foreach ($question_types_array as $key => $value){
+							$html .= '<option value="' . esc_attr( $key ) . '"' . selected( $key, $question_type, false ) . '>' . esc_html( $value ) . '</option>' . "\n";
+						} // End For Loop
+					$html .= '</select>' . "\n";
+					$html .= '<div class="question_required_fields">';
+						// Question
+						$html .= '<label>' . __( 'Question'  , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" />'; // V2 - additional validation on this field
+					$html .= '</div>';
+					$html .= '<div class="question_default_fields">';
+						// Right Answer
+						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="add_question_right_answer" name="question_right_answer" value="" size="25" class="widefat" />';
+						// Wrong Answers - V2 make dynamic
+						$html .= '<label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
+	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
+	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
+	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
+  					$html .= '</div>';
+  					// True/False Inputs
+  					$html .= '<div class="question_boolean_fields hidden">';
+  						$html .= '<input type="radio" name="question_right_answer_boolean" value="true" />&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
+						$html .= '<input type="radio" name="question_right_answer_boolean" value="false" />&nbsp;&nbsp;False';
+					$html .= '</div>';
+					// GapFill Inputs
+  					$html .= '<div class="question_gapfill_fields hidden">';
+  						// Right Answer
+						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<input type="text" id="add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="" size="25" class="widefat" />';
+	  					$html .= '<input type="text" id="add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="" size="25" class="widefat" />';
+	  					$html .= '<input type="text" id="add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="" size="25" class="widefat" />';
+					$html .= '</div>';
+					// Essay Inputs
+  					$html .= '<div class="question_essay_fields hidden">';
+  						// Right Answer
+						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<textarea id="add_question_right_answer_essay" name="add_question_right_answer_essay" rows="15" cols="40" class="widefat"></textarea>';
+					$html .= '</div>';
+					// Multi Line Inputs
+  					$html .= '<div class="question_multiline_fields hidden">';
+  						// Right Answer
+						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<textarea id="add_question_right_answer_multiline" name="add_question_right_answer_multiline" rows="3" cols="40" class="widefat"></textarea>';
+					$html .= '</div>';
+					// Single Line Inputs
+  					$html .= '<div class="question_singleline_fields hidden">';
+  						// Right Answer
+						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<input type="text" id="add_question_right_answer_singleline" name="add_question_right_answer_singleline" value="" size="25" class="widefat" />';
+					$html .= '</div>';
   					// Save the question
   					$html .= '<a title="' . esc_attr( __( 'Add Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="add_question_save button button-highlighted">' . esc_html( __( 'Add Question', 'woothemes-sensei' ) ) . '</a>';
   					$html .= '&nbsp;&nbsp;&nbsp;';
