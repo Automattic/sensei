@@ -516,9 +516,14 @@ class WooThemes_Sensei_Lesson {
 					foreach ( $posts_array as $question ) {
 						setup_postdata($question);
 						$question_id = $question->ID;
+						$question_type = 'multiple-choice';
 						// Get existing questions meta data
 						$select_question_right_answer = get_post_meta( $question_id, '_question_right_answer', true);
 						$select_question_wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true);
+						$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+						if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
+							$question_type = $question_types[0];
+						} // End If Statement
 						// Row with question and actions
 						$html .= '<tr>';
 							$html .= '<td class="table-count hidden">' . $question_counter . '</td>';
@@ -529,18 +534,51 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<tr class="question-quick-edit hidden">';
 							$html .= '<td colspan="3">';
 						    	// Question
-						    	$html .= '<label>' . __( 'Question' . ' ' . $question_counter  , 'woothemes-sensei' ) . '</label> ';
-  						    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
-  						    	// Right Answer
-						    	$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
-  						    	$html .= '<input type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $select_question_right_answer ) ) . '" size="25" class="widefat" />';
-						    	// Wrong Answers - TO DO
-						    	$html .= '<label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
-  						    	// Setup Wrong Answer HTML
-						    	for ( $i = 0; $i < 4; $i++ ) {
-						    		if ( !isset( $select_question_wrong_answers[ $i ] ) ) { $select_question_wrong_answers[ $i ] = ''; }
-						    		$html .= '<input type="text" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $select_question_wrong_answers[ $i ] ) ) . '" size="25" class="widefat" />';
-  						    	} // End For Loop
+						    	$html .= '<div class="question_default_fields">';
+							    	$html .= '<label>' . __( 'Question' . ' ' . $question_counter  , 'woothemes-sensei' ) . '</label> ';
+	  						    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
+  						    	$html .= '</div>';
+  						    	switch ( $question_type ) {
+									case 'multiple-choice':
+										// Right Answer
+								    	$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+		  						    	$html .= '<input type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $select_question_right_answer ) ) . '" size="25" class="widefat" />';
+								    	// Wrong Answers - TO DO
+								    	$html .= '<label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
+		  						    	// Setup Wrong Answer HTML
+								    	for ( $i = 0; $i < 4; $i++ ) {
+								    		if ( !isset( $select_question_wrong_answers[ $i ] ) ) { $select_question_wrong_answers[ $i ] = ''; }
+								    		$html .= '<input type="text" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $select_question_wrong_answers[ $i ] ) ) . '" size="25" class="widefat" />';
+		  						    	} // End For Loop
+									break;
+									case 'boolean':
+
+									break;
+									case 'gap-fill':
+
+									break;
+									case 'essay-paste':
+
+									break;
+									case 'multi-line':
+
+									break;
+									case 'single-line':
+
+									break;
+									default :
+										// Right Answer
+								    	$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+		  						    	$html .= '<input type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $select_question_right_answer ) ) . '" size="25" class="widefat" />';
+								    	// Wrong Answers - TO DO
+								    	$html .= '<label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
+		  						    	// Setup Wrong Answer HTML
+								    	for ( $i = 0; $i < 4; $i++ ) {
+								    		if ( !isset( $select_question_wrong_answers[ $i ] ) ) { $select_question_wrong_answers[ $i ] = ''; }
+								    		$html .= '<input type="text" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $select_question_wrong_answers[ $i ] ) ) . '" size="25" class="widefat" />';
+		  						    	} // End For Loop
+									break;
+								} // End Switch Statement
   						    	// Question ID
   						    	$html .= '<input type="hidden" name="question_id" id="question_' . $question_counter . '_id" value="' . $question_id . '" />';
 						    	// Update question button
@@ -885,6 +923,7 @@ class WooThemes_Sensei_Lesson {
 		$question_text = '';
 		$question_right_answer = '';
 		$question_wrong_answers = array();
+		$question_type = 'multiple-choice';
 		if ( isset( $data[ 'question_id' ] ) && ( 0 < absint( $data[ 'question_id' ] ) ) ) {
 			$question_id = absint( $data[ 'question_id' ] );
 		} // End If Statement
@@ -892,11 +931,36 @@ class WooThemes_Sensei_Lesson {
 			$question_text = $data[ 'question' ];
 		} // End If Statement
 		$post_title = $question_text;
+		// Handle Default Fields (multiple choice)
 		if ( isset( $data[ 'question_right_answer' ] ) && ( '' != $data[ 'question_right_answer' ] ) ) {
 			$question_right_answer = $data[ 'question_right_answer' ];
 		} // End If Statement
 		if ( isset( $data[ 'question_wrong_answers' ] ) && ( '' != $data[ 'question_wrong_answers' ] ) ) {
 			$question_wrong_answers = $data[ 'question_wrong_answers' ];
+		} // End If Statement
+		// Handle Boolean Fields
+		if ( isset( $data[ 'question_right_answer_boolean' ] ) && ( '' != $data[ 'question_right_answer_boolean' ] ) ) {
+			$question_right_answer = $data[ 'question_right_answer_boolean' ];
+		} // End If Statement
+		// Handle Gap Fill Fields
+		if ( isset( $data[ 'add_question_right_answer_gapfill_pre' ] ) && ( '' != $data[ 'add_question_right_answer_gapfill_pre' ] ) ) {
+			$question_right_answer = $data[ 'add_question_right_answer_gapfill_pre' ] . '|' . $data[ 'add_question_right_answer_gapfill_gap' ] . '|' . $data[ 'add_question_right_answer_gapfill_post' ];
+		} // End If Statement
+		// Handle Essay Fields
+		if ( isset( $data[ 'add_question_right_answer_essay' ] ) && ( '' != $data[ 'add_question_right_answer_essay' ] ) ) {
+			$question_right_answer = $data[ 'add_question_right_answer_essay' ];
+		} // End If Statement
+		// Handle Multi Line Fields
+		if ( isset( $data[ 'add_question_right_answer_multiline' ] ) && ( '' != $data[ 'add_question_right_answer_multiline' ] ) ) {
+			$question_right_answer = $data[ 'add_question_right_answer_multiline' ];
+		} // End If Statement
+		// Handle Single Line Fields
+		if ( isset( $data[ 'add_question_right_answer_singleline' ] ) && ( '' != $data[ 'add_question_right_answer_singleline' ] ) ) {
+			$question_right_answer = $data[ 'add_question_right_answer_singleline' ];
+		} // End If Statement
+		// Handle Question Type
+		if ( isset( $data[ 'question_type' ] ) && ( '' != $data[ 'question_type' ] ) ) {
+			$question_type = $data[ 'question_type' ];
 		} // End If Statement
 		$post_title = $question_text;
 		$post_author = $data[ 'post_author' ];
@@ -925,10 +989,12 @@ class WooThemes_Sensei_Lesson {
 		    	update_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	update_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    } else {
-		    	$question_id = wp_insert_post($post_type_args);
+				$question_id = wp_insert_post($post_type_args);
 		    	add_post_meta( $question_id, '_quiz_id', $quiz_id );
 		    	add_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	add_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
+		    	// Set the post terms for question-type
+			    wp_set_post_terms( $question_id, array( $question_type ), 'question-type' ); // EXTENSIONS
 		    } // End If Statement
 		} // End If Statement
   		// Check that the insert or update saved by testing the post id

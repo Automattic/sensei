@@ -227,68 +227,36 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery( '#add-question-actions' ).on( 'change', 'select.question-type-select', function() {
-		// Prep and Display add question panel and hide the add question button
-		// jQuery( this ).addClass('hidden');
-		// jQuery( '#add-new-question' ).removeClass( 'hidden' );
-		// jQuery.fn.resetQuestionTable();
-		// jQuery( this ).removeAttr('style');
+		// Show the correct Question Type
+		// REFACTOR
 		var questionType = jQuery(this).val();
+		jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
+		jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
+		jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
+		jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
+		jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
+		jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
 		switch ( questionType ) {
 			case 'multiple-choice':
 				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
-				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
 			break;
 			case 'boolean':
-				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
 				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).show();
-				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
 			break;
 			case 'gap-fill':
-				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
 				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).show();
-				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
 			break;
 			case 'essay-paste':
-				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
 				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).show();
-				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
 			break;
 			case 'multi-line':
-				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
 				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).show();
-				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
 			break;
 			case 'single-line':
-				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
 				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).show();
 			break;
 			default :
 				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
-				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
-				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
 			break;
 		} // End Switch Statement
 	});
@@ -358,15 +326,65 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-new-question' ).on( 'click', 'a.add_question_save', function() {
 		var dataToPost = '';
+		var questionType = 'multiple-choice';
 	 	// Validate Inputs
 		var validInput = jQuery.fn.validateQuestionInput( 'add', jQuery(this) );
 		if ( validInput ) {
 			// Setup data to post
 	 		dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 	 		dataToPost += '&action=add';
-	 		jQuery( '#add-new-question' ).children( 'input' ).each( function() {
-	 		    dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+			if ( jQuery( '#add-question-type-options' ).val() != '' ) {
+	 			questionType = jQuery( '#add-question-type-options' ).val();
+	 		} // End If Statement
+	 		var divFieldsClass = 'question_default_fields';
+	 		switch ( questionType ) {
+				case 'multiple-choice':
+					divFieldsClass = 'question_default_fields';
+				break;
+				case 'boolean':
+					divFieldsClass = 'question_boolean_fields';
+				break;
+				case 'gap-fill':
+					divFieldsClass = 'question_gapfill_fields';
+				break;
+				case 'essay-paste':
+					divFieldsClass = 'question_essay_fields';
+				break;
+				case 'multi-line':
+					divFieldsClass = 'question_multiline_fields';
+				break;
+				case 'single-line':
+					divFieldsClass = 'question_singleline_fields';
+				break;
+				default :
+					divFieldsClass = 'question_default_fields';
+				break;
+			} // End Switch Statement
+			// Handle Required Fields
+			jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).children( 'input' ).each( function() {
+	 			dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+ 			});
+	 		// Handle Question Input Fields
+	 		var radioCount = 0;
+	 		jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).children( 'input' ).each( function() {
+	 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
+	 				// Only get the selected radio button
+	 				if ( radioCount == 0 ) {
+	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
+	 					radioCount++;
+	 				} // End If Statement
+ 				} else {
+ 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+ 				} // End If Statement
 	 		});
+	 		// Handle Question Textarea Fields
+	 		if ( jQuery( '#add_question_right_answer_essay' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
+	 			dataToPost += '&' + jQuery( '#add_question_right_answer_essay' ).attr( 'name' ) + '=' + jQuery( '#add_question_right_answer_essay' ).val();
+	 		} // End If Statement
+ 			if ( jQuery( '#add_question_right_answer_multiline' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
+ 				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + jQuery( '#add_question_right_answer_multiline' ).val();
+	 		} // End If Statement
+	 		dataToPost += '&' + 'question_type' + '=' + questionType;
 	 		// Perform the AJAX call.
 	 		jQuery.post(
 	 		    ajaxurl,
@@ -380,6 +398,7 @@ jQuery(document).ready( function($) {
 	 		    	//	jQuery( this ).css( 'visibility', 'hidden' );
 	 		    	//});
 	 		    	// Check for a valid question id
+	 		    	alert(response);
 	 		    	if ( 0 < response ) {
 	 		    		// TODO - Add the question to the table, and clear the add form and hide it
 	 		    		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
@@ -397,7 +416,21 @@ jQuery(document).ready( function($) {
 	 		    			arrayCounter++;
 	 		    		});
 	 		    		// TODO - Localize the english labels for translation
-	 		    		jQuery( '#add-question-metadata table tbody' ).append('<tr><td class="table-count hidden">' + tableCount + '</td><td>' + addQuestionText + '</td><td><a title="Edit Question" href="#question_' + tableCount + '" class="question_table_edit">Edit</a>&nbsp;&nbsp;&nbsp;<a title="Delete Question" href="#add-question-metadata" class="question_table_delete">Delete</a></td></tr><tr class="question-quick-edit hidden"><td colspan="3"><label>Question ' + tableCount + '</label> <input type="text" id="question_' + tableCount + '" name="question" value="' + addQuestionText + '" size="25" class="widefat"><label>Right Answer</label> <input type="text" id="question_' + tableCount + '_right_answer" name="question_right_answer" value="' + addQuestionRightText + '" size="25" class="widefat"><label>Wrong Answers</label> <input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[0] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[1] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[2] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[3] + '" size="25" class="widefat"><input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '"><a title="Save Question" href="#add-question-metadata" class="question_table_save button-primary">Save</a></td></tr>');
+	 		    		var outputEditForm = '';
+	 		    		outputEditForm += '<tr>';
+    						outputEditForm += '<td class="table-count hidden">' + tableCount + '</td>';
+				 		    outputEditForm += '<td>' + addQuestionText + '</td>';
+				 		    outputEditForm += '<td><a title="Edit Question" href="#question_' + tableCount + '" class="question_table_edit">Edit</a>&nbsp;&nbsp;&nbsp;<a title="Delete Question" href="#add-question-metadata" class="question_table_delete">Delete</a></td>';
+				 		outputEditForm += '</tr>';
+				 		outputEditForm += '<tr class="question-quick-edit hidden">';
+				 		    outputEditForm += '<td colspan="3">';
+				 		    	outputEditForm += '<label>Question ' + tableCount + '</label> <input type="text" id="question_' + tableCount + '" name="question" value="' + addQuestionText + '" size="25" class="widefat">';
+				 		    	outputEditForm += '<label>Right Answer</label> <input type="text" id="question_' + tableCount + '_right_answer" name="question_right_answer" value="' + addQuestionRightText + '" size="25" class="widefat">';
+				 		    	outputEditForm += '<label>Wrong Answers</label> <input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[0] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[1] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[2] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[3] + '" size="25" class="widefat"><input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '">';
+				 		    	outputEditForm += '<a title="Save Question" href="#add-question-metadata" class="question_table_save button-primary">Save</a>';
+				 		    outputEditForm += '</td>';
+				 		outputEditForm += '</tr>';
+	 		    		jQuery( '#add-question-metadata table tbody' ).append( outputEditForm );
 			    		jQuery.fn.resetAddQuestionForm();
 	 		    	}
 	 		    }

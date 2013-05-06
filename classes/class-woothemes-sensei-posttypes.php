@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - setup_question_post_type()
  * - setup_course_category_taxonomy()
  * - setup_quiz_type_taxonomy()
+ * - setup_question_type_taxonomy()
  * - setup_post_type_labels_base()
  * - create_post_type_labels()
  * - setup_post_type_messages()
@@ -52,6 +53,7 @@ class WooThemes_Sensei_PostTypes {
 		// Setup Taxonomies
 		add_action( 'init', array( &$this, 'setup_course_category_taxonomy' ), 100 );
 		add_action( 'init', array( &$this, 'setup_quiz_type_taxonomy' ), 100 );
+		add_action( 'init', array( &$this, 'setup_question_type_taxonomy' ), 100 );
 		// Load Post Type Objects
 		$default_post_types = array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) ;
 		$this->load_posttype_objects( $default_post_types );
@@ -352,6 +354,40 @@ class WooThemes_Sensei_PostTypes {
 
 		register_taxonomy( 'quiz-type', array( 'quiz' ), $args );
 	} // End setup_quiz_type_taxonomy()
+
+	/**
+	 * Setup the "question type" taxonomy, linked to the "question" post type.
+	 * @since  1.3.0
+	 * @return void
+	 */
+	public function setup_question_type_taxonomy () {
+		// "Quiz Types" Custom Taxonomy
+		$labels = array(
+			'name' => _x( 'Question Types', 'taxonomy general name', 'woothemes-sensei' ),
+			'singular_name' => _x( 'Question Type', 'taxonomy singular name', 'woothemes-sensei' ),
+			'search_items' =>  __( 'Search Question Types', 'woothemes-sensei' ),
+			'all_items' => __( 'All Question Types', 'woothemes-sensei' ),
+			'parent_item' => __( 'Parent Question Type', 'woothemes-sensei' ),
+			'parent_item_colon' => __( 'Parent Question Type:', 'woothemes-sensei' ),
+			'edit_item' => __( 'Edit Question Type', 'woothemes-sensei' ),
+			'update_item' => __( 'Update Question Type', 'woothemes-sensei' ),
+			'add_new_item' => __( 'Add New Question Type', 'woothemes-sensei' ),
+			'new_item_name' => __( 'New Question Type Name', 'woothemes-sensei' ),
+			'menu_name' => __( 'Question Types', 'woothemes-sensei' ),
+			'popular_items' => null // Hides the "Popular" section above the "add" form in the admin.
+		);
+
+		$args = array(
+			'hierarchical' => false,
+			'labels' => $labels,
+			'show_ui' => true, /* TO DO - future releases */
+			'query_var' => true,
+			'show_in_nav_menus' => false,
+			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', 'question-type' ) ) )
+		);
+
+		register_taxonomy( 'question-type', array( 'question' ), $args );
+	} // End setup_question_type_taxonomy()
 
 	/**
 	 * Setup the singular, plural and menu label names for the post types.
