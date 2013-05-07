@@ -78,7 +78,10 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
  	jQuery.fn.resetAddQuestionForm = function() {
- 	    jQuery( '#add-new-question' ).children('input').each( function() {
+ 	    jQuery( '#add-new-question' ).find('div').children('input').each( function() {
+			jQuery(this).attr( 'value', '' );
+		});
+		jQuery( '#add-new-question' ).find('div').children('textarea').each( function() {
 			jQuery(this).attr( 'value', '' );
 		});
  	}
@@ -289,7 +292,7 @@ jQuery(document).ready( function($) {
 		jQuery( '#add-new-question' ).addClass( 'hidden' );
 	 	jQuery.fn.resetAddQuestionForm();
 	 	jQuery.fn.resetQuestionTable();
-		jQuery( '#question_' + questionId ).parent('td').parent('tr').removeClass('hidden');
+		jQuery( '#question_' + questionId ).parent('div').parent('td').parent('tr').removeClass('hidden');
 		jQuery( '#question_' + questionId ).focus();
 	});
 
@@ -315,7 +318,7 @@ jQuery(document).ready( function($) {
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.lesson_question_cancel', function() {
 		// Hide the edit question panel
 		var tableRowId = jQuery( this ).parent('td').parent('tr').prev('tr').find('td:first').text();
-		jQuery( '#question_' + tableRowId ).parent('td').parent('tr').addClass( 'hidden' );
+		jQuery( '#question_' + tableRowId ).parent('div').parent('td').parent('tr').addClass( 'hidden' );
 	});
 
 	/**
@@ -327,6 +330,7 @@ jQuery(document).ready( function($) {
 	jQuery( '#add-new-question' ).on( 'click', 'a.add_question_save', function() {
 		var dataToPost = '';
 		var questionType = 'multiple-choice';
+		var radioValue = 'true';
 	 	// Validate Inputs
 		var validInput = jQuery.fn.validateQuestionInput( 'add', jQuery(this) );
 		if ( validInput ) {
@@ -370,7 +374,8 @@ jQuery(document).ready( function($) {
 	 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
 	 				// Only get the selected radio button
 	 				if ( radioCount == 0 ) {
-	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
+	 					radioValue = jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
+	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + radioValue;
 	 					radioCount++;
 	 				} // End If Statement
  				} else {
@@ -398,7 +403,6 @@ jQuery(document).ready( function($) {
 	 		    	//	jQuery( this ).css( 'visibility', 'hidden' );
 	 		    	//});
 	 		    	// Check for a valid question id
-	 		    	alert(response);
 	 		    	if ( 0 < response ) {
 	 		    		// TODO - Add the question to the table, and clear the add form and hide it
 	 		    		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
@@ -408,13 +412,6 @@ jQuery(document).ready( function($) {
 	 		    		var tableCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
 	 		    		var questionId = response;
 	 		    		var addQuestionText = jQuery.fn.htmlentities( jQuery( '#add_question' ).attr( 'value' ) );
-	 		    		var addQuestionRightText = jQuery.fn.htmlentities( jQuery( '#add_question_right_answer' ).attr( 'value' ) );
-	 		    		var arrayCounter = 0;
-	 		    		var addQuestionWrongText = new Array();
-	 		    		jQuery( '#add-new-question input[name="question_wrong_answers[]"]' ).each( function() {
-	 		    			addQuestionWrongText[arrayCounter] = jQuery.fn.htmlentities( jQuery(this).attr( 'value' ) );
-	 		    			arrayCounter++;
-	 		    		});
 	 		    		// TODO - Localize the english labels for translation
 	 		    		var outputEditForm = '';
 	 		    		outputEditForm += '<tr>';
@@ -424,10 +421,81 @@ jQuery(document).ready( function($) {
 				 		outputEditForm += '</tr>';
 				 		outputEditForm += '<tr class="question-quick-edit hidden">';
 				 		    outputEditForm += '<td colspan="3">';
-				 		    	outputEditForm += '<label>Question ' + tableCount + '</label> <input type="text" id="question_' + tableCount + '" name="question" value="' + addQuestionText + '" size="25" class="widefat">';
-				 		    	outputEditForm += '<label>Right Answer</label> <input type="text" id="question_' + tableCount + '_right_answer" name="question_right_answer" value="' + addQuestionRightText + '" size="25" class="widefat">';
-				 		    	outputEditForm += '<label>Wrong Answers</label> <input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[0] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[1] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[2] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[3] + '" size="25" class="widefat"><input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '">';
-				 		    	outputEditForm += '<a title="Save Question" href="#add-question-metadata" class="question_table_save button-primary">Save</a>';
+				 		    	outputEditForm += '<div class="question_required_fields">';
+				 		    		outputEditForm += '<label>Question ' + tableCount + '</label> <input type="text" id="question_' + tableCount + '" name="question" value="' + addQuestionText + '" size="25" class="widefat">';
+				 		    	outputEditForm += '</div>';
+				 		    	switch ( questionType ) {
+									case 'multiple-choice':
+										var addQuestionRightText = jQuery.fn.htmlentities( jQuery( '#add_question_right_answer' ).attr( 'value' ) );
+										var arrayCounter = 0;
+					 		    		var addQuestionWrongText = new Array();
+					 		    		jQuery( '#add-new-question input[name="question_wrong_answers[]"]' ).each( function() {
+					 		    			addQuestionWrongText[arrayCounter] = jQuery.fn.htmlentities( jQuery(this).attr( 'value' ) );
+					 		    			arrayCounter++;
+					 		    		});
+										outputEditForm += '<div class="question_default_fields">';
+						 		    		outputEditForm += '<label>Right Answer</label> <input type="text" id="question_' + tableCount + '_right_answer" name="question_right_answer" value="' + addQuestionRightText + '" size="25" class="widefat">';
+						 		    		outputEditForm += '<label>Wrong Answers</label> <input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[0] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[1] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[2] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[3] + '" size="25" class="widefat">';
+						 		    	outputEditForm += '</div>';
+									break;
+									case 'boolean':
+										outputEditForm += '<div class="question_boolean_fields">';
+											var trueChecked = '';
+											var falseChecked = '';
+											if ( 'true' == radioValue ) {
+												trueChecked = 'checked';
+											} // End If Statement
+						 		    		outputEditForm += '<input type="radio" name="question_right_answer_boolean" value="true" ' + trueChecked + ' />&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
+						 		    		if ( 'false' == radioValue ) {
+												falseChecked = 'checked';
+											} // End If Statement
+						 		    		outputEditForm += '<input type="radio" name="question_right_answer_boolean" value="false" ' + falseChecked + ' />&nbsp;&nbsp;False';
+						 		    	outputEditForm += '</div>';
+									break;
+									case 'gap-fill':
+										outputEditForm += '<div class="question_gapfill_fields">';
+											outputEditForm += '<label>Right Answer</label> ';
+						 		    		outputEditForm += '<input type="text" id="question_' + tableCount + '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' + jQuery( '#add_question_right_answer_gapfill_pre' ).val() + '" size="25" class="widefat">';
+						 		    		outputEditForm += '<input type="text" id="question_' + tableCount  + '_add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="' + jQuery( '#add_question_right_answer_gapfill_gap' ).val() + '" size="25" class="widefat">';
+						 		    		outputEditForm += '<input type="text" id="question_' + tableCount  + '_add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="' + jQuery( '#add_question_right_answer_gapfill_post' ).val() + '" size="25" class="widefat">';
+						 		    	outputEditForm += '</div>';
+									break;
+									case 'essay-paste':
+										outputEditForm += '<div class="question_essay_fields">';
+											outputEditForm += '<label>Right Answer</label> ';
+											outputEditForm += '<textarea id="question_' + tableCount + '_add_question_right_answer_essay" name="add_question_right_answer_essay" rows="15" cols="40" class="widefat">' + jQuery( '#add_question_right_answer_essay' ).val() + '</textarea>';
+										outputEditForm += '</div>';
+									break;
+									case 'multi-line':
+										outputEditForm += '<div class="question_multiline_fields">';
+											outputEditForm += '<label>Right Answer</label> ';
+											outputEditForm += '<textarea id="question_' + tableCount + '_add_question_right_answer_multiline" name="add_question_right_answer_multiline" rows="3" cols="40" class="widefat">' + jQuery( '#add_question_right_answer_multiline' ).val() + '</textarea>';
+										outputEditForm += '</div>';
+									break;
+									case 'single-line':
+										outputEditForm += '<div class="question_singleline_fields">';
+											outputEditForm += '<label>Right Answer</label> ';
+											outputEditForm += '<input type="text" id="question_' + tableCount  + '_add_question_right_answer_singleline" name="add_question_right_answer_singleline" value="' + jQuery( '#add_question_right_answer_singleline' ).val() + '" size="25" class="widefat">';
+										outputEditForm += '</div>';
+									break;
+									default :
+										var addQuestionRightText = jQuery.fn.htmlentities( jQuery( '#add_question_right_answer' ).attr( 'value' ) );
+										var arrayCounter = 0;
+					 		    		var addQuestionWrongText = new Array();
+					 		    		jQuery( '#add-new-question input[name="question_wrong_answers[]"]' ).each( function() {
+					 		    			addQuestionWrongText[arrayCounter] = jQuery.fn.htmlentities( jQuery(this).attr( 'value' ) );
+					 		    			arrayCounter++;
+					 		    		});
+										outputEditForm += '<div class="question_default_fields">';
+						 		    		outputEditForm += '<label>Right Answer</label> <input type="text" id="question_' + tableCount + '_right_answer" name="question_right_answer" value="' + addQuestionRightText + '" size="25" class="widefat">';
+						 		    		outputEditForm += '<label>Wrong Answers</label> <input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[0] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[1] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[2] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[3] + '" size="25" class="widefat">';
+						 		    	outputEditForm += '</div>';
+									break;
+								} // End Switch Statement
+				 		    	outputEditForm += '<input type="hidden" name="question_type" id="question_' + tableCount + '_question_type" value="' + questionType + '">';
+				 		    	outputEditForm += '<input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '">';
+				 		    	outputEditForm += '<a title="Update Question" href="#add-question-metadata" class="question_table_save button button-highlighted">Update</a>&nbsp;&nbsp;&nbsp;';
+								outputEditForm += '<a title="Cancel" href="#question-edit-cancel" class="lesson_question_cancel">Cancel</a>';
 				 		    outputEditForm += '</td>';
 				 		outputEditForm += '</tr>';
 	 		    		jQuery( '#add-question-metadata table tbody' ).append( outputEditForm );
@@ -463,7 +531,59 @@ jQuery(document).ready( function($) {
 	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
 	 			});
 	 			tableRowId = jQuery( this ).parent('td').parent('tr').prev('tr').find('td:first').text();
-	 			// Perform the AJAX call.
+	 			if ( jQuery( this ).parent().find( 'input.question_type' ).val() != '' ) {
+		 			questionType = jQuery( this ).parent().find( 'input.question_type' ).val();
+		 		} // End If Statement
+		 		var divFieldsClass = 'question_default_fields';
+		 		switch ( questionType ) {
+					case 'multiple-choice':
+						divFieldsClass = 'question_default_fields';
+					break;
+					case 'boolean':
+						divFieldsClass = 'question_boolean_fields';
+					break;
+					case 'gap-fill':
+						divFieldsClass = 'question_gapfill_fields';
+					break;
+					case 'essay-paste':
+						divFieldsClass = 'question_essay_fields';
+					break;
+					case 'multi-line':
+						divFieldsClass = 'question_multiline_fields';
+					break;
+					case 'single-line':
+						divFieldsClass = 'question_singleline_fields';
+					break;
+					default :
+						divFieldsClass = 'question_default_fields';
+					break;
+				} // End Switch Statement
+				// Handle Required Fields
+				jQuery( this ).parent().find( 'div.question_required_fields' ).children( 'input' ).each( function() {
+		 			dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+	 			});
+		 		// Handle Question Input Fields
+		 		var radioCount = 0;
+		 		jQuery( this ).parent().find( 'div.' + divFieldsClass ).children( 'input' ).each( function() {
+		 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
+		 				// Only get the selected radio button
+		 				if ( radioCount == 0 ) {
+		 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
+		 					radioCount++;
+		 				} // End If Statement
+	 				} else {
+	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+	 				} // End If Statement
+		 		});
+		 		// Handle Question Textarea Fields
+		 		if ( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
+		 			dataToPost += '&' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val();
+		 		} // End If Statement
+		 		if ( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
+		 			dataToPost += '&' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val();
+		 		} // End If Statement
+				dataToPost += '&' + 'question_type' + '=' + questionType;
+				// Perform the AJAX call.
 	 			jQuery.post(
 	 				ajaxurl,
 	 				{
@@ -481,9 +601,8 @@ jQuery(document).ready( function($) {
 	 							if ( jQuery(this).text() == tableRowId ) {
 	 								jQuery(this).next('td').text( jQuery( '#question_' + tableRowId ).attr('value') );
 	 							}
-
 	 						});
-	 						jQuery( '#question_' + tableRowId ).parent('td').parent('tr').addClass( 'hidden' );
+	 						jQuery( '#question_' + tableRowId ).parent('div').parent('td').parent('tr').addClass( 'hidden' );
 	 					}
 	 				}
 	 			);

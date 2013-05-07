@@ -534,37 +534,64 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<tr class="question-quick-edit hidden">';
 							$html .= '<td colspan="3">';
 						    	// Question
-						    	$html .= '<div class="question_default_fields">';
+						    	$html .= '<div class="question_required_fields">';
 							    	$html .= '<label>' . __( 'Question' . ' ' . $question_counter  , 'woothemes-sensei' ) . '</label> ';
 	  						    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
-  						    	$html .= '</div>';
+	  						    $html .= '</div>';
   						    	switch ( $question_type ) {
 									case 'multiple-choice':
-										// Right Answer
-								    	$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
-		  						    	$html .= '<input type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $select_question_right_answer ) ) . '" size="25" class="widefat" />';
-								    	// Wrong Answers - TO DO
-								    	$html .= '<label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
-		  						    	// Setup Wrong Answer HTML
-								    	for ( $i = 0; $i < 4; $i++ ) {
-								    		if ( !isset( $select_question_wrong_answers[ $i ] ) ) { $select_question_wrong_answers[ $i ] = ''; }
-								    		$html .= '<input type="text" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $select_question_wrong_answers[ $i ] ) ) . '" size="25" class="widefat" />';
-		  						    	} // End For Loop
+										$html .= '<div class="question_default_fields">';
+											// Right Answer
+											$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+			  						    	$html .= '<input type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $select_question_right_answer ) ) . '" size="25" class="widefat" />';
+									    	// Wrong Answers - TO DO
+									    	$html .= '<label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
+			  						    	// Setup Wrong Answer HTML
+									    	for ( $i = 0; $i < 4; $i++ ) {
+									    		if ( !isset( $select_question_wrong_answers[ $i ] ) ) { $select_question_wrong_answers[ $i ] = ''; }
+									    		$html .= '<input type="text" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $select_question_wrong_answers[ $i ] ) ) . '" size="25" class="widefat" />';
+			  						    	} // End For Loop
+		  						    	$html .= '</div>';
 									break;
 									case 'boolean':
-
+										$html .= '<div class="question_boolean_fields">';
+					  						$html .= '<input type="radio" name="question_right_answer_boolean" value="true" '. checked( $select_question_right_answer, 'true', false ) . ' />&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
+											$html .= '<input type="radio" name="question_right_answer_boolean" value="false" '. checked( $select_question_right_answer, 'false', false ) . ' />&nbsp;&nbsp;False';
+										$html .= '</div>';
 									break;
 									case 'gap-fill':
-
+										$gapfill_array = explode( '|', $select_question_right_answer );
+										if ( isset( $gapfill_array[0] ) ) { $gapfill_pre = $gapfill_array[0]; } else { $gapfill_pre = ''; }
+										if ( isset( $gapfill_array[1] ) ) { $gapfill_gap = $gapfill_array[1]; } else { $gapfill_gap = ''; }
+										if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { $gapfill_post = ''; }
+										$html .= '<div class="question_gapfill_fields">';
+					  						// Right Answer
+											$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+											$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' . $gapfill_pre . '" size="25" class="widefat" />';
+						  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="' . $gapfill_gap . '" size="25" class="widefat" />';
+						  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="' . $gapfill_post . '" size="25" class="widefat" />';
+										$html .= '</div>';
 									break;
 									case 'essay-paste':
-
+										$html .= '<div class="question_essay_fields">';
+					  						// Right Answer
+											$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+											$html .= '<textarea id="question_' . $question_counter . '_add_question_right_answer_essay" name="add_question_right_answer_essay" rows="15" cols="40" class="widefat">' . $select_question_right_answer . '</textarea>';
+										$html .= '</div>';
 									break;
 									case 'multi-line':
-
+										$html .= '<div class="question_multiline_fields">';
+					  						// Right Answer
+											$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+											$html .= '<textarea id="question_' . $question_counter . '_add_question_right_answer_multiline" name="add_question_right_answer_multiline" rows="3" cols="40" class="widefat">' . $select_question_right_answer . '</textarea>';
+										$html .= '</div>';
 									break;
 									case 'single-line':
-
+										$html .= '<div class="question_singleline_fields">';
+					  						// Right Answer
+											$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+											$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_singleline" name="add_question_right_answer_singleline" value="' . $select_question_right_answer . '" size="25" class="widefat" />';
+										$html .= '</div>';
 									break;
 									default :
 										// Right Answer
@@ -579,13 +606,15 @@ class WooThemes_Sensei_Lesson {
 		  						    	} // End For Loop
 									break;
 								} // End Switch Statement
+								// Question Type
+								$html .= '<input type="hidden" id="question_' . $question_counter . '_question_type" class="question_type" name="question_type" value="' . $question_type . '" />';
   						    	// Question ID
   						    	$html .= '<input type="hidden" name="question_id" id="question_' . $question_counter . '_id" value="' . $question_id . '" />';
 						    	// Update question button
 						    	$html .= '<a title="' . esc_attr( __( 'Update Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_save button button-highlighted">' . esc_html( __( 'Update', 'woothemes-sensei' ) ) . '</a>';
 						    	$html .= '&nbsp;&nbsp;&nbsp;';
 						    	// Cancel the edit button
-						    	$html .= '<a href="#question-edit-cancel" class="lesson_question_cancel">' . __( 'Cancel', 'woothemes-sensei' ) . '</a>';
+						    	$html .= '<a href="#question-edit-cancel" class="lesson_question_cancel" title="' . esc_attr( __( 'Cancel', 'woothemes-sensei' ) ) . '">' . __( 'Cancel', 'woothemes-sensei' ) . '</a>';
 						    $html .= '</td>';
 						$html .= '</tr>';
 						$question_counter++;
@@ -710,7 +739,7 @@ class WooThemes_Sensei_Lesson {
 	public function enqueue_scripts() {
 		global $woothemes_sensei;
 		// Load the lessons script
-		wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.0.0' );
+		wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.3.0' );
 		wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.0.0' );
 		$translation_strings = array();
 		$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ) );
