@@ -197,7 +197,11 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 			$course_ids = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
 		} // End If Statement
 
+		$posts_array = array();
+		if ( !empty($course_ids) ) {
 		$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ), $course_ids );
+		} // End If Statement
+
 		if ( count( $posts_array ) > 0 ) { ?>
 			<ul>
 			<?php foreach ($posts_array as $post_item){
@@ -226,7 +230,11 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		    	echo '<li class="my-account fix"><a href="'. esc_url( get_permalink( $my_account_page_id ) ) .'">'.__('My Courses', 'woothemes-sensei').' <span class="meta-nav">→</span></a></li>';
 		    } // End If Statement ?>
 		</ul>
-		<?php } // End If Statement
+		<?php } else {
+			// No posts returned. This means the user either has no active or no completed courses.
+			$course_status = substr( esc_attr( $instance['component'] ) , 0, -7);
+			echo sprintf( __( 'You have no %1s courses.', 'woothemes-sensei' ), $course_status );
+		} // End If Statement
 	} // End load_component()
 } // End Class
 ?>

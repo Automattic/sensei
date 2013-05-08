@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.05.08 - version 1.2.4
+ * /widgets/widget-woothemes-sensei-course-component.php - fix for no active and completed courses in widget
+
 2013.04.30 - version 1.2.3
  * /assets/css/frontend.css - fix for FontAwesome issue in Firefox
  * /classes/class-woothemes-sensei-frontend.php - warning message fix
