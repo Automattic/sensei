@@ -123,6 +123,16 @@ jQuery(document).ready( function($) {
  		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
 
+	jQuery.fn.ucwords = function( str ) {
+		str = str.toLowerCase();
+		str = str.replace( '-', ' ' );
+		str = str.replace( 'boolean', 'True/False' );
+	    return str.replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
+	        function($1){
+	            return $1.toUpperCase();
+	        });
+	}
+
 	/***************************************************************************************************
 	 * 	2 - Lesson Quiz Functions.
 	 ***************************************************************************************************/
@@ -417,6 +427,7 @@ jQuery(document).ready( function($) {
 	 		    		outputEditForm += '<tr>';
     						outputEditForm += '<td class="table-count hidden">' + tableCount + '</td>';
 				 		    outputEditForm += '<td>' + addQuestionText + '</td>';
+				 		    outputEditForm += '<td>' + jQuery.fn.ucwords( questionType ) + '</td>';
 				 		    outputEditForm += '<td><a title="Edit Question" href="#question_' + tableCount + '" class="question_table_edit">Edit</a>&nbsp;&nbsp;&nbsp;<a title="Delete Question" href="#add-question-metadata" class="question_table_delete">Delete</a></td>';
 				 		outputEditForm += '</tr>';
 				 		outputEditForm += '<tr class="question-quick-edit hidden">';

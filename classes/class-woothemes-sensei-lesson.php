@@ -497,6 +497,7 @@ class WooThemes_Sensei_Lesson {
 								    <tr>
 								        <th class="hidden">#</th>
 								        <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
+								        <th style="width:125px;">' . __( 'Type', 'woothemes-sensei' ) . '</th>
 								        <th style="width:125px;">' . __( 'Action', 'woothemes-sensei' ) . '</th>
 								    </tr>
 								</thead>
@@ -504,13 +505,14 @@ class WooThemes_Sensei_Lesson {
 								    <tr>
 								    <th class="hidden">#</th>
 								    <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
+								    <th>' . __( 'Type', 'woothemes-sensei' ) . '</th>
 								    <th>' . __( 'Action', 'woothemes-sensei' ) . '</th>
 								    </tr>
 								</tfoot>
 								<tbody>';
 					if ( 0 < $post_count) { $message_class = "hidden"; }
 					$html .= '<tr id="no-questions-message" class="' . esc_attr( $message_class ) . '">';
-						$html .= '<td colspan="3">' . __( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
+						$html .= '<td colspan="4">' . __( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
 					$html .= '</tr>';
 					// Existing questions
 					foreach ( $posts_array as $question ) {
@@ -528,11 +530,13 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<tr>';
 							$html .= '<td class="table-count hidden">' . $question_counter . '</td>';
    							$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
+   							$question_types_filtered = str_replace( array( '-', 'boolean' ), array( ' ', 'True/False' ), $question_type );
+   							$html .= '<td>' . esc_html( ucwords( $question_types_filtered ) ) . '</td>';
    							$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a>&nbsp;&nbsp;&nbsp;<a title="' . esc_attr( __( 'Delete Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Delete', 'woothemes-sensei' ) ) . '</a></td>';
 						$html .= '</tr>';
 						// Edit question form
 						$html .= '<tr class="question-quick-edit hidden">';
-							$html .= '<td colspan="3">';
+							$html .= '<td colspan="4">';
 						    	// Question
 						    	$html .= '<div class="question_required_fields">';
 							    	$html .= '<label>' . __( 'Question' . ' ' . $question_counter  , 'woothemes-sensei' ) . '</label> ';
@@ -632,6 +636,7 @@ class WooThemes_Sensei_Lesson {
 								    <tr>
 								        <th class="hidden">#</th>
 								        <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
+								        <th style="width:125px;">' . __( 'Type', 'woothemes-sensei' ) . '</th>
 								        <th style="width:125px;">' . __( 'Action', 'woothemes-sensei' ) . '</th>
 								    </tr>
 								</thead>
@@ -639,13 +644,14 @@ class WooThemes_Sensei_Lesson {
 								    <tr>
 								    <th class="hidden">#</th>
 								    <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
+								    <th>' . __( 'Type', 'woothemes-sensei' ) . '</th>
 								    <th>' . __( 'Action', 'woothemes-sensei' ) . '</th>
 								    </tr>
 								</tfoot>
 								<tbody>';
 					if ( 0 < $post_count) { $message_class = "hidden"; }
 					$html .= '<tr id="no-questions-message" class="' . esc_attr( $message_class ) . '">';
-						$html .= '<td colspan="3">' . __( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
+						$html .= '<td colspan="4">' . __( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
 					$html .= '</tr>';
 					$html .= '</tbody>
 							</table>';
