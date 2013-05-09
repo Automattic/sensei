@@ -13,6 +13,7 @@ global $post, $woothemes_sensei, $current_user;
 // Get Frontend Data
 $user_quizzes = $woothemes_sensei->frontend->data->user_quizzes;
 $question_item = $woothemes_sensei->frontend->data->question_item;
+$question_count = $woothemes_sensei->frontend->data->question_count;
 // Question Meta
 $question_right_answer = get_post_meta( $question_item->ID, '_question_right_answer', true );
 $question_wrong_answers = get_post_meta( $question_item->ID, '_question_wrong_answers', true );

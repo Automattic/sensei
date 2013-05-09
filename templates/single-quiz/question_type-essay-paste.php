@@ -13,6 +13,7 @@ global $post, $woothemes_sensei, $current_user;
 // Get Frontend Data
 $user_quizzes = $woothemes_sensei->frontend->data->user_quizzes;
 $question_item = $woothemes_sensei->frontend->data->question_item;
+$question_count = $woothemes_sensei->frontend->data->question_count;
 // Question Meta
 $question_right_answer = get_post_meta( $question_item->ID, '_question_right_answer', true );
 $question_wrong_answers = get_post_meta( $question_item->ID, '_question_wrong_answers', true );
@@ -24,5 +25,5 @@ $question_text = $question_item->post_title;
 <li>
     <span><?php echo esc_html( stripslashes( $question_text ) ); ?></span>
     <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_count ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
-    TODO - ESSAY PASTE CODE HERE
+    <?php WooThemes_Sensei_Utils::sensei_text_editor( $content, 'essayquestion' . $question_count, 'question_' . $question_count ); ?>
 </li>
