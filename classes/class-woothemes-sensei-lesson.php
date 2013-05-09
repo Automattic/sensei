@@ -231,6 +231,14 @@ class WooThemes_Sensei_Lesson {
 		if ( isset( $_POST[ 'quiz_passmark' ] ) && ( 0 < absint( $_POST[ 'quiz_passmark' ] ) ) ) {
 			$quiz_passmark = absint( $_POST[ 'quiz_passmark' ] );
 		} // End If Statement
+		if ( isset( $_POST[ 'quiz_grade_type' ] ) && $_POST[ 'quiz_grade_type' ] == 'on' ) {
+			$quiz_grade_type = 'auto';
+		} else {
+			$quiz_grade_type = 'manual';
+		}// End If Statement
+		if ( isset( $_POST[ 'quiz_grade_type_disabled' ] ) ) {
+			$quiz_grade_type_disabled = esc_html( $_POST[ 'quiz_grade_type_disabled' ] );
+		}
 		// Setup Query Arguments
 		$post_type_args = array(	'post_content' => $post_content,
   		    						'post_status' => $post_status,
@@ -245,6 +253,8 @@ class WooThemes_Sensei_Lesson {
 		    // Update the post meta data
 		    update_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
 		    update_post_meta( $quiz_id, '_quiz_passmark', $quiz_passmark );
+		    update_post_meta( $quiz_id, '_quiz_grade_type', $quiz_grade_type );
+		    update_post_meta( $quiz_id, '_quiz_grade_type_disabled', $quiz_grade_type_disabled );
 		    // Set the post terms for quiz-type
 		    wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' ); // EXTENSIONS - possible refactor to get term slug after ID selection
 		} else {
@@ -253,6 +263,8 @@ class WooThemes_Sensei_Lesson {
 		    // Add the post meta data
 		    add_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
 		    add_post_meta( $quiz_id, '_quiz_passmark', $quiz_passmark );
+		    add_post_meta( $quiz_id, '_quiz_grade_type', $quiz_grade_type );
+		    add_post_meta( $quiz_id, '_quiz_grade_type_disabled', $quiz_grade_type_disabled );
 		    // Set the post terms for quiz-type
 		    wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' ); // EXTENSIONS - possible refactor to get term slug after ID selection
 		} // End If Statement
@@ -425,6 +437,12 @@ class WooThemes_Sensei_Lesson {
 				setup_postdata($quiz);
 				$quiz_id = $quiz->ID;
 				$lesson_quiz_passmark = get_post_meta( $quiz_id, '_quiz_passmark', true );
+				$quiz_grade_type_disabled = get_post_meta( $quiz_id, '_quiz_grade_type_disabled', true );
+				if( $quiz_grade_type_disabled == 'disabled' ) {
+					$quiz_grade_type = 'manual';
+				} else {
+					$quiz_grade_type = get_post_meta( $quiz_id, '_quiz_grade_type', true );
+				}
 			} // End For Loop
 		} // End If Statement
 		// Quiz Panel CSS Class
@@ -447,23 +465,36 @@ class WooThemes_Sensei_Lesson {
 					$html .= '<button type="button" class="button button-highlighted add_quiz">' . esc_html( __( 'Add', 'woothemes-sensei' ) )  . '</button>';
 				$html .= '</p>';
 			} // End If Statement
+			
 			// Inner DIV
 			$html .= '<div id="add-quiz-metadata"' . $quiz_class . '>';
+				
 				// Quiz Meta data
 				$html .= '<p>';
+					
 					// Quiz Pass Percentage
 					$html .= '<input type="hidden" name="quiz_id" id="quiz_id" value="' . esc_attr( $quiz_id ) . '" />';
 					$html .= '<label for="quiz_passmark">' . __( 'Quiz passmark percentage' , 'woothemes-sensei' ) . '</label> ';
   					$html .= '<input type="text" id="quiz_passmark" name="quiz_passmark" value="' . esc_attr( $lesson_quiz_passmark ) . '" size="25" class="widefat" />';
+  					$html .= '<br/>';
+  					
+  					// Quiz grade type
+  					$html .= '<input type="hidden" id="quiz_grade_type_disabled" name="quiz_grade_type_disabled" value="' . esc_attr( $quiz_grade_type_disabled ) . '" /> ';
+  					$html .= '<input type="checkbox" id="quiz_grade_type" name="quiz_grade_type"' . checked( $quiz_grade_type, 'auto', false ) . ' ' . disabled( $quiz_grade_type_disabled, 'disabled', false ) . ' /> ';
+  					$html .= '<label for="quiz_grade_type">' . __( 'Grade quiz automatically', 'woothemes-sensei' ) . '</label>';
+
 				$html .= '</p>';
+
 				// Default Message
 				if ( 0 == $quiz_id ) {
 					$html .= '<p class="save-note">';
 						$html .= esc_html( __( 'Please save your lesson in order to add questions to your quiz.', 'woothemes-sensei' ) );
 					$html .= '</p>';
 				} // End If Statement
+
 			$html .= '</div>';
 		$html .= '</div>';
+
 		// Question Container DIV
 		$html .= '<div id="add-question-main"' . $quiz_class . '>';
 			// Inner DIV

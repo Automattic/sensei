@@ -87,6 +87,71 @@ jQuery(document).ready( function($) {
  	}
 
  	/**
+	 * Checks if the quiz can be automatically graded
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+ 	jQuery.fn.checkQuizGradeType = function( latest_questionType ) {
+
+ 		// Fetch all current question types
+ 		var questionType;
+ 		var types = []
+ 		jQuery( '#add-question-metadata > table > tbody > tr input.question_type' ).each( function() {
+			questionType = jQuery( this ).val();
+			types.push( questionType );
+		});
+		
+		// Add latest question to array if it exists
+		if( latest_questionType ) {
+			types.push( latest_questionType );
+		}
+
+		var currentType;
+		var disableAuto = false;
+		for( var i = 0; i < types.length; i++ ) {
+		    currentType = types[i];
+
+		    if( ! disableAuto ) {
+			    switch ( currentType ) {
+					case 'multiple-choice':
+						disableAuto = false;
+					break;
+					case 'boolean':
+						disableAuto = false;
+					break;
+					case 'gap-fill':
+						disableAuto = true;
+					break;
+					case 'essay-paste':
+						disableAuto = true;
+					break;
+					case 'multi-line':
+						disableAuto = true;
+					break;
+					case 'single-line':
+						disableAuto = true;
+					break;
+					default :
+						disableAuto = false;
+					break;
+				} // End Switch Statement
+			}
+
+		}
+
+		// Disable/enable field based on question types
+		if( disableAuto ) {
+			jQuery( 'input#quiz_grade_type' ).prop( 'checked', false );
+			jQuery( 'input#quiz_grade_type' ).attr( 'disabled', 'disabled' );
+			jQuery( 'input#quiz_grade_type_disabled' ).val( 'disabled' );
+		} else {
+			jQuery( 'input#quiz_grade_type' ).removeAttr( 'disabled' );
+			jQuery( 'input#quiz_grade_type_disabled' ).val( 'enabled' );
+		}
+ 	}
+
+ 	/**
 	 * Updates the Number of Questions counter.
 	 *
 	 * @since 1.0.0
@@ -511,6 +576,7 @@ jQuery(document).ready( function($) {
 				 		outputEditForm += '</tr>';
 	 		    		jQuery( '#add-question-metadata table tbody' ).append( outputEditForm );
 			    		jQuery.fn.resetAddQuestionForm();
+			 			jQuery.fn.checkQuizGradeType( questionType );
 	 		    	}
 	 		    }
 	 		);
@@ -671,6 +737,7 @@ jQuery(document).ready( function($) {
 								}
 	 						});
 	 						jQuery.fn.updateQuestionCount( 1, '-' );
+	 						jQuery.fn.checkQuizGradeType( false );
 	 						// TODO - renumber function for reuse when adding
 	 					}
 	 				}
