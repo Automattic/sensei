@@ -62,6 +62,7 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
     			<?php foreach ($lesson_quiz_questions as $question_item) {
                     // Setup current Frontend Question
                     $woothemes_sensei->frontend->data->question_item = $question_item;
+                    $woothemes_sensei->frontend->data->question_count = $question_count;
                     // Question Type
                     $question_type = 'multiple-choice';
                     $question_types_array = wp_get_post_terms( $question_item->ID, 'question-type', array( 'fields' => 'names' ) );

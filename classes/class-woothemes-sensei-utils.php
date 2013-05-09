@@ -301,5 +301,36 @@ class WooThemes_Sensei_Utils {
 			} // End If Statement
 		} // End For Loop
 	} // End sensei_customer_bought_product()
+
+	/**
+	 * Load the WordPress rich text editor
+	 * @param  string $content    Initial content for editor
+	 * @param  string $editor_id  ID of editor (only lower case characters - no spaces, underscores, hyphens, etc.)
+	 * @param  string $input_name Name for textarea form element
+	 * @return void
+	 */
+	public function sensei_text_editor( $content = '', $editor_id = 'senseitexteditor', $input_name = '' ) {
+
+		if( ! $input_name ) $input_name = $editor_id;
+
+		$buttons = 'bold,italic,underline,strikethrough,blockquote,bullist,numlist,justifyleft,justifycenter,justifyright,undo,redo,pastetext';
+
+		$settings = array(
+			'media_buttons' => false,
+			'wpautop' => true,
+			'textarea_name' => $input_name,
+			'editor_class' => 'sense_text_editor',
+			'teeny' => false,
+			'dfw' => false,
+			'tinymce' => array(
+				'theme_advanced_buttons1' => $buttons
+			),
+			'quicktags' => false
+		);
+
+		wp_editor( $content, $editor_id, $settings );
+
+	} // End sensei_text_editor()
+
 } // End Class
 ?>
