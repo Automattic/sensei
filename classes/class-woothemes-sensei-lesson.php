@@ -600,31 +600,35 @@ class WooThemes_Sensei_Lesson {
 										if ( isset( $gapfill_array[1] ) ) { $gapfill_gap = $gapfill_array[1]; } else { $gapfill_gap = ''; }
 										if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { $gapfill_post = ''; }
 										$html .= '<div class="question_gapfill_fields">';
-					  						// Right Answer
-											$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
-											$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' . $gapfill_pre . '" size="25" class="widefat" />';
-						  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="' . $gapfill_gap . '" size="25" class="widefat" />';
-						  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="' . $gapfill_post . '" size="25" class="widefat" />';
-										$html .= '</div>';
+					  						// Fill in the Gaps
+											$html .= '<label>' . __( 'Text before the Gap' , 'woothemes-sensei' ) . '</label> ';
+											$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' . $gapfill_pre . '" size="25" class="widefat gapfill-field" />';
+						  					$html .= '<label>' . __( 'The Gap' , 'woothemes-sensei' ) . '</label> ';
+						  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="' . $gapfill_gap . '" size="25" class="widefat gapfill-field" />';
+						  					$html .= '<label>' . __( 'Text after the Gap' , 'woothemes-sensei' ) . '</label> ';
+						  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="' . $gapfill_post . '" size="25" class="widefat gapfill-field" />';
+						  					$html .= '<label>' . __( 'Preview:' , 'woothemes-sensei' ) . '</label> ';
+						  					$html .= '<p class="gapfill-preview">' . $gapfill_pre . '&nbsp;<u>' . $gapfill_gap . '</u>&nbsp;' . $gapfill_post . '</p>';
+						  				$html .= '</div>';
 									break;
 									case 'essay-paste':
 										$html .= '<div class="question_essay_fields">';
-					  						// Right Answer
-											$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+					  						// Guides for grading
+											$html .= '<label>' . __( 'Guide/Teacher Notes for grading the Essay' , 'woothemes-sensei' ) . '</label> ';
 											$html .= '<textarea id="question_' . $question_counter . '_add_question_right_answer_essay" name="add_question_right_answer_essay" rows="15" cols="40" class="widefat">' . $select_question_right_answer . '</textarea>';
 										$html .= '</div>';
 									break;
 									case 'multi-line':
 										$html .= '<div class="question_multiline_fields">';
-					  						// Right Answer
-											$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+					  						// Guides for grading
+											$html .= '<label>' . __( 'Guide/Teacher Notes for grading the answer' , 'woothemes-sensei' ) . '</label> ';
 											$html .= '<textarea id="question_' . $question_counter . '_add_question_right_answer_multiline" name="add_question_right_answer_multiline" rows="3" cols="40" class="widefat">' . $select_question_right_answer . '</textarea>';
 										$html .= '</div>';
 									break;
 									case 'single-line':
 										$html .= '<div class="question_singleline_fields">';
-					  						// Right Answer
-											$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+					  						// Recommended Answer
+											$html .= '<label>' . __( 'Recommended Answer' , 'woothemes-sensei' ) . '</label> ';
 											$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_singleline" name="add_question_right_answer_singleline" value="' . $select_question_right_answer . '" size="25" class="widefat" />';
 										$html .= '</div>';
 									break;
@@ -725,33 +729,37 @@ class WooThemes_Sensei_Lesson {
   					$html .= '</div>';
   					// True/False Inputs
   					$html .= '<div class="question_boolean_fields hidden">';
-  						$html .= '<input type="radio" name="question_right_answer_boolean" value="true" />&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
+  						$html .= '<input type="radio" name="question_right_answer_boolean" value="true" checked="checked"/>&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
 						$html .= '<input type="radio" name="question_right_answer_boolean" value="false" />&nbsp;&nbsp;False';
 					$html .= '</div>';
 					// GapFill Inputs
   					$html .= '<div class="question_gapfill_fields hidden">';
-  						// Right Answer
-						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<input type="text" id="add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="" size="25" class="widefat" />';
-	  					$html .= '<input type="text" id="add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="" size="25" class="widefat" />';
-	  					$html .= '<input type="text" id="add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="" size="25" class="widefat" />';
+  						// The Gaps
+						$html .= '<label>' . __( 'Text before the Gap' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<input type="text" id="add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="" size="25" class="widefat gapfill-field" />';
+						$html .= '<label>' . __( 'The Gap' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="" size="25" class="widefat gapfill-field" />';
+	  					$html .= '<label>' . __( 'Text after the Gap' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="" size="25" class="widefat gapfill-field" />';
+	  					$html .= '<label>' . __( 'Preview:' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<p class="gapfill-preview"></span>';
 					$html .= '</div>';
 					// Essay Inputs
   					$html .= '<div class="question_essay_fields hidden">';
-  						// Right Answer
-						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+  						// Guides for grading
+						$html .= '<label>' . __( 'Guide/Teacher Notes for grading the Essay' , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<textarea id="add_question_right_answer_essay" name="add_question_right_answer_essay" rows="15" cols="40" class="widefat"></textarea>';
 					$html .= '</div>';
 					// Multi Line Inputs
   					$html .= '<div class="question_multiline_fields hidden">';
-  						// Right Answer
-						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+  						// Guides for grading
+						$html .= '<label>' . __( 'Guide/Teacher Notes for grading the answer' , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<textarea id="add_question_right_answer_multiline" name="add_question_right_answer_multiline" rows="3" cols="40" class="widefat"></textarea>';
 					$html .= '</div>';
 					// Single Line Inputs
   					$html .= '<div class="question_singleline_fields hidden">';
-  						// Right Answer
-						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+  						// Recommended Answer
+						$html .= '<label>' . __( 'Recommended Answer' , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<input type="text" id="add_question_right_answer_singleline" name="add_question_right_answer_singleline" value="" size="25" class="widefat" />';
 					$html .= '</div>';
   					// Save the question

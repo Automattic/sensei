@@ -101,7 +101,7 @@ jQuery(document).ready( function($) {
 			questionType = jQuery( this ).val();
 			types.push( questionType );
 		});
-		
+
 		// Add latest question to array if it exists
 		if( latest_questionType ) {
 			types.push( latest_questionType );
@@ -212,6 +212,29 @@ jQuery(document).ready( function($) {
 		// Display add quiz form and hide add quiz button
 		jQuery( '#add-quiz-metadata' ).show();
 		jQuery( '#add-quiz-main > p:first' ).hide();
+	});
+
+	/**
+	 * Gap Fill text change events
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	jQuery( 'input.gapfill-field' ).each( function() {
+		// Handles change events like paste, tabbing, and click change selectors
+		jQuery( this ).change(function() {
+			var gapPre = jQuery( this ).parent('div').find('input[name=add_question_right_answer_gapfill_pre]').val();
+			var gapGap = jQuery( this ).parent('div').find('input[name=add_question_right_answer_gapfill_gap]').val();
+			var gapPost = jQuery( this ).parent('div').find('input[name=add_question_right_answer_gapfill_post]').val();
+			jQuery( this ).parent('div').find('p.gapfill-preview').html( gapPre + ' <u>' + gapGap + '</u> ' + gapPost );
+		});
+		// Handles the pressing up of the key, general typing
+		jQuery( this ).keyup(function() {
+			var gapPre = jQuery( this ).parent('div').find('input[name=add_question_right_answer_gapfill_pre]').val();
+			var gapGap = jQuery( this ).parent('div').find('input[name=add_question_right_answer_gapfill_gap]').val();
+			var gapPost = jQuery( this ).parent('div').find('input[name=add_question_right_answer_gapfill_post]').val();
+			jQuery( this ).parent('div').find('p.gapfill-preview').html( gapPre + ' <u>' + gapGap + '</u> ' + gapPost );
+		});
 	});
 
 	/***************************************************************************************************
