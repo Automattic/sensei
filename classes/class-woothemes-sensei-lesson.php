@@ -465,19 +465,19 @@ class WooThemes_Sensei_Lesson {
 					$html .= '<button type="button" class="button button-highlighted add_quiz">' . esc_html( __( 'Add', 'woothemes-sensei' ) )  . '</button>';
 				$html .= '</p>';
 			} // End If Statement
-			
+
 			// Inner DIV
 			$html .= '<div id="add-quiz-metadata"' . $quiz_class . '>';
-				
+
 				// Quiz Meta data
 				$html .= '<p>';
-					
+
 					// Quiz Pass Percentage
 					$html .= '<input type="hidden" name="quiz_id" id="quiz_id" value="' . esc_attr( $quiz_id ) . '" />';
 					$html .= '<label for="quiz_passmark">' . __( 'Quiz passmark percentage' , 'woothemes-sensei' ) . '</label> ';
   					$html .= '<input type="text" id="quiz_passmark" name="quiz_passmark" value="' . esc_attr( $lesson_quiz_passmark ) . '" size="25" class="widefat" />';
   					$html .= '<br/>';
-  					
+
   					// Quiz grade type
   					$html .= '<input type="hidden" id="quiz_grade_type_disabled" name="quiz_grade_type_disabled" value="' . esc_attr( $quiz_grade_type_disabled ) . '" /> ';
   					$html .= '<input type="checkbox" id="quiz_grade_type" name="quiz_grade_type"' . checked( $quiz_grade_type, 'auto', false ) . ' ' . disabled( $quiz_grade_type_disabled, 'disabled', false ) . ' /> ';

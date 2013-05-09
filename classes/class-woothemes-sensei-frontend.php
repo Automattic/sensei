@@ -91,6 +91,8 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_woocommerce_in_cart_message', array( &$this, 'sensei_woocommerce_in_cart_message' ), 10 );
 		add_action( 'sensei_course_start', array( &$this, 'sensei_course_start' ), 10 );
 		add_filter( 'get_comments_number', array( &$this, 'sensei_lesson_comment_count' ), 1 );
+		// 1.3.0
+		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();

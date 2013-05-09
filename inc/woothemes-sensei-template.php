@@ -278,6 +278,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	 } // End quiz_questions()
 
+	 /**
+	  * quiz_question_type function.
+	  *
+	  * @access public
+	  * @since  1.3.0
+	  * @return void
+	  */
+	 function quiz_question_type( $question_type = 'multiple-choice' ) {
+
+	 	global $woothemes_sensei;
+	 	$woothemes_sensei->frontend->sensei_get_template( 'single-quiz/question_type-' . $question_type . '.php' );
+
+	 } // End lesson_single_meta()
+
 	 /***************************************************************************************************
 	 * 	3 - Helper functions.
 	 ***************************************************************************************************/

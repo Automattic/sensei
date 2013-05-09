@@ -60,31 +60,18 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
     	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
     		<ol>
     			<?php foreach ($lesson_quiz_questions as $question_item) {
-    				// Question Meta
-    				$question_right_answer = get_post_meta( $question_item->ID, '_question_right_answer', true );
-    				$question_wrong_answers = get_post_meta( $question_item->ID, '_question_wrong_answers', true );
-    				// Merge right and wrong answers and randomize
-    				array_push( $question_wrong_answers, $question_right_answer );
-    				shuffle($question_wrong_answers);
-    				$question_text = $question_item->post_title;
-    				?>
-    				<li>
-    					<span><?php echo esc_html( stripslashes( $question_text ) ); ?></span>
-    					<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_count ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
-    				    <ul>
-    					<?php $count = 0; ?>
-    					<?php foreach( $question_wrong_answers as $question ) {
-    						$checked = '';
-    						$count++;
-    						if ( isset( $user_quizzes[$question_count] ) && ( '' != $user_quizzes[$question_count] ) ) {
-    							$checked = checked( $question, $user_quizzes[$question_count], false );
-    						} // End If Statement ?>
-    						<li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'question_' . $question_count ); ?>" value="<?php echo esc_attr( stripslashes( $question ) ); ?>" <?php echo $checked; ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>"><?php echo esc_html( stripslashes( $question ) ); ?></label></li>
-    					<?php } // End For Loop ?>
-    				    </ul>
-    				</li>
-    				<?php
-    				$question_count++;
+                    // Setup current Frontend Question
+                    $woothemes_sensei->frontend->data->question_item = $question_item;
+                    // Question Type
+                    $question_type = 'multiple-choice';
+                    $question_types_array = wp_get_post_terms( $question_item->ID, 'question-type', array( 'fields' => 'names' ) );
+                    if ( isset( $question_types_array[0] ) && '' != $question_types_array[0] ) {
+                        $question_type = $question_types_array[0];
+                    } // End If Statement
+
+    				do_action( 'sensei_quiz_question_type', $question_type );
+
+                    $question_count++;
     			} // End For Loop ?>
 
     		</ol>
