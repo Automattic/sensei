@@ -1056,9 +1056,10 @@ class WooThemes_Sensei_Frontend {
 		global $woothemes_sensei;
 		// Get the prerequisite lesson
 		$lesson_prerequisite = get_post_meta( $post_id, '_lesson_prerequisite', true );
+		$lesson_course_id = get_post_meta( $post_id, '_lesson_course', true );
 		// Lesson Quiz Meta
 		$lesson_quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $post_id );
-		if ( 0 < count($lesson_quizzes) && is_user_logged_in() ) { ?>
+		if ( 0 < count($lesson_quizzes) && is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $user_id ) ) { ?>
         	<header>
             <?php $no_quiz_count = 0; ?>
         	<?php foreach ($lesson_quizzes as $quiz_item){
@@ -1216,7 +1217,10 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_login_form()
 
 	public function sensei_quiz_action_buttons() {
-		if ( is_user_logged_in() ) {
+		global $post, $current_user;
+		$lesson_id = get_post_meta( $post->ID, '_quiz_lesson', true );
+		$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		if ( is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) {
 			global $woothemes_sensei;
 			// Get Reset Settings
 			$reset_quiz_allowed = $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ]; ?>
