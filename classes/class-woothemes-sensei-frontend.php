@@ -1031,7 +1031,7 @@ class WooThemes_Sensei_Frontend {
         	    	<?php if( $quiz_grade_type == 'auto' ) { ?>
         	    		<div class="woo-sc-box tick"><?php echo sprintf( __( 'You have completed this lesson quiz with a grade of %d%%', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
         	    	<?php } else { ?>
-        	    		<div class="woo-sc-box tick"><?php echo sprintf( __( 'You have completed this lesson quiz and it will be graded soon.', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
+        	    		<div class="woo-sc-box info"><?php echo sprintf( __( 'You have completed this lesson quiz and it will be graded soon.', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
         	    	<?php } ?>
                     <?php sensei_reset_lesson_button(); ?>
         	    <?php } else {

@@ -100,6 +100,10 @@ class WooThemes_Sensei {
 			$this->load_class( 'analysis' );
 			$this->analysis = new WooThemes_Sensei_Analysis( $file );
 			$this->analysis->token = $this->token;
+			// Load Grading Functionality
+			$this->load_class( 'grading' );
+			$this->grading = new WooThemes_Sensei_Grading( $file );
+			$this->grading->token = $this->token;
 		} else {
 			// Load Frontend Class
 			$this->load_class( 'frontend' );
