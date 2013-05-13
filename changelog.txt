@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2013.05.13 - version 1.2.5
+ * /classes/class-woothemes-sensei-frontend.php - fix for access permissions settings on Lessons and Quiz pages
+ * /templates/content-single-lesson.php - fix for access permissions settings on Lessons page
+
 2013.05.08 - version 1.2.4
  * /widgets/widget-woothemes-sensei-course-component.php - fix for no active and completed courses in widget
 
