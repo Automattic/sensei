@@ -23,6 +23,7 @@ do_action( 'sensei_complete_quiz' );
 $user_quizzes = $woothemes_sensei->frontend->data->user_quizzes;
 $user_quiz_grade = $woothemes_sensei->frontend->data->user_quiz_grade;
 $quiz_lesson = $woothemes_sensei->frontend->data->quiz_lesson;
+$quiz_grade_type = $woothemes_sensei->frontend->data->quiz_grade_type;
 $user_lesson_end = $woothemes_sensei->frontend->data->user_lesson_end;
 $user_lesson_complete = $woothemes_sensei->frontend->data->user_lesson_complete;
 $lesson_quiz_questions = $woothemes_sensei->frontend->data->lesson_quiz_questions;
@@ -38,11 +39,15 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
                 <div class="woo-sc-box info"><?php echo sprintf( __( 'You must be logged in to take this Quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) ); ?></div>
             <?php } elseif ( isset( $user_quiz_grade ) && abs( $user_quiz_grade ) >= 0 && isset( $user_lesson_complete ) && $user_lesson_complete ) {
     			$quiz_passmark_float = (float) $quiz_passmark;
-    			if ( $user_quiz_grade >= abs( round( $quiz_passmark_float, 2 ) ) ) { ?>
-    				<div class="woo-sc-box tick"><?php echo sprintf( __( 'Congratulations! You have passed this Quiz achieving %d%%', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?></div>
-    			<?php } else { ?>
-    				<div class="woo-sc-box alert"><?php if ( $user_lesson_complete ) { echo sprintf( __( 'You require %1$d%% to pass this Quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $user_quiz_grade ) ); } ?></div>
-    			<?php } // End If Statement
+                if( 'manual' == $quiz_grade_type ) { ?>
+                    <div class="woo-sc-box tick"><?php echo sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$d%% to pass.', 'woothemes-sensei' ), round( $quiz_passmark ) ); ?></div>
+                <?php } else {
+        			if ( $user_quiz_grade >= abs( round( $quiz_passmark_float, 2 ) ) ) { ?>
+        				<div class="woo-sc-box tick"><?php echo sprintf( __( 'Congratulations! You have passed this quiz achieving %d%%', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?></div>
+        			<?php } else { ?>
+        				<div class="woo-sc-box alert"><?php if ( $user_lesson_complete ) { echo sprintf( __( 'You require %1$d%% to pass this Quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $user_quiz_grade ) ); } ?></div>
+        			<?php } // End If Statement
+                }
     		} else {
                 $quiz_passmark_float = (float) $quiz_passmark;
                 if ( isset( $user_quiz_grade ) &&  '' != $user_quiz_grade && $user_quiz_grade < abs( round( $quiz_passmark_float, 2 ) ) ) { ?>
@@ -50,7 +55,7 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
                 <?php } else { ?>
     	           <div class="woo-sc-box info"><?php echo sprintf( __( 'You require %1$d%% to pass this Quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) ); ?></div>
                 <?php } ?>
-    		<?php } // End If Statement ?>
+            <?php } // End If Statement ?>
     	</p>
     <?php } // End If Statement
     // Lesson Quiz Meta

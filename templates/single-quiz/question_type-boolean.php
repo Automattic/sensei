@@ -24,9 +24,9 @@ $question_text = $question_item->post_title;
 ?>
 <li>
     <span><?php echo esc_html( stripslashes( $question_text ) ); ?></span>
-    <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_count ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
+    <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_item->ID ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
     <ul>
-        <li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'question_' . $question_count ); ?>" value="true" <?php echo checked( $select_question_right_answer, 'true', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>"><?php _e( 'True', 'woothemes-sensei' ); ?></label></li>
-        <li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'question_' . $question_count ); ?>" value="false" <?php echo checked( $select_question_right_answer, 'false', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>"><?php _e( 'False', 'woothemes-sensei' ); ?></label></li>
+        <li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_item->ID ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_item->ID . ']' ); ?>" value="true" <?php echo checked( $user_quizzes[ $question_item->ID ], 'true', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_item->ID ) . '-option-' . $count; ?>"><?php _e( 'True', 'woothemes-sensei' ); ?></label></li>
+        <li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_item->ID ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_item->ID . ']' ); ?>" value="false" <?php echo checked( $user_quizzes[ $question_item->ID ], 'false', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_item->ID ) . '-option-' . $count; ?>"><?php _e( 'False', 'woothemes-sensei' ); ?></label></li>
     </ul>
 </li>

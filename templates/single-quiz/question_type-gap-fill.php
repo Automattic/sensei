@@ -25,8 +25,8 @@ if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { 
 ?>
 <li>
     <span><?php echo esc_html( stripslashes( $question_text ) ); ?></span>
-    <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_count ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
+    <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_item->ID ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
     <p class="gapfill-answer">
-    	<span class="gapfill-answer-pre"><?php echo esc_html( $gapfill_pre ); ?></span>&nbsp;<input type="text" id="<?php echo esc_attr( 'question_' . $question_count ); ?>" name="<?php echo esc_attr( 'question_' . $question_count ); ?>" value="" class="gapfill-answer-gap" />&nbsp;<span class="gapfill-answer-post"><?php echo esc_html( $gapfill_post ); ?></span>
+    	<span class="gapfill-answer-pre"><?php echo esc_html( $gapfill_pre ); ?></span>&nbsp;<input type="text" id="<?php echo esc_attr( 'question_' . $question_item->ID ); ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_item->ID . ']' ); ?>" value="<?php echo esc_attr( $user_quizzes[ $question_item->ID ] ); ?>" class="gapfill-answer-gap" />&nbsp;<span class="gapfill-answer-post"><?php echo esc_html( $gapfill_post ); ?></span>
     </p>
 </li>

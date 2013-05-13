@@ -332,5 +332,84 @@ class WooThemes_Sensei_Utils {
 
 	} // End sensei_text_editor()
 
+	/**
+	 * Save quiz answers submitted by users
+	 * @param  boolean $submitted User's quiz answers
+	 * @return boolean            Whether the answers were saved or not
+	 */
+	public function sensei_save_quiz_answers( $submitted = false ) {
+		global $current_user;
+
+		$answers_saved = false;
+
+		if( $submitted ) {
+    		foreach( $submitted as $question_id => $answer ) {
+    			$args = array(
+								    'post_id' => $question_id,
+								    'username' => $current_user->user_login,
+								    'user_email' => $current_user->user_email,
+								    'user_url' => $current_user->user_url,
+								    'data' => base64_encode( maybe_serialize( $answer ) ),
+								    'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
+								    'parent' => 0,
+								    'user_id' => $current_user->ID,
+								    'action' => 'update'
+								);
+
+				$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+    		}
+    	}
+
+    	return $answers_saved;
+	} // End sensei_save_quiz_answers()
+
+	/**
+	 * Grade quiz automatically
+	 * @param  integer $quiz_id         ID of quiz
+	 * @param  integer $lesson_id       ID of lesson
+	 * @param  boolean $submitted       Submitted answers
+	 * @param  integer $total_questions Total questions in quiz
+	 * @return boolean                  Whether quiz was successfully graded or not
+	 */
+	public function sensei_grade_quiz( $quiz_id = 0, $submitted = false, $total_questions = 0, $quiz_grade_type = 'auto' ) {
+		global $current_user;
+
+		$grade = 0;
+		$correct_answers = 0;
+		$quiz_graded = false;
+
+		if( intval( $quiz_id ) > 0 && $submitted && intval( $total_questions ) > 0 ) {
+
+			if( $quiz_grade_type == 'auto' ) {
+				foreach( $submitted as $question_id => $answer ) {
+					$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
+					if ( 0 == strcmp( $right_answer, $answer ) ) {
+						// Answer is correct
+						$correct_answers++;
+					}
+				}
+
+				$grade = abs( round( ( doubleval( $correct_answers ) * 100 ) / ( $total_questions ), 2 ) );
+
+				// Save quiz grade
+				$args = array(
+								    'post_id' => $quiz_id,
+								    'username' => $current_user->user_login,
+								    'user_email' => $current_user->user_email,
+								    'user_url' => $current_user->user_url,
+								    'data' => $grade,
+								    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
+								    'parent' => 0,
+								    'user_id' => $current_user->ID,
+								    'action' => 'update'
+								);
+
+				$quiz_graded = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+			}
+		}
+
+		return $grade;
+	} // End sensei_grade_quiz()
+
 } // End Class
 ?>

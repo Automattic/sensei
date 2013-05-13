@@ -24,6 +24,6 @@ $question_text = $question_item->post_title;
 ?>
 <li>
     <span><?php echo esc_html( stripslashes( $question_text ) ); ?></span>
-    <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_count ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
-    <?php WooThemes_Sensei_Utils::sensei_text_editor( $content, 'essayquestion' . $question_count, 'question_' . $question_count ); ?>
+    <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_item->ID ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
+    <?php WooThemes_Sensei_Utils::sensei_text_editor( $user_quizzes[ $question_item->ID ], 'essayquestion' . $question_item->ID, 'sensei_question[' . $question_item->ID . ']' ); ?>
 </li>

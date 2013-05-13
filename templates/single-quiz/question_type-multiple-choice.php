@@ -24,16 +24,16 @@ $question_text = $question_item->post_title;
 ?>
 <li>
     <span><?php echo esc_html( stripslashes( $question_text ) ); ?></span>
-    <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_count ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
+    <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_item->ID ); ?>" value="<?php echo esc_attr( $question_item->ID ); ?>" />
     <ul>
     <?php $count = 0; ?>
     <?php foreach( $question_wrong_answers as $question ) {
         $checked = '';
         $count++;
-        if ( isset( $user_quizzes[$question_count] ) && ( '' != $user_quizzes[$question_count] ) ) {
-            $checked = checked( $question, $user_quizzes[$question_count], false );
+        if ( isset( $user_quizzes[ $question_item->ID ] ) && ( '' != $user_quizzes[ $question_item->ID ] ) ) {
+            $checked = checked( $question, $user_quizzes[ $question_item->ID ], false );
         } // End If Statement ?>
-        <li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'question_' . $question_count ); ?>" value="<?php echo esc_attr( stripslashes( $question ) ); ?>" <?php echo $checked; ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>"><?php echo esc_html( stripslashes( $question ) ); ?></label></li>
+        <li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_item->ID ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_item->ID . ']' ); ?>" value="<?php echo esc_attr( stripslashes( $question ) ); ?>" <?php echo $checked; ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_item->ID ) . '-option-' . $count; ?>"><?php echo esc_html( stripslashes( $question ) ); ?></label></li>
     <?php } // End For Loop ?>
     </ul>
 </li>

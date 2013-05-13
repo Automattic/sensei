@@ -619,69 +619,50 @@ class WooThemes_Sensei_Frontend {
 		            // Manual Grade
 		            $grade = 100;
 
-		            // Save Quiz Answers
-		            $args = array(
-		                                'post_id' => $lesson_quiz_id,
-		                                'username' => $current_user->user_login,
-		                                'user_email' => $current_user->user_email,
-		                                'user_url' => $current_user->user_url,
-		                                'data' => base64_encode( serialize( $answers_array ) ),
-		                                'type' => 'sensei_quiz_answers', /* FIELD SIZE 20 */
-		                                'parent' => 0,
-		                                'user_id' => $current_user->ID,
-		                                'action' => 'update'
-		                            );
-
-		            $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-
-		            if ( $activity_logged ) {
-		                // Save Quiz Grade
-		                $args = array(
-		                                    'post_id' => $lesson_quiz_id,
-		                                    'username' => $current_user->user_login,
-		                                    'user_email' => $current_user->user_email,
-		                                    'user_url' => $current_user->user_url,
-		                                    'data' => $grade,
-		                                    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
-		                                    'parent' => 0,
-		                                    'user_id' => $current_user->ID,
-		                                    'action' => 'update'
-		                                );
-		                $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-		                // Get Lesson Grading Setting
-		                if ( $activity_logged && 'passed' == $woothemes_sensei->settings->settings[ 'lesson_completion' ] ) {
-		                    $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
-		                    if ( $lesson_prerequisite <= $grade ) {
-		                        // Student has reached the pass mark and lesson is complete
-		                        $args = array(
-		                                            'post_id' => $post->ID,
-		                                            'username' => $current_user->user_login,
-		                                            'user_email' => $current_user->user_email,
-		                                            'user_url' => $current_user->user_url,
-		                                            'data' => __( 'Lesson completed and passed by the user', 'woothemes-sensei' ),
-		                                            'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
-		                                            'parent' => 0,
-		                                            'user_id' => $current_user->ID
-		                                        );
-		                        $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-		                    } // End If Statement
-		                } elseif ($activity_logged) {
-		                    // Mark lesson as complete
-		                    $args = array(
-		                                        'post_id' => $post->ID,
-		                                        'username' => $current_user->user_login,
-		                                        'user_email' => $current_user->user_email,
-		                                        'user_url' => $current_user->user_url,
-		                                        'data' => __( 'Lesson completed by the user', 'woothemes-sensei' ),
-		                                        'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
-		                                        'parent' => 0,
-		                                        'user_id' => $current_user->ID
-		                                    );
-		                    $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-		                } // End If Statement
-		            } else {
-		                // Something broke
-		            } // End If Statement
+		            // Save Quiz Grade
+	                $args = array(
+	                                    'post_id' => $lesson_quiz_id,
+	                                    'username' => $current_user->user_login,
+	                                    'user_email' => $current_user->user_email,
+	                                    'user_url' => $current_user->user_url,
+	                                    'data' => $grade,
+	                                    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
+	                                    'parent' => 0,
+	                                    'user_id' => $current_user->ID,
+	                                    'action' => 'update'
+	                                );
+	                $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+	                // Get Lesson Grading Setting
+	                if ( $activity_logged && 'passed' == $woothemes_sensei->settings->settings[ 'lesson_completion' ] ) {
+	                    $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
+	                    if ( $lesson_prerequisite <= $grade ) {
+	                        // Student has reached the pass mark and lesson is complete
+	                        $args = array(
+	                                            'post_id' => $post->ID,
+	                                            'username' => $current_user->user_login,
+	                                            'user_email' => $current_user->user_email,
+	                                            'user_url' => $current_user->user_url,
+	                                            'data' => __( 'Lesson completed and passed by the user', 'woothemes-sensei' ),
+	                                            'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
+	                                            'parent' => 0,
+	                                            'user_id' => $current_user->ID
+	                                        );
+	                        $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+	                    } // End If Statement
+	                } elseif ($activity_logged) {
+	                    // Mark lesson as complete
+	                    $args = array(
+	                                        'post_id' => $post->ID,
+	                                        'username' => $current_user->user_login,
+	                                        'user_email' => $current_user->user_email,
+	                                        'user_url' => $current_user->user_url,
+	                                        'data' => __( 'Lesson completed by the user', 'woothemes-sensei' ),
+	                                        'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
+	                                        'parent' => 0,
+	                                        'user_id' => $current_user->ID
+	                                    );
+	                    $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+	                } // End If Statement
 		            break;
 		        case __( 'Reset Lesson', 'woothemes-sensei' ):
 		            // Remove existing user quiz meta
@@ -835,7 +816,7 @@ class WooThemes_Sensei_Frontend {
 		}
 
 		// Get Answers and Grade
-		$user_quizzes = unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_answers', 'field' => 'comment_content' ) ) ) );
+		$user_quizzes = $this->sensei_get_user_quiz_answers( $post->ID );
 		$user_quiz_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 		if ( '' == $user_quiz_grade ) {
 			$user_quiz_grade = '';
@@ -851,62 +832,32 @@ class WooThemes_Sensei_Frontend {
 			$user_lesson_complete = true;
 		} // End If Statement
 
+		// Get quiz grade type
+		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
+
 		// Handle Quiz Completion
 		if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_quiz_noonce' ], 'woothemes_sensei_complete_quiz_noonce' ) ) {
 
 		    $sanitized_submit = esc_html( $_POST['quiz_complete'] );
 
 		    $answers_array = array();
+		    $activity_logged = false;
 
 		    switch ($sanitized_submit) {
 		    	case __( 'Complete Quiz', 'woothemes-sensei' ):
-		    		// Add to quizzes array
-		    		$correct_answers = 0;
-		    		for ( $i = 1; $i <= count($lesson_quiz_questions); $i++ ) {
-		    			$answers_array[ $i ] = $_POST[ 'question_' . $i ];
-		    			// Grade if number of questions submitted matches question count
-		    			$question_id = absint( $_POST[ 'question_id_' . $i ] );
-		    			$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-		    			if ( 0 == strcmp( $right_answer, $_POST[ 'question_' . $i ] ) ) {
-		    				// Answer is correct
-		    				$correct_answers++;
-		    			} // End If Statement ;
-		    		} // End For Loop
-
-		    		// Calculate Grade
-		    		$grade = abs( round( ( doubleval( $correct_answers ) * 100 ) / ( count( $lesson_quiz_questions ) ), 2 ) );
 
 		    		// Save Quiz Answers
-		    		$args = array(
-									    'post_id' => $post->ID,
-									    'username' => $current_user->user_login,
-									    'user_email' => $current_user->user_email,
-									    'user_url' => $current_user->user_url,
-									    'data' => base64_encode( serialize( $answers_array ) ),
-									    'type' => 'sensei_quiz_answers', /* FIELD SIZE 20 */
-									    'parent' => 0,
-									    'user_id' => $current_user->ID,
-									    'action' => 'update'
-									);
-
-					$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+		    		if( isset( $_POST['sensei_question'] ) ) {
+			    		$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
+			    	}
 
 					if ( $activity_logged ) {
-						// Save Quiz Grade
-		    			$args = array(
-										    'post_id' => $post->ID,
-										    'username' => $current_user->user_login,
-										    'user_email' => $current_user->user_email,
-										    'user_url' => $current_user->user_url,
-										    'data' => $grade,
-										    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
-										    'parent' => 0,
-										    'user_id' => $current_user->ID,
-										    'action' => 'update'
-										);
-						$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+						// Grade quiz
+		    			$grade = WooThemes_Sensei_Utils::sensei_grade_quiz( $post->ID, $_POST['sensei_question'], count( $lesson_quiz_questions ), $quiz_grade_type );
+
 						// Get Lesson Grading Setting
-						if ( $activity_logged && 'passed' == $woothemes_sensei->settings->settings[ 'lesson_completion' ] ) {
+						if ( 'auto' == $quiz_grade_type && 'passed' == $woothemes_sensei->settings->settings[ 'lesson_completion' ] ) {
 							$lesson_prerequisite = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
 							if ( $lesson_prerequisite <= $grade ) {
 								// Student has reached the pass mark and lesson is complete
@@ -922,7 +873,7 @@ class WooThemes_Sensei_Frontend {
 												);
 								$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 							} // End If Statement
-						} elseif ($activity_logged) {
+						} else {
 							// Mark lesson as complete
 							$args = array(
 							    			    'post_id' => $quiz_lesson,
@@ -943,27 +894,12 @@ class WooThemes_Sensei_Frontend {
 					break;
 		    	case __( 'Save Quiz', 'woothemes-sensei' ):
 
-		    		// Add to quizzes array
-		    		for ( $i = 1; $i <= count($lesson_quiz_questions); $i++ ) {
-		    			if ( isset( $_POST[ 'question_' . $i ] ) ) {
-		    				$answers_array[ $i ] = $_POST[ 'question_' . $i ];
-		    			} // End If Statement
-		    		} // End For Loop
+			    	if( isset( $_POST['sensei_question'] ) ) {
+			    		$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
+			    	}
 
-		    		// Save Quiz Answers
-		    		$args = array(
-									    'post_id' => $post->ID,
-									    'username' => $current_user->user_login,
-									    'user_email' => $current_user->user_email,
-									    'user_url' => $current_user->user_url,
-									    'data' => base64_encode( serialize( $answers_array ) ),
-									    'type' => 'sensei_quiz_answers', /* FIELD SIZE 20 */
-									    'parent' => 0,
-									    'user_id' => $current_user->ID,
-									    'action' => 'update'
-									);
-					$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 					$this->messages = '<div class="woo-sc-box note">' . __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) . '</div>';
+
 					break;
 		    	case __( 'Reset Quiz', 'woothemes-sensei' ):
 		    		// Remove existing user quiz meta
@@ -987,7 +923,7 @@ class WooThemes_Sensei_Frontend {
 		    } // End Switch Statement
 
 			// Get latest quiz answers and grades
-			$user_quizzes = unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_answers', 'field' => 'comment_content' ) ) ) );
+			$user_quizzes = $this->sensei_get_user_quiz_answers( $post->ID );
 		    $user_quiz_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 			if ( '' == $user_quiz_grade ) {
 				$user_quiz_grade = '';
@@ -997,22 +933,40 @@ class WooThemes_Sensei_Frontend {
 
 			// Check again that the lesson is complete
 			$quiz_lesson = absint( get_post_meta( $post->ID, '_quiz_lesson', true ) );
-			$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_lesson, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
+			$user_lesson_end = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_lesson, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
 			$user_lesson_complete = false;
 			if ( '' != $user_lesson_end ) {
 				$user_lesson_complete = true;
 			} // End If Statement
 
 		} // End If Statement
+
 		// Build frontend data object
-			$this->data->user_quizzes = $user_quizzes;
-			$this->data->user_quiz_grade = $user_quiz_grade;
-			$this->data->quiz_lesson = $quiz_lesson;
-			$this->data->user_lesson_end = $user_lesson_end;
-			$this->data->user_lesson_complete = $user_lesson_complete;
-			$this->data->lesson_quiz_questions = $lesson_quiz_questions;
+		$this->data->user_quizzes = $user_quizzes;
+		$this->data->user_quiz_grade = $user_quiz_grade;
+		$this->data->quiz_lesson = $quiz_lesson;
+		$this->data->quiz_grade_type = $quiz_grade_type;
+		$this->data->user_lesson_end = $user_lesson_end;
+		$this->data->user_lesson_complete = $user_lesson_complete;
+		$this->data->lesson_quiz_questions = $lesson_quiz_questions;
 
 	} // End sensei_complete_quiz()
+
+	public function sensei_get_user_quiz_answers( $lesson_id = 0 ) {
+		global $current_user, $woothemes_sensei;
+
+		$user_answers = array();
+
+		if ( 0 < intval( $lesson_id ) ) {
+			$lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $lesson_id );
+			foreach( $lesson_quiz_questions as $question ) {
+				$answer = maybe_unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_user_answer', 'field' => 'comment_content' ) ) ) );
+				$user_answers[ $question->ID ] = $answer;
+			}
+		}
+
+		return $user_answers;
+	} // End sensei_get_user_quiz_answers()
 
 	public function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
 		$user_lesson_complete = false;
