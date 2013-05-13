@@ -803,6 +803,7 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_complete_quiz() {
 		global $post, $woothemes_sensei, $current_user;
 
+		// Default grade
 		$grade = 0;
 
 		// See if we must randomize questions
@@ -1018,6 +1019,8 @@ class WooThemes_Sensei_Frontend {
         	<header>
             <?php $no_quiz_count = 0; ?>
         	<?php foreach ($lesson_quizzes as $quiz_item){
+        		// Get quiz grade type
+        		$quiz_grade_type = get_post_meta( $quiz_item->ID, '_quiz_grade_type', true );
                 // Check quiz grade
         		$user_quiz_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_item->ID, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 				if ( '' == $user_quiz_grade ) {
@@ -1025,7 +1028,11 @@ class WooThemes_Sensei_Frontend {
 				} // End If Statement
         		// Check if Lesson is complete
         	    if ( sensei_has_user_completed_lesson( $post_id, $user_id ) ) { ?>
-        	    	<div class="woo-sc-box tick"><?php echo sprintf( __( 'You have completed this Lesson Quiz with a grade of %d%%', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
+        	    	<?php if( $quiz_grade_type == 'auto' ) { ?>
+        	    		<div class="woo-sc-box tick"><?php echo sprintf( __( 'You have completed this lesson quiz with a grade of %d%%', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
+        	    	<?php } else { ?>
+        	    		<div class="woo-sc-box tick"><?php echo sprintf( __( 'You have completed this lesson quiz and it will be graded soon.', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
+        	    	<?php } ?>
                     <?php sensei_reset_lesson_button(); ?>
         	    <?php } else {
                     $question_count = 0;
