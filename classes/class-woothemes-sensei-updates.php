@@ -109,5 +109,19 @@ class WooThemes_Sensei_Updates {
 		return $success;
 	} // End assign_role_caps
 
+	public function set_quiz_grade_type() {
+
+		// Check if update has run
+		$updated = get_option( 'sensei_quiz_grade_type_upgrade' );
+
+		if( ! $updated ) {
+
+
+			// Mark update as complete
+			add_option( 'sensei_quiz_grade_type_upgrade', true )
+		}
+
+	}
+
 } // End Class
 ?>
