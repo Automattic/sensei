@@ -57,6 +57,29 @@ class WooThemes_Sensei_Grading_Overview {
 		// Get data for the user
 		$data = $this->build_data_array();
 
+		// Get the Course Posts
+		$post_args = array(	'post_type' 		=> 'course',
+							'numberposts' 		=> -1,
+							'orderby'         	=> 'title',
+    						'order'           	=> 'DESC',
+    						'post_status'      	=> 'any',
+    						'suppress_filters' 	=> 0
+							);
+		$posts_array = get_posts( $post_args );
+
+		$html .= '<label>' . __( 'Select a Course to Grade', 'woothemes-sensei' ) . '</label>';
+
+		$html .= '<select id="grading-course-options" name="grading_course" class="widefat">' . "\n";
+			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+			if ( count( $posts_array ) > 0 ) {
+				foreach ($posts_array as $post_item){
+					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
+				} // End For Loop
+			} // End If Statement
+		$html .= '</select>' . "\n";
+
+		echo $html;
+
 		echo '<p>';
 			echo 'Debugging...fix me Jeff!';
 		echo '</p>';
@@ -119,6 +142,35 @@ class WooThemes_Sensei_Grading_Overview {
 	    } // End For Loop
 	    $array = $ret;
 	} // End sort_array_by_key()
+
+	public function get_lessons_dropdown() {
+
+		$posts_array = array();
+
+		$post_args = array(	'post_type' 		=> 'lesson',
+							'numberposts' 		=> -1,
+							'orderby'         	=> 'menu_order',
+    						'order'           	=> 'ASC',
+    						'meta_key'        	=> '_lesson_course',
+    						'meta_value'      	=> $course_id,
+    						'post_status'       => $post_status,
+							'suppress_filters' 	=> 0
+							);
+		$posts_array = get_posts( $post_args );
+
+		$html .= '<label>' . __( 'Select a Lesson to Grade', 'woothemes-sensei' ) . '</label>';
+
+		$html .= '<select id="grading-lesson-options" name="grading_lesson" class="widefat">' . "\n";
+			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+			if ( count( $posts_array ) > 0 ) {
+				foreach ($posts_array as $post_item){
+					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
+				} // End For Loop
+			} // End If Statement
+		$html .= '</select>' . "\n";
+
+		return $html;
+	}
 
 } // End Class
 ?>
