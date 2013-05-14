@@ -118,7 +118,7 @@ class WooThemes_Sensei_Updates {
 
 
 			// Mark update as complete
-			add_option( 'sensei_quiz_grade_type_upgrade', true )
+			add_option( 'sensei_quiz_grade_type_upgrade', true );
 		}
 
 	}
