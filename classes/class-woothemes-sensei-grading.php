@@ -33,13 +33,14 @@ class WooThemes_Sensei_Grading {
 		// Admin functions
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( &$this, 'grading_admin_menu' ), 10);
+			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
+			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
 			add_action( 'grading_wrapper_container', array( &$this, 'wrapper_container'  ) );
 		} // End If Statement
 	} // End __construct()
 
-
 	/**
-	 * analysis_admin_menu function.
+	 * grading_admin_menu function.
 	 * @since  1.3.0
 	 * @access public
 	 * @return void
@@ -52,6 +53,37 @@ class WooThemes_Sensei_Grading {
 	    $analysis_page = add_submenu_page('edit.php?post_type=lesson', __('Grading', 'woothemes-sensei'),  __('Grading', 'woothemes-sensei') , 'manage_options', 'sensei_grading', array( &$this, 'grading_page' ) );
 
 	} // End analysis_admin_menu()
+
+		/**
+	 * enqueue_scripts function.
+	 *
+	 * @description Load in JavaScripts where necessary.
+	 * @access public
+	 * @since 1.3.0
+	 * @return void
+	 */
+	public function enqueue_scripts () {
+		global $woothemes_sensei;
+		// Load Grading JS
+		wp_enqueue_script( 'woosensei-grading-general', $woothemes_sensei->plugin_url . 'assets/js/grading-general.js', array( 'jquery' ), '1.3.0' );
+
+	} // End enqueue_scripts()
+
+	/**
+	 * enqueue_styles function.
+	 *
+	 * @description Load in CSS styles where necessary.
+	 * @access public
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function enqueue_styles () {
+		global $woothemes_sensei;
+		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
+
+		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.0.0' );
+
+	} // End enqueue_styles()
 
 	/**
 	 * load_data_table_files loads required files for Grading
