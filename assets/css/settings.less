@@ -13,7 +13,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /*-----------------------------------------------------------------------------------*/
 /* Backend Global Stylesheet */
 /*-----------------------------------------------------------------------------------*/
-	
+
 /* Info Boxes */
 .info-box {
 	background: #F2F2F2;
@@ -129,7 +129,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			margin: 0 0 0 10px!important;
 		}
 	}
-	h2 span.version  { 
+	h2 span.version  {
 		font-size: 0.4em;
 		font-weight: bold;
 		position: relative;
@@ -143,7 +143,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 }
 #screen-meta-links .screen-meta-toggle {
 	z-index: 2;
-} 
+}
 /* Analysis */
 .sensei-analysis-wrap {
 	margin-left: 300px;
@@ -230,5 +230,68 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	}
 	tfoot  {
 		display: none;
+	}
+}
+
+/* Grading */
+.sensei-grading-main {
+	.sensei-grading-answer {
+		float: left;
+		border-right: 1px solid @border_main;
+		padding-right: 10px;
+		.calc_width(~"100% - 211px");
+		h4 {
+			border-bottom: 1px solid @border_main;
+		}
+	}
+	.sensei-grading-actions {
+		position: relative;
+		float: right;
+		width: 185px;
+		margin: 0 10px 0 -1px;
+		min-height: 90px;
+		border-left: 1px solid @border_main;
+		padding-left: 5px;
+		.right-answer {
+			background: @success;
+			color: #FFF;
+			padding: 5px;
+			border-radius: 5px;
+			width: 100%;
+			font-weight: 700;
+			margin-bottom: 50px;
+		}
+		.actions {
+			input {
+				width: 32px;
+				height: 32px;
+				-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+				filter: alpha(opacity=0);
+				-moz-opacity:0;
+				-khtml-opacity:0;
+				opacity:0;
+				cursor: pointer;
+			}
+			.grading-mark {
+				display: inline-block;
+				width: 32px;
+				height: 32px;
+				&.icon_right {
+					background: url('../images/icon_right_32.png');
+				}
+				&.icon_wrong {
+					background: url('../images/icon_wrong_32.png');
+				}
+			}
+		}
+	}
+	h4 {
+		padding: 0 0 5px 0;
+		margin: 0;
+	}
+	.highlight {
+		background: #E6DB55;
+		padding: 1px 5px;
+		margin: 0;
 	}
 }

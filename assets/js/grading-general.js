@@ -91,9 +91,22 @@ jQuery(document).ready( function($) {
 	});
 
 	/***************************************************************************************************
-	 * 	3 - Grading User Profile Functions.
+	 * 	3 - Grading User Quiz Functions.
 	 ***************************************************************************************************/
 
+	 jQuery( '.grading-mark' ).on( 'change', 'input', function() {
+	 	var input_name = this.name;
+	 	var input_value = this.value;
+	 	var bgcolor;
+
+	 	if( input_value == 'right' ) {
+	 		bgcolor = '#AEE7AE';
+	 	} else {
+	 		bgcolor = '#FFC0C0';
+	 	}
+
+	 	jQuery( '#' + this.name + '_box' ).css( 'background', bgcolor );
+	 });
 
 
 	/***************************************************************************************************
