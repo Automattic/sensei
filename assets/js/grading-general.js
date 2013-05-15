@@ -39,6 +39,9 @@ jQuery(document).ready( function($) {
 			function( response ) {
 				// Check for a response
 				if ( '' != response ) {
+					// Empty the results div's
+					jQuery( '#learners-to-grade' ).empty();
+					jQuery( '#learners-graded' ).empty();
 					// Populate the Lessons drop down
 					jQuery( '#grading-lesson-options' ).empty().append( response );
 					// Add Chosen to the drop down
@@ -82,6 +85,8 @@ jQuery(document).ready( function($) {
 				// Check for a response
 				if ( '' != response ) {
 					console.log(response);
+					jQuery( '#learners-to-grade' ).append( 'A learner to grade' );
+					jQuery( '#learners-graded' ).append( 'A learner already graded' );
 				} else {
 					// Failed
 				}
