@@ -2,7 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Grading User Profile Class
+ * Sensei Grading User Quiz Class
  *
  * All functionality pertaining to the Admin Grading User Profile in Sensei.
  *
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - build_data_array()
  * - display()
  */
-class WooThemes_Sensei_Grading_User_Profile {
+class WooThemes_Sensei_Grading_User_Quiz {
 	public $user_id;
 
 	/**
@@ -45,8 +45,16 @@ class WooThemes_Sensei_Grading_User_Profile {
 
 		$return_array = array();
 
-		// @HUGH - This is where you get the list of questions
-		// Remember $this->user_id is available and $this->quiz_id
+		$post_args = array(	'post_type' 		=> 'question',
+							'numberposts' 		=> -1,
+							'orderby'         	=> 'ID',
+    						'order'           	=> 'ASC',
+    						'meta_key'        	=> '_quiz_id',
+    						'meta_value'      	=> $this->quiz_id,
+    						'post_status'		=> 'publish',
+							'suppress_filters' 	=> 0
+							);
+		$return_array = get_posts( $post_args );
 
 		$return_array = $this->array_sort_reorder( $return_array );
 		return $return_array;
@@ -61,22 +69,7 @@ class WooThemes_Sensei_Grading_User_Profile {
 		// Get data for the user
 		$data = $this->build_data_array();
 
-		echo '<p>';
-			echo 'Debugging...fix me Hugh!';
-		echo '</p>';
-
-		echo '<p>';
-			echo 'User ID - ' . $this->user_id;
-		echo '</p>';
-
-		echo '<p>';
-			echo 'Quiz ID - ' . $this->quiz_id;
-		echo '</p>';
-
-		echo '<p>';
-			echo 'Look...some whitespace in the code ;-)';
-		echo '</p>';
-
+		echo '<pre>';print_r( $data );echo '</pre>';
 	} // End display()
 
 	/**
