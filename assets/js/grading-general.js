@@ -96,9 +96,38 @@ jQuery(document).ready( function($) {
 	});
 
 	/***************************************************************************************************
-	 * 	3 - Grading User Profile Functions.
+	 * 	3 - Grading User Quiz Functions.
 	 ***************************************************************************************************/
 
+	 jQuery( '.grading-mark' ).on( 'click', 'input', function() {
+	 	var input_name = this.name;
+	 	var input_value = this.value;
+
+	 	var changed = true;
+	 	var existing_choice = jQuery( '#' + input_name + '_grade_choice' ).val();
+	 	if( existing_choice == input_value ) { changed = false; }
+	 	jQuery( '#' + input_name + '_grade_choice' ).val( input_value );
+
+	 	var bgcolor;
+	 	if( input_value == 'right' ) { bgcolor = '#AEE7AE'; } else { bgcolor = '#FFC0C0'; }
+	 	jQuery( '#' + this.name + '_box .user-answer' ).css( 'background', bgcolor );
+
+	 	if( changed ) {
+	 		var total_grade = parseInt( jQuery( '#total_grade' ).val() );
+	 		var question_grade = parseInt( jQuery( '#' + this.name + '_grade' ).val() );
+	 		var new_grade = total_grade;
+	 		if( input_value == 'right' ) {
+	 			new_grade = ( total_grade + question_grade );
+	 		} else if( input_value == 'wrong' && existing_choice != '' ) {
+	 			new_grade = ( total_grade - question_grade );
+	 		}
+	 		jQuery( '#total_grade' ).val( new_grade );
+	 	}
+	 });
+
+	 jQuery( '.sensei-grading-main .buttons' ).on( 'click', 'input.reset-button', function() {
+	 	jQuery( '.question_box .user-answer' ).css( 'background', '#F5F5F5' );
+	 });
 
 
 	/***************************************************************************************************

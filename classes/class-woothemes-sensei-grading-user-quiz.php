@@ -67,9 +67,100 @@ class WooThemes_Sensei_Grading_User_Quiz {
 	 */
 	public function display() {
 		// Get data for the user
-		$data = $this->build_data_array();
+		$questions = $this->build_data_array();
 
-		echo '<pre>';print_r( $data );echo '</pre>';
+		?><form name="' . esc_attr( 'quiz_' . $this->quiz_id ) . '" action="" method="post">
+			<div class="buttons">
+				<input type="submit" value="<?php esc_attr_e( __( 'Save', 'woothemes-sensei' ) ); ?>" class="grade-button button-primary" />
+				<input type="reset" value="<?php esc_attr_e( __( 'Reset', 'woothemes-sensei' ) ); ?>" class="reset-button button-secondary" />
+				<input type="button" value="<?php esc_attr_e( __( 'Auto grade', 'woothemes-sensei' ) ); ?>" class="autograde-button button-secondary" />
+			</div>
+			<div class="clear"></div><br/><?php
+
+		$count = 1;
+		foreach( $questions as $question ) {
+			$qid = $question->ID;
+
+			$types = wp_get_post_terms( $qid, 'question-type' );
+			foreach( $types as $t ) {
+				$type = $t->name;
+				break;
+			}
+
+			$right_answer = stripslashes( get_post_meta( $qid, '_question_right_answer', true ) );
+			$user_answer = maybe_unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $qid, 'user_id' => $this->user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_content' ) ) ) );
+
+			switch( $type ) {
+				case 'boolean':
+					$type_name = __( 'True/False', 'woothemes-sensei' );
+					$right_answer = ucfirst( $right_answer );
+					$user_answer = ucfirst( $user_answer );
+				break;
+				case 'multiple-choice':
+					$type_name = __( 'Multiple Choice', 'woothemes-sensei' );
+				break;
+				case 'gap-fill':
+					$type_name = __( 'Gap Fill', 'woothemes-sensei' );
+
+					$right_answer_array = explode( '|', $right_answer );
+					if ( isset( $right_answer_array[0] ) ) { $gapfill_pre = $right_answer_array[0]; } else { $gapfill_pre = ''; }
+					if ( isset( $right_answer_array[1] ) ) { $gapfill_gap = $right_answer_array[1]; } else { $gapfill_gap = ''; }
+					if ( isset( $right_answer_array[2] ) ) { $gapfill_post = $right_answer_array[2]; } else { $gapfill_post = ''; }
+
+					$right_answer = $gapfill_pre . ' <span class="highlight">' . $gapfill_gap . '</span> ' . $gapfill_post;
+					$user_answer = $gapfill_pre . ' <span class="highlight">' . $user_answer . '</span> ' . $gapfill_post;
+
+				break;
+				case 'multi-line':
+					$type_name = __( 'Multi Line', 'woothemes-sensei' );
+				break;
+				case 'essay-paste':
+					$type_name = __( 'Essay Paste', 'woothemes-sensei' );
+				break;
+				case 'single-line':
+					$type_name = __( 'Single Line', 'woothemes-sensei' );
+				break;
+				default:
+					// Nothing
+				break;
+			}
+
+			$question_title = sprintf( __( 'Question %d: ', 'woothemes-sensei' ), $count ) . $type_name;
+
+			?><div class="postbox question_box" id="<?php esc_attr_e( 'question_' . $qid . '_box' ); ?>">
+				<div class="handlediv" title="Click to toggle"><br></div>
+				<h3 class="hndle"><span><?php echo $question_title; ?></span></h3>
+				<div class="inside">
+					<div class="sensei-grading-answer">
+						<h4><?php echo $question->post_title; ?></h4>
+						<p class="user-answer"><?php echo $user_answer; ?></p>
+					</div>
+					<div class="sensei-grading-actions">
+						<div class="right-answer">
+							<h5><?php _e( 'Right answer', 'woothemes-sensei' ) ?></h5>
+							<?php echo $right_answer; ?>
+						</div>
+						<div class="actions">
+							<input type="hidden" id="<?php esc_attr_e( 'question_' . $qid . '_grade_choice' ); ?>" value="" />
+							<input type="hidden" name="<?php esc_attr_e( 'question_' . $qid . '_grade' ); ?>" id="<?php esc_attr_e( 'question_' . $qid . '_grade' ); ?>" value="1" />
+							<span class="grading-mark icon_right"><input type="radio" name="<?php esc_attr_e( 'question_' . $qid ); ?>" value="right" /></span>
+							<span class="grading-mark icon_wrong"><input type="radio" name="<?php esc_attr_e( 'question_' . $qid ); ?>" value="wrong" /></span>
+						</div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div><?php
+
+			++$count;
+		} ?>
+			<input type="text" size="5" disabled="disabled" name="total_grade" id="total_grade" value="0" />
+			<div class="buttons">
+				<input type="submit" value="<?php esc_attr_e( __( 'Save', 'woothemes-sensei' ) ); ?>" class="grade-button button-primary" />
+				<input type="reset" value="<?php esc_attr_e( __( 'Reset', 'woothemes-sensei' ) ); ?>" class="reset-button button-secondary" />
+				<input type="button" value="<?php esc_attr_e( __( 'Auto grade', 'woothemes-sensei' ) ); ?>" class="autograde-button button-secondary" />
+			</div>
+			<div class="clear"></div>
+		</form><?php
 	} // End display()
 
 	/**
