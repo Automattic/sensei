@@ -24,34 +24,70 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery( '#grading-course-options' ).on( 'change', '', function() {
-		var courseId = jQuery(this).val();
 		// Populate the Lessons select box
-		
+		var courseId = jQuery(this).val();
+		var dataToPost = '';
+	 	dataToPost += 'course_id' + '=' + courseId;
 		// Perform the AJAX call to get the select box.
-		// jQuery.post(
-		// 	ajaxurl,
-		// 	{
-		// 		action : 'lesson_add_course',
-		// 		lesson_add_course_nonce : woo_localized_data.lesson_add_course_nonce,
-		// 		data : dataToPost
-		// 	},
-		// 	function( response ) {
-		// 		//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
-		// 		//	jQuery( this ).css( 'visibility', 'hidden' );
-		// 		//});
-		// 		// Check for a course id
-		// 		if ( 0 < response ) {
-		// 			jQuery( '#lesson-course-actions' ).show();
-		// 		jQuery( '#lesson-course-details' ).addClass( 'hidden' );
-		// 		jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(jQuery( '#course-title' ).attr( 'value' )));
-		// 		jQuery( '#lesson-course-options' ).val( response );
-		// 		jQuery( '#lesson-course-options' ).trigger( 'liszt:updated' );
-		// 		} else {
-		// 			// TODO - course creation fail message
-		// 		}
-		// 	}
-		// );
-		// return false; // TODO - move this below the next bracket when doing the ajax loader
+		jQuery.post(
+			ajaxurl,
+			{
+				action : 'get_lessons_dropdown',
+				get_lessons_dropdown_nonce : woo_localized_data.get_lessons_dropdown_nonce,
+				data : dataToPost
+			},
+			function( response ) {
+				// Check for a response
+				if ( '' != response ) {
+					// Populate the Lessons drop down
+					jQuery( '#grading-lesson-options' ).empty().append( response );
+					// Add Chosen to the drop down
+					if ( jQuery( '#grading-lesson-options' ).exists() ) {
+						// Show the Lessons label
+						jQuery( '#grading-lesson-options-label' ).show();
+						if ( jQuery( '#grading-lesson-options' ).hasClass( 'chzn-done' ) ) {
+							jQuery( '#grading-lesson-options' ).trigger("liszt:updated");
+						} else {
+							jQuery( '#grading-lesson-options' ).chosen();
+						} // End If Statement
+					} // End If Statement
+				} else {
+					// Failed
+				}
+			}
+		);
+		return false;
+	});
+
+	/**
+	 * Lesson Change Event.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	jQuery( '#grading-lesson-options' ).on( 'change', '', function() {
+		// Populate the Lessons select box
+		var lessonId = jQuery(this).val();
+		var dataToPost = '';
+	 	dataToPost += 'lesson_id' + '=' + lessonId;
+		// Perform the AJAX call to get the select box.
+		jQuery.post(
+			ajaxurl,
+			{
+				action : 'get_lessons_html',
+				get_lessons_html_nonce : woo_localized_data.get_lessons_html_nonce,
+				data : dataToPost
+			},
+			function( response ) {
+				// Check for a response
+				if ( '' != response ) {
+					console.log(response);
+				} else {
+					// Failed
+				}
+			}
+		);
+		return false;
 	});
 
 	/***************************************************************************************************

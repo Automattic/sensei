@@ -37,6 +37,13 @@ class WooThemes_Sensei_Grading {
 			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
 			add_action( 'grading_wrapper_container', array( &$this, 'wrapper_container'  ) );
 		} // End If Statement
+		// Ajax functions
+		if ( is_admin() ) {
+			add_action( 'wp_ajax_get_lessons_dropdown', array( &$this, 'get_lessons_dropdown' ) );
+			add_action( 'wp_ajax_nopriv_get_lessons_dropdown', array( &$this, 'get_lessons_dropdown' ) );
+			add_action( 'wp_ajax_get_lessons_html', array( &$this, 'get_lessons_html' ) );
+			add_action( 'wp_ajax_nopriv_get_lessons_html', array( &$this, 'get_lessons_html' ) );
+		} // End If Statement
 	} // End __construct()
 
 	/**
@@ -241,6 +248,59 @@ class WooThemes_Sensei_Grading {
 			<br class="clear"><?php
 		} // End If Statement
 	} // End grading_user_profile_nav()
+
+	public function get_lessons_dropdown() {
+
+		$posts_array = array();
+
+		// Parse POST data
+		$data = $_POST['data'];
+		$course_data = array();
+		parse_str($data, $course_data);
+
+		$course_id = intval( $course_data['course_id'] );
+
+		$post_args = array(	'post_type' 		=> 'lesson',
+							'numberposts' 		=> -1,
+							'orderby'         	=> 'menu_order',
+    						'order'           	=> 'ASC',
+    						'meta_key'        	=> '_lesson_course',
+    						'meta_value'      	=> $course_id,
+    						'post_status'       => 'publish',
+							'suppress_filters' 	=> 0
+							);
+		$posts_array = get_posts( $post_args );
+
+		$html .= '<label>' . __( 'Select a Lesson to Grade', 'woothemes-sensei' ) . '</label>';
+
+		// $html .= '<select id="grading-lesson-options" name="grading_lesson" class="widefat">' . "\n";
+			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+			if ( count( $posts_array ) > 0 ) {
+				foreach ($posts_array as $post_item){
+					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
+				} // End For Loop
+			} // End If Statement
+		// $html .= '</select>' . "\n";
+		echo $html;
+		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
+	}
+
+	public function get_lessons_html() {
+
+		$posts_array = array();
+
+		// Parse POST data
+		$data = $_POST['data'];
+		$lesson_data = array();
+		parse_str($data, $lesson_data);
+
+		$lesson_id = intval( $lesson_data['lesson_id'] );
+
+		$html = $lesson_id;
+
+		echo $html;
+		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
+	}
 
 } // End Class
 ?>
