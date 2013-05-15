@@ -238,17 +238,21 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	.sensei-grading-answer {
 		float: left;
 		border-right: 1px solid @border_main;
-		padding-right: 10px;
+		padding-right: 17px;
 		.calc_width(~"100% - 211px");
 		h4 {
-			border-bottom: 1px solid @border_main;
+			border-bottom: 1px dashed @border_main;
+			font-size: 14px;
+		}
+		.user-answer {
+			padding: 5px;
+			.border_radius(5px);
 		}
 	}
 	.sensei-grading-actions {
-		position: relative;
 		float: right;
 		width: 185px;
-		margin: 0 10px 0 -1px;
+		margin: 0 3px 0 -1px;
 		min-height: 90px;
 		border-left: 1px solid @border_main;
 		padding-left: 5px;
@@ -259,9 +263,21 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			border-radius: 5px;
 			width: 100%;
 			font-weight: 700;
-			margin-bottom: 50px;
+			margin-bottom: 40px;
+			h5 {
+				font-size: 100%;
+				padding: 0 0 2px 0;
+				margin: 0 0 2px 0;
+				text-align: center;
+				text-transform: uppercase;
+				border-bottom: 1px solid #FFF;
+			}
 		}
 		.actions {
+			text-align: center;
+			width: 195px;
+			position: absolute;
+			bottom: 0;
 			input[type="radio"] {
 				width: 32px;
 				height: 32px;
@@ -289,5 +305,20 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		background: #E6DB55;
 		padding: 1px 5px;
 		margin: 0;
+	}
+	.buttons {
+		float: left;
+	}
+	#total_grade {
+		float: right;
+		font-size: 30px;
+		width: 90px;
+		text-align: center;
+		color: #000;
+		border-left: 0;
+		border-right: 0;
+		border-top: 1px dashed @border_main;
+		border-bottom: 1px solid @border_main;
+		.border_radius(0);
 	}
 }
