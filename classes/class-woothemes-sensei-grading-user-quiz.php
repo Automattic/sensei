@@ -69,6 +69,8 @@ class WooThemes_Sensei_Grading_User_Quiz {
 		// Get data for the user
 		$questions = $this->build_data_array();
 
+		echo '<form name="' . esc_attr( 'quiz_' . $this->quiz_id ) . '" action="" method="post">';
+
 		foreach( $questions as $question ) {
 			$qid = $question->ID;
 
@@ -116,7 +118,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				break;
 			}
 
-			?><div class="postbox" id="<?php esc_attr_e( 'question_' . $qid . '_box' ); ?>">
+			?><div class="postbox question_box" id="<?php esc_attr_e( 'question_' . $qid . '_box' ); ?>">
 					<div class="handlediv" title="Click to toggle"><br></div>
 					<h3 class="hndle"><span><?php echo $type_name; ?></span></h3>
 					<div class="inside">
@@ -129,6 +131,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 								<?php echo $right_answer; ?>
 							</div>
 							<div class="actions">
+								<input type="hidden" name="<?php esc_attr_e( 'grade_' . $qid ); ?>" value="1" />
 								<span class="grading-mark icon_right"><input type="radio" name="<?php esc_attr_e( 'question_' . $qid ); ?>" value="right" /></span>
 								<span class="grading-mark icon_wrong"><input type="radio" name="<?php esc_attr_e( 'question_' . $qid ); ?>" value="wrong" /></span>
 							</div>
@@ -136,10 +139,13 @@ class WooThemes_Sensei_Grading_User_Quiz {
 						<div class="clear"></div>
 					</div>
 				</div><?php
-			// echo '<pre>';print_r( $question );echo '</pre>';
-		}
+		} ?>
 
-		// echo '<pre>';print_r( $data );echo '</pre>';
+			<div class="buttons">
+				<input type="submit" value="Save" class="grade-button button-primary" /> <input type="reset" value="Reset" class="reset-button button-secondary" />
+			</div>
+
+		</form><?php
 	} // End display()
 
 	/**

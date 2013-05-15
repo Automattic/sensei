@@ -108,6 +108,10 @@ jQuery(document).ready( function($) {
 	 	jQuery( '#' + this.name + '_box' ).css( 'background', bgcolor );
 	 });
 
+	 jQuery( '.sensei-grading-main .buttons' ).on( 'click', 'input.reset-button', function() {
+	 	jQuery( '.question_box' ).css( 'background', '#F5F5F5' );
+	 });
+
 
 	/***************************************************************************************************
 	 * 	4 - Load Chosen Dropdowns.
