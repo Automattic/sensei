@@ -49,12 +49,11 @@ class WooThemes_Sensei_Grading {
 	    global $menu, $woocommerce;
 
 	    if ( current_user_can( 'manage_options' ) )
-
-	    $analysis_page = add_submenu_page('edit.php?post_type=lesson', __('Grading', 'woothemes-sensei'),  __('Grading', 'woothemes-sensei') , 'manage_options', 'sensei_grading', array( &$this, 'grading_page' ) );
+	    	$analysis_page = add_submenu_page('edit.php?post_type=lesson', __('Grading', 'woothemes-sensei'),  __('Grading', 'woothemes-sensei') , 'manage_options', 'sensei_grading', array( &$this, 'grading_page' ) );
 
 	} // End analysis_admin_menu()
 
-		/**
+	/**
 	 * enqueue_scripts function.
 	 *
 	 * @description Load in JavaScripts where necessary.
@@ -95,7 +94,7 @@ class WooThemes_Sensei_Grading {
 		// Load Grading Classes
 		$classes_to_load = array(	'list-table',
 									'grading-overview',
-									'grading-user-profile'
+									'grading-user-quiz'
 									);
 		foreach ( $classes_to_load as $class_file ) {
 			$woothemes_sensei->load_class( $class_file );
@@ -130,7 +129,7 @@ class WooThemes_Sensei_Grading {
 	public function grading_page() {
 		global $woothemes_sensei;
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) && isset( $_GET['quiz_id'] ) && 0 < intval( $_GET['quiz_id'] ) ) {
-			$this->grading_user_profile_view();
+			$this->grading_user_quiz_view();
 		} else {
 			$this->grading_default_view();
 		} // End If Statement
@@ -161,19 +160,19 @@ class WooThemes_Sensei_Grading {
 	} // End grading_default_view()
 
 	/**
-	 * grading_user_profile_view user profile view for analysis page
+	 * grading_user_quiz_view user quiz answers view for grading page
 	 * @since  1.2.0
 	 * @return void
 	 */
-	public function grading_user_profile_view() {
+	public function grading_user_quiz_view() {
 		global $woothemes_sensei;
 		// Load Grading data
 		$this->load_data_table_files();
-		$sensei_grading_user_profile = $this->load_data_object( 'User_Profile', intval( $_GET['user'] ), intval( $_GET['quiz_id'] ) );
+		$sensei_grading_user_profile = $this->load_data_object( 'User_Quiz', intval( $_GET['user'] ), intval( $_GET['quiz_id'] ) );
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
-		$this->grading_headers( array( 'nav' => 'user_profile' ) );
+		$this->grading_headers( array( 'nav' => 'user_quiz' ) );
 		?><div id="poststuff" class="sensei-grading-wrap user-profile">
 				<div class="sensei-grading-main">
 					<?php $sensei_grading_user_profile->display(); ?>
@@ -182,7 +181,7 @@ class WooThemes_Sensei_Grading {
 		<?php
 		do_action( 'grading_wrapper_container', 'bottom' );
 		do_action( 'grading_after_container' );
-	} // End grading_user_profile_view()
+	} // End grading_user_quiz_view()
 
 	/**
 	 * analysis_headers outputs analysis general headers
@@ -227,11 +226,11 @@ class WooThemes_Sensei_Grading {
 	} // End grading_default_nav()
 
 	/**
-	 * grading_user_profile_nav nav area for analysis user profile
+	 * grading_user_quiz_nav nav area for grading user quiz answers
 	 * @since  1.3.0
 	 * @return void
 	 */
-	public function grading_user_profile_nav() {
+	public function grading_user_quiz_nav() {
 		global $woothemes_sensei;
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 			$user_data = get_userdata( intval( $_GET['user'] ) );
@@ -240,7 +239,7 @@ class WooThemes_Sensei_Grading {
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<br class="clear"><?php
 		} // End If Statement
-	} // End grading_user_profile_nav()
+	} // End grading_user_quiz_nav()
 
 } // End Class
 ?>
