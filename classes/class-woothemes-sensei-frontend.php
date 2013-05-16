@@ -104,6 +104,8 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'wp_nav_menu_objects',  array( &$this, 'sensei_nav_menu_item_classes' ), 2, 20 );
 		// Search Results filters
 		add_filter( 'post_class', array( &$this, 'sensei_search_results_classes' ), 10 );
+		// Comments Feed Actions
+		add_filter( 'comment_feed_where', array( &$this, 'comments_rss_item_filter' ), 10, 1 );
 	} // End __construct()
 
 	/**
@@ -1347,6 +1349,22 @@ class WooThemes_Sensei_Frontend {
 			return $count;
 		} // End If Statement
 	} // End sensei_lesson_comment_count()
+
+	/**
+	 * comments_rss_item_filter function.
+	 *
+	 * Filters the frontend comments feed to not include the sensei prefixed comments
+	 *
+	 * @access public
+	 * @param mixed $pieces
+	 * @return void
+	 */
+	function comments_rss_item_filter( $pieces ) {
+		if ( is_comment_feed() ) {
+			$pieces .= " AND comment_type NOT LIKE 'sensei_%' ";
+		} // End If Statement
+		return $pieces;
+	} // End comments_rss_item_filter()
 
 } // End Class
 ?>
