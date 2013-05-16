@@ -472,5 +472,72 @@ class WooThemes_Sensei_Utils {
 		return $activity_logged;
 	}
 
+	public function sensei_get_quiz_questions( $quiz_id = 0 ) {
+
+		$questions = array();
+
+		if( intval( $quiz_id ) > 0 ) {
+			$args = array(	'post_type' 		=> 'question',
+								'numberposts' 		=> -1,
+								'orderby'         	=> 'ID',
+	    						'order'           	=> 'ASC',
+	    						'meta_key'        	=> '_quiz_id',
+	    						'meta_value'      	=> $quiz_id,
+	    						'post_status'		=> 'publish',
+								'suppress_filters' 	=> 0
+								);
+			$questions = get_posts( $args );
+
+			$questions = WooThemes_Sensei_Utils::array_sort_reorder( $questions );
+		}
+
+		return $questions;
+	}
+
+	/**
+	 * array_sort_reorder handle sorting of table data
+	 * @since  1.3.0
+	 * @param  array $return_array data to be ordered
+	 * @return array $return_array ordered data
+	 */
+	public function array_sort_reorder( $return_array ) {
+		if ( isset( $_GET['orderby'] ) && '' != esc_html( $_GET['orderby'] ) ) {
+			$sort_key = '';
+			// if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->sortable_columns ) ) {
+			// 	$sort_key = esc_html( $_GET['orderby'] );
+			// } // End If Statement
+			if ( '' != $sort_key ) {
+					WooThemes_Sensei_Utils::sort_array_by_key($return_array,$sort_key);
+				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
+					$return_array = array_reverse( $return_array, true );
+				} // End If Statement
+			} // End If Statement
+			return $return_array;
+		} else {
+			return $return_array;
+		} // End If Statement
+	} // End array_sort_reorder()
+
+	/**
+	 * sort_array_by_key sorts array by key
+	 * @since  1.3.0
+	 * @param  $array by ref
+	 * @param  $key string column name in array
+	 * @return void
+	 */
+	public function sort_array_by_key( &$array, $key ) {
+	    $sorter = array();
+	    $ret = array();
+	    reset( $array );
+	    foreach ( $array as $ii => $va ) {
+	        $sorter[$ii] = $va[$key];
+	    } // End For Loop
+	    asort( $sorter );
+	    foreach ( $sorter as $ii => $va ) {
+	        $ret[$ii] = $array[$ii];
+	    } // End For Loop
+	    $array = $ret;
+	} // End sort_array_by_key()
+
 } // End Class
 ?>

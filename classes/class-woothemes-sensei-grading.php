@@ -36,6 +36,7 @@ class WooThemes_Sensei_Grading {
 			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
 			add_action( 'grading_wrapper_container', array( &$this, 'wrapper_container'  ) );
+			add_action( 'admin_init', array( &$this, 'process_grading' ) );
 		} // End If Statement
 		// Ajax functions
 		if ( is_admin() ) {
@@ -299,6 +300,16 @@ class WooThemes_Sensei_Grading {
 
 		echo $html;
 		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
+	}
+
+	public function process_grading() {
+		if( isset( $_POST['sensei_manual_grade'] ) && isset( $_GET['quiz_id'] ) ) {
+			$quiz_id = $_GET['quiz_id'];
+			$verify_nonce = wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' );
+			if( $verify_nonce && $quiz_id == $_POST['sensei_manual_grade'] ) {
+				echo '<pre>';print_r( $_POST );echo '</pre>';
+			}
+		}
 	}
 
 } // End Class
