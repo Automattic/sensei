@@ -847,6 +847,8 @@ class WooThemes_Sensei_Frontend {
 		    switch ($sanitized_submit) {
 		    	case __( 'Complete Quiz', 'woothemes-sensei' ):
 
+		    		$activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $quiz_lesson );
+
 		    		// Save Quiz Answers
 		    		if( isset( $_POST['sensei_question'] ) ) {
 			    		$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
@@ -855,7 +857,7 @@ class WooThemes_Sensei_Frontend {
 					if ( $activity_logged ) {
 
 						// Grade quiz
-		    			$grade = WooThemes_Sensei_Utils::sensei_grade_quiz( $post->ID, $_POST['sensei_question'], count( $lesson_quiz_questions ), $quiz_grade_type );
+		    			$grade = WooThemes_Sensei_Utils::sensei_grade_quiz_auto( $post->ID, $_POST['sensei_question'], count( $lesson_quiz_questions ), $quiz_grade_type );
 
 						// Get Lesson Grading Setting
 						if ( 'auto' == $quiz_grade_type && 'passed' == $woothemes_sensei->settings->settings[ 'lesson_completion' ] ) {
@@ -894,6 +896,8 @@ class WooThemes_Sensei_Frontend {
 
 					break;
 		    	case __( 'Save Quiz', 'woothemes-sensei' ):
+
+		    		$activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $quiz_lesson );
 
 			    	if( isset( $_POST['sensei_question'] ) ) {
 			    		$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );

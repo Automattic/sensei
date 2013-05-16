@@ -371,7 +371,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $total_questions Total questions in quiz
 	 * @return boolean                  Whether quiz was successfully graded or not
 	 */
-	public function sensei_grade_quiz( $quiz_id = 0, $submitted = false, $total_questions = 0, $quiz_grade_type = 'auto' ) {
+	public function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = false, $total_questions = 0, $quiz_grade_type = 'auto' ) {
 		global $current_user;
 
 		$grade = 0;
@@ -381,15 +381,13 @@ class WooThemes_Sensei_Utils {
 		if( intval( $quiz_id ) > 0 && $submitted && intval( $total_questions ) > 0 ) {
 
 			if( $quiz_grade_type == 'auto' ) {
+				$grade_total = 0;
 				foreach( $submitted as $question_id => $answer ) {
-					$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-					if ( 0 == strcmp( $right_answer, $answer ) ) {
-						// Answer is correct
-						$correct_answers++;
-					}
+					$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $answer );
+					$grade_total += $question_grade;
 				}
 
-				$grade = abs( round( ( doubleval( $correct_answers ) * 100 ) / ( $total_questions ), 2 ) );
+				$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $total_questions ), 2 ) );
 
 				// Save quiz grade
 				$args = array(
@@ -410,6 +408,69 @@ class WooThemes_Sensei_Utils {
 
 		return $grade;
 	} // End sensei_grade_quiz()
+
+	/**
+	 * Grade question automatically
+	 * @param  integer $question_id ID of question
+	 * @param  string  $answer      User's answer
+	 * @return integer              User's grade for question
+	 */
+	public function sensei_grade_question_auto( $question_id = 0, $answer = '' ) {
+		global $current_user;
+
+		$question_grade = 0;
+		if( intval( $question_id ) > 0 ) {
+			$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
+			if ( 0 == strcmp( $right_answer, $answer ) ) {
+				// TO DO: Enable custom grades for questions
+				$question_grade = 1;
+			}
+
+			$args = array(
+							    'post_id' => $question_id,
+							    'username' => $current_user->user_login,
+							    'user_email' => $current_user->user_email,
+							    'user_url' => $current_user->user_url,
+							    'data' => $question_grade,
+							    'type' => 'sensei_user_grade', /* FIELD SIZE 20 */
+							    'parent' => 0,
+							    'user_id' => $current_user->ID
+							);
+
+			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+		}
+
+		return $question_grade;
+
+	}
+
+	/**
+	 * Marked lesson as started for user
+	 * @param  integer $lesson_id ID of lesson
+	 * @return boolean
+	 */
+	public function sensei_start_lesson( $lesson_id = 0 ) {
+		global $current_user;
+
+		$activity_logged = false;
+
+		if( intval( $lesson_id ) > 0 ) {
+			$args = array(
+							    'post_id' => $lesson_id,
+							    'username' => $current_user->user_login,
+							    'user_email' => $current_user->user_email,
+							    'user_url' => $current_user->user_url,
+							    'data' => __( 'Lesson started by the user', 'woothemes-sensei' ),
+							    'type' => 'sensei_lesson_start', /* FIELD SIZE 20 */
+							    'parent' => 0,
+							    'user_id' => $current_user->ID
+							);
+
+			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+		}
+
+		return $activity_logged;
+	}
 
 } // End Class
 ?>
