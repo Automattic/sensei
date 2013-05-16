@@ -13,6 +13,64 @@ jQuery(document).ready( function($) {
 		return this.length>0;
 	}
 
+	/**
+	 * Calculates the total grade based on the questions already graded
+	 * @return void
+	 */
+	jQuery.fn.calculateTotalGrade = function() {
+		var question_id;
+	 	var question_grade;
+	 	var total_grade = 0;
+	 	jQuery( '.question_box.user_right' ).each( function() {
+	 		question_id = jQuery( this ).find( '.question_id' ).val();
+	 		question_grade = parseInt( jQuery( this ).find( '#question_' + question_id + '_grade' ).val() );
+	 		total_grade += question_grade
+	 	});
+	 	jQuery( '#total_grade' ).val( total_grade );
+	}
+
+	/**
+	 * AUotmatically grades questions where possible
+	 * @return void
+	 */
+	jQuery.fn.autoGrade = function() {
+		jQuery( '.question_box' ).each( function() {
+	 		if( jQuery( this ).hasClass( 'gap-fill' ) ) {
+	 			var user_answer = jQuery( this ).find( '.user-answer .highlight' ).html();
+		 		var correct_answer = jQuery( this ).find( '.correct-answer .highlight' ).html();
+	 		} else {
+		 		var user_answer = jQuery( this ).find( '.user-answer' ).html();
+		 		var correct_answer = jQuery( this ).find( '.correct-answer' ).html();
+	 		}
+
+	 		if( user_answer == correct_answer ) {
+	 			jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' );
+	 			jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
+	 			jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+	 		} else {
+	 			if( jQuery( this ).hasClass( 'auto-grade' ) ) {
+	 				jQuery( this ).addClass( 'user_wrong' ).removeClass( 'user_right' );
+	 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
+	 				jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+	 			} else {
+	 				jQuery.fn.resetGrades( jQuery( this ) );
+	 			}
+	 		}
+	 	});
+	 	jQuery.fn.calculateTotalGrade();
+	}
+
+	/**
+	 * Resets all graded questions
+	 * @param  obj	scope	Scope of questions to reset
+	 * @return void
+	 */
+	jQuery.fn.resetGrades = function( scope ) {
+		scope.find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+		scope.find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+		scope.removeClass( 'user_wrong' ).removeClass( 'user_right' );
+	}
+
 	/***************************************************************************************************
 	 * 	2 - Grading Overview Functions.
 	 ***************************************************************************************************/
@@ -99,36 +157,40 @@ jQuery(document).ready( function($) {
 	 * 	3 - Grading User Quiz Functions.
 	 ***************************************************************************************************/
 
-	 jQuery( '.grading-mark' ).on( 'click', 'input', function() {
-	 	var input_name = this.name;
-	 	var input_value = this.value;
+	/**
+	 * Grade Change Event.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	jQuery( '.grading-mark' ).on( 'change', 'input', function() {
+		if( this.value == 'right' ) {
+			jQuery( '#' + this.name + '_box' ).addClass( 'user_right' ).removeClass( 'user_wrong' );
+		} else {
+			jQuery( '#' + this.name + '_box' ).addClass( 'user_wrong' ).removeClass( 'user_right' );
+		}
+		jQuery.fn.calculateTotalGrade();
+	});
 
-	 	var changed = true;
-	 	var existing_choice = jQuery( '#' + input_name + '_grade_choice' ).val();
-	 	if( existing_choice == input_value ) { changed = false; }
-	 	jQuery( '#' + input_name + '_grade_choice' ).val( input_value );
+	/**
+	 * Grade Reset Event.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	jQuery( '.sensei-grading-main .buttons' ).on( 'click', '.reset-button', function() {
+		jQuery.fn.resetGrades( jQuery( '.question_box' ) );
+	});
 
-	 	var bgcolor;
-	 	if( input_value == 'right' ) { bgcolor = '#AEE7AE'; } else { bgcolor = '#FFC0C0'; }
-	 	jQuery( '#' + this.name + '_box .user-answer' ).css( 'background', bgcolor );
-
-	 	if( changed ) {
-	 		var total_grade = parseInt( jQuery( '#total_grade' ).val() );
-	 		var question_grade = parseInt( jQuery( '#' + this.name + '_grade' ).val() );
-	 		var new_grade = total_grade;
-	 		if( input_value == 'right' ) {
-	 			new_grade = ( total_grade + question_grade );
-	 		} else if( input_value == 'wrong' && existing_choice != '' ) {
-	 			new_grade = ( total_grade - question_grade );
-	 		}
-	 		jQuery( '#total_grade' ).val( new_grade );
-	 	}
-	 });
-
-	 jQuery( '.sensei-grading-main .buttons' ).on( 'click', 'input.reset-button', function() {
-	 	jQuery( '.question_box .user-answer' ).css( 'background', '#F5F5F5' );
-	 });
-
+	/**
+	 * Auto grade event
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	jQuery( '.sensei-grading-main .buttons' ).on( 'click', '.autograde-button', function() {
+		jQuery.fn.autoGrade();
+	});
 
 	/***************************************************************************************************
 	 * 	4 - Load Chosen Dropdowns.
