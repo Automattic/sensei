@@ -307,7 +307,29 @@ class WooThemes_Sensei_Grading {
 			$quiz_id = $_GET['quiz_id'];
 			$verify_nonce = wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' );
 			if( $verify_nonce && $quiz_id == $_POST['sensei_manual_grade'] ) {
-				echo '<pre>';print_r( $_POST );echo '</pre>';
+				$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+				$total_grade = $_POST['total_grade'];
+
+				foreach( $questions as $question ) {
+					$question_id = $question->ID;
+					if( isset( $_POST[ 'question_' . $question_id ] ) ) {
+						$correct = false;
+						$question_grade = 0;
+						if( $_POST[ 'question_' . $question_id ] == 'right' ) {
+							$correct = true;
+							$question_grade = $_POST[ 'question_' . $question_id . '_grade' ];
+						}
+						$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade );
+					}
+
+				}
+
+				$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $total_grade );
+
+				if( isset( $_POST['_wp_http_referer'] ) ) {
+					wp_redirect( $_POST['_wp_http_referer'] );
+					exit;
+				}
 			}
 		}
 	}

@@ -27,6 +27,7 @@ jQuery(document).ready( function($) {
 	 		total_grade += question_grade
 	 	});
 	 	jQuery( '#total_grade' ).val( total_grade );
+	 	jQuery( '#total_grade_total' ).html( total_grade );
 	}
 
 	/**

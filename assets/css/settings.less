@@ -326,16 +326,19 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	.buttons {
 		float: left;
 	}
-	#total_grade {
+	.total_grade_display {
 		float: right;
 		font-size: 30px;
-		width: 90px;
-		text-align: center;
+		line-height: 45px;
+		text-align: right;
 		color: #000;
 		border-left: 0;
 		border-right: 0;
 		border-top: 1px dashed @border_main;
 		border-bottom: 1px solid @border_main;
 		.border_radius(0);
+		#total_grade_total {
+			font-weight: 700;
+		}
 	}
 }

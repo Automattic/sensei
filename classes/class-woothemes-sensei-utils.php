@@ -389,25 +389,42 @@ class WooThemes_Sensei_Utils {
 
 				$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $total_questions ), 2 ) );
 
-				// Save quiz grade
-				$args = array(
-								    'post_id' => $quiz_id,
-								    'username' => $current_user->user_login,
-								    'user_email' => $current_user->user_email,
-								    'user_url' => $current_user->user_url,
-								    'data' => $grade,
-								    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
-								    'parent' => 0,
-								    'user_id' => $current_user->ID,
-								    'action' => 'update'
-								);
-
-				$quiz_graded = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+				$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade );
 			}
 		}
 
 		return $grade;
-	} // End sensei_grade_quiz()
+	} // End sensei_grade_quiz_auto()
+
+	/**
+	 * Grade question
+	 * @param  integer $question_id ID of question
+	 * @param  integer $grade       Grade received
+	 * @return boolean
+	 */
+	public function sensei_grade_quiz( $quiz_id = 0, $grade = 0 ) {
+		global $current_user;
+
+		$activity_logged = false;
+		if( intval( $quiz_id ) > 0 ) {
+
+			$args = array(
+							    'post_id' => $quiz_id,
+							    'username' => $current_user->user_login,
+							    'user_email' => $current_user->user_email,
+							    'user_url' => $current_user->user_url,
+							    'data' => $grade,
+							    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
+							    'parent' => 0,
+							    'user_id' => $current_user->ID,
+							    'action' => 'update'
+							);
+
+			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+		}
+
+		return $activity_logged;
+	}
 
 	/**
 	 * Grade question automatically
@@ -425,23 +442,41 @@ class WooThemes_Sensei_Utils {
 				// TO DO: Enable custom grades for questions
 				$question_grade = 1;
 			}
+			$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade );
+		}
+
+		return $question_grade;
+
+	}
+
+	/**
+	 * Grade question
+	 * @param  integer $question_id ID of question
+	 * @param  integer $grade       Grade received
+	 * @return boolean
+	 */
+	public function sensei_grade_question( $question_id = 0, $grade = 0 ) {
+		global $current_user;
+
+		$activity_logged = false;
+		if( intval( $question_id ) > 0 ) {
 
 			$args = array(
 							    'post_id' => $question_id,
 							    'username' => $current_user->user_login,
 							    'user_email' => $current_user->user_email,
 							    'user_url' => $current_user->user_url,
-							    'data' => $question_grade,
+							    'data' => $grade,
 							    'type' => 'sensei_user_grade', /* FIELD SIZE 20 */
 							    'parent' => 0,
-							    'user_id' => $current_user->ID
+							    'user_id' => $current_user->ID,
+							    'action' => 'update'
 							);
 
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 		}
 
-		return $question_grade;
-
+		return $activity_logged;
 	}
 
 	/**
