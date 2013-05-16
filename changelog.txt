@@ -1,5 +1,11 @@
 *** Sensei Changelog ***
 
+2013.05.16 - version 1.2.6
+ * /classes/class-woothemes-sensei-frontend.php - modified the course signup link to handle purchaseable courses
+ * /classes/class-woothemes-sensei.php - permissions modification for user access
+ * /templates/content-single-lesson.php - added notice for course signup if the user doesnt have access
+ * /templates/single-quiz/quiz-questions.php - disabled quiz fields for when user is not taking the course, and added signup notice
+
 2013.05.13 - version 1.2.5
  * /classes/class-woothemes-sensei-frontend.php - fix for access permissions settings on Lessons and Quiz pages
  * /templates/content-single-lesson.php - fix for access permissions settings on Lessons page

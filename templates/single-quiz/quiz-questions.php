@@ -27,6 +27,10 @@ $user_lesson_end = $woothemes_sensei->frontend->data->user_lesson_end;
 $user_lesson_complete = $woothemes_sensei->frontend->data->user_lesson_complete;
 $lesson_quiz_questions = $woothemes_sensei->frontend->data->lesson_quiz_questions;
 
+// Check if the user has started the course
+$lesson_course_id = absint( get_post_meta( $quiz_lesson, '_lesson_course', true ) );
+$has_user_start_the_course = sensei_has_user_started_course( $lesson_course_id, $current_user->ID );
+
 // Get the meta info
 $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
 ?>
@@ -34,7 +38,9 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
     <?php if ( 0 < $quiz_passmark && 0 < count( $lesson_quiz_questions ) ) { ?>
     	<p>
            <?php do_action( 'sensei_frontend_messages' ); ?>
-    	   <?php if ( !is_user_logged_in() ) { ?>
+    	   <?php if ( !$has_user_start_the_course ) { ?>
+                 <div class="woo-sc-box info"><?php echo sprintf( __( 'Please Sign Up for the %1$s before taking this Quiz', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+           <?php } elseif ( !is_user_logged_in() ) { ?>
                 <div class="woo-sc-box info"><?php echo sprintf( __( 'You must be logged in to take this Quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) ); ?></div>
             <?php } elseif ( isset( $user_quiz_grade ) && abs( $user_quiz_grade ) >= 0 && isset( $user_lesson_complete ) && $user_lesson_complete ) {
     			$quiz_passmark_float = (float) $quiz_passmark;
@@ -79,7 +85,7 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
     						if ( isset( $user_quizzes[$question_count] ) && ( '' != $user_quizzes[$question_count] ) ) {
     							$checked = checked( $question, $user_quizzes[$question_count], false );
     						} // End If Statement ?>
-    						<li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'question_' . $question_count ); ?>" value="<?php echo esc_attr( stripslashes( $question ) ); ?>" <?php echo $checked; ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>"><?php echo esc_html( stripslashes( $question ) ); ?></label></li>
+    						<li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'question_' . $question_count ); ?>" value="<?php echo esc_attr( stripslashes( $question ) ); ?>" <?php echo $checked; ?><?php if ( !is_user_logged_in() || !$has_user_start_the_course ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_count ) . '-option-' . $count; ?>"><?php echo esc_html( stripslashes( $question ) ); ?></label></li>
     					<?php } // End For Loop ?>
     				    </ul>
     				</li>

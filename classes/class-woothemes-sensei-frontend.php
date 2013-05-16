@@ -584,10 +584,14 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_lesson_course_signup_link( $course_id = 0 ) {
 		if ( 0 < intval( $course_id ) ) {
-		?><section class="lesson-meta">
-    		<header>
-    			<a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>" title="<?php echo esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ); ?>"><?php _e( 'Please Sign Up for the course before starting the lesson.', 'woothemes-sensei' ); ?></a>
-    		</header>
+		?><section class="lesson-meta"><?php
+			$course_link = '<a href="' . esc_url( get_permalink( $course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+			$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product',true );
+			if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) { ?>
+				<div class="woo-sc-box info"><?php echo sprintf( __( 'Please purchase the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+			<?php } else { ?>
+				<div class="woo-sc-box info"><?php echo sprintf( __( 'Please Sign Up for the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+			<?php } // End If Statement ?>
     	</section><?php
     	} // End If Statement
 	}

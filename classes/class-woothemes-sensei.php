@@ -561,7 +561,20 @@ class WooThemes_Sensei {
 						$user_allowed = true;
 					} // End If Statement
 				} elseif( $this->access_settings() ) {
-					$user_allowed = true;
+					// Check if the user has started the course
+					if ( is_user_logged_in() && !sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) && ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) ) {
+						$user_allowed = false;
+						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
+						$course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+						$wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
+						if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+							$this->permissions_message['message'] = sprintf( __('Please purchase the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
+						} else {
+							$this->permissions_message['message'] = sprintf( __('Please sign up for the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
+						} // End If Statement
+					} else {
+						$user_allowed = true;
+					} // End If Statement
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
 					$course_link = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';

@@ -58,6 +58,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 				<?php if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) ) {
 					do_action( 'sensei_lesson_single_meta' );
+				} else {
+					do_action( 'sensei_lesson_course_signup', $lesson_course_id );
 				} ?>
 
 				<?php
