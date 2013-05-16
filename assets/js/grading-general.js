@@ -35,6 +35,7 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery.fn.autoGrade = function() {
 		jQuery( '.question_box' ).each( function() {
+			jQuery( this ).addClass( 'ungraded' )
 	 		if( jQuery( this ).hasClass( 'gap-fill' ) ) {
 	 			var user_answer = jQuery( this ).find( '.user-answer .highlight' ).html();
 		 		var correct_answer = jQuery( this ).find( '.correct-answer .highlight' ).html();
@@ -44,16 +45,18 @@ jQuery(document).ready( function($) {
 	 		}
 
 	 		if( user_answer == correct_answer ) {
-	 			jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' );
+	 			jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
 	 			jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
 	 			jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
 	 		} else {
 	 			if( jQuery( this ).hasClass( 'auto-grade' ) ) {
-	 				jQuery( this ).addClass( 'user_wrong' ).removeClass( 'user_right' );
+	 				jQuery( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
 	 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
 	 				jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
 	 			} else {
-	 				jQuery.fn.resetGrades( jQuery( this ) );
+	 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+					jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+					jQuery( this ).removeClass( 'user_wrong' ).removeClass( 'user_right' );
 	 			}
 	 		}
 	 	});
@@ -68,7 +71,7 @@ jQuery(document).ready( function($) {
 	jQuery.fn.resetGrades = function( scope ) {
 		scope.find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
 		scope.find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-		scope.removeClass( 'user_wrong' ).removeClass( 'user_right' );
+		scope.removeClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
 	}
 
 	/***************************************************************************************************

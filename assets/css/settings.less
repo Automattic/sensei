@@ -236,6 +236,11 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /* Grading */
 .sensei-grading-main {
 	.question_box {
+		&.ungraded {
+			p.user-answer {
+				background: #FFFFE0;
+			}
+		}
 		&.user_right {
 			p.user-answer {
 				background: #AEE7AE;

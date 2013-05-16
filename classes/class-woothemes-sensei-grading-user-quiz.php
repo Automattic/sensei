@@ -68,7 +68,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 	public function display() {
 		// Get data for the user
 		$questions = $this->build_data_array();
-echo '<pre>';print_r( $_POST );echo '</pre>';
+
 		?><form name="' . esc_attr( 'quiz_' . $this->quiz_id ) . '" action="" method="post">
 			<div class="buttons">
 				<input type="submit" value="<?php esc_attr_e( __( 'Save', 'woothemes-sensei' ) ); ?>" class="grade-button button-primary" />
