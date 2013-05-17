@@ -62,7 +62,9 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			<div class="clear"></div><br/><?php
 
 		$user_quiz_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->quiz_id, 'user_id' => $this->user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
+
 		$count = 0;
+		$correct_answers = 0;
 		foreach( $questions as $question ) {
 			$question_id = $question->ID;
 			++$count;
@@ -126,6 +128,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				$graded_class = 'ungraded';
 				if( intval( $user_question_grade ) > 0 ) {
 					$graded_class = 'user_right';
+					++$correct_answers;
 				} else {
 					if( ! is_bool( $user_question_grade ) && intval( $user_question_grade ) == 0 ) {
 						$graded_class = 'user_wrong';
@@ -136,13 +139,9 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				<div class="handlediv" title="Click to toggle"><br></div>
 				<h3 class="hndle"><span><?php echo $question_title; ?></span></h3>
 				<div class="inside">
-					<div class="sensei-grading-answer">
-						<h4><?php echo $question->post_title; ?></h4>
-						<p class="user-answer"><?php echo $user_answer; ?></p>
-					</div>
 					<div class="sensei-grading-actions">
 						<div class="right-answer">
-							<h5><?php _e( 'Right answer', 'woothemes-sensei' ) ?></h5>
+							<h5><?php _e( 'Correct answer', 'woothemes-sensei' ) ?></h5>
 							<span class="correct-answer"><?php echo $right_answer; ?></span>
 						</div>
 						<div class="actions">
@@ -152,17 +151,21 @@ class WooThemes_Sensei_Grading_User_Quiz {
 							<span class="grading-mark icon_wrong"><input type="radio" name="<?php esc_attr_e( 'question_' . $question_id ); ?>" value="wrong" <?php checked( $graded_class, 'user_wrong', true ); ?> /></span>
 						</div>
 					</div>
+					<div class="sensei-grading-answer">
+						<h4><?php echo $question->post_title; ?></h4>
+						<p class="user-answer"><?php echo $user_answer; ?></p>
+					</div>
 					<div class="clear"></div>
 				</div>
 			</div><?php
 		}
 
 		$quiz_grade = intval( $user_quiz_grade );
-		$percent = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $count ), 2 ) );
 
-		?><input type="hidden" name="total_grade" id="total_grade" value="<?php esc_attr_e( $quiz_grade ); ?>" />
+		?>  <input type="hidden" name="total_grade" id="total_grade" value="<?php esc_attr_e( $correct_answers ); ?>" />
+			<input type="hidden" name="total_questions" id="total_questions" value="<?php esc_attr_e( $count ); ?>" />
 			<div class="total_grade_display">
-				<span id="total_grade_total"><?php echo $quiz_grade; ?></span> / <?php echo $count; ?> (<?php echo $percent; ?>%)
+				<span id="total_grade_total"><?php echo $correct_answers; ?></span> / <?php echo $count; ?> (<span id="total_grade_percent"><?php echo $quiz_grade; ?></span>%)
 			</div>
 			<div class="buttons">
 				<input type="submit" value="<?php esc_attr_e( __( 'Save', 'woothemes-sensei' ) ); ?>" class="grade-button button-primary" />

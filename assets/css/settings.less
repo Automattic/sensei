@@ -253,10 +253,10 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		}
 	}
 	.sensei-grading-answer {
-		float: left;
-		border-right: 1px solid @border_main;
-		padding-right: 17px;
-		.calc_width(~"100% - 211px");
+		float: right;
+		border-left: 1px solid @border_main;
+		padding-left: 17px;
+		.calc_width(~"100% - 230px");
 		h4 {
 			border-bottom: 1px dashed @border_main;
 			font-size: 14px;
@@ -267,12 +267,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		}
 	}
 	.sensei-grading-actions {
-		float: right;
+		float: left;
 		width: 185px;
-		margin: 0 3px 0 -1px;
+		margin: 0 -1px 0 3px;
 		min-height: 90px;
-		border-left: 1px solid @border_main;
-		padding-left: 5px;
+		border-right: 1px solid #E6E6E6;
+		padding-right: 24px;
 		.right-answer {
 			background: @success;
 			color: #FFF;
@@ -323,15 +323,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		padding: 1px 5px;
 		margin: 0;
 	}
-	.buttons {
-		float: left;
-	}
 	.total_grade_display {
-		float: right;
+		display: inline-block;
 		font-size: 30px;
 		line-height: 45px;
-		text-align: right;
 		color: #000;
+		margin-bottom: 20px;
 		border-left: 0;
 		border-right: 0;
 		border-top: 1px dashed @border_main;

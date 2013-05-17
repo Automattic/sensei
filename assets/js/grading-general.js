@@ -26,17 +26,24 @@ jQuery(document).ready( function($) {
 	 		question_grade = parseInt( jQuery( this ).find( '#question_' + question_id + '_grade' ).val() );
 	 		total_grade += question_grade
 	 	});
+
+	 	var total_questions = parseInt( jQuery( '#total_questions' ).val() );
+	 	var percent = parseFloat( total_grade * 100 / total_questions ).toFixed(2);
+	 	percent = percent.replace( '.00', '' );
+
 	 	jQuery( '#total_grade' ).val( total_grade );
 	 	jQuery( '#total_grade_total' ).html( total_grade );
+	 	jQuery( '#total_grade_percent' ).html( percent );
 	}
 
 	/**
-	 * AUotmatically grades questions where possible
+	 * Automatically grades questions where possible
 	 * @return void
 	 */
 	jQuery.fn.autoGrade = function() {
+		jQuery.fn.resetGrades( jQuery( '.question_box' ) );
 		jQuery( '.question_box' ).each( function() {
-			jQuery( this ).addClass( 'ungraded' )
+			jQuery( this ).addClass( 'ungraded' );
 	 		if( jQuery( this ).hasClass( 'gap-fill' ) ) {
 	 			var user_answer = jQuery( this ).find( '.user-answer .highlight' ).html();
 		 		var correct_answer = jQuery( this ).find( '.correct-answer .highlight' ).html();
