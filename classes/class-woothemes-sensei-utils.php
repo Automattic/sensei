@@ -479,6 +479,30 @@ class WooThemes_Sensei_Utils {
 		return $activity_logged;
 	}
 
+	public function sensei_delete_question_grade( $question_id = 0 ) {
+		global $current_user;
+
+		$activity_logged = false;
+		if( intval( $question_id ) > 0 ) {
+
+			$args = array(
+							    'post_id' => $question_id,
+							    'username' => $current_user->user_login,
+							    'user_email' => $current_user->user_email,
+							    'user_url' => $current_user->user_url,
+							    'data' => '',
+							    'type' => 'sensei_user_grade', /* FIELD SIZE 20 */
+							    'parent' => 0,
+							    'user_id' => $current_user->ID,
+							    'action' => 'update'
+							);
+
+			$activity_logged = WooThemes_Sensei_Utils::sensei_delete_activities( $args );
+		}
+
+		return $activity_logged;
+	}
+
 	/**
 	 * Marked lesson as started for user
 	 * @param  integer $lesson_id ID of lesson

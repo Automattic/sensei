@@ -322,8 +322,9 @@ class WooThemes_Sensei_Grading {
 						}
 						$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade );
 						$quiz_grade += $question_grade;
+					} else {
+						WooThemes_Sensei_Utils::sensei_delete_question_grade( $question_id );
 					}
-
 				}
 
 				$quiz_percent = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $count ), 2 ) );
