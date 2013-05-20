@@ -99,6 +99,10 @@ class WooThemes_Sensei_Grading_User_Quiz {
 					if ( isset( $right_answer_array[1] ) ) { $gapfill_gap = $right_answer_array[1]; } else { $gapfill_gap = ''; }
 					if ( isset( $right_answer_array[2] ) ) { $gapfill_post = $right_answer_array[2]; } else { $gapfill_post = ''; }
 
+					if( ! $user_answer ) {
+						$user_answer = '______';
+					}
+
 					$right_answer = $gapfill_pre . ' <span class="highlight">' . $gapfill_gap . '</span> ' . $gapfill_post;
 					$user_answer = $gapfill_pre . ' <span class="highlight">' . $user_answer . '</span> ' . $gapfill_post;
 					$grade_type = 'auto-grade';
