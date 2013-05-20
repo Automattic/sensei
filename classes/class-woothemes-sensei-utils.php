@@ -553,6 +553,21 @@ class WooThemes_Sensei_Utils {
 		return $questions;
 	}
 
+	public function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			$user_id = $current_user->ID;
+		}
+
+		$delete_answers = false;
+		if( intval( $quiz_id ) > 0 ) {
+			$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+			foreach( $questions as $question ) {
+				$delete_answers = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $question->ID, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ) );
+			}
+		}
+	}
+
 	/**
 	 * array_sort_reorder handle sorting of table data
 	 * @since  1.3.0

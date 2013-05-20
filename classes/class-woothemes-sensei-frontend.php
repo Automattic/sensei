@@ -915,7 +915,7 @@ class WooThemes_Sensei_Frontend {
 		    		// Check for quiz grade
 		    		$delete_grades = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
 		    		// Check for quiz answers
-		    		$delete_answers = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_answers' ) );
+		    		$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $post->ID, $current_user->ID );
 		    		// Check for lesson complete
 		    		$delete_lesson_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_lesson, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
 		    		// Check for course complete
