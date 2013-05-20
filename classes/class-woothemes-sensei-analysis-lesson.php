@@ -78,8 +78,8 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 	    	$lesson_quiz_id = $quiz_item->ID;
 	    } // End For Loop
 		foreach ( $users as $user_key => $user_item ) {
-			// Get Quiz Answers
-			$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_item->ID, 'type' => 'sensei_quiz_answers', 'field' => 'comment_date' ) );
+			// Check if Lesson has started
+			$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->lesson_id, 'user_id' => $user_item->ID, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
 			// Check if Lesson is complete
 			$lesson_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->lesson_id, 'user_id' => $user_item->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
 			// Quiz Grade

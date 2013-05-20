@@ -263,7 +263,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		    		$lesson_quiz_id = $quiz_item->ID;
 		    	} // End For Loop
 				// Lesson Students
-				$lesson_students = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_quiz_id, 'type' => 'sensei_quiz_answers' ), true );
+				$lesson_students = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_item->ID, 'type' => 'sensei_lesson_start' ), true );
 				$lesson_students = intval( count( $lesson_students ) );
 				// Lesson Completions
 				$lesson_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_item->ID, 'type' => 'sensei_lesson_end' ), true );

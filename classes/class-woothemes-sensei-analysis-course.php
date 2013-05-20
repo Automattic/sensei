@@ -133,16 +133,16 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 				if ( 0 < intval( $title_keyword_count ) ) {
 					$lesson_status = __( 'In Progress', 'woothemes-sensei' );
 					$lesson_end_date = '';
+					// Check for Lesson Start Date
+			    	$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
 					// Check if Lesson is complete
-			    	$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
+			    	$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
 			    	// Get Quiz ID and data
 			    	$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_item->ID );
 			    	$lesson_grade = __( 'No Grade', 'woothemes-sensei' );
 			    	$lesson_quiz_id = 0;
 			    	foreach ($lesson_quizzes as $quiz_item) {
-			    		// Quiz Answers
-			    		$quiz_answers =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_quiz_answers', 'field' => 'comment_date' ) );
-			    		if ( 0 < count( $quiz_answers ) ) {
+			    		if ( 0 < count( $lesson_start_date ) ) {
 			    			// Quiz Grade
 			    			$quiz_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 			    			if ( 0 < intval( $quiz_grade ) ) {
@@ -164,8 +164,6 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 														'lesson_grade' => $lesson_grade
 					 								);
 			    	if ( 0 == $this->user_id ) {
-			    		// Answers for all lesson students
-			    		$lesson_students = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_quiz_id,'type' => 'sensei_quiz_answers' ), true );
 			    		// Grades for all lesson students
 			    		$total_quiz_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'type' => 'sensei_quiz_grade' ), true );
 			    		// Calculate the average quiz grade
@@ -178,10 +176,10 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 							} // End If Statement
 						} // End For Loop
 						$total_average_grade = 0;
-						if ( 0 < count( $lesson_students ) ) {
+						if ( 0 < count( $lesson_start_date ) ) {
 							$total_average_grade = abs( round( doubleval( $total_grade_total / $total_grade_count ), 2 ) );
 						} // End If Statement
-			    		$data_array['lesson_students'] = count( $lesson_students );
+			    		$data_array['lesson_students'] = count( $lesson_start_date );
 						$data_array['lesson_average_grade'] = $total_average_grade . '%';
 			    	} // End If Statement
 					array_push( $return_array, $data_array );

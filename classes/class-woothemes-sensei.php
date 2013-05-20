@@ -577,7 +577,7 @@ class WooThemes_Sensei {
 				break;
 
 		} // End Switch Statement
-		return $user_allowed;
+		return apply_filters( 'sensei_access_permissions', $user_allowed );
 	} // End get_placeholder_image()
 
 
