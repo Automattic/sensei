@@ -84,9 +84,7 @@ class WooThemes_Sensei_Grading_Overview {
 
 		$html .= '</select>' . "\n";
 
-		$html .= '<div id="learners-to-grade"></div>';
-
-		$html .= '<div id="learners-graded"></div>';
+		$html .= '<div id="learners-container"></div>';
 
 		echo $html;
 

@@ -152,10 +152,10 @@ jQuery(document).ready( function($) {
 			},
 			function( response ) {
 				// Check for a response
+				console.log(response);
 				if ( '' != response ) {
 					console.log(response);
-					jQuery( '#learners-to-grade' ).append( 'A learner to grade' );
-					jQuery( '#learners-graded' ).append( 'A learner already graded' );
+					jQuery( '#learners-container' ).empty().append( response );
 				} else {
 					// Failed
 				}
