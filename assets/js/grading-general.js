@@ -41,32 +41,33 @@ jQuery(document).ready( function($) {
 	 * @return void
 	 */
 	jQuery.fn.autoGrade = function() {
-		jQuery.fn.resetGrades( jQuery( '.question_box' ) );
 		jQuery( '.question_box' ).each( function() {
-			jQuery( this ).addClass( 'ungraded' );
-	 		if( jQuery( this ).hasClass( 'gap-fill' ) ) {
-	 			var user_answer = jQuery( this ).find( '.user-answer .highlight' ).html();
-		 		var correct_answer = jQuery( this ).find( '.correct-answer .highlight' ).html();
-	 		} else {
-		 		var user_answer = jQuery( this ).find( '.user-answer' ).html();
-		 		var correct_answer = jQuery( this ).find( '.correct-answer' ).html();
-	 		}
+			if( ! jQuery( this ).hasClass( 'user_right' ) && ! jQuery( this ).hasClass( 'user_wrong' ) ) {
+				jQuery( this ).addClass( 'ungraded' );
+		 		if( jQuery( this ).hasClass( 'gap-fill' ) ) {
+		 			var user_answer = jQuery( this ).find( '.user-answer .highlight' ).html();
+			 		var correct_answer = jQuery( this ).find( '.correct-answer .highlight' ).html();
+		 		} else {
+			 		var user_answer = jQuery( this ).find( '.user-answer' ).html();
+			 		var correct_answer = jQuery( this ).find( '.correct-answer' ).html();
+		 		}
 
-	 		if( user_answer == correct_answer ) {
-	 			jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
-	 			jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
-	 			jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-	 		} else {
-	 			if( jQuery( this ).hasClass( 'auto-grade' ) ) {
-	 				jQuery( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
-	 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
-	 				jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-	 			} else {
-	 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-					jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-					jQuery( this ).removeClass( 'user_wrong' ).removeClass( 'user_right' );
-	 			}
-	 		}
+		 		if( user_answer == correct_answer ) {
+		 			jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
+		 			jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
+		 			jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+		 		} else {
+		 			if( jQuery( this ).hasClass( 'auto-grade' ) ) {
+		 				jQuery( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
+		 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
+		 				jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+		 			} else {
+		 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+						jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+						jQuery( this ).removeClass( 'user_wrong' ).removeClass( 'user_right' );
+		 			}
+		 		}
+		 	}
 	 	});
 	 	jQuery.fn.calculateTotalGrade();
 	}
@@ -76,10 +77,11 @@ jQuery(document).ready( function($) {
 	 * @param  obj	scope	Scope of questions to reset
 	 * @return void
 	 */
-	jQuery.fn.resetGrades = function( scope ) {
-		scope.find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-		scope.find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-		scope.removeClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
+	jQuery.fn.resetGrades = function() {
+		jQuery( '.question_box' ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+		jQuery( '.question_box' ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+		jQuery( '.question_box' ).removeClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
+		jQuery.fn.calculateTotalGrade();
 	}
 
 	/***************************************************************************************************
@@ -190,7 +192,7 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery( '.sensei-grading-main .buttons' ).on( 'click', '.reset-button', function() {
-		jQuery.fn.resetGrades( jQuery( '.question_box' ) );
+		jQuery.fn.resetGrades();
 	});
 
 	/**
