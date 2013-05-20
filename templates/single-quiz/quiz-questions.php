@@ -28,6 +28,10 @@ $user_lesson_end = $woothemes_sensei->frontend->data->user_lesson_end;
 $user_lesson_complete = $woothemes_sensei->frontend->data->user_lesson_complete;
 $lesson_quiz_questions = $woothemes_sensei->frontend->data->lesson_quiz_questions;
 
+// Check if the user has started the course
+$lesson_course_id = absint( get_post_meta( $quiz_lesson, '_lesson_course', true ) );
+$has_user_start_the_course = sensei_has_user_started_course( $lesson_course_id, $current_user->ID );
+
 // Get the meta info
 $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
 ?>
@@ -35,7 +39,9 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
     <?php if ( 0 < $quiz_passmark && 0 < count( $lesson_quiz_questions ) ) { ?>
     	<p>
            <?php do_action( 'sensei_frontend_messages' ); ?>
-    	   <?php if ( !is_user_logged_in() ) { ?>
+    	   <?php if ( !$has_user_start_the_course ) { ?>
+                 <div class="woo-sc-box info"><?php echo sprintf( __( 'Please Sign Up for the %1$s before taking this Quiz', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+           <?php } elseif ( !is_user_logged_in() ) { ?>
                 <div class="woo-sc-box info"><?php echo sprintf( __( 'You must be logged in to take this Quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) ); ?></div>
             <?php } elseif ( isset( $user_quiz_grade ) && abs( $user_quiz_grade ) >= 0 && isset( $user_lesson_complete ) && $user_lesson_complete ) {
     			$quiz_passmark_float = (float) $quiz_passmark;
@@ -65,6 +71,7 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
     	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
     		<ol>
     			<?php foreach ($lesson_quiz_questions as $question_item) {
+
                     // Setup current Frontend Question
                     $woothemes_sensei->frontend->data->question_item = $question_item;
                     $woothemes_sensei->frontend->data->question_count = $question_count;
@@ -78,6 +85,7 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
     				do_action( 'sensei_quiz_question_type', $question_type );
 
                     $question_count++;
+
     			} // End For Loop ?>
 
     		</ol>

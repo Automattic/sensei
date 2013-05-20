@@ -3,6 +3,19 @@
 2013.05.07 - version 1.3.0
  * IN PROGRESS
 
+2013.05.16 - version 1.2.6
+ * /classes/class-woothemes-sensei-frontend.php - modified the course signup link to handle purchaseable courses
+ * /classes/class-woothemes-sensei.php - permissions modification for user access
+ * /templates/content-single-lesson.php - added notice for course signup if the user doesnt have access
+ * /templates/single-quiz/quiz-questions.php - disabled quiz fields for when user is not taking the course, and added signup notice
+
+2013.05.13 - version 1.2.5
+ * /classes/class-woothemes-sensei-frontend.php - fix for access permissions settings on Lessons and Quiz pages
+ * /templates/content-single-lesson.php - fix for access permissions settings on Lessons page
+
+2013.05.08 - version 1.2.4
+ * /widgets/widget-woothemes-sensei-course-component.php - fix for no active and completed courses in widget
+
 2013.04.30 - version 1.2.3
  * /assets/css/frontend.css - fix for FontAwesome issue in Firefox
  * /classes/class-woothemes-sensei-frontend.php - warning message fix

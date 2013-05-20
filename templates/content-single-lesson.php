@@ -49,14 +49,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 					$view_lesson = true;
 				}
 
-				if( $view_lesson ) { ?>
-
+				if( $view_lesson ) {
+					$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
+					$user_taking_course = sensei_has_user_started_course( $lesson_course_id, $current_user->ID ); ?>
 				<section class="entry fix">
-                	<?php if ( $access_permission || is_user_logged_in() ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
+                	<?php if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
 				</section>
 
-				<?php if ( $access_permission || is_user_logged_in() ) {
+				<?php if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) ) {
 					do_action( 'sensei_lesson_single_meta' );
+				} else {
+					do_action( 'sensei_lesson_course_signup', $lesson_course_id );
 				} ?>
 
 				<?php

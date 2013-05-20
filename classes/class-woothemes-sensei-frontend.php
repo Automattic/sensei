@@ -588,10 +588,14 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_lesson_course_signup_link( $course_id = 0 ) {
 		if ( 0 < intval( $course_id ) ) {
-		?><section class="lesson-meta">
-    		<header>
-    			<a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>" title="<?php echo esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ); ?>"><?php _e( 'Please Sign Up for the course before starting the lesson.', 'woothemes-sensei' ); ?></a>
-    		</header>
+		?><section class="lesson-meta"><?php
+			$course_link = '<a href="' . esc_url( get_permalink( $course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+			$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product',true );
+			if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) { ?>
+				<div class="woo-sc-box info"><?php echo sprintf( __( 'Please purchase the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+			<?php } else { ?>
+				<div class="woo-sc-box info"><?php echo sprintf( __( 'Please Sign Up for the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+			<?php } // End If Statement ?>
     	</section><?php
     	} // End If Statement
 	}
@@ -1044,9 +1048,10 @@ class WooThemes_Sensei_Frontend {
 		global $woothemes_sensei;
 		// Get the prerequisite lesson
 		$lesson_prerequisite = get_post_meta( $post_id, '_lesson_prerequisite', true );
+		$lesson_course_id = get_post_meta( $post_id, '_lesson_course', true );
 		// Lesson Quiz Meta
 		$lesson_quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $post_id );
-		if ( 0 < count($lesson_quizzes) && is_user_logged_in() ) { ?>
+		if ( 0 < count($lesson_quizzes) && is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $user_id ) ) { ?>
         	<header>
             <?php $no_quiz_count = 0; ?>
         	<?php foreach ($lesson_quizzes as $quiz_item){
@@ -1210,7 +1215,10 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_login_form()
 
 	public function sensei_quiz_action_buttons() {
-		if ( is_user_logged_in() ) {
+		global $post, $current_user;
+		$lesson_id = get_post_meta( $post->ID, '_quiz_lesson', true );
+		$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		if ( is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) {
 			global $woothemes_sensei;
 			// Get Reset Settings
 			$reset_quiz_allowed = $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ]; ?>

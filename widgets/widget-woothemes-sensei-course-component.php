@@ -198,9 +198,11 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		} // End If Statement
 
 		$posts_array = array();
+
 		if ( !empty( $course_ids ) ) {
 			$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ), $course_ids );
 		} // End If Statement
+
 		if ( count( $posts_array ) > 0 ) { ?>
 			<ul>
 			<?php foreach ($posts_array as $post_item){
