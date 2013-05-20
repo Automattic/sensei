@@ -685,6 +685,7 @@ class WooThemes_Sensei {
 	        				foreach ($lesson_quizzes as $quiz_item){
 	        					// Check for quiz grade
 	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $quiz_item->ID ), 'user_id' => intval( $order_user['ID'] ), 'type' => 'sensei_quiz_grade' ) );
+	    						$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( intval( $quiz_item->ID ), intval( $order_user['ID'] ) );
 	    					} // End For Loop
 	    				} // End If Statement
 	    			} // End For Loop

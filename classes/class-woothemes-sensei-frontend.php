@@ -671,7 +671,7 @@ class WooThemes_Sensei_Frontend {
 		            // Check for quiz grade
 		            $delete_grades = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
 		            // Check for quiz answers
-		            $delete_answers = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_answers' ) );
+		            $delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $lesson_quiz_id, $current_user->ID );
 		            // Check for lesson complete
 		            $delete_lesson_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
 		            // Check for course complete
@@ -783,7 +783,7 @@ class WooThemes_Sensei_Frontend {
 		        			if ( 0 < count($lesson_quizzes) )  {
 		        				foreach ($lesson_quizzes as $quiz_item){
 		        					// Check for quiz answers
-		    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_answers' ) );
+		        					$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_item->ID, $current_user->ID );
 		    						// Check for quiz grade
 		    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
 		    					} // End For Loop
