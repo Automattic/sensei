@@ -1376,8 +1376,9 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_lesson_comment_count( $count ) {
 		global $post, $current_user;
 		if ( is_singular( 'lesson' ) ) {
-			$lesson_comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end'/*, 'user_id' => $current_user->ID*/ ), true );
-			return $count - intval( count( $lesson_comments ) );
+			$lesson_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_start'/*, 'user_id' => $current_user->ID*/ ), true );
+			$lesson_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end'/*, 'user_id' => $current_user->ID*/ ), true );
+			return $count - intval( count( $lesson_comments_start ) ) - intval( count( $lesson_comments_end ) );
 		} else {
 			return $count;
 		} // End If Statement
