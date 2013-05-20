@@ -330,10 +330,16 @@ class WooThemes_Sensei_Grading {
 				$quiz_percent = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $count ), 2 ) );
 				$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $quiz_percent );
 
-				if( isset( $_POST['_wp_http_referer'] ) ) {
-					wp_redirect( $_POST['_wp_http_referer'] );
-					exit;
+				if( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
+					$load_url = add_query_arg( 'user', $_POST['sensei_grade_next_learner'] );
+				} elseif ( isset( $_POST['_wp_http_referer'] ) ) {
+					$load_url = $_POST['_wp_http_referer'];
+				} else {
+					$load_url = add_query_arg();
 				}
+
+				wp_redirect( $load_url );
+				exit;
 			}
 		}
 	}
