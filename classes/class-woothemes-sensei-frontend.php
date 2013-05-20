@@ -621,6 +621,19 @@ class WooThemes_Sensei_Frontend {
 		            // Manual Grade
 		            $grade = 100;
 
+		            // Force Start the Lesson
+                    $args = array(
+                                        'post_id' => $post->ID,
+                                        'username' => $current_user->user_login,
+                                        'user_email' => $current_user->user_email,
+                                        'user_url' => $current_user->user_url,
+                                        'data' => __( 'Lesson started by the user', 'woothemes-sensei' ),
+                                        'type' => 'sensei_lesson_start', /* FIELD SIZE 20 */
+                                        'parent' => 0,
+                                        'user_id' => $current_user->ID
+                                    );
+                    $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
 		            // Save Quiz Grade
 	                $args = array(
 	                                    'post_id' => $lesson_quiz_id,
@@ -719,6 +732,18 @@ class WooThemes_Sensei_Frontend {
 		    			$course_lessons = $this->course->course_lessons( $sanitized_course_id );
 		    			// Mark all quiz user meta lessons as complete
 		    			foreach ($course_lessons as $lesson_item){
+		    				// Mark lesson as started
+							$args = array(
+							    		    'post_id' => $lesson_item->ID,
+							    		    'username' => $current_user->user_login,
+							    		    'user_email' => $current_user->user_email,
+							    		    'user_url' => $current_user->user_url,
+							    		    'data' => __( 'Lesson started by the user', 'woothemes-sensei' ),
+							    		    'type' => 'sensei_lesson_start', /* FIELD SIZE 20 */
+							    		    'parent' => 0,
+							    		    'user_id' => $current_user->ID
+							    		);
+							$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 		    				// Mark lesson as complete
 							$args = array(
 							    		    'post_id' => $lesson_item->ID,
