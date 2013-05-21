@@ -157,13 +157,15 @@ jQuery(document).ready( function($) {
 	jQuery( '#grading-lesson-options' ).on( 'change', '', function() {
 		// Populate the Lessons select box
 		var lessonId = jQuery(this).val();
+		var courseId = jQuery( '#grading-course-options' ).val();
 		var dataToPost = '';
 	 	dataToPost += 'lesson_id' + '=' + lessonId;
+	 	dataToPost += '&course_id' + '=' + courseId;
 		// Perform the AJAX call to get the select box.
 		jQuery.post(
 			ajaxurl,
 			{
-				action : 'get_lessons_html',
+				action : 'get_redirect_url',
 				get_lessons_html_nonce : woo_localized_data.get_lessons_html_nonce,
 				data : dataToPost
 			},
@@ -171,8 +173,7 @@ jQuery(document).ready( function($) {
 				// Check for a response
 				console.log(response);
 				if ( '' != response ) {
-					console.log(response);
-					jQuery( '#learners-container' ).empty().append( response );
+					window.location = response;
 				} else {
 					// Failed
 				}
