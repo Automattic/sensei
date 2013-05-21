@@ -553,6 +553,20 @@ class WooThemes_Sensei_Utils {
 		return $questions;
 	}
 
+	public function sensei_get_user_question_grade( $question_id = 0, $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			$user_id = $current_user->ID;
+		}
+
+		$question_grade = false;
+		if( intval( $question_id ) > 0 ) {
+			$question_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_grade', 'field' => 'comment_content' ) );
+		}
+
+		return $question_grade;
+	}
+
 	public function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
@@ -566,6 +580,8 @@ class WooThemes_Sensei_Utils {
 				$delete_answers = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $question->ID, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ) );
 			}
 		}
+
+		return $delete_answers;
 	}
 
 	/**

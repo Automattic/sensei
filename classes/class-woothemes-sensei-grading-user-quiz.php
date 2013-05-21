@@ -129,7 +129,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$question_title = sprintf( __( 'Question %d: ', 'woothemes-sensei' ), $count ) . $type_name;
 
 			$graded_class = '';
-			$user_question_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_grade', 'field' => 'comment_content' ) );
+			$user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $question_id, $this->user_id );
 			$graded_class = 'ungraded';
 			if( intval( $user_question_grade ) > 0 ) {
 				$graded_class = 'user_right';
