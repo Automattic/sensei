@@ -226,6 +226,7 @@ jQuery(document).ready( function($) {
 
 	// Grading Overview Drop Downs
 	if ( jQuery( '#grading-course-options' ).exists() ) { jQuery( '#grading-course-options' ).chosen(); }
+	if ( jQuery( '#grading-lesson-options' ).exists() ) { jQuery( '#grading-lesson-options' ).chosen(); }
 
 
 });

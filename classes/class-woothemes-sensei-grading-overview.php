@@ -78,9 +78,9 @@ class WooThemes_Sensei_Grading_Overview {
 			} // End If Statement
 		$html .= '</select>' . "\n";
 
-		$html .= '<label id="grading-lesson-options-label" class="hidden">' . __( 'Select a Lesson to Grade', 'woothemes-sensei' ) . '</label>';
+		$html .= '<label id="grading-lesson-options-label">' . __( 'Select a Lesson to Grade', 'woothemes-sensei' ) . '</label>';
 
-		$html .= '<select id="grading-lesson-options" name="grading_lesson" class="hidden">' . "\n";
+		$html .= '<select id="grading-lesson-options" name="grading_lesson" class="widefat">' . "\n";
 
 		$html .= '</select>' . "\n";
 
