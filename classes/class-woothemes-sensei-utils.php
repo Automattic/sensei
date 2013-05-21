@@ -319,7 +319,7 @@ class WooThemes_Sensei_Utils {
 			'media_buttons' => false,
 			'wpautop' => true,
 			'textarea_name' => $input_name,
-			'editor_class' => 'sense_text_editor',
+			'editor_class' => 'sensei_text_editor',
 			'teeny' => false,
 			'dfw' => false,
 			'tinymce' => array(
@@ -337,22 +337,28 @@ class WooThemes_Sensei_Utils {
 	 * @param  boolean $submitted User's quiz answers
 	 * @return boolean            Whether the answers were saved or not
 	 */
-	public function sensei_save_quiz_answers( $submitted = false ) {
-		global $current_user;
+	public function sensei_save_quiz_answers( $submitted = false, $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			$user_id = $current_user->ID;
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
 
 		$answers_saved = false;
 
-		if( $submitted ) {
+		if( $submitted && intval( $user_id ) > 0 ) {
     		foreach( $submitted as $question_id => $answer ) {
     			$args = array(
 								    'post_id' => $question_id,
-								    'username' => $current_user->user_login,
-								    'user_email' => $current_user->user_email,
-								    'user_url' => $current_user->user_url,
+								    'username' => $user->user_login,
+								    'user_email' => $user->user_email,
+								    'user_url' => $user->user_url,
 								    'data' => base64_encode( maybe_serialize( $answer ) ),
 								    'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
 								    'parent' => 0,
-								    'user_id' => $current_user->ID,
+								    'user_id' => $user_id,
 								    'action' => 'update'
 								);
 
@@ -432,8 +438,11 @@ class WooThemes_Sensei_Utils {
 	 * @param  string  $answer      User's answer
 	 * @return integer              User's grade for question
 	 */
-	public function sensei_grade_question_auto( $question_id = 0, $answer = '' ) {
-		global $current_user;
+	public function sensei_grade_question_auto( $question_id = 0, $answer = '', $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			$user_id = $current_user->ID;
+		}
 
 		$question_grade = 0;
 		if( intval( $question_id ) > 0 ) {
@@ -442,7 +451,7 @@ class WooThemes_Sensei_Utils {
 				// TO DO: Enable custom grades for questions
 				$question_grade = 1;
 			}
-			$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade );
+			$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
 		}
 
 		return $question_grade;
@@ -455,25 +464,31 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $grade       Grade received
 	 * @return boolean
 	 */
-	public function sensei_grade_question( $question_id = 0, $grade = 0 ) {
-		global $current_user;
+	public function sensei_grade_question( $question_id = 0, $grade = 0, $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			$user_id = $current_user->ID;
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
 
 		$activity_logged = false;
-		if( intval( $question_id ) > 0 ) {
+		if( intval( $question_id ) > 0 && intval( $user_id ) > 0 ) {
 
 			$args = array(
 							    'post_id' => $question_id,
-							    'username' => $current_user->user_login,
-							    'user_email' => $current_user->user_email,
-							    'user_url' => $current_user->user_url,
+							    'username' => $user->user_login,
+							    'user_email' => $user->user_email,
+							    'user_url' => $user->user_url,
 							    'data' => $grade,
 							    'type' => 'sensei_user_grade', /* FIELD SIZE 20 */
 							    'parent' => 0,
-							    'user_id' => $current_user->ID,
+							    'user_id' => $user_id,
 							    'action' => 'update'
 							);
-
-			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+echo '<pre>';print_r( $args );echo '</pre>';
+			// $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 		}
 
 		return $activity_logged;

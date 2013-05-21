@@ -186,7 +186,7 @@ class WooThemes_Sensei_Updates {
 		// Check if update has run
 		$updated = get_option( 'sensei_question_answer_data_update' );
 
-		// if( ! $updated ) {
+		if( ! $updated ) {
 
 			$args = array(	'post_type' 		=> 'quiz',
 							'numberposts' 		=> -1,
@@ -195,20 +195,52 @@ class WooThemes_Sensei_Updates {
 							);
 			$quizzes = get_posts( $args );
 
+			$old_answers = array();
+
 			foreach( $quizzes as $quiz ) {
-				$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz->ID, 'type' => 'sensei_quiz_answers', true ) );
-					// echo '<pre>';print_r( $comments );echo '</pre>';
-				// foreach ( $comments as $key => $value ) {
-				// 	// Get the activity value
-				//     if ( isset( $value->{$args['field']} ) && '' != $value->{$args['field']} ) {
-				//     	$activity_value = $value->{$args['field']};
-				//     } // End If Statement
-				// }
+				$quiz_id = $quiz->ID;
+				$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+
+				// Get current user answers
+				$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
+				foreach ( $comments as $comment ) {
+					$user_id = $comment->user_id;
+					$content = maybe_unserialize( base64_decode( $comment->comment_content ) );
+					$old_user_answers[ $quiz_id ][ $user_id ] = $content;
+				}
+
+				// Get correct answers
+				$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+				foreach( $questions as $question ) {
+					$right_answer = get_post_meta( $question->ID, '_question_right_answer', true );
+					$right_answers[ $quiz_id ][ $question->ID ] = $right_answer;
+				}
+			}
+
+			foreach( $right_answers as $quiz_id => $question ) {
+				$count = 0;
+				foreach( $question as $question_id => $answer ) {
+					++$count;
+					if( isset( $old_user_answers[ $quiz_id ] ) ) {
+						$answers_linkup[ $quiz_id ][ $count ] = $question_id;
+					}
+				}
+			}
+
+			foreach( $old_user_answers as $quiz_id => $user_answers ) {
+				foreach( $user_answers as $user_id => $answers ) {
+					foreach( $answers as $answer_id => $user_answer ) {
+						$question_id = $answers_linkup[ $quiz_id ][ $answer_id ];
+						$new_user_answers[ $question_id ] = $user_answer;
+						WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $user_answer, $user_id );
+					}
+					WooThemes_Sensei_Utils::sensei_save_quiz_answers( $new_user_answers, $user_id );
+				}
 			}
 
 			// Mark update as complete
-			// add_option( 'sensei_question_answer_data_update', true );
-		// }
+			add_option( 'sensei_question_answer_data_update', true );
+		}
 	} // End update_question_answer_data
 
 } // End Class
