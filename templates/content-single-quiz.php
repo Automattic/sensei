@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                 <?php do_action( 'sensei_quiz_single_title' ); ?>
 
-                <section class="entry fix">
+                <section class="entry">
                 	<?php the_content(); ?>
                 	<?php do_action( 'sensei_quiz_questions' ); ?>
 				</section>

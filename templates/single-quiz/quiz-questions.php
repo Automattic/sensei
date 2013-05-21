@@ -69,7 +69,7 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
     	$question_count = 1;
     	?>
     	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
-    		<ol>
+    		<ol id="sensei-quiz-list">
     			<?php foreach ($lesson_quiz_questions as $question_item) {
 
                     // Setup current Frontend Question

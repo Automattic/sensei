@@ -168,6 +168,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 }
 
 .lesson-course  {
+	margin: 2em 0;
 	font-style: italic;
 	color: lighten(@color_body, 20%);
 	font-size: .9em;
@@ -180,12 +181,16 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 
 .quiz  {
 	form  {
-		ol  {
-			margin: 0 0 1.618em 1.618em;
+		ol#sensei-quiz-list  {
+			margin: 0 0 1.618em 0;
 			li  {
-				margin: 0 0 1em;
+				margin: 0 0 1.618em;
 				font-size: 1.1em;
-				font-weight: bold;
+				> span  {
+					display: block;
+					margin: 0 0 1em;
+					font-weight: bold;
+				}
 				ul  {
 					margin: .53em 0;
 					li  {
