@@ -55,6 +55,10 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			<?php wp_nonce_field( 'sensei_manual_grading', '_wp_sensei_manual_grading_nonce' ); ?>
 			<input type="hidden" name="sensei_manual_grade" value="<?php esc_attr_e( $this->quiz_id ); ?>" />
 			<input type="hidden" name="sensei_grade_next_learner" value="<?php esc_attr_e( $this->user_id ); ?>" />
+			<div class="total_grade_display">
+				<span><?php esc_attr_e( __( 'Grade:', 'woothemes-sensei' ) ); ?></span>
+				<span id="total_grade_total"><?php echo $correct_answers; ?></span> / <?php echo $count; ?> (<span id="total_grade_percent"><?php echo $quiz_grade; ?></span>%)
+			</div>
 			<div class="buttons">
 				<input type="submit" value="<?php esc_attr_e( __( 'Save', 'woothemes-sensei' ) ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
 				<input type="reset" value="<?php esc_attr_e( __( 'Reset', 'woothemes-sensei' ) ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
@@ -146,22 +150,24 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				<h3 class="hndle"><span><?php echo $question_title; ?></span></h3>
 				<div class="inside">
 					<div class="sensei-grading-actions">
-						<div class="right-answer">
-							<h5><?php _e( 'Correct answer', 'woothemes-sensei' ) ?></h5>
-							<span class="correct-answer"><?php echo $right_answer; ?></span>
-						</div>
 						<div class="actions">
 							<input type="hidden" class="question_id" value="<?php esc_attr_e( $question_id ); ?>" />
 							<input type="hidden" name="<?php esc_attr_e( 'question_' . $question_id . '_grade' ); ?>" id="<?php esc_attr_e( 'question_' . $question_id . '_grade' ); ?>" value="1" />
 							<span class="grading-mark icon_right"><input type="radio" name="<?php esc_attr_e( 'question_' . $question_id ); ?>" value="right" <?php checked( $graded_class, 'user_right', true ); ?> /></span>
 							<span class="grading-mark icon_wrong"><input type="radio" name="<?php esc_attr_e( 'question_' . $question_id ); ?>" value="wrong" <?php checked( $graded_class, 'user_wrong', true ); ?> /></span>
+							
 						</div>
 					</div>
 					<div class="sensei-grading-answer">
 						<h4><?php echo $question->post_title; ?></h4>
 						<p class="user-answer"><?php echo $user_answer; ?></p>
+						
+						<div class="right-answer">
+							<h5><?php _e( 'Correct answer', 'woothemes-sensei' ) ?></h5>
+							<span class="correct-answer"><?php echo $right_answer; ?></span>
+						</div>
+						
 					</div>
-					<div class="clear"></div>
 				</div>
 			</div><?php
 		}
@@ -177,6 +183,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			<input type="hidden" name="total_graded_questions" id="total_graded_questions" value="<?php esc_attr_e( $graded_count ); ?>" />
 			<input type="hidden" name="all_questions_graded" id="all_questions_graded" value="<?php esc_attr_e( $all_graded ); ?>" />
 			<div class="total_grade_display">
+				<span><?php esc_attr_e( __( 'Grade:', 'woothemes-sensei' ) ); ?></span>
 				<span id="total_grade_total"><?php echo $correct_answers; ?></span> / <?php echo $count; ?> (<span id="total_grade_percent"><?php echo $quiz_grade; ?></span>%)
 			</div>
 			<div class="buttons">

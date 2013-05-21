@@ -95,13 +95,13 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			    } // End If Statement
 
 			    if ( ( isset( $lesson_end_date ) && '' != $lesson_end_date ) && ( isset( $lesson_grade ) && '' == $lesson_grade ) ) {
-					$status_html = __( 'Submitted for Grading', 'woothemes-sensei' );
+					$status_html = '<span class="submitted">' . __( 'Submitted for Grading', 'woothemes-sensei' ) . '</span>';
 					$to_be_graded_count++;
 				} elseif ( ( isset( $lesson_start_date ) && '' != $lesson_start_date ) && ( isset( $lesson_end_date ) && '' == $lesson_end_date  ) ) {
-					$status_html = __( 'In Progress', 'woothemes-sensei' );
+					$status_html = '<span class="in-progress">' . __( 'In Progress', 'woothemes-sensei' ) . '</span>';
 					$in_progress_count++;
 				} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
-					$status_html = __( 'Graded', 'woothemes-sensei' );
+					$status_html = '<span class="graded">' . __( 'Graded', 'woothemes-sensei' ) . '</span>';
 					$graded_count++;
 				} // End If Statement
 
@@ -160,9 +160,9 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 */
 	public function data_table_header() {
 		if ( isset( $this->lesson_id ) && 0 < intval( $this->lesson_id ) && isset( $this->course_id ) && 0 < intval( $this->course_id ) ) {
-			echo '<strong>' . __( 'Learners to be Graded', 'woothemes-sensei' ) . '</strong>';
+			echo '<h3>' . __( 'Learners to be Graded', 'woothemes-sensei' ) . '</h3>';
 		} else {
-			echo '<strong>' . __( 'Please select a Lesson to be Graded', 'woothemes-sensei' ) . '</strong>';
+			echo '<h3>' . __( 'Please select a Lesson to be Graded', 'woothemes-sensei' ) . '</h3>';
 		} // End If Statement
 	} // End data_table_header()
 

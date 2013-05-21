@@ -237,7 +237,8 @@ class WooThemes_Sensei_Grading {
 				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['course_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Courses', 'woothemes-sensei' ); ?></a></li>
 				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Lessons', 'woothemes-sensei' ); ?></a></li>
 			</ul> -->
-			<br class="clear"><?php
+			<div class="grading-selects">
+			<?php
 			// Get the Course Posts
 			$post_args = array(	'post_type' 		=> 'course',
 								'numberposts' 		=> -1,
@@ -252,7 +253,9 @@ class WooThemes_Sensei_Grading {
 			if ( isset( $_GET['course_id'] ) ) {
 				$selected_course_id = intval( $_GET['course_id'] );
 			} // End If Statement
-
+			
+			echo '<div class="select-box">' . "\n";
+			
 			echo '<label>' . __( 'Select a Course to Grade', 'woothemes-sensei' ) . '</label>';
 
 			echo '<select id="grading-course-options" name="grading_course" class="widefat">' . "\n";
@@ -263,7 +266,11 @@ class WooThemes_Sensei_Grading {
 					} // End For Loop
 				} // End If Statement
 			echo '</select>' . "\n";
-
+			
+			echo '</div>' . "\n";
+			
+			echo '<div class="select-box">' . "\n";
+				
 			echo '<label id="grading-lesson-options-label">' . __( 'Select a Lesson to Grade', 'woothemes-sensei' ) . '</label>';
 
 			echo '<select id="grading-lesson-options" name="grading_lesson" class="widefat">' . "\n";
@@ -277,6 +284,12 @@ class WooThemes_Sensei_Grading {
 				} // End If Statement
 
 			echo '</select>' . "\n";
+			
+			echo '</div>' . "\n";
+			?>
+			</div>
+			</div><!-- /.grading-selects -->
+			<?php
 	} // End grading_default_nav()
 
 	/**
