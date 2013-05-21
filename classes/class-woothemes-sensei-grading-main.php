@@ -149,7 +149,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		if ( isset( $this->lesson_id ) && 0 < intval( $this->lesson_id ) && isset( $this->course_id ) && 0 < intval( $this->course_id ) ) {
 			_e( 'No learners found.', 'woothemes-sensei' );
 		} else {
-  			_e( 'No lessons found.', 'woothemes-sensei' );
+			_e( 'No learners found.', 'woothemes-sensei' );
   		} // End If Statement
 	} // End no_items()
 
