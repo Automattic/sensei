@@ -41,7 +41,8 @@ class WooThemes_Sensei_Updates {
 								'1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' ),
 													'manual' 	=> array()
 												),
-								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type', 'set_default_question_type' ),
+								//'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type', 'set_default_question_type', 'update_question_answer_data' ),
+								'1.3.0' => array( 	'auto' 		=> array( 'update_question_answer_data' ),
 													'manual' 	=> array()
 												),
 							);
@@ -172,6 +173,43 @@ class WooThemes_Sensei_Updates {
 			add_option( 'sensei_question_type_update', true );
 		}
 	} // End set_default_question_type
+
+	/**
+	 * Update question answers to use new data structure
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 * @return void
+	 */
+	public function update_question_answer_data() {
+
+		// Check if update has run
+		$updated = get_option( 'sensei_question_answer_data_update' );
+
+		// if( ! $updated ) {
+
+			$args = array(	'post_type' 		=> 'quiz',
+							'numberposts' 		=> -1,
+    						'post_status'		=> 'publish',
+							'suppress_filters' 	=> 0
+							);
+			$quizzes = get_posts( $args );
+
+			foreach( $quizzes as $quiz ) {
+				$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz->ID, 'type' => 'sensei_quiz_answers', true ) );
+					// echo '<pre>';print_r( $comments );echo '</pre>';
+				// foreach ( $comments as $key => $value ) {
+				// 	// Get the activity value
+				//     if ( isset( $value->{$args['field']} ) && '' != $value->{$args['field']} ) {
+				//     	$activity_value = $value->{$args['field']};
+				//     } // End If Statement
+				// }
+			}
+
+			// Mark update as complete
+			// add_option( 'sensei_question_answer_data_update', true );
+		// }
+	} // End update_question_answer_data
 
 } // End Class
 ?>
