@@ -303,6 +303,36 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
   display: none;
 }
 /* Grading */
+.grading-selects {
+  margin: 20px 0 0;
+}
+.grading-selects:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
+.grading-selects .select-box {
+  float: left;
+  width: 290px;
+  margin: 0 20px 0 0;
+}
+.grading-selects .select-box label {
+  font-weight: bold;
+  display: inline-block;
+  margin: 0 0 5px;
+}
+.sensei-grading-wrap {
+  margin-right: 15px;
+}
+.sensei-grading-wrap h3 {
+  float: left;
+  padding: 7px 0!important;
+}
+.sensei-grading-wrap table td {
+  padding: 12px 7px 12px;
+}
 .sensei-grading-main .question_box:after {
   content: "\0020";
   display: block;
