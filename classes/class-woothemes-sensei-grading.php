@@ -230,7 +230,7 @@ class WooThemes_Sensei_Grading {
 	public function grading_default_nav() {
 		global $woothemes_sensei;
 		?><?php screen_icon( 'woothemes-sensei' ); ?>
-			<h2><?php echo esc_html( $this->name ); ?><?php if ( isset( $_GET['course_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . __( 'Courses', 'woothemes-sensei' ); } ?><?php if ( isset( $_GET['lesson_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . __( 'Lessons', 'woothemes-sensei' ); } ?></h2>
+			<h2><?php echo esc_html( $this->name ); ?><?php if ( isset( $_GET['course_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ); } ?><?php if ( isset( $_GET['lesson_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['lesson_id'] ) ); } ?></h2>
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<!-- <ul class="subsubsub">
 				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading' ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( !isset( $_GET['course_id'] ) && !isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Overview', 'woothemes-sensei' ); ?></a></li>
@@ -259,7 +259,7 @@ class WooThemes_Sensei_Grading {
 				echo '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				if ( count( $posts_array ) > 0 ) {
 					foreach ($posts_array as $post_item){
-						echo '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $selected_course_id, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
+						echo '<option value="' . esc_attr( absint( $post_item->ID ) ) . '" ' . selected( $post_item->ID, $selected_course_id, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 					} // End For Loop
 				} // End If Statement
 			echo '</select>' . "\n";
@@ -267,6 +267,14 @@ class WooThemes_Sensei_Grading {
 			echo '<label id="grading-lesson-options-label">' . __( 'Select a Lesson to Grade', 'woothemes-sensei' ) . '</label>';
 
 			echo '<select id="grading-lesson-options" name="grading_lesson" class="widefat">' . "\n";
+
+				if ( 0 < $selected_course_id ) {
+					$selected_lesson_id = 0;
+					if ( isset( $_GET['lesson_id'] ) ) {
+						$selected_lesson_id = intval( $_GET['lesson_id'] );
+					} // End If Statement
+					echo $this->lessons_drop_down_html( $selected_course_id, $selected_lesson_id );
+				} // End If Statement
 
 			echo '</select>' . "\n";
 	} // End grading_default_nav()
@@ -298,30 +306,43 @@ class WooThemes_Sensei_Grading {
 
 		$course_id = intval( $course_data['course_id'] );
 
-		$post_args = array(	'post_type' 		=> 'lesson',
-							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order',
-    						'order'           	=> 'ASC',
-    						'meta_key'        	=> '_lesson_course',
-    						'meta_value'      	=> $course_id,
-    						'post_status'       => 'publish',
-							'suppress_filters' 	=> 0
-							);
-		$posts_array = get_posts( $post_args );
+		$html = $this->lessons_drop_down_html( $course_id );
 
-		$html .= '<label>' . __( 'Select a Lesson to Grade', 'woothemes-sensei' ) . '</label>';
-
-		// $html .= '<select id="grading-lesson-options" name="grading_lesson" class="widefat">' . "\n";
-			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-			if ( count( $posts_array ) > 0 ) {
-				foreach ($posts_array as $post_item){
-					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
-				} // End For Loop
-			} // End If Statement
-		// $html .= '</select>' . "\n";
 		echo $html;
 		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	}
+
+	public function lessons_drop_down_html( $course_id = 0, $selected_lesson_id = 0 ) {
+
+		$html = '';
+		if ( 0 < intval( $course_id ) ) {
+
+			$post_args = array(	'post_type' 		=> 'lesson',
+								'numberposts' 		=> -1,
+								'orderby'         	=> 'menu_order',
+	    						'order'           	=> 'ASC',
+	    						'meta_key'        	=> '_lesson_course',
+	    						'meta_value'      	=> $course_id,
+	    						'post_status'       => 'publish',
+								'suppress_filters' 	=> 0
+								);
+			$posts_array = get_posts( $post_args );
+
+			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+			if ( count( $posts_array ) > 0 ) {
+				foreach ($posts_array as $post_item){
+					$selected_attr_html = '';
+					if ( 0 < $selected_lesson_id ) {
+						$selected_attr_html = selected( $post_item->ID, $selected_lesson_id, false );
+					} // End If Statement
+					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '" ' . $selected_attr_html . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
+				} // End For Loop
+			} // End If Statement
+
+		} // End If Statement
+
+		return $html;
+	} // End lessons_drop_down_html()
 
 	public function get_lessons_html() {
 		global $woothemes_sensei;
