@@ -128,19 +128,17 @@ class WooThemes_Sensei_Grading_User_Quiz {
 
 			$question_title = sprintf( __( 'Question %d: ', 'woothemes-sensei' ), $count ) . $type_name;
 
-			if( ! is_bool( $user_quiz_grade ) ) {
-				$graded_class = '';
-				$user_question_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_grade', 'field' => 'comment_content' ) );
-				$graded_class = 'ungraded';
-				if( intval( $user_question_grade ) > 0 ) {
-					$graded_class = 'user_right';
-					++$correct_answers;
+			$graded_class = '';
+			$user_question_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_grade', 'field' => 'comment_content' ) );
+			$graded_class = 'ungraded';
+			if( intval( $user_question_grade ) > 0 ) {
+				$graded_class = 'user_right';
+				++$correct_answers;
+				++$graded_count;
+			} else {
+				if( ! is_bool( $user_question_grade ) && intval( $user_question_grade ) == 0 ) {
+					$graded_class = 'user_wrong';
 					++$graded_count;
-				} else {
-					if( ! is_bool( $user_question_grade ) && intval( $user_question_grade ) == 0 ) {
-						$graded_class = 'user_wrong';
-						++$graded_count;
-					}
 				}
 			}
 			?><div class="postbox question_box <?php esc_attr_e( $type ); ?> <?php esc_attr_e( $grade_type ); ?> <?php esc_attr_e( $graded_class ); ?>" id="<?php esc_attr_e( 'question_' . $question_id . '_box' ); ?>">
