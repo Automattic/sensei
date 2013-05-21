@@ -40,7 +40,10 @@ class WooThemes_Sensei_Updates {
 		$this->legacy = array( 	'1.0.0' => array(),
 								'1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' ),
 													'manual' 	=> array()
-												)
+												),
+								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type', 'set_default_question_type' ),
+													'manual' 	=> array()
+												),
 							);
 		$this->legacy = apply_filters( 'sensei_upgrade_functions', $this->legacy, $this->legacy );
 		$this->version = get_option( $this->token . '-version' );
@@ -109,19 +112,66 @@ class WooThemes_Sensei_Updates {
 		return $success;
 	} // End assign_role_caps
 
-	public function set_quiz_grade_type() {
+	/**
+	 * Set default quiz grade type
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 * @return void
+	 */
+	public function set_default_quiz_grade_type() {
 
 		// Check if update has run
-		$updated = get_option( 'sensei_quiz_grade_type_upgrade' );
+		$updated = get_option( 'sensei_quiz_grade_type_update' );
 
 		if( ! $updated ) {
 
+			$args = array(	'post_type' 		=> 'quiz',
+							'numberposts' 		=> -1,
+    						'post_status'		=> 'publish',
+							'suppress_filters' 	=> 0
+							);
+			$quizzes = get_posts( $args );
+
+			foreach( $quizzes as $quiz ) {
+				update_post_meta( $quiz->ID, '_quiz_grade_type', 'auto' );
+				update_post_meta( $quiz->ID, '_quiz_grade_type_disabled', '' );
+			}
 
 			// Mark update as complete
-			add_option( 'sensei_quiz_grade_type_upgrade', true );
+			add_option( 'sensei_quiz_grade_type_update', true );
 		}
+	} // End set_default_quiz_grade_type
 
-	}
+	/**
+	 * Set default question type
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 * @return void
+	 */
+	public function set_default_question_type() {
+
+		// Check if update has run
+		$updated = get_option( 'sensei_question_type_update' );
+
+		if( ! $updated ) {
+
+			$args = array(	'post_type' 		=> 'question',
+							'numberposts' 		=> -1,
+    						'post_status'		=> 'publish',
+							'suppress_filters' 	=> 0
+							);
+			$questions = get_posts( $args );
+
+			foreach( $questions as $question ) {
+				wp_set_post_terms( $question->ID, array( $question_type ), 'question-type' );
+			}
+
+			// Mark update as complete
+			add_option( 'sensei_question_type_update', true );
+		}
+	} // End set_default_question_type
 
 } // End Class
 ?>
