@@ -326,7 +326,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 .sensei-grading-wrap {
   margin-right: 15px;
 }
-.sensei-grading-wrap h3 {
+.sensei-grading-wrap h3.grading-header {
   float: left;
   padding: 7px 0!important;
 }

@@ -160,9 +160,9 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 */
 	public function data_table_header() {
 		if ( isset( $this->lesson_id ) && 0 < intval( $this->lesson_id ) && isset( $this->course_id ) && 0 < intval( $this->course_id ) ) {
-			echo '<h3>' . __( 'Learners to be Graded', 'woothemes-sensei' ) . '</h3>';
+			echo '<h3 class="grading-header">' . __( 'Learners to be Graded', 'woothemes-sensei' ) . '</h3>';
 		} else {
-			echo '<h3>' . __( 'Please select a Lesson to be Graded', 'woothemes-sensei' ) . '</h3>';
+			echo '<h3 class="grading-header">' . __( 'Please select a Lesson to be Graded', 'woothemes-sensei' ) . '</h3>';
 		} // End If Statement
 	} // End data_table_header()
 
