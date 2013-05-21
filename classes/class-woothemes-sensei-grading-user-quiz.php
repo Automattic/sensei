@@ -56,7 +56,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			<input type="hidden" name="sensei_manual_grade" value="<?php esc_attr_e( $this->quiz_id ); ?>" />
 			<input type="hidden" name="sensei_grade_next_learner" value="<?php esc_attr_e( $this->user_id ); ?>" />
 			<div class="buttons">
-				<input type="submit" value="<?php esc_attr_e( __( 'Grade', 'woothemes-sensei' ) ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
+				<input type="submit" value="<?php esc_attr_e( __( 'Save', 'woothemes-sensei' ) ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
 				<input type="reset" value="<?php esc_attr_e( __( 'Reset', 'woothemes-sensei' ) ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
 				<input type="button" value="<?php esc_attr_e( __( 'Auto grade', 'woothemes-sensei' ) ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
 			</div>
@@ -65,6 +65,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 		$user_quiz_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->quiz_id, 'user_id' => $this->user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 
 		$count = 0;
+		$graded_count = 0;
 		$correct_answers = 0;
 		foreach( $questions as $question ) {
 			$question_id = $question->ID;
@@ -134,9 +135,11 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				if( intval( $user_question_grade ) > 0 ) {
 					$graded_class = 'user_right';
 					++$correct_answers;
+					++$graded_count;
 				} else {
 					if( ! is_bool( $user_question_grade ) && intval( $user_question_grade ) == 0 ) {
 						$graded_class = 'user_wrong';
+						++$graded_count;
 					}
 				}
 			}
@@ -166,18 +169,30 @@ class WooThemes_Sensei_Grading_User_Quiz {
 		}
 
 		$quiz_grade = intval( $user_quiz_grade );
+		$all_graded = 'no';
+		if( intval( $count ) == intval( $graded_count ) ) {
+			$all_graded = 'yes';
+		}
 
 		?>  <input type="hidden" name="total_grade" id="total_grade" value="<?php esc_attr_e( $correct_answers ); ?>" />
 			<input type="hidden" name="total_questions" id="total_questions" value="<?php esc_attr_e( $count ); ?>" />
+			<input type="hidden" name="total_graded_questions" id="total_graded_questions" value="<?php esc_attr_e( $graded_count ); ?>" />
+			<input type="hidden" name="all_questions_graded" id="all_questions_graded" value="<?php esc_attr_e( $all_graded ); ?>" />
 			<div class="total_grade_display">
 				<span id="total_grade_total"><?php echo $correct_answers; ?></span> / <?php echo $count; ?> (<span id="total_grade_percent"><?php echo $quiz_grade; ?></span>%)
 			</div>
 			<div class="buttons">
-				<input type="submit" value="<?php esc_attr_e( __( 'Grade', 'woothemes-sensei' ) ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
+				<input type="submit" value="<?php esc_attr_e( 'Save' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
 				<input type="reset" value="<?php esc_attr_e( __( 'Reset', 'woothemes-sensei' ) ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
 				<input type="button" value="<?php esc_attr_e( __( 'Auto grade', 'woothemes-sensei' ) ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
 			</div>
 			<div class="clear"></div>
+			<script type="text/javascript">
+				jQuery( window ).load( function() {
+					// Calculate total grade on page load to make sure everything is set up correctly
+					jQuery.fn.calculateTotalGrade();
+				});
+			</script>
 		</form><?php
 	} // End display()
 

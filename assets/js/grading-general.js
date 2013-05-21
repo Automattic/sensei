@@ -21,11 +21,18 @@ jQuery(document).ready( function($) {
 		var question_id;
 	 	var question_grade;
 	 	var total_grade = 0;
+	 	var total_graded_questions = 0;
 	 	jQuery( '.question_box.user_right' ).each( function() {
 	 		question_id = jQuery( this ).find( '.question_id' ).val();
 	 		question_grade = parseInt( jQuery( this ).find( '#question_' + question_id + '_grade' ).val() );
 	 		total_grade += question_grade
+	 		total_graded_questions++;
 	 	});
+	 	jQuery( '.question_box.user_wrong' ).each( function() {
+	 		total_graded_questions++;
+	 	});
+
+	 	jQuery( '#total_graded_questions' ).val( total_graded_questions );
 
 	 	var total_questions = parseInt( jQuery( '#total_questions' ).val() );
 	 	var percent = parseFloat( total_grade * 100 / total_questions ).toFixed(2);
@@ -34,6 +41,14 @@ jQuery(document).ready( function($) {
 	 	jQuery( '#total_grade' ).val( total_grade );
 	 	jQuery( '#total_grade_total' ).html( total_grade );
 	 	jQuery( '#total_grade_percent' ).html( percent );
+
+	 	if( total_questions == total_graded_questions ) {
+			jQuery( '#all_questions_graded' ).val( 'yes' );
+			jQuery( '.grade-button' ).val( 'Grade' );
+	 	} else {
+	 		jQuery( '#all_questions_graded' ).val( 'no' );
+	 		jQuery( '.grade-button' ).val( 'Save' );
+	 	}
 	}
 
 	/**
