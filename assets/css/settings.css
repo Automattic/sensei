@@ -333,6 +333,24 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 .sensei-grading-wrap table td {
   padding: 12px 7px 12px;
 }
+.sensei-grading-wrap table .user_status span {
+  padding: 5px 10px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+.sensei-grading-wrap table .user_status .submitted {
+  background: #ededed;
+}
+.sensei-grading-wrap table .user_status .in-progress {
+  background: #ffffe0;
+}
+.sensei-grading-wrap table .user_status .graded {
+  background: #63a95f;
+  color: #fff;
+}
 .sensei-grading-main .question_box:after {
   content: "\0020";
   display: block;

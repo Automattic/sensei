@@ -269,6 +269,22 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		td  {
 			padding: 12px 7px 12px;
 		}
+		.user_status  {
+			span  {
+				padding: 5px 10px;
+				.border_radius(3px);
+			}
+			.submitted  {
+				background: darken(@bg_light, 5%);
+			}
+			.in-progress  {
+				background: #ffffe0;
+			}
+			.graded  {
+				background: @success;
+				color: #fff;
+			}
+		}
 	}
 }
 .sensei-grading-main {
