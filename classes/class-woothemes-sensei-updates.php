@@ -42,7 +42,7 @@ class WooThemes_Sensei_Updates {
 													'manual' 	=> array()
 												),
 								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type', 'set_default_question_type', 'update_question_answer_data' ),
-													'manual' 	=> array()
+													'manual' 	=> array( 'update_question_answer_data' )
 												),
 							);
 		$this->legacy = apply_filters( 'sensei_upgrade_functions', $this->legacy, $this->legacy );
@@ -180,12 +180,12 @@ class WooThemes_Sensei_Updates {
 	 * @access public
 	 * @return void
 	 */
-	public function update_question_answer_data() {
+	public function update_question_answer_data( $force = false ) {
 
 		// Check if update has run
 		$updated = get_option( 'sensei_question_answer_data_update' );
 
-		if( ! $updated ) {
+		if( ! $updated || $force ) {
 
 			$args = array(	'post_type' 		=> 'quiz',
 							'numberposts' 		=> -1,
