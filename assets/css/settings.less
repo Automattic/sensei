@@ -14,6 +14,17 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /* Backend Global Stylesheet */
 /*-----------------------------------------------------------------------------------*/
 
+/* Font Awesome Icons */
+@font-face {
+  font-family: 'FontAwesomeSensei';
+  src: url('../fonts/fontawesome-webfont.eot');
+  src: url('../fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/fontawesome-webfont.woff') format('woff'),
+    url('../fonts/fontawesome-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* Info Boxes */
 .info-box {
 	background: #F2F2F2;
@@ -236,80 +247,122 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /* Grading */
 .sensei-grading-main {
 	.question_box {
+		.clearfix;
 		&.ungraded {
-			p.user-answer {
-				background: #FFFFE0;
-			}
+			
 		}
 		&.user_right {
-			p.user-answer {
-				background: #AEE7AE;
+			.grading-mark.icon_right  {
+				&:after  {
+					color: darken(@success, 15%)!important;
+				}
+			}
+			.grading-mark.icon_wrong  {
+				&:after  {
+					.opacity(0.2);
+				}
 			}
 		}
 		&.user_wrong {
-			p.user-answer {
-				background: #FFC0C0;
+			.grading-mark.icon_wrong  {
+				&:after  {
+					color: darken(@error, 15%)!important;
+				}
 			}
+			.grading-mark.icon_right  {
+				&:after  {
+					.opacity(0.2);
+				}
+			}
+		}
+		&.essay-paste  {
 		}
 	}
 	.sensei-grading-answer {
 		float: right;
-		border-left: 1px solid @border_main;
-		padding-left: 17px;
-		.calc_width(~"100% - 230px");
+		padding: 20px 0;
+		.calc_width(~"100% - 110px");
 		h4 {
 			border-bottom: 1px dashed @border_main;
-			font-size: 14px;
+			font-size: 16px;
 		}
 		.user-answer {
 			padding: 5px;
+			font-size: 1.2em;
+		}
+		.right-answer {
+			border: 1px solid @border_main;
+			padding: 15px 20px;
+			background: #fff;
 			.border_radius(5px);
+			h5  {
+				display: inline-block;
+				border-bottom: 1px solid @border_main;
+				margin: 0 0 10px;
+				padding: 0 0 4px;
+				font-size: 14px;
+			}
+			.correct-answer  {
+				display: block;
+			}
 		}
 	}
 	.sensei-grading-actions {
 		float: left;
-		width: 185px;
+		width: 85px;
 		margin: 0 -1px 0 3px;
 		min-height: 90px;
-		border-right: 1px solid #E6E6E6;
-		padding-right: 24px;
-		.right-answer {
-			background: @success;
-			color: #FFF;
-			padding: 5px;
-			border-radius: 5px;
-			width: 100%;
-			font-weight: 700;
-			margin-bottom: 40px;
-			h5 {
-				font-size: 100%;
-				padding: 0 0 2px 0;
-				margin: 0 0 2px 0;
-				text-align: center;
-				text-transform: uppercase;
-				border-bottom: 1px solid #FFF;
-			}
-		}
 		.actions {
+			padding: 20px 0 0;
 			text-align: center;
-			width: 195px;
-			position: absolute;
-			bottom: 0;
 			input[type="radio"] {
-				width: 32px;
-				height: 32px;
+				position: relative;
+				z-index: 9999;
+				width: 28px;
+				height: 28px;
 				.opacity(0);
 				cursor: pointer;
 			}
 			.grading-mark {
+				position: relative;
 				display: inline-block;
-				width: 32px;
-				height: 32px;
+				margin: 0 5px;
+				width: 28px;
+				height: 28px;
+				cursor: pointer;
+				&:after  {
+				    .iconafter;
+				    position: absolute;
+				    top: 0;
+				    left: 0;
+				    z-index: 1;
+				    margin: 0;
+				    width: 28px;
+				    height: 28px;
+				    line-height: .9;
+				    font-size: 31px;
+				}
 				&.icon_right {
-					background: url('../images/icon_right_32.png');
+					&:after  {
+						content: "\f058";
+						color: @success;
+					}
+					&:hover  {
+						&:after  {
+							color: darken(@success, 7%);
+						}
+					}
 				}
 				&.icon_wrong {
-					background: url('../images/icon_wrong_32.png');
+					&:after  {
+						content: "\f057";
+						color: @error;
+					}
+					&:hover  {
+						&:after  {
+							color: darken(@error, 7%);
+						}
+					}
 				}
 			}
 		}
@@ -331,8 +384,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		margin-bottom: 20px;
 		border-left: 0;
 		border-right: 0;
-		border-top: 1px dashed @border_main;
-		border-bottom: 1px solid @border_main;
 		.border_radius(0);
 		#total_grade_total {
 			font-weight: 700;
