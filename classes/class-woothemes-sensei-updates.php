@@ -41,8 +41,7 @@ class WooThemes_Sensei_Updates {
 								'1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' ),
 													'manual' 	=> array()
 												),
-								//'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type', 'set_default_question_type', 'update_question_answer_data' ),
-								'1.3.0' => array( 	'auto' 		=> array( 'update_question_answer_data' ),
+								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type', 'set_default_question_type', 'update_question_answer_data' ),
 													'manual' 	=> array()
 												),
 							);
@@ -199,7 +198,6 @@ class WooThemes_Sensei_Updates {
 
 			foreach( $quizzes as $quiz ) {
 				$quiz_id = $quiz->ID;
-				$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 
 				// Get current user answers
 				$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
@@ -234,6 +232,8 @@ class WooThemes_Sensei_Updates {
 						$new_user_answers[ $question_id ] = $user_answer;
 						WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $user_answer, $user_id );
 					}
+					$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+					WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 					WooThemes_Sensei_Utils::sensei_save_quiz_answers( $new_user_answers, $user_id );
 				}
 			}

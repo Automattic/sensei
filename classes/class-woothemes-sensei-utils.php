@@ -361,7 +361,6 @@ class WooThemes_Sensei_Utils {
 								    'user_id' => $user_id,
 								    'action' => 'update'
 								);
-
 				$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
     		}
     	}
@@ -455,7 +454,6 @@ class WooThemes_Sensei_Utils {
 		}
 
 		return $question_grade;
-
 	}
 
 	/**
@@ -487,8 +485,7 @@ class WooThemes_Sensei_Utils {
 							    'user_id' => $user_id,
 							    'action' => 'update'
 							);
-echo '<pre>';print_r( $args );echo '</pre>';
-			// $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 		}
 
 		return $activity_logged;
@@ -523,21 +520,27 @@ echo '<pre>';print_r( $args );echo '</pre>';
 	 * @param  integer $lesson_id ID of lesson
 	 * @return boolean
 	 */
-	public function sensei_start_lesson( $lesson_id = 0 ) {
-		global $current_user;
+	public function sensei_start_lesson( $lesson_id = 0, $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			$user_id = $current_user->ID;
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
 
 		$activity_logged = false;
 
 		if( intval( $lesson_id ) > 0 ) {
 			$args = array(
 							    'post_id' => $lesson_id,
-							    'username' => $current_user->user_login,
-							    'user_email' => $current_user->user_email,
-							    'user_url' => $current_user->user_url,
+							    'username' => $user->user_login,
+							    'user_email' => $user->user_email,
+							    'user_url' => $user->user_url,
 							    'data' => __( 'Lesson started by the user', 'woothemes-sensei' ),
 							    'type' => 'sensei_lesson_start', /* FIELD SIZE 20 */
 							    'parent' => 0,
-							    'user_id' => $current_user->ID
+							    'user_id' => $user_id
 							);
 
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
