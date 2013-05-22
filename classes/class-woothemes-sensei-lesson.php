@@ -62,6 +62,8 @@ class WooThemes_Sensei_Lesson {
 			add_action( 'wp_ajax_nopriv_lesson_update_question', array( &$this, 'lesson_update_question' ) );
 			add_action( 'wp_ajax_lesson_add_course', array( &$this, 'lesson_add_course' ) );
 			add_action( 'wp_ajax_nopriv_lesson_add_course', array( &$this, 'lesson_add_course' ) );
+			add_action( 'wp_ajax_lesson_update_grade_type', array( &$this, 'lesson_update_grade_type' ) );
+			add_action( 'wp_ajax_nopriv_lesson_update_grade_type', array( &$this, 'lesson_update_grade_type' ) );
 		} else {
 			// Frontend actions
 		} // End If Statement
@@ -787,7 +789,7 @@ class WooThemes_Sensei_Lesson {
 		wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.3.0' );
 		wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.0.0' );
 		$translation_strings = array();
-		$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ) );
+		$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ) );
 		$data = array_merge( $translation_strings, $ajax_vars );
 		// V2 - Specify variables to be made available to the lesson-metadata.js file.
 		wp_localize_script( 'woosensei-lesson-metadata', 'woo_localized_data', $data );
@@ -906,6 +908,23 @@ class WooThemes_Sensei_Lesson {
 		echo $updated;
 		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	} // End lesson_update_question()
+
+	public function lesson_update_grade_type() {
+		//Add nonce security to the request
+		if ( isset($_POST['lesson_update_grade_type_nonce']) ) {
+			$nonce = esc_html( $_POST['lesson_update_grade_type_nonce'] );
+		} // End If Statement
+		if ( ! wp_verify_nonce( $nonce, 'lesson_update_grade_type_nonce' ) ) {
+			die('');
+		} // End If Statement
+		// Parse POST data
+		$data = $_POST['data'];
+		$quiz_data = array();
+		parse_str($data, $quiz_data);
+		update_post_meta( $quiz_data['quiz_id'], '_quiz_grade_type', $quiz_data['quiz_grade_type'] );
+		update_post_meta( $quiz_data['quiz_id'], '_quiz_grade_type_disabled', $quiz_data['quiz_grade_type_disabled'] );
+		die();
+	}
 
 
 	/**

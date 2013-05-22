@@ -149,6 +149,9 @@ jQuery(document).ready( function($) {
 			jQuery( 'input#quiz_grade_type' ).removeAttr( 'disabled' );
 			jQuery( 'input#quiz_grade_type_disabled' ).val( 'enabled' );
 		}
+
+		// Save quiz grade type
+		jQuery.fn.saveQuizGradeType();
  	}
 
  	/**
@@ -176,6 +179,33 @@ jQuery(document).ready( function($) {
  	    } else {
  	    	jQuery( '#no-questions-message' ).removeClass( 'hidden' );
  	    }
+ 	}
+
+ 	/**
+ 	 * Save quiz grade type
+ 	 *
+ 	 * @since 1.3.0
+ 	 * access public
+ 	 */
+ 	jQuery.fn.saveQuizGradeType = function() {
+
+ 		var quiz_grade_type = jQuery( 'input#quiz_grade_type' ).is( ':checked' ) ? 'auto' : 'manual';
+ 		var quiz_grade_type_disabled = jQuery( 'input#quiz_grade_type_disabled' ).val();
+
+ 		var dataToPost = 'quiz_grade_type' + '=' + quiz_grade_type;
+ 		dataToPost += '&quiz_grade_type_disabled' + '=' + quiz_grade_type_disabled;
+ 		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+ 		jQuery.post(
+			ajaxurl,
+			{
+				action : 'lesson_update_grade_type',
+				lesson_update_grade_type_nonce : woo_localized_data.lesson_update_grade_type_nonce,
+				data : dataToPost
+			},
+			function( response ) {}
+		);
+		return false;
  	}
 
  	/**
@@ -235,6 +265,16 @@ jQuery(document).ready( function($) {
 			var gapPost = jQuery( this ).parent('div').find('input[name=add_question_right_answer_gapfill_post]').val();
 			jQuery( this ).parent('div').find('p.gapfill-preview').html( gapPre + ' <u>' + gapGap + '</u> ' + gapPost );
 		});
+	});
+
+	/**
+	 * Quiz grade type checkbox change event
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	jQuery( '#add-quiz-metadata' ).on( 'change', '#quiz_grade_type', function() {
+		jQuery.fn.saveQuizGradeType();
 	});
 
 	/***************************************************************************************************
