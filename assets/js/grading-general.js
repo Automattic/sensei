@@ -39,8 +39,9 @@ jQuery(document).ready( function($) {
 	 	percent = percent.replace( '.00', '' );
 
 	 	jQuery( '#total_grade' ).val( total_grade );
-	 	jQuery( '#total_grade_total' ).html( total_grade );
-	 	jQuery( '#total_grade_percent' ).html( percent );
+	 	jQuery( '.total_grade_total' ).html( total_grade );
+	 	jQuery( '.total_grade_percent' ).html( percent );
+	 	jQuery( '.total_grade_count' ).html( total_questions );
 
 	 	if( total_questions == total_graded_questions ) {
 			jQuery( '#all_questions_graded' ).val( 'yes' );
