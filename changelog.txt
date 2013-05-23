@@ -1,7 +1,37 @@
 *** Sensei Changelog ***
 
 2013.05.23 - version 1.3.0
- * IN PROGRESS
+ * /assets/css/global.css,
+   /assets/css/frontend.css,
+   /assets/css/settings.css - question types and grading styling
+ * /assets/images/icon_right_32.png,
+   /assets/images/icon_wrong_32.png - grading icons
+ * /assets/js/grading-general.js - New grading javascript logic
+ * /assets/js/lesson-metadata.js - question types modifications
+ * /classes/class-woothemes-sensei-analysis.php,
+   /classes/class-woothemes-sensei-analysis-course.php,
+   /classes/class-woothemes-sensei-analysis-lesson.php,
+   /classes/class-woothemes-sensei-analysis-overview.php - question types and grading modifications
+ * /classes/class-woothemes-sensei-frontend.php - question types and grading modifications
+ * /classes/class-woothemes-sensei-lesson.php - question types modifications
+ * /classes/class-woothemes-sensei-grading.php - New grading functionality, main class
+ * /classes/class-woothemes-sensei-grading-main.php - New grading functionality, overview screen
+ * /classes/class-woothemes-sensei-grading-user-profile.php - New grading functionality, grade a quiz screen
+ * /classes/class-woothemes-sensei-posttypes.php - question types modifications
+ * /classes/class-woothemes-sensei-question.php - question types modifications
+ * /classes/class-woothemes-sensei-quiz.php - question types modifications
+ * /classes/class-woothemes-sensei-updates.php - upgrade functions for questions types and grading data
+ * /classes/class-woothemes-sensei-utils.php - question types and grading helper functions
+ * /classes/class-woothemes-sensei.php - added access permissions filter, woocommerce paypal hook fix
+ * /inc/woothemes-sensei-template.php - questions types and grading helper functions
+ * /templates/single-quiz/question_type-boolean.php,
+   /templates/single-quiz/question_type-essay_paste.php,
+   /templates/single-quiz/question_type-gap-fill.php,
+   /templates/single-quiz/question_type-multi-line.php,
+   /templates/single-quiz/question_type-multiple-choice.php,
+   /templates/single-quiz/question_type-single-line.php,
+   /templates/single-quiz/quiz-questions.php - question types modifications, added new template files for new question types
+
 
 2013.05.16 - version 1.2.6
  * /classes/class-woothemes-sensei-frontend.php - modified the course signup link to handle purchaseable courses
