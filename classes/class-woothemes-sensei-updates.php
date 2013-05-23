@@ -77,6 +77,7 @@ class WooThemes_Sensei_Updates {
 					// If successful
 					if ( $updated ) {
 						array_push( $this->upgrades_run, $key );
+						flush_rewrite_rules();
 					} // End If Statement
 				} // End For Loop
 			} // End If Statement
