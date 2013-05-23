@@ -97,13 +97,13 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			    if ( ( isset( $lesson_end_date ) && '' != $lesson_end_date ) && ( isset( $lesson_grade ) && '' == $lesson_grade ) ) {
 					$status_html = '<span class="submitted">' . __( 'Submitted for Grading', 'woothemes-sensei' ) . '</span>';
 					$to_be_graded_count++;
-				} elseif ( ( isset( $lesson_start_date ) && '' != $lesson_start_date ) && ( isset( $lesson_end_date ) && '' == $lesson_end_date  ) ) {
-					$status_html = '<span class="in-progress">' . __( 'In Progress', 'woothemes-sensei' ) . '</span>';
-					$in_progress_count++;
 				} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
 					$status_html = '<span class="graded">' . __( 'Graded', 'woothemes-sensei' ) . '</span>';
 					$graded_count++;
-				} // End If Statement
+				} elseif ( ( isset( $lesson_start_date ) && '' != $lesson_start_date ) && ( isset( $lesson_end_date ) && '' == $lesson_end_date  ) ) {
+					$status_html = '<span class="in-progress">' . __( 'In Progress', 'woothemes-sensei' ) . '</span>';
+					$in_progress_count++;
+				}  // End If Statement
 
 				// Output the users data
 				if ( isset( $lesson_start_date ) && '' != $lesson_start_date ) {

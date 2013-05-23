@@ -180,9 +180,9 @@ class WooThemes_Sensei_Admin {
 	 */
 	public function admin_styles_global () {
 		global $woothemes_sensei;
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.0.0', 'screen' );
+		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.3.0', 'screen' );
 		wp_enqueue_style( $woothemes_sensei->token . '-global' );
-		wp_register_style( $woothemes_sensei->token . '-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.css', '', '1.0.0', 'screen' );
+		wp_register_style( $woothemes_sensei->token . '-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.css', '', '1.3.0', 'screen' );
 		wp_enqueue_style( $woothemes_sensei->token . '-chosen' );
 	} // End admin_styles_global()
 

@@ -130,10 +130,10 @@ class WooThemes_Sensei_Frontend {
 		} // End If Statement
 		if ( ! $disable_js ) {
 			// My Courses tabs script
-			wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard.js' ), array( 'jquery-ui-tabs' ), '1.0.0', true );
+			wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard.js' ), array( 'jquery-ui-tabs' ), '1.3.0', true );
 			wp_enqueue_script( $this->token . '-user-dashboard' );
 			// Load the general script
-			wp_enqueue_script( 'woosensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend.js', array( 'jquery' ), '1.0.0' );
+			wp_enqueue_script( 'woosensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend.js', array( 'jquery' ), '1.3.0' );
 		} // End If Statement
 
 	} // End enqueue_scripts()
@@ -151,7 +151,7 @@ class WooThemes_Sensei_Frontend {
 			$disable_styles = $woothemes_sensei->settings->settings[ 'styles_disable' ];
 		} // End If Statement
 		if ( ! $disable_styles ) {
-			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.0.0', 'screen' );
+			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.3.0', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
 		} // End If Statement
 
