@@ -196,46 +196,60 @@ class WooThemes_Sensei_Updates {
 			$quizzes = get_posts( $args );
 
 			$old_answers = array();
+			$right_answers = array();
+			$old_user_answers = array();
 
-			foreach( $quizzes as $quiz ) {
-				$quiz_id = $quiz->ID;
+			if( is_array( $quizzes ) ) {
+				foreach( $quizzes as $quiz ) {
+					$quiz_id = $quiz->ID;
 
-				// Get current user answers
-				$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
-				foreach ( $comments as $comment ) {
-					$user_id = $comment->user_id;
-					$content = maybe_unserialize( base64_decode( $comment->comment_content ) );
-					$old_user_answers[ $quiz_id ][ $user_id ] = $content;
-				}
+					// Get current user answers
+					$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
+					if( is_array( $comments ) ) {
+						foreach ( $comments as $comment ) {
+							$user_id = $comment->user_id;
+							$content = maybe_unserialize( base64_decode( $comment->comment_content ) );
+							$old_user_answers[ $quiz_id ][ $user_id ] = $content;
+						}
+					}
 
-				// Get correct answers
-				$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
-				foreach( $questions as $question ) {
-					$right_answer = get_post_meta( $question->ID, '_question_right_answer', true );
-					$right_answers[ $quiz_id ][ $question->ID ] = $right_answer;
-				}
-			}
-
-			foreach( $right_answers as $quiz_id => $question ) {
-				$count = 0;
-				foreach( $question as $question_id => $answer ) {
-					++$count;
-					if( isset( $old_user_answers[ $quiz_id ] ) ) {
-						$answers_linkup[ $quiz_id ][ $count ] = $question_id;
+					// Get correct answers
+					$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+					if( is_array( $questions ) ) {
+						foreach( $questions as $question ) {
+							$right_answer = get_post_meta( $question->ID, '_question_right_answer', true );
+							$right_answers[ $quiz_id ][ $question->ID ] = $right_answer;
+						}
 					}
 				}
 			}
 
-			foreach( $old_user_answers as $quiz_id => $user_answers ) {
-				foreach( $user_answers as $user_id => $answers ) {
-					foreach( $answers as $answer_id => $user_answer ) {
-						$question_id = $answers_linkup[ $quiz_id ][ $answer_id ];
-						$new_user_answers[ $question_id ] = $user_answer;
-						WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $user_answer, $user_id );
+			if( is_array( $right_answers ) ) {
+				foreach( $right_answers as $quiz_id => $question ) {
+					$count = 0;
+					if( is_array( $question ) ) {
+						foreach( $question as $question_id => $answer ) {
+							++$count;
+							if( isset( $old_user_answers[ $quiz_id ] ) ) {
+								$answers_linkup[ $quiz_id ][ $count ] = $question_id;
+							}
+						}
 					}
-					$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-					WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-					WooThemes_Sensei_Utils::sensei_save_quiz_answers( $new_user_answers, $user_id );
+				}
+			}
+
+			if( is_array( $old_user_answers ) ) {
+				foreach( $old_user_answers as $quiz_id => $user_answers ) {
+					foreach( $user_answers as $user_id => $answers ) {
+						foreach( $answers as $answer_id => $user_answer ) {
+							$question_id = $answers_linkup[ $quiz_id ][ $answer_id ];
+							$new_user_answers[ $question_id ] = $user_answer;
+							WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $user_answer, $user_id );
+						}
+						$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+						WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+						WooThemes_Sensei_Utils::sensei_save_quiz_answers( $new_user_answers, $user_id );
+					}
 				}
 			}
 
