@@ -45,7 +45,7 @@ $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
                 <div class="woo-sc-box info"><?php echo sprintf( __( 'You must be logged in to take this Quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) ); ?></div>
             <?php } elseif ( isset( $user_quiz_grade ) && abs( $user_quiz_grade ) >= 0 && isset( $user_lesson_complete ) && $user_lesson_complete ) {
     			$quiz_passmark_float = (float) $quiz_passmark;
-                if( 'manual' == $quiz_grade_type ) { ?>
+                if( $quiz_grade_type != 'auto' ) { ?>
                     <div class="woo-sc-box info"><?php echo sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$d%% to pass.', 'woothemes-sensei' ), round( $quiz_passmark ) ); ?></div>
                 <?php } else {
         			if ( $user_quiz_grade >= abs( round( $quiz_passmark_float, 2 ) ) ) { ?>
