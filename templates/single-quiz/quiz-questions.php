@@ -36,7 +36,7 @@ $has_user_start_the_course = sensei_has_user_started_course( $lesson_course_id, 
 $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
 ?>
 <div class="lesson-meta">
-    <?php if ( 0 < $quiz_passmark && 0 < count( $lesson_quiz_questions ) ) { ?>
+    <?php if ( 0 <= $quiz_passmark && 0 < count( $lesson_quiz_questions ) ) { ?>
     	<p>
            <?php do_action( 'sensei_frontend_messages' ); ?>
     	   <?php if ( !$has_user_start_the_course ) { ?>
