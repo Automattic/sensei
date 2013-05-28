@@ -654,5 +654,28 @@ class WooThemes_Sensei_Utils {
 	    $array = $ret;
 	} // End sort_array_by_key()
 
+	/**
+	 * lesson_quiz_questions gets array of lesson quiz questions
+	 * @since  1.3.2
+	 * @param  integer $quiz_id
+	 * @return array of quiz questions
+	 */
+	public function lesson_quiz_questions( $quiz_id = 0 ) {
+		$questions_array = array();
+		if ( 0 < $quiz_id ) {
+			$question_args = array( 'post_type'         => 'question',
+                                    'numberposts'       => -1,
+                                    'orderby'           => 'ID',
+                                    'order'             => 'ASC',
+                                    'meta_key'          => '_quiz_id',
+                                    'meta_value'        => $quiz_id,
+                                    'post_status'       => 'any',
+                                    'suppress_filters'  => 0
+                                );
+            $questions_array = get_posts( $question_args );
+        } // End If Statement
+        return $questions_array;
+	} // End lesson_quiz_questions()
+
 } // End Class
 ?>

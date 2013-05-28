@@ -1062,29 +1062,25 @@ class WooThemes_Sensei_Frontend {
 				if ( '' == $user_quiz_grade ) {
 					$user_quiz_grade = '';
 				} // End If Statement
+        		$question_count = 0;
+                if ( 0 < $quiz_item->ID ) {
+                	$questions_array = WooThemes_Sensei_Utils::lesson_quiz_questions( $quiz_item->ID );
+                    $question_count = count( $questions_array );
+                } // End If Statement
         		// Check if Lesson is complete
         	    if ( sensei_has_user_completed_lesson( $post_id, $user_id ) ) { ?>
-        	    	<?php if( $quiz_grade_type == 'auto' ) { ?>
-        	    		<div class="woo-sc-box tick"><?php echo sprintf( __( 'You have completed this lesson quiz with a grade of %d%%', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
-        	    	<?php } else { ?>
-        	    		<div class="woo-sc-box info"><?php echo sprintf( __( 'You have completed this lesson quiz and it will be graded soon.', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
-        	    	<?php } ?>
+        	    	<?php
+        	    	if ( 0 < $question_count ) { ?>
+		    	    	<?php if( $quiz_grade_type == 'auto' ) { ?>
+		    	    		<div class="woo-sc-box tick"><?php echo sprintf( __( 'You have completed this lesson quiz with a grade of %d%%', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
+		    	    	<?php } else { ?>
+		    	    		<div class="woo-sc-box info"><?php echo sprintf( __( 'You have completed this lesson quiz and it will be graded soon.', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
+		    	    	<?php } // End If Statement ?>
+                	<?php } else { ?>
+                		<div class="woo-sc-box tick"><?php echo __( 'You have completed this lesson.', 'woothemes-sensei' ); ?></div>
+                	<?php } // End If Statement ?>
                     <?php sensei_reset_lesson_button(); ?>
         	    <?php } else {
-                    $question_count = 0;
-                    if ( 0 < $quiz_item->ID ) {
-                        $question_args = array( 'post_type'         => 'question',
-                                                'numberposts'       => -1,
-                                                'orderby'           => 'ID',
-                                                'order'             => 'ASC',
-                                                'meta_key'          => '_quiz_id',
-                                                'meta_value'        => $quiz_item->ID,
-                                                'post_status'       => 'any',
-                                                'suppress_filters'  => 0
-                                            );
-                        $questions_array = get_posts( $question_args );
-                        $question_count = count( $questions_array );
-                    } // End If Statement
                     if ( 0 < $question_count ) {
                         if ( $lesson_prerequisite > 0) {
                             if ( sensei_has_user_completed_prerequisite_lesson( $lesson_prerequisite, $user_id ) ) { ?>
