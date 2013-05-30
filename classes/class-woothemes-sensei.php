@@ -123,6 +123,12 @@ class WooThemes_Sensei {
 		add_action( 'woocommerce_order_status_completed' , array( $this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_order_status_cancelled' , array( $this, 'sensei_woocommerce_cancel_order' ) );
 		add_action( 'subscriptions_activated_for_order', array( $this, 'sensei_activate_subscription' ) );
+		// WooCommerce Subscriptions Actions
+		add_action( 'reactivated_subscription', array( $this, 'sensei_woocommerce_reactivate_subscription' ), 10, 2 );
+		add_action( 'subscription_expired' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
+		add_action( 'subscription_end_of_prepaid_term' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
+		add_action( 'cancelled_subscription' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
+		add_action( 'subscription_put_on-hold' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		// Run Upgrades once the WP functions have loaded
 		if ( is_admin() ) {
 			add_action( 'wp_loaded', array( $this, 'run_upgrades' ), 10 );
@@ -707,6 +713,42 @@ class WooThemes_Sensei {
 			} // End For Loop
 		} // End If Statement
 	} // End sensei_woocommerce_cancel_order()
+
+	/**
+	 * Runs when an subscription is cancelled or expires.
+	 * @since   1.3.3
+	 * @access  public
+	 * @param   integer $user_id User ID
+	 * @param   integer $subscription_key Subscription Unique Key
+	 * @return  void
+	 */
+	public function sensei_woocommerce_subscription_ended( $user_id, $subscription_key ) {
+		$subscription = WC_Subscriptions_Manager::get_users_subscription( $user_id, $subscription_key );
+		self::sensei_woocommerce_cancel_order( $subscription['order_id'] );
+	}
+
+	/**
+	 * Runs when an subscription is re-activated after suspension.
+	 * @since   1.3.3
+	 * @access  public
+	 * @param   integer $user_id User ID
+	 * @param   integer $subscription_key Subscription Unique Key
+	 * @return  void
+	 */
+	public function sensei_woocommerce_reactivate_subscription( $user_id, $subscription_key ) {
+		$subscription = WC_Subscriptions_Manager::get_users_subscription( $user_id, $subscription_key );
+		$order = new WC_Order( $subscription['order_id'] );
+		$user = get_user_by( 'id', $order->user_id );
+		$order_user = array();
+		$order_user['ID'] = $user->ID;
+		$order_user['user_login'] = $user->user_login;
+		$order_user['user_email'] = $user->user_email;
+		$order_user['user_url'] = $user->user_url;
+		$courses = $this->post_types->course->get_product_courses( $subscription['product_id'] );
+		foreach ( $courses as $course_item ){
+			$update_course = $this->woocommerce_course_update( $course_item->ID, $order_user );
+		} // End For Loop
+	} // End sensei_woocommerce_reactivate_subscription
 
 	/**
 	 * Returns the WooCommerce Product Object for pre and post WooCommerce 2.0 installations.
