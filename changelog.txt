@@ -1,5 +1,13 @@
 *** Sensei Changelog ***
 
+2013.06.04 - version 1.3.4
+ * /classes/class-woothemes-sensei.php,
+   /classes/class-woothemes-sensei-analysis-course.php,
+   /classes/class-woothemes-sensei-analysis-lesson.php,
+   /classes/class-woothemes-sensei-frontend.php - fixes bug in completed courses logic
+ * /templates/single-course/course-lessons.php,
+   /templates/user/my-courses.php - fixes bug in completed courses logic
+
 2013.05.30 - version 1.3.3
  * /assets/css/frontend.css - fixes Twenty Twelve CSS conflict for lesson navigation next and previous links
  * /classes/class-woothemes-sensei.php - adds support for more WC subscriptions actions
