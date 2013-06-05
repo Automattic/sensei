@@ -1310,7 +1310,7 @@ class WooThemes_Sensei_Frontend {
 								    	$lesson_quiz_id = $quiz_item->ID;
 								    } // End For Loop
 								    // Quiz Grade
-									$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_item->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
+									$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
 									// Check if Grade is bigger than pass percentage
 									$lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
 									if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
@@ -1322,7 +1322,7 @@ class WooThemes_Sensei_Frontend {
 							} // End If Statement
 						} // End If Statement
 					} // End For Loop
-		    		if ( absint( $lessons_completed ) == absint( count( $course_lessons ) ) && ( 0 < absint( count( $course_lessons ) ) ) && ( 0 < absint( $lessons_completed ) ) ) {
+					if ( absint( $lessons_completed ) == absint( count( $course_lessons ) ) && ( 0 < absint( count( $course_lessons ) ) ) && ( 0 < absint( $lessons_completed ) ) ) {
 		    			// Mark course as complete
 		    			$args = array(
 										    'post_id' => $post->ID,
