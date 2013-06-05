@@ -147,6 +147,8 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 			    			$quiz_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 			    			if ( 0 < intval( $quiz_grade ) ) {
 			    				$lesson_grade = $quiz_grade . '%';
+			    			} else {
+			    				$user_lesson_end = '';
 			    			} // End If Statement
 		    			} // End If Statement
 		    			$lesson_quiz_id = $quiz_item->ID;
