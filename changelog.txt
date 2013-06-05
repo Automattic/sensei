@@ -1,13 +1,17 @@
 *** Sensei Changelog ***
 
-2013.05.28 - verion 1.3.2
+2013.05.30 - version 1.3.3
+ * /assets/css/frontend.css - fixes Twenty Twelve CSS conflict for lesson navigation next and previous links
+ * /classes/class-woothemes-sensei.php - adds support for more WC subscriptions actions
+
+2013.05.28 - version 1.3.2
  * /classes/class-woothemes-sensei-grading.php,
    /classes/class-woothemes-sensei-utils.php - Fixing grading bug that was causing grade totals to not be saved, added function for lesson_quiz_questions()
  * /classes/class-woothemes-sensei-frontend.php - Adding logic to fix message for lessons without quiz questions that have been completed
  * /classes/class-woothemes-sensei-updates.php - Adding security checks on update script loops
  * /templates/single-quiz/quiz-questions.php - Improving check for manual/auto quiz grading on front-end
 
-2013.05.27 - verion 1.3.1
+2013.05.27 - version 1.3.1
  * /classes/class-woothemes-sensei-grading.php - Fixing bug that prevented non-admin users from being graded
 
 2013.05.23 - version 1.3.0
