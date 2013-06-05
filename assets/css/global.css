@@ -48,3 +48,4 @@ div.chzn-drop { width: 254px !important; }
 div.chzn-search input { width: 246px !important; }
 /* Course Write Panel Styling */
 /* Grading */
+.wrap div.grading-notice { margin: 25px 0 0px; }
