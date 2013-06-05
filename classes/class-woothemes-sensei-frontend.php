@@ -151,7 +151,7 @@ class WooThemes_Sensei_Frontend {
 			$disable_styles = $woothemes_sensei->settings->settings[ 'styles_disable' ];
 		} // End If Statement
 		if ( ! $disable_styles ) {
-			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.3.0', 'screen' );
+			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.3.3', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
 		} // End If Statement
 
