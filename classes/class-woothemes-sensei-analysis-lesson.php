@@ -87,6 +87,8 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 			$quiz_grade = __( 'No Grade', 'woothemes-sensei' );
 			if ( 0 < intval( $lesson_grade ) ) {
 		    	$quiz_grade = $lesson_grade . '%';
+		    } else {
+		    	$lesson_end_date = '';
 		    } // End If Statement
 			// Output the users data
 			if ( isset( $lesson_start_date ) && '' != $lesson_start_date ) {

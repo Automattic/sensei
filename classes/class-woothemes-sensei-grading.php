@@ -37,6 +37,7 @@ class WooThemes_Sensei_Grading {
 			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
 			add_action( 'grading_wrapper_container', array( &$this, 'wrapper_container'  ) );
 			add_action( 'admin_init', array( &$this, 'process_grading' ) );
+			add_action( 'sensei_grading_notices', array( &$this, 'sensei_grading_notices' ) );
 		} // End If Statement
 		// Ajax functions
 		if ( is_admin() ) {
@@ -189,6 +190,7 @@ class WooThemes_Sensei_Grading {
 		$this->grading_headers( array( 'nav' => 'user_quiz' ) );
 		?><div id="poststuff" class="sensei-grading-wrap user-profile">
 				<div class="sensei-grading-main">
+					<?php do_action( 'sensei_grading_notices' ); ?>
 					<?php $sensei_grading_user_profile->display(); ?>
 				</div>
 			</div>
@@ -499,11 +501,11 @@ class WooThemes_Sensei_Grading {
 				}
 
 				if( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
-					$load_url = add_query_arg( 'user', $_POST['sensei_grade_next_learner'] );
+					$load_url = add_query_arg( array( 'action' => 'graded' ) );
 				} elseif ( isset( $_POST['_wp_http_referer'] ) ) {
-					$load_url = $_POST['_wp_http_referer'];
+					$load_url = add_query_arg( array( 'action' => 'graded' ), $_POST['_wp_http_referer'] );
 				} else {
-					$load_url = add_query_arg();
+					$load_url = add_query_arg( array( 'action' => 'graded' ) );
 				}
 
 				wp_redirect( $load_url );
@@ -529,6 +531,14 @@ class WooThemes_Sensei_Grading {
 		echo $redirect_url;
 		die();
 	}
+
+	public function sensei_grading_notices() {
+		if ( isset( $_GET['action'] ) && 'graded' == $_GET['action'] ) {
+			echo '<div class="grading-notice updated">';
+				echo '<p>' . __( 'Quiz Graded Successfully!', 'woothemes-sensei' ) . '</p>';
+			echo '</div>';
+		} // End If Statement
+    } // End sensei_grading_notices()
 
 } // End Class
 ?>

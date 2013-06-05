@@ -515,7 +515,29 @@ class WooThemes_Sensei {
 		    			// Check if Lesson is complete
     					$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
 						if ( '' != $user_lesson_end ) {
-							$lessons_completed++;
+							//Check for Passed or Completed Setting
+		                    $course_completion = $this->settings->settings[ 'course_completion' ];
+		                    if ( 'passed' == $course_completion ) {
+		                        // If Setting is Passed -> Check for Quiz Grades
+		                        $lesson_quizzes = $this->post_types->lesson->lesson_quizzes( $lesson_item->ID );
+		                        // Get Quiz ID
+		                        if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
+		                            foreach ($lesson_quizzes as $quiz_item) {
+		                                $lesson_quiz_id = $quiz_item->ID;
+		                            } // End For Loop
+		                            // Quiz Grade
+		                            $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
+		                            // Check if Grade is bigger than pass percentage
+		                            $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
+		                            if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
+		                                $lessons_completed++;
+		                                $single_lesson_complete = true;
+		                            } // End If Statement
+		                        } // End If Statement
+		                    } else {
+		                        $lessons_completed++;
+		                        $single_lesson_complete = true;
+		                    } // End If Statement;
 						} // End If Statement
 		    		} // End For Loop
 		    		// Check prerequisites
