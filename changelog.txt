@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2013.06.10 - version 1.3.5
+ * /assets/js/lesson-metadata.js - fix for true false question type selector problems
+ * /classes/class-woothemes-sensei-lesson.php - fix for true false question type selector problems
+ * /widgets/widget-woothemes-sensei-course-component.php - fix for featured courses output
+
 2013.06.04 - version 1.3.4
  * /assets/css/global.css - updated styling for grading notices
  * /classes/class-woothemes-sensei.php,

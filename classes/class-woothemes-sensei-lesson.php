@@ -592,8 +592,8 @@ class WooThemes_Sensei_Lesson {
 									break;
 									case 'boolean':
 										$html .= '<div class="question_boolean_fields">';
-					  						$html .= '<input type="radio" name="question_right_answer_boolean" value="true" '. checked( $select_question_right_answer, 'true', false ) . ' />&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
-											$html .= '<input type="radio" name="question_right_answer_boolean" value="false" '. checked( $select_question_right_answer, 'false', false ) . ' />&nbsp;&nbsp;False';
+					  						$html .= '<input type="radio" name="question_' . $question_id . '_right_answer_boolean" value="true" '. checked( $select_question_right_answer, 'true', false ) . ' />&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
+											$html .= '<input type="radio" name="question_' . $question_id . '_right_answer_boolean" value="false" '. checked( $select_question_right_answer, 'false', false ) . ' />&nbsp;&nbsp;False';
 										$html .= '</div>';
 									break;
 									case 'gap-fill':
@@ -786,7 +786,7 @@ class WooThemes_Sensei_Lesson {
 	public function enqueue_scripts() {
 		global $woothemes_sensei;
 		// Load the lessons script
-		wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.3.0' );
+		wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.3.5' );
 		wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.3.0' );
 		$translation_strings = array();
 		$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ) );
@@ -1031,7 +1031,11 @@ class WooThemes_Sensei_Lesson {
 		if ( isset( $data[ 'question_wrong_answers' ] ) && ( '' != $data[ 'question_wrong_answers' ] ) ) {
 			$question_wrong_answers = $data[ 'question_wrong_answers' ];
 		} // End If Statement
-		// Handle Boolean Fields
+		// Handle Boolean Fields - Edit
+		if ( isset( $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && ( '' != $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) ) {
+			$question_right_answer = $data[ 'question_' . $question_id . '_right_answer_boolean' ];
+		} // End If Statement
+		// Handle Boolean Fields - Add
 		if ( isset( $data[ 'question_right_answer_boolean' ] ) && ( '' != $data[ 'question_right_answer_boolean' ] ) ) {
 			$question_right_answer = $data[ 'question_right_answer_boolean' ];
 		} // End If Statement
@@ -1075,7 +1079,7 @@ class WooThemes_Sensei_Lesson {
   			// Get Quiz ID for the question
   		    $quiz_id = $data[ 'quiz_id' ];
   		    // Insert or Update the Lesson Quiz
-		    if ( 0 < $question_id ) {
+  		    if ( 0 < $question_id ) {
 		    	$post_type_args[ 'ID' ] = $question_id;
 		    	$question_id = wp_update_post($post_type_args);
 		    	update_post_meta( $question_id, '_quiz_id', $quiz_id );
