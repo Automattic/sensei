@@ -79,7 +79,9 @@ jQuery(document).ready( function($) {
 	 */
  	jQuery.fn.resetAddQuestionForm = function() {
  	    jQuery( '#add-new-question' ).find('div').children('input').each( function() {
-			jQuery(this).attr( 'value', '' );
+			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
+				jQuery(this).attr( 'value', '' );
+			} // End If Statement
 		});
 		jQuery( '#add-new-question' ).find('div').children('textarea').each( function() {
 			jQuery(this).attr( 'value', '' );
@@ -584,11 +586,11 @@ jQuery(document).ready( function($) {
 											if ( 'true' == radioValue ) {
 												trueChecked = 'checked';
 											} // End If Statement
-						 		    		outputEditForm += '<input type="radio" name="question_right_answer_boolean" value="true" ' + trueChecked + ' />&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
+						 		    		outputEditForm += '<input type="radio" name="question_' + questionId + '_right_answer_boolean" value="true" ' + trueChecked + ' />&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
 						 		    		if ( 'false' == radioValue ) {
 												falseChecked = 'checked';
 											} // End If Statement
-						 		    		outputEditForm += '<input type="radio" name="question_right_answer_boolean" value="false" ' + falseChecked + ' />&nbsp;&nbsp;False';
+						 		    		outputEditForm += '<input type="radio" name="question_' + questionId + '_right_answer_boolean" value="false" ' + falseChecked + ' />&nbsp;&nbsp;False';
 						 		    	outputEditForm += '</div>';
 									break;
 									case 'gap-fill':
@@ -724,7 +726,7 @@ jQuery(document).ready( function($) {
 		 		} // End If Statement
 				dataToPost += '&' + 'question_type' + '=' + questionType;
 				// Perform the AJAX call.
-	 			jQuery.post(
+				jQuery.post(
 	 				ajaxurl,
 	 				{
 	 					action : 'lesson_update_question',

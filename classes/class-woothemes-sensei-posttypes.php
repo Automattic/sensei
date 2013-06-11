@@ -281,7 +281,7 @@ class WooThemes_Sensei_PostTypes {
 		    'hierarchical' => false,
 		    'menu_position' => 10, // Below "Pages"
 		    'menu_icon' => esc_url( $woothemes_sensei->plugin_url . 'assets/images/icon_course_16.png' ),
-		    'supports' => array( 'title' )
+		    'supports' => array( 'title', 'custom-fields' )
 		);
 
 		register_post_type( 'question', $args );
