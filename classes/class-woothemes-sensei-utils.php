@@ -445,23 +445,23 @@ class WooThemes_Sensei_Utils {
 	 * @return integer              User's grade for question
 	 */
 	public function sensei_grade_question_auto( $question_id = 0, $answer = '', $user_id = 0 ) {
-		if( intval( $user_id ) == 0 ) {
-			global $current_user;
-			$user_id = $current_user->ID;
-		}
+        if( intval( $user_id ) == 0 ) {
+            global $current_user;
+            $user_id = $current_user->ID;
+        }
 
-		$question_grade = 0;
-		if( intval( $question_id ) > 0 ) {
-			$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-			if ( 0 == strcmp( $right_answer, $answer ) ) {
-				// TO DO: Enable custom grades for questions
-				$question_grade = 1;
-			}
-			$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
-		}
+        $question_grade = 0;
+        if( intval( $question_id ) > 0 ) {
+            $right_answer = get_post_meta( $question_id, '_question_right_answer', true );
+            if ( 0 == strcmp( $right_answer, stripslashes( $answer ) ) ) {
+                // TO DO: Enable custom grades for questions
+                $question_grade = 1;
+            }
+            $activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
+        }
 
-		return $question_grade;
-	}
+        return $question_grade;
+    }
 
 	/**
 	 * Grade question
