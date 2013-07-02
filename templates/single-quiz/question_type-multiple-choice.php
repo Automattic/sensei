@@ -31,7 +31,7 @@ $question_text = $question_item->post_title;
         $checked = '';
         $count++;
         if ( isset( $user_quizzes[ $question_item->ID ] ) && ( '' != $user_quizzes[ $question_item->ID ] ) ) {
-            $checked = checked( $question, $user_quizzes[ $question_item->ID ], false );
+            $checked = checked( $question, stripslashes( $user_quizzes[ $question_item->ID ] ), false );
         } // End If Statement ?>
         <li><input type="radio" id="<?php echo esc_attr( 'question_' . $question_item->ID ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_item->ID . ']' ); ?>" value="<?php echo esc_attr( stripslashes( $question ) ); ?>" <?php echo $checked; ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_item->ID ) . '-option-' . $count; ?>"><?php echo esc_html( stripslashes( $question ) ); ?></label></li>
     <?php } // End For Loop ?>
