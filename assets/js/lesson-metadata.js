@@ -324,8 +324,8 @@ jQuery(document).ready( function($) {
 	 			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
 	 			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
 	 			dataToPost += '&course_category' + '=' + jQuery( '#course-category-options' ).val();
-	 			dataToPost += '&course_title' + '=' + jQuery( '#course-title' ).attr( 'value' );
-	 			dataToPost += '&course_content' + '=' + jQuery( '#course-content' ).attr( 'value' );
+	 			dataToPost += '&course_title' + '=' + encodeURIComponent( jQuery( '#course-title' ).attr( 'value' ) );
+	 			dataToPost += '&course_content' + '=' + encodeURIComponent( jQuery( '#course-content' ).attr( 'value' ) );
 	 			dataToPost += '&action=add';
 	 			// Perform the AJAX call.
 	 			jQuery.post(
@@ -343,7 +343,7 @@ jQuery(document).ready( function($) {
 	 					if ( 0 < response ) {
 	 						jQuery( '#lesson-course-actions' ).show();
 							jQuery( '#lesson-course-details' ).addClass( 'hidden' );
-							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(jQuery( '#course-title' ).attr( 'value' )));
+							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text( encodeURIComponent( jQuery( '#course-title' ).attr( 'value' ) ) ) );
 							jQuery( '#lesson-course-options' ).val( response );
 							jQuery( '#lesson-course-options' ).trigger( 'liszt:updated' );
 	 					} else {
@@ -506,7 +506,7 @@ jQuery(document).ready( function($) {
 			} // End Switch Statement
 			// Handle Required Fields
 			jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).children( 'input' ).each( function() {
-	 			dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+	 			dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
  			});
 	 		// Handle Question Input Fields
 	 		var radioCount = 0;
@@ -519,15 +519,15 @@ jQuery(document).ready( function($) {
 	 					radioCount++;
 	 				} // End If Statement
  				} else {
- 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+ 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
  				} // End If Statement
 	 		});
 	 		// Handle Question Textarea Fields
 	 		if ( jQuery( '#add_question_right_answer_essay' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
-	 			dataToPost += '&' + jQuery( '#add_question_right_answer_essay' ).attr( 'name' ) + '=' + jQuery( '#add_question_right_answer_essay' ).val();
+	 			dataToPost += '&' + jQuery( '#add_question_right_answer_essay' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_essay' ).val() );
 	 		} // End If Statement
  			if ( jQuery( '#add_question_right_answer_multiline' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
- 				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + jQuery( '#add_question_right_answer_multiline' ).val();
+ 				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_multiline' ).val() );
 	 		} // End If Statement
 	 		dataToPost += '&' + 'question_type' + '=' + questionType;
 	 		// Perform the AJAX call.
@@ -670,7 +670,7 @@ jQuery(document).ready( function($) {
 	 			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 	 			dataToPost += '&action=save';
 	 			jQuery( this ).parent( 'td' ).children( 'input' ).each( function() {
-	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
 	 			});
 	 			tableRowId = jQuery( this ).parent('td').parent('tr').prev('tr').find('td:first').text();
 	 			if ( jQuery( this ).parent().find( 'input.question_type' ).val() != '' ) {
@@ -702,7 +702,7 @@ jQuery(document).ready( function($) {
 				} // End Switch Statement
 				// Handle Required Fields
 				jQuery( this ).parent().find( 'div.question_required_fields' ).children( 'input' ).each( function() {
-		 			dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+		 			dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
 	 			});
 		 		// Handle Question Input Fields
 		 		var radioCount = 0;
@@ -714,15 +714,15 @@ jQuery(document).ready( function($) {
 		 					radioCount++;
 		 				} // End If Statement
 	 				} else {
-	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
 	 				} // End If Statement
 		 		});
 		 		// Handle Question Textarea Fields
 		 		if ( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
-		 			dataToPost += '&' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val();
+		 			dataToPost += '&' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
 		 		} // End If Statement
 		 		if ( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
-		 			dataToPost += '&' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val();
+		 			dataToPost += '&' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
 		 		} // End If Statement
 				dataToPost += '&' + 'question_type' + '=' + questionType;
 				// Perform the AJAX call.
