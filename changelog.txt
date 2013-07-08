@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2013.07.05 - version 1.3.7
+ * /assets/js/lesson-metadata.js - fix for javascript removing special chars in ajax posting for question types
+ * /classes/class-woothemes-sensei-updates.php - adds hidden manual updates screen in /wp-admin/options-general.php?page=sensei-manual-update-hidden-page
+
 2013.07.01 - version 1.3.6
  * /templates/single-quiz/question_type-multiple-choice.php - handles apostrophes in answers bugfix
  * /classes/class-woothemes-sensei-utils.php - handles apostrophes in answers bugfix
