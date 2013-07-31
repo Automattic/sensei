@@ -383,16 +383,25 @@ class WooThemes_Sensei_Utils {
 		$correct_answers = 0;
 		$quiz_graded = false;
 
-		if( intval( $quiz_id ) > 0 && $submitted && intval( $total_questions ) > 0 ) {
+		if( intval( $quiz_id ) > 0 && $submitted ) {
 
 			if( $quiz_grade_type == 'auto' ) {
+				$quiz_total = 0;
 				$grade_total = 0;
 				foreach( $submitted as $question_id => $answer ) {
+					// Get total question grade
+					$question_grade_total = (int) get_post_meta( $question_id, '_question_grade', true );
+					if( ! $question_grade_total || $question_grade_total == '' ) {
+						$question_grade_total = 1;
+					}
+					$quiz_total += $question_grade_total;
+
+					// Get user question grade
 					$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $answer );
 					$grade_total += $question_grade;
 				}
 
-				$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $total_questions ), 2 ) );
+				$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
 
 				$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade );
 			}
@@ -455,7 +464,10 @@ class WooThemes_Sensei_Utils {
             $right_answer = get_post_meta( $question_id, '_question_right_answer', true );
             if ( 0 == strcmp( $right_answer, stripslashes( $answer ) ) ) {
                 // TO DO: Enable custom grades for questions
-                $question_grade = 1;
+                $question_grade = get_post_meta( $question_id, '_question_grade', true );
+                if( ! $question_grade || $question_grade == '' ) {
+                	$question_grade = 1;
+                }
             }
             $activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
         }
@@ -607,6 +619,43 @@ class WooThemes_Sensei_Utils {
 		}
 
 		return $delete_answers;
+	}
+
+	/**
+	 * Add answer notes to question
+	 * @param  integer $question_id ID of question
+	 * @param  integer $user_id     ID of user
+	 * @return boolean
+	 */
+	public function sensei_add_answer_notes( $question_id = 0, $user_id = 0, $notes = '' ) {
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			$user_id = $current_user->ID;
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
+
+		$activity_logged = false;
+
+		if( intval( $question_id ) > 0 ) {
+			$notes = base64_encode( $notes );
+			$args = array(
+							    'post_id' => $question_id,
+							    'username' => $user->user_login,
+							    'user_email' => $user->user_email,
+							    'user_url' => $user->user_url,
+							    'data' => $notes,
+							    'type' => 'sensei_answer_notes', /* FIELD SIZE 20 */
+							    'parent' => 0,
+							    'user_id' => $user_id,
+							    'action' => 'update'
+							);
+
+			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+		}
+
+		return $activity_logged;
 	}
 
 	/**

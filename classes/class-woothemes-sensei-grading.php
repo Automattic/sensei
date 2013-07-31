@@ -254,9 +254,9 @@ class WooThemes_Sensei_Grading {
 			if ( isset( $_GET['course_id'] ) ) {
 				$selected_course_id = intval( $_GET['course_id'] );
 			} // End If Statement
-			
+
 			echo '<div class="select-box">' . "\n";
-			
+
 			echo '<label>' . __( 'Select a Course to Grade', 'woothemes-sensei' ) . '</label>';
 
 			echo '<select id="grading-course-options" name="grading_course" class="widefat">' . "\n";
@@ -267,11 +267,11 @@ class WooThemes_Sensei_Grading {
 					} // End For Loop
 				} // End If Statement
 			echo '</select>' . "\n";
-			
+
 			echo '</div>' . "\n";
-			
+
 			echo '<div class="select-box">' . "\n";
-				
+
 			echo '<label id="grading-lesson-options-label">' . __( 'Select a Lesson to Grade', 'woothemes-sensei' ) . '</label>';
 
 			echo '<select id="grading-lesson-options" name="grading_lesson" class="widefat">' . "\n";
@@ -285,7 +285,7 @@ class WooThemes_Sensei_Grading {
 				} // End If Statement
 
 			echo '</select>' . "\n";
-			
+
 			echo '</div>' . "\n";
 			?>
 			</div>
@@ -478,12 +478,14 @@ class WooThemes_Sensei_Grading {
 				$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 				$quiz_grade = 0;
 				$count = 0;
+				$quiz_grade_total = $_POST['quiz_grade_total'];
 				foreach( $questions as $question ) {
 					++$count;
 					$question_id = $question->ID;
 					if( isset( $_POST[ 'question_' . $question_id ] ) ) {
 						$correct = false;
 						$question_grade = 0;
+						$question_total_grade = $_POST['question_total_grade'];
 						if( $_POST[ 'question_' . $question_id ] == 'right' ) {
 							$correct = true;
 							$question_grade = $_POST[ 'question_' . $question_id . '_grade' ];
@@ -493,10 +495,15 @@ class WooThemes_Sensei_Grading {
 					} else {
 						WooThemes_Sensei_Utils::sensei_delete_question_grade( $question_id );
 					}
+					$answer_notes = $_POST[ 'question_' . $question_id . '_notes' ];
+					if( ! $answer_notes || $answer_notes == '' ) {
+						$answer_notes = '';
+					}
+					WooThemes_Sensei_Utils::sensei_add_answer_notes( $question_id, $user_id, $answer_notes );
 				}
 
 				if( $_POST['all_questions_graded'] == 'yes' ) {
-					$quiz_percent = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $count ), 2 ) );
+					$quiz_percent = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
 					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $quiz_percent, $user_id );
 				}
 
@@ -508,7 +515,7 @@ class WooThemes_Sensei_Grading {
 					$load_url = add_query_arg( array( 'action' => 'graded' ) );
 				}
 
-				wp_redirect( $load_url );
+				wp_safe_redirect( $load_url );
 				exit;
 			}
 		}

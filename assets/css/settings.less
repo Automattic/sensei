@@ -291,7 +291,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	.question_box {
 		.clearfix;
 		&.ungraded {
-			
+
 		}
 		&.user_right {
 			.grading-mark.icon_right  {
@@ -335,8 +335,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		.right-answer {
 			border: 1px solid @border_main;
 			padding: 15px 20px;
+			margin-right: 15px;
 			background: #fff;
 			.border_radius(5px);
+			display: inline-block;
+			width: 43%;
+			vertical-align: top;
 			h5  {
 				display: inline-block;
 				border-bottom: 1px solid @border_main;
@@ -346,6 +350,26 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			}
 			.correct-answer  {
 				display: block;
+			}
+		}
+		.answer-notes {
+			border: 1px solid @border_main;
+			padding: 15px 20px;
+			background: #fff;
+			.border_radius(5px);
+			display: inline-block;
+			width: 43%;
+			vertical-align: top;
+			h5  {
+				display: inline-block;
+				border-bottom: 1px solid @border_main;
+				margin: 0 0 10px;
+				padding: 0 0 4px;
+				font-size: 14px;
+			}
+			textarea  {
+				display: block;
+				width: 100%;
 			}
 		}
 	}
@@ -406,6 +430,20 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 						}
 					}
 				}
+			}
+			.question-grade {
+				display: inline-block;
+				width: 100%;
+				text-align: center;
+				font-size: 200%;
+				margin: 10px 0;
+			}
+			.question-grade-total {
+				display: inline-block;
+				font-size: 250%;
+				border-top: 2px solid #000;
+				padding-top: 15px;
+				width: 100%;
 			}
 		}
 	}

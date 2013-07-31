@@ -1,5 +1,35 @@
 *** Sensei Changelog ***
 
+2013.8.15 - version 1.4.0
+ * /templates/user/my-courses.php - Moving courses output to global function
+ * /templates/learner-profile.php,
+   /templates/learner-profile/learner-info.php - Adding new templates to display learner profiles
+ * /templates/single-quiz/quiz-questions.php - Fixing logic for quiz grade message
+ * /templates/single-quiz/question_type-boolean.php,
+   /templates/single-quiz/question_type-essay-paste.php,
+   /templates/single-quiz/question_type-gap-fill.php,
+   /templates/single-quiz/question_type-multi-line.php,
+   /templates/single-quiz/question_type-multiple-choice.php,
+   /templates/single-quiz/question_type-single-line.php - Adding question grade and answer notes
+ * /classes/class-woothemes-sensei.php - Loading new class for learner profiles
+ * /classes/class-woothemes-sensei-course.php - Adding load_user_courses_content() to generate active/completed course data per user
+ * /classes/class-woothemes-sensei-settings.php - Adding Learner Profiles settings
+ * /classes/class-woothemes-sensei-settings-api.php - Fixing HTML labels on settings page
+ * /classes/class-woothemes-sensei-settings-learner-profiles.php - New class for managing learner profiles
+ * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points per question
+ * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing
+ * /classes/class-woothemes-sensei-grading.php,
+   /classes/class-woothemes-sensei-grading-user-quiz.php,
+   /classes/class-woothemes-sensei-lesson.php,
+   /assets/js/grading-general.js,
+   /assets/js/lesson-metadata.js,
+   /assets/js/general-frontend.js, - Adding grade points and answer notes per question
+ * /assets/settings.less,
+   /assets/settings.css - Adding styles for new grading features
+ * /assets/frontend.less,
+   /assets/frontend.css - Adding styles for learner profiles
+
+
 2013.07.05 - version 1.3.7
  * /assets/js/lesson-metadata.js - fix for javascript removing special chars in ajax posting for question types
  * /classes/class-woothemes-sensei-updates.php - adds hidden manual updates screen in /wp-admin/options-general.php?page=sensei-manual-update-hidden-page

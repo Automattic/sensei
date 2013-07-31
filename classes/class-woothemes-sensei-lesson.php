@@ -552,6 +552,10 @@ class WooThemes_Sensei_Lesson {
 						setup_postdata($question);
 						$question_id = $question->ID;
 						$question_type = 'multiple-choice';
+						$question_grade = get_post_meta( $question_id, '_question_grade', true );
+						if( ! $question_grade || $question_grade == '' ) {
+							$question_grade = 1;
+						}
 						// Get existing questions meta data
 						$select_question_right_answer = get_post_meta( $question_id, '_question_right_answer', true);
 						$select_question_wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true);
@@ -572,8 +576,14 @@ class WooThemes_Sensei_Lesson {
 							$html .= '<td colspan="4">';
 						    	// Question
 						    	$html .= '<div class="question_required_fields">';
-							    	$html .= '<label>' . __( 'Question' . ' ' . $question_counter  , 'woothemes-sensei' ) . '</label> ';
+							    	$html .= '<label>' . __( 'Question' . ' ' . $question_counter, 'woothemes-sensei' ) . '</label> ';
 	  						    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
+
+	  						    	// Question Grade
+	  						    	$html .= '<div>';
+		  						    	$html .= '<label>' . __( 'Question grade', 'woothemes-sensei' ) . '</label> ';
+		  						    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade" name="question_grade" class="short" min="1" value="' . $question_grade . '" />';
+	  						    	$html .= '</div>';
 	  						    $html .= '</div>';
   						    	switch ( $question_type ) {
 									case 'multiple-choice':
@@ -717,6 +727,11 @@ class WooThemes_Sensei_Lesson {
 						// Question
 						$html .= '<label>' . __( 'Question'  , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" />'; // V2 - additional validation on this field
+	  					// Question grade
+	  					$html .= '<p>' . "\n";
+							$html .= '<label>' . __( 'Question Grade'  , 'woothemes-sensei' ) . '</label> ';
+							$html .= '<input type="number" id="add-question-grade" name="question_grade" class="short" min="1" value="1" />' . "\n";
+						$html .= '</p>' . "\n";
 					$html .= '</div>';
 					$html .= '<div class="question_default_fields">';
 						// Right Answer
@@ -1059,6 +1074,10 @@ class WooThemes_Sensei_Lesson {
 		if ( isset( $data[ 'question_type' ] ) && ( '' != $data[ 'question_type' ] ) ) {
 			$question_type = $data[ 'question_type' ];
 		} // End If Statement
+		// Handle Question Grade
+		if ( isset( $data[ 'question_grade' ] ) && ( '' != $data[ 'question_grade' ] ) ) {
+			$question_grade = $data[ 'question_grade' ];
+		} // End If Statement
 		$post_title = $question_text;
 		$post_author = $data[ 'post_author' ];
 		$post_status = 'publish';
@@ -1083,11 +1102,13 @@ class WooThemes_Sensei_Lesson {
 		    	$post_type_args[ 'ID' ] = $question_id;
 		    	$question_id = wp_update_post($post_type_args);
 		    	update_post_meta( $question_id, '_quiz_id', $quiz_id );
+		    	update_post_meta( $question_id, '_question_grade', $question_grade );
 		    	update_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	update_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    } else {
 				$question_id = wp_insert_post($post_type_args);
 		    	add_post_meta( $question_id, '_quiz_id', $quiz_id );
+		    	add_post_meta( $question_id, '_question_grade', $question_grade );
 		    	add_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	add_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    	// Set the post terms for question-type

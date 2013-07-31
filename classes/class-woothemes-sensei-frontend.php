@@ -867,6 +867,9 @@ class WooThemes_Sensei_Frontend {
 		// Get quiz grade type
 		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
 
+		// Get quiz pass mark
+		$quiz_passmark = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
+
 		// Handle Quiz Completion
 		if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_quiz_noonce' ], 'woothemes_sensei_complete_quiz_noonce' ) ) {
 
@@ -892,8 +895,7 @@ class WooThemes_Sensei_Frontend {
 
 						// Get Lesson Grading Setting
 						if ( 'auto' == $quiz_grade_type && 'passed' == $woothemes_sensei->settings->settings[ 'lesson_completion' ] ) {
-							$lesson_prerequisite = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
-							if ( $lesson_prerequisite <= $grade ) {
+							if ( $quiz_passmark <= $grade ) {
 								// Student has reached the pass mark and lesson is complete
 								$args = array(
 												    'post_id' => $quiz_lesson,
@@ -980,6 +982,7 @@ class WooThemes_Sensei_Frontend {
 		// Build frontend data object
 		$this->data->user_quizzes = $user_quizzes;
 		$this->data->user_quiz_grade = $user_quiz_grade;
+		$this->data->quiz_passmark = $quiz_passmark;
 		$this->data->quiz_lesson = $quiz_lesson;
 		$this->data->quiz_grade_type = $quiz_grade_type;
 		$this->data->user_lesson_end = $user_lesson_end;

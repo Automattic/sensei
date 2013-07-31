@@ -530,6 +530,8 @@ jQuery(document).ready( function($) {
  				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_multiline' ).val() );
 	 		} // End If Statement
 	 		dataToPost += '&' + 'question_type' + '=' + questionType;
+	 		questionGrade = jQuery( '#add-question-grade' ).val();
+	 		dataToPost += '&' + 'question_grade' + '=' + questionGrade;
 	 		// Perform the AJAX call.
 	 		jQuery.post(
 	 		    ajaxurl,
@@ -564,6 +566,7 @@ jQuery(document).ready( function($) {
 				 		    outputEditForm += '<td colspan="3">';
 				 		    	outputEditForm += '<div class="question_required_fields">';
 				 		    		outputEditForm += '<label>Question ' + tableCount + '</label> <input type="text" id="question_' + tableCount + '" name="question" value="' + addQuestionText + '" size="25" class="widefat">';
+				 		    		outputEditForm += '<div><label>Question Grade</label> <input type="number" id="question_' + tableCount + '_grade" class="question_grade" name="question_grade" value="' + questionGrade + '" class="short" min="1"></div>';
 				 		    	outputEditForm += '</div>';
 				 		    	switch ( questionType ) {
 									case 'multiple-choice':
@@ -725,6 +728,8 @@ jQuery(document).ready( function($) {
 		 			dataToPost += '&' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
 		 		} // End If Statement
 				dataToPost += '&' + 'question_type' + '=' + questionType;
+				questionGrade = jQuery( this ).parent().find( 'input.question_grade' ).val();
+	 			dataToPost += '&' + 'question_grade' + '=' + questionGrade;
 				// Perform the AJAX call.
 				jQuery.post(
 	 				ajaxurl,

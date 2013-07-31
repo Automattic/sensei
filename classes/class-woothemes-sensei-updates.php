@@ -54,48 +54,33 @@ class WooThemes_Sensei_Updates {
 		$this->version = get_option( $this->token . '-version' );
 
 		// Manual Update Screen
-		add_action('admin_menu', array( &$this, 'manual_update_admin_screen' ) );
+		add_action('admin_menu', array( &$this, 'add_update_admin_screen' ) );
 
 	} // End __construct()
 
 	/**
-	 * manual_update_admin_screen Adds hidden screen to run manual udpates
+	 * add_update_admin_screen Adds admin screen to run manual udpates
 	 * @access public
 	 * @since  1.3.7
 	 * @return void
 	 */
-	public function manual_update_admin_screen() {
-
-		// This WordPress variable is essential: it stores which admin pages are registered to WordPress
-		global $_registered_pages;
-
-		// Get the name of the hook for this plugin
-		// We use "options-general.php" as the parent as we want our page to appear under "options-general.php?page=sensei-manual-update-hidden-page"
-		$hookname = get_plugin_page_hookname('sensei-manual-update-hidden-page', 'options-general.php');
-
-		// Add the callback via the action on $hookname, so the callback function is called when the page "options-general.php?page=sensei-manual-update-hidden-page" is loaded
-		if (!empty($hookname)) {
-			add_action($hookname, array( &$this, 'manual_update_adminpage_hidden' ) );
-		} // End If Statement
-
-		// Add this page to the registered pages
-		$_registered_pages[$hookname] = true;
-
-	} // End manual_update_admin_screen()
+	public function add_update_admin_screen() {
+		add_submenu_page( 'edit.php?post_type=lesson', 'Sensei Updates', 'Updates', 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+	} // End add_update_admin_screen()
 
 	/**
-	 * manual_update_adminpage_hidden html output for hidden manual update screen
+	 * sensei_updates_page HTML output for manual update screen
 	 * @access public
 	 * @since  1.3.7
 	 * @return void
 	 */
-	public function manual_update_adminpage_hidden() {
+	public function sensei_updates_page() {
 		// Page contents
 		?>
 
 		<div class="wrap">
 
-			<div id="icon-tools" class="icon32"><br></div>	<h2><?php _e( 'Sensei Updates', 'woothemes-sensei' ); ?></h2>
+			<div id="icon-woothemes-sensei" class="icon32"><br></div>	<h2><?php _e( 'Sensei Updates', 'woothemes-sensei' ); ?></h2>
 
 			<?php
 			if ( isset( $_GET['action'] ) && $_GET['action'] == 'update' && isset( $_GET['n'] ) && intval( $_GET['n'] ) >= 0 && ( ( isset( $_POST['checked'][0] ) && '' != $_POST['checked'][0] ) || ( isset( $_GET['functions'] ) && '' != $_GET['functions'] ) ) ) {
@@ -204,7 +189,7 @@ class WooThemes_Sensei_Updates {
 
 			<?php
 			} // End If Statement
-	}
+	} // End sensei_updates_page()
 
 	/**
 	 * update Calls the functions for updating

@@ -184,16 +184,32 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		ol#sensei-quiz-list  {
 			margin: 0 0 1.618em 0;
 			li  {
+				position: relative;
 				margin: 0 0 1.618em;
 				font-size: 1.1em;
 				> span  {
 					display: block;
 					margin: 0 0 1em;
 					font-weight: bold;
+					span {
+						float: right;
+					}
 				}
 				ul  {
+					position: relative;
+					z-index: 1;
 					margin: .53em 0;
-					li  {
+					li {
+						&.right_answer {
+							color: green;
+						}
+						&.user_right {
+							color: green;
+							font-weight: 700;
+						}
+						&.user_wrong {
+							color: red;
+						}
 						margin: 0 0 .382em;
 						font-weight: normal;
 						font-size: 0.9em;
@@ -204,6 +220,53 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 						label  {
 							vertical-align: middle;
 						}
+					}
+				}
+				.answer_message {
+					position: absolute;
+					right: 0;
+					top: 50%;
+					width: 100%;
+					z-index: 2;
+					text-align: right;
+					span {
+						text-align: right;
+					}
+					&.has_notes {
+						cursor: help;
+						span {
+							border-bottom: 1px dotted;
+						}
+					}
+					&.user_right {
+						color: green;
+						border-color: green;
+					}
+					&.user_wrong {
+						color: red;
+						border-color: red;
+					}
+					.notes {
+						display: none;
+						cursor: help;
+						z-index: 3;
+						position: absolute;
+						top: 10px;
+						right: -25%;
+						width: 50%;
+						background: #FFF;
+						border: 1px solid;
+						.border_radius();
+						padding: 10px;
+						font-size: 85%;
+						text-align: left;
+					}
+				}
+				&.essay-paste, &.gap-fill, &.multi-line, &.single-line {
+					.answer_message {
+						position: relative;
+						margin: 10px 0;
+						text-align: right;
 					}
 				}
 			}
@@ -222,7 +285,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	    &.reset  {
 	    	background: @error;
 	    }
-	}	
+	}
 }
 
 .lesson  {
@@ -255,6 +318,27 @@ section.entry span.course-price { padding-left: 10px; }
 				font-weight: normal;
 			}
 		}
+	}
+}
+
+/* Learner Profiles */
+#learner-info {
+	h2 {
+		margin: 20px 0;
+	}
+	.learner-avatar {
+		float: right;
+		width: 120px;
+	}
+	.learner-content {
+		float: left;
+		.calc_width(~"100% - 140px");
+		h2 {
+			margin-top: 0;
+		}
+	}
+	.fix {
+		clear: both;
 	}
 }
 

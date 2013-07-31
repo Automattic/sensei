@@ -445,13 +445,13 @@ class WooThemes_Sensei_Settings_API {
 		$has_description = false;
 		if ( isset( $args['data']['description'] ) ) {
 			$has_description = true;
-			echo '<label for="' . $this->token . '[' . esc_attr( $args['key'] ) . ']">' . "\n";
+			echo '<label for="' . esc_attr( $args['key'] ) . '">' . "\n";
 		}
 		echo '<input id="' . $args['key'] . '" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" type="checkbox" value="1"' . checked( esc_attr( $options[$args['key']] ), '1', false ) . ' />' . "\n";
 		if ( $has_description ) {
 			echo esc_html( $args['data']['description'] ) . '</label>' . "\n";
 		}
-	} // End form_field_text()
+	} // End form_field_checkbox()
 
 	/**
 	 * Generate textarea field.

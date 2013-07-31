@@ -90,6 +90,10 @@ class WooThemes_Sensei {
 		} // End If Statement
 		$this->settings->setup_settings();
 		$this->settings->get_settings();
+		// Load Learner Profiles Class
+		$this->load_class( 'learner-profiles' );
+		$this->learner_profiles = new WooThemes_Sensei_Learner_Profiles();
+		$this->learner_profiles->token = $this->token;
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
@@ -311,7 +315,7 @@ class WooThemes_Sensei {
 	 */
 	public function template_loader ( $template ) {
 		// REFACTOR
-		global $post;
+		global $post, $wp_query;
 
 		$find = array( 'woothemes-sensei.php' );
 		$file = '';
@@ -383,7 +387,11 @@ class WooThemes_Sensei {
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
-		} // End If Statement
+		} elseif ( isset( $wp_query->query_vars['learner_username'] ) ) {
+			$file 	= 'learner-profile.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+		}// End If Statement
 
 		// Load the template file
 		if ( $file ) {
