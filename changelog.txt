@@ -4,20 +4,26 @@
  * /templates/user/my-courses.php - Moving courses output to global function
  * /templates/learner-profile.php,
    /templates/learner-profile/learner-info.php - Adding new templates to display learner profiles
- * /templates/single-quiz/quiz-questions.php - Fixing logic for quiz grade message
+ * /templates/course-results.php,
+   /templates/course-results/course-info.php,
+   /templates/course-results/course-lessons.php - Adding new templates to display course results page
+ * /templates/single-quiz/quiz-questions.php - Moving logic for quiz grade message into utility function
  * /templates/single-quiz/question_type-boolean.php,
    /templates/single-quiz/question_type-essay-paste.php,
    /templates/single-quiz/question_type-gap-fill.php,
    /templates/single-quiz/question_type-multi-line.php,
    /templates/single-quiz/question_type-multiple-choice.php,
    /templates/single-quiz/question_type-single-line.php - Adding question grade and answer notes
- * /classes/class-woothemes-sensei.php - Loading new class for learner profiles
+ * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles and course results
+ * /classes/class-woothemes-sensei-posttypes.php - Making slugs both translatable and filterable
+ * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates
  * /classes/class-woothemes-sensei-course.php - Adding load_user_courses_content() to generate active/completed course data per user
  * /classes/class-woothemes-sensei-settings.php - Adding Learner Profiles settings
  * /classes/class-woothemes-sensei-settings-api.php - Fixing HTML labels on settings page
- * /classes/class-woothemes-sensei-settings-learner-profiles.php - New class for managing learner profiles
- * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points per question
- * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing
+ * /classes/class-woothemes-sensei-learner-profiles.php - New class for managing learner profiles
+ * /classes/class-woothemes-sensei-course-results.php - New class for managing course results pages
+ * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points as well as moving a number of operations into  functions
+ * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing and moving some operations into utility functions
  * /classes/class-woothemes-sensei-grading.php,
    /classes/class-woothemes-sensei-grading-user-quiz.php,
    /classes/class-woothemes-sensei-lesson.php,

@@ -1,8 +1,8 @@
 <?php
 /**
- * The Template for displaying the my course page data.
+ * The Template for displaying the learner profile page data.
  *
- * Override this template by copying it to yourtheme/sensei/user/my-courses.php
+ * Override this template by copying it to yourtheme/sensei/learner-profile/learner-info.php
  *
  * @author 		WooThemes
  * @package 	Sensei/Templates
@@ -15,6 +15,8 @@ global $woothemes_sensei, $post, $current_user, $wp_query, $learner_user;
 
 // Get User Meta
 get_currentuserinfo();
+
+do_action( 'sensei_complete_course' );
 
 	?>
 	<section id="learner-info" class="learner-info">

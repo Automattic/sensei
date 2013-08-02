@@ -125,7 +125,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_ui' => true,
 		    'show_in_menu' => 'edit.php?post_type=lesson',
 		    'query_var' => true,
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', 'course' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'course',
 		    // 'capabilities' => array(

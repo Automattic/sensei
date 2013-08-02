@@ -94,6 +94,10 @@ class WooThemes_Sensei {
 		$this->load_class( 'learner-profiles' );
 		$this->learner_profiles = new WooThemes_Sensei_Learner_Profiles();
 		$this->learner_profiles->token = $this->token;
+		// Load Course Results Class
+		$this->load_class( 'course-results' );
+		$this->course_results = new WooThemes_Sensei_Course_Results();
+		$this->course_results->token = $this->token;
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
@@ -388,10 +392,18 @@ class WooThemes_Sensei {
 		    $find[] = $this->template_url . $file;
 
 		} elseif ( isset( $wp_query->query_vars['learner_username'] ) ) {
+
 			$file 	= 'learner-profile.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
-		}// End If Statement
+
+		} elseif ( isset( $wp_query->query_vars['course_results_slug'] ) ) {
+
+			$file 	= 'course-results.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
+		} // End If Statement
 
 		// Load the template file
 		if ( $file ) {

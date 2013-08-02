@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class WooThemes_Sensei_Learner_Profiles {
 	private $profile_url_base;
+	public $token;
 
 	/**
 	 * Constructor.
@@ -38,13 +39,13 @@ class WooThemes_Sensei_Learner_Profiles {
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 
 		// Load content for learner profiles
-		add_action( 'sensei_learner_profile_content', array( $this, 'learner_profile_content' ), 10 );
+		add_action( 'sensei_learner_profile_content', array( $this, 'content' ), 10 );
 
 		// Load user info on learner profiles
-		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_user_info' ), 10 );
+		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_user_info' ), 10, 1 );
 
 		// Set heading for courses section of learner profiles
-		add_action( 'sensei_before_learner_course_content', array( $this, 'learner_profile_courses_heading' ), 10 );
+		add_action( 'sensei_before_learner_course_content', array( $this, 'learner_profile_courses_heading' ), 10, 1 );
 
 		// Add profile link to main navigation
 		add_filter( 'wp_nav_menu_items', array( $this, 'learner_profile_menu_item' ), 11, 2 );
@@ -71,7 +72,7 @@ class WooThemes_Sensei_Learner_Profiles {
 	 * @since  1.4.0
 	 * @return void
 	 */
-	public function learner_profile_content() {
+	public function content() {
 		global $wp_query, $woothemes_sensei, $learner_user, $current_user;
 
 		if( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) {
