@@ -56,8 +56,13 @@ if ( is_user_logged_in() ) {
         $html .= '</section>';
 
     } // End If Statement
+
+    do_action( 'sensei_course_results_before_lessons', $course->ID );
+
     // Output the HTML
     echo $html;
+
+    do_action( 'sensei_course_results_after_lessons', $course->ID );
 
 } // End If Statement
 

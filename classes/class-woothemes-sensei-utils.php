@@ -760,7 +760,7 @@ class WooThemes_Sensei_Utils {
 			$course_passmark = ( $total_passmark / $lesson_count );
 		}
 
-		return number_format( $course_passmark, 2, '.', ' ' );
+		return round( $course_passmark );
 	}
 
 	/**
@@ -802,7 +802,7 @@ class WooThemes_Sensei_Utils {
 			$total_grade = ( $total_grade / $lesson_count );
 		}
 
-		return number_format( $total_grade, 2, '.', ' ' );
+		return round( $total_grade );
 	}
 
 	/**
@@ -973,14 +973,18 @@ class WooThemes_Sensei_Utils {
 			} else {
 				$status = 'not_started';
 				$box_class = 'info';
-				$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+				if( $is_lesson ) {
+					$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+				} else {
+					$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+				}
 			}
 
 		}
 
 		$message = apply_filters( 'sensei_user_quiz_status_' . $status, $message );
 
-		if( $is_lesson ) {
+		if( $is_lesson && ! in_array( $status, array( 'login_required', 'not_started_course' ) ) ) {
 			$extra = '<a class="button" href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_view_quiz_text', __( 'View the lesson quiz', 'woothemes-sensei' ) ) ) . '">' . apply_filters( 'sensei_view_quiz_text', __( 'View the lesson quiz', 'woothemes-sensei' ) ) . '</a>';
 		}
 

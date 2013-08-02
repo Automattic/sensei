@@ -80,6 +80,8 @@ class WooThemes_Sensei_Course_Results {
 	public function course_info() {
 		global $course, $current_user;
 
+		do_action( 'sensei_course_results_top', $course->ID );
+
 		do_action( 'sensei_course_image', $course->ID );
 
         ?>
@@ -90,6 +92,8 @@ class WooThemes_Sensei_Course_Results {
         echo '<div class="woo-sc-box ' . $course_status['box_class'] . '">' . $course_status['message'] . '</div>';
 
         do_action( 'sensei_course_results_lessons', $course );
+
+        do_action( 'sensei_course_results_bottom', $course->ID );
 	}
 
 	public function course_lessons( $course ) {
