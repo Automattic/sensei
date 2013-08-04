@@ -1063,8 +1063,8 @@ class WooThemes_Sensei_Course {
 		<div id="my-courses">
 
 		    <ul>
-		    	<li><a href="#active-courses"><?php apply_filters( 'sensei_active_courses_text', __( 'Active Courses', 'woothemes-sensei' ) ); ?></a></li>
-		    	<li><a href="#completed-courses"><?php apply_filters( 'sensei_completed_courses_text', __( 'Completed Courses', 'woothemes-sensei' ) ); ?></a></li>
+		    	<li><a href="#active-courses"><?php echo apply_filters( 'sensei_active_courses_text', __( 'Active Courses', 'woothemes-sensei' ) ); ?></a></li>
+		    	<li><a href="#completed-courses"><?php echo apply_filters( 'sensei_completed_courses_text', __( 'Completed Courses', 'woothemes-sensei' ) ); ?></a></li>
 		    </ul>
 
 		    <?php do_action( 'sensei_before_active_user_courses' ); ?>
