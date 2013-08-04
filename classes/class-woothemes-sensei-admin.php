@@ -39,9 +39,87 @@ class WooThemes_Sensei_Admin {
 		add_action( 'admin_print_styles', array( &$this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( &$this, 'install_pages_output' ) );
 		add_filter( 'comments_clauses', array( &$this, 'comments_admin_filter' ), 10, 1 );
+		add_action( 'admin_menu', array( &$this, 'admin_menu' ), 10 );
+		add_action( 'menu_order', array( &$this, 'admin_menu_order' ) );
+		add_action( 'admin_head', array( &$this, 'admin_menu_highlight' ) );
+		add_action( 'admin_init', array( &$this, 'page_redirect' ) );
 
 	} // End __construct()
 
+	/**
+	 * Add items to admin menu
+	 * @since  1.4.0
+	 * @return void
+	 */
+	public function admin_menu() {
+		global $woothemes_sensei, $menu;
+		if( current_user_can( 'manage_options' ) ) {
+			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
+			$main_page = add_menu_page( __( 'Sensei', 'woothemes-sensei' ), __( 'Sensei', 'woothemes-sensei' ), 'manage_options', 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
+		}
+	}
+
+	/**
+	 * [admin_menu_order description]
+	 * @since  1.4.0
+	 * @param  array $menu_order Existing menu order
+	 * @return array 			 Modified menu order for Sensei
+	 */
+	public function admin_menu_order( $menu_order ) {
+
+		// Initialize our custom order array
+		$sensei_menu_order = array();
+
+		// Get the index of our custom separator
+		$sensei_separator = array_search( 'separator-sensei', $menu_order );
+
+		// Loop through menu order and do some rearranging
+		foreach ( $menu_order as $index => $item ) :
+
+			if ( ( ( 'sensei' ) == $item ) ) :
+				$sensei_menu_order[] = 'separator-sensei';
+				$sensei_menu_order[] = $item;
+				unset( $menu_order[$sensei_separator] );
+			elseif ( !in_array( $item, array( 'separator-sensei' ) ) ) :
+				$sensei_menu_order[] = $item;
+			endif;
+
+		endforeach;
+
+		// Return order
+		return $sensei_menu_order;
+	}
+
+	/**
+	 * Handle highlighting of admin menu items
+	 * @since 1.4.0
+	 * @return void
+	 */
+	public function admin_menu_highlight() {
+		global $menu, $submenu, $parent_file, $submenu_file, $self, $post_type, $taxonomy;
+
+		$screen = get_current_screen();
+
+		if ( $screen->base == 'post' && $post_type == 'course' ) {
+			$submenu_file = 'edit.php?post_type=course';
+			$parent_file  = 'edit.php?post_type=lesson';
+		} elseif ( $screen->base == 'edit-tags' && $taxonomy = 'course-category' ) {
+			$submenu_file = 'edit-tags.php?taxonomy=course-category&post_type=course';
+			$parent_file  = 'edit.php?post_type=lesson';
+		}
+	}
+
+	/**
+	 * Redirect Sensei menu item to Analysis page
+	 * @since  1.4.0
+	 * @return void
+	 */
+	public function page_redirect() {
+		if( isset( $_GET['page'] ) && $_GET['page'] == 'sensei' ) {
+			wp_safe_redirect( 'admin.php?page=sensei_analysis' );
+			exit;
+		}
+	}
 
 	/**
 	 * comments_admin_filter function.

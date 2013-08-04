@@ -59,8 +59,9 @@ class WooThemes_Sensei_Grading {
 	public function grading_admin_menu() {
 	    global $menu, $woocommerce;
 
-	    if ( current_user_can( 'manage_options' ) )
-	    	$analysis_page = add_submenu_page('edit.php?post_type=lesson', __('Grading', 'woothemes-sensei'),  __('Grading', 'woothemes-sensei') , 'manage_options', 'sensei_grading', array( &$this, 'grading_page' ) );
+	    if ( current_user_can( 'manage_options' ) ) {
+	    	$grading_page = add_submenu_page('sensei', __('Grading', 'woothemes-sensei'),  __('Grading', 'woothemes-sensei') , 'manage_options', 'sensei_grading', array( &$this, 'grading_page' ) );
+	    }
 
 	} // End analysis_admin_menu()
 

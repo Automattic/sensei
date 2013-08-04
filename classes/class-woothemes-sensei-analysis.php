@@ -75,7 +75,7 @@ class WooThemes_Sensei_Analysis {
 
 	    if ( current_user_can( 'manage_options' ) )
 
-	    $analysis_page = add_submenu_page('edit.php?post_type=lesson', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( &$this, 'analysis_page' ) );
+	    $analysis_page = add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( &$this, 'analysis_page' ) );
 
 	} // End analysis_admin_menu()
 

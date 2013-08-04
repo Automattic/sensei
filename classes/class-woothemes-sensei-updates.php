@@ -65,7 +65,9 @@ class WooThemes_Sensei_Updates {
 	 * @return void
 	 */
 	public function add_update_admin_screen() {
-		add_submenu_page( 'edit.php?post_type=lesson', 'Sensei Updates', 'Updates', 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+		if ( current_user_can( 'manage_options' ) ) {
+			add_submenu_page( 'sensei', 'Sensei Updates', 'Updates', 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+		}
 	} // End add_update_admin_screen()
 
 	/**

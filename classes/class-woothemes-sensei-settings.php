@@ -43,7 +43,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 	public function register_settings_screen () {
 		global $woothemes_sensei;
 		$this->settings_version = $woothemes_sensei->version; // Use the global plugin version on this settings screen.
-		$hook = add_submenu_page( 'edit.php?post_type=lesson', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
+		$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
 		$this->hook = $hook;
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {

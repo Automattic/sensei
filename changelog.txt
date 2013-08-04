@@ -14,8 +14,10 @@
    /templates/single-quiz/question_type-multi-line.php,
    /templates/single-quiz/question_type-multiple-choice.php,
    /templates/single-quiz/question_type-single-line.php - Adding question grade and answer notes
+ * /inc/woothemes-sensei-template.php - Adding text filters
  * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles and course results
- * /classes/class-woothemes-sensei-posttypes.php - Making slugs both translatable and filterable
+ * /classes/class-woothemes-sensei.php - Restructuring Sensei admin menu items
+ * /classes/class-woothemes-sensei-posttypes.php - Adding author field to post types, filters on labels and slugs and restructuring admin menu
  * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates
  * /classes/class-woothemes-sensei-course.php - Adding load_user_courses_content() to generate active/completed course data per user
  * /classes/class-woothemes-sensei-settings.php - Adding Learner Profiles settings
@@ -26,17 +28,18 @@
    /classes/class-woothemes-sensei-analysis-user-profile.php,
    /classes/class-woothemes-sensei-grading-main.php - Adding text filters
  * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points as well as moving a number of operations into functions
- * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing and moving some operations into utility functions
+ * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing, adding text filters and moving some operations into utility functions
  * /classes/class-woothemes-sensei-grading.php,
    /classes/class-woothemes-sensei-grading-user-quiz.php,
    /classes/class-woothemes-sensei-lesson.php,
    /assets/js/grading-general.js,
    /assets/js/lesson-metadata.js,
    /assets/js/general-frontend.js, - Adding grade points and answer notes per question
- * /assets/settings.less,
-   /assets/settings.css - Adding styles for new grading features
- * /assets/frontend.less,
-   /assets/frontend.css - Adding styles for learner profiles
+ * /assets/css/settings.less,
+   /assets/css/settings.css - Adding styles for new grading features
+ * /assets/css/frontend.less,
+   /assets/css/frontend.css - Adding styles for learner profiles
+ * /assets/css/global.css - Updating styles for admin menu items
 
 
 2013.07.05 - version 1.3.7
