@@ -84,7 +84,6 @@ class WooThemes_Sensei_PostTypes {
 	    global $menu;
 
 	    if ( current_user_can( 'manage_options' ) ) {
-	    	// add_menu_page( '' );
 	    	$course_category = add_submenu_page('edit.php?post_type=lesson', __('Course Categories', 'woothemes-sensei'),  __('Course Categories', 'woothemes-sensei') , 'manage_categories', 'edit-tags.php?taxonomy=course-category&post_type=course' );
 	    } // End If Statement
 
