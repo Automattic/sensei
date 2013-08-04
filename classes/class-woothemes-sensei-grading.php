@@ -430,7 +430,7 @@ class WooThemes_Sensei_Grading {
 				$html .= '<tr>';
 					$html .= '<td class="table-count hidden">Test</td>';
 						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a></td>';
-						$html .= '<td>' . __( 'Submitted for Grading', 'woothemes-sensei' ) . '</td>';
+						$html .= '<td>' . apply_filters( 'sensei_submitted_text', __( 'Submitted for Grading', 'woothemes-sensei' ) ) . '</td>';
 						$html .= '<td>' . $quiz_grade . '</td>';
 				$html .= '</tr>';
 				$to_be_graded_count++;
@@ -439,7 +439,7 @@ class WooThemes_Sensei_Grading {
 				$html .= '<tr>';
 					$html .= '<td class="table-count hidden">Test</td>';
 						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a></td>';
-						$html .= '<td>' . __( 'In Progress', 'woothemes-sensei' ) . '</td>';
+						$html .= '<td>' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</td>';
 						$html .= '<td>' . $quiz_grade . '</td>';
 				$html .= '</tr>';
 				$in_progress_count++;
@@ -448,7 +448,7 @@ class WooThemes_Sensei_Grading {
 				$html .= '<tr>';
 					$html .= '<td class="table-count hidden">Test</td>';
 						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a></td>';
-						$html .= '<td>' . __( 'Graded', 'woothemes-sensei' ) . '</td>';
+						$html .= '<td>' . apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) ) . '</td>';
 						$html .= '<td>' . $quiz_grade . '</td>';
 				$html .= '</tr>';
 				$graded_count++;

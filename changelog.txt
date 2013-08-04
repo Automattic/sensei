@@ -22,7 +22,10 @@
  * /classes/class-woothemes-sensei-settings-api.php - Fixing HTML labels on settings page
  * /classes/class-woothemes-sensei-learner-profiles.php - New class for managing learner profiles
  * /classes/class-woothemes-sensei-course-results.php - New class for managing course results pages
- * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points as well as moving a number of operations into  functions
+ * /classes/class-woothemes-sensei-analysis-course.php,
+   /classes/class-woothemes-sensei-analysis-user-profile.php,
+   /classes/class-woothemes-sensei-grading-main.php - Adding text filters
+ * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points as well as moving a number of operations into functions
  * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing and moving some operations into utility functions
  * /classes/class-woothemes-sensei-grading.php,
    /classes/class-woothemes-sensei-grading-user-quiz.php,

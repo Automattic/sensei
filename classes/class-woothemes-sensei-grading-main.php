@@ -101,7 +101,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 					$status_html = '<span class="graded">' . __( 'Graded', 'woothemes-sensei' ) . '</span>';
 					$graded_count++;
 				} elseif ( ( isset( $lesson_start_date ) && '' != $lesson_start_date ) && ( isset( $lesson_end_date ) && '' == $lesson_end_date  ) ) {
-					$status_html = '<span class="in-progress">' . __( 'In Progress', 'woothemes-sensei' ) . '</span>';
+					$status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
 					$in_progress_count++;
 				}  // End If Statement
 

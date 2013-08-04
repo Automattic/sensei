@@ -131,7 +131,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 				$title_keyword_count = substr_count( strtolower( sanitize_title( $lesson_item->post_title ) ) , strtolower( sanitize_title( $_POST['s'] ) ) );
 				} // End If Statement
 				if ( 0 < intval( $title_keyword_count ) ) {
-					$lesson_status = __( 'In Progress', 'woothemes-sensei' );
+					$lesson_status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
 					$lesson_end_date = '';
 					// Check for Lesson Start Date
 			    	$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );

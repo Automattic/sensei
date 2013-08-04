@@ -83,7 +83,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 			$title_keyword_count = substr_count( strtolower( sanitize_title( $course_item->post_title ) ) , strtolower( sanitize_title( $_POST['s'] ) ) );
 			} // End If Statement
 			if ( 0 < intval( $title_keyword_count ) ) {
-				$course_status = __( 'In Progress', 'woothemes-sensei' );
+				$course_status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
 				$course_end_date = '';
 				// Check if Course is complete
 		    	$user_course_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_course_end', 'field' => 'comment_content' ) );
