@@ -1309,9 +1309,10 @@ class WooThemes_Sensei_Frontend {
 				} // End If Statement
 				// Success message
 		   		if ( $completed_course ) { ?>
-		   			<div class="status completed"><?php _e( 'Completed', 'woothemes-sensei' ); ?></div>
+		   			<div class="status completed"><?php echo apply_filters( 'sensei_complete_text', __( 'Completed', 'woothemes-sensei' ) ); ?></div>
+		   			<div class="view-results"><a href="<?php echo $woothemes_sensei->course_results->get_permalink( $post->ID ); ?>"><?php echo apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ); ?></a></div>
 		   		<?php } else { ?>
-		    		<div class="status in-progress"><?php _e( 'In Progress', 'woothemes-sensei' ); ?></div>
+		    		<div class="status in-progress"><?php echo apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ); ?></div>
 		    	<?php } ?>
 		    <?php } else {
 		    	// Get the product ID

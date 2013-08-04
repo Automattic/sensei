@@ -16,10 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * - __construct()
  * - setup_permastruct()
- * - learner_profile_content()
- * - learner_profile_courses_heading()
- * - learner_profile_user_info()
- * - learner_profile_menu_item()
+ * - get_permalink()
+ * - content()
+ * - course_info()
+ * - course_lessons()
  */
 class WooThemes_Sensei_Course_Results {
 	private $course_results_url_base;
@@ -37,6 +37,7 @@ class WooThemes_Sensei_Course_Results {
 
 		// Setup permalink structure for course results
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
+		add_action( 'init', array( $this, 'get_permalink' ) );
 
 		// Load content for learner profiles
 		add_action( 'sensei_course_results_content', array( $this, 'content' ), 10 );
@@ -53,8 +54,32 @@ class WooThemes_Sensei_Course_Results {
 	 * @return void
 	 */
 	public function setup_permastruct() {
-		add_rewrite_rule( '^' . $this->courses_url_base . '/([^/]*)/results/?', 'index.php?course_results_slug=$matches[1]', 'top' );
-		add_rewrite_tag( '%course_results_slug%', '([^&]+)' );
+		add_rewrite_rule( '^' . $this->courses_url_base . '/([^/]*)/results/?', 'index.php?course_results=$matches[1]', 'top' );
+		add_rewrite_tag( '%course_results%', '([^&]+)' );
+	}
+
+	/**
+	 * Get permalink for course results based on course ID
+	 * @since  1.4.0
+	 * @param  integer $course_id ID of course
+	 * @return string             The course results page permalink
+	 */
+	public function get_permalink( $course_id = 0 ) {
+
+		$permalink = '';
+
+		if( $course_id > 0 ) {
+
+			$course = get_post( $course_id );
+
+			if ( get_option('permalink_structure') ) {
+				$permalink = trailingslashit( get_site_url() ) . $this->courses_url_base . '/' . $course->post_name . '/results/';
+			} else {
+				$permalink = trailingslashit( get_site_url() ) . '?course_results=' . $course->post_name;
+			}
+		}
+
+		return $permalink;
 	}
 
 	/**
@@ -65,7 +90,7 @@ class WooThemes_Sensei_Course_Results {
 	public function content() {
 		global $wp_query, $woothemes_sensei, $current_user;
 
-		if( isset( $wp_query->query_vars['course_results_slug'] ) ) {
+		if( isset( $wp_query->query_vars['course_results'] ) ) {
 			$woothemes_sensei->frontend->sensei_get_template( 'course-results/course-info.php' );
 		}
 
@@ -74,7 +99,6 @@ class WooThemes_Sensei_Course_Results {
 	/**
 	 * Load course results info
 	 * @since  1.4.0
-	 * @param  object $course Queried course object
 	 * @return void
 	 */
 	public function course_info() {
@@ -96,7 +120,12 @@ class WooThemes_Sensei_Course_Results {
         do_action( 'sensei_course_results_bottom', $course->ID );
 	}
 
-	public function course_lessons( $course ) {
+	/**
+	 * Load template for displaying course lessons
+	 * @since  1.4.0
+	 * @return void
+	 */
+	public function course_lessons() {
 		global $course, $woothemes_sensei, $current_user;
 
 		$started_course = sensei_has_user_started_course( $course->ID, $current_user->ID );

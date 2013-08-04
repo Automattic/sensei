@@ -949,6 +949,8 @@ class WooThemes_Sensei_Course {
 
 							$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
 
+							$complete_html .= '<a class="button view-results" href="' . $woothemes_sensei->course_results->get_permalink( $course_item->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+
 			    		$complete_html .= '</section>';
 
 			    	$complete_html .= '</article>';
@@ -1046,11 +1048,11 @@ class WooThemes_Sensei_Course {
 		} // End If Statement
 
 		if( $manage ) {
-			$no_active_message = apply_filters( 'sensei_no_active_courses_user', __( 'You have no active courses.', 'woothemes-sensei' ) );
-			$no_complete_message = apply_filters( 'sensei_no_complete_courses_user', __( 'You have not completed any courses yet.', 'woothemes-sensei' ) );
+			$no_active_message = apply_filters( 'sensei_no_active_courses_user_text', __( 'You have no active courses.', 'woothemes-sensei' ) );
+			$no_complete_message = apply_filters( 'sensei_no_complete_courses_user_text', __( 'You have not completed any courses yet.', 'woothemes-sensei' ) );
 		} else {
-			$no_active_message = apply_filters( 'sensei_no_active_courses_learner', __( 'This learner has no active courses.', 'woothemes-sensei' ) );
-			$no_complete_message = apply_filters( 'sensei_no_complete_courses_learner', __( 'This learner has not completed any courses yet.', 'woothemes-sensei' ) );
+			$no_active_message = apply_filters( 'sensei_no_active_courses_learner_text', __( 'This learner has no active courses.', 'woothemes-sensei' ) );
+			$no_complete_message = apply_filters( 'sensei_no_complete_courses_learner_text', __( 'This learner has not completed any courses yet.', 'woothemes-sensei' ) );
 		}
 
 		ob_start();
@@ -1061,8 +1063,8 @@ class WooThemes_Sensei_Course {
 		<div id="my-courses">
 
 		    <ul>
-		    	<li><a href="#active-courses"><?php _e( 'Active Courses', 'woothemes-sensei' ); ?></a></li>
-		    	<li><a href="#completed-courses"><?php _e( 'Completed Courses', 'woothemes-sensei' ); ?></a></li>
+		    	<li><a href="#active-courses"><?php apply_filters( 'sensei_active_courses_text', __( 'Active Courses', 'woothemes-sensei' ) ); ?></a></li>
+		    	<li><a href="#completed-courses"><?php apply_filters( 'sensei_completed_courses_text', __( 'Completed Courses', 'woothemes-sensei' ) ); ?></a></li>
 		    </ul>
 
 		    <?php do_action( 'sensei_before_active_user_courses' ); ?>

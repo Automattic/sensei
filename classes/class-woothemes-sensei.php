@@ -391,13 +391,13 @@ class WooThemes_Sensei {
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
-		} elseif ( isset( $wp_query->query_vars['learner_username'] ) ) {
+		} elseif ( isset( $wp_query->query_vars['learner_profile'] ) ) {
 
 			$file 	= 'learner-profile.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
-		} elseif ( isset( $wp_query->query_vars['course_results_slug'] ) ) {
+		} elseif ( isset( $wp_query->query_vars['course_results'] ) ) {
 
 			$file 	= 'course-results.php';
 		    $find[] = $file;

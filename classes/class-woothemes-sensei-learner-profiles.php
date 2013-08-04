@@ -62,9 +62,38 @@ class WooThemes_Sensei_Learner_Profiles {
 		$allow_public_profiles = $woothemes_sensei->settings->settings[ 'learner_profile_enable' ];
 
 		if( isset( $allow_public_profiles ) && $allow_public_profiles ) {
-			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=true&learner_username=$matches[1]', 'top' );
-			add_rewrite_tag( '%learner_username%', '([^&]+)' );
+			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
+			add_rewrite_tag( '%learner_profile%', '([^&]+)' );
 		}
+	}
+
+	/**
+	 * Get permalink for learner profile
+	 * @since  1.4.0
+	 * @param  integer $user_id ID of user
+	 * @return string           The learner profile permalink
+	 */
+	public function get_permalink( $user_id = 0 ) {
+		$user = false;
+		if( $user_id == 0 ) {
+			global $current_user;
+			wp_get_current_user();
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
+
+		$permalink = '';
+
+		if( $user ) {
+			if ( get_option('permalink_structure') ) {
+				$permalink = trailingslashit( get_site_url() ) . $this->profile_url_base . '/' . $user->user_login;
+			} else {
+				$permalink = trailingslashit( get_site_url() ) . '?learner_profile=' . $user->user_login;
+			}
+		}
+
+		return $permalink;
 	}
 
 	/**
@@ -77,10 +106,10 @@ class WooThemes_Sensei_Learner_Profiles {
 
 		if( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) {
 
-			if( isset( $wp_query->query_vars['learner_username'] ) && username_exists( $wp_query->query_vars['learner_username'] ) ) {
+			if( isset( $wp_query->query_vars['learner_profile'] ) && username_exists( $wp_query->query_vars['learner_profile'] ) ) {
 
 				// Get user object for learner
-				$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_username'] );
+				$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );
 
 				if( ! is_wp_error( $learner_user ) ) {
 					$woothemes_sensei->frontend->sensei_get_template( 'learner-profile/learner-info.php' );
@@ -149,12 +178,11 @@ class WooThemes_Sensei_Learner_Profiles {
 					// Get User Meta
 					get_currentuserinfo();
 
-					$profile_url = trailingslashit( get_site_url() ) . $this->profile_url_base . '/' . $current_user->user_login;
 					$classes = '';
-					if ( isset( $wp_query->query_vars['learner_username'] ) ) {
+					if ( isset( $wp_query->query_vars['learner_profile'] ) && $wp_query->query_vars['learner_profile'] == $current_user->user_login ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= apply_filters( 'sensei_learner_profile_menu_link', '<li class="learner-profile' . $classes . '"><a href="'. esc_url( $profile_url ) .'">' . apply_filters( 'sensei_learner_profile_menu_link_text', __( 'My Profile', 'woothemes-sensei' ) ) . '</a></li>' );
+						$items .= apply_filters( 'sensei_learner_profile_menu_link', '<li class="learner-profile' . $classes . '"><a href="'. esc_url( $this->get_permalink() ) .'">' . apply_filters( 'sensei_learner_profile_menu_link_text', __( 'My Profile', 'woothemes-sensei' ) ) . '</a></li>' );
 				} // End If Statement
 			}
 		}

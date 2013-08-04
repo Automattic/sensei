@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 global $woothemes_sensei, $course, $current_user, $wp_query;
 
-$course = get_page_by_path( $wp_query->query_vars['course_results_slug'], OBJECT, 'course' );
+$course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );
 
 // Get User Meta
 get_currentuserinfo();

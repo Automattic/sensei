@@ -1,6 +1,6 @@
 <?php
 /**
- * The Template for displaying all  course lessons on the course results page.
+ * The Template for displaying all course lessons on the course results page.
  *
  * Override this template by copying it to yourtheme/sensei/course-results/course-lessons.php
  *
