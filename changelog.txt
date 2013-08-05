@@ -24,7 +24,7 @@
  * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates
  * /classes/class-woothemes-sensei-course.php - Adding load_user_courses_content() to generate active/completed course data per user
  * /classes/class-woothemes-sensei-settings.php - Adding Learner Profiles settings
- * /classes/class-woothemes-sensei-settings-api.php - Fixing HTML labels on settings page
+ * /classes/class-woothemes-sensei-settings-api.php - Fixing HTML labels on settings page, updating settings CSS version
  * /classes/class-woothemes-sensei-learner-profiles.php - New class for managing learner profiles
  * /classes/class-woothemes-sensei-course-results.php - New class for managing course results pages
  * /classes/class-woothemes-sensei-analysis.php,
@@ -32,7 +32,7 @@
    /classes/class-woothemes-sensei-analysis-course.php,
    /classes/class-woothemes-sensei-analysis-lesson.php,
    /classes/class-woothemes-sensei-analysis-user-profile.php,
-   /classes/class-woothemes-sensei-grading-main.php - Updating layout, restructuring links and adding text filters
+   /classes/class-woothemes-sensei-grading-main.php - Updating layout, restructuring links, adding text filters and removing CSS from non-Sensei pages
  * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points as well as moving a number of operations into functions
  * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing, adding text filters and moving some operations into utility functions
  * /classes/class-woothemes-sensei-grading.php,
@@ -40,7 +40,7 @@
    /classes/class-woothemes-sensei-lesson.php,
    /assets/js/grading-general.js,
    /assets/js/lesson-metadata.js,
-   /assets/js/general-frontend.js, - Adding grade points and answer notes per question, restructuring links and adding text filters
+   /assets/js/general-frontend.js, - Adding grade points and answer notes per question, restructuring links, adding text filters and removing CSS from non-Sensei pages
  * /assets/css/settings.less,
    /assets/css/settings.css - Adding styles for new grading features
  * /assets/css/frontend.less,

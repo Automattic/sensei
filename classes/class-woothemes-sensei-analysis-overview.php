@@ -376,7 +376,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				$report_id = 'user-overview';
 			break;
 		} // End Switch Statement
-		echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'report_id' => $report_id ), admin_url( 'admin.php' ) ) . '">' . __( 'Export', 'woothemes-sensei' ) . '</a>';
+		echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'report_id' => $report_id ), admin_url( 'admin.php' ) ) . '">' . __( 'CSV Export', 'woothemes-sensei' ) . '</a>';
 	} // End data_table_header()
 
 } // End Class

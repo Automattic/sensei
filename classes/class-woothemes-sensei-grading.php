@@ -21,6 +21,7 @@ class WooThemes_Sensei_Grading {
 	public $token;
 	public $name;
 	public $file;
+	public $page_slug;
 
 	/**
 	 * Constructor
@@ -30,14 +31,18 @@ class WooThemes_Sensei_Grading {
 	public function __construct ( $file ) {
 		$this->name = 'Grading';
 		$this->file = $file;
+		$this->page_slug = 'sensei_grading';
+
 		// Admin functions
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( &$this, 'grading_admin_menu' ), 10);
-			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
 			add_action( 'grading_wrapper_container', array( &$this, 'wrapper_container'  ) );
 			add_action( 'admin_init', array( &$this, 'process_grading' ) );
 			add_action( 'sensei_grading_notices', array( &$this, 'sensei_grading_notices' ) );
+			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+				add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
+				add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+			}
 		} // End If Statement
 		// Ajax functions
 		if ( is_admin() ) {
@@ -92,7 +97,7 @@ class WooThemes_Sensei_Grading {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.3.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.4.0' );
 
 	} // End enqueue_styles()
 

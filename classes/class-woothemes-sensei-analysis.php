@@ -44,6 +44,7 @@ class WooThemes_Sensei_Analysis {
 	public $token;
 	public $name;
 	public $file;
+	public $page_slug;
 
 	/**
 	 * Constructor
@@ -53,13 +54,17 @@ class WooThemes_Sensei_Analysis {
 	public function __construct ( $file ) {
 		$this->name = 'Analysis';
 		$this->file = $file;
+		$this->page_slug = 'sensei_analysis';
+
 		// Admin functions
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( &$this, 'analysis_admin_menu' ), 10);
-			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
 			add_action( 'analysis_wrapper_container', array( &$this, 'wrapper_container'  ) );
 			add_action( 'admin_init', array( &$this, 'report_download_page' ) );
+			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+				add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
+				add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+			}
 		} // End If Statement
 	} // End __construct()
 
@@ -73,9 +78,9 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_admin_menu() {
 	    global $menu, $woocommerce;
 
-	    if ( current_user_can( 'manage_options' ) )
-
-	    $analysis_page = add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( &$this, 'analysis_page' ) );
+	    if ( current_user_can( 'manage_options' ) ) {
+	    	$analysis_page = add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( &$this, 'analysis_page' ) );
+	    }
 
 	} // End analysis_admin_menu()
 
@@ -322,7 +327,7 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.3.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.4.0' );
 
 	} // End enqueue_styles()
 
