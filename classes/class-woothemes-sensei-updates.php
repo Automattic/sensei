@@ -137,11 +137,11 @@ class WooThemes_Sensei_Updates {
 
 					<h3><?php _e( 'Processing Updates.....', 'woothemes-sensei' ); ?></h3>
 
-					<p><?php _e( 'If your browser doesn&#8217;t start loading the next page automatically, click this link:', 'woothemes-sensei' ); ?>&nbsp;&nbsp;<a class="button" href="options-general.php?page=sensei-manual-update-hidden-page&action=update&n=<?php echo ($n + 1) ?>&functions[]=<?php echo $functions_list; ?>"><?php _e( 'Next', 'woothemes-sensei' ); ?></a></p>
+					<p><?php _e( 'If your browser doesn&#8217;t start loading the next page automatically, click this link:', 'woothemes-sensei' ); ?>&nbsp;&nbsp;<a class="button" href="admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 1) ?>&functions[]=<?php echo $functions_list; ?>"><?php _e( 'Next', 'woothemes-sensei' ); ?></a></p>
 					<script type='text/javascript'>
 					<!--
 					function sensei_nextpage() {
-						location.href = "options-general.php?page=sensei-manual-update-hidden-page&action=update&n=<?php echo ($n + 1) ?>&functions[]=<?php echo $functions_list; ?>";
+						location.href = "admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 1) ?>&functions[]=<?php echo $functions_list; ?>";
 					}
 					setTimeout( "sensei_nextpage()", 250 );
 					//-->
@@ -158,7 +158,7 @@ class WooThemes_Sensei_Updates {
 				<h3><?php _e( 'Updates', 'woothemes-sensei' ); ?></h3>
 				<p><?php _e( 'The following manual updates may be run.', 'woothemes-sensei' ); ?></p>
 
-				<form method="post" action="options-general.php?page=sensei-manual-update-hidden-page&action=update&n=0" name="update-sensei" class="upgrade">
+				<form method="post" action="admin.php?page=sensei_updates&action=update&n=0" name="update-sensei" class="upgrade">
 
 					<table class="widefat" cellspacing="0" id="update-plugins-table">
 

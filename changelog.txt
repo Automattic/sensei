@@ -21,7 +21,7 @@
  * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles and course results
  * /classes/class-woothemes-sensei.php - Restructuring Sensei admin menu items
  * /classes/class-woothemes-sensei-posttypes.php - Adding author field to post types, filters on labels and slugs and restructuring admin menu
- * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates
+ * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates and restructuring links
  * /classes/class-woothemes-sensei-course.php - Adding load_user_courses_content() to generate active/completed course data per user
  * /classes/class-woothemes-sensei-settings.php - Adding Learner Profiles settings
  * /classes/class-woothemes-sensei-settings-api.php - Fixing HTML labels on settings page, updating settings CSS version
@@ -44,7 +44,7 @@
  * /assets/css/settings.less,
    /assets/css/settings.css - Adding styles for new grading features
  * /assets/css/frontend.less,
-   /assets/css/frontend.css - Adding styles for learner profiles
+   /assets/css/frontend.css - Adding styles for learner profiles and course results
  * /assets/css/global.css - Updating styles for admin menu items
 
 

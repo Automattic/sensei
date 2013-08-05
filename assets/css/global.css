@@ -15,7 +15,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /* Sensei Menu Icons */
 #toplevel_page_sensei li.wp-first-item { display: none; }
 #toplevel_page_sensei a.toplevel_page_sensei .wp-menu-image { background: url(../images/icon_sensei_16.png) no-repeat left top; width: 20px; height: 16px; margin-left: 7px; margin-top: 5px; }
-#toplevel_page_sensei a.toplevel_page_sensei:hover .wp-menu-image, #toplevel_page_sensei.wp-has-current-submenu a.toplevel_page_sensei .wp-menu-image { background-position: left -16px; }
+#toplevel_page_sensei:hover a.toplevel_page_sensei .wp-menu-image, #toplevel_page_sensei.wp-has-current-submenu a.toplevel_page_sensei .wp-menu-image { background-position: left -16px; }
 /* Course Menu Icons */
 li.menu-icon-lesson .wp-menu-image img, li.menu-icon-course .wp-menu-image img { display: none; }
 #wpwrap li.menu-icon-course div.wp-menu-image  { background: url(../images/icon_course_16.png) no-repeat left top; width: 20px; height: 16px; margin-left: 7px; margin-top: 5px; }

@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Sensei
-Plugin URI: http://woothemes.com/
+Plugin URI: http://www.woothemes.com/products/sensei/
 Description: Sensei by WooThemes is the best Learning Management System ever!
 Version: 1.4.0
 Author: WooThemes
-Author URI: http://woothemes.com/
+Author URI: http://www.woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 */
 /*  Copyright 2013  WooThemes  (email : info@woothemes.com)
