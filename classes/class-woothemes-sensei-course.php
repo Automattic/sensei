@@ -937,7 +937,7 @@ class WooThemes_Sensei_Course {
 			    		    	} // End If Statement
 
 			    		    	// Lesson count for this author
-			    		    	$complete_html .= '<span class="course-lesson-count">' . $woothemes_sensei->post_types->course->course_author_lesson_count( $course_item->post_author, absint( $course_item->ID ) ) . '&nbsp;' . __( 'Lectures', 'woothemes-sensei' ) . '</span>';
+			    		    	$complete_html .= '<span class="course-lesson-count">' . $woothemes_sensei->post_types->course->course_author_lesson_count( $course_item->post_author, absint( $course_item->ID ) ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ) . '</span>';
 			    		    	// Course Categories
 			    		    	if ( '' != $category_output ) {
 			    		    		$complete_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';
@@ -986,7 +986,7 @@ class WooThemes_Sensei_Course {
 								if ( 0 == $lesson_count ) {
 									$lesson_count = 1;
 								} // End If Statement
-			    		    	$active_html .= '<span class="course-lesson-count">' . $lesson_count . '&nbsp;' . __( 'Lectures', 'woothemes-sensei' ) . '</span>';
+			    		    	$active_html .= '<span class="course-lesson-count">' . $lesson_count . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ) . '</span>';
 			    		    	// Course Categories
 			    		    	if ( '' != $category_output ) {
 			    		    		$active_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';

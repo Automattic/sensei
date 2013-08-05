@@ -111,7 +111,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 				$course_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->course_id, 'user_id' => $user_item->ID, 'type' => 'sensei_course_end', 'field' => 'comment_date' ) );
 				// Output the users data
 				if ( isset( $course_start_date ) && '' != $course_start_date ) {
-					array_push( $return_array, array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID, 'course_id' => $this->course_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a>',
+					array_push( $return_array, array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a>',
 													'user_course_date_started' => $course_start_date,
 													'user_course_date_completed' => $course_end_date
 
@@ -159,7 +159,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 			    		$lesson_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
 			    	} // End If Statement
 			    	// Data to build table
-			    	$data_array = array( 	'lesson_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $this->user_id, 'lesson_id' => $lesson_item->ID ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$lesson_item->post_title.'</a>',
+			    	$data_array = array( 	'lesson_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $this->user_id, 'lesson_id' => $lesson_item->ID ), admin_url( 'admin.php' ) ) . '">'.$lesson_item->post_title.'</a>',
 														'lesson_started' => $lesson_start_date,
 														'lesson_completed' => $lesson_end_date,
 														'lesson_status' => $lesson_status,
@@ -247,10 +247,10 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 	public function data_table_footer() {
 		if ( isset( $_GET['user'] ) && -1 == intval( $_GET['user'] ) && isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
 			// Nothing yet
-			echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => $this->course_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">' . __( 'View Lessons in this Course', 'woothemes-sensei' ) . '</a>';
+			echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">' . __( 'View Lessons in this Course', 'woothemes-sensei' ) . '</a>';
 		} else {
 			// Nothing yet
-			echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => '-1', 'course_id' => $this->course_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">' . __( 'View Learners taking this Course', 'woothemes-sensei' ) . '</a>';
+			echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => '-1', 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">' . __( 'View Learners taking this Course', 'woothemes-sensei' ) . '</a>';
 		} // End If Statement
 	} // End data_table_footer()
 

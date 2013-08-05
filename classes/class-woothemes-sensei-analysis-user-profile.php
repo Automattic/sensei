@@ -93,7 +93,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 		    		$course_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_course_end', 'field' => 'comment_date' ) );
 		    	} // End If Statement
 
-				array_push( $return_array, array( 	'course_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $this->user_id, 'course_id' => $course_item->ID ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$course_item->post_title.'</a>',
+				array_push( $return_array, array( 	'course_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $this->user_id, 'course_id' => $course_item->ID ), admin_url( 'admin.php' ) ) . '">'.$course_item->post_title.'</a>',
 													'course_started' => $course_start_date,
 													'course_completed' => $course_end_date,
 													'course_status' => $course_status,

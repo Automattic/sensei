@@ -107,7 +107,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 				// Output the users data
 				if ( isset( $lesson_start_date ) && '' != $lesson_start_date ) {
-					array_push( $return_array, array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->display_name.'</a>',
+					array_push( $return_array, array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a>',
 													'user_status' => $status_html,
 													'user_grade' => $quiz_grade
 				 								)

@@ -235,9 +235,9 @@ class WooThemes_Sensei_Grading {
 			<h2><?php echo esc_html( $this->name ); ?><?php if ( isset( $_GET['course_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ); } ?><?php if ( isset( $_GET['lesson_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['lesson_id'] ) ); } ?></h2>
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<!-- <ul class="subsubsub">
-				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading' ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( !isset( $_GET['course_id'] ) && !isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Overview', 'woothemes-sensei' ); ?></a></li>
-				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['course_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Courses', 'woothemes-sensei' ); ?></a></li>
-				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Lessons', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading' ), admin_url( 'admin.php' ) ); ?>" <?php if ( !isset( $_GET['course_id'] ) && !isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Overview', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => -1 ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['course_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Courses', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => -1 ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Lessons', 'woothemes-sensei' ); ?></a></li>
 			</ul> -->
 			<div class="grading-selects">
 			<?php
@@ -430,7 +430,7 @@ class WooThemes_Sensei_Grading {
 				// To Be Graded
 				$html .= '<tr>';
 					$html .= '<td class="table-count hidden">Test</td>';
-						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a></td>';
+						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a></td>';
 						$html .= '<td>' . apply_filters( 'sensei_submitted_text', __( 'Submitted for Grading', 'woothemes-sensei' ) ) . '</td>';
 						$html .= '<td>' . $quiz_grade . '</td>';
 				$html .= '</tr>';
@@ -439,7 +439,7 @@ class WooThemes_Sensei_Grading {
 				// In Progress
 				$html .= '<tr>';
 					$html .= '<td class="table-count hidden">Test</td>';
-						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a></td>';
+						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a></td>';
 						$html .= '<td>' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</td>';
 						$html .= '<td>' . $quiz_grade . '</td>';
 				$html .= '</tr>';
@@ -448,7 +448,7 @@ class WooThemes_Sensei_Grading {
 				// Graded
 				$html .= '<tr>';
 					$html .= '<td class="table-count hidden">Test</td>';
-						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->user_login.'</a></td>';
+						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a></td>';
 						$html .= '<td>' . apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) ) . '</td>';
 						$html .= '<td>' . $quiz_grade . '</td>';
 				$html .= '</tr>';
@@ -533,7 +533,7 @@ class WooThemes_Sensei_Grading {
 
 		$redirect_url = '';
 		if ( 0 < $lesson_id && 0 < $course_id ) {
-			$redirect_url = add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => $lesson_id, 'course_id' => $course_id ), admin_url( 'edit.php?post_type=lesson' ) );
+			$redirect_url = add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => $lesson_id, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
 		} // End If Statement
 
 		echo $redirect_url;

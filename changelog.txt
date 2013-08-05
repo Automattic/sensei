@@ -7,6 +7,7 @@
  * /templates/course-results.php,
    /templates/course-results/course-info.php,
    /templates/course-results/course-lessons.php - Adding new templates to display course results page
+ * /templates/loop-course.php - Changing 'Lectures' to 'Lessons' and adding text filters
  * /templates/single-quiz/quiz-questions.php - Moving logic for quiz grade message into utility function
  * /templates/single-quiz/question_type-boolean.php,
    /templates/single-quiz/question_type-essay-paste.php,
@@ -15,6 +16,8 @@
    /templates/single-quiz/question_type-multiple-choice.php,
    /templates/single-quiz/question_type-single-line.php - Adding question grade and answer notes
  * /inc/woothemes-sensei-template.php - Adding text filters
+ * /widget/widget-woothemes-sensei-category-courses.php,
+   /widget/widget-woothemes-sensei-course-component.php - Changing 'Lectures' to 'Lessons' and adding text filters
  * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles and course results
  * /classes/class-woothemes-sensei.php - Restructuring Sensei admin menu items
  * /classes/class-woothemes-sensei-posttypes.php - Adding author field to post types, filters on labels and slugs and restructuring admin menu
@@ -24,9 +27,12 @@
  * /classes/class-woothemes-sensei-settings-api.php - Fixing HTML labels on settings page
  * /classes/class-woothemes-sensei-learner-profiles.php - New class for managing learner profiles
  * /classes/class-woothemes-sensei-course-results.php - New class for managing course results pages
- * /classes/class-woothemes-sensei-analysis-course.php,
+ * /classes/class-woothemes-sensei-analysis.php,
+   /classes/class-woothemes-sensei-analysis-overview.php,
+   /classes/class-woothemes-sensei-analysis-course.php,
+   /classes/class-woothemes-sensei-analysis-lesson.php,
    /classes/class-woothemes-sensei-analysis-user-profile.php,
-   /classes/class-woothemes-sensei-grading-main.php - Adding text filters
+   /classes/class-woothemes-sensei-grading-main.php - Updating layout, restructuring links and adding text filters
  * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points as well as moving a number of operations into functions
  * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing, adding text filters and moving some operations into utility functions
  * /classes/class-woothemes-sensei-grading.php,
@@ -34,7 +40,7 @@
    /classes/class-woothemes-sensei-lesson.php,
    /assets/js/grading-general.js,
    /assets/js/lesson-metadata.js,
-   /assets/js/general-frontend.js, - Adding grade points and answer notes per question
+   /assets/js/general-frontend.js, - Adding grade points and answer notes per question, restructuring links and adding text filters
  * /assets/css/settings.less,
    /assets/css/settings.css - Adding styles for new grading features
  * /assets/css/frontend.less,
