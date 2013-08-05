@@ -20,8 +20,8 @@
    /widget/widget-woothemes-sensei-course-component.php - Changing 'Lectures' to 'Lessons' & adding text filters
  * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles & course results
  * /classes/class-woothemes-sensei-admin.php - Restructuring Sensei admin menu items & fixing menu highlighting
- * /classes/class-woothemes-sensei-posttypes.php - Adding author field to post types, filters on labels & slugs & restructuring admin menu
- * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates & restructuring links
+ * /classes/class-woothemes-sensei-posttypes.php - Adding author field to post types, filters on labels and slugs & restructuring admin menu
+ * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates, restructuring links, improving updates panel & adding new update function
  * /classes/class-woothemes-sensei-course.php - Adding load_user_courses_content() to generate active/completed course data per user
  * /classes/class-woothemes-sensei-settings.php - Adding Learner Profiles settings
  * /classes/class-woothemes-sensei-settings-api.php - Fixing HTML labels on settings page, updating settings CSS version
@@ -48,6 +48,7 @@
  * /assets/css/global.css - Updating styles for admin menu items
  * /assets/css/activation.less,
    /assets/css/activation.css - Adding stylesheet to handle Sensei setup notice
+ * /assets/images/woothemes.png - Updating WooThemes logo
 
 
 2013.07.05 - version 1.3.7

@@ -139,7 +139,7 @@ class WooThemes_Sensei {
 		add_action( 'subscription_put_on-hold' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		// Run Upgrades once the WP functions have loaded
 		if ( is_admin() ) {
-			add_action( 'wp_loaded', array( $this, 'run_upgrades' ), 10 );
+			add_action( 'wp_loaded', array( $this, 'run_updates' ), 10 );
 		} // End If Statement
 	} // End __construct()
 
@@ -149,14 +149,14 @@ class WooThemes_Sensei {
 	 * @since   1.1.0
 	 * @return  void
 	 */
-	public function run_upgrades() {
+	public function run_updates() {
 		// Run updates if administrator
 		if ( current_user_can( 'manage_options' ) ) {
 			$this->load_class( 'updates' );
 			$this->updates = new WooThemes_Sensei_Updates( $this );
 			$this->updates->update();
 		} // End If Statement
-	} // End run_upgrades()
+	} // End run_updates()
 
 	/**
 	 * Setup required WooCommerce settings.
