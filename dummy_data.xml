@@ -2253,6 +2253,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:12:"Adii Pienaar";i:1;s:14:"Mark Forrester";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>Which of the Support Technicians are from Poland?</title>
@@ -2286,6 +2290,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:11:"Dan Johnson";i:1;s:15:"Daniel Espinoza";i:2;s:14:"Dwain Maralack";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2321,6 +2329,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:17:"Gerhard Potgieter";i:1;s:15:"Hugh Lashbrooke";i:2;s:12:"James Koster";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>Which of the Developers built Sensei?</title>
@@ -2354,6 +2366,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:4:{i:0;s:11:"Matty Cohen";i:1;s:15:"Hugh Lashbrooke";i:2;s:12:"James Koster";i:3;s:11:"Coen Jacobs";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2389,6 +2405,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:10:"Google.com";i:1;s:13:"Microsoft.com";i:2;s:9:"Apple.com";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>Where can you download the Sensei plugin after purchase?</title>
@@ -2422,6 +2442,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:8:"uTorrent";i:1;s:6:"iTunes";i:2;s:10:"Amazon.com";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2457,6 +2481,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:28:"Say Abracadabra 3 times fast";i:1;s:20:"Log a support ticket";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>Which box can you create a Course in?</title>
@@ -2490,6 +2518,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:20:"Lesson Pre-requisite";i:1;s:11:"Lesson Quiz";i:2;s:18:"Lesson Information";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2525,6 +2557,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:1:{i:0;s:3:"Yes";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>Where can I view the Average Grade in the WordPress admin?</title>
@@ -2558,6 +2594,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:5:"Posts";i:1;s:5:"Pages";i:2;s:7:"Widgets";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2593,6 +2633,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:7:"Magento";i:1;s:10:"VirtueMart";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>Which of the following are not required fields for our product?</title>
@@ -2626,6 +2670,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:13:"Product Title";i:1;s:15:"Product Content";i:2;s:13:"Product Price";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2662,7 +2710,7 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_value><![CDATA[a:4:{i:0;s:4:"lang";i:1;s:3:"inc";i:2;s:6:"assets";i:3;s:7:"classes";}]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>total_sales</wp:meta_key>
+			<wp:meta_key>_question_grade</wp:meta_key>
 			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
@@ -2699,6 +2747,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:9:"woothemes";i:1;s:11:"woocommerce";i:2;s:9:"templates";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>What hook runs before the loop in Sensei?</title>
@@ -2732,6 +2784,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:25:"sensei_after_main_content";i:1;s:17:"sensei_pagination";i:2;s:15:"sensei_comments";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2767,6 +2823,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:4:{i:0;s:20:"Lessons Archive Page";i:1;s:18:"Course Single Page";i:2;s:19:"Course Archive Page";i:3;s:16:"All Sensei Pages";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>What plugin is Sensei&#039;s templating structure similar to?</title>
@@ -2800,6 +2860,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:7:"WooDojo";i:1;s:9:"WooSlider";i:2;s:10:"WooTumblog";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2835,6 +2899,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:1:"G";i:1;s:1:"B";i:2;s:1:"D";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>Which strings are not required when playing a D Major Chord?</title>
@@ -2868,6 +2936,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:12:"Third String";i:1;s:13:"Second String";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2907,6 +2979,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>total_sales</wp:meta_key>
 			<wp:meta_value><![CDATA[3]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>What can happen if you hold your guitar incorrectly?</title>
@@ -2940,6 +3016,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:13:"A Record Deal";i:1;s:13:"Ripping Solos";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -2975,6 +3055,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:12:"Keep playing";i:1;s:18:"Get another guitar";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>What should you use to press the strings of your guitar?</title>
@@ -3008,6 +3092,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:24:"The pads of your fingers";i:1;s:9:"Your toes";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -3043,6 +3131,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:21:"Keep your hands loose";i:1;s:27:"Avoid unnecessary movements";i:2;s:26:"Not smothering the strings";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>What part of the guitar lies at the end of the neck?</title>
@@ -3077,6 +3169,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:3:{i:0;s:13:"The Fretboard";i:1;s:8:"The Body";i:2;s:10:"The Bridge";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>What function do tuning pegs perform?</title>
@@ -3110,6 +3206,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:1:{i:0;s:45:"Maintain correct string spacing and alignment";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -3791,6 +3891,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:8:"A hammer";i:1;s:10:"A Chainsaw";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>What part of the guitar do you adjust when tuning it?</title>
@@ -3824,6 +3928,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:13:"The Fretboard";i:1;s:8:"The Neck";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -3859,6 +3967,10 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:2:{i:0;s:6:"A coin";i:1;s:6:"A shoe";}]]></wp:meta_value>
 		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 	<item>
 		<title>Name a disadvantage of using a pick?</title>
@@ -3892,6 +4004,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:1:{i:0;s:24:"A louder, brighter sound";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -3928,7 +4044,7 @@ Use your first finger on the third string, third finger on the second string, an
 			<wp:meta_value><![CDATA[a:2:{i:0;s:14:"Hold a concert";i:1;s:15:"Record an album";}]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>total_sales</wp:meta_key>
+			<wp:meta_key>_question_grade</wp:meta_key>
 			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
@@ -3964,6 +4080,10 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
 			<wp:meta_value><![CDATA[a:1:{i:0;s:37:"A chord playing on an electric guitar";}]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_question_grade</wp:meta_key>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 </channel>

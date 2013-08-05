@@ -59,9 +59,7 @@ class WooThemes_Sensei_Learner_Profiles {
 	public function setup_permastruct() {
 		global $woothemes_sensei;
 
-		$allow_public_profiles = $woothemes_sensei->settings->settings[ 'learner_profile_enable' ];
-
-		if( isset( $allow_public_profiles ) && $allow_public_profiles ) {
+		if( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) {
 			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
 			add_rewrite_tag( '%learner_profile%', '([^&]+)' );
 		}
@@ -166,9 +164,7 @@ class WooThemes_Sensei_Learner_Profiles {
 	public function learner_profile_menu_item( $items, $args ) {
 		global $woothemes_sensei, $wp_query, $current_user;
 
-		$allow_public_profiles = $woothemes_sensei->settings->settings[ 'learner_profile_enable' ];
-
-		if( isset( $allow_public_profiles ) && $allow_public_profiles ) {
+		if( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) {
 
 			if( is_user_logged_in() ) {
 				$add_menu_item = $woothemes_sensei->settings->settings[ 'learner_profile_menu_link' ];

@@ -46,6 +46,8 @@
  * /assets/css/frontend.less,
    /assets/css/frontend.css - Adding styles for learner profiles & course results
  * /assets/css/global.css - Updating styles for admin menu items
+ * /assets/css/activation.less,
+   /assets/css/activation.css - Adding stylesheet to handle Sensei setup notice
 
 
 2013.07.05 - version 1.3.7
