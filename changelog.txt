@@ -1,27 +1,27 @@
 *** Sensei Changelog ***
 
 2013.8.15 - version 1.4.0
- * /templates/user/my-courses.php - Moving courses output to global function
  * /templates/learner-profile.php,
    /templates/learner-profile/learner-info.php - Adding new templates to display learner profiles
  * /templates/course-results.php,
    /templates/course-results/course-info.php,
    /templates/course-results/course-lessons.php - Adding new templates to display course results page
- * /templates/loop-course.php - Changing 'Lectures' to 'Lessons' and adding text filters
+ * /templates/user/my-courses.php - Moving courses output to global function
+ * /templates/loop-course.php - Changing 'Lectures' to 'Lessons' & adding text filters
  * /templates/single-quiz/quiz-questions.php - Moving logic for quiz grade message into utility function
  * /templates/single-quiz/question_type-boolean.php,
    /templates/single-quiz/question_type-essay-paste.php,
    /templates/single-quiz/question_type-gap-fill.php,
    /templates/single-quiz/question_type-multi-line.php,
    /templates/single-quiz/question_type-multiple-choice.php,
-   /templates/single-quiz/question_type-single-line.php - Adding question grade and answer notes
+   /templates/single-quiz/question_type-single-line.php - Adding question grade & answer notes
  * /inc/woothemes-sensei-template.php - Adding text filters
  * /widget/widget-woothemes-sensei-category-courses.php,
-   /widget/widget-woothemes-sensei-course-component.php - Changing 'Lectures' to 'Lessons' and adding text filters
- * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles and course results
- * /classes/class-woothemes-sensei.php - Restructuring Sensei admin menu items
- * /classes/class-woothemes-sensei-posttypes.php - Adding author field to post types, filters on labels and slugs and restructuring admin menu
- * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates and restructuring links
+   /widget/widget-woothemes-sensei-course-component.php - Changing 'Lectures' to 'Lessons' & adding text filters
+ * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles & course results
+ * /classes/class-woothemes-sensei-admin.php - Restructuring Sensei admin menu items & fixing menu highlighting
+ * /classes/class-woothemes-sensei-posttypes.php - Adding author field to post types, filters on labels & slugs & restructuring admin menu
+ * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates & restructuring links
  * /classes/class-woothemes-sensei-course.php - Adding load_user_courses_content() to generate active/completed course data per user
  * /classes/class-woothemes-sensei-settings.php - Adding Learner Profiles settings
  * /classes/class-woothemes-sensei-settings-api.php - Fixing HTML labels on settings page, updating settings CSS version
@@ -32,19 +32,19 @@
    /classes/class-woothemes-sensei-analysis-course.php,
    /classes/class-woothemes-sensei-analysis-lesson.php,
    /classes/class-woothemes-sensei-analysis-user-profile.php,
-   /classes/class-woothemes-sensei-grading-main.php - Updating layout, restructuring links, adding text filters and removing CSS from non-Sensei pages
+   /classes/class-woothemes-sensei-grading-main.php - Updating layout, restructuring links, adding text filters & removing CSS from non-Sensei pages
  * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points as well as moving a number of operations into functions
- * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing, adding text filters and moving some operations into utility functions
+ * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing, adding text filters & moving some operations into utility functions
  * /classes/class-woothemes-sensei-grading.php,
    /classes/class-woothemes-sensei-grading-user-quiz.php,
    /classes/class-woothemes-sensei-lesson.php,
    /assets/js/grading-general.js,
    /assets/js/lesson-metadata.js,
-   /assets/js/general-frontend.js, - Adding grade points and answer notes per question, restructuring links, adding text filters and removing CSS from non-Sensei pages
+   /assets/js/general-frontend.js, - Adding grade points & answer notes per question, restructuring links, adding text filters & removing CSS from non-Sensei pages
  * /assets/css/settings.less,
    /assets/css/settings.css - Adding styles for new grading features
  * /assets/css/frontend.less,
-   /assets/css/frontend.css - Adding styles for learner profiles and course results
+   /assets/css/frontend.css - Adding styles for learner profiles & course results
  * /assets/css/global.css - Updating styles for admin menu items
 
 

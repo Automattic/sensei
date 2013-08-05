@@ -49,6 +49,9 @@ class WooThemes_Sensei_Updates {
 								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type', 'set_default_question_type' ),
 													'manual' 	=> array( 'update_question_answer_data' )
 												),
+								'1.4.0' => array( 	'auto' 		=> array( 'update_question_grade_points' ),
+													'manual' 	=> array()
+												),
 							);
 		$this->legacy = apply_filters( 'sensei_upgrade_functions', $this->legacy, $this->legacy );
 		$this->version = get_option( $this->token . '-version' );
@@ -82,7 +85,8 @@ class WooThemes_Sensei_Updates {
 
 		<div class="wrap">
 
-			<div id="icon-woothemes-sensei" class="icon32"><br></div>	<h2><?php _e( 'Sensei Updates', 'woothemes-sensei' ); ?></h2>
+			<div id="icon-woothemes-sensei" class="icon32"><br></div>
+			<h2><?php _e( 'Sensei Updates', 'woothemes-sensei' ); ?></h2>
 
 			<?php
 			if ( isset( $_GET['action'] ) && $_GET['action'] == 'update' && isset( $_GET['n'] ) && intval( $_GET['n'] ) >= 0 && ( ( isset( $_POST['checked'][0] ) && '' != $_POST['checked'][0] ) || ( isset( $_GET['functions'] ) && '' != $_GET['functions'] ) ) ) {
@@ -164,22 +168,24 @@ class WooThemes_Sensei_Updates {
 
 						<thead>
 							<tr>
-								<th scope="col" class="manage-column check-column"><input type="checkbox" id="plugins-select-all"></th>
 								<th scope="col" class="manage-column"><label for="plugins-select-all"><?php _e( 'Select All', 'woothemes-sensei' ); ?></label></th>
 							</tr>
 						</thead>
 
 						<tfoot>
 							<tr>
-								<th scope="col" class="manage-column check-column"><input type="checkbox" id="plugins-select-all-2"></th>
 								<th scope="col" class="manage-column"><label for="plugins-select-all-2"><?php _e( 'Select All', 'woothemes-sensei' ); ?></label></th>
 							</tr>
 						</tfoot>
 
 						<tbody class="plugins">
 							<tr class="active">
-								<th scope="row" class="check-column"><input type="checkbox" name="checked[]" value="update_question_answer_data"></th>
-								<td><p><strong><?php _e( 'Update Question Answer Data', 'woothemes-sensei' ); ?></strong><br><?php _e( 'Runs through all Learners data and updates the answers from the old quiz types system to the new question types system.', 'woothemes-sensei' ); ?><br><em><?php _e( 'Originally run in v1.3.0', 'woothemes-sensei' ); ?></em></p></td>
+								<td>
+									<p>
+										<input type="hidden" name="checked[]" value="update_question_answer_data">
+										<strong><?php _e( 'Update Question Answer Data', 'woothemes-sensei' ); ?></strong><br><?php _e( 'Runs through all Learners data and updates the answers from the old quiz types system to the new question types system.', 'woothemes-sensei' ); ?><br><em><?php _e( 'Originally run in v1.3.0', 'woothemes-sensei' ); ?></em>
+									</p>
+								</td>
 							</tr>
 						</tbody>
 

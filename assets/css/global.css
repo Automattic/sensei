@@ -37,10 +37,10 @@ li.menu-icon-question .wp-menu-image a img { display: none; }
 #wpwrap li.menu-icon-question.current div.wp-menu-image, #wpwrap li.menu-icon-question:hover div.wp-menu-image, #wpwrap li.menu-icon-question.wp-has-current-submenu div.wp-menu-image  { background-position: left -16px; }
 #icon-woothemes-sensei, #icon-post.icon32-posts-question, #icon-edit.icon32-posts-question { background: transparent url(../images/icon_course_32.png) no-repeat left top; }
 /* Page icons */
-.sensei_page_sensei_grading #icon-woothemes-sensei { background: transparent url(../images/icon_grading_32.png) no-repeat left top; }
-.sensei_page_sensei_analysis #icon-woothemes-sensei { background: transparent url(../images/icon_analysis_32.png) no-repeat left top; }
-.sensei_page_sensei_updates #icon-woothemes-sensei { background: transparent url(../images/icon_updates_32.png) no-repeat left top; }
-.sensei_page_woothemes-sensei-settings #icon-woothemes-sensei { background: transparent url(../images/icon_settings_32.png) no-repeat left top; }
+.sensei_page_sensei_grading #icon-woothemes-sensei { background: transparent url(../images/icon_sensei_32.png) no-repeat left top; }
+.sensei_page_sensei_analysis #icon-woothemes-sensei { background: transparent url(../images/icon_sensei_32.png) no-repeat left top; }
+.sensei_page_sensei_updates #icon-woothemes-sensei { background: transparent url(../images/icon_sensei_32.png) no-repeat left top; }
+.sensei_page_woothemes-sensei-settings #icon-woothemes-sensei { background: transparent url(../images/icon_sensei_32.png) no-repeat left top; }
 /* Lesson Write Panel Styling */
 a.lesson_course_cancel { text-decoration: underline; }
 a.lesson_question_cancel { text-decoration: underline; }
