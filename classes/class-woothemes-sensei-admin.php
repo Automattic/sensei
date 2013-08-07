@@ -103,7 +103,7 @@ class WooThemes_Sensei_Admin {
 		if ( $screen->base == 'post' && $post_type == 'course' ) {
 			$submenu_file = 'edit.php?post_type=course';
 			$parent_file  = 'edit.php?post_type=lesson';
-		} elseif ( $screen->base == 'edit-tags' && $taxonomy = 'course-category' ) {
+		} elseif ( $screen->base == 'edit-tags' && $taxonomy == 'course-category' ) {
 			$submenu_file = 'edit-tags.php?taxonomy=course-category&post_type=course';
 			$parent_file  = 'edit.php?post_type=lesson';
 		}
