@@ -248,29 +248,30 @@ class WooThemes_Sensei_Updates {
 	 */
 	public function update ( $type = 'auto' ) {
 		// Run through all functions
-		foreach ( $this->updates as $key => $value ) {
-			if ( !in_array( $key, $this->updates_run ) ) {
-				// Run the update function
-				foreach ( $this->updates[$key] as $upgrade_type => $function_to_run ) {
+		foreach ( $this->updates as $version => $value ) {
+			foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
+				if ( $upgrade_type == $type ) {
 					$updated = false;
+					// Run the update function
 					foreach ( $function_to_run as $function_name => $update_data ) {
 						if ( isset( $function_name ) && '' != $function_name ) {
-							if ( $upgrade_type == $type && method_exists( $this, $function_name ) ) {
-								$updated = call_user_func( array( $this, $function_name ) );
-							} elseif( $upgrade_type == $type && function_exists( $function_name ) ) {
-								$updated = call_user_func( $function_name );
-							} else {
-								// Nothing to see here...
-							} // End If Statement
+							if ( ! in_array( $function_name, $this->updates_run ) ) {
+								$updated = false;
+								if ( method_exists( $this, $function_name ) ) {
+									$updated = call_user_func( array( $this, $function_name ) );
+								} elseif( function_exists( $function_name ) ) {
+									$updated = call_user_func( $function_name );
+								} else {
+									// Nothing to see here...
+								} // End If Statement
+								if ( $updated ) {
+									array_push( $this->updates_run, $function_name );
+								} // End If Statement
+							}
 						} // End If Statement
 					} // End For Loop
-					// If successful
-					if ( $updated ) {
-						array_push( $this->updates_run, $key );
-						flush_rewrite_rules();
-					} // End If Statement
-				} // End For Loop
-			} // End If Statement
+				} // End If Statement
+			} // End For Loop
 		} // End For Loop
 		update_option( $this->token . '-upgrades', $this->updates_run );
 		return true;
@@ -346,6 +347,7 @@ class WooThemes_Sensei_Updates {
 			update_post_meta( $quiz->ID, '_quiz_grade_type', 'auto' );
 			update_post_meta( $quiz->ID, '_quiz_grade_type_disabled', '' );
 		}
+		return true;
 	} // End set_default_quiz_grade_type
 
 	/**
@@ -366,6 +368,7 @@ class WooThemes_Sensei_Updates {
 		foreach( $questions as $question ) {
 			wp_set_post_terms( $question->ID, array( $question_type ), 'question-type' );
 		}
+		return true;
 	} // End set_default_question_type
 
 	/**
@@ -486,6 +489,7 @@ class WooThemes_Sensei_Updates {
 		foreach( $questions as $question ) {
 			update_post_meta( $question->ID, '_question_grade', '1' );
 		}
+		return true;
 	} // End update_question_grade_points
 
 } // End Class
