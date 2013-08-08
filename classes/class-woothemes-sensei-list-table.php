@@ -204,9 +204,10 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	    $ret = array();
 	    reset( $array );
 	    foreach ( $array as $ii => $va ) {
-	        $sorter[$ii] = $va[$key];
+	    	// Remove HTML tags for proper sorting
+	        $sorter[$ii] = strip_tags( $va[$key] );
 	    } // End For Loop
-	    asort( $sorter );
+	    natcasesort( $sorter );
 	    foreach ( $sorter as $ii => $va ) {
 	        $ret[$ii] = $array[$ii];
 	    } // End For Loop
