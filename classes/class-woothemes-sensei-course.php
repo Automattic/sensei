@@ -949,7 +949,9 @@ class WooThemes_Sensei_Course {
 
 							$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
 
-							$complete_html .= '<a class="button view-results" href="' . $woothemes_sensei->course_results->get_permalink( $course_item->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+							if( $manage ) {
+								$complete_html .= '<a class="button view-results" href="' . $woothemes_sensei->course_results->get_permalink( $course_item->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+							}
 
 			    		$complete_html .= '</section>';
 
