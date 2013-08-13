@@ -638,6 +638,8 @@ class WooThemes_Sensei_Frontend {
                                     );
                     $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 
+                    do_action( 'sensei_user_lesson_start', $current_user->ID, $post->ID );
+
 		            // Save Quiz Grade
 	                $args = array(
 	                                    'post_id' => $lesson_quiz_id,
@@ -651,6 +653,10 @@ class WooThemes_Sensei_Frontend {
 	                                    'action' => 'update'
 	                                );
 	                $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+	                $quiz_passmark = absint( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) );
+	                do_action( 'sensei_user_quiz_grade', $current_user->ID, $lesson_quiz_id, $grade, $quiz_passmark );
+
 	                // Get Lesson Grading Setting
 	                if ( $activity_logged && 'passed' == $woothemes_sensei->settings->settings[ 'lesson_completion' ] ) {
 	                    $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
@@ -667,6 +673,9 @@ class WooThemes_Sensei_Frontend {
 	                                            'user_id' => $current_user->ID
 	                                        );
 	                        $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+	                        do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
+
 	                    } // End If Statement
 	                } elseif ($activity_logged) {
 	                    // Mark lesson as complete
@@ -681,6 +690,9 @@ class WooThemes_Sensei_Frontend {
 	                                        'user_id' => $current_user->ID
 	                                    );
 	                    $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+	                    do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
+
 	                } // End If Statement
 		            break;
 		        case apply_filters( 'sensei_reset_lesson_text', __( 'Reset Lesson', 'woothemes-sensei' ) ):
@@ -748,6 +760,9 @@ class WooThemes_Sensei_Frontend {
 							    		    'user_id' => $current_user->ID
 							    		);
 							$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+							do_action( 'sensei_user_lesson_start', $current_user->ID, $lesson_item->ID );
+
 		    				// Mark lesson as complete
 							$args = array(
 							    		    'post_id' => $lesson_item->ID,
@@ -760,6 +775,8 @@ class WooThemes_Sensei_Frontend {
 							    		    'user_id' => $current_user->ID
 							    		);
 							$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+							do_action( 'sensei_user_lesson_end', $current_user->ID, $lesson_item->ID );
 
 							if ( $activity_logged ) {
 								// Lesson Quiz Meta
@@ -778,10 +795,16 @@ class WooThemes_Sensei_Frontend {
 										    		    'user_id' => $current_user->ID
 										    		);
 										$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+										$quiz_passmark = absint( get_post_meta( $quiz_item->ID, '_quiz_passmark', true ) );
+										do_action( 'sensei_user_quiz_grade', $current_user->ID, $quiz_item->ID, 100, $quiz_passmark );
+
 									} // End For Loop
 								} // End If Statement
 							} // End If Statement
 						} // End For Loop
+
+						do_action( 'sensei_user_course_end', $current_user->ID, $post->ID );
 		    		} // End If Statement
 
 					// Success message
@@ -908,6 +931,9 @@ class WooThemes_Sensei_Frontend {
 												    'user_id' => $current_user->ID
 												);
 								$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+								do_action( 'sensei_user_lesson_end', $current_user->ID, $quiz_lesson );
+
 							} // End If Statement
 						} else {
 							// Mark lesson as complete
@@ -922,6 +948,9 @@ class WooThemes_Sensei_Frontend {
 							    			    'user_id' => $current_user->ID
 							    			);
 							$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+							do_action( 'sensei_user_lesson_end', $current_user->ID, $quiz_lesson );
+
 						} // End If Statement
 					} else {
 						// Something broke
@@ -1232,6 +1261,8 @@ class WooThemes_Sensei_Frontend {
 			$this->data->is_user_taking_course = false;
 			if ( $activity_logged ) {
 				$this->data->is_user_taking_course = true;
+
+				do_action( 'sensei_user_course_start', $current_user->ID, $post->ID );
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_course_start()

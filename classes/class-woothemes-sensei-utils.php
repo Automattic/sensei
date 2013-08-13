@@ -411,7 +411,7 @@ class WooThemes_Sensei_Utils {
 	} // End sensei_grade_quiz_auto()
 
 	/**
-	 * Grade question
+	 * Grade quiz
 	 * @param  integer $quiz_id ID of quiz
 	 * @param  integer $grade   Grade received
 	 * @param  integer $user_id ID of user being graded
@@ -442,6 +442,9 @@ class WooThemes_Sensei_Utils {
 							);
 
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
+			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark );
 		}
 
 		return $activity_logged;
@@ -563,6 +566,8 @@ class WooThemes_Sensei_Utils {
 							);
 
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
 		}
 
 		return $activity_logged;
