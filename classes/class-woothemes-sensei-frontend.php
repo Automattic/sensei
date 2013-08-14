@@ -989,7 +989,12 @@ class WooThemes_Sensei_Frontend {
 
 		    } // End Switch Statement
 
-			// Get latest quiz answers and grades
+		    // Refresh page to avoid re-posting
+			?>
+		    <script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
+		    <?php
+
+		    // Get latest quiz answers and grades
 			$user_quizzes = $this->sensei_get_user_quiz_answers( $post->ID );
 		    $user_quiz_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 			if ( '' == $user_quiz_grade ) {
