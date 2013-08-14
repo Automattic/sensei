@@ -35,7 +35,7 @@
    /classes/class-woothemes-sensei-analysis-lesson.php,
    /classes/class-woothemes-sensei-analysis-user-profile.php,
    /classes/class-woothemes-sensei-grading-main.php - Updating layout, restructuring links, adding text filters & removing CSS from non-Sensei pages
- * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points as well as moving a number of operations into functions
+ * /classes/class-woothemes-sensei-utils.php - Numerous changes for grade points, moving a number of operations into functions and some minor bug fixes
  * /classes/class-woothemes-sensei-frontend.php - Adding extra info for question processing, adding text filters & moving some operations into utility functions
  * /classes/class-woothemes-sensei-list-table.php - Fixing sorting of primary columns
  * /classes/class-woothemes-sensei-grading.php,

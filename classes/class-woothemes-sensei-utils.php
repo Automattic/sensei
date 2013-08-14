@@ -323,7 +323,8 @@ class WooThemes_Sensei_Utils {
 			'teeny' => false,
 			'dfw' => false,
 			'tinymce' => array(
-				'theme_advanced_buttons1' => $buttons
+				'theme_advanced_buttons1' => $buttons,
+				'theme_advanced_buttons2' => ''
 			),
 			'quicktags' => false
 		);
