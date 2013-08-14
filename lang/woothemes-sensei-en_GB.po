@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Sensei v1.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-08-13 09:21:33+0000\n"
+"PO-Revision-Date: 2013-08-14 05:03:07+0000\n"
 "Last-Translator: Hugh <hugh@woothemes.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -255,7 +255,7 @@ msgstr ""
 #: classes/class-woothemes-sensei-course.php:991
 #: classes/class-woothemes-sensei-frontend.php:341
 #: classes/class-woothemes-sensei-frontend.php:368
-#: classes/class-woothemes-sensei-frontend.php:1089
+#: classes/class-woothemes-sensei-frontend.php:1118
 #: classes/class-woothemes-sensei-grading.php:245
 #: classes/class-woothemes-sensei-posttypes.php:401
 #: classes/class-woothemes-sensei-settings.php:76
@@ -766,11 +766,6 @@ msgstr ""
 msgid "Add Nav Menu Links"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:121
-#@ woothemes-sensei
-msgid "Enabling this will add menu links for the Courses and My Courses pages, the Lesson Archive page, and a Login/Logout link."
-msgstr ""
-
 #: classes/class-woothemes-sensei-settings.php:128
 #@ woothemes-sensei
 msgid "Course Archive Page"
@@ -1153,21 +1148,21 @@ msgstr ""
 msgid "Start taking this Course"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:1128
-#: classes/class-woothemes-sensei-frontend.php:1163
+#: classes/class-woothemes-sensei-frontend.php:1157
+#: classes/class-woothemes-sensei-frontend.php:1192
 #@ woothemes-sensei
 msgid "No courses found which match your selection."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:1136
+#: classes/class-woothemes-sensei-frontend.php:1165
 #@ woothemes-sensei
 msgid "No lessons found which match your selection."
 msgstr ""
 
 #: classes/class-woothemes-sensei-course.php:936
 #: classes/class-woothemes-sensei-course.php:983
-#: classes/class-woothemes-sensei-frontend.php:1087
-#: classes/class-woothemes-sensei-frontend.php:1203
+#: classes/class-woothemes-sensei-frontend.php:1116
+#: classes/class-woothemes-sensei-frontend.php:1232
 #: templates/loop-course.php:67
 #: templates/loop-course.php:123
 #: widgets/widget-woothemes-sensei-category-courses.php:198
@@ -1182,14 +1177,14 @@ msgstr ""
 msgid "Lessons Archive"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:1206
+#: classes/class-woothemes-sensei-frontend.php:1235
 #: widgets/widget-woothemes-sensei-lesson-component.php:210
 #, php-format
 #@ woothemes-sensei
 msgid "Part of: %s"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:1206
+#: classes/class-woothemes-sensei-frontend.php:1235
 #: widgets/widget-woothemes-sensei-lesson-component.php:210
 #@ woothemes-sensei
 msgid "View course"
@@ -1245,7 +1240,7 @@ msgstr ""
 
 #: classes/class-woothemes-sensei-analysis-course.php:134
 #: classes/class-woothemes-sensei-analysis-user-profile.php:86
-#: classes/class-woothemes-sensei-frontend.php:1315
+#: classes/class-woothemes-sensei-frontend.php:1346
 #: classes/class-woothemes-sensei-grading-main.php:104
 #: classes/class-woothemes-sensei-grading.php:448
 #: templates/single-course/course-lessons.php:105
@@ -1253,20 +1248,20 @@ msgstr ""
 msgid "In Progress"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:1351
+#: classes/class-woothemes-sensei-frontend.php:1382
 #, php-format
 #@ woothemes-sensei
 msgid "You have already added this Course to your cart. Please %1$s to access the course."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:1351
+#: classes/class-woothemes-sensei-frontend.php:1382
 #@ woothemes-sensei
 msgid "complete the purchase"
 msgstr ""
 
 #: classes/class-woothemes-sensei-analysis-overview.php:53
 #: classes/class-woothemes-sensei-analysis-overview.php:68
-#: classes/class-woothemes-sensei-frontend.php:1312
+#: classes/class-woothemes-sensei-frontend.php:1343
 #: classes/class-woothemes-sensei-settings.php:107
 #@ woothemes-sensei
 msgid "Completed"
@@ -1274,12 +1269,12 @@ msgstr ""
 
 #: classes/class-woothemes-sensei-frontend.php:595
 #: classes/class-woothemes-sensei-frontend.php:597
-#: classes/class-woothemes-sensei-utils.php:929
+#: classes/class-woothemes-sensei-utils.php:934
 #@ woothemes-sensei
 msgid "Sign Up"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:1070
+#: classes/class-woothemes-sensei-frontend.php:1099
 #@ woothemes-sensei
 msgid "View the Lesson Quiz"
 msgstr ""
@@ -1306,30 +1301,30 @@ msgstr ""
 msgid "Back to the course"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:882
-#: classes/class-woothemes-sensei-frontend.php:1187
+#: classes/class-woothemes-sensei-frontend.php:905
+#: classes/class-woothemes-sensei-frontend.php:1216
 #@ woothemes-sensei
 msgid "Complete Quiz"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:931
-#: classes/class-woothemes-sensei-frontend.php:1188
+#: classes/class-woothemes-sensei-frontend.php:960
+#: classes/class-woothemes-sensei-frontend.php:1217
 #@ woothemes-sensei
 msgid "Save Quiz"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:939
+#: classes/class-woothemes-sensei-frontend.php:968
 #@ woothemes-sensei
 msgid "Quiz Saved Successfully."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:942
-#: classes/class-woothemes-sensei-frontend.php:1191
+#: classes/class-woothemes-sensei-frontend.php:971
+#: classes/class-woothemes-sensei-frontend.php:1220
 #@ woothemes-sensei
 msgid "Reset Quiz"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:955
+#: classes/class-woothemes-sensei-frontend.php:984
 #@ woothemes-sensei
 msgid "Quiz Reset Successfully."
 msgstr ""
@@ -1345,24 +1340,24 @@ msgid "Back to the lesson"
 msgstr ""
 
 #: classes/class-woothemes-sensei-course.php:1023
-#: classes/class-woothemes-sensei-frontend.php:716
+#: classes/class-woothemes-sensei-frontend.php:728
 #@ woothemes-sensei
 msgid "Mark as Complete"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:789
+#: classes/class-woothemes-sensei-frontend.php:812
 #, php-format
 #@ woothemes-sensei
 msgid "%1$s marked as complete."
 msgstr ""
 
 #: classes/class-woothemes-sensei-course.php:1036
-#: classes/class-woothemes-sensei-frontend.php:793
+#: classes/class-woothemes-sensei-frontend.php:816
 #@ woothemes-sensei
 msgid "Delete Course"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:824
+#: classes/class-woothemes-sensei-frontend.php:847
 #, php-format
 #@ woothemes-sensei
 msgid "%1$s deleted."
@@ -1515,18 +1510,18 @@ msgid "This will disable the error notice when a Lesson has no Quiz on the Lesso
 msgstr ""
 
 #: classes/class-woothemes-sensei-frontend.php:623
-#: classes/class-woothemes-sensei-frontend.php:1044
+#: classes/class-woothemes-sensei-frontend.php:1073
 #@ woothemes-sensei
 msgid "Complete Lesson"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:686
+#: classes/class-woothemes-sensei-frontend.php:698
 #: inc/woothemes-sensei-template.php:476
 #@ woothemes-sensei
 msgid "Reset Lesson"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:697
+#: classes/class-woothemes-sensei-frontend.php:709
 #@ woothemes-sensei
 msgid "Lesson Reset Successfully."
 msgstr ""
@@ -1629,7 +1624,7 @@ msgstr ""
 
 #: classes/class-woothemes-sensei-course.php:943
 #: classes/class-woothemes-sensei-course.php:994
-#: classes/class-woothemes-sensei-frontend.php:1091
+#: classes/class-woothemes-sensei-frontend.php:1120
 #: templates/loop-course.php:71
 #: templates/loop-course.php:127
 #, php-format
@@ -1825,27 +1820,27 @@ msgstr ""
 msgid "No items found."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:1226
+#: classes/class-woothemes-sensei-frontend.php:1255
 #: classes/class-woothemes-sensei.php:483
 #@ woothemes-sensei
 msgid "Course started by the user"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:725
-#: classes/class-woothemes-sensei-frontend.php:1296
+#: classes/class-woothemes-sensei-frontend.php:737
+#: classes/class-woothemes-sensei-frontend.php:1327
 #@ woothemes-sensei
 msgid "Course completed by the user"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:664
-#: classes/class-woothemes-sensei-frontend.php:905
+#: classes/class-woothemes-sensei-frontend.php:670
+#: classes/class-woothemes-sensei-frontend.php:928
 #@ woothemes-sensei
 msgid "Lesson completed and passed by the user"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:678
-#: classes/class-woothemes-sensei-frontend.php:757
-#: classes/class-woothemes-sensei-frontend.php:919
+#: classes/class-woothemes-sensei-frontend.php:687
+#: classes/class-woothemes-sensei-frontend.php:772
+#: classes/class-woothemes-sensei-frontend.php:945
 #@ woothemes-sensei
 msgid "Lesson completed by the user"
 msgstr ""
@@ -1885,8 +1880,8 @@ msgid "Please sign up for the %1$s before starting this Quiz."
 msgstr ""
 
 #: classes/class-woothemes-sensei-frontend.php:634
-#: classes/class-woothemes-sensei-frontend.php:745
-#: classes/class-woothemes-sensei-utils.php:559
+#: classes/class-woothemes-sensei-frontend.php:757
+#: classes/class-woothemes-sensei-utils.php:562
 #@ woothemes-sensei
 msgid "Lesson started by the user"
 msgstr ""
@@ -2168,13 +2163,13 @@ msgstr ""
 msgid "Answer:"
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:969
+#: classes/class-woothemes-sensei-utils.php:974
 #, php-format
 #@ woothemes-sensei
 msgid "You have completed this quiz and it will be graded soon. You require %1$d%% to pass."
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:948
+#: classes/class-woothemes-sensei-utils.php:953
 #, php-format
 #@ woothemes-sensei
 msgid "Congratulations! You have passed this quiz achieving %d%%"
@@ -2197,7 +2192,7 @@ msgid "course"
 msgstr ""
 
 #: classes/class-woothemes-sensei-course.php:953
-#: classes/class-woothemes-sensei-frontend.php:1313
+#: classes/class-woothemes-sensei-frontend.php:1344
 #@ woothemes-sensei
 msgid "View results"
 msgstr ""
@@ -2364,12 +2359,6 @@ msgstr ""
 msgid "Add menu link"
 msgstr ""
 
-#: classes/class-woothemes-sensei-settings.php:414
-#, php-format
-#@ woothemes-sensei
-msgid "Add a '%s' link to the main navigation."
-msgstr ""
-
 #: classes/class-woothemes-sensei-updates.php:93
 #@ woothemes-sensei
 msgid "Sensei Updates"
@@ -2390,76 +2379,76 @@ msgstr ""
 msgid "Updates"
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:848
+#: classes/class-woothemes-sensei-utils.php:853
 #@ woothemes-sensei
 msgid "You have not started this course yet."
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:862
+#: classes/class-woothemes-sensei-utils.php:867
 #, php-format
 #@ woothemes-sensei
 msgid "You have passed this course with a grade of %1$d%%."
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:866
+#: classes/class-woothemes-sensei-utils.php:871
 #, php-format
 #@ woothemes-sensei
 msgid "You require %1$d%% to pass this course. Your grade is %2$d%%."
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:891
+#: classes/class-woothemes-sensei-utils.php:896
 #@ woothemes-sensei
 msgid "You have not taken this lesson's quiz yet"
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:929
+#: classes/class-woothemes-sensei-utils.php:934
 #, php-format
 #@ woothemes-sensei
 msgid "Please sign up for %1$the course%2$s before taking this quiz"
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:935
+#: classes/class-woothemes-sensei-utils.php:940
 #@ woothemes-sensei
 msgid "You must be logged in to take this quiz"
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:946
+#: classes/class-woothemes-sensei-utils.php:951
 #, php-format
 #@ woothemes-sensei
 msgid "Congratulations! You have passed this lesson's quiz achieving %d%%"
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:956
+#: classes/class-woothemes-sensei-utils.php:961
 #, php-format
 #@ woothemes-sensei
 msgid "You require %1$d%% to pass this lesson's quiz. Your grade is %2$d%%"
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:958
+#: classes/class-woothemes-sensei-utils.php:963
 #, php-format
 #@ woothemes-sensei
 msgid "You require %1$d%% to pass this quiz. Your grade is %2$d%%"
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:967
+#: classes/class-woothemes-sensei-utils.php:972
 #, php-format
 #@ woothemes-sensei
 msgid "You have completed this lesson's quiz and it will be graded soon. %2$sView the lesson quiz%2$s"
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:977
+#: classes/class-woothemes-sensei-utils.php:982
 #, php-format
 #@ woothemes-sensei
 msgid "You require %1$d%% to pass this lesson's quiz."
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:979
+#: classes/class-woothemes-sensei-utils.php:984
 #, php-format
 #@ woothemes-sensei
 msgid "You require %1$d%% to pass this quiz."
 msgstr ""
 
-#: classes/class-woothemes-sensei-utils.php:988
+#: classes/class-woothemes-sensei-utils.php:993
 #@ woothemes-sensei
 msgid "View the lesson quiz"
 msgstr ""
@@ -2556,5 +2545,16 @@ msgstr ""
 #: classes/class-woothemes-sensei-updates.php:212
 #@ woothemes-sensei
 msgid "Run Update"
+msgstr ""
+
+#: classes/class-woothemes-sensei-settings.php:121
+#@ woothemes-sensei
+msgid "Enabling this will add menu links for the Courses and My Courses pages, the Lesson Archive page, and a Login/Logout link. This will only work if you have a custom menu enabled."
+msgstr ""
+
+#: classes/class-woothemes-sensei-settings.php:414
+#, php-format
+#@ woothemes-sensei
+msgid "Add a '%s' link to the main navigation. This will only work if you have a custom menu enabled."
 msgstr ""
 

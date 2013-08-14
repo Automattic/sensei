@@ -118,7 +118,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		$fields['menu_items'] = array(
 								'name' => __( 'Add Nav Menu Links', 'woothemes-sensei' ),
-								'description' => __( 'Enabling this will add menu links for the Courses and My Courses pages, the Lesson Archive page, and a Login/Logout link.', 'woothemes-sensei' ),
+								'description' => __( 'Enabling this will add menu links for the Courses and My Courses pages, the Lesson Archive page, and a Login/Logout link. This will only work if you have a custom menu enabled.', 'woothemes-sensei' ),
 								'type' => 'checkbox',
 								'default' => true,
 								'section' => 'default-settings'
@@ -411,7 +411,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		$fields['learner_profile_menu_link'] = array(
 							'name' => __( 'Add menu link', 'woothemes-sensei' ),
-							'description' => sprintf( __( 'Add a \'%s\' link to the main navigation.', 'woothemes-sensei' ), apply_filters( 'sensei_learner_profile_menu_link_text', __( 'My Profile', 'woothemes-sensei' ) ) ) ,
+							'description' => sprintf( __( 'Add a \'%s\' link to the main navigation. This will only work if you have a custom menu enabled.', 'woothemes-sensei' ), apply_filters( 'sensei_learner_profile_menu_link_text', __( 'My Profile', 'woothemes-sensei' ) ) ) ,
 							'type' => 'checkbox',
 							'default' => false,
 							'section' => 'learner-profile-settings'
