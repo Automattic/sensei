@@ -116,7 +116,7 @@ class WooThemes_Sensei_Updates {
 						} // End If Statement
 
 						// Mark update has having been run
-						$this->has_update_run( $value );
+						$this->set_update_run( $value );
 
 					} // End For Loop
 
@@ -144,7 +144,7 @@ class WooThemes_Sensei_Updates {
 
 				} // End If Statement
 
-				if ( !$done_processing ) { ?>
+				if ( ! $done_processing ) { ?>
 
 					<h3><?php _e( 'Processing Updates......', 'woothemes-sensei' ); ?></h3>
 
@@ -299,6 +299,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	private function set_update_run( $update ) {
 		array_push( $this->updates_run, $update );
+		update_option( $this->token . '-upgrades', $this->updates_run );
 	}
 
 	/**
@@ -309,7 +310,6 @@ class WooThemes_Sensei_Updates {
 	 * @return void
 	 */
 	public function assign_role_caps() {
-		$success = false;
 		foreach ( $this->parent->post_types->role_caps as $role_cap_set  ) {
 			foreach ( $role_cap_set as $role_key => $capabilities_array ) {
 				/* Get the role. */
@@ -319,13 +319,12 @@ class WooThemes_Sensei_Updates {
 					if ( !empty( $role ) ) {
 						if ( !$role->has_cap( $cap_name ) ) {
 							$role->add_cap( $cap_name );
-							$success = true;
 						} // End If Statement
 					} // End If Statement
 				} // End For Loop
 			} // End For Loop
 		} // End For Loop
-		return $success;
+		return true;
 	} // End assign_role_caps
 
 	/**
@@ -335,7 +334,7 @@ class WooThemes_Sensei_Updates {
 	 * @access public
 	 * @return void
 	 */
-	public function set_default_quiz_grade_type( $n = 5, $offset = 0 ) {
+	public function set_default_quiz_grade_type() {
 		$args = array(	'post_type' 		=> 'quiz',
 						'numberposts' 		=> -1,
 						'post_status'		=> 'publish',
@@ -357,7 +356,7 @@ class WooThemes_Sensei_Updates {
 	 * @access public
 	 * @return void
 	 */
-	public function set_default_question_type( $n = 5, $offset = 0 ) {
+	public function set_default_question_type() {
 		$args = array(	'post_type' 		=> 'question',
 						'numberposts' 		=> -1,
 						'post_status'		=> 'publish',
@@ -459,11 +458,6 @@ class WooThemes_Sensei_Updates {
 			}
 		}
 
-		// Mark update as complete
-		if ( $current_page == $total_pages ) {
-			add_option( 'sensei_question_answer_data_update', true );
-		} // End If Statement
-
 		if ( $current_page == $total_pages ) {
 			return true;
 		} else {
@@ -478,7 +472,7 @@ class WooThemes_Sensei_Updates {
 	 * @since  1.4.0
 	 * @return void
 	 */
-	public function update_question_grade_points( $force = false, $n = 5, $offset = 0 ) {
+	public function update_question_grade_points() {
 		$args = array(	'post_type' 		=> 'question',
 						'numberposts' 		=> -1,
 						'post_status'		=> 'publish',
