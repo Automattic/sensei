@@ -15,7 +15,9 @@
    /templates/single-quiz/question_type-multi-line.php,
    /templates/single-quiz/question_type-multiple-choice.php,
    /templates/single-quiz/question_type-single-line.php - Adding question grade & answer notes
- * /inc/woothemes-sensei-template.php - Adding text filters
+ * /templates/content-single-course.php,
+   /templates/content-single-lesson.php - Allowing site admins to view all content
+ * /inc/woothemes-sensei-template.php - Adding sensei_all_access() function and text filters
  * /widget/widget-woothemes-sensei-category-courses.php,
    /widget/widget-woothemes-sensei-course-component.php - Changing 'Lectures' to 'Lessons' & adding text filters
  * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles & course results

@@ -930,7 +930,7 @@ class WooThemes_Sensei_Utils {
 
 				$status = 'not_started_course';
 				$box_class = 'info';
-				$message = sprintf( __( 'Please sign up for %1$the course%2$s before taking this quiz', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">', '</a>' );
+				$message = sprintf( __( 'Please sign up for %1$sthe course%2$s before taking this quiz', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">', '</a>' );
 
 			} elseif ( ! is_user_logged_in() ) {
 

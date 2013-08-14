@@ -597,7 +597,7 @@ class WooThemes_Sensei {
 				$lesson_id = get_post_meta( $post->ID, '_quiz_lesson',true );
 				$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course',true );
 				$update_course = $this->woocommerce_course_update( $lesson_course_id  );
-				if ( $this->access_settings() && WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) {
+				if ( ( $this->access_settings() && WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) || sensei_all_access() ) {
 					// Check for prerequisite lesson for this quiz
 					$lesson_prerequisite_id = get_post_meta( $lesson_id, '_lesson_prerequisite', true);
 					$user_lesson_prerequisite_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite_id, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
@@ -606,12 +606,16 @@ class WooThemes_Sensei {
 						$user_lesson_prerequisite_complete = true;
 					} // End If Statement
 					// Handle restrictions
-					if ( 0 < absint( $lesson_prerequisite_id ) && ( !$user_lesson_prerequisite_complete ) ) {
-						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
-						$lesson_link = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
-						$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this Quiz.', 'woothemes-sensei' ), $lesson_link );
-					} else {
+					if( sensei_all_access() ) {
 						$user_allowed = true;
+					} else {
+						if ( 0 < absint( $lesson_prerequisite_id ) && ( !$user_lesson_prerequisite_complete ) ) {
+							$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
+							$lesson_link = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
+							$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this Quiz.', 'woothemes-sensei' ), $lesson_link );
+						} else {
+							$user_allowed = true;
+						} // End If Statement
 					} // End If Statement
 				} elseif( $this->access_settings() ) {
 					// Check if the user has started the course
@@ -650,6 +654,9 @@ class WooThemes_Sensei {
 	 * @return void
 	 */
 	public function access_settings () {
+
+		if( sensei_all_access() ) return true;
+
 		if ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) {
         	if ( is_user_logged_in() ) {
         		return true;

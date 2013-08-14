@@ -546,4 +546,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         } // End If Statement
 	} // End sensei_no_quiz_message()
 
+	function sensei_all_access() {
+		$access = false;
+		if( current_user_can( 'manage_options' ) ) {
+			$access = true;
+		}
+		return apply_filters( 'sensei_all_access', $access );
+	} // End sensei_all_access()
+
 ?>
