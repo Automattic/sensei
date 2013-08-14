@@ -465,8 +465,7 @@ class WooThemes_Sensei_Utils {
         $question_grade = 0;
         if( intval( $question_id ) > 0 ) {
             $right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-            if ( 0 == strcmp( $right_answer, stripslashes( $answer ) ) ) {
-                // TO DO: Enable custom grades for questions
+            if ( 0 == strcmp( $right_answer, $answer ) ) {
                 $question_grade = get_post_meta( $question_id, '_question_grade', true );
                 if( ! $question_grade || $question_grade == '' ) {
                 	$question_grade = 1;
