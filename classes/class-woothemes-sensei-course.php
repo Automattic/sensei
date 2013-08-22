@@ -1019,7 +1019,7 @@ class WooThemes_Sensei_Course {
 
 				    				$active_html .= '<input type="hidden" name="course_complete_id" id="course-complete-id" value="' . esc_attr( absint( $course_item->ID ) ) . '" />';
 
-				    				if ( 0 < absint( count( $course_lessons ) ) ) {
+				    				if ( 0 < absint( count( $course_lessons ) ) && $woothemes_sensei->settings->settings['lesson_completion'] == 'complete' && $woothemes_sensei->settings->settings['course_completion'] == 'complete' ) {
 				    					$active_html .= '<span><input name="course_complete" type="submit" class="course-complete" value="' . apply_filters( 'sensei_mark_as_complete_text', __( 'Mark as Complete', 'woothemes-sensei' ) ) . '"/></span>';
 				    				} // End If Statement
 

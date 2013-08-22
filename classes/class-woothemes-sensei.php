@@ -643,6 +643,11 @@ class WooThemes_Sensei {
 				break;
 
 		} // End Switch Statement
+
+		if( sensei_all_access() ) {
+			$user_allowed = true;
+		}
+
 		return apply_filters( 'sensei_access_permissions', $user_allowed );
 	} // End get_placeholder_image()
 
