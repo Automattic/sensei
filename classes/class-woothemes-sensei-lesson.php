@@ -88,6 +88,8 @@ class WooThemes_Sensei_Lesson {
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 		// Add JS scripts
 		add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
+		// Add CSS
+		add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
 	} // End meta_box_setup()
 
 
@@ -809,6 +811,18 @@ class WooThemes_Sensei_Lesson {
 		// V2 - Specify variables to be made available to the lesson-metadata.js file.
 		wp_localize_script( 'woosensei-lesson-metadata', 'woo_localized_data', $data );
 	} // End enqueue_scripts()
+
+	/**
+	 * Load in CSS styles where necessary.
+	 *
+	 * @access public
+	 * @since  1.4.0
+	 * @return void
+	 */
+	public function enqueue_styles () {
+		global $woothemes_sensei;
+		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.4.0' );
+	} // End enqueue_styles()
 
 	/**
 	 * Add column headings to the "lesson" post list screen.

@@ -1013,6 +1013,8 @@ class WooThemes_Sensei_Frontend {
 
 		} // End If Statement
 
+		$this->data = new stdClass();
+
 		// Build frontend data object
 		$this->data->user_quizzes = $user_quizzes;
 		$this->data->user_quiz_grade = $user_quiz_grade;
