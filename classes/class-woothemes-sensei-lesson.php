@@ -435,7 +435,9 @@ class WooThemes_Sensei_Lesson {
 			$posts_array = $this->lesson_quizzes( $post->ID, 'any' );
 
 		} // End If Statement
-		// Set Quiz ID
+		// Set Quiz data
+		$quiz_grade_type = false;
+		$quiz_grade_type_disabled = false;
 		if ( $posts_array ) {
 			foreach ( $posts_array as $quiz ) {
 				setup_postdata($quiz);
