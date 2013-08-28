@@ -137,6 +137,8 @@ class WooThemes_Sensei {
 		add_action( 'subscription_end_of_prepaid_term' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'cancelled_subscription' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'subscription_put_on-hold' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
+		// Filster comments
+		add_filter( 'wp_count_comments', array( &$this, 'sensei_count_comments' ), 10, 2 );
 		// Run Upgrades once the WP functions have loaded
 		if ( is_admin() ) {
 			add_action( 'wp_loaded', array( $this, 'run_updates' ), 10 );
@@ -881,6 +883,52 @@ class WooThemes_Sensei {
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_activate_subscription()
+
+	/**
+	 * Filtering wp_count_comments to ensure that Sensei comments are ignored
+	 * @since   1.4.0
+	 * @access  public
+	 * @param  array   $comments
+	 * @param  integer $post_id
+	 * @return array
+	 */
+	public function sensei_count_comments( $comments, $post_id ) {
+		global $wpdb;
+
+		$post_id = (int) $post_id;
+
+		$count = wp_cache_get("comments-{$post_id}", 'counts');
+
+		if ( false !== $count )
+			return $count;
+
+		$where = "WHERE comment_type NOT LIKE 'sensei%'";
+		if ( $post_id > 0 )
+			$where .= $wpdb->prepare( " AND comment_post_ID = %d", $post_id );
+
+		$count = $wpdb->get_results( "SELECT comment_approved, COUNT( * ) AS num_comments FROM {$wpdb->comments} {$where} GROUP BY comment_approved", ARRAY_A );
+
+		$total = 0;
+		$approved = array('0' => 'moderated', '1' => 'approved', 'spam' => 'spam', 'trash' => 'trash', 'post-trashed' => 'post-trashed');
+		foreach ( (array) $count as $row ) {
+			// Don't count post-trashed toward totals
+			if ( 'post-trashed' != $row['comment_approved'] && 'trash' != $row['comment_approved'] )
+				$total += $row['num_comments'];
+			if ( isset( $approved[$row['comment_approved']] ) )
+				$stats[$approved[$row['comment_approved']]] = $row['num_comments'];
+		}
+
+		$stats['total_comments'] = $total;
+		foreach ( $approved as $key ) {
+			if ( empty($stats[$key]) )
+				$stats[$key] = 0;
+		}
+
+		$stats = (object) $stats;
+		wp_cache_set("comments-{$post_id}", $stats, 'counts');
+
+		return $stats;
+	}
 
 } // End Class
 ?>
