@@ -415,8 +415,8 @@ class WooThemes_Sensei_PostTypes {
 	 */
 	private function create_post_type_labels ( $token, $singular, $plural, $menu ) {
 		$labels = array(
-		    'name' => sprintf( _x( '%s', $token . 'post type general name', 'woothemes-sensei' ), $plural ),
-		    'singular_name' => sprintf( _x( '%s', $token . 'post type singular name', 'woothemes-sensei' ), $singular ),
+		    'name' => sprintf( _x( '%s', 'post type general name', 'woothemes-sensei' ), $plural ),
+		    'singular_name' => sprintf( _x( '%s', 'post type singular name', 'woothemes-sensei' ), $singular ),
 		    'add_new' => _x( 'Add New', $token, 'woothemes-sensei' ),
 		    'add_new_item' => sprintf( __( 'Add New %s', 'woothemes-sensei' ), $singular ),
 		    'edit_item' => sprintf( __( 'Edit %s', 'woothemes-sensei' ), $singular ),
