@@ -1304,6 +1304,7 @@ class WooThemes_Sensei_Lesson {
 			} // End If Statement
 		} // End If Statement
 
+		$img_url = '';
 		if ( has_post_thumbnail( $lesson_id ) ) {
    			// Get Featured Image
    			$img_url = get_the_post_thumbnail( $lesson_id, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
