@@ -169,11 +169,48 @@ class WooThemes_Sensei {
 	public function set_woocommerce_functionality() {
 		// Disable guest checkout as we need a valid user to store data for
 		update_option( 'woocommerce_enable_guest_checkout', false );
+		// This filter will replace the above line once it is implemented in WooCommerce
+		add_filter( 'woocommerce_enable_guest_checkout', array( $this, 'disable_guest_checkout' ), 10, 1 );
 
 		// Make orders with virtual products to complete rather then stay processing
 		add_filter( 'woocommerce_payment_complete_order_status', array( $this, 'virtual_order_payment_complete' ), 10, 2 );
 
 	} // End set_woocommerce_functionality()
+
+	/**
+	 * Disable guest checkout if a course product is in the cart
+	 * @param  boolean $guest_checkout Current guest checkout setting
+	 * @return boolean                 Modified guest checkout setting
+	 */
+	public function disable_guest_checkout( $guest_checkout ) {
+		global $woocommerce;
+
+		if( isset( $woocommerce->cart->cart_contents ) && count( $woocommerce->cart->cart_contents ) > 0 ) {
+			foreach( $woocommerce->cart->cart_contents as $cart_key => $product ) {
+				if( isset( $product['product_id'] ) ) {
+					$args = array(
+						'posts_per_page' => -1,
+						'post_type' => 'course',
+						'meta_query' => array(
+							array(
+								'key' => '_course_woocommerce_product',
+								'value' => $product['product_id']
+							)
+						)
+					);
+					$posts = get_posts( $args );
+					if( $posts && count( $posts ) > 0 ) {
+						foreach( $posts as $course ) {
+							$guest_checkout = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		return $guest_checkout;
+	}
 
 	/**
 	 * Change order status with virtual products to completed

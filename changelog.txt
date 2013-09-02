@@ -21,7 +21,7 @@
  * /inc/woothemes-sensei-template.php - Adding sensei_all_access() function and text filters
  * /widget/widget-woothemes-sensei-category-courses.php,
    /widget/widget-woothemes-sensei-course-component.php - Changing 'Lectures' to 'Lessons' & adding text filters
- * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles & course results
+ * /classes/class-woothemes-sensei.php - Loading new classes for learner profiles & course results and adding function to dynamically disable guest checkout (pending WooCommerce update)
  * /classes/class-woothemes-sensei-admin.php - Restructuring Sensei admin menu items & fixing menu highlighting
  * /classes/class-woothemes-sensei-posttypes.php - Adding author field to post types, filters on labels and slugs & restructuring admin menu
  * /classes/class-woothemes-sensei-updates.php - Adding admin menu page for manual updates, restructuring links, refactoring updates panel & adding new update function
