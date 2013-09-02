@@ -17,6 +17,7 @@
    /templates/single-quiz/question_type-single-line.php - Adding question grade & answer notes
  * /templates/content-single-course.php,
    /templates/content-single-lesson.php - Allowing site admins to view all content
+ * /templates/woocommerce/add-to-cart.php - Fixing purchase course button to work with variable subscriptions
  * /inc/woothemes-sensei-template.php - Adding sensei_all_access() function and text filters
  * /widget/widget-woothemes-sensei-category-courses.php,
    /widget/widget-woothemes-sensei-course-component.php - Changing 'Lectures' to 'Lessons' & adding text filters

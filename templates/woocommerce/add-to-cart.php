@@ -40,7 +40,11 @@ if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user
                             <input type="hidden" name="variation_id" value="<?php echo $product->variation_id; ?>" />
                             <input type="hidden" name="product_id" value="<?php echo esc_attr( $product->id ); ?>" />
                             <input type="hidden" name="quantity" value="1" />
-                            <input type="hidden" name="attribute_package" id="package" value="<?php echo $product->variation_data['attribute_package']; ?>" />
+                            <?php if( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 1 ) { ?>
+                                <?php foreach( $product->variation_data as $att => $val ) { ?>
+                                    <input type="hidden" name="<?php echo esc_attr( $att ); ?>" id="<?php echo esc_attr( str_replace( 'attribute_', '', $att ) ); ?>" value="<?php echo esc_attr( $val ); ?>" />
+                                <?php } ?>
+                            <?php } ?>
                         <?php } ?>
                         <button type="submit" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></button>
                     <?php } // End If Statement ?>
