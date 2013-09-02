@@ -96,7 +96,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			break;
 		} // End Switch Statement
 		// Actions
-		add_action( 'sensei_before_list_table', array( &$this, 'data_table_header' ) );
+		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 	} // End __construct()
 
 	/**

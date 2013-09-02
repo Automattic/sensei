@@ -35,14 +35,14 @@ class WooThemes_Sensei_Admin {
 	 */
 	public function __construct () {
 
-		add_action( 'admin_enqueue_scripts', array( &$this, 'admin_styles_global' ) );
-		add_action( 'admin_print_styles', array( &$this, 'admin_notices_styles' ) );
-		add_action( 'settings_before_form', array( &$this, 'install_pages_output' ) );
-		add_filter( 'comments_clauses', array( &$this, 'comments_admin_filter' ), 10, 1 );
-		add_action( 'admin_menu', array( &$this, 'admin_menu' ), 10 );
-		add_action( 'menu_order', array( &$this, 'admin_menu_order' ) );
-		add_action( 'admin_head', array( &$this, 'admin_menu_highlight' ) );
-		add_action( 'admin_init', array( &$this, 'page_redirect' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_styles_global' ) );
+		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
+		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
+		add_filter( 'comments_clauses', array( $this, 'comments_admin_filter' ), 10, 1 );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
+		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
+		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
+		add_action( 'admin_init', array( $this, 'page_redirect' ) );
 
 	} // End __construct()
 
@@ -322,9 +322,9 @@ class WooThemes_Sensei_Admin {
 	    	wp_enqueue_style( 'sensei-activation', plugins_url(  '/assets/css/activation.css', dirname( __FILE__ ) ) );
 
 	    	if (get_option('skip_install_sensei_pages')!=1 && $woothemes_sensei->get_page_id('course')<1 && !isset($_GET['install_sensei_pages']) && !isset($_GET['skip_install_sensei_pages'])) {
-	    		add_action( 'admin_notices', array( &$this, 'admin_install_notice' ) );
+	    		add_action( 'admin_notices', array( $this, 'admin_install_notice' ) );
 	    	} elseif ( !isset($_GET['page']) || $_GET['page']!='woothemes-sensei-settings' ) {
-	    		add_action( 'admin_notices', array( &$this, 'admin_installed_notice' ) );
+	    		add_action( 'admin_notices', array( $this, 'admin_installed_notice' ) );
 	    	} // End If Statement
 
 	    } // End If Statement

@@ -52,8 +52,8 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		);
 
 		// Actions
-		add_action( 'sensei_before_list_table', array( &$this, 'data_table_header' ) );
-		add_action( 'sensei_after_list_table', array( &$this, 'data_table_footer' ) );
+		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
+		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 	} // End __construct()
 
 	/**

@@ -137,8 +137,8 @@ class WooThemes_Sensei {
 		add_action( 'subscription_end_of_prepaid_term' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'cancelled_subscription' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'subscription_put_on-hold' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
-		// Filster comments
-		add_filter( 'wp_count_comments', array( &$this, 'sensei_count_comments' ), 10, 2 );
+		// Filter comment counts
+		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
 		// Run Upgrades once the WP functions have loaded
 		if ( is_admin() ) {
 			add_action( 'wp_loaded', array( $this, 'run_updates' ), 10 );

@@ -35,23 +35,23 @@ class WooThemes_Sensei_Grading {
 
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( &$this, 'grading_admin_menu' ), 10);
-			add_action( 'grading_wrapper_container', array( &$this, 'wrapper_container'  ) );
-			add_action( 'admin_init', array( &$this, 'process_grading' ) );
-			add_action( 'sensei_grading_notices', array( &$this, 'sensei_grading_notices' ) );
+			add_action( 'admin_menu', array( $this, 'grading_admin_menu' ), 10);
+			add_action( 'grading_wrapper_container', array( $this, 'wrapper_container'  ) );
+			add_action( 'admin_init', array( $this, 'process_grading' ) );
+			add_action( 'sensei_grading_notices', array( $this, 'sensei_grading_notices' ) );
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
-				add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
-				add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 		} // End If Statement
 		// Ajax functions
 		if ( is_admin() ) {
-			add_action( 'wp_ajax_get_lessons_dropdown', array( &$this, 'get_lessons_dropdown' ) );
-			add_action( 'wp_ajax_nopriv_get_lessons_dropdown', array( &$this, 'get_lessons_dropdown' ) );
-			add_action( 'wp_ajax_get_lessons_html', array( &$this, 'get_lessons_html' ) );
-			add_action( 'wp_ajax_nopriv_get_lessons_html', array( &$this, 'get_lessons_html' ) );
-			add_action( 'wp_ajax_get_redirect_url', array( &$this, 'get_redirect_url' ) );
-			add_action( 'wp_ajax_nopriv_get_redirect_url', array( &$this, 'get_redirect_url' ) );
+			add_action( 'wp_ajax_get_lessons_dropdown', array( $this, 'get_lessons_dropdown' ) );
+			add_action( 'wp_ajax_nopriv_get_lessons_dropdown', array( $this, 'get_lessons_dropdown' ) );
+			add_action( 'wp_ajax_get_lessons_html', array( $this, 'get_lessons_html' ) );
+			add_action( 'wp_ajax_nopriv_get_lessons_html', array( $this, 'get_lessons_html' ) );
+			add_action( 'wp_ajax_get_redirect_url', array( $this, 'get_redirect_url' ) );
+			add_action( 'wp_ajax_nopriv_get_redirect_url', array( $this, 'get_redirect_url' ) );
 		} // End If Statement
 	} // End __construct()
 
@@ -65,7 +65,7 @@ class WooThemes_Sensei_Grading {
 	    global $menu, $woocommerce;
 
 	    if ( current_user_can( 'manage_options' ) ) {
-	    	$grading_page = add_submenu_page('sensei', __('Grading', 'woothemes-sensei'),  __('Grading', 'woothemes-sensei') , 'manage_options', 'sensei_grading', array( &$this, 'grading_page' ) );
+	    	$grading_page = add_submenu_page('sensei', __('Grading', 'woothemes-sensei'),  __('Grading', 'woothemes-sensei') , 'manage_options', 'sensei_grading', array( $this, 'grading_page' ) );
 	    }
 
 	} // End analysis_admin_menu()

@@ -694,7 +694,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  $key string column name in array
 	 * @return void
 	 */
-	public function sort_array_by_key( &$array, $key ) {
+	public function sort_array_by_key( $array, $key ) {
 	    $sorter = array();
 	    $ret = array();
 	    reset( $array );

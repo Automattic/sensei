@@ -49,63 +49,63 @@ class WooThemes_Sensei_Frontend {
 	public function __construct () {
 
 		// Template output actions
-		add_action( 'sensei_before_main_content', array( &$this, 'sensei_output_content_wrapper' ), 10 );
-		add_action( 'sensei_after_main_content', array( &$this, 'sensei_output_content_wrapper_end' ), 10 );
-		add_action( 'sensei_pagination', array( &$this, 'sensei_output_content_pagination' ), 10 );
-		add_action( 'sensei_comments', array( &$this, 'sensei_output_comments' ), 10 );
+		add_action( 'sensei_before_main_content', array( $this, 'sensei_output_content_wrapper' ), 10 );
+		add_action( 'sensei_after_main_content', array( $this, 'sensei_output_content_wrapper_end' ), 10 );
+		add_action( 'sensei_pagination', array( $this, 'sensei_output_content_pagination' ), 10 );
+		add_action( 'sensei_comments', array( $this, 'sensei_output_comments' ), 10 );
 		add_action( 'sensei_course_single_meta', 'course_single_meta', 10 );
 		add_action( 'sensei_course_single_lessons', 'course_single_lessons', 10 );
 		add_action( 'sensei_lesson_single_meta', 'lesson_single_meta', 10 );
 		add_action( 'sensei_quiz_questions', 'quiz_questions', 10 );
-		add_action( 'sensei_course_single_title', array( &$this, 'sensei_single_title' ), 10 );
-		add_action( 'sensei_lesson_single_title', array( &$this, 'sensei_single_title' ), 10 );
-		add_action( 'sensei_quiz_single_title', array( &$this, 'sensei_single_title' ), 10 );
-		add_action( 'sensei_course_image', array( &$this, 'sensei_course_image' ), 10, 4 );
-		add_action( 'sensei_lesson_image', array( &$this, 'sensei_lesson_image' ), 10, 4 );
-		add_action( 'sensei_course_archive_header', array( &$this, 'sensei_course_archive_header' ), 10, 3 );
-		add_action( 'sensei_lesson_archive_header', array( &$this, 'sensei_lesson_archive_header' ), 10, 3 );
-		add_action( 'sensei_course_archive_course_title', array( &$this, 'sensei_course_archive_course_title' ), 10, 1 );
-		add_action( 'sensei_lesson_archive_lesson_title', array( &$this, 'sensei_lesson_archive_lesson_title' ), 10 );
+		add_action( 'sensei_course_single_title', array( $this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_lesson_single_title', array( $this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_quiz_single_title', array( $this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_course_image', array( $this, 'sensei_course_image' ), 10, 4 );
+		add_action( 'sensei_lesson_image', array( $this, 'sensei_lesson_image' ), 10, 4 );
+		add_action( 'sensei_course_archive_header', array( $this, 'sensei_course_archive_header' ), 10, 3 );
+		add_action( 'sensei_lesson_archive_header', array( $this, 'sensei_lesson_archive_header' ), 10, 3 );
+		add_action( 'sensei_course_archive_course_title', array( $this, 'sensei_course_archive_course_title' ), 10, 1 );
+		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 		// 1.2.1
-		add_action( 'sensei_lesson_back_link', array( &$this, 'sensei_lesson_back_to_course_link' ), 10, 1 );
-		add_action( 'sensei_quiz_back_link', array( &$this, 'sensei_quiz_back_to_lesson_link' ), 10, 1 );
-		add_action( 'sensei_lesson_course_signup', array( &$this, 'sensei_lesson_course_signup_link' ), 10, 1 );
-		add_action( 'sensei_complete_lesson', array( &$this, 'sensei_complete_lesson' ) );
-		add_action( 'sensei_complete_course', array( &$this, 'sensei_complete_course' ) );
-		add_action( 'sensei_complete_quiz', array( &$this, 'sensei_complete_quiz' ) );
-		add_action( 'sensei_frontend_messages', array( &$this, 'sensei_frontend_messages' ) );
-		add_action( 'sensei_lesson_video', array( &$this, 'sensei_lesson_video' ), 10, 1 );
-		add_action( 'sensei_complete_lesson_button', array( &$this, 'sensei_complete_lesson_button' ) );
-		add_action( 'sensei_lesson_quiz_meta', array( &$this, 'sensei_lesson_quiz_meta' ), 10, 2 );
-		add_action( 'sensei_course_archive_meta', array( &$this, 'sensei_course_archive_meta' ) );
-		add_action( 'sensei_single_main_content', array( &$this, 'sensei_single_main_content' ), 10 );
-		add_action( 'sensei_course_archive_main_content', array( &$this, 'sensei_course_archive_main_content' ), 10 );
-		add_action( 'sensei_lesson_archive_main_content', array( &$this, 'sensei_lesson_archive_main_content' ), 10 );
-		add_action( 'sensei_course_category_main_content', array( &$this, 'sensei_course_category_main_content' ), 10 );
-		add_action( 'sensei_no_permissions_main_content', array( &$this, 'sensei_no_permissions_main_content' ), 10 );
-		add_action( 'sensei_login_form', array( &$this, 'sensei_login_form' ), 10 );
-		add_action( 'sensei_quiz_action_buttons', array( &$this, 'sensei_quiz_action_buttons' ), 10 );
-		add_action( 'sensei_lesson_meta', array( &$this, 'sensei_lesson_meta' ), 10 );
-		add_action( 'sensei_course_meta', array( &$this, 'sensei_course_meta' ), 10 );
-		add_action( 'sensei_course_meta_video', array( &$this, 'sensei_course_meta_video' ), 10 );
-		add_action( 'sensei_woocommerce_in_cart_message', array( &$this, 'sensei_woocommerce_in_cart_message' ), 10 );
-		add_action( 'sensei_course_start', array( &$this, 'sensei_course_start' ), 10 );
-		add_filter( 'get_comments_number', array( &$this, 'sensei_lesson_comment_count' ), 1 );
+		add_action( 'sensei_lesson_back_link', array( $this, 'sensei_lesson_back_to_course_link' ), 10, 1 );
+		add_action( 'sensei_quiz_back_link', array( $this, 'sensei_quiz_back_to_lesson_link' ), 10, 1 );
+		add_action( 'sensei_lesson_course_signup', array( $this, 'sensei_lesson_course_signup_link' ), 10, 1 );
+		add_action( 'sensei_complete_lesson', array( $this, 'sensei_complete_lesson' ) );
+		add_action( 'sensei_complete_course', array( $this, 'sensei_complete_course' ) );
+		add_action( 'sensei_complete_quiz', array( $this, 'sensei_complete_quiz' ) );
+		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
+		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
+		add_action( 'sensei_complete_lesson_button', array( $this, 'sensei_complete_lesson_button' ) );
+		add_action( 'sensei_lesson_quiz_meta', array( $this, 'sensei_lesson_quiz_meta' ), 10, 2 );
+		add_action( 'sensei_course_archive_meta', array( $this, 'sensei_course_archive_meta' ) );
+		add_action( 'sensei_single_main_content', array( $this, 'sensei_single_main_content' ), 10 );
+		add_action( 'sensei_course_archive_main_content', array( $this, 'sensei_course_archive_main_content' ), 10 );
+		add_action( 'sensei_lesson_archive_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
+		add_action( 'sensei_course_category_main_content', array( $this, 'sensei_course_category_main_content' ), 10 );
+		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
+		add_action( 'sensei_login_form', array( $this, 'sensei_login_form' ), 10 );
+		add_action( 'sensei_quiz_action_buttons', array( $this, 'sensei_quiz_action_buttons' ), 10 );
+		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
+		add_action( 'sensei_course_meta', array( $this, 'sensei_course_meta' ), 10 );
+		add_action( 'sensei_course_meta_video', array( $this, 'sensei_course_meta_video' ), 10 );
+		add_action( 'sensei_woocommerce_in_cart_message', array( $this, 'sensei_woocommerce_in_cart_message' ), 10 );
+		add_action( 'sensei_course_start', array( $this, 'sensei_course_start' ), 10 );
+		add_filter( 'get_comments_number', array( $this, 'sensei_lesson_comment_count' ), 1 );
 		// 1.3.0
 		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();
 		// Scripts and Styles
-		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_styles' ) );
-		add_action( 'wp_head', array( &$this, 'enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+		add_action( 'wp_head', array( $this, 'enqueue_scripts' ) );
 		// Menu Item filters
-		add_filter( 'wp_nav_menu_items', array( &$this, 'sensei_nav_menu_items' ), 10, 2 );
-		add_filter( 'wp_nav_menu_objects',  array( &$this, 'sensei_nav_menu_item_classes' ), 2, 20 );
+		add_filter( 'wp_nav_menu_items', array( $this, 'sensei_nav_menu_items' ), 10, 2 );
+		add_filter( 'wp_nav_menu_objects',  array( $this, 'sensei_nav_menu_item_classes' ), 2, 20 );
 		// Search Results filters
-		add_filter( 'post_class', array( &$this, 'sensei_search_results_classes' ), 10 );
+		add_filter( 'post_class', array( $this, 'sensei_search_results_classes' ), 10 );
 		// Comments Feed Actions
-		add_filter( 'comment_feed_where', array( &$this, 'comments_rss_item_filter' ), 10, 1 );
+		add_filter( 'comment_feed_where', array( $this, 'comments_rss_item_filter' ), 10, 1 );
 	} // End __construct()
 
 	/**

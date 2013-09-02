@@ -28,8 +28,8 @@ class WooThemes_Sensei_Question {
 		$this->meta_fields = array( 'question_right_answer', 'question_wrong_answers' );
 		if ( is_admin() ) {
 			// Custom Write Panel Columns
-			add_filter( 'manage_edit-question_columns', array( &$this, 'add_column_headings' ), 10, 1 );
-			add_action( 'manage_posts_custom_column', array( &$this, 'add_column_data' ), 10, 2 );
+			add_filter( 'manage_edit-question_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 		} // End If Statement
 	} // End __construct()
 

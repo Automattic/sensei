@@ -58,12 +58,12 @@ class WooThemes_Sensei_Analysis {
 
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( &$this, 'analysis_admin_menu' ), 10);
-			add_action( 'analysis_wrapper_container', array( &$this, 'wrapper_container'  ) );
-			add_action( 'admin_init', array( &$this, 'report_download_page' ) );
+			add_action( 'admin_menu', array( $this, 'analysis_admin_menu' ), 10);
+			add_action( 'analysis_wrapper_container', array( $this, 'wrapper_container'  ) );
+			add_action( 'admin_init', array( $this, 'report_download_page' ) );
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
-				add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
-				add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 		} // End If Statement
 	} // End __construct()
@@ -79,7 +79,7 @@ class WooThemes_Sensei_Analysis {
 	    global $menu, $woocommerce;
 
 	    if ( current_user_can( 'manage_options' ) ) {
-	    	$analysis_page = add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( &$this, 'analysis_page' ) );
+	    	$analysis_page = add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( $this, 'analysis_page' ) );
 	    }
 
 	} // End analysis_admin_menu()

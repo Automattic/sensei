@@ -53,7 +53,7 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 			'course_grade'
 		);
 		// Actions
-		add_action( 'sensei_before_list_table', array( &$this, 'data_table_header' ) );
+		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 	} // End __construct()
 
 	/**

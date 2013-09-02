@@ -54,7 +54,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 									'ajax'	=> false // No Ajax for this table
 		) );
 		// Actions
-		add_action( 'sensei_before_list_table', array( &$this, 'table_search_form' ) );
+		add_action( 'sensei_before_list_table', array( $this, 'table_search_form' ) );
 	} // End __construct()
 
 	/**
@@ -199,7 +199,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	 * @param  $key string column name in array
 	 * @return void
 	 */
-	public function sort_array_by_key( &$array, $key ) {
+	public function sort_array_by_key( $array, $key ) {
 	    $sorter = array();
 	    $ret = array();
 	    reset( $array );

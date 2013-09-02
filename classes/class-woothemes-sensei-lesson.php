@@ -51,19 +51,19 @@ class WooThemes_Sensei_Lesson {
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
-			add_action( 'admin_menu', array( &$this, 'meta_box_setup' ), 20 );
-			add_action( 'save_post', array( &$this, 'meta_box_save' ) );
-			add_action( 'save_post', array( &$this, 'post_updated' ) );
+			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'save_post', array( $this, 'meta_box_save' ) );
+			add_action( 'save_post', array( $this, 'post_updated' ) );
 			// Custom Write Panel Columns
-			add_filter( 'manage_edit-lesson_columns', array( &$this, 'add_column_headings' ), 10, 1 );
-			add_action( 'manage_posts_custom_column', array( &$this, 'add_column_data' ), 10, 2 );
+			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 			// Ajax functions
-			add_action( 'wp_ajax_lesson_update_question', array( &$this, 'lesson_update_question' ) );
-			add_action( 'wp_ajax_nopriv_lesson_update_question', array( &$this, 'lesson_update_question' ) );
-			add_action( 'wp_ajax_lesson_add_course', array( &$this, 'lesson_add_course' ) );
-			add_action( 'wp_ajax_nopriv_lesson_add_course', array( &$this, 'lesson_add_course' ) );
-			add_action( 'wp_ajax_lesson_update_grade_type', array( &$this, 'lesson_update_grade_type' ) );
-			add_action( 'wp_ajax_nopriv_lesson_update_grade_type', array( &$this, 'lesson_update_grade_type' ) );
+			add_action( 'wp_ajax_lesson_update_question', array( $this, 'lesson_update_question' ) );
+			add_action( 'wp_ajax_nopriv_lesson_update_question', array( $this, 'lesson_update_question' ) );
+			add_action( 'wp_ajax_lesson_add_course', array( $this, 'lesson_add_course' ) );
+			add_action( 'wp_ajax_nopriv_lesson_add_course', array( $this, 'lesson_add_course' ) );
+			add_action( 'wp_ajax_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
+			add_action( 'wp_ajax_nopriv_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
 		} else {
 			// Frontend actions
 		} // End If Statement
@@ -77,19 +77,19 @@ class WooThemes_Sensei_Lesson {
 	 */
 	public function meta_box_setup () {
 		// Add Meta Box for Prerequisite Lesson
-		add_meta_box( 'lesson-prerequisite', __( 'Lesson Prerequisite', 'woothemes-sensei' ), array( &$this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-prerequisite', __( 'Lesson Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Lesson Course
-		add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( &$this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Lesson Quiz information
-		add_meta_box( 'lesson-info', __( 'Lesson Information', 'woothemes-sensei' ), array( &$this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'lesson-info', __( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box for Lesson Quiz Questions
-		add_meta_box( 'lesson-quiz', __( 'Lesson Quiz', 'woothemes-sensei' ), array( &$this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'lesson-quiz', __( 'Lesson Quiz', 'woothemes-sensei' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 		// Add JS scripts
-		add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
+		add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 		// Add CSS
-		add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+		add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 	} // End meta_box_setup()
 
 
@@ -218,7 +218,7 @@ class WooThemes_Sensei_Lesson {
 			} // End If Statement
 		} // End If Statement
 		// Temporarily disable the filter
-   		remove_action('save_post', array(&$this, __FUNCTION__));
+   		remove_action('save_post', array($this, __FUNCTION__));
 		// Save the Quiz
 		$quiz_id = 0;
 		$quiz_passmark = 0;
@@ -273,7 +273,7 @@ class WooThemes_Sensei_Lesson {
 		    wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' ); // EXTENSIONS - possible refactor to get term slug after ID selection
 		} // End If Statement
 		// Restore the previously disabled filter
-    	add_action('save_post', array(&$this, __FUNCTION__));
+    	add_action('save_post', array($this, __FUNCTION__));
 	} // End post_updated()
 
 

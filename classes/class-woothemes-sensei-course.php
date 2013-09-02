@@ -47,11 +47,11 @@ class WooThemes_Sensei_Course {
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
-			add_action( 'admin_menu', array( &$this, 'meta_box_setup' ), 20 );
-			add_action( 'save_post', array( &$this, 'meta_box_save' ) );
+			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			// Custom Write Panel Columns
-			add_filter( 'manage_edit-course_columns', array( &$this, 'add_column_headings' ), 10, 1 );
-			add_action( 'manage_posts_custom_column', array( &$this, 'add_column_data' ), 10, 2 );
+			add_filter( 'manage_edit-course_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 		} else {
 			// Frontend actions
 
@@ -69,16 +69,16 @@ class WooThemes_Sensei_Course {
 
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
 			// Add Meta Box for WooCommerce Course
-			add_meta_box( 'course-wc-product', __( 'WooCommerce Product', 'woothemes-sensei' ), array( &$this, 'course_woocommerce_product_meta_box_content' ), $this->token, 'side', 'default' );
+			add_meta_box( 'course-wc-product', __( 'WooCommerce Product', 'woothemes-sensei' ), array( $this, 'course_woocommerce_product_meta_box_content' ), $this->token, 'side', 'default' );
 		} // End If Statement
 		// Add Meta Box for Prerequisite Course
-		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'woothemes-sensei' ), array( &$this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'woothemes-sensei' ), array( $this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Featured Course
-		add_meta_box( 'course-featured', __( 'Featured Course', 'woothemes-sensei' ), array( &$this, 'course_featured_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'course-featured', __( 'Featured Course', 'woothemes-sensei' ), array( $this, 'course_featured_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Course Meta
-		add_meta_box( 'course-video', __( 'Course Video', 'woothemes-sensei' ), array( &$this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'course-video', __( 'Course Video', 'woothemes-sensei' ), array( $this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box for Course Lessons
-		add_meta_box( 'course-lessons', __( 'Course Lessons', 'woothemes-sensei' ), array( &$this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'course-lessons', __( 'Course Lessons', 'woothemes-sensei' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 	} // End meta_box_setup()

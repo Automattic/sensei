@@ -82,8 +82,8 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 			} // End If Statement
 		} // End If Statement
 		// Actions
-		add_action( 'sensei_before_list_table', array( &$this, 'data_table_header' ) );
-		add_action( 'sensei_after_list_table', array( &$this, 'data_table_footer' ) );
+		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
+		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 	} // End __construct()
 
 	/**

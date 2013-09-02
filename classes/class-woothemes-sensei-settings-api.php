@@ -330,9 +330,9 @@ class WooThemes_Sensei_Settings_API {
 		}
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
-			add_action( 'admin_notices', array( &$this, 'settings_errors' ) );
-			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+			add_action( 'admin_notices', array( $this, 'settings_errors' ) );
+			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 		}
 	} // End register_settings_screen()
 

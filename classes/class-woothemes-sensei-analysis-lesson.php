@@ -51,8 +51,8 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 			'user_lesson_grade' => array( 'user_lesson_grade', false )
 		);
 		// Actions
-		add_action( 'sensei_before_list_table', array( &$this, 'data_table_header' ) );
-		add_action( 'sensei_after_list_table', array( &$this, 'data_table_footer' ) );
+		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
+		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 	} // End __construct()
 
 	/**
