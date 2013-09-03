@@ -212,6 +212,8 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	height: 60px;
 }
 
+/* ADD QUESTION */
+
 #lesson-quiz  {
 
 	#add-quiz-metadata  {
@@ -289,6 +291,34 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			border-bottom: 1px solid #dfdfdf;
 		}
 	}
+	
+	/* EDIT QUESTION */
+	#add-question-metadata .question-quick-edit  {
+		td  {
+			padding: 20px;
+			background: #fff;
+			.question_required_fields  {
+				margin: 0 0 20px;
+				padding: 0 0 20px;
+				border-bottom: 1px solid #dfdfdf;
+				.question_grade  {
+					display: block;
+					width: 80px;
+				}
+			}
+			.update-question  {
+				clear: both;
+				padding: 10px 0;
+				float: left;
+				width: 100%;
+				text-align: right;
+				.button  {
+					margin: 0 0 0 10px;
+				}
+			}
+		}
+	}
+	
 }
 
 @media only screen and (min-width: 768px)  {
@@ -302,11 +332,31 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				width: 30%;
 				border-right: 1px solid #dfdfdf;
 				border-bottom: none;
-				height: 100%;
 			}
 			.answer-fields  {
 				float: right;
 				width: 60%;
+			}
+		}
+		/* EDIT QUESTION */
+		#add-question-metadata .question-quick-edit  {
+			td  {
+				.question_required_fields  {
+					float: left;
+					padding: 0 5% 0 0;
+					width: 30%;
+					border-right: 1px solid #dfdfdf;
+					border-bottom: none;
+				}
+				.question_multiline_fields,
+				.question_singleline_fields,
+				.question_essay_fields,
+				.question_gapfill_fields,
+				.question_boolean_fields,
+				.question_default_fields  {
+					float: right;
+					width: 60%;
+				}
 			}
 		}
 	}

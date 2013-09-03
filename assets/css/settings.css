@@ -279,6 +279,11 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
   width: 98%;
   height: 60px;
 }
+/* ADD QUESTION */
+#lesson-quiz {
+  /* EDIT QUESTION */
+
+}
 #lesson-quiz #add-quiz-metadata label {
   float: left;
   line-height: 2em;
@@ -341,7 +346,34 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
   padding: 0 0 20px;
   border-bottom: 1px solid #dfdfdf;
 }
+#lesson-quiz #add-question-metadata .question-quick-edit td {
+  padding: 20px;
+  background: #fff;
+}
+#lesson-quiz #add-question-metadata .question-quick-edit td .question_required_fields {
+  margin: 0 0 20px;
+  padding: 0 0 20px;
+  border-bottom: 1px solid #dfdfdf;
+}
+#lesson-quiz #add-question-metadata .question-quick-edit td .question_required_fields .question_grade {
+  display: block;
+  width: 80px;
+}
+#lesson-quiz #add-question-metadata .question-quick-edit td .update-question {
+  clear: both;
+  padding: 10px 0;
+  float: left;
+  width: 100%;
+  text-align: right;
+}
+#lesson-quiz #add-question-metadata .question-quick-edit td .update-question .button {
+  margin: 0 0 0 10px;
+}
 @media only screen and (min-width: 768px) {
+  #lesson-quiz {
+    /* EDIT QUESTION */
+  
+  }
   #lesson-quiz #add-new-question:after {
     content: "\0020";
     display: block;
@@ -355,9 +387,24 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
     width: 30%;
     border-right: 1px solid #dfdfdf;
     border-bottom: none;
-    height: 100%;
   }
   #lesson-quiz #add-new-question .answer-fields {
+    float: right;
+    width: 60%;
+  }
+  #lesson-quiz #add-question-metadata .question-quick-edit td .question_required_fields {
+    float: left;
+    padding: 0 5% 0 0;
+    width: 30%;
+    border-right: 1px solid #dfdfdf;
+    border-bottom: none;
+  }
+  #lesson-quiz #add-question-metadata .question-quick-edit td .question_multiline_fields,
+  #lesson-quiz #add-question-metadata .question-quick-edit td .question_singleline_fields,
+  #lesson-quiz #add-question-metadata .question-quick-edit td .question_essay_fields,
+  #lesson-quiz #add-question-metadata .question-quick-edit td .question_gapfill_fields,
+  #lesson-quiz #add-question-metadata .question-quick-edit td .question_boolean_fields,
+  #lesson-quiz #add-question-metadata .question-quick-edit td .question_default_fields {
     float: right;
     width: 60%;
   }

@@ -638,8 +638,8 @@ jQuery(document).ready( function($) {
 								} // End Switch Statement
 				 		    	outputEditForm += '<input type="hidden" name="question_type" id="question_' + tableCount + '_question_type" value="' + questionType + '">';
 				 		    	outputEditForm += '<input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '">';
-				 		    	outputEditForm += '<a title="Update Question" href="#add-question-metadata" class="question_table_save button button-highlighted">Update</a>&nbsp;&nbsp;&nbsp;';
-								outputEditForm += '<a title="Cancel" href="#question-edit-cancel" class="lesson_question_cancel">Cancel</a>';
+				 		    	outputEditForm += '<div class="update-question"><a title="Cancel" href="#question-edit-cancel" class="lesson_question_cancel">Cancel</a>';
+								outputEditForm += '<a title="Update Question" href="#add-question-metadata" class="question_table_save button button-highlighted">Update</a></div>';
 				 		    outputEditForm += '</td>';
 				 		outputEditForm += '</tr>';
 	 		    		jQuery( '#add-question-metadata table tbody' ).append( outputEditForm );
