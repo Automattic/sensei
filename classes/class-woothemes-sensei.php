@@ -167,12 +167,10 @@ class WooThemes_Sensei {
 	 * @return  void
 	 */
 	public function set_woocommerce_functionality() {
-		// Disable guest checkout as we need a valid user to store data for
-		update_option( 'woocommerce_enable_guest_checkout', false );
-		// This filter will replace the above line once it is implemented in WooCommerce
-		add_filter( 'woocommerce_enable_guest_checkout', array( $this, 'disable_guest_checkout' ), 10, 1 );
+		// Disable guest checkout if a course is in the cart as we need a valid user to store data for
+		add_filter( 'pre_option_woocommerce_enable_guest_checkout', array( $this, 'disable_guest_checkout' ) );
 
-		// Make orders with virtual products to complete rather then stay processing
+		// Mark orders with virtual products as complete rather then stay processing
 		add_filter( 'woocommerce_payment_complete_order_status', array( $this, 'virtual_order_payment_complete' ), 10, 2 );
 
 	} // End set_woocommerce_functionality()
@@ -182,8 +180,11 @@ class WooThemes_Sensei {
 	 * @param  boolean $guest_checkout Current guest checkout setting
 	 * @return boolean                 Modified guest checkout setting
 	 */
-	public function disable_guest_checkout( $guest_checkout ) {
+	public function disable_guest_checkout() {
 		global $woocommerce;
+
+		$all_options = wp_load_alloptions();
+		$guest_checkout = $all_options['woocommerce_enable_guest_checkout'];
 
 		if( isset( $woocommerce->cart->cart_contents ) && count( $woocommerce->cart->cart_contents ) > 0 ) {
 			foreach( $woocommerce->cart->cart_contents as $cart_key => $product ) {
@@ -201,7 +202,7 @@ class WooThemes_Sensei {
 					$posts = get_posts( $args );
 					if( $posts && count( $posts ) > 0 ) {
 						foreach( $posts as $course ) {
-							$guest_checkout = false;
+							$guest_checkout = '';
 							break;
 						}
 					}
