@@ -186,24 +186,27 @@ class WooThemes_Sensei {
 		$all_options = wp_load_alloptions();
 		$guest_checkout = $all_options['woocommerce_enable_guest_checkout'];
 
-		if( isset( $woocommerce->cart->cart_contents ) && count( $woocommerce->cart->cart_contents ) > 0 ) {
-			foreach( $woocommerce->cart->cart_contents as $cart_key => $product ) {
-				if( isset( $product['product_id'] ) ) {
-					$args = array(
-						'posts_per_page' => -1,
-						'post_type' => 'course',
-						'meta_query' => array(
-							array(
-								'key' => '_course_woocommerce_product',
-								'value' => $product['product_id']
+		if( ! is_admin() ) {
+
+			if( isset( $woocommerce->cart->cart_contents ) && count( $woocommerce->cart->cart_contents ) > 0 ) {
+				foreach( $woocommerce->cart->cart_contents as $cart_key => $product ) {
+					if( isset( $product['product_id'] ) ) {
+						$args = array(
+							'posts_per_page' => -1,
+							'post_type' => 'course',
+							'meta_query' => array(
+								array(
+									'key' => '_course_woocommerce_product',
+									'value' => $product['product_id']
+								)
 							)
-						)
-					);
-					$posts = get_posts( $args );
-					if( $posts && count( $posts ) > 0 ) {
-						foreach( $posts as $course ) {
-							$guest_checkout = '';
-							break;
+						);
+						$posts = get_posts( $args );
+						if( $posts && count( $posts ) > 0 ) {
+							foreach( $posts as $course ) {
+								$guest_checkout = '';
+								break;
+							}
 						}
 					}
 				}
