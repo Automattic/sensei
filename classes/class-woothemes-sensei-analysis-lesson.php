@@ -70,6 +70,19 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 			$args_array['search'] = esc_html( $_POST['s'] );
 		} // End If Statement
 		// Get the data required
+		$offset = '';
+		if ( isset($_GET['paged']) && 0 < intval($_GET['paged']) ) {
+			$offset = $this->per_page * ( $_GET['paged'] - 1 );
+		} // End If Statement
+		$usersearch = isset( $_REQUEST['s'] ) ? trim( $_REQUEST['s'] ) : '';
+		$role = isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '';
+		$args_array = array(
+			'number' => $this->per_page,
+			'offset' => $offset,
+			'role' => $role,
+			'search' => $usersearch,
+			'fields' => 'all_with_meta'
+		);
 		$users = get_users( $args_array );
 		$output_counter = 0;
 		$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $this->lesson_id );

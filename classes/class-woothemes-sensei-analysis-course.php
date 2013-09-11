@@ -103,6 +103,19 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 				$args_array['search'] = esc_html( $_POST['s'] );
 			} // End If Statement
 			// Get Users data
+			$offset = '';
+			if ( isset($_GET['paged']) && 0 < intval($_GET['paged']) ) {
+				$offset = $this->per_page * ( $_GET['paged'] - 1 );
+			} // End If Statement
+			$usersearch = isset( $_REQUEST['s'] ) ? trim( $_REQUEST['s'] ) : '';
+			$role = isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '';
+			$args_array = array(
+				'number' => $this->per_page,
+				'offset' => $offset,
+				'role' => $role,
+				'search' => $usersearch,
+				'fields' => 'all_with_meta'
+			);
 			$users = get_users( $args_array );
 			foreach ( $users as $user_key => $user_item ) {
 				// Get Courses Started Date
