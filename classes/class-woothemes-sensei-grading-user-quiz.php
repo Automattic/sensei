@@ -55,6 +55,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 		$graded_count = 0;
 		$user_quiz_grade_total = 0;
 		$quiz_grade_total = 0;
+		$quiz_grade = 0;
 
 		?><form name="<?php esc_attr_e( 'quiz_' . $this->quiz_id ); ?>" action="" method="post">
 			<?php wp_nonce_field( 'sensei_manual_grading', '_wp_sensei_manual_grading_nonce' ); ?>
@@ -72,10 +73,14 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			<div class="clear"></div><br/><?php
 
 		$user_quiz_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->quiz_id, 'user_id' => $this->user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
+		$correct_answers = 0;
 
 		foreach( $questions as $question ) {
 			$question_id = $question->ID;
 			++$count;
+
+			$type = false;
+			$type_name = '';
 
 			$types = wp_get_post_terms( $question_id, 'question-type' );
 			foreach( $types as $t ) {
@@ -162,7 +167,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 					<div class="sensei-grading-actions">
 						<div class="actions">
 							<input type="hidden" class="question_id" value="<?php esc_attr_e( $question_id ); ?>" />
-							<input type="hidden" class="question_total_grade" value="<?php echo $question_grade_total; ?>" />
+							<input type="hidden" class="question_total_grade" name="question_total_grade" value="<?php echo $question_grade_total; ?>" />
 							<span class="grading-mark icon_right"><input type="radio" class="<?php esc_attr_e( 'question_' . $question_id . '_right_option' ); ?>" name="<?php esc_attr_e( 'question_' . $question_id ); ?>" value="right" <?php checked( $graded_class, 'user_right', true ); ?> /></span>
 							<span class="grading-mark icon_wrong"><input type="radio" class="<?php esc_attr_e( 'question_' . $question_id . '_wrong_option' ); ?>" name="<?php esc_attr_e( 'question_' . $question_id ); ?>" value="wrong" <?php checked( $graded_class, 'user_wrong', true ); ?> /></span>
 							<input type="number" class="question-grade" name="<?php esc_attr_e( 'question_' . $question_id . '_grade' ); ?>" id="<?php esc_attr_e( 'question_' . $question_id . '_grade' ); ?>" value="<?php esc_attr_e( $user_question_grade ); ?>" min="0" max="<?php esc_attr_e( $question_grade_total ); ?>" />
