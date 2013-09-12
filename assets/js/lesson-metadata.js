@@ -45,7 +45,7 @@ jQuery(document).ready( function($) {
  	    	}
  	    } else if ( 'edit' == action ) {
  			// Check for empty questions
- 			var tableRowId = jqueryObject.parent('td').parent('tr').prev('tr').find('td:first').text();
+ 			var tableRowId = jqueryObject.parent('div').parent('td').parent('tr').prev('tr').find('td:first').text();
  			if ( jQuery( '#question_' + tableRowId ).val().replace(/^\s+|\s+$/g, "").length != 0 ) {
  	    		return true;
  	    	} else {
@@ -457,7 +457,7 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.lesson_question_cancel', function() {
 		// Hide the edit question panel
-		var tableRowId = jQuery( this ).parent('td').parent('tr').prev('tr').find('td:first').text();
+		var tableRowId = jQuery( this ).parent('div').parent('td').parent('tr').prev('tr').find('td.table-count').text();
 		jQuery( '#question_' + tableRowId ).parent('div').parent('td').parent('tr').addClass( 'hidden' );
 	});
 
@@ -638,8 +638,8 @@ jQuery(document).ready( function($) {
 								} // End Switch Statement
 				 		    	outputEditForm += '<input type="hidden" name="question_type" id="question_' + tableCount + '_question_type" value="' + questionType + '">';
 				 		    	outputEditForm += '<input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '">';
-				 		    	outputEditForm += '<a title="Update Question" href="#add-question-metadata" class="question_table_save button button-highlighted">Update</a>&nbsp;&nbsp;&nbsp;';
-								outputEditForm += '<a title="Cancel" href="#question-edit-cancel" class="lesson_question_cancel">Cancel</a>';
+				 		    	outputEditForm += '<div class="update-question"><a title="Cancel" href="#question-edit-cancel" class="lesson_question_cancel">Cancel</a>';
+								outputEditForm += '<a title="Update Question" href="#add-question-metadata" class="question_table_save button button-highlighted">Update</a></div>';
 				 		    outputEditForm += '</td>';
 				 		outputEditForm += '</tr>';
 	 		    		jQuery( '#add-question-metadata table tbody' ).append( outputEditForm );
@@ -667,17 +667,15 @@ jQuery(document).ready( function($) {
 	 	// Validate Inputs
 	 	var validInput = jQuery.fn.validateQuestionInput( 'edit', jQuery(this) );
 		if ( validInput ) {
-			//var ajaxLoaderIcon = jQuery( this ).parent().find( '.ajax-loading' );
-	 		//ajaxLoaderIcon.css( 'visibility', 'visible' ).fadeTo( 'slow', 1, function () {
 	 			// Setup the data to post
 	 			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 	 			dataToPost += '&action=save';
-	 			jQuery( this ).parent( 'td' ).children( 'input' ).each( function() {
+	 			jQuery( this ).parent('div').parent( 'td' ).children( 'input' ).each( function() {
 	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
 	 			});
-	 			tableRowId = jQuery( this ).parent('td').parent('tr').prev('tr').find('td:first').text();
-	 			if ( jQuery( this ).parent().find( 'input.question_type' ).val() != '' ) {
-		 			questionType = jQuery( this ).parent().find( 'input.question_type' ).val();
+	 			tableRowId = jQuery( this ).parent('div').parent('td').parent('tr').prev('tr').find('td:first').text();
+	 			if ( jQuery( this ).parent('div').parent().find( 'input.question_type' ).val() != '' ) {
+		 			questionType = jQuery( this ).parent('div').parent().find( 'input.question_type' ).val();
 		 		} // End If Statement
 		 		var divFieldsClass = 'question_default_fields';
 		 		switch ( questionType ) {
@@ -704,12 +702,12 @@ jQuery(document).ready( function($) {
 					break;
 				} // End Switch Statement
 				// Handle Required Fields
-				jQuery( this ).parent().find( 'div.question_required_fields' ).children( 'input' ).each( function() {
+				jQuery( this ).parent('div').parent().find( 'div.question_required_fields' ).children( 'input' ).each( function() {
 		 			dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
 	 			});
 		 		// Handle Question Input Fields
 		 		var radioCount = 0;
-		 		jQuery( this ).parent().find( 'div.' + divFieldsClass ).children( 'input' ).each( function() {
+		 		jQuery( this ).parent('div').parent().find( 'div.' + divFieldsClass ).children( 'input' ).each( function() {
 		 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
 		 				// Only get the selected radio button
 		 				if ( radioCount == 0 ) {
@@ -721,14 +719,14 @@ jQuery(document).ready( function($) {
 	 				} // End If Statement
 		 		});
 		 		// Handle Question Textarea Fields
-		 		if ( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
-		 			dataToPost += '&' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
+		 		if ( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
+		 			dataToPost += '&' +  jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
 		 		} // End If Statement
-		 		if ( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
-		 			dataToPost += '&' +  jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
+		 		if ( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
+		 			dataToPost += '&' +  jQuery(this).parent('div').parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
 		 		} // End If Statement
 				dataToPost += '&' + 'question_type' + '=' + questionType;
-				questionGrade = jQuery( this ).parent().find( 'input.question_grade' ).val();
+				questionGrade = jQuery( this ).parent('div').parent().find( 'input.question_grade' ).val();
 	 			dataToPost += '&' + 'question_grade' + '=' + questionGrade;
 				// Perform the AJAX call.
 				jQuery.post(
@@ -756,7 +754,7 @@ jQuery(document).ready( function($) {
 	 			return false; // TODO - move this below the next bracket when doing the ajax loader
 	 	//});
 		} else {
-			tableRowId = jQuery( this ).parent('td').parent('tr').prev('tr').find('td:first').text();
+			tableRowId = jQuery( this ).parent('div').parent('td').parent('tr').prev('tr').find('td:first').text();
 			jQuery( '#question_' + tableRowId ).focus();
 			// TODO - add error message
 		}
