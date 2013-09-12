@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2013.8.15 - version 1.4.0
+2013.9.16 - version 1.4.0
  * /templates/learner-profile.php,
    /templates/learner-profile/learner-info.php - Adding new templates to display learner profiles
  * /templates/course-results.php,
@@ -46,7 +46,7 @@
    /assets/js/lesson-metadata.js,
    /assets/js/general-frontend.js, - Adding grade points & answer notes per question, restructuring links, adding text filters, fixing PHP notices & removing CSS from non-Sensei pages
  * /assets/css/settings.less,
-   /assets/css/settings.css - Adding styles for new grading features
+   /assets/css/settings.css - Adding styles for new grading features & updating admin UI styling
  * /assets/css/frontend.less,
    /assets/css/frontend.css - Adding styles for learner profiles & course results
  * /assets/css/global.css - Updating styles for admin menu items
