@@ -48,7 +48,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		$this->columns = array();
 		$this->sortable_columns = array();
 		$this->hidden_columns = array();
-		$this->per_page = 2;
+		$this->per_page = 10;
 		$this->use_users = false;
 		parent::__construct( array(
 									'singular'=> 'wp_list_table_' . $this->token, // Singular label
@@ -156,6 +156,8 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		if ( $this->use_users ) {
 			$user_count = count_users();
 			$total_items = $user_count['total_users'];
+		} elseif ( isset( $this->user_ids ) && 0 < intval( $this->user_ids ) ) {
+			$total_items = count ( $this->user_ids );
 		} else {
 			$total_items = count( $this->items );
 			// Subset for pagination
