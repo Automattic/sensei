@@ -44,9 +44,9 @@
    /classes/class-woothemes-sensei-lesson.php,
    /assets/js/grading-general.js,
    /assets/js/lesson-metadata.js,
-   /assets/js/general-frontend.js, - Adding grade points & answer notes per question, restructuring links, adding text filters, fixing PHP notices & removing CSS from non-Sensei pages
+   /assets/js/general-frontend.js, - Adding grade points and answer notes per question, restructuring links, adding text filters, updating quiz add/edit UI, fixing PHP notices & removing CSS from non-Sensei pages
  * /assets/css/settings.less,
-   /assets/css/settings.css - Adding styles for new grading features & updating admin UI styling
+   /assets/css/settings.css - Adding styles for new grading features, updating quiz add/edit UI & updating general admin UI styling
  * /assets/css/frontend.less,
    /assets/css/frontend.css - Adding styles for learner profiles & course results
  * /assets/css/global.css - Updating styles for admin menu items
