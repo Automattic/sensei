@@ -1211,10 +1211,35 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_login_form()
 
 	public function sensei_quiz_action_buttons() {
-		global $post, $current_user;
+		global $post, $current_user, $woothemes_sensei;
 		$lesson_id = get_post_meta( $post->ID, '_quiz_lesson', true );
 		$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-		if ( is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) {
+		$lesson_prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+		$show_actions = true;
+		if( intval( $lesson_prerequisite ) > 0 ) {
+			$completion = $woothemes_sensei->settings->settings['lesson_completion'];
+			switch( $completion ) {
+				case 'passed':
+					$quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_prerequisite );
+					foreach ( $quizzes as $quiz ) {
+		                $prerequisite_quiz_id = $quiz->ID;
+		            }
+					$quiz_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $prerequisite_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
+					$quiz_passmark = intval( get_post_meta( $prerequisite_quiz_id, '_quiz_passmark', true ) );
+					if( $quiz_grade < $quiz_passmark ) {
+						$show_actions = false;
+					}
+				break;
+
+				case 'complete':
+					$user_lesson_end = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_start', 'field' => 'comment_content' ) );
+					if ( ! $user_lesson_end || $user_lesson_end == '' || strlen( $user_lesson_end ) == 0 ) {
+						$show_actions = false;
+					}
+				break;
+			}
+		}
+		if ( $show_actions && is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) {
 			global $woothemes_sensei;
 			// Get Reset Settings
 			$reset_quiz_allowed = $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ]; ?>
