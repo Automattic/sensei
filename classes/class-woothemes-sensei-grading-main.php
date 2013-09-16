@@ -95,10 +95,10 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			    } // End If Statement
 
 			    if ( ( isset( $lesson_end_date ) && '' != $lesson_end_date ) && ( isset( $lesson_grade ) && '' == $lesson_grade ) ) {
-					$status_html = '<span class="submitted">' . __( 'Submitted for Grading', 'woothemes-sensei' ) . '</span>';
+					$status_html = '<span class="submitted">' . apply_filters( 'sensei_submitted_for_grading_text', __( 'Submitted for Grading', 'woothemes-sensei' ) ) . '</span>';
 					$to_be_graded_count++;
 				} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
-					$status_html = '<span class="graded">' . __( 'Graded', 'woothemes-sensei' ) . '</span>';
+					$status_html = '<span class="graded">' . apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) ) . '</span>';
 					$graded_count++;
 				} elseif ( ( isset( $lesson_start_date ) && '' != $lesson_start_date ) && ( isset( $lesson_end_date ) && '' == $lesson_end_date  ) ) {
 					$status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
