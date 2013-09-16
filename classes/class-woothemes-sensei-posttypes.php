@@ -46,14 +46,14 @@ class WooThemes_Sensei_PostTypes {
 		// Setup Post Types
 		$this->labels = array();
 		$this->setup_post_type_labels_base();
-		add_action( 'init', array( &$this, 'setup_course_post_type' ), 100 );
-		add_action( 'init', array( &$this, 'setup_lesson_post_type' ), 100 );
-		add_action( 'init', array( &$this, 'setup_quiz_post_type' ), 100 );
-		add_action( 'init', array( &$this, 'setup_question_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
 		// Setup Taxonomies
-		add_action( 'init', array( &$this, 'setup_course_category_taxonomy' ), 100 );
-		add_action( 'init', array( &$this, 'setup_quiz_type_taxonomy' ), 100 );
-		add_action( 'init', array( &$this, 'setup_question_type_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_question_type_taxonomy' ), 100 );
 		// Load Post Type Objects
 		$default_post_types = array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) ;
 		$this->load_posttype_objects( $default_post_types );
@@ -62,14 +62,14 @@ class WooThemes_Sensei_PostTypes {
 			$this->set_role_cap_defaults( $default_post_types );
 			global $pagenow;
 			if ( ( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) ) {
-				add_filter( 'enter_title_here', array( &$this, 'enter_title_here' ), 10 );
-				add_filter( 'post_updated_messages', array( &$this, 'setup_post_type_messages' ) );
+				add_filter( 'enter_title_here', array( $this, 'enter_title_here' ), 10 );
+				add_filter( 'post_updated_messages', array( $this, 'setup_post_type_messages' ) );
 			} // End If Statement
 		} // End If Statement
 
 		// Menu functions
 		if ( is_admin() ) {
-			add_action('admin_menu', array( &$this, 'sensei_admin_menu_items' ), 10);
+			add_action('admin_menu', array( $this, 'sensei_admin_menu_items' ), 10);
 		} // End If Statement
 
 	} // End __construct()
