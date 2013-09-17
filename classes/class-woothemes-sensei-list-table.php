@@ -36,6 +36,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public $hidden_columns;
 	public $per_page;
 	public $use_users;
+	public $total_items;
 
 	/**
 	 * Constructor
@@ -50,6 +51,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		$this->hidden_columns = array();
 		$this->per_page = 10;
 		$this->use_users = false;
+		$this->total_items = 0;
 		parent::__construct( array(
 									'singular'=> 'wp_list_table_' . $this->token, // Singular label
 									'plural' => 'wp_list_table_' . $this->token . 's', // Plural label
@@ -154,8 +156,12 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		$per_page = $this->per_page;
 		$current_page = $this->get_pagenum();
 		if ( $this->use_users ) {
-			$user_count = count_users();
-			$total_items = $user_count['total_users'];
+			if( intval( $this->total_items ) > 0 ) {
+				$total_items = $this->total_items;
+			} else {
+				$user_count = count_users();
+				$total_items = $user_count['total_users'];
+			}
 		} elseif ( isset( $this->user_ids ) && 0 < intval( $this->user_ids ) ) {
 			$total_items = count ( $this->user_ids );
 		} else {
