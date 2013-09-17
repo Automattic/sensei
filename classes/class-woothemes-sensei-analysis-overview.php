@@ -157,7 +157,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			$args_array['search'] = '*' . $args_array['search'] . '*';
 		} // End If Statement
 		$users = get_users( $args_array );
-		$this->total_items = count($users);
+		$this->total_items = count( $users );
 		foreach ( $users as $user_key => $user_item ) {
 			// Get Started Courses
 			$user_courses_started = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_course_start' ), true );

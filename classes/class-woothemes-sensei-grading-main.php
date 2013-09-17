@@ -77,7 +77,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			} // End If Statement
 			// Get Users data
 			$users = get_users( $args_array );
-
+			$this->total_items = count( $users );
 			$lesson_id = $this->lesson_id;
 			$output_counter = 0;
 			$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
