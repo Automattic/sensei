@@ -37,19 +37,19 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_lesson' );
 		// Default Columns
-		$this->columns = array(
+		$this->columns = apply_filters( 'sensei_analysis_lesson_columns', array(
 			'user_login' => __( 'Learner', 'woothemes-sensei' ),
 			'user_lesson_date_started' => __( 'Date Started', 'woothemes-sensei' ),
 			'user_lesson_date_completed' => __( 'Date Completed', 'woothemes-sensei' ),
 			'user_lesson_grade' => __( 'Grade', 'woothemes-sensei' )
-		);
+		) );
 		// Sortable Columns
-		$this->sortable_columns = array(
+		$this->sortable_columns = apply_filters( 'sensei_analysis_lesson_columns_sortable', array(
 			'user_login' => array( 'user_login', false ),
 			'user_lesson_date_started' => array( 'user_lesson_date_started', false ),
 			'user_lesson_date_completed' => array( 'user_lesson_date_completed', false ),
 			'user_lesson_grade' => array( 'user_lesson_grade', false )
-		);
+		) );
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
@@ -92,11 +92,11 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 		    } // End If Statement
 			// Output the users data
 			if ( isset( $lesson_start_date ) && '' != $lesson_start_date ) {
-				array_push( $return_array, array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a>',
+				array_push( $return_array, apply_filters( 'sensei_analysis_lesson_column_data', array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a>',
 												'user_lesson_date_started' => $lesson_start_date,
 												'user_lesson_date_completed' => $lesson_end_date,
 												'user_lesson_grade' => $quiz_grade . ''
-			 								)
+			 								), $this->lesson_id )
 						);
 			} // End If Statement
 		} // End For Loop

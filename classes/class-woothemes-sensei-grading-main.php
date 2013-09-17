@@ -39,17 +39,17 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		parent::__construct( 'grading_main' );
 
 		// Default Columns
-		$this->columns = array(
+		$this->columns = apply_filters( 'sensei_grading_main_columns', array(
 			'user_login' => __( 'Learner', 'woothemes-sensei' ),
 			'user_status' => __( 'Status', 'woothemes-sensei' ),
 			'user_grade' => __( 'Grade', 'woothemes-sensei' )
-		);
+		) );
 		// Sortable Columns
-		$this->sortable_columns = array(
+		$this->sortable_columns = apply_filters( 'sensei_grading_main_columns_sortable', array(
 			'user_login' => array( 'user_login', false ),
 			'user_status' => array( 'user_status', false ),
 			'user_grade' => array( 'user_grade', false )
-		);
+		) _;
 
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
@@ -108,10 +108,10 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 				// Output the users data
 				if ( isset( $lesson_start_date ) && '' != $lesson_start_date ) {
-					array_push( $return_array, array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a>',
+					array_push( $return_array, apply_filters( 'sensei_grading_main_column_data', array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a>',
 													'user_status' => $status_html,
 													'user_grade' => $quiz_grade
-				 								)
+				 								), $lesson_id, $user_item->ID )
 							);
 				} // End If Statement
 			} // End For Loop
