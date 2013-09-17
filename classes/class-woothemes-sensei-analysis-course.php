@@ -123,6 +123,9 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 				'search' => $usersearch,
 				'fields' => 'all_with_meta'
 			);
+			if ( '' !== $args_array['search'] ) {
+				$args_array['search'] = '*' . $args_array['search'] . '*';
+			} // End If Statement
 			$users = get_users( $args_array );
 			foreach ( $users as $user_key => $user_item ) {
 				// Get Courses Started Date
@@ -178,6 +181,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 			    		// Get Lesson End Date
 			    		$lesson_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
 			    	} // End If Statement
+			    	$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
 			    	// Data to build table
 			    	$data_array = array( 	'lesson_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $this->user_id, 'lesson_id' => $lesson_item->ID ), admin_url( 'admin.php' ) ) . '">'.$lesson_item->post_title.'</a>',
 														'lesson_started' => $lesson_start_date,

@@ -153,6 +153,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			'search' => $usersearch,
 			'fields' => 'all_with_meta'
 		);
+		if ( '' !== $args_array['search'] ) {
+			$args_array['search'] = '*' . $args_array['search'] . '*';
+		} // End If Statement
 		$users = get_users( $args_array );
 		foreach ( $users as $user_key => $user_item ) {
 			// Get Started Courses

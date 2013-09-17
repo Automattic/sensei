@@ -90,6 +90,9 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 			'search' => $usersearch,
 			'fields' => 'all_with_meta'
 		);
+		if ( '' !== $args_array['search'] ) {
+			$args_array['search'] = '*' . $args_array['search'] . '*';
+		} // End If Statement
 		$users = get_users( $args_array );
 		$output_counter = 0;
 		$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $this->lesson_id );
