@@ -59,7 +59,27 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		) );
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'table_search_form' ) );
+
+		// Filters to remove sortabel columns from Analysis & Grading (to be updated in future versions)
+		add_filter( 'sensei_analysis_overview_courses_columns_sortable', array( $this, 'remove_sortable_columns' ) );
+		add_filter( 'sensei_analysis_overview_lessons_columns_sortable', array( $this, 'remove_sortable_columns' ) );
+		add_filter( 'sensei_analysis_overview_users_columns_sortable', array( $this, 'remove_sortable_columns' ) );
+		add_filter( 'sensei_analysis_lesson_columns_sortable', array( $this, 'remove_sortable_columns' ) );
+		add_filter( 'sensei_analysis_user_profile_columns_sortable', array( $this, 'remove_sortable_columns' ) );
+		add_filter( 'sensei_analysis_course_user_columns_sortable', array( $this, 'remove_sortable_columns' ) );
+		add_filter( 'sensei_analysis_course_lesson_columns_sortable', array( $this, 'remove_sortable_columns' ) );
+		add_filter( 'sensei_grading_main_columns_sortable', array( $this, 'remove_sortable_columns' ) );
+
 	} // End __construct()
+
+	/**
+	 * remove_sortable_columns removes all sortable columns by returning an empty array
+	 * @param  array $columns Existing columns
+	 * @return array          Modified columns
+	 */
+	public function remove_sortable_columns( $columns ) {
+		return array();
+	}
 
 	/**
 	 * extra_tablenav adds extra markup in the toolbars before or after the list
