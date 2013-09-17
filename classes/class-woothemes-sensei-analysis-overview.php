@@ -121,6 +121,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				$return_array = $this->overview_lessons( $args_array );
 			break;
 			default :
+				$this->use_users = true;
 				$return_array = $this->overview_users( $args_array );
 			break;
 		} // End Switch Statement
@@ -137,8 +138,26 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 	public function overview_users( $args_array ) {
 		global $woothemes_sensei;
 		$return_array = array();
+		$raw = $args_array['raw'];
 		// Get Users
+		$offset = '';
+		if ( isset($_GET['paged']) && 0 < intval($_GET['paged']) ) {
+			$offset = $this->per_page * ( $_GET['paged'] - 1 );
+		} // End If Statement
+		$usersearch = isset( $_REQUEST['s'] ) ? trim( $_REQUEST['s'] ) : '';
+		$role = isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '';
+		$args_array = array(
+			'number' => $this->per_page,
+			'offset' => $offset,
+			'role' => $role,
+			'search' => $usersearch,
+			'fields' => 'all_with_meta'
+		);
+		if ( '' !== $args_array['search'] ) {
+			$args_array['search'] = '*' . $args_array['search'] . '*';
+		} // End If Statement
 		$users = get_users( $args_array );
+		$this->total_items = count( $users );
 		foreach ( $users as $user_key => $user_item ) {
 			// Get Started Courses
 			$user_courses_started = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_course_start' ), true );
@@ -159,7 +178,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			} // End If Statement
 			$user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
 			// Output the users data
-			if ( $args_array['raw'] ) {
+			if ( $raw ) {
 				$user_login = $user_item->user_login;
 			} else {
 				$user_login = '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a>';
@@ -311,8 +330,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 	public function load_stats() {
 		global $woothemes_sensei;
 		// Get the data required
-		$users = get_users();
-		$this->user_count = count( $users );
+		$user_count = count_users();
+		$this->user_count = $user_count['total_users'];
 		$this->total_courses = $woothemes_sensei->post_types->course->course_count();
 		$this->total_lessons = $woothemes_sensei->post_types->lesson->lesson_count();
 		$total_quiz_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'type' => 'sensei_quiz_grade' ), true );
@@ -376,7 +395,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				$report_id = 'user-overview';
 			break;
 		} // End Switch Statement
-		echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'report_id' => $report_id ), admin_url( 'admin.php' ) ) . '">' . __( 'CSV Export', 'woothemes-sensei' ) . '</a>';
+		echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'report_id' => $report_id ), admin_url( 'admin.php' ) ) . '">' . __( 'Export page (CSV)', 'woothemes-sensei' ) . '</a>';
 	} // End data_table_header()
 
 } // End Class

@@ -26,6 +26,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 	public $user_id;
 	public $course_id;
 	public $total_lessons;
+	public $user_ids;
 
 	/**
 	 * Constructor
@@ -35,9 +36,14 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 	public function __construct ( $course_id = 0, $user_id = 0 ) {
 		$this->course_id = intval( $course_id );
 		$this->user_id = intval( $user_id );
+		$this->user_ids = array();
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_course' );
 		if ( isset( $_GET['user'] ) && -1 == intval( $_GET['user'] ) && isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
+			// Get Lessons Users
+			if ( isset( $this->course_id ) && 0 < intval( $this->course_id ) ) {
+				$this->user_ids = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'post_id' => intval( $this->course_id ), 'type' => 'sensei_course_start', 'field' => 'user_id' ) );
+			} // End If Statement
 			// Default Columns
 			$this->columns = apply_filters( 'sensei_analysis_course_user_columns', array(
 				'user_login' => __( 'Learner', 'woothemes-sensei' ),
@@ -103,6 +109,23 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 				$args_array['search'] = esc_html( $_POST['s'] );
 			} // End If Statement
 			// Get Users data
+			$offset = '';
+			if ( isset($_GET['paged']) && 0 < intval($_GET['paged']) ) {
+				$offset = $this->per_page * ( $_GET['paged'] - 1 );
+			} // End If Statement
+			$usersearch = isset( $_REQUEST['s'] ) ? trim( $_REQUEST['s'] ) : '';
+			$role = isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '';
+			$args_array = array(
+				'number' => $this->per_page,
+				'include' => $this->user_ids,
+				'offset' => $offset,
+				'role' => $role,
+				'search' => $usersearch,
+				'fields' => 'all_with_meta'
+			);
+			if ( '' !== $args_array['search'] ) {
+				$args_array['search'] = '*' . $args_array['search'] . '*';
+			} // End If Statement
 			$users = get_users( $args_array );
 			foreach ( $users as $user_key => $user_item ) {
 				// Get Courses Started Date
@@ -134,9 +157,9 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 					$lesson_status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
 					$lesson_end_date = '';
 					// Check for Lesson Start Date
-			    	$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
-					// Check if Lesson is complete
-			    	$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
+			    	$lesson_start_date = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'post_id' => $lesson_item->ID, 'type' => 'sensei_lesson_start', 'field' => 'user_id' ) );
+			    	// Check if Lesson is complete
+			    	$user_lesson_end = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'post_id' => $lesson_item->ID, 'type' => 'sensei_lesson_end', 'field' => 'user_id' ) );
 			    	// Get Quiz ID and data
 			    	$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_item->ID );
 			    	$lesson_grade = __( 'No Grade', 'woothemes-sensei' );
@@ -158,6 +181,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 			    		// Get Lesson End Date
 			    		$lesson_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
 			    	} // End If Statement
+			    	$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
 			    	// Data to build table
 			    	$data_array = array( 	'lesson_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $this->user_id, 'lesson_id' => $lesson_item->ID ), admin_url( 'admin.php' ) ) . '">'.$lesson_item->post_title.'</a>',
 														'lesson_started' => $lesson_start_date,
@@ -178,7 +202,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 							} // End If Statement
 						} // End For Loop
 						$total_average_grade = 0;
-						if ( 0 < count( $lesson_start_date ) ) {
+						if ( 0 < count( $lesson_start_date ) && 0 < $total_grade_count ) {
 							$total_average_grade = abs( round( doubleval( $total_grade_total / $total_grade_count ), 2 ) );
 						} // End If Statement
 			    		$data_array['lesson_students'] = count( $lesson_start_date );

@@ -184,6 +184,8 @@ class WooThemes_Sensei_Utils {
 				// Add matches to id array
 				if ( isset( $args['field'] ) && 'comment' == $args['field'] ) {
 					array_push( $post_ids, $value->comment_ID );
+				} elseif( isset( $args['field'] ) && 'user_id' == $args['field'] ) {
+					array_push( $post_ids, $value->user_id );
 				} else {
 					array_push( $post_ids, $value->comment_post_ID );
 				} // End If Statement
