@@ -49,7 +49,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			'user_login' => array( 'user_login', false ),
 			'user_status' => array( 'user_status', false ),
 			'user_grade' => array( 'user_grade', false )
-		) _;
+		) );
 
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
@@ -72,7 +72,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			if ( isset( $_POST['s'] ) && '' != esc_html( $_POST['s'] ) ) {
 				$args_array['search'] = esc_html( $_POST['s'] );
 			} // End If Statement
-			if ( '' !== $args_array['search'] ) {
+			if ( isset( $args_array['search'] ) && '' !== $args_array['search'] ) {
 				$args_array['search'] = '*' . $args_array['search'] . '*';
 			} // End If Statement
 			// Get Users data
