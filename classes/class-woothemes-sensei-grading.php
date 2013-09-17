@@ -165,7 +165,15 @@ class WooThemes_Sensei_Grading {
 		global $woothemes_sensei;
 		// Load Grading data
 		$this->load_data_table_files();
-		$sensei_grading_overview = $this->load_data_object( 'Main', intval( $_GET['course_id'] ), intval( $_GET['lesson_id'] ) );
+		$course_id = 0;
+		$lesson_id = 0;
+		if( isset( $_GET['course_id'] ) ) {
+			$course_id = intval( $_GET['course_id'] );
+		}
+		if( isset( $_GET['lesson_id'] ) ) {
+			$lesson_id = intval( $_GET['lesson_id'] );
+		}
+		$sensei_grading_overview = $this->load_data_object( 'Main', $course_id, $lesson_id );
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );

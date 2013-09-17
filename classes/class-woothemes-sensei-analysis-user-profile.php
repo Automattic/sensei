@@ -34,24 +34,24 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_user_profile' );
 		// Default Columns
-		$this->columns = array(
+		$this->columns = apply_filters( 'sensei_analysis_user_profile_columns', array(
 			'course_title' => __( 'Course', 'woothemes-sensei' ),
 			'course_started' => __( 'Date Started', 'woothemes-sensei' ),
 			'course_completed' => __( 'Date Completed', 'woothemes-sensei' ),
 			'course_status' => __( 'Status', 'woothemes-sensei' ),
 			'course_grade' => __( 'Grade', 'woothemes-sensei' )
-		);
+		) );
 		// Sortable Columns
-		$this->sortable_columns = array(
+		$this->sortable_columns = apply_filters( 'sensei_analysis_user_profile_columns_sortable', array(
 			'course_title' => array( 'course_title', false ),
 			'course_started' => array( 'course_started', false ),
 			'course_completed' => array( 'course_completed', false ),
 			'course_status' => array( 'course_status', false ),
 			'course_grade' => array( 'course_grade', false )
-		);
-		$this->hidden_columns = array(
+		) );
+		$this->hidden_columns = apply_filters( 'sensei_analysis_user_profile_columns_hidden', array(
 			'course_grade'
-		);
+		) );
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 	} // End __construct()
@@ -93,12 +93,12 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 		    		$course_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_course_end', 'field' => 'comment_date' ) );
 		    	} // End If Statement
 
-				array_push( $return_array, array( 	'course_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $this->user_id, 'course_id' => $course_item->ID ), admin_url( 'admin.php' ) ) . '">'.$course_item->post_title.'</a>',
+				array_push( $return_array, apply_filters( 'sensei_analysis_user_profile_column_data', array( 	'course_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $this->user_id, 'course_id' => $course_item->ID ), admin_url( 'admin.php' ) ) . '">'.$course_item->post_title.'</a>',
 													'course_started' => $course_start_date,
 													'course_completed' => $course_end_date,
 													'course_status' => $course_status,
 													'course_grade' => 'TODO'
-				 								)
+				 								), $course_item->ID )
 							);
 			} // End If Statement
 		} // End For Loop
