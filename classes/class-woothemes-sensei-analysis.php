@@ -44,6 +44,7 @@ class WooThemes_Sensei_Analysis {
 	public $token;
 	public $name;
 	public $file;
+	public $page_slug;
 
 	/**
 	 * Constructor
@@ -53,13 +54,17 @@ class WooThemes_Sensei_Analysis {
 	public function __construct ( $file ) {
 		$this->name = 'Analysis';
 		$this->file = $file;
+		$this->page_slug = 'sensei_analysis';
+
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( &$this, 'analysis_admin_menu' ), 10);
-			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
-			add_action( 'analysis_wrapper_container', array( &$this, 'wrapper_container'  ) );
-			add_action( 'admin_init', array( &$this, 'report_download_page' ) );
+			add_action( 'admin_menu', array( $this, 'analysis_admin_menu' ), 10);
+			add_action( 'analysis_wrapper_container', array( $this, 'wrapper_container'  ) );
+			add_action( 'admin_init', array( $this, 'report_download_page' ) );
+			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
+			}
 		} // End If Statement
 	} // End __construct()
 
@@ -73,9 +78,9 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_admin_menu() {
 	    global $menu, $woocommerce;
 
-	    if ( current_user_can( 'manage_options' ) )
-
-	    $analysis_page = add_submenu_page('edit.php?post_type=lesson', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( &$this, 'analysis_page' ) );
+	    if ( current_user_can( 'manage_options' ) ) {
+	    	$analysis_page = add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( $this, 'analysis_page' ) );
+	    }
 
 	} // End analysis_admin_menu()
 
@@ -322,7 +327,7 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.3.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.4.0' );
 
 	} // End enqueue_styles()
 
@@ -377,9 +382,9 @@ class WooThemes_Sensei_Analysis {
 			<h2><?php echo esc_html( $this->name ); ?><?php if ( isset( $_GET['course_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . __( 'Courses', 'woothemes-sensei' ); } ?><?php if ( isset( $_GET['lesson_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . __( 'Lessons', 'woothemes-sensei' ); } ?></h2>
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<ul class="subsubsub">
-				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis' ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( !isset( $_GET['course_id'] ) && !isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Overview', 'woothemes-sensei' ); ?></a></li>
-				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['course_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Courses', 'woothemes-sensei' ); ?></a></li>
-				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis', 'lesson_id' => -1 ), admin_url( 'edit.php?post_type=lesson' ) ); ?>" <?php if ( isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Lessons', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis' ), admin_url( 'admin.php' ) ); ?>" <?php if ( !isset( $_GET['course_id'] ) && !isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Overview', 'woothemes-sensei' ); ?></a> |</li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis', 'course_id' => -1 ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['course_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Courses', 'woothemes-sensei' ); ?></a> |</li>
+				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_analysis', 'lesson_id' => -1 ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Lessons', 'woothemes-sensei' ); ?></a></li>
 			</ul>
 			<br class="clear"><?php
 	} // End analysis_default_nav()

@@ -175,6 +175,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	.sensei-analysis-main {
 		float: left;
 		min-width: 100%;
+		.tablenav {
+			.tablenav-pages {
+				line-height: 25px;
+				margin-right: 20px;
+			}
+		}
 	}
 	table  {
 		tr  {
@@ -212,10 +218,30 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	height: 60px;
 }
 
+/* ADD QUESTION */
+
 #lesson-quiz  {
+
+	#add-quiz-metadata  {
+		label  {
+			float: left;
+			line-height: 2em;
+			margin: 0 1em 0 0;
+		}
+		input#quiz_passmark  {
+			float: left;
+			margin: 0 3em 0 0;
+			width: 100px;
+			clear: none;
+		}
+		.grade-label  {
+			float: none;
+			margin: 0 0 0 .5em;
+		}
+	}
+
 	.add_question_answer  {
 		display: inline-block;
-		margin: 0 0 0 10px;
 		&.hidden  {
 			display: none;
 		}
@@ -225,6 +251,8 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		margin: 0 0 .53em;
 	}
 	.save-note  {
+		margin: 1.5em 0 1em;
+		clear: both;
 		font-style: italic;
 	}
 	#add-question-metadata  {
@@ -241,6 +269,102 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	}
 	tfoot  {
 		display: none;
+	}
+	.question_boolean_fields  {
+		label  {
+			display: block;
+		}
+	}
+	#add-question-grade  {
+		display: block;
+		width: 80px;
+		position: relative;
+		top: -2px;
+	}
+	.add-question  {
+		margin: 0 0 20px;
+		clear: both;
+		text-align: right;
+		padding: 15px 0 0 0;
+		.add_question_save  {
+			margin: 0 0 0 10px;
+		}
+	}
+	#add-new-question  {
+		.question  {
+			margin: 0 0 20px;
+			padding: 0 0 20px;
+			border-bottom: 1px solid #dfdfdf;
+		}
+	}
+	
+	/* EDIT QUESTION */
+	#add-question-metadata .question-quick-edit  {
+		td  {
+			padding: 20px;
+			background: #fff;
+			.question_required_fields  {
+				margin: 0 0 20px;
+				padding: 0 0 20px;
+				border-bottom: 1px solid #dfdfdf;
+				.question_grade  {
+					display: block;
+					width: 80px;
+				}
+			}
+			.update-question  {
+				clear: both;
+				padding: 10px 0;
+				float: left;
+				width: 100%;
+				text-align: right;
+				.button  {
+					margin: 0 0 0 10px;
+				}
+			}
+		}
+	}
+	
+}
+
+@media only screen and (min-width: 768px)  {
+	
+	#lesson-quiz  {
+		#add-new-question  {
+			.clearfix;
+			.question  {
+				float: left;
+				padding: 0 5% 0 0;
+				width: 30%;
+				border-right: 1px solid #dfdfdf;
+				border-bottom: none;
+			}
+			.answer-fields  {
+				float: right;
+				width: 60%;
+			}
+		}
+		/* EDIT QUESTION */
+		#add-question-metadata .question-quick-edit  {
+			td  {
+				.question_required_fields  {
+					float: left;
+					padding: 0 5% 0 0;
+					width: 30%;
+					border-right: 1px solid #dfdfdf;
+					border-bottom: none;
+				}
+				.question_multiline_fields,
+				.question_singleline_fields,
+				.question_essay_fields,
+				.question_gapfill_fields,
+				.question_boolean_fields,
+				.question_default_fields  {
+					float: right;
+					width: 60%;
+				}
+			}
+		}
 	}
 }
 
@@ -291,7 +415,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	.question_box {
 		.clearfix;
 		&.ungraded {
-			
+
 		}
 		&.user_right {
 			.grading-mark.icon_right  {
@@ -335,8 +459,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		.right-answer {
 			border: 1px solid @border_main;
 			padding: 15px 20px;
+			margin-right: 15px;
 			background: #fff;
 			.border_radius(5px);
+			display: inline-block;
+			width: 43%;
+			vertical-align: top;
 			h5  {
 				display: inline-block;
 				border-bottom: 1px solid @border_main;
@@ -346,6 +474,26 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			}
 			.correct-answer  {
 				display: block;
+			}
+		}
+		.answer-notes {
+			border: 1px solid @border_main;
+			padding: 15px 20px;
+			background: #fff;
+			.border_radius(5px);
+			display: inline-block;
+			width: 43%;
+			vertical-align: top;
+			h5  {
+				display: inline-block;
+				border-bottom: 1px solid @border_main;
+				margin: 0 0 10px;
+				padding: 0 0 4px;
+				font-size: 14px;
+			}
+			textarea  {
+				display: block;
+				width: 100%;
 			}
 		}
 	}
@@ -406,6 +554,20 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 						}
 					}
 				}
+			}
+			.question-grade {
+				display: inline-block;
+				width: 100%;
+				text-align: center;
+				font-size: 200%;
+				margin: 10px 0;
+			}
+			.question-grade-total {
+				display: inline-block;
+				font-size: 250%;
+				border-top: 2px solid #000;
+				padding-top: 15px;
+				width: 100%;
 			}
 		}
 	}

@@ -49,63 +49,63 @@ class WooThemes_Sensei_Frontend {
 	public function __construct () {
 
 		// Template output actions
-		add_action( 'sensei_before_main_content', array( &$this, 'sensei_output_content_wrapper' ), 10 );
-		add_action( 'sensei_after_main_content', array( &$this, 'sensei_output_content_wrapper_end' ), 10 );
-		add_action( 'sensei_pagination', array( &$this, 'sensei_output_content_pagination' ), 10 );
-		add_action( 'sensei_comments', array( &$this, 'sensei_output_comments' ), 10 );
+		add_action( 'sensei_before_main_content', array( $this, 'sensei_output_content_wrapper' ), 10 );
+		add_action( 'sensei_after_main_content', array( $this, 'sensei_output_content_wrapper_end' ), 10 );
+		add_action( 'sensei_pagination', array( $this, 'sensei_output_content_pagination' ), 10 );
+		add_action( 'sensei_comments', array( $this, 'sensei_output_comments' ), 10 );
 		add_action( 'sensei_course_single_meta', 'course_single_meta', 10 );
 		add_action( 'sensei_course_single_lessons', 'course_single_lessons', 10 );
 		add_action( 'sensei_lesson_single_meta', 'lesson_single_meta', 10 );
 		add_action( 'sensei_quiz_questions', 'quiz_questions', 10 );
-		add_action( 'sensei_course_single_title', array( &$this, 'sensei_single_title' ), 10 );
-		add_action( 'sensei_lesson_single_title', array( &$this, 'sensei_single_title' ), 10 );
-		add_action( 'sensei_quiz_single_title', array( &$this, 'sensei_single_title' ), 10 );
-		add_action( 'sensei_course_image', array( &$this, 'sensei_course_image' ), 10, 4 );
-		add_action( 'sensei_lesson_image', array( &$this, 'sensei_lesson_image' ), 10, 4 );
-		add_action( 'sensei_course_archive_header', array( &$this, 'sensei_course_archive_header' ), 10, 3 );
-		add_action( 'sensei_lesson_archive_header', array( &$this, 'sensei_lesson_archive_header' ), 10, 3 );
-		add_action( 'sensei_course_archive_course_title', array( &$this, 'sensei_course_archive_course_title' ), 10, 1 );
-		add_action( 'sensei_lesson_archive_lesson_title', array( &$this, 'sensei_lesson_archive_lesson_title' ), 10 );
+		add_action( 'sensei_course_single_title', array( $this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_lesson_single_title', array( $this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_quiz_single_title', array( $this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_course_image', array( $this, 'sensei_course_image' ), 10, 4 );
+		add_action( 'sensei_lesson_image', array( $this, 'sensei_lesson_image' ), 10, 4 );
+		add_action( 'sensei_course_archive_header', array( $this, 'sensei_course_archive_header' ), 10, 3 );
+		add_action( 'sensei_lesson_archive_header', array( $this, 'sensei_lesson_archive_header' ), 10, 3 );
+		add_action( 'sensei_course_archive_course_title', array( $this, 'sensei_course_archive_course_title' ), 10, 1 );
+		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 		// 1.2.1
-		add_action( 'sensei_lesson_back_link', array( &$this, 'sensei_lesson_back_to_course_link' ), 10, 1 );
-		add_action( 'sensei_quiz_back_link', array( &$this, 'sensei_quiz_back_to_lesson_link' ), 10, 1 );
-		add_action( 'sensei_lesson_course_signup', array( &$this, 'sensei_lesson_course_signup_link' ), 10, 1 );
-		add_action( 'sensei_complete_lesson', array( &$this, 'sensei_complete_lesson' ) );
-		add_action( 'sensei_complete_course', array( &$this, 'sensei_complete_course' ) );
-		add_action( 'sensei_complete_quiz', array( &$this, 'sensei_complete_quiz' ) );
-		add_action( 'sensei_frontend_messages', array( &$this, 'sensei_frontend_messages' ) );
-		add_action( 'sensei_lesson_video', array( &$this, 'sensei_lesson_video' ), 10, 1 );
-		add_action( 'sensei_complete_lesson_button', array( &$this, 'sensei_complete_lesson_button' ) );
-		add_action( 'sensei_lesson_quiz_meta', array( &$this, 'sensei_lesson_quiz_meta' ), 10, 2 );
-		add_action( 'sensei_course_archive_meta', array( &$this, 'sensei_course_archive_meta' ) );
-		add_action( 'sensei_single_main_content', array( &$this, 'sensei_single_main_content' ), 10 );
-		add_action( 'sensei_course_archive_main_content', array( &$this, 'sensei_course_archive_main_content' ), 10 );
-		add_action( 'sensei_lesson_archive_main_content', array( &$this, 'sensei_lesson_archive_main_content' ), 10 );
-		add_action( 'sensei_course_category_main_content', array( &$this, 'sensei_course_category_main_content' ), 10 );
-		add_action( 'sensei_no_permissions_main_content', array( &$this, 'sensei_no_permissions_main_content' ), 10 );
-		add_action( 'sensei_login_form', array( &$this, 'sensei_login_form' ), 10 );
-		add_action( 'sensei_quiz_action_buttons', array( &$this, 'sensei_quiz_action_buttons' ), 10 );
-		add_action( 'sensei_lesson_meta', array( &$this, 'sensei_lesson_meta' ), 10 );
-		add_action( 'sensei_course_meta', array( &$this, 'sensei_course_meta' ), 10 );
-		add_action( 'sensei_course_meta_video', array( &$this, 'sensei_course_meta_video' ), 10 );
-		add_action( 'sensei_woocommerce_in_cart_message', array( &$this, 'sensei_woocommerce_in_cart_message' ), 10 );
-		add_action( 'sensei_course_start', array( &$this, 'sensei_course_start' ), 10 );
-		add_filter( 'get_comments_number', array( &$this, 'sensei_lesson_comment_count' ), 1 );
+		add_action( 'sensei_lesson_back_link', array( $this, 'sensei_lesson_back_to_course_link' ), 10, 1 );
+		add_action( 'sensei_quiz_back_link', array( $this, 'sensei_quiz_back_to_lesson_link' ), 10, 1 );
+		add_action( 'sensei_lesson_course_signup', array( $this, 'sensei_lesson_course_signup_link' ), 10, 1 );
+		add_action( 'sensei_complete_lesson', array( $this, 'sensei_complete_lesson' ) );
+		add_action( 'sensei_complete_course', array( $this, 'sensei_complete_course' ) );
+		add_action( 'sensei_complete_quiz', array( $this, 'sensei_complete_quiz' ) );
+		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
+		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
+		add_action( 'sensei_complete_lesson_button', array( $this, 'sensei_complete_lesson_button' ) );
+		add_action( 'sensei_lesson_quiz_meta', array( $this, 'sensei_lesson_quiz_meta' ), 10, 2 );
+		add_action( 'sensei_course_archive_meta', array( $this, 'sensei_course_archive_meta' ) );
+		add_action( 'sensei_single_main_content', array( $this, 'sensei_single_main_content' ), 10 );
+		add_action( 'sensei_course_archive_main_content', array( $this, 'sensei_course_archive_main_content' ), 10 );
+		add_action( 'sensei_lesson_archive_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
+		add_action( 'sensei_course_category_main_content', array( $this, 'sensei_course_category_main_content' ), 10 );
+		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
+		add_action( 'sensei_login_form', array( $this, 'sensei_login_form' ), 10 );
+		add_action( 'sensei_quiz_action_buttons', array( $this, 'sensei_quiz_action_buttons' ), 10 );
+		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
+		add_action( 'sensei_course_meta', array( $this, 'sensei_course_meta' ), 10 );
+		add_action( 'sensei_course_meta_video', array( $this, 'sensei_course_meta_video' ), 10 );
+		add_action( 'sensei_woocommerce_in_cart_message', array( $this, 'sensei_woocommerce_in_cart_message' ), 10 );
+		add_action( 'sensei_course_start', array( $this, 'sensei_course_start' ), 10 );
+		add_filter( 'get_comments_number', array( $this, 'sensei_lesson_comment_count' ), 1 );
 		// 1.3.0
 		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();
 		// Scripts and Styles
-		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_styles' ) );
-		add_action( 'wp_head', array( &$this, 'enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+		add_action( 'wp_head', array( $this, 'enqueue_scripts' ) );
 		// Menu Item filters
-		add_filter( 'wp_nav_menu_items', array( &$this, 'sensei_nav_menu_items' ), 10, 2 );
-		add_filter( 'wp_nav_menu_objects',  array( &$this, 'sensei_nav_menu_item_classes' ), 2, 20 );
+		add_filter( 'wp_nav_menu_items', array( $this, 'sensei_nav_menu_items' ), 10, 2 );
+		add_filter( 'wp_nav_menu_objects',  array( $this, 'sensei_nav_menu_item_classes' ), 2, 20 );
 		// Search Results filters
-		add_filter( 'post_class', array( &$this, 'sensei_search_results_classes' ), 10 );
+		add_filter( 'post_class', array( $this, 'sensei_search_results_classes' ), 10 );
 		// Comments Feed Actions
-		add_filter( 'comment_feed_where', array( &$this, 'comments_rss_item_filter' ), 10, 1 );
+		add_filter( 'comment_feed_where', array( $this, 'comments_rss_item_filter' ), 10, 1 );
 	} // End __construct()
 
 	/**
@@ -330,7 +330,7 @@ class WooThemes_Sensei_Frontend {
 					if ( is_page( $course_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= apply_filters( 'sensei_course_page_menu_link', '<li class="courses' . $classes . '"><a href="'. get_permalink( $course_page_id ) .'">'.__('Courses', 'woothemes-sensei').'</a></li>' );
+					$items .= apply_filters( 'sensei_course_page_menu_link', '<li class="courses' . $classes . '"><a href="'. get_permalink( $course_page_id ) .'">' . apply_filters( 'sensei_courses_text', __('Courses', 'woothemes-sensei') ) . '</a></li>' );
 				} // End If Statement
 				// Lesson Archive Link
 				if ( !strstr( $items, get_post_type_archive_link( 'lesson' ) ) ) {
@@ -338,7 +338,7 @@ class WooThemes_Sensei_Frontend {
 					if ( is_post_type_archive( 'lesson' ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= apply_filters( 'sensei_lesson_archive_page_menu_link', '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">'.__('Lessons', 'woothemes-sensei').'</a></li>' );
+					$items .= apply_filters( 'sensei_lesson_archive_page_menu_link', '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">' . apply_filters( 'sensei_lessons_text', __('Lessons', 'woothemes-sensei') ) . '</a></li>' );
 				} // End If Statement
 				// My Courses Page Link
 				if ( 0 < $my_account_page_id && is_user_logged_in() && !strstr( $items, get_permalink( $my_account_page_id ) ) ) {
@@ -346,10 +346,10 @@ class WooThemes_Sensei_Frontend {
 					if ( is_page( $my_account_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= apply_filters( 'sensei_my_account_page_menu_link', '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Courses', 'woothemes-sensei').'</a></li>' );
+					$items .= apply_filters( 'sensei_my_account_page_menu_link', '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">' . apply_filters( 'sensei_my_courses_text', __('My Courses', 'woothemes-sensei') ) . '</a></li>' );
 				} // End If Statement
 				// Logout Link
-				$items .= apply_filters( 'sensei_logout_menu_link', '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">'.__('Logout', 'woothemes-sensei').'</a></li>' );
+				$items .= apply_filters( 'sensei_logout_menu_link', '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">' . apply_filters( 'sensei_logout_text', __('Logout', 'woothemes-sensei') ) . '</a></li>' );
 			} else {
 				// Course Page Link
 				if ( 0 < $course_page_id && !strstr( $items, get_permalink( $course_page_id ) ) ) {
@@ -357,7 +357,7 @@ class WooThemes_Sensei_Frontend {
 					if ( is_page( $course_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= apply_filters( 'sensei_course_page_menu_link', '<li class="courses' . $classes . '"><a href="'. get_permalink( $course_page_id ) .'">'.__('Courses', 'woothemes-sensei').'</a></li>' );
+					$items .= apply_filters( 'sensei_course_page_menu_link', '<li class="courses' . $classes . '"><a href="'. get_permalink( $course_page_id ) .'">' . apply_filters( 'sensei_courses_text', __('Courses', 'woothemes-sensei') ) . '</a></li>' );
 				} // End If Statement
 				// Lesson Archive Link
 				if ( !strstr( $items, get_post_type_archive_link( 'lesson' ) ) ) {
@@ -365,7 +365,7 @@ class WooThemes_Sensei_Frontend {
 					if ( is_post_type_archive( 'lesson' ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= apply_filters( 'sensei_lesson_archive_page_menu_link', '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">'.__('Lessons', 'woothemes-sensei').'</a></li>' );
+					$items .= apply_filters( 'sensei_lesson_archive_page_menu_link', '<li class="lessons' . $classes . '"><a href="'. get_post_type_archive_link( 'lesson' ) .'">' . apply_filters( 'sensei_lessons_text', __('Lessons', 'woothemes-sensei') ) . '</a></li>' );
 				} // End If Statement
 				// My Courses Page Link
 				if ( 0 < $my_account_page_id && is_user_logged_in() && !strstr( $items, get_permalink( $my_account_page_id ) ) ) {
@@ -373,14 +373,14 @@ class WooThemes_Sensei_Frontend {
 					if ( is_page( $my_account_page_id ) ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
-					$items .= apply_filters( 'sensei_my_account_page_menu_link', '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">'.__('My Courses', 'woothemes-sensei').'</a></li>' );
+					$items .= apply_filters( 'sensei_my_account_page_menu_link', '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">' . apply_filters( 'sensei_my_courses_text', __('My Courses', 'woothemes-sensei') ) . '</a></li>' );
 				} // End If Statement
 				// Logout Link
 				if ( is_user_logged_in() && !strstr( $items, wp_logout_url( home_url() ) ) ) {
-					$items .= apply_filters( 'sensei_logout_menu_link', '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">'.__('Logout', 'woothemes-sensei').'</a></li>' );
+					$items .= apply_filters( 'sensei_logout_menu_link', '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">' . apply_filters( 'sensei_logout_text', __('Logout', 'woothemes-sensei') ) . '</a></li>' );
 				} else {
 					// Login Link
-					$items .= apply_filters( 'sensei_login_menu_link', '<li class="login"><a href="'. wp_login_url( home_url() ) .'">'.__('Login', 'woothemes-sensei').'</a></li>' );
+					$items .= apply_filters( 'sensei_login_menu_link', '<li class="login"><a href="'. wp_login_url( home_url() ) .'">' . apply_filters( 'sensei_login_text', __('Login', 'woothemes-sensei') ) . '</a></li>' );
 				} // End If Statement
 			} // End If Statement
 
@@ -501,19 +501,19 @@ class WooThemes_Sensei_Frontend {
 
 		switch ( $query_type ) {
 			case 'newcourses':
-				$html .= $before_html . __( 'New Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . apply_filters( 'sensei_new_courses_text', __( 'New Courses', 'woothemes-sensei' ) ) . $after_html;
 				break;
 			case 'featuredcourses':
-				$html .= $before_html . __( 'Featured Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . apply_filters( 'sensei_featured_courses_text', __( 'Featured Courses', 'woothemes-sensei' ) ) . $after_html;
 				break;
 			case 'freecourses':
-				$html .= $before_html . __( 'Free Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . apply_filters( 'sensei_free_courses_text', __( 'Free Courses', 'woothemes-sensei' ) ) . $after_html;
 				break;
 			case 'paidcourses':
-				$html .= $before_html . __( 'Paid Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . apply_filters( 'sensei_paid_courses_text', __( 'Paid Courses', 'woothemes-sensei' ) ) . $after_html;
 				break;
 			default:
-				$html .= $before_html . __( 'Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . apply_filters( 'sensei_courses_text', __( 'Courses', 'woothemes-sensei' ) ) . $after_html;
 				break;
 		} // End Switch Statement
 
@@ -533,7 +533,7 @@ class WooThemes_Sensei_Frontend {
 		$html = '';
 		error_log( $before_html, 0 );
 		error_log( $after_html, 0 );
-		$html .= $before_html . __( 'Lessons Archive', 'woothemes-sensei' ) . $after_html;
+		$html .= $before_html . apply_filters( 'sensei_lessons_archive_text', __( 'Lessons Archive', 'woothemes-sensei' ) ) . $after_html;
 		echo apply_filters( 'lesson_archive_title', $html );
 	} // sensei_course_archive_header()
 
@@ -573,7 +573,7 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_lesson_back_to_course_link( $course_id = 0 ) {
 		if ( 0 < intval( $course_id ) ) {
 		?><section class="lesson-course">
-    		<?php _e( 'Back to ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>" title="<?php echo esc_attr( __( 'Back to the course', 'woothemes-sensei' ) ); ?>"><?php echo get_the_title( $course_id ); ?></a>
+    		<?php _e( 'Back to ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_back_to_course_text', __( 'Back to the course', 'woothemes-sensei' ) ) ); ?>"><?php echo get_the_title( $course_id ); ?></a>
     	</section><?php
     	} // End If Statement
 	} // End sensei_lesson_back_to_course_link()
@@ -581,7 +581,7 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_quiz_back_to_lesson_link( $quiz_id = 0 ) {
 		if ( 0 < intval( $quiz_id ) ) {
 		?><section class="lesson-course">
-    		<?php _e( 'Back to ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php echo esc_attr( __( 'Back to the lesson', 'woothemes-sensei' ) ); ?>"><?php echo get_the_title( $quiz_id ); ?></a>
+    		<?php _e( 'Back to ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_back_to_lesson_text', __( 'Back to the lesson', 'woothemes-sensei' ) ) ); ?>"><?php echo get_the_title( $quiz_id ); ?></a>
 		</section><?php
 		} // End If Statement
 	} // End sensei_quiz_back_to_lesson_link()
@@ -592,9 +592,9 @@ class WooThemes_Sensei_Frontend {
 			$course_link = '<a href="' . esc_url( get_permalink( $course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 			$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product',true );
 			if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) { ?>
-				<div class="woo-sc-box info"><?php echo sprintf( __( 'Please purchase the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+				<div class="woo-sc-box info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
 			<?php } else { ?>
-				<div class="woo-sc-box info"><?php echo sprintf( __( 'Please Sign Up for the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+				<div class="woo-sc-box info"><?php echo apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
 			<?php } // End If Statement ?>
     	</section><?php
     	} // End If Statement
@@ -620,7 +620,7 @@ class WooThemes_Sensei_Frontend {
 		    $answers_array = array();
 
 		    switch ($sanitized_submit) {
-		        case __( 'Complete Lesson', 'woothemes-sensei' ):
+		        case apply_filters( 'sensei_complete_lesson_text', __( 'Complete Lesson', 'woothemes-sensei' ) ):
 
 		            // Manual Grade
 		            $grade = 100;
@@ -638,6 +638,8 @@ class WooThemes_Sensei_Frontend {
                                     );
                     $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 
+                    do_action( 'sensei_user_lesson_start', $current_user->ID, $post->ID );
+
 		            // Save Quiz Grade
 	                $args = array(
 	                                    'post_id' => $lesson_quiz_id,
@@ -651,6 +653,10 @@ class WooThemes_Sensei_Frontend {
 	                                    'action' => 'update'
 	                                );
 	                $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+	                $quiz_passmark = absint( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) );
+	                do_action( 'sensei_user_quiz_grade', $current_user->ID, $lesson_quiz_id, $grade, $quiz_passmark );
+
 	                // Get Lesson Grading Setting
 	                if ( $activity_logged && 'passed' == $woothemes_sensei->settings->settings[ 'lesson_completion' ] ) {
 	                    $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
@@ -667,6 +673,9 @@ class WooThemes_Sensei_Frontend {
 	                                            'user_id' => $current_user->ID
 	                                        );
 	                        $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+	                        do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
+
 	                    } // End If Statement
 	                } elseif ($activity_logged) {
 	                    // Mark lesson as complete
@@ -681,9 +690,12 @@ class WooThemes_Sensei_Frontend {
 	                                        'user_id' => $current_user->ID
 	                                    );
 	                    $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+	                    do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
+
 	                } // End If Statement
 		            break;
-		        case __( 'Reset Lesson', 'woothemes-sensei' ):
+		        case apply_filters( 'sensei_reset_lesson_text', __( 'Reset Lesson', 'woothemes-sensei' ) ):
 		            // Remove existing user quiz meta
 		            // Check for quiz grade
 		            $delete_grades = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
@@ -694,7 +706,7 @@ class WooThemes_Sensei_Frontend {
 		            // Check for course complete
 		            $course_id = get_post_meta( $post->ID, '_lesson_course' ,true );
 		            $delete_course_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
-		            $this->messages = '<div class="woo-sc-box note">' . __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) . '</div>';
+		            $this->messages = '<div class="woo-sc-box note">' . apply_filters( 'sensei_lesson_reset_text', __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 		            break;
 		        default:
 		            // Nothing
@@ -713,7 +725,7 @@ class WooThemes_Sensei_Frontend {
 		    $sanitized_course_id = absint( esc_html( $_POST['course_complete_id'] ) );
 			// Handle submit data
 		    switch ($sanitized_submit) {
-		    	case __( 'Mark as Complete', 'woothemes-sensei' ):
+		    	case apply_filters( 'sensei_mark_as_complete_text', __( 'Mark as Complete', 'woothemes-sensei' ) ):
 
 		    		$dataset_changes = false;
 		    		// Save Course Data Answers
@@ -748,6 +760,9 @@ class WooThemes_Sensei_Frontend {
 							    		    'user_id' => $current_user->ID
 							    		);
 							$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+							do_action( 'sensei_user_lesson_start', $current_user->ID, $lesson_item->ID );
+
 		    				// Mark lesson as complete
 							$args = array(
 							    		    'post_id' => $lesson_item->ID,
@@ -760,6 +775,8 @@ class WooThemes_Sensei_Frontend {
 							    		    'user_id' => $current_user->ID
 							    		);
 							$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+							do_action( 'sensei_user_lesson_end', $current_user->ID, $lesson_item->ID );
 
 							if ( $activity_logged ) {
 								// Lesson Quiz Meta
@@ -778,10 +795,16 @@ class WooThemes_Sensei_Frontend {
 										    		    'user_id' => $current_user->ID
 										    		);
 										$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+										$quiz_passmark = absint( get_post_meta( $quiz_item->ID, '_quiz_passmark', true ) );
+										do_action( 'sensei_user_quiz_grade', $current_user->ID, $quiz_item->ID, 100, $quiz_passmark );
+
 									} // End For Loop
 								} // End If Statement
 							} // End If Statement
 						} // End For Loop
+
+						do_action( 'sensei_user_course_end', $current_user->ID, $post->ID );
 		    		} // End If Statement
 
 					// Success message
@@ -790,7 +813,7 @@ class WooThemes_Sensei_Frontend {
 		    		} // End If Statement
 
 		    		break;
-		    	case __( 'Delete Course', 'woothemes-sensei' ):
+		    	case apply_filters( 'sensei_delete_course_text', __( 'Delete Course', 'woothemes-sensei' ) ):
 
 		    		$dataset_changes = false;
 		    		// Check for quiz grade
@@ -867,6 +890,9 @@ class WooThemes_Sensei_Frontend {
 		// Get quiz grade type
 		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
 
+		// Get quiz pass mark
+		$quiz_passmark = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
+
 		// Handle Quiz Completion
 		if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_quiz_noonce' ], 'woothemes_sensei_complete_quiz_noonce' ) ) {
 
@@ -876,7 +902,7 @@ class WooThemes_Sensei_Frontend {
 		    $activity_logged = false;
 
 		    switch ($sanitized_submit) {
-		    	case __( 'Complete Quiz', 'woothemes-sensei' ):
+		    	case apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ):
 
 		    		$activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $quiz_lesson );
 
@@ -892,8 +918,7 @@ class WooThemes_Sensei_Frontend {
 
 						// Get Lesson Grading Setting
 						if ( 'auto' == $quiz_grade_type && 'passed' == $woothemes_sensei->settings->settings[ 'lesson_completion' ] ) {
-							$lesson_prerequisite = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
-							if ( $lesson_prerequisite <= $grade ) {
+							if ( $quiz_passmark <= $grade ) {
 								// Student has reached the pass mark and lesson is complete
 								$args = array(
 												    'post_id' => $quiz_lesson,
@@ -906,6 +931,9 @@ class WooThemes_Sensei_Frontend {
 												    'user_id' => $current_user->ID
 												);
 								$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+								do_action( 'sensei_user_lesson_end', $current_user->ID, $quiz_lesson );
+
 							} // End If Statement
 						} else {
 							// Mark lesson as complete
@@ -920,13 +948,16 @@ class WooThemes_Sensei_Frontend {
 							    			    'user_id' => $current_user->ID
 							    			);
 							$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+							do_action( 'sensei_user_lesson_end', $current_user->ID, $quiz_lesson );
+
 						} // End If Statement
 					} else {
 						// Something broke
 					} // End If Statement
 
 					break;
-		    	case __( 'Save Quiz', 'woothemes-sensei' ):
+		    	case apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ):
 
 		    		$activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $quiz_lesson );
 
@@ -934,10 +965,10 @@ class WooThemes_Sensei_Frontend {
 			    		$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
 			    	}
 
-					$this->messages = '<div class="woo-sc-box note">' . __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) . '</div>';
+					$this->messages = '<div class="woo-sc-box note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
 
 					break;
-		    	case __( 'Reset Quiz', 'woothemes-sensei' ):
+		    	case apply_filters( 'sensei_reset_quiz_text', __( 'Reset Quiz', 'woothemes-sensei' ) ):
 		    		// Remove existing user quiz meta
 		    		$grade = '';
 		    		$answers_array = array();
@@ -950,7 +981,7 @@ class WooThemes_Sensei_Frontend {
 		    		// Check for course complete
 		    		$course_id = absint( get_post_meta( $quiz_lesson, '_lesson_course' ,true ) );
 		    		$delete_course_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
-		    		$this->messages = '<div class="woo-sc-box note">' . __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) . '</div>';
+		    		$this->messages = '<div class="woo-sc-box note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 		    		break;
 		    	default:
 		    		// Nothing
@@ -958,7 +989,12 @@ class WooThemes_Sensei_Frontend {
 
 		    } // End Switch Statement
 
-			// Get latest quiz answers and grades
+		    // Refresh page to avoid re-posting
+			?>
+		    <script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
+		    <?php
+
+		    // Get latest quiz answers and grades
 			$user_quizzes = $this->sensei_get_user_quiz_answers( $post->ID );
 		    $user_quiz_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 			if ( '' == $user_quiz_grade ) {
@@ -977,9 +1013,12 @@ class WooThemes_Sensei_Frontend {
 
 		} // End If Statement
 
+		$this->data = new stdClass();
+
 		// Build frontend data object
 		$this->data->user_quizzes = $user_quizzes;
 		$this->data->user_quiz_grade = $user_quiz_grade;
+		$this->data->quiz_passmark = $quiz_passmark;
 		$this->data->quiz_lesson = $quiz_lesson;
 		$this->data->quiz_grade_type = $quiz_grade_type;
 		$this->data->user_lesson_end = $user_lesson_end;
@@ -1038,7 +1077,7 @@ class WooThemes_Sensei_Frontend {
 		?>
 		<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
             <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
-            <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php _e( 'Complete Lesson', 'woothemes-sensei' ); ?>"/></span>
+            <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_lesson_text', __( 'Complete Lesson', 'woothemes-sensei' ) ); ?>"/></span>
         </form>
 		<?php
 		} // End If Statement
@@ -1055,55 +1094,16 @@ class WooThemes_Sensei_Frontend {
         	<header>
             <?php $no_quiz_count = 0; ?>
         	<?php foreach ($lesson_quizzes as $quiz_item){
-        		// Get quiz grade type
-        		$quiz_grade_type = get_post_meta( $quiz_item->ID, '_quiz_grade_type', true );
-                // Check quiz grade
-        		$user_quiz_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_item->ID, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
-				if ( '' == $user_quiz_grade ) {
-					$user_quiz_grade = '';
-				} // End If Statement
-        		$question_count = 0;
-                if ( 0 < $quiz_item->ID ) {
-                	$questions_array = WooThemes_Sensei_Utils::lesson_quiz_questions( $quiz_item->ID );
-                    $question_count = count( $questions_array );
-                } // End If Statement
-        		// Check if Lesson is complete
-        	    if ( sensei_has_user_completed_lesson( $post_id, $user_id ) ) { ?>
-        	    	<?php
-        	    	if ( 0 < $question_count ) { ?>
-		    	    	<?php if( $quiz_grade_type == 'auto' ) { ?>
-		    	    		<div class="woo-sc-box tick"><?php echo sprintf( __( 'You have completed this lesson quiz with a grade of %d%%', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
-		    	    	<?php } else { ?>
-		    	    		<div class="woo-sc-box info"><?php echo sprintf( __( 'You have completed this lesson quiz and it will be graded soon.', 'woothemes-sensei' ), round( $user_quiz_grade ) ); ?> <a href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>" class="view-quiz"><?php _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?></a></div>
-		    	    	<?php } // End If Statement ?>
-                	<?php } else { ?>
-                		<div class="woo-sc-box tick"><?php echo __( 'You have completed this lesson.', 'woothemes-sensei' ); ?></div>
-                	<?php } // End If Statement ?>
-                    <?php sensei_reset_lesson_button(); ?>
-        	    <?php } else {
-                    if ( 0 < $question_count ) {
-                        if ( $lesson_prerequisite > 0) {
-                            if ( sensei_has_user_completed_prerequisite_lesson( $lesson_prerequisite, $user_id ) ) { ?>
-                                <a class="button" href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'Take the Lesson Quiz', 'woothemes-sensei' ) ); ?>"><?php _e( 'Take the Lesson Quiz',    'woothemes-sensei' ); ?></a>
-                                <?php do_action( 'sensei_complete_lesson_button' ); ?>
-                            <?php } else {
-                                echo sprintf( __( 'You must first complete %1$s before taking this Lesson\'s Quiz', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_prerequisite ) ) . '" title="' . esc_attr(  sprintf( __( 'You must first complete: %1$s', 'woothemes-sensei' ), get_the_title( $lesson_prerequisite ) ) ) . '">' . get_the_title( $lesson_prerequisite ). '</a>' );
-                            } // End If Statement
-                        } else { ?>
-                            <a class="button" href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'Take the Lesson Quiz', 'woothemes-sensei' ) ); ?>"><?php _e( 'Take the Lesson Quiz', 'woothemes-sensei'    ); ?></a>
-                           <?php do_action( 'sensei_complete_lesson_button' ); ?>
-                        <?php } // End If Statement
-                    } else {
-                        $no_quiz_count = sensei_no_quiz_message( $no_quiz_count );
-                        do_action( 'sensei_complete_lesson_button' );
-                    } // End If Statement
-        	    } // End If Statement
+        		// Display lesson quiz status message
+        		$status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $post_id, $user_id, true );
+    			echo '<div class="woo-sc-box ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+    			echo $status['extra'];
         	} // End For Loop ?>
         	</header>
         <?php } elseif( 0 < count($lesson_quizzes) && $woothemes_sensei->access_settings() ) { ?>
         	<header>
         		<?php foreach ($lesson_quizzes as $quiz_item){ ?>
-        		<a class="button" href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>"><?php _e( 'View the Lesson Quiz',    'woothemes-sensei' ); ?></a>
+        		<a class="button" href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ) ); ?>"><?php _e( 'View the Lesson Quiz',    'woothemes-sensei' ); ?></a>
         		<?php } // End For Loop ?>
         	</header>
         <?php } // End If Statement
@@ -1122,7 +1122,7 @@ class WooThemes_Sensei_Frontend {
            	<?php if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) { ?>
 		   	<span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
 		   	<?php } // End If Statement ?>
-		   	<span class="course-lesson-count"><?php echo $woothemes_sensei->post_types->course->course_author_lesson_count( $author_id, $post_id ) . '&nbsp;' . __( 'Lectures', 'woothemes-sensei' ); ?></span>
+		   	<span class="course-lesson-count"><?php echo $woothemes_sensei->post_types->course->course_author_lesson_count( $author_id, $post_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
 		   	<?php if ( '' != $category_output ) { ?>
 		   	<span class="course-category"><?php echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ); ?></span>
 		   	<?php } // End If Statement ?>
@@ -1211,20 +1211,45 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_login_form()
 
 	public function sensei_quiz_action_buttons() {
-		global $post, $current_user;
+		global $post, $current_user, $woothemes_sensei;
 		$lesson_id = get_post_meta( $post->ID, '_quiz_lesson', true );
 		$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-		if ( is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) {
+		$lesson_prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+		$show_actions = true;
+		if( intval( $lesson_prerequisite ) > 0 ) {
+			$completion = $woothemes_sensei->settings->settings['lesson_completion'];
+			switch( $completion ) {
+				case 'passed':
+					$quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_prerequisite );
+					foreach ( $quizzes as $quiz ) {
+		                $prerequisite_quiz_id = $quiz->ID;
+		            }
+					$quiz_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $prerequisite_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
+					$quiz_passmark = intval( get_post_meta( $prerequisite_quiz_id, '_quiz_passmark', true ) );
+					if( $quiz_grade < $quiz_passmark ) {
+						$show_actions = false;
+					}
+				break;
+
+				case 'complete':
+					$user_lesson_end = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_start', 'field' => 'comment_content' ) );
+					if ( ! $user_lesson_end || $user_lesson_end == '' || strlen( $user_lesson_end ) == 0 ) {
+						$show_actions = false;
+					}
+				break;
+			}
+		}
+		if ( $show_actions && is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) {
 			global $woothemes_sensei;
 			// Get Reset Settings
 			$reset_quiz_allowed = $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ]; ?>
 			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_noonce' ); ?>" value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_complete_quiz_noonce' ) ); ?>" />
 		    <?php if ( ( isset( $this->data->user_lesson_complete ) && !$this->data->user_lesson_complete ) ) { ?>
-		 	<span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php _e( 'Complete Quiz', 'woothemes-sensei' ); ?>"/></span>
-		 	<span><input type="submit" name="quiz_complete" class="quiz-submit save" value="<?php _e( 'Save Quiz', 'woothemes-sensei' ); ?>"/></span>
+		 	<span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ); ?>"/></span>
+		 	<span><input type="submit" name="quiz_complete" class="quiz-submit save" value="<?php echo apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		     <?php } // End If Statement ?>
 	          <?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
-		 	   <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php _e( 'Reset Quiz', 'woothemes-sensei' ); ?>"/></span>
+		 	   <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php echo apply_filters( 'sensei_reset_quiz_text', __( 'Reset Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		     <?php } ?>
         <?php }
 	} // End sensei_quiz_action_buttons()
@@ -1239,7 +1264,7 @@ class WooThemes_Sensei_Frontend {
 			    <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
 			    <?php } ?>
                 <?php if ( 0 < intval( $lesson_course_id ) ) { ?>
-                <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'woothemes-sensei' ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
+                <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_view_course_text', __( 'View course', 'woothemes-sensei' ) ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
                 <?php } ?>
             </p>
             <p><?php the_excerpt(); ?></p>
@@ -1268,6 +1293,8 @@ class WooThemes_Sensei_Frontend {
 			$this->data->is_user_taking_course = false;
 			if ( $activity_logged ) {
 				$this->data->is_user_taking_course = true;
+
+				do_action( 'sensei_user_course_start', $current_user->ID, $post->ID );
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_course_start()
@@ -1345,9 +1372,10 @@ class WooThemes_Sensei_Frontend {
 				} // End If Statement
 				// Success message
 		   		if ( $completed_course ) { ?>
-		   			<div class="status completed"><?php _e( 'Completed', 'woothemes-sensei' ); ?></div>
+		   			<div class="status completed"><?php echo apply_filters( 'sensei_complete_text', __( 'Completed', 'woothemes-sensei' ) ); ?></div>
+		   			<div class="view-results"><a href="<?php echo $woothemes_sensei->course_results->get_permalink( $post->ID ); ?>"><?php echo apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ); ?></a></div>
 		   		<?php } else { ?>
-		    		<div class="status in-progress"><?php _e( 'In Progress', 'woothemes-sensei' ); ?></div>
+		    		<div class="status in-progress"><?php echo apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ); ?></div>
 		    	<?php } ?>
 		    <?php } else {
 		    	// Get the product ID

@@ -39,21 +39,21 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		parent::__construct( 'grading_main' );
 
 		// Default Columns
-		$this->columns = array(
+		$this->columns = apply_filters( 'sensei_grading_main_columns', array(
 			'user_login' => __( 'Learner', 'woothemes-sensei' ),
 			'user_status' => __( 'Status', 'woothemes-sensei' ),
 			'user_grade' => __( 'Grade', 'woothemes-sensei' )
-		);
+		) );
 		// Sortable Columns
-		$this->sortable_columns = array(
+		$this->sortable_columns = apply_filters( 'sensei_grading_main_columns_sortable', array(
 			'user_login' => array( 'user_login', false ),
 			'user_status' => array( 'user_status', false ),
 			'user_grade' => array( 'user_grade', false )
-		);
+		) );
 
 		// Actions
-		add_action( 'sensei_before_list_table', array( &$this, 'data_table_header' ) );
-		add_action( 'sensei_after_list_table', array( &$this, 'data_table_footer' ) );
+		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
+		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 	} // End __construct()
 
 	/**
@@ -72,9 +72,12 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			if ( isset( $_POST['s'] ) && '' != esc_html( $_POST['s'] ) ) {
 				$args_array['search'] = esc_html( $_POST['s'] );
 			} // End If Statement
+			if ( isset( $args_array['search'] ) && '' !== $args_array['search'] ) {
+				$args_array['search'] = '*' . $args_array['search'] . '*';
+			} // End If Statement
 			// Get Users data
 			$users = get_users( $args_array );
-
+			$this->total_items = count( $users );
 			$lesson_id = $this->lesson_id;
 			$output_counter = 0;
 			$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
@@ -82,6 +85,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		    foreach ($lesson_quizzes as $quiz_item) {
 		    	$lesson_quiz_id = $quiz_item->ID;
 		    } // End For Loop
+		    $graded_count = 0;
 		    foreach ( $users as $user_key => $user_item ) {
 				// Get Start Date
 				$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_item->ID, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
@@ -95,22 +99,22 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			    } // End If Statement
 
 			    if ( ( isset( $lesson_end_date ) && '' != $lesson_end_date ) && ( isset( $lesson_grade ) && '' == $lesson_grade ) ) {
-					$status_html = '<span class="submitted">' . __( 'Submitted for Grading', 'woothemes-sensei' ) . '</span>';
+					$status_html = '<span class="submitted">' . apply_filters( 'sensei_submitted_for_grading_text', __( 'Submitted for Grading', 'woothemes-sensei' ) ) . '</span>';
 					$to_be_graded_count++;
 				} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
-					$status_html = '<span class="graded">' . __( 'Graded', 'woothemes-sensei' ) . '</span>';
+					$status_html = '<span class="graded">' . apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) ) . '</span>';
 					$graded_count++;
 				} elseif ( ( isset( $lesson_start_date ) && '' != $lesson_start_date ) && ( isset( $lesson_end_date ) && '' == $lesson_end_date  ) ) {
-					$status_html = '<span class="in-progress">' . __( 'In Progress', 'woothemes-sensei' ) . '</span>';
+					$status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
 					$in_progress_count++;
 				}  // End If Statement
 
 				// Output the users data
 				if ( isset( $lesson_start_date ) && '' != $lesson_start_date ) {
-					array_push( $return_array, array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'edit.php?post_type=lesson' ) ) . '">'.$user_item->display_name.'</a>',
+					array_push( $return_array, apply_filters( 'sensei_grading_main_column_data', array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a>',
 													'user_status' => $status_html,
 													'user_grade' => $quiz_grade
-				 								)
+				 								), $lesson_id, $user_item->ID )
 							);
 				} // End If Statement
 			} // End For Loop

@@ -35,13 +35,14 @@ jQuery(document).ready( function($) {
 	 	jQuery( '#total_graded_questions' ).val( total_graded_questions );
 
 	 	var total_questions = parseInt( jQuery( '#total_questions' ).val() );
-	 	var percent = parseFloat( total_grade * 100 / total_questions ).toFixed(2);
+	 	var quiz_grade_total = parseInt( jQuery( '#quiz_grade_total' ).val() );
+	 	var percent = parseFloat( total_grade * 100 / quiz_grade_total ).toFixed(2);
 	 	percent = percent.replace( '.00', '' );
 
 	 	jQuery( '#total_grade' ).val( total_grade );
 	 	jQuery( '.total_grade_total' ).html( total_grade );
 	 	jQuery( '.total_grade_percent' ).html( percent );
-	 	jQuery( '.total_grade_count' ).html( total_questions );
+	 	jQuery( '.quiz_grade_total' ).html( quiz_grade_total );
 
 	 	if( total_questions == total_graded_questions ) {
 			jQuery( '#all_questions_graded' ).val( 'yes' );
@@ -72,11 +73,13 @@ jQuery(document).ready( function($) {
 		 			jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
 		 			jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
 		 			jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+		 			jQuery( this ).find( 'input.question-grade' ).val( jQuery( this ).find( 'input.question_total_grade' ).val() );
 		 		} else {
 		 			if( jQuery( this ).hasClass( 'auto-grade' ) ) {
 		 				jQuery( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
 		 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
 		 				jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+		 				jQuery( this ).find( '.input.question-grade' ).val( 0 );
 		 			} else {
 		 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
 						jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
@@ -97,6 +100,7 @@ jQuery(document).ready( function($) {
 		jQuery( '.question_box' ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
 		jQuery( '.question_box' ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
 		jQuery( '.question_box' ).removeClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
+		jQuery( '.question-grade' ).val( '0' );
 		jQuery.fn.calculateTotalGrade();
 	}
 
@@ -188,7 +192,7 @@ jQuery(document).ready( function($) {
 	 ***************************************************************************************************/
 
 	/**
-	 * Grade Change Event.
+	 * Grade change event
 	 *
 	 * @since 1.3.0
 	 * @access public
@@ -196,14 +200,37 @@ jQuery(document).ready( function($) {
 	jQuery( '.grading-mark' ).on( 'change', 'input', function() {
 		if( this.value == 'right' ) {
 			jQuery( '#' + this.name + '_box' ).addClass( 'user_right' ).removeClass( 'user_wrong' );
+			jQuery( '#' + this.name + '_box' ).find( 'input.question-grade' ).val( jQuery( '#' + this.name + '_box' ).find( 'input.question_total_grade' ).val() );
 		} else {
 			jQuery( '#' + this.name + '_box' ).addClass( 'user_wrong' ).removeClass( 'user_right' );
+			jQuery( '#' + this.name + '_box' ).find( 'input.question-grade' ).val( 0 );
 		}
 		jQuery.fn.calculateTotalGrade();
 	});
 
 	/**
-	 * Grade Reset Event.
+	 * Grade value change event
+	 *
+	 * @since 1.4.0
+	 * @access public
+	 */
+	jQuery( '.question-grade' ).on( 'change', '', function() {
+		var grade = parseInt( jQuery( this ).val() );
+		var question_label = this.id.replace( '_grade', '' );
+		if( grade > 0 ) {
+			jQuery( '#' + question_label + '_box' ).addClass( 'user_right' ).removeClass( 'user_wrong' );
+			jQuery( '#' + question_label + '_box .grading-mark input.' + question_label + '_right_option' ).attr( 'checked', 'checked' );
+			jQuery( '#' + question_label + '_box .grading-mark input.' + question_label + '_wrong_option' ).attr( 'checked', false );
+		} else {
+			jQuery( '#' + question_label + '_box' ).addClass( 'user_wrong' ).removeClass( 'user_right' );
+			jQuery( '#' + question_label + '_box .grading-mark input.' + question_label + '_wrong_option' ).attr( 'checked', 'checked' );
+			jQuery( '#' + question_label + '_box .grading-mark input.' + question_label + '_right_option' ).attr( 'checked', false );
+		}
+		jQuery.fn.calculateTotalGrade();
+	});
+
+	/**
+	 * Grade reset event
 	 *
 	 * @since 1.3.0
 	 * @access public

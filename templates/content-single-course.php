@@ -19,7 +19,7 @@ get_currentuserinfo();
 $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
 // Content Access Permissions
 $access_permission = false;
-if ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && !$woothemes_sensei->settings->settings['access_permission'] ) {
+if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! $woothemes_sensei->settings->settings['access_permission'] ) || sensei_all_access() ) {
 	$access_permission = true;
 } // End If Statement
 ?>
@@ -41,7 +41,7 @@ if ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && !$wo
                 <?php do_action( 'sensei_course_single_title' ); ?>
 
                 <section class="entry fix">
-                	<?php if ( ( is_user_logged_in() && $is_user_taking_course ) || ( $access_permission ) ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
+                	<?php if ( ( is_user_logged_in() && $is_user_taking_course ) || $access_permission ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
                 </section>
 
                 <?php do_action( 'sensei_course_single_meta' ); ?>

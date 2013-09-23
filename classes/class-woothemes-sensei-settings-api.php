@@ -323,14 +323,16 @@ class WooThemes_Sensei_Settings_API {
 	public function register_settings_screen () {
 		global $woothemes_sensei;
 
-		$hook = add_submenu_page( 'edit.php?post_type=slide', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
+		if ( current_user_can( 'manage_options' ) ) {
+			$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
 
-		$this->hook = $hook;
+			$this->hook = $hook;
+		}
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
-			add_action( 'admin_notices', array( &$this, 'settings_errors' ) );
-			add_action( 'admin_print_scripts', array( &$this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( &$this, 'enqueue_styles' ) );
+			add_action( 'admin_notices', array( $this, 'settings_errors' ) );
+			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 		}
 	} // End register_settings_screen()
 
@@ -445,13 +447,13 @@ class WooThemes_Sensei_Settings_API {
 		$has_description = false;
 		if ( isset( $args['data']['description'] ) ) {
 			$has_description = true;
-			echo '<label for="' . $this->token . '[' . esc_attr( $args['key'] ) . ']">' . "\n";
+			echo '<label for="' . esc_attr( $args['key'] ) . '">' . "\n";
 		}
 		echo '<input id="' . $args['key'] . '" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" type="checkbox" value="1"' . checked( esc_attr( $options[$args['key']] ), '1', false ) . ' />' . "\n";
 		if ( $has_description ) {
 			echo esc_html( $args['data']['description'] ) . '</label>' . "\n";
 		}
-	} // End form_field_text()
+	} // End form_field_checkbox()
 
 	/**
 	 * Generate textarea field.
@@ -834,7 +836,7 @@ class WooThemes_Sensei_Settings_API {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.0.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.4.0' );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()
