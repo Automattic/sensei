@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2013.9.16 - version 1.4.0
+2013.9.24 - version 1.4.0
  * /templates/learner-profile.php,
    /templates/learner-profile/learner-info.php - Adding new templates to display learner profiles
  * /templates/course-results.php,
