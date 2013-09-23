@@ -13,6 +13,13 @@ jQuery(document).ready( function($) {
 	    			width: jQuery(this).data("origWidth")
 	    		}, 1200);
 		});
+
+		jQuery(".answer_message.has_notes").mouseover(function() {
+			jQuery(this).children(".notes").show();
+		});
+		jQuery(".answer_message.has_notes").mouseout(function() {
+			jQuery(this).children(".notes").hide();
+		});
 	});
 
 });

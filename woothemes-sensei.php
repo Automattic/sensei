@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Sensei
-Plugin URI: http://woothemes.com/
+Plugin URI: http://www.woothemes.com/products/sensei/
 Description: Sensei by WooThemes is the best Learning Management System ever!
-Version: 1.3.7
+Version: 1.4.0
 Author: WooThemes
-Author URI: http://woothemes.com/
+Author URI: http://www.woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 */
 /*  Copyright 2013  WooThemes  (email : info@woothemes.com)
@@ -31,7 +31,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	if ( ! is_admin() ) require_once( 'inc/woothemes-sensei-template.php' );
 	global $woothemes_sensei;
 	$woothemes_sensei = new WooThemes_Sensei( __FILE__ );
-	$woothemes_sensei->version = '1.3.7';
+	$woothemes_sensei->version = '1.4.0';
 
     /**
      * Plugin updates

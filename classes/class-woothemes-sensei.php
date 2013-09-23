@@ -90,6 +90,14 @@ class WooThemes_Sensei {
 		} // End If Statement
 		$this->settings->setup_settings();
 		$this->settings->get_settings();
+		// Load Learner Profiles Class
+		$this->load_class( 'learner-profiles' );
+		$this->learner_profiles = new WooThemes_Sensei_Learner_Profiles();
+		$this->learner_profiles->token = $this->token;
+		// Load Course Results Class
+		$this->load_class( 'course-results' );
+		$this->course_results = new WooThemes_Sensei_Course_Results();
+		$this->course_results->token = $this->token;
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
@@ -129,9 +137,11 @@ class WooThemes_Sensei {
 		add_action( 'subscription_end_of_prepaid_term' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'cancelled_subscription' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'subscription_put_on-hold' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
+		// Filter comment counts
+		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
 		// Run Upgrades once the WP functions have loaded
 		if ( is_admin() ) {
-			add_action( 'wp_loaded', array( $this, 'run_upgrades' ), 10 );
+			add_action( 'wp_loaded', array( $this, 'run_updates' ), 10 );
 		} // End If Statement
 	} // End __construct()
 
@@ -141,14 +151,14 @@ class WooThemes_Sensei {
 	 * @since   1.1.0
 	 * @return  void
 	 */
-	public function run_upgrades() {
+	public function run_updates() {
 		// Run updates if administrator
 		if ( current_user_can( 'manage_options' ) ) {
 			$this->load_class( 'updates' );
 			$this->updates = new WooThemes_Sensei_Updates( $this );
 			$this->updates->update();
 		} // End If Statement
-	} // End run_upgrades()
+	} // End run_updates()
 
 	/**
 	 * Setup required WooCommerce settings.
@@ -157,13 +167,54 @@ class WooThemes_Sensei {
 	 * @return  void
 	 */
 	public function set_woocommerce_functionality() {
-		// Disable guest checkout as we need a valid user to store data for
-		update_option( 'woocommerce_enable_guest_checkout', false );
+		// Disable guest checkout if a course is in the cart as we need a valid user to store data for
+		add_filter( 'pre_option_woocommerce_enable_guest_checkout', array( $this, 'disable_guest_checkout' ) );
 
-		// Make orders with virtual products to complete rather then stay processing
+		// Mark orders with virtual products as complete rather then stay processing
 		add_filter( 'woocommerce_payment_complete_order_status', array( $this, 'virtual_order_payment_complete' ), 10, 2 );
 
 	} // End set_woocommerce_functionality()
+
+	/**
+	 * Disable guest checkout if a course product is in the cart
+	 * @param  boolean $guest_checkout Current guest checkout setting
+	 * @return boolean                 Modified guest checkout setting
+	 */
+	public function disable_guest_checkout() {
+		global $woocommerce;
+
+		$all_options = wp_load_alloptions();
+		$guest_checkout = $all_options['woocommerce_enable_guest_checkout'];
+
+		if( ! is_admin() ) {
+
+			if( isset( $woocommerce->cart->cart_contents ) && count( $woocommerce->cart->cart_contents ) > 0 ) {
+				foreach( $woocommerce->cart->cart_contents as $cart_key => $product ) {
+					if( isset( $product['product_id'] ) ) {
+						$args = array(
+							'posts_per_page' => -1,
+							'post_type' => 'course',
+							'meta_query' => array(
+								array(
+									'key' => '_course_woocommerce_product',
+									'value' => $product['product_id']
+								)
+							)
+						);
+						$posts = get_posts( $args );
+						if( $posts && count( $posts ) > 0 ) {
+							foreach( $posts as $course ) {
+								$guest_checkout = '';
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $guest_checkout;
+	}
 
 	/**
 	 * Change order status with virtual products to completed
@@ -311,7 +362,7 @@ class WooThemes_Sensei {
 	 */
 	public function template_loader ( $template ) {
 		// REFACTOR
-		global $post;
+		global $post, $wp_query;
 
 		$find = array( 'woothemes-sensei.php' );
 		$file = '';
@@ -380,6 +431,18 @@ class WooThemes_Sensei {
 		} elseif ( is_post_type_archive( 'lesson' ) ) {
 
 		    $file 	= 'archive-lesson.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
+		} elseif ( isset( $wp_query->query_vars['learner_profile'] ) ) {
+
+			$file 	= 'learner-profile.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
+		} elseif ( isset( $wp_query->query_vars['course_results'] ) ) {
+
+			$file 	= 'course-results.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
@@ -577,7 +640,7 @@ class WooThemes_Sensei {
 				$lesson_id = get_post_meta( $post->ID, '_quiz_lesson',true );
 				$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course',true );
 				$update_course = $this->woocommerce_course_update( $lesson_course_id  );
-				if ( $this->access_settings() && WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) {
+				if ( ( $this->access_settings() && WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) || sensei_all_access() ) {
 					// Check for prerequisite lesson for this quiz
 					$lesson_prerequisite_id = get_post_meta( $lesson_id, '_lesson_prerequisite', true);
 					$user_lesson_prerequisite_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite_id, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
@@ -586,12 +649,16 @@ class WooThemes_Sensei {
 						$user_lesson_prerequisite_complete = true;
 					} // End If Statement
 					// Handle restrictions
-					if ( 0 < absint( $lesson_prerequisite_id ) && ( !$user_lesson_prerequisite_complete ) ) {
-						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
-						$lesson_link = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
-						$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this Quiz.', 'woothemes-sensei' ), $lesson_link );
-					} else {
+					if( sensei_all_access() ) {
 						$user_allowed = true;
+					} else {
+						if ( 0 < absint( $lesson_prerequisite_id ) && ( !$user_lesson_prerequisite_complete ) ) {
+							$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
+							$lesson_link = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
+							$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this Quiz.', 'woothemes-sensei' ), $lesson_link );
+						} else {
+							$user_allowed = true;
+						} // End If Statement
 					} // End If Statement
 				} elseif( $this->access_settings() ) {
 					// Check if the user has started the course
@@ -619,6 +686,11 @@ class WooThemes_Sensei {
 				break;
 
 		} // End Switch Statement
+
+		if( sensei_all_access() ) {
+			$user_allowed = true;
+		}
+
 		return apply_filters( 'sensei_access_permissions', $user_allowed );
 	} // End get_placeholder_image()
 
@@ -630,6 +702,9 @@ class WooThemes_Sensei {
 	 * @return void
 	 */
 	public function access_settings () {
+
+		if( sensei_all_access() ) return true;
+
 		if ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) {
         	if ( is_user_logged_in() ) {
         		return true;
@@ -849,6 +924,52 @@ class WooThemes_Sensei {
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_activate_subscription()
+
+	/**
+	 * Filtering wp_count_comments to ensure that Sensei comments are ignored
+	 * @since   1.4.0
+	 * @access  public
+	 * @param  array   $comments
+	 * @param  integer $post_id
+	 * @return array
+	 */
+	public function sensei_count_comments( $comments, $post_id ) {
+		global $wpdb;
+
+		$post_id = (int) $post_id;
+
+		$count = wp_cache_get("comments-{$post_id}", 'counts');
+
+		if ( false !== $count )
+			return $count;
+
+		$where = "WHERE comment_type NOT LIKE 'sensei%'";
+		if ( $post_id > 0 )
+			$where .= $wpdb->prepare( " AND comment_post_ID = %d", $post_id );
+
+		$count = $wpdb->get_results( "SELECT comment_approved, COUNT( * ) AS num_comments FROM {$wpdb->comments} {$where} GROUP BY comment_approved", ARRAY_A );
+
+		$total = 0;
+		$approved = array('0' => 'moderated', '1' => 'approved', 'spam' => 'spam', 'trash' => 'trash', 'post-trashed' => 'post-trashed');
+		foreach ( (array) $count as $row ) {
+			// Don't count post-trashed toward totals
+			if ( 'post-trashed' != $row['comment_approved'] && 'trash' != $row['comment_approved'] )
+				$total += $row['num_comments'];
+			if ( isset( $approved[$row['comment_approved']] ) )
+				$stats[$approved[$row['comment_approved']]] = $row['num_comments'];
+		}
+
+		$stats['total_comments'] = $total;
+		foreach ( $approved as $key ) {
+			if ( empty($stats[$key]) )
+				$stats[$key] = 0;
+		}
+
+		$stats = (object) $stats;
+		wp_cache_set("comments-{$post_id}", $stats, 'counts');
+
+		return $stats;
+	}
 
 } // End Class
 ?>

@@ -46,14 +46,14 @@ class WooThemes_Sensei_PostTypes {
 		// Setup Post Types
 		$this->labels = array();
 		$this->setup_post_type_labels_base();
-		add_action( 'init', array( &$this, 'setup_course_post_type' ), 100 );
-		add_action( 'init', array( &$this, 'setup_lesson_post_type' ), 100 );
-		add_action( 'init', array( &$this, 'setup_quiz_post_type' ), 100 );
-		add_action( 'init', array( &$this, 'setup_question_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
 		// Setup Taxonomies
-		add_action( 'init', array( &$this, 'setup_course_category_taxonomy' ), 100 );
-		add_action( 'init', array( &$this, 'setup_quiz_type_taxonomy' ), 100 );
-		add_action( 'init', array( &$this, 'setup_question_type_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_question_type_taxonomy' ), 100 );
 		// Load Post Type Objects
 		$default_post_types = array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) ;
 		$this->load_posttype_objects( $default_post_types );
@@ -62,14 +62,14 @@ class WooThemes_Sensei_PostTypes {
 			$this->set_role_cap_defaults( $default_post_types );
 			global $pagenow;
 			if ( ( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) ) {
-				add_filter( 'enter_title_here', array( &$this, 'enter_title_here' ), 10 );
-				add_filter( 'post_updated_messages', array( &$this, 'setup_post_type_messages' ) );
+				add_filter( 'enter_title_here', array( $this, 'enter_title_here' ), 10 );
+				add_filter( 'post_updated_messages', array( $this, 'setup_post_type_messages' ) );
 			} // End If Statement
 		} // End If Statement
 
 		// Menu functions
 		if ( is_admin() ) {
-			add_action('admin_menu', array( &$this, 'sensei_admin_menu_items' ), 10);
+			add_action('admin_menu', array( $this, 'sensei_admin_menu_items' ), 10);
 		} // End If Statement
 
 	} // End __construct()
@@ -125,7 +125,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_ui' => true,
 		    'show_in_menu' => 'edit.php?post_type=lesson',
 		    'query_var' => true,
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', 'course' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'course',
 		    // 'capabilities' => array(
@@ -156,7 +156,7 @@ class WooThemes_Sensei_PostTypes {
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
 		    'menu_icon' => esc_url( $woothemes_sensei->plugin_url . 'assets/images/icon_course_16.png' ),
-		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail' )
+		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'author' )
 		);
 
 		register_post_type( 'course', $args );
@@ -171,7 +171,7 @@ class WooThemes_Sensei_PostTypes {
 	public function setup_lesson_post_type () {
 		global $woothemes_sensei;
 
-		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' );
+		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'author' );
 		$allow_comments = false;
 		if ( isset( $woothemes_sensei->settings->settings[ 'lesson_comments' ] ) ) {
 			$allow_comments = $woothemes_sensei->settings->settings[ 'lesson_comments' ];
@@ -187,7 +187,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_ui' => true,
 		    'show_in_menu' => true,
 		    'query_var' => true,
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_slug', 'lesson' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'lesson',
 		    // 'capabilities' => array(
@@ -216,7 +216,7 @@ class WooThemes_Sensei_PostTypes {
 						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
-		    'menu_position' => 20, // Below "Pages"
+		    'menu_position' => 51, // Below "Pages"
 		    'menu_icon' => esc_url( $woothemes_sensei->plugin_url . 'assets/images/icon_course_16.png' ),
 		    'supports' => $supports_array
 		);
@@ -242,7 +242,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_nav_menus' => false,
 		    'query_var' => true,
 		    'exclude_from_search' => true,
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_slug', 'quiz' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'quiz',
 		    'has_archive' => false,
@@ -274,7 +274,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_nav_menus' => false,
 		    'query_var' => true,
 		    'exclude_from_search' => true,
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_slug', 'question' ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'question',
 		    'has_archive' => true,
@@ -315,7 +315,7 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => true,
-			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', 'course-category' ) ) )
+			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
 		register_taxonomy( 'course-category', array( 'course' ), $args );
@@ -349,7 +349,7 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true, /* TO DO - future releases */
 			'query_var' => true,
 			'show_in_nav_menus' => false,
-			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', 'quiz-type' ) ) )
+			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
 		register_taxonomy( 'quiz-type', array( 'quiz' ), $args );
@@ -383,7 +383,7 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true, /* TO DO - future releases */
 			'query_var' => true,
 			'show_in_nav_menus' => false,
-			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', 'question-type' ) ) )
+			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
 		register_taxonomy( 'question-type', array( 'question' ), $args );
@@ -417,7 +417,7 @@ class WooThemes_Sensei_PostTypes {
 		$labels = array(
 		    'name' => sprintf( _x( '%s', 'post type general name', 'woothemes-sensei' ), $plural ),
 		    'singular_name' => sprintf( _x( '%s', 'post type singular name', 'woothemes-sensei' ), $singular ),
-		    'add_new' => sprintf( _x( 'Add New %s', $token, 'woothemes-sensei' ), $singular ),
+		    'add_new' => __( 'Add New', 'woothemes-sensei' ),
 		    'add_new_item' => sprintf( __( 'Add New %s', 'woothemes-sensei' ), $singular ),
 		    'edit_item' => sprintf( __( 'Edit %s', 'woothemes-sensei' ), $singular ),
 		    'new_item' => sprintf( __( 'New %s', 'woothemes-sensei' ), $singular ),

@@ -342,7 +342,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
     			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_start_course_noonce' ) ); ?>" />
 
-    			<span><input name="course_start" type="submit" class="course-start" value="<?php _e( 'Start taking this Course', 'woothemes-sensei' ); ?>"/></span>
+    			<span><input name="course_start" type="submit" class="course-start" value="<?php echo apply_filters( 'sensei_start_course_text', __( 'Start taking this Course', 'woothemes-sensei' ) ); ?>"/></span>
 
     		</form><?php
     	} // End If Statement
@@ -473,7 +473,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		?>
 		<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
             <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
-            <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php _e( 'Reset Lesson', 'woothemes-sensei' ); ?>"/></span>
+            <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php echo apply_filters( 'sensei_reset_lesson_text', __( 'Reset Lesson', 'woothemes-sensei' ) ); ?>"/></span>
         </form>
 		<?php
 		} // End If Statement
@@ -545,5 +545,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             if ( $no_quiz_count == 0 ) { ?><div class="woo-sc-box alert"><?php _e( 'There is no Quiz for this Lesson yet. Check back soon.', 'woothemes-sensei' ); ?></div><?php $no_quiz_count++; }
         } // End If Statement
 	} // End sensei_no_quiz_message()
+
+	function sensei_all_access() {
+		$access = false;
+		if( current_user_can( 'manage_options' ) ) {
+			$access = true;
+		}
+		return apply_filters( 'sensei_all_access', $access );
+	} // End sensei_all_access()
 
 ?>

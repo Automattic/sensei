@@ -43,7 +43,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 	public function register_settings_screen () {
 		global $woothemes_sensei;
 		$this->settings_version = $woothemes_sensei->version; // Use the global plugin version on this settings screen.
-		$hook = add_submenu_page( 'edit.php?post_type=lesson', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
+		$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
 		$this->hook = $hook;
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
@@ -63,23 +63,28 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		$sections = array();
 
 		$sections['default-settings'] = array(
-					'name' 			=> __( 'General Settings', 'woothemes-sensei' ),
+					'name' 			=> __( 'General', 'woothemes-sensei' ),
 					'description'	=> __( 'Settings that apply to the entire plugin.', 'woothemes-sensei' )
 				);
 
 		$sections['course-settings'] = array(
-					'name' 			=> __( 'Course Settings', 'woothemes-sensei' ),
+					'name' 			=> __( 'Courses', 'woothemes-sensei' ),
 					'description'	=> __( 'Settings that apply to all Courses.', 'woothemes-sensei' )
 				);
 
 		$sections['lesson-settings'] = array(
-					'name' 			=> __( 'Lesson Settings', 'woothemes-sensei' ),
+					'name' 			=> __( 'Lessons', 'woothemes-sensei' ),
 					'description'	=> __( 'Settings that apply to all Lessons.', 'woothemes-sensei' )
+				);
+
+		$sections['learner-profile-settings'] = array(
+					'name' 			=> __( 'Learner Profiles', 'woothemes-sensei' ),
+					'description'	=> __( 'Settings for public Learner Profiles.', 'woothemes-sensei' )
 				);
 
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() ) {
 			$sections['woocommerce-settings'] = array(
-						'name' 			=> __( 'WooCommerce Settings', 'woothemes-sensei' ),
+						'name' 			=> __( 'WooCommerce', 'woothemes-sensei' ),
 						'description'	=> __( 'Optional settings for WooCommerce functions.', 'woothemes-sensei' )
 					);
 		} // End If Statement
@@ -113,7 +118,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		$fields['menu_items'] = array(
 								'name' => __( 'Add Nav Menu Links', 'woothemes-sensei' ),
-								'description' => __( 'Enabling this will add menu links for the Courses and My Courses pages, the Lesson Archive page, and a Login/Logout link.', 'woothemes-sensei' ),
+								'description' => __( 'Enabling this will add menu links for the Courses and My Courses pages, the Lesson Archive page, and a Login/Logout link. This will only work if you have a custom menu enabled.', 'woothemes-sensei' ),
 								'type' => 'checkbox',
 								'default' => true,
 								'section' => 'default-settings'
@@ -383,6 +388,34 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'section' => 'lesson-settings',
 								'required' => 0
 								);
+
+		// Learner Profile settings
+
+		$profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'woothemes-sensei') );
+		$profile_url_example = trailingslashit( get_site_url() ) . $profile_url_base . '/%username%';
+		$fields['learner_profile_enable'] = array(
+							'name' => __( 'Public learner profiles', 'woothemes-sensei' ),
+							'description' => sprintf( __( 'Enable public learner profiles that will be accassible to everyone. Profile URL format: %s', 'woothemes-sensei' ), $profile_url_example ),
+							'type' => 'checkbox',
+							'default' => true,
+							'section' => 'learner-profile-settings'
+							);
+
+		$fields['learner_profile_show_courses'] = array(
+							'name' => __( 'Show learner\'s courses', 'woothemes-sensei' ),
+							'description' => __( 'Display the learner\'s active and completed courses on their profile.', 'woothemes-sensei' ),
+							'type' => 'checkbox',
+							'default' => true,
+							'section' => 'learner-profile-settings'
+							);
+
+		$fields['learner_profile_menu_link'] = array(
+							'name' => __( 'Add menu link', 'woothemes-sensei' ),
+							'description' => sprintf( __( 'Add a \'%s\' link to the main navigation. This will only work if you have a custom menu enabled.', 'woothemes-sensei' ), apply_filters( 'sensei_learner_profile_menu_link_text', __( 'My Profile', 'woothemes-sensei' ) ) ) ,
+							'type' => 'checkbox',
+							'default' => false,
+							'section' => 'learner-profile-settings'
+							);
 
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() ) {
 			// WooCommerce Settings
