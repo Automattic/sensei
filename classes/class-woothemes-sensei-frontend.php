@@ -136,7 +136,7 @@ class WooThemes_Sensei_Frontend {
 			wp_enqueue_script( 'woosensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend.js', array( 'jquery' ), '1.3.0' );
 
 			// Allow additional scripts to be loaded
-			add_action( 'sensei_additional_scripts' );
+			do_action( 'sensei_additional_scripts' );
 
 		} // End If Statement
 
@@ -159,7 +159,7 @@ class WooThemes_Sensei_Frontend {
 			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
 
 			// Allow additional stylesheets to be loaded
-			add_action( 'sensei_additional_styles' );
+			do_action( 'sensei_additional_styles' );
 
 		} // End If Statement
 
