@@ -855,7 +855,7 @@ class WooThemes_Sensei_Course {
 	 * @return string          HTML displayng course data
 	 */
 	public function load_user_courses_content( $user = false, $manage = false ) {
-		global $woothemes_sensei, $post, $wp_query;
+		global $woothemes_sensei, $post, $wp_query, $course;
 
 		// Build Output HTML
 		$complete_html = '';
@@ -877,6 +877,7 @@ class WooThemes_Sensei_Course {
 
 			// MAIN LOOP
 			foreach ($posts_array as $course_item){
+				$course = $course_item;
 			    $course_lessons = $woothemes_sensei->frontend->course->course_lessons( $course_item->ID );
 			    $lessons_completed = 0;
 			    foreach ($course_lessons as $lesson_item){
