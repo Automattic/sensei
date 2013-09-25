@@ -994,7 +994,7 @@ class WooThemes_Sensei_Course {
 			    		    	if ( '' != $category_output ) {
 			    		    		$active_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';
 			    		    	} // End If Statement
-								$active_html .= '<span class="course-lesson-progress">' . sprintf( __( '%1$d of %2$d Chapters completed', 'woothemes-sensei' ) , $lessons_completed, $lesson_count  ) . '</span>';
+								$active_html .= '<span class="course-lesson-progress">' . sprintf( __( '%1$d of %2$d lessons completed', 'woothemes-sensei' ) , $lessons_completed, $lesson_count  ) . '</span>';
 
 			    		    $active_html .= '</p>';
 
