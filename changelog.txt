@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.9.25 - version 1.4.1
+ * /templates/single-course/course-lessons.php - Fixing typo.
+
 2013.9.24 - version 1.4.0
  * /templates/learner-profile.php,
    /templates/learner-profile/learner-info.php - Adding new templates to display learner profiles

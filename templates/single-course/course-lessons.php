@@ -32,7 +32,7 @@ if ( 0 < $total_lessons ) {
     	  $html .= '<h2>' . __( 'Lessons', 'woothemes-sensei' ) . '</h2>';
     	  if ( is_user_logged_in() && $is_user_taking_course ) {
 
-    	  		$html .= '<span class="course-completion-rate">' . sprintf( __( 'Currently completed %1$s of %2$s on total', 'woothemes-sensei' ), '######', $total_lessons ) . '</span>';
+    	  		$html .= '<span class="course-completion-rate">' . sprintf( __( 'Currently completed %1$s of %2$s in total', 'woothemes-sensei' ), '######', $total_lessons ) . '</span>';
     	  		$html .= '<div class="meter+++++"><span style="width: @@@@@%">@@@@@%</span></div>';
 
     	  } // End If Statement
