@@ -1110,8 +1110,11 @@ class WooThemes_Sensei_Frontend {
         	</header>
         <?php } elseif( 0 < count($lesson_quizzes) && $woothemes_sensei->access_settings() ) { ?>
         	<header>
-        		<?php foreach ($lesson_quizzes as $quiz_item){ ?>
-        		<a class="button" href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ) ); ?>"><?php _e( 'View the Lesson Quiz',    'woothemes-sensei' ); ?></a>
+        		<?php foreach ($lesson_quizzes as $quiz_item){
+        		$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post_id );
+        		if( 0 < count( $quiz_questions ) ) { ?>
+        		<a class="button" href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ) ); ?>"><?php echo apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?></a>
+        		<?php } ?>
         		<?php } // End For Loop ?>
         	</header>
         <?php } // End If Statement
