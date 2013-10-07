@@ -1,5 +1,11 @@
 *** Sensei Changelog ***
 
+2013.10.08 - version 1.4.1
+ * /assets/css/frontend.less,
+   /assets/css/frontend.css - Updating layout of lesson buttons
+ * /classes/class-woothemes-sensei-frontend.php - Ensuring 'complete lesson' and 'take quiz' buttons display correctly
+ * /classes/class-woothemes-sensei-lesson.php - Fixing adding of multiple choice questions
+
 2013.9.24 - version 1.4.0
  * /templates/learner-profile.php,
    /templates/learner-profile/learner-info.php - Adding new templates to display learner profiles
