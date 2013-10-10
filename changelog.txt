@@ -1,12 +1,18 @@
 *** Sensei Changelog ***
 
-2013.10.08 - version 1.4.1
+2013.10.10 - version 1.4.1
  * /templates/single-course/course-lessons.php - Fixing typo in lessons template
  * /assets/css/frontend.less,
    /assets/css/frontend.css - Updating layout of lesson buttons
  * /classes/class-woothemes-sensei-frontend.php - Ensuring 'complete lesson' and 'take quiz' buttons display correctly
  * /classes/class-woothemes-sensei-lesson.php - Fixing adding of multiple choice questions
  * /classes/class-woothemes-sensei-course.php - Changing 'chapters' to 'lessons' for consistency
+ * /classes/class-woothemes-sensei-list-table.php - fixes user query and pagination for scaling
+ * /classes/class-woothemes-sensei-analysis-overview.php,
+   /classes/class-woothemes-sensei-analysis-course.php,
+   /classes/class-woothemes-sensei-analysis-lesson.php,
+   /classes/class-woothemes-sensei-grading.php,
+   /classes/class-woothemes-sensei-grading-main.php - fixes user query for scaling
 
 2013.9.24 - version 1.4.0
  * /templates/learner-profile.php,
