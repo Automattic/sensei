@@ -1,6 +1,7 @@
 *** Sensei Changelog ***
 
 2013.10.08 - version 1.4.1
+ * /templates/single-course/course-lessons.php - Fixing typo
  * /assets/css/frontend.less,
    /assets/css/frontend.css - Updating layout of lesson buttons
  * /classes/class-woothemes-sensei-frontend.php - Ensuring 'complete lesson' and 'take quiz' buttons display correctly
