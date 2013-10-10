@@ -126,7 +126,11 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 			if ( '' !== $args_array['search'] ) {
 				$args_array['search'] = '*' . $args_array['search'] . '*';
 			} // End If Statement
-			$users = get_users( $args_array );
+
+			// Get Users
+			$users = $this->user_query_results( $args_array );
+
+			// Users Loop
 			foreach ( $users as $user_key => $user_item ) {
 				// Get Courses Started Date
 				$course_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->course_id, 'user_id' => $user_item->ID, 'type' => 'sensei_course_start', 'field' => 'comment_date' ) );
