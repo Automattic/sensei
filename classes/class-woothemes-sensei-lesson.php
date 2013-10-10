@@ -1064,11 +1064,11 @@ class WooThemes_Sensei_Lesson {
 			$question_wrong_answers = $data[ 'question_wrong_answers' ];
 		} // End If Statement
 		// Handle Boolean Fields - Edit
-		if ( isset( $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && ( '' != $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) ) {
+		if ( isset( $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && ( '' != $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && 'boolean' == $question_type ) {
 			$question_right_answer = $data[ 'question_' . $question_id . '_right_answer_boolean' ];
 		} // End If Statement
 		// Handle Boolean Fields - Add
-		if ( isset( $data[ 'question_right_answer_boolean' ] ) && ( '' != $data[ 'question_right_answer_boolean' ] ) ) {
+		if ( isset( $data[ 'question_right_answer_boolean' ] ) && ( '' != $data[ 'question_right_answer_boolean' ] ) && 'boolean' == $question_type ) {
 			$question_right_answer = $data[ 'question_right_answer_boolean' ];
 		} // End If Statement
 		// Handle Gap Fill Fields
@@ -1108,8 +1108,14 @@ class WooThemes_Sensei_Lesson {
   		    						);
   		// Remove empty values and reindex the array
   		if ( is_array( $question_wrong_answers ) ) {
-  			$question_wrong_answers = array_values( array_filter( $question_wrong_answers, 'strlen' ) );
+  			$question_wrong_answers_array = array_values( array_filter( $question_wrong_answers, 'strlen' ) );
+  			$question_wrong_answers = array();
   		} // End If Statement
+  		foreach( $question_wrong_answers_array as $answer ) {
+  			if( ! in_array( $answer, $question_wrong_answers ) ) {
+  				$question_wrong_answers[] = $answer;
+  			}
+  		}
   		// Only save if there is a valid title
   		if ( $post_title != '' ) {
   			// Get Quiz ID for the question

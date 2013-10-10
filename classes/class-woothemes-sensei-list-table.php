@@ -188,11 +188,11 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 			$total_items = count( $this->items );
 			// Subset for pagination
 			$this->items = array_slice($this->items,(($current_page-1)*$per_page),$per_page);
+			$this->set_pagination_args( array(
+				'total_items' => $total_items,
+				'per_page' => $per_page,
+			) );
 		} // End If Statement
-		$this->set_pagination_args( array(
-		    'total_items' => $total_items,
-		    'per_page'    => $per_page
-		) );
 	} // End prepare_items()
 
 	/**
@@ -292,6 +292,22 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public function bulk_actions() {
 		// This will be output Above the table headers on the left
 	} // End bulk_actions()
+
+	/**
+	 * user_query_results wrapper for user query
+	 * @since  1.4.1
+	 * @return array
+	 */
+	public function user_query_results( $args_array ) {
+		// User Query
+		$wp_user_search = new WP_User_Query( $args_array );
+		$users = $wp_user_search->get_results();
+		$this->set_pagination_args( array(
+			'total_items' => $wp_user_search->get_total(),
+			'per_page' => $this->per_page,
+		) );
+		return $users;
+	} // End user_query_results()
 
 } // End Class
 ?>
