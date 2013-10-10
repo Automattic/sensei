@@ -385,7 +385,9 @@ class WooThemes_Sensei_Grading {
 
 		$args_array = array();
 		// Get the data required
-		$users = get_users( $args_array );
+		$wp_user_search = new WP_User_Query( $args_array );
+		$users = $wp_user_search->get_results();
+
 		$output_counter = 0;
 		$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
 		// Get Quiz ID

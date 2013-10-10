@@ -76,8 +76,29 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 				$args_array['search'] = '*' . $args_array['search'] . '*';
 			} // End If Statement
 			// Get Users data
-			$users = get_users( $args_array );
-			$this->total_items = count( $users );
+
+			if ( isset( $this->lesson_id ) && 0 < intval( $this->lesson_id ) ) {
+			$this->user_ids = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'post_id' => intval( $this->lesson_id ), 'type' => 'sensei_lesson_start', 'field' => 'user_id' ) );
+			} // End If Statement
+
+			$offset = '';
+			if ( isset($_GET['paged']) && 0 < intval($_GET['paged']) ) {
+				$offset = $this->per_page * ( $_GET['paged'] - 1 );
+			} // End If Statement
+			$usersearch = isset( $_REQUEST['s'] ) ? trim( $_REQUEST['s'] ) : '';
+			$role = isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '';
+
+			$args_array = array(
+				'number' => $this->per_page,
+				'include' => $this->user_ids,
+				'offset' => $offset,
+				'role' => $role,
+				'search' => $usersearch,
+				'fields' => 'all_with_meta'
+			);
+
+			$users = $this->user_query_results( $args_array );
+
 			$lesson_id = $this->lesson_id;
 			$output_counter = 0;
 			$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
