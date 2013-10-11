@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2013.10.11 - version 1.4.2
+ * /classes/class-woothemes-sensei-admin.php - fixes issue where sensei comment types were visible to authors in the backend.
+ * /classes/class-woothemes-sensei-grading.php - fixes layout issue in the grading admin interface where the footer was misplaced.
+ * /classes/class-woothemes-sensei-updates.php - fixes array sort method error notices on the updates screen.
+
 2013.10.10 - version 1.4.1
  * /templates/single-course/course-lessons.php - Fixing typo in lessons template
  * /assets/css/frontend.less,
