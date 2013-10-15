@@ -1300,6 +1300,7 @@ class WooThemes_Sensei_Frontend {
 							    'user_id' => $current_user->ID
 							);
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+			$this->data = new stdClass();
 			$this->data->is_user_taking_course = false;
 			if ( $activity_logged ) {
 				$this->data->is_user_taking_course = true;
