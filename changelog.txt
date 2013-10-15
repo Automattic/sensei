@@ -1,7 +1,8 @@
 *** Sensei Changelog ***
 
 2013.10.15 - version 1.4.2
- * /templates/woocommerce/add-to-cart.php - fixes adding of variable subscription courses to cart
+ * /assets/js/lesson-metadata.js - fixes post issues with multiline and boolean add and edit ajax functions.
+ * /templates/woocommerce/add-to-cart.php - fixes adding of variable subscription courses to cart.
  * /templates/single-quiz/question_type-boolean.php,
    /templates/single-quiz/question_type-essay-paste.php,
    /templates/single-quiz/question_type-gap-fill.php,
@@ -12,7 +13,8 @@
  * /classes/class-woothemes-sensei-grading.php - fixes layout issue in the grading admin interface where the footer was misplaced.
  * /classes/class-woothemes-sensei-updates.php - fixes array sort method error notices on the updates screen.
  * /classes/class-woothemes-sensei-utils.php - fixes quiz submitted link translation string on single lesson page & auto grading issue when some questions are left unanswered.
- * /classes/class-woothemes-sensei-frontend.php - fixes object instantiation PHP warning
+ * /classes/class-woothemes-sensei-frontend.php - fixes object instantiation PHP warning, and issue on quiz button incorrectly displaying on single lesson page.
+ * /classes/class-woothemes-sensei-lesson.php - fixes save function to handle changes made in lessons ajax.
 
 2013.10.10 - version 1.4.1
  * /templates/single-course/course-lessons.php - Fixing typo in lessons template

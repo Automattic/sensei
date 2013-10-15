@@ -897,7 +897,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $user_id   ID of user
 	 * @return array              Status code and message
 	 */
-	public function sensei_user_quiz_status_message( $lesson_id = 0, $user_id = 0, $is_lesson = false ) {
+	public static function sensei_user_quiz_status_message( $lesson_id = 0, $user_id = 0, $is_lesson = false ) {
 		global $woothemes_sensei, $current_user;
 		if( intval( $user_id ) == 0 ) {
 			$user_id = $current_user->ID;
