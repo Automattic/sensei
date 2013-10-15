@@ -971,7 +971,7 @@ class WooThemes_Sensei_Utils {
 					$status = 'complete';
 					$box_class = 'info';
 					if( $is_lesson ) {
-						$message = __( 'You have completed this lesson\'s quiz and it will be graded soon. %2$sView the lesson quiz%2$s', 'woothemes-sensei' );
+						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
 					} else {
 						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$d%% to pass.', 'woothemes-sensei' ), round( $quiz_passmark ) );
 					}
