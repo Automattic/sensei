@@ -2,6 +2,12 @@
 
 2013.10.15 - version 1.4.2
  * /templates/woocommerce/add-to-cart.php - fixes adding of variable subscription courses to cart
+ * /templates/single-quiz/question_type-boolean.php,
+   /templates/single-quiz/question_type-essay-paste.php,
+   /templates/single-quiz/question_type-gap-fill.php,
+   /templates/single-quiz/question_type-multi-line.php,
+   /templates/single-quiz/question_type-multiple-choice.php,
+   /templates/single-quiz/question_type-single-line.php - sets default grade of 1 to every question for cases where no grade is set
  * /classes/class-woothemes-sensei-admin.php - fixes issue where sensei comment types were visible to authors in the backend.
  * /classes/class-woothemes-sensei-grading.php - fixes layout issue in the grading admin interface where the footer was misplaced.
  * /classes/class-woothemes-sensei-updates.php - fixes array sort method error notices on the updates screen.
