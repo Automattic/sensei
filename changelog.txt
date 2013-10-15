@@ -1,6 +1,7 @@
 *** Sensei Changelog ***
 
-2013.10.11 - version 1.4.2
+2013.10.15 - version 1.4.2
+ * /templates/woocommerce/add-to-cart.php - fixes adding of variable subscription courses to cart
  * /classes/class-woothemes-sensei-admin.php - fixes issue where sensei comment types were visible to authors in the backend.
  * /classes/class-woothemes-sensei-grading.php - fixes layout issue in the grading admin interface where the footer was misplaced.
  * /classes/class-woothemes-sensei-updates.php - fixes array sort method error notices on the updates screen.
