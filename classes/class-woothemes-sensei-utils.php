@@ -389,20 +389,14 @@ class WooThemes_Sensei_Utils {
 		if( intval( $quiz_id ) > 0 && $submitted ) {
 
 			if( $quiz_grade_type == 'auto' ) {
-				$quiz_total = 0;
 				$grade_total = 0;
 				foreach( $submitted as $question_id => $answer ) {
-					// Get total question grade
-					$question_grade_total = (int) get_post_meta( $question_id, '_question_grade', true );
-					if( ! $question_grade_total || $question_grade_total == '' ) {
-						$question_grade_total = 1;
-					}
-					$quiz_total += $question_grade_total;
-
 					// Get user question grade
 					$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $answer );
 					$grade_total += $question_grade;
 				}
+
+				$quiz_total = WooThemes_Sensei_Utils::sensei_get_quiz_total( $quiz_id );
 
 				$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
 
@@ -595,6 +589,22 @@ class WooThemes_Sensei_Utils {
 		}
 
 		return $questions;
+	}
+
+	public function sensei_get_quiz_total( $quiz_id = 0 ) {
+
+		$quiz_total = 0;
+
+		if( $quiz_id > 0 ) {
+			$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+			$question_grade = 0;
+			foreach( $questions as $question ) {
+				$question_grade = get_post_meta( $question->ID, '_question_grade', true );
+				$quiz_total += $question_grade;
+			}
+		}
+
+		return $quiz_total;
 	}
 
 	public function sensei_get_user_question_grade( $question_id = 0, $user_id = 0 ) {
@@ -887,7 +897,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $user_id   ID of user
 	 * @return array              Status code and message
 	 */
-	public function sensei_user_quiz_status_message( $lesson_id = 0, $user_id = 0, $is_lesson = false ) {
+	public static function sensei_user_quiz_status_message( $lesson_id = 0, $user_id = 0, $is_lesson = false ) {
 		global $woothemes_sensei, $current_user;
 		if( intval( $user_id ) == 0 ) {
 			$user_id = $current_user->ID;
@@ -971,19 +981,43 @@ class WooThemes_Sensei_Utils {
 					$status = 'complete';
 					$box_class = 'info';
 					if( $is_lesson ) {
-						$message = __( 'You have completed this lesson\'s quiz and it will be graded soon. %2$sView the lesson quiz%2$s', 'woothemes-sensei' );
+						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
 					} else {
 						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$d%% to pass.', 'woothemes-sensei' ), round( $quiz_passmark ) );
 					}
 				}
 
 			} else {
-				$status = 'not_started';
-				$box_class = 'info';
-				if( $is_lesson ) {
-					$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+				if ( isset( $quiz_grade ) && $quiz_grade && abs( $quiz_grade ) >= 0 ) {
+					if ( $quiz_grade >= abs( round( $quiz_passmark_float, 2 ) ) ) {
+
+						$status = 'passed';
+						$box_class = 'tick';
+						if( $is_lesson ) {
+							$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
+						} else {
+							$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
+						}
+
+					} else {
+
+						$status = 'failed';
+						$box_class = 'alert';
+						if( $is_lesson ) {
+							$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+						} else {
+							$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+						}
+
+					}
 				} else {
-					$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+					$status = 'not_started';
+					$box_class = 'info';
+					if( $is_lesson ) {
+						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+					} else {
+						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+					}
 				}
 			}
 

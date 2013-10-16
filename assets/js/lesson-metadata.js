@@ -506,7 +506,9 @@ jQuery(document).ready( function($) {
 			} // End Switch Statement
 			// Handle Required Fields
 			jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).children( 'input' ).each( function() {
-	 			dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
+	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+	 			} // End If Statement
  			});
 	 		// Handle Question Input Fields
 	 		var radioCount = 0;
@@ -636,7 +638,7 @@ jQuery(document).ready( function($) {
 						 		    	outputEditForm += '</div>';
 									break;
 								} // End Switch Statement
-				 		    	outputEditForm += '<input type="hidden" name="question_type" id="question_' + tableCount + '_question_type" value="' + questionType + '">';
+				 		    	outputEditForm += '<input type="hidden" class="question_type" name="question_type" id="question_' + tableCount + '_question_type" value="' + questionType + '">';
 				 		    	outputEditForm += '<input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '">';
 				 		    	outputEditForm += '<div class="update-question"><a title="Cancel" href="#question-edit-cancel" class="lesson_question_cancel">Cancel</a>';
 								outputEditForm += '<a title="Update Question" href="#add-question-metadata" class="question_table_save button button-highlighted">Update</a></div>';
@@ -703,7 +705,9 @@ jQuery(document).ready( function($) {
 				} // End Switch Statement
 				// Handle Required Fields
 				jQuery( this ).parent('div').parent().find( 'div.question_required_fields' ).children( 'input' ).each( function() {
-		 			dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+		 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
+		 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+		 			} // End If Statement
 	 			});
 		 		// Handle Question Input Fields
 		 		var radioCount = 0;
@@ -723,12 +727,12 @@ jQuery(document).ready( function($) {
 		 			dataToPost += '&' +  jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
 		 		} // End If Statement
 		 		if ( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
-		 			dataToPost += '&' +  jQuery(this).parent('div').parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
+		 			dataToPost += '&' +  jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
 		 		} // End If Statement
 				dataToPost += '&' + 'question_type' + '=' + questionType;
 				questionGrade = jQuery( this ).parent('div').parent().find( 'input.question_grade' ).val();
 	 			dataToPost += '&' + 'question_grade' + '=' + questionGrade;
-				// Perform the AJAX call.
+	 			// Perform the AJAX call.
 				jQuery.post(
 	 				ajaxurl,
 	 				{

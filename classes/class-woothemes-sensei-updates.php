@@ -193,7 +193,8 @@ class WooThemes_Sensei_Updates {
 					<tbody class="plugins">
 						<?php
 						// Sort updates with the latest at the top
-						uasort( $this->updates, array( $this, 'sort_updates' ) );
+						uksort( $this->updates, array( $this, 'sort_updates' ) );
+						$this->updates = array_reverse( $this->updates, true );
 						foreach( $this->updates as $version => $version_updates ) {
 							foreach( $version_updates as $type => $updates ) {
 								foreach( $updates as $update => $data ) {
