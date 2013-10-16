@@ -1102,14 +1102,17 @@ class WooThemes_Sensei_Frontend {
 		if ( 0 < count($lesson_quizzes) && is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $user_id ) ) { ?>
             <?php $no_quiz_count = 0; ?>
         	<?php foreach ($lesson_quizzes as $quiz_item){
-        		// Display lesson quiz status message
-        		$status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $post_id, $user_id, true );
-    			echo '<div class="woo-sc-box ' . $status['box_class'] . '">' . $status['message'] . '</div>';
-    			echo $status['extra'];
+        		$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_item->ID );
+	        	if( 0 < count( $quiz_questions ) ) {
+	        		// Display lesson quiz status message
+	        		$status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $post_id, $user_id, true );
+	    			echo '<div class="woo-sc-box ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+	    			echo $status['extra'];
+    			} // End If Statement
         	} // End For Loop ?>
         <?php } elseif( 0 < count($lesson_quizzes) && $woothemes_sensei->access_settings() ) { ?>
         		<?php foreach ($lesson_quizzes as $quiz_item){
-	        		$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post_id );
+	        		$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_item->ID );
 	        		if( 0 < count( $quiz_questions ) ) { ?>
 	        		<a class="button" href="<?php echo esc_url( get_permalink( $quiz_item->ID ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ) ); ?>"><?php echo apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?></a>
 	        		<?php } ?>
@@ -1300,6 +1303,7 @@ class WooThemes_Sensei_Frontend {
 							    'user_id' => $current_user->ID
 							);
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+			$this->data = new stdClass();
 			$this->data->is_user_taking_course = false;
 			if ( $activity_logged ) {
 				$this->data->is_user_taking_course = true;

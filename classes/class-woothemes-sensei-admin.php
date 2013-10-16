@@ -133,7 +133,7 @@ class WooThemes_Sensei_Admin {
 	function comments_admin_filter( $pieces ) {
 
 		// Filter Admin Comments Area to not display Sensei's use of commenting system
-		if( is_admin() && current_user_can( 'moderate_comments' ) && !( isset($_GET['page']) && 'sensei_analysis' == $_GET['page'] ) ) {
+		if( is_admin() && !( isset($_GET['page']) && 'sensei_analysis' == $_GET['page'] ) ) {
 			$pieces['where'] .= " AND comment_type NOT LIKE 'sensei_%' ";
 		} // End If Statement
 

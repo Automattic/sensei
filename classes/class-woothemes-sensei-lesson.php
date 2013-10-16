@@ -1049,6 +1049,12 @@ class WooThemes_Sensei_Lesson {
 		$question_right_answer = '';
 		$question_wrong_answers = array();
 		$question_type = 'multiple-choice';
+
+		// Handle Question Type
+		if ( isset( $data[ 'question_type' ] ) && ( '' != $data[ 'question_type' ] ) ) {
+			$question_type = $data[ 'question_type' ];
+		} // End If Statement
+
 		if ( isset( $data[ 'question_id' ] ) && ( 0 < absint( $data[ 'question_id' ] ) ) ) {
 			$question_id = absint( $data[ 'question_id' ] );
 		} // End If Statement
@@ -1086,10 +1092,6 @@ class WooThemes_Sensei_Lesson {
 		// Handle Single Line Fields
 		if ( isset( $data[ 'add_question_right_answer_singleline' ] ) && ( '' != $data[ 'add_question_right_answer_singleline' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_singleline' ];
-		} // End If Statement
-		// Handle Question Type
-		if ( isset( $data[ 'question_type' ] ) && ( '' != $data[ 'question_type' ] ) ) {
-			$question_type = $data[ 'question_type' ];
 		} // End If Statement
 		// Handle Question Grade
 		if ( isset( $data[ 'question_grade' ] ) && ( '' != $data[ 'question_grade' ] ) ) {
@@ -1130,7 +1132,7 @@ class WooThemes_Sensei_Lesson {
 		    	update_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    } else {
 				$question_id = wp_insert_post($post_type_args);
-		    	add_post_meta( $question_id, '_quiz_id', $quiz_id );
+				add_post_meta( $question_id, '_quiz_id', $quiz_id );
 		    	add_post_meta( $question_id, '_question_grade', $question_grade );
 		    	add_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	add_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );

@@ -22,6 +22,9 @@ $lesson_complete = $woothemes_sensei->frontend->data->user_lesson_complete;
 $question_id = $question_item->ID;
 $question_right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 $question_grade = get_post_meta( $question_id, '_question_grade', true );
+if( ! $question_grade || $question_grade == '' ) {
+    $question_grade = 1;
+}
 $user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $question_id, $current_user->ID );
 
 // Gap Fill data
