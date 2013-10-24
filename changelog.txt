@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.10.21 - version 1.4.3
+ * /assets/css/frontend.css - Responsive layout tweaks & fixes.
+
 2013.10.15 - version 1.4.2
  * /assets/js/lesson-metadata.js - fixes post issues with multiline and boolean add and edit ajax functions.
  * /templates/woocommerce/add-to-cart.php - fixes adding of variable subscription courses to cart.

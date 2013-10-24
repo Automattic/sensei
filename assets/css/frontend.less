@@ -2,7 +2,7 @@
 Plugin Name: Sensei
 Plugin URI: http://woothemes.com/
 Description: Sensei by WooThemes is the best Learning Management System ever!
-Version: 1.3.3
+Version: 1.4.3
 Author: WooThemes
 Author URI: http://woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -36,12 +36,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		margin: 0;
 	}
 	.course-meta  {
-		position: absolute;
-		top: .202em;
-		right: 0;
-		.course-start  {
-			margin-top: .53em;
-		}
 		.status  {
 			padding: .382em 1em;
 			.border_radius(5px);
@@ -136,9 +130,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 					}
 				}
 				.lesson-status  {
-					position: absolute;
-					top: .53em;
-					right: 0;
 					font-style: normal;
 					&.complete  {
 						color: @success;
@@ -157,12 +148,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				}
 			}
 		}
-	}
-}
-.single.logged-in #main .type-course  {
-	border: none;
-	header h1  {
-		margin-right: 150px;
 	}
 }
 
@@ -578,6 +563,7 @@ section.entry span.course-price { padding-left: 10px; }
 		line-height: 1.618em;
 		.borderbox;
 		white-space: nowrap;
+		-webkit-appearance: none;
 
 		.border_radius(5px);
 		background: @color_links;
@@ -617,5 +603,29 @@ section.entry span.course-price { padding-left: 10px; }
 			}
 		}
 
+	}
+}
+
+#submit  {
+	-webkit-appearance: none;
+}
+
+/* RESPOND */
+@media only screen and (min-width: 768px)  {
+	#main .course  {
+		.course-meta  {
+			position: absolute;
+			top: .202em;
+			right: 0;
+			.course-start  {
+				margin-top: .53em;
+			}
+		}
+	}
+	.single.logged-in #main .type-course  {
+		border: none;
+		header h1  {
+			margin-right: 150px;
+		}
 	}
 }
