@@ -834,22 +834,21 @@ class WooThemes_Sensei_Frontend {
 		    		// Remove all quiz user meta lessons
 		    		// Mark all quiz user meta lessons as complete
 		    		$dataset_changes = false;
-		    		if ( isset( $lesson_quizzes ) && 0 < count($lesson_quizzes) )  {
-		    			foreach ($course_lessons as $lesson_item){
-		    				// Check for lesson complete
-		    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
-		    				// Lesson Quiz Meta
-		        			$lesson_quizzes = $this->lesson->lesson_quizzes( $lesson_item->ID );
-		        			if ( 0 < count($lesson_quizzes) )  {
-		        				foreach ($lesson_quizzes as $quiz_item){
-		        					// Check for quiz answers
-		        					$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_item->ID, $current_user->ID );
-		    						// Check for quiz grade
-		    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
-		    					} // End For Loop
-		    				} // End If Statement
-		    			} // End For Loop
-		    		} // End If Statement
+	    			foreach ($course_lessons as $lesson_item){
+	    				// Check for lesson complete
+	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_start' ) );
+	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
+	    				// Lesson Quiz Meta
+	        			$lesson_quizzes = $this->lesson->lesson_quizzes( $lesson_item->ID );
+	        			if ( 0 < count($lesson_quizzes) )  {
+	        				foreach ($lesson_quizzes as $quiz_item){
+	        					// Check for quiz answers
+	        					$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_item->ID, $current_user->ID );
+	    						// Check for quiz grade
+	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
+	    					} // End For Loop
+	    				} // End If Statement
+	    			} // End For Loop
 		    		// Success message
 		    		if ( $dataset_changes ) {
 		    			$this->messages = '<header class="archive-header"><div class="woo-sc-box tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header><div class="fix"></div>';
