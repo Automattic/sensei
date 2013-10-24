@@ -1,7 +1,8 @@
 *** Sensei Changelog ***
 
-2013.10.21 - version 1.4.3
+2013.10.24 - version 1.4.3
  * /assets/css/frontend.css - Responsive layout tweaks & fixes.
+ * /classes/class-woothemes-sensei-frontend.php - fixes missing complete course hook, fixes missing lesson complete message and reset lesson buttons
 
 2013.10.15 - version 1.4.2
  * /assets/js/lesson-metadata.js - fixes post issues with multiline and boolean add and edit ajax functions.
