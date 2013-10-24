@@ -834,22 +834,21 @@ class WooThemes_Sensei_Frontend {
 		    		// Remove all quiz user meta lessons
 		    		// Mark all quiz user meta lessons as complete
 		    		$dataset_changes = false;
-		    		if ( isset( $lesson_quizzes ) && 0 < count($lesson_quizzes) )  {
-		    			foreach ($course_lessons as $lesson_item){
-		    				// Check for lesson complete
-		    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
-		    				// Lesson Quiz Meta
-		        			$lesson_quizzes = $this->lesson->lesson_quizzes( $lesson_item->ID );
-		        			if ( 0 < count($lesson_quizzes) )  {
-		        				foreach ($lesson_quizzes as $quiz_item){
-		        					// Check for quiz answers
-		        					$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_item->ID, $current_user->ID );
-		    						// Check for quiz grade
-		    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
-		    					} // End For Loop
-		    				} // End If Statement
-		    			} // End For Loop
-		    		} // End If Statement
+	    			foreach ($course_lessons as $lesson_item){
+	    				// Check for lesson complete
+	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_start' ) );
+	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
+	    				// Lesson Quiz Meta
+	        			$lesson_quizzes = $this->lesson->lesson_quizzes( $lesson_item->ID );
+	        			if ( 0 < count($lesson_quizzes) )  {
+	        				foreach ($lesson_quizzes as $quiz_item){
+	        					// Check for quiz answers
+	        					$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_item->ID, $current_user->ID );
+	    						// Check for quiz grade
+	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
+	    					} // End For Loop
+	    				} // End If Statement
+	    			} // End For Loop
 		    		// Success message
 		    		if ( $dataset_changes ) {
 		    			$this->messages = '<header class="archive-header"><div class="woo-sc-box tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header><div class="fix"></div>';
@@ -1098,16 +1097,19 @@ class WooThemes_Sensei_Frontend {
 		$lesson_course_id = get_post_meta( $post_id, '_lesson_course', true );
 		// Lesson Quiz Meta
 		$lesson_quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $post_id );
+		$has_user_completed_lesson = $this->sensei_has_user_completed_lesson( $post_id, $user_id );
 		?><header><?php
 		if ( 0 < count($lesson_quizzes) && is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $user_id ) ) { ?>
             <?php $no_quiz_count = 0; ?>
         	<?php foreach ($lesson_quizzes as $quiz_item){
         		$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_item->ID );
-	        	if( 0 < count( $quiz_questions ) ) {
-	        		// Display lesson quiz status message
+	        	// Display lesson quiz status message
+	        	if ( $has_user_completed_lesson || 0 < count( $quiz_questions ) ) {
 	        		$status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $post_id, $user_id, true );
-	    			echo '<div class="woo-sc-box ' . $status['box_class'] . '">' . $status['message'] . '</div>';
-	    			echo $status['extra'];
+	        		echo '<div class="woo-sc-box ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+	    			if( 0 < count( $quiz_questions ) ) {
+	        			echo $status['extra'];
+    				} // End If Statement
     			} // End If Statement
         	} // End For Loop ?>
         <?php } elseif( 0 < count($lesson_quizzes) && $woothemes_sensei->access_settings() ) { ?>
@@ -1118,7 +1120,11 @@ class WooThemes_Sensei_Frontend {
 	        		<?php } ?>
         		<?php } // End For Loop ?>
         <?php } // End If Statement
-        sensei_complete_lesson_button();
+        if ( !$has_user_completed_lesson ) {
+        	sensei_complete_lesson_button();
+        } else {
+        	sensei_reset_lesson_button();
+        } // End If Statement
         ?></header><?php
 	} // End sensei_lesson_quiz_meta()
 
@@ -1381,6 +1387,7 @@ class WooThemes_Sensei_Frontend {
 						if ( $activity_logged ) {
 							// Course is complete
 							$completed_course = true;
+							do_action( 'sensei_user_course_end', $current_user->ID, $post->ID );
 						} // End If Statement
 		    		} // End If Statement
 				} // End If Statement

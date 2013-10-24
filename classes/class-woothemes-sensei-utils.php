@@ -960,7 +960,12 @@ class WooThemes_Sensei_Utils {
 						$status = 'passed';
 						$box_class = 'tick';
 						if( $is_lesson ) {
-							$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
+							$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
+							if ( 0 < count( $quiz_questions ) ) {
+								$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
+							} else {
+								$message = sprintf( __( 'Congratulations! You have passed this lesson.', 'woothemes-sensei' ) );
+							} // End If Statement
 						} else {
 							$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
 						}
