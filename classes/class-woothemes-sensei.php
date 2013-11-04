@@ -180,11 +180,8 @@ class WooThemes_Sensei {
 	 * @param  boolean $guest_checkout Current guest checkout setting
 	 * @return boolean                 Modified guest checkout setting
 	 */
-	public function disable_guest_checkout() {
+	public function disable_guest_checkout( $guest_checkout ) {
 		global $woocommerce;
-
-		$all_options = wp_load_alloptions();
-		$guest_checkout = $all_options['woocommerce_enable_guest_checkout'];
 
 		if( ! is_admin() ) {
 
