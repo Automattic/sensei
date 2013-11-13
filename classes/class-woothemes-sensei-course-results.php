@@ -37,7 +37,7 @@ class WooThemes_Sensei_Course_Results {
 
 		// Setup permalink structure for course results
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
-		add_action( 'init', array( $this, 'get_permalink' ) );
+		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
 		// Load content for learner profiles
 		add_action( 'sensei_course_results_content', array( $this, 'content' ), 10 );
@@ -56,6 +56,21 @@ class WooThemes_Sensei_Course_Results {
 	public function setup_permastruct() {
 		add_rewrite_rule( '^' . $this->courses_url_base . '/([^/]*)/results/?', 'index.php?course_results=$matches[1]', 'top' );
 		add_rewrite_tag( '%course_results%', '([^&]+)' );
+	}
+
+	/**
+	 * Adding page title for course results page
+	 * @param  string $title Original title
+	 * @param  string $sep   Seeparator string
+	 * @return string        Modified title
+	 */
+	public function page_title( $title, $sep ) {
+		global $wp_query;
+		if( isset( $wp_query->query_vars['course_results'] ) ) {
+			$course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );
+			$title = __( 'Course Results: ', 'woothemes-sensei' ) . $course->post_title . ' ' . $sep . ' ';
+		}
+		return $title;
 	}
 
 	/**

@@ -436,11 +436,17 @@ class WooThemes_Sensei {
 
 		} elseif ( isset( $wp_query->query_vars['learner_profile'] ) ) {
 
+			// Override for sites with static home page
+			$wp_query->is_home = false;
+
 			$file 	= 'learner-profile.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
 		} elseif ( isset( $wp_query->query_vars['course_results'] ) ) {
+
+			// Override for sites with static home page
+			$wp_query->is_home = false;
 
 			$file 	= 'course-results.php';
 		    $find[] = $file;
