@@ -759,6 +759,8 @@ class WooThemes_Sensei {
 					} // End For Loop
 				} // End For Loop
 			} // End If Statement
+			// Add meta to indicate that payment has been completed successfully
+			update_post_meta( $order_id, 'sensei_payment_complete', '1' );
 		} // End If Statement
 	} // End sensei_woocommerce_complete_order()
 
