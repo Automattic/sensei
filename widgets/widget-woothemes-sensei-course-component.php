@@ -75,6 +75,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	public function widget( $args, $instance ) {
 		extract( $args, EXTR_SKIP );
 
+		remove_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 
 		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) && !is_user_logged_in() ) {
 			// No Output
@@ -102,6 +103,8 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 			/* After widget (defined by themes). */
 			echo $after_widget;
 		} // End If Statement
+
+		add_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 
 	} // End widget()
 
