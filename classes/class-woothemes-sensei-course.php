@@ -473,7 +473,7 @@ class WooThemes_Sensei_Course {
 
 		$post_args = array();
 
-		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && 'usercourses' != $type && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) {
+		if ( 0 == $amount && ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && 'usercourses' != $type && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) ) {
 			$amount = absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] );
 		} else {
 			if ( 0 == $amount) {
