@@ -37,6 +37,7 @@ class WooThemes_Sensei_Learner_Profiles {
 
 		// Setup permalink structure for learner profiles
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
+		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
 		// Load content for learner profiles
 		add_action( 'sensei_learner_profile_content', array( $this, 'content' ), 10 );
@@ -63,6 +64,29 @@ class WooThemes_Sensei_Learner_Profiles {
 			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
 			add_rewrite_tag( '%learner_profile%', '([^&]+)' );
 		}
+	}
+
+	/**
+	 * Adding page title for course results page
+	 * @param  string $title Original title
+	 * @param  string $sep   Seeparator string
+	 * @return string        Modified title
+	 */
+	public function page_title( $title, $sep ) {
+		global $wp_query;
+		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
+			$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );
+
+			$name = '';
+			if( strlen( $learner_user->first_name ) > 0 ) {
+				$name = $learner_user->first_name;
+			} else {
+				$name = $learner_user->display_name;
+			}
+
+			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) . ' ' . $sep . ' ';
+		}
+		return $title;
 	}
 
 	/**
