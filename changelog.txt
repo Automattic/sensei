@@ -5,8 +5,8 @@
  * /templates/learner-profile/learner-info.php - Updating markup for learner profile page
  * /templates/content-single-lesson.php - Fixing lesson prerequisite check
  * /widgets/widget-woothemes-sensei-course-component.php - Fixing 'My Active Courses' & 'Featured Courses' widgets
- * /classes/class-woothemes-sensei-course-results.php - Fixing rewrite rules for course results page
- * /classes/class-woothemes-sensei-learner-profiles.php - Rexing rewrite rules for learner profiles
+ * /classes/class-woothemes-sensei-course-results.php - Updating markup & fixing rewrite rules for course results page
+ * /classes/class-woothemes-sensei-learner-profiles.php - Updating markup & fixing rewrite rules for learner profiles
  * /classes/class-woothemes-sensei-course.php - Updating markup for lesson quiz meta buttons & fixing limits on course queries
  * /classes/class-woothemes-sensei-frontend.php - Updating markup, fixing lesson prerequisites & adding function to check for completed lessons
  * /classes/class-woothemes-sensei-utils.php - Updating button markup
