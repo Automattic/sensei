@@ -46,6 +46,9 @@ class WooThemes_Sensei_Course_Results {
 		add_action( 'sensei_course_results_info', array( $this, 'course_info' ), 10 );
 
 		add_action( 'sensei_course_results_lessons', array( $this, 'course_lessons' ), 10 );
+
+		// Add class to body tag
+		add_filter( 'body_class', array( $this, 'body_class' ), 10, 1 );
 	} // End __construct()
 
 	/**
@@ -147,6 +150,19 @@ class WooThemes_Sensei_Course_Results {
 		if( $started_course ) {
 	 		$woothemes_sensei->frontend->sensei_get_template( 'course-results/course-lessons.php' );
 	 	}
+	}
+
+	/**
+	 * Adding class to body tag
+	 * @param  array $classes Existing classes
+	 * @return array          Modified classes
+	 */
+	public function body_class( $classes ) {
+		global $wp_query;
+		if( isset( $wp_query->query_vars['course_results'] ) ) {
+			$classes[] = 'course-results';
+		}
+		return $classes;
 	}
 
 } // End Class

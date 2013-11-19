@@ -50,6 +50,9 @@ class WooThemes_Sensei_Learner_Profiles {
 
 		// Add profile link to main navigation
 		add_filter( 'wp_nav_menu_items', array( $this, 'learner_profile_menu_item' ), 11, 2 );
+
+		// Add class to body tag
+		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
 	} // End __construct()
 
 	/**
@@ -208,6 +211,19 @@ class WooThemes_Sensei_Learner_Profiles {
 		}
 
 		return apply_filters( 'sensei_custom_menu_links', $items );
+	}
+
+	/**
+	 * Adding class to body tag
+	 * @param  array $classes Existing classes
+	 * @return array          Modified classes
+	 */
+	public function learner_profile_body_class( $classes ) {
+		global $wp_query;
+		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
+			$classes[] = 'learner-profile';
+		}
+		return $classes;
 	}
 
 } // End Class
