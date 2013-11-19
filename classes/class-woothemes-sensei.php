@@ -180,11 +180,8 @@ class WooThemes_Sensei {
 	 * @param  boolean $guest_checkout Current guest checkout setting
 	 * @return boolean                 Modified guest checkout setting
 	 */
-	public function disable_guest_checkout() {
+	public function disable_guest_checkout( $guest_checkout ) {
 		global $woocommerce;
-
-		$all_options = wp_load_alloptions();
-		$guest_checkout = $all_options['woocommerce_enable_guest_checkout'];
 
 		if( ! is_admin() ) {
 
@@ -436,11 +433,17 @@ class WooThemes_Sensei {
 
 		} elseif ( isset( $wp_query->query_vars['learner_profile'] ) ) {
 
+			// Override for sites with static home page
+			$wp_query->is_home = false;
+
 			$file 	= 'learner-profile.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
 		} elseif ( isset( $wp_query->query_vars['course_results'] ) ) {
+
+			// Override for sites with static home page
+			$wp_query->is_home = false;
 
 			$file 	= 'course-results.php';
 		    $find[] = $file;
@@ -753,6 +756,8 @@ class WooThemes_Sensei {
 					} // End For Loop
 				} // End For Loop
 			} // End If Statement
+			// Add meta to indicate that payment has been completed successfully
+			update_post_meta( $order_id, 'sensei_payment_complete', '1' );
 		} // End If Statement
 	} // End sensei_woocommerce_complete_order()
 

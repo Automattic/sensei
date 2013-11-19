@@ -1,5 +1,17 @@
 *** Sensei Changelog ***
 
+2013.11.19 - version 1.4.4
+ * /templates/course-results/course-info.php - Updating markup for course results page
+ * /templates/learner-profile/learner-info.php - Updating markup for learner profile page
+ * /templates/content-single-lesson.php - Fixing lesson prerequisite check
+ * /widgets/widget-woothemes-sensei-course-component.php - Fixing 'My Active Courses' & 'Featured Courses' widgets
+ * /classes/class-woothemes-sensei-course-results.php - Updating markup & fixing rewrite rules for course results page
+ * /classes/class-woothemes-sensei-learner-profiles.php - Updating markup & fixing rewrite rules for learner profiles
+ * /classes/class-woothemes-sensei-course.php - Updating markup for lesson quiz meta buttons & fixing limits on course queries
+ * /classes/class-woothemes-sensei-frontend.php - Updating markup, fixing lesson prerequisites & adding function to check for completed lessons
+ * /classes/class-woothemes-sensei-utils.php - Updating button markup
+ * /classes/class-woothemes-sensei.php - Fixing rewrite rules for learner profiles and course results page & improving guest checkout check
+
 2013.10.24 - version 1.4.3
  * /assets/css/frontend.css - Responsive layout tweaks & fixes.
  * /classes/class-woothemes-sensei-frontend.php - fixes missing complete course hook, fixes missing lesson complete message and reset lesson buttons, fixes 'delete course' function.

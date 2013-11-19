@@ -37,7 +37,7 @@ class WooThemes_Sensei_Course_Results {
 
 		// Setup permalink structure for course results
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
-		add_action( 'init', array( $this, 'get_permalink' ) );
+		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
 		// Load content for learner profiles
 		add_action( 'sensei_course_results_content', array( $this, 'content' ), 10 );
@@ -46,6 +46,9 @@ class WooThemes_Sensei_Course_Results {
 		add_action( 'sensei_course_results_info', array( $this, 'course_info' ), 10 );
 
 		add_action( 'sensei_course_results_lessons', array( $this, 'course_lessons' ), 10 );
+
+		// Add class to body tag
+		add_filter( 'body_class', array( $this, 'body_class' ), 10, 1 );
 	} // End __construct()
 
 	/**
@@ -56,6 +59,21 @@ class WooThemes_Sensei_Course_Results {
 	public function setup_permastruct() {
 		add_rewrite_rule( '^' . $this->courses_url_base . '/([^/]*)/results/?', 'index.php?course_results=$matches[1]', 'top' );
 		add_rewrite_tag( '%course_results%', '([^&]+)' );
+	}
+
+	/**
+	 * Adding page title for course results page
+	 * @param  string $title Original title
+	 * @param  string $sep   Seeparator string
+	 * @return string        Modified title
+	 */
+	public function page_title( $title, $sep ) {
+		global $wp_query;
+		if( isset( $wp_query->query_vars['course_results'] ) ) {
+			$course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );
+			$title = __( 'Course Results: ', 'woothemes-sensei' ) . $course->post_title . ' ' . $sep . ' ';
+		}
+		return $title;
 	}
 
 	/**
@@ -132,6 +150,19 @@ class WooThemes_Sensei_Course_Results {
 		if( $started_course ) {
 	 		$woothemes_sensei->frontend->sensei_get_template( 'course-results/course-lessons.php' );
 	 	}
+	}
+
+	/**
+	 * Adding class to body tag
+	 * @param  array $classes Existing classes
+	 * @return array          Modified classes
+	 */
+	public function body_class( $classes ) {
+		global $wp_query;
+		if( isset( $wp_query->query_vars['course_results'] ) ) {
+			$classes[] = 'course-results';
+		}
+		return $classes;
 	}
 
 } // End Class

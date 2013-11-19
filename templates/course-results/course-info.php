@@ -20,12 +20,13 @@ get_currentuserinfo();
 
 	?>
 	<article <?php post_class( array( 'course', 'post' ) ); ?>>
+		<section class="entry fix">
+			<?php
 
-		<?php
+			do_action( 'sensei_frontend_messages' );
 
-		do_action( 'sensei_frontend_messages' );
+			do_action( 'sensei_course_results_info' );
 
-		do_action( 'sensei_course_results_info' );
-
-		?>
+			?>
+		</section>
 	</article>

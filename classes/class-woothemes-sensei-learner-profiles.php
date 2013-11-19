@@ -37,6 +37,7 @@ class WooThemes_Sensei_Learner_Profiles {
 
 		// Setup permalink structure for learner profiles
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
+		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
 		// Load content for learner profiles
 		add_action( 'sensei_learner_profile_content', array( $this, 'content' ), 10 );
@@ -49,6 +50,9 @@ class WooThemes_Sensei_Learner_Profiles {
 
 		// Add profile link to main navigation
 		add_filter( 'wp_nav_menu_items', array( $this, 'learner_profile_menu_item' ), 11, 2 );
+
+		// Add class to body tag
+		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
 	} // End __construct()
 
 	/**
@@ -63,6 +67,29 @@ class WooThemes_Sensei_Learner_Profiles {
 			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
 			add_rewrite_tag( '%learner_profile%', '([^&]+)' );
 		}
+	}
+
+	/**
+	 * Adding page title for course results page
+	 * @param  string $title Original title
+	 * @param  string $sep   Seeparator string
+	 * @return string        Modified title
+	 */
+	public function page_title( $title, $sep ) {
+		global $wp_query;
+		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
+			$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );
+
+			$name = '';
+			if( strlen( $learner_user->first_name ) > 0 ) {
+				$name = $learner_user->first_name;
+			} else {
+				$name = $learner_user->display_name;
+			}
+
+			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) . ' ' . $sep . ' ';
+		}
+		return $title;
 	}
 
 	/**
@@ -184,6 +211,19 @@ class WooThemes_Sensei_Learner_Profiles {
 		}
 
 		return apply_filters( 'sensei_custom_menu_links', $items );
+	}
+
+	/**
+	 * Adding class to body tag
+	 * @param  array $classes Existing classes
+	 * @return array          Modified classes
+	 */
+	public function learner_profile_body_class( $classes ) {
+		global $wp_query;
+		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
+			$classes[] = 'learner-profile';
+		}
+		return $classes;
 	}
 
 } // End Class

@@ -42,6 +42,27 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 					$view_lesson = false;
                     if ( ( isset( $user_lesson_prerequisite_complete ) && $user_lesson_prerequisite_complete ) ) {
                     	$view_lesson = true;
+                    	$completion = $woothemes_sensei->settings->settings['lesson_completion'];
+						switch( $completion ) {
+							case 'passed':
+								$quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_prerequisite );
+								foreach ( $quizzes as $quiz ) {
+					                $prerequisite_quiz_id = $quiz->ID;
+					            }
+								$quiz_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $prerequisite_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
+								$quiz_passmark = intval( get_post_meta( $prerequisite_quiz_id, '_quiz_passmark', true ) );
+								if( $quiz_grade < $quiz_passmark ) {
+									$view_lesson = false;
+								}
+							break;
+
+							case 'complete':
+								$user_lesson_end = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_start', 'field' => 'comment_content' ) );
+								if ( ! $user_lesson_end || $user_lesson_end == '' || strlen( $user_lesson_end ) == 0 ) {
+									$view_lesson = false;
+								}
+							break;
+						}
                  	}
 				}
 
