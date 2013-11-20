@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2013.11.19 - version 1.4.4
+2013.11.20 - version 1.4.4
  * /templates/course-results/course-info.php - Updating markup for course results page
  * /templates/learner-profile/learner-info.php - Updating markup for learner profile page
  * /templates/content-single-lesson.php - Fixing lesson prerequisite check
