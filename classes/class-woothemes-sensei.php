@@ -183,7 +183,7 @@ class WooThemes_Sensei {
 	public function disable_guest_checkout( $guest_checkout ) {
 		global $woocommerce;
 
-		if( ! is_admin() ) {
+		if( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
 
 			if( isset( $woocommerce->cart->cart_contents ) && count( $woocommerce->cart->cart_contents ) > 0 ) {
 				foreach( $woocommerce->cart->cart_contents as $cart_key => $product ) {
