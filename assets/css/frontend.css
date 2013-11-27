@@ -587,14 +587,14 @@ section.entry span.course-price {
 /*-------------------------------------------------------------------------------------------*/
 /* 1. Info Boxes */
 /*-------------------------------------------------------------------------------------------*/
-.course-container p.woo-sc-box,
-.course p.woo-sc-box,
-.lesson p.woo-sc-box,
-.quiz p.woo-sc-box,
-.course-container div.woo-sc-box,
-.course div.woo-sc-box,
-.lesson div.woo-sc-box,
-.quiz div.woo-sc-box {
+.course-container p.sensei-message,
+.course p.sensei-message,
+.lesson p.sensei-message,
+.quiz p.sensei-message,
+.course-container div.sensei-message,
+.course div.sensei-message,
+.lesson div.sensei-message,
+.quiz div.sensei-message {
   margin: 1.387em 0 1.618em 0;
   padding: 1em 1.618em;
   border: none!important;
@@ -604,14 +604,14 @@ section.entry span.course-price {
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
 }
-.course-container p.woo-sc-box:before,
-.course p.woo-sc-box:before,
-.lesson p.woo-sc-box:before,
-.quiz p.woo-sc-box:before,
-.course-container div.woo-sc-box:before,
-.course div.woo-sc-box:before,
-.lesson div.woo-sc-box:before,
-.quiz div.woo-sc-box:before {
+.course-container p.sensei-message:before,
+.course p.sensei-message:before,
+.lesson p.sensei-message:before,
+.quiz p.sensei-message:before,
+.course-container div.sensei-message:before,
+.course div.sensei-message:before,
+.lesson div.sensei-message:before,
+.quiz div.sensei-message:before {
   font-family: 'FontAwesomeSensei';
   display: inline-block;
   font-size: 100%;
@@ -623,263 +623,263 @@ section.entry span.course-price {
   position: relative;
   top: .1em;
 }
-.course-container p.woo-sc-box.medium,
-.course p.woo-sc-box.medium,
-.lesson p.woo-sc-box.medium,
-.quiz p.woo-sc-box.medium,
-.course-container div.woo-sc-box.medium,
-.course div.woo-sc-box.medium,
-.lesson div.woo-sc-box.medium,
-.quiz div.woo-sc-box.medium {
+.course-container p.sensei-message.medium,
+.course p.sensei-message.medium,
+.lesson p.sensei-message.medium,
+.quiz p.sensei-message.medium,
+.course-container div.sensei-message.medium,
+.course div.sensei-message.medium,
+.lesson div.sensei-message.medium,
+.quiz div.sensei-message.medium {
   padding: 18px 20px 18px 50px;
   font-size: 1.1em;
 }
-.course-container p.woo-sc-box.large,
-.course p.woo-sc-box.large,
-.lesson p.woo-sc-box.large,
-.quiz p.woo-sc-box.large,
-.course-container div.woo-sc-box.large,
-.course div.woo-sc-box.large,
-.lesson div.woo-sc-box.large,
-.quiz div.woo-sc-box.large {
+.course-container p.sensei-message.large,
+.course p.sensei-message.large,
+.lesson p.sensei-message.large,
+.quiz p.sensei-message.large,
+.course-container div.sensei-message.large,
+.course div.sensei-message.large,
+.lesson div.sensei-message.large,
+.quiz div.sensei-message.large {
   padding: 25px 27px 25px 50px;
   font-size: 1.2em;
 }
-.course-container p.woo-sc-box.rounded,
-.course p.woo-sc-box.rounded,
-.lesson p.woo-sc-box.rounded,
-.quiz p.woo-sc-box.rounded,
-.course-container div.woo-sc-box.rounded,
-.course div.woo-sc-box.rounded,
-.lesson div.woo-sc-box.rounded,
-.quiz div.woo-sc-box.rounded {
+.course-container p.sensei-message.rounded,
+.course p.sensei-message.rounded,
+.lesson p.sensei-message.rounded,
+.quiz p.sensei-message.rounded,
+.course-container div.sensei-message.rounded,
+.course div.sensei-message.rounded,
+.lesson div.sensei-message.rounded,
+.quiz div.sensei-message.rounded {
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   border-radius: 15px;
 }
-.course-container p.woo-sc-box a,
-.course p.woo-sc-box a,
-.lesson p.woo-sc-box a,
-.quiz p.woo-sc-box a,
-.course-container div.woo-sc-box a,
-.course div.woo-sc-box a,
-.lesson div.woo-sc-box a,
-.quiz div.woo-sc-box a {
+.course-container p.sensei-message a,
+.course p.sensei-message a,
+.lesson p.sensei-message a,
+.quiz p.sensei-message a,
+.course-container div.sensei-message a,
+.course div.sensei-message a,
+.lesson div.sensei-message a,
+.quiz div.sensei-message a {
   text-decoration: underline;
 }
-.course-container p.woo-sc-box a:hover,
-.course p.woo-sc-box a:hover,
-.lesson p.woo-sc-box a:hover,
-.quiz p.woo-sc-box a:hover,
-.course-container div.woo-sc-box a:hover,
-.course div.woo-sc-box a:hover,
-.lesson div.woo-sc-box a:hover,
-.quiz div.woo-sc-box a:hover {
+.course-container p.sensei-message a:hover,
+.course p.sensei-message a:hover,
+.lesson p.sensei-message a:hover,
+.quiz p.sensei-message a:hover,
+.course-container div.sensei-message a:hover,
+.course div.sensei-message a:hover,
+.lesson div.sensei-message a:hover,
+.quiz div.sensei-message a:hover {
   text-decoration: none;
 }
-.course-container p.woo-sc-box.alert,
-.course p.woo-sc-box.alert,
-.lesson p.woo-sc-box.alert,
-.quiz p.woo-sc-box.alert,
-.course-container div.woo-sc-box.alert,
-.course div.woo-sc-box.alert,
-.lesson div.woo-sc-box.alert,
-.quiz div.woo-sc-box.alert {
+.course-container p.sensei-message.alert,
+.course p.sensei-message.alert,
+.lesson p.sensei-message.alert,
+.quiz p.sensei-message.alert,
+.course-container div.sensei-message.alert,
+.course div.sensei-message.alert,
+.lesson div.sensei-message.alert,
+.quiz div.sensei-message.alert {
   background: #ffd9c8;
 }
-.course-container p.woo-sc-box.alert:before,
-.course p.woo-sc-box.alert:before,
-.lesson p.woo-sc-box.alert:before,
-.quiz p.woo-sc-box.alert:before,
-.course-container div.woo-sc-box.alert:before,
-.course div.woo-sc-box.alert:before,
-.lesson div.woo-sc-box.alert:before,
-.quiz div.woo-sc-box.alert:before {
+.course-container p.sensei-message.alert:before,
+.course p.sensei-message.alert:before,
+.lesson p.sensei-message.alert:before,
+.quiz p.sensei-message.alert:before,
+.course-container div.sensei-message.alert:before,
+.course div.sensei-message.alert:before,
+.lesson div.sensei-message.alert:before,
+.quiz div.sensei-message.alert:before {
   content: '\f071';
   color: #ed6c6c;
 }
-.course-container p.woo-sc-box.alert a,
-.course p.woo-sc-box.alert a,
-.lesson p.woo-sc-box.alert a,
-.quiz p.woo-sc-box.alert a,
-.course-container div.woo-sc-box.alert a,
-.course div.woo-sc-box.alert a,
-.lesson div.woo-sc-box.alert a,
-.quiz div.woo-sc-box.alert a {
+.course-container p.sensei-message.alert a,
+.course p.sensei-message.alert a,
+.lesson p.sensei-message.alert a,
+.quiz p.sensei-message.alert a,
+.course-container div.sensei-message.alert a,
+.course div.sensei-message.alert a,
+.lesson div.sensei-message.alert a,
+.quiz div.sensei-message.alert a {
   color: #e73f3f;
 }
-.course-container p.woo-sc-box.alert a:hover,
-.course p.woo-sc-box.alert a:hover,
-.lesson p.woo-sc-box.alert a:hover,
-.quiz p.woo-sc-box.alert a:hover,
-.course-container div.woo-sc-box.alert a:hover,
-.course div.woo-sc-box.alert a:hover,
-.lesson div.woo-sc-box.alert a:hover,
-.quiz div.woo-sc-box.alert a:hover {
+.course-container p.sensei-message.alert a:hover,
+.course p.sensei-message.alert a:hover,
+.lesson p.sensei-message.alert a:hover,
+.quiz p.sensei-message.alert a:hover,
+.course-container div.sensei-message.alert a:hover,
+.course div.sensei-message.alert a:hover,
+.lesson div.sensei-message.alert a:hover,
+.quiz div.sensei-message.alert a:hover {
   color: #e52828;
 }
-.course-container p.woo-sc-box.download,
-.course p.woo-sc-box.download,
-.lesson p.woo-sc-box.download,
-.quiz p.woo-sc-box.download,
-.course-container div.woo-sc-box.download,
-.course div.woo-sc-box.download,
-.lesson div.woo-sc-box.download,
-.quiz div.woo-sc-box.download,
-.course-container p.woo-sc-box.tick,
-.course p.woo-sc-box.tick,
-.lesson p.woo-sc-box.tick,
-.quiz p.woo-sc-box.tick,
-.course-container div.woo-sc-box.tick,
-.course div.woo-sc-box.tick,
-.lesson div.woo-sc-box.tick,
-.quiz div.woo-sc-box.tick {
+.course-container p.sensei-message.download,
+.course p.sensei-message.download,
+.lesson p.sensei-message.download,
+.quiz p.sensei-message.download,
+.course-container div.sensei-message.download,
+.course div.sensei-message.download,
+.lesson div.sensei-message.download,
+.quiz div.sensei-message.download,
+.course-container p.sensei-message.tick,
+.course p.sensei-message.tick,
+.lesson p.sensei-message.tick,
+.quiz p.sensei-message.tick,
+.course-container div.sensei-message.tick,
+.course div.sensei-message.tick,
+.lesson div.sensei-message.tick,
+.quiz div.sensei-message.tick {
   background: #edfcd5;
 }
-.course-container p.woo-sc-box.download:before,
-.course p.woo-sc-box.download:before,
-.lesson p.woo-sc-box.download:before,
-.quiz p.woo-sc-box.download:before,
-.course-container div.woo-sc-box.download:before,
-.course div.woo-sc-box.download:before,
-.lesson div.woo-sc-box.download:before,
-.quiz div.woo-sc-box.download:before,
-.course-container p.woo-sc-box.tick:before,
-.course p.woo-sc-box.tick:before,
-.lesson p.woo-sc-box.tick:before,
-.quiz p.woo-sc-box.tick:before,
-.course-container div.woo-sc-box.tick:before,
-.course div.woo-sc-box.tick:before,
-.lesson div.woo-sc-box.tick:before,
-.quiz div.woo-sc-box.tick:before {
+.course-container p.sensei-message.download:before,
+.course p.sensei-message.download:before,
+.lesson p.sensei-message.download:before,
+.quiz p.sensei-message.download:before,
+.course-container div.sensei-message.download:before,
+.course div.sensei-message.download:before,
+.lesson div.sensei-message.download:before,
+.quiz div.sensei-message.download:before,
+.course-container p.sensei-message.tick:before,
+.course p.sensei-message.tick:before,
+.lesson p.sensei-message.tick:before,
+.quiz p.sensei-message.tick:before,
+.course-container div.sensei-message.tick:before,
+.course div.sensei-message.tick:before,
+.lesson div.sensei-message.tick:before,
+.quiz div.sensei-message.tick:before {
   content: '\f019';
   color: #63a95f;
 }
-.course-container p.woo-sc-box.download a,
-.course p.woo-sc-box.download a,
-.lesson p.woo-sc-box.download a,
-.quiz p.woo-sc-box.download a,
-.course-container div.woo-sc-box.download a,
-.course div.woo-sc-box.download a,
-.lesson div.woo-sc-box.download a,
-.quiz div.woo-sc-box.download a,
-.course-container p.woo-sc-box.tick a,
-.course p.woo-sc-box.tick a,
-.lesson p.woo-sc-box.tick a,
-.quiz p.woo-sc-box.tick a,
-.course-container div.woo-sc-box.tick a,
-.course div.woo-sc-box.tick a,
-.lesson div.woo-sc-box.tick a,
-.quiz div.woo-sc-box.tick a {
+.course-container p.sensei-message.download a,
+.course p.sensei-message.download a,
+.lesson p.sensei-message.download a,
+.quiz p.sensei-message.download a,
+.course-container div.sensei-message.download a,
+.course div.sensei-message.download a,
+.lesson div.sensei-message.download a,
+.quiz div.sensei-message.download a,
+.course-container p.sensei-message.tick a,
+.course p.sensei-message.tick a,
+.lesson p.sensei-message.tick a,
+.quiz p.sensei-message.tick a,
+.course-container div.sensei-message.tick a,
+.course div.sensei-message.tick a,
+.lesson div.sensei-message.tick a,
+.quiz div.sensei-message.tick a {
   color: #4e8b4a;
 }
-.course-container p.woo-sc-box.download a:hover,
-.course p.woo-sc-box.download a:hover,
-.lesson p.woo-sc-box.download a:hover,
-.quiz p.woo-sc-box.download a:hover,
-.course-container div.woo-sc-box.download a:hover,
-.course div.woo-sc-box.download a:hover,
-.lesson div.woo-sc-box.download a:hover,
-.quiz div.woo-sc-box.download a:hover,
-.course-container p.woo-sc-box.tick a:hover,
-.course p.woo-sc-box.tick a:hover,
-.lesson p.woo-sc-box.tick a:hover,
-.quiz p.woo-sc-box.tick a:hover,
-.course-container div.woo-sc-box.tick a:hover,
-.course div.woo-sc-box.tick a:hover,
-.lesson div.woo-sc-box.tick a:hover,
-.quiz div.woo-sc-box.tick a:hover {
+.course-container p.sensei-message.download a:hover,
+.course p.sensei-message.download a:hover,
+.lesson p.sensei-message.download a:hover,
+.quiz p.sensei-message.download a:hover,
+.course-container div.sensei-message.download a:hover,
+.course div.sensei-message.download a:hover,
+.lesson div.sensei-message.download a:hover,
+.quiz div.sensei-message.download a:hover,
+.course-container p.sensei-message.tick a:hover,
+.course p.sensei-message.tick a:hover,
+.lesson p.sensei-message.tick a:hover,
+.quiz p.sensei-message.tick a:hover,
+.course-container div.sensei-message.tick a:hover,
+.course div.sensei-message.tick a:hover,
+.lesson div.sensei-message.tick a:hover,
+.quiz div.sensei-message.tick a:hover {
   color: #457a42;
 }
-.course-container p.woo-sc-box.tick:before,
-.course p.woo-sc-box.tick:before,
-.lesson p.woo-sc-box.tick:before,
-.quiz p.woo-sc-box.tick:before,
-.course-container div.woo-sc-box.tick:before,
-.course div.woo-sc-box.tick:before,
-.lesson div.woo-sc-box.tick:before,
-.quiz div.woo-sc-box.tick:before {
+.course-container p.sensei-message.tick:before,
+.course p.sensei-message.tick:before,
+.lesson p.sensei-message.tick:before,
+.quiz p.sensei-message.tick:before,
+.course-container div.sensei-message.tick:before,
+.course div.sensei-message.tick:before,
+.lesson div.sensei-message.tick:before,
+.quiz div.sensei-message.tick:before {
   content: '\f00c';
 }
-.course-container p.woo-sc-box.info,
-.course p.woo-sc-box.info,
-.lesson p.woo-sc-box.info,
-.quiz p.woo-sc-box.info,
-.course-container div.woo-sc-box.info,
-.course div.woo-sc-box.info,
-.lesson div.woo-sc-box.info,
-.quiz div.woo-sc-box.info {
+.course-container p.sensei-message.info,
+.course p.sensei-message.info,
+.lesson p.sensei-message.info,
+.quiz p.sensei-message.info,
+.course-container div.sensei-message.info,
+.course div.sensei-message.info,
+.lesson div.sensei-message.info,
+.quiz div.sensei-message.info {
   background: #eee;
 }
-.course-container p.woo-sc-box.info:before,
-.course p.woo-sc-box.info:before,
-.lesson p.woo-sc-box.info:before,
-.quiz p.woo-sc-box.info:before,
-.course-container div.woo-sc-box.info:before,
-.course div.woo-sc-box.info:before,
-.lesson div.woo-sc-box.info:before,
-.quiz div.woo-sc-box.info:before {
+.course-container p.sensei-message.info:before,
+.course p.sensei-message.info:before,
+.lesson p.sensei-message.info:before,
+.quiz p.sensei-message.info:before,
+.course-container div.sensei-message.info:before,
+.course div.sensei-message.info:before,
+.lesson div.sensei-message.info:before,
+.quiz div.sensei-message.info:before {
   content: '\f05a';
 }
-.course-container p.woo-sc-box.info a,
-.course p.woo-sc-box.info a,
-.lesson p.woo-sc-box.info a,
-.quiz p.woo-sc-box.info a,
-.course-container div.woo-sc-box.info a,
-.course div.woo-sc-box.info a,
-.lesson div.woo-sc-box.info a,
-.quiz div.woo-sc-box.info a {
+.course-container p.sensei-message.info a,
+.course p.sensei-message.info a,
+.lesson p.sensei-message.info a,
+.quiz p.sensei-message.info a,
+.course-container div.sensei-message.info a,
+.course div.sensei-message.info a,
+.lesson div.sensei-message.info a,
+.quiz div.sensei-message.info a {
   color: #3b3b3b;
 }
-.course-container p.woo-sc-box.info a:hover,
-.course p.woo-sc-box.info a:hover,
-.lesson p.woo-sc-box.info a:hover,
-.quiz p.woo-sc-box.info a:hover,
-.course-container div.woo-sc-box.info a:hover,
-.course div.woo-sc-box.info a:hover,
-.lesson div.woo-sc-box.info a:hover,
-.quiz div.woo-sc-box.info a:hover {
+.course-container p.sensei-message.info a:hover,
+.course p.sensei-message.info a:hover,
+.lesson p.sensei-message.info a:hover,
+.quiz p.sensei-message.info a:hover,
+.course-container div.sensei-message.info a:hover,
+.course div.sensei-message.info a:hover,
+.lesson div.sensei-message.info a:hover,
+.quiz div.sensei-message.info a:hover {
   color: #2f2f2f;
 }
-.course-container p.woo-sc-box.note,
-.course p.woo-sc-box.note,
-.lesson p.woo-sc-box.note,
-.quiz p.woo-sc-box.note,
-.course-container div.woo-sc-box.note,
-.course div.woo-sc-box.note,
-.lesson div.woo-sc-box.note,
-.quiz div.woo-sc-box.note {
+.course-container p.sensei-message.note,
+.course p.sensei-message.note,
+.lesson p.sensei-message.note,
+.quiz p.sensei-message.note,
+.course-container div.sensei-message.note,
+.course div.sensei-message.note,
+.lesson div.sensei-message.note,
+.quiz div.sensei-message.note {
   background: #fef6d2;
 }
-.course-container p.woo-sc-box.note:before,
-.course p.woo-sc-box.note:before,
-.lesson p.woo-sc-box.note:before,
-.quiz p.woo-sc-box.note:before,
-.course-container div.woo-sc-box.note:before,
-.course div.woo-sc-box.note:before,
-.lesson div.woo-sc-box.note:before,
-.quiz div.woo-sc-box.note:before {
+.course-container p.sensei-message.note:before,
+.course p.sensei-message.note:before,
+.lesson p.sensei-message.note:before,
+.quiz p.sensei-message.note:before,
+.course-container div.sensei-message.note:before,
+.course div.sensei-message.note:before,
+.lesson div.sensei-message.note:before,
+.quiz div.sensei-message.note:before {
   content: '\f0f6';
 }
-.course-container p.woo-sc-box.normal,
-.course p.woo-sc-box.normal,
-.lesson p.woo-sc-box.normal,
-.quiz p.woo-sc-box.normal,
-.course-container div.woo-sc-box.normal,
-.course div.woo-sc-box.normal,
-.lesson div.woo-sc-box.normal,
-.quiz div.woo-sc-box.normal {
+.course-container p.sensei-message.normal,
+.course p.sensei-message.normal,
+.lesson p.sensei-message.normal,
+.quiz p.sensei-message.normal,
+.course-container div.sensei-message.normal,
+.course div.sensei-message.normal,
+.lesson div.sensei-message.normal,
+.quiz div.sensei-message.normal {
   background: #eee;
   padding: 9px 15px;
 }
-.course-container p.woo-sc-box .view-quiz,
-.course p.woo-sc-box .view-quiz,
-.lesson p.woo-sc-box .view-quiz,
-.quiz p.woo-sc-box .view-quiz,
-.course-container div.woo-sc-box .view-quiz,
-.course div.woo-sc-box .view-quiz,
-.lesson div.woo-sc-box .view-quiz,
-.quiz div.woo-sc-box .view-quiz {
+.course-container p.sensei-message .view-quiz,
+.course p.sensei-message .view-quiz,
+.lesson p.sensei-message .view-quiz,
+.quiz p.sensei-message .view-quiz,
+.course-container div.sensei-message .view-quiz,
+.course div.sensei-message .view-quiz,
+.lesson div.sensei-message .view-quiz,
+.quiz div.sensei-message .view-quiz {
   float: right;
 }
 .course-container a.button,

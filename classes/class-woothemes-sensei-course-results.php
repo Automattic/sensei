@@ -131,7 +131,7 @@ class WooThemes_Sensei_Course_Results {
         <?php
 
         $course_status = WooThemes_Sensei_Utils::sensei_user_course_status_message( $course->ID, $current_user->ID );
-        echo '<div class="woo-sc-box ' . $course_status['box_class'] . '">' . $course_status['message'] . '</div>';
+        echo '<div class="sensei-message ' . $course_status['box_class'] . '">' . $course_status['message'] . '</div>';
 
         do_action( 'sensei_course_results_lessons', $course );
 
