@@ -825,7 +825,7 @@ class WooThemes_Sensei_Frontend {
 
 					// Success message
 		    		if ( $dataset_changes ) {
-		    			$this->messages = '<header class="archive-header"><div class="woo-sc-box tick">' . sprintf( __( '%1$s marked as complete.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header><div class="fix"></div>';
+		    			$this->messages = '<header class="archive-header"><div class="woo-sc-box tick">' . sprintf( __( '%1$s marked as complete.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
 		    		} // End If Statement
 
 		    		break;
@@ -859,7 +859,7 @@ class WooThemes_Sensei_Frontend {
 	    			} // End For Loop
 		    		// Success message
 		    		if ( $dataset_changes ) {
-		    			$this->messages = '<header class="archive-header"><div class="woo-sc-box tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header><div class="fix"></div>';
+		    			$this->messages = '<header class="archive-header"><div class="woo-sc-box tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
 		    		} // End If Statement
 		    		break;
 		    	default:
@@ -1236,14 +1236,12 @@ class WooThemes_Sensei_Frontend {
 		if ( have_posts() ) { ?>
 			<section id="main-course" class="course-container">
 	    	    <?php do_action( 'sensei_course_archive_header' ); ?>
-	    	    <div class="fix"></div>
 	    	    <?php while ( have_posts() ) { the_post(); ?>
 				<article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ); ?>">
 	    			<?php do_action( 'sensei_course_image', get_the_ID() ); ?>
 	    			<?php do_action( 'sensei_course_archive_course_title', $post ); ?>
 	    			<?php do_action( 'sensei_course_archive_meta' ); ?>
 	    		</article>
-	    		<div class="fix"></div>
 	    		<?php } // End While Loop ?>
 	    	</section>
 		<?php } else { ?>

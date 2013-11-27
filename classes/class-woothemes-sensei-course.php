@@ -958,8 +958,6 @@ class WooThemes_Sensei_Course {
 
 			    	$complete_html .= '</article>';
 
-			    	$complete_html .= '<div class="fix"></div>';
-
 			    } else {
 
 			    	$active_html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_item->ID ) ) ) . '">';
@@ -1043,8 +1041,6 @@ class WooThemes_Sensei_Course {
 				    	}
 
 			    	$active_html .= '</article>';
-
-			    	$active_html .= '<div class="fix"></div>';
 
 			    } // End If Statement
 			} // End For Loop

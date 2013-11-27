@@ -176,7 +176,6 @@ class WooThemes_Sensei_Learner_Profiles {
 				<h2><?php echo $learner_name; ?></h2>
 				<div class="description"><?php echo wpautop( $learner_bio ); ?></div>
 			</div>
-			<div class="fix"></div>
 		</div>
 		<?php
 	}
