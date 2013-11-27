@@ -343,7 +343,7 @@ jQuery(document).ready( function($) {
 	 					if ( 0 < response ) {
 	 						jQuery( '#lesson-course-actions' ).show();
 							jQuery( '#lesson-course-details' ).addClass( 'hidden' );
-							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text( encodeURIComponent( jQuery( '#course-title' ).attr( 'value' ) ) ) );
+							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(  jQuery( '#course-title' ).attr( 'value' ) ) );
 							jQuery( '#lesson-course-options' ).val( response );
 							jQuery( '#lesson-course-options' ).trigger( 'liszt:updated' );
 	 					} else {
