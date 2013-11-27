@@ -313,9 +313,9 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_output_comments() {
-		global $woothemes_sensei;
+		global $woothemes_sensei, $view_lesson, $user_taking_course;
 		$allow_comments = $woothemes_sensei->settings->settings[ 'lesson_comments' ];
-		if ( is_user_logged_in() && $allow_comments ) {
+		if ( is_user_logged_in() && $allow_comments && ( isset( $view_lesson ) && $view_lesson ) && ( isset( $user_taking_course ) && $user_taking_course ) ) {
 			comments_template();
 		} // End If Statement
 	} // End sensei_output_comments()
