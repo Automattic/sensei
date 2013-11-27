@@ -20,8 +20,6 @@ global $woothemes_sensei, $post, $wp_query;
 
     	    <?php do_action( 'sensei_lesson_archive_header' ); ?>
 
-    	    <div class="fix"></div>
-
     	    <?php while ( have_posts() ) { the_post();
     			// Meta data
     			$post_id = get_the_ID(); ?>
@@ -32,8 +30,6 @@ global $woothemes_sensei, $post, $wp_query;
                     <?php do_action( 'sensei_lesson_meta', $post_id ); ?>
 
                 </article>
-
-    		<div class="fix"></div>
 
     		<?php } // End While Loop ?>
 

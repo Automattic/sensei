@@ -126,8 +126,6 @@ if ( 0 < $total_lessons ) {
 
     	    $html .= '</article>';
 
-    	    $html .= '<div class="fix"></div>';
-
     	    $lesson_count++;
 
     	} // End For Loop

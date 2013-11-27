@@ -41,8 +41,6 @@ if ( ! $paged || $paged < 2 ) {
 
     	    <?php do_action( 'sensei_course_archive_header', $query_type ); ?>
 
-    	    <div class="fix"></div>
-
     	    <?php foreach ($posts_array as $post_item){
     			// Make sure the other loops dont include the same post twice!
     			array_push( $course_excludes, $post_item->ID );
@@ -75,8 +73,6 @@ if ( ! $paged || $paged < 2 ) {
                         <p><?php echo apply_filters( 'get_the_excerpt', $post_item->post_excerpt ); ?></p>
     				</section>
     			</article>
-
-    			<div class="fix"></div>
     			<?php
 
     		} // End For Loop
@@ -100,8 +96,6 @@ if ( ! $paged || $paged < 2 ) {
 		<section id="main-course" class="course-container">
 
     	    <?php do_action( 'sensei_course_archive_header', $query_type ); ?>
-
-    	    <div class="fix"></div>
 
     	    <?php while ( have_posts() ) { the_post();
     			// Meta data
@@ -131,8 +125,6 @@ if ( ! $paged || $paged < 2 ) {
                     <p><?php the_excerpt(); ?></p>
     			</section>
     		</article>
-
-    		<div class="fix"></div>
 
     		<?php } // End While Loop ?>
 
