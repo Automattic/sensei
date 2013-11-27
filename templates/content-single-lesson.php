@@ -11,7 +11,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
- global $woothemes_sensei, $post, $current_user;
+ global $woothemes_sensei, $post, $current_user, $view_lesson, $user_taking_course;
  // Content Access Permissions
  $access_permission = false;
  if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! $woothemes_sensei->settings->settings['access_permission'] ) || sensei_all_access() ) {
