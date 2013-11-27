@@ -1073,7 +1073,7 @@ class WooThemes_Sensei_Course {
 		    	<?php if ( '' != $active_html ) {
 		    		echo $active_html;
 		    	} else { ?>
-		    		<div class="woo-sc-box info"><?php echo $no_active_message; ?> <a href="<?php echo get_post_type_archive_link( 'course' ); ?>"><?php apply_filters( 'sensei_start_a_course_text', _e( 'Start a Course!', 'woothemes-sensei' ) ); ?></a></div>
+		    		<div class="sensei-message info"><?php echo $no_active_message; ?> <a href="<?php echo get_post_type_archive_link( 'course' ); ?>"><?php apply_filters( 'sensei_start_a_course_text', _e( 'Start a Course!', 'woothemes-sensei' ) ); ?></a></div>
 		    	<?php } // End If Statement ?>
 
 		    </div>
@@ -1087,7 +1087,7 @@ class WooThemes_Sensei_Course {
 		    	<?php if ( '' != $complete_html ) {
 		    		echo $complete_html;
 		    	} else { ?>
-		    		<div class="woo-sc-box info"><?php echo $no_complete_message; ?></div>
+		    		<div class="sensei-message info"><?php echo $no_complete_message; ?></div>
 		    	<?php } // End If Statement ?>
 
 		    </div>

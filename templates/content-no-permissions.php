@@ -28,7 +28,7 @@ global $woothemes_sensei;
                			</header>
 
             		    <section class="entry fix">
-            		    	<div class="woo-sc-box alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
+            		    	<div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
             		    	<?php the_content(); ?>
             		    </section>
 
@@ -42,7 +42,7 @@ global $woothemes_sensei;
 	                </header>
 
                 	<section class="entry fix">
-                		<div class="woo-sc-box alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
+                		<div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
                 	</section>
                 <?php } // End If Statement ?>
 

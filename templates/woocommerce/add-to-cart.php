@@ -19,7 +19,7 @@ $wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
 get_currentuserinfo();
 // Check if customer purchased the product
 if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id ) ) { ?>
-    <div class="woo-sc-box tick"><?php _e( 'You are currently taking this course.', 'woothemes-sensei' ); ?></div>
+    <div class="sensei-message tick"><?php _e( 'You are currently taking this course.', 'woothemes-sensei' ); ?></div>
 <?php } else {
     // based on simple.php in WC templates/single-product/add-to-cart/
     if ( 0 < $wc_post_id ) {

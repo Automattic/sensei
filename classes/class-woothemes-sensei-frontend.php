@@ -608,9 +608,9 @@ class WooThemes_Sensei_Frontend {
 			$course_link = '<a href="' . esc_url( get_permalink( $course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 			$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product',true );
 			if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) { ?>
-				<div class="woo-sc-box info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
+				<div class="sensei-message info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
 			<?php } else { ?>
-				<div class="woo-sc-box info"><?php echo apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
+				<div class="sensei-message info"><?php echo apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the Lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
 			<?php } // End If Statement ?>
     	</section><?php
     	} // End If Statement
@@ -722,7 +722,7 @@ class WooThemes_Sensei_Frontend {
 		            // Check for course complete
 		            $course_id = get_post_meta( $post->ID, '_lesson_course' ,true );
 		            $delete_course_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
-		            $this->messages = '<div class="woo-sc-box note">' . apply_filters( 'sensei_lesson_reset_text', __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
+		            $this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_lesson_reset_text', __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 		            break;
 		        default:
 		            // Nothing
@@ -825,7 +825,7 @@ class WooThemes_Sensei_Frontend {
 
 					// Success message
 		    		if ( $dataset_changes ) {
-		    			$this->messages = '<header class="archive-header"><div class="woo-sc-box tick">' . sprintf( __( '%1$s marked as complete.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
+		    			$this->messages = '<header class="archive-header"><div class="sensei-message tick">' . sprintf( __( '%1$s marked as complete.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
 		    		} // End If Statement
 
 		    		break;
@@ -859,7 +859,7 @@ class WooThemes_Sensei_Frontend {
 	    			} // End For Loop
 		    		// Success message
 		    		if ( $dataset_changes ) {
-		    			$this->messages = '<header class="archive-header"><div class="woo-sc-box tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
+		    			$this->messages = '<header class="archive-header"><div class="sensei-message tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
 		    		} // End If Statement
 		    		break;
 		    	default:
@@ -980,7 +980,7 @@ class WooThemes_Sensei_Frontend {
 			    		$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
 			    	}
 
-					$this->messages = '<div class="woo-sc-box note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
+					$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
 
 					break;
 		    	case apply_filters( 'sensei_reset_quiz_text', __( 'Reset Quiz', 'woothemes-sensei' ) ):
@@ -996,7 +996,7 @@ class WooThemes_Sensei_Frontend {
 		    		// Check for course complete
 		    		$course_id = absint( get_post_meta( $quiz_lesson, '_lesson_course' ,true ) );
 		    		$delete_course_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
-		    		$this->messages = '<div class="woo-sc-box note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
+		    		$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 		    		break;
 		    	default:
 		    		// Nothing
@@ -1138,7 +1138,7 @@ class WooThemes_Sensei_Frontend {
 	        	// Display lesson quiz status message
 	        	if ( $has_user_completed_lesson || 0 < count( $quiz_questions ) ) {
 	        		$status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $post_id, $user_id, true );
-	        		echo '<div class="woo-sc-box ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+	        		echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
 	    			if( 0 < count( $quiz_questions ) ) {
 	        			echo $status['extra'];
     				} // End If Statement
@@ -1461,7 +1461,7 @@ class WooThemes_Sensei_Frontend {
 
 		if ( 0 < intval( $wc_post_id ) ) {
 			if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
-				echo '<div class="woo-sc-box info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
+				echo '<div class="sensei-message info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
 			} // End If Statement
 		} // End If Statement
 
