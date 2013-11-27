@@ -174,7 +174,7 @@ class WooThemes_Sensei_Learner_Profiles {
 			<div class="learner-avatar"><?php echo $learner_avatar; ?></div>
 			<div class="learner-content">
 				<h2><?php echo $learner_name; ?></h2>
-				<div class="description"><?php echo $learner_bio; ?></div>
+				<div class="description"><?php echo wpautop( $learner_bio ); ?></div>
 			</div>
 			<div class="fix"></div>
 		</div>
