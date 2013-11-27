@@ -108,6 +108,8 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'comment_feed_where', array( $this, 'comments_rss_item_filter' ), 10, 1 );
 		// Checks if Course is complete when completing a Lesson or Quiz
 		add_action( 'sensei_user_lesson_end', array( $this, 'sensei_completed_course' ), 10, 2 );
+		// Only show course & lesson excerpts in search results
+		add_filter( 'the_content', array( $this, 'sensei_search_results_excerpt' ) );
 	} // End __construct()
 
 	/**
@@ -1608,6 +1610,21 @@ class WooThemes_Sensei_Frontend {
 		return $completed_course;
 
 	} // End sensei_completed_course()
+
+	/**
+	 * Only show excerpts for lessons and courses in search results
+	 * @param  string $content Original content
+	 * @return string          Modified content
+	 */
+	public function sensei_search_results_excerpt( $content ) {
+		global $post;
+
+		if( is_search() && in_array( $post->post_type, array( 'course', 'lesson' ) ) ) {
+			$content = $post->post_excerpt;
+		}
+
+		return $content;
+	}
 
 } // End Class
 ?>
