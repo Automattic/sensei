@@ -2,7 +2,7 @@
 Plugin Name: Sensei
 Plugin URI: http://woothemes.com/
 Description: Sensei by WooThemes is the best Learning Management System ever!
-Version: 1.0.0
+Version: 1.4.5
 Author: WooThemes
 Author URI: http://woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -75,20 +75,3 @@ li.menu-icon-lesson .wp-menu-image img, li.menu-icon-course .wp-menu-image img {
 #wpwrap li.menu-icon-course div.wp-menu-image  { background: url(../images/icon_course_16.png) no-repeat left top; width: 20px; height: 16px; margin-left: 7px; margin-top: 5px; }
 #wpwrap li.menu-icon-course.current div.wp-menu-image, #wpwrap li.menu-icon-course:hover div.wp-menu-image, #wpwrap li.menu-icon-course.wp-has-current-submenu div.wp-menu-image  { background-position: left -16px; }
 /*#icon-woothemes-sensei, #icon-post.icon32-posts-course, #icon-edit.icon32-posts-course { background: transparent url(../images/icon_course_32.png) no-repeat left top; }*/
-/* Lesson Write Panel Styling */
-a.lesson_course_cancel { text-decoration: underline; }
-a.lesson_question_cancel { text-decoration: underline; }
-#lesson-info input[type=text] { margin-bottom: 10px; }
-#lesson-quiz input[type=text] { margin-bottom: 10px; }
-#lesson-course-details input, #lesson-course-details select { margin-bottom: 10px; }
-tr.question-quick-edit td { padding-bottom: 10px; }
-#add-quiz-main button.add_quiz { margin-left: 5px; }
-select.question-type-select { margin-bottom: 10px; }
-div.question_boolean_fields { margin-bottom: 10px; }
-/* Chosen styling */
-div.chzn-container { width: 256px !important; margin-bottom: 10px; display: block;}
-div.chzn-drop { width: 254px !important; }
-div.chzn-search input { width: 246px !important; }
-/* Course Write Panel Styling */
-/* Grading */
-.wrap div.grading-notice { margin: 25px 0 0px; }
