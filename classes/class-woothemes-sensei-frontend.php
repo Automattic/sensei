@@ -1344,6 +1344,8 @@ class WooThemes_Sensei_Frontend {
 				$this->data->is_user_taking_course = true;
 
 				do_action( 'sensei_user_course_start', $current_user->ID, $post->ID );
+
+				echo '<script type="text/javascript">window.location.reload();</script>';
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_course_start()
