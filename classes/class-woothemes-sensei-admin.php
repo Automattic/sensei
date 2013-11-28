@@ -256,12 +256,27 @@ class WooThemes_Sensei_Admin {
 	 * @since 1.0.0
 	 * @return void
 	 */
-	public function admin_styles_global () {
-		global $woothemes_sensei;
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.4.0', 'screen' );
-		wp_enqueue_style( $woothemes_sensei->token . '-global' );
-		wp_register_style( $woothemes_sensei->token . '-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.css', '', '1.3.0', 'screen' );
-		wp_enqueue_style( $woothemes_sensei->token . '-chosen' );
+	public function admin_styles_global ( $hook ) {
+		global $woothemes_sensei, $post_type;
+
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
+		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
+		$allowed_hooks = apply_filters( 'sensei_scripts_allowed_hooks', array( 'sensei_page_sensei_grading', 'sensei_page_sensei_analysis', 'sensei_page_sensei_updates', 'sensei_page_woothemes-sensei-settings' ) );
+
+		// Test for Write Panel Pages
+		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $hook ) && in_array( $hook, $allowed_hooks ) ) ) {
+
+			wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.4.0', 'screen' );
+			wp_enqueue_style( $woothemes_sensei->token . '-global' );
+			wp_register_style( $woothemes_sensei->token . '-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.css', '', '1.3.0', 'screen' );
+			wp_enqueue_style( $woothemes_sensei->token . '-chosen' );
+
+		} else {
+
+			return;
+
+		} // End If Statement
+
 	} // End admin_styles_global()
 
 
