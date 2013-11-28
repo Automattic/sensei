@@ -110,6 +110,14 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_user_lesson_end', array( $this, 'sensei_completed_course' ), 10, 2 );
 		// Only show course & lesson excerpts in search results
 		add_filter( 'the_content', array( $this, 'sensei_search_results_excerpt' ) );
+
+		// Remove course from active courses if an order is cancelled or refunded
+		add_action( 'woocommerce_order_status_processing_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
+        add_action( 'woocommerce_order_status_completed_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
+        add_action( 'woocommerce_order_status_on-hold_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
+        add_action( 'woocommerce_order_status_processing_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
+        add_action( 'woocommerce_order_status_completed_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
+        add_action( 'woocommerce_order_status_on-hold_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
 	} // End __construct()
 
 	/**
@@ -1624,7 +1632,68 @@ class WooThemes_Sensei_Frontend {
 		}
 
 		return $content;
-	}
+	} // End sensei_search_results_excerpt()
+
+	/**
+	 * Remove active course when an order is refunded or cancelled
+	 * @param  integer $order_id ID of order
+	 * @return void
+	 */
+	public function remove_active_course( $order_id ) {
+		$order = new WC_Order( $order_id );
+
+		foreach ( $order->get_items() as $item ) {
+
+            if ( $item['product_id'] > 0 ) {
+
+				$user_id = get_post_meta( $order_id, '_customer_user', true );
+
+				if( $user_id ) {
+
+					// Get all courses for product
+					$args = array(
+						'posts_per_page' => -1,
+						'post_type' => 'course',
+						'meta_query' => array(
+							array(
+								'key' => '_course_woocommerce_product',
+								'value' => $item['product_id']
+							)
+						)
+					);
+					$courses = get_posts( $args );
+
+					if( $courses && count( $courses ) > 0 ) {
+						foreach( $courses as $course ) {
+
+				    		// Remove all course user meta
+				    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course->ID, 'user_id' => $user_id, 'type' => 'sensei_course_start' ) );
+				    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course->ID, 'user_id' => $user_id, 'type' => 'sensei_course_end' ) );
+
+				    		// Get all course lessons
+				    		$course_lessons = $this->course->course_lessons( $course->ID );
+
+				    		// Remove all lesson user meta in course
+			    			foreach ($course_lessons as $lesson_item){
+
+			    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $user_id, 'type' => 'sensei_lesson_start' ) );
+			    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $user_id, 'type' => 'sensei_lesson_end' ) );
+
+			    				// Remove all quiz user meta in lesson
+			        			$lesson_quizzes = $this->lesson->lesson_quizzes( $lesson_item->ID );
+			        			if ( 0 < count($lesson_quizzes) )  {
+			        				foreach ($lesson_quizzes as $quiz_item){
+			        					$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_item->ID, $user_id );
+			    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_item->ID, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade' ) );
+			    					} // End For Loop
+			    				} // End If Statement
+			    			} // End For Loop
+						} // End For Loop
+					} // End If Statement
+				} // End If Statement
+            } // End If Statement
+        } // End For Loop
+	} // End remove_active_course()
 
 } // End Class
 ?>
