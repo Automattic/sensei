@@ -182,9 +182,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			$user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
 			// Output the users data
 			if ( $raw ) {
-				$user_login = $user_item->user_login;
+				$user_login = $user_item->display_name;
 			} else {
-				$user_login = '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a>';
+				$user_login = '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a>';
 				$user_average_grade = $user_average_grade . '%';
 			} // End If Statement
 			array_push( $return_array, apply_filters( 'sensei_analysis_overview_users_column_data', array( 	'user_login' => $user_login,
