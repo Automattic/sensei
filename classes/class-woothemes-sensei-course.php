@@ -814,6 +814,30 @@ class WooThemes_Sensei_Course {
 	} // End course_author_lesson_count()
 
 	/**
+	 * course_lesson_count function.
+	 *
+	 * @access public
+	 * @param  int $course_id (default: 0)
+	 * @return int
+	 */
+	public function course_lesson_count( $course_id = 0 ) {
+
+		$count = 0;
+
+		$lesson_args = array(	'post_type' 		=> 'lesson',
+								'numberposts' 		=> -1,
+		    					'meta_key'        	=> '_lesson_course',
+    							'meta_value'      	=> $course_id,
+    	    					'post_status'      	=> 'publish',
+    	    					'suppress_filters' 	=> 0
+		    				);
+		$lessons_array = get_posts( $lesson_args );
+		$count = count( $lessons_array );
+		return $count;
+
+	} // End course_lesson_count()
+
+	/**
 	 * get_product_courses function.
 	 *
 	 * @access public
@@ -938,7 +962,7 @@ class WooThemes_Sensei_Course {
 			    		    	} // End If Statement
 
 			    		    	// Lesson count for this author
-			    		    	$complete_html .= '<span class="course-lesson-count">' . $woothemes_sensei->post_types->course->course_author_lesson_count( $course_item->post_author, absint( $course_item->ID ) ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ) . '</span>';
+			    		    	$complete_html .= '<span class="course-lesson-count">' . $woothemes_sensei->post_types->course->course_lesson_count( absint( $course_item->ID ) ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ) . '</span>';
 			    		    	// Course Categories
 			    		    	if ( '' != $category_output ) {
 			    		    		$complete_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';
@@ -982,7 +1006,7 @@ class WooThemes_Sensei_Course {
 			    		    		$active_html .= '<span class="course-author"><a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . __( 'by ', 'woothemes-sensei' ) . esc_html( $user_info->display_name ) . '</a></span>';
 			    		    	} // End If Statement
 			    		    	// Lesson count for this author
-			    		    	$lesson_count = $woothemes_sensei->post_types->course->course_author_lesson_count( $course_item->post_author, absint( $course_item->ID ) );
+			    		    	$lesson_count = $woothemes_sensei->post_types->course->course_lesson_count( absint( $course_item->ID ) );
 			    		    	// Handle Division by Zero
 								if ( 0 == $lesson_count ) {
 									$lesson_count = 1;
