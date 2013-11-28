@@ -120,7 +120,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 		    } // End If Statement
 			// Output the users data
 			if ( isset( $lesson_start_date ) && '' != $lesson_start_date ) {
-				array_push( $return_array, apply_filters( 'sensei_analysis_lesson_column_data', array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a>',
+				array_push( $return_array, apply_filters( 'sensei_analysis_lesson_column_data', array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a>',
 												'user_lesson_date_started' => $lesson_start_date,
 												'user_lesson_date_completed' => $lesson_end_date,
 												'user_lesson_grade' => $quiz_grade . ''

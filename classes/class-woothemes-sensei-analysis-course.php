@@ -138,7 +138,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 				$course_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->course_id, 'user_id' => $user_item->ID, 'type' => 'sensei_course_end', 'field' => 'comment_date' ) );
 				// Output the users data
 				if ( isset( $course_start_date ) && '' != $course_start_date ) {
-					array_push( $return_array, apply_filters( 'sensei_analysis_course_user_column_data', array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->user_login.'</a>',
+					array_push( $return_array, apply_filters( 'sensei_analysis_course_user_column_data', array( 	'user_login' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $user_item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a>',
 													'user_course_date_started' => $course_start_date,
 													'user_course_date_completed' => $course_end_date
 
