@@ -970,7 +970,7 @@ class WooThemes_Sensei_Course {
 
 							$complete_html .= '</p>';
 
-							$complete_html .= '<p>' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
+							$complete_html .= '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
 
 							$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
 
@@ -1020,7 +1020,7 @@ class WooThemes_Sensei_Course {
 
 			    		    $active_html .= '</p>';
 
-			    		    $active_html .= '<p>' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
+			    		    $active_html .= '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
 
 			    		   	$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $lesson_count ), 0 ) );
 

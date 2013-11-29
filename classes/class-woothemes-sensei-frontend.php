@@ -1191,7 +1191,7 @@ class WooThemes_Sensei_Frontend {
 		   	<?php } // End If Statement ?>
 		   	<?php sensei_simple_course_price( $post_id ); ?>
         	</p>
-        	<p><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
+        	<p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
 		</section><?php
 	} // End sensei_course_archive_meta()
 
@@ -1327,7 +1327,7 @@ class WooThemes_Sensei_Frontend {
                 <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_view_course_text', __( 'View course', 'woothemes-sensei' ) ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
                 <?php } ?>
             </p>
-            <p><?php the_excerpt(); ?></p>
+            <p class="lesson-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
 		</section><?php
 		} // End If Statement
 	} // sensei_lesson_meta()
@@ -1632,7 +1632,7 @@ class WooThemes_Sensei_Frontend {
 		global $post;
 
 		if( is_search() && in_array( $post->post_type, array( 'course', 'lesson' ) ) ) {
-			$content = $post->post_excerpt;
+			$content = '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $post->post_excerpt ) . '</p>';
 		}
 
 		return $content;
