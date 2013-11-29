@@ -118,6 +118,10 @@ class WooThemes_Sensei_Frontend {
         add_action( 'woocommerce_order_status_processing_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
         add_action( 'woocommerce_order_status_completed_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
         add_action( 'woocommerce_order_status_on-hold_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
+
+        // Add course link to order page
+        add_action( 'woocommerce_thankyou', array( $this, 'course_link_from_order' ), 10, 1 );
+        add_action( 'woocommerce_view_order', array( $this, 'course_link_from_order' ), 10, 1 );
 	} // End __construct()
 
 	/**
@@ -1694,6 +1698,63 @@ class WooThemes_Sensei_Frontend {
             } // End If Statement
         } // End For Loop
 	} // End remove_active_course()
+
+	/**
+	 * Add course link to order thank you and details pages
+	 * @param  integer $order_id ID of order
+	 * @return void
+	 */
+	public function course_link_from_order( $order_id ) {
+		global $woocommerce;
+
+		$order = new WC_Order( $order_id );
+
+		if( 'completed' != $order->status ) return;
+
+		$order_items = $order->get_items();
+
+		$messages = array();
+
+		foreach ( $order_items as $item ) {
+
+            if ( $item['product_id'] > 0 ) {
+
+				$user_id = get_post_meta( $order_id, '_customer_user', true );
+
+				if( $user_id ) {
+
+					// Get all courses for product
+					$args = array(
+						'posts_per_page' => -1,
+						'post_type' => 'course',
+						'meta_query' => array(
+							array(
+								'key' => '_course_woocommerce_product',
+								'value' => $item['product_id']
+							)
+						)
+					);
+					$courses = get_posts( $args );
+
+					if( $courses && count( $courses ) > 0 ) {
+						foreach( $courses as $course ) {
+
+							$title = $course->post_title;
+							$permalink = get_permalink( $course->ID );
+
+							$messages[] = sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '">' . $title . '</a>' );
+						}
+					}
+				}
+			}
+		}
+
+		foreach( $messages as $message ) {
+			$woocommerce->add_message( $message, 'woocommerce' );
+		}
+
+		$woocommerce->show_messages();
+	}
 
 } // End Class
 ?>
