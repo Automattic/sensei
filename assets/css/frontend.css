@@ -391,6 +391,74 @@ section.entry span.course-price {
 #my-courses #loginform .login-remember label {
   font-weight: normal;
 }
+#my-courses.ui-tabs {
+  position: relative;
+  /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+
+  zoom: 1;
+}
+#my-courses.ui-tabs .ui-tabs-nav {
+  margin: 0 0 10px!important;
+  float: left;
+  width: 100%;
+  padding: .2em 0 0;
+}
+#my-courses.ui-tabs .ui-tabs-nav li {
+  list-style: none;
+  float: left;
+  position: relative;
+  top: 1px;
+  margin: 0 .2em 1px 0;
+  border-bottom: 0 !important;
+  padding: 0;
+  white-space: nowrap;
+}
+#my-courses.ui-tabs .ui-tabs-nav li a {
+  float: left;
+  padding: 5px 20px;
+  font-weight: bold;
+  color: #777;
+  text-decoration: none;
+  outline: none!important;
+  line-height: 1;
+  cursor: pointer;
+}
+#my-courses.ui-tabs .ui-tabs-nav li.ui-tabs-selected {
+  margin-bottom: 0;
+  padding-bottom: 1px;
+}
+#my-courses.ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
+  cursor: text;
+}
+#my-courses.ui-tabs .ui-tabs-nav li.ui-state-hover a {
+  color: #555;
+}
+#my-courses.ui-tabs .ui-tabs-nav li.ui-state-active a {
+  color: #333;
+  background: #e2e2e2;
+  border-radius: 100px;
+  -moz-border-radius: 100px;
+  -webkit-border-radius: 100px;
+}
+#my-courses.ui-tabs .ui-tabs-nav li.ui-state-disabled a {
+  cursor: text;
+}
+#my-courses.ui-tabs .ui-tabs-nav li.ui-state-processing a {
+  cursor: text;
+}
+#my-courses.ui-tabsui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a {
+  cursor: pointer;
+}
+#my-courses.ui-tabs .ui-tabs-panel {
+  clear: both;
+  display: block;
+  border-width: 0;
+  padding: 1em 0;
+  background: none;
+}
+#my-courses.ui-tabs .ui-tabs-hide {
+  display: none !important;
+}
 /* Learner Profiles */
 #learner-info h2 {
   margin: 20px 0;
@@ -451,70 +519,6 @@ section.entry span.course-price {
 }
 .course-results-lessons h2 .lesson-grade {
   float: right;
-}
-/* Tabber */
-.ui-tabs {
-  position: relative;
-  zoom: 1;
-}
-/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
-.ui-tabs .ui-tabs-nav {
-  margin: 0 0 10px!important;
-  float: left;
-  width: 100%;
-  padding: .2em 0 0;
-}
-.ui-tabs .ui-tabs-nav li {
-  list-style: none;
-  float: left;
-  position: relative;
-  top: 1px;
-  margin: 0 .2em 1px 0;
-  border-bottom: 0 !important;
-  padding: 0;
-  white-space: nowrap;
-}
-.ui-tabs .ui-tabs-nav li a {
-  float: left;
-  padding: 5px 20px;
-  font-weight: bold;
-  color: #777;
-  text-decoration: none;
-  outline: none!important;
-  line-height: 1;
-}
-.ui-tabs .ui-tabs-nav li.ui-tabs-selected {
-  margin-bottom: 0;
-  padding-bottom: 1px;
-}
-.ui-tabs .ui-tabs-nav li.ui-state-hover a {
-  color: #555;
-}
-.ui-tabs .ui-tabs-nav li.ui-state-active a {
-  color: #333;
-  background: #e2e2e2;
-  border-radius: 100px;
-  -moz-border-radius: 100px;
-  -webkit-border-radius: 100px;
-}
-.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
-.ui-tabs .ui-tabs-nav li.ui-state-disabled a,
-.ui-tabs .ui-tabs-nav li.ui-state-processing a {
-  cursor: text;
-}
-.ui-tabs .ui-tabs-nav li a,
-.ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a {
-  cursor: pointer;
-}
-.ui-tabs .ui-tabs-panel {
-  clear: both;
-  display: block;
-  border-width: 0;
-  padding: 1em 0;
-  background: none;
-}
-.ui-tabs .ui-tabs-hide {
-  display: none !important;
 }
 /* Course Progress Bars */
 .meter {
@@ -927,8 +931,6 @@ section.entry span.course-price {
   /* Inputs need pointers! */
 
   overflow: visible;
-  /* IE fix */
-
   width: auto;
   /* IE fix */
 
