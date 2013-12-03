@@ -234,6 +234,14 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'required' => 0
 								);
 
+		$fields['course_archive_image_hard_crop'] = array(
+								'name' => __( 'Image Hard Crop - Archive', 'woothemes-sensei' ),
+								'description' => sprintf( __( 'After changing this setting you may need to <a href="%s">regenerate your thumbnails</a>.', 'woothemes-sensei' ), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'course-settings'
+								);
+
 		$fields['course_single_image_enable'] = array(
 								'name' => __( 'Single Course Image', 'woothemes-sensei' ),
 								'description' => __( 'Output the Course Image on the Single Course Page.', 'woothemes-sensei' ),
@@ -258,6 +266,14 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'default' => '100',
 								'section' => 'course-settings',
 								'required' => 0
+								);
+
+		$fields['course_single_image_hard_crop'] = array(
+								'name' => __( 'Image Hard Crop - Single', 'woothemes-sensei' ),
+								'description' => sprintf( __( 'After changing this setting you may need to <a href="%s">regenerate your thumbnails</a>.', 'woothemes-sensei' ), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'course-settings'
 								);
 
 		$fields['course_archive_featured_enable'] = array(
@@ -363,6 +379,14 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'required' => 0
 								);
 
+		$fields['lesson_archive_image_hard_crop'] = array(
+								'name' => __( 'Image Hard Crop - Course Lessons', 'woothemes-sensei' ),
+								'description' => sprintf( __( 'After changing this setting you may need to <a href="%s">regenerate your thumbnails</a>.', 'woothemes-sensei' ), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'lesson-settings'
+								);
+
 		$fields['lesson_single_image_enable'] = array(
 								'name' => __( 'Single Lesson Images', 'woothemes-sensei' ),
 								'description' => __( 'Output the Lesson Image on the Single Lesson Page.', 'woothemes-sensei' ),
@@ -387,6 +411,14 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'default' => '100',
 								'section' => 'lesson-settings',
 								'required' => 0
+								);
+
+		$fields['lesson_single_image_hard_crop'] = array(
+								'name' => __( 'Image Hard Crop - Single', 'woothemes-sensei' ),
+								'description' => sprintf( __( 'After changing this setting you may need to <a href="%s">regenerate your thumbnails</a>.', 'woothemes-sensei' ), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'lesson-settings'
 								);
 
 		// Learner Profile settings

@@ -1332,14 +1332,20 @@ class WooThemes_Sensei_Lesson {
 				if ( !$woothemes_sensei->settings->settings[ 'lesson_single_image_enable' ] ) {
 					return '';
 				} // End If Statement
-				$width = $woothemes_sensei->settings->settings[ 'lesson_single_image_width' ];
-				$height = $woothemes_sensei->settings->settings[ 'lesson_single_image_height' ];
+				$image_thumb_size = 'lesson_single_image';
+				$dimensions = $woothemes_sensei->get_image_size( $image_thumb_size );
+				$width = $dimensions['width'];
+				$height = $dimensions['height'];
+				$crop = $dimensions['crop'];
 			} else {
 				if ( !$woothemes_sensei->settings->settings[ 'course_lesson_image_enable' ] ) {
 					return '';
 				} // End If Statement
-				$width = $woothemes_sensei->settings->settings[ 'lesson_archive_image_width' ];
-				$height = $woothemes_sensei->settings->settings[ 'lesson_archive_image_height' ];
+				$image_thumb_size = 'lesson_archive_image';
+				$dimensions = $woothemes_sensei->get_image_size( $image_thumb_size );
+				$width = $dimensions['width'];
+				$height = $dimensions['height'];
+				$crop = $dimensions['crop'];
 			} // End If Statement
 		} // End If Statement
 
