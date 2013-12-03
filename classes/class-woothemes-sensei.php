@@ -121,6 +121,8 @@ class WooThemes_Sensei {
 			// Frontend Hooks
 			add_filter( 'template_include', array( $this, 'template_loader' ) );
 		}
+		// Image Sizes
+		$this->init_image_sizes();
 		// Force WooCommerce Required Settings
 		$this->set_woocommerce_functionality();
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
@@ -975,6 +977,54 @@ class WooThemes_Sensei {
 		wp_cache_set("comments-{$post_id}", $stats, 'counts');
 
 		return $stats;
+	}
+
+	/**
+	 * Init images.
+	 *
+	 * @since 1.4.5
+	 * @access public
+	 * @return void
+	 */
+	public function init_image_sizes() {
+		$course_archive_thumbnail 	= $this->get_image_size( 'course_archive_image' );
+		$course_single_thumbnail	= $this->get_image_size( 'course_single_image' );
+		$lesson_archive_thumbnail 	= $this->get_image_size( 'lesson_archive_image' );
+		$lesson_single_thumbnail	= $this->get_image_size( 'lesson_single_image' );
+
+		add_image_size( 'course_archive_thumbnail', $course_archive_thumbnail['width'], $course_archive_thumbnail['height'], $course_archive_thumbnail['crop'] );
+		add_image_size( 'course_single_thumbnail', $course_single_thumbnail['width'], $course_single_thumbnail['height'], $course_single_thumbnail['crop'] );
+		add_image_size( 'lesson_archive_thumbnail', $lesson_archive_thumbnail['width'], $lesson_archive_thumbnail['height'], $lesson_archive_thumbnail['crop'] );
+		add_image_size( 'lesson_single_thumbnail', $lesson_single_thumbnail['width'], $lesson_single_thumbnail['height'], $lesson_single_thumbnail['crop'] );
+	}
+
+	/**
+	 * Get an image size.
+	 *
+	 * Variable is filtered by sensei_get_image_size_{image_size}
+	 *
+	 * @since 1.4.5
+	 * @access public
+	 * @param mixed $image_size
+	 * @return string
+	 */
+	public function get_image_size( $image_size ) {
+
+		// Only return sizes we define in settings
+		if ( ! in_array( $image_size, array( 'course_archive_image', 'course_single_image', 'lesson_archive_image', 'lesson_single_image' ) ) )
+			return apply_filters( 'sensei_get_image_size_' . $image_size, '' );
+
+		$size = array_filter( array(
+			'width' => $this->settings->settings[ $image_size . '_width' ],
+			'height' => $this->settings->settings[ $image_size . '_height' ],
+			'crop' => $this->settings->settings[ $image_size . '_hard_crop' ]
+		) );
+
+		$size['width'] 	= isset( $size['width'] ) ? $size['width'] : '100';
+		$size['height'] = isset( $size['height'] ) ? $size['height'] : '100';
+		$size['crop'] 	= isset( $size['crop'] ) ? $size['crop'] : 0;
+
+		return apply_filters( 'sensei_get_image_size_' . $image_size, $size );
 	}
 
 } // End Class
