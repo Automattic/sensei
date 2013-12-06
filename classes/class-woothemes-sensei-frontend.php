@@ -122,6 +122,7 @@ class WooThemes_Sensei_Frontend {
         // Add course link to order page
         add_action( 'woocommerce_thankyou', array( $this, 'course_link_from_order' ), 10, 1 );
         add_action( 'woocommerce_view_order', array( $this, 'course_link_from_order' ), 10, 1 );
+
 	} // End __construct()
 
 	/**
@@ -1701,11 +1702,12 @@ class WooThemes_Sensei_Frontend {
 
 	/**
 	 * Add course link to order thank you and details pages
+	 * @since  1.4.5
 	 * @param  integer $order_id ID of order
 	 * @return void
 	 */
 	public function course_link_from_order( $order_id ) {
-		global $woocommerce;
+		global $woocommerce, $woothemes_sensei;
 
 		$order = new WC_Order( $order_id );
 
@@ -1743,6 +1745,8 @@ class WooThemes_Sensei_Frontend {
 							$permalink = get_permalink( $course->ID );
 
 							$messages[] = sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '">' . $title . '</a>' );
+
+							$update_course = $woothemes_sensei->woocommerce_course_update( $course->ID  );
 						}
 					}
 				}

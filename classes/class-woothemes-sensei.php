@@ -34,8 +34,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - access_settings()
  * - sensei_woocommerce_complete_order()
  * - sensei_woocommerce_cancel_order()
+ * - sensei_woocommerce_subscription_ended()
+ * - sensei_woocommerce_reactive_subscription()
+ * - sensei_get_woocommerce_product_object()
  * - load_class()
  * - sensei_activate_subscription()
+ * - sensei_woocommerce_email_order_meta_keys()
+ * - sensei_count_comments()
+ * - init_image_sizes()
+ * - get_image_size()
  */
 class WooThemes_Sensei {
 	public $admin;
@@ -140,6 +147,8 @@ class WooThemes_Sensei {
 		add_action( 'subscription_end_of_prepaid_term' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'cancelled_subscription' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'subscription_put_on-hold' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
+		// Add Email link to course orders
+        add_action( 'woocommerce_email_after_order_table', array( $this, 'sensei_woocommerce_email_course_details' ), 10, 1 );
 		// Filter comment counts
 		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
 		// Run Upgrades once the WP functions have loaded
@@ -932,6 +941,61 @@ class WooThemes_Sensei {
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_activate_subscription()
+
+	/**
+	 * sensei_woocommerce_email_course_details adds detail to email
+	 * @since   1.4.5
+	 * @access  public
+	 * @param   integer $order_id order ID
+	 * @return  void
+	 */
+	public function sensei_woocommerce_email_course_details( $order ) {
+		global $woocommerce, $woothemes_sensei;
+
+		if( 'completed' != $order->status ) return;
+
+		$order_items = $order->get_items();
+		$order_id = $order->id;
+
+		$messages = array();
+
+		foreach ( $order_items as $item ) {
+
+            if ( $item['product_id'] > 0 ) {
+
+				$user_id = get_post_meta( $order_id, '_customer_user', true );
+
+				if( $user_id ) {
+
+					// Get all courses for product
+					$args = array(
+						'posts_per_page' => -1,
+						'post_type' => 'course',
+						'meta_query' => array(
+							array(
+								'key' => '_course_woocommerce_product',
+								'value' => $item['product_id']
+							)
+						)
+					);
+					$courses = get_posts( $args );
+
+					if( $courses && count( $courses ) > 0 ) {
+
+						foreach( $courses as $course ) {
+
+							$title = $course->post_title;
+							$permalink = get_permalink( $course->ID );
+
+							echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
+							echo '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
+
+						}
+					}
+				}
+			}
+		}
+	}
 
 	/**
 	 * Filtering wp_count_comments to ensure that Sensei comments are ignored
