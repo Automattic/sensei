@@ -1014,6 +1014,10 @@ class WooThemes_Sensei {
 		if ( ! in_array( $image_size, array( 'course_archive_image', 'course_single_image', 'lesson_archive_image', 'lesson_single_image' ) ) )
 			return apply_filters( 'sensei_get_image_size_' . $image_size, '' );
 
+		if( ! isset( $this->settings->settings[ $image_size . '_hard_crop' ] ) ) {
+			$this->settings->settings[ $image_size . '_hard_crop' ] = false;
+		}
+
 		$size = array_filter( array(
 			'width' => $this->settings->settings[ $image_size . '_width' ],
 			'height' => $this->settings->settings[ $image_size . '_height' ],
