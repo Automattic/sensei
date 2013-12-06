@@ -451,7 +451,12 @@ class WooThemes_Sensei_Settings_API {
 		}
 		echo '<input id="' . $args['key'] . '" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" type="checkbox" value="1"' . checked( esc_attr( $options[$args['key']] ), '1', false ) . ' />' . "\n";
 		if ( $has_description ) {
-			echo esc_html( $args['data']['description'] ) . '</label>' . "\n";
+			echo wp_kses( $args['data']['description'], array( 'a' => array(
+																	        'href' => array(),
+																	        'title' => array()
+																	    )
+															)
+						) . '</label>' . "\n";
 		}
 	} // End form_field_checkbox()
 

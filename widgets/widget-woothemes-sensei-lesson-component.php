@@ -207,12 +207,12 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
     					<br />
     				<?php } // End If Statement ?>
     				<?php if ( 0 < $lesson_course_id ) { ?>
-                        <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'woothemes-sensei' ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
+                        <span class="lesson-course"><?php echo ' ' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'woothemes-sensei' ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
                     <?php } ?>
     				<br />
 		    	</li>
 		    <?php } // End For Loop ?>
-		    <?php echo '<li class="my-account fix"><a href="'. esc_url( get_post_type_archive_link( 'lesson' ) ) .'">'.__('More Lessons', 'woothemes-sensei').' <span class="meta-nav">→</span></a></li>'; ?>
+		    <?php echo '<li class="my-account fix"><a class="button" href="'. esc_url( get_post_type_archive_link( 'lesson' ) ) .'">'.__('More Lessons', 'woothemes-sensei').'</a></li>'; ?>
 		</ul>
 		<?php } // End If Statement
 	} // End load_component()

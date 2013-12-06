@@ -96,6 +96,9 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 				'search' => $usersearch,
 				'fields' => 'all_with_meta'
 			);
+			if ( '' !== $args_array['search'] ) {
+				$args_array['search'] = '*' . $args_array['search'] . '*';
+			} // End If Statement
 
 			$users = $this->user_query_results( $args_array );
 

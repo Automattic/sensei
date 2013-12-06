@@ -87,9 +87,9 @@ class WooThemes_Sensei_Lesson {
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 		// Add JS scripts
-		add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		// Add CSS
-		add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
+		add_action( 'admin_enqueue_styles', array( $this, 'enqueue_styles' ) );
 	} // End meta_box_setup()
 
 
@@ -803,16 +803,31 @@ class WooThemes_Sensei_Lesson {
 	 * @access public
 	 * @return void
 	 */
-	public function enqueue_scripts() {
-		global $woothemes_sensei;
-		// Load the lessons script
-		wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.3.7' );
-		wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.3.0' );
-		$translation_strings = array();
-		$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ) );
-		$data = array_merge( $translation_strings, $ajax_vars );
-		// V2 - Specify variables to be made available to the lesson-metadata.js file.
-		wp_localize_script( 'woosensei-lesson-metadata', 'woo_localized_data', $data );
+	public function enqueue_scripts( $hook ) {
+		global $woothemes_sensei, $post_type;
+
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
+		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
+		$allowed_hooks = apply_filters( 'sensei_scripts_allowed_hooks', array( 'sensei_page_sensei_grading', 'sensei_page_sensei_analysis', 'sensei_page_sensei_updates', 'sensei_page_woothemes-sensei-settings' ) );
+
+		// Test for Write Panel Pages
+		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $hook ) && in_array( $hook, $allowed_hooks ) ) ) {
+
+			// Load the lessons script
+			wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.3.7' );
+			wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.3.0' );
+			$translation_strings = array();
+			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ) );
+			$data = array_merge( $translation_strings, $ajax_vars );
+			// V2 - Specify variables to be made available to the lesson-metadata.js file.
+			wp_localize_script( 'woosensei-lesson-metadata', 'woo_localized_data', $data );
+
+		} else {
+
+			return;
+
+		} // End If Statement
+
 	} // End enqueue_scripts()
 
 	/**
@@ -822,9 +837,24 @@ class WooThemes_Sensei_Lesson {
 	 * @since  1.4.0
 	 * @return void
 	 */
-	public function enqueue_styles () {
-		global $woothemes_sensei;
-		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.4.0' );
+	public function enqueue_styles ( $hook ) {
+		global $woothemes_sensei, $post_type;
+
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
+		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
+		$allowed_hooks = apply_filters( 'sensei_scripts_allowed_hooks', array( 'sensei_page_sensei_grading', 'sensei_page_sensei_analysis', 'sensei_page_sensei_updates', 'sensei_page_woothemes-sensei-settings' ) );
+
+		// Test for Write Panel Pages
+		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $hook ) && in_array( $hook, $allowed_hooks ) ) ) {
+
+			wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.4.0' );
+
+		} else {
+
+			return;
+
+		} // End If Statement
+
 	} // End enqueue_styles()
 
 	/**
@@ -1302,14 +1332,20 @@ class WooThemes_Sensei_Lesson {
 				if ( !$woothemes_sensei->settings->settings[ 'lesson_single_image_enable' ] ) {
 					return '';
 				} // End If Statement
-				$width = $woothemes_sensei->settings->settings[ 'lesson_single_image_width' ];
-				$height = $woothemes_sensei->settings->settings[ 'lesson_single_image_height' ];
+				$image_thumb_size = 'lesson_single_image';
+				$dimensions = $woothemes_sensei->get_image_size( $image_thumb_size );
+				$width = $dimensions['width'];
+				$height = $dimensions['height'];
+				$crop = $dimensions['crop'];
 			} else {
 				if ( !$woothemes_sensei->settings->settings[ 'course_lesson_image_enable' ] ) {
 					return '';
 				} // End If Statement
-				$width = $woothemes_sensei->settings->settings[ 'lesson_archive_image_width' ];
-				$height = $woothemes_sensei->settings->settings[ 'lesson_archive_image_height' ];
+				$image_thumb_size = 'lesson_archive_image';
+				$dimensions = $woothemes_sensei->get_image_size( $image_thumb_size );
+				$width = $dimensions['width'];
+				$height = $dimensions['height'];
+				$crop = $dimensions['crop'];
 			} // End If Statement
 		} // End If Statement
 

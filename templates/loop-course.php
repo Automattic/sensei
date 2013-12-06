@@ -41,8 +41,6 @@ if ( ! $paged || $paged < 2 ) {
 
     	    <?php do_action( 'sensei_course_archive_header', $query_type ); ?>
 
-    	    <div class="fix"></div>
-
     	    <?php foreach ($posts_array as $post_item){
     			// Make sure the other loops dont include the same post twice!
     			array_push( $course_excludes, $post_item->ID );
@@ -66,17 +64,15 @@ if ( ! $paged || $paged < 2 ) {
                            <?php if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) { ?>
     					   <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><a href="<?php echo $author_link; ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_html( $author_display_name   ); ?></a></span>
     					   <?php } // End If Statement ?>
-    					   <span class="course-lesson-count"><?php echo $woothemes_sensei->post_types->course->course_author_lesson_count( $author_id, $post_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
+    					   <span class="course-lesson-count"><?php echo $woothemes_sensei->post_types->course->course_lesson_count( $post_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
                            <?php if ( '' != $category_output ) { ?>
                            <span class="course-category"><?php echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ); ?></span>
                            <?php } // End If Statement ?>
     					   <?php sensei_simple_course_price( $post_id ); ?>
                         </p>
-                        <p><?php echo apply_filters( 'get_the_excerpt', $post_item->post_excerpt ); ?></p>
+                        <p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post_item->post_excerpt ); ?></p>
     				</section>
     			</article>
-
-    			<div class="fix"></div>
     			<?php
 
     		} // End For Loop
@@ -101,8 +97,6 @@ if ( ! $paged || $paged < 2 ) {
 
     	    <?php do_action( 'sensei_course_archive_header', $query_type ); ?>
 
-    	    <div class="fix"></div>
-
     	    <?php while ( have_posts() ) { the_post();
     			// Meta data
     			$post_id = get_the_ID();
@@ -122,17 +116,15 @@ if ( ! $paged || $paged < 2 ) {
     				    <?php if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) { ?>
     				    <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
     				    <?php } ?>
-    				    <span class="course-lesson-count"><?php echo $woothemes_sensei->post_types->course->course_author_lesson_count( $author_id, $post_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
+    				    <span class="course-lesson-count"><?php echo $woothemes_sensei->post_types->course->course_lesson_count( $post_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
     				    <?php if ( '' != $category_output ) { ?>
                         <span class="course-category"><?php echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ); ?></span>
                         <?php } // End If Statement ?>
                         <?php sensei_simple_course_price( $post_id ); ?>
                     </p>
-                    <p><?php the_excerpt(); ?></p>
+                    <p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post_item->post_excerpt ); ?></p>
     			</section>
     		</article>
-
-    		<div class="fix"></div>
 
     		<?php } // End While Loop ?>
 

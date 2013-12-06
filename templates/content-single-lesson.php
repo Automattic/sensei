@@ -11,7 +11,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
- global $woothemes_sensei, $post, $current_user;
+ global $woothemes_sensei, $post, $current_user, $view_lesson, $user_taking_course;
  // Content Access Permissions
  $access_permission = false;
  if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! $woothemes_sensei->settings->settings['access_permission'] ) || sensei_all_access() ) {
@@ -66,13 +66,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                  	}
 				}
 
+				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
+				$user_taking_course = sensei_has_user_started_course( $lesson_course_id, $current_user->ID );
+
 				if( current_user_can( 'administrator' ) ) {
 					$view_lesson = true;
+					$user_taking_course = true;
 				}
 
-				if( $view_lesson ) {
-					$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
-					$user_taking_course = sensei_has_user_started_course( $lesson_course_id, $current_user->ID ); ?>
+				if( $view_lesson ) { ?>
 				<section class="entry fix">
                 	<?php if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
 				</section>

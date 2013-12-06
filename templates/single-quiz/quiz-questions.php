@@ -41,7 +41,7 @@ $quiz_passmark_float = (float) $quiz_passmark;
 
     // Display user's quiz status
     $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $quiz_lesson, $current_user->ID );
-    echo '<div class="woo-sc-box ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+    echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
 
     // Lesson Quiz Meta
     if ( 0 < count( $lesson_quiz_questions ) )  {
@@ -71,7 +71,7 @@ $quiz_passmark_float = (float) $quiz_passmark;
             <?php do_action( 'sensei_quiz_action_buttons' ); ?>
     	</form>
     <?php } else { ?>
-    	<div class="woo-sc-box alert"><?php _e( 'There are no questions for this Quiz yet. Check back soon.', 'woothemes-sensei' ); ?></div>
+    	<div class="sensei-message alert"><?php _e( 'There are no questions for this Quiz yet. Check back soon.', 'woothemes-sensei' ); ?></div>
     <?php } // End If Statement ?>
 </div>
 

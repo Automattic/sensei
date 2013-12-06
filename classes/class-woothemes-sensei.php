@@ -34,8 +34,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - access_settings()
  * - sensei_woocommerce_complete_order()
  * - sensei_woocommerce_cancel_order()
+ * - sensei_woocommerce_subscription_ended()
+ * - sensei_woocommerce_reactive_subscription()
+ * - sensei_get_woocommerce_product_object()
  * - load_class()
  * - sensei_activate_subscription()
+ * - sensei_woocommerce_email_order_meta_keys()
+ * - sensei_count_comments()
+ * - init_image_sizes()
+ * - get_image_size()
  */
 class WooThemes_Sensei {
 	public $admin;
@@ -121,6 +128,8 @@ class WooThemes_Sensei {
 			// Frontend Hooks
 			add_filter( 'template_include', array( $this, 'template_loader' ) );
 		}
+		// Image Sizes
+		$this->init_image_sizes();
 		// Force WooCommerce Required Settings
 		$this->set_woocommerce_functionality();
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
@@ -130,6 +139,7 @@ class WooThemes_Sensei {
 		add_action( 'woocommerce_thankyou' , array( $this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_order_status_completed' , array( $this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_order_status_cancelled' , array( $this, 'sensei_woocommerce_cancel_order' ) );
+		add_action( 'woocommerce_order_status_refunded' , array( $this, 'sensei_woocommerce_cancel_order' ) );
 		add_action( 'subscriptions_activated_for_order', array( $this, 'sensei_activate_subscription' ) );
 		// WooCommerce Subscriptions Actions
 		add_action( 'reactivated_subscription', array( $this, 'sensei_woocommerce_reactivate_subscription' ), 10, 2 );
@@ -137,6 +147,8 @@ class WooThemes_Sensei {
 		add_action( 'subscription_end_of_prepaid_term' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'cancelled_subscription' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'subscription_put_on-hold' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
+		// Add Email link to course orders
+        add_action( 'woocommerce_email_after_order_table', array( $this, 'sensei_woocommerce_email_course_details' ), 10, 1 );
 		// Filter comment counts
 		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
 		// Run Upgrades once the WP functions have loaded
@@ -183,7 +195,7 @@ class WooThemes_Sensei {
 	public function disable_guest_checkout( $guest_checkout ) {
 		global $woocommerce;
 
-		if( ! is_admin() ) {
+		if( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
 
 			if( isset( $woocommerce->cart->cart_contents ) && count( $woocommerce->cart->cart_contents ) > 0 ) {
 				foreach( $woocommerce->cart->cart_contents as $cart_key => $product ) {
@@ -931,6 +943,61 @@ class WooThemes_Sensei {
 	} // End sensei_activate_subscription()
 
 	/**
+	 * sensei_woocommerce_email_course_details adds detail to email
+	 * @since   1.4.5
+	 * @access  public
+	 * @param   integer $order_id order ID
+	 * @return  void
+	 */
+	public function sensei_woocommerce_email_course_details( $order ) {
+		global $woocommerce, $woothemes_sensei;
+
+		if( 'completed' != $order->status ) return;
+
+		$order_items = $order->get_items();
+		$order_id = $order->id;
+
+		$messages = array();
+
+		foreach ( $order_items as $item ) {
+
+            if ( $item['product_id'] > 0 ) {
+
+				$user_id = get_post_meta( $order_id, '_customer_user', true );
+
+				if( $user_id ) {
+
+					// Get all courses for product
+					$args = array(
+						'posts_per_page' => -1,
+						'post_type' => 'course',
+						'meta_query' => array(
+							array(
+								'key' => '_course_woocommerce_product',
+								'value' => $item['product_id']
+							)
+						)
+					);
+					$courses = get_posts( $args );
+
+					if( $courses && count( $courses ) > 0 ) {
+
+						foreach( $courses as $course ) {
+
+							$title = $course->post_title;
+							$permalink = get_permalink( $course->ID );
+
+							echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
+							echo '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
+
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Filtering wp_count_comments to ensure that Sensei comments are ignored
 	 * @since   1.4.0
 	 * @access  public
@@ -974,6 +1041,58 @@ class WooThemes_Sensei {
 		wp_cache_set("comments-{$post_id}", $stats, 'counts');
 
 		return $stats;
+	}
+
+	/**
+	 * Init images.
+	 *
+	 * @since 1.4.5
+	 * @access public
+	 * @return void
+	 */
+	public function init_image_sizes() {
+		$course_archive_thumbnail 	= $this->get_image_size( 'course_archive_image' );
+		$course_single_thumbnail	= $this->get_image_size( 'course_single_image' );
+		$lesson_archive_thumbnail 	= $this->get_image_size( 'lesson_archive_image' );
+		$lesson_single_thumbnail	= $this->get_image_size( 'lesson_single_image' );
+
+		add_image_size( 'course_archive_thumbnail', $course_archive_thumbnail['width'], $course_archive_thumbnail['height'], $course_archive_thumbnail['crop'] );
+		add_image_size( 'course_single_thumbnail', $course_single_thumbnail['width'], $course_single_thumbnail['height'], $course_single_thumbnail['crop'] );
+		add_image_size( 'lesson_archive_thumbnail', $lesson_archive_thumbnail['width'], $lesson_archive_thumbnail['height'], $lesson_archive_thumbnail['crop'] );
+		add_image_size( 'lesson_single_thumbnail', $lesson_single_thumbnail['width'], $lesson_single_thumbnail['height'], $lesson_single_thumbnail['crop'] );
+	}
+
+	/**
+	 * Get an image size.
+	 *
+	 * Variable is filtered by sensei_get_image_size_{image_size}
+	 *
+	 * @since 1.4.5
+	 * @access public
+	 * @param mixed $image_size
+	 * @return string
+	 */
+	public function get_image_size( $image_size ) {
+
+		// Only return sizes we define in settings
+		if ( ! in_array( $image_size, array( 'course_archive_image', 'course_single_image', 'lesson_archive_image', 'lesson_single_image' ) ) )
+			return apply_filters( 'sensei_get_image_size_' . $image_size, '' );
+
+		if( ! isset( $this->settings->settings[ $image_size . '_hard_crop' ] ) ) {
+			$this->settings->settings[ $image_size . '_hard_crop' ] = false;
+		}
+
+		$size = array_filter( array(
+			'width' => $this->settings->settings[ $image_size . '_width' ],
+			'height' => $this->settings->settings[ $image_size . '_height' ],
+			'crop' => $this->settings->settings[ $image_size . '_hard_crop' ]
+		) );
+
+		$size['width'] 	= isset( $size['width'] ) ? $size['width'] : '100';
+		$size['height'] = isset( $size['height'] ) ? $size['height'] : '100';
+		$size['crop'] 	= isset( $size['crop'] ) ? $size['crop'] : 0;
+
+		return apply_filters( 'sensei_get_image_size_' . $image_size, $size );
 	}
 
 } // End Class

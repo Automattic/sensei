@@ -39,6 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - report_set_headers()
  * - report_load_object()
  * - report_write_download()
+ * - user_search_columns_filter()
  */
 class WooThemes_Sensei_Analysis {
 	public $token;
@@ -65,6 +66,7 @@ class WooThemes_Sensei_Analysis {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
+			add_filter( 'user_search_columns', array( $this, 'user_search_columns_filter' ), 10, 3 );
 		} // End If Statement
 	} // End __construct()
 
@@ -550,6 +552,20 @@ class WooThemes_Sensei_Analysis {
         } // End For Loop
         fclose($fp);
     } // End report_write_download()
+
+    /**
+	 * user_search_columns_filter adds display_name to the default list of search columns for the WP User Object
+	 * @since  1.4.5
+	 * @param  array $search_columns 	array of default user columns to search
+	 * @param  string $search 			search string
+	 * @param  object $user_object    	WordPress User Object
+	 * @return array $search_columns 	array of user columns to search
+	 */
+	public function user_search_columns_filter( $search_columns, $search, $user_object ) {
+	    // Alter $search_columns to include the fields you want to search on
+	    array_push( $search_columns, 'display_name' );
+	    return $search_columns;
+	}
 
 } // End Class
 ?>
