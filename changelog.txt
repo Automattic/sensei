@@ -1,5 +1,50 @@
 *** Sensei Changelog ***
 
+2013.12.04 - version 1.4.5
+ * /classes/class-woothemes-sensei-frontend.php - Ensures course content displays when user starts taking course
+ * /classes/class-woothemes-sensei-course.php,
+   /classes/class-woothemes-sensei-frontend.php,
+   /templates/loop-course.php,
+   /widgets/widget-woothemes-sensei-category-courses.php,
+   /widgets/widget-woothemes-sensei-course-component.php - Fixes lesson count when lesson and course have different authors
+ * /assets/js/lesson-metadata.js - Fixes display of course name when adding from within a lesson
+ * /classes/class-woothemes-sensei-frontend.php - Adds course link to order thank you and details pages 
+ * /classes/class-woothemes-sensei-course.php,
+   /classes/class-woothemes-sensei-frontend.php,
+   /classes/class-woothemes-sensei-learner-profiles.php,
+   /templates/loop-course.php,
+   /templates/loop-lesson.php,
+   /templates/single-course/course-lessons.php - Removes empty 'fix' divs
+ * /widgets/widget-woothemes-sensei-lesson-component.php,
+   /classes/class-woothemes-sensei-course.php,
+   /classes/class-woothemes-sensei-frontend.php - Markup fixes
+ * /classes/class-woothemes-sensei-learner-profiles.php - Enables auto paragraphs on learner profile description
+ * /assets/css/frontend.css,
+   /classes/class-woothemes-sensei-course-results.php,
+   /classes/class-woothemes-sensei-course.php,
+   /classes/class-woothemes-sensei-frontend.php,
+   /inc/woothemes-sensei-template.php,
+   /templates/content-no-permissions.php,
+   /templates/single-quiz/quiz-questions.php,
+   /templates/woocommerce/add-to-cart.php - Adds unique classes on sensei messages
+ * /classes/class-woothemes-sensei-analysis-course.php,
+   /classes/class-woothemes-sensei-analysis-lesson.php,
+   /classes/class-woothemes-sensei-analysis-overview.php,
+   /classes/class-woothemes-sensei-analysis.php,
+   /classes/class-woothemes-sensei-grading-main.php - Uses display name instead of username in Analysis/Grading sections
+ * /templates/content-single-lesson.php,
+   /classes/class-woothemes-sensei-frontend.php - Ensures lesson comments are only visible to users with access
+ * /classes/class-woothemes-sensei.php,
+   /classes/class-woothemes-sensei-frontend.php - Ensures courses are deactivated when an order is refunded/cancelled
+ * /classes/class-woothemes-sensei-course.php,
+   /classes/class-woothemes-sensei-lesson.php,
+   /classes/class-woothemes-sensei-settings-api.php,
+   /classes/class-woothemes-sensei-settings.php,
+   /classes/class-woothemes-sensei.php - Registers new image sizes for Sensei images, with hard crop setting
+ * /classes/class-woothemes-sensei.php - Ensures guest checkout is disabled if Sensei products in cart
+ * /classes/class-woothemes-sensei-frontend.php - Only display excerpts for lessons/courses in search results
+ 
+
 2013.11.20 - version 1.4.4
  * /templates/course-results/course-info.php - Updating markup for course results page
  * /templates/learner-profile/learner-info.php - Updating markup for learner profile page
