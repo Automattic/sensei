@@ -18,10 +18,6 @@ tr.question-quick-edit td { padding-bottom: 10px; }
 #add-quiz-main button.add_quiz { margin-left: 5px; }
 select.question-type-select { margin-bottom: 10px; }
 div.question_boolean_fields { margin-bottom: 10px; }
-/* Chosen styling */
-div.chzn-container { width: 256px !important; margin-bottom: 10px; display: block;}
-div.chzn-drop { width: 254px !important; }
-div.chzn-search input { width: 246px !important; }
 /* Course Write Panel Styling */
 /* Grading */
 .wrap div.grading-notice { margin: 25px 0 0px; }
