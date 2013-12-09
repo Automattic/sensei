@@ -43,7 +43,7 @@ class WooThemes_Sensei_Updates {
 		$this->parent = $parent;
 		$this->updates_run = get_option( $this->token . '-upgrades', array() );
 		// The list of upgrades to run
-		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => 'Assign role capbilities', 'desc' => 'Assigns Sensei capabilites to the relevant user roles.' ) ),
+		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => 'Assign role capbilities', 'desc' => 'Assigns Sensei capabilites to the relevant user roles.', 'product' => 'Sensei' ) ),
 													'manual' 	=> array()
 												),
 								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type' => array( 'title' => 'Set default quiz grade type', 'desc' => 'Sets all quizzes to the default \'auto\' grade type.' ),
@@ -106,7 +106,11 @@ class WooThemes_Sensei_Updates {
 					foreach ( $_POST['checked'] as $key => $value ) {
 
 						// Dynamic function call
-						$done_processing = call_user_func_array( array( $this, $value ), array( 5, $n ) );
+						if ( method_exists( $this, $value) ) {
+							$done_processing = call_user_func_array( array( $this, $value ), array( 5, $n ) );
+						} else {
+							$done_processing = call_user_func_array( $value, array( 5, $n ) );
+						} // End If Statement
 
 						// Add to functions list get args
 						if ( '' == $functions_list ) {
@@ -131,7 +135,11 @@ class WooThemes_Sensei_Updates {
 					foreach ( $functions_array as $key => $value ) {
 
 						// Dynamic function call
-						$done_processing = call_user_func_array( array( $this, $value ), array( 5, $n ) );
+						if ( method_exists( $this, $value) ) {
+							$done_processing = call_user_func_array( array( $this, $value ), array( 5, $n ) );
+						} else {
+							$done_processing = call_user_func_array( $value, array( 5, $n ) );
+						} // End If Statement
 
 						// Add to functions list get args
 						if ( '' == $functions_list ) {
@@ -199,6 +207,10 @@ class WooThemes_Sensei_Updates {
 							foreach( $version_updates as $type => $updates ) {
 								foreach( $updates as $update => $data ) {
 									$update_run = $this->has_update_run( $update );
+									$product = 'Sensei';
+									if ( isset( $data['product'] ) && '' != $data['product'] ) {
+										$product = $data['product'];
+									} // End If Statement
 									?>
 									<form method="post" action="admin.php?page=sensei_updates&action=update&n=0" name="update-sensei" class="upgrade">
 										<tr class="active">
@@ -206,7 +218,7 @@ class WooThemes_Sensei_Updates {
 												<p>
 													<input type="hidden" name="checked[]" value="<?php echo $update; ?>">
 													<strong><?php echo $data['title']; ?></strong><br><?php echo $data['desc']; ?><br>
-													<em><?php printf( __( 'Originally included in Sensei v%s', 'woothemes-sensei' ), $version ); ?></em>
+													<em><?php printf( __( 'Originally included in %s v%s', 'woothemes-sensei' ), $product, $version ); ?></em>
 												</p>
 											</td>
 											<td><p><?php echo ucfirst( $type ); ?></p></td>
