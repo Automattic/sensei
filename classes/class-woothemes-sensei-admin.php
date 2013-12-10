@@ -257,15 +257,20 @@ class WooThemes_Sensei_Admin {
 	 * @return void
 	 */
 	public function admin_styles_global ( $hook ) {
-		global $woothemes_sensei, $post_type;
+		global $woothemes_sensei, $post_type, $wp_version;
 
 		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 		$allowed_hooks = apply_filters( 'sensei_scripts_allowed_hooks', array( 'sensei_page_sensei_grading', 'sensei_page_sensei_analysis', 'sensei_page_sensei_updates', 'sensei_page_woothemes-sensei-settings' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.4.5', 'screen' );
-		wp_enqueue_style( $woothemes_sensei->token . '-global' );
+		if( version_compare( $wp_version, '3.8', '>=') ) {
+			wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.4.6', 'screen' );
+			wp_enqueue_style( $woothemes_sensei->token . '-global' );
+		} else {
+			wp_register_style( $woothemes_sensei->token . '-global-old', $woothemes_sensei->plugin_url . 'assets/css/global-old.css', '', '1.4.5', 'screen' );
+			wp_enqueue_style( $woothemes_sensei->token . '-global-old' );
+		}
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $hook ) && in_array( $hook, $allowed_hooks ) ) ) {
