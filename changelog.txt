@@ -1,6 +1,10 @@
 *** Sensei Changelog ***
 
-2013.12.13 - version 1.4.6
+2013.12.14 - version 1.4.6
+ * New - Adding Chosen' Ajax library and updating Chosen CSS
+   /assets/chosen/ajax-chosen.jquery.min.js,
+   /assets/chosen/chosen.css,
+   /assets/css/admin-custom.css
  * Tweak - Moving nav arrows from markup to CSS
    /templates/wrappers/pagination-lesson.php,
    /templates/wrappers/pagination-posts.php,
@@ -10,6 +14,29 @@
    /assets/css/frontend.css,
    /widgets/widget-woothemes-sensei-course-component.php,
    /inc/woothemes-sensei-template.php
+ * Tweak - Removing absolute positioning from Course action buttons
+   /templates/content-single-course.php,
+   /assets/css/frontend.less,
+   /assets/css/frontend.css
+ * Tweak - Updating admin icons and styling for WordPress 3.8
+   /assets/css/admin-custom.css,
+   /assets/css/global-old.css,
+   /assets/css/global.css,
+   /assets/js/lesson-metadata.js,
+   /classes/class-woothemes-sensei-admin.php,
+   /classes/class-woothemes-sensei-course.php,
+   /classes/class-woothemes-sensei-grading-user-quiz.php,
+   /classes/class-woothemes-sensei-lesson.php
+ * Tweak - Allowing Sensei updater to run functions from other Sensei extensions
+   /classes/class-woothemes-sensei-updates.php
+ * Tweak - Preventing groupoed products from being selected as course products
+   /classes/class-woothemes-sensei-course.php
+ * Fix - Removing PHP warnings
+   /classes/class-woothemes-sensei.php,
+   /widgets/widget-woothemes-sensei-course-categories.php
+ * Fix - Fixing course excerpt display on Courses page
+   /templates/loop-course.php
+
 
 2013.12.04 - version 1.4.5
  * /classes/class-woothemes-sensei-frontend.php - Ensures course content displays when user starts taking course
@@ -19,7 +46,7 @@
    /widgets/widget-woothemes-sensei-category-courses.php,
    /widgets/widget-woothemes-sensei-course-component.php - Fixes lesson count when lesson and course have different authors
  * /assets/js/lesson-metadata.js - Fixes display of course name when adding from within a lesson
- * /classes/class-woothemes-sensei-frontend.php - Adds course link to order thank you and details pages 
+ * /classes/class-woothemes-sensei-frontend.php - Adds course link to order thank you and details pages
  * /classes/class-woothemes-sensei-course.php,
    /classes/class-woothemes-sensei-frontend.php,
    /classes/class-woothemes-sensei-learner-profiles.php,
@@ -54,7 +81,7 @@
    /classes/class-woothemes-sensei.php - Registers new image sizes for Sensei images, with hard crop setting
  * /classes/class-woothemes-sensei.php - Ensures guest checkout is disabled if Sensei products in cart
  * /classes/class-woothemes-sensei-frontend.php - Only display excerpts for lessons/courses in search results
- 
+
 
 2013.11.20 - version 1.4.4
  * /templates/course-results/course-info.php - Updating markup for course results page
