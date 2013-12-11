@@ -109,19 +109,19 @@ class WooThemes_Sensei_Lesson {
 
 		$html = '';
 		// Lesson Length
-		$html .= '<label for="lesson_length">' . __( 'Lesson Length in minutes', 'woothemes-sensei' ) . '</label>';
-		$html .= '<input type="text" id="lesson-length" name="lesson_length" value="' . esc_attr( $lesson_length ) . '" size="25" class="widefat" />';
+		$html .= '<p><label for="lesson_length">' . __( 'Lesson Length in minutes', 'woothemes-sensei' ) . ': </label>';
+		$html .= '<input type="number" id="lesson-length" name="lesson_length" class="small-text" value="' . esc_attr( $lesson_length ) . '" /></p>' . "\n";
 		// Lesson Complexity
-		$html .= '<label for="lesson_complexity">' . __( 'Lesson Complexity', 'woothemes-sensei' ) . '</label>';
-		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="widefat lesson-complexity-select">' . "\n";
+		$html .= '<p><label for="lesson_complexity">' . __( 'Lesson Complexity', 'woothemes-sensei' ) . ': </label>';
+		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="lesson-complexity-select">';
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 			foreach ($complexity_array as $key => $value){
 				$html .= '<option value="' . esc_attr( $key ) . '"' . selected( $key, $lesson_complexity, false ) . '>' . esc_html( $value ) . '</option>' . "\n";
 			} // End For Loop
-		$html .= '</select>' . "\n";
+		$html .= '</select></p>' . "\n";
 
-		$html .= '<label for="lesson_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . '</label>';
-		$html .= '<textarea rows="1" cols="40" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . $lesson_video_embed . '</textarea>';
+		$html .= '<p><label for="lesson_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
+		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . $lesson_video_embed . '</textarea></p>' . "\n";
 
 		echo $html;
 
@@ -481,7 +481,7 @@ class WooThemes_Sensei_Lesson {
 					// Quiz Pass Percentage
 					$html .= '<input type="hidden" name="quiz_id" id="quiz_id" value="' . esc_attr( $quiz_id ) . '" />';
 					$html .= '<label for="quiz_passmark">' . __( 'Quiz passmark percentage' , 'woothemes-sensei' ) . '</label> ';
-  					$html .= '<input type="text" id="quiz_passmark" name="quiz_passmark" value="' . esc_attr( $lesson_quiz_passmark ) . '" size="25" class="widefat" />';
+  					$html .= '<input type="number" id="quiz_passmark" name="quiz_passmark" value="' . esc_attr( $lesson_quiz_passmark ) . '" class="small-text" /> ';
 
   					// Quiz grade type
   					$html .= '<input type="hidden" id="quiz_grade_type_disabled" name="quiz_grade_type_disabled" value="' . esc_attr( $quiz_grade_type_disabled ) . '" /> ';
@@ -585,7 +585,7 @@ class WooThemes_Sensei_Lesson {
 	  						    	// Question Grade
 	  						    	$html .= '<div>';
 		  						    	$html .= '<label>' . __( 'Question grade', 'woothemes-sensei' ) . '</label> ';
-		  						    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade" name="question_grade" class="short" min="1" value="' . $question_grade . '" />';
+		  						    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="1" value="' . $question_grade . '" />';
 	  						    	$html .= '</div>';
 	  						    $html .= '</div>';
   						    	switch ( $question_type ) {
@@ -665,7 +665,7 @@ class WooThemes_Sensei_Lesson {
   						    	// Question ID
   						    	$html .= '<input type="hidden" name="question_id" id="question_' . $question_counter . '_id" value="' . $question_id . '" />';
   						    	// Cancel the edit button
-						    	$html .= '<div class="update-question"><a href="#question-edit-cancel" class="lesson_question_cancel" title="' . esc_attr( __( 'Cancel', 'woothemes-sensei' ) ) . '">' . __( 'Cancel', 'woothemes-sensei' ) . '</a>';
+						    	$html .= '<div class="update-question"><a href="#question-edit-cancel" class="lesson_question_cancel" title="' . esc_attr( __( 'Cancel', 'woothemes-sensei' ) ) . '">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
 						    	// Update question button
 						    	$html .= '<a title="' . esc_attr( __( 'Update Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_save button button-highlighted">' . esc_html( __( 'Update', 'woothemes-sensei' ) ) . '</a></div>';
 						    $html .= '</td>';
@@ -728,29 +728,29 @@ class WooThemes_Sensei_Lesson {
 					$html .= '</select>' . "\n";
 					$html .= '<div class="question_required_fields">';
 						// Question
-						$html .= '<label>' . __( 'Question'  , 'woothemes-sensei' ) . '</label> ';
-	  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" />'; // V2 - additional validation on this field
+						$html .= '<p><label>' . __( 'Question'  , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" /></p>';
 	  					// Question grade
-							$html .= '<label>' . __( 'Question Grade'  , 'woothemes-sensei' ) . '</label> ';
-							$html .= '<input type="number" id="add-question-grade" name="question_grade" class="short" min="1" value="1" />' . "\n";
+							$html .= '<p><label>' . __( 'Question Grade'  , 'woothemes-sensei' ) . '</label> ';
+							$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="1" value="1" /></p>' . "\n";
 					$html .= '</div>';
 					$html .= '</div>';
 					$html .= '<div class="answer-fields question_default_fields question_required_fields">';
 						// Right Answer
-						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
-	  					$html .= '<input type="text" id="add_question_right_answer" name="question_right_answer" value="" size="25" class="widefat" />';
+						$html .= '<p><label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="add_question_right_answer" name="question_right_answer" value="" size="25" class="widefat" /></p>';
 						// Wrong Answers - V2 make dynamic
-						$html .= '<label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
-	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
-	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
-	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
-	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" />';
+						$html .= '<p><label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" /><br/>';
+	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" /><br/>';
+	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" /><br/>';
+	  					$html .= '<input type="text" name="question_wrong_answers[]" value="" size="25" class="widefat" /></p>';
   					$html .= '</div>';
   					// True/False Inputs
   					$html .= '<div class="answer-fields question_boolean_fields hidden  question_required_fields">';
-  						$html .= '<label>' . __( 'Correct Answer' , 'woothemes-sensei' ) . '</label> ';
-  						$html .= '<input type="radio" name="question_right_answer_boolean" value="true" checked="checked"/>&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
-						$html .= '<input type="radio" name="question_right_answer_boolean" value="false" />&nbsp;&nbsp;False';
+  						$html .= '<p><label>' . __( 'Correct Answer' , 'woothemes-sensei' ) . ': </label> ';
+  						$html .= '<label for="add_question_boolean_true"><input type="radio" id="add_question_boolean_true" name="question_right_answer_boolean" value="true" checked="checked"/> <span>True</span></label>&nbsp;&nbsp;&nbsp;';
+						$html .= '<label for="add_question_boolean_false"><input type="radio" id="add_question_boolean_false" name="question_right_answer_boolean" value="false" /> <span>False</span></label></p>';
 					$html .= '</div>';
 					// GapFill Inputs
   					$html .= '<div class="answer-fields question_gapfill_fields hidden  question_required_fields">';
@@ -761,8 +761,8 @@ class WooThemes_Sensei_Lesson {
 	  					$html .= '<input type="text" id="add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="" size="25" class="widefat gapfill-field" />';
 	  					$html .= '<label>' . __( 'Text after the Gap' , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<input type="text" id="add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="" size="25" class="widefat gapfill-field" />';
-	  					$html .= '<label>' . __( 'Preview:' , 'woothemes-sensei' ) . '</label> ';
-	  					$html .= '<p class="gapfill-preview"></span>';
+	  					$html .= '<label>' . __( 'Preview:' , 'woothemes-sensei' ) . '</label>';
+	  					$html .= '<p class="gapfill-preview"></p>';
 					$html .= '</div>';
 					// Essay Inputs
   					$html .= '<div class="answer-fields question_essay_fields hidden  question_required_fields">';
@@ -785,7 +785,7 @@ class WooThemes_Sensei_Lesson {
   					// Save the question
   					$html .= '<div class="add-question">';
   					// Cancel the question add
-					$html .= '<a href="#question-add-cancel" class="lesson_question_cancel">' . __( 'Cancel', 'woothemes-sensei' ) . '</a>';
+					$html .= '<a href="#question-add-cancel" class="lesson_question_cancel">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
 					// Save the question
   					$html .= '<a title="' . esc_attr( __( 'Add Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="add_question_save button button-highlighted">' . esc_html( __( 'Add Question', 'woothemes-sensei' ) ) . '</a>';
 					$html .= '</div>';
@@ -814,7 +814,7 @@ class WooThemes_Sensei_Lesson {
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $hook ) && in_array( $hook, $allowed_hooks ) ) ) {
 
 			// Load the lessons script
-			wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.3.7' );
+			wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery' ), '1.4.6' );
 			wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.3.0' );
 			wp_enqueue_script( 'woosensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery.min.js', array( 'jquery', 'woosensei-lesson-chosen' ), '1.4.6' );
 			$translation_strings = array();

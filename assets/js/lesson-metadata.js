@@ -568,7 +568,7 @@ jQuery(document).ready( function($) {
 				 		    outputEditForm += '<td colspan="3">';
 				 		    	outputEditForm += '<div class="question_required_fields">';
 				 		    		outputEditForm += '<label>Question ' + tableCount + '</label> <input type="text" id="question_' + tableCount + '" name="question" value="' + addQuestionText + '" size="25" class="widefat">';
-				 		    		outputEditForm += '<div><label>Question Grade</label> <input type="number" id="question_' + tableCount + '_grade" class="question_grade" name="question_grade" value="' + questionGrade + '" class="short" min="1"></div>';
+				 		    		outputEditForm += '<div><label>Question Grade</label> <input type="number" id="question_' + tableCount + '_grade" class="question_grade small-text" name="question_grade" value="' + questionGrade + '" min="1"></div>';
 				 		    	outputEditForm += '</div>';
 				 		    	switch ( questionType ) {
 									case 'multiple-choice':
@@ -591,11 +591,11 @@ jQuery(document).ready( function($) {
 											if ( 'true' == radioValue ) {
 												trueChecked = 'checked';
 											} // End If Statement
-						 		    		outputEditForm += '<input type="radio" name="question_' + questionId + '_right_answer_boolean" value="true" ' + trueChecked + ' />&nbsp;&nbsp;True&nbsp;&nbsp;&nbsp;&nbsp;';
+						 		    		outputEditForm += '<label for="question_' + questionId + '_boolean_true"><input id="question_' + questionId + '_boolean_true" type="radio" name="question_' + questionId + '_right_answer_boolean" value="true" ' + trueChecked + ' /> True</label>&nbsp;&nbsp;&nbsp;';
 						 		    		if ( 'false' == radioValue ) {
 												falseChecked = 'checked';
 											} // End If Statement
-						 		    		outputEditForm += '<input type="radio" name="question_' + questionId + '_right_answer_boolean" value="false" ' + falseChecked + ' />&nbsp;&nbsp;False';
+						 		    		outputEditForm += '<label for="question_' + questionId + '_boolean_false"><input id="question_' + questionId + '_boolean_false" type="radio" name="question_' + questionId + '_right_answer_boolean" value="false" ' + falseChecked + ' /> False</label>';
 						 		    	outputEditForm += '</div>';
 									break;
 									case 'gap-fill':
@@ -640,7 +640,7 @@ jQuery(document).ready( function($) {
 								} // End Switch Statement
 				 		    	outputEditForm += '<input type="hidden" class="question_type" name="question_type" id="question_' + tableCount + '_question_type" value="' + questionType + '">';
 				 		    	outputEditForm += '<input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '">';
-				 		    	outputEditForm += '<div class="update-question"><a title="Cancel" href="#question-edit-cancel" class="lesson_question_cancel">Cancel</a>';
+				 		    	outputEditForm += '<div class="update-question"><a title="Cancel" href="#question-edit-cancel" class="lesson_question_cancel">Cancel</a> ';
 								outputEditForm += '<a title="Update Question" href="#add-question-metadata" class="question_table_save button button-highlighted">Update</a></div>';
 				 		    outputEditForm += '</td>';
 				 		outputEditForm += '</tr>';
