@@ -67,8 +67,8 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			</div>
 			<div class="buttons">
 				<input type="submit" value="<?php esc_attr_e( __( 'Save', 'woothemes-sensei' ) ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
-				<input type="reset" value="<?php esc_attr_e( __( 'Reset', 'woothemes-sensei' ) ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
 				<input type="button" value="<?php esc_attr_e( __( 'Auto grade', 'woothemes-sensei' ) ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
+				<input type="reset" value="<?php esc_attr_e( __( 'Reset', 'woothemes-sensei' ) ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
 			</div>
 			<div class="clear"></div><br/><?php
 
@@ -207,8 +207,8 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			</div>
 			<div class="buttons">
 				<input type="submit" value="<?php esc_attr_e( 'Save' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
-				<input type="reset" value="<?php esc_attr_e( __( 'Reset', 'woothemes-sensei' ) ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
 				<input type="button" value="<?php esc_attr_e( __( 'Auto grade', 'woothemes-sensei' ) ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
+				<input type="reset" value="<?php esc_attr_e( __( 'Reset', 'woothemes-sensei' ) ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
 			</div>
 			<div class="clear"></div>
 			<script type="text/javascript">
