@@ -1,5 +1,16 @@
 *** Sensei Changelog ***
 
+2013.12.13 - version 1.4.6
+ * Tweak - Moving nav arrows from markup to CSS
+   /templates/wrappers/pagination-lesson.php,
+   /templates/wrappers/pagination-posts.php,
+   /templates/wrappers/pagination-quiz.php,
+   /templates/wrappers/pagination.php,
+   /assets/css/frontend.less,
+   /assets/css/frontend.css,
+   /widgets/widget-woothemes-sensei-course-component.php,
+   /inc/woothemes-sensei-template.php
+
 2013.12.04 - version 1.4.5
  * /classes/class-woothemes-sensei-frontend.php - Ensures course content displays when user starts taking course
  * /classes/class-woothemes-sensei-course.php,
