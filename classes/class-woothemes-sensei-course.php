@@ -115,7 +115,7 @@ class WooThemes_Sensei_Course {
 
 					// Do not show grouped products
 					$product = get_product( $post_item );
-					if( isset( $product->product_type ) && $product->product_type == 'grouped' ) break;
+					if( isset( $product->product_type ) && $product->product_type == 'grouped' ) continue;
 
 					if ( 'product_variation' == $post_item->post_type ) {
 						$product_object = get_product( $post_item->ID );
