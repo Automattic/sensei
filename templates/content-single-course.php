@@ -40,11 +40,12 @@ if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! 
 
                 <?php do_action( 'sensei_course_single_title' ); ?>
 
+                <?php do_action( 'sensei_course_single_meta' ); ?>
+
                 <section class="entry fix">
                 	<?php if ( ( is_user_logged_in() && $is_user_taking_course ) || $access_permission ) { the_content(); } else { echo '<p class="course-excerpt">' . $post->post_excerpt . '</p>'; } ?>
                 </section>
 
-                <?php do_action( 'sensei_course_single_meta' ); ?>
                 <?php do_action( 'sensei_course_single_lessons' ); ?>
 
             </article><!-- .post -->
