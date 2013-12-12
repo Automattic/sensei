@@ -70,7 +70,7 @@ if ( ! $paged || $paged < 2 ) {
                            <?php } // End If Statement ?>
     					   <?php sensei_simple_course_price( $post_id ); ?>
                         </p>
-                        <p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post_item->post_excerpt ); ?></p>
+                        <p class="course-excerpt"><?php echo $post_item->post_excerpt; ?></p>
     				</section>
     			</article>
     			<?php

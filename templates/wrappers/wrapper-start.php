@@ -23,6 +23,11 @@ switch( $template ) {
 		echo '<div id="primary" class="site-content"><div id="content" role="main">';
 		break;
 
+	// IF Twenty Fourteen
+	case 'twentyfourteen' :
+		echo '<div id="main-content" class="main-content"><div id="primary" class="content-area"><div id="content" class="site-content" role="main">';
+		break;
+
 	// IF Canvas
 	case 'canvas' :
 		echo '<div id="content" class="col-full"><div id="main-sidebar-container"><div id="main">';

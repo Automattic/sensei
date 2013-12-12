@@ -112,6 +112,11 @@ class WooThemes_Sensei_Course {
 			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
 			$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
+
+					// Do not show grouped products
+					$product = get_product( $post_item );
+					if( isset( $product->product_type ) && $product->product_type == 'grouped' ) continue;
+
 					if ( 'product_variation' == $post_item->post_type ) {
 						$product_object = get_product( $post_item->ID );
 						$product_name = '&nbsp;&nbsp;&nbsp;' . ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
@@ -221,7 +226,7 @@ class WooThemes_Sensei_Course {
 		$html = '';
 
 		$html .= '<label class="screen-reader-text" for="course_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . '</label>';
-		$html .= '<textarea rows="1" cols="40" name="course_video_embed" tabindex="6" id="course-video-embed">' . $course_video_embed . '</textarea>';
+		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . $course_video_embed . '</textarea>';
 		$html .= '<p>' .  __( 'Paste the embed code for your YouTube or Vimeo videos in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;

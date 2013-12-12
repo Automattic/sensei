@@ -141,12 +141,12 @@ class WooThemes_Sensei_Course_Categories_Widget extends WP_Widget {
 		</p>
 		<!-- Widget Show Count: Checkbox Input -->
 		<p>
-			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('count') ); ?>" name="<?php echo esc_attr( $this->get_field_name('count') ); ?>"<?php checked( $count ); ?> />
+			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('count') ); ?>" name="<?php echo esc_attr( $this->get_field_name('count') ); ?>"<?php checked( $instance['count'], 'on' ); ?> />
 			<label for="<?php echo esc_attr( $this->get_field_id('count') ); ?>"><?php _e( 'Show post counts', 'woothemes-sensei' ); ?></label><br />
 		</p>
 		<!-- Widget Show Hierarchy: Checkbox Input -->
 		<p>
-			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('hierarchical') ); ?>" name="<?php echo esc_attr( $this->get_field_name('hierarchical') ); ?>"<?php checked( $hierarchical ); ?> />
+			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('hierarchical') ); ?>" name="<?php echo esc_attr( $this->get_field_name('hierarchical') ); ?>"<?php checked( $instance['hierarchical'], 'on' ); ?> />
 			<label for="<?php echo esc_attr( $this->get_field_id('hierarchical') ); ?>"><?php _e( 'Show hierarchy', 'woothemes-sensei' ); ?></label></p>
 		</p>
 <?php

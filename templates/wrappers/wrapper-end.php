@@ -31,6 +31,16 @@ switch( $template ) {
 	<?php
 		break;
 
+	// IF Twenty Fourteen
+	case 'twentyfourteen' :
+	?>
+				</div>
+			</div>
+		</div>
+		<?php get_sidebar(); ?>
+	<?php
+		break;
+
 	// IF Canvas
 	case 'canvas' :
 	?>
