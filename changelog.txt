@@ -1,12 +1,13 @@
 *** Sensei Changelog ***
 
 2013.12.12 - version 1.4.6
- * New - Adding Chosen' Ajax library and updating Chosen CSS
+ * New - Adding Chosen Ajax library
+ * Tweak - Updating Chosen CSS
  * Tweak - Moving nav arrows from markup to CSS (affects pagination wrappers)
- * Tweak - Removing absolute positioning from Course action buttons on single course page
+ * Tweak - Removing absolute positioning from course action buttons on single course page
  * Tweak - Updating admin icons and styling for WordPress 3.8
  * Tweak - Allowing Sensei updater to run functions from extensions
- * Tweak - Preventing groupoed products from being selected as course products
+ * Tweak - Preventing grouped products from being selected as course products
  * Fix - Removing PHP warnings
  * Fix - Fixing course excerpt display on Courses page
 
