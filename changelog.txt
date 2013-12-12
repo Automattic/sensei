@@ -1,42 +1,14 @@
 *** Sensei Changelog ***
 
-2013.12.14 - version 1.4.6
+2013.12.12 - version 1.4.6
  * New - Adding Chosen' Ajax library and updating Chosen CSS
-   /assets/chosen/ajax-chosen.jquery.min.js,
-   /assets/chosen/chosen.css,
-   /assets/css/admin-custom.css
- * Tweak - Moving nav arrows from markup to CSS
-   /templates/wrappers/pagination-lesson.php,
-   /templates/wrappers/pagination-posts.php,
-   /templates/wrappers/pagination-quiz.php,
-   /templates/wrappers/pagination.php,
-   /assets/css/frontend.less,
-   /assets/css/frontend.css,
-   /widgets/widget-woothemes-sensei-course-component.php,
-   /inc/woothemes-sensei-template.php
- * Tweak - Removing absolute positioning from Course action buttons
-   /templates/content-single-course.php,
-   /assets/css/frontend.less,
-   /assets/css/frontend.css
+ * Tweak - Moving nav arrows from markup to CSS (affects pagination wrappers)
+ * Tweak - Removing absolute positioning from Course action buttons on single course page
  * Tweak - Updating admin icons and styling for WordPress 3.8
-   /assets/css/admin-custom.css,
-   /assets/css/global-old.css,
-   /assets/css/global.css,
-   /assets/js/lesson-metadata.js,
-   /classes/class-woothemes-sensei-admin.php,
-   /classes/class-woothemes-sensei-course.php,
-   /classes/class-woothemes-sensei-grading-user-quiz.php,
-   /classes/class-woothemes-sensei-lesson.php
- * Tweak - Allowing Sensei updater to run functions from other Sensei extensions
-   /classes/class-woothemes-sensei-updates.php
+ * Tweak - Allowing Sensei updater to run functions from extensions
  * Tweak - Preventing groupoed products from being selected as course products
-   /classes/class-woothemes-sensei-course.php
  * Fix - Removing PHP warnings
-   /classes/class-woothemes-sensei.php,
-   /widgets/widget-woothemes-sensei-course-categories.php
  * Fix - Fixing course excerpt display on Courses page
-   /templates/loop-course.php
-
 
 2013.12.04 - version 1.4.5
  * /classes/class-woothemes-sensei-frontend.php - Ensures course content displays when user starts taking course
