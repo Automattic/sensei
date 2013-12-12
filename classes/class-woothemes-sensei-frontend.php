@@ -735,6 +735,8 @@ class WooThemes_Sensei_Frontend {
 		            // Check for course complete
 		            $course_id = get_post_meta( $post->ID, '_lesson_course' ,true );
 		            $delete_course_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
+		            // Run any action on course reset
+		            do_action( 'sensei_user_course_reset', $current_user->ID, $course_id );
 		            $this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_lesson_reset_text', __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 		            break;
 		        default:
@@ -870,6 +872,8 @@ class WooThemes_Sensei_Frontend {
 	    					} // End For Loop
 	    				} // End If Statement
 	    			} // End For Loop
+	    			// Run any action on course reset
+	    			do_action( 'sensei_user_course_reset', $current_user->ID, $sanitized_course_id );
 		    		// Success message
 		    		if ( $dataset_changes ) {
 		    			$this->messages = '<header class="archive-header"><div class="sensei-message tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
