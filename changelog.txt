@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2013.12.13 - version 1.4.7
+ * Fix - Fixing add question function for WordPress 3.8+
+
 2013.12.12 - version 1.4.6
  * New - Adding Chosen Ajax library
  * Tweak - Updating Chosen CSS
