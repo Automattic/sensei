@@ -202,10 +202,10 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 		$posts_array = array();
 
-		if ( !empty( $course_ids ) ) {
+		if ( ! empty( $course_ids ) ) {
 			$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ), $course_ids );
 		} else {
-			if ( 'activecourses' == esc_attr( $instance['component'] ) ) {
+			if ( 'activecourses' == esc_attr( $instance['component'] ) || 'completedcourses' == esc_attr( $instance['component'] ) ) {
 				$posts_array = array();
 			} else {
 				$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ) );
