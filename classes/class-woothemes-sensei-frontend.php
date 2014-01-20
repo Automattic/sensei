@@ -1362,7 +1362,10 @@ class WooThemes_Sensei_Frontend {
 
 				do_action( 'sensei_user_course_start', $current_user->ID, $post->ID );
 
-				echo '<script type="text/javascript">window.location.reload();</script>';
+				// Refresh page to avoid re-posting
+				?>
+			    <script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
+			    <?php
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_course_start()
