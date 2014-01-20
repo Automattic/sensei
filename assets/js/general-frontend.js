@@ -14,11 +14,11 @@ jQuery(document).ready( function($) {
 	    		}, 1200);
 		});
 
-		jQuery(".answer_message.has_notes").mouseover(function() {
-			jQuery(this).children(".notes").show();
+		jQuery(".answer_message.has_notes span").mouseover(function() {
+			jQuery(this).siblings(".notes").show();
 		});
-		jQuery(".answer_message.has_notes").mouseout(function() {
-			jQuery(this).children(".notes").hide();
+		jQuery(".answer_message.has_notes span").mouseout(function() {
+			jQuery(this).siblings(".notes").hide();
 		});
 	});
 
