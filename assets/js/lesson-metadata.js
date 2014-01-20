@@ -512,7 +512,7 @@ jQuery(document).ready( function($) {
  			});
 	 		// Handle Question Input Fields
 	 		var radioCount = 0;
-	 		jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).children('p').children( 'input' ).each( function() {
+	 		jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).children('p').find( 'input' ).each( function() {
 	 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
 	 				// Only get the selected radio button
 	 				if ( radioCount == 0 ) {
