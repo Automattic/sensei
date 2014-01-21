@@ -353,12 +353,28 @@ class WooThemes_Sensei_Utils {
 
 		if( $submitted && intval( $user_id ) > 0 ) {
     		foreach( $submitted as $question_id => $answer ) {
+
+    			// Get question type
+    			$question_types = wp_get_post_terms( $question_id, 'question-type' );
+    			foreach( $question_types as $type ) {
+    				$question_type = $type->slug;
+    			}
+
+    			// Sanitise answer
+    			switch( $question_type ) {
+    				case 'essay-paste': $answer = nl2br( stripslashes( $answer ) ); break;
+    				case 'multi-line': $answer = nl2br( stripslashes( $answer ) ); break;
+    				case 'single-line': $answer = stripslashes( $answer ); break;
+    				case 'gap-fill': $answer = stripslashes( $answer ); break;
+    				default: $answer = maybe_serialize( $answer ); break;
+    			}
+
     			$args = array(
 								    'post_id' => $question_id,
 								    'username' => $user->user_login,
 								    'user_email' => $user->user_email,
 								    'user_url' => $user->user_url,
-								    'data' => base64_encode( maybe_serialize( $answer ) ),
+								    'data' => base64_encode( $answer ),
 								    'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
 								    'parent' => 0,
 								    'user_id' => $user_id,
