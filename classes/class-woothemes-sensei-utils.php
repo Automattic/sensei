@@ -363,6 +363,9 @@ class WooThemes_Sensei_Utils {
     			// Sanitise answer
     			switch( $question_type ) {
     				case 'essay-paste': $answer = nl2br( stripslashes( $answer ) ); break;
+    				case 'multi-line': $answer = nl2br( stripslashes( $answer ) ); break;
+    				case 'single-line': $answer = stripslashes( $answer ); break;
+    				case 'gap-fill': $answer = stripslashes( $answer ); break;
     				default: $answer = maybe_serialize( $answer ); break;
     			}
 
