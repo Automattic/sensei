@@ -78,12 +78,12 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
  	jQuery.fn.resetAddQuestionForm = function() {
- 	    jQuery( '#add-new-question' ).find('div').children('input').each( function() {
+ 	    jQuery( '#add-new-question' ).find('div').find('input').each( function() {
 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
 				jQuery(this).attr( 'value', '' );
 			} // End If Statement
 		});
-		jQuery( '#add-new-question' ).find('div').children('textarea').each( function() {
+		jQuery( '#add-new-question' ).find('div').find('textarea').each( function() {
 			jQuery(this).attr( 'value', '' );
 		});
  	}
