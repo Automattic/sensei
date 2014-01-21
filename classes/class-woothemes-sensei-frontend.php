@@ -123,6 +123,9 @@ class WooThemes_Sensei_Frontend {
         add_action( 'woocommerce_thankyou', array( $this, 'course_link_from_order' ), 10, 1 );
         add_action( 'woocommerce_view_order', array( $this, 'course_link_from_order' ), 10, 1 );
 
+        // Make sure correct courses are marked as active on My Courses page
+        add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
+
 	} // End __construct()
 
 	/**
@@ -1765,6 +1768,104 @@ class WooThemes_Sensei_Frontend {
 		}
 
 		$woocommerce->show_messages();
+	}
+
+	/**
+	 * Activate all purchased courses for user
+	 * @since  1.4.8
+	 * @param  integer $user_id User ID
+	 * @return void
+	 */
+	public function activate_purchased_courses( $user_id = 0 ) {
+
+		if( $user_id ) {
+
+			if( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+
+				// Get all user's orders
+				$order_args = array(
+					'post_type' => 'shop_order',
+					'posts_per_page' => -1,
+					'meta_query' => array(
+						array(
+							'key' => '_customer_user',
+							'value' => $user_id
+						)
+					),
+					'tax_query' => array(
+						array(
+							'taxonomy' => 'shop_order_status',
+							'field' => 'slug',
+							'terms' => 'completed'
+						)
+					)
+				);
+				$orders = get_posts( $order_args );
+
+				$product_ids = array();
+				$order_ids = array();
+				foreach( $orders as $post ) {
+
+					// Only process each order once
+					$processed = get_post_meta( $post->ID, 'sensei_products_processed', true );
+					if( $processed && $processed == 'processed' ) {
+						continue;
+					}
+
+					// Get course product IDs from order
+					$order = new WC_Order( $post->ID );
+					$items = $order->get_items();
+					foreach( $items as $item ) {
+						$product_id = $item['product_id'];
+						$product_ids[] = $product_id;
+					}
+
+					$order_ids[] = $post->ID;
+				}
+
+				if( count( $product_ids ) > 0 ) {
+
+					// Get all courses from user's orders
+					$course_args = array(
+						'post_type' => 'course',
+						'posts_per_page' => -1,
+						'meta_query' => array(
+							array(
+						        'key' => '_course_woocommerce_product',
+						        'value' => $product_ids,
+						        'compare' => 'IN'
+				       		)
+						)
+					);
+					$courses = get_posts( $course_args );
+
+					foreach( $courses as $course ) {
+
+						// Ignore course if already completed
+						$course_completed =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course->ID, 'user_id' => $user_id, 'type' => 'sensei_course_end', 'field' => 'comment_content' ) );
+						if( '' != $course_completed ) {
+							continue;
+						}
+
+						// Ignore course if already started
+						$course_started =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course->ID, 'user_id' => $user_id, 'type' => 'sensei_course_start', 'field' => 'comment_content' ) );
+						if( '' != $course_started ) {
+							continue;
+						}
+
+						// Mark course as started by user
+						WooThemes_Sensei_Utils::user_start_course( $user_id, $course->ID );
+					}
+				}
+
+				if( count( $order_ids ) > 0 ) {
+					foreach( $order_ids as $order_id ) {
+						// Mark order as processed
+						update_post_meta( $order_id, 'sensei_products_processed', 'processed' );
+					}
+				}
+			}
+		}
 	}
 
 } // End Class
