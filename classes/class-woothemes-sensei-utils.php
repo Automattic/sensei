@@ -1067,8 +1067,11 @@ class WooThemes_Sensei_Utils {
 			// Allow further actions
 			if ( $activity_logged ) {
 				do_action( 'sensei_user_course_start', $user_id, $course_id );
+				return true;
 			}
 		}
+
+		return false;
 	}
 
 } // End Class
