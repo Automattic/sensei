@@ -72,6 +72,10 @@ if( $lesson_complete && $user_quiz_grade != '' ) {
 	                $answer_class = 'user_right';
 	            }
                 $answer_class .= ' right_answer';
+            } else {
+                if( ! $user_correct ) {
+                    $answer_class = 'user_wrong';
+                }
             }
         }
         ?>
@@ -84,6 +88,10 @@ if( $lesson_complete && $user_quiz_grade != '' ) {
 	                $answer_class = 'user_right';
 	            }
                 $answer_class .= ' right_answer';
+            } else {
+                if( ! $user_correct ) {
+                    $answer_class = 'user_wrong';
+                }
             }
         }
         ?>
