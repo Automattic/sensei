@@ -672,7 +672,7 @@ class WooThemes_Sensei_Utils {
 		$activity_logged = false;
 
 		if( intval( $question_id ) > 0 ) {
-			$notes = base64_encode( $notes );
+			$notes = base64_encode( stripslashes( $notes ) );
 			$args = array(
 							    'post_id' => $question_id,
 							    'username' => $user->user_login,
