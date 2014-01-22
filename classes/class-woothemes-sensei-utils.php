@@ -969,7 +969,7 @@ class WooThemes_Sensei_Utils {
 
 			} elseif ( isset( $lesson_complete ) && $lesson_complete ) {
 
-				if ( isset( $quiz_grade ) && $quiz_grade && abs( $quiz_grade ) >= 0 ) {
+				if ( isset( $quiz_grade ) && abs( $quiz_grade ) >= 0 ) {
 
 					if ( $quiz_grade >= abs( round( $quiz_passmark_float, 2 ) ) ) {
 

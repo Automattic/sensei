@@ -36,7 +36,7 @@ if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { 
 
 $answer_message = false;
 $answer_notes = false;
-if( $lesson_complete && $user_quiz_grade && $user_quiz_grade != '' ) {
+if( $lesson_complete && $user_quiz_grade != '' ) {
     $user_correct = false;
     $answer_message = __( 'Incorrect', 'woothemes-sensei' );
     $answer_message_class = 'user_wrong';
