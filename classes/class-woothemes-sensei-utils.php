@@ -1053,5 +1053,42 @@ class WooThemes_Sensei_Utils {
 		return array( 'status' => $status, 'box_class' => $box_class, 'message' => $message, 'extra' => $extra );
 	}
 
+	/**
+	 * Start course for user
+	 * @since  1.4.8
+	 * @param  integer $user_id   User ID
+	 * @param  integer $course_id Course ID
+	 * @return void
+	 */
+	public function user_start_course( $user_id = 0, $course_id = 0 ) {
+
+		if( $user_id && $course_id ) {
+
+			// Get user object
+			$user = get_userdata( $user_id );
+
+			// Add user to course
+			$args = array(
+			    'post_id' => $course_id,
+			    'username' => $user->user_login,
+			    'user_email' => $user->user_email,
+			    'user_url' => $user->user_url,
+			    'data' => __( 'Course started by the user', 'woothemes-sensei' ),
+			    'type' => 'sensei_course_start', /* FIELD SIZE 20 */
+			    'parent' => 0,
+			    'user_id' => $user_id
+			);
+			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+			// Allow further actions
+			if ( $activity_logged ) {
+				do_action( 'sensei_user_course_start', $user_id, $course_id );
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 } // End Class
 ?>

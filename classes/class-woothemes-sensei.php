@@ -138,6 +138,7 @@ class WooThemes_Sensei {
 		add_action( 'woocommerce_payment_complete' , array( $this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_thankyou' , array( $this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_order_status_completed' , array( $this, 'sensei_woocommerce_complete_order' ) );
+		add_action( 'woocommerce_order_status_processing' , array( $this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_order_status_cancelled' , array( $this, 'sensei_woocommerce_cancel_order' ) );
 		add_action( 'woocommerce_order_status_refunded' , array( $this, 'sensei_woocommerce_cancel_order' ) );
 		add_action( 'subscriptions_activated_for_order', array( $this, 'sensei_activate_subscription' ) );
