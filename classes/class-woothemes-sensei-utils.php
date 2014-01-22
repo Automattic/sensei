@@ -353,12 +353,28 @@ class WooThemes_Sensei_Utils {
 
 		if( $submitted && intval( $user_id ) > 0 ) {
     		foreach( $submitted as $question_id => $answer ) {
+
+    			// Get question type
+    			$question_types = wp_get_post_terms( $question_id, 'question-type' );
+    			foreach( $question_types as $type ) {
+    				$question_type = $type->slug;
+    			}
+
+    			// Sanitise answer
+    			switch( $question_type ) {
+    				case 'essay-paste': $answer = nl2br( stripslashes( $answer ) ); break;
+    				case 'multi-line': $answer = nl2br( stripslashes( $answer ) ); break;
+    				case 'single-line': $answer = stripslashes( $answer ); break;
+    				case 'gap-fill': $answer = stripslashes( $answer ); break;
+    				default: $answer = maybe_serialize( $answer ); break;
+    			}
+
     			$args = array(
 								    'post_id' => $question_id,
 								    'username' => $user->user_login,
 								    'user_email' => $user->user_email,
 								    'user_url' => $user->user_url,
-								    'data' => base64_encode( maybe_serialize( $answer ) ),
+								    'data' => base64_encode( $answer ),
 								    'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
 								    'parent' => 0,
 								    'user_id' => $user_id,
@@ -656,7 +672,7 @@ class WooThemes_Sensei_Utils {
 		$activity_logged = false;
 
 		if( intval( $question_id ) > 0 ) {
-			$notes = base64_encode( $notes );
+			$notes = base64_encode( stripslashes( $notes ) );
 			$args = array(
 							    'post_id' => $question_id,
 							    'username' => $user->user_login,
@@ -953,7 +969,7 @@ class WooThemes_Sensei_Utils {
 
 			} elseif ( isset( $lesson_complete ) && $lesson_complete ) {
 
-				if ( isset( $quiz_grade ) && $quiz_grade && abs( $quiz_grade ) >= 0 ) {
+				if ( isset( $quiz_grade ) && ! is_bool( $quiz_grade ) && abs( $quiz_grade ) >= 0 ) {
 
 					if ( $quiz_grade >= abs( round( $quiz_passmark_float, 2 ) ) ) {
 
@@ -993,7 +1009,7 @@ class WooThemes_Sensei_Utils {
 				}
 
 			} else {
-				if ( isset( $quiz_grade ) && $quiz_grade && abs( $quiz_grade ) >= 0 ) {
+				if ( isset( $quiz_grade ) && ! is_bool( $quiz_grade ) && abs( $quiz_grade ) >= 0 ) {
 					if ( $quiz_grade >= abs( round( $quiz_passmark_float, 2 ) ) ) {
 
 						$status = 'passed';
@@ -1035,6 +1051,43 @@ class WooThemes_Sensei_Utils {
 		}
 
 		return array( 'status' => $status, 'box_class' => $box_class, 'message' => $message, 'extra' => $extra );
+	}
+
+	/**
+	 * Start course for user
+	 * @since  1.4.8
+	 * @param  integer $user_id   User ID
+	 * @param  integer $course_id Course ID
+	 * @return void
+	 */
+	public function user_start_course( $user_id = 0, $course_id = 0 ) {
+
+		if( $user_id && $course_id ) {
+
+			// Get user object
+			$user = get_userdata( $user_id );
+
+			// Add user to course
+			$args = array(
+			    'post_id' => $course_id,
+			    'username' => $user->user_login,
+			    'user_email' => $user->user_email,
+			    'user_url' => $user->user_url,
+			    'data' => __( 'Course started by the user', 'woothemes-sensei' ),
+			    'type' => 'sensei_course_start', /* FIELD SIZE 20 */
+			    'parent' => 0,
+			    'user_id' => $user_id
+			);
+			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+			// Allow further actions
+			if ( $activity_logged ) {
+				do_action( 'sensei_user_course_start', $user_id, $course_id );
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 } // End Class

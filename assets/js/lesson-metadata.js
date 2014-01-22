@@ -78,12 +78,12 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
  	jQuery.fn.resetAddQuestionForm = function() {
- 	    jQuery( '#add-new-question' ).find('div').children('input').each( function() {
+ 	    jQuery( '#add-new-question' ).find('div').find('input').each( function() {
 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
 				jQuery(this).attr( 'value', '' );
 			} // End If Statement
 		});
-		jQuery( '#add-new-question' ).find('div').children('textarea').each( function() {
+		jQuery( '#add-new-question' ).find('div').find('textarea').each( function() {
 			jQuery(this).attr( 'value', '' );
 		});
  	}
@@ -505,14 +505,14 @@ jQuery(document).ready( function($) {
 				break;
 			} // End Switch Statement
 			// Handle Required Fields
-			jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).children('p').children( 'input' ).each( function() {
+			jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'input' ).each( function() {
 	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
 	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
 	 			} // End If Statement
  			});
 	 		// Handle Question Input Fields
 	 		var radioCount = 0;
-	 		jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).children('p').children( 'input' ).each( function() {
+	 		jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).find( 'input' ).each( function() {
 	 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
 	 				// Only get the selected radio button
 	 				if ( radioCount == 0 ) {

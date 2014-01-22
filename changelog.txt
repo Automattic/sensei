@@ -1,5 +1,17 @@
 *** Sensei Changelog ***
 
+2014.01.23 - version 1.4.8
+ * New - Allowing access to courses when WooCommerce order is marked as processing
+ * Fix - Ensuring that all purchased courses show up on the My Courses page
+ * Fix - Fixing auto grading when all user's answers are incorrect
+ * Fix - IE compatibility fix for course completion
+ * Fix - Fixing update script so that all questions are not reset to multiple choice on update
+ * Fix - Fixing sanitisation of answer input fields
+ * Fix - Fixing saving of true/false questions
+ * Fix - Ensuring that new questions do not contain data from previous question added
+ * Fix - Preventing completed courses widget from showing all courses if none are completed
+ * Tweak - General CSS tweaks
+
 2013.12.13 - version 1.4.7
  * Fix - Fixing add question function for WordPress 3.8+
 

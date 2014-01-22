@@ -37,33 +37,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	}
 	.course-meta  {
 		margin-bottom: 20px;
-		.status  {
-			padding: .382em 1em;
-			.border_radius(5px);
-			color: #fff;
-			font-weight: bold;
-			background: darken(@bg_dark, 5%);
-			&:before  {
-				.iconbefore();
-			}
-			&.completed  {
-				background: @success;
-				&:before  {
-					content: "\f00c";
-				}
-			}
-			&.in-progress  {
-				&:before  {
-					content: "\f110";
-				}
-			}
-			&.register  {
-				background: @error;
-				a  {
-					color: #fff;
-				}
-			}
-		}
+		clear: both;
 		.view-results {
 			text-align: right;
 			margin: 5px 0;
@@ -152,6 +126,39 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	}
 }
 
+/* Status Indicators */
+
+.course, .course-lessons, .course-container {
+	.status  {
+		padding: .382em 1em;
+		.border_radius(5px);
+		color: #fff;
+		font-weight: bold;
+		background: darken(@bg_dark, 5%);
+		display: inline-block;
+		&:before  {
+			.iconbefore();
+		}
+		&.completed  {
+			background: @success;
+			&:before  {
+				content: "\f00c";
+			}
+		}
+		&.in-progress  {
+			&:before  {
+				content: "\f110";
+			}
+		}
+		&.register  {
+			background: @error;
+			a  {
+				color: #fff;
+			}
+		}
+	}
+}
+
 .lesson  {
 	.lesson-meta  {
 		margin: 0 0 1.618em;
@@ -217,15 +224,15 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 					position: absolute;
 					right: 0;
 					top: 50%;
-					width: 100%;
+					width: 50%;
 					z-index: 2;
 					text-align: right;
 					span {
 						text-align: right;
 					}
 					&.has_notes {
-						cursor: help;
 						span {
+							cursor: help;
 							border-bottom: 1px dotted;
 						}
 					}
@@ -244,7 +251,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 						position: absolute;
 						top: 20px;
 						right: 0;
-						width: 50%;
+						width: 100%;
 						background: #FFF;
 						border: 1px solid;
 						.border_radius();
@@ -256,8 +263,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				&.essay-paste, &.gap-fill, &.multi-line, &.single-line {
 					.answer_message {
 						position: relative;
+						width: 100%;
 						margin: 10px 0;
 						text-align: right;
+						.notes {
+							width: 50%;
+						}
 					}
 				}
 			}

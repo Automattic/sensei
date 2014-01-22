@@ -897,6 +897,10 @@ class WooThemes_Sensei_Course {
 		$active_html = '';
 
 		if( $user ) {
+
+			// Allow action to be run before My Courses content has loaded
+			do_action( 'sensei_before_my_courses', $user->ID );
+
 			// Logic for Active and Completed Courses
 			if ( isset( $woothemes_sensei->settings->settings[ 'my_course_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'my_course_amount' ] ) ) ) {
 				$amount = absint( $woothemes_sensei->settings->settings[ 'my_course_amount' ] );
