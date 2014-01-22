@@ -1796,7 +1796,7 @@ class WooThemes_Sensei_Frontend {
 						array(
 							'taxonomy' => 'shop_order_status',
 							'field' => 'slug',
-							'terms' => 'completed'
+							'terms' => array( 'completed', 'processing' )
 						)
 					)
 				);
