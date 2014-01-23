@@ -44,7 +44,195 @@ class WooThemes_Sensei_Admin {
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'page_redirect' ) );
 
+		// Duplicate lesson & courses
+		add_filter( 'post_row_actions', array( $this, 'duplicate_action_link' ), 10, 2 );
+		add_action( 'admin_action_duplicate_lesson', array( $this, 'duplicate_lesson_action' ) );
+		add_action( 'admin_action_duplicate_course', array( $this, 'duplicate_course_action' ) );
+		add_action( 'admin_action_duplicate_course_with_lessons', array( $this, 'duplicate_course_with_lessons_action' ) );
+
 	} // End __construct()
+
+	public function duplicate_action_link( $actions, $post ) {
+		switch( $post->post_type ) {
+			case 'lesson':
+				$confirm = __( 'This will duplicate the lesson quiz and all of its questions. Are you sure you want to do this?', 'woothemes-sensei' );
+				$actions['duplicate'] = "<a onclick='return confirm(\"" . $confirm . "\");' href='" . $this->get_duplicate_link( $post->ID ) . "' title='" . esc_attr(__( 'Duplicate this lesson', 'woothemes-sensei' ) ) . "'>" .  __('Duplicate', 'woothemes-sensei' ) . "</a>";
+			break;
+
+			case 'course':
+				$confirm = __( 'This will duplicate the course lessons along with all of their quizzes and questions. Are you sure you want to do this?', 'woothemes-sensei' );
+				$actions['duplicate'] = '<a href="' . $this->get_duplicate_link( $post->ID ) . '" title="' . esc_attr(__( 'Duplicate this course', 'woothemes-sensei' ) ) . '">' .  __('Duplicate', 'woothemes-sensei' ) . '</a>';
+				$actions['duplicate_with_lessons'] = '<a onclick="return confirm(\'' . $confirm . '\');" href="' . $this->get_duplicate_link( $post->ID, true ) . '" title="' . esc_attr(__( 'Duplicate this course with its lessons', 'woothemes-sensei' ) ) . '">' .  __('Duplicate (with lessons)', 'woothemes-sensei' ) . '</a>';
+			break;
+		}
+
+		return $actions;
+	}
+
+	private function get_duplicate_link( $post_id = 0, $with_lessons = false ) {
+
+		$post = get_post( $post_id );
+
+		$action = 'duplicate_' . $post->post_type;
+
+		if( 'course' == $post->post_type && $with_lessons ) {
+			$action .= '_with_lessons';
+		}
+
+		return apply_filters( $action . '_link', admin_url( 'admin.php?action=' . $action . '&post=' . $post_id ), $post_id );
+	}
+
+	public function duplicate_lesson_action() {
+		$this->duplicate_content( 'lesson' );
+	}
+
+	public function duplicate_course_action() {
+		$this->duplicate_content( 'course' );
+	}
+
+	public function duplicate_course_with_lessons_action() {
+		$this->duplicate_content( 'course', true );
+	}
+
+	private function duplicate_content( $post_type = 'lesson', $with_lessons = false ) {
+		if ( ! isset( $_GET['post'] ) ) {
+			wp_die( sprintf( __( 'Please supply a %1$s ID.', 'woothemes-sensei' ) ), $post_type );
+		}
+
+		$post_id = $_GET['post'];
+		$post = get_post( $post_id );
+
+		if( ! is_wp_error( $post ) ) {
+
+			$new_post = $this->duplicate_post( $post );
+
+			if( $new_post && ! is_wp_error( $new_post ) ) {
+
+				if( 'lesson' == $new_post->post_type ) {
+					$this->duplicate_lesson_quizzes( $post_id, $new_post->ID );
+				}
+
+				if( 'course' == $new_post->post_type && $with_lessons ) {
+					$this->duplicate_course_lessons( $post_id, $new_post->ID );
+				}
+
+				$redirect_url = admin_url( 'post.php?post=' . $new_post->ID . '&action=edit' );
+			} else {
+				$redirect_url = admin_url( 'edit.php?post_type=' . $post->post_type . '&message=duplicate_failed' );
+			}
+
+			wp_safe_redirect( $redirect_url );
+			exit;
+		}
+	}
+
+	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
+
+		$quiz_args = array(
+			'post_type' => 'quiz',
+			'posts_per_page' => -1,
+			'meta_key' => '_quiz_lesson',
+			'meta_value' => $old_lesson_id,
+			'suppress_filters' 	=> 0
+		);
+		$quizzes = get_posts( $quiz_args );
+
+		foreach( $quizzes as $quiz ) {
+
+			$question_args = array(
+				'post_type'	=> 'question',
+				'posts_per_page' => -1,
+				'meta_key' => '_quiz_id',
+				'meta_value' => $quiz->ID,
+				'suppress_filters' => 0
+			);
+			$questions = get_posts( $question_args );
+
+			$new_quiz = $this->duplicate_post( $quiz, '' );
+			add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
+
+			foreach( $questions as $question ) {
+				$new_question = $this->duplicate_post( $question, '' );
+				add_post_meta( $new_question->ID, '_quiz_id', $new_quiz->ID );
+			}
+		}
+	}
+
+	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
+		$lesson_args = array(
+			'post_type' => 'lesson',
+			'posts_per_page' => -1,
+			'meta_key' => '_lesson_course',
+			'meta_value' => $old_course_id,
+			'suppress_filters' 	=> 0
+		);
+		$lessons = get_posts( $lesson_args );
+
+		foreach( $lessons as $lesson ) {
+			$new_lesson = $this->duplicate_post( $lesson, '', true );
+			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
+
+			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
+		}
+	}
+
+	private function duplicate_post( $post, $suffix = ' (Duplicate)', $ignore_course = false ) {
+
+		$new_post = array();
+
+		foreach( $post as $k => $v ) {
+			if( ! in_array( $k, array( 'ID', 'post_date', 'post_date_gmt', 'post_name', 'post_modified', 'post_modified_gmt', 'guid', 'comment_count' ) ) ) {
+				$new_post[ $k ] = $v;
+			}
+		}
+
+		$new_post['post_title'] .= __( $suffix, 'woothemes-sensei' );
+
+		$new_post['post_date'] = date( 'Y-m-d H:i:s' );
+		$new_post['post_date_gmt'] = get_gmt_from_date( $new_post['post_date'] );
+		$new_post['post_modified'] = $new_post['post_date'];
+		$new_post['post_modified_gmt'] = $new_post['post_date_gmt'];
+
+		$new_post_id = wp_insert_post( $new_post );
+
+		if( ! is_wp_error( $new_post_id ) ) {
+
+			$post_meta = get_post_custom( $post->ID );
+			if( $post_meta && count( $post_meta ) > 0 ) {
+
+				$ignore_meta = array( '_quiz_lesson', '_quiz_id' );
+				if( $ignore_course ) {
+					$ignore_meta[] = '_lesson_course';
+				}
+
+				foreach( $post_meta as $key => $meta ) {
+					foreach( $meta as $value ) {
+						$value = maybe_unserialize( $value );
+						if( ! in_array( $key, $ignore_meta ) ) {
+							add_post_meta( $new_post_id, $key, $value );
+						}
+					}
+				}
+			}
+
+			add_post_meta( $new_post_id, '_duplicate', $post->ID );
+
+			$taxonomies = get_object_taxonomies( $post->post_type, 'objects' );
+
+			foreach ( $taxonomies as $slug => $tax ) {
+				$terms = get_the_terms( $post->ID, $slug );
+				foreach( $terms as $term ) {
+					wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
+				}
+			}
+
+			$new_post = get_post( $new_post_id );
+
+			return $new_post;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Add items to admin menu
