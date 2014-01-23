@@ -28,4 +28,6 @@ if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $le
     <?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
 <?php } else {
 	 do_action( 'sensei_lesson_course_signup', $lesson_course_id );
-} // End If Statement ?>
+} // End If Statement
+do_action( 'sensei_lesson_meta_extra', $post->ID );
+?>
