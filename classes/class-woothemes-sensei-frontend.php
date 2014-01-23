@@ -126,6 +126,12 @@ class WooThemes_Sensei_Frontend {
         // Make sure correct courses are marked as active on My Courses page
         add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
 
+        // Lesson tags
+        add_action( 'sensei_lesson_meta_extra', array( $this, 'lesson_tags_display' ), 10, 1 );
+        add_action( 'pre_get_posts', array( $this, 'lesson_tag_archive_filter' ), 10, 1 );
+        add_filter( 'sensei_lessons_archive_text', array( $this, 'lesson_tag_archive_header' ) );
+        add_action( 'sensei_lesson_archive_header', array( $this, 'lesson_tag_archive_description' ), 11 );
+
 	} // End __construct()
 
 	/**
@@ -630,6 +636,53 @@ class WooThemes_Sensei_Frontend {
 			<?php } // End If Statement ?>
     	</section><?php
     	} // End If Statement
+	}
+
+	public function lesson_tags_display( $lesson_id = 0 ) {
+		if( $lesson_id ) {
+			$tags = wp_get_post_terms( $lesson_id, 'lesson-tag' );
+			if( $tags && count( $tags ) > 0 ) {
+				$tag_list = '';
+				foreach( $tags as $tag ) {
+					$tag_link = get_term_link( $tag, 'lesson-tag' );
+					if( ! is_wp_error( $tag_link ) ) {
+						if( $tag_list ) { $tag_list .= ', '; }
+						$tag_list .= '<a href="' . $tag_link . '">' . $tag->name . '</a>';
+					}
+				}
+				if( $tag_list ) {
+					?><section class="lesson-tags">
+		    			<?php printf( __( 'Lesson tags: %1$s', 'woothemes-sensei' ), $tag_list ); ?> 
+		    		</section><?php
+		    	}
+	    	}
+		}
+	}
+
+	public function lesson_tag_archive_filter( $query ) {
+    	if( is_tax( 'lesson-tag' ) && $query->is_main_query() ) {
+    		// Limit to lessons only
+    		$query->set( 'post_type', 'lesson' );
+
+    		// Set order of lessons
+    		$query->set( 'orderby', 'menu_order' );
+    		$query->set( 'order', 'ASC' );
+
+    	}
+    }
+
+    public function lesson_tag_archive_header( $title ) {
+		if( is_tax( 'lesson-tag' ) ) {
+			$title = sprintf( __( 'Lesson tag: %1$s', 'woothemes-sensei' ), apply_filters( 'sensei_lesson_tag_archive_title', get_queried_object()->name ) );
+		}
+		return $title;
+	}
+
+	public function lesson_tag_archive_description() {
+		if( is_tax( 'lesson-tag' ) ) {
+			$tag = get_queried_object();
+			echo '<p class="archive-description lesson-description">' . apply_filters( 'sensei_lesson_tag_archive_description', nl2br( $tag->description ), $tag->term_id ) . '</p>';
+		}
 	}
 
 	public function sensei_complete_lesson() {

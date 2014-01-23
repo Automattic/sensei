@@ -54,6 +54,7 @@ class WooThemes_Sensei_PostTypes {
 		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_type_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_lesson_tag_taxonomy' ), 100 );
 		// Load Post Type Objects
 		$default_post_types = array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) ;
 		$this->load_posttype_objects( $default_post_types );
@@ -388,6 +389,39 @@ class WooThemes_Sensei_PostTypes {
 
 		register_taxonomy( 'question-type', array( 'question' ), $args );
 	} // End setup_question_type_taxonomy()
+
+	/**
+	 * Setup the "lesson tags" taxonomy, linked to the "lesson" post type.
+	 * @since  1.5.0
+	 * @return void
+	 */
+	public function setup_lesson_tag_taxonomy () {
+		// "Lesson Tags" Custom Taxonomy
+		$labels = array(
+			'name' => _x( 'Lesson Tags', 'taxonomy general name', 'woothemes-sensei' ),
+			'singular_name' => _x( 'Lesson Tag', 'taxonomy singular name', 'woothemes-sensei' ),
+			'search_items' =>  __( 'Search Lesson Tags', 'woothemes-sensei' ),
+			'all_items' => __( 'All Lesson Tags', 'woothemes-sensei' ),
+			'parent_item' => __( 'Parent Tag', 'woothemes-sensei' ),
+			'parent_item_colon' => __( 'Parent Tag:', 'woothemes-sensei' ),
+			'edit_item' => __( 'Edit Lesson Tag', 'woothemes-sensei' ),
+			'update_item' => __( 'Update Lesson Tag', 'woothemes-sensei' ),
+			'add_new_item' => __( 'Add New Lesson Tag', 'woothemes-sensei' ),
+			'new_item_name' => __( 'New Tag Name', 'woothemes-sensei' ),
+			'menu_name' => __( 'Lesson Tags', 'woothemes-sensei' )
+		);
+
+		$args = array(
+			'hierarchical' => false,
+			'labels' => $labels,
+			'show_ui' => true,
+			'query_var' => true,
+			'show_in_nav_menus' => true,
+			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
+		);
+
+		register_taxonomy( 'lesson-tag', array( 'lesson' ), $args );
+	} // End setup_lesson_tag_taxonomy()
 
 	/**
 	 * Setup the singular, plural and menu label names for the post types.
