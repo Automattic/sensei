@@ -44,6 +44,16 @@ class WooThemes_Sensei_Admin {
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'page_redirect' ) );
 
+		// Duplicate lesson & courses
+		add_filter( 'post_row_actions', array( $this, 'duplicate_action_link' ), 10, 2 );
+		add_action( 'admin_action_duplicate_lesson', array( $this, 'duplicate_lesson_action' ) );
+		add_action( 'admin_action_duplicate_course', array( $this, 'duplicate_course_action' ) );
+		add_action( 'admin_action_duplicate_course_with_lessons', array( $this, 'duplicate_course_with_lessons_action' ) );
+
+		// Handle lessons list table filtering
+		add_action( 'restrict_manage_posts', array( $this, 'lesson_filter_options' ) );
+		add_filter( 'request', array( $this, 'lesson_filter_actions' ) );
+
 	} // End __construct()
 
 	/**
@@ -353,6 +363,296 @@ class WooThemes_Sensei_Admin {
 
 	    } // End If Statement
 	} // End admin_notices_styles()
+
+	/**
+	 * Add links for duplicating lessons & courses
+	 * @param  array  $actions Default actions
+	 * @param  object $post    Current post
+	 * @return array           Modified actions
+	 */
+	public function duplicate_action_link( $actions, $post ) {
+		switch( $post->post_type ) {
+			case 'lesson':
+				$confirm = __( 'This will duplicate the lesson quiz and all of its questions. Are you sure you want to do this?', 'woothemes-sensei' );
+				$actions['duplicate'] = "<a onclick='return confirm(\"" . $confirm . "\");' href='" . $this->get_duplicate_link( $post->ID ) . "' title='" . esc_attr(__( 'Duplicate this lesson', 'woothemes-sensei' ) ) . "'>" .  __('Duplicate', 'woothemes-sensei' ) . "</a>";
+			break;
+
+			case 'course':
+				$confirm = __( 'This will duplicate the course lessons along with all of their quizzes and questions. Are you sure you want to do this?', 'woothemes-sensei' );
+				$actions['duplicate'] = '<a href="' . $this->get_duplicate_link( $post->ID ) . '" title="' . esc_attr(__( 'Duplicate this course', 'woothemes-sensei' ) ) . '">' .  __('Duplicate', 'woothemes-sensei' ) . '</a>';
+				$actions['duplicate_with_lessons'] = '<a onclick="return confirm(\'' . $confirm . '\');" href="' . $this->get_duplicate_link( $post->ID, true ) . '" title="' . esc_attr(__( 'Duplicate this course with its lessons', 'woothemes-sensei' ) ) . '">' .  __('Duplicate (with lessons)', 'woothemes-sensei' ) . '</a>';
+			break;
+		}
+
+		return $actions;
+	}
+
+	/**
+	 * Generate duplicationlink
+	 * @param  integer $post_id      Post ID
+	 * @param  boolean $with_lessons Include lessons or not
+	 * @return string                Duplication link
+	 */
+	private function get_duplicate_link( $post_id = 0, $with_lessons = false ) {
+
+		$post = get_post( $post_id );
+
+		$action = 'duplicate_' . $post->post_type;
+
+		if( 'course' == $post->post_type && $with_lessons ) {
+			$action .= '_with_lessons';
+		}
+
+		return apply_filters( $action . '_link', admin_url( 'admin.php?action=' . $action . '&post=' . $post_id ), $post_id );
+	}
+
+	/**
+	 * Duplicate lesson
+	 * @return void
+	 */
+	public function duplicate_lesson_action() {
+		$this->duplicate_content( 'lesson' );
+	}
+
+	/**
+	 * Duplicate course
+	 * @return void
+	 */
+	public function duplicate_course_action() {
+		$this->duplicate_content( 'course' );
+	}
+
+	/**
+	 * Duplicate course with lessons
+	 * @return void
+	 */
+	public function duplicate_course_with_lessons_action() {
+		$this->duplicate_content( 'course', true );
+	}
+
+	/**
+	 * Duplicate content
+	 * @param  string  $post_type    Post type being duplicated
+	 * @param  boolean $with_lessons Include lessons or not
+	 * @return void
+	 */
+	private function duplicate_content( $post_type = 'lesson', $with_lessons = false ) {
+		if ( ! isset( $_GET['post'] ) ) {
+			wp_die( sprintf( __( 'Please supply a %1$s ID.', 'woothemes-sensei' ) ), $post_type );
+		}
+
+		$post_id = $_GET['post'];
+		$post = get_post( $post_id );
+
+		if( ! is_wp_error( $post ) ) {
+
+			$new_post = $this->duplicate_post( $post );
+
+			if( $new_post && ! is_wp_error( $new_post ) ) {
+
+				if( 'lesson' == $new_post->post_type ) {
+					$this->duplicate_lesson_quizzes( $post_id, $new_post->ID );
+				}
+
+				if( 'course' == $new_post->post_type && $with_lessons ) {
+					$this->duplicate_course_lessons( $post_id, $new_post->ID );
+				}
+
+				$redirect_url = admin_url( 'post.php?post=' . $new_post->ID . '&action=edit' );
+			} else {
+				$redirect_url = admin_url( 'edit.php?post_type=' . $post->post_type . '&message=duplicate_failed' );
+			}
+
+			wp_safe_redirect( $redirect_url );
+			exit;
+		}
+	}
+
+	/**
+	 * Duplicate quizzes inside lessons
+	 * @param  integer $old_lesson_id ID of original lesson
+	 * @param  integer $new_lesson_id ID of duplicate lesson
+	 * @return void
+	 */
+	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
+
+		$quiz_args = array(
+			'post_type' => 'quiz',
+			'posts_per_page' => -1,
+			'meta_key' => '_quiz_lesson',
+			'meta_value' => $old_lesson_id,
+			'suppress_filters' 	=> 0
+		);
+		$quizzes = get_posts( $quiz_args );
+
+		foreach( $quizzes as $quiz ) {
+
+			$question_args = array(
+				'post_type'	=> 'question',
+				'posts_per_page' => -1,
+				'meta_key' => '_quiz_id',
+				'meta_value' => $quiz->ID,
+				'suppress_filters' => 0
+			);
+			$questions = get_posts( $question_args );
+
+			$new_quiz = $this->duplicate_post( $quiz, '' );
+			add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
+
+			foreach( $questions as $question ) {
+				$new_question = $this->duplicate_post( $question, '' );
+				add_post_meta( $new_question->ID, '_quiz_id', $new_quiz->ID );
+			}
+		}
+	}
+
+	/**
+	 * Duplicate lessons inside a course
+	 * @param  integer $old_course_id ID of original course
+	 * @param  integer $new_course_id ID of duplicated course
+	 * @return void
+	 */
+	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
+		$lesson_args = array(
+			'post_type' => 'lesson',
+			'posts_per_page' => -1,
+			'meta_key' => '_lesson_course',
+			'meta_value' => $old_course_id,
+			'suppress_filters' 	=> 0
+		);
+		$lessons = get_posts( $lesson_args );
+
+		foreach( $lessons as $lesson ) {
+			$new_lesson = $this->duplicate_post( $lesson, '', true );
+			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
+
+			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
+		}
+	}
+
+	/**
+	 * Duplicate post
+	 * @param  object  $post          Post to be duplicated
+	 * @param  string  $suffix        Suffix for duplicated post title
+	 * @param  boolean $ignore_course Ignore lesson course when dulicating
+	 * @return object                 Duplicate post object
+	 */
+	private function duplicate_post( $post, $suffix = ' (Duplicate)', $ignore_course = false ) {
+
+		$new_post = array();
+
+		foreach( $post as $k => $v ) {
+			if( ! in_array( $k, array( 'ID', 'post_status', 'post_date', 'post_date_gmt', 'post_name', 'post_modified', 'post_modified_gmt', 'guid', 'comment_count' ) ) ) {
+				$new_post[ $k ] = $v;
+			}
+		}
+
+		$new_post['post_title'] .= __( $suffix, 'woothemes-sensei' );
+
+		$new_post['post_date'] = date( 'Y-m-d H:i:s' );
+		$new_post['post_date_gmt'] = get_gmt_from_date( $new_post['post_date'] );
+		$new_post['post_modified'] = $new_post['post_date'];
+		$new_post['post_modified_gmt'] = $new_post['post_date_gmt'];
+
+		switch( $post->post_type ) {
+			case 'course': $new_post['post_status'] = 'draft'; break;
+			case 'lesson': $new_post['post_status'] = 'draft'; break;
+			case 'quiz': $new_post['post_status'] = 'publish'; break;
+			case 'question': $new_post['post_status'] = 'publish'; break;
+		}
+
+		$new_post_id = wp_insert_post( $new_post );
+
+		if( ! is_wp_error( $new_post_id ) ) {
+
+			$post_meta = get_post_custom( $post->ID );
+			if( $post_meta && count( $post_meta ) > 0 ) {
+
+				$ignore_meta = array( '_quiz_lesson', '_quiz_id' );
+				if( $ignore_course ) {
+					$ignore_meta[] = '_lesson_course';
+				}
+
+				foreach( $post_meta as $key => $meta ) {
+					foreach( $meta as $value ) {
+						$value = maybe_unserialize( $value );
+						if( ! in_array( $key, $ignore_meta ) ) {
+							add_post_meta( $new_post_id, $key, $value );
+						}
+					}
+				}
+			}
+
+			add_post_meta( $new_post_id, '_duplicate', $post->ID );
+
+			$taxonomies = get_object_taxonomies( $post->post_type, 'objects' );
+
+			foreach ( $taxonomies as $slug => $tax ) {
+				$terms = get_the_terms( $post->ID, $slug );
+				foreach( $terms as $term ) {
+					wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
+				}
+			}
+
+			$new_post = get_post( $new_post_id );
+
+			return $new_post;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Add options to filter lessons
+	 * @return void
+	 */
+	public function lesson_filter_options() {
+		global $typenow;
+
+		if( is_admin() && 'lesson' == $typenow ) {
+
+			$args = array(
+				'post_type' => 'course',
+				'posts_per_page' => -1,
+				'suppress_filters' => 0,
+			);
+			$courses = get_posts( $args );
+
+			$selected = isset( $_GET['lesson_course'] ) ? $_GET['lesson_course'] : '';
+			$course_options = '';
+			foreach( $courses as $course ) {
+				$course_options .= '<option value="' . esc_attr( $course->ID ) . '" ' . selected( $selected, $course->ID, false ) . '>' . get_the_title( $course->ID ) . '</option>';
+			}
+
+			$output = '<select name="lesson_course" id="dropdown_lesson_course">';
+			$output .= '<option value="">'.__( 'Show all courses', 'woothemes-sensei' ).'</option>';
+			$output .= $course_options;
+			$output .= '</select>';
+
+			echo $output;
+		}
+	}
+
+	/**
+	 * Filter lessons
+	 * @param  array $request Current request
+	 * @return array          Modified request
+	 */
+	public function lesson_filter_actions( $request ) {
+		global $typenow;
+
+		if( is_admin() && 'lesson' == $typenow ) {
+			$lesson_course = isset( $_GET['lesson_course'] ) ? $_GET['lesson_course'] : '';
+
+			if( $lesson_course ) {
+				$request['meta_key'] = '_lesson_course';
+				$request['meta_value'] = $lesson_course;
+				$request['meta_compare'] = '=';
+			}
+		}
+
+		return $request;
+	}
 
 } // End Class
 ?>
