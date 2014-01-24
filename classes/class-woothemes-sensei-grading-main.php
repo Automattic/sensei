@@ -159,6 +159,9 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		if( isset( $_GET['grading_status'] ) && strlen( $_GET['grading_status'] ) > 0 && $_GET['grading_status'] != 'all' ) {
 			$grading_status = $_GET['grading_status'];
 		}
+		if( ! $grading_status && $_GET['grading_status'] != 'all' ) {
+			$grading_status = 'ungraded';
+		}
 
 		// Get Quiz ID
 		$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
@@ -268,8 +271,8 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		global $woothemes_sensei;
 
 		$all_class = $ungraded_class = $graded_class = $inprogress_class = '';
-		if( ( isset( $_GET['grading_status'] ) && $_GET['grading_status'] == 'all' ) || ! isset( $_GET['grading_status'] ) ) { $all_class = 'current'; }
-		if( isset( $_GET['grading_status'] ) && $_GET['grading_status'] == 'ungraded' ) { $ungraded_class = 'current'; }
+		if( ( isset( $_GET['grading_status'] ) && $_GET['grading_status'] == 'all' ) ) { $all_class = 'current'; }
+		if( isset( $_GET['grading_status'] ) && $_GET['grading_status'] == 'ungraded' || ! isset( $_GET['grading_status'] ) ) { $ungraded_class = 'current'; }
 		if( isset( $_GET['grading_status'] ) && $_GET['grading_status'] == 'graded' ) { $graded_class = 'current'; }
 		if( isset( $_GET['grading_status'] ) && $_GET['grading_status'] == 'in-progress' ) { $inprogress_class = 'current'; }
 

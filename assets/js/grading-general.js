@@ -181,7 +181,7 @@ jQuery(document).ready( function($) {
 	 	if( gradingStatus ) {
 	 		dataToPost += '&grading_status' + '=' + gradingStatus;
 	 	} else {
-	 		dataToPost += '&grading_status' + '=all';
+	 		dataToPost += '&grading_status' + '=ungraded';
 	 	}
 
 		// Perform the AJAX call to get the select box.
