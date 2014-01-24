@@ -625,7 +625,7 @@ class WooThemes_Sensei_Admin {
 			}
 
 			$output = '<select name="lesson_course" id="dropdown_lesson_course">';
-			$output .= '<option value="">'.__( 'Show all lessons', 'woothemes-sensei' ).'</option>';
+			$output .= '<option value="">'.__( 'Show all courses', 'woothemes-sensei' ).'</option>';
 			$output .= $course_options;
 			$output .= '</select>';
 
