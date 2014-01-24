@@ -523,7 +523,7 @@ class WooThemes_Sensei_Admin {
 		$lessons = get_posts( $lesson_args );
 
 		foreach( $lessons as $lesson ) {
-			$new_lesson = $this->duplicate_post( $lesson, ' (Duplicate)', true );
+			$new_lesson = $this->duplicate_post( $lesson, '', true );
 			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
 
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
@@ -548,11 +548,18 @@ class WooThemes_Sensei_Admin {
 		}
 
 		$new_post['post_title'] .= __( $suffix, 'woothemes-sensei' );
-		$new_post['post_status'] = 'draft';
+
 		$new_post['post_date'] = date( 'Y-m-d H:i:s' );
 		$new_post['post_date_gmt'] = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified'] = $new_post['post_date'];
 		$new_post['post_modified_gmt'] = $new_post['post_date_gmt'];
+
+		switch( $post->post_type ) {
+			case 'course': $new_post['post_status'] = 'draft'; break;
+			case 'lesson': $new_post['post_status'] = 'draft'; break;
+			case 'quiz': $new_post['post_status'] = 'publish'; break;
+			case 'question': $new_post['post_status'] = 'publish'; break;
+		}
 
 		$new_post_id = wp_insert_post( $new_post );
 
