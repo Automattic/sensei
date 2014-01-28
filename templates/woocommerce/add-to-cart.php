@@ -34,9 +34,22 @@ if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user
             } // End If Statement
             // Check for stock
             if ( $product->is_in_stock() ) { ?>
-                    <?php if (! sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
-                        <a href="<?php echo esc_url( get_permalink($product->id) ); ?>" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></a>
-                    <?php } // End If Statement ?>
+                <?php if (! sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
+                    <form action="<?php echo esc_url( $product->add_to_cart_url() ); ?>" class="cart" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="product_id" value="<?php echo esc_attr( $product->id ); ?>" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <?php if ( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) { ?>
+                            <input type="hidden" name="variation_id" value="<?php echo $product->variation_id; ?>" />
+                            <?php if( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 1 ) { ?>
+                                <?php foreach( $product->variation_data as $att => $val ) { ?>
+                                    <input type="hidden" name="<?php echo esc_attr( $att ); ?>" id="<?php echo esc_attr( str_replace( 'attribute_', '', $att ) ); ?>" value="<?php echo esc_attr( $val ); ?>" />
+                                <?php } ?>
+                            <?php } ?>
+                        <?php } ?>
+                        <button type="submit" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></button>
+                        <!--<a href="<?php echo esc_url( get_permalink($product->id) ); ?>" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></a>-->
+                    </form>
+                <?php } // End If Statement ?>
              <?php } // End If Statement
         } // End If Statement
     } // End If Statement
