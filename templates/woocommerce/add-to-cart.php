@@ -47,7 +47,6 @@ if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user
                             <?php } ?>
                         <?php } ?>
                         <button type="submit" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></button>
-                        <!--<a href="<?php echo esc_url( get_permalink($product->id) ); ?>" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></a>-->
                     </form>
                 <?php } // End If Statement ?>
              <?php } // End If Statement
