@@ -17,6 +17,7 @@ $question_count = $woothemes_sensei->frontend->data->question_count;
 $quiz_passmark = $woothemes_sensei->frontend->data->quiz_passmark;
 $user_quiz_grade = $woothemes_sensei->frontend->data->user_quiz_grade;
 $lesson_complete = $woothemes_sensei->frontend->data->user_lesson_complete;
+$reset_quiz_allowed = $woothemes_sensei->frontend->data->reset_quiz_allowed;
 
 // Question Meta
 $question_id = $question_item->ID;
@@ -35,7 +36,7 @@ $question_text = $question_item->post_title;
 
 $answer_message = false;
 $answer_notes = false;
-if( $lesson_complete && $user_quiz_grade != '' ) {
+if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $reset_quiz_allowed ) ) {
     $user_correct = false;
     $answer_message = __( 'Incorrect', 'woothemes-sensei' );
     $answer_message_class = 'user_wrong';

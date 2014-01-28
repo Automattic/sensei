@@ -1112,6 +1112,7 @@ class WooThemes_Sensei_Frontend {
 		$this->data->user_lesson_end = $user_lesson_end;
 		$this->data->user_lesson_complete = $user_lesson_complete;
 		$this->data->lesson_quiz_questions = $lesson_quiz_questions;
+		$this->data->reset_quiz_allowed = $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ];
 
 	} // End sensei_complete_quiz()
 
