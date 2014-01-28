@@ -374,11 +374,10 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		float: none;
 	}
 	.clearfix;
-	margin: 20px 0 0;
 	.select-box  {
 		float: left;
 		width: 290px;
-		margin: 0 20px 0 0;
+		margin: 5px 20px 0 0;
 		label  {
 			font-weight: bold;
 			display: inline-block;
@@ -401,7 +400,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				padding: 5px 10px;
 				.border_radius(3px);
 			}
-			.submitted  {
+			.ungraded  {
 				background: darken(@bg_light, 5%);
 			}
 			.in-progress  {
@@ -415,6 +414,13 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	}
 }
 .sensei-grading-main {
+	.tablenav {
+		&.top {
+			.tablenav-pages {
+				margin: -30px 0 5px 0;
+			}
+		}
+	}
 	.question_box {
 		.clearfix;
 		&.ungraded {

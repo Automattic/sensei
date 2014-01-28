@@ -51,6 +51,9 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		// Sortable Columns
 		$this->sortable_columns = apply_filters( 'sensei_grading_main_columns_sortable', array(
 			'user_login' => array( 'user_login', false ),
+			'course' => array( 'course', false ),
+			'lesson' => array( 'lesson', false ),
+			'updated' => array( 'updated', false ),
 			'user_status' => array( 'user_status', false ),
 			'user_grade' => array( 'user_grade', false )
 		) );
@@ -134,12 +137,22 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 					// Get user ID
 					$user_id = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'post_id' => $lesson_id, 'type' => 'sensei_lesson_start', 'field' => 'user_id' ) );
 
-					// Get row data
-					$row_data = $this->row_data( $lesson_id, $user_id[0] );
+					$user = get_userdata( $user_id[0] );
 
-					// Add row to table data
-					if( $row_data ) {
-						array_push( $return_array, $row_data );
+					$show_user = true;
+					if( $search ) {
+						$show_user = $this->user_search( $user, $search );
+					}
+
+					if( $show_user ) {
+
+						// Get row data
+						$row_data = $this->row_data( $lesson_id, $user_id[0] );
+
+						// Add row to table data
+						if( $row_data ) {
+							array_push( $return_array, $row_data );
+						}
 					}
 				}
 			} // End If Statement
@@ -152,6 +165,37 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		return $return_array;
 	} // End build_data_array()
 
+	/**
+	 * Search a user object for a given string
+	 * @since  1.5.0
+	 * @param  object  $user   User object
+	 * @param  string  $search String to search for
+	 * @return boolean         True on success
+	 */
+	private function user_search( $user, $search ) {
+
+	    if( stripos( $user->user_login, $search ) !== false ) {
+	    	return true;
+	    }
+
+	    if( stripos( $user->display_name, $search ) !== false ) {
+	    	return true;
+	    }
+
+	    if( stripos( $user->user_email, $search ) !== false ) {
+	    	return true;
+	    }
+
+	    return false;
+	}
+
+	/**
+	 * Fetch data for single table row
+	 * @since  1.5.0
+	 * @param  integer $lesson_id ID of lesson
+	 * @param  integer $user_id   ID of user
+	 * @return array              Data for table row
+	 */
 	private function row_data( $lesson_id, $user_id ) {
 		global $woothemes_sensei;
 
@@ -191,8 +235,8 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	    $updated = '';
 	    if ( ( isset( $lesson_end_date ) && '' != $lesson_end_date ) && ( isset( $lesson_grade ) && '' == $lesson_grade ) ) {
 	    	if( $grading_status && $grading_status != 'ungraded' ) { return false; }
-	    	$status = 'submitted';
-			$status_html = '<span class="submitted">' . apply_filters( 'sensei_submitted_for_grading_text', __( 'Submitted for Grading', 'woothemes-sensei' ) ) . '</span>';
+	    	$status = 'ungraded';
+			$status_html = '<span class="ungraded">' . apply_filters( 'sensei_ungraded_text', __( 'Ungraded', 'woothemes-sensei' ) ) . '</span>';
 			$updated = $lesson_end_date;
 		} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
 			if( $grading_status && $grading_status != 'graded' ) { return false; }
@@ -211,11 +255,11 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 			$quiz_link = add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_id, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) );
 			switch( $status ) {
-				case 'submitted': $grade_link = '<a class="button-primary" href="' . $quiz_link . '">Grade quiz</a>'; break;
+				case 'ungraded': $grade_link = '<a class="button-primary" href="' . $quiz_link . '">Grade quiz</a>'; break;
 				case 'graded': $grade_link = '<a class="button-secondary" href="' . $quiz_link . '">Review grade</a>'; break;
 				case 'in-progress': $grade_link = ''; break;
 			}
-			if( $status == 'submitted' ) {
+			if( $status == 'ungraded' ) {
 				$button_class = 'button-primary';
 			} else {
 				$button_class = 'button-secondary';
@@ -259,7 +303,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		_e( 'No quizzes found.', 'woothemes-sensei' );
+		_e( 'No learners/quizzes found.', 'woothemes-sensei' );
 	} // End no_items()
 
 	/**

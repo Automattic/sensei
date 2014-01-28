@@ -68,7 +68,6 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		add_filter( 'sensei_analysis_user_profile_columns_sortable', array( $this, 'remove_sortable_columns' ) );
 		add_filter( 'sensei_analysis_course_user_columns_sortable', array( $this, 'remove_sortable_columns' ) );
 		add_filter( 'sensei_analysis_course_lesson_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-		add_filter( 'sensei_grading_main_columns_sortable', array( $this, 'remove_sortable_columns' ) );
 
 	} // End __construct()
 
@@ -149,7 +148,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 				$sort_key = esc_html( $_GET['orderby'] );
 			} // End If Statement
 			if ( '' != $sort_key ) {
-					$this->sort_array_by_key($return_array,$sort_key);
+					$return_array = $this->sort_array_by_key($return_array,$sort_key);
 				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
 					$return_array = array_reverse( $return_array, true );
 				} // End If Statement
@@ -247,6 +246,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	        $ret[$ii] = $array[$ii];
 	    } // End For Loop
 	    $array = $ret;
+	    return $array;
 	} // End sort_array_by_key()
 
 	/**
