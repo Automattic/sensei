@@ -400,7 +400,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<div class="select-box">' . "\n";
 
-				echo '<select id="grading-lesson-options" name="grading_lesson" class="widefat">' . "\n";
+				echo '<select id="grading-lesson-options" data-placeholder="&larr; Select a course" name="grading_lesson" class="widefat">' . "\n";
 
 					if ( 0 < $selected_course_id ) {
 						$selected_lesson_id = 0;

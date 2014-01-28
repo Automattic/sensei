@@ -104,7 +104,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public function table_search_form() {
 		?><form method="post">
   				<input type="hidden" name="page" value="<?php esc_attr( $this->token ); ?>" />
-  				<?php $this->search_box('search', 'search_id'); ?>
+  				<?php $this->search_box('Search Users', 'search_id'); ?>
 			</form><?php
 	} // End table_search_form()
 
