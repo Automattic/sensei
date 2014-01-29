@@ -354,9 +354,9 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 					$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_date' ) );
 
 					// Increment counters
-					if ( ( isset( $lesson_end ) && '' != $lesson_end ) && ( isset( $lesson_grade ) && '' == $lesson_grade ) ) {
+					if ( ( isset( $lesson_end ) && '' != $lesson_end ) && ( ( isset( $lesson_grade ) && '' == $lesson_grade ) || ! $lesson_grade ) ) {
 				    	++$ungraded_lessons_count;
-					} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
+					} elseif ( isset( $lesson_grade ) && '' != $lesson_grade ) {
 						++$graded_lessons_count;
 					} else {
 						++$inprogress_lessons_count;
