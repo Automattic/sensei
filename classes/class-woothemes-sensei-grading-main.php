@@ -324,49 +324,56 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		<div class="grading-selects">
 			<?php
 
+			// Setup counters
 			$all_lessons_count = $ungraded_lessons_count = $graded_lessons_count = $inprogress_lessons_count = 0;
 			$all_lessons_args = array( 'type' => 'sensei_lesson_start', 'field' => 'post_id' );
 			if( isset( $_GET['lesson_id'] ) && intval( $_GET['lesson_id'] ) > 0 ) {
 				$all_lessons_args['post_id'] = intval( $_GET['lesson_id'] );
 			}
+
+			// Get all lessons
 			$all_lessons = WooThemes_Sensei_Utils::sensei_activity_ids( $all_lessons_args );
-			$all_lessons_count = count( $all_lessons );
 
 			foreach( $all_lessons as $lesson_id ) {
 
-				// Get Quiz ID
+				// Get lesson quiz ID
 				$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
 			    foreach ( $lesson_quizzes as $quiz_item ) {
 			    	$lesson_quiz_id = $quiz_item->ID;
 			    }
 
-				// Get user ID
-				$user_id = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'post_id' => $lesson_id, 'type' => 'sensei_lesson_start', 'field' => 'user_id' ) );
+				// Get user IDs for all started lessons
+				$started =  WooThemes_Sensei_Utils::sensei_activity_ids( array( 'post_id' => $lesson_id, 'type' => 'sensei_lesson_start', 'field' => 'user_id' ) );
 
-				// Get Start Date
-				$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
+				foreach( $started as $user_id ) {
 
-				// Check if Lesson is complete
-				$lesson_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
+					// Check if user has finished lesson
+					$lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
 
-				// Quiz Grade
-				$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_date' ) );
+					// Check if user has been graded
+					$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_date' ) );
 
-				if ( ( isset( $lesson_end_date ) && '' != $lesson_end_date ) && ( isset( $lesson_grade ) && '' == $lesson_grade ) ) {
-			    	++$ungraded_lessons_count;
-				} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
-					++$graded_lessons_count;
-				} elseif ( ( isset( $lesson_start_date ) && '' != $lesson_start_date ) && ( isset( $lesson_end_date ) && '' == $lesson_end_date  ) ) {
-					++$inprogress_lessons_count;
+					// Increment counters
+					if ( ( isset( $lesson_end ) && '' != $lesson_end ) && ( isset( $lesson_grade ) && '' == $lesson_grade ) ) {
+				    	++$ungraded_lessons_count;
+					} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
+						++$graded_lessons_count;
+					} else {
+						++$inprogress_lessons_count;
+					}
 				}
+
+				$all_lessons_count = $ungraded_lessons_count + $graded_lessons_count + $inprogress_lessons_count;
+
 			}
 
+			// Display counters and status links
 			echo '<ul class="subsubsub">' . "\n";
 
-				echo '<li class="all"><a class="' . $all_class . '" href="' . add_query_arg( 'grading_status', 'all' ) . '">' . __( 'All', 'woothemes-sensei' ) . ' <span class="count">(' . $all_lessons_count . ')</span></a> | </li>';
-				echo '<li class="ungraded"><a class="' . $ungraded_class . '" href="' . add_query_arg( 'grading_status', 'ungraded' ) . '">' . __( 'Ungraded', 'woothemes-sensei' ) . ' <span class="count">(' . $ungraded_lessons_count . ')</span></a> | </li>';
-				echo '<li class="graded"><a class="' . $graded_class . '" href="' . add_query_arg( 'grading_status', 'graded' ) . '">' . __( 'Graded', 'woothemes-sensei' ) . ' <span class="count">(' . $graded_lessons_count . ')</span></a> | </li>';
-				echo '<li class="in-progress"><a class="' . $inprogress_class . '" href="' . add_query_arg( 'grading_status', 'in-progress' ) . '">' . __( 'In Progress', 'woothemes-sensei' ) . ' <span class="count">(' . $inprogress_lessons_count . ')</span></a></li>';
+				echo '<li class="all"><a class="' . $all_class . '" href="' . add_query_arg( 'grading_status', 'all' ) . '">' . __( 'All', 'woothemes-sensei' ) . ' <span class="count">(' . $all_lessons_count . ')</span></a> | </li>' . "\n";
+				echo '<li class="ungraded"><a class="' . $ungraded_class . '" href="' . add_query_arg( 'grading_status', 'ungraded' ) . '">' . __( 'Ungraded', 'woothemes-sensei' ) . ' <span class="count">(' . $ungraded_lessons_count . ')</span></a> | </li>' . "\n";
+				echo '<li class="graded"><a class="' . $graded_class . '" href="' . add_query_arg( 'grading_status', 'graded' ) . '">' . __( 'Graded', 'woothemes-sensei' ) . ' <span class="count">(' . $graded_lessons_count . ')</span></a> | </li>' . "\n";
+				echo '<li class="in-progress"><a class="' . $inprogress_class . '" href="' . add_query_arg( 'grading_status', 'in-progress' ) . '">' . __( 'In Progress', 'woothemes-sensei' ) . ' <span class="count">(' . $inprogress_lessons_count . ')</span></a></li>' . "\n";
 
 			echo '</ul>' . "\n";
 
@@ -413,6 +420,17 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 				echo '</select>' . "\n";
 
 			echo '</div>' . "\n";
+
+			if( $selected_course_id && $selected_lesson_id ) {
+
+				echo '<div class="select-box reset-filter">' . "\n";
+
+					echo '<a class="button-secondary" href="' . remove_query_arg( array( 'lesson_id', 'course_id' ) ) . '">' . __( 'Reset filter', 'woothemes-sensei' ) . '</a>' . "\n";
+
+				echo '</div>' . "\n";
+
+			}
+
 			?>
 		</div><!-- /.grading-selects -->
 		<?php
