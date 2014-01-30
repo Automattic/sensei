@@ -98,7 +98,7 @@ class WooThemes_Sensei_Grading {
 	public function enqueue_scripts () {
 		global $woothemes_sensei;
 		// Load Grading JS
-		wp_enqueue_script( 'woosensei-grading-general', $woothemes_sensei->plugin_url . 'assets/js/grading-general.js', array( 'jquery' ), '1.3.0' );
+		wp_enqueue_script( 'woosensei-grading-general', $woothemes_sensei->plugin_url . 'assets/js/grading-general.js', array( 'jquery' ), '1.5.0' );
 
 	} // End enqueue_scripts()
 
@@ -114,7 +114,7 @@ class WooThemes_Sensei_Grading {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.4.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.5.0' );
 
 	} // End enqueue_styles()
 
@@ -269,57 +269,6 @@ class WooThemes_Sensei_Grading {
 				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => -1 ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['course_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Courses', 'woothemes-sensei' ); ?></a></li>
 				<li><a href="<?php echo add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => -1 ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['lesson_id'] ) ) { ?>class="current"<?php } ?>><?php _e( 'Lessons', 'woothemes-sensei' ); ?></a></li>
 			</ul> -->
-			<div class="grading-selects">
-				<?php
-				// Get the Course Posts
-				$post_args = array(	'post_type' 		=> 'course',
-									'numberposts' 		=> -1,
-									'orderby'         	=> 'title',
-		    						'order'           	=> 'DESC',
-		    						'post_status'      	=> 'any',
-		    						'suppress_filters' 	=> 0
-									);
-				$posts_array = get_posts( $post_args );
-
-				$selected_course_id = 0;
-				if ( isset( $_GET['course_id'] ) ) {
-					$selected_course_id = intval( $_GET['course_id'] );
-				} // End If Statement
-
-				echo '<div class="select-box">' . "\n";
-
-					echo '<label>' . __( 'Select a Course to Grade', 'woothemes-sensei' ) . '</label>';
-
-					echo '<select id="grading-course-options" name="grading_course" class="widefat">' . "\n";
-						echo '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-						if ( count( $posts_array ) > 0 ) {
-							foreach ($posts_array as $post_item){
-								echo '<option value="' . esc_attr( absint( $post_item->ID ) ) . '" ' . selected( $post_item->ID, $selected_course_id, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
-							} // End For Loop
-						} // End If Statement
-					echo '</select>' . "\n";
-
-				echo '</div>' . "\n";
-
-				echo '<div class="select-box">' . "\n";
-
-					echo '<label id="grading-lesson-options-label">' . __( 'Select a Lesson to Grade', 'woothemes-sensei' ) . '</label>';
-
-					echo '<select id="grading-lesson-options" name="grading_lesson" class="widefat">' . "\n";
-
-						if ( 0 < $selected_course_id ) {
-							$selected_lesson_id = 0;
-							if ( isset( $_GET['lesson_id'] ) ) {
-								$selected_lesson_id = intval( $_GET['lesson_id'] );
-							} // End If Statement
-							echo $this->lessons_drop_down_html( $selected_course_id, $selected_lesson_id );
-						} // End If Statement
-
-					echo '</select>' . "\n";
-
-				echo '</div>' . "\n";
-				?>
-			</div><!-- /.grading-selects -->
 			<?php
 	} // End grading_default_nav()
 
@@ -372,7 +321,7 @@ class WooThemes_Sensei_Grading {
 								);
 			$posts_array = get_posts( $post_args );
 
-			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+			$html .= '<option value="">' . __( 'Select a lesson', 'woothemes-sensei' ) . '</option>';
 			if ( count( $posts_array ) > 0 ) {
 				foreach ($posts_array as $post_item){
 					$selected_attr_html = '';
@@ -561,10 +510,11 @@ class WooThemes_Sensei_Grading {
 
 		$lesson_id = intval( $lesson_data['lesson_id'] );
 		$course_id = intval( $lesson_data['course_id'] );
+		$grading_status = $lesson_data['grading_status'];
 
 		$redirect_url = '';
 		if ( 0 < $lesson_id && 0 < $course_id ) {
-			$redirect_url = add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => $lesson_id, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
+			$redirect_url = add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => $lesson_id, 'course_id' => $course_id, 'grading_status' => $grading_status ), admin_url( 'admin.php' ) );
 		} // End If Statement
 
 		echo $redirect_url;

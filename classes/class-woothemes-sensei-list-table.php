@@ -68,7 +68,6 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		add_filter( 'sensei_analysis_user_profile_columns_sortable', array( $this, 'remove_sortable_columns' ) );
 		add_filter( 'sensei_analysis_course_user_columns_sortable', array( $this, 'remove_sortable_columns' ) );
 		add_filter( 'sensei_analysis_course_lesson_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-		add_filter( 'sensei_grading_main_columns_sortable', array( $this, 'remove_sortable_columns' ) );
 
 	} // End __construct()
 
@@ -103,9 +102,17 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	public function table_search_form() {
-		?><form method="post">
-  				<input type="hidden" name="page" value="<?php esc_attr( $this->token ); ?>" />
-  				<?php $this->search_box('search', 'search_id'); ?>
+		?><form method="get">
+  				<?php
+  				if( isset( $_GET ) && count( $_GET ) > 0 ) {
+  					foreach( $_GET as $k => $v ) {
+  						if( 's' != $k ) {
+  							?><input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" /><?php
+  						}
+  					}
+  				}
+  				?>
+  				<?php $this->search_box('Search Users', 'search_id'); ?>
 			</form><?php
 	} // End table_search_form()
 
@@ -149,7 +156,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 				$sort_key = esc_html( $_GET['orderby'] );
 			} // End If Statement
 			if ( '' != $sort_key ) {
-					$this->sort_array_by_key($return_array,$sort_key);
+					$return_array = $this->sort_array_by_key($return_array,$sort_key);
 				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
 					$return_array = array_reverse( $return_array, true );
 				} // End If Statement
@@ -210,8 +217,13 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		$record_count = 0;
 		if( !empty( $records ) ) {
 			foreach( $records as $rec ) {
+				// Row class
+				$class = '';
+				if( ! ( $record_count % 2 ) ) {
+					$class = 'alternate';
+				}
 				// Table Row
-				echo '<tr id="record_'.$record_count.'">';
+				echo '<tr class="' . $class . '" id="record_'.$record_count.'">';
 				// Table Columns Loop
 				foreach ( $columns as $column_name => $column_display_name ) {
 					$class = "class='$column_name column-$column_name'";
@@ -247,6 +259,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	        $ret[$ii] = $array[$ii];
 	    } // End For Loop
 	    $array = $ret;
+	    return $array;
 	} // End sort_array_by_key()
 
 	/**
