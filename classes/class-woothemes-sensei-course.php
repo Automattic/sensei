@@ -100,6 +100,14 @@ class WooThemes_Sensei_Course {
     						'order'           	=> 'DESC',
     						'exclude' 			=> $post->ID,
     						'post_status'		=> array( 'publish', 'private', 'draft' ),
+    						'tax_query'			=> array(
+								array(
+									'taxonomy'	=> 'product_type',
+									'field'		=> 'slug',
+									'terms'		=> array( 'variable', 'grouped' ),
+									'operator'	=> 'NOT IN'
+								)
+							),
 							'suppress_filters' 	=> 0
 							);
 		$posts_array = get_posts( $post_args );
@@ -111,18 +119,30 @@ class WooThemes_Sensei_Course {
 		if ( count( $posts_array ) > 0 ) {
 			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
 			$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-				foreach ($posts_array as $post_item){
-
-					// Do not show grouped products
-					$product = get_product( $post_item );
-					if( isset( $product->product_type ) && $product->product_type == 'grouped' ) continue;
+				$prev_parent_id = 0;
+				foreach ( $posts_array as $post_item ) {
 
 					if ( 'product_variation' == $post_item->post_type ) {
 						$product_object = get_product( $post_item->ID );
-						$product_name = '&nbsp;&nbsp;&nbsp;' . ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
+						$parent_id = wp_get_post_parent_id( $post_item->ID );
+						$product_name = ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
 					} else {
+						$parent_id = false;
+						$prev_parent_id = 0;
 						$product_name = $post_item->post_title;
 					}
+
+					// Show variations in groups
+					if( $parent_id && $parent_id != $prev_parent_id ) {
+						if( 0 != $prev_parent_id ) {
+							$html .= '</optgroup>';
+						}
+						$html .= '<optgroup label="' . get_the_title( $parent_id ) . '">';
+						$prev_parent_id = $parent_id;
+					} elseif( ! $parent_id && 0 == $prev_parent_id ) {
+						$html .= '</optgroup>';
+					}
+
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_woocommerce_product, false ) . '>' . esc_html( $product_name ) . '</option>' . "\n";
 				} // End For Loop
 			$html .= '</select>' . "\n";
