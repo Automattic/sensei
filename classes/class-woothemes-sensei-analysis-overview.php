@@ -110,8 +110,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		$return_array = array();
 		// Get the data required
 		$args_array = array( 'raw' => $raw );
-		if ( isset( $_POST['s'] ) && '' != esc_html( $_POST['s'] ) ) {
-			$args_array['search'] = esc_html( $_POST['s'] );
+		if ( isset( $_GET['s'] ) && '' != esc_html( $_GET['s'] ) ) {
+			$args_array['search'] = esc_html( $_GET['s'] );
 		} // End If Statement
 		switch ( $this->type ) {
 			case 'courses':
@@ -144,7 +144,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		if ( isset($_GET['paged']) && 0 < intval($_GET['paged']) ) {
 			$offset = $this->per_page * ( $_GET['paged'] - 1 );
 		} // End If Statement
-		$usersearch = isset( $_REQUEST['s'] ) ? trim( $_REQUEST['s'] ) : '';
+		$usersearch = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : '';
 		$role = isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '';
 		$args_array = array(
 			'number' => $this->per_page,
@@ -215,8 +215,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		foreach ($posts_array as $course_item) {
 			// Manual Keyword Search
 			$title_keyword_count = 1;
-			if ( isset( $_POST['s'] ) && '' != $_POST['s'] ) {
-			$title_keyword_count = substr_count( strtolower( sanitize_title( $course_item->post_title ) ) , strtolower( sanitize_title( $_POST['s'] ) ) );
+			if ( isset( $_GET['s'] ) && '' != $_GET['s'] ) {
+			$title_keyword_count = substr_count( strtolower( sanitize_title( $course_item->post_title ) ) , strtolower( sanitize_title( $_GET['s'] ) ) );
 			} // End If Statement
 			// If Matches are found
 			if ( 0 < intval( $title_keyword_count ) ) {
@@ -269,8 +269,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		foreach ($posts_array as $lesson_item) {
 			// Manual keyword search
 			$title_keyword_count = 1;
-			if ( isset( $_POST['s'] ) && '' != $_POST['s'] ) {
-			$title_keyword_count = substr_count( strtolower( sanitize_title( $lesson_item->post_title ) ) , strtolower( sanitize_title( $_POST['s'] ) ) );
+			if ( isset( $_GET['s'] ) && '' != $_GET['s'] ) {
+			$title_keyword_count = substr_count( strtolower( sanitize_title( $lesson_item->post_title ) ) , strtolower( sanitize_title( $_GET['s'] ) ) );
 			} // End If Statement
 			if ( 0 < intval( $title_keyword_count ) ) {
 				// Lesson Course

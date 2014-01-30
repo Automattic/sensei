@@ -72,15 +72,15 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 		$return_array = array();
 		// Handle search
 		$args_array = array();
-		if ( isset( $_POST['s'] ) && '' != esc_html( $_POST['s'] ) ) {
-			$args_array['search'] = esc_html( $_POST['s'] );
+		if ( isset( $_GET['s'] ) && '' != esc_html( $_GET['s'] ) ) {
+			$args_array['search'] = esc_html( $_GET['s'] );
 		} // End If Statement
 		// Get the data required
 		$offset = '';
 		if ( isset($_GET['paged']) && 0 < intval($_GET['paged']) ) {
 			$offset = $this->per_page * ( $_GET['paged'] - 1 );
 		} // End If Statement
-		$usersearch = isset( $_REQUEST['s'] ) ? trim( $_REQUEST['s'] ) : '';
+		$usersearch = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : '';
 		$role = isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '';
 		$args_array = array(
 			'number' => $this->per_page,
