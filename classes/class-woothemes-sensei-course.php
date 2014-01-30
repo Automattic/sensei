@@ -769,6 +769,34 @@ class WooThemes_Sensei_Course {
 
 	} // End course_lessons()
 
+	/**
+	 * Fetch all quizzes in a course
+	 * @since  1.5.0
+	 * @param  integer $course_id ID of course
+	 * @return array              Array of quiz post objects
+	 */
+	public function course_quizzes( $course_id = 0 ) {
+		global $woothemes_sensei;
+
+		$course_quizzes = array();
+
+		if( $course_id ) {
+			$lessons = $woothemes_sensei->frontend->course->course_lessons( $course_id );
+
+			foreach( $lessons as $lesson ) {
+				$quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson->ID );
+				foreach( $quizzes as $quiz ) {
+					$questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz->ID );
+					if( count( $questions ) > 0 ) {
+						$course_quizzes[] = $quiz;
+					}
+				}
+			}
+		}
+
+		return $course_quizzes;
+	}
+
 
 	/**
 	 * course_lessons_completed function.
@@ -990,7 +1018,9 @@ class WooThemes_Sensei_Course {
 							$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
 
 							if( $manage ) {
-								$complete_html .= '<p class="sensei-results-links"><a class="button view-results" href="' . $woothemes_sensei->course_results->get_permalink( $course_item->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a></p>';
+								if( count( $woothemes_sensei->frontend->course->course_quizzes( $course_item->ID ) ) > 0 ) {
+									$complete_html .= '<p class="sensei-results-links"><a class="button view-results" href="' . $woothemes_sensei->course_results->get_permalink( $course_item->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a></p>';
+								}
 							}
 
 			    		$complete_html .= '</section>';
