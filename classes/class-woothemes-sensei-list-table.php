@@ -217,8 +217,13 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		$record_count = 0;
 		if( !empty( $records ) ) {
 			foreach( $records as $rec ) {
+				// Row class
+				$class = '';
+				if( ! ( $record_count % 2 ) ) {
+					$class = 'alternate';
+				}
 				// Table Row
-				echo '<tr id="record_'.$record_count.'">';
+				echo '<tr class="' . $class . '" id="record_'.$record_count.'">';
 				// Table Columns Loop
 				foreach ( $columns as $column_name => $column_display_name ) {
 					$class = "class='$column_name column-$column_name'";
