@@ -268,9 +268,9 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 				$button_class = 'button-secondary';
 			}
 			return apply_filters( 'sensei_grading_main_column_data', array(
-					'user_login' => $user->display_name,
-					'course' => get_the_title( $course_id ),
-					'lesson' => get_the_title( $lesson_id ),
+					'user_login' => '<a href="' . admin_url( 'user-edit.php?user_id=' . $user_id ) . '">' . $user->display_name . '</a>',
+					'course' => '<a href="' . admin_url( 'post.php?action=edit&post=' . $course_id ) . '">' . get_the_title( $course_id ) . '</a>',
+					'lesson' => '<a href="' . admin_url( 'post.php?action=edit&post=' . $lesson_id ) . '">' . get_the_title( $lesson_id ) . '</a>',
 					'updated' => $updated,
 					'user_status' => $status_html,
 					'user_grade' => $quiz_grade,
