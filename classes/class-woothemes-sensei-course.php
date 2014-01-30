@@ -786,7 +786,10 @@ class WooThemes_Sensei_Course {
 			foreach( $lessons as $lesson ) {
 				$quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson->ID );
 				foreach( $quizzes as $quiz ) {
-					$course_quizzes[] = $quiz;
+					$questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz->ID );
+					if( count( $questions ) > 0 ) {
+						$course_quizzes[] = $quiz;
+					}
 				}
 			}
 		}
