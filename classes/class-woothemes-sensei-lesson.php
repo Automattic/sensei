@@ -377,18 +377,49 @@ class WooThemes_Sensei_Lesson {
 	  						// Get the Products
 							$select_course_woocommerce_product = get_post_meta( $post_item->ID, '_course_woocommerce_product', true );
 
-							$product_args = array(	'post_type' 		=> 'product',
+							$product_args = array(	'post_type' 		=> array( 'product', 'product_variation' ),
 													'numberposts' 		=> -1,
 													'orderby'         	=> 'title',
 	    											'order'           	=> 'DESC',
 	    											'post_status'		=> array( 'publish', 'private', 'draft' ),
+	    											'tax_query'			=> array(
+														array(
+															'taxonomy'	=> 'product_type',
+															'field'		=> 'slug',
+															'terms'		=> array( 'variable', 'grouped' ),
+															'operator'	=> 'NOT IN'
+														)
+													),
 	    											'suppress_filters' 	=> 0
 													);
 							$products_array = get_posts( $product_args );
 							$html .= '<label>' . __( 'WooCommerce Product' , 'woothemes-sensei' ) . '</label> ';
 	  						$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
 								$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+								$prev_parent_id = 0;
 								foreach ($products_array as $products_item){
+
+									if ( 'product_variation' == $products_item->post_type ) {
+										$product_object = get_product( $products_item->ID );
+										$parent_id = wp_get_post_parent_id( $products_item->ID );
+										$product_name = ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
+									} else {
+										$parent_id = false;
+										$prev_parent_id = 0;
+										$product_name = $products_item->post_title;
+									}
+
+									// Show variations in groups
+									if( $parent_id && $parent_id != $prev_parent_id ) {
+										if( 0 != $prev_parent_id ) {
+											$html .= '</optgroup>';
+										}
+										$html .= '<optgroup label="' . get_the_title( $parent_id ) . '">';
+										$prev_parent_id = $parent_id;
+									} elseif( ! $parent_id && 0 == $prev_parent_id ) {
+										$html .= '</optgroup>';
+									}
+
 									$html .= '<option value="' . esc_attr( absint( $products_item->ID ) ) . '">' . esc_html( $products_item->post_title ) . '</option>' . "\n";
 								} // End For Loop
 							$html .= '</select>' . "\n";
