@@ -40,7 +40,7 @@ if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user
                         <input type="hidden" name="quantity" value="1" />
                         <?php if ( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) { ?>
                             <input type="hidden" name="variation_id" value="<?php echo $product->variation_id; ?>" />
-                            <?php if( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 1 ) { ?>
+                            <?php if( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 0 ) { ?>
                                 <?php foreach( $product->variation_data as $att => $val ) { ?>
                                     <input type="hidden" name="<?php echo esc_attr( $att ); ?>" id="<?php echo esc_attr( str_replace( 'attribute_', '', $att ) ); ?>" value="<?php echo esc_attr( $val ); ?>" />
                                 <?php } ?>
