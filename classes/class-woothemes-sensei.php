@@ -530,28 +530,53 @@ class WooThemes_Sensei {
 			$user_id = $current_user->ID;
 		} // End If Statement
 
+	 	$course_prereq = get_post_meta( $course_id, '_course_prerequisite', true );
+	 	if( $course_prereq && 0 < intval( $course_prereq ) ) {
+	 		$prereq_course_complete =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval( $course_prereq ), 'user_id' => intval( $user_id ), 'type' => 'sensei_course_end', 'field' => 'comment_content' ) );
+			if ( ! $prereq_course_complete || '' == $prereq_course_complete ) {
+				// Remove all course user meta
+	    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_start' ) );
+	    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_end' ) );
+
+	    		// Get all course lessons
+	    		$course_lessons = WooThemes_Sensei_Course::course_lessons( $course_id );
+
+	    		// Remove all lesson user meta in course
+	    		if( isset( $course_lessons) && is_array( $course_lessons ) && count( $course_lessons ) > 0 ) {
+	    			foreach ( $course_lessons as $lesson_item ) {
+	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $user_id, 'type' => 'sensei_lesson_start' ) );
+	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $user_id, 'type' => 'sensei_lesson_end' ) );
+	    			}
+	    		}
+				return true;
+			}
+	 	}
+
 	 	$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $course_id ), 'user_id' => intval( $user_id ), 'type' => 'sensei_course_start' ) );
 
-		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && WooThemes_Sensei_Utils::sensei_customer_bought_product( $user_email, $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) && ! $is_user_taking_course ) {
+	 	if( ! $is_user_taking_course ) {
 
-			$args = array(
-							    'post_id' => intval( $course_id ),
-							    'username' => sanitize_user( $user_login ),
-							    'user_email' => sanitize_email( $user_email ),
-							    'user_url' => esc_url( $user_url ),
-							    'data' => __('Course started by the user', 'woothemes-sensei' ),
-							    'type' => 'sensei_course_start', /* FIELD SIZE 20 */
-							    'parent' => 0,
-							    'user_id' => intval( $user_id )
-							);
+			if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && WooThemes_Sensei_Utils::sensei_customer_bought_product( $user_email, $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) ) {
 
-			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+				$args = array(
+								    'post_id' => intval( $course_id ),
+								    'username' => sanitize_user( $user_login ),
+								    'user_email' => sanitize_email( $user_email ),
+								    'user_url' => esc_url( $user_url ),
+								    'data' => __('Course started by the user', 'woothemes-sensei' ),
+								    'type' => 'sensei_course_start', /* FIELD SIZE 20 */
+								    'parent' => 0,
+								    'user_id' => intval( $user_id )
+								);
 
-			$is_user_taking_course = false;
-			if ( true == $activity_logged ) {
-				$is_user_taking_course = true;
+				$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+				$is_user_taking_course = false;
+				if ( true == $activity_logged ) {
+					$is_user_taking_course = true;
+				} // End If Statement
 			} // End If Statement
-		} // End If Statement
+		}
 
 		return $is_user_taking_course;
 	} // End woocommerce_course_update()
