@@ -38,7 +38,7 @@ $question_text = $question_item->post_title;
 
 $answer_message = false;
 $answer_notes = false;
-if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $reset_quiz_allowed ) || ( 'auto' == $quiz_grade_type && ! $reset_quiz_allowed && $user_quiz_grade != '' ) ) {
+if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $reset_quiz_allowed && 'auto' == $quiz_grade_type ) || ( 'auto' == $quiz_grade_type && ! $reset_quiz_allowed && $user_quiz_grade != '' ) ) {
     $user_correct = false;
     $answer_message = __( 'Incorrect', 'woothemes-sensei' );
     $answer_message_class = 'user_wrong';
