@@ -199,11 +199,12 @@ class WooThemes_Sensei_Updates {
 							</tr>
 						</tfoot>
 
-						<tbody class="plugins">
+						<tbody class="updates">
 							<?php
 							// Sort updates with the latest at the top
 							uksort( $this->updates, array( $this, 'sort_updates' ) );
 							$this->updates = array_reverse( $this->updates, true );
+							$class = 'alternate';
 							foreach( $this->updates as $version => $version_updates ) {
 								foreach( $version_updates as $type => $updates ) {
 									foreach( $updates as $update => $data ) {
@@ -214,7 +215,7 @@ class WooThemes_Sensei_Updates {
 										} // End If Statement
 										?>
 										<form method="post" action="admin.php?page=sensei_updates&action=update&n=0" name="update-sensei" class="upgrade">
-											<tr class="active">
+											<tr class="<?php echo $class; ?>">
 												<td>
 													<p>
 														<input type="hidden" name="checked[]" value="<?php echo $update; ?>">
@@ -227,6 +228,11 @@ class WooThemes_Sensei_Updates {
 											</tr>
 										</form>
 										<?php
+										if( 'alternate' == $class ) {
+											$class = '';
+										} else {
+											$class = 'alternate';
+										}
 									}
 								}
 							}
