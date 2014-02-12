@@ -416,16 +416,6 @@ class WooThemes_Sensei {
 				$find[] = $this->template_url . $file;
 			} // End If Statement
 
-		} elseif ( is_tax( 'product_cat' ) || is_tax( 'product_tag' ) ) {
-
-		    $term = get_queried_object();
-
-		    $file 		= 'taxonomy-' . $term->taxonomy . '.php';
-		    $find[] 	= 'taxonomy-' . $term->taxonomy . '-' . $term->slug . '.php';
-		    $find[] 	= $this->template_url . 'taxonomy-' . $term->taxonomy . '-' . $term->slug . '.php';
-		    $find[] 	= $file;
-		    $find[] 	= $this->template_url . $file;
-
 		} elseif ( is_post_type_archive( 'course' ) || is_page( $this->get_page_id( 'courses' ) ) ) {
 
 		    $file 	= 'archive-course.php';
