@@ -616,6 +616,9 @@ class WooThemes_Sensei_Utils {
 			$question_grade = 0;
 			foreach( $questions as $question ) {
 				$question_grade = get_post_meta( $question->ID, '_question_grade', true );
+				if( ! $question_grade || $question_grade == '' ) {
+					$question_grade = 1;
+				}
 				$quiz_total += $question_grade;
 			}
 		}
