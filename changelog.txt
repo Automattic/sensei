@@ -1,5 +1,11 @@
 *** Sensei Changelog ***
 
+2014.02.13 - version 1.4.9
+ * Fix - Fixing WooCommerce taxonomy templates when Sensei is active
+ * Fix - Fixing bug that was causing grades to be higher than 100%
+ * Fix - Clearing floats on Sensei front-end messages
+ * Fix - Making sure chosen drop down is always used on course product selection
+
 2014.01.23 - version 1.4.8
  * New - Allowing access to courses when WooCommerce order is marked as processing
  * Fix - Ensuring that all purchased courses show up on the My Courses page
