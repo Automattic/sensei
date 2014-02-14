@@ -258,17 +258,22 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	#add-question-metadata  {
 		table  {
 			tr  {
+				th {
+					&.question-count-column {
+						width: 45px;
+					}
+				}
 				td  {
+					&.question-count-column {
+						width: 45px;
+					}
+					&.question-grade-column {
+						text-align: center;
+					}
 					padding: 10px 7px;
 				}
 			}
 		}
-	}
-	table  {
-		border-bottom: none;
-	}
-	tfoot  {
-		display: none;
 	}
 	.question_boolean_fields  {
 		label  {

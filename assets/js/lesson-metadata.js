@@ -457,8 +457,7 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.lesson_question_cancel', function() {
 		// Hide the edit question panel
-		var tableRowId = jQuery( this ).parent('div').parent('td').parent('tr').prev('tr').find('td.table-count').text();
-		jQuery( '#question_' + tableRowId ).parent('div').parent('td').parent('tr').addClass( 'hidden' );
+		jQuery( this ).closest('tr.question-quick-edit').addClass( 'hidden' );
 	});
 
 	/**
