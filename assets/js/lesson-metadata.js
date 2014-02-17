@@ -213,6 +213,29 @@ jQuery(document).ready( function($) {
  	}
 
  	/**
+ 	 * Save quiz question order
+ 	 *
+ 	 * @since 1.5.0
+ 	 * access public
+ 	 */
+ 	jQuery.fn.saveQuestionOrder = function( question_order ) {
+
+ 		var dataToPost = 'question_order' + '=' + question_order;
+ 		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+ 		jQuery.post(
+			ajaxurl,
+			{
+				action : 'lesson_update_question_order',
+				lesson_update_question_order_nonce : woo_localized_data.lesson_update_question_order_nonce,
+				data : dataToPost
+			},
+			function( response ) {}
+		);
+		return false;
+ 	}
+
+ 	/**
 	 * Reset question numbers and row highlighting
 	 *
 	 * @since 1.5.0
@@ -231,6 +254,24 @@ jQuery(document).ready( function($) {
 			}
 			row_number++;
 		});
+	}
+
+	/**
+	 * Update quesiton order input field
+	 *
+	 * @since 1.5.0
+	 */
+	jQuery.fn.updateQuestionOrder = function() {
+		var orderString = '';
+
+		jQuery( '#sortable-questions' ).find( 'input.row_question_id' ).each( function ( i, e ) {
+			if ( i > 0 ) { orderString += ','; }
+			orderString += jQuery( this ).val();
+		});
+
+		jQuery( 'input#question-order' ).attr( 'value', orderString );
+
+		jQuery.fn.saveQuestionOrder( orderString );
 	}
 
  	/**
@@ -449,13 +490,13 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_table_edit', function() {
 		// Display the question for edit
-		var questionId = jQuery(this).parent('td').parent('tr').find('td:first').text();
+		var questionId = jQuery(this).closest('tr').find('td:first').text();
 		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
  		// Hide the add question form and prep the table
 		jQuery( '#add-new-question' ).addClass( 'hidden' );
 	 	jQuery.fn.resetAddQuestionForm();
 	 	jQuery.fn.resetQuestionTable();
-		jQuery( '#question_' + questionId ).parent('div').parent('td').parent('tr').removeClass('hidden');
+		jQuery( '#question_' + questionId ).closest('tr').removeClass('hidden');
 		jQuery( '#question_' + questionId ).focus();
 	});
 
@@ -740,6 +781,13 @@ jQuery(document).ready( function($) {
  			);
  			return false;
 		}
+	});
+
+	jQuery( '#sortable-questions' ).sortable( { items: "tbody" } );
+
+	jQuery( '#sortable-questions' ).bind( 'sortstop', function ( e, ui ) {
+		jQuery.fn.updateQuestionOrder();
+		jQuery.fn.updateQuestionRows();
 	});
 
 	/***************************************************************************************************
