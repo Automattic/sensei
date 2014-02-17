@@ -624,7 +624,7 @@ class WooThemes_Sensei_Lesson {
 			if( 0 == $question_grade ) { $question_grade = 1; }
 
 			$html .= '<tr class="' . $question_class . '">';
-				$html .= '<td class="table-count question-count-column">' . $question_counter . '</td>';
+				$html .= '<td class="table-count question-number question-count-column">' . $question_counter . '</td>';
 				$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
 				$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 				$question_types_filtered = str_replace( array( '-', 'boolean' ), array( ' ', 'True/False' ), $question_type );

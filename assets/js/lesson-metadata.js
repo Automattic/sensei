@@ -181,6 +181,8 @@ jQuery(document).ready( function($) {
  	    } else {
  	    	jQuery( '#no-questions-message' ).removeClass( 'hidden' );
  	    }
+
+ 	    jQuery.fn.updateQuestionRows();
  	}
 
  	/**
@@ -209,6 +211,27 @@ jQuery(document).ready( function($) {
 		);
 		return false;
  	}
+
+ 	/**
+	 * Reset question numbers and row highlighting
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 */
+	jQuery.fn.updateQuestionRows = function() {
+		var row_number = 1;
+		var row_class = 'alternate';
+		jQuery( '#add-question-metadata' ).find( 'td.question-number' ).each( function() {
+			jQuery( this ).text( row_number );
+			jQuery( this ).parent( 'tr' ).removeClass().addClass( row_class );
+			if( 'alternate' == row_class ) {
+				row_class = '';
+			} else {
+				row_class = 'alternate';
+			}
+			row_number++;
+		});
+	}
 
  	/**
 	 * JS version of PHP htmlentities.
@@ -681,45 +704,40 @@ jQuery(document).ready( function($) {
 	 	// TODO - localize this delete message
 	 	var confirmDelete = confirm( 'Are you sure you want to delete this question?' );
 	 	if ( confirmDelete ) {
-	 		//var ajaxLoaderIcon = jQuery( this ).parent().find( '.ajax-loading' );
-	 		//ajaxLoaderIcon.css( 'visibility', 'visible' ).fadeTo( 'slow', 1, function () {
-	 			// Setup data to post
-	 			dataToPost += '&action=delete';
-	 			jQuery( this ).parent( 'td' ).parent('tr').next('tr').find('td').children( 'input' ).each( function() {
-	 				if ( jQuery( this ).attr( 'name' ) == 'question_id' ) {
-	 					questionId = jQuery( this ).attr( 'value' );
-	 					dataToPost += '&question_id' + '=' + jQuery( this ).attr( 'value' );
-	 				} // End If Statement
-	 			});
-	 			tableRowId = jQuery( this ).parent('td').parent('tr').find('td:first').text();
-	 			// Perform the AJAX call.
-	 			jQuery.post(
-	 				ajaxurl,
-	 				{
-	 					action : 'lesson_update_question',
-	 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
-	 					data : dataToPost
-	 				},
-	 				function( response ) {
-	 					//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
-	 					//	jQuery( this ).css( 'visibility', 'hidden' );
-	 					//});
-	 					if ( response ) {
-	 						// Remove the html element for the deleted question
-	 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
-	 							if ( jQuery(this).text() == tableRowId ) {
-	 								jQuery(this).parent('tr').next('tr').remove();
-	 								jQuery(this).parent('tr').remove();
-								}
-	 						});
-	 						jQuery.fn.updateQuestionCount( 1, '-' );
-	 						jQuery.fn.checkQuizGradeType( false );
-	 						// TODO - renumber function for reuse when adding
-	 					}
-	 				}
-	 			);
-	 			return false; // TODO - move this below the next bracket when doing the ajax loader
-	 	//});
+ 			// Setup data to post
+ 			dataToPost += '&action=delete';
+ 			jQuery( this ).parent( 'td' ).parent('tr').next('tr').find('td').children( 'input' ).each( function() {
+ 				if ( jQuery( this ).attr( 'name' ) == 'question_id' ) {
+ 					questionId = jQuery( this ).attr( 'value' );
+ 					dataToPost += '&question_id' + '=' + jQuery( this ).attr( 'value' );
+ 				} // End If Statement
+ 			});
+ 			tableRowId = jQuery( this ).parent('td').parent('tr').find('td.question-number').text();
+ 			// Perform the AJAX call.
+ 			jQuery.post(
+ 				ajaxurl,
+ 				{
+ 					action : 'lesson_update_question',
+ 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
+ 					data : dataToPost
+ 				},
+ 				function( response ) {
+ 					if ( response ) {
+ 						// Remove the html element for the deleted question
+ 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
+ 							if ( jQuery(this).text() == tableRowId ) {
+ 								jQuery(this).parent('tr').next('tr').remove();
+ 								jQuery(this).parent('tr').remove();
+ 								// Exit each() to prevent multiple row deletions
+ 								return false;
+							}
+ 						});
+ 						jQuery.fn.updateQuestionCount( 1, '-' );
+ 						jQuery.fn.checkQuizGradeType( false );
+ 					}
+ 				}
+ 			);
+ 			return false;
 		}
 	});
 
