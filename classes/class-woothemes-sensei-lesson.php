@@ -742,6 +742,7 @@ class WooThemes_Sensei_Lesson {
 							$field_name = 'question_' . $question_id . '_right_answer_boolean';
 						} else {
 							$field_name = 'question_right_answer_boolean';
+							$right_answer = 'true';
 						}
 						$html .= '<label for="question_' . $question_id . '_boolean_true"><input id="question_' . $question_id . '_boolean_true" type="radio" name="' . $field_name . '" value="true" '. checked( $right_answer, 'true', false ) . ' /> ' . __( 'True', 'woothemes-sensei' ) . '</label>';
 						$html .= '<label for="question_' . $question_id . '_boolean_false"><input id="question_' . $question_id . '_boolean_false" type="radio" name="' . $field_name . '" value="false" '. checked( $right_answer, 'false', false ) . ' /> ' . __( 'False', 'woothemes-sensei' ) . '</label>';
