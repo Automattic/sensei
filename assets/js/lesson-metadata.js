@@ -659,6 +659,10 @@ jQuery(document).ready( function($) {
 				dataToPost += '&' + 'question_type' + '=' + questionType;
 				questionGrade = jQuery( this ).parent('div').parent().find( 'input.question_grade' ).val();
 	 			dataToPost += '&' + 'question_grade' + '=' + questionGrade;
+
+	 			var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+	 			dataToPost += '&' + 'question_count' + '=' + questionCount;
+
 	 			// Perform the AJAX call.
 				jQuery.post(
 	 				ajaxurl,
@@ -668,26 +672,23 @@ jQuery(document).ready( function($) {
 	 					data : dataToPost
 	 				},
 	 				function( response ) {
-	 					//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
-	 					//	jQuery( this ).css( 'visibility', 'hidden' );
-	 					//});
 	 					if ( response ) {
-	 						// Display the question for edit
 	 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
 	 							if ( jQuery(this).text() == tableRowId ) {
 	 								jQuery(this).next('td').text( jQuery( '#question_' + tableRowId ).attr('value') );
+	 								// Exit each() to prevent multiple column text insertions
+	 								return false;
 	 							}
 	 						});
 	 						jQuery( '#question_' + tableRowId ).parent('div').parent('td').parent('tr').addClass( 'hidden' );
 	 					}
 	 				}
 	 			);
-	 			return false; // TODO - move this below the next bracket when doing the ajax loader
+	 			return false;
 	 	//});
 		} else {
 			tableRowId = jQuery( this ).parent('div').parent('td').parent('tr').prev('tr').find('td:first').text();
 			jQuery( '#question_' + tableRowId ).focus();
-			// TODO - add error message
 		}
 	});
 

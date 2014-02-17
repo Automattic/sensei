@@ -596,10 +596,15 @@ class WooThemes_Sensei_Lesson {
 
 				$question_id = $question->ID;
 
+				$question_type = '';
 				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
 				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 					$question_type = $question_types[0];
 				} // End If Statement
+
+				if( ! $question_type ) {
+					$question_type = 'multiple-choice';
+				}
 
 				// Row with question and actions
 				$html .= $this->quiz_panel_question( $question_type, $question_counter, $question_id );
@@ -623,12 +628,14 @@ class WooThemes_Sensei_Lesson {
 			$question_grade = intval( get_post_meta( $question_id, '_question_grade', true ) );
 			if( 0 == $question_grade ) { $question_grade = 1; }
 
+			if( ! $question_type ) { $question_type = 'multiple-choice'; }
+
 			$html .= '<tr class="' . $question_class . '">';
 				$html .= '<td class="table-count question-number question-count-column">' . $question_counter . '</td>';
 				$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
 				$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
-				$question_types_filtered = str_replace( array( '-', 'boolean' ), array( ' ', 'True/False' ), $question_type );
-				$html .= '<td>' . esc_html( ucwords( $question_types_filtered ) ) . '</td>';
+				$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', 'True/False' ), $question_type ) );
+				$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
 				$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a>&nbsp;&nbsp;&nbsp;<a title="' . esc_attr( __( 'Delete Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Delete', 'woothemes-sensei' ) ) . '</a></td>';
 			$html .= '</tr>';
 
@@ -974,9 +981,14 @@ class WooThemes_Sensei_Lesson {
 				$question_id = $this->lesson_save_question($question_data);
 				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
 				$question_counter = 0;
+				$question_type = '';
 				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 					$question_type = $question_types[0];
 				} // End If Statement
+
+				if( ! $question_type ) {
+					$question_type = 'multiple-choice';
+				}
 
 				$question_count = intval( $question_data['question_count'] );
 				++$question_count;
