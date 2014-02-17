@@ -738,8 +738,13 @@ class WooThemes_Sensei_Lesson {
 				break;
 				case 'boolean':
 					$html .= '<div class="question_boolean_fields ' . $question_class . '">';
-						$html .= '<label for="question_' . $question_id . '_boolean_true"><input id="question_' . $question_id . '_boolean_true" type="radio" name="question_' . $question_id . '_right_answer_boolean" value="true" '. checked( $right_answer, 'true', false ) . ' /> ' . __( 'True', 'woothemes-sensei' ) . '</label>';
-						$html .= '<label for="question_' . $question_id . '_boolean_false"><input id="question_' . $question_id . '_boolean_false" type="radio" name="question_' . $question_id . '_right_answer_boolean" value="false" '. checked( $right_answer, 'false', false ) . ' /> ' . __( 'False', 'woothemes-sensei' ) . '</label>';
+						if( $question_id ) {
+							$field_name = 'question_' . $question_id . '_right_answer_boolean';
+						} else {
+							$field_name = 'question_right_answer_boolean';
+						}
+						$html .= '<label for="question_' . $question_id . '_boolean_true"><input id="question_' . $question_id . '_boolean_true" type="radio" name="' . $field_name . '" value="true" '. checked( $right_answer, 'true', false ) . ' /> ' . __( 'True', 'woothemes-sensei' ) . '</label>';
+						$html .= '<label for="question_' . $question_id . '_boolean_false"><input id="question_' . $question_id . '_boolean_false" type="radio" name="' . $field_name . '" value="false" '. checked( $right_answer, 'false', false ) . ' /> ' . __( 'False', 'woothemes-sensei' ) . '</label>';
 					$html .= '</div>';
 				break;
 				case 'gap-fill':
@@ -768,14 +773,19 @@ class WooThemes_Sensei_Lesson {
 				break;
 				case 'multi-line':
 					$html .= '<div class="question_multiline_fields ' . $question_class . '">';
-							// Guides for grading
+						// Guides for grading
+						if( $question_counter ) {
+							$field_id = 'question_' . $question_counter . '_add_question_right_answer_multiline';
+						} else {
+							$field_id = 'add_question_right_answer_multiline';
+						}
 						$html .= '<label>' . __( 'Guide/Teacher Notes for grading the answer' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<textarea id="question_' . $question_counter . '_add_question_right_answer_multiline" name="add_question_right_answer_multiline" rows="3" cols="40" class="widefat">' . $right_answer . '</textarea>';
+						$html .= '<textarea id="' . $field_id . '" name="add_question_right_answer_multiline" rows="3" cols="40" class="widefat">' . $right_answer . '</textarea>';
 					$html .= '</div>';
 				break;
 				case 'single-line':
 					$html .= '<div class="question_singleline_fields ' . $question_class . '">';
-							// Recommended Answer
+						// Recommended Answer
 						$html .= '<label>' . __( 'Recommended Answer' , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_singleline" name="add_question_right_answer_singleline" value="' . $right_answer . '" size="25" class="widefat" />';
 					$html .= '</div>';
