@@ -783,7 +783,12 @@ jQuery(document).ready( function($) {
 		}
 	});
 
-	jQuery( '#sortable-questions' ).sortable( { items: "tbody" } );
+	jQuery( '#sortable-questions' ).sortable( {
+		items: "tbody",
+		'start': function (event, ui) {
+        ui.placeholder.html("<tr><td colspan='5'>&nbsp;</td></tr>")
+    }
+	});
 
 	jQuery( '#sortable-questions' ).bind( 'sortstop', function ( e, ui ) {
 		jQuery.fn.updateQuestionOrder();
