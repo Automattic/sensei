@@ -638,7 +638,7 @@ jQuery(document).ready( function($) {
 	 			});
 		 		// Handle Question Input Fields
 		 		var radioCount = 0;
-		 		jQuery( this ).parent('div').parent().find( 'div.' + divFieldsClass ).children( 'input' ).each( function() {
+		 		jQuery( this ).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'input' ).each( function() {
 		 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
 		 				// Only get the selected radio button
 		 				if ( radioCount == 0 ) {
