@@ -1053,6 +1053,7 @@ class WooThemes_Sensei_Lesson {
 				update_post_meta( $question_id, '_quiz_question_order', $quiz_data['quiz_id'] . '000' . $o );
 				++$o;
 			}
+			update_post_meta( $quiz_data['quiz_id'], '_question_order', $questions );
 		}
 		die();
 	}
@@ -1357,9 +1358,11 @@ class WooThemes_Sensei_Lesson {
 	 * @param string $post_status (default: 'publish')
 	 * @return void
 	 */
-	public function lesson_quiz_questions( $quiz_id = 0, $post_status = 'any', $orderby = 'meta_value_num', $order = 'ASC' ) {
+	public function lesson_quiz_questions( $quiz_id = 0, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) {
 
 		$posts_array = array();
+
+		$this->set_default_question_order( $quiz_id );
 
 		$post_args = array(	'post_type' 		=> 'question',
 							'numberposts' 		=> -1,
@@ -1381,6 +1384,43 @@ class WooThemes_Sensei_Lesson {
 
 	} // End lesson_quiz_questions()
 
+	/**
+	 * Set the default quiz order
+	 * @param integer $quiz_id ID of quiz
+	 */
+	public function set_default_question_order( $quiz_id = 0 ) {
+
+		if( $quiz_id ) {
+
+			$question_order = get_post_meta( $quiz_id, '_question_order', true );
+
+			if( ! $question_order ) {
+
+				$args = array(
+					'post_type' 		=> 'question',
+					'numberposts' 		=> -1,
+					'orderby'         	=> 'ID',
+					'order'           	=> 'ASC',
+					'meta_query'		=> array(
+						array(
+							'key'       => '_quiz_id',
+							'value'     => $quiz_id
+						)
+					),
+					'post_status'		=> 'any',
+					'suppress_filters' 	=> 0
+				);
+				$questions = get_posts( $args );
+
+				$o = 1;
+				foreach( $questions as $question ) {
+					add_post_meta( $question->ID, '_quiz_question_order', $quiz_id . '000' . $o, true );
+					$o++;
+				}
+			}
+		}
+
+	}
 
 	/**
 	 * lesson_image function.
