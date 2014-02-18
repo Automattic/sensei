@@ -66,6 +66,8 @@ class WooThemes_Sensei_Lesson {
 			add_action( 'wp_ajax_nopriv_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
 			add_action( 'wp_ajax_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
+			add_action( 'wp_ajax_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
+			add_action( 'wp_ajax_nopriv_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
 		} else {
 			// Frontend actions
 		} // End If Statement
@@ -716,9 +718,13 @@ class WooThemes_Sensei_Lesson {
 
 			$right_answer = '';
 			$wrong_answers = array();
+			$answer_order_string = '';
+			$answer_order = array();
 			if( $question_id ) {
 				$right_answer = get_post_meta( $question_id, '_question_right_answer', true);
 				$wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true);
+				$answer_order_string = get_post_meta( $question_id, '_answer_order', true );
+				$answer_order = array_filter( explode( ',', $answer_order_string ) );
 				$question_class = '';
 			} else {
 				$question_id = '';
@@ -729,27 +735,62 @@ class WooThemes_Sensei_Lesson {
 				case 'multiple-choice':
 					$html .= '<div class="question_default_fields multiple-choice-answers ' . str_replace( ' hidden', '', $question_class ) . '">';
 
-						// Right Answer
-				    	$answers[] = '<label for="question_' . $question_counter . '_right_answer"><span>' . __( 'Right:' , 'woothemes-sensei' ) . '</span> <input type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $right_answer ) ) . '" size="25" class="widefat" /></label>';
+						$right_answer_id = $this->get_answer_id( $right_answer );
 
-				    	$total_wrong = get_post_meta( $question_id, '_wrong_answer_count', true );
-				    	if( ! $total_wrong ) {
+						// Right Answer
+				    	$right_answer = '<label for="question_' . $question_counter . '_right_answer"><span>' . __( 'Right:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $right_answer ) ) . '" size="25" class="question_answer widefat" /></label>';
+				    	if( $question_id ) {
+				    		$answers[ $right_answer_id ] = $right_answer;
+				    	} else {
+				    		$answers[] = $right_answer;
+				    	}
+
+				    	// Calculate total wrong answers available (defaults to 4)
+				    	$total_wrong = 0;
+				    	if( $question_id ) {
+				    		$total_wrong = get_post_meta( $question_id, '_wrong_answer_count', true );
+				    	}
+				    	if( 0 == intval( $total_wrong ) ) {
 				    		$total_wrong = 4;
 				    	}
 
 					    // Setup Wrong Answer HTML
 				    	for ( $i = 0; $i < $total_wrong; $i++ ) {
 				    		if ( !isset( $wrong_answers[ $i ] ) ) { $wrong_answers[ $i ] = ''; }
-				    		$answers[] = '<label for="question_' . $question_counter . '_wrong_answer_' . $i . '"><span>' . __( 'Wrong:' , 'woothemes-sensei' ) . '</span> <input type="text" id="question_' . $question_counter . '_wrong_answer_' . $i . '" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $wrong_answers[ $i ] ) ) . '" size="25" class="widefat" /></label>';
+				    		$answer_id = $this->get_answer_id( $wrong_answers[ $i ] );
+				    		$wrong_answer = '<label for="question_' . $question_counter . '_wrong_answer_' . $i . '"><span>' . __( 'Wrong:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . $question_counter . '_wrong_answer_' . $i . '" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $wrong_answers[ $i ] ) ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+				    		if( $question_id ) {
+					    		$answers[ $answer_id ] = $wrong_answer;
+					    	} else {
+					    		$answers[] = $wrong_answer;
+					    	}
 				    	}
 
-				    	foreach( $answers as $answer ) {
+				    	$answers_sorted = $answers;
+				    	if( $question_id && count( $answer_order ) > 0 ) {
+				    		$answers_sorted = array();
+				    		foreach( $answer_order as $answer_id ) {
+				    			if( $answers[ $answer_id ] ) {
+				    				$answers_sorted[ $answer_id ] = $answers[ $answer_id ];
+				    				unset( $answers[ $answer_id ] );
+				    			}
+				    		}
+				    	}
+
+				    	if( count( $answers ) > 0 ) {
+					    	foreach( $answers as $id => $answer ) {
+					    		$answers_sorted[ $id ] = $answer;
+					    	}
+					    }
+
+				    	foreach( $answers_sorted as $id => $answer ) {
 				    		$html .= $answer;
 				    	}
 
+				    	$html .= '<input type="hidden" class="answer_order" name="answer_order" value="' . $answer_order_string . '" />';
 				    	$html .= '<span class="hidden wrong_answer_count">' . $total_wrong . '</span>';
 
-				    	$html .= '<a class="add_answer_option" rel="' . $question_counter . '">+ ' . __( 'Add answer', 'woothemes-sensei' ) . '</a>';
+				    	$html .= '<a class="add_answer_option" rel="' . $question_counter . '">' . __( 'Add answer', 'woothemes-sensei' ) . '</a>';
 
 				    	$html .= '</div>';
 				break;
@@ -812,6 +853,28 @@ class WooThemes_Sensei_Lesson {
 		}
 
 		return $html;
+	}
+
+	public function question_get_answer_id() {
+		$data = $_POST['data'];
+		$answer_data = array();
+		parse_str( $data, $answer_data );
+		$answer = $answer_data['answer_value'];
+		$answer_id = $this->get_answer_id( $answer );
+		echo $answer_id;
+		die();
+	}
+
+	private function get_answer_id( $answer = '' ) {
+
+		$answer_id = '';
+
+		if( $answer ) {
+			$answer_id = strtolower( str_replace( array( ',', ' ', '-', '&', '\'', '"', '`', '?', ':', ';', '!', '<', '>', '/', '.' ), '', stripslashes( $answer ) ) );
+		}
+
+		return $answer_id;
+
 	}
 
 	/**
@@ -1237,8 +1300,13 @@ class WooThemes_Sensei_Lesson {
 
   		// Only save if there is a valid title
   		if ( $post_title != '' ) {
+
   			// Get Quiz ID for the question
-  		    $quiz_id = $data[ 'quiz_id' ];
+  		    $quiz_id = $data['quiz_id'];
+
+  		    // Get answer order
+			$answer_order = $data['answer_order'];
+
   		    // Insert or Update the question
   		    if ( 0 < $question_id ) {
 		    	$post_type_args[ 'ID' ] = $question_id;
@@ -1249,6 +1317,7 @@ class WooThemes_Sensei_Lesson {
 		    	update_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	update_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    	update_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
+		    	update_post_meta( $question_id, '_answer_order', $answer_order );
 		    } else {
 				$question_id = wp_insert_post( $post_type_args );
 				$question_count = intval( $data['question_count'] );
@@ -1261,6 +1330,7 @@ class WooThemes_Sensei_Lesson {
 		    	add_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    	add_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
 		    	add_post_meta( $question_id, '_quiz_question_order', $quiz_id . '000' . $question_count );
+		    	add_post_meta( $question_id, '_answer_order', $answer_order );
 
 		    	// Set the post terms for question-type
 			    wp_set_post_terms( $question_id, array( $question_type ), 'question-type' );

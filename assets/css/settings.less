@@ -254,16 +254,45 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		label {
 			display: block;
 			margin: 0;
+			cursor: move;
 			span {
-				width: 50px;
+				width: 70px;
 				display: inline-block;
+				&:before {
+					font-family: dashicons;
+					content: "\f333";
+					font-size: 110%;
+					vertical-align: bottom;
+					color: #BDBDBD;
+					margin-right: 5px;
+				}
 			}
 			input {
 				width: auto;
+  				width: calc(~"100% - 100px");
+			}
+			.remove_answer_option {
+				cursor: pointer;
+				color: #a00;
+				&:before {
+					font-family: dashicons;
+					content: "\f335";
+					font-size: 150%;
+					vertical-align: middle;
+				}
+				&:hover {
+					color: red;
+				}
 			}
 		}
 		.add_answer_option {
 			cursor: pointer;
+			&:before {
+				font-family: dashicons;
+				content: "\f132";
+				vertical-align: middle;
+				margin-right: 5px;
+			}
 		}
 	}
 	.save-note  {
@@ -286,6 +315,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 								color: #BDBDBD;
 								margin-right: 13px;
 							}
+						}
+					}
+					.question_table_delete {
+						color: #A00;
+						&:hover {
+							color: red;
 						}
 					}
 				}
