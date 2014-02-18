@@ -250,6 +250,22 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		display: inline-block;
 		margin: 0 0 .53em;
 	}
+	.multiple-choice-answers {
+		label {
+			display: block;
+			margin: 0;
+			span {
+				width: 50px;
+				display: inline-block;
+			}
+			input {
+				width: auto;
+			}
+		}
+		.add_answer_option {
+			cursor: pointer;
+		}
+	}
 	.save-note  {
 		margin: 1.5em 0 1em;
 		clear: both;
@@ -337,7 +353,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			border-bottom: 1px solid #dfdfdf;
 		}
 	}
-	
+
 	/* EDIT QUESTION */
 	#add-question-metadata .question-quick-edit  {
 		td  {
@@ -363,11 +379,11 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			}
 		}
 	}
-	
+
 }
 
 @media only screen and (min-width: 768px)  {
-	
+
 	#lesson-quiz  {
 		#add-new-question  {
 			.clearfix;

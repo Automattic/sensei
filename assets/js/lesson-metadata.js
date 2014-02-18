@@ -783,6 +783,14 @@ jQuery(document).ready( function($) {
 		}
 	});
 
+	jQuery( '#add-question-main' ).on( 'click', '.add_answer_option', function() {
+		var question_counter = jQuery( this ).attr( 'rel' );
+		var answer_count = jQuery( this ).closest( 'div' ).find( '.wrong_answer_count' );
+		answer_count++;
+		var html = '<label for="question_' + question_counter + '_wrong_answer_' + answer_count + '"><span>' + woo_localized_data.wrong_colon + '</span> <input type="text" id="question_' + question_counter + '_wrong_answer_' + answer_count + '" name="question_wrong_answers[]" value="" size="25" class="widefat" /></label>';
+		jQuery( this ).before( html );
+	});
+
 	jQuery( '#sortable-questions' ).sortable( {
 		items: "tbody",
 		'start': function (event, ui) {

@@ -727,17 +727,30 @@ class WooThemes_Sensei_Lesson {
 
 			switch ( $question_type ) {
 				case 'multiple-choice':
-					$html .= '<div class="question_default_fields ' . str_replace( ' hidden', '', $question_class ) . '">';
+					$html .= '<div class="question_default_fields multiple-choice-answers ' . str_replace( ' hidden', '', $question_class ) . '">';
+
 						// Right Answer
-						$html .= '<label>' . __( 'Right Answer' , 'woothemes-sensei' ) . '</label> ';
-					    	$html .= '<input type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $right_answer ) ) . '" size="25" class="widefat" />';
-				    	// Wrong Answers - TO DO
-				    	$html .= '<label>' . __( 'Wrong Answers' , 'woothemes-sensei' ) . '</label> ';
-					    	// Setup Wrong Answer HTML
-				    	for ( $i = 0; $i < 4; $i++ ) {
+				    	$answers[] = '<label for="question_' . $question_counter . '_right_answer"><span>' . __( 'Right:' , 'woothemes-sensei' ) . '</span> <input type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $right_answer ) ) . '" size="25" class="widefat" /></label>';
+
+				    	$total_wrong = get_post_meta( $question_id, '_wrong_answer_count', true );
+				    	if( ! $total_wrong ) {
+				    		$total_wrong = 4;
+				    	}
+
+					    // Setup Wrong Answer HTML
+				    	for ( $i = 0; $i < $total_wrong; $i++ ) {
 				    		if ( !isset( $wrong_answers[ $i ] ) ) { $wrong_answers[ $i ] = ''; }
-				    		$html .= '<input type="text" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $wrong_answers[ $i ] ) ) . '" size="25" class="widefat" />';
-					    	} // End For Loop
+				    		$answers[] = '<label for="question_' . $question_counter . '_wrong_answer_' . $i . '"><span>' . __( 'Wrong:' , 'woothemes-sensei' ) . '</span> <input type="text" id="question_' . $question_counter . '_wrong_answer_' . $i . '" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $wrong_answers[ $i ] ) ) . '" size="25" class="widefat" /></label>';
+				    	}
+
+				    	foreach( $answers as $answer ) {
+				    		$html .= $answer;
+				    	}
+
+				    	$html .= '<span class="hidden wrong_answer_count">' . $total_wrong . '</span>';
+
+				    	$html .= '<a class="add_answer_option" rel="' . $question_counter . '">+ ' . __( 'Add answer', 'woothemes-sensei' ) . '</a>';
+
 				    	$html .= '</div>';
 				break;
 				case 'boolean':
@@ -849,7 +862,7 @@ class WooThemes_Sensei_Lesson {
 			wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery', 'jquery-ui-sortable' ), '1.5.0' );
 			wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.3.0' );
 			wp_enqueue_script( 'woosensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery.min.js', array( 'jquery', 'woosensei-lesson-chosen' ), '1.4.6' );
-			$translation_strings = array();
+			$translation_strings = array( 'wrong_colon' => __( 'Wrong:', 'woothemes-sensei' ) );
 			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ) );
 			$data = array_merge( $translation_strings, $ajax_vars );
 			// V2 - Specify variables to be made available to the lesson-metadata.js file.
@@ -990,10 +1003,10 @@ class WooThemes_Sensei_Lesson {
 			$return = $this->lesson_delete_question($question_data);
 		} else {
 			// Save the Question
-			if ( isset( $question_data[ 'quiz_id' ] ) && ( 0 < absint( $question_data[ 'quiz_id' ] ) ) ) {
+			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
 				$current_user = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
-				$question_id = $this->lesson_save_question($question_data);
+				$question_id = $this->lesson_save_question( $question_data );
 				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
 				$question_counter = 0;
 				$question_type = '';
@@ -1207,36 +1220,50 @@ class WooThemes_Sensei_Lesson {
   		    						'post_title' => $post_title,
   		    						'post_type' => $post_type
   		    						);
+
   		// Remove empty values and reindex the array
   		if ( is_array( $question_wrong_answers ) ) {
   			$question_wrong_answers_array = array_values( array_filter( $question_wrong_answers, 'strlen' ) );
   			$question_wrong_answers = array();
   		} // End If Statement
+
   		foreach( $question_wrong_answers_array as $answer ) {
   			if( ! in_array( $answer, $question_wrong_answers ) ) {
   				$question_wrong_answers[] = $answer;
   			}
   		}
+
+  		$wrong_answer_count = count( $question_wrong_answers );
+
   		// Only save if there is a valid title
   		if ( $post_title != '' ) {
   			// Get Quiz ID for the question
   		    $quiz_id = $data[ 'quiz_id' ];
-  		    // Insert or Update the Lesson Quiz
+  		    // Insert or Update the question
   		    if ( 0 < $question_id ) {
 		    	$post_type_args[ 'ID' ] = $question_id;
-		    	$question_id = wp_update_post($post_type_args);
+		    	$question_id = wp_update_post( $post_type_args );
+
 		    	update_post_meta( $question_id, '_quiz_id', $quiz_id );
 		    	update_post_meta( $question_id, '_question_grade', $question_grade );
 		    	update_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	update_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
+		    	update_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
 		    } else {
-				$question_id = wp_insert_post($post_type_args);
+				$question_id = wp_insert_post( $post_type_args );
+				$question_count = intval( $data['question_count'] );
+				++$question_count;
+
+				// Set post meta
 				add_post_meta( $question_id, '_quiz_id', $quiz_id );
 		    	add_post_meta( $question_id, '_question_grade', $question_grade );
 		    	add_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	add_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
+		    	add_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
+		    	add_post_meta( $question_id, '_quiz_question_order', $quiz_id . '000' . $question_count );
+
 		    	// Set the post terms for question-type
-			    wp_set_post_terms( $question_id, array( $question_type ), 'question-type' ); // EXTENSIONS
+			    wp_set_post_terms( $question_id, array( $question_type ), 'question-type' );
 		    } // End If Statement
 		} // End If Statement
   		// Check that the insert or update saved by testing the post id
