@@ -20,19 +20,56 @@ $lesson_complete = $woothemes_sensei->frontend->data->user_lesson_complete;
 $reset_quiz_allowed = $woothemes_sensei->frontend->data->reset_quiz_allowed;
 $quiz_grade_type = $woothemes_sensei->frontend->data->quiz_grade_type;
 
-// Question Meta
+// Question ID
 $question_id = $question_item->ID;
+
+// Question answers
 $question_right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 $question_wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
+
+// Merge right and wrong answers
+array_push( $question_wrong_answers, $question_right_answer );
+
+// Setup answer array
+foreach( $question_wrong_answers as $answer ) {
+    $answer_id = WooThemes_Sensei_Lesson::get_answer_id( $answer );
+    $question_answers[ $answer_id ] = $answer;
+}
+
+$answers_sorted = array();
+$random_order = get_post_meta( $question_id, '_random_order', true );
+if( ! $random_order || ( $random_order && $random_order == 'yes' ) ) {
+    $answers_sorted = $question_answers;
+    shuffle( $answers_sorted );
+} else {
+    $answer_order = array();
+    $answer_order_string = get_post_meta( $question_id, '_answer_order', true );
+    if( $answer_order_string ) {
+        $answer_order = array_filter( explode( ',', $answer_order_string ) );
+    }
+
+    if( count( $answer_order ) > 0 ) {
+        foreach( $answer_order as $answer_id ) {
+            if( $question_answers[ $answer_id ] ) {
+                $answers_sorted[ $answer_id ] = $question_answers[ $answer_id ];
+                unset( $question_answers[ $answer_id ] );
+            }
+        }
+
+        if( count( $question_answers ) > 0 ) {
+            foreach( $question_answers as $id => $answer ) {
+                $answers_sorted[ $id ] = $answer;
+            }
+        }
+    }
+}
+
 $question_grade = get_post_meta( $question_id, '_question_grade', true );
 if( ! $question_grade || $question_grade == '' ) {
     $question_grade = 1;
 }
 $user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $question_id, $current_user->ID );
 
-// Merge right and wrong answers and randomize
-array_push( $question_wrong_answers, $question_right_answer );
-shuffle($question_wrong_answers);
 $question_text = $question_item->post_title;
 
 $answer_message = false;
@@ -66,7 +103,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
     <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
     <ul>
     <?php $count = 0; ?>
-    <?php foreach( $question_wrong_answers as $question ) {
+    <?php foreach( $answers_sorted as $id => $question ) {
         $checked = '';
         $count++;
 

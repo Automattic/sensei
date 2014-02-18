@@ -630,6 +630,11 @@ class WooThemes_Sensei_Lesson {
 			$question_grade = intval( get_post_meta( $question_id, '_question_grade', true ) );
 			if( 0 == $question_grade ) { $question_grade = 1; }
 
+			$random_order = get_post_meta( $question_id, '_random_order', true );
+			if( ! $random_order ) {
+				$random_order = 'yes';
+			}
+
 			if( ! $question_type ) { $question_type = 'multiple-choice'; }
 
 			$html .= '<tbody class="' . $question_class . '">';
@@ -653,6 +658,12 @@ class WooThemes_Sensei_Lesson {
 						    	$html .= '<label>' . __( 'Question grade', 'woothemes-sensei' ) . '</label> ';
 						    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="1" value="' . $question_grade . '" />';
 					    	$html .= '</div>';
+
+					    	if( $question_type == 'multiple-choice' ) {
+					    		$html .= '<div>';
+					    			$html .= '<label for="' . $question_id . '_random_order"><input type="checkbox" name="random_order" class="random_order" id="' . $question_id . '_random_order" value="yes" ' . checked( $random_order, 'yes', false ) . ' /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
+					    		$html .= '</div>';
+					    	}
 					    $html .= '</div>';
 
 					    $html .= $this->quiz_panel_question_field( $question_type, $question_id, $question_counter );
@@ -693,6 +704,10 @@ class WooThemes_Sensei_Lesson {
 	  					// Question grade
 						$html .= '<p><label>' . __( 'Question Grade'  , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="1" value="1" /></p>' . "\n";
+
+			    		$html .= '<div class="add_question_random_order">';
+			    			$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
+			    		$html .= '</div>';
 
 					$html .= '</div>';
 				$html .= '</div>';
@@ -775,13 +790,13 @@ class WooThemes_Sensei_Lesson {
 				    				unset( $answers[ $answer_id ] );
 				    			}
 				    		}
-				    	}
 
-				    	if( count( $answers ) > 0 ) {
-					    	foreach( $answers as $id => $answer ) {
-					    		$answers_sorted[ $id ] = $answer;
-					    	}
-					    }
+				    		if( count( $answers ) > 0 ) {
+						    	foreach( $answers as $id => $answer ) {
+						    		$answers_sorted[ $id ] = $answer;
+						    	}
+						    }
+				    	}
 
 				    	foreach( $answers_sorted as $id => $answer ) {
 				    		$html .= $answer;
@@ -865,7 +880,7 @@ class WooThemes_Sensei_Lesson {
 		die();
 	}
 
-	private function get_answer_id( $answer = '' ) {
+	public function get_answer_id( $answer = '' ) {
 
 		$answer_id = '';
 
@@ -1307,6 +1322,9 @@ class WooThemes_Sensei_Lesson {
   		    // Get answer order
 			$answer_order = $data['answer_order'];
 
+			// Get random order selection
+			$random_order = $data['random_order'];
+
   		    // Insert or Update the question
   		    if ( 0 < $question_id ) {
 		    	$post_type_args[ 'ID' ] = $question_id;
@@ -1318,6 +1336,7 @@ class WooThemes_Sensei_Lesson {
 		    	update_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    	update_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
 		    	update_post_meta( $question_id, '_answer_order', $answer_order );
+		    	update_post_meta( $question_id, '_random_order', $random_order );
 		    } else {
 				$question_id = wp_insert_post( $post_type_args );
 				$question_count = intval( $data['question_count'] );
@@ -1331,6 +1350,7 @@ class WooThemes_Sensei_Lesson {
 		    	add_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
 		    	add_post_meta( $question_id, '_quiz_question_order', $quiz_id . '000' . $question_count );
 		    	add_post_meta( $question_id, '_answer_order', $answer_order );
+		    	add_post_meta( $question_id, '_random_order', $random_order );
 
 		    	// Set the post terms for question-type
 			    wp_set_post_terms( $question_id, array( $question_type ), 'question-type' );

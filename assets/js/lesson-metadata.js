@@ -466,24 +466,31 @@ jQuery(document).ready( function($) {
 		switch ( questionType ) {
 			case 'multiple-choice':
 				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
+				jQuery( '.add_question_random_order' ).show();
 			break;
 			case 'boolean':
 				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).show();
+				jQuery( '.add_question_random_order' ).hide();
 			break;
 			case 'gap-fill':
 				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).show();
+				jQuery( '.add_question_random_order' ).hide();
 			break;
 			case 'essay-paste':
 				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).show();
+				jQuery( '.add_question_random_order' ).hide();
 			break;
 			case 'multi-line':
 				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).show();
+				jQuery( '.add_question_random_order' ).hide();
 			break;
 			case 'single-line':
 				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).show();
+				jQuery( '.add_question_random_order' ).hide();
 			break;
-			default :
-				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
+			case 'file-upload':
+				jQuery( '#add-new-question' ).find( 'div.question_fileupload_fields' ).show();
+				jQuery( '.add_question_random_order' ).hide();
 			break;
 		} // End Switch Statement
 	});
@@ -621,6 +628,12 @@ jQuery(document).ready( function($) {
 	 		var answer_order = jQuery( '#add-new-question' ).find( '.answer_order' ).attr( 'value' );
  			dataToPost += '&' + 'answer_order' + '=' + answer_order;
 
+ 			var random_order = 'no';
+ 			if ( jQuery( 'div#add-new-question' ).find( '.random_order' ).is(':checked') ) {
+ 				random_order = 'yes'
+ 			}
+ 			dataToPost += '&' + 'random_order' + '=' + random_order;
+
 	 		// Perform the AJAX call.
 	 		jQuery.post(
 	 		    ajaxurl,
@@ -656,11 +669,7 @@ jQuery(document).ready( function($) {
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_table_save', function() {
 	 	var dataToPost = '';
 	 	var tableRowId = '';
-	 	var is_disabled = jQuery( this ).attr( 'disabled' );
 	 	var validInput = jQuery.fn.validateQuestionInput( 'edit', jQuery(this) );
-	 	if (typeof is_disabled !== 'undefined' && is_disabled !== false) {
-	 		validInput = false;
-		}
 		if ( validInput ) {
  			// Setup the data to post
  			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
@@ -731,6 +740,12 @@ jQuery(document).ready( function($) {
 
  			var answer_order = jQuery( this ).closest('td').find( '.answer_order' ).attr( 'value' );
  			dataToPost += '&' + 'answer_order' + '=' + answer_order;
+
+ 			var random_order = 'no';
+ 			if ( jQuery( this ).closest('td').find( '.random_order' ).is(':checked') ) {
+ 				random_order = 'yes'
+ 			}
+ 			dataToPost += '&' + 'random_order' + '=' + random_order;
 
  			// Perform the AJAX call.
 			jQuery.post(
@@ -843,7 +858,6 @@ jQuery(document).ready( function($) {
 	jQuery( '.multiple-choice-answers' ).bind( 'sortstop', function ( e, ui ) {
 		jQuery.fn.updateAnswerOrder( jQuery( this ) );
 	});
-
 
 	jQuery( '#sortable-questions' ).sortable( {
 		items: "tbody",
