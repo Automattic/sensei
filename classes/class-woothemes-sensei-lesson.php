@@ -630,9 +630,9 @@ class WooThemes_Sensei_Lesson {
 
 			if( ! $question_type ) { $question_type = 'multiple-choice'; }
 
-			$html .= '<tbody>';
+			$html .= '<tbody class="' . $question_class . '">';
 
-				$html .= '<tr class="' . $question_class . '">';
+				$html .= '<tr>';
 					$html .= '<td class="table-count question-number question-count-column">' . $question_counter . '</td>';
 					$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
 					$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
@@ -643,7 +643,7 @@ class WooThemes_Sensei_Lesson {
 
 				$html .= '<tr class="question-quick-edit hidden">';
 					$html .= '<td colspan="5">';
-
+						$html .= '<span class="hidden question_original_counter">' . $question_counter . '</span>';
 				    	$html .= '<div class="question_required_fields">';
 					    	$html .= '<label>' . __( 'Edit Question', 'woothemes-sensei' ) . '</label> ';
 					    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';

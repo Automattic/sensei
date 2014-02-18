@@ -246,7 +246,7 @@ jQuery(document).ready( function($) {
 		var row_class = 'alternate';
 		jQuery( '#add-question-metadata' ).find( 'td.question-number' ).each( function() {
 			jQuery( this ).text( row_number );
-			jQuery( this ).parent( 'tr' ).removeClass().addClass( row_class );
+			jQuery( this ).closest( 'tbody' ).removeClass().addClass( row_class );
 			if( 'alternate' == row_class ) {
 				row_class = '';
 			} else {
@@ -490,7 +490,7 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_table_edit', function() {
 		// Display the question for edit
-		var questionId = jQuery(this).closest('tr').find('td:first').text();
+		var questionId = jQuery(this).closest('tr').next('tr').find('.question_original_counter').text();
 		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
  		// Hide the add question form and prep the table
 		jQuery( '#add-new-question' ).addClass( 'hidden' );
@@ -612,7 +612,7 @@ jQuery(document).ready( function($) {
 	 		    		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
 						jQuery( '#add-new-question' ).addClass( 'hidden' );
 	 		    		jQuery.fn.updateQuestionCount( 1, '+' );
-	 		    		jQuery( '#add-question-metadata table tbody' ).append( response );
+	 		    		jQuery( '#add-question-metadata table' ).append( response );
 			    		jQuery.fn.resetAddQuestionForm();
 			 			jQuery.fn.checkQuizGradeType( questionType );
 	 		    	}

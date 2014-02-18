@@ -586,21 +586,12 @@ class WooThemes_Sensei_Utils {
 	}
 
 	public function sensei_get_quiz_questions( $quiz_id = 0 ) {
+		global $woothemes_sensei;
 
 		$questions = array();
 
 		if( intval( $quiz_id ) > 0 ) {
-			$args = array(	'post_type' 		=> 'question',
-								'numberposts' 		=> -1,
-								'orderby'         	=> 'ID',
-	    						'order'           	=> 'ASC',
-	    						'meta_key'        	=> '_quiz_id',
-	    						'meta_value'      	=> $quiz_id,
-	    						'post_status'		=> 'publish',
-								'suppress_filters' 	=> 0
-								);
-			$questions = get_posts( $args );
-
+			$questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
 			$questions = WooThemes_Sensei_Utils::array_sort_reorder( $questions );
 		}
 
