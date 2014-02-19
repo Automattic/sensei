@@ -1,5 +1,7 @@
 jQuery(document).ready( function($) {
 
+	var file_frame;
+
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
 	 ***************************************************************************************************/
@@ -275,6 +277,75 @@ jQuery(document).ready( function($) {
 	}
 
 	/**
+	 * Upload media file to questions
+	 *
+	 * @param  object  button        Button that was clicked
+	 * @return void
+	 *
+	 * @since  1.5.0
+	 */
+	jQuery.fn.uploadQuestionMedia = function( button ) {
+		var button_id = button.attr('id');
+		var field_id = button_id.replace( '_button', '' );
+		var preview_id = button_id.replace( '_button', '_preview' );
+		var link_id = button_id.replace( '_button', '_link' );
+		var delete_id = button_id.replace( '_button', '_button_delete' );
+
+		// Create the media frame.
+		file_frame = wp.media.frames.file_frame = wp.media({
+			title: button.data( 'uploader_title' ),
+			button: { text: button.data( 'uploader_button_text' ) },
+			multiple: false
+		});
+
+		// When a file is selected, run a callback.
+		file_frame.on( 'select', function() {
+			attachment = file_frame.state().get('selection').first().toJSON();
+			jQuery( '#' + field_id ).val( attachment.id );
+			console.log(attachment);
+
+			var filetype = attachment.type;
+			var preview_image = false;
+			if( 'image' == filetype ) {
+				preview_image = true;
+			}
+
+			var link_text = '<a class="' + filetype + '" href="' + attachment.url + '" target="_blank">' + attachment.filename + '</a>';
+			jQuery( '#' + link_id ).removeClass( 'hidden' );
+			jQuery( '#' + link_id ).html( link_text );
+
+			if( preview_image ) {
+				jQuery( '#' + preview_id ).removeClass( 'hidden' );
+				jQuery( '#' + preview_id ).attr( 'src', attachment.sizes.thumbnail.url );
+			} else {
+				jQuery( '#' + preview_id ).addClass( 'hidden' );
+				jQuery( '#' + preview_id ).attr( 'src', '' );
+			}
+
+			jQuery( '#' + delete_id ).removeClass( 'hidden' );
+
+		});
+
+		// Open the modal
+		file_frame.open();
+	}
+
+	jQuery.fn.deleteQuestionMedia = function( button ) {
+		var button_id = button.attr('id');
+		var field_id = button_id.replace( '_button_delete', '' );
+		var preview_id = button_id.replace( '_button_delete', '_preview' );
+		var link_id = button_id.replace( '_button_delete', '_link' );
+
+		jQuery( '#' + field_id ).val( '' );
+		jQuery( '#' + preview_id ).addClass( 'hidden' );
+		jQuery( '#' + preview_id ).attr( 'src', '' );
+		jQuery( '#' + link_id ).addClass( 'hidden' );
+		jQuery( '#' + link_id ).html();
+
+		button.addClass( 'hidden' );
+	}
+
+	/**
 	 * Update answer order input field
 	 *
 	 * @since 1.5.0
@@ -523,7 +594,8 @@ jQuery(document).ready( function($) {
 		jQuery( '#add-new-question' ).addClass( 'hidden' );
 	 	jQuery.fn.resetAddQuestionForm();
 	 	jQuery.fn.resetQuestionTable();
-		jQuery( '#question_' + questionId ).closest('tr').removeClass('hidden');
+		// jQuery( '#question_' + questionId ).closest('tr').removeClass('hidden');
+		jQuery(this).closest('tr').next('tr').removeClass('hidden');
 		jQuery( '#question_' + questionId ).focus();
 	});
 
@@ -628,6 +700,9 @@ jQuery(document).ready( function($) {
 	 		var answer_order = jQuery( '#add-new-question' ).find( '.answer_order' ).attr( 'value' );
  			dataToPost += '&' + 'answer_order' + '=' + answer_order;
 
+ 			var question_media = jQuery( '#add-new-question' ).find( '.question_media' ).attr( 'value' );
+ 			dataToPost += '&' + 'question_media' + '=' + question_media;
+
  			var random_order = 'no';
  			if ( jQuery( 'div#add-new-question' ).find( '.random_order' ).is(':checked') ) {
  				random_order = 'yes'
@@ -706,7 +781,7 @@ jQuery(document).ready( function($) {
 				break;
 			} // End Switch Statement
 			// Handle Required Fields
-			jQuery( this ).closest('td').find( 'div.question_required_fields' ).children( 'input' ).each( function() {
+			jQuery( this ).closest('td').find( 'div.question_required_fields' ).find( 'input' ).each( function() {
 	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
 	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
 	 			} // End If Statement
@@ -740,6 +815,9 @@ jQuery(document).ready( function($) {
 
  			var answer_order = jQuery( this ).closest('td').find( '.answer_order' ).attr( 'value' );
  			dataToPost += '&' + 'answer_order' + '=' + answer_order;
+
+ 			var question_media = jQuery( this ).closest('td').find( '.question_media' ).attr( 'value' );
+ 			dataToPost += '&' + 'question_media' + '=' + question_media;
 
  			var random_order = 'no';
  			if ( jQuery( this ).closest('td').find( '.random_order' ).is(':checked') ) {
@@ -869,6 +947,18 @@ jQuery(document).ready( function($) {
 	jQuery( '#sortable-questions' ).bind( 'sortstop', function ( e, ui ) {
 		jQuery.fn.updateQuestionOrder();
 		jQuery.fn.updateQuestionRows();
+	});
+
+	// Set click trigger for file upload
+	jQuery('#add-question-main').on( 'click', '.upload_media_file_button', function( event ) {
+		event.preventDefault();
+		jQuery.fn.uploadQuestionMedia( jQuery( this ) );
+	});
+
+	// Set click trigger for file upload
+	jQuery('#add-question-main').on( 'click', '.delete_media_file_button', function( event ) {
+		event.preventDefault();
+		jQuery.fn.deleteQuestionMedia( jQuery( this ) );
 	});
 
 	/***************************************************************************************************

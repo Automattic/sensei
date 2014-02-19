@@ -317,7 +317,27 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 							}
 						}
 					}
+					&.question-quick-edit  {
+						td  {
+							padding: 20px;
+							.question_grade  {
+								display: block;
+								width: 80px;
+							}
+							.update-question  {
+								clear: both;
+								padding: 10px 0;
+								float: left;
+								width: 100%;
+								text-align: right;
+								.button  {
+									margin: 0 0 0 10px;
+								}
+							}
+						}
+					}
 					.question_table_delete {
+						margin-left: 10px;
 						color: #A00;
 						&:hover {
 							color: red;
@@ -389,27 +409,46 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		}
 	}
 
-	/* EDIT QUESTION */
-	#add-question-metadata .question-quick-edit  {
-		td  {
-			padding: 20px;
-			.question_required_fields  {
-				margin: 0 0 20px;
-				padding: 0 0 20px;
-				border-bottom: 1px solid #dfdfdf;
-				.question_grade  {
-					display: block;
-					width: 80px;
-				}
+	#add-question-main {
+		.upload_media_file_button {
+			margin-right: 10px;
+		}
+		.delete_media_file_button {
+			&.hidden {
+				display: none !important;
 			}
-			.update-question  {
-				clear: both;
-				padding: 10px 0;
-				float: left;
-				width: 100%;
-				text-align: right;
-				.button  {
-					margin: 0 0 0 10px;
+		}
+		.question_media_preview {
+			margin-top: 10px;
+			padding: 2px;
+			border: 1px solid #BDBDBD;
+		}
+		.question_media_link {
+			a {
+				display: inline-block;
+				margin-top: 4px;
+				text-decoration: none !important;
+				&:before {
+					font-family: dashicons;
+					content: "\f123";
+					vertical-align: middle;
+					font-size: 150%;
+					margin-right: 10px;
+				}
+				&.image {
+					&:before {
+						content: "\f128";
+					}
+				}
+				&.video {
+					&:before {
+						content: "\f126";
+					}
+				}
+				&.audio {
+					&:before {
+						content: "\f127";
+					}
 				}
 			}
 		}

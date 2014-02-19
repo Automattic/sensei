@@ -630,6 +630,32 @@ class WooThemes_Sensei_Lesson {
 			$question_grade = intval( get_post_meta( $question_id, '_question_grade', true ) );
 			if( 0 == $question_grade ) { $question_grade = 1; }
 
+			$question_media = get_post_meta( $question_id, '_question_media', true );
+			$question_media_type = $question_media_thumb = $question_media_link = $question_media_filename = '';
+			$question_media_thumb_class = $question_media_link_class = $question_media_delete_class = 'hidden';
+			if( 0 < intval( $question_media ) ) {
+				$mimetype = get_post_mime_type( $question_media );
+				if( $mimetype ) {
+					$mimetype_array = explode( '/', $mimetype);
+					if( isset( $mimetype_array[0] ) && $mimetype_array[0] ) {
+						$question_media_delete_class = '';
+						$question_media_type = $mimetype_array[0];
+						if( 'image' == $question_media_type ) {
+							$question_media_thumb = wp_get_attachment_thumb_url( $question_media );
+							if( $question_media_thumb ) {
+								$question_media_thumb_class = '';
+							}
+						}
+						$question_media_url = wp_get_attachment_url( $question_media );
+						if( $question_media_url ) {
+							$question_media_filename = basename( $question_media_url );
+							$question_media_link = '<a href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_filename . '</a>';
+							$question_media_link_class = '';
+						}
+					}
+				}
+			}
+
 			$random_order = get_post_meta( $question_id, '_random_order', true );
 			if( ! $random_order ) {
 				$random_order = 'yes';
@@ -645,25 +671,43 @@ class WooThemes_Sensei_Lesson {
 					$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 					$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', 'True/False' ), $question_type ) );
 					$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
-					$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a>&nbsp;&nbsp;&nbsp;<a title="' . esc_attr( __( 'Delete Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Delete', 'woothemes-sensei' ) ) . '</a></td>';
+					$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Delete Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Delete', 'woothemes-sensei' ) ) . '</a></td>';
 				$html .= '</tr>';
 
 				$html .= '<tr class="question-quick-edit hidden">';
 					$html .= '<td colspan="5">';
 						$html .= '<span class="hidden question_original_counter">' . $question_counter . '</span>';
 				    	$html .= '<div class="question_required_fields">';
-					    	$html .= '<label>' . __( 'Edit Question', 'woothemes-sensei' ) . '</label> ';
-					    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
+
+					    	// Question title
 					    	$html .= '<div>';
-						    	$html .= '<label>' . __( 'Question grade', 'woothemes-sensei' ) . '</label> ';
+						    	$html .= '<label for="question_' . $question_counter . '">' . __( 'Question:', 'woothemes-sensei' ) . '</label> ';
+						    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
+					    	$html .= '</div>';
+
+					    	// Question grade
+					    	$html .= '<div>';
+						    	$html .= '<label for="question_' . $question_counter . '_grade">' . __( 'Question grade:', 'woothemes-sensei' ) . '</label> ';
 						    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="1" value="' . $question_grade . '" />';
 					    	$html .= '</div>';
 
+					    	// Random order
 					    	if( $question_type == 'multiple-choice' ) {
 					    		$html .= '<div>';
-					    			$html .= '<label for="' . $question_id . '_random_order"><input type="checkbox" name="random_order" class="random_order" id="' . $question_id . '_random_order" value="yes" ' . checked( $random_order, 'yes', false ) . ' /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
+					    			$html .= '<label for="' . $question_counter . '_random_order"><input type="checkbox" name="random_order" class="random_order" id="' . $question_counter . '_random_order" value="yes" ' . checked( $random_order, 'yes', false ) . ' /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
 					    		$html .= '</div>';
 					    	}
+
+					    	// Question media
+					    	$html .= '<div>';
+						    	$html .= '<label for="question_' . $question_counter . '_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
+						    	$html .= '<button id="question_' . $question_counter . '_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Upload file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Upload file', 'woothemes-sensei' ) . '</button>';
+						    	$html .= '<button id="question_' . $question_counter . '_media_button_delete" class="delete_media_file_button button-secondary ' . $question_media_delete_class . '">' . __( 'Delete file', 'woothemes-sensei' ) . '</button>';
+						    	$html .= '<span id="question_' . $question_counter . '_media_link" class="question_media_link ' . $question_media_link_class . ' ' . $question_media_type . '">' . $question_media_link . '</span>';
+						    	$html .= '<br/><img id="question_' . $question_counter . '_media_preview" class="question_media_preview ' . $question_media_thumb_class . '" src="' . $question_media_thumb . '" /><br/>';
+						    	$html .= '<input type="hidden" id="question_' . $question_counter . '_media" class="question_media" name="question_media" value="' . $question_media . '" />';
+					    	$html .= '</div>';
+
 					    $html .= '</div>';
 
 					    $html .= $this->quiz_panel_question_field( $question_type, $question_id, $question_counter );
@@ -697,17 +741,28 @@ class WooThemes_Sensei_Lesson {
 							} // End For Loop
 						$html .= '</select>' . "\n";
 
-						// Question
-						$html .= '<p><label>' . __( 'Question'  , 'woothemes-sensei' ) . '</label> ';
+						// Question title
+						$html .= '<p><label>' . __( 'Question:'  , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" /></p>';
 
 	  					// Question grade
-						$html .= '<p><label>' . __( 'Question Grade'  , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<p><label>' . __( 'Question Grade:'  , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="1" value="1" /></p>' . "\n";
 
-			    		$html .= '<div class="add_question_random_order">';
+						// Random order
+						$html .= '<p class="add_question_random_order">';
 			    			$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
-			    		$html .= '</div>';
+			    		$html .= '</p>';
+
+			    		// Question media
+						$html .= '<p>';
+					    	$html .= '<label for="question_add_new_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
+					    	$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Upload file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Upload file', 'woothemes-sensei' ) . '</button>';
+					    	$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . __( 'Delete file', 'woothemes-sensei' ) . '</button>';
+					    	$html .= '<span id="question_add_new_media_link" class="question_media_link hidden"></span>';
+					    	$html .= '<br/><img id="question_add_new_media_preview" class="question_media_preview hidden" src="" /><br/>';
+					    	$html .= '<input type="hidden" id="question_add_new_media" class="question_media" name="question_media" value="" />';
+				    	$html .= '</p>';
 
 					$html .= '</div>';
 				$html .= '</div>';
@@ -1319,6 +1374,9 @@ class WooThemes_Sensei_Lesson {
   			// Get Quiz ID for the question
   		    $quiz_id = $data['quiz_id'];
 
+  		    // Get question media
+			$question_media = $data['question_media'];
+
   		    // Get answer order
 			$answer_order = $data['answer_order'];
 
@@ -1330,11 +1388,13 @@ class WooThemes_Sensei_Lesson {
 		    	$post_type_args[ 'ID' ] = $question_id;
 		    	$question_id = wp_update_post( $post_type_args );
 
+		    	// Update poast meta
 		    	update_post_meta( $question_id, '_quiz_id', $quiz_id );
 		    	update_post_meta( $question_id, '_question_grade', $question_grade );
 		    	update_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	update_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    	update_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
+		    	update_post_meta( $question_id, '_question_media', $question_media );
 		    	update_post_meta( $question_id, '_answer_order', $answer_order );
 		    	update_post_meta( $question_id, '_random_order', $random_order );
 		    } else {
@@ -1349,6 +1409,7 @@ class WooThemes_Sensei_Lesson {
 		    	add_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    	add_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
 		    	add_post_meta( $question_id, '_quiz_question_order', $quiz_id . '000' . $question_count );
+		    	add_post_meta( $question_id, '_question_media', $question_media );
 		    	add_post_meta( $question_id, '_answer_order', $answer_order );
 		    	add_post_meta( $question_id, '_random_order', $random_order );
 
