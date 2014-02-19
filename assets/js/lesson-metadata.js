@@ -965,6 +965,11 @@ jQuery(document).ready( function($) {
 		jQuery.fn.deleteQuestionMedia( jQuery( this ) );
 	});
 
+	jQuery('#add-question-main').on( 'click', '.question_media_preview', function( event ) {
+		event.preventDefault();
+		jQuery.fn.uploadQuestionMedia( jQuery( this ).closest( 'div' ).find( '.upload_media_file_button' ) );
+	});
+
 	/***************************************************************************************************
 	 * 	5 - Load Chosen Dropdowns.
 	 ***************************************************************************************************/

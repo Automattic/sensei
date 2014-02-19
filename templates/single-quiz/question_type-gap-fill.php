@@ -42,7 +42,8 @@ if( 0 < intval( $question_media ) ) {
             $question_media_title = $attachment->post_title;
             $question_media_description = $attachment->post_content;
             if( 'image' == $question_media_type ) {
-                $attachment_src = wp_get_attachment_image_src( $question_media, 'medium' );
+                $image_size = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
+                $attachment_src = wp_get_attachment_image_src( $question_media, $image_size );
                 $question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank"><img src="' . $attachment_src[0] . '" width="' . $attachment_src[1] . '" height="' . $attachment_src[2] . '" /></a>';
             } else {
                 $question_media_filename = basename( $question_media_url );
