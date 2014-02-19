@@ -631,7 +631,7 @@ class WooThemes_Sensei_Lesson {
 			if( 0 == $question_grade ) { $question_grade = 1; }
 
 			$question_media = get_post_meta( $question_id, '_question_media', true );
-			$question_media_type = $question_media_thumb = $question_media_link = $question_media_filename = '';
+			$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = '';
 			$question_media_thumb_class = $question_media_link_class = $question_media_delete_class = 'hidden';
 			if( 0 < intval( $question_media ) ) {
 				$mimetype = get_post_mime_type( $question_media );
@@ -648,8 +648,14 @@ class WooThemes_Sensei_Lesson {
 						}
 						$question_media_url = wp_get_attachment_url( $question_media );
 						if( $question_media_url ) {
-							$question_media_filename = basename( $question_media_url );
-							$question_media_link = '<a href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_filename . '</a>';
+							$attachment = get_post( $question_media );
+							$question_media_title = $attachment->post_title;
+
+							if( ! $question_media_title ) {
+								$question_media_filename = basename( $question_media_url );
+								$question_media_title = $question_media_filename;
+							}
+							$question_media_link = '<a class="' . $question_media_type . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_title . '</a>';
 							$question_media_link_class = '';
 						}
 					}
@@ -702,8 +708,8 @@ class WooThemes_Sensei_Lesson {
 					    	$html .= '<div>';
 						    	$html .= '<label for="question_' . $question_counter . '_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
 						    	$html .= '<button id="question_' . $question_counter . '_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Upload file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Upload file', 'woothemes-sensei' ) . '</button>';
-						    	$html .= '<button id="question_' . $question_counter . '_media_button_delete" class="delete_media_file_button button-secondary ' . $question_media_delete_class . '">' . __( 'Delete file', 'woothemes-sensei' ) . '</button>';
-						    	$html .= '<span id="question_' . $question_counter . '_media_link" class="question_media_link ' . $question_media_link_class . ' ' . $question_media_type . '">' . $question_media_link . '</span>';
+						    	$html .= '<button id="question_' . $question_counter . '_media_button_delete" class="delete_media_file_button button-secondary ' . $question_media_delete_class . '">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
+						    	$html .= '<span id="question_' . $question_counter . '_media_link" class="question_media_link ' . $question_media_link_class . '">' . $question_media_link . '</span>';
 						    	$html .= '<br/><img id="question_' . $question_counter . '_media_preview" class="question_media_preview ' . $question_media_thumb_class . '" src="' . $question_media_thumb . '" /><br/>';
 						    	$html .= '<input type="hidden" id="question_' . $question_counter . '_media" class="question_media" name="question_media" value="' . $question_media . '" />';
 					    	$html .= '</div>';
@@ -758,7 +764,7 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<p>';
 					    	$html .= '<label for="question_add_new_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
 					    	$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Upload file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Upload file', 'woothemes-sensei' ) . '</button>';
-					    	$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . __( 'Delete file', 'woothemes-sensei' ) . '</button>';
+					    	$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
 					    	$html .= '<span id="question_add_new_media_link" class="question_media_link hidden"></span>';
 					    	$html .= '<br/><img id="question_add_new_media_preview" class="question_media_preview hidden" src="" /><br/>';
 					    	$html .= '<input type="hidden" id="question_add_new_media" class="question_media" name="question_media" value="" />';

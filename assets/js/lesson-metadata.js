@@ -302,7 +302,6 @@ jQuery(document).ready( function($) {
 		file_frame.on( 'select', function() {
 			attachment = file_frame.state().get('selection').first().toJSON();
 			jQuery( '#' + field_id ).val( attachment.id );
-			console.log(attachment);
 
 			var filetype = attachment.type;
 			var preview_image = false;
@@ -310,7 +309,12 @@ jQuery(document).ready( function($) {
 				preview_image = true;
 			}
 
-			var link_text = '<a class="' + filetype + '" href="' + attachment.url + '" target="_blank">' + attachment.filename + '</a>';
+			var media_title = attachment.title;
+			if( ! media_title || media_title == '' ) {
+				media_title = attachment.filename;
+			}
+
+			var link_text = '<a class="' + filetype + '" href="' + attachment.url + '" target="_blank">' + media_title + '</a>';
 			jQuery( '#' + link_id ).removeClass( 'hidden' );
 			jQuery( '#' + link_id ).html( link_text );
 
