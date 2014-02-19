@@ -633,6 +633,7 @@ class WooThemes_Sensei_Lesson {
 			$question_media = get_post_meta( $question_id, '_question_media', true );
 			$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = '';
 			$question_media_thumb_class = $question_media_link_class = $question_media_delete_class = 'hidden';
+			$question_media_add_button = __( 'Add file', 'woothemes-sensei' );
 			if( 0 < intval( $question_media ) ) {
 				$mimetype = get_post_mime_type( $question_media );
 				if( $mimetype ) {
@@ -658,6 +659,8 @@ class WooThemes_Sensei_Lesson {
 							$question_media_link = '<a class="' . $question_media_type . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_title . '</a>';
 							$question_media_link_class = '';
 						}
+
+						$question_media_add_button = __( 'Change file', 'woothemes-sensei' );
 					}
 				}
 			}
@@ -707,7 +710,7 @@ class WooThemes_Sensei_Lesson {
 					    	// Question media
 					    	$html .= '<div>';
 						    	$html .= '<label for="question_' . $question_counter . '_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
-						    	$html .= '<button id="question_' . $question_counter . '_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Upload file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Upload file', 'woothemes-sensei' ) . '</button>';
+						    	$html .= '<button id="question_' . $question_counter . '_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . $question_media_add_button . '</button>';
 						    	$html .= '<button id="question_' . $question_counter . '_media_button_delete" class="delete_media_file_button button-secondary ' . $question_media_delete_class . '">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
 						    	$html .= '<span id="question_' . $question_counter . '_media_link" class="question_media_link ' . $question_media_link_class . '">' . $question_media_link . '</span>';
 						    	$html .= '<br/><img id="question_' . $question_counter . '_media_preview" class="question_media_preview ' . $question_media_thumb_class . '" src="' . $question_media_thumb . '" /><br/>';
@@ -763,7 +766,7 @@ class WooThemes_Sensei_Lesson {
 			    		// Question media
 						$html .= '<p>';
 					    	$html .= '<label for="question_add_new_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
-					    	$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Upload file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Upload file', 'woothemes-sensei' ) . '</button>';
+					    	$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Add file', 'woothemes-sensei' ) . '</button>';
 					    	$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
 					    	$html .= '<span id="question_add_new_media_link" class="question_media_link hidden"></span>';
 					    	$html .= '<br/><img id="question_add_new_media_preview" class="question_media_preview hidden" src="" /><br/>';
@@ -1001,7 +1004,7 @@ class WooThemes_Sensei_Lesson {
 			wp_enqueue_script( 'woosensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata.js', array( 'jquery', 'jquery-ui-sortable' ), '1.5.0' );
 			wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.3.0' );
 			wp_enqueue_script( 'woosensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery.min.js', array( 'jquery', 'woosensei-lesson-chosen' ), '1.4.6' );
-			$translation_strings = array( 'wrong_colon' => __( 'Wrong:', 'woothemes-sensei' ) );
+			$translation_strings = array( 'wrong_colon' => __( 'Wrong:', 'woothemes-sensei' ), 'add_file' => __( 'Add file', 'woothemes-sensei' ), 'change_file' => __( 'Change file', 'woothemes-sensei' ) );
 			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ) );
 			$data = array_merge( $translation_strings, $ajax_vars );
 			// V2 - Specify variables to be made available to the lesson-metadata.js file.

@@ -326,6 +326,7 @@ jQuery(document).ready( function($) {
 				jQuery( '#' + preview_id ).attr( 'src', '' );
 			}
 
+			button.text( woo_localized_data.change_file );
 			jQuery( '#' + delete_id ).removeClass( 'hidden' );
 
 		});
@@ -336,6 +337,7 @@ jQuery(document).ready( function($) {
 
 	jQuery.fn.deleteQuestionMedia = function( button ) {
 		var button_id = button.attr('id');
+		var add_button_id = button_id.replace( '_button_delete', '_button' );
 		var field_id = button_id.replace( '_button_delete', '' );
 		var preview_id = button_id.replace( '_button_delete', '_preview' );
 		var link_id = button_id.replace( '_button_delete', '_link' );
@@ -346,6 +348,7 @@ jQuery(document).ready( function($) {
 		jQuery( '#' + link_id ).addClass( 'hidden' );
 		jQuery( '#' + link_id ).html();
 
+		jQuery( '#' + add_button_id ).text( woo_localized_data.add_file );
 		button.addClass( 'hidden' );
 	}
 
