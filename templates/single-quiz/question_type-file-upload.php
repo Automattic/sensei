@@ -35,10 +35,10 @@ $user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $
 
 // Get uploaded file
 $attachment_id = $user_quizzes[ $question_id ];
-$question_media_url = $question_media_filename = '';
+$answer_media_url = $answer_media_filename = '';
 if( 0 < intval( $attachment_id ) ) {
-    $question_media_url = wp_get_attachment_url( $attachment_id );
-    $question_media_filename = basename( $question_media_url );
+    $answer_media_url = wp_get_attachment_url( $attachment_id );
+    $answer_media_filename = basename( $answer_media_url );
 }
 
 // Get max upload file size, formatted for display
@@ -113,20 +113,19 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 }
 
 ?>
-<li class="essay-paste">
+<li class="file-upload">
     <span><?php echo esc_html( stripslashes( $question_text ) ); ?> <span>[<?php echo $question_grade; ?>]</span></span>
     <?php if( $question_media_link ) { ?>
         <div class="question_media_display">
             <?php echo $question_media_link; ?>
-            <aside>
-                <?php if( $question_media_title ) { ?>
-                    <strong><?php echo $question_media_title; ?></strong>
-                    <br/>
-                <?php } ?>
-                <?php if( $question_media_description ) { ?>
-                    <?php echo $question_media_description; ?>
-                <?php } ?>
-            </aside>
+            <dl>
+            <?php if( $question_media_title ) { ?>
+                <dt><?php echo $question_media_title; ?></dt>
+            <?php } ?>
+            <?php if( $question_media_description ) { ?>
+                <?php echo '<dd>' . $question_media_description . '</dd>'; ?>
+            <?php } ?>
+            </dl>
         </div>
     <?php } ?>
     <?php if( $answer_message ) { ?>
@@ -141,8 +140,8 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
     <?php if( $question_description ) { ?>
         <p><?php echo $question_description; ?></p>
     <?php } ?>
-    <?php if ( $question_media_url && $question_media_filename ) { ?>
-        <p class="submitted_file"><?php printf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $question_media_url ) . '" target="_blank">' . esc_html( $question_media_filename ) . '</a>' ); ?></p>
+    <?php if ( $answer_media_url && $answer_media_filename ) { ?>
+        <p class="submitted_file"><?php printf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' ); ?></p>
         <?php if( ! $lesson_complete ) { ?>
             <aside class="reupload_notice"><?php _e( 'Uploading a new file will replace your existing one:', 'woothemes-sensei' ); ?></aside>
         <?php } ?>

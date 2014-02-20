@@ -95,15 +95,14 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
     <?php if( $question_media_link ) { ?>
         <div class="question_media_display">
             <?php echo $question_media_link; ?>
-            <aside>
+            <dl>
                 <?php if( $question_media_title ) { ?>
-                    <strong><?php echo $question_media_title; ?></strong>
-                    <br/>
+                    <dt><?php echo $question_media_title; ?></dt>
                 <?php } ?>
                 <?php if( $question_media_description ) { ?>
-                    <?php echo $question_media_description; ?>
+                    <?php echo '<dd>' . $question_media_description . '</dd>'; ?>
                 <?php } ?>
-            </aside>
+            </dl>
         </div>
     <?php } ?>
     <?php if( $answer_message ) { ?>
