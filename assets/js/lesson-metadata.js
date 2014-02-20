@@ -47,7 +47,7 @@ jQuery(document).ready( function($) {
  	    	}
  	    } else if ( 'edit' == action ) {
  			// Check for empty questions
- 			var tableRowId = jqueryObject.parent('div').parent('td').parent('tr').prev('tr').find('td:first').text();
+ 			var tableRowId = jqueryObject.closest('tr').prev('tr').find('td:first').text();
  			if ( jQuery( '#question_' + tableRowId ).val().replace(/^\s+|\s+$/g, "").length != 0 ) {
  	    		return true;
  	    	} else {
@@ -806,13 +806,17 @@ jQuery(document).ready( function($) {
  					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
  				} // End If Statement
 	 		});
+
 	 		// Handle Question Textarea Fields
-	 		if ( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
-	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
-	 		} // End If Statement
 	 		if ( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
 	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
 	 		} // End If Statement
+	 		if ( divFieldsClass == 'question_fileupload_fields' ) {
+	 			jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).each( function() {
+	 				dataToPost += '&' +  jQuery(this).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).val() );
+	 			});
+	 		} // End If Statement
+
 			dataToPost += '&' + 'question_type' + '=' + questionType;
 			questionGrade = jQuery( this ).closest('td').find( 'input.question_grade' ).val();
  			dataToPost += '&' + 'question_grade' + '=' + questionGrade;

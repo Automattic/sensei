@@ -1,12 +1,12 @@
 <?php
 /**
- * The Template for displaying Essay Paste Questions.
+ * The Template for displaying File Upload Questions.
  *
- * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-essay-paste.php
+ * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-file-upload.php
  *
  * @author      WooThemes
  * @package     Sensei/Templates
- * @version     1.3.0
+ * @version     1.5.0
  */
 
 global $post, $woothemes_sensei, $current_user;
@@ -23,6 +23,10 @@ $reset_quiz_allowed = $woothemes_sensei->frontend->data->reset_quiz_allowed;
 $question_id = $question_item->ID;
 $question_right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 $question_wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
+$question_description = '';
+if( isset( $question_wrong_answers[0] ) ) {
+    $question_description = $question_wrong_answers[0];
+}
 $question_grade = get_post_meta( $question_id, '_question_grade', true );
 if( ! $question_grade || $question_grade == '' ) {
     $question_grade = 1;
@@ -66,9 +70,6 @@ if( 0 < intval( $question_media ) ) {
     }
 }
 
-// Merge right and wrong answers and randomize
-array_push( $question_wrong_answers, $question_right_answer );
-shuffle($question_wrong_answers);
 $question_text = $question_item->post_title;
 
 $answer_message = false;
@@ -108,11 +109,14 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
     <?php if( $answer_message ) { ?>
         <div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
             <span><?php echo $answer_message; ?></span>
-            <?php //if( $answer_notes ) { ?>
+            <?php if( $answer_notes ) { ?>
                 <div class="notes"><?php echo $answer_notes; ?></div>
-            <?php //} ?>
+            <?php } ?>
         </div>
     <?php } ?>
     <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
-    <?php WooThemes_Sensei_Utils::sensei_text_editor( $user_quizzes[ $question_id ], 'essayquestion' . $question_id, 'sensei_question[' . $question_id . ']' ); ?>
+    <?php if( $question_description ) { ?>
+        <p><?php echo $question_description; ?></p>
+    <?php } ?>
+    <input type="file" name="file_upload[<?php echo $question_id; ?>]" />
 </li>

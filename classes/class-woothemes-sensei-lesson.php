@@ -891,7 +891,7 @@ class WooThemes_Sensei_Lesson {
 					if ( isset( $gapfill_array[1] ) ) { $gapfill_gap = $gapfill_array[1]; } else { $gapfill_gap = ''; }
 					if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { $gapfill_post = ''; }
 					$html .= '<div class="question_gapfill_fields ' . $question_class . '">';
-							// Fill in the Gaps
+						// Fill in the Gaps
 						$html .= '<label>' . __( 'Text before the Gap' , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' . $gapfill_pre . '" size="25" class="widefat gapfill-field" />';
 	  					$html .= '<label>' . __( 'The Gap' , 'woothemes-sensei' ) . '</label> ';
@@ -902,13 +902,6 @@ class WooThemes_Sensei_Lesson {
 	  					$html .= '<p class="gapfill-preview">' . $gapfill_pre . '&nbsp;<u>' . $gapfill_gap . '</u>&nbsp;' . $gapfill_post . '</p>';
 	  				$html .= '</div>';
 				break;
-				case 'essay-paste':
-					$html .= '<div class="question_essay_fields ' . $question_class . '">';
-							// Guides for grading
-						$html .= '<label>' . __( 'Guide/Teacher Notes for grading the Essay' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<textarea id="question_' . $question_counter . '_add_question_right_answer_essay" name="add_question_right_answer_essay" rows="15" cols="40" class="widefat">' . $right_answer . '</textarea>';
-					$html .= '</div>';
-				break;
 				case 'multi-line':
 					$html .= '<div class="question_multiline_fields ' . $question_class . '">';
 						// Guides for grading
@@ -918,14 +911,41 @@ class WooThemes_Sensei_Lesson {
 							$field_id = 'add_question_right_answer_multiline';
 						}
 						$html .= '<label>' . __( 'Guide/Teacher Notes for grading the answer' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<textarea id="' . $field_id . '" name="add_question_right_answer_multiline" rows="3" cols="40" class="widefat">' . $right_answer . '</textarea>';
+						$html .= '<textarea id="' . $field_id . '" name="add_question_right_answer_multiline" rows="15" cols="40" class="widefat">' . $right_answer . '</textarea>';
 					$html .= '</div>';
 				break;
 				case 'single-line':
 					$html .= '<div class="question_singleline_fields ' . $question_class . '">';
 						// Recommended Answer
+						if( $question_counter ) {
+							$field_id = 'question_' . $question_counter . '_add_question_right_answer_singleline';
+						} else {
+							$field_id = 'add_question_right_answer_singleline';
+						}
 						$html .= '<label>' . __( 'Recommended Answer' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_singleline" name="add_question_right_answer_singleline" value="' . $right_answer . '" size="25" class="widefat" />';
+						$html .= '<input type="text" id="' . $field_id . '" name="add_question_right_answer_singleline" value="' . $right_answer . '" size="25" class="widefat" />';
+					$html .= '</div>';
+				break;
+				case 'file-upload':
+					$html .= '<div class="question_fileupload_fields ' . $question_class . '">';
+						if( $question_counter ) {
+							$right_field_id = 'question_' . $question_counter . '_add_question_right_answer_fileupload';
+							$wrong_field_id = 'question_' . $question_counter . '_add_question_wrong_answer_fileupload';
+						} else {
+							$right_field_id = 'add_question_right_answer_fileupload';
+							$wrong_field_id = 'add_question_wrong_answer_fileupload';
+						}
+
+						$wrong_answer = '';
+						if( isset( $wrong_answers[0] ) ) {
+							$wrong_answer = $wrong_answers[0];
+						}
+						$html .= '<label>' . __( 'Description for student explaining what needs to be uploaded' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<textarea id="' . $wrong_field_id . '" name="add_question_wrong_answer_fileupload" rows="7" cols="40" class="widefat">' . $wrong_answer . '</textarea>';
+
+						// Guides for grading
+						$html .= '<label>' . __( 'Guide/Teacher Notes for grading the upload' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<textarea id="' . $right_field_id . '" name="add_question_right_answer_fileupload" rows="7" cols="40" class="widefat">' . $right_answer . '</textarea>';
 					$html .= '</div>';
 				break;
 			}
@@ -1335,10 +1355,6 @@ class WooThemes_Sensei_Lesson {
 		if ( isset( $data[ 'add_question_right_answer_gapfill_pre' ] ) && ( '' != $data[ 'add_question_right_answer_gapfill_pre' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_gapfill_pre' ] . '|' . $data[ 'add_question_right_answer_gapfill_gap' ] . '|' . $data[ 'add_question_right_answer_gapfill_post' ];
 		} // End If Statement
-		// Handle Essay Fields
-		if ( isset( $data[ 'add_question_right_answer_essay' ] ) && ( '' != $data[ 'add_question_right_answer_essay' ] ) ) {
-			$question_right_answer = $data[ 'add_question_right_answer_essay' ];
-		} // End If Statement
 		// Handle Multi Line Fields
 		if ( isset( $data[ 'add_question_right_answer_multiline' ] ) && ( '' != $data[ 'add_question_right_answer_multiline' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_multiline' ];
@@ -1347,6 +1363,14 @@ class WooThemes_Sensei_Lesson {
 		if ( isset( $data[ 'add_question_right_answer_singleline' ] ) && ( '' != $data[ 'add_question_right_answer_singleline' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_singleline' ];
 		} // End If Statement
+		// Handle File Upload Fields
+		if ( isset( $data[ 'add_question_right_answer_fileupload' ] ) && ( '' != $data[ 'add_question_right_answer_fileupload' ] ) ) {
+			$question_right_answer = $data[ 'add_question_right_answer_fileupload' ];
+		} // End If Statement
+		if ( isset( $data[ 'add_question_wrong_answer_fileupload' ] ) && ( '' != $data[ 'add_question_wrong_answer_fileupload' ] ) ) {
+			$question_wrong_answers = array( $data[ 'add_question_wrong_answer_fileupload' ] );
+		} // End If Statement
+
 		// Handle Question Grade
 		if ( isset( $data[ 'question_grade' ] ) && ( '' != $data[ 'question_grade' ] ) ) {
 			$question_grade = $data[ 'question_grade' ];
