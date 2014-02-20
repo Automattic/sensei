@@ -550,6 +550,11 @@ class WooThemes_Sensei_Updates {
 
 		foreach( $questions as $question ) {
 			wp_set_object_terms( $question->ID, 'multi-line', 'question-type', false );
+
+			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
+			if( 0 < intval( $quiz_id ) ) {
+				add_post_meta( $question->ID, '_quiz_question_order', $quiz_id . '0000', true );
+			}
 		}
 		return true;
 	} // End convert_essay_paste_questions
