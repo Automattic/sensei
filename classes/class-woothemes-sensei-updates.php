@@ -55,7 +55,7 @@ class WooThemes_Sensei_Updates {
 													'manual' 	=> array()
 												),
 								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => 'Convert essay paste questions into multi-line questions', 'desc' => 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.' ) ),
-													'manual' 	=> array()
+													'manual' 	=> array( 'set_random_question_order' => array( 'title' => 'Set all quizzes to have a random question order', 'desc' => 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.' ))
 												),
 							);
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
@@ -558,6 +558,46 @@ class WooThemes_Sensei_Updates {
 		}
 		return true;
 	} // End convert_essay_paste_questions
+
+	/**
+	 * Set all quizzes to have a random quetion order
+	 *
+	 * @since  1.5.0
+	 * @return boolean
+	 */
+	public function set_random_question_order( $n = 10, $offset = 0 ) {
+
+		// Get Total Number of Updates to run
+		$quiz_count_object = wp_count_posts( 'quiz' );
+		$quiz_count_published = $quiz_count_object->publish;
+
+		// Calculate if this is the last page
+		if ( 0 == $offset ) {
+			$current_page = 1;
+		} else {
+			$current_page = intval( $offset / $n );
+		} // End If Statement
+		$total_pages = intval( $quiz_count_published / $n );
+
+		$args = array(	'post_type' 		=> 'quiz',
+						'post_status'		=> 'any',
+						'numberposts' 		=> $n,
+						'offset'			=> $offset,
+						'suppress_filters' 	=> 0
+						);
+		$quizzes = get_posts( $args );
+
+		foreach( $quizzes as $quiz ) {
+			update_post_meta( $quiz->ID, '_random_question_order', 'yes' );
+		}
+
+		if ( $current_page == $total_pages ) {
+			return true;
+		} else {
+			return false;
+		} // End If Statement
+
+	} // End set_random_question_order()
 
 } // End Class
 ?>
