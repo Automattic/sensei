@@ -54,6 +54,9 @@ class WooThemes_Sensei_Updates {
 								'1.4.0' => array( 	'auto' 		=> array( 'update_question_grade_points' => array( 'title' => 'Update question grade points', 'desc' => 'Sets all question grade points to the default value of \'1\'.' ) ),
 													'manual' 	=> array()
 												),
+								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => 'Convert essay paste questions into multi-line', 'desc' => 'Converts all essay paste questions into multi-line questions.' ) ),
+													'manual' 	=> array()
+												),
 							);
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
 		$this->version = get_option( $this->token . '-version' );
@@ -508,7 +511,7 @@ class WooThemes_Sensei_Updates {
 	 * Add default question grade points for v1.4.0
 	 *
 	 * @since  1.4.0
-	 * @return void
+	 * @return boolean
 	 */
 	public function update_question_grade_points() {
 		$args = array(	'post_type' 		=> 'question',
@@ -523,6 +526,33 @@ class WooThemes_Sensei_Updates {
 		}
 		return true;
 	} // End update_question_grade_points
+
+	/**
+	 * Convert all essay paste questions into multi-line for v1.5.0
+	 *
+	 * @since  1.5.0
+	 * @return boolean
+	 */
+	public function convert_essay_paste_questions() {
+		$args = array(	'post_type' 		=> 'question',
+						'numberposts' 		=> -1,
+						'post_status'		=> 'publish',
+						'tax_query'			=> array(
+							array(
+								'taxonomy'		=> 'question-type',
+								'terms'			=> 'essay-paste',
+								'field'			=> 'slug'
+							)
+						),
+						'suppress_filters' 	=> 0
+						);
+		$questions = get_posts( $args );
+
+		foreach( $questions as $question ) {
+			wp_set_object_terms( $question->ID, 'multi-line', 'question-type', false );
+		}
+		return true;
+	} // End convert_essay_paste_questions
 
 } // End Class
 ?>

@@ -119,12 +119,12 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
         <div class="question_media_display">
             <?php echo $question_media_link; ?>
             <dl>
-            <?php if( $question_media_title ) { ?>
-                <dt><?php echo $question_media_title; ?></dt>
-            <?php } ?>
-            <?php if( $question_media_description ) { ?>
-                <?php echo '<dd>' . $question_media_description . '</dd>'; ?>
-            <?php } ?>
+                <?php if( $question_media_title ) { ?>
+                    <dt><?php echo $question_media_title; ?></dt>
+                <?php } ?>
+                <?php if( $question_media_description ) { ?>
+                    <?php echo '<dd>' . $question_media_description . '</dd>'; ?>
+                <?php } ?>
             </dl>
         </div>
     <?php } ?>
