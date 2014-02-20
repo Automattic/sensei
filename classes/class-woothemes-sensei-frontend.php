@@ -1383,7 +1383,7 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_quiz_action_buttons()
 
 	public function sensei_lesson_meta( $post_id = 0 ) {
-		global $woothemes_sensei;
+		global $post, $woothemes_sensei;
 		if ( 0 < intval( $post_id ) ) {
 		$lesson_course_id = absint( get_post_meta( $post_id, '_lesson_course', true ) );
 		?><section class="entry">
