@@ -54,7 +54,7 @@ class WooThemes_Sensei_Updates {
 								'1.4.0' => array( 	'auto' 		=> array( 'update_question_grade_points' => array( 'title' => 'Update question grade points', 'desc' => 'Sets all question grade points to the default value of \'1\'.' ) ),
 													'manual' 	=> array()
 												),
-								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => 'Convert essay paste questions into multi-line', 'desc' => 'Converts all essay paste questions into multi-line questions.' ) ),
+								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => 'Convert essay paste questions into multi-line questions', 'desc' => 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.' ) ),
 													'manual' 	=> array()
 												),
 							);
