@@ -352,6 +352,7 @@ class WooThemes_Sensei_Utils {
 		$answers_saved = false;
 
 		if( $submitted && intval( $user_id ) > 0 ) {
+
     		foreach( $submitted as $question_id => $answer ) {
 
     			// Get question type
@@ -360,9 +361,12 @@ class WooThemes_Sensei_Utils {
     				$question_type = $type->slug;
     			}
 
+    			if( ! $question_type ) {
+    				$question_type = 'multiple-choice';
+    			}
+
     			// Sanitise answer
     			switch( $question_type ) {
-    				case 'essay-paste': $answer = nl2br( stripslashes( $answer ) ); break;
     				case 'multi-line': $answer = nl2br( stripslashes( $answer ) ); break;
     				case 'single-line': $answer = stripslashes( $answer ); break;
     				case 'gap-fill': $answer = stripslashes( $answer ); break;
@@ -382,10 +386,70 @@ class WooThemes_Sensei_Utils {
 								);
 				$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
     		}
+
+    		// Handle file upload questions
+    		if( isset( $_FILES ) ) {
+				foreach( $_FILES as $field => $file ) {
+					if( strpos( $field, 'file_upload_' ) !== false ) {
+						$question_id = str_replace( 'file_upload_', '', $field );
+						if( $file && $question_id ) {
+							$attachment_id = self::upload_file( $file );
+							if( $attachment_id ) {
+								$args = array(
+								    'post_id' => $question_id,
+								    'username' => $user->user_login,
+								    'user_email' => $user->user_email,
+								    'user_url' => $user->user_url,
+								    'data' => base64_encode( $attachment_id ),
+								    'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
+								    'parent' => 0,
+								    'user_id' => $user_id,
+								    'action' => 'update'
+								);
+								$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+							}
+						}
+					}
+				}
+			}
     	}
 
     	return $answers_saved;
 	} // End sensei_save_quiz_answers()
+
+	public function upload_file( $file = array() ) {
+
+		require_once( ABSPATH . 'wp-admin/includes/admin.php' );
+
+        $file_return = wp_handle_upload( $file, array('test_form' => false ) );
+
+        if( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
+            return false;
+        } else {
+
+            $filename = $file_return['file'];
+
+            $attachment = array(
+                'post_mime_type' => $file_return['type'],
+                'post_title' => preg_replace( '/\.[^.]+$/', '', basename( $filename ) ),
+                'post_content' => '',
+                'post_status' => 'inherit',
+                'guid' => $file_return['url']
+            );
+
+            $attachment_id = wp_insert_attachment( $attachment, $file_return['url'] );
+
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
+            $attachment_data = wp_generate_attachment_metadata( $attachment_id, $filename );
+            wp_update_attachment_metadata( $attachment_id, $attachment_data );
+
+            if( 0 < intval( $attachment_id ) ) {
+            	return $attachment_id;
+            }
+        }
+
+        return false;
+	}
 
 	/**
 	 * Grade quiz automatically
@@ -586,21 +650,12 @@ class WooThemes_Sensei_Utils {
 	}
 
 	public function sensei_get_quiz_questions( $quiz_id = 0 ) {
+		global $woothemes_sensei;
 
 		$questions = array();
 
 		if( intval( $quiz_id ) > 0 ) {
-			$args = array(	'post_type' 		=> 'question',
-								'numberposts' 		=> -1,
-								'orderby'         	=> 'ID',
-	    						'order'           	=> 'ASC',
-	    						'meta_key'        	=> '_quiz_id',
-	    						'meta_value'      	=> $quiz_id,
-	    						'post_status'		=> 'publish',
-								'suppress_filters' 	=> 0
-								);
-			$questions = get_posts( $args );
-
+			$questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
 			$questions = WooThemes_Sensei_Utils::array_sort_reorder( $questions );
 		}
 

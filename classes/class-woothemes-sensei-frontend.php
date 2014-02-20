@@ -1009,7 +1009,7 @@ class WooThemes_Sensei_Frontend {
 
 		    		// Save Quiz Answers
 		    		if( isset( $_POST['sensei_question'] ) ) {
-			    		$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
+						$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
 			    	}
 
 					if ( $activity_logged ) {

@@ -250,6 +250,51 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		display: inline-block;
 		margin: 0 0 .53em;
 	}
+	.multiple-choice-answers {
+		label {
+			display: block;
+			margin: 0;
+			cursor: move;
+			span {
+				width: 70px;
+				display: inline-block;
+				&:before {
+					font-family: dashicons;
+					content: "\f333";
+					font-size: 110%;
+					vertical-align: bottom;
+					color: #BDBDBD;
+					margin-right: 5px;
+				}
+			}
+			input {
+				width: auto;
+  				width: calc(~"100% - 100px");
+			}
+			.remove_answer_option {
+				cursor: pointer;
+				color: #a00;
+				&:before {
+					font-family: dashicons;
+					content: "\f335";
+					font-size: 150%;
+					vertical-align: middle;
+				}
+				&:hover {
+					color: red;
+				}
+			}
+		}
+		.add_answer_option {
+			cursor: pointer;
+			&:before {
+				font-family: dashicons;
+				content: "\f132";
+				vertical-align: middle;
+				margin-right: 5px;
+			}
+		}
+	}
 	.save-note  {
 		margin: 1.5em 0 1em;
 		clear: both;
@@ -257,10 +302,71 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	}
 	#add-question-metadata  {
 		table  {
+			tbody {
+				cursor: move;
+				tr {
+					td {
+						&.question-number {
+							&:before {
+								font-family: dashicons;
+								content: "\f333";
+								font-size: 170%;
+								vertical-align: bottom;
+								color: #BDBDBD;
+								margin-right: 13px;
+							}
+						}
+					}
+					&.question-quick-edit  {
+						td  {
+							padding: 20px;
+							.question_grade  {
+								display: block;
+								width: 80px;
+							}
+							.update-question  {
+								clear: both;
+								padding: 10px 0;
+								float: left;
+								width: 100%;
+								text-align: right;
+								.button  {
+									margin: 0 0 0 10px;
+								}
+							}
+						}
+					}
+					.question_table_delete {
+						margin-left: 10px;
+						color: #A00;
+						&:hover {
+							color: red;
+						}
+					}
+				}
+				&#no-questions-message {
+					cursor: pointer;
+				}
+				&.ui-sortable-helper {
+					width: 100%;
+					zoom: 1;
+					filter: alpha(opacity=70);
+					opacity: 0.7;
+					background: #F9F9F9;
+				}
+				&.ui-sortable-placeholder {
+					visibility: visible !important;
+					background: #EBEBEB !important;
+					td {
+						border: 3px dashed #DDDDDD;
+					}
+				}
+			}
 			tr  {
 				th {
 					&.question-count-column {
 						width: 45px;
+						padding-left: 45px;
 					}
 				}
 				td  {
@@ -302,38 +408,57 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			border-bottom: 1px solid #dfdfdf;
 		}
 	}
-	
-	/* EDIT QUESTION */
-	#add-question-metadata .question-quick-edit  {
-		td  {
-			padding: 20px;
-			background: #fff;
-			.question_required_fields  {
-				margin: 0 0 20px;
-				padding: 0 0 20px;
-				border-bottom: 1px solid #dfdfdf;
-				.question_grade  {
-					display: block;
-					width: 80px;
-				}
+
+	#add-question-main {
+		.upload_media_file_button {
+			margin: 0 10px 10px 0;
+		}
+		.delete_media_file_button {
+			&.hidden {
+				display: none !important;
 			}
-			.update-question  {
-				clear: both;
-				padding: 10px 0;
-				float: left;
-				width: 100%;
-				text-align: right;
-				.button  {
-					margin: 0 0 0 10px;
+		}
+		.question_media_preview {
+			cursor: pointer;
+			margin-top: 10px;
+			padding: 2px;
+			border: 1px solid #BDBDBD;
+		}
+		.question_media_link {
+			a {
+				display: inline-block;
+				margin-top: 4px;
+				text-decoration: none !important;
+				&:before {
+					font-family: dashicons;
+					content: "\f123";
+					vertical-align: middle;
+					font-size: 150%;
+					margin-right: 10px;
+				}
+				&.image {
+					&:before {
+						content: "\f128";
+					}
+				}
+				&.video {
+					&:before {
+						content: "\f126";
+					}
+				}
+				&.audio {
+					&:before {
+						content: "\f127";
+					}
 				}
 			}
 		}
 	}
-	
+
 }
 
 @media only screen and (min-width: 768px)  {
-	
+
 	#lesson-quiz  {
 		#add-new-question  {
 			.clearfix;
@@ -361,10 +486,10 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				}
 				.question_multiline_fields,
 				.question_singleline_fields,
-				.question_essay_fields,
 				.question_gapfill_fields,
 				.question_boolean_fields,
-				.question_default_fields  {
+				.question_default_fields,
+				.question_fileupload_fields  {
 					float: right;
 					width: 60%;
 				}

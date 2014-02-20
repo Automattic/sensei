@@ -31,6 +31,43 @@ if( ! $question_grade || $question_grade == '' ) {
 }
 $user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $question_id, $current_user->ID );
 
+// Question media
+$question_media = get_post_meta( $question_id, '_question_media', true );
+$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = $question_media_description = '';
+if( 0 < intval( $question_media ) ) {
+    $mimetype = get_post_mime_type( $question_media );
+    if( $mimetype ) {
+        $mimetype_array = explode( '/', $mimetype);
+        if( isset( $mimetype_array[0] ) && $mimetype_array[0] ) {
+            $question_media_type = $mimetype_array[0];
+            $question_media_url = wp_get_attachment_url( $question_media );
+            $attachment = get_post( $question_media );
+            $question_media_title = $attachment->post_title;
+            $question_media_description = $attachment->post_content;
+            switch( $question_media_type ) {
+                case 'image':
+                    $image_size = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
+                    $attachment_src = wp_get_attachment_image_src( $question_media, $image_size );
+                    $question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank"><img src="' . $attachment_src[0] . '" width="' . $attachment_src[1] . '" height="' . $attachment_src[2] . '" /></a>';
+                break;
+
+                case 'audio':
+                    $question_media_link = wp_audio_shortcode( array( 'src' => $question_media_url ) );
+                break;
+
+                case 'video':
+                    $question_media_link = wp_video_shortcode( array( 'src' => $question_media_url ) );
+                break;
+
+                default:
+                    $question_media_filename = basename( $question_media_url );
+                    $question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_filename . '</a>';
+                break;
+            }
+        }
+    }
+}
+
 // Merge right and wrong answers and randomize
 array_push( $question_wrong_answers, $question_right_answer );
 shuffle($question_wrong_answers);
@@ -56,6 +93,19 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 ?>
 <li class="boolean">
     <span><?php echo esc_html( stripslashes( $question_text ) ); ?> <span>[<?php echo $question_grade; ?>]</span></span>
+    <?php if( $question_media_link ) { ?>
+        <div class="question_media_display">
+            <?php echo $question_media_link; ?>
+            <dl>
+                <?php if( $question_media_title ) { ?>
+                    <dt><?php echo $question_media_title; ?></dt>
+                <?php } ?>
+                <?php if( $question_media_description ) { ?>
+                    <?php echo '<dd>' . $question_media_description . '</dd>'; ?>
+                <?php } ?>
+            </dl>
+        </div>
+    <?php } ?>
     <?php if( $answer_message ) { ?>
         <div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
             <span><?php echo $answer_message; ?></span>

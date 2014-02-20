@@ -1,12 +1,12 @@
 <?php
 /**
- * The Template for displaying Multi Line Questions.
+ * The Template for displaying File Upload Questions.
  *
- * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-multi-line.php
+ * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-file-upload.php
  *
  * @author      WooThemes
  * @package     Sensei/Templates
- * @version     1.3.0
+ * @version     1.5.0
  */
 
 global $post, $woothemes_sensei, $current_user;
@@ -23,11 +23,38 @@ $reset_quiz_allowed = $woothemes_sensei->frontend->data->reset_quiz_allowed;
 $question_id = $question_item->ID;
 $question_right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 $question_wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
+$question_description = '';
+if( isset( $question_wrong_answers[0] ) ) {
+    $question_description = $question_wrong_answers[0];
+}
 $question_grade = get_post_meta( $question_id, '_question_grade', true );
 if( ! $question_grade || $question_grade == '' ) {
     $question_grade = 1;
 }
 $user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $question_id, $current_user->ID );
+
+// Get uploaded file
+$attachment_id = $user_quizzes[ $question_id ];
+$answer_media_url = $answer_media_filename = '';
+if( 0 < intval( $attachment_id ) ) {
+    $answer_media_url = wp_get_attachment_url( $attachment_id );
+    $answer_media_filename = basename( $answer_media_url );
+}
+
+// Get max upload file size, formatted for display
+// Code copied from wp-admin/includes/media.php:1515
+$upload_size_unit = $max_upload_size = wp_max_upload_size();
+$sizes = array( 'KB', 'MB', 'GB' );
+for ( $u = -1; $upload_size_unit > 1024 && $u < count( $sizes ) - 1; $u++ ) {
+    $upload_size_unit /= 1024;
+}
+if ( $u < 0 ) {
+    $upload_size_unit = 0;
+    $u = 0;
+} else {
+    $upload_size_unit = (int) $upload_size_unit;
+}
+$max_upload_size = sprintf( __( 'Maximum upload file size: %d%s' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
 
 // Question media
 $question_media = get_post_meta( $question_id, '_question_media', true );
@@ -66,9 +93,6 @@ if( 0 < intval( $question_media ) ) {
     }
 }
 
-// Merge right and wrong answers and randomize
-array_push( $question_wrong_answers, $question_right_answer );
-shuffle($question_wrong_answers);
 $question_text = $question_item->post_title;
 
 $answer_message = false;
@@ -89,7 +113,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 }
 
 ?>
-<li class="multi-line">
+<li class="file-upload">
     <span><?php echo esc_html( stripslashes( $question_text ) ); ?> <span>[<?php echo $question_grade; ?>]</span></span>
     <?php if( $question_media_link ) { ?>
         <div class="question_media_display">
@@ -113,5 +137,17 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
         </div>
     <?php } ?>
     <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
-    <?php WooThemes_Sensei_Utils::sensei_text_editor( $user_quizzes[ $question_id ], 'textquestion' . $question_id, 'sensei_question[' . $question_id . ']' ); ?>
+    <?php if( $question_description ) { ?>
+        <p><?php echo $question_description; ?></p>
+    <?php } ?>
+    <?php if ( $answer_media_url && $answer_media_filename ) { ?>
+        <p class="submitted_file"><?php printf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' ); ?></p>
+        <?php if( ! $lesson_complete ) { ?>
+            <aside class="reupload_notice"><?php _e( 'Uploading a new file will replace your existing one:', 'woothemes-sensei' ); ?></aside>
+        <?php } ?>
+    <?php } ?>
+    <?php if( ! $lesson_complete ) { ?>
+        <input type="file" name="file_upload_<?php echo $question_id; ?>" />
+        <aside class="max_upload_size"><?php echo $max_upload_size; ?></aside>
+    <?php } ?>
 </li>
