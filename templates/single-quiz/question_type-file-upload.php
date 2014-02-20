@@ -33,6 +33,29 @@ if( ! $question_grade || $question_grade == '' ) {
 }
 $user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $question_id, $current_user->ID );
 
+// Get uploaded file
+$attachment_id = $user_quizzes[ $question_id ];
+$question_media_url = $question_media_filename = '';
+if( 0 < intval( $attachment_id ) ) {
+    $question_media_url = wp_get_attachment_url( $attachment_id );
+    $question_media_filename = basename( $question_media_url );
+}
+
+// Get max upload file size, formatted for display
+// Code copied from wp-admin/includes/media.php:1515
+$upload_size_unit = $max_upload_size = wp_max_upload_size();
+$sizes = array( 'KB', 'MB', 'GB' );
+for ( $u = -1; $upload_size_unit > 1024 && $u < count( $sizes ) - 1; $u++ ) {
+    $upload_size_unit /= 1024;
+}
+if ( $u < 0 ) {
+    $upload_size_unit = 0;
+    $u = 0;
+} else {
+    $upload_size_unit = (int) $upload_size_unit;
+}
+$max_upload_size = sprintf( __( 'Maximum upload file size: %d%s' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
+
 // Question media
 $question_media = get_post_meta( $question_id, '_question_media', true );
 $question_media_type = $question_media_thumb = $question_media_link = $question_media_title = $question_media_description = '';
@@ -118,5 +141,14 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
     <?php if( $question_description ) { ?>
         <p><?php echo $question_description; ?></p>
     <?php } ?>
-    <input type="file" name="file_upload[<?php echo $question_id; ?>]" />
+    <?php if ( $question_media_url && $question_media_filename ) { ?>
+        <p class="submitted_file"><?php printf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $question_media_url ) . '" target="_blank">' . esc_html( $question_media_filename ) . '</a>' ); ?></p>
+        <?php if( ! $lesson_complete ) { ?>
+            <aside class="reupload_notice"><?php _e( 'Uploading a new file will replace your existing one:', 'woothemes-sensei' ); ?></aside>
+        <?php } ?>
+    <?php } ?>
+    <?php if( ! $lesson_complete ) { ?>
+        <input type="file" name="file_upload_<?php echo $question_id; ?>" />
+        <aside class="max_upload_size"><?php echo $max_upload_size; ?></aside>
+    <?php } ?>
 </li>
