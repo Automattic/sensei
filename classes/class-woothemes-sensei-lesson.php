@@ -66,6 +66,8 @@ class WooThemes_Sensei_Lesson {
 			add_action( 'wp_ajax_nopriv_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
 			add_action( 'wp_ajax_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
+			add_action( 'wp_ajax_lesson_update_question_order_random', array( $this, 'lesson_update_question_order_random' ) );
+			add_action( 'wp_ajax_nopriv_lesson_update_question_order_random', array( $this, 'lesson_update_question_order_random' ) );
 			add_action( 'wp_ajax_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
 			add_action( 'wp_ajax_nopriv_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
 		} else {
@@ -472,6 +474,11 @@ class WooThemes_Sensei_Lesson {
 			}
 		}
 
+		$random_question_order = get_post_meta( $quiz_id, '_random_question_order', true );
+		if( ! $random_question_order || '' == $random_question_order ) {
+			$random_question_order = 'no';
+		}
+
 		// Quiz Panel CSS Class
 		$quiz_class = '';
 		if ( 0 == $quiz_id ) {
@@ -495,6 +502,10 @@ class WooThemes_Sensei_Lesson {
 					$html .= '<input type="hidden" id="quiz_grade_type_disabled" name="quiz_grade_type_disabled" value="' . esc_attr( $quiz_grade_type_disabled ) . '" /> ';
 					$html .= '<input type="checkbox" id="quiz_grade_type" name="quiz_grade_type"' . checked( $quiz_grade_type, 'auto', false ) . ' ' . disabled( $quiz_grade_type_disabled, 'disabled', false ) . ' /> ';
 					$html .= '<label class="grade-label" for="quiz_grade_type">' . __( 'Grade quiz automatically', 'woothemes-sensei' ) . '</label>';
+
+					// Random question order
+					$html .= '<input type="checkbox" id="random_question_order" name="random_question_order"' . checked( $random_question_order, 'yes', false ) . ' /> ';
+					$html .= '<label class="random-label" for="random_question_order">' . __( 'Randomise question order', 'woothemes-sensei' ) . '</label>';
 
 			$html .= '</p>';
 
@@ -1025,7 +1036,7 @@ class WooThemes_Sensei_Lesson {
 			wp_enqueue_script( 'woosensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery.min.js', array( 'jquery' ), '1.3.0' );
 			wp_enqueue_script( 'woosensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery.min.js', array( 'jquery', 'woosensei-lesson-chosen' ), '1.4.6' );
 			$translation_strings = array( 'wrong_colon' => __( 'Wrong:', 'woothemes-sensei' ), 'add_file' => __( 'Add file', 'woothemes-sensei' ), 'change_file' => __( 'Change file', 'woothemes-sensei' ) );
-			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ) );
+			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ), 'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ) );
 			$data = array_merge( $translation_strings, $ajax_vars );
 			// V2 - Specify variables to be made available to the lesson-metadata.js file.
 			wp_localize_script( 'woosensei-lesson-metadata', 'woo_localized_data', $data );
@@ -1230,6 +1241,22 @@ class WooThemes_Sensei_Lesson {
 			}
 			update_post_meta( $quiz_data['quiz_id'], '_question_order', $questions );
 		}
+		die();
+	}
+
+	public function lesson_update_question_order_random() {
+		//Add nonce security to the request
+		if ( isset($_POST['lesson_update_question_order_random_nonce']) ) {
+			$nonce = esc_html( $_POST['lesson_update_question_order_random_nonce'] );
+		} // End If Statement
+		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_random_nonce' ) ) {
+			die('');
+		} // End If Statement
+		// Parse POST data
+		$data = $_POST['data'];
+		$quiz_data = array();
+		parse_str($data, $quiz_data);
+		update_post_meta( $quiz_data['quiz_id'], '_random_question_order', $quiz_data['random_question_order'] );
 		die();
 	}
 
@@ -1574,6 +1601,13 @@ class WooThemes_Sensei_Lesson {
 		$posts_array = array();
 
 		$this->set_default_question_order( $quiz_id );
+
+		if ( ! is_admin() ) {
+			$random_order = get_post_meta( $quiz_id, '_random_question_order', true );
+			if( $random_order && $random_order == 'yes' ) {
+				$orderby = 'rand';
+			}
+		}
 
 		$post_args = array(	'post_type' 		=> 'question',
 							'numberposts' 		=> -1,

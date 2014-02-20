@@ -238,6 +238,31 @@ jQuery(document).ready( function($) {
  	}
 
  	/**
+ 	 * Save rnadom question order for quiz
+ 	 *
+ 	 * @since 1.5.0
+ 	 * access public
+ 	 */
+ 	jQuery.fn.saveQuestionOrderRandom = function() {
+
+ 		var random_question_order = jQuery( 'input#random_question_order' ).is( ':checked' ) ? 'yes' : 'no';
+
+ 		var dataToPost = 'random_question_order' + '=' + random_question_order;
+ 		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+ 		jQuery.post(
+			ajaxurl,
+			{
+				action : 'lesson_update_question_order_random',
+				lesson_update_question_order_random_nonce : woo_localized_data.lesson_update_question_order_random_nonce,
+				data : dataToPost
+			},
+			function( response ) {}
+		);
+		return false;
+ 	}
+
+ 	/**
 	 * Reset question numbers and row highlighting
 	 *
 	 * @since 1.5.0
@@ -906,6 +931,10 @@ jQuery(document).ready( function($) {
 		}
 	});
 
+	jQuery( '#add-quiz-metadata' ).on( 'change', '#random_question_order', function() {
+		jQuery.fn.saveQuestionOrderRandom();
+	});
+
 	jQuery( '#add-question-main' ).on( 'blur', '.question_answer', function() {
 		var answer_value = jQuery( this ).val();
 		var answer_field = jQuery( this );
@@ -960,13 +989,11 @@ jQuery(document).ready( function($) {
 		jQuery.fn.updateQuestionRows();
 	});
 
-	// Set click trigger for file upload
 	jQuery('#add-question-main').on( 'click', '.upload_media_file_button', function( event ) {
 		event.preventDefault();
 		jQuery.fn.uploadQuestionMedia( jQuery( this ) );
 	});
 
-	// Set click trigger for file upload
 	jQuery('#add-question-main').on( 'click', '.delete_media_file_button', function( event ) {
 		event.preventDefault();
 		jQuery.fn.deleteQuestionMedia( jQuery( this ) );

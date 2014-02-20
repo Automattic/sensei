@@ -961,15 +961,8 @@ class WooThemes_Sensei_Frontend {
 		// Default grade
 		$grade = 0;
 
-		// See if we must randomize questions
-		$random_quiz_questions = $woothemes_sensei->settings->settings[ 'quiz_randomize_questions' ];
-		if ( isset( $random_quiz_questions ) && ( $random_quiz_questions ) ) {
-		    // Get Quiz Questions
-		    $lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post->ID, 'publish', 'rand', '' );
-		} else {
-		    // Get Quiz Questions
-		    $lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post->ID );
-		}
+		// Get Quiz Questions
+	    $lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post->ID );
 
 		// Get Answers and Grade
 		$user_quizzes = $this->sensei_get_user_quiz_answers( $post->ID );
