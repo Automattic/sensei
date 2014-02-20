@@ -375,24 +375,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 * @param int $wc_post_id (default: 0)
 	 * @return void
 	 */
-	function sensei_check_if_product_is_in_cart( $wc_post_id = 0 ) {
+	function sensei_check_if_product_is_in_cart( $wc_product_id = 0 ) {
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
 			global $woocommerce;
 
-			$return = false;
-
-			if ( 0 < $wc_post_id ) {
-				$cart_id = $woocommerce->cart->generate_cart_id( $wc_post_id );
-				$test = $woocommerce->cart->find_product_in_cart( $cart_id );
-		    	if ( $test === $cart_id ) {
-		    		$return = true;
-		    	} // End If Statement
+			if ( 0 < $wc_product_id ) {
+				$product = get_product( $wc_product_id );
+				$parent_id = '';
+				if( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) {
+					$wc_product_id = $product->parent->id;
+				}
+				foreach( $woocommerce->cart->get_cart() as $cart_item_key => $values ) {
+					$_product = $values['data'];
+					if( $wc_product_id == $_product->id ) {
+						return true;
+					}
+				}
 		    } // End If Statement
-
-			return $return;
-		} else {
-			return false;
 		}
+
+		return false;
 	} // End sensei_check_if_product_is_in_cart()
 
 	/**
