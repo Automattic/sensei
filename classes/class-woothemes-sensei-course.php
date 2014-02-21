@@ -843,7 +843,7 @@ class WooThemes_Sensei_Course {
 
 		return $posts_array;
 
-	} // End course_lessons()
+	} // End course_lessons_completed()
 
 
 	/**
