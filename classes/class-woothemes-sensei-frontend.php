@@ -1363,11 +1363,42 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_login_form() {
 		?><div id="my-courses">
+
+			<h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
+
+			<form method="post" class="login">
+
+				<?php do_action( 'sensei_login_form_start' ); ?>
+
+				<p class="form-row form-row-wide">
+					<label for="username"><?php _e( 'Username or email address', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+					<input type="text" class="input-text" name="username" id="username" />
+				</p>
+				<p class="form-row form-row-wide">
+					<label for="password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+					<input class="input-text" type="password" name="password" id="password" />
+				</p>
+
+				<?php do_action( 'sensei_login_form_fields' ); ?>
+
+				<p class="form-row">
+					<?php //wp_nonce_field( 'sensei-login' ); ?>
+					<input type="submit" class="button" name="login" value="<?php _e( 'Login', 'woothemes-sensei' ); ?>" /> 
+					<label for="rememberme" class="inline">
+						<input name="rememberme" type="checkbox" id="rememberme" value="forever" /> <?php _e( 'Remember me', 'woothemes-sensei' ); ?>
+					</label>
+				</p>
+
+				<?php do_action( 'sensei_login_form_end' ); ?>
+
+			</form>
+
 			<?php
-			// Display Login Form and Registration Link
-			wp_login_form( array( 'redirect' => get_permalink() ) );
-			wp_register();
+			if ( get_option('users_can_register') ) {
+				echo '<div class="register-link"><a href="' . esc_url( wp_registration_url() ) . '">' . __( 'Register', 'woothemes-sensei' ) . '</a></div>';
+			}
 			?>
+
 		</div><?php
 	} // End sensei_login_form()
 
