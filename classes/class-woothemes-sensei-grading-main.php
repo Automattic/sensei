@@ -206,7 +206,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		if( isset( $_GET['grading_status'] ) && strlen( $_GET['grading_status'] ) > 0 && $_GET['grading_status'] != 'all' ) {
 			$grading_status = $_GET['grading_status'];
 		}
-		if( ! $grading_status && $_GET['grading_status'] != 'all' ) {
+		if( ! $grading_status && isset( $_GET['grading_status'] ) && $_GET['grading_status'] != 'all' ) {
 			$grading_status = 'ungraded';
 		}
 
