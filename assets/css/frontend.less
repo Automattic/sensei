@@ -26,7 +26,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 }
 
 /* Courses */
-#main .course  {
+#main .course, #main .course-container {
 	.clearfix();
 	position: relative;
 	margin: 0 0 1.618em;
@@ -73,7 +73,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			margin: 0 1em 0 0;
 		}
 	}
-	.course-lessons  {
+	.course-lessons, .module-lessons  {
 		> header  {
 			margin: 2.244em 0 1.618em;
 			padding: 2.244em 0 0;
@@ -126,6 +126,13 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	}
 }
 
+#main .course-container .module-lessons {
+	> header {
+		margin: 0 0 1.618em;
+		padding: 0;
+		border-top: 0;
+	}
+}
 /* Status Indicators */
 
 .course, .course-lessons, .course-container {
