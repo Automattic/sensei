@@ -508,6 +508,14 @@ class WooThemes_Sensei_Lesson {
 		// Build the HTML to Output
 		$message_class = '';
 
+		// Setup Questions Query
+		$questions = array();
+		if ( 0 < $quiz_id ) {
+			$questions = $this->lesson_quiz_questions( $quiz_id );
+		} // End If Statement
+
+		$question_count = count( $questions );
+
 		// Inner DIV
 		$html .= '<div id="add-quiz-metadata"' . $quiz_class . '>';
 
@@ -519,23 +527,23 @@ class WooThemes_Sensei_Lesson {
 
 				// Quiz Pass Percentage
 				$html .= '<label for="quiz_passmark">' . __( 'Quiz passmark percentage' , 'woothemes-sensei' ) . '</label> ';
-				$html .= '<input type="number" id="quiz_passmark" name="quiz_passmark" value="' . esc_attr( $lesson_quiz_passmark ) . '" class="small-text" /> ';
+				$html .= '<input type="number" min="0" max="100" id="quiz_passmark" name="quiz_passmark" value="' . esc_attr( $lesson_quiz_passmark ) . '" class="small-text" /> ';
 
 				// Number of questions to show
 				$html .= '<label for="show_questions">' . __( 'Number of questions to show' , 'woothemes-sensei' ) . '</label> ';
-				$html .= '<input type="number" title="' . __( 'This setting will allow you to show a random selection of questions from this quiz each time a student views it.', 'woothemes-sensei' ) . '" id="show_questions" name="show_questions" value="' . esc_attr( $show_questions ) . '" placeholder="' . __( 'All', 'woothemes-sensei' ) . '" class="small-text" />';
+				$html .= '<input type="number" min="0" max="' . $question_count . '" title="' . __( 'This setting will allow you to show a random selection of questions from this quiz each time a student views it.', 'woothemes-sensei' ) . '" id="show_questions" name="show_questions" value="' . esc_attr( $show_questions ) . '" placeholder="' . __( 'All', 'woothemes-sensei' ) . '" class="small-text" />';
 
-			$html .= '<p>';
-			$html .= '</p>';
+			// $html .= '<p>';
+			// $html .= '</p>';
 
 				// Quiz grade type
 				$html .= '<input type="hidden" id="quiz_grade_type_disabled" name="quiz_grade_type_disabled" value="' . esc_attr( $quiz_grade_type_disabled ) . '" /> ';
-				$html .= '<input type="checkbox" id="quiz_grade_type" name="quiz_grade_type"' . checked( $quiz_grade_type, 'auto', false ) . ' ' . disabled( $quiz_grade_type_disabled, 'disabled', false ) . ' /> ';
-				$html .= '<label class="grade-label" for="quiz_grade_type">' . __( 'Grade quiz automatically', 'woothemes-sensei' ) . '</label>';
+				$html .= '<label class="grade-label" for="quiz_grade_type"><input type="checkbox" id="quiz_grade_type" name="quiz_grade_type"' . checked( $quiz_grade_type, 'auto', false ) . ' ' . disabled( $quiz_grade_type_disabled, 'disabled', false ) . ' /> ';
+				$html .= '' . __( 'Grade quiz automatically', 'woothemes-sensei' ) . '</label>';
 
 				// Random question order
-				$html .= '<input type="checkbox" id="random_question_order" name="random_question_order"' . checked( $random_question_order, 'yes', false ) . ' /> ';
-				$html .= '<label class="random-label" for="random_question_order">' . __( 'Randomise question order', 'woothemes-sensei' ) . '</label>';
+				$html .= '<label class="random-label" for="random_question_order"><input type="checkbox" id="random_question_order" name="random_question_order"' . checked( $random_question_order, 'yes', false ) . ' /> ';
+				$html .= '' . __( 'Randomise question order', 'woothemes-sensei' ) . '</label>';
 
 			$html .= '</p>';
 
@@ -552,16 +560,6 @@ class WooThemes_Sensei_Lesson {
 		$html .= '<div id="add-question-main"' . $quiz_class . '>';
 			// Inner DIV
 			$html .= '<div id="add-question-metadata">';
-
-				// Setup Questions Query
-				$questions = array();
-				if ( 0 < $quiz_id ) {
-					$questions = $this->lesson_quiz_questions( $quiz_id );
-				} // End If Statement
-
-				$question_count = count( $questions );
-
-				$this->question_order = '';
 
 				// Count of questions
 				$html .= '<input type="hidden" name="question_counter" id="question_counter" value="' . esc_attr( $question_count ) . '" />';

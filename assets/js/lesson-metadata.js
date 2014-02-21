@@ -758,6 +758,10 @@ jQuery(document).ready( function($) {
 	 		    		jQuery( '#add-question-metadata table' ).append( response );
 			    		jQuery.fn.resetAddQuestionForm();
 			 			jQuery.fn.checkQuizGradeType( questionType );
+
+			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+			 			max_questions++;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
 	 		    	}
 	 		    }
 	 		);
@@ -924,6 +928,10 @@ jQuery(document).ready( function($) {
  						jQuery.fn.updateQuestionCount( 1, '-' );
  						jQuery.fn.checkQuizGradeType( false );
  						jQuery.fn.updateAnswerOrder( row_parent );
+
+ 						var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+			 			max_questions--;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
  					}
  				}
  			);
