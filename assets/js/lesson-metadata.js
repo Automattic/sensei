@@ -929,9 +929,14 @@ jQuery(document).ready( function($) {
  						jQuery.fn.checkQuizGradeType( false );
  						jQuery.fn.updateAnswerOrder( row_parent );
 
- 						var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+ 						var max_questions = parseInt( jQuery( '#show_questions' ).attr( 'max' ) );
 			 			max_questions--;
 			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+
+			 			var show_questions_field = parseInt( jQuery( '#show_questions' ).val() );
+			 			if( show_questions_field > max_questions ) {
+			 				jQuery( '#show_questions' ).val( max_questions );
+			 			}
  					}
  				}
  			);
