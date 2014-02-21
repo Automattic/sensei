@@ -39,9 +39,11 @@ class WooThemes_Sensei_Updates {
 	 * @return  void
 	 */
 	public function __construct ( $parent ) {
+
 		// Setup object data
 		$this->parent = $parent;
 		$this->updates_run = get_option( $this->token . '-upgrades', array() );
+
 		// The list of upgrades to run
 		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => 'Assign role capbilities', 'desc' => 'Assigns Sensei capabilites to the relevant user roles.', 'product' => 'Sensei' ) ),
 													'manual' 	=> array()
@@ -55,9 +57,11 @@ class WooThemes_Sensei_Updates {
 													'manual' 	=> array()
 												),
 								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => 'Convert essay paste questions into multi-line questions', 'desc' => 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.' ) ),
-													'manual' 	=> array( 'set_random_question_order' => array( 'title' => 'Set all quizzes to have a random question order', 'desc' => 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.' ))
+													'manual' 	=> array( 'set_random_question_order' => array( 'title' => 'Set all quizzes to have a random question order', 'desc' => 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.' ),
+																		  'set_default_show_question_count' => array( 'title' => 'Set all quizzes to show all questions', 'desc' => 'Sets all quizzes to show all questions - this can be changed per quiz.' ) )
 												),
 							);
+
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
 		$this->version = get_option( $this->token . '-version' );
 
@@ -560,7 +564,7 @@ class WooThemes_Sensei_Updates {
 	} // End convert_essay_paste_questions
 
 	/**
-	 * Set all quizzes to have a random quetion order
+	 * Set all quizzes to have a random question order
 	 *
 	 * @since  1.5.0
 	 * @return boolean
@@ -598,6 +602,50 @@ class WooThemes_Sensei_Updates {
 		} // End If Statement
 
 	} // End set_random_question_order()
+
+	/**
+	 * Set all quizzes to display all questions
+	 *
+	 * @since  1.5.0
+	 * @return boolean
+	 */
+	public function set_default_show_question_count( $n = 10, $offset = 0 ) {
+
+		$args = array(	'post_type' 		=> 'quiz',
+						'post_status'		=> 'any',
+						'numberposts' 		=> $n,
+						'offset'			=> $offset,
+						'meta_key'			=> '_show_questions',
+						'suppress_filters' 	=> 0
+						);
+		$quizzes = get_posts( $args );
+
+		$total_quizzes = count( $quizzes );
+
+		if( 0 == intval( $total_quizzes ) ) {
+			return true;
+		}
+
+		foreach( $quizzes as $quiz ) {
+			delete_post_meta( $quiz->ID, '_show_questions' );
+		}
+
+		$total_pages = intval( $total_quizzes / $n );
+
+		// Calculate if this is the last page
+		if ( 0 == $offset ) {
+			$current_page = 1;
+		} else {
+			$current_page = intval( $offset / $n );
+		} // End If Statement
+
+		if ( $current_page == $total_pages ) {
+			return true;
+		} else {
+			return false;
+		} // End If Statement
+
+	}
 
 } // End Class
 ?>
