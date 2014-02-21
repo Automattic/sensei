@@ -125,7 +125,12 @@ class WooThemes_Sensei_Course {
 					if ( 'product_variation' == $post_item->post_type ) {
 						$product_object = get_product( $post_item->ID );
 						$parent_id = wp_get_post_parent_id( $post_item->ID );
-						$product_name = ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
+						if( sensei_check_woocommerce_version( '2.1' ) ) {
+							$formatted_variation = wc_get_formatted_variation( $product_object->variation_data, true );
+						} else {
+							$formatted_variation = woocommerce_get_formatted_variation( $product_object->variation_data, true );
+						}
+						$product_name = ucwords( $formatted_variation );
 					} else {
 						$parent_id = false;
 						$prev_parent_id = 0;
@@ -439,7 +444,12 @@ class WooThemes_Sensei_Course {
 					if ( 0 < absint( $course_woocommerce_product_id ) ) {
 						if ( 'product_variation' == get_post_type( $course_woocommerce_product_id ) ) {
 							$product_object = get_product( $course_woocommerce_product_id );
-							$product_name = $product_object->parent->post->post_title . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
+							if( sensei_check_woocommerce_version( '2.1' ) ) {
+								$formatted_variation = wc_get_formatted_variation( $product_object->variation_data, true );
+							} else {
+								$formatted_variation = woocommerce_get_formatted_variation( $product_object->variation_data, true );
+							}
+							$product_name = $product_object->parent->post->post_title . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( $formatted_variation );
 						} else {
 							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
 						} // End If Statement
