@@ -665,7 +665,7 @@ class WooThemes_Sensei_Frontend {
 				}
 				if( $tag_list ) {
 					?><section class="lesson-tags">
-		    			<?php printf( __( 'Lesson tags: %1$s', 'woothemes-sensei' ), $tag_list ); ?> 
+		    			<?php printf( __( 'Lesson tags: %1$s', 'woothemes-sensei' ), $tag_list ); ?>
 		    		</section><?php
 		    	}
 	    	}
@@ -995,6 +995,22 @@ class WooThemes_Sensei_Frontend {
 		    $answers_array = array();
 		    $activity_logged = false;
 
+		    $questions_asked = $_POST['questions_asked'];
+		    $questions_asked_string = implode( ',', $questions_asked );
+		    $questions_asked_args = false;
+		    if( $questions_asked_string ) {
+			    $questions_asked_args = array(
+				    'post_id' => $post->ID,
+				    'username' => $current_user->user_login,
+				    'user_email' => $current_user->user_email,
+				    'user_url' => $current_user->user_url,
+				    'data' => $questions_asked_string,
+				    'type' => 'sensei_quiz_asked', /* FIELD SIZE 20 */
+				    'parent' => 0,
+				    'user_id' => $current_user->ID
+				);
+			}
+
 		    switch ($sanitized_submit) {
 		    	case apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ):
 
@@ -1004,6 +1020,11 @@ class WooThemes_Sensei_Frontend {
 		    		if( isset( $_POST['sensei_question'] ) ) {
 						$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
 			    	}
+
+			    	// Save questions that were asked in this quiz
+					if( $questions_asked_args ) {
+						$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $questions_asked_args );
+					}
 
 					if ( $activity_logged ) {
 
@@ -1046,8 +1067,6 @@ class WooThemes_Sensei_Frontend {
 							do_action( 'sensei_user_lesson_end', $current_user->ID, $quiz_lesson );
 
 						} // End If Statement
-					} else {
-						// Something broke
 					} // End If Statement
 
 					break;
@@ -1059,6 +1078,11 @@ class WooThemes_Sensei_Frontend {
 			    		$activity_logged = WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
 			    	}
 
+			    	// Save questions that were asked in this quiz
+			    	if( $questions_asked_args ) {
+						$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $questions_asked_args );
+					}
+
 					$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
 
 					break;
@@ -1066,15 +1090,23 @@ class WooThemes_Sensei_Frontend {
 		    		// Remove existing user quiz meta
 		    		$grade = '';
 		    		$answers_array = array();
-		    		// Check for quiz grade
+
+		    		// Delete quiz grade
 		    		$delete_grades = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade' ) );
-		    		// Check for quiz answers
+
+		    		// Delete quiz answers
 		    		$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $post->ID, $current_user->ID );
-		    		// Check for lesson complete
+
+		    		// Delete lesson completion flag
 		    		$delete_lesson_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_lesson, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end' ) );
-		    		// Check for course complete
+
+		    		// Delete course completion flag
 		    		$course_id = absint( get_post_meta( $quiz_lesson, '_lesson_course' ,true ) );
 		    		$delete_course_completion = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
+
+		    		// Delete questions asked in this quiz
+		    		$delete_questions_asked = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_asked' ) );
+
 		    		$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 		    		break;
 		    	default:

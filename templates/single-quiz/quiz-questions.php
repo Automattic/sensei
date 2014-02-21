@@ -61,6 +61,8 @@ $quiz_passmark_float = (float) $quiz_passmark;
                         $question_type = $question_types_array[0];
                     } // End If Statement
 
+                    echo '<input type="hidden" name="questions_asked[]" value="' . $question_item->ID . '" />';
+
     				do_action( 'sensei_quiz_question_type', $question_type );
 
                     $question_count++;

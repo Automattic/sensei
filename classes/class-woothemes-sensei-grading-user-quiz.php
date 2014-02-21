@@ -91,6 +91,9 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$question_answer_notes = base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_answer_notes', 'field' => 'comment_content' ) ) );
 
 			$question_grade_total = get_post_meta( $question_id, '_question_grade', true );
+			if( ! $question_grade_total || 0 == intval( $question_grade_total ) ) {
+				$question_grade_total = 1;
+			}
 			$quiz_grade_total += $question_grade_total;
 
 			$right_answer = stripslashes( get_post_meta( $question_id, '_question_right_answer', true ) );
