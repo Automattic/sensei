@@ -1748,7 +1748,7 @@ class WooThemes_Sensei_Lesson {
 	 * @param string $height (default: '100')
 	 * @return void
 	 */
-	public function lesson_image( $lesson_id = 0, $width = '100', $height = '100' ) {
+	public function lesson_image( $lesson_id = 0, $width = '100', $height = '100', $widget = false ) {
 
 		global $woothemes_sensei;
 
@@ -1757,7 +1757,7 @@ class WooThemes_Sensei_Lesson {
 		// Get Width and Height settings
 		if ( ( $width == '100' ) && ( $height == '100' ) ) {
 			if ( is_singular( 'lesson' ) ) {
-				if ( !$woothemes_sensei->settings->settings[ 'lesson_single_image_enable' ] ) {
+				if ( ! $widget && ! $woothemes_sensei->settings->settings[ 'lesson_single_image_enable' ] ) {
 					return '';
 				} // End If Statement
 				$image_thumb_size = 'lesson_single_image';
@@ -1766,7 +1766,7 @@ class WooThemes_Sensei_Lesson {
 				$height = $dimensions['height'];
 				$crop = $dimensions['crop'];
 			} else {
-				if ( !$woothemes_sensei->settings->settings[ 'course_lesson_image_enable' ] ) {
+				if ( ! $widget && ! $woothemes_sensei->settings->settings[ 'course_lesson_image_enable' ] ) {
 					return '';
 				} // End If Statement
 				$image_thumb_size = 'lesson_archive_image';

@@ -61,7 +61,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_lesson_single_title', array( $this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_quiz_single_title', array( $this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_course_image', array( $this, 'sensei_course_image' ), 10, 4 );
-		add_action( 'sensei_lesson_image', array( $this, 'sensei_lesson_image' ), 10, 4 );
+		add_action( 'sensei_lesson_image', array( $this, 'sensei_lesson_image' ), 10, 5 );
 		add_action( 'sensei_course_archive_header', array( $this, 'sensei_course_archive_header' ), 10, 3 );
 		add_action( 'sensei_lesson_archive_header', array( $this, 'sensei_lesson_archive_header' ), 10, 3 );
 		add_action( 'sensei_course_archive_course_title', array( $this, 'sensei_course_archive_course_title' ), 10, 1 );
@@ -506,11 +506,11 @@ class WooThemes_Sensei_Frontend {
 	 * @since  1.2.0
 	 * @return void
 	 */
-	function sensei_lesson_image( $lesson_id, $width = '100', $height = '100', $return = false ) {
+	function sensei_lesson_image( $lesson_id, $width = '100', $height = '100', $return = false, $widget = false ) {
 		if ( $return ) {
-			return $this->lesson->lesson_image( $lesson_id, $width, $height );
+			return $this->lesson->lesson_image( $lesson_id, $width, $height, $widget );
 		} else {
-			echo $this->lesson->lesson_image( $lesson_id, $width, $height );
+			echo $this->lesson->lesson_image( $lesson_id, $width, $height, $widget );
 		} // End If Statement
 	} // End sensei_lesson_image()
 
