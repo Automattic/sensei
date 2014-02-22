@@ -1363,12 +1363,88 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_login_form() {
 		?><div id="my-courses">
+			<div class="col2-set" id="customer_login">
+
+				<div class="col-1">
+
+					<h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
+
+					<form method="post" class="login">
+
+						<?php do_action( 'sensei_login_form_start' ); ?>
+
+						<p class="form-row form-row-wide">
+							<label for="username"><?php _e( 'Username or email address', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+							<input type="text" class="input-text" name="username" id="username" />
+						</p>
+						<p class="form-row form-row-wide">
+							<label for="password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+							<input class="input-text" type="password" name="password" id="password" />
+						</p>
+
+						<?php do_action( 'sensei_login_form_fields' ); ?>
+
+						<p class="form-row">
+							<input type="submit" class="button" name="login" value="<?php _e( 'Login', 'woothemes-sensei' ); ?>" />
+							<label for="rememberme" class="inline">
+								<input name="rememberme" type="checkbox" id="rememberme" value="forever" /> <?php _e( 'Remember me', 'woothemes-sensei' ); ?>
+							</label>
+						</p>
+
+						<?php do_action( 'sensei_login_form_end' ); ?>
+
+					</form>
+
 			<?php
-			// Display Login Form and Registration Link
-			wp_login_form( array( 'redirect' => get_permalink() ) );
-			wp_register();
+			if ( get_option('users_can_register') ) {
+				?>
+
+				</div>
+
+				<div class="col-2">
+					<h2><?php _e( 'Register', 'woothemes-sensei' ); ?></h2>
+
+					<form method="post" class="register">
+
+						<?php do_action( 'sensei_register_form_start' ); ?>
+
+						<p class="form-row form-row-wide">
+							<label for="reg_username"><?php _e( 'Username', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+							<input type="text" class="input-text" name="username" id="reg_username" value="<?php if ( ! empty( $_POST['username'] ) ) esc_attr_e( $_POST['username'] ); ?>" />
+						</p>
+
+						<p class="form-row form-row-wide">
+							<label for="reg_email"><?php _e( 'Email address', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+							<input type="email" class="input-text" name="email" id="reg_email" value="<?php if ( ! empty( $_POST['email'] ) ) esc_attr_e( $_POST['email'] ); ?>" />
+						</p>
+
+						<p class="form-row form-row-wide">
+							<label for="reg_password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+							<input type="password" class="input-text" name="password" id="reg_password" value="<?php if ( ! empty( $_POST['password'] ) ) esc_attr_e( $_POST['password'] ); ?>" />
+						</p>
+
+						<!-- Spam Trap -->
+						<div style="left:-999em; position:absolute;"><label for="trap"><?php _e( 'Anti-spam', 'woothemes-sensei' ); ?></label><input type="text" name="email_2" id="trap" tabindex="-1" /></div>
+
+						<?php do_action( 'sensei_register_form_fields' ); ?>
+						<?php do_action( 'register_form' ); ?>
+
+						<p class="form-row">
+							<input type="submit" class="button" name="register" value="<?php _e( 'Register', 'woothemes-sensei' ); ?>" />
+						</p>
+
+						<?php do_action( 'sensei_register_form_end' ); ?>
+
+					</form>
+				<?php
+			}
 			?>
-		</div><?php
+
+				</div>
+			</div>
+		</div>
+
+		<?php
 	} // End sensei_login_form()
 
 	public function sensei_quiz_action_buttons() {

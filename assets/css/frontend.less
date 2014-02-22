@@ -339,24 +339,77 @@ section.entry span.course-category { padding-left: 10px; }
 section.entry span.course-lesson-progress { padding-left: 10px; }
 section.entry span.course-price { padding-left: 10px; }
 
-/* My Courses */
-#my-courses  {
-	#loginform  {
-		label  {
-			font-weight: bold;
-			margin: 0 1em 0 0;
+form {
+	.form-row {
+		padding: 3px;
+		margin: 0 0 6px;
+
+		[placeholder]:focus::-webkit-input-placeholder {
+			-webkit-transition: opacity 0.5s 0.5s ease;
+			-moz-transition: opacity 0.5s 0.5s ease;
+			transition: opacity 0.5s 0.5s ease;
+			opacity: 0;
 		}
-		.login-username, .login-password  {
-			clear: both;
+		label {
+			line-height: 2em;
 		}
-		.login-remember  {
-			float: left;
-			margin: .2em 7.2em 0 0;
-			font-size: .9em;
-			label  {
-				font-weight: normal;
+		label.hidden {
+			visibility:hidden;
+		}
+		label.inline {
+			display: inline;
+		}
+		select {
+			cursor: pointer;
+			margin: 0;
+		}
+		.required {
+			color: red;
+			font-weight:bold;
+			border: 0;
+		}
+		.input-checkbox {
+			display: inline;
+			margin: -2px 8px 0 0;
+			text-align: center;
+			vertical-align: middle;
+		}
+		input.input-text, textarea {
+			.borderbox;
+			width: 100%;
+			margin: 0;
+			outline: 0;
+			line-height: 1em;
+		}
+		textarea {
+			height: 4em;
+			line-height: 1.5em;
+			display:block;
+			-moz-box-shadow:none;
+			-webkit-box-shadow:none;
+			box-shadow:none;
+		}
+		&.validate-required {
+			.chosen-single, .chosen-drop, input.input-text, select {
+				border-color: #fb7f88;
 			}
 		}
+		::-webkit-input-placeholder {
+			line-height: normal;
+		}
+		:-moz-placeholder {
+			line-height: normal;
+		}
+		:-ms-input-placeholder {
+			line-height: normal;
+		}
+	}
+}
+
+/* My Courses */
+#my-courses  {
+	.register-link {
+		clear: both;
 	}
 	&.ui-tabs {
 		position: relative; /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
