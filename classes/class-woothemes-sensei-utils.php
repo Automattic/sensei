@@ -1148,5 +1148,58 @@ class WooThemes_Sensei_Utils {
 		return false;
 	}
 
+	public function user_completed_course( $course_id = 0, $user_id = 0 ) {
+		global $woothemes_sensei;
+
+		if( $course_id ) {
+
+			if( ! $user_id ) {
+				global $current_user;
+				wp_get_current_user();
+				$user = $current_user;
+			} else {
+				$user = get_userdata( $user_id );
+			}
+
+			$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $course_id );
+		    $lessons_completed = 0;
+		    foreach ( $course_lessons as $lesson ){
+		    	$single_lesson_complete = false;
+		    	// Check if Lesson is complete
+		    	$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson->ID, 'user_id' => $user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
+				if ( '' != $user_lesson_end ) {
+					//Check for Passed or Completed Setting
+	                $course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
+	                if ( 'passed' == $course_completion ) {
+	                    // If Setting is Passed -> Check for Quiz Grades
+	                    $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson->ID );
+	                    // Get Quiz ID
+	                    if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
+	                        foreach ($lesson_quizzes as $quiz_item) {
+	                            $lesson_quiz_id = $quiz_item->ID;
+	                        } // End For Loop
+	                        // Quiz Grade
+	                        $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
+	                        // Check if Grade is bigger than pass percentage
+	                        $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
+	                        if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
+	                            $lessons_completed++;
+	                            $single_lesson_complete = true;
+	                        } // End If Statement
+	                    } // End If Statement
+	                } else {
+	                    $lessons_completed++;
+	                    $single_lesson_complete = true;
+	                } // End If Statement;
+				} // End If Statement
+		    } // End For Loop
+
+		    if ( absint( $lessons_completed ) == absint( count( $course_lessons ) ) && ( 0 < absint( count( $course_lessons ) ) ) && ( 0 < absint( $lessons_completed ) ) ) {
+		    	return true;
+		    }
+		}
+		return false;
+	}
+
 } // End Class
 ?>
