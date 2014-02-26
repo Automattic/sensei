@@ -558,14 +558,17 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-question-actions' ).on( 'change', 'select.question-type-select', function() {
 		// Show the correct Question Type
-		// REFACTOR
 		var questionType = jQuery(this).val();
+
 		jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
 		jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
 		jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
-		jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
 		jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
 		jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
+		jQuery( '#add-new-question' ).find( 'div.question_fileupload_fields' ).hide();
+
+		jQuery( '.add_question_random_order' ).hide();
+
 		switch ( questionType ) {
 			case 'multiple-choice':
 				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
@@ -573,27 +576,18 @@ jQuery(document).ready( function($) {
 			break;
 			case 'boolean':
 				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).show();
-				jQuery( '.add_question_random_order' ).hide();
 			break;
 			case 'gap-fill':
 				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).show();
-				jQuery( '.add_question_random_order' ).hide();
-			break;
-			case 'essay-paste':
-				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).show();
-				jQuery( '.add_question_random_order' ).hide();
 			break;
 			case 'multi-line':
 				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).show();
-				jQuery( '.add_question_random_order' ).hide();
 			break;
 			case 'single-line':
 				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).show();
-				jQuery( '.add_question_random_order' ).hide();
 			break;
 			case 'file-upload':
 				jQuery( '#add-new-question' ).find( 'div.question_fileupload_fields' ).show();
-				jQuery( '.add_question_random_order' ).hide();
 			break;
 		} // End Switch Statement
 	});
