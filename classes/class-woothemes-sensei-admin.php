@@ -54,6 +54,9 @@ class WooThemes_Sensei_Admin {
 		add_action( 'restrict_manage_posts', array( $this, 'lesson_filter_options' ) );
 		add_filter( 'request', array( $this, 'lesson_filter_actions' ) );
 
+		// Add Sensei items to 'at a glance' widget
+		add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
+
 	} // End __construct()
 
 	/**
@@ -274,13 +277,8 @@ class WooThemes_Sensei_Admin {
 		$allowed_hooks = apply_filters( 'sensei_scripts_allowed_hooks', array( 'sensei_page_sensei_grading', 'sensei_page_sensei_analysis', 'sensei_page_sensei_updates', 'sensei_page_woothemes-sensei-settings' ) );
 
 		// Global Styles for icons and menu items
-		if( version_compare( $wp_version, '3.8', '>=') ) {
-			wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.4.6', 'screen' );
-			wp_enqueue_style( $woothemes_sensei->token . '-global' );
-		} else {
-			wp_register_style( $woothemes_sensei->token . '-global-old', $woothemes_sensei->plugin_url . 'assets/css/global-old.css', '', '1.4.5', 'screen' );
-			wp_enqueue_style( $woothemes_sensei->token . '-global-old' );
-		}
+		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.5.0', 'screen' );
+		wp_enqueue_style( $woothemes_sensei->token . '-global' );
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $hook ) && in_array( $hook, $allowed_hooks ) ) ) {
@@ -654,6 +652,40 @@ class WooThemes_Sensei_Admin {
 		}
 
 		return $request;
+	}
+
+	/**
+	 * Adding Sensei items to 'At a glance' dashboard widget
+	 * @param  array $items Existing items
+	 * @return array        Updated items
+	 */
+	public function glance_items( $items = array() ) {
+		global $woothemes_sensei;
+
+		$types = array( 'course', 'lesson' );
+
+		foreach( $types as $type ) {
+			if( ! post_type_exists( $type ) ) continue;
+
+			$num_posts = wp_count_posts( $type );
+
+			if( $num_posts ) {
+
+				$published = intval( $num_posts->publish );
+				$post_type = get_post_type_object( $type );
+
+				$text = _n( '%s ' . $post_type->labels->singular_name, '%s ' . $post_type->labels->name, $published, 'woothemes-sensei' );
+				$text = sprintf( $text, number_format_i18n( $published ) );
+
+				if ( current_user_can( $post_type->cap->edit_posts ) ) {
+					$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $type, $text ) . "\n";
+				} else {
+					$items[] = sprintf( '<span class="%1$s-count">%2$s</span>', $type, $text ) . "\n";
+				}
+			}
+		}
+
+		return $items;
 	}
 
 } // End Class
