@@ -589,8 +589,10 @@ class WooThemes_Sensei_Admin {
 
 			foreach ( $taxonomies as $slug => $tax ) {
 				$terms = get_the_terms( $post->ID, $slug );
-				foreach( $terms as $term ) {
-					wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
+				if( isset( $terms ) && is_array( $terms ) && 0 < count( $terms ) ) {
+					foreach( $terms as $term ) {
+						wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
+					}
 				}
 			}
 
