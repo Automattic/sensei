@@ -202,12 +202,14 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	private function row_data( $lesson_id, $user_id ) {
 		global $woothemes_sensei;
 
-		$grading_status = '';
-		if( isset( $_GET['grading_status'] ) && strlen( $_GET['grading_status'] ) > 0 && $_GET['grading_status'] != 'all' ) {
-			$grading_status = $_GET['grading_status'];
-		}
-		if( ! $grading_status && isset( $_GET['grading_status'] ) && $_GET['grading_status'] != 'all' ) {
+		if( isset( $_GET['grading_status'] ) && $_GET['grading_status'] != 'all' ) {
+			if( isset( $_GET['grading_status'] ) && strlen( $_GET['grading_status'] ) > 0 ) {
+				$grading_status = $_GET['grading_status'];
+			}
+		} elseif( ! isset( $_GET['grading_status'] ) ) {
 			$grading_status = 'ungraded';
+		} else {
+			$grading_status = '';
 		}
 
 		// Get Quiz ID
