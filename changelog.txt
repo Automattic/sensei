@@ -1,30 +1,76 @@
 *** Sensei Changelog ***
 
+2014.03.04 - version 1.5.0
+
+ * [QUIZZES] NEW - Completely refactored the quiz edit panel
+ * [QUIZZES] NEW - Adding 'File Upload' question type
+ * [QUIZZES] NEW - Adding ability to manually order quiz questions via drag-and-drop along with option to randomly order questions
+ * [QUIZZES] NEW - Adding option to have any number of multiple choice answers
+ * [QUIZZES] NEW - Adding ability to manually order multiple choice answers via drag-and-drop along with option to randomly order answers
+ * [QUIZZES] NEW - Adding function to upload media files to quiz questions
+ * [QUIZZES] NEW - Adding option to only show a limited number of quiz questions to each student
+ * [QUIZZES] TWEAK - Displaying grading notes on graded quizzes if quiz reset is disabled
+
+ * [COURSES] NEW - Adding ablity to duplicate courses
+ * [COURSES] NEW - Adding option to filter lessons by course in the dashboard
+ * [COURSES] NEW - Adding pagination to My Courses page
+ * [COURSES] FIX - Fixing number of courses shown on My Course page
+ * [COURSES] FIX - Preventing purchased courses with incomplete prerequisites from being completed
+ * [COURSES] FIX - Removing 'view results' link when no quizzes are present
+
+ * [LESSONS] NEW - Adding ablity to duplicate lessons
+ * [LESSONS] NEW - Adding 'lesson tags' taxonomy for broader grouping of lessons
+ * [LESSONS] TWEAK - Removing numbering from lessons and adding filter to put them back
+ * [LESSONS] TWEAK - Moving videos to top of lessons and adding filter to choose the video location
+ * [LESSONS] FIX - Making lesson archive display consistent in all areas
+ * [LESSONS] FIX - Removing PHP notices from lesson archives
+
+ * [GRADING] NEW - Enhancing grading dashboard to allow filtering by grade status
+ * [GRADING] TWEAK - Improving user search in grading dashboard
+
+ * [DASHBOARD] NEW - Adding courses and lessons to the 'At a Glance' dashboard widget
+
+ * [WOOCOMMERCE] TWEAK - Updating deprecated functions for WooCommerce 2.1
+ * [WOOCOMMERCE] FIX - Fixing adding variable product course to cart
+
+ * [ACCOUNT] NEW - Adding registration form to login page
+ * [ACCOUNT] TWEAK - Improving styling of login page
+
+ * [WIDGETS] FIX - Fixing image display in widgets
+
+ * [GENERAL] TWEAK - Removing unused images and CSS
+
+2014.02.13 - version 1.4.9
+ * FIX - Fixing WooCommerce taxonomy templates when Sensei is active
+ * FIX - Fixing bug that was causing grades to be higher than 100%
+ * FIX - Clearing floats on Sensei front-end messages
+ * FIX - Making sure chosen drop down is always used on course product selection
+
 2014.01.23 - version 1.4.8
- * New - Allowing access to courses when WooCommerce order is marked as processing
- * Fix - Ensuring that all purchased courses show up on the My Courses page
- * Fix - Fixing auto grading when all user's answers are incorrect
- * Fix - IE compatibility fix for course completion
- * Fix - Fixing update script so that all questions are not reset to multiple choice on update
- * Fix - Fixing sanitisation of answer input fields
- * Fix - Fixing saving of true/false questions
- * Fix - Ensuring that new questions do not contain data from previous question added
- * Fix - Preventing completed courses widget from showing all courses if none are completed
- * Tweak - General CSS tweaks
+ * NEW - Allowing access to courses when WooCommerce order is marked as processing
+ * FIX - Ensuring that all purchased courses show up on the My Courses page
+ * FIX - Fixing auto grading when all user's answers are incorrect
+ * FIX - IE compatibility fix for course completion
+ * FIX - Fixing update script so that all questions are not reset to multiple choice on update
+ * FIX - Fixing sanitisation of answer input fields
+ * FIX - Fixing saving of true/false questions
+ * FIX - Ensuring that new questions do not contain data from previous question added
+ * FIX - Preventing completed courses widget from showing all courses if none are completed
+ * TWEAK - General CSS tweaks
 
 2013.12.13 - version 1.4.7
- * Fix - Fixing add question function for WordPress 3.8+
+ * FIX - Fixing add question function for WordPress 3.8+
 
 2013.12.12 - version 1.4.6
- * New - Adding Chosen Ajax library
- * Tweak - Updating Chosen CSS
- * Tweak - Moving nav arrows from markup to CSS (affects pagination wrappers)
- * Tweak - Removing absolute positioning from course action buttons on single course page
- * Tweak - Updating admin icons and styling for WordPress 3.8
- * Tweak - Allowing Sensei updater to run functions from extensions
- * Tweak - Preventing grouped products from being selected as course products
- * Fix - Removing PHP warnings
- * Fix - Fixing course excerpt display on Courses page
+ * NEW - Adding Chosen Ajax library
+ * TWEAK - Updating Chosen CSS
+ * TWEAK - Moving nav arrows from markup to CSS (affects pagination wrappers)
+ * TWEAK - Removing absolute positioning from course action buttons on single course page
+ * TWEAK - Updating admin icons and styling for WordPress 3.8
+ * TWEAK - Allowing Sensei updater to run functions from extensions
+ * TWEAK - Preventing grouped products from being selected as course products
+ * FIX - Removing PHP warnings
+ * FIX - Fixing course excerpt display on Courses page
 
 2013.12.04 - version 1.4.5
  * /classes/class-woothemes-sensei-frontend.php - Ensures course content displays when user starts taking course
