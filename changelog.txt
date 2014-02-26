@@ -1,6 +1,7 @@
 *** Sensei Changelog ***
 
 2014.03.04 - version 1.5.0
+
  * [QUIZZES] NEW - Completely refactored the quiz edit panel
  * [QUIZZES] NEW - Adding 'File Upload' question type
  * [QUIZZES] NEW - Adding ability to manually order quiz questions via drag-and-drop along with option to randomly order questions
@@ -9,24 +10,35 @@
  * [QUIZZES] NEW - Adding function to upload media files to quiz questions
  * [QUIZZES] NEW - Adding option to only show a limited number of quiz questions to each student
  * [QUIZZES] TWEAK - Displaying grading notes on graded quizzes if quiz reset is disabled
- * [COURSES & LESSONS] NEW - Adding ablity to duplicate courses and lessons
+
+ * [COURSES] NEW - Adding ablity to duplicate courses
  * [COURSES] NEW - Adding option to filter lessons by course in the dashboard
  * [COURSES] NEW - Adding pagination to My Courses page
  * [COURSES] FIX - Fixing number of courses shown on My Course page
  * [COURSES] FIX - Preventing purchased courses with incomplete prerequisites from being completed
  * [COURSES] FIX - Removing 'view results' link when no quizzes are present
+
+ * [LESSONS] NEW - Adding ablity to duplicate lessons
  * [LESSONS] NEW - Adding 'lesson tags' taxonomy for broader grouping of lessons
  * [LESSONS] TWEAK - Removing numbering from lessons and adding filter to put them back
  * [LESSONS] TWEAK - Moving videos to top of lessons and adding filter to choose the video location
  * [LESSONS] FIX - Making lesson archive display consistent in all areas
  * [LESSONS] FIX - Removing PHP notices from lesson archives
+
  * [GRADING] NEW - Enhancing grading dashboard to allow filtering by grade status
  * [GRADING] TWEAK - Improving user search in grading dashboard
+
+ * [DASHBOARD] NEW - Adding courses and lessons to the 'At a Glance' dashboard widget
+
  * [WOOCOMMERCE] TWEAK - Updating deprecated functions for WooCommerce 2.1
  * [WOOCOMMERCE] FIX - Fixing adding variable product course to cart
+
  * [ACCOUNT] NEW - Adding registration form to login page
  * [ACCOUNT] TWEAK - Improving styling of login page
+
  * [WIDGETS] FIX - Fixing image display in widgets
+
+ * [GENERAL] TWEAK - Removing unused images and CSS
 
 2014.02.13 - version 1.4.9
  * FIX - Fixing WooCommerce taxonomy templates when Sensei is active
