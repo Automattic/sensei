@@ -14,6 +14,8 @@ jQuery(document).ready( function($) {
 	    		}, 1200);
 		});
 
+		jQuery(".answer_message.has_notes .notes").hide();
+
 		jQuery(".answer_message.has_notes span").mouseover(function() {
 			jQuery(this).siblings(".notes").show();
 		});
