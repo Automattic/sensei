@@ -156,6 +156,8 @@ class WooThemes_Sensei {
 		if ( is_admin() ) {
 			add_action( 'wp_loaded', array( $this, 'run_updates' ), 10 );
 		} // End If Statement
+
+		add_action( 'body_class', array( $this, 'body_class' ) );
 	} // End __construct()
 
 	/**
@@ -1115,6 +1117,13 @@ class WooThemes_Sensei {
 		$size['crop'] 	= isset( $size['crop'] ) ? $size['crop'] : 0;
 
 		return apply_filters( 'sensei_get_image_size_' . $image_size, $size );
+	}
+
+	public function body_class( $classes ) {
+		if( is_sensei() ) {
+			$classes[] = 'sensei';
+		}
+		return $classes;
 	}
 
 } // End Class
