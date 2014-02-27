@@ -57,6 +57,10 @@ class WooThemes_Sensei_Admin {
 		// Add Sensei items to 'at a glance' widget
 		add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
 
+		// Handle course and lesson deletions
+		add_action( 'trash_course', array( $this, 'delete_content' ), 10, 2 );
+		add_action( 'trash_lesson', array( $this, 'delete_content' ), 10, 2 );
+
 	} // End __construct()
 
 	/**
@@ -686,6 +690,36 @@ class WooThemes_Sensei_Admin {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Process lesson and course deletion
+	 * @param  integer $post_id Post ID
+	 * @param  object  $post    Post object
+	 * @return void
+	 */
+	public function delete_content( $post_id, $post ) {
+
+		$type = $post->post_type;
+
+		if( in_array( $type, array( 'lesson', 'course' ) ) ) {
+
+			$meta_key = '_' . $type . '_prerequisite';
+
+			$args = array(
+				'post_type' => $type,
+				'post_status' => 'any',
+				'posts_per_page' => -1,
+				'meta_key' => $meta_key,
+				'meta_value' => $post_id
+			);
+
+			$posts = get_posts( $args );
+
+			foreach( $posts as $post ) {
+				delete_post_meta( $post->ID, $meta_key );
+			}
+		}
 	}
 
 } // End Class
