@@ -112,9 +112,9 @@ class WooThemes_Sensei_Learner_Profiles {
 
 		if( $user ) {
 			if ( get_option('permalink_structure') ) {
-				$permalink = trailingslashit( get_site_url() ) . $this->profile_url_base . '/' . $user->user_login;
+				$permalink = trailingslashit( get_site_url() ) . $this->profile_url_base . '/' . $user->user_nicename;
 			} else {
-				$permalink = trailingslashit( get_site_url() ) . '?learner_profile=' . $user->user_login;
+				$permalink = trailingslashit( get_site_url() ) . '?learner_profile=' . $user->user_nicename;
 			}
 		}
 
@@ -131,10 +131,10 @@ class WooThemes_Sensei_Learner_Profiles {
 
 		if( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) {
 
-			if( isset( $wp_query->query_vars['learner_profile'] ) && username_exists( $wp_query->query_vars['learner_profile'] ) ) {
+			if( isset( $wp_query->query_vars['learner_profile'] ) ) {
 
 				// Get user object for learner
-				$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );
+				$learner_user = get_user_by( 'slug', $wp_query->query_vars['learner_profile'] );
 
 				if( ! is_wp_error( $learner_user ) ) {
 					$woothemes_sensei->frontend->sensei_get_template( 'learner-profile/learner-info.php' );
@@ -201,7 +201,7 @@ class WooThemes_Sensei_Learner_Profiles {
 					get_currentuserinfo();
 
 					$classes = '';
-					if ( isset( $wp_query->query_vars['learner_profile'] ) && $wp_query->query_vars['learner_profile'] == $current_user->user_login ) {
+					if ( isset( $wp_query->query_vars['learner_profile'] ) && $wp_query->query_vars['learner_profile'] == $current_user->user_nicename ) {
 						$classes = ' current-menu-item current_page_item';
 					} // End If Statement
 						$items .= apply_filters( 'sensei_learner_profile_menu_link', '<li class="learner-profile' . $classes . '"><a href="'. esc_url( $this->get_permalink() ) .'">' . apply_filters( 'sensei_learner_profile_menu_link_text', __( 'My Profile', 'woothemes-sensei' ) ) . '</a></li>' );
