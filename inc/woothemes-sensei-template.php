@@ -445,7 +445,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		// Apply Filter only if on frontend and when course archive is running
 		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
 
-		if ( ! is_admin() && ( $query->is_page( $course_page_id ) ) ) {
+		if ( ! is_admin() && ( $query->get( 'page_id' ) == $course_page_id ) ) {
 			// Check for pagination settings
    			if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) {
     			$amount = absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] );
