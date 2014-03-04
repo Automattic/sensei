@@ -423,7 +423,7 @@ class WooThemes_Sensei_Updates {
 	 * @access public
 	 * @return void
 	 */
-	public function update_question_answer_data( $n = 5, $offset = 0 ) {
+	public function update_question_answer_data( $n = 10, $offset = 0 ) {
 
 		// Get Total Number of Updates to run
 		$quiz_count_object = wp_count_posts( 'quiz' );
@@ -649,6 +649,9 @@ class WooThemes_Sensei_Updates {
 	}
 
 	public function remove_deleted_user_activity( $n = 10, $offset = 0 ) {
+		global $woothemes_sensei;
+
+		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 
 		$all_activity = get_comments( array( 'status' => 'approve' ) );
 		$activity_count = array();
@@ -691,7 +694,9 @@ class WooThemes_Sensei_Updates {
 			$current_page = intval( $offset / $n );
 		} // End If Statement
 
-		if ( $current_page == $total_pages ) {
+		add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+
+		if ( $current_page >= $total_pages ) {
 			return true;
 		} else {
 			return false;
