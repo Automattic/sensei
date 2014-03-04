@@ -36,6 +36,8 @@
  * [WIDGETS] Fix - Fixing image display in widgets
  * [GENERAL] New - Adding is_sensei() conditional to check for Sensei pages
  * [GENERAL] New - Adding 'sensei' class to body tag for all Sensei pages
+ * [GENERAL] New - Adding update to clean up Sensei activity for deleted users
+ * [GENERAL] Fix - Ensuring that user Sensei activity is deleted when a user is deleted from WordPress
 
 2014.02.13 - version 1.4.9
  * Fix - Fixing WooCommerce taxonomy templates when Sensei is active
