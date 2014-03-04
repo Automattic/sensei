@@ -206,7 +206,7 @@ class WooThemes_Sensei_Utils {
 	 * @access public
 	 * @since  1.0.0
 	 * @param  array $args (default: array())
-	 * @return void
+	 * @return boolean
 	 */
 	public static function sensei_delete_activities ( $args = array() ) {
 		$dataset_changes = false;
@@ -224,6 +224,34 @@ class WooThemes_Sensei_Utils {
     	} // End If Statement
     	return $dataset_changes;
     } // End sensei_delete_activities()
+
+    /**
+     * Delete all activity for specified user
+     * @access public
+	 * @since  1.5.0
+     * @param  integer $user_id User ID
+     * @return boolean
+     */
+    public static function delete_all_user_activity( $user_id = 0 ) {
+
+    	$dataset_changes = false;
+
+    	if( $user_id ) {
+
+			$activities = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_id ), true );
+
+			if( $activities ) {
+				foreach( $activities as $activity ) {
+					if( '' == $activity->comment_type ) continue;
+					if( strpos( 'sensei_', $activity->comment_type ) != 0 ) continue;
+					$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
+					wp_cache_flush();
+				}
+			}
+		}
+
+		return $dataset_changes;
+	} // Edn delete_all_user_activity()
 
 
 	/**
