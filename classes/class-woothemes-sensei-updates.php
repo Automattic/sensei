@@ -58,7 +58,8 @@ class WooThemes_Sensei_Updates {
 												),
 								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => 'Convert essay paste questions into multi-line questions', 'desc' => 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.' ) ),
 													'manual' 	=> array( 'set_random_question_order' => array( 'title' => 'Set all quizzes to have a random question order', 'desc' => 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.' ),
-																		  'set_default_show_question_count' => array( 'title' => 'Set all quizzes to show all questions', 'desc' => 'Sets all quizzes to show all questions - this can be changed per quiz.' ) )
+																		  'set_default_show_question_count' => array( 'title' => 'Set all quizzes to show all questions', 'desc' => 'Sets all quizzes to show all questions - this can be changed per quiz.' ),
+																		  'remove_deleted_user_activity' => array( 'title' => 'Remove Sensei activity for deleted users', 'desc' => 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.' ) )
 												),
 							);
 
@@ -115,9 +116,9 @@ class WooThemes_Sensei_Updates {
 
 							// Dynamic function call
 							if ( method_exists( $this, $value) ) {
-								$done_processing = call_user_func_array( array( $this, $value ), array( 5, $n ) );
+								$done_processing = call_user_func_array( array( $this, $value ), array( 10, $n ) );
 							} else {
-								$done_processing = call_user_func_array( $value, array( 5, $n ) );
+								$done_processing = call_user_func_array( $value, array( 10, $n ) );
 							} // End If Statement
 
 							// Add to functions list get args
@@ -144,9 +145,9 @@ class WooThemes_Sensei_Updates {
 
 							// Dynamic function call
 							if ( method_exists( $this, $value) ) {
-								$done_processing = call_user_func_array( array( $this, $value ), array( 5, $n ) );
+								$done_processing = call_user_func_array( array( $this, $value ), array( 10, $n ) );
 							} else {
-								$done_processing = call_user_func_array( $value, array( 5, $n ) );
+								$done_processing = call_user_func_array( $value, array( 10, $n ) );
 							} // End If Statement
 
 							// Add to functions list get args
@@ -631,6 +632,57 @@ class WooThemes_Sensei_Updates {
 		}
 
 		$total_pages = intval( $total_quizzes / $n );
+
+		// Calculate if this is the last page
+		if ( 0 == $offset ) {
+			$current_page = 1;
+		} else {
+			$current_page = intval( $offset / $n );
+		} // End If Statement
+
+		if ( $current_page == $total_pages ) {
+			return true;
+		} else {
+			return false;
+		} // End If Statement
+
+	}
+
+	public function remove_deleted_user_activity( $n = 10, $offset = 0 ) {
+
+		$all_activity = get_comments( array( 'status' => 'approve' ) );
+		$activity_count = array();
+		foreach( $all_activity as $activity ) {
+			if( '' == $activity->comment_type ) continue;
+			if( strpos( 'sensei_', $activity->comment_type ) != 0 ) continue;
+			if( 0 == $activity->user_id ) continue;
+			$activity_count[] = $activity->comment_ID;
+		}
+
+		$args = array(
+			'number' => $n,
+			'offset' => $offset,
+			'status' => 'approve'
+		);
+
+		$activities = get_comments( $args );
+
+		foreach( $activities as $activity ) {
+			if( '' == $activity->comment_type ) continue;
+			if( strpos( 'sensei_', $activity->comment_type ) != 0 ) continue;
+			if( 0 == $activity->user_id ) continue;
+
+			$user_exists = get_userdata( $activity->user_id );
+
+			if( ! $user_exists ) {
+				wp_delete_comment( intval( $activity->comment_ID ), true );
+				wp_cache_flush();
+			}
+		}
+
+		$total_activities = count( $activity_count );
+
+		$total_pages = intval( $total_activities / $n );
 
 		// Calculate if this is the last page
 		if ( 0 == $offset ) {
