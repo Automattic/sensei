@@ -169,7 +169,7 @@ class WooThemes_Sensei_Updates {
 						<script type='text/javascript'>
 						<!--
 						function sensei_nextpage() {
-							location.href = "admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 5) ?>&functions[]=<?php echo $functions_list; ?>";
+							location.href = "admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 10) ?>&functions[]=<?php echo $functions_list; ?>";
 						}
 						setTimeout( "sensei_nextpage()", 250 );
 						//-->
