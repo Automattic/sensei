@@ -154,7 +154,7 @@ class WooThemes_Sensei_Admin {
 
 		// Filter Admin Comments Area to not display Sensei's use of commenting system
 		if( is_admin() && !( isset($_GET['page']) && 'sensei_analysis' == $_GET['page'] ) ) {
-			// $pieces['where'] .= " AND comment_type NOT LIKE 'sensei_%' ";
+			$pieces['where'] .= " AND comment_type NOT LIKE 'sensei_%' ";
 		} // End If Statement
 
 		return $pieces;
