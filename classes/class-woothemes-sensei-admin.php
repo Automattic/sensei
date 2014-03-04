@@ -61,6 +61,9 @@ class WooThemes_Sensei_Admin {
 		add_action( 'trash_course', array( $this, 'delete_content' ), 10, 2 );
 		add_action( 'trash_lesson', array( $this, 'delete_content' ), 10, 2 );
 
+		// Delete user activity when user is deleted
+		add_action( 'deleted_user', array( $this, 'delete_user_activity' ), 10, 1 );
+
 	} // End __construct()
 
 	/**
@@ -151,7 +154,7 @@ class WooThemes_Sensei_Admin {
 
 		// Filter Admin Comments Area to not display Sensei's use of commenting system
 		if( is_admin() && !( isset($_GET['page']) && 'sensei_analysis' == $_GET['page'] ) ) {
-			$pieces['where'] .= " AND comment_type NOT LIKE 'sensei_%' ";
+			// $pieces['where'] .= " AND comment_type NOT LIKE 'sensei_%' ";
 		} // End If Statement
 
 		return $pieces;
@@ -719,6 +722,17 @@ class WooThemes_Sensei_Admin {
 			foreach( $posts as $post ) {
 				delete_post_meta( $post->ID, $meta_key );
 			}
+		}
+	}
+
+	/**
+	 * Delete all user activity when user is deleted
+	 * @param  integer $user_id User ID
+	 * @return void
+	 */
+	public function delete_user_activity( $user_id = 0 ) {
+		if( $user_id ) {
+			WooThemes_Sensei_Utils::delete_all_user_activity( $user_id );
 		}
 	}
 
