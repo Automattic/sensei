@@ -39,9 +39,11 @@ class WooThemes_Sensei_Updates {
 	 * @return  void
 	 */
 	public function __construct ( $parent ) {
+
 		// Setup object data
 		$this->parent = $parent;
 		$this->updates_run = get_option( $this->token . '-upgrades', array() );
+
 		// The list of upgrades to run
 		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => 'Assign role capbilities', 'desc' => 'Assigns Sensei capabilites to the relevant user roles.', 'product' => 'Sensei' ) ),
 													'manual' 	=> array()
@@ -54,7 +56,13 @@ class WooThemes_Sensei_Updates {
 								'1.4.0' => array( 	'auto' 		=> array( 'update_question_grade_points' => array( 'title' => 'Update question grade points', 'desc' => 'Sets all question grade points to the default value of \'1\'.' ) ),
 													'manual' 	=> array()
 												),
+								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => 'Convert essay paste questions into multi-line questions', 'desc' => 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.' ) ),
+													'manual' 	=> array( 'set_random_question_order' => array( 'title' => 'Set all quizzes to have a random question order', 'desc' => 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.' ),
+																		  'set_default_show_question_count' => array( 'title' => 'Set all quizzes to show all questions', 'desc' => 'Sets all quizzes to show all questions - this can be changed per quiz.' ),
+																		  'remove_deleted_user_activity' => array( 'title' => 'Remove Sensei activity for deleted users', 'desc' => 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.' ) )
+												),
 							);
+
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
 		$this->version = get_option( $this->token . '-version' );
 
@@ -108,9 +116,9 @@ class WooThemes_Sensei_Updates {
 
 							// Dynamic function call
 							if ( method_exists( $this, $value) ) {
-								$done_processing = call_user_func_array( array( $this, $value ), array( 5, $n ) );
+								$done_processing = call_user_func_array( array( $this, $value ), array( 10, $n ) );
 							} else {
-								$done_processing = call_user_func_array( $value, array( 5, $n ) );
+								$done_processing = call_user_func_array( $value, array( 10, $n ) );
 							} // End If Statement
 
 							// Add to functions list get args
@@ -137,9 +145,9 @@ class WooThemes_Sensei_Updates {
 
 							// Dynamic function call
 							if ( method_exists( $this, $value) ) {
-								$done_processing = call_user_func_array( array( $this, $value ), array( 5, $n ) );
+								$done_processing = call_user_func_array( array( $this, $value ), array( 10, $n ) );
 							} else {
-								$done_processing = call_user_func_array( $value, array( 5, $n ) );
+								$done_processing = call_user_func_array( $value, array( 10, $n ) );
 							} // End If Statement
 
 							// Add to functions list get args
@@ -161,7 +169,7 @@ class WooThemes_Sensei_Updates {
 						<script type='text/javascript'>
 						<!--
 						function sensei_nextpage() {
-							location.href = "admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 5) ?>&functions[]=<?php echo $functions_list; ?>";
+							location.href = "admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 10) ?>&functions[]=<?php echo $functions_list; ?>";
 						}
 						setTimeout( "sensei_nextpage()", 250 );
 						//-->
@@ -199,11 +207,12 @@ class WooThemes_Sensei_Updates {
 							</tr>
 						</tfoot>
 
-						<tbody class="plugins">
+						<tbody class="updates">
 							<?php
 							// Sort updates with the latest at the top
 							uksort( $this->updates, array( $this, 'sort_updates' ) );
 							$this->updates = array_reverse( $this->updates, true );
+							$class = 'alternate';
 							foreach( $this->updates as $version => $version_updates ) {
 								foreach( $version_updates as $type => $updates ) {
 									foreach( $updates as $update => $data ) {
@@ -214,7 +223,7 @@ class WooThemes_Sensei_Updates {
 										} // End If Statement
 										?>
 										<form method="post" action="admin.php?page=sensei_updates&action=update&n=0" name="update-sensei" class="upgrade">
-											<tr class="active">
+											<tr class="<?php echo $class; ?>">
 												<td>
 													<p>
 														<input type="hidden" name="checked[]" value="<?php echo $update; ?>">
@@ -227,6 +236,11 @@ class WooThemes_Sensei_Updates {
 											</tr>
 										</form>
 										<?php
+										if( 'alternate' == $class ) {
+											$class = '';
+										} else {
+											$class = 'alternate';
+										}
 									}
 								}
 							}
@@ -409,7 +423,7 @@ class WooThemes_Sensei_Updates {
 	 * @access public
 	 * @return void
 	 */
-	public function update_question_answer_data( $n = 5, $offset = 0 ) {
+	public function update_question_answer_data( $n = 10, $offset = 0 ) {
 
 		// Get Total Number of Updates to run
 		$quiz_count_object = wp_count_posts( 'quiz' );
@@ -502,7 +516,7 @@ class WooThemes_Sensei_Updates {
 	 * Add default question grade points for v1.4.0
 	 *
 	 * @since  1.4.0
-	 * @return void
+	 * @return boolean
 	 */
 	public function update_question_grade_points() {
 		$args = array(	'post_type' 		=> 'question',
@@ -517,6 +531,178 @@ class WooThemes_Sensei_Updates {
 		}
 		return true;
 	} // End update_question_grade_points
+
+	/**
+	 * Convert all essay paste questions into multi-line for v1.5.0
+	 *
+	 * @since  1.5.0
+	 * @return boolean
+	 */
+	public function convert_essay_paste_questions() {
+		$args = array(	'post_type' 		=> 'question',
+						'numberposts' 		=> -1,
+						'post_status'		=> 'publish',
+						'tax_query'			=> array(
+							array(
+								'taxonomy'		=> 'question-type',
+								'terms'			=> 'essay-paste',
+								'field'			=> 'slug'
+							)
+						),
+						'suppress_filters' 	=> 0
+						);
+		$questions = get_posts( $args );
+
+		foreach( $questions as $question ) {
+			wp_set_object_terms( $question->ID, 'multi-line', 'question-type', false );
+
+			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
+			if( 0 < intval( $quiz_id ) ) {
+				add_post_meta( $question->ID, '_quiz_question_order', $quiz_id . '0000', true );
+			}
+		}
+		return true;
+	} // End convert_essay_paste_questions
+
+	/**
+	 * Set all quizzes to have a random question order
+	 *
+	 * @since  1.5.0
+	 * @return boolean
+	 */
+	public function set_random_question_order( $n = 10, $offset = 0 ) {
+
+		// Get Total Number of Updates to run
+		$quiz_count_object = wp_count_posts( 'quiz' );
+		$quiz_count_published = $quiz_count_object->publish;
+
+		// Calculate if this is the last page
+		if ( 0 == $offset ) {
+			$current_page = 1;
+		} else {
+			$current_page = intval( $offset / $n );
+		} // End If Statement
+		$total_pages = intval( $quiz_count_published / $n );
+
+		$args = array(	'post_type' 		=> 'quiz',
+						'post_status'		=> 'any',
+						'numberposts' 		=> $n,
+						'offset'			=> $offset,
+						'suppress_filters' 	=> 0
+						);
+		$quizzes = get_posts( $args );
+
+		foreach( $quizzes as $quiz ) {
+			update_post_meta( $quiz->ID, '_random_question_order', 'yes' );
+		}
+
+		if ( $current_page == $total_pages ) {
+			return true;
+		} else {
+			return false;
+		} // End If Statement
+
+	} // End set_random_question_order()
+
+	/**
+	 * Set all quizzes to display all questions
+	 *
+	 * @since  1.5.0
+	 * @return boolean
+	 */
+	public function set_default_show_question_count( $n = 10, $offset = 0 ) {
+
+		$args = array(	'post_type' 		=> 'quiz',
+						'post_status'		=> 'any',
+						'numberposts' 		=> $n,
+						'offset'			=> $offset,
+						'meta_key'			=> '_show_questions',
+						'suppress_filters' 	=> 0
+						);
+		$quizzes = get_posts( $args );
+
+		$total_quizzes = count( $quizzes );
+
+		if( 0 == intval( $total_quizzes ) ) {
+			return true;
+		}
+
+		foreach( $quizzes as $quiz ) {
+			delete_post_meta( $quiz->ID, '_show_questions' );
+		}
+
+		$total_pages = intval( $total_quizzes / $n );
+
+		// Calculate if this is the last page
+		if ( 0 == $offset ) {
+			$current_page = 1;
+		} else {
+			$current_page = intval( $offset / $n );
+		} // End If Statement
+
+		if ( $current_page == $total_pages ) {
+			return true;
+		} else {
+			return false;
+		} // End If Statement
+
+	}
+
+	public function remove_deleted_user_activity( $n = 10, $offset = 0 ) {
+		global $woothemes_sensei;
+
+		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+
+		$all_activity = get_comments( array( 'status' => 'approve' ) );
+		$activity_count = array();
+		foreach( $all_activity as $activity ) {
+			if( '' == $activity->comment_type ) continue;
+			if( strpos( 'sensei_', $activity->comment_type ) != 0 ) continue;
+			if( 0 == $activity->user_id ) continue;
+			$activity_count[] = $activity->comment_ID;
+		}
+
+		$args = array(
+			'number' => $n,
+			'offset' => $offset,
+			'status' => 'approve'
+		);
+
+		$activities = get_comments( $args );
+
+		foreach( $activities as $activity ) {
+			if( '' == $activity->comment_type ) continue;
+			if( strpos( 'sensei_', $activity->comment_type ) != 0 ) continue;
+			if( 0 == $activity->user_id ) continue;
+
+			$user_exists = get_userdata( $activity->user_id );
+
+			if( ! $user_exists ) {
+				wp_delete_comment( intval( $activity->comment_ID ), true );
+				wp_cache_flush();
+			}
+		}
+
+		$total_activities = count( $activity_count );
+
+		$total_pages = intval( $total_activities / $n );
+
+		// Calculate if this is the last page
+		if ( 0 == $offset ) {
+			$current_page = 1;
+		} else {
+			$current_page = intval( $offset / $n );
+		} // End If Statement
+
+		add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+
+		if ( $current_page >= $total_pages ) {
+			return true;
+		} else {
+			return false;
+		} // End If Statement
+
+	}
 
 } // End Class
 ?>

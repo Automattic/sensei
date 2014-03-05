@@ -1,5 +1,7 @@
 jQuery(document).ready( function($) {
 
+	var file_frame;
+
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
 	 ***************************************************************************************************/
@@ -45,7 +47,7 @@ jQuery(document).ready( function($) {
  	    	}
  	    } else if ( 'edit' == action ) {
  			// Check for empty questions
- 			var tableRowId = jqueryObject.parent('div').parent('td').parent('tr').prev('tr').find('td:first').text();
+ 			var tableRowId = jqueryObject.closest('tr').prev('tr').find('td:first').text();
  			if ( jQuery( '#question_' + tableRowId ).val().replace(/^\s+|\s+$/g, "").length != 0 ) {
  	    		return true;
  	    	} else {
@@ -181,6 +183,8 @@ jQuery(document).ready( function($) {
  	    } else {
  	    	jQuery( '#no-questions-message' ).removeClass( 'hidden' );
  	    }
+
+ 	    jQuery.fn.updateQuestionRows();
  	}
 
  	/**
@@ -209,6 +213,189 @@ jQuery(document).ready( function($) {
 		);
 		return false;
  	}
+
+ 	/**
+ 	 * Save quiz question order
+ 	 *
+ 	 * @since 1.5.0
+ 	 * access public
+ 	 */
+ 	jQuery.fn.saveQuestionOrder = function( question_order ) {
+
+ 		var dataToPost = 'question_order' + '=' + question_order;
+ 		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+ 		jQuery.post(
+			ajaxurl,
+			{
+				action : 'lesson_update_question_order',
+				lesson_update_question_order_nonce : woo_localized_data.lesson_update_question_order_nonce,
+				data : dataToPost
+			},
+			function( response ) {}
+		);
+		return false;
+ 	}
+
+ 	/**
+ 	 * Save rnadom question order for quiz
+ 	 *
+ 	 * @since 1.5.0
+ 	 * access public
+ 	 */
+ 	jQuery.fn.saveQuestionOrderRandom = function() {
+
+ 		var random_question_order = jQuery( 'input#random_question_order' ).is( ':checked' ) ? 'yes' : 'no';
+
+ 		var dataToPost = 'random_question_order' + '=' + random_question_order;
+ 		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+ 		jQuery.post(
+			ajaxurl,
+			{
+				action : 'lesson_update_question_order_random',
+				lesson_update_question_order_random_nonce : woo_localized_data.lesson_update_question_order_random_nonce,
+				data : dataToPost
+			},
+			function( response ) {}
+		);
+		return false;
+ 	}
+
+ 	/**
+	 * Reset question numbers and row highlighting
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 */
+	jQuery.fn.updateQuestionRows = function() {
+		var row_number = 1;
+		var row_class = 'alternate';
+		jQuery( '#add-question-metadata' ).find( 'td.question-number' ).each( function() {
+			jQuery( this ).text( row_number );
+			jQuery( this ).closest( 'tbody' ).removeClass().addClass( row_class );
+			if( 'alternate' == row_class ) {
+				row_class = '';
+			} else {
+				row_class = 'alternate';
+			}
+			row_number++;
+		});
+	}
+
+	/**
+	 * Update question order input field
+	 *
+	 * @since 1.5.0
+	 */
+	jQuery.fn.updateQuestionOrder = function() {
+		var orderString = '';
+
+		jQuery( '#sortable-questions' ).find( 'input.row_question_id' ).each( function ( i, e ) {
+			if ( i > 0 ) { orderString += ','; }
+			orderString += jQuery( this ).val();
+		});
+
+		jQuery( 'input#question-order' ).attr( 'value', orderString );
+
+		jQuery.fn.saveQuestionOrder( orderString );
+	}
+
+	/**
+	 * Upload media file to questions
+	 *
+	 * @param  object  button        Button that was clicked
+	 * @return void
+	 *
+	 * @since  1.5.0
+	 */
+	jQuery.fn.uploadQuestionMedia = function( button ) {
+		var button_id = button.attr('id');
+		var field_id = button_id.replace( '_button', '' );
+		var preview_id = button_id.replace( '_button', '_preview' );
+		var link_id = button_id.replace( '_button', '_link' );
+		var delete_id = button_id.replace( '_button', '_button_delete' );
+
+		// Create the media frame.
+		file_frame = wp.media.frames.file_frame = wp.media({
+			title: button.data( 'uploader_title' ),
+			button: { text: button.data( 'uploader_button_text' ) },
+			multiple: false
+		});
+
+		// When a file is selected, run a callback.
+		file_frame.on( 'select', function() {
+			attachment = file_frame.state().get('selection').first().toJSON();
+			jQuery( '#' + field_id ).val( attachment.id );
+
+			var filetype = attachment.type;
+			var preview_image = false;
+			if( 'image' == filetype ) {
+				preview_image = true;
+			}
+
+			var media_title = attachment.title;
+			if( ! media_title || media_title == '' ) {
+				media_title = attachment.filename;
+			}
+
+			var link_text = '<a class="' + filetype + '" href="' + attachment.url + '" target="_blank">' + media_title + '</a>';
+			jQuery( '#' + link_id ).removeClass( 'hidden' );
+			jQuery( '#' + link_id ).html( link_text );
+
+			if( preview_image ) {
+				jQuery( '#' + preview_id ).removeClass( 'hidden' );
+				jQuery( '#' + preview_id ).attr( 'src', attachment.sizes.thumbnail.url );
+			} else {
+				jQuery( '#' + preview_id ).addClass( 'hidden' );
+				jQuery( '#' + preview_id ).attr( 'src', '' );
+			}
+
+			button.text( woo_localized_data.change_file );
+			jQuery( '#' + delete_id ).removeClass( 'hidden' );
+
+		});
+
+		// Open the modal
+		file_frame.open();
+	}
+
+	jQuery.fn.deleteQuestionMedia = function( button ) {
+		var button_id = button.attr('id');
+		var add_button_id = button_id.replace( '_button_delete', '_button' );
+		var field_id = button_id.replace( '_button_delete', '' );
+		var preview_id = button_id.replace( '_button_delete', '_preview' );
+		var link_id = button_id.replace( '_button_delete', '_link' );
+
+		jQuery( '#' + field_id ).val( '' );
+		jQuery( '#' + preview_id ).addClass( 'hidden' );
+		jQuery( '#' + preview_id ).attr( 'src', '' );
+		jQuery( '#' + link_id ).addClass( 'hidden' );
+		jQuery( '#' + link_id ).html();
+
+		jQuery( '#' + add_button_id ).text( woo_localized_data.add_file );
+		button.addClass( 'hidden' );
+	}
+
+	/**
+	 * Update answer order input field
+	 *
+	 * @since 1.5.0
+	 */
+	jQuery.fn.updateAnswerOrder = function( answer_parent ) {
+		var answer_id = '';
+		var orderString = '';
+
+		answer_parent.find( 'input.question_answer' ).each( function ( i, e ) {
+			answer_id = jQuery( this ).attr( 'rel' );
+			if( '' != answer_id ) {
+				if ( i > 0 ) { orderString += ','; }
+				orderString += jQuery( this ).attr( 'rel' );
+			}
+		});
+
+		answer_parent.find( 'input.answer_order' ).attr( 'value', orderString );
+	}
 
  	/**
 	 * JS version of PHP htmlentities.
@@ -371,17 +558,21 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-question-actions' ).on( 'change', 'select.question-type-select', function() {
 		// Show the correct Question Type
-		// REFACTOR
 		var questionType = jQuery(this).val();
+
 		jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
 		jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
 		jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).hide();
-		jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).hide();
 		jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).hide();
 		jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).hide();
+		jQuery( '#add-new-question' ).find( 'div.question_fileupload_fields' ).hide();
+
+		jQuery( '.add_question_random_order' ).hide();
+
 		switch ( questionType ) {
 			case 'multiple-choice':
 				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
+				jQuery( '.add_question_random_order' ).show();
 			break;
 			case 'boolean':
 				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).show();
@@ -389,17 +580,14 @@ jQuery(document).ready( function($) {
 			case 'gap-fill':
 				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).show();
 			break;
-			case 'essay-paste':
-				jQuery( '#add-new-question' ).find( 'div.question_essay_fields' ).show();
-			break;
 			case 'multi-line':
 				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).show();
 			break;
 			case 'single-line':
 				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).show();
 			break;
-			default :
-				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
+			case 'file-upload':
+				jQuery( '#add-new-question' ).find( 'div.question_fileupload_fields' ).show();
 			break;
 		} // End Switch Statement
 	});
@@ -426,13 +614,14 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_table_edit', function() {
 		// Display the question for edit
-		var questionId = jQuery(this).parent('td').parent('tr').find('td:first').text();
+		var questionId = jQuery(this).closest('tr').next('tr').find('.question_original_counter').text();
 		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
  		// Hide the add question form and prep the table
 		jQuery( '#add-new-question' ).addClass( 'hidden' );
 	 	jQuery.fn.resetAddQuestionForm();
 	 	jQuery.fn.resetQuestionTable();
-		jQuery( '#question_' + questionId ).parent('div').parent('td').parent('tr').removeClass('hidden');
+		// jQuery( '#question_' + questionId ).closest('tr').removeClass('hidden');
+		jQuery(this).closest('tr').next('tr').removeClass('hidden');
 		jQuery( '#question_' + questionId ).focus();
 	});
 
@@ -457,8 +646,7 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.lesson_question_cancel', function() {
 		// Hide the edit question panel
-		var tableRowId = jQuery( this ).parent('div').parent('td').parent('tr').prev('tr').find('td.table-count').text();
-		jQuery( '#question_' + tableRowId ).parent('div').parent('td').parent('tr').addClass( 'hidden' );
+		jQuery( this ).closest('tr.question-quick-edit').addClass( 'hidden' );
 	});
 
 	/**
@@ -491,17 +679,14 @@ jQuery(document).ready( function($) {
 				case 'gap-fill':
 					divFieldsClass = 'question_gapfill_fields';
 				break;
-				case 'essay-paste':
-					divFieldsClass = 'question_essay_fields';
-				break;
 				case 'multi-line':
 					divFieldsClass = 'question_multiline_fields';
 				break;
 				case 'single-line':
 					divFieldsClass = 'question_singleline_fields';
 				break;
-				default :
-					divFieldsClass = 'question_default_fields';
+				case 'file-upload':
+					divFieldsClass = 'question_fileupload_fields';
 				break;
 			} // End Switch Statement
 			// Handle Required Fields
@@ -534,6 +719,22 @@ jQuery(document).ready( function($) {
 	 		dataToPost += '&' + 'question_type' + '=' + questionType;
 	 		questionGrade = jQuery( '#add-question-grade' ).val();
 	 		dataToPost += '&' + 'question_grade' + '=' + questionGrade;
+
+	 		var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+	 		dataToPost += '&' + 'question_count' + '=' + questionCount;
+
+	 		var answer_order = jQuery( '#add-new-question' ).find( '.answer_order' ).attr( 'value' );
+ 			dataToPost += '&' + 'answer_order' + '=' + answer_order;
+
+ 			var question_media = jQuery( '#add-new-question' ).find( '.question_media' ).attr( 'value' );
+ 			dataToPost += '&' + 'question_media' + '=' + question_media;
+
+ 			var random_order = 'no';
+ 			if ( jQuery( 'div#add-new-question' ).find( '.random_order' ).is(':checked') ) {
+ 				random_order = 'yes'
+ 			}
+ 			dataToPost += '&' + 'random_order' + '=' + random_order;
+
 	 		// Perform the AJAX call.
 	 		jQuery.post(
 	 		    ajaxurl,
@@ -543,117 +744,24 @@ jQuery(document).ready( function($) {
 	 		    	data : dataToPost
 	 		    },
 	 		    function( response ) {
-	 		    	//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
-	 		    	//	jQuery( this ).css( 'visibility', 'hidden' );
-	 		    	//});
-	 		    	// Check for a valid question id
-	 		    	if ( 0 < response ) {
-	 		    		// TODO - Add the question to the table, and clear the add form and hide it
+	 		    	// Check for a valid response
+	 		    	if ( response ) {
 	 		    		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
- 						// If successful, hide the form and add to the table, clear the values
 						jQuery( '#add-new-question' ).addClass( 'hidden' );
 	 		    		jQuery.fn.updateQuestionCount( 1, '+' );
-	 		    		var tableCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
-	 		    		var questionId = response;
-	 		    		var addQuestionText = jQuery.fn.htmlentities( jQuery( '#add_question' ).attr( 'value' ) );
-	 		    		// TODO - Localize the english labels for translation
-	 		    		var outputEditForm = '';
-	 		    		outputEditForm += '<tr>';
-    						outputEditForm += '<td class="table-count hidden">' + tableCount + '</td>';
-				 		    outputEditForm += '<td>' + addQuestionText + '</td>';
-				 		    outputEditForm += '<td>' + jQuery.fn.ucwords( questionType ) + '</td>';
-				 		    outputEditForm += '<td><a title="Edit Question" href="#question_' + tableCount + '" class="question_table_edit">Edit</a>&nbsp;&nbsp;&nbsp;<a title="Delete Question" href="#add-question-metadata" class="question_table_delete">Delete</a></td>';
-				 		outputEditForm += '</tr>';
-				 		outputEditForm += '<tr class="question-quick-edit hidden">';
-				 		    outputEditForm += '<td colspan="3">';
-				 		    	outputEditForm += '<div class="question_required_fields">';
-				 		    		outputEditForm += '<label>Question ' + tableCount + '</label> <input type="text" id="question_' + tableCount + '" name="question" value="' + addQuestionText + '" size="25" class="widefat">';
-				 		    		outputEditForm += '<div><label>Question Grade</label> <input type="number" id="question_' + tableCount + '_grade" class="question_grade small-text" name="question_grade" value="' + questionGrade + '" min="1"></div>';
-				 		    	outputEditForm += '</div>';
-				 		    	switch ( questionType ) {
-									case 'multiple-choice':
-										var addQuestionRightText = jQuery.fn.htmlentities( jQuery( '#add_question_right_answer' ).attr( 'value' ) );
-										var arrayCounter = 0;
-					 		    		var addQuestionWrongText = new Array();
-					 		    		jQuery( '#add-new-question input[name="question_wrong_answers[]"]' ).each( function() {
-					 		    			addQuestionWrongText[arrayCounter] = jQuery.fn.htmlentities( jQuery(this).attr( 'value' ) );
-					 		    			arrayCounter++;
-					 		    		});
-										outputEditForm += '<div class="question_default_fields">';
-						 		    		outputEditForm += '<label>Right Answer</label> <input type="text" id="question_' + tableCount + '_right_answer" name="question_right_answer" value="' + addQuestionRightText + '" size="25" class="widefat">';
-						 		    		outputEditForm += '<label>Wrong Answers</label> <input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[0] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[1] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[2] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[3] + '" size="25" class="widefat">';
-						 		    	outputEditForm += '</div>';
-									break;
-									case 'boolean':
-										outputEditForm += '<div class="question_boolean_fields">';
-											var trueChecked = '';
-											var falseChecked = '';
-											if ( 'true' == radioValue ) {
-												trueChecked = 'checked';
-											} // End If Statement
-						 		    		outputEditForm += '<label for="question_' + questionId + '_boolean_true"><input id="question_' + questionId + '_boolean_true" type="radio" name="question_' + questionId + '_right_answer_boolean" value="true" ' + trueChecked + ' /> True</label>&nbsp;&nbsp;&nbsp;';
-						 		    		if ( 'false' == radioValue ) {
-												falseChecked = 'checked';
-											} // End If Statement
-						 		    		outputEditForm += '<label for="question_' + questionId + '_boolean_false"><input id="question_' + questionId + '_boolean_false" type="radio" name="question_' + questionId + '_right_answer_boolean" value="false" ' + falseChecked + ' /> False</label>';
-						 		    	outputEditForm += '</div>';
-									break;
-									case 'gap-fill':
-										outputEditForm += '<div class="question_gapfill_fields">';
-											outputEditForm += '<label>Right Answer</label> ';
-						 		    		outputEditForm += '<input type="text" id="question_' + tableCount + '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' + jQuery( '#add_question_right_answer_gapfill_pre' ).val() + '" size="25" class="widefat">';
-						 		    		outputEditForm += '<input type="text" id="question_' + tableCount  + '_add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="' + jQuery( '#add_question_right_answer_gapfill_gap' ).val() + '" size="25" class="widefat">';
-						 		    		outputEditForm += '<input type="text" id="question_' + tableCount  + '_add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="' + jQuery( '#add_question_right_answer_gapfill_post' ).val() + '" size="25" class="widefat">';
-						 		    	outputEditForm += '</div>';
-									break;
-									case 'essay-paste':
-										outputEditForm += '<div class="question_essay_fields">';
-											outputEditForm += '<label>Right Answer</label> ';
-											outputEditForm += '<textarea id="question_' + tableCount + '_add_question_right_answer_essay" name="add_question_right_answer_essay" rows="15" cols="40" class="widefat">' + jQuery( '#add_question_right_answer_essay' ).val() + '</textarea>';
-										outputEditForm += '</div>';
-									break;
-									case 'multi-line':
-										outputEditForm += '<div class="question_multiline_fields">';
-											outputEditForm += '<label>Right Answer</label> ';
-											outputEditForm += '<textarea id="question_' + tableCount + '_add_question_right_answer_multiline" name="add_question_right_answer_multiline" rows="3" cols="40" class="widefat">' + jQuery( '#add_question_right_answer_multiline' ).val() + '</textarea>';
-										outputEditForm += '</div>';
-									break;
-									case 'single-line':
-										outputEditForm += '<div class="question_singleline_fields">';
-											outputEditForm += '<label>Right Answer</label> ';
-											outputEditForm += '<input type="text" id="question_' + tableCount  + '_add_question_right_answer_singleline" name="add_question_right_answer_singleline" value="' + jQuery( '#add_question_right_answer_singleline' ).val() + '" size="25" class="widefat">';
-										outputEditForm += '</div>';
-									break;
-									default :
-										var addQuestionRightText = jQuery.fn.htmlentities( jQuery( '#add_question_right_answer' ).attr( 'value' ) );
-										var arrayCounter = 0;
-					 		    		var addQuestionWrongText = new Array();
-					 		    		jQuery( '#add-new-question input[name="question_wrong_answers[]"]' ).each( function() {
-					 		    			addQuestionWrongText[arrayCounter] = jQuery.fn.htmlentities( jQuery(this).attr( 'value' ) );
-					 		    			arrayCounter++;
-					 		    		});
-										outputEditForm += '<div class="question_default_fields">';
-						 		    		outputEditForm += '<label>Right Answer</label> <input type="text" id="question_' + tableCount + '_right_answer" name="question_right_answer" value="' + addQuestionRightText + '" size="25" class="widefat">';
-						 		    		outputEditForm += '<label>Wrong Answers</label> <input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[0] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[1] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[2] + '" size="25" class="widefat"><input type="text" name="question_wrong_answers[]" value="' + addQuestionWrongText[3] + '" size="25" class="widefat">';
-						 		    	outputEditForm += '</div>';
-									break;
-								} // End Switch Statement
-				 		    	outputEditForm += '<input type="hidden" class="question_type" name="question_type" id="question_' + tableCount + '_question_type" value="' + questionType + '">';
-				 		    	outputEditForm += '<input type="hidden" name="question_id" id="question_' + tableCount + '_id" value="' + questionId + '">';
-				 		    	outputEditForm += '<div class="update-question"><a title="Cancel" href="#question-edit-cancel" class="lesson_question_cancel">Cancel</a> ';
-								outputEditForm += '<a title="Update Question" href="#add-question-metadata" class="question_table_save button button-highlighted">Update</a></div>';
-				 		    outputEditForm += '</td>';
-				 		outputEditForm += '</tr>';
-	 		    		jQuery( '#add-question-metadata table tbody' ).append( outputEditForm );
+	 		    		jQuery( '#add-question-metadata table' ).append( response );
 			    		jQuery.fn.resetAddQuestionForm();
 			 			jQuery.fn.checkQuizGradeType( questionType );
+
+			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+			 			max_questions++;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
 	 		    	}
 	 		    }
 	 		);
-	 		return false; // TODO - move this below the next bracket when doing the ajax loader
+	 		return false;
 	 	} else {
 			jQuery( '#add_question' ).focus();
-			// TODO - add error message
 		}
 	});
 
@@ -666,101 +774,106 @@ jQuery(document).ready( function($) {
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_table_save', function() {
 	 	var dataToPost = '';
 	 	var tableRowId = '';
-	 	// Validate Inputs
 	 	var validInput = jQuery.fn.validateQuestionInput( 'edit', jQuery(this) );
 		if ( validInput ) {
-	 			// Setup the data to post
-	 			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
-	 			dataToPost += '&action=save';
-	 			jQuery( this ).parent('div').parent( 'td' ).children( 'input' ).each( function() {
+ 			// Setup the data to post
+ 			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+ 			dataToPost += '&action=save';
+ 			jQuery( this ).closest( 'td' ).children( 'input' ).each( function() {
+ 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+ 			});
+ 			tableRowId = jQuery( this ).closest('td').find('span.question_original_counter').text();
+ 			if ( jQuery( this ).closest('td').find( 'input.question_type' ).val() != '' ) {
+	 			questionType = jQuery( this ).closest('td').find( 'input.question_type' ).val();
+	 		} // End If Statement
+	 		var divFieldsClass = 'question_default_fields';
+	 		switch ( questionType ) {
+				case 'multiple-choice':
+					divFieldsClass = 'question_default_fields';
+				break;
+				case 'boolean':
+					divFieldsClass = 'question_boolean_fields';
+				break;
+				case 'gap-fill':
+					divFieldsClass = 'question_gapfill_fields';
+				break;
+				case 'essay-paste':
+					divFieldsClass = 'question_essay_fields';
+				break;
+				case 'multi-line':
+					divFieldsClass = 'question_multiline_fields';
+				break;
+				case 'single-line':
+					divFieldsClass = 'question_singleline_fields';
+				break;
+				case 'file-upload':
+					divFieldsClass = 'question_fileupload_fields';
+				break;
+			} // End Switch Statement
+			// Handle Required Fields
+			jQuery( this ).closest('td').find( 'div.question_required_fields' ).find( 'input' ).each( function() {
+	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
 	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
-	 			});
-	 			tableRowId = jQuery( this ).parent('div').parent('td').parent('tr').prev('tr').find('td:first').text();
-	 			if ( jQuery( this ).parent('div').parent().find( 'input.question_type' ).val() != '' ) {
-		 			questionType = jQuery( this ).parent('div').parent().find( 'input.question_type' ).val();
-		 		} // End If Statement
-		 		var divFieldsClass = 'question_default_fields';
-		 		switch ( questionType ) {
-					case 'multiple-choice':
-						divFieldsClass = 'question_default_fields';
-					break;
-					case 'boolean':
-						divFieldsClass = 'question_boolean_fields';
-					break;
-					case 'gap-fill':
-						divFieldsClass = 'question_gapfill_fields';
-					break;
-					case 'essay-paste':
-						divFieldsClass = 'question_essay_fields';
-					break;
-					case 'multi-line':
-						divFieldsClass = 'question_multiline_fields';
-					break;
-					case 'single-line':
-						divFieldsClass = 'question_singleline_fields';
-					break;
-					default :
-						divFieldsClass = 'question_default_fields';
-					break;
-				} // End Switch Statement
-				// Handle Required Fields
-				jQuery( this ).parent('div').parent().find( 'div.question_required_fields' ).children( 'input' ).each( function() {
-		 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
-		 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
-		 			} // End If Statement
-	 			});
-		 		// Handle Question Input Fields
-		 		var radioCount = 0;
-		 		jQuery( this ).parent('div').parent().find( 'div.' + divFieldsClass ).children( 'input' ).each( function() {
-		 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
-		 				// Only get the selected radio button
-		 				if ( radioCount == 0 ) {
-		 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
-		 					radioCount++;
-		 				} // End If Statement
-	 				} else {
-	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+	 			} // End If Statement
+ 			});
+	 		// Handle Question Input Fields
+	 		var radioCount = 0;
+	 		jQuery( this ).closest('td').find( 'div.' + divFieldsClass ).find( 'input' ).each( function() {
+	 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
+	 				// Only get the selected radio button
+	 				if ( radioCount == 0 ) {
+	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
+	 					radioCount++;
 	 				} // End If Statement
-		 		});
-		 		// Handle Question Textarea Fields
-		 		if ( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
-		 			dataToPost += '&' +  jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
-		 		} // End If Statement
-		 		if ( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
-		 			dataToPost += '&' +  jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).parent('div').parent().find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
-		 		} // End If Statement
-				dataToPost += '&' + 'question_type' + '=' + questionType;
-				questionGrade = jQuery( this ).parent('div').parent().find( 'input.question_grade' ).val();
-	 			dataToPost += '&' + 'question_grade' + '=' + questionGrade;
-	 			// Perform the AJAX call.
-				jQuery.post(
-	 				ajaxurl,
-	 				{
-	 					action : 'lesson_update_question',
-	 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
-	 					data : dataToPost
-	 				},
-	 				function( response ) {
-	 					//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
-	 					//	jQuery( this ).css( 'visibility', 'hidden' );
-	 					//});
-	 					if ( response ) {
-	 						// Display the question for edit
-	 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
-	 							if ( jQuery(this).text() == tableRowId ) {
-	 								jQuery(this).next('td').text( jQuery( '#question_' + tableRowId ).attr('value') );
-	 							}
-	 						});
-	 						jQuery( '#question_' + tableRowId ).parent('div').parent('td').parent('tr').addClass( 'hidden' );
-	 					}
-	 				}
-	 			);
-	 			return false; // TODO - move this below the next bracket when doing the ajax loader
-	 	//});
-		} else {
-			tableRowId = jQuery( this ).parent('div').parent('td').parent('tr').prev('tr').find('td:first').text();
-			jQuery( '#question_' + tableRowId ).focus();
-			// TODO - add error message
+ 				} else {
+ 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+ 				} // End If Statement
+	 		});
+
+	 		// Handle Question Textarea Fields
+	 		if ( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
+	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
+	 		} // End If Statement
+	 		if ( divFieldsClass == 'question_fileupload_fields' ) {
+	 			jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).each( function() {
+	 				dataToPost += '&' +  jQuery(this).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).val() );
+	 			});
+	 		} // End If Statement
+
+			dataToPost += '&' + 'question_type' + '=' + questionType;
+			questionGrade = jQuery( this ).closest('td').find( 'input.question_grade' ).val();
+ 			dataToPost += '&' + 'question_grade' + '=' + questionGrade;
+
+ 			var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+ 			dataToPost += '&' + 'question_count' + '=' + questionCount;
+
+ 			var answer_order = jQuery( this ).closest('td').find( '.answer_order' ).attr( 'value' );
+ 			dataToPost += '&' + 'answer_order' + '=' + answer_order;
+
+ 			var question_media = jQuery( this ).closest('td').find( '.question_media' ).attr( 'value' );
+ 			dataToPost += '&' + 'question_media' + '=' + question_media;
+
+ 			var random_order = 'no';
+ 			if ( jQuery( this ).closest('td').find( '.random_order' ).is(':checked') ) {
+ 				random_order = 'yes'
+ 			}
+ 			dataToPost += '&' + 'random_order' + '=' + random_order;
+
+ 			// Perform the AJAX call.
+			jQuery.post(
+ 				ajaxurl,
+ 				{
+ 					action : 'lesson_update_question',
+ 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
+ 					data : dataToPost
+ 				},
+ 				function( response ) {
+ 					if ( response ) {
+ 						jQuery( '#question_' + tableRowId ).closest('tr').addClass( 'hidden' );
+ 					}
+ 				}
+ 			);
+ 			return false;
 		}
 	});
 
@@ -777,46 +890,125 @@ jQuery(document).ready( function($) {
 	 	// TODO - localize this delete message
 	 	var confirmDelete = confirm( 'Are you sure you want to delete this question?' );
 	 	if ( confirmDelete ) {
-	 		//var ajaxLoaderIcon = jQuery( this ).parent().find( '.ajax-loading' );
-	 		//ajaxLoaderIcon.css( 'visibility', 'visible' ).fadeTo( 'slow', 1, function () {
-	 			// Setup data to post
-	 			dataToPost += '&action=delete';
-	 			jQuery( this ).parent( 'td' ).parent('tr').next('tr').find('td').children( 'input' ).each( function() {
-	 				if ( jQuery( this ).attr( 'name' ) == 'question_id' ) {
-	 					questionId = jQuery( this ).attr( 'value' );
-	 					dataToPost += '&question_id' + '=' + jQuery( this ).attr( 'value' );
-	 				} // End If Statement
-	 			});
-	 			tableRowId = jQuery( this ).parent('td').parent('tr').find('td:first').text();
-	 			// Perform the AJAX call.
-	 			jQuery.post(
-	 				ajaxurl,
-	 				{
-	 					action : 'lesson_update_question',
-	 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
-	 					data : dataToPost
-	 				},
-	 				function( response ) {
-	 					//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
-	 					//	jQuery( this ).css( 'visibility', 'hidden' );
-	 					//});
-	 					if ( response ) {
-	 						// Remove the html element for the deleted question
-	 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
-	 							if ( jQuery(this).text() == tableRowId ) {
-	 								jQuery(this).parent('tr').next('tr').remove();
-	 								jQuery(this).parent('tr').remove();
-								}
-	 						});
-	 						jQuery.fn.updateQuestionCount( 1, '-' );
-	 						jQuery.fn.checkQuizGradeType( false );
-	 						// TODO - renumber function for reuse when adding
-	 					}
-	 				}
-	 			);
-	 			return false; // TODO - move this below the next bracket when doing the ajax loader
-	 	//});
+ 			// Setup data to post
+ 			dataToPost += '&action=delete';
+ 			jQuery( this ).closest('tr').next('tr').find('td').find( 'input' ).each( function() {
+ 				if ( jQuery( this ).attr( 'name' ) == 'question_id' ) {
+ 					questionId = jQuery( this ).attr( 'value' );
+ 					dataToPost += '&question_id' + '=' + jQuery( this ).attr( 'value' );
+ 				} // End If Statement
+ 			});
+ 			tableRowId = jQuery( this ).closest('tr').find('td.question-number').text();
+ 			var row_parent = jQuery( this ).closest( 'tbody' );
+ 			// Perform the AJAX call.
+ 			jQuery.post(
+ 				ajaxurl,
+ 				{
+ 					action : 'lesson_update_question',
+ 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
+ 					data : dataToPost
+ 				},
+ 				function( response ) {
+ 					if ( response ) {
+ 						// Remove the html element for the deleted question
+ 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
+ 							if ( jQuery(this).text() == tableRowId ) {
+ 								jQuery(this).closest('tr').next('tr').remove();
+ 								jQuery(this).closest('tr').remove();
+ 								// Exit each() to prevent multiple row deletions
+ 								return false;
+							}
+ 						});
+ 						jQuery.fn.updateQuestionCount( 1, '-' );
+ 						jQuery.fn.checkQuizGradeType( false );
+ 						jQuery.fn.updateAnswerOrder( row_parent );
+
+ 						var max_questions = parseInt( jQuery( '#show_questions' ).attr( 'max' ) );
+			 			max_questions--;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+
+			 			var show_questions_field = parseInt( jQuery( '#show_questions' ).val() );
+			 			if( show_questions_field > max_questions ) {
+			 				jQuery( '#show_questions' ).val( max_questions );
+			 			}
+ 					}
+ 				}
+ 			);
+ 			return false;
 		}
+	});
+
+	jQuery( '#add-quiz-metadata' ).on( 'change', '#random_question_order', function() {
+		jQuery.fn.saveQuestionOrderRandom();
+	});
+
+	jQuery( '#add-question-main' ).on( 'blur', '.question_answer', function() {
+		var answer_value = jQuery( this ).val();
+		var answer_field = jQuery( this );
+
+		dataToPost = '&answer_value=' + answer_value;
+		jQuery.post(
+			ajaxurl,
+			{
+				action : 'question_get_answer_id',
+				data : dataToPost
+			},
+			function( response ) {
+				if ( response ) {
+					answer_field.attr( 'rel', response );
+					jQuery.fn.updateAnswerOrder( answer_field.closest( 'div' ) );
+				}
+			}
+		);
+
+		return false;
+	});
+
+	jQuery( '#add-question-main' ).on( 'click', '.add_answer_option', function() {
+		var question_counter = jQuery( this ).attr( 'rel' );
+		var answer_count = jQuery( this ).closest( 'div' ).find( '.wrong_answer_count' ).text();
+		answer_count++;
+		var html = '<label for="question_' + question_counter + '_wrong_answer_' + answer_count + '"><span>' + woo_localized_data.wrong_colon + '</span> <input type="text" id="question_' + question_counter + '_wrong_answer_' + answer_count + '" name="question_wrong_answers[]" value="" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+		jQuery( this ).before( html );
+	});
+
+	jQuery( '#add-question-main' ).on( 'click', '.remove_answer_option', function() {
+		jQuery( this ).closest( 'label' ).remove();
+	});
+
+	jQuery( '.multiple-choice-answers' ).sortable( {
+		items: "label"
+	});
+
+	jQuery( '.multiple-choice-answers' ).bind( 'sortstop', function ( e, ui ) {
+		jQuery.fn.updateAnswerOrder( jQuery( this ) );
+	});
+
+	jQuery( '#sortable-questions' ).sortable( {
+		items: "tbody",
+		'start': function (event, ui) {
+	        ui.placeholder.html("<tr><td colspan='5'>&nbsp;</td></tr>")
+	    }
+	});
+
+	jQuery( '#sortable-questions' ).bind( 'sortstop', function ( e, ui ) {
+		jQuery.fn.updateQuestionOrder();
+		jQuery.fn.updateQuestionRows();
+	});
+
+	jQuery('#add-question-main').on( 'click', '.upload_media_file_button', function( event ) {
+		event.preventDefault();
+		jQuery.fn.uploadQuestionMedia( jQuery( this ) );
+	});
+
+	jQuery('#add-question-main').on( 'click', '.delete_media_file_button', function( event ) {
+		event.preventDefault();
+		jQuery.fn.deleteQuestionMedia( jQuery( this ) );
+	});
+
+	jQuery('#add-question-main').on( 'click', '.question_media_preview', function( event ) {
+		event.preventDefault();
+		jQuery.fn.uploadQuestionMedia( jQuery( this ).closest( 'div' ).find( '.upload_media_file_button' ) );
 	});
 
 	/***************************************************************************************************
@@ -830,7 +1022,7 @@ jQuery(document).ready( function($) {
 	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).chosen(); }
 	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).chosen(); }
 	// Courses Write Panel
-	if ( jQuery( '#course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
+	if ( jQuery( '#course-wc-product #course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
 	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).chosen(); }
 	// Sensei Settings Panel
 	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {

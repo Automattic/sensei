@@ -206,7 +206,7 @@ class WooThemes_Sensei_Utils {
 	 * @access public
 	 * @since  1.0.0
 	 * @param  array $args (default: array())
-	 * @return void
+	 * @return boolean
 	 */
 	public static function sensei_delete_activities ( $args = array() ) {
 		$dataset_changes = false;
@@ -224,6 +224,34 @@ class WooThemes_Sensei_Utils {
     	} // End If Statement
     	return $dataset_changes;
     } // End sensei_delete_activities()
+
+    /**
+     * Delete all activity for specified user
+     * @access public
+	 * @since  1.5.0
+     * @param  integer $user_id User ID
+     * @return boolean
+     */
+    public static function delete_all_user_activity( $user_id = 0 ) {
+
+    	$dataset_changes = false;
+
+    	if( $user_id ) {
+
+			$activities = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_id ), true );
+
+			if( $activities ) {
+				foreach( $activities as $activity ) {
+					if( '' == $activity->comment_type ) continue;
+					if( strpos( 'sensei_', $activity->comment_type ) != 0 ) continue;
+					$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
+					wp_cache_flush();
+				}
+			}
+		}
+
+		return $dataset_changes;
+	} // Edn delete_all_user_activity()
 
 
 	/**
@@ -352,6 +380,7 @@ class WooThemes_Sensei_Utils {
 		$answers_saved = false;
 
 		if( $submitted && intval( $user_id ) > 0 ) {
+
     		foreach( $submitted as $question_id => $answer ) {
 
     			// Get question type
@@ -360,9 +389,12 @@ class WooThemes_Sensei_Utils {
     				$question_type = $type->slug;
     			}
 
+    			if( ! $question_type ) {
+    				$question_type = 'multiple-choice';
+    			}
+
     			// Sanitise answer
     			switch( $question_type ) {
-    				case 'essay-paste': $answer = nl2br( stripslashes( $answer ) ); break;
     				case 'multi-line': $answer = nl2br( stripslashes( $answer ) ); break;
     				case 'single-line': $answer = stripslashes( $answer ); break;
     				case 'gap-fill': $answer = stripslashes( $answer ); break;
@@ -382,10 +414,70 @@ class WooThemes_Sensei_Utils {
 								);
 				$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
     		}
+
+    		// Handle file upload questions
+    		if( isset( $_FILES ) ) {
+				foreach( $_FILES as $field => $file ) {
+					if( strpos( $field, 'file_upload_' ) !== false ) {
+						$question_id = str_replace( 'file_upload_', '', $field );
+						if( $file && $question_id ) {
+							$attachment_id = self::upload_file( $file );
+							if( $attachment_id ) {
+								$args = array(
+								    'post_id' => $question_id,
+								    'username' => $user->user_login,
+								    'user_email' => $user->user_email,
+								    'user_url' => $user->user_url,
+								    'data' => base64_encode( $attachment_id ),
+								    'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
+								    'parent' => 0,
+								    'user_id' => $user_id,
+								    'action' => 'update'
+								);
+								$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+							}
+						}
+					}
+				}
+			}
     	}
 
     	return $answers_saved;
 	} // End sensei_save_quiz_answers()
+
+	public function upload_file( $file = array() ) {
+
+		require_once( ABSPATH . 'wp-admin/includes/admin.php' );
+
+        $file_return = wp_handle_upload( $file, array('test_form' => false ) );
+
+        if( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
+            return false;
+        } else {
+
+            $filename = $file_return['file'];
+
+            $attachment = array(
+                'post_mime_type' => $file_return['type'],
+                'post_title' => preg_replace( '/\.[^.]+$/', '', basename( $filename ) ),
+                'post_content' => '',
+                'post_status' => 'inherit',
+                'guid' => $file_return['url']
+            );
+
+            $attachment_id = wp_insert_attachment( $attachment, $file_return['url'] );
+
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
+            $attachment_data = wp_generate_attachment_metadata( $attachment_id, $filename );
+            wp_update_attachment_metadata( $attachment_id, $attachment_data );
+
+            if( 0 < intval( $attachment_id ) ) {
+            	return $attachment_id;
+            }
+        }
+
+        return false;
+	}
 
 	/**
 	 * Grade quiz automatically
@@ -586,21 +678,12 @@ class WooThemes_Sensei_Utils {
 	}
 
 	public function sensei_get_quiz_questions( $quiz_id = 0 ) {
+		global $woothemes_sensei;
 
 		$questions = array();
 
 		if( intval( $quiz_id ) > 0 ) {
-			$args = array(	'post_type' 		=> 'question',
-								'numberposts' 		=> -1,
-								'orderby'         	=> 'ID',
-	    						'order'           	=> 'ASC',
-	    						'meta_key'        	=> '_quiz_id',
-	    						'meta_value'      	=> $quiz_id,
-	    						'post_status'		=> 'publish',
-								'suppress_filters' 	=> 0
-								);
-			$questions = get_posts( $args );
-
+			$questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
 			$questions = WooThemes_Sensei_Utils::array_sort_reorder( $questions );
 		}
 
@@ -617,8 +700,8 @@ class WooThemes_Sensei_Utils {
 			foreach( $questions as $question ) {
 				$question_grade = get_post_meta( $question->ID, '_question_grade', true );
 				if( ! $question_grade || $question_grade == '' ) {
-					$question_grade = 1;
-				}
+                	$question_grade = 1;
+                }
 				$quiz_total += $question_grade;
 			}
 		}
@@ -1090,6 +1173,59 @@ class WooThemes_Sensei_Utils {
 			}
 		}
 
+		return false;
+	}
+
+	public function user_completed_course( $course_id = 0, $user_id = 0 ) {
+		global $woothemes_sensei;
+
+		if( $course_id ) {
+
+			if( ! $user_id ) {
+				global $current_user;
+				wp_get_current_user();
+				$user = $current_user;
+			} else {
+				$user = get_userdata( $user_id );
+			}
+
+			$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $course_id );
+		    $lessons_completed = 0;
+		    foreach ( $course_lessons as $lesson ){
+		    	$single_lesson_complete = false;
+		    	// Check if Lesson is complete
+		    	$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson->ID, 'user_id' => $user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
+				if ( '' != $user_lesson_end ) {
+					//Check for Passed or Completed Setting
+	                $course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
+	                if ( 'passed' == $course_completion ) {
+	                    // If Setting is Passed -> Check for Quiz Grades
+	                    $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson->ID );
+	                    // Get Quiz ID
+	                    if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
+	                        foreach ($lesson_quizzes as $quiz_item) {
+	                            $lesson_quiz_id = $quiz_item->ID;
+	                        } // End For Loop
+	                        // Quiz Grade
+	                        $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
+	                        // Check if Grade is bigger than pass percentage
+	                        $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
+	                        if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
+	                            $lessons_completed++;
+	                            $single_lesson_complete = true;
+	                        } // End If Statement
+	                    } // End If Statement
+	                } else {
+	                    $lessons_completed++;
+	                    $single_lesson_complete = true;
+	                } // End If Statement;
+				} // End If Statement
+		    } // End For Loop
+
+		    if ( absint( $lessons_completed ) == absint( count( $course_lessons ) ) && ( 0 < absint( count( $course_lessons ) ) ) && ( 0 < absint( $lessons_completed ) ) ) {
+		    	return true;
+		    }
+		}
 		return false;
 	}
 

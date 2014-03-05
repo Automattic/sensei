@@ -21,9 +21,6 @@ body #toplevel_page_sensei div.wp-menu-image:before {
   	vertical-align: top;
   	display: inline-block;
 }
-#icon-woothemes-sensei.icon32 {
-	background: transparent url(../images/sensei-icons.png) no-repeat left top;
-}
 
 /* Lessons Icon */
 body #menu-posts-lesson div.wp-menu-image:before {
@@ -34,25 +31,13 @@ body #menu-posts-lesson div.wp-menu-image:before {
   	vertical-align: top;
   	display: inline-block;
 }
-#icon-edit.icon32-posts-lesson, #icon-edit.icon32-posts-course {
-	background: transparent url(../images/lessons-icons.png) no-repeat left top;
-}
 
-
-/*  Retina */
-@media
-only screen and (-webkit-min-device-pixel-ratio: 2),
-only screen and (   min--moz-device-pixel-ratio: 2),
-only screen and (     -o-min-device-pixel-ratio: 2/1),
-only screen and (        min-device-pixel-ratio: 2) {
-	/* 	Sensei */
-	#icon-woothemes-sensei.icon32 {
-		background-image: url(../images/sensei-icons@x2.png);
-		background-size: 32px 187px;
-	}
-}
+#dashboard_right_now a.course-count:before, #dashboard_right_now span.course-count:before { content: "\f118"; }
+#dashboard_right_now a.lesson-count:before, #dashboard_right_now span.lesson-count:before { content: "\f331"; }
+#dashboard_right_now a.quizzes-count:before, #dashboard_right_now span.quizzes-count:before { content: "\f119"; }
 
 /* Sensei Menu */
 #toplevel_page_sensei li.wp-first-item { display: none; }
+
 /* Course Menu Icons */
 li.menu-icon-lesson .wp-menu-image img, li.menu-icon-course .wp-menu-image img { display: none; }

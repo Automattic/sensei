@@ -33,6 +33,19 @@ class WooThemes_Sensei_Question {
 		} // End If Statement
 	} // End __construct()
 
+	public function question_types() {
+		$types = array(
+			'multiple-choice' => 'Multiple Choice',
+			'boolean' => 'True/False',
+			'gap-fill' => 'Gap Fill',
+			'single-line' => 'Single Line',
+			'multi-line' => 'Multi Line',
+			'file-upload' => 'File Upload',
+		);
+
+		return apply_filters( 'sensei_question_types', $types );
+	}
+
 	/**
 	 * Add column headings to the "lesson" post list screen.
 	 * @access public
@@ -76,15 +89,15 @@ class WooThemes_Sensei_Question {
 												'>multiple-choice<',
 												'>gap-fill<',
 												'>multi-line<',
-												'>essay-paste<',
-												'>single-line<'
+												'>single-line<',
+												'>file-upload<'
 										 );
 				$question_type_replace = array(	'>True/False<',
 												'>Multiple Choice<',
 												'>Gap Fill<',
 												'>Multi Line<',
-												'>Essay Paste<',
-												'>Single Line<'
+												'>Single Line<',
+												'>File Upload<'
 										 );
 				echo str_replace( $question_type_orig, $question_type_replace, $output );
 			break;

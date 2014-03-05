@@ -47,7 +47,7 @@ $quiz_passmark_float = (float) $quiz_passmark;
     if ( 0 < count( $lesson_quiz_questions ) )  {
     	$question_count = 1;
     	?>
-    	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
+    	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data">
     		<ol id="sensei-quiz-list">
     			<?php foreach ($lesson_quiz_questions as $question_item) {
 
@@ -60,6 +60,8 @@ $quiz_passmark_float = (float) $quiz_passmark;
                     if ( isset( $question_types_array[0] ) && '' != $question_types_array[0] ) {
                         $question_type = $question_types_array[0];
                     } // End If Statement
+
+                    echo '<input type="hidden" name="questions_asked[]" value="' . $question_item->ID . '" />';
 
     				do_action( 'sensei_quiz_question_type', $question_type );
 

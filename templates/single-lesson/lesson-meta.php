@@ -21,11 +21,17 @@ do_action( 'sensei_complete_lesson' );
 // Check that the course has been started
 if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) { ?>
 	<section class="lesson-meta">
-        <?php do_action( 'sensei_lesson_video', $post->ID ); ?>
+		<?php
+		if( apply_filters( 'sensei_video_position', 'top', $post->ID ) == 'bottom' ) {
+			do_action( 'sensei_lesson_video', $post->ID );
+		}
+		?>
         <?php do_action( 'sensei_frontend_messages' ); ?>
         <?php do_action( 'sensei_lesson_quiz_meta', $post->ID, $current_user->ID  ); ?>
     </section>
     <?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
 <?php } else {
 	 do_action( 'sensei_lesson_course_signup', $lesson_course_id );
-} // End If Statement ?>
+} // End If Statement
+do_action( 'sensei_lesson_meta_extra', $post->ID );
+?>

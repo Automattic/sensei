@@ -79,8 +79,8 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 		// MAIN LOOP
 		foreach ($posts_array as $course_item) {
 			$title_keyword_count = 1;
-			if ( isset( $_POST['s'] ) && '' != $_POST['s'] ) {
-			$title_keyword_count = substr_count( strtolower( sanitize_title( $course_item->post_title ) ) , strtolower( sanitize_title( $_POST['s'] ) ) );
+			if ( isset( $_GET['s'] ) && '' != $_GET['s'] ) {
+			$title_keyword_count = substr_count( strtolower( sanitize_title( $course_item->post_title ) ) , strtolower( sanitize_title( $_GET['s'] ) ) );
 			} // End If Statement
 			if ( 0 < intval( $title_keyword_count ) ) {
 				$course_status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );

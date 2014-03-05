@@ -375,24 +375,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 * @param int $wc_post_id (default: 0)
 	 * @return void
 	 */
-	function sensei_check_if_product_is_in_cart( $wc_post_id = 0 ) {
+	function sensei_check_if_product_is_in_cart( $wc_product_id = 0 ) {
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
 			global $woocommerce;
 
-			$return = false;
-
-			if ( 0 < $wc_post_id ) {
-				$cart_id = $woocommerce->cart->generate_cart_id( $wc_post_id );
-				$test = $woocommerce->cart->find_product_in_cart( $cart_id );
-		    	if ( $test === $cart_id ) {
-		    		$return = true;
-		    	} // End If Statement
+			if ( 0 < $wc_product_id ) {
+				$product = get_product( $wc_product_id );
+				$parent_id = '';
+				if( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) {
+					$wc_product_id = $product->parent->id;
+				}
+				foreach( $woocommerce->cart->get_cart() as $cart_item_key => $values ) {
+					$_product = $values['data'];
+					if( $wc_product_id == $_product->id ) {
+						return true;
+					}
+				}
 		    } // End If Statement
-
-			return $return;
-		} else {
-			return false;
 		}
+
+		return false;
 	} // End sensei_check_if_product_is_in_cart()
 
 	/**
@@ -439,9 +441,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 */
 	function sensei_course_archive_filter( $query ) {
 		global $woothemes_sensei;
+
 		// Apply Filter only if on frontend and when course archive is running
 		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
-		if ( ( $query->is_post_type_archive( 'course' ) || $query->is_page( $course_page_id ) ) && !is_admin() ) {
+
+		if ( ! is_admin() && ( $query->get( 'page_id' ) == $course_page_id ) ) {
 			// Check for pagination settings
    			if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) {
     			$amount = absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] );
@@ -553,5 +557,30 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		}
 		return apply_filters( 'sensei_all_access', $access );
 	} // End sensei_all_access()
+
+	function is_sensei() {
+		global $post, $woothemes_sensei;
+
+		$is_sensei = false;
+
+		$post_types = array( 'lesson', 'course', 'quiz', 'question' );
+		$taxonomies = array( 'course-category', 'quiz-type', 'question-type', 'lesson-tag' );
+
+		if( is_post_type_archive( $post_types ) || is_singular( $post_types ) || is_tax( $taxonomies ) ) {
+			$is_sensei = true;
+		}
+
+		if( is_object( $post ) && ! is_wp_error( $post ) ) {
+
+			$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
+			$my_courses_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
+
+			if( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) ) ) {
+				$is_sensei = true;
+			}
+		}
+
+		return apply_filters( 'is_sensei', $is_sensei, $post );
+	}
 
 ?>

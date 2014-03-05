@@ -91,10 +91,14 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$question_answer_notes = base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_answer_notes', 'field' => 'comment_content' ) ) );
 
 			$question_grade_total = get_post_meta( $question_id, '_question_grade', true );
+			if( ! $question_grade_total || 0 == intval( $question_grade_total ) ) {
+				$question_grade_total = 1;
+			}
 			$quiz_grade_total += $question_grade_total;
 
 			$right_answer = stripslashes( get_post_meta( $question_id, '_question_right_answer', true ) );
 			$user_answer = maybe_unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_content' ) ) ) );
+			$type_name = __( 'Multiple Choice', 'woothemes-sensei' );
 			$grade_type = 'manual-grade';
 
 			switch( $type ) {
@@ -129,13 +133,28 @@ class WooThemes_Sensei_Grading_User_Quiz {
 					$type_name = __( 'Multi Line', 'woothemes-sensei' );
 					$grade_type = 'manual-grade';
 				break;
-				case 'essay-paste':
-					$type_name = __( 'Essay Paste', 'woothemes-sensei' );
-					$grade_type = 'manual-grade';
-				break;
 				case 'single-line':
 					$type_name = __( 'Single Line', 'woothemes-sensei' );
 					$grade_type = 'manual-grade';
+				break;
+				case 'file-upload':
+					$type_name = __( 'File Upload', 'woothemes-sensei' );
+					$grade_type = 'manual-grade';
+
+					// Get uploaded file
+					if( $user_answer ) {
+						$attachment_id = $user_answer;
+						$answer_media_url = $answer_media_filename = '';
+						if( 0 < intval( $attachment_id ) ) {
+						    $answer_media_url = wp_get_attachment_url( $attachment_id );
+						    $answer_media_filename = basename( $answer_media_url );
+						    if( $answer_media_url && $answer_media_filename ) {
+						    	$user_answer = sprintf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
+						    }
+						}
+					} else {
+						$user_answer = '';
+					}
 				break;
 				default:
 					// Nothing

@@ -104,6 +104,16 @@ jQuery(document).ready( function($) {
 		jQuery.fn.calculateTotalGrade();
 	}
 
+	jQuery.fn.getQueryVariable = function(variable) {
+	       var query = window.location.search.substring(1);
+	       var vars = query.split("&");
+	       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+	       }
+	       return(false);
+	}
+
 	/***************************************************************************************************
 	 * 	2 - Grading Overview Functions.
 	 ***************************************************************************************************/
@@ -166,6 +176,14 @@ jQuery(document).ready( function($) {
 		var dataToPost = '';
 	 	dataToPost += 'lesson_id' + '=' + lessonId;
 	 	dataToPost += '&course_id' + '=' + courseId;
+
+	 	var gradingStatus = jQuery.fn.getQueryVariable( 'grading_status' );
+	 	if( gradingStatus ) {
+	 		dataToPost += '&grading_status' + '=' + gradingStatus;
+	 	} else {
+	 		dataToPost += '&grading_status' + '=ungraded';
+	 	}
+
 		// Perform the AJAX call to get the select box.
 		jQuery.post(
 			ajaxurl,

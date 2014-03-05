@@ -40,6 +40,7 @@ if ( 0 < $total_lessons ) {
 
     	$lesson_count = 1;
     	$lessons_completed = 0;
+        $show_lesson_numbers = false;
     	foreach ($course_lessons as $lesson_item){
             $single_lesson_complete = false;
             $user_lesson_end = '';
@@ -84,7 +85,13 @@ if ( 0 < $total_lessons ) {
 
     			$html .= '<header>';
 
-    	    		$html .= '<h2><a href="' . esc_url( get_permalink( $lesson_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '"><span class="lesson-number">' . $lesson_count . '. </span>' . esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '</a></h2>';
+    	    		$html .= '<h2><a href="' . esc_url( get_permalink( $lesson_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '">';
+
+                    if( apply_filters( 'sensei_show_lesson_numbers', $show_lesson_numbers ) ) {
+                        $html .= '<span class="lesson-number">' . $lesson_count . '. </span>';
+                    }
+
+                    $html .= esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '</a></h2>';
 
     	    		$html .= '<p class="lesson-meta">';
 

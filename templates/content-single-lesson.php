@@ -76,7 +76,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 				if( $view_lesson ) { ?>
 				<section class="entry fix">
-                	<?php if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) ) { the_content(); } else { echo '<p>' . $post->post_excerpt . '</p>'; } ?>
+                	<?php
+                	if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) ) {
+                		if( apply_filters( 'sensei_video_position', 'top', $post->ID ) == 'top' ) {
+                			do_action( 'sensei_lesson_video', $post->ID );
+                		}
+                		the_content();
+                	} else {
+                		echo '<p>' . $post->post_excerpt . '</p>';
+                	}
+            		?>
 				</section>
 
 				<?php if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) ) {
