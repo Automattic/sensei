@@ -127,13 +127,13 @@ jQuery(document).ready( function($) {
 					case 'gap-fill':
 						disableAuto = true;
 					break;
-					case 'essay-paste':
-						disableAuto = true;
-					break;
 					case 'multi-line':
 						disableAuto = true;
 					break;
 					case 'single-line':
+						disableAuto = true;
+					break;
+					case 'file-upload':
 						disableAuto = true;
 					break;
 					default :
