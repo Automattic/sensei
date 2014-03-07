@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2014.03.07 - version 1.5.1
+ * New - Adding utility function to check if a user has completed a lesson
+ * Fix - Fixing PHP errors on My Courses page
+ * Fix - Fixing course progress bars on My Courses page
+
 2014.03.04 - version 1.5.0
  * [QUIZZES] New - Completely refactored the quiz edit panel
  * [QUIZZES] New - Adding 'File Upload' question type
