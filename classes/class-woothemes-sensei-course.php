@@ -1000,12 +1000,14 @@ class WooThemes_Sensei_Course {
 
 			$active_count = $completed_count = 0;
 
+			$active_courses = array();
 			if ( 0 < intval( count( $active_ids ) ) ) {
 				$my_courses_section = 'active';
 				$active_courses = $woothemes_sensei->post_types->course->course_query( $per_page, 'usercourses', $active_ids );
 				$active_count = count( $active_ids );
 			} // End If Statement
 
+			$completed_courses = array();
 			if ( 0 < intval( count( $completed_ids ) ) ) {
 				$my_courses_section = 'completed';
 				$completed_courses = $woothemes_sensei->post_types->course->course_query( $per_page, 'usercourses', $completed_ids );
@@ -1024,6 +1026,14 @@ class WooThemes_Sensei_Course {
 			}
 			foreach ( $active_courses as $course_item ) {
 				$course = $course_item;
+
+				$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $course_item->ID );
+				$lessons_completed = 0;
+				foreach ( $course_lessons as $lesson ) {
+					if ( WooThemes_Sensei_Utils::user_completed_lesson( $lesson->ID, $user->ID ) ) {
+						++$lessons_completed;
+					}
+				}
 
 			    // Get Course Categories
 			    $category_output = get_the_term_list( $course_item->ID, 'course-category', '', ', ', '' );
