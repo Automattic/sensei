@@ -816,18 +816,21 @@ class WooThemes_Sensei_Settings_API {
 	 */
 	public function enqueue_scripts () {
 		global $woothemes_sensei;
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 		if ( $this->has_range ) {
-			wp_enqueue_script( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/js/ranges.js' ), array( 'jquery-ui-slider' ), '1.2.1' );
+			wp_enqueue_script( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/js/ranges' . $suffix . '.js' ), array( 'jquery-ui-slider' ), '1.5.2' );
 		}
 
-		wp_register_script( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/js/image-selectors.js' ), array( 'jquery' ), '1.2.1' );
+		wp_register_script( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/js/image-selectors' . $suffix . '.js' ), array( 'jquery' ), '1.5.2' );
 
 		if ( $this->has_imageselector ) {
 			wp_enqueue_script( 'woothemes-sensei-settings-imageselectors' );
 		}
 
 		if ( $this->has_tabs ) {
-			wp_enqueue_script( 'woothemes-sensei-settings-tabs-navigation', esc_url( $woothemes_sensei->plugin_url . 'assets/js/tabs-navigation.js' ), array( 'jquery' ), '1.0.0' );
+			wp_enqueue_script( 'woothemes-sensei-settings-tabs-navigation', esc_url( $woothemes_sensei->plugin_url . 'assets/js/tabs-navigation' . $suffix . '.js' ), array( 'jquery' ), '1.5.2' );
 		}
 	} // End enqueue_scripts()
 

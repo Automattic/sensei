@@ -97,8 +97,11 @@ class WooThemes_Sensei_Grading {
 	 */
 	public function enqueue_scripts () {
 		global $woothemes_sensei;
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 		// Load Grading JS
-		wp_enqueue_script( 'woosensei-grading-general', $woothemes_sensei->plugin_url . 'assets/js/grading-general.js', array( 'jquery' ), '1.5.0' );
+		wp_enqueue_script( 'sensei-grading-general', $woothemes_sensei->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery' ), '1.5.2' );
 
 	} // End enqueue_scripts()
 
