@@ -116,7 +116,7 @@ class WooThemes_Sensei_Course {
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
+			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
 			$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				$prev_parent_id = 0;
 				foreach ( $posts_array as $post_item ) {
@@ -196,7 +196,7 @@ class WooThemes_Sensei_Course {
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="widefat">' . "\n";
+			$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="chosen_select widefat">' . "\n";
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -373,13 +373,6 @@ class WooThemes_Sensei_Course {
 
 			} // End For Loop
 
-			/*
-			$html .= '<select name="lesson_course" class="widefat">' . "\n";
-			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-				foreach ($posts_array as $post_item){
-					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
-				} // End For Loop
-			$html .= '</select>' . "\n";*/
 		} else {
 			$course_id = '';
 			if ( 0 < $post->ID ) { $course_id = '&course_id=' . $post->ID; }

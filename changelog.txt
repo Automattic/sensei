@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2014.03.12 - version 1.5.2
+ * New - Adding support for RTL languages in the dashboard
+ * New - Adding minified versions of all Javascript files and enabling SCRIPT_DEBUG script expansion
+ * Tweak - Updating Chosen Javascript & CSS libraries to v1.1
+
 2014.03.07 - version 1.5.1
  * New - Adding utility function to check if a user has completed a lesson
  * Fix - Fixing PHP errors on My Courses page

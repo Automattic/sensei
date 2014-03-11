@@ -155,11 +155,15 @@ class WooThemes_Sensei_Frontend {
 			$disable_js = $woothemes_sensei->settings->settings[ 'js_disable' ];
 		} // End If Statement
 		if ( ! $disable_js ) {
+
+			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 			// My Courses tabs script
-			wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard.js' ), array( 'jquery-ui-tabs' ), '1.3.0', true );
+			wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), '1.5.2', true );
 			wp_enqueue_script( $this->token . '-user-dashboard' );
+
 			// Load the general script
-			wp_enqueue_script( 'woosensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend.js', array( 'jquery' ), '1.5.0' );
+			wp_enqueue_script( 'sensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend' . $suffix . '.js', array( 'jquery' ), '1.5.2' );
 
 			// Allow additional scripts to be loaded
 			do_action( 'sensei_additional_scripts' );
