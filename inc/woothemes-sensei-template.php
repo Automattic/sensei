@@ -22,8 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 * @param mixed $wp_query
 	 * @return void
 	 */
-	function sensei_filter_courses_archive( $wp_query ) {
-		global $gloss_category;
+	function sensei_filter_courses_archive( $query ) {
+
+		if ( ! $query->is_main_query() )
+        	return;
 
 		$query_type = '';
 		// Handle course archive page
@@ -442,10 +444,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	function sensei_course_archive_filter( $query ) {
 		global $woothemes_sensei;
 
+		if ( ! $query->is_main_query() )
+        	return;
+
 		// Apply Filter only if on frontend and when course archive is running
 		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
 
-		if ( ! is_admin() && ( $query->get( 'page_id' ) == $course_page_id ) ) {
+		if ( ! is_admin() && 0 < $course_page_id && 0 < intval( $query->get( 'page_id' ) ) && $query->get( 'page_id' ) == $course_page_id ) {
 			// Check for pagination settings
    			if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) {
     			$amount = absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] );
