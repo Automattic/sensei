@@ -149,11 +149,7 @@ jQuery(document).ready( function($) {
 					if ( jQuery( '#grading-lesson-options' ).exists() ) {
 						// Show the Lessons label
 						jQuery( '#grading-lesson-options-label' ).show();
-						if ( jQuery( '#grading-lesson-options' ).hasClass( 'chzn-done' ) ) {
-							jQuery( '#grading-lesson-options' ).trigger("liszt:updated");
-						} else {
-							jQuery( '#grading-lesson-options' ).chosen();
-						} // End If Statement
+						jQuery( '#grading-lesson-options' ).trigger("chosen:updated");
 					} // End If Statement
 				} else {
 					// Failed
