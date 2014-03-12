@@ -156,7 +156,6 @@ class WooThemes_Sensei_PostTypes {
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
-		    'menu_icon' => esc_url( $woothemes_sensei->plugin_url . 'assets/images/icon_course_16.png' ),
 		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'author' )
 		);
 
@@ -218,7 +217,6 @@ class WooThemes_Sensei_PostTypes {
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 51, // Below "Pages"
-		    'menu_icon' => esc_url( $woothemes_sensei->plugin_url . 'assets/images/icon_course_16.png' ),
 		    'supports' => $supports_array
 		);
 
@@ -249,7 +247,6 @@ class WooThemes_Sensei_PostTypes {
 		    'has_archive' => false,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
-		    'menu_icon' => esc_url( $woothemes_sensei->plugin_url . 'assets/images/icon_course_16.png' ),
 		    'supports' => array( 'title' )
 		);
 
@@ -281,7 +278,6 @@ class WooThemes_Sensei_PostTypes {
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 10, // Below "Pages"
-		    'menu_icon' => esc_url( $woothemes_sensei->plugin_url . 'assets/images/icon_course_16.png' ),
 		    'supports' => array( 'title', 'custom-fields' )
 		);
 

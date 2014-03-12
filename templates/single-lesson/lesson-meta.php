@@ -20,7 +20,7 @@ get_currentuserinfo();
 do_action( 'sensei_complete_lesson' );
 // Check that the course has been started
 if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) { ?>
-	<section class="lesson-meta">
+	<section class="lesson-meta" id="lesson_complete">
 		<?php
 		if( apply_filters( 'sensei_video_position', 'top', $post->ID ) == 'bottom' ) {
 			do_action( 'sensei_lesson_video', $post->ID );
