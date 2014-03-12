@@ -281,25 +281,21 @@ class WooThemes_Sensei_Admin {
 
 		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_hooks = apply_filters( 'sensei_scripts_allowed_hooks', array( 'sensei_page_sensei_grading', 'sensei_page_sensei_analysis', 'sensei_page_sensei_updates', 'sensei_page_woothemes-sensei-settings' ) );
+		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_updates', 'woothemes-sensei-settings' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.5.0', 'screen' );
+		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.5.2', 'screen' );
 		wp_enqueue_style( $woothemes_sensei->token . '-global' );
 
 		// Test for Write Panel Pages
-		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $hook ) && in_array( $hook, $allowed_hooks ) ) ) {
+		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
-			wp_register_style( $woothemes_sensei->token . '-admin-custom', $woothemes_sensei->plugin_url . 'assets/css/admin-custom.css', '', '1.4.5', 'screen' );
+			wp_register_style( $woothemes_sensei->token . '-admin-custom', $woothemes_sensei->plugin_url . 'assets/css/admin-custom.css', '', '1.5.2', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-admin-custom' );
-			wp_register_style( $woothemes_sensei->token . '-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.css', '', '1.3.0', 'screen' );
+			wp_register_style( $woothemes_sensei->token . '-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.css', '', '1.5.2', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-chosen' );
 
-		} else {
-
-			return;
-
-		} // End If Statement
+		}
 
 	} // End admin_styles_global()
 
