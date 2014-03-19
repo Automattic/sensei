@@ -411,8 +411,16 @@ form {
 	.register-link {
 		clear: both;
 	}
+	form {
+		label {
+			display: block;
+		}
+		input[type="text"], input[type="password"] {
+			width: 100%;
+		}
+	}
 	&.ui-tabs {
-		position: relative; /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+		position: relative;
 		zoom: 1;
 		.ui-tabs-nav {
 			margin: 0 0 10px!important;
