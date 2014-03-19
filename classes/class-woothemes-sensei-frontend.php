@@ -1365,6 +1365,7 @@ class WooThemes_Sensei_Frontend {
 		<?php } // End If Statement
 	} // End sensei_course_category_main_content()
 
+
 	public function sensei_login_form() {
 		?><div id="my-courses">
 			<div class="col2-set" id="customer_login">
@@ -1373,31 +1374,7 @@ class WooThemes_Sensei_Frontend {
 
 					<h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
 
-					<form method="post" class="login">
-
-						<?php do_action( 'sensei_login_form_start' ); ?>
-
-						<p class="form-row form-row-wide">
-							<label for="username"><?php _e( 'Username or email address', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
-							<input type="text" class="input-text" name="username" id="username" />
-						</p>
-						<p class="form-row form-row-wide">
-							<label for="password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
-							<input class="input-text" type="password" name="password" id="password" />
-						</p>
-
-						<?php do_action( 'sensei_login_form_fields' ); ?>
-
-						<p class="form-row">
-							<input type="submit" class="button" name="login" value="<?php _e( 'Login', 'woothemes-sensei' ); ?>" />
-							<label for="rememberme" class="inline">
-								<input name="rememberme" type="checkbox" id="rememberme" value="forever" /> <?php _e( 'Remember me', 'woothemes-sensei' ); ?>
-							</label>
-						</p>
-
-						<?php do_action( 'sensei_login_form_end' ); ?>
-
-					</form>
+					<?php wp_login_form( array( 'redirect' => get_permalink() ) ); ?>
 
 			<?php
 			if ( get_option('users_can_register') ) {
