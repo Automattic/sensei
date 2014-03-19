@@ -173,7 +173,12 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
         }
 
         if ( isset( $user_quizzes[ $question_id ] ) && ( '' != $user_quizzes[ $question_id ] ) ) {
-            $checked = checked( $question, $user_quizzes[ $question_id ], false );
+            if( 0 == get_magic_quotes_gpc() ) {
+                $user_answer = stripslashes( $user_quizzes[ $question_id ] );
+            } else {
+                $user_answer = $user_quizzes[ $question_id ];
+            }
+            $checked = checked( $question, $user_answer, false );
         } // End If Statement ?>
         <li class="<?php esc_attr_e( $answer_class ); ?>">
             <input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="<?php echo esc_attr( stripslashes( $question ) ); ?>" <?php echo $checked; ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;

@@ -569,13 +569,20 @@ class WooThemes_Sensei_Utils {
 
         $question_grade = 0;
         if( intval( $question_id ) > 0 ) {
+
             $right_answer = get_post_meta( $question_id, '_question_right_answer', true );
+
+            if( 0 == get_magic_quotes_gpc() ) {
+                $answer = stripslashes( $answer );
+            }
+
             if ( 0 == strcmp( $right_answer, $answer ) ) {
                 $question_grade = get_post_meta( $question_id, '_question_grade', true );
                 if( ! $question_grade || $question_grade == '' ) {
                 	$question_grade = 1;
                 }
             }
+
             $activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
         }
 
