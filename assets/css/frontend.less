@@ -339,7 +339,7 @@ section.entry span.course-category { padding-left: 10px; }
 section.entry span.course-lesson-progress { padding-left: 10px; }
 section.entry span.course-price { padding-left: 10px; }
 
-form {
+.sensei form {
 	.form-row {
 		padding: 3px;
 		margin: 0 0 6px;
@@ -411,8 +411,16 @@ form {
 	.register-link {
 		clear: both;
 	}
+	form#loginform {
+		label {
+			display: block;
+		}
+		input[type="text"], input[type="password"] {
+			width: 90%;
+		}
+	}
 	&.ui-tabs {
-		position: relative; /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+		position: relative;
 		zoom: 1;
 		.ui-tabs-nav {
 			margin: 0 0 10px!important;
