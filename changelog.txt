@@ -1,5 +1,11 @@
 *** Sensei Changelog ***
 
+2014.03.21 - version 1.5.3
+ * New - Moving global Sensei functions to new file to make them accessible everywhere
+ * Fix - Fixing CSS conflict with WooCommerce forms
+ * Fix - Fixing login form on My Courses page
+ * Fix - Making sure multiple choice answers that contain apostrophes wil always work on any server
+
 2014.03.12 - version 1.5.2
  * New - Adding support for RTL languages in the dashboard
  * New - Minifying all Javascript files and enabling SCRIPT_DEBUG script expansion
