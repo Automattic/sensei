@@ -5,6 +5,7 @@
  * Fix - Fixing CSS conflict with WooCommerce forms
  * Fix - Fixing login form on My Courses page
  * Fix - Making sure multiple choice answers that contain apostrophes wil always work on any server
+ * Fix - Fixing occasional WooCommerce error on single course pages
 
 2014.03.12 - version 1.5.2
  * New - Adding support for RTL languages in the dashboard
