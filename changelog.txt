@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2014.03.21 - version 1.5.4
+ * Fix - Fixing content formatting in TwentyTwelve theme
+
 2014.03.21 - version 1.5.3
  * New - Moving global Sensei functions to new file to make them accessible everywhere
  * Fix - Fixing CSS conflict with WooCommerce forms

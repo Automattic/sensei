@@ -20,7 +20,7 @@ switch( $template ) {
 
 	// IF Twenty Twelve
 	case 'twentytwelve' :
-		echo '<div id="primary" class="site-content"><div id="content" role="main">';
+		echo '<div id="primary" class="site-content"><div id="content" role="main" class="entry-content">';
 		break;
 
 	// IF Twenty Fourteen
