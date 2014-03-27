@@ -1687,9 +1687,17 @@ class WooThemes_Sensei_Lesson {
 				if( $show_questions ) {
 					$selected_questions = array_rand( $questions_array, $show_questions );
 					$questions = array();
+					print_r($selected_questions);
 					foreach( $questions_array as $k => $question ) {
-						if( in_array( $k, $selected_questions ) ) {
-							$questions[] = $question;
+						if( is_array($selected_questions) ) {
+							if( in_array( $k, $selected_questions ) ) {
+								$questions[] = $question;
+							}
+						}
+						elseif( 1 == $show_questions ) {
+							if ( $selected_questions == $k ) {
+								$questions[] = $question;
+							}
 						}
 					}
 				}
