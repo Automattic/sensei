@@ -2,6 +2,7 @@
 
 2014.03.21 - version 1.5.4
  * Fix - Fixing content formatting in TwentyTwelve theme
+ * Fix - Fixing warning when number of questions to show is 1
 
 2014.03.21 - version 1.5.3
  * New - Moving global Sensei functions to new file to make them accessible everywhere
