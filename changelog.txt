@@ -4,6 +4,8 @@
  * Fix - Fixing content formatting in TwentyTwelve theme
  * Fix - Fixing warning when number of questions to show is 1
  * Fix - Start a Course link on My Courses page now links to custom Course Archive page if specified in settings.
+ * Fix - Fixing Javascript error on lesson and course edit pages
+ * Fix - Fixing file upload question type when no other types are included in the quiz
 
 2014.03.21 - version 1.5.3
  * New - Moving global Sensei functions to new file to make them accessible everywhere
