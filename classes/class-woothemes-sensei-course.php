@@ -1262,12 +1262,19 @@ class WooThemes_Sensei_Course {
 
 		    <?php do_action( 'sensei_before_active_user_courses' ); ?>
 
+		    <?php $course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
+		    	if ( 0 < $course_page_id ) {
+		    		$course_page_url = get_permalink( $course_page_id );
+		    	} elseif ( 0 == $course_page_id ) {
+		    		$course_page_url = get_post_type_archive_link( 'course' );
+		    	} ?>
+
 		    <div id="active-courses">
 
 		    	<?php if ( '' != $active_html ) {
 		    		echo $active_html;
 		    	} else { ?>
-		    		<div class="sensei-message info"><?php echo $no_active_message; ?> <a href="<?php echo get_post_type_archive_link( 'course' ); ?>"><?php apply_filters( 'sensei_start_a_course_text', _e( 'Start a Course!', 'woothemes-sensei' ) ); ?></a></div>
+		    		<div class="sensei-message info"><?php echo $no_active_message; ?> <a href="<?php echo $course_page_url; ?>"><?php apply_filters( 'sensei_start_a_course_text', _e( 'Start a Course!', 'woothemes-sensei' ) ); ?></a></div>
 		    	<?php } // End If Statement ?>
 
 		    </div>

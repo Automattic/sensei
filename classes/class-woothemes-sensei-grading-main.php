@@ -140,6 +140,10 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 					// Get each row for user
 					foreach( $user_ids as $user_id ) {
 
+						if( is_array( $user_id ) ) {
+							$user_id = $user_id[0];
+						}
+
 						$show_user = true;
 						if( $search ) {
 							$user = get_userdata( $user_id );
@@ -149,7 +153,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 						if( $show_user ) {
 
 							// Get row data
-							$row_data = $this->row_data( $lesson_id, $user_id[0] );
+							$row_data = $this->row_data( $lesson_id, $user_id );
 
 							// Add row to table data
 							if( $row_data ) {

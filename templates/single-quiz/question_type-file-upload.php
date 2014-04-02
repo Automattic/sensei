@@ -148,6 +148,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
     <?php } ?>
     <?php if( ! $lesson_complete ) { ?>
         <input type="file" name="file_upload_<?php echo $question_id; ?>" />
+        <input type="hidden" name="sensei_question[<?php echo $question_id; ?>]" value="true" />
         <aside class="max_upload_size"><?php echo $max_upload_size; ?></aside>
     <?php } ?>
 </li>
