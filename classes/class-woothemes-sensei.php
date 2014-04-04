@@ -799,16 +799,18 @@ class WooThemes_Sensei {
 	 * @return  void
 	 */
 	public function sensei_woocommerce_cancel_order ( $order_id ) {
-		// REFACTOR
+
+		// Get order object
 		$order = new WC_Order( $order_id );
-		$user = get_user_by( 'id', $order->user_id );
-		$order_user['ID'] = $user->ID;
-		$order_user['user_login'] = $user->user_login;
-		$order_user['user_email'] = $user->user_email;
-		$order_user['user_url'] = $user->user_url;
+
 		// Run through each product ordered
 		if ( 0 < sizeof( $order->get_items() ) ) {
+
+			// Get order user
+			$user_id = $order->__get( 'user_id' );
+
 			foreach( $order->get_items() as $item ) {
+
 				$product_type = '';
 				if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
 					$item_id = $item['variation_id'];
@@ -817,27 +819,30 @@ class WooThemes_Sensei {
 					$item_id = $item['product_id'];
 				} // End If Statement
 				$_product = $this->sensei_get_woocommerce_product_object( $item_id, $product_type );
+
 				// Get courses that use the WC product
 				$courses = array();
 				$courses = $this->post_types->course->get_product_courses( $item_id );
+
 				// Loop and update those courses
 				foreach ($courses as $course_item){
 					// Check and Remove course from courses user meta
-					$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $course_item->ID ), 'user_id' => intval( $order_user['ID'] ), 'type' => 'sensei_course_start' ) );
-		    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $course_item->ID ), 'user_id' => intval( $order_user['ID'] ), 'type' => 'sensei_course_end' ) );
+					$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $course_item->ID ), 'user_id' => $user_id, 'type' => 'sensei_course_start' ) );
+		    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $course_item->ID ), 'user_id' => $user_id, 'type' => 'sensei_course_end' ) );
 					// Get all course lessons
 	    			$course_lessons = $this->post_types->course->course_lessons( $course_item->ID );
 	    			foreach ($course_lessons as $lesson_item){
 	    				// Check for lesson complete
-	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $lesson_item->ID ), 'user_id' => intval( $order_user['ID'] ), 'type' => 'sensei_lesson_start' ) );
-	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $lesson_item->ID ), 'user_id' => intval( $order_user['ID'] ), 'type' => 'sensei_lesson_end' ) );
+	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $lesson_item->ID ), 'user_id' => $user_id, 'type' => 'sensei_lesson_start' ) );
+	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $lesson_item->ID ), 'user_id' => $user_id, 'type' => 'sensei_lesson_end' ) );
 	    				// Lesson Quiz Meta
 	        			$lesson_quizzes = $this->post_types->lesson->lesson_quizzes( $lesson_item->ID );
 	        			if ( 0 < count($lesson_quizzes) )  {
 	        				foreach ($lesson_quizzes as $quiz_item){
 	        					// Check for quiz grade
-	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $quiz_item->ID ), 'user_id' => intval( $order_user['ID'] ), 'type' => 'sensei_quiz_grade' ) );
-	    						$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( intval( $quiz_item->ID ), intval( $order_user['ID'] ) );
+	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $quiz_item->ID ), 'user_id' => $user_id, 'type' => 'sensei_quiz_grade' ) );
+	    						$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $quiz_item->ID ), 'user_id' => $user_id, 'type' => 'sensei_quiz_asked' ) );
+	    						$delete_answers = WooThemes_Sensei_Utils::sensei_delete_quiz_answers( intval( $quiz_item->ID ), $user_id );
 	    					} // End For Loop
 	    				} // End If Statement
 	    			} // End For Loop

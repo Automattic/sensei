@@ -76,6 +76,7 @@ class WooThemes_Sensei_Utils {
 	 * @return void
 	 */
 	public static function sensei_log_activity ( $args = array() ) {
+
 		// Setup & Prep Data
 		$time = current_time('mysql');
 		// Args
@@ -316,16 +317,34 @@ class WooThemes_Sensei_Utils {
 		    'post_status' => 'publish'
 		) );
 
-		// REFACTOR - check if $orders contains items and return appropriate response (false?) if not.
-
 		foreach ( $orders as $order_id ) {
 			$order = new WC_Order( $order_id->ID );
 			if ( $order->status == 'completed' ) {
 				if ( 0 < sizeof( $order->get_items() ) ) {
 					foreach( $order->get_items() as $item ) {
+
+						// Check if user has bought product
 						if ( $item['product_id'] == $product_id || $item['variation_id'] == $product_id ) {
+
+							// Check if user has an active subscription for product
+							if( class_exists( 'WC_Subscriptions_Manager' ) ) {
+								$sub_key = WC_Subscriptions_Manager::get_subscription_key( $order_id->ID, $product_id );
+								if( $sub_key ) {
+									$sub = WC_Subscriptions_Manager::get_subscription( $sub_key );
+									if( $sub && isset( $sub['status'] ) ) {
+										if( 'active' == $sub['status'] ) {
+											return true;
+										} else {
+											return false;
+										}
+									}
+								}
+							}
+
+							// Customer has bought product
 							return true;
 						} // End If Statement
+
 					} // End For Loop
 				} // End If Statement
 			} // End If Statement
