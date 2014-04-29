@@ -25,7 +25,7 @@ switch( $template ) {
 
 	// IF Twenty Fourteen
 	case 'twentyfourteen' :
-		echo '<div id="main-content" class="main-content"><div id="primary" class="content-area"><div id="content" class="site-content" role="main">';
+		echo '<div id="main-content" class="main-content"><div id="primary" class="content-area"><div id="content" class="site-content" role="main"><div class="entry-content">';
 		break;
 
 	// IF Canvas
