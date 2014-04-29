@@ -34,6 +34,7 @@ switch( $template ) {
 	// IF Twenty Fourteen
 	case 'twentyfourteen' :
 	?>
+					</div>
 				</div>
 			</div>
 		</div>
