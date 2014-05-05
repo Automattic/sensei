@@ -237,7 +237,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		// Quiz Grade
 		$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 		$quiz_grade = __( 'No Grade', 'woothemes-sensei' );
-		if ( 0 < intval( $lesson_grade ) ) {
+		if ( '' != $lesson_grade ) {
 	    	$quiz_grade = $lesson_grade . '%';
 	    } // End If Statement
 
@@ -247,7 +247,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	    	$status = 'ungraded';
 			$status_html = '<span class="ungraded">' . apply_filters( 'sensei_ungraded_text', __( 'Ungraded', 'woothemes-sensei' ) ) . '</span>';
 			$updated = $lesson_end_date;
-		} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
+		} elseif ( isset( $lesson_grade ) && '' != $lesson_grade ) {
 			if( $grading_status && $grading_status != 'graded' ) { return false; }
 			$status = 'graded';
 			$status_html = '<span class="graded">' . apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) ) . '</span>';
