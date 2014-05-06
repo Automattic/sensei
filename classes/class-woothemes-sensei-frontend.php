@@ -133,6 +133,9 @@ class WooThemes_Sensei_Frontend {
         add_filter( 'sensei_lessons_archive_text', array( $this, 'lesson_tag_archive_header' ) );
         add_action( 'sensei_lesson_archive_header', array( $this, 'lesson_tag_archive_description' ), 11 );
 
+        // Hide Sensie activity comments from lesson and course pages
+        add_filter( 'wp_list_comments_args', array( $this, 'hide_sensei_activity' ) );
+
 	} // End __construct()
 
 	/**
@@ -1646,10 +1649,14 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_lesson_comment_count( $count ) {
 		global $post, $current_user;
-		if ( is_singular( 'lesson' ) ) {
-			$lesson_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_start'/*, 'user_id' => $current_user->ID*/ ), true );
-			$lesson_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end'/*, 'user_id' => $current_user->ID*/ ), true );
-			return $count - intval( count( $lesson_comments_start ) ) - intval( count( $lesson_comments_end ) );
+		if ( is_singular( 'lesson' ) || is_singular( 'course' ) ) {
+			$lesson_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_start' ), true );
+			$lesson_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end' ), true );
+			$lesson_quiz_grade = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_grade' ), true );
+			$lesson_quiz_asked = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_asked' ), true );
+			$course_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_start' ), true );
+			$course_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_end' ), true );
+			return $count - intval( count( $lesson_comments_start ) ) - intval( count( $lesson_comments_end ) ) - intval( count( $lesson_quiz_grade ) ) - intval( count( $lesson_quiz_asked ) ) - intval( count( $course_comments_start ) ) - intval( count( $course_comments_end ) );
 		} else {
 			return $count;
 		} // End If Statement
@@ -1665,9 +1672,9 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function comments_rss_item_filter( $pieces ) {
-		if ( is_comment_feed() ) {
+		// if ( is_comment_feed() ) {
 			$pieces .= " AND comment_type NOT LIKE 'sensei_%' ";
-		} // End If Statement
+		// } // End If Statement
 		return $pieces;
 	} // End comments_rss_item_filter()
 
@@ -2084,6 +2091,20 @@ class WooThemes_Sensei_Frontend {
 
 		}
 	} // End activate_purchased_single_course()
+
+	/**
+	 * Hide Sensei activity comments from frontend (requires WordPress 4.0+)
+	 * @param  array  $args Default arguments
+	 * @return array        Modified arguments
+	 */
+	public function hide_sensei_activity( $args = array() ) {
+
+		if( is_singular( 'lesson' ) || is_singular( 'course' ) ) {
+			$args['type'] = 'comment';
+		}
+
+		return $args;
+	} // End hide_sensei_activity()
 
 } // End Class
 ?>
