@@ -1,0 +1,199 @@
+/**
+ * Variables
+ */
+// Colors
+$color_links:       #52a8e8;        // Links / Main theme colour
+$color_body:        #555;           // Body Copy
+$border_main:       #e6e6e6;        // The 1px grey rules used throughout the WF
+$bg_light:          #fafafa;
+$bg_dark:           #d3d3d3;
+$success:           #63a95f;
+$info:              #3c8bae;
+$error:             #ed6c6c;
+
+// Fonts
+$sans:              sans-serif;
+$serif:             Georgia, serif;
+
+// Google fonts - These are also defined in Theme Setup (theme-actions.php)
+$sans_google:       "Droid Sans", sans-serif;
+$serif_google:      "Droid Serif", sans-serif;
+
+// Paths
+$imagepath:         'images';
+$fontpath:          'includes/fonts/';
+
+/**
+ * Functions
+ */
+@mixin iconafter()
+{
+    font-family: 'FontAwesomeSensei';
+    display: inline-block;
+    font-size:100%;
+    margin-left:.618em;
+    font-weight: normal;
+    line-height: 1em;
+    width:1em;
+    text-align: right;
+}
+
+@mixin iconbefore()
+{
+    font-family: 'FontAwesomeSensei';
+    display: inline-block;
+    font-size:100%;
+    margin-right:.618em;
+    font-weight: normal;
+    line-height: 1em;
+    width:1em;
+}
+
+/**
+ * Mixins
+ */
+@mixin clearfix()
+{
+	&:after {
+		content: "\0020";
+		display: block;
+		height: 0;
+		overflow: hidden;
+		clear: both;
+	}
+}
+@mixin border_radius($radius:10px)
+{
+    -webkit-border-radius:$radius;
+    border-radius:$radius;
+    -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+}
+
+@mixin border_radius_right($radius:10px)
+{
+    -webkit-border-top-right-radius: $radius;
+    -webkit-border-bottom-right-radius: $radius;
+    border-top-right-radius: $radius;
+    border-bottom-right-radius: $radius;
+    -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+}
+
+@mixin border_radius_left($radius:10px)
+{
+    -webkit-border-top-left-radius: $radius;
+    -webkit-border-bottom-left-radius: $radius;
+    border-top-left-radius: $radius;
+    border-bottom-left-radius: $radius;
+    -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+}
+
+@mixin border_radius_bottom($radius:10px)
+{
+    -webkit-border-bottom-left-radius: $radius;
+    -webkit-border-bottom-right-radius: $radius;
+    border-bottom-left-radius: $radius;
+    border-bottom-right-radius: $radius;
+    -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+}
+
+@mixin border_radius_top($radius:10px)
+{
+    -webkit-border-top-left-radius: $radius;
+    -webkit-border-top-right-radius: $radius;
+    border-top-left-radius: $radius;
+    border-top-right-radius: $radius;
+    -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+}
+
+@mixin box_shadow($shadow_x:3px, $shadow_y:3px, $shadow_rad:3px, $shadow_in:3px, $shadow_color:#888)
+{
+    box-shadow:$shadow_x $shadow_y $shadow_rad $shadow_in $shadow_color;
+    -webkit-box-shadow:$shadow_x $shadow_y $shadow_rad $shadow_in $shadow_color;
+}
+
+@mixin inset_box_shadow($shadow_x:3px, $shadow_y:3px, $shadow_rad:3px, $shadow_in:3px, $shadow_color:#888)
+{
+    box-shadow:inset $shadow_x $shadow_y $shadow_rad $shadow_in $shadow_color;
+    -webkit-box-shadow:inset $shadow_x $shadow_y $shadow_rad $shadow_in $shadow_color;
+}
+
+@mixin text_shadow($shadow_x:3px, $shadow_y:3px, $shadow_rad:3px, $shadow_color:#fff)
+{
+    text-shadow:$shadow_x $shadow_y $shadow_rad $shadow_color;
+}
+
+@mixin vertical_gradient($from: #000, $to: #FFF)
+{
+	background-color: $from;
+	background-image: -webkit-gradient(linear, left top, left bottom, from($from), to($to));   /* Saf4+, Chrome */
+	background-image: -webkit-linear-gradient(top, $from, $to);                                /* Chrome 10+, Saf5.1+, iOS 5+ */
+	background-image:    -moz-linear-gradient(top, $from, $to);                                /* FF3.6+ */
+	background-image:     -ms-linear-gradient(top, $from, $to);                                /* IE10 */
+	background-image:      -o-linear-gradient(top, $from, $to);                                /* Opera 11.10+ */
+	background-image:         linear-gradient(to bottom, $from, $to);
+}
+
+@mixin transition($selector:all, $animation:ease-in-out, $duration:.2s)
+{
+    -webkit-transition:$selector $animation $duration;
+    -moz-transition:$selector $animation $duration;
+    -ms-transition:$selector $animation $duration;
+    -o-transition:$selector $animation $duration;
+    transition:$selector $animation $duration;
+}
+
+@mixin opacity($opacity:0.75)
+{
+    opacity: $opacity;
+    filter:#{"alpha(opacity=$opacity * 100)"};
+}
+
+@mixin rotate($degree:1deg)
+{
+	-webkit-transform: rotate($degree);    /* Saf3.1+, Chrome */
+	-moz-transform: rotate($degree);       /* FF3.5+ */
+	-ms-transform: rotate($degree);        /* IE9 */
+	-o-transform: rotate($degree);         /* Opera 10.5 */
+	transform: rotate($degree);
+	zoom: 1;
+}
+
+@mixin scale($ratio:1.5)
+{
+  -webkit-transform:scale($ratio);
+  -moz-transform:scale($ratio);
+  -ms-transform:scale($ratio);
+  -o-transform:scale($ratio);
+  transform:scale($ratio);
+}
+
+@mixin radial_gradient($from: #000, $to: #FFF)
+{
+	background: $from;
+    background: -webkit-gradient(radial, 50% 10%, 0, 50% 10%, 1000, from($from), to($to));
+    background: -moz-radial-gradient(center top, $from 0%, $to 100%);
+}
+
+@mixin borderbox()
+{
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+@mixin calc_width($val:100% - 50%)
+{
+    width: calc(#{$val});
+    width: -webkit-calc(#{$val});
+    width: -moz-calc(#{$val});
+    width: -o-calc(#{$val});
+}
+
+/**
+ * Animations
+ */
+@-webkit-keyframes spin-360 {
+    from { @include rotate(0); }
+    50% { @include rotate(180deg); }
+    to { @include rotate(0); }
+}
