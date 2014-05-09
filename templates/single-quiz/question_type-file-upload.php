@@ -131,9 +131,6 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
     <?php if( $answer_message ) { ?>
         <div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
             <span><?php echo $answer_message; ?></span>
-            <?php if( $answer_notes ) { ?>
-                <div class="notes"><?php echo $answer_notes; ?></div>
-            <?php } ?>
         </div>
     <?php } ?>
     <input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
@@ -150,5 +147,8 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
         <input type="file" name="file_upload_<?php echo $question_id; ?>" />
         <input type="hidden" name="sensei_question[<?php echo $question_id; ?>]" value="<?php echo esc_attr( $user_quizzes[ $question_id ] ); ?>" />
         <aside class="max_upload_size"><?php echo $max_upload_size; ?></aside>
+    <?php } ?>
+    <?php if( $answer_notes ) { ?>
+        <div class="sensei-message info info-special"><?php echo $answer_notes; ?></div>
     <?php } ?>
 </li>
