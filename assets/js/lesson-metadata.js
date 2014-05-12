@@ -729,6 +729,11 @@ jQuery(document).ready( function($) {
  			var question_media = jQuery( '#add-new-question' ).find( '.question_media' ).attr( 'value' );
  			dataToPost += '&' + 'question_media' + '=' + question_media;
 
+ 			if ( '' != jQuery( 'div#add-new-question' ).find( 'div.' + divFieldsClass ).find( '.answer_feedback' ).exists() ) {
+	 			var answer_feedback = jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).find( '.answer_feedback' ).attr( 'value' );
+	 			dataToPost += '&' + 'answer_feedback' + '=' + answer_feedback;
+	 		}
+
  			var random_order = 'no';
  			if ( jQuery( 'div#add-new-question' ).find( '.random_order' ).is(':checked') ) {
  				random_order = 'yes'
@@ -853,6 +858,11 @@ jQuery(document).ready( function($) {
  			var question_media = jQuery( this ).closest('td').find( '.question_media' ).attr( 'value' );
  			dataToPost += '&' + 'question_media' + '=' + question_media;
 
+ 			if ( '' != jQuery( this ).closest('td').find( '.answer_feedback' ).exists() ) {
+	 			var answer_feedback = jQuery( this ).closest('td').find( '.answer_feedback' ).attr( 'value' );
+	 			dataToPost += '&' + 'answer_feedback' + '=' + answer_feedback;
+	 		}
+
  			var random_order = 'no';
  			if ( jQuery( this ).closest('td').find( '.random_order' ).is(':checked') ) {
  				random_order = 'yes'
@@ -968,16 +978,16 @@ jQuery(document).ready( function($) {
 		var question_counter = jQuery( this ).attr( 'rel' );
 		var answer_count = jQuery( this ).closest( 'div' ).find( '.wrong_answer_count' ).text();
 		answer_count++;
-		var html = '<label for="question_' + question_counter + '_wrong_answer_' + answer_count + '"><span>' + woo_localized_data.wrong_colon + '</span> <input type="text" id="question_' + question_counter + '_wrong_answer_' + answer_count + '" name="question_wrong_answers[]" value="" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+		var html = '<label class="answer" for="question_' + question_counter + '_wrong_answer_' + answer_count + '"><span>' + woo_localized_data.wrong_colon + '</span> <input type="text" id="question_' + question_counter + '_wrong_answer_' + answer_count + '" name="question_wrong_answers[]" value="" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
 		jQuery( this ).before( html );
 	});
 
 	jQuery( '#add-question-main' ).on( 'click', '.remove_answer_option', function() {
-		jQuery( this ).closest( 'label' ).remove();
+		jQuery( this ).closest( 'label.answer' ).remove();
 	});
 
 	jQuery( '.multiple-choice-answers' ).sortable( {
-		items: "label"
+		items: "label.answer"
 	});
 
 	jQuery( '.multiple-choice-answers' ).bind( 'sortstop', function ( e, ui ) {
