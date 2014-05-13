@@ -56,8 +56,9 @@ class WooThemes_Sensei_Question {
 	public function add_column_headings ( $defaults ) {
 		$new_columns['cb'] = '<input type="checkbox" />';
 		// $new_columns['id'] = __( 'ID' );
-		$new_columns['title'] = _x( 'Question Title', 'column name', 'woothemes-sensei' );
-		$new_columns['question-type'] = _x( 'Question Type', 'column name', 'woothemes-sensei' );
+		$new_columns['title'] = _x( 'Question', 'column name', 'woothemes-sensei' );
+		$new_columns['question-type'] = _x( 'Type', 'column name', 'woothemes-sensei' );
+		$new_columns['question-category'] = _x( 'Categories', 'column name', 'woothemes-sensei' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
@@ -82,8 +83,8 @@ class WooThemes_Sensei_Question {
 			break;
 			case 'question-type':
 				$output = get_the_term_list( $id, 'question-type', '', ', ', '' );
-				if ( '' == $output ) {
-					$output = __( 'None', 'woothemes-sensei' );
+				if ( ! $output ) {
+					$output = '&mdash;';
 				} // End If Statement
 				$question_type_orig = array(	'>boolean<',
 												'>multiple-choice<',
@@ -99,7 +100,14 @@ class WooThemes_Sensei_Question {
 												'>Single Line<',
 												'>File Upload<'
 										 );
-				echo str_replace( $question_type_orig, $question_type_replace, $output );
+				echo strip_tags( str_replace( $question_type_orig, $question_type_replace, $output ) );
+			break;
+			case 'question-category':
+				$output = strip_tags( get_the_term_list( $id, 'question-category', '', ', ', '' ) );
+				if( ! $output ) {
+					$output = '&mdash;';
+				}
+				echo $output;
 			break;
 			default:
 			break;

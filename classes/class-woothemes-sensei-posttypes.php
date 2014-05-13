@@ -54,6 +54,7 @@ class WooThemes_Sensei_PostTypes {
 		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_type_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_question_category_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_lesson_tag_taxonomy' ), 100 );
 		// Load Post Type Objects
 		$default_post_types = array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) ;
@@ -268,7 +269,7 @@ class WooThemes_Sensei_PostTypes {
 		    'public' => false,
 		    'publicly_queryable' => true,
 		    'show_ui' => true,
-		    'show_in_menu' => false,
+		    'show_in_menu' => 'edit.php?post_type=lesson',
 		    'show_in_nav_menus' => false,
 		    'query_var' => true,
 		    'exclude_from_search' => true,
@@ -278,7 +279,7 @@ class WooThemes_Sensei_PostTypes {
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 10, // Below "Pages"
-		    'supports' => array( 'title', 'custom-fields' )
+		    'supports' => array( 'title' )
 		);
 
 		register_post_type( 'question', $args );
@@ -358,7 +359,7 @@ class WooThemes_Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_question_type_taxonomy () {
-		// "Quiz Types" Custom Taxonomy
+		// "Question Types" Custom Taxonomy
 		$labels = array(
 			'name' => _x( 'Question Types', 'taxonomy general name', 'woothemes-sensei' ),
 			'singular_name' => _x( 'Question Type', 'taxonomy singular name', 'woothemes-sensei' ),
@@ -377,13 +378,50 @@ class WooThemes_Sensei_PostTypes {
 		$args = array(
 			'hierarchical' => false,
 			'labels' => $labels,
-			'show_ui' => true, /* TO DO - future releases */
-			'query_var' => true,
+			'show_ui' => false,
+			'public' => false,
+			'query_var' => false,
 			'show_in_nav_menus' => false,
+			'show_admin_column' => true,
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
 		register_taxonomy( 'question-type', array( 'question' ), $args );
+	} // End setup_question_type_taxonomy()
+
+	/**
+	 * Setup the "question category" taxonomy, linked to the "question" post type.
+	 * @since  1.3.0
+	 * @return void
+	 */
+	public function setup_question_category_taxonomy () {
+		// "Question Categories" Custom Taxonomy
+		$labels = array(
+			'name' => _x( 'Question Categories', 'taxonomy general name', 'woothemes-sensei' ),
+			'singular_name' => _x( 'Question Category', 'taxonomy singular name', 'woothemes-sensei' ),
+			'search_items' =>  __( 'Search Question Categories', 'woothemes-sensei' ),
+			'all_items' => __( 'All Question Categories', 'woothemes-sensei' ),
+			'parent_item' => __( 'Parent Question Category', 'woothemes-sensei' ),
+			'parent_item_colon' => __( 'Parent Question Category:', 'woothemes-sensei' ),
+			'edit_item' => __( 'Edit Question Category', 'woothemes-sensei' ),
+			'update_item' => __( 'Update Question Category', 'woothemes-sensei' ),
+			'add_new_item' => __( 'Add New Question Category', 'woothemes-sensei' ),
+			'new_item_name' => __( 'New Question Category Name', 'woothemes-sensei' ),
+			'menu_name' => __( 'Question Categories', 'woothemes-sensei' ),
+		);
+
+		$args = array(
+			'hierarchical' => true,
+			'labels' => $labels,
+			'show_ui' => true,
+			'public' => false,
+			'query_var' => false,
+			'show_in_nav_menus' => false,
+			'show_admin_column' => true,
+			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
+		);
+
+		register_taxonomy( 'question-category', array( 'question' ), $args );
 	} // End setup_question_type_taxonomy()
 
 	/**
