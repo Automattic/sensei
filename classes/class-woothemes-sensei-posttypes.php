@@ -84,8 +84,8 @@ class WooThemes_Sensei_PostTypes {
 	public function sensei_admin_menu_items() {
 	    global $menu;
 
-	    if ( current_user_can( 'manage_options' ) ) {
-	    	$course_category = add_submenu_page('edit.php?post_type=lesson', __('Course Categories', 'woothemes-sensei'),  __('Course Categories', 'woothemes-sensei') , 'manage_categories', 'edit-tags.php?taxonomy=course-category&post_type=course' );
+	    if ( current_user_can( 'manage_sensei' ) ) {
+	    	$course_category = add_submenu_page('edit.php?post_type=lesson', __('Course Categories', 'woothemes-sensei'),  __('Course Categories', 'woothemes-sensei') , 'manage_sensei', 'edit-tags.php?taxonomy=course-category&post_type=course' );
 	    } // End If Statement
 
 	} // End sensei_admin_menu_items()
@@ -553,7 +553,9 @@ class WooThemes_Sensei_PostTypes {
 																			'delete_published_' . $post_type_item . 's',
 																			'delete_others_' . $post_type_item . 's',
 																			'edit_private_' . $post_type_item . 's',
-																			'edit_published_' . $post_type_item . 's' ),
+																			'edit_published_' . $post_type_item . 's',
+																			'manage_sensei',
+																			'manage_sensei_grades' ),
 											'editor' 			=> array(	'edit_' . $post_type_item,
 																			'read_' . $post_type_item,
 																			'delete_' . $post_type_item,

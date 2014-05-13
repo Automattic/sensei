@@ -323,8 +323,8 @@ class WooThemes_Sensei_Settings_API {
 	public function register_settings_screen () {
 		global $woothemes_sensei;
 
-		if ( current_user_can( 'manage_options' ) ) {
-			$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
+		if ( current_user_can( 'manage_sensei' ) ) {
+			$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
 
 			$this->hook = $hook;
 		}
