@@ -323,8 +323,8 @@ class WooThemes_Sensei_Settings_API {
 	public function register_settings_screen () {
 		global $woothemes_sensei;
 
-		if ( current_user_can( 'manage_options' ) ) {
-			$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
+		if ( current_user_can( 'manage_sensei' ) ) {
+			$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
 
 			$this->hook = $hook;
 		}
@@ -844,7 +844,7 @@ class WooThemes_Sensei_Settings_API {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.4.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.6.0' );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()

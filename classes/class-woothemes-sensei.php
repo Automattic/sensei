@@ -168,7 +168,7 @@ class WooThemes_Sensei {
 	 */
 	public function run_updates() {
 		// Run updates if administrator
-		if ( current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'manage_options' ) || current_user_can( 'manage_sensei' ) ) {
 			$this->load_class( 'updates' );
 			$this->updates = new WooThemes_Sensei_Updates( $this );
 			$this->updates->update();
