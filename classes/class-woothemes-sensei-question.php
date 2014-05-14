@@ -25,6 +25,7 @@ class WooThemes_Sensei_Question {
 	 * @since  1.0.0
 	 */
 	public function __construct () {
+		$this->question_types = $this->question_types();
 		$this->meta_fields = array( 'question_right_answer', 'question_wrong_answers' );
 		if ( is_admin() ) {
 			// Custom Write Panel Columns
@@ -119,7 +120,24 @@ class WooThemes_Sensei_Question {
 
 	public function question_edit_panel_metabox( $post_type, $post ) {
 		if( 'question' == $post_type ) {
-			add_meta_box( 'question-edit-panel', __( 'Question', 'woothemes-sensei' ), array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
+
+			$metabox_title = __( 'Question', 'woothemes-sensei' );
+
+			if( isset( $post->ID ) ) {
+				$question_type = '';
+				$question_types = wp_get_post_terms( $post->ID, 'question-type', array( 'fields' => 'names' ) );
+				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
+					$question_type = $question_types[0];
+				} // End If Statement
+
+				if( $question_type ) {
+					$type = $this->question_types[ $question_type ];
+					if( $type ) {
+						$metabox_title = $type;
+					}
+				}
+			}
+			add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
 		}
 	}
 
