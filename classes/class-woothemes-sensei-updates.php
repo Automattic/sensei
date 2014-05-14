@@ -61,10 +61,6 @@ class WooThemes_Sensei_Updates {
 																		  'set_default_show_question_count' => array( 'title' => 'Set all quizzes to show all questions', 'desc' => 'Sets all quizzes to show all questions - this can be changed per quiz.' ),
 																		  'remove_deleted_user_activity' => array( 'title' => 'Remove Sensei activity for deleted users', 'desc' => 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.' ) )
 												),
-								'1.6.0' => array( 	'auto' 		=> array( 'add_teacher_role' => array( 'title' => 'Add \'Teacher\' role', 'desc' => 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.' ),
-																		  'add_sensei_caps' => array( 'title' => 'Add administrator capabilities', 'desc' => 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.' ) ),
-													'manual' 	=> array()
-												),
 							);
 
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
@@ -83,8 +79,8 @@ class WooThemes_Sensei_Updates {
 	 * @return void
 	 */
 	public function add_update_admin_screen() {
-		if ( current_user_can( 'manage_sensei' ) ) {
-			add_submenu_page( 'sensei', 'Sensei Updates', 'Updates', 'manage_sensei', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+		if ( current_user_can( 'manage_options' ) ) {
+			add_submenu_page( 'sensei', 'Sensei Updates', 'Updates', 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
 		}
 	} // End add_update_admin_screen()
 
@@ -98,7 +94,7 @@ class WooThemes_Sensei_Updates {
 	public function sensei_updates_page() {
 
 		// Only allow admins to load this page and run the update functions
-		if( current_user_can( 'manage_sensei' ) ) {
+		if( current_user_can( 'administrator' ) ) {
 			?>
 			<div class="wrap">
 
@@ -282,7 +278,7 @@ class WooThemes_Sensei_Updates {
 	public function update ( $type = 'auto' ) {
 
 		// Only allow admins to run update functions
-		if( current_user_can( 'manage_sensei' ) ) {
+		if( current_user_can( 'administrator' ) ) {
 
 			// Run through all functions
 			foreach ( $this->updates as $version => $value ) {
@@ -706,18 +702,6 @@ class WooThemes_Sensei_Updates {
 			return false;
 		} // End If Statement
 
-	}
-
-	public function add_teacher_role() {
-		add_role( 'teacher', __( 'Teacher', 'woothemes-sensei' ), array( 'read' => true, 'manage_sensei_grades' => true ) );
-		return true;
-	}
-
-	public function add_sensei_caps() {
-		$role = get_role( 'administrator' );
-		$role->add_cap( 'manage_sensei' );
-		$role->add_cap( 'manage_sensei_grades' );
-		return true;
 	}
 
 } // End Class

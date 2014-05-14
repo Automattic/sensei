@@ -638,9 +638,6 @@ class WooThemes_Sensei_Utils {
 							    'action' => 'update'
 							);
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-
-			$answer_notes = get_post_meta( $question_id, '_answer_feedback', true );
-			WooThemes_Sensei_Utils::sensei_add_answer_notes( $question_id, $user_id, $answer_notes );
 		}
 
 		return $activity_logged;

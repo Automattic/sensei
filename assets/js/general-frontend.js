@@ -13,6 +13,15 @@ jQuery(document).ready( function($) {
 	    			width: jQuery(this).data("origWidth")
 	    		}, 1200);
 		});
+
+		jQuery(".answer_message.has_notes .notes").hide();
+
+		jQuery(".answer_message.has_notes span").mouseover(function() {
+			jQuery(this).siblings(".notes").show();
+		});
+		jQuery(".answer_message.has_notes span").mouseout(function() {
+			jQuery(this).siblings(".notes").hide();
+		});
 	});
 
 });

@@ -201,7 +201,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 							<span class="correct-answer"><?php echo $right_answer; ?></span>
 						</div>
 						<div class="answer-notes">
-							<h5><?php _e( 'Grading Notes', 'woothemes-sensei' ) ?></h5>
+							<h5><?php _e( 'Notes', 'woothemes-sensei' ) ?></h5>
 							<textarea class="correct-answer" name="<?php esc_attr_e( 'question_' . $question_id . '_notes' ); ?>" placeholder="<?php _e( 'Add notes here...', 'woothemes-sensei' ) ?>"><?php echo $question_answer_notes; ?></textarea>
 						</div>
 					</div>

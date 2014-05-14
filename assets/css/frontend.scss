@@ -261,6 +261,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 					span {
 						text-align: right;
 					}
+					&.has_notes {
+						span {
+							cursor: help;
+							border-bottom: 1px dotted;
+						}
+					}
 					&.user_right {
 						color: green;
 						border-color: green;
@@ -694,9 +700,6 @@ section.entry span.course-price { padding-left: 10px; }
 				&:hover  {
 					color: darken($color_body, 15%);
 				}
-			}
-			&.info-special {
-				background:#dbf1ff;
 			}
 		}
 		&.note {

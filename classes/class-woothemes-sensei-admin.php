@@ -73,18 +73,9 @@ class WooThemes_Sensei_Admin {
 	 */
 	public function admin_menu() {
 		global $woothemes_sensei, $menu;
-		$menu_cap = '';
-		if( current_user_can( 'manage_sensei' ) ) {
-			$menu_cap = 'manage_sensei';
-		} else {
-			if( current_user_can( 'manage_sensei_grades' ) ) {
-				$menu_cap = 'manage_sensei_grades';
-			}
-		}
-
-		if( $menu_cap ) {
+		if( current_user_can( 'manage_options' ) ) {
 			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
-			$main_page = add_menu_page( __( 'Sensei', 'woothemes-sensei' ), __( 'Sensei', 'woothemes-sensei' ), $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
+			$main_page = add_menu_page( __( 'Sensei', 'woothemes-sensei' ), __( 'Sensei', 'woothemes-sensei' ), 'manage_options', 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
 		}
 	}
 

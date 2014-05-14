@@ -167,7 +167,7 @@ class WooThemes_Sensei_Frontend {
 			wp_enqueue_script( $this->token . '-user-dashboard' );
 
 			// Load the general script
-			wp_enqueue_script( 'sensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend' . $suffix . '.js', array( 'jquery' ), '1.6.0' );
+			wp_enqueue_script( 'sensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend' . $suffix . '.js', array( 'jquery' ), '1.5.2' );
 
 			// Allow additional scripts to be loaded
 			do_action( 'sensei_additional_scripts' );
@@ -193,7 +193,7 @@ class WooThemes_Sensei_Frontend {
 		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
 
 		if ( ! $disable_styles ) {
-			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.6.0', 'screen' );
+			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.5.3', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
 
 			// Allow additional stylesheets to be loaded

@@ -80,8 +80,8 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_admin_menu() {
 	    global $menu, $woocommerce;
 
-	    if ( current_user_can( 'manage_sensei_grades' ) ) {
-	    	$analysis_page = add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_sensei_grades', 'sensei_analysis', array( $this, 'analysis_page' ) );
+	    if ( current_user_can( 'manage_options' ) ) {
+	    	$analysis_page = add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_options', 'sensei_analysis', array( $this, 'analysis_page' ) );
 	    }
 
 	} // End analysis_admin_menu()
@@ -329,7 +329,7 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.6.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.4.0' );
 
 	} // End enqueue_styles()
 
