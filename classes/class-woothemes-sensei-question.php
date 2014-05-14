@@ -125,6 +125,7 @@ class WooThemes_Sensei_Question {
 				}
 			}
 			add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
+			add_meta_box( 'question-lessons-panel', __( 'Quizzes', 'woothemes-sensei' ), array( $this, 'question_lessons_panel' ), 'question', 'side', 'default' );
 		}
 	}
 
@@ -162,6 +163,52 @@ class WooThemes_Sensei_Question {
 		$html .= $after;
 
 		echo $html;
+	}
+
+	public function question_lessons_panel() {
+		global $post;
+
+		$no_lessons = sprintf( __( '%1$sThis question does not appear in any quizzes yet.%2$s', 'woothemes-sensei' ), '<em>', '</em>' );
+
+		if( ! isset( $post->ID ) ) {
+			echo $no_lessons;
+			return;
+		}
+
+		$quizzes = get_post_meta( $post->ID, '_quizzes', true );
+
+		if( ! $quizzes ) {
+			echo $no_lessons;
+			return;
+		}
+
+		$lessons = false;
+
+		foreach( $quizzes as $quiz ) {
+
+			$lesson_id = get_post_meta( $quiz, '_quiz_lesson', true );
+
+			if( ! $lesson_id ) continue;
+
+			$lessons[ $lesson_id ]['title'] = get_the_title( $lesson_id );
+			$lessons[ $lesson_id ]['link'] = admin_url( 'post.php?post=' . $lesson_id . '&action=edit' );
+		}
+
+		if( ! $lessons ) {
+			echo $no_lessons;
+			return;
+		}
+
+		$html = '<ul>';
+
+		foreach( $lessons as $id => $lesson ) {
+			$html .= '<li><a href="' . esc_url( $lesson['link'] ) . '">' . esc_html( $lesson['title'] ) . '</a></li>';
+		}
+
+		$html .= '</ul>';
+
+		echo $html;
+
 	}
 
 	public function save_question( $post_id = 0 ) {

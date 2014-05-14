@@ -599,6 +599,10 @@ class WooThemes_Sensei_Lesson {
 
 				$html .= '</table>';
 
+				if( ! isset( $this->question_order ) ) {
+					$this->question_order = '';
+				}
+
 				$html .= '<input type="hidden" id="question-order" name="question-order" value="' . $this->question_order . '" />';
 
 			$html .= '</div>';
@@ -648,7 +652,7 @@ class WooThemes_Sensei_Lesson {
 				$html .= $this->quiz_panel_question( $question_type, $question_counter, $question_id );
 				$question_counter++;
 
-				if( strlen( $this->question_order ) > 0 ) { $this->question_order .= ','; }
+				if( isset( $this->question_order ) && strlen( $this->question_order ) > 0 ) { $this->question_order .= ','; }
 				$this->question_order .= $question_id;
 			} // End For Loop
 		}
@@ -1504,8 +1508,10 @@ class WooThemes_Sensei_Lesson {
 		    	$question_id = wp_update_post( $post_type_args );
 
 		    	// Update poast meta
-		    	if( 'quiz' != $context ) {
-		    		update_post_meta( $question_id, '_quiz_id', $quiz_id );
+		    	if( 'quiz' == $context ) {
+		    		$quizzes = get_post_meta( $question_id, '_quizzes', true );
+		    		$quizzes[] = $quiz_id;
+		    		update_post_meta( $question_id, '_quizzes', $quizzes );
 		    	}
 
 		    	update_post_meta( $question_id, '_question_grade', $question_grade );
@@ -1525,8 +1531,8 @@ class WooThemes_Sensei_Lesson {
 				++$question_count;
 
 				// Set post meta
-				if( 'quiz' != $context ) {
-					add_post_meta( $question_id, '_quiz_id', $quiz_id );
+				if( 'quiz' == $context ) {
+					add_post_meta( $question_id, '_quizzes', array( $quiz_id ) );
 				}
 
 		    	add_post_meta( $question_id, '_question_grade', $question_grade );
@@ -1665,6 +1671,8 @@ class WooThemes_Sensei_Lesson {
 
 		$questions = array();
 
+		$quiz_id = (string) $quiz_id;
+
 		$this->set_default_question_order( $quiz_id );
 
 		if ( ! is_admin() ) {
@@ -1674,20 +1682,23 @@ class WooThemes_Sensei_Lesson {
 			}
 		}
 
-		$post_args = array(	'post_type' 		=> 'question',
-							'numberposts' 		=> -1,
-							'meta_key'        	=> '_quiz_question_order',
-							'orderby'         	=> $orderby,
-    						'order'           	=> $order,
-    						'meta_query'		=> array(
-    							array(
-	    							'key'       => '_quiz_id',
-	    							'value'     => $quiz_id
-    							)
-							),
-    						'post_status'		=> $post_status,
-							'suppress_filters' 	=> 0
-							);
+		$post_args = array(
+			'post_type' 		=> 'question',
+			'numberposts' 		=> -1,
+			'meta_key'        	=> '_quiz_question_order',
+			'orderby'         	=> $orderby,
+			'order'           	=> $order,
+			'meta_query'		=> array(
+				array(
+					'key'       => '_quizzes',
+					'value'     => $quiz_id,
+					'compare'	=> 'LIKE'
+				)
+			),
+			'post_status'		=> $post_status,
+			'suppress_filters' 	=> 0
+		);
+
 		$questions_array = get_posts( $post_args );
 
 		// Set return array to initially include all questions
@@ -1762,8 +1773,9 @@ class WooThemes_Sensei_Lesson {
 					'order'           	=> 'ASC',
 					'meta_query'		=> array(
 						array(
-							'key'       => '_quiz_id',
-							'value'     => $quiz_id
+							'key'       => '_quizzes',
+							'value'     => $quiz_id,
+							'compare'	=> 'LIKE'
 						)
 					),
 					'post_status'		=> 'any',

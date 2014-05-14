@@ -62,7 +62,8 @@ class WooThemes_Sensei_Updates {
 																		  'remove_deleted_user_activity' => array( 'title' => 'Remove Sensei activity for deleted users', 'desc' => 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.' ) )
 												),
 								'1.6.0' => array( 	'auto' 		=> array( 'add_teacher_role' => array( 'title' => 'Add \'Teacher\' role', 'desc' => 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.' ),
-																		  'add_sensei_caps' => array( 'title' => 'Add administrator capabilities', 'desc' => 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.' ) ),
+																		  'add_sensei_caps' => array( 'title' => 'Add administrator capabilities', 'desc' => 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.' ),
+																		  'restructure_question_meta' => array( 'title' => 'Restructure question meta data', 'desc' => 'Restructures the quesiton meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.' ) ),
 													'manual' 	=> array()
 												),
 							);
@@ -717,6 +718,33 @@ class WooThemes_Sensei_Updates {
 		$role = get_role( 'administrator' );
 		$role->add_cap( 'manage_sensei' );
 		$role->add_cap( 'manage_sensei_grades' );
+		return true;
+	}
+
+	public function restructure_question_meta() {
+		$args = array(
+			'post_type' 		=> 'question',
+			'posts_per_page' 	=> -1,
+			'post_status'		=> 'any',
+			'suppress_filters' 	=> 0
+		);
+
+		$questions = get_posts( $args );
+
+		foreach( $questions as $question ) {
+
+			if( ! isset( $question->ID ) ) continue;
+
+			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
+
+			if( ! $quiz_id ) continue;
+
+			$quiz_id = (string) $quiz_id;
+
+			$quizzes = array( $quiz_id );
+
+			update_post_meta( $question->ID, '_quizzes', $quizzes );
+		}
 		return true;
 	}
 
