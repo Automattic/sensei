@@ -86,25 +86,12 @@ class WooThemes_Sensei_Question {
 				echo $id;
 			break;
 			case 'question-type':
-				$output = get_the_term_list( $id, 'question-type', '', ', ', '' );
+				$question_type = strip_tags( get_the_term_list( $id, 'question-type', '', ', ', '' ) );
+				$output = $this->question_types[ $question_type ];
 				if ( ! $output ) {
 					$output = '&mdash;';
 				} // End If Statement
-				$question_type_orig = array(	'>boolean<',
-												'>multiple-choice<',
-												'>gap-fill<',
-												'>multi-line<',
-												'>single-line<',
-												'>file-upload<'
-										 );
-				$question_type_replace = array(	'>True/False<',
-												'>Multiple Choice<',
-												'>Gap Fill<',
-												'>Multi Line<',
-												'>Single Line<',
-												'>File Upload<'
-										 );
-				echo strip_tags( str_replace( $question_type_orig, $question_type_replace, $output ) );
+				echo $output;
 			break;
 			case 'question-category':
 				$output = strip_tags( get_the_term_list( $id, 'question-category', '', ', ', '' ) );
