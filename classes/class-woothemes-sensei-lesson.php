@@ -657,7 +657,7 @@ class WooThemes_Sensei_Lesson {
 
 	}
 
-	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0 ) {
+	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz' ) {
 
 		$html = '';
 
@@ -713,16 +713,23 @@ class WooThemes_Sensei_Lesson {
 
 			$html .= '<tbody class="' . $question_class . '">';
 
-				$html .= '<tr>';
-					$html .= '<td class="table-count question-number question-count-column">' . $question_counter . '</td>';
-					$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
-					$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
-					$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', 'True/False' ), $question_type ) );
-					$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
-					$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Delete Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Delete', 'woothemes-sensei' ) ) . '</a></td>';
-				$html .= '</tr>';
+				if( 'quiz' == $context ) {
+					$html .= '<tr>';
+						$html .= '<td class="table-count question-number question-count-column">' . $question_counter . '</td>';
+						$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
+						$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
+						$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', 'True/False' ), $question_type ) );
+						$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
+						$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Delete Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Delete', 'woothemes-sensei' ) ) . '</a></td>';
+					$html .= '</tr>';
+				}
 
-				$html .= '<tr class="question-quick-edit hidden">';
+				$edit_class = '';
+				if( 'quiz' == $context ) {
+					$edit_class = 'hidden';
+				}
+
+				$html .= '<tr class="question-quick-edit ' . esc_attr( $edit_class ) . '">';
 					$html .= '<td colspan="5">';
 						$html .= '<span class="hidden question_original_counter">' . $question_counter . '</span>';
 				    	$html .= '<div class="question_required_fields">';
@@ -763,10 +770,12 @@ class WooThemes_Sensei_Lesson {
 					    $html .= '<input type="hidden" id="question_' . $question_counter . '_question_type" class="question_type" name="question_type" value="' . $question_type . '" />';
 						$html .= '<input type="hidden" name="question_id" class="row_question_id" id="question_' . $question_counter . '_id" value="' . $question_id . '" />';
 
-			    		$html .= '<div class="update-question">';
-				    		$html .= '<a href="#question-edit-cancel" class="lesson_question_cancel" title="' . esc_attr( __( 'Cancel', 'woothemes-sensei' ) ) . '">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
-				    		$html .= '<a title="' . esc_attr( __( 'Update Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_save button button-highlighted">' . esc_html( __( 'Update', 'woothemes-sensei' ) ) . '</a>';
-			    		$html .= '</div>';
+						if( 'quiz' == $context ) {
+				    		$html .= '<div class="update-question">';
+					    		$html .= '<a href="#question-edit-cancel" class="lesson_question_cancel" title="' . esc_attr( __( 'Cancel', 'woothemes-sensei' ) ) . '">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
+					    		$html .= '<a title="' . esc_attr( __( 'Update Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_save button button-highlighted">' . esc_html( __( 'Update', 'woothemes-sensei' ) ) . '</a>';
+				    		$html .= '</div>';
+				    	}
 
 		    		$html .= '</td>';
 				$html .= '</tr>';
@@ -774,14 +783,21 @@ class WooThemes_Sensei_Lesson {
 			$html .= '</tbody>';
 
 		} else {
-			$html .= '<div id="add-new-question" class="hidden">';
-		    	$html .= '<h2>' . __( 'New Question'  , 'woothemes-sensei' ) . '</h2>';
+			$add_class = '';
+			if( 'quiz' == $context ) {
+				$add_class = 'hidden';
+			}
+			$html .= '<div id="add-new-question" class="' . esc_attr( $add_class ) . '">';
+
+				if( 'quiz' == $context ) {
+		    		$html .= '<h2>' . __( 'New Question'  , 'woothemes-sensei' ) . '</h2>';
+		    	}
 
 				$html .= '<div class="question">';
 					$html .= '<div class="question_required_fields">';
 
 						// Question type
-						$html .= '<label>' . __( 'Question Type' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<label>' . __( 'Question Type:' , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<select id="add-question-type-options" name="question_type" class="chosen_select widefat question-type-select">' . "\n";
 							$question_types = WooThemes_Sensei_Question::question_types();
 							foreach ( $question_types as $type => $label ) {
@@ -819,10 +835,12 @@ class WooThemes_Sensei_Lesson {
 					$html .= $this->quiz_panel_question_field( $type );
 				}
 
-				$html .= '<div class="add-question">';
-		    		$html .= '<a href="#question-add-cancel" class="lesson_question_cancel">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
-		    		$html .= '<a title="' . esc_attr( __( 'Add Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="add_question_save button button-highlighted">' . esc_html( __( 'Add Question', 'woothemes-sensei' ) ) . '</a>';
-	    		$html .= '</div>';
+				if( 'quiz' == $context ) {
+					$html .= '<div class="add-question">';
+			    		$html .= '<a href="#question-add-cancel" class="lesson_question_cancel">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
+			    		$html .= '<a title="' . esc_attr( __( 'Add Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="add_question_save button button-highlighted">' . esc_html( __( 'Add Question', 'woothemes-sensei' ) ) . '</a>';
+		    		$html .= '</div>';
+		    	}
 		}
 
 		return $html;
@@ -1052,7 +1070,7 @@ class WooThemes_Sensei_Lesson {
 	public function enqueue_scripts( $hook ) {
 		global $woothemes_sensei, $post_type;
 
-		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_updates', 'woothemes-sensei-settings' ) );
 
@@ -1091,7 +1109,7 @@ class WooThemes_Sensei_Lesson {
 	public function enqueue_styles ( $hook ) {
 		global $woothemes_sensei, $post_type;
 
-		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_updates', 'woothemes-sensei-settings' ) );
 
@@ -1371,7 +1389,7 @@ class WooThemes_Sensei_Lesson {
 	 * @param array $data (default: array())
 	 * @return void
 	 */
-	private function lesson_save_question( $data = array() ) {
+	public function lesson_save_question( $data = array(), $context = 'quiz' ) {
 		$return = false;
 		// Save the Questions
 		// Setup the Question data
@@ -1468,18 +1486,28 @@ class WooThemes_Sensei_Lesson {
 			$question_media = $data['question_media'];
 
   		    // Get answer order
-			$answer_order = $data['answer_order'];
+  		    $answer_order = '';
+  		    if( isset( $data['answer_order'] ) ) {
+				$answer_order = $data['answer_order'];
+			}
 
 			// Get random order selection
-			$random_order = $data['random_order'];
+			$random_order = 'no';
+			if( isset( $data['random_order'] ) ) {
+				$random_order = $data['random_order'];
+			}
 
   		    // Insert or Update the question
   		    if ( 0 < $question_id ) {
-		    	$post_type_args[ 'ID' ] = $question_id;
+
+  		    	$post_type_args[ 'ID' ] = $question_id;
 		    	$question_id = wp_update_post( $post_type_args );
 
 		    	// Update poast meta
-		    	update_post_meta( $question_id, '_quiz_id', $quiz_id );
+		    	if( 'quiz' != $context ) {
+		    		update_post_meta( $question_id, '_quiz_id', $quiz_id );
+		    	}
+
 		    	update_post_meta( $question_id, '_question_grade', $question_grade );
 		    	update_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	update_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
@@ -1487,13 +1515,20 @@ class WooThemes_Sensei_Lesson {
 		    	update_post_meta( $question_id, '_question_media', $question_media );
 		    	update_post_meta( $question_id, '_answer_order', $answer_order );
 		    	update_post_meta( $question_id, '_random_order', $random_order );
+
+		    	if( 'quiz' != $context ) {
+		    		wp_set_post_terms( $question_id, array( $question_type ), 'question-type' );
+		    	}
 		    } else {
 				$question_id = wp_insert_post( $post_type_args );
 				$question_count = intval( $data['question_count'] );
 				++$question_count;
 
 				// Set post meta
-				add_post_meta( $question_id, '_quiz_id', $quiz_id );
+				if( 'quiz' != $context ) {
+					add_post_meta( $question_id, '_quiz_id', $quiz_id );
+				}
+
 		    	add_post_meta( $question_id, '_question_grade', $question_grade );
 		    	add_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	add_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );

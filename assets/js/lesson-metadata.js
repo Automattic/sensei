@@ -1033,4 +1033,6 @@ jQuery(document).ready( function($) {
 		} // End If Statement
 	});
 
+	if( jQuery( '.post-type-question #post-body-content').exists() ) { jQuery( '.post-type-question #post-body-content').remove(); }
+
 });

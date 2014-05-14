@@ -220,6 +220,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 
 /* ADD QUESTION */
 
+.post-type-question {
+	#post-body-content {
+		display: none;
+	}
+}
+
 #lesson-quiz  {
 
 	#add-quiz-metadata  {
@@ -450,6 +456,20 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 						content: "\f127";
 					}
 				}
+			}
+		}
+	}
+
+	&.single-question {
+		table {
+			border: 0 !important;
+			tbody {
+				cursor: default !important;
+			}
+		}
+		.multiple-choice-answers {
+			label {
+				margin-bottom: 10px;
 			}
 		}
 	}

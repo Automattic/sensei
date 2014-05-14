@@ -106,7 +106,6 @@ class WooThemes_Sensei_PostTypes {
 			$class_name = 'WooThemes_Sensei_' . $posttype_name;
 			$this->$posttype_token = new $class_name();
 			$this->$posttype_token->token = $posttype_token;
-
 		} // End For Loop
 
 	} // End load_posttype_objects
@@ -217,7 +216,7 @@ class WooThemes_Sensei_PostTypes {
 						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
-		    'menu_position' => 51, // Below "Pages"
+		    'menu_position' => 51,
 		    'supports' => $supports_array
 		);
 
@@ -269,7 +268,7 @@ class WooThemes_Sensei_PostTypes {
 		    'public' => false,
 		    'publicly_queryable' => true,
 		    'show_ui' => true,
-		    'show_in_menu' => 'edit.php?post_type=lesson',
+		    'show_in_menu' => true,
 		    'show_in_nav_menus' => false,
 		    'query_var' => true,
 		    'exclude_from_search' => true,
@@ -278,7 +277,7 @@ class WooThemes_Sensei_PostTypes {
 		    'capability_type' => 'question',
 		    'has_archive' => true,
 		    'hierarchical' => false,
-		    'menu_position' => 10, // Below "Pages"
+		    'menu_position' => 51,
 		    'supports' => array( 'title' )
 		);
 
@@ -407,7 +406,7 @@ class WooThemes_Sensei_PostTypes {
 			'update_item' => __( 'Update Question Category', 'woothemes-sensei' ),
 			'add_new_item' => __( 'Add New Question Category', 'woothemes-sensei' ),
 			'new_item_name' => __( 'New Question Category Name', 'woothemes-sensei' ),
-			'menu_name' => __( 'Question Categories', 'woothemes-sensei' ),
+			'menu_name' => __( 'Categories', 'woothemes-sensei' ),
 		);
 
 		$args = array(
