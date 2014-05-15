@@ -953,11 +953,11 @@ class WooThemes_Sensei_Lesson {
 					if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { $gapfill_post = ''; }
 					$html .= '<div class="question_gapfill_fields ' . $question_class . '">';
 						// Fill in the Gaps
-						$html .= '<label>' . __( 'Text before the Gap' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<label>' . __( 'Text before the Gap:' , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' . $gapfill_pre . '" size="25" class="widefat gapfill-field" />';
-	  					$html .= '<label>' . __( 'The Gap' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<label>' . __( 'The Gap:' , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="' . $gapfill_gap . '" size="25" class="widefat gapfill-field" />';
-	  					$html .= '<label>' . __( 'Text after the Gap' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<label>' . __( 'Text after the Gap:' , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="' . $gapfill_post . '" size="25" class="widefat gapfill-field" />';
 	  					$html .= '<label>' . __( 'Preview:' , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<p class="gapfill-preview">' . $gapfill_pre . '&nbsp;<u>' . $gapfill_gap . '</u>&nbsp;' . $gapfill_post . '</p>';
