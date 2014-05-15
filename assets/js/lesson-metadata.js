@@ -886,6 +886,7 @@ jQuery(document).ready( function($) {
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_table_delete', function() {
 	 	var dataToPost = '';
 	 	var questionId = '';
+	 	var quizId = '';
 	 	var tableRowId = '';
 	 	// TODO - localize this delete message
 	 	var confirmDelete = confirm( 'Are you sure you want to delete this question?' );
@@ -898,8 +899,12 @@ jQuery(document).ready( function($) {
  					dataToPost += '&question_id' + '=' + jQuery( this ).attr( 'value' );
  				} // End If Statement
  			});
+
+			dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
  			tableRowId = jQuery( this ).closest('tr').find('td.question-number').text();
  			var row_parent = jQuery( this ).closest( 'tbody' );
+
  			// Perform the AJAX call.
  			jQuery.post(
  				ajaxurl,

@@ -612,7 +612,7 @@ class WooThemes_Sensei_Lesson {
 				// Question Actions panel
 				$html .= '<p>';
 					// Add question action button
-					$html .= '<button type="button" class="button button-highlighted add_question_answer">' . esc_html( __( 'Add A Question', 'woothemes-sensei' ) )  . '</button>';
+					$html .= '<button type="button" class="button button-highlighted add_question_answer">' . esc_html( __( 'Add Question(s)', 'woothemes-sensei' ) )  . '</button>';
 				$html .= '</p>';
 
 				$html .= $this->quiz_panel_question();
@@ -724,7 +724,7 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 						$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', 'True/False' ), $question_type ) );
 						$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
-						$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Delete Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Delete', 'woothemes-sensei' ) ) . '</a></td>';
+						$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Remove Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Remove', 'woothemes-sensei' ) ) . '</a></td>';
 					$html .= '</tr>';
 				}
 
@@ -842,7 +842,7 @@ class WooThemes_Sensei_Lesson {
 				if( 'quiz' == $context ) {
 					$html .= '<div class="add-question">';
 			    		$html .= '<a href="#question-add-cancel" class="lesson_question_cancel">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
-			    		$html .= '<a title="' . esc_attr( __( 'Add Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="add_question_save button button-highlighted">' . esc_html( __( 'Add Question', 'woothemes-sensei' ) ) . '</a>';
+			    		$html .= '<a title="' . esc_attr( __( 'Add Question(s)', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="add_question_save button button-highlighted">' . esc_html( __( 'Add Question(s)', 'woothemes-sensei' ) ) . '</a>';
 		    		$html .= '</div>';
 		    	}
 		}
@@ -1564,7 +1564,7 @@ class WooThemes_Sensei_Lesson {
 	 * @return void
 	 */
 	private function lesson_delete_question( $data = array() ) {
-		$return = false;
+
 		// Get which question to delete
 		$question_id = 0;
 		if ( isset( $data[ 'question_id' ] ) && ( 0 < absint( $data[ 'question_id' ] ) ) ) {
@@ -1572,13 +1572,20 @@ class WooThemes_Sensei_Lesson {
 		} // End If Statement
 		// Delete the question
 		if ( 0 < $question_id ) {
-			$deleted = wp_delete_post( $question_id, true ); // 2nd param forces delete even from the trash, returns false if it fails
-			// Check if it deleted successfully
-			if ( $deleted ) {
-				$return = true;
-			} // End If Statement
+			$quizzes = get_post_meta( $question_id, '_quizzes', true );
+
+			$updated_quizzes = array();
+			foreach( $quizzes as $quiz_id ) {
+				if( $quiz_id != $data['quiz_id'] ) {
+					$updated_quizzes[] = $quiz_id;
+				}
+			}
+
+			update_post_meta( $question_id, '_quizzes', $updated_quizzes, $quizzes );
+
+			return true;
 		} // End If Statement
-		return $return;
+		return false;
 	} // End lesson_delete_question()
 
 
