@@ -288,7 +288,7 @@ class WooThemes_Sensei_Admin {
 	public function admin_styles_global ( $hook ) {
 		global $woothemes_sensei, $post_type, $wp_version;
 
-		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_updates', 'woothemes-sensei-settings' ) );
 

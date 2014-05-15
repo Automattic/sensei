@@ -658,6 +658,7 @@ jQuery(document).ready( function($) {
 	jQuery( '#add-new-question' ).on( 'click', 'a.add_question_save', function() {
 		var dataToPost = '';
 		var questionType = 'multiple-choice';
+		var questionCategory = '';
 		var radioValue = 'true';
 	 	// Validate Inputs
 		var validInput = jQuery.fn.validateQuestionInput( 'add', jQuery(this) );
@@ -668,6 +669,11 @@ jQuery(document).ready( function($) {
 			if ( jQuery( '#add-question-type-options' ).val() != '' ) {
 	 			questionType = jQuery( '#add-question-type-options' ).val();
 	 		} // End If Statement
+
+	 		if ( jQuery( '#add-question-category-options' ).val() != '' ) {
+	 			questionCategory = jQuery( '#add-question-category-options' ).val();
+	 		} // End If Statement
+
 	 		var divFieldsClass = 'question_default_fields';
 	 		switch ( questionType ) {
 				case 'multiple-choice':
@@ -717,6 +723,7 @@ jQuery(document).ready( function($) {
  				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_multiline' ).val() );
 	 		} // End If Statement
 	 		dataToPost += '&' + 'question_type' + '=' + questionType;
+	 		dataToPost += '&' + 'question_category' + '=' + questionCategory;
 	 		questionGrade = jQuery( '#add-question-grade' ).val();
 	 		dataToPost += '&' + 'question_grade' + '=' + questionGrade;
 
@@ -1026,6 +1033,27 @@ jQuery(document).ready( function($) {
 		jQuery.fn.uploadQuestionMedia( jQuery( this ).closest( 'div' ).find( '.upload_media_file_button' ) );
 	});
 
+	jQuery( '.add-question-tabs .nav-tab' ).click( function() {
+		var tab_id = jQuery( this ).attr('id');
+		var tab_content_id = tab_id + '-content';
+
+		jQuery( '#add-new-question .nav-tab' ).removeClass( 'nav-tab-active' );
+		jQuery( this ).addClass( 'nav-tab-active' );
+
+		jQuery( '#add-new-question .tab-content' ).addClass( 'hidden' );
+		jQuery( '#' + tab_content_id ).removeClass( 'hidden' );
+	});
+
+	jQuery( '#add-multiple-question-options').change( function() {
+		var selected = jQuery( this ).val();
+
+		if( selected || '' != selected ) {
+			jQuery( '#tab-multiple-content .can_hide' ).removeClass( 'hidden' );
+		} else {
+			jQuery( '#tab-multiple-content .can_hide' ).addClass( 'hidden' );
+		}
+	});
+
 	/***************************************************************************************************
 	 * 	5 - Load Chosen Dropdowns.
 	 ***************************************************************************************************/
@@ -1038,15 +1066,25 @@ jQuery(document).ready( function($) {
 	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).chosen(); }
 	if ( jQuery( '#course-woocommerce-product-options' ).exists() && '-' != jQuery( '#course-woocommerce-product-options' ).val() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
 
+	// Quiz edit panel
+	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).chosen(); }
+	if ( jQuery( '#add-question-category-options' ).exists() ) { jQuery( '#add-question-category-options' ).chosen(); }
+	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).chosen(); }
+
 	// Courses Write Panel
 	if ( jQuery( '#course-wc-product #course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
-	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).chosen(); }
+	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).chosen(); }
+
 	// Sensei Settings Panel
 	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {
 		if ( !jQuery( this ).hasClass( 'range-input' ) ) {
 			jQuery( this ).chosen();
 		} // End If Statement
 	});
+
+	/***************************************************************************************************
+	 * 6 - Single Quiz Edit Screen
+	 ***************************************************************************************************/
 
 	if( jQuery( '.post-type-question #post-body-content').exists() ) { jQuery( '.post-type-question #post-body-content').remove(); }
 
