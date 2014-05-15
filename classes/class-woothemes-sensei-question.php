@@ -33,6 +33,10 @@ class WooThemes_Sensei_Question {
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 			add_action( 'add_meta_boxes', array( $this, 'question_edit_panel_metabox' ), 10, 2 );
 
+			// Quesitno list table filters
+			add_action( 'restrict_manage_posts', array( $this, 'filter_options' ) );
+			add_filter( 'request', array( $this, 'filter_actions' ) );
+
 			add_action( 'save_post', array( $this, 'save_question' ), 10, 1 );
 		} // End If Statement
 	} // End __construct()
@@ -236,6 +240,82 @@ class WooThemes_Sensei_Question {
 		}
 
 		return;
+	}
+
+	/**
+	 * Add options to filter the questions list table
+	 * @return void
+	 */
+	public function filter_options() {
+		global $typenow;
+
+		if( is_admin() && 'question' == $typenow ) {
+
+			$output = '';
+
+			// Question type
+			$selected = isset( $_GET['question_type'] ) ? $_GET['question_type'] : '';
+			$type_options = '<option value="">' . __( 'All types', 'woothemes-sensei' ) . '</option>';
+			foreach( $this->question_types as $label => $type ) {
+				$type_options .= '<option value="' . esc_attr( $label ) . '" ' . selected( $selected, $label, false ) . '>' . esc_html( $type ) . '</option>';
+			}
+
+			$output .= '<select name="question_type" id="dropdown_question_type">';
+			$output .= $type_options;
+			$output .= '</select>';
+
+			// Question category
+			$cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
+			if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
+				$selected = isset( $_GET['question_cat'] ) ? $_GET['question_cat'] : '';
+				$cat_options = '<option value="">' . __( 'All categories', 'woothemes-sensei' ) . '</option>';
+				foreach( $cats as $cat ) {
+					$cat_options .= '<option value="' . esc_attr( $cat->slug ) . '" ' . selected( $selected, $cat->slug, false ) . '>' . esc_html( $cat->name ) . '</option>';
+				}
+
+				$output .= '<select name="question_cat" id="dropdown_question_cat">';
+				$output .= $cat_options;
+				$output .= '</select>';
+			}
+
+			echo $output;
+		}
+	}
+
+	/**
+	 * Filter questions list table
+	 * @param  array $request Current request
+	 * @return array          Modified request
+	 */
+	public function filter_actions( $request ) {
+		global $typenow;
+
+		if( is_admin() && 'question' == $typenow ) {
+
+			// Question type
+			$question_type = isset( $_GET['question_type'] ) ? $_GET['question_type'] : '';
+			if( $question_type ) {
+				$type_query = array(
+					'taxonomy' => 'question-type',
+					'terms' => $question_type,
+					'field' => 'slug',
+				);
+				$request['tax_query'][] = $type_query;
+			}
+
+			// Question category
+			$question_cat = isset( $_GET['question_cat'] ) ? $_GET['question_cat'] : '';
+			if( $question_cat ) {
+				$cat_query = array(
+					'taxonomy' => 'question-category',
+					'terms' => $question_cat,
+					'field' => 'slug',
+				);
+				$request['tax_query'][] = $cat_query;
+			}
+		}
+
+		return $request;
 	}
 
 } // End Class
