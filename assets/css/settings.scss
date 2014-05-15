@@ -467,8 +467,21 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				cursor: default !important;
 			}
 		}
+		#add-new-question {
+			padding: 20px;
+		}
+		.question_required_fields {
+			div {
+				margin-bottom: 10px;
+			}
+		}
 		.multiple-choice-answers {
 			label {
+				margin-bottom: 10px;
+			}
+		}
+		.question_gapfill_fields {
+			input[type="text"] {
 				margin-bottom: 10px;
 			}
 		}

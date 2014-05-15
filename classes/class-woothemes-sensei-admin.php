@@ -500,8 +500,13 @@ class WooThemes_Sensei_Admin {
 			$question_args = array(
 				'post_type'	=> 'question',
 				'posts_per_page' => -1,
-				'meta_key' => '_quiz_id',
-				'meta_value' => $quiz->ID,
+				'meta_query'		=> array(
+					array(
+						'key'       => '_quizzes',
+						'value'     => $quiz->ID,
+						'compare'	=> 'LIKE'
+					)
+				),
 				'suppress_filters' => 0
 			);
 			$questions = get_posts( $question_args );
@@ -511,7 +516,7 @@ class WooThemes_Sensei_Admin {
 
 			foreach( $questions as $question ) {
 				$new_question = $this->duplicate_post( $question, '' );
-				add_post_meta( $new_question->ID, '_quiz_id', $new_quiz->ID );
+				add_post_meta( $new_question->ID, '_quizzes', array( $new_quiz->ID ) );
 			}
 		}
 	}
@@ -578,7 +583,7 @@ class WooThemes_Sensei_Admin {
 			$post_meta = get_post_custom( $post->ID );
 			if( $post_meta && count( $post_meta ) > 0 ) {
 
-				$ignore_meta = array( '_quiz_lesson', '_quiz_id' );
+				$ignore_meta = array( '_quiz_lesson', '_quizzes' );
 				if( $ignore_course ) {
 					$ignore_meta[] = '_lesson_course';
 				}

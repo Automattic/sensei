@@ -864,8 +864,13 @@ class WooThemes_Sensei_Utils {
                                     'numberposts'       => -1,
                                     'orderby'           => 'ID',
                                     'order'             => 'ASC',
-                                    'meta_key'          => '_quiz_id',
-                                    'meta_value'        => $quiz_id,
+                                    'meta_query'		=> array(
+										array(
+											'key'       => '_quizzes',
+											'value'     => $quiz_id,
+											'compare'	=> 'LIKE'
+										)
+									),
                                     'post_status'       => 'any',
                                     'suppress_filters'  => 0
                                 );
