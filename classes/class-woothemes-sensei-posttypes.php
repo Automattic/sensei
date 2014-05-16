@@ -50,6 +50,7 @@ class WooThemes_Sensei_PostTypes {
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_multiple_question_post_type' ), 100 );
 		// Setup Taxonomies
 		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 100 );
@@ -257,11 +258,9 @@ class WooThemes_Sensei_PostTypes {
 	/**
 	 * Setup the "question" post type, it's admin menu item and the appropriate labels and permissions.
 	 * @since  1.0.0
-	 * @uses  global $woothemes_sensei
 	 * @return void
 	 */
 	public function setup_question_post_type () {
-		global $woothemes_sensei;
 
 		$args = array(
 		    'labels' => $this->create_post_type_labels( 'question', $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
@@ -283,6 +282,34 @@ class WooThemes_Sensei_PostTypes {
 
 		register_post_type( 'question', $args );
 	} // End setup_question_post_type()
+
+	/**
+	 * Setup the "multiple_question" post type, it's admin menu item and the appropriate labels and permissions.
+	 * @since  1.6.0
+	 * @return void
+	 */
+	public function setup_multiple_question_post_type () {
+
+		$args = array(
+		    'labels' => $this->create_post_type_labels( 'multiple_question', $this->labels['multiple_question']['singular'], $this->labels['multiple_question']['plural'], $this->labels['multiple_question']['menu'] ),
+		    'public' => false,
+		    'publicly_queryable' => false,
+		    'show_ui' => false,
+		    'show_in_menu' => false,
+		    'show_in_nav_menus' => false,
+		    'query_var' => false,
+		    'exclude_from_search' => true,
+		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => false, 'feeds' => false, 'pages' => false ),
+		    'map_meta_cap' => true,
+		    'capability_type' => 'question',
+		    'has_archive' => false,
+		    'hierarchical' => false,
+		    'menu_position' => 51,
+		    'supports' => array( 'title', 'custom-fields' )
+		);
+
+		register_post_type( 'multiple_question', $args );
+	} // End setup_multiple_question_post_type()
 
 	/**
 	 * Setup the "course category" taxonomy, linked to the "course" post type.
@@ -468,6 +495,7 @@ class WooThemes_Sensei_PostTypes {
 		$this->labels['lesson'] = array( 'singular' => __( 'Lesson', 'woothemes-sensei' ), 'plural' => __( 'Lessons', 'woothemes-sensei' ), 'menu' => __( 'Lessons', 'woothemes-sensei' ) );
 		$this->labels['quiz'] = array( 'singular' => __( 'Quiz', 'woothemes-sensei' ), 'plural' => __( 'Quizzes', 'woothemes-sensei' ), 'menu' => __( 'Quizzes', 'woothemes-sensei' ) );
 		$this->labels['question'] = array( 'singular' => __( 'Question', 'woothemes-sensei' ), 'plural' => __( 'Questions', 'woothemes-sensei' ), 'menu' => __( 'Questions', 'woothemes-sensei' ) );
+		$this->labels['multiple_question'] = array( 'singular' => __( 'Multiple Question', 'woothemes-sensei' ), 'plural' => __( 'Multiple Questions', 'woothemes-sensei' ), 'menu' => __( 'Multiple Questions', 'woothemes-sensei' ) );
 
 	} // End setup_post_type_labels_base()
 
@@ -513,6 +541,7 @@ class WooThemes_Sensei_PostTypes {
 		$messages['lesson'] = $this->create_post_type_messages( 'lesson' );
 		$messages['quiz'] = $this->create_post_type_messages( 'quiz' );
 		$messages['question'] = $this->create_post_type_messages( 'question' );
+		$messages['multiple_question'] = $this->create_post_type_messages( 'multiple_question' );
 
 		return $messages;
 	} // End setup_post_type_messages()

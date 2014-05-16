@@ -168,6 +168,7 @@ jQuery(document).ready( function($) {
  		// Get current value
  		var currentValue = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
  		var newValue = currentValue;
+ 		increment = parseInt( increment );
  		// Increment or Decrement
  		if ( operator == '-' ) {
  			newValue = currentValue - increment;
@@ -272,14 +273,32 @@ jQuery(document).ready( function($) {
 		var row_number = 1;
 		var row_class = 'alternate';
 		jQuery( '#add-question-metadata' ).find( 'td.question-number' ).each( function() {
-			jQuery( this ).text( row_number );
+			jQuery( this ).find( 'span.number' ).text( row_number );
 			jQuery( this ).closest( 'tbody' ).removeClass().addClass( row_class );
 			if( 'alternate' == row_class ) {
 				row_class = '';
 			} else {
 				row_class = 'alternate';
 			}
-			row_number++;
+
+			if( '' != jQuery( this ).find( 'span.total-number' ).text() ) {
+				var total_number = parseInt( jQuery( this ).find( 'span.total-number' ).text() );
+				var end_number = row_number + total_number - 1;
+				var multiple_numbers = '';
+
+				if( row_number == end_number ) {
+					multiple_numbers = row_number;
+				} else {
+					multiple_numbers = row_number + ' - ' + end_number ;
+				}
+
+				jQuery( this ).find( 'span.row-numbers' ).text( multiple_numbers );
+				row_number += total_number;
+
+			} else {
+				row_number++;
+			}
+
 		});
 	}
 
@@ -778,6 +797,67 @@ jQuery(document).ready( function($) {
 	});
 
 	/**
+	 * Add Multiple Questions Save Click Event - Ajax.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 */
+	jQuery( '#add-new-question' ).on( 'click', 'a.add_multiple_save', function() {
+		var dataToPost = '';
+	 	var questionCategory = '';
+	 	var questionNumber = '';
+
+	 	dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+		if ( jQuery( '#add-multiple-question-category-options' ).val() != '' ) {
+ 			questionCategory = jQuery( '#add-multiple-question-category-options' ).val();
+ 		} // End If Statement
+ 		dataToPost += '&' + 'question_category' + '=' + questionCategory;
+
+ 		if ( jQuery( '#add-multiple-question-count' ).val() != '' ) {
+ 			questionNumber = jQuery( '#add-multiple-question-count' ).val();
+ 		} // End If Statement
+ 		dataToPost += '&' + 'question_number' + '=' + questionNumber;
+
+ 		var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+ 		dataToPost += '&' + 'question_count' + '=' + questionCount;
+
+ 		if( questionCategory && questionCount ) {
+	 		// Perform the AJAX call.
+	 		jQuery.post(
+	 		    ajaxurl,
+	 		    {
+	 		    	action : 'lesson_add_multiple_questions',
+	 		    	lesson_add_multiple_questions_nonce : woo_localized_data.lesson_add_multiple_questions_nonce,
+	 		    	data : dataToPost
+	 		    },
+	 		    function( response ) {
+	 		    	// Check for a valid response
+	 		    	if ( response ) {
+						jQuery( '#add-multiple-question-category-options' ).val('');
+						jQuery( '#tab-multiple-content .can_hide' ).addClass( 'hidden' );
+						jQuery( '#add-multiple-question-count' ).val('1');
+
+	 		    		jQuery.fn.updateQuestionCount( questionNumber, '+' );
+	 		    		jQuery( '#add-question-metadata table' ).append( response );
+			    		jQuery.fn.resetAddQuestionForm();
+
+			    		jQuery.fn.updateQuestionOrder();
+
+			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+			 			max_questions += questionNumber;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+	 		    	}
+	 		    }
+	 		);
+	 		return false;
+	 	} else {
+	 		jQuery( '#add-multiple-question-category-options' ).focus();
+	 	}
+
+	});
+
+	/**
 	 * Edit Question Save Click Event - Ajax.
 	 *
 	 * @since 1.0.0
@@ -895,7 +975,7 @@ jQuery(document).ready( function($) {
 	});
 
 	/**
-	 * Delete Question Click Event - Ajax.
+	 * Remove Question Click Event - Ajax.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -919,7 +999,7 @@ jQuery(document).ready( function($) {
 
 			dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
- 			tableRowId = jQuery( this ).closest('tr').find('td.question-number').text();
+ 			tableRowId = jQuery( this ).closest('tr').find('td.question-number span.number').text();
  			var row_parent = jQuery( this ).closest( 'tbody' );
 
  			// Perform the AJAX call.
@@ -934,7 +1014,7 @@ jQuery(document).ready( function($) {
  					if ( response ) {
  						// Remove the html element for the deleted question
  						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
- 							if ( jQuery(this).text() == tableRowId ) {
+ 							if ( jQuery(this).find('span.number').text() == tableRowId ) {
  								jQuery(this).closest('tr').next('tr').remove();
  								jQuery(this).closest('tr').remove();
  								// Exit each() to prevent multiple row deletions
@@ -947,6 +1027,62 @@ jQuery(document).ready( function($) {
 
  						var max_questions = parseInt( jQuery( '#show_questions' ).attr( 'max' ) );
 			 			max_questions--;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+
+			 			var show_questions_field = parseInt( jQuery( '#show_questions' ).val() );
+			 			if( show_questions_field > max_questions ) {
+			 				jQuery( '#show_questions' ).val( max_questions );
+			 			}
+ 					}
+ 				}
+ 			);
+ 			return false;
+		}
+	});
+
+	/**
+	 * Remove Multple Questions Row Click Event - Ajax.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 */
+	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_multiple_delete', function() {
+	 	var dataToPost = '';
+
+	 	var confirmDelete = confirm( 'Are you sure you want to delete this question?' );
+
+	 	if ( confirmDelete ) {
+
+	 		dataToPost += 'question_id' + '=' + jQuery( this ).attr( 'rel' );
+			dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+ 			var tableRowId = jQuery( this ).closest('tr').find('td.question-number span.number').text();
+ 			var total_number = jQuery( this ).closest('tr').find('td.question-number span.total-number').text();
+ 			var row_parent = jQuery( this ).closest( 'tbody' );
+
+ 			// Perform the AJAX call.
+ 			jQuery.post(
+ 				ajaxurl,
+ 				{
+ 					action : 'lesson_remove_multiple_questions',
+ 					lesson_remove_multiple_questions_nonce : woo_localized_data.lesson_remove_multiple_questions_nonce,
+ 					data : dataToPost
+ 				},
+ 				function( response ) {
+ 					if ( response ) {
+
+ 						// Remove the html element for the deleted question
+ 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
+ 							if ( jQuery(this).find('span.number').text() == tableRowId ) {
+ 								jQuery(this).closest('tr').remove();
+ 								// Exit each() to prevent multiple row deletions
+ 								return false;
+							}
+ 						});
+ 						jQuery.fn.updateQuestionCount( total_number, '-' );
+
+ 						var max_questions = parseInt( jQuery( '#show_questions' ).attr( 'max' ) );
+			 			max_questions -= total_number;
 			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
 
 			 			var show_questions_field = parseInt( jQuery( '#show_questions' ).val() );
@@ -1044,7 +1180,7 @@ jQuery(document).ready( function($) {
 		jQuery( '#' + tab_content_id ).removeClass( 'hidden' );
 	});
 
-	jQuery( '#add-multiple-question-options').change( function() {
+	jQuery( '#add-multiple-question-category-options').change( function() {
 		var selected = jQuery( this ).val();
 
 		if( selected || '' != selected ) {
@@ -1073,7 +1209,7 @@ jQuery(document).ready( function($) {
 
 	// Courses Write Panel
 	if ( jQuery( '#course-wc-product #course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
-	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).chosen(); }
+	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) { jQuery( '#add-multiple-question-category-options' ).chosen(); }
 
 	// Sensei Settings Panel
 	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {

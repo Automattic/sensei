@@ -43,12 +43,12 @@ class WooThemes_Sensei_Question {
 
 	public function question_types() {
 		$types = array(
-			'multiple-choice' => 'Multiple Choice',
-			'boolean' => 'True/False',
-			'gap-fill' => 'Gap Fill',
-			'single-line' => 'Single Line',
-			'multi-line' => 'Multi Line',
-			'file-upload' => 'File Upload',
+			'multiple-choice' => __( 'Multiple Choice', 'woothemes-sensei' ),
+			'boolean' => __( 'True/False', 'woothemes-sensei' ),
+			'gap-fill' => __( 'Gap Fill', 'woothemes-sensei' ),
+			'single-line' => __( 'Single Line', 'woothemes-sensei' ),
+			'multi-line' => __( 'Multi Line', 'woothemes-sensei' ),
+			'file-upload' => __( 'File Upload', 'woothemes-sensei' ),
 		);
 
 		return apply_filters( 'sensei_question_types', $types );
@@ -63,7 +63,6 @@ class WooThemes_Sensei_Question {
 	 */
 	public function add_column_headings ( $defaults ) {
 		$new_columns['cb'] = '<input type="checkbox" />';
-		// $new_columns['id'] = __( 'ID' );
 		$new_columns['title'] = _x( 'Question', 'column name', 'woothemes-sensei' );
 		$new_columns['question-type'] = _x( 'Type', 'column name', 'woothemes-sensei' );
 		$new_columns['question-category'] = _x( 'Categories', 'column name', 'woothemes-sensei' );
@@ -110,7 +109,7 @@ class WooThemes_Sensei_Question {
 	} // End add_column_data()
 
 	public function question_edit_panel_metabox( $post_type, $post ) {
-		if( 'question' == $post_type ) {
+		if( in_array( $post_type, array( 'question', 'multiple_question' ) ) ) {
 
 			$metabox_title = __( 'Question', 'woothemes-sensei' );
 
@@ -130,6 +129,7 @@ class WooThemes_Sensei_Question {
 			}
 			add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
 			add_meta_box( 'question-lessons-panel', __( 'Quizzes', 'woothemes-sensei' ), array( $this, 'question_lessons_panel' ), 'question', 'side', 'default' );
+			add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'woothemes-sensei' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
 		}
 	}
 

@@ -50,26 +50,47 @@ class WooThemes_Sensei_Lesson {
 		$this->meta_fields = array( 'lesson_prerequisite', 'lesson_course', 'lesson_length', 'lesson_complexity', 'lesson_video_embed' );
 		// Admin actions
 		if ( is_admin() ) {
+
 			// Metabox functions
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'post_updated' ) );
+
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 10, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
-			// Ajax functions
+
+			// Add/Update question
 			add_action( 'wp_ajax_lesson_update_question', array( $this, 'lesson_update_question' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_question', array( $this, 'lesson_update_question' ) );
+
+			// Add course
 			add_action( 'wp_ajax_lesson_add_course', array( $this, 'lesson_add_course' ) );
 			add_action( 'wp_ajax_nopriv_lesson_add_course', array( $this, 'lesson_add_course' ) );
+
+			// Update grade type
 			add_action( 'wp_ajax_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
+
+			// Update question order
 			add_action( 'wp_ajax_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_question_order', array( $this, 'lesson_update_question_order' ) );
+
+			//Update question order
 			add_action( 'wp_ajax_lesson_update_question_order_random', array( $this, 'lesson_update_question_order_random' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_question_order_random', array( $this, 'lesson_update_question_order_random' ) );
+
+			// Get answer ID
 			add_action( 'wp_ajax_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
 			add_action( 'wp_ajax_nopriv_question_get_answer_id', array( $this, 'question_get_answer_id' ) );
+
+			// Add multiple questions
+			add_action( 'wp_ajax_lesson_add_multiple_questions', array( $this, 'lesson_add_multiple_questions' ) );
+			add_action( 'wp_ajax_nopriv_lesson_add_multiple_questions', array( $this, 'lesson_add_multiple_questions' ) );
+
+			// Remove multiple questions
+			add_action( 'wp_ajax_lesson_remove_multiple_questions', array( $this, 'lesson_remove_multiple_questions' ) );
+			add_action( 'wp_ajax_nopriv_lesson_remove_multiple_questions', array( $this, 'lesson_remove_multiple_questions' ) );
 		} else {
 			// Frontend actions
 		} // End If Statement
@@ -514,7 +535,17 @@ class WooThemes_Sensei_Lesson {
 			$questions = $this->lesson_quiz_questions( $quiz_id );
 		} // End If Statement
 
-		$question_count = count( $questions );
+		$question_count = 0;
+		foreach( $questions as $question ) {
+
+			if( $question->post_type == 'multiple_question' ) {
+				$question_number = get_post_meta( $question->ID, 'number', true );
+				$question_count += $question_number;
+			} else {
+				++$question_count;
+			}
+
+		}
 
 		// Inner DIV
 		$html .= '<div id="add-quiz-metadata"' . $quiz_class . '>';
@@ -644,13 +675,27 @@ class WooThemes_Sensei_Lesson {
 					$question_type = $question_types[0];
 				} // End If Statement
 
+				$multiple_data = array();
+				$question_increment = 1;
+				if( 'multiple_question' == $question->post_type ) {
+					$question_type = 'category';
+
+					$question_category = get_post_meta( $question->ID, 'category', true );
+					$question_cat = get_term( $question_category, 'question-category' );
+
+					$question_number = get_post_meta( $question->ID, 'number', true );
+					$question_increment = $question_number;
+
+					$multiple_data = array( $question_cat->name, $question_number );
+				}
+
 				if( ! $question_type ) {
 					$question_type = 'multiple-choice';
 				}
 
 				// Row with question and actions
-				$html .= $this->quiz_panel_question( $question_type, $question_counter, $question_id );
-				$question_counter++;
+				$html .= $this->quiz_panel_question( $question_type, $question_counter, $question_id, 'quiz', $multiple_data );
+				$question_counter += $question_increment;
 
 				if( isset( $this->question_order ) && strlen( $this->question_order ) > 0 ) { $this->question_order .= ','; }
 				$this->question_order .= $question_id;
@@ -661,128 +706,159 @@ class WooThemes_Sensei_Lesson {
 
 	}
 
-	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz' ) {
+	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz', $multiple_data = array() ) {
+		global $row_counter;
 
 		$html = '';
 
+		if( ! $row_counter || ! isset( $row_counter ) ) {
+			$row_counter = 1;
+		}
 		$question_class = '';
-		if( $question_counter && $question_counter % 2 ) { $question_class = 'alternate'; }
+		if( $row_counter % 2 ) { $question_class = 'alternate'; }
+		++$row_counter;
 
 		if( $question_id ) {
 
-			$question_grade = intval( get_post_meta( $question_id, '_question_grade', true ) );
-			if( 0 == $question_grade ) { $question_grade = 1; }
+			if( $question_type != 'category' ) {
 
-			$question_media = get_post_meta( $question_id, '_question_media', true );
-			$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = '';
-			$question_media_thumb_class = $question_media_link_class = $question_media_delete_class = 'hidden';
-			$question_media_add_button = __( 'Add file', 'woothemes-sensei' );
-			if( 0 < intval( $question_media ) ) {
-				$mimetype = get_post_mime_type( $question_media );
-				if( $mimetype ) {
-					$mimetype_array = explode( '/', $mimetype);
-					if( isset( $mimetype_array[0] ) && $mimetype_array[0] ) {
-						$question_media_delete_class = '';
-						$question_media_type = $mimetype_array[0];
-						if( 'image' == $question_media_type ) {
-							$question_media_thumb = wp_get_attachment_thumb_url( $question_media );
-							if( $question_media_thumb ) {
-								$question_media_thumb_class = '';
+				$question_grade = intval( get_post_meta( $question_id, '_question_grade', true ) );
+				if( 0 == $question_grade ) { $question_grade = 1; }
+
+				$question_media = get_post_meta( $question_id, '_question_media', true );
+				$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = '';
+				$question_media_thumb_class = $question_media_link_class = $question_media_delete_class = 'hidden';
+				$question_media_add_button = __( 'Add file', 'woothemes-sensei' );
+				if( 0 < intval( $question_media ) ) {
+					$mimetype = get_post_mime_type( $question_media );
+					if( $mimetype ) {
+						$mimetype_array = explode( '/', $mimetype);
+						if( isset( $mimetype_array[0] ) && $mimetype_array[0] ) {
+							$question_media_delete_class = '';
+							$question_media_type = $mimetype_array[0];
+							if( 'image' == $question_media_type ) {
+								$question_media_thumb = wp_get_attachment_thumb_url( $question_media );
+								if( $question_media_thumb ) {
+									$question_media_thumb_class = '';
+								}
 							}
-						}
-						$question_media_url = wp_get_attachment_url( $question_media );
-						if( $question_media_url ) {
-							$attachment = get_post( $question_media );
-							$question_media_title = $attachment->post_title;
+							$question_media_url = wp_get_attachment_url( $question_media );
+							if( $question_media_url ) {
+								$attachment = get_post( $question_media );
+								$question_media_title = $attachment->post_title;
 
-							if( ! $question_media_title ) {
-								$question_media_filename = basename( $question_media_url );
-								$question_media_title = $question_media_filename;
+								if( ! $question_media_title ) {
+									$question_media_filename = basename( $question_media_url );
+									$question_media_title = $question_media_filename;
+								}
+								$question_media_link = '<a class="' . $question_media_type . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_title . '</a>';
+								$question_media_link_class = '';
 							}
-							$question_media_link = '<a class="' . $question_media_type . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_title . '</a>';
-							$question_media_link_class = '';
-						}
 
-						$question_media_add_button = __( 'Change file', 'woothemes-sensei' );
+							$question_media_add_button = __( 'Change file', 'woothemes-sensei' );
+						}
 					}
 				}
-			}
 
-			$random_order = get_post_meta( $question_id, '_random_order', true );
-			if( ! $random_order ) {
-				$random_order = 'yes';
-			}
+				$random_order = get_post_meta( $question_id, '_random_order', true );
+				if( ! $random_order ) {
+					$random_order = 'yes';
+				}
 
-			if( ! $question_type ) { $question_type = 'multiple-choice'; }
+				if( ! $question_type ) { $question_type = 'multiple-choice'; }
+			}
 
 			$html .= '<tbody class="' . $question_class . '">';
 
 				if( 'quiz' == $context ) {
 					$html .= '<tr>';
-						$html .= '<td class="table-count question-number question-count-column">' . $question_counter . '</td>';
-						$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
-						$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
-						$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', 'True/False' ), $question_type ) );
-						$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
-						$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Remove Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Remove', 'woothemes-sensei' ) ) . '</a></td>';
+						if( $question_type != 'category' ) {
+
+							$html .= '<td class="table-count question-number question-count-column"><span class="number">' . $question_counter . '</span></td>';
+							$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
+							$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
+							$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', __( 'True/False', 'woothemes-sensei' ) ), $question_type ) );
+							$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
+							$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Remove Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Remove', 'woothemes-sensei' ) ) . '</a></td>';
+
+						} else {
+
+							$end_number = intval( $question_counter ) + intval( $multiple_data[1] ) - 1;
+							if( $question_counter == $end_number ) {
+								$row_numbers = $question_counter;
+							} else {
+								$row_numbers = $question_counter . ' - ' . $end_number;
+							}
+							$row_title = sprintf( __( 'Selected from \'%1$s\' ', 'woothemes-sensei' ), $multiple_data[0] );
+
+							$html .= '<td class="table-count question-number question-count-column"><span class="number hidden">' . $question_counter . '</span><span class="hidden total-number">' . $multiple_data[1] . '</span><span class="row-numbers">' . esc_html( $row_numbers ) . '</span></td>';
+							$html .= '<td>' . esc_html( $row_title ) . '</td>';
+							$html .= '<td class="question-grade-column"></td>';
+							$html .= '<td><input type="hidden" name="question_id" class="row_question_id" id="question_' . $question_counter . '_id" value="' . $question_id . '" /></td>';
+							$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit" style="visibility:hidden;">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Remove Question(s)', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_multiple_delete" rel="' . $question_id . '">' . esc_html( __( 'Remove', 'woothemes-sensei' ) ) . '</a></td>';
+
+						}
 					$html .= '</tr>';
 				}
 
-				$edit_class = '';
-				if( 'quiz' == $context ) {
-					$edit_class = 'hidden';
-				}
+				if( $question_type != 'category' ) {
 
-				$html .= '<tr class="question-quick-edit ' . esc_attr( $edit_class ) . '">';
-					$html .= '<td colspan="5">';
-						$html .= '<span class="hidden question_original_counter">' . $question_counter . '</span>';
-				    	$html .= '<div class="question_required_fields">';
+					$edit_class = '';
+					if( 'quiz' == $context ) {
+						$edit_class = 'hidden';
+					}
 
-					    	// Question title
-					    	$html .= '<div>';
-						    	$html .= '<label for="question_' . $question_counter . '">' . __( 'Question:', 'woothemes-sensei' ) . '</label> ';
-						    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
-					    	$html .= '</div>';
+					$html .= '<tr class="question-quick-edit ' . esc_attr( $edit_class ) . '">';
+						$html .= '<td colspan="5">';
+							$html .= '<span class="hidden question_original_counter">' . $question_counter . '</span>';
+					    	$html .= '<div class="question_required_fields">';
 
-					    	// Question grade
-					    	$html .= '<div>';
-						    	$html .= '<label for="question_' . $question_counter . '_grade">' . __( 'Question grade:', 'woothemes-sensei' ) . '</label> ';
-						    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="1" value="' . $question_grade . '" />';
-					    	$html .= '</div>';
+						    	// Question title
+						    	$html .= '<div>';
+							    	$html .= '<label for="question_' . $question_counter . '">' . __( 'Question:', 'woothemes-sensei' ) . '</label> ';
+							    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
+						    	$html .= '</div>';
 
-					    	// Random order
-					    	if( $question_type == 'multiple-choice' ) {
-					    		$html .= '<div>';
-					    			$html .= '<label for="' . $question_counter . '_random_order"><input type="checkbox" name="random_order" class="random_order" id="' . $question_counter . '_random_order" value="yes" ' . checked( $random_order, 'yes', false ) . ' /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
+						    	// Question grade
+						    	$html .= '<div>';
+							    	$html .= '<label for="question_' . $question_counter . '_grade">' . __( 'Question grade:', 'woothemes-sensei' ) . '</label> ';
+							    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="1" value="' . $question_grade . '" />';
+						    	$html .= '</div>';
+
+						    	// Random order
+						    	if( $question_type == 'multiple-choice' ) {
+						    		$html .= '<div>';
+						    			$html .= '<label for="' . $question_counter . '_random_order"><input type="checkbox" name="random_order" class="random_order" id="' . $question_counter . '_random_order" value="yes" ' . checked( $random_order, 'yes', false ) . ' /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
+						    		$html .= '</div>';
+						    	}
+
+						    	// Question media
+						    	$html .= '<div>';
+							    	$html .= '<label for="question_' . $question_counter . '_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
+							    	$html .= '<button id="question_' . $question_counter . '_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . $question_media_add_button . '</button>';
+							    	$html .= '<button id="question_' . $question_counter . '_media_button_delete" class="delete_media_file_button button-secondary ' . $question_media_delete_class . '">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
+							    	$html .= '<span id="question_' . $question_counter . '_media_link" class="question_media_link ' . $question_media_link_class . '">' . $question_media_link . '</span>';
+							    	$html .= '<br/><img id="question_' . $question_counter . '_media_preview" class="question_media_preview ' . $question_media_thumb_class . '" src="' . $question_media_thumb . '" /><br/>';
+							    	$html .= '<input type="hidden" id="question_' . $question_counter . '_media" class="question_media" name="question_media" value="' . $question_media . '" />';
+						    	$html .= '</div>';
+
+						    $html .= '</div>';
+
+						    $html .= $this->quiz_panel_question_field( $question_type, $question_id, $question_counter );
+
+						    $html .= '<input type="hidden" id="question_' . $question_counter . '_question_type" class="question_type" name="question_type" value="' . $question_type . '" />';
+							$html .= '<input type="hidden" name="question_id" class="row_question_id" id="question_' . $question_counter . '_id" value="' . $question_id . '" />';
+
+							if( 'quiz' == $context ) {
+					    		$html .= '<div class="update-question">';
+						    		$html .= '<a href="#question-edit-cancel" class="lesson_question_cancel" title="' . esc_attr( __( 'Cancel', 'woothemes-sensei' ) ) . '">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
+						    		$html .= '<a title="' . esc_attr( __( 'Update Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_save button button-highlighted">' . esc_html( __( 'Update', 'woothemes-sensei' ) ) . '</a>';
 					    		$html .= '</div>';
 					    	}
 
-					    	// Question media
-					    	$html .= '<div>';
-						    	$html .= '<label for="question_' . $question_counter . '_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
-						    	$html .= '<button id="question_' . $question_counter . '_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . $question_media_add_button . '</button>';
-						    	$html .= '<button id="question_' . $question_counter . '_media_button_delete" class="delete_media_file_button button-secondary ' . $question_media_delete_class . '">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
-						    	$html .= '<span id="question_' . $question_counter . '_media_link" class="question_media_link ' . $question_media_link_class . '">' . $question_media_link . '</span>';
-						    	$html .= '<br/><img id="question_' . $question_counter . '_media_preview" class="question_media_preview ' . $question_media_thumb_class . '" src="' . $question_media_thumb . '" /><br/>';
-						    	$html .= '<input type="hidden" id="question_' . $question_counter . '_media" class="question_media" name="question_media" value="' . $question_media . '" />';
-					    	$html .= '</div>';
-
-					    $html .= '</div>';
-
-					    $html .= $this->quiz_panel_question_field( $question_type, $question_id, $question_counter );
-
-					    $html .= '<input type="hidden" id="question_' . $question_counter . '_question_type" class="question_type" name="question_type" value="' . $question_type . '" />';
-						$html .= '<input type="hidden" name="question_id" class="row_question_id" id="question_' . $question_counter . '_id" value="' . $question_id . '" />';
-
-						if( 'quiz' == $context ) {
-				    		$html .= '<div class="update-question">';
-					    		$html .= '<a href="#question-edit-cancel" class="lesson_question_cancel" title="' . esc_attr( __( 'Cancel', 'woothemes-sensei' ) ) . '">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
-					    		$html .= '<a title="' . esc_attr( __( 'Update Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_save button button-highlighted">' . esc_html( __( 'Update', 'woothemes-sensei' ) ) . '</a>';
-				    		$html .= '</div>';
-				    	}
-
-		    		$html .= '</td>';
-				$html .= '</tr>';
+			    		$html .= '</td>';
+					$html .= '</tr>';
+				}
 
 			$html .= '</tbody>';
 
@@ -807,6 +883,8 @@ class WooThemes_Sensei_Lesson {
 
 		    	$html .= '<div class="tab-content" id="tab-new-content">';
 
+		    		$html .= '<p><em>' . sprintf( __( 'Add a new question to this quiz - your question will also be added to the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
+
 					$html .= '<div class="question">';
 						$html .= '<div class="question_required_fields">';
 
@@ -830,7 +908,7 @@ class WooThemes_Sensei_Lesson {
 									$html .= '<select id="add-question-category-options" name="question_category" class="chosen_select widefat question-category-select">' . "\n";
 									$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>' . "\n";
 									foreach( $question_cats as $cat ) {
-										$html .= '<option value="' . esc_attr( $cat->slug ) . '">' . esc_html( $cat->name ) . '</option>';
+										$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';
 									} // End For Loop
 									$html .= '</select></p>' . "\n";
 								}
@@ -872,19 +950,24 @@ class WooThemes_Sensei_Lesson {
 			    $html .= '</div>';
 
 			    $html .= '<div class="tab-content hidden" id="tab-existing-content">';
+
+			    	$html .= '<p><em>' . sprintf( __( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
+
 			    $html .= '</div>';
 
 			    if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
 				    $html .= '<div class="tab-content hidden" id="tab-multiple-content">';
 
-						$html .= '<p><select id="add-multiple-question-options" name="multiple_category" class="chosen_select widefat question-category-select">' . "\n";
+				    	$html .= '<p><em>' . sprintf( __( 'Add any number of questions from a specified category. Edit your question categories %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) . '">', '</a>' ) . '</em></p>';
+
+						$html .= '<p><select id="add-multiple-question-category-options" name="multiple_category" class="chosen_select widefat question-category-select">' . "\n";
 						$html .= '<option value="">' . __( 'Select a Question Category', 'woothemes-sensei' ) . '</option>' . "\n";
 						foreach( $question_cats as $cat ) {
-							$html .= '<option value="' . esc_attr( $cat->slug ) . '">' . esc_html( $cat->name ) . '</option>';
+							$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';
 						} // End For Loop
 						$html .= '</select></p>' . "\n";
 
-						$html .= '<p class="can_hide hidden">' . __( 'Number of questions:', 'woothemes-sensei' ) . ' <input type="number" min="1" value="1" name="multiple_number" class="small-text"/>';
+						$html .= '<p class="can_hide hidden">' . __( 'Number of questions:', 'woothemes-sensei' ) . ' <input type="number" min="1" value="1" id="add-multiple-question-count" class="small-text"/>';
 
 						$html .= '<a title="' . esc_attr( __( 'Add Question(s)', 'woothemes-sensei' ) ) . '" class="add_multiple_save button button-highlighted">' . esc_html( __( 'Add Question(s)', 'woothemes-sensei' ) ) . '</a></p>';
 
@@ -1160,7 +1243,7 @@ class WooThemes_Sensei_Lesson {
 
 			// Localise script
 			$translation_strings = array( 'wrong_colon' => __( 'Wrong:', 'woothemes-sensei' ), 'add_file' => __( 'Add file', 'woothemes-sensei' ), 'change_file' => __( 'Change file', 'woothemes-sensei' ) );
-			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ), 'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ) );
+			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ), 'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ), 'lesson_add_multiple_questions_nonce' => wp_create_nonce( 'lesson_add_multiple_questions_nonce' ), 'lesson_remove_multiple_questions_nonce' => wp_create_nonce( 'lesson_remove_multiple_questions_nonce' ) );
 			$data = array_merge( $translation_strings, $ajax_vars );
 			wp_localize_script( 'sensei-lesson-metadata', 'woo_localized_data', $data );
 
@@ -1325,6 +1408,86 @@ class WooThemes_Sensei_Lesson {
 		die();
 	} // End lesson_update_question()
 
+	public function lesson_add_multiple_questions() {
+
+		$return = '';
+
+		//Add nonce security to the request
+		$nonce = '';
+		if( isset( $_POST['lesson_add_multiple_questions_nonce'] ) ) {
+			$nonce = esc_html( $_POST['lesson_add_multiple_questions_nonce'] );
+		} // End If Statement
+
+		if( ! wp_verify_nonce( $nonce, 'lesson_add_multiple_questions_nonce' ) ) {
+			die( $return );
+		} // End If Statement
+
+		// Parse POST data
+		$data = $_POST['data'];
+		$question_data = array();
+		parse_str( $data, $question_data );
+
+		if( is_array( $question_data ) ) {
+			if( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
+
+				$quiz_id = intval( $question_data['quiz_id'] );
+				$question_number = intval( $question_data['question_number'] );
+				$question_category = intval( $question_data['question_category'] );
+
+				$question_counter = intval( $question_data['question_count'] );
+				++$question_counter;
+
+				$cat = get_term( $question_category, 'question-category' );
+
+				$post_data = array(
+					'post_content' => '',
+					'post_status' => 'publish',
+					'post_title' => sprintf( __( '%1$s Question(s) from %2$s', 'woothemes-sensei' ), $question_number, $cat->name ),
+					'post_type' => 'multiple_question'
+				);
+
+				$multiple_id = wp_insert_post( $post_data );
+
+				if( $multiple_id && ! is_wp_error( $multiple_id ) ) {
+					add_post_meta( $multiple_id, 'category', $question_category );
+					add_post_meta( $multiple_id, 'number', $question_number );
+					add_post_meta( $multiple_id, '_quizzes', array( $quiz_id ) );
+					add_post_meta( $multiple_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_counter );
+
+					$return = $this->quiz_panel_question( 'category', $question_counter, $multiple_id, 'quiz', array( $cat->name, $question_number ) );
+				}
+			}
+		}
+
+		echo $return;
+
+		die();
+	}
+
+	public function lesson_remove_multiple_questions() {
+
+		//Add nonce security to the request
+		$nonce = '';
+		if( isset( $_POST['lesson_remove_multiple_questions_nonce'] ) ) {
+			$nonce = esc_html( $_POST['lesson_remove_multiple_questions_nonce'] );
+		} // End If Statement
+
+		if( ! wp_verify_nonce( $nonce, 'lesson_remove_multiple_questions_nonce' ) ) {
+			die('');
+		} // End If Statement
+
+		// Parse POST data
+		$data = $_POST['data'];
+		$question_data = array();
+		parse_str( $data, $question_data );
+
+		if( is_array( $question_data ) ) {
+			$this->lesson_delete_question( $question_data );
+		}
+
+		die('Deleted');
+	}
+
 	public function lesson_update_grade_type() {
 		//Add nonce security to the request
 		if ( isset($_POST['lesson_update_grade_type_nonce']) ) {
@@ -1358,7 +1521,7 @@ class WooThemes_Sensei_Lesson {
 			$questions = explode( ',', $quiz_data['question_order'] );
 			$o = 1;
 			foreach( $questions as $question_id ) {
-				update_post_meta( $question_id, '_quiz_question_order', $quiz_data['quiz_id'] . '000' . $o );
+				update_post_meta( $question_id, '_quiz_question_order' . $quiz_data['quiz_id'], $quiz_data['quiz_id'] . '000' . $o );
 				++$o;
 			}
 			update_post_meta( $quiz_data['quiz_id'], '_question_order', $questions );
@@ -1606,9 +1769,6 @@ class WooThemes_Sensei_Lesson {
 
 		    	if( 'quiz' != $context ) {
 		    		wp_set_post_terms( $question_id, array( $question_type ), 'question-type', false );
-		    		if( $question_category ) {
-		    			wp_set_post_terms( $question_id, array( $question_category ), 'question-category', false );
-		    		}
 		    	}
 
 		    	update_post_meta( $question_id, '_answer_feedback', $answer_feedback );
@@ -1623,11 +1783,13 @@ class WooThemes_Sensei_Lesson {
 					add_post_meta( $question_id, '_quizzes', array( $quiz_id ) );
 				}
 
-		    	add_post_meta( $question_id, '_question_grade', $question_grade );
+				if( isset( $question_grade ) ) {
+		    		add_post_meta( $question_id, '_question_grade', $question_grade );
+		    	}
 		    	add_post_meta( $question_id, '_question_right_answer', $question_right_answer );
 		    	add_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    	add_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
-		    	add_post_meta( $question_id, '_quiz_question_order', $quiz_id . '000' . $question_count );
+		    	add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
 		    	add_post_meta( $question_id, '_question_media', $question_media );
 		    	add_post_meta( $question_id, '_answer_order', $answer_order );
 		    	add_post_meta( $question_id, '_random_order', $random_order );
@@ -1635,6 +1797,11 @@ class WooThemes_Sensei_Lesson {
 
 		    	// Set the post terms for question-type
 			    wp_set_post_terms( $question_id, array( $question_type ), 'question-type' );
+
+			    if( $question_category ) {
+	    			wp_set_post_terms( $question_id, array( $question_category ), 'question-category' );
+	    		}
+
 		    } // End If Statement
 		} // End If Statement
   		// Check that the insert or update saved by testing the post id
@@ -1779,9 +1946,9 @@ class WooThemes_Sensei_Lesson {
 		}
 
 		$post_args = array(
-			'post_type' 		=> 'question',
+			'post_type' 		=> array( 'question', 'multiple_question' ),
 			'numberposts' 		=> -1,
-			'meta_key'        	=> '_quiz_question_order',
+			'meta_key'        	=> '_quiz_question_order' . $quiz_id,
 			'orderby'         	=> $orderby,
 			'order'           	=> $order,
 			'meta_query'		=> array(
@@ -1881,7 +2048,7 @@ class WooThemes_Sensei_Lesson {
 
 				$o = 1;
 				foreach( $questions as $question ) {
-					add_post_meta( $question->ID, '_quiz_question_order', $quiz_id . '000' . $o, true );
+					add_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $o, true );
 					$o++;
 				}
 			}
