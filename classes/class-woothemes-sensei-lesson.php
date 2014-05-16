@@ -1482,10 +1482,10 @@ class WooThemes_Sensei_Lesson {
 		parse_str( $data, $question_data );
 
 		if( is_array( $question_data ) ) {
-			$this->lesson_delete_question( $question_data );
+			wp_delete_post( $question_data['question_id'], true );
 		}
 
-		die('Deleted');
+		die( 'Deleted' );
 	}
 
 	public function lesson_update_grade_type() {
@@ -1930,7 +1930,7 @@ class WooThemes_Sensei_Lesson {
 	 * @param string $post_status (default: 'publish')
 	 * @return void
 	 */
-	public function lesson_quiz_questions( $quiz_id = 0, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) {
+	public function lesson_quiz_questions( $quiz_id = 0, $context = 'meta', $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) {
 
 		$questions = array();
 
