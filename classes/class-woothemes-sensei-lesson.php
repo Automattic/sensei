@@ -1930,7 +1930,7 @@ class WooThemes_Sensei_Lesson {
 	 * @param string $post_status (default: 'publish')
 	 * @return void
 	 */
-	public function lesson_quiz_questions( $quiz_id = 0, $context = 'meta', $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) {
+	public function lesson_quiz_questions( $quiz_id = 0, $mode = 'data', $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) {
 
 		$questions = array();
 
@@ -1977,15 +1977,72 @@ class WooThemes_Sensei_Lesson {
 				wp_get_current_user();
 				$user_id = $current_user->ID;
 			}
+
 			$questions_asked_string = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_asked', 'field' => 'comment_content' ) );
 			if( $questions_asked_string ) {
+
 				$selected_questions = explode( ',', $questions_asked_string );
-				$questions = array();
+
+				$sargs = array(
+					'post_type' 		=> 'question',
+					'numberposts' 		=> -1,
+					'post_status'		=> $post_status,
+					'suppress_filters' 	=> 0,
+					'post__in'			=> $selected_questions,
+				);
+
+				$questions = get_posts( $sargs );
+
+			} else {
+
+				$multiple_array = array();
+				$existing_questions = array();
+
 				foreach( $questions_array as $question ) {
-					if( in_array( $question->ID, $selected_questions ) ) {
-						$questions[] = $question;
+					if( 'question' != $question->post_type ) continue;
+					$existing_questions[] = $question->ID;
+				}
+
+				foreach( $questions_array as $k => $question ) {
+
+					if( 'multiple_question' != $question->post_type ) continue;
+
+					$multiple_array[] = $k;
+
+					$question_cat = intval( get_post_meta( $question->ID, 'category', true ) );
+					$question_number = intval( get_post_meta( $question->ID, 'number', true ) );
+
+					$qargs = array(
+						'post_type' 		=> 'question',
+						'numberposts' 		=> $question_number,
+						'orderby'         	=> 'rand',
+						'tax_query'			=> array(
+							array(
+								'taxonomy'  => 'question-category',
+								'field'     => 'term_id',
+								'terms'		=> $question_cat
+							)
+						),
+						'post_status'		=> $post_status,
+						'suppress_filters' 	=> 0,
+						'post__not_in'		=> $existing_questions,
+					);
+
+					$cat_questions = get_posts( $qargs );
+
+					$questions_array = array_merge( $questions_array, $cat_questions );
+
+					foreach( $questions_array as $cat_question ) {
+						if( in_array( $cat_question->ID, $existing_questions ) ) continue;
+						$existing_questions[] = $cat_question->ID;
 					}
 				}
+
+				foreach( $multiple_array as $k ) {
+					unset( $questions_array[ $k ] );
+				}
+
+				$questions = $questions_array;
 			}
 		}
 

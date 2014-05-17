@@ -970,7 +970,7 @@ class WooThemes_Sensei_Frontend {
 		$grade = 0;
 
 		// Get Quiz Questions
-	    $lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post->ID, 'questions' );
+	    $lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $post->ID, 'display' );
 
 		// Get Answers and Grade
 		$user_quizzes = $this->sensei_get_user_quiz_answers( $post->ID );
