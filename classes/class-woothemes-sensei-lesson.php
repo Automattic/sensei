@@ -1928,16 +1928,20 @@ class WooThemes_Sensei_Lesson {
 	 * @access public
 	 * @param int $quiz_id (default: 0)
 	 * @param string $post_status (default: 'publish')
+	 * @param string $orderby (default: 'meta_value_num title')
+	 * @param string $order (default: 'ASC')
 	 * @return void
 	 */
-	public function lesson_quiz_questions( $quiz_id = 0, $mode = 'data', $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) {
+	public function lesson_quiz_questions( $quiz_id = 0, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) {
 
 		$questions = array();
 
 		$quiz_id = (string) $quiz_id;
 
+		// Set the default quesiton order if it has not already been set for this quiz
 		$this->set_default_question_order( $quiz_id );
 
+		// If viewing quiz on the frontend then show questions in random order if set
 		if ( ! is_admin() ) {
 			$random_order = get_post_meta( $quiz_id, '_random_question_order', true );
 			if( $random_order && $random_order == 'yes' ) {
@@ -1945,6 +1949,7 @@ class WooThemes_Sensei_Lesson {
 			}
 		}
 
+		// Get all questions and multiple questions
 		$post_args = array(
 			'post_type' 		=> array( 'question', 'multiple_question' ),
 			'numberposts' 		=> -1,
@@ -1961,13 +1966,12 @@ class WooThemes_Sensei_Lesson {
 			'post_status'		=> $post_status,
 			'suppress_filters' 	=> 0
 		);
-
 		$questions_array = get_posts( $post_args );
 
-		// Set return array to initially include all questions
+		// Set return array to initially include all items
 		$questions = $questions_array;
 
-		// Fetch the questions that the user was asked in their quiz - only show this list on the frontend and on grading
+		// If viewing quiz on frontend or in grading then individula questions must be shown
 		$selected_questions = false;
 		if( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' == $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 			if( is_admin() ) {
@@ -1978,11 +1982,13 @@ class WooThemes_Sensei_Lesson {
 				$user_id = $current_user->ID;
 			}
 
+			// Fetch the questions that the user was asked in their quiz if they have already completed it
 			$questions_asked_string = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_asked', 'field' => 'comment_content' ) );
 			if( $questions_asked_string ) {
 
 				$selected_questions = explode( ',', $questions_asked_string );
 
+				// Get all questions that were asked originally
 				$sargs = array(
 					'post_type' 		=> 'question',
 					'numberposts' 		=> -1,
@@ -1990,76 +1996,91 @@ class WooThemes_Sensei_Lesson {
 					'suppress_filters' 	=> 0,
 					'post__in'			=> $selected_questions,
 				);
-
 				$questions = get_posts( $sargs );
 
 			} else {
 
+				// Otherwise, make sure that we convert all multiple questions into single questions
+
 				$multiple_array = array();
 				$existing_questions = array();
 
+				// Set array of questions that already exist so we can prevent duplicates from appearing
 				foreach( $questions_array as $question ) {
 					if( 'question' != $question->post_type ) continue;
 					$existing_questions[] = $question->ID;
 				}
 
-				foreach( $questions_array as $k => $question ) {
+				// Include only single questions in the return array
+				$questions_loop = $questions_array;
+				$questions_array = array();
+				foreach( $questions_loop as $k => $question ) {
 
-					if( 'multiple_question' != $question->post_type ) continue;
+					// If this is a single question then include it
+					if( 'question' == $question->post_type ) {
+						$questions_array[] = $question;
+					} else {
 
-					$multiple_array[] = $k;
+						// If this is a multiple question then get the specified amount of questions from specified category
+						$question_cat = intval( get_post_meta( $question->ID, 'category', true ) );
+						$question_number = intval( get_post_meta( $question->ID, 'number', true ) );
 
-					$question_cat = intval( get_post_meta( $question->ID, 'category', true ) );
-					$question_number = intval( get_post_meta( $question->ID, 'number', true ) );
+						$qargs = array(
+							'post_type' 		=> 'question',
+							'numberposts' 		=> $question_number,
+							'orderby'         	=> 'rand',
+							'tax_query'			=> array(
+								array(
+									'taxonomy'  => 'question-category',
+									'field'     => 'term_id',
+									'terms'		=> $question_cat
+								)
+							),
+							'post_status'		=> $post_status,
+							'suppress_filters' 	=> 0,
+							'post__not_in'		=> $existing_questions,
+						);
+						$cat_questions = get_posts( $qargs );
 
-					$qargs = array(
-						'post_type' 		=> 'question',
-						'numberposts' 		=> $question_number,
-						'orderby'         	=> 'rand',
-						'tax_query'			=> array(
-							array(
-								'taxonomy'  => 'question-category',
-								'field'     => 'term_id',
-								'terms'		=> $question_cat
-							)
-						),
-						'post_status'		=> $post_status,
-						'suppress_filters' 	=> 0,
-						'post__not_in'		=> $existing_questions,
-					);
+						// Merge results into return array
+						$questions_array = array_merge( $questions_array, $cat_questions );
 
-					$cat_questions = get_posts( $qargs );
-
-					$questions_array = array_merge( $questions_array, $cat_questions );
-
-					foreach( $questions_array as $cat_question ) {
-						if( in_array( $cat_question->ID, $existing_questions ) ) continue;
-						$existing_questions[] = $cat_question->ID;
+						// Add selected questions to existing questions array to prevent duplicates
+						foreach( $questions_array as $cat_question ) {
+							if( in_array( $cat_question->ID, $existing_questions ) ) continue;
+							$existing_questions[] = $cat_question->ID;
+						}
 					}
 				}
 
-				foreach( $multiple_array as $k ) {
-					unset( $questions_array[ $k ] );
-				}
-
+				// Set return data
 				$questions = $questions_array;
 			}
 		}
 
-		// Show a random selection of the specified amount of questions if the user hasn't taken the quiz already
+		// If user has not already taken the quiz and a limited number of questions are to be shown, then show a random selection of the specified amount of questions
 		if( ! $selected_questions ) {
+
+			// Only limit questions on the frontend
 			if( ! is_admin() ) {
+
+				// Get number of questions to show
 				$show_questions = intval( get_post_meta( $quiz_id, '_show_questions', true ) );
 				if( $show_questions ) {
+
+					// Get random set of array keys from selected questions array
 					$selected_questions = array_rand( $questions_array, $show_questions );
+
+					// Loop through all questions and pick the the ones to be shown based on the random key selection
 					$questions = array();
 					foreach( $questions_array as $k => $question ) {
-						if( is_array($selected_questions) ) {
+
+						// Random keys will be an array, unless only one question is to be shown
+						if( is_array( $selected_questions ) ) {
 							if( in_array( $k, $selected_questions ) ) {
 								$questions[] = $question;
 							}
-						}
-						elseif( 1 == $show_questions ) {
+						} elseif( 1 == $show_questions ) {
 							if ( $selected_questions == $k ) {
 								$questions[] = $question;
 							}
