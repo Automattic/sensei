@@ -1923,7 +1923,7 @@ class WooThemes_Sensei_Lesson {
 
 
 	/**
-	 * lesson_quiz_questions function.
+	 * Fetches all the questions for a quiz - probably the most complicated function in all of Sensei
 	 *
 	 * @access public
 	 * @param int $quiz_id (default: 0)
@@ -1971,7 +1971,7 @@ class WooThemes_Sensei_Lesson {
 		// Set return array to initially include all items
 		$questions = $questions_array;
 
-		// If viewing quiz on frontend or in grading then individula questions must be shown
+		// If viewing quiz on frontend or in grading then only single questions must be shown
 		$selected_questions = false;
 		if( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' == $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 			if( is_admin() ) {
@@ -1988,15 +1988,14 @@ class WooThemes_Sensei_Lesson {
 
 				$selected_questions = explode( ',', $questions_asked_string );
 
-				// Get all questions that were asked originally
-				$sargs = array(
-					'post_type' 		=> 'question',
-					'numberposts' 		=> -1,
-					'post_status'		=> $post_status,
-					'suppress_filters' 	=> 0,
-					'post__in'			=> $selected_questions,
-				);
-				$questions = get_posts( $sargs );
+				// Fetch each question in the order in which they were asked
+				$questions = array();
+				foreach( $selected_questions as $question_id ) {
+					if( ! $question_id ) continue;
+					$question = get_post( $question_id );
+					if( ! isset( $question ) || ! isset( $question->ID ) ) continue;
+					$questions[] = $question;
+				}
 
 			} else {
 
@@ -2021,7 +2020,7 @@ class WooThemes_Sensei_Lesson {
 						$questions_array[] = $question;
 					} else {
 
-						// If this is a multiple question then get the specified amount of questions from specified category
+						// If this is a multiple question then get the specified amount of questions from the specified category
 						$question_cat = intval( get_post_meta( $question->ID, 'category', true ) );
 						$question_number = intval( get_post_meta( $question->ID, 'number', true ) );
 
@@ -2045,7 +2044,7 @@ class WooThemes_Sensei_Lesson {
 						// Merge results into return array
 						$questions_array = array_merge( $questions_array, $cat_questions );
 
-						// Add selected questions to existing questions array to prevent duplicates
+						// Add selected questions to existing questions array to prevent duplicates from being added
 						foreach( $questions_array as $cat_question ) {
 							if( in_array( $cat_question->ID, $existing_questions ) ) continue;
 							$existing_questions[] = $cat_question->ID;
@@ -2061,7 +2060,7 @@ class WooThemes_Sensei_Lesson {
 		// If user has not already taken the quiz and a limited number of questions are to be shown, then show a random selection of the specified amount of questions
 		if( ! $selected_questions ) {
 
-			// Only limit questions on the frontend
+			// Only limit questions like this on the frontend
 			if( ! is_admin() ) {
 
 				// Get number of questions to show
@@ -2075,7 +2074,7 @@ class WooThemes_Sensei_Lesson {
 					$questions = array();
 					foreach( $questions_array as $k => $question ) {
 
-						// Random keys will be an array, unless only one question is to be shown
+						// Random keys will always be an array, unless only one question is to be shown
 						if( is_array( $selected_questions ) ) {
 							if( in_array( $k, $selected_questions ) ) {
 								$questions[] = $question;
