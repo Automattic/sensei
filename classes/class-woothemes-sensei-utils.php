@@ -866,9 +866,8 @@ class WooThemes_Sensei_Utils {
                                     'order'             => 'ASC',
                                     'meta_query'		=> array(
 										array(
-											'key'       => '_quizzes',
+											'key'       => '_quiz_id',
 											'value'     => $quiz_id,
-											'compare'	=> 'LIKE'
 										)
 									),
                                     'post_status'       => 'any',

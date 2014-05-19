@@ -612,20 +612,6 @@ jQuery(document).ready( function($) {
 	});
 
 	/**
-	 * Change Question Type Event.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	jQuery( '#add-question-actions' ).on( 'click', 'button.add_question_answer', function() {
-		// Prep and Display add question panel and hide the add question button
-		jQuery( this ).addClass('hidden');
-		jQuery( '#add-new-question' ).removeClass( 'hidden' );
-		jQuery.fn.resetQuestionTable();
-		jQuery( this ).removeAttr('style');
-	});
-
-	/**
 	 * Edit Question Click Event.
 	 *
 	 * @since 1.0.0
@@ -635,26 +621,12 @@ jQuery(document).ready( function($) {
 		// Display the question for edit
 		var questionId = jQuery(this).closest('tr').next('tr').find('.question_original_counter').text();
 		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
- 		// Hide the add question form and prep the table
-		jQuery( '#add-new-question' ).addClass( 'hidden' );
+
 	 	jQuery.fn.resetAddQuestionForm();
 	 	jQuery.fn.resetQuestionTable();
-		// jQuery( '#question_' + questionId ).closest('tr').removeClass('hidden');
+
 		jQuery(this).closest('tr').next('tr').removeClass('hidden');
 		jQuery( '#question_' + questionId ).focus();
-	});
-
-	/**
-	 * Cancel Events Click Event - add question.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	jQuery( '#add-new-question' ).on( 'click', 'a.lesson_question_cancel', function() {
-		// Hide the add question panel and show the add question button
-		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
-		jQuery( '#add-new-question' ).addClass( 'hidden' );
-		jQuery.fn.resetQuestionTable();
 	});
 
 	/**
@@ -777,8 +749,7 @@ jQuery(document).ready( function($) {
 	 		    function( response ) {
 	 		    	// Check for a valid response
 	 		    	if ( response ) {
-	 		    		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
-						jQuery( '#add-new-question' ).addClass( 'hidden' );
+
 	 		    		jQuery.fn.updateQuestionCount( 1, '+' );
 	 		    		jQuery( '#add-question-metadata table' ).append( response );
 			    		jQuery.fn.resetAddQuestionForm();
@@ -835,12 +806,10 @@ jQuery(document).ready( function($) {
 	 		    	// Check for a valid response
 	 		    	if ( response ) {
 						jQuery( '#add-multiple-question-category-options' ).val('');
-						jQuery( '#tab-multiple-content .can_hide' ).addClass( 'hidden' );
 						jQuery( '#add-multiple-question-count' ).val('1');
 
 	 		    		jQuery.fn.updateQuestionCount( questionNumber, '+' );
 	 		    		jQuery( '#add-question-metadata table' ).append( response );
-			    		jQuery.fn.resetAddQuestionForm();
 
 			    		jQuery.fn.updateQuestionOrder();
 
@@ -985,8 +954,9 @@ jQuery(document).ready( function($) {
 	 	var questionId = '';
 	 	var quizId = '';
 	 	var tableRowId = '';
-	 	// TODO - localize this delete message
-	 	var confirmDelete = confirm( 'Are you sure you want to delete this question?' );
+
+	 	var confirmDelete = confirm( woo_localized_data.confirm_remove );
+
 	 	if ( confirmDelete ) {
  			// Setup data to post
  			dataToPost += '&action=delete';
@@ -1049,7 +1019,7 @@ jQuery(document).ready( function($) {
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_multiple_delete', function() {
 	 	var dataToPost = '';
 
-	 	var confirmDelete = confirm( 'Are you sure you want to delete this question?' );
+	 	var confirmDelete = confirm( woo_localized_data.confirm_remove_multiple );
 
 	 	if ( confirmDelete ) {
 
@@ -1089,6 +1059,58 @@ jQuery(document).ready( function($) {
 			 			if( show_questions_field > max_questions ) {
 			 				jQuery( '#show_questions' ).val( max_questions );
 			 			}
+ 					}
+ 				}
+ 			);
+ 			return false;
+		}
+	});
+
+	/**
+	 * Add Existing Questions Click Event - Ajax.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 */
+	jQuery( '#add-new-question' ).on( 'click', 'a.add_existing_save', function() {
+		var questions = '';
+		var dataToPost = '';
+		var i = 0;
+		jQuery( '#existing-questions' ).find( 'input.existing-item' ).each( function() {
+			if( jQuery( this ).is( ':checked' ) ) {
+				var question_id = jQuery( this ).val();
+				questions += question_id + ',';
+				++i;
+			}
+		});
+
+		if( questions ) {
+
+			dataToPost = 'questions=' + questions;
+			dataToPost += '&quiz_id=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+			var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+	 		dataToPost += '&question_count=' + questionCount;
+
+			// Perform the AJAX call.
+ 			jQuery.post(
+ 				ajaxurl,
+ 				{
+ 					action : 'lesson_add_existing_questions',
+ 					lesson_add_existing_questions_nonce : woo_localized_data.lesson_add_existing_questions_nonce,
+ 					data : dataToPost
+ 				},
+ 				function( response ) {
+ 					if ( response ) {
+
+ 						jQuery.fn.updateQuestionCount( i, '+' );
+	 		    		jQuery( '#add-question-metadata table' ).append( response );
+
+			 			jQuery.fn.checkQuizGradeType();
+
+			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+			 			max_questions += i;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
  					}
  				}
  			);
@@ -1180,14 +1202,8 @@ jQuery(document).ready( function($) {
 		jQuery( '#' + tab_content_id ).removeClass( 'hidden' );
 	});
 
-	jQuery( '#add-multiple-question-category-options').change( function() {
-		var selected = jQuery( this ).val();
-
-		if( selected || '' != selected ) {
-			jQuery( '#tab-multiple-content .can_hide' ).removeClass( 'hidden' );
-		} else {
-			jQuery( '#tab-multiple-content .can_hide' ).addClass( 'hidden' );
-		}
+	jQuery( '#existing-table th.check-column input' ).click( function () {
+	    jQuery( '#existing-questions' ).find( ':checkbox' ).attr( 'checked' , this.checked );
 	});
 
 	/***************************************************************************************************

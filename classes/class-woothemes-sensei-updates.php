@@ -737,16 +737,13 @@ class WooThemes_Sensei_Updates {
 
 			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
 
-			if( ! $quiz_id ) continue;
-
-			// Add quizzes as an array so one question can be added to multiple quizzes
-			$quiz_id = (string) $quiz_id;
-			$quizzes = array( $quiz_id );
-			update_post_meta( $question->ID, '_quizzes', $quizzes );
+			if( 0 == count( $quizzes ) ) continue;
 
 			// Update quesiton order to be used per quiz
-			$question_order = get_post_meta( $question->ID, '_quiz_question_order', true );
-			update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order, true );
+			foreach( $quizzes as $quiz_id ) {
+				$question_order = get_post_meta( $question->ID, '_quiz_question_order', true );
+				update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
+			}
 		}
 		return true;
 	}
