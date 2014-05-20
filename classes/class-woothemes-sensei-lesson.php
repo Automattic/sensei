@@ -1581,11 +1581,14 @@ class WooThemes_Sensei_Lesson {
 
 				foreach( $questions as $question_id ) {
 
-					$quizzes = get_post_meta( $question_id, '_quiz_id', false );
+					++$question_count;
 
+					$quizzes = get_post_meta( $question_id, '_quiz_id', false );
 					if( ! in_array( $quiz_id, $quizzes ) ) {
 			    		add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
 			    	}
+
+			    	add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
 
 					$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
 					$question_type = '';
@@ -1594,8 +1597,6 @@ class WooThemes_Sensei_Lesson {
 					} else {
 						$question_type = 'multiple-choice';
 					}
-
-					++$question_count;
 
 					$return .= $this->quiz_panel_question( $question_type, $question_count, $question_id );
 				}
