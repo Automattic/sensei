@@ -793,7 +793,7 @@ jQuery(document).ready( function($) {
  		var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
  		dataToPost += '&' + 'question_count' + '=' + questionCount;
 
- 		if( questionCategory && questionCount ) {
+ 		if( questionCategory && questionNumber ) {
 	 		// Perform the AJAX call.
 	 		jQuery.post(
 	 		    ajaxurl,
@@ -1204,6 +1204,12 @@ jQuery(document).ready( function($) {
 
 	jQuery( '#existing-table th.check-column input' ).click( function () {
 	    jQuery( '#existing-questions' ).find( ':checkbox' ).attr( 'checked' , this.checked );
+	});
+
+	jQuery( '#existing-table tbody tr td:not(.cb)' ).click( function() {
+		jQuery( this ).closest( 'tr' ).find( ':checkbox' ).each( function() {
+			jQuery( this ).prop( 'checked', ! jQuery( this ).prop( 'checked' ) );
+		});
 	});
 
 	/***************************************************************************************************

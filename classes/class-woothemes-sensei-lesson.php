@@ -957,6 +957,7 @@ class WooThemes_Sensei_Lesson {
 		    $html .= '</div>';
 
 		    if( 'quiz' == $context ) {
+
 			    $html .= '<div class="tab-content hidden" id="tab-existing-content">';
 
 			    	$html .= '<p><em>' . sprintf( __( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
