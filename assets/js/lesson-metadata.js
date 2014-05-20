@@ -776,19 +776,28 @@ jQuery(document).ready( function($) {
 	jQuery( '#add-new-question' ).on( 'click', 'a.add_multiple_save', function() {
 		var dataToPost = '';
 	 	var questionCategory = '';
-	 	var questionNumber = '';
+	 	var questionNumber = 0;
 
 	 	dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+	 	if ( jQuery( '#add-multiple-question-count' ).val() != '' ) {
+ 			questionNumber = jQuery( '#add-multiple-question-count' ).val();
+ 		} // End If Statement
+ 		dataToPost += '&' + 'question_number' + '=' + questionNumber;
+
+	 	var maxAllowed = jQuery( '#add-multiple-question-count' ).attr( 'max' );
+
+	 	// Only allow submission if selected number is not greater than the amount of questions in the category
+	 	if( questionNumber > maxAllowed ) {
+	 		alert( woo_localized_data.too_many_for_cat );
+	 		jQuery( '#add-multiple-question-count' ).focus();
+	 		return false;
+	 	}
 
 		if ( jQuery( '#add-multiple-question-category-options' ).val() != '' ) {
  			questionCategory = jQuery( '#add-multiple-question-category-options' ).val();
  		} // End If Statement
  		dataToPost += '&' + 'question_category' + '=' + questionCategory;
-
- 		if ( jQuery( '#add-multiple-question-count' ).val() != '' ) {
- 			questionNumber = jQuery( '#add-multiple-question-count' ).val();
- 		} // End If Statement
- 		dataToPost += '&' + 'question_number' + '=' + questionNumber;
 
  		var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
  		dataToPost += '&' + 'question_count' + '=' + questionCount;
@@ -1118,6 +1127,45 @@ jQuery(document).ready( function($) {
 		}
 	});
 
+	jQuery( '#existing-filter-button' ).click( function() {
+		var dataToPost = '';
+		var questionStatus = '';
+		var questionType = '';
+		var questionCat = '';
+
+		jQuery( 'tbody#existing-questions' ).fadeTo( 'fast', 0.5 );
+
+		questionStatus = jQuery( '#existing-status' ).val();
+		dataToPost += 'question_status=' + questionStatus;
+
+		if( '' != jQuery( '#existing-type' ).val() ) {
+			questionType = jQuery( '#existing-type' ).val();
+			dataToPost += '&question_type=' + questionType;
+		}
+
+		if( '' != jQuery( '#existing-category' ).val() ) {
+			questionCat = jQuery( '#existing-category' ).val();
+			dataToPost += '&question_category=' + questionCat;
+		}
+
+		// Perform the AJAX call.
+		jQuery.post(
+			ajaxurl,
+			{
+				action : 'filter_existing_questions',
+				filter_existing_questions_nonce : woo_localized_data.filter_existing_questions_nonce,
+				data : dataToPost
+			},
+			function( response ) {
+				if ( response ) {
+					jQuery( 'tbody#existing-questions' ).html( response );
+					jQuery( 'tbody#existing-questions' ).fadeTo( 'fast', 1 );
+				}
+			}
+		);
+		return false;
+	});
+
 	jQuery( '#add-quiz-metadata' ).on( 'change', '#random_question_order', function() {
 		jQuery.fn.saveQuestionOrderRandom();
 	});
@@ -1200,6 +1248,31 @@ jQuery(document).ready( function($) {
 
 		jQuery( '#add-new-question .tab-content' ).addClass( 'hidden' );
 		jQuery( '#' + tab_content_id ).removeClass( 'hidden' );
+	});
+
+	jQuery( '#add-multiple-question-category-options' ).change( function() {
+		var cat = jQuery( this ).val();
+		if( ! cat ) {
+			return;
+		}
+
+		var dataToPost = 'cat=' + cat;
+
+		jQuery.post(
+			ajaxurl,
+			{
+				action : 'get_question_category_limit',
+				data : dataToPost
+			},
+			function( response ) {
+				if ( response ) {
+					var max = parseInt( response );
+					if( max ) {
+						jQuery( '#add-multiple-question-count' ).attr( 'max', max );
+					}
+				}
+			}
+		);
 	});
 
 	jQuery( '#existing-table th.check-column input' ).click( function () {
