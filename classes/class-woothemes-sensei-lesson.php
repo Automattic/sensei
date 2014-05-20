@@ -645,7 +645,7 @@ class WooThemes_Sensei_Lesson {
 			// Question Action Container DIV
 			$html .= '<div id="add-question-actions">';
 
-				$html .= $this->quiz_panel_question();
+				$html .= $this->quiz_panel_add();
 
 			$html .= '</div>';
 
@@ -656,6 +656,9 @@ class WooThemes_Sensei_Lesson {
 	}
 
 	public function quiz_panel_questions( $questions = array() ) {
+		global $quiz_questions;
+
+		$quiz_questions = $questions;
 
 		$html = '';
 
@@ -706,16 +709,18 @@ class WooThemes_Sensei_Lesson {
 	}
 
 	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz', $multiple_data = array() ) {
-		global $row_counter, $woothemes_sensei;
+		global $row_counter, $woothemes_sensei, $quiz_questions;
 
 		$html = '';
 
-		if( ! $row_counter || ! isset( $row_counter ) ) {
-			$row_counter = 1;
-		}
 		$question_class = '';
-		if( $row_counter % 2 ) { $question_class = 'alternate'; }
-		++$row_counter;
+		if( 'quiz' == $context ) {
+			if( ! $row_counter || ! isset( $row_counter ) ) {
+				$row_counter = 1;
+			}
+			if( $row_counter % 2 ) { $question_class = 'alternate'; }
+			++$row_counter;
+		}
 
 		if( $question_id ) {
 
@@ -861,92 +866,97 @@ class WooThemes_Sensei_Lesson {
 
 			$html .= '</tbody>';
 
-		} else {
-			$add_class = '';
-			if( 'quiz' == $context ) {
-				// $add_class = 'hidden';
-			}
-			$html .= '<div id="add-new-question" class="' . esc_attr( $add_class ) . '">';
+		}
 
-				$question_cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
+		return $html;
+	}
+
+	public function quiz_panel_add( $context = 'quiz' ) {
+
+		$html = '<div id="add-new-question">';
+
+			$question_cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
+
+			if( 'quiz' == $context ) {
+	    		$html .= '<h2 class="nav-tab-wrapper add-question-tabs">';
+	    			$html .= '<a id="tab-new" class="nav-tab nav-tab-active">' . __( 'New Question'  , 'woothemes-sensei' ) . '</a>';
+	    			$html .= '<a id="tab-existing" class="nav-tab">' . __( 'Existing Questions'  , 'woothemes-sensei' ) . '</a>';
+	    			if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
+	    				$html .= '<a id="tab-multiple" class="nav-tab">' . __( 'Category Questions'  , 'woothemes-sensei' ) . '</a>';
+	    			}
+	    		$html .= '</h2>';
+	    	}
+
+	    	$html .= '<div class="tab-content" id="tab-new-content">';
+
+	    		if( 'quiz' == $context ) {
+	    			$html .= '<p><em>' . sprintf( __( 'Add a new question to this quiz - your question will also be added to the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
+	    		}
+
+				$html .= '<div class="question">';
+					$html .= '<div class="question_required_fields">';
+
+						// Question title
+						$html .= '<p><label>' . __( 'Question:'  , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" /></p>';
+
+	  					// Question type
+						$html .= '<p><label>' . __( 'Question Type:' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<select id="add-question-type-options" name="question_type" class="chosen_select widefat question-type-select">' . "\n";
+							$question_types = WooThemes_Sensei_Question::question_types();
+							foreach ( $question_types as $type => $label ) {
+								$html .= '<option value="' . esc_attr( $type ) . '">' . esc_html( $label ) . '</option>' . "\n";
+							} // End For Loop
+						$html .= '</select></p>' . "\n";
+
+						// Question category
+						if( 'quiz' == $context ) {
+							if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
+								$html .= '<p><label>' . __( 'Question Category:' , 'woothemes-sensei' ) . '</label> ';
+								$html .= '<select id="add-question-category-options" name="question_category" class="chosen_select widefat question-category-select">' . "\n";
+								$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>' . "\n";
+								foreach( $question_cats as $cat ) {
+									$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';
+								} // End For Loop
+								$html .= '</select></p>' . "\n";
+							}
+						}
+
+	  					// Question grade
+						$html .= '<p><label>' . __( 'Question Grade:'  , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="1" value="1" /></p>' . "\n";
+
+						// Random order
+						$html .= '<p class="add_question_random_order">';
+			    			$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
+			    		$html .= '</p>';
+
+			    		// Question media
+						$html .= '<p>';
+					    	$html .= '<label for="question_add_new_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
+					    	$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Add file', 'woothemes-sensei' ) . '</button>';
+					    	$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
+					    	$html .= '<span id="question_add_new_media_link" class="question_media_link hidden"></span>';
+					    	$html .= '<br/><img id="question_add_new_media_preview" class="question_media_preview hidden" src="" /><br/>';
+					    	$html .= '<input type="hidden" id="question_add_new_media" class="question_media" name="question_media" value="" />';
+				    	$html .= '</p>';
+
+					$html .= '</div>';
+				$html .= '</div>';
+
+				foreach ( $question_types as $type => $label ) {
+					$html .= $this->quiz_panel_question_field( $type );
+				}
 
 				if( 'quiz' == $context ) {
-		    		$html .= '<h2 class="nav-tab-wrapper add-question-tabs">';
-		    			$html .= '<a id="tab-new" class="nav-tab nav-tab-active">' . __( 'New Question'  , 'woothemes-sensei' ) . '</a>';
-		    			$html .= '<a id="tab-existing" class="nav-tab">' . __( 'Existing Questions'  , 'woothemes-sensei' ) . '</a>';
-		    			if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
-		    				$html .= '<a id="tab-multiple" class="nav-tab">' . __( 'Multiple Questions'  , 'woothemes-sensei' ) . '</a>';
-		    			}
-		    		$html .= '</h2>';
+					$html .= '<div class="add-question">';
+			    		$html .= '<a title="' . esc_attr( __( 'Add Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="add_question_save button button-primary button-highlighted">' . esc_html( __( 'Add Question', 'woothemes-sensei' ) ) . '</a>';
+		    		$html .= '</div>';
 		    	}
 
-		    	$html .= '<div class="tab-content" id="tab-new-content">';
+		    $html .= '</div>';
 
-		    		$html .= '<p><em>' . sprintf( __( 'Add a new question to this quiz - your question will also be added to the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
-
-					$html .= '<div class="question">';
-						$html .= '<div class="question_required_fields">';
-
-							// Question title
-							$html .= '<p><label>' . __( 'Question:'  , 'woothemes-sensei' ) . '</label> ';
-		  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" /></p>';
-
-		  					// Question type
-							$html .= '<p><label>' . __( 'Question Type:' , 'woothemes-sensei' ) . '</label> ';
-							$html .= '<select id="add-question-type-options" name="question_type" class="chosen_select widefat question-type-select">' . "\n";
-								$question_types = WooThemes_Sensei_Question::question_types();
-								foreach ( $question_types as $type => $label ) {
-									$html .= '<option value="' . esc_attr( $type ) . '">' . esc_html( $label ) . '</option>' . "\n";
-								} // End For Loop
-							$html .= '</select></p>' . "\n";
-
-							// Question category
-							if( 'quiz' == $context ) {
-								if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
-									$html .= '<p><label>' . __( 'Question Category:' , 'woothemes-sensei' ) . '</label> ';
-									$html .= '<select id="add-question-category-options" name="question_category" class="chosen_select widefat question-category-select">' . "\n";
-									$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>' . "\n";
-									foreach( $question_cats as $cat ) {
-										$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';
-									} // End For Loop
-									$html .= '</select></p>' . "\n";
-								}
-							}
-
-		  					// Question grade
-							$html .= '<p><label>' . __( 'Question Grade:'  , 'woothemes-sensei' ) . '</label> ';
-							$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="1" value="1" /></p>' . "\n";
-
-							// Random order
-							$html .= '<p class="add_question_random_order">';
-				    			$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
-				    		$html .= '</p>';
-
-				    		// Question media
-							$html .= '<p>';
-						    	$html .= '<label for="question_add_new_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
-						    	$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Add file', 'woothemes-sensei' ) . '</button>';
-						    	$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
-						    	$html .= '<span id="question_add_new_media_link" class="question_media_link hidden"></span>';
-						    	$html .= '<br/><img id="question_add_new_media_preview" class="question_media_preview hidden" src="" /><br/>';
-						    	$html .= '<input type="hidden" id="question_add_new_media" class="question_media" name="question_media" value="" />';
-					    	$html .= '</p>';
-
-						$html .= '</div>';
-					$html .= '</div>';
-
-					foreach ( $question_types as $type => $label ) {
-						$html .= $this->quiz_panel_question_field( $type );
-					}
-
-					if( 'quiz' == $context ) {
-						$html .= '<div class="add-question">';
-				    		$html .= '<a title="' . esc_attr( __( 'Add Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="add_question_save button button-primary button-highlighted">' . esc_html( __( 'Add Question', 'woothemes-sensei' ) ) . '</a>';
-			    		$html .= '</div>';
-			    	}
-
-			    $html .= '</div>';
-
+		    if( 'quiz' == $context ) {
 			    $html .= '<div class="tab-content hidden" id="tab-existing-content">';
 
 			    	$html .= '<p><em>' . sprintf( __( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
@@ -1037,7 +1047,9 @@ class WooThemes_Sensei_Lesson {
 
 				    $html .= '</div>';
 				}
-		}
+			}
+
+		$html .= '</div>';
 
 		return $html;
 	}
