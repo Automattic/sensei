@@ -1056,7 +1056,7 @@ class WooThemes_Sensei_Lesson {
 		return $html;
 	}
 
-	public function quiz_panel_get_existing_questions( $question_status = 'all', $question_type = '', $question_category = '', $page = 1 ) {
+	public function quiz_panel_get_existing_questions( $question_status = 'all', $question_type = '', $question_category = '', $question_search = '', $page = 1 ) {
 
 		$args = array(
 			'post_type' => 'question',
@@ -1097,6 +1097,14 @@ class WooThemes_Sensei_Lesson {
 
 		if( $question_type && $question_category ) {
 			$args['tax_query']['relation'] = 'AND';
+		}
+
+		if( $question_search ) {
+			$args['s'] = $question_search;
+		}
+
+		if( $page ) {
+			$args['paged'] = $page;
 		}
 
 		$questions = get_posts( $args );
@@ -1167,7 +1175,12 @@ class WooThemes_Sensei_Lesson {
 				$question_category = $question_data['question_category'];
 			}
 
-			$questions = $this->quiz_panel_get_existing_questions( $question_status, $question_type, $question_category );
+			$question_search = '';
+			if( isset( $question_data['question_search'] ) ) {
+				$question_search = $question_data['question_search'];
+			}
+
+			$questions = $this->quiz_panel_get_existing_questions( $question_status, $question_type, $question_category, $question_search );
 
 			$row = 1;
 			foreach( $questions as $question ) {

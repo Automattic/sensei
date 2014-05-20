@@ -1132,6 +1132,7 @@ jQuery(document).ready( function($) {
 		var questionStatus = '';
 		var questionType = '';
 		var questionCat = '';
+		var questionSearch = '';
 
 		jQuery( 'tbody#existing-questions' ).fadeTo( 'fast', 0.5 );
 
@@ -1146,6 +1147,11 @@ jQuery(document).ready( function($) {
 		if( '' != jQuery( '#existing-category' ).val() ) {
 			questionCat = jQuery( '#existing-category' ).val();
 			dataToPost += '&question_category=' + questionCat;
+		}
+
+		if( '' != jQuery( '#existing-search' ).val() ) {
+			questionSearch = jQuery( '#existing-search' ).val();
+			dataToPost += '&question_search=' + questionSearch;
 		}
 
 		// Perform the AJAX call.
