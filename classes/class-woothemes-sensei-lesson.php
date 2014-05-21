@@ -1082,11 +1082,22 @@ class WooThemes_Sensei_Lesson {
 		}
 
 		if( $quiz_status ) {
-			$args['meta_query'][] = array(
-				'key' => '_quiz_id',
-				'value' => '1',
-				'compare' => $quiz_status,
-			);
+			switch( $quiz_status ) {
+				case 'EXISTS':
+					$args['meta_query'][] = array(
+						'key' => '_quiz_id',
+						'compare' => $quiz_status,
+					);
+				break;
+
+				case 'NOT EXISTS':
+					$args['meta_query'][] = array(
+						'key' => '_quiz_id',
+						'value' => 'bug #23268',
+						'compare' => $quiz_status,
+					);
+				break;
+			}
 		}
 
 		if( $question_type ) {
