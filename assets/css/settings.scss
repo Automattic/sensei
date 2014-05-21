@@ -254,6 +254,19 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				}
 			}
 		}
+		#existing-pagination {
+			float: right;
+			a {
+				display: inline-block;
+				cursor: pointer;
+				&.no-paging {
+					visibility: hidden;
+				}
+				&.next {
+					margin-left: 15px;
+				}
+			}
+		}
 	}
 
 	.question_required_fields {

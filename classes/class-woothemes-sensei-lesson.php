@@ -978,13 +978,13 @@ class WooThemes_Sensei_Lesson {
 			    					<option value="used">' . __( 'Used', 'woothemes-sensei' ) . '</option>
 			    				</select>
 			    				<select id="existing-type">
-			    					<option value="">' . __( 'All', 'woothemes-sensei' ) . '</option>';
+			    					<option value="">' . __( 'All Types', 'woothemes-sensei' ) . '</option>';
 							    	foreach ( $question_types as $type => $label ) {
 										$html .= '<option value="' . esc_attr( $type ) . '">' . esc_html( $label ) . '</option>';
 									}
     				$html .= '</select>
     							<select id="existing-category">
-			    					<option value="">' . __( 'All', 'woothemes-sensei' ) . '</option>';
+			    					<option value="">' . __( 'All Categories', 'woothemes-sensei' ) . '</option>';
 				    				foreach( $question_cats as $cat ) {
 										$html .= '<option value="' . esc_attr( $cat->slug ) . '">' . esc_html( $cat->name ) . '</option>';
 									}
@@ -1016,7 +1016,7 @@ class WooThemes_Sensei_Lesson {
 						$questions = $this->quiz_panel_get_existing_questions();
 
 						$row = 1;
-						foreach( $questions as $question ) {
+						foreach( $questions['questions'] as $question ) {
 							$html .= $this->quiz_panel_add_existing_question( $question->ID, $row );
 							++$row;
 						}
@@ -1024,6 +1024,16 @@ class WooThemes_Sensei_Lesson {
 						$html .= '</tbody>';
 
 			    	$html .= '</table>';
+
+			    	$next_class = '';
+			    	if( $questions['count'] <= 10 ) {
+			    		$next_class = 'hidden';
+			    	}
+
+			    	$html .= '<div id="existing-pagination">';
+			    		$html .= '<input type="hidden" id="existing-page" value="1" />';
+			    		$html .= '<a class="prev no-paging">&larr; ' . __( 'Previous', 'woothemes-sensei') . '</a> <a class="next ' . esc_attr( $next_class ) . '">' . __( 'Next', 'woothemes-sensei') . ' &rarr;</a>';
+			    	$html .= '</div>';
 
 			    	$html .= '<div class="existing-actions">';
 			    		$html .= '<a title="' . esc_attr( __( 'Add Selected Question(s)', 'woothemes-sensei' ) ) . '" class="add_existing_save button button-primary button-highlighted">' . esc_html( __( 'Add Selected Question(s)', 'woothemes-sensei' ) ) . '</a></p>';
@@ -1107,7 +1117,11 @@ class WooThemes_Sensei_Lesson {
 			$args['paged'] = $page;
 		}
 
-		$questions = get_posts( $args );
+		$qry = new WP_Query( $args );
+
+		$questions['questions'] = $qry->posts;
+		$questions['count'] = $qry->found_posts;
+		$questions['page'] = $page;
 
 		return $questions;
 	}
@@ -1180,24 +1194,34 @@ class WooThemes_Sensei_Lesson {
 				$question_search = $question_data['question_search'];
 			}
 
-			$questions = $this->quiz_panel_get_existing_questions( $question_status, $question_type, $question_category, $question_search );
+			$question_page = 1;
+			if( isset( $question_data['question_page'] ) ) {
+				$question_page = intval( $question_data['question_page'] );
+			}
+
+			$questions = $this->quiz_panel_get_existing_questions( $question_status, $question_type, $question_category, $question_search, $question_page );
 
 			$row = 1;
-			foreach( $questions as $question ) {
-				$return .= $this->quiz_panel_add_existing_question( $question->ID, $row );
+			$html = '';
+			foreach( $questions['questions'] as $question ) {
+				$html .= $this->quiz_panel_add_existing_question( $question->ID, $row );
 				++$row;
 			}
+
+			if( ! $html ) {
+				$html = '<tr class="alternate">
+								<td class="no-results" colspan="4"><em>' . __( 'There are no questions matching your search.', 'woothemes-sensei' ) . '</em></td>
+							  </tr>';
+			}
+
+			$return['html'] = $html;
+			$return['count'] = $questions['count'];
+			$return['page'] = $questions['page'];
+
+			wp_send_json( $return );
 		}
 
-		if( ! $return ) {
-			$return .= '<tr class="alternate">
-							<td class="no-results" colspan="4"><em>' . __( 'There are no questions matching your search.', 'woothemes-sensei' ) . '</em></td>
-						  </tr>';
-		}
-
-		echo $return;
-
-		die('');
+		die( $return );
 	}
 
 	public function quiz_panel_question_field( $question_type = '', $question_id = 0, $question_counter = 0 ) {

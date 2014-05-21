@@ -436,6 +436,77 @@ jQuery(document).ready( function($) {
 	        });
 	}
 
+	jQuery.fn.filterExistingQuestions = function( page ) {
+		var dataToPost = '';
+		var questionStatus = '';
+		var questionType = '';
+		var questionCat = '';
+		var questionSearch = '';
+		var questionPage = 1;
+
+		jQuery( 'tbody#existing-questions' ).fadeTo( 'fast', 0.33 );
+
+		questionStatus = jQuery( '#existing-status' ).val();
+		dataToPost += 'question_status=' + questionStatus;
+
+		if( '' != jQuery( '#existing-type' ).val() ) {
+			questionType = jQuery( '#existing-type' ).val();
+			dataToPost += '&question_type=' + questionType;
+		}
+
+		if( '' != jQuery( '#existing-category' ).val() ) {
+			questionCat = jQuery( '#existing-category' ).val();
+			dataToPost += '&question_category=' + questionCat;
+		}
+
+		if( '' != jQuery( '#existing-search' ).val() ) {
+			questionSearch = jQuery( '#existing-search' ).val();
+			dataToPost += '&question_search=' + questionSearch;
+		}
+
+		if( ! page ) {
+			questionPage = jQuery( '#existing-page' ).val();
+		} else {
+			questionPage = page;
+		}
+		dataToPost += '&question_page=' + questionPage;
+
+		// Perform the AJAX call.
+		jQuery.post(
+			ajaxurl,
+			{
+				action : 'filter_existing_questions',
+				filter_existing_questions_nonce : woo_localized_data.filter_existing_questions_nonce,
+				data : dataToPost
+			},
+			function( response ) {
+				if ( response ) {
+					var count = parseInt( response.count );
+					var page = parseInt( response.page );
+					var last_row = page * 10;
+
+					jQuery( 'tbody#existing-questions' ).html( response.html );
+					jQuery( 'tbody#existing-questions' ).fadeTo( 'fast', 1 );
+
+					jQuery( '#existing-page' ).val( page );
+
+					if( 1 < page ) {
+						jQuery( '#existing-pagination .prev' ).removeClass( 'no-paging' );
+					} else {
+						jQuery( '#existing-pagination .prev' ).addClass( 'no-paging' );
+					}
+
+					if( last_row <= count ) {
+						jQuery( '#existing-pagination .next' ).removeClass( 'no-paging' );
+					} else {
+						jQuery( '#existing-pagination .next' ).addClass( 'no-paging' );
+					}
+				}
+			}
+		);
+		return false;
+	}
+
 	/***************************************************************************************************
 	 * 	2 - Lesson Quiz Functions.
 	 ***************************************************************************************************/
@@ -523,8 +594,7 @@ jQuery(document).ready( function($) {
 	 	// Validate Inputs
 	 	var validInput = jQuery.fn.validateCourseInput();
 		if ( validInput ) {
-			//var ajaxLoaderIcon = jQuery( this ).parent().find( '.ajax-loading' );
-	 		//ajaxLoaderIcon.css( 'visibility', 'visible' ).fadeTo( 'slow', 1, function () {
+
 	 			// Setup data
 	 			var dataToPost = '';
 	 			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
@@ -542,9 +612,7 @@ jQuery(document).ready( function($) {
 	 					data : dataToPost
 	 				},
 	 				function( response ) {
-	 					//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
-	 					//	jQuery( this ).css( 'visibility', 'hidden' );
-	 					//});
+
 	 					// Check for a course id
 	 					if ( 0 < response ) {
 	 						jQuery( '#lesson-course-actions' ).show();
@@ -1128,48 +1196,19 @@ jQuery(document).ready( function($) {
 	});
 
 	jQuery( '#existing-filter-button' ).click( function() {
-		var dataToPost = '';
-		var questionStatus = '';
-		var questionType = '';
-		var questionCat = '';
-		var questionSearch = '';
+		jQuery.fn.filterExistingQuestions(1);
+	});
 
-		jQuery( 'tbody#existing-questions' ).fadeTo( 'fast', 0.5 );
-
-		questionStatus = jQuery( '#existing-status' ).val();
-		dataToPost += 'question_status=' + questionStatus;
-
-		if( '' != jQuery( '#existing-type' ).val() ) {
-			questionType = jQuery( '#existing-type' ).val();
-			dataToPost += '&question_type=' + questionType;
+	jQuery( '#existing-pagination' ).on( 'click', 'a', function() {
+		var currentPage = parseInt( jQuery( '#existing-page' ).val() );
+		var newPage = currentPage;
+		if( jQuery( this ).hasClass( 'prev' ) ) {
+			newPage = currentPage - 1;
+		} else if( jQuery( this ).hasClass( 'next' ) ) {
+			newPage = currentPage + 1;
 		}
-
-		if( '' != jQuery( '#existing-category' ).val() ) {
-			questionCat = jQuery( '#existing-category' ).val();
-			dataToPost += '&question_category=' + questionCat;
-		}
-
-		if( '' != jQuery( '#existing-search' ).val() ) {
-			questionSearch = jQuery( '#existing-search' ).val();
-			dataToPost += '&question_search=' + questionSearch;
-		}
-
-		// Perform the AJAX call.
-		jQuery.post(
-			ajaxurl,
-			{
-				action : 'filter_existing_questions',
-				filter_existing_questions_nonce : woo_localized_data.filter_existing_questions_nonce,
-				data : dataToPost
-			},
-			function( response ) {
-				if ( response ) {
-					jQuery( 'tbody#existing-questions' ).html( response );
-					jQuery( 'tbody#existing-questions' ).fadeTo( 'fast', 1 );
-				}
-			}
-		);
-		return false;
+		newPage = parseInt( newPage );
+		jQuery.fn.filterExistingQuestions( newPage );
 	});
 
 	jQuery( '#add-quiz-metadata' ).on( 'change', '#random_question_order', function() {
@@ -1285,7 +1324,7 @@ jQuery(document).ready( function($) {
 	    jQuery( '#existing-questions' ).find( ':checkbox' ).attr( 'checked' , this.checked );
 	});
 
-	jQuery( '#existing-table tbody tr td:not(.cb)' ).click( function() {
+	jQuery( 'tbody#existing-questions' ).on( 'click', 'tr td:not(.cb)', function() {
 		jQuery( this ).closest( 'tr' ).find( ':checkbox' ).each( function() {
 			jQuery( this ).prop( 'checked', ! jQuery( this ).prop( 'checked' ) );
 		});
