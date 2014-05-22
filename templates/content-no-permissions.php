@@ -42,6 +42,10 @@ global $woothemes_sensei;
 	                </header>
 
                 	<section class="entry fix">
+                        <?php if ( is_singular( 'lesson' ) && '' != $post->post_excerpt ) { 
+                            $lesson_excerpt = $post->post_excerpt; ?>
+                            <p class="lesson-excerpt"><?php echo $lesson_excerpt; ?></p>
+                        <?php } ?>
                 		<div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
                 	</section>
                 <?php } // End If Statement ?>
