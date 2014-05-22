@@ -288,7 +288,7 @@ class WooThemes_Sensei_Admin {
 	public function admin_styles_global ( $hook ) {
 		global $woothemes_sensei, $post_type, $wp_version;
 
-		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_updates', 'woothemes-sensei-settings' ) );
 
@@ -502,9 +502,8 @@ class WooThemes_Sensei_Admin {
 				'posts_per_page' => -1,
 				'meta_query'		=> array(
 					array(
-						'key'       => '_quizzes',
+						'key'       => '_quiz_id',
 						'value'     => $quiz->ID,
-						'compare'	=> 'LIKE'
 					)
 				),
 				'suppress_filters' => 0
@@ -516,7 +515,7 @@ class WooThemes_Sensei_Admin {
 
 			foreach( $questions as $question ) {
 				$new_question = $this->duplicate_post( $question, '' );
-				add_post_meta( $new_question->ID, '_quizzes', array( $new_quiz->ID ) );
+				add_post_meta( $new_question->ID, '_quiz_id', $new_quiz->ID, false );
 			}
 		}
 	}
@@ -583,7 +582,7 @@ class WooThemes_Sensei_Admin {
 			$post_meta = get_post_custom( $post->ID );
 			if( $post_meta && count( $post_meta ) > 0 ) {
 
-				$ignore_meta = array( '_quiz_lesson', '_quizzes' );
+				$ignore_meta = array( '_quiz_lesson', '_quiz_id' );
 				if( $ignore_course ) {
 					$ignore_meta[] = '_lesson_course';
 				}

@@ -168,6 +168,7 @@ jQuery(document).ready( function($) {
  		// Get current value
  		var currentValue = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
  		var newValue = currentValue;
+ 		increment = parseInt( increment );
  		// Increment or Decrement
  		if ( operator == '-' ) {
  			newValue = currentValue - increment;
@@ -272,14 +273,32 @@ jQuery(document).ready( function($) {
 		var row_number = 1;
 		var row_class = 'alternate';
 		jQuery( '#add-question-metadata' ).find( 'td.question-number' ).each( function() {
-			jQuery( this ).text( row_number );
+			jQuery( this ).find( 'span.number' ).text( row_number );
 			jQuery( this ).closest( 'tbody' ).removeClass().addClass( row_class );
 			if( 'alternate' == row_class ) {
 				row_class = '';
 			} else {
 				row_class = 'alternate';
 			}
-			row_number++;
+
+			if( '' != jQuery( this ).find( 'span.total-number' ).text() ) {
+				var total_number = parseInt( jQuery( this ).find( 'span.total-number' ).text() );
+				var end_number = row_number + total_number - 1;
+				var multiple_numbers = '';
+
+				if( row_number == end_number ) {
+					multiple_numbers = row_number;
+				} else {
+					multiple_numbers = row_number + ' - ' + end_number ;
+				}
+
+				jQuery( this ).find( 'span.row-numbers' ).text( multiple_numbers );
+				row_number += total_number;
+
+			} else {
+				row_number++;
+			}
+
 		});
 	}
 
@@ -417,6 +436,77 @@ jQuery(document).ready( function($) {
 	        });
 	}
 
+	jQuery.fn.filterExistingQuestions = function( page ) {
+		var dataToPost = '';
+		var questionStatus = '';
+		var questionType = '';
+		var questionCat = '';
+		var questionSearch = '';
+		var questionPage = 1;
+
+		jQuery( 'tbody#existing-questions' ).fadeTo( 'fast', 0.33 );
+
+		questionStatus = jQuery( '#existing-status' ).val();
+		dataToPost += 'question_status=' + questionStatus;
+
+		if( '' != jQuery( '#existing-type' ).val() ) {
+			questionType = jQuery( '#existing-type' ).val();
+			dataToPost += '&question_type=' + questionType;
+		}
+
+		if( '' != jQuery( '#existing-category' ).val() ) {
+			questionCat = jQuery( '#existing-category' ).val();
+			dataToPost += '&question_category=' + questionCat;
+		}
+
+		if( '' != jQuery( '#existing-search' ).val() ) {
+			questionSearch = jQuery( '#existing-search' ).val();
+			dataToPost += '&question_search=' + questionSearch;
+		}
+
+		if( ! page ) {
+			questionPage = jQuery( '#existing-page' ).val();
+		} else {
+			questionPage = page;
+		}
+		dataToPost += '&question_page=' + questionPage;
+
+		// Perform the AJAX call.
+		jQuery.post(
+			ajaxurl,
+			{
+				action : 'filter_existing_questions',
+				filter_existing_questions_nonce : woo_localized_data.filter_existing_questions_nonce,
+				data : dataToPost
+			},
+			function( response ) {
+				if ( response ) {
+					var count = parseInt( response.count );
+					var page = parseInt( response.page );
+					var last_row = page * 10;
+
+					jQuery( 'tbody#existing-questions' ).html( response.html );
+					jQuery( 'tbody#existing-questions' ).fadeTo( 'fast', 1 );
+
+					jQuery( '#existing-page' ).val( page );
+
+					if( 1 < page ) {
+						jQuery( '#existing-pagination .prev' ).removeClass( 'no-paging' );
+					} else {
+						jQuery( '#existing-pagination .prev' ).addClass( 'no-paging' );
+					}
+
+					if( last_row <= count ) {
+						jQuery( '#existing-pagination .next' ).removeClass( 'no-paging' );
+					} else {
+						jQuery( '#existing-pagination .next' ).addClass( 'no-paging' );
+					}
+				}
+			}
+		);
+		return false;
+	}
+
 	/***************************************************************************************************
 	 * 	2 - Lesson Quiz Functions.
 	 ***************************************************************************************************/
@@ -504,8 +594,7 @@ jQuery(document).ready( function($) {
 	 	// Validate Inputs
 	 	var validInput = jQuery.fn.validateCourseInput();
 		if ( validInput ) {
-			//var ajaxLoaderIcon = jQuery( this ).parent().find( '.ajax-loading' );
-	 		//ajaxLoaderIcon.css( 'visibility', 'visible' ).fadeTo( 'slow', 1, function () {
+
 	 			// Setup data
 	 			var dataToPost = '';
 	 			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
@@ -523,9 +612,7 @@ jQuery(document).ready( function($) {
 	 					data : dataToPost
 	 				},
 	 				function( response ) {
-	 					//ajaxLoaderIcon.fadeTo( 'slow', 0, function () {
-	 					//	jQuery( this ).css( 'visibility', 'hidden' );
-	 					//});
+
 	 					// Check for a course id
 	 					if ( 0 < response ) {
 	 						jQuery( '#lesson-course-actions' ).show();
@@ -593,20 +680,6 @@ jQuery(document).ready( function($) {
 	});
 
 	/**
-	 * Change Question Type Event.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	jQuery( '#add-question-actions' ).on( 'click', 'button.add_question_answer', function() {
-		// Prep and Display add question panel and hide the add question button
-		jQuery( this ).addClass('hidden');
-		jQuery( '#add-new-question' ).removeClass( 'hidden' );
-		jQuery.fn.resetQuestionTable();
-		jQuery( this ).removeAttr('style');
-	});
-
-	/**
 	 * Edit Question Click Event.
 	 *
 	 * @since 1.0.0
@@ -616,26 +689,12 @@ jQuery(document).ready( function($) {
 		// Display the question for edit
 		var questionId = jQuery(this).closest('tr').next('tr').find('.question_original_counter').text();
 		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
- 		// Hide the add question form and prep the table
-		jQuery( '#add-new-question' ).addClass( 'hidden' );
+
 	 	jQuery.fn.resetAddQuestionForm();
 	 	jQuery.fn.resetQuestionTable();
-		// jQuery( '#question_' + questionId ).closest('tr').removeClass('hidden');
+
 		jQuery(this).closest('tr').next('tr').removeClass('hidden');
 		jQuery( '#question_' + questionId ).focus();
-	});
-
-	/**
-	 * Cancel Events Click Event - add question.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	jQuery( '#add-new-question' ).on( 'click', 'a.lesson_question_cancel', function() {
-		// Hide the add question panel and show the add question button
-		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
-		jQuery( '#add-new-question' ).addClass( 'hidden' );
-		jQuery.fn.resetQuestionTable();
 	});
 
 	/**
@@ -658,6 +717,7 @@ jQuery(document).ready( function($) {
 	jQuery( '#add-new-question' ).on( 'click', 'a.add_question_save', function() {
 		var dataToPost = '';
 		var questionType = 'multiple-choice';
+		var questionCategory = '';
 		var radioValue = 'true';
 	 	// Validate Inputs
 		var validInput = jQuery.fn.validateQuestionInput( 'add', jQuery(this) );
@@ -668,6 +728,11 @@ jQuery(document).ready( function($) {
 			if ( jQuery( '#add-question-type-options' ).val() != '' ) {
 	 			questionType = jQuery( '#add-question-type-options' ).val();
 	 		} // End If Statement
+
+	 		if ( jQuery( '#add-question-category-options' ).val() != '' ) {
+	 			questionCategory = jQuery( '#add-question-category-options' ).val();
+	 		} // End If Statement
+
 	 		var divFieldsClass = 'question_default_fields';
 	 		switch ( questionType ) {
 				case 'multiple-choice':
@@ -717,6 +782,7 @@ jQuery(document).ready( function($) {
  				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_multiline' ).val() );
 	 		} // End If Statement
 	 		dataToPost += '&' + 'question_type' + '=' + questionType;
+	 		dataToPost += '&' + 'question_category' + '=' + questionCategory;
 	 		questionGrade = jQuery( '#add-question-grade' ).val();
 	 		dataToPost += '&' + 'question_grade' + '=' + questionGrade;
 
@@ -751,8 +817,7 @@ jQuery(document).ready( function($) {
 	 		    function( response ) {
 	 		    	// Check for a valid response
 	 		    	if ( response ) {
-	 		    		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
-						jQuery( '#add-new-question' ).addClass( 'hidden' );
+
 	 		    		jQuery.fn.updateQuestionCount( 1, '+' );
 	 		    		jQuery( '#add-question-metadata table' ).append( response );
 			    		jQuery.fn.resetAddQuestionForm();
@@ -768,6 +833,74 @@ jQuery(document).ready( function($) {
 	 	} else {
 			jQuery( '#add_question' ).focus();
 		}
+	});
+
+	/**
+	 * Add Multiple Questions Save Click Event - Ajax.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 */
+	jQuery( '#add-new-question' ).on( 'click', 'a.add_multiple_save', function() {
+		var dataToPost = '';
+	 	var questionCategory = '';
+	 	var questionNumber = 0;
+
+	 	dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+	 	if ( jQuery( '#add-multiple-question-count' ).val() != '' ) {
+ 			questionNumber = parseInt( jQuery( '#add-multiple-question-count' ).val() );
+ 		} // End If Statement
+ 		dataToPost += '&' + 'question_number' + '=' + questionNumber;
+
+	 	var maxAllowed = parseInt( jQuery( '#add-multiple-question-count' ).attr( 'max' ) );
+
+	 	// Only allow submission if selected number is not greater than the amount of questions in the category
+	 	if( questionNumber > maxAllowed ) {
+	 		alert( woo_localized_data.too_many_for_cat );
+	 		jQuery( '#add-multiple-question-count' ).focus();
+	 		return false;
+	 	}
+
+		if ( jQuery( '#add-multiple-question-category-options' ).val() != '' ) {
+ 			questionCategory = jQuery( '#add-multiple-question-category-options' ).val();
+ 		} // End If Statement
+ 		dataToPost += '&' + 'question_category' + '=' + questionCategory;
+
+ 		var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+ 		dataToPost += '&' + 'question_count' + '=' + questionCount;
+
+ 		if( questionCategory && questionNumber ) {
+	 		// Perform the AJAX call.
+	 		jQuery.post(
+	 		    ajaxurl,
+	 		    {
+	 		    	action : 'lesson_add_multiple_questions',
+	 		    	lesson_add_multiple_questions_nonce : woo_localized_data.lesson_add_multiple_questions_nonce,
+	 		    	data : dataToPost
+	 		    },
+	 		    function( response ) {
+	 		    	// Check for a valid response
+	 		    	if ( response ) {
+						jQuery( '#add-multiple-question-category-options' ).val('');
+						jQuery( '#add-multiple-question-count' ).val('1');
+
+	 		    		jQuery.fn.updateQuestionCount( questionNumber, '+' );
+	 		    		jQuery( '#add-question-metadata table' ).append( response );
+
+			    		jQuery.fn.updateQuestionOrder();
+
+			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+			 			max_questions += questionNumber;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+	 		    	}
+	 		    }
+	 		);
+	 		return false;
+	 	} else {
+	 		jQuery( '#add-multiple-question-category-options' ).focus();
+	 	}
+
 	});
 
 	/**
@@ -888,7 +1021,7 @@ jQuery(document).ready( function($) {
 	});
 
 	/**
-	 * Delete Question Click Event - Ajax.
+	 * Remove Question Click Event - Ajax.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -898,8 +1031,9 @@ jQuery(document).ready( function($) {
 	 	var questionId = '';
 	 	var quizId = '';
 	 	var tableRowId = '';
-	 	// TODO - localize this delete message
-	 	var confirmDelete = confirm( 'Are you sure you want to delete this question?' );
+
+	 	var confirmDelete = confirm( woo_localized_data.confirm_remove );
+
 	 	if ( confirmDelete ) {
  			// Setup data to post
  			dataToPost += '&action=delete';
@@ -912,7 +1046,7 @@ jQuery(document).ready( function($) {
 
 			dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
- 			tableRowId = jQuery( this ).closest('tr').find('td.question-number').text();
+ 			tableRowId = jQuery( this ).closest('tr').find('td.question-number span.number').text();
  			var row_parent = jQuery( this ).closest( 'tbody' );
 
  			// Perform the AJAX call.
@@ -927,7 +1061,7 @@ jQuery(document).ready( function($) {
  					if ( response ) {
  						// Remove the html element for the deleted question
  						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
- 							if ( jQuery(this).text() == tableRowId ) {
+ 							if ( jQuery(this).find('span.number').text() == tableRowId ) {
  								jQuery(this).closest('tr').next('tr').remove();
  								jQuery(this).closest('tr').remove();
  								// Exit each() to prevent multiple row deletions
@@ -951,6 +1085,130 @@ jQuery(document).ready( function($) {
  			);
  			return false;
 		}
+	});
+
+	/**
+	 * Remove Multple Questions Row Click Event - Ajax.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 */
+	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_multiple_delete', function() {
+	 	var dataToPost = '';
+
+	 	var confirmDelete = confirm( woo_localized_data.confirm_remove_multiple );
+
+	 	if ( confirmDelete ) {
+
+	 		dataToPost += 'question_id' + '=' + jQuery( this ).attr( 'rel' );
+			dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+ 			var tableRowId = jQuery( this ).closest('tr').find('td.question-number span.number').text();
+ 			var total_number = jQuery( this ).closest('tr').find('td.question-number span.total-number').text();
+ 			var row_parent = jQuery( this ).closest( 'tbody' );
+
+ 			// Perform the AJAX call.
+ 			jQuery.post(
+ 				ajaxurl,
+ 				{
+ 					action : 'lesson_remove_multiple_questions',
+ 					lesson_remove_multiple_questions_nonce : woo_localized_data.lesson_remove_multiple_questions_nonce,
+ 					data : dataToPost
+ 				},
+ 				function( response ) {
+ 					if ( response ) {
+
+ 						// Remove the html element for the deleted question
+ 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
+ 							if ( jQuery(this).find('span.number').text() == tableRowId ) {
+ 								jQuery(this).closest('tr').remove();
+ 								// Exit each() to prevent multiple row deletions
+ 								return false;
+							}
+ 						});
+ 						jQuery.fn.updateQuestionCount( total_number, '-' );
+
+ 						var max_questions = parseInt( jQuery( '#show_questions' ).attr( 'max' ) );
+			 			max_questions -= total_number;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+
+			 			var show_questions_field = parseInt( jQuery( '#show_questions' ).val() );
+			 			if( show_questions_field > max_questions ) {
+			 				jQuery( '#show_questions' ).val( max_questions );
+			 			}
+ 					}
+ 				}
+ 			);
+ 			return false;
+		}
+	});
+
+	/**
+	 * Add Existing Questions Click Event - Ajax.
+	 *
+	 * @since 1.6.0
+	 * @access public
+	 */
+	jQuery( '#add-new-question' ).on( 'click', 'a.add_existing_save', function() {
+		var questions = '';
+		var dataToPost = '';
+		var i = 0;
+		jQuery( '#existing-questions' ).find( 'input.existing-item' ).each( function() {
+			if( jQuery( this ).is( ':checked' ) ) {
+				var question_id = jQuery( this ).val();
+				questions += question_id + ',';
+				++i;
+			}
+		});
+
+		if( questions ) {
+
+			dataToPost = 'questions=' + questions;
+			dataToPost += '&quiz_id=' + jQuery( '#quiz_id' ).attr( 'value' );
+
+			var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+	 		dataToPost += '&question_count=' + questionCount;
+
+			// Perform the AJAX call.
+ 			jQuery.post(
+ 				ajaxurl,
+ 				{
+ 					action : 'lesson_add_existing_questions',
+ 					lesson_add_existing_questions_nonce : woo_localized_data.lesson_add_existing_questions_nonce,
+ 					data : dataToPost
+ 				},
+ 				function( response ) {
+ 					if ( response ) {
+
+ 						jQuery.fn.updateQuestionCount( i, '+' );
+	 		    		jQuery( '#add-question-metadata table' ).append( response );
+
+			 			jQuery.fn.checkQuizGradeType();
+
+			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+			 			max_questions += i;
+			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+ 					}
+ 				}
+ 			);
+ 			return false;
+		}
+	});
+
+	jQuery( '#existing-filter-button' ).click( function() {
+		jQuery.fn.filterExistingQuestions(1);
+	});
+
+	jQuery( '#existing-pagination' ).on( 'click', 'a', function() {
+		var currentPage = parseInt( jQuery( '#existing-page' ).val() );
+		var newPage = currentPage;
+		if( jQuery( this ).hasClass( 'prev' ) ) {
+			newPage = currentPage - 1;
+		} else if( jQuery( this ).hasClass( 'next' ) ) {
+			newPage = currentPage + 1;
+		}
+		newPage = parseInt( newPage );
+		jQuery.fn.filterExistingQuestions( newPage );
 	});
 
 	jQuery( '#add-quiz-metadata' ).on( 'change', '#random_question_order', function() {
@@ -1026,6 +1284,48 @@ jQuery(document).ready( function($) {
 		jQuery.fn.uploadQuestionMedia( jQuery( this ).closest( 'div' ).find( '.upload_media_file_button' ) );
 	});
 
+	jQuery( '.add-question-tabs .nav-tab' ).click( function() {
+		var tab_id = jQuery( this ).attr('id');
+		var tab_content_id = tab_id + '-content';
+
+		jQuery( '#add-new-question .nav-tab' ).removeClass( 'nav-tab-active' );
+		jQuery( this ).addClass( 'nav-tab-active' );
+
+		jQuery( '#add-new-question .tab-content' ).addClass( 'hidden' );
+		jQuery( '#' + tab_content_id ).removeClass( 'hidden' );
+	});
+
+	jQuery( '#add-multiple-question-category-options' ).change( function() {
+		var cat = jQuery( this ).val();
+		var dataToPost = 'cat=' + cat;
+
+		jQuery.post(
+			ajaxurl,
+			{
+				action : 'get_question_category_limit',
+				data : dataToPost
+			},
+			function( response ) {
+				if ( response ) {
+					var max = parseInt( response );
+					if( max ) {
+						jQuery( '#add-multiple-question-count' ).attr( 'max', max );
+					}
+				}
+			}
+		);
+	});
+
+	jQuery( '#existing-table th.check-column input' ).click( function () {
+	    jQuery( '#existing-questions' ).find( ':checkbox' ).attr( 'checked' , this.checked );
+	});
+
+	jQuery( 'tbody#existing-questions' ).on( 'click', 'tr td:not(.cb)', function() {
+		jQuery( this ).closest( 'tr' ).find( ':checkbox' ).each( function() {
+			jQuery( this ).prop( 'checked', ! jQuery( this ).prop( 'checked' ) );
+		});
+	});
+
 	/***************************************************************************************************
 	 * 	5 - Load Chosen Dropdowns.
 	 ***************************************************************************************************/
@@ -1038,15 +1338,25 @@ jQuery(document).ready( function($) {
 	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).chosen(); }
 	if ( jQuery( '#course-woocommerce-product-options' ).exists() && '-' != jQuery( '#course-woocommerce-product-options' ).val() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
 
+	// Quiz edit panel
+	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).chosen(); }
+	if ( jQuery( '#add-question-category-options' ).exists() ) { jQuery( '#add-question-category-options' ).chosen(); }
+	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).chosen(); }
+
 	// Courses Write Panel
 	if ( jQuery( '#course-wc-product #course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
-	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).chosen(); }
+	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) { jQuery( '#add-multiple-question-category-options' ).chosen(); }
+
 	// Sensei Settings Panel
 	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {
 		if ( !jQuery( this ).hasClass( 'range-input' ) ) {
 			jQuery( this ).chosen();
 		} // End If Statement
 	});
+
+	/***************************************************************************************************
+	 * 6 - Single Quiz Edit Screen.
+	 ***************************************************************************************************/
 
 	if( jQuery( '.post-type-question #post-body-content').exists() ) { jQuery( '.post-type-question #post-body-content').remove(); }
 

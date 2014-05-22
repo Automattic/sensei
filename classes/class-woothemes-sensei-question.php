@@ -43,12 +43,12 @@ class WooThemes_Sensei_Question {
 
 	public function question_types() {
 		$types = array(
-			'multiple-choice' => 'Multiple Choice',
-			'boolean' => 'True/False',
-			'gap-fill' => 'Gap Fill',
-			'single-line' => 'Single Line',
-			'multi-line' => 'Multi Line',
-			'file-upload' => 'File Upload',
+			'multiple-choice' => __( 'Multiple Choice', 'woothemes-sensei' ),
+			'boolean' => __( 'True/False', 'woothemes-sensei' ),
+			'gap-fill' => __( 'Gap Fill', 'woothemes-sensei' ),
+			'single-line' => __( 'Single Line', 'woothemes-sensei' ),
+			'multi-line' => __( 'Multi Line', 'woothemes-sensei' ),
+			'file-upload' => __( 'File Upload', 'woothemes-sensei' ),
 		);
 
 		return apply_filters( 'sensei_question_types', $types );
@@ -63,7 +63,6 @@ class WooThemes_Sensei_Question {
 	 */
 	public function add_column_headings ( $defaults ) {
 		$new_columns['cb'] = '<input type="checkbox" />';
-		// $new_columns['id'] = __( 'ID' );
 		$new_columns['title'] = _x( 'Question', 'column name', 'woothemes-sensei' );
 		$new_columns['question-type'] = _x( 'Type', 'column name', 'woothemes-sensei' );
 		$new_columns['question-category'] = _x( 'Categories', 'column name', 'woothemes-sensei' );
@@ -110,7 +109,7 @@ class WooThemes_Sensei_Question {
 	} // End add_column_data()
 
 	public function question_edit_panel_metabox( $post_type, $post ) {
-		if( 'question' == $post_type ) {
+		if( in_array( $post_type, array( 'question', 'multiple_question' ) ) ) {
 
 			$metabox_title = __( 'Question', 'woothemes-sensei' );
 
@@ -130,6 +129,7 @@ class WooThemes_Sensei_Question {
 			}
 			add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
 			add_meta_box( 'question-lessons-panel', __( 'Quizzes', 'woothemes-sensei' ), array( $this, 'question_lessons_panel' ), 'question', 'side', 'default' );
+			add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'woothemes-sensei' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
 		}
 	}
 
@@ -139,32 +139,33 @@ class WooThemes_Sensei_Question {
 		add_action( 'admin_enqueue_scripts', array( $woothemes_sensei->post_types->lesson, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $woothemes_sensei->post_types->lesson, 'enqueue_styles' ) );
 
-		$html = '';
-
-		$before = '<div id="lesson-quiz" class="single-question"><div id="add-question-main">';
-		$after = '';
-		$question_type = '';
+		$html = '<div id="lesson-quiz" class="single-question"><div id="add-question-main">';
 
 		if( 'post-new.php' == $pagenow ) {
-			$question_id = 0;
-			$before .= '<div id="add-question-actions">';
-			$after .= '</div>';
+
+			$html .= '<div id="add-question-actions">';
+				$html .= $woothemes_sensei->post_types->lesson->quiz_panel_add( 'question' );
+			$html .= '</div>';
+
 		} else {
 			$question_id = $post->ID;
-			$before .= '<div id="add-question-metadata"><table class="widefat">';
-			$after .= '</table></div>';
 
+			$question_type = '';
 			$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
 			if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 				$question_type = $question_types[0];
-			} // End If Statement
+			}
+
+			if( ! $question_type ) {
+				$question_type = 'multiple-choice';
+			}
+
+			$html .= '<div id="add-question-metadata"><table class="widefat">';
+				$html .= $woothemes_sensei->post_types->lesson->quiz_panel_question( $question_type, 0, $question_id, 'question' );
+			$html .= '</table></div>';
 		}
 
-		$after .= '</div></div>';
-
-		$html .= $before;
-		$html .= $woothemes_sensei->post_types->lesson->quiz_panel_question( $question_type, 0, $question_id, 'question' );
-		$html .= $after;
+		$html .= '</div></div>';
 
 		echo $html;
 	}

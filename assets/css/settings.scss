@@ -228,6 +228,54 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 
 #lesson-quiz  {
 
+	.add-question-tabs {
+		padding: 0 0 0 10px !important;
+		.nav-tab {
+			cursor: pointer;
+			&.nav-tab-active {
+				background: #FFF;
+				border-bottom: 0;
+			}
+		}
+	}
+
+	#tab-multiple-content {
+		.add_multiple_save {
+			margin-left: 10px;
+		}
+	}
+
+	#tab-existing-content {
+		#existing-table {
+			margin: 10px 0;
+			tbody {
+				tr {
+					cursor: pointer;
+				}
+			}
+		}
+		#existing-pagination {
+			float: right;
+			a {
+				display: inline-block;
+				cursor: pointer;
+				&.no-paging {
+					visibility: hidden;
+				}
+				&.next {
+					margin-left: 15px;
+				}
+			}
+		}
+	}
+
+	.question_required_fields {
+		margin-top: 5px;
+		p {
+			margin: 5px 0;
+		}
+	}
+
 	#add-quiz-metadata  {
 		label  {
 			float: left;
@@ -341,7 +389,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 							}
 						}
 					}
-					.question_table_delete {
+					.question_table_delete, .question_multiple_delete {
 						margin-left: 10px;
 						color: #A00;
 						&:hover {
@@ -469,21 +517,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		}
 		#add-new-question {
 			padding: 20px;
-		}
-		.question_required_fields {
-			div {
-				margin-bottom: 10px;
-			}
-		}
-		.multiple-choice-answers {
-			label {
-				margin-bottom: 10px;
-			}
-		}
-		.question_gapfill_fields {
-			input[type="text"] {
-				margin-bottom: 10px;
-			}
 		}
 	}
 

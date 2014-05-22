@@ -563,7 +563,7 @@ class WooThemes_Sensei_Updates {
 
 			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
 			if( 0 < intval( $quiz_id ) ) {
-				add_post_meta( $question->ID, '_quiz_question_order', $quiz_id . '0000', true );
+				add_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $quiz_id . '0000', true );
 			}
 		}
 		return true;
@@ -737,13 +737,13 @@ class WooThemes_Sensei_Updates {
 
 			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
 
-			if( ! $quiz_id ) continue;
+			if( 0 == count( $quizzes ) ) continue;
 
-			$quiz_id = (string) $quiz_id;
-
-			$quizzes = array( $quiz_id );
-
-			update_post_meta( $question->ID, '_quizzes', $quizzes );
+			// Update quesiton order to be used per quiz
+			foreach( $quizzes as $quiz_id ) {
+				$question_order = get_post_meta( $question->ID, '_quiz_question_order', true );
+				update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
+			}
 		}
 		return true;
 	}
