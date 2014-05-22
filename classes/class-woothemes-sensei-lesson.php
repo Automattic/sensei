@@ -1144,12 +1144,16 @@ class WooThemes_Sensei_Lesson {
 		$existing_class = '';
 		if( $row % 2 ) { $existing_class = 'alternate'; }
 
+		$all_question_types = WooThemes_Sensei_Question::question_types();
 		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
 		$question_type = '';
 		if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 			$question_type = $question_types[0];
-			$question_types = WooThemes_Sensei_Question::question_types();
-			$question_type = $question_types[ $question_type ];
+			$question_type = $all_question_types[ $question_type ];
+		}
+
+		if( ! $question_type ) {
+			$question_type = $all_question_types['multiple-choice'];
 		}
 
 		$question_cat_list = strip_tags( get_the_term_list( $question_id, 'question-category', '', ', ', '' ) );
@@ -1747,6 +1751,9 @@ class WooThemes_Sensei_Lesson {
 
 	public function get_question_category_limit() {
 
+		// Set default
+		$return = 1;
+
 		// Parse POST data
 		$data = $_POST['data'];
 		$cat_data = array();
@@ -1755,9 +1762,11 @@ class WooThemes_Sensei_Lesson {
 		if( isset( $cat_data['cat'] ) && '' != $cat_data['cat'] ) {
 			$cat = get_term( $cat_data['cat'], 'question-category' );
 			if( isset( $cat->count ) ) {
-				echo $cat->count;
+				$return = $cat->count;
 			}
 		}
+
+		echo $return;
 
 		die('');
 	}

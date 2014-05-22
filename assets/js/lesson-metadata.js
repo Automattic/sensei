@@ -849,11 +849,11 @@ jQuery(document).ready( function($) {
 	 	dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
 	 	if ( jQuery( '#add-multiple-question-count' ).val() != '' ) {
- 			questionNumber = jQuery( '#add-multiple-question-count' ).val();
+ 			questionNumber = parseInt( jQuery( '#add-multiple-question-count' ).val() );
  		} // End If Statement
  		dataToPost += '&' + 'question_number' + '=' + questionNumber;
 
-	 	var maxAllowed = jQuery( '#add-multiple-question-count' ).attr( 'max' );
+	 	var maxAllowed = parseInt( jQuery( '#add-multiple-question-count' ).attr( 'max' ) );
 
 	 	// Only allow submission if selected number is not greater than the amount of questions in the category
 	 	if( questionNumber > maxAllowed ) {
@@ -1297,10 +1297,6 @@ jQuery(document).ready( function($) {
 
 	jQuery( '#add-multiple-question-category-options' ).change( function() {
 		var cat = jQuery( this ).val();
-		if( ! cat ) {
-			return;
-		}
-
 		var dataToPost = 'cat=' + cat;
 
 		jQuery.post(
@@ -1359,7 +1355,7 @@ jQuery(document).ready( function($) {
 	});
 
 	/***************************************************************************************************
-	 * 6 - Single Quiz Edit Screen
+	 * 6 - Single Quiz Edit Screen.
 	 ***************************************************************************************************/
 
 	if( jQuery( '.post-type-question #post-body-content').exists() ) { jQuery( '.post-type-question #post-body-content').remove(); }
