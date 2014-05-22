@@ -2524,5 +2524,23 @@ class WooThemes_Sensei_Lesson {
 
 	} // End lesson_image()
 
+	/**
+	 * Handles the output of the lesson excerpt.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public static function lesson_excerpt( $lesson = null ) {
+		
+		if ( is_a( $lesson, 'WP_Post' ) && 'lesson' == $lesson->post_type ) {
+			$html = '';
+			if ( '' != $lesson->post_excerpt ) {
+				$html .= wpautop( $lesson->post_excerpt );
+			}
+			return $html;
+		}
+
+	} // End lesson_excerpt()
+
 } // End Class
 ?>

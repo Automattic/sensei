@@ -79,7 +79,6 @@ if ( 0 < $total_lessons ) {
     	    $lesson_complexity = get_post_meta( $lesson_item->ID, '_lesson_complexity', true );
     	    if ( '' != $lesson_complexity ) { $lesson_complexity = $complexity_array[$lesson_complexity]; }
     	    $user_info = get_userdata( absint( $lesson_item->post_author ) );
-    	    if ( '' != $lesson_item->post_excerpt ) { $lesson_excerpt = $lesson_item->post_excerpt; } else { $lesson_excerpt = $lesson_item->post_content; }
 
     	    $html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $lesson_item->ID ) ) ) . '">';
 
@@ -123,11 +122,7 @@ if ( 0 < $total_lessons ) {
 
     			$html .= '<section class="entry">';
 
-    	   		 	$html .= '<p class="lesson-excerpt">';
-
-    	   		 		$html .= '<span>' . $lesson_excerpt . '</span>';
-
-    	   		 	$html .= '</p>';
+                    $html .= WooThemes_Sensei_Lesson::lesson_excerpt( $lesson_item );
 
     	   		$html .= '</section>';
 
