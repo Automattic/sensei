@@ -46,7 +46,7 @@ class WooThemes_Sensei_Grading {
 	 * @return  void
 	 */
 	public function __construct ( $file ) {
-		$this->name = 'Grading';
+		$this->name = __( 'Grading', 'woothemes-sensei' );
 		$this->file = $file;
 		$this->page_slug = 'sensei_grading';
 
@@ -79,10 +79,10 @@ class WooThemes_Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_admin_menu() {
-	    global $menu, $woocommerce;
+	    global $menu;
 
 	    if ( current_user_can( 'manage_sensei_grades' ) ) {
-	    	$grading_page = add_submenu_page('sensei', __('Grading', 'woothemes-sensei'),  __('Grading', 'woothemes-sensei') , 'manage_sensei_grades', 'sensei_grading', array( $this, 'grading_page' ) );
+	    	$grading_page = add_submenu_page('sensei', __('Grading', 'woothemes-sensei'),  __('Grading', 'woothemes-sensei') , 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
 	    }
 
 	} // End analysis_admin_menu()
