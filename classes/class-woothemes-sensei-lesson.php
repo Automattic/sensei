@@ -2531,15 +2531,13 @@ class WooThemes_Sensei_Lesson {
 	 * @return string
 	 */
 	public static function lesson_excerpt( $lesson = null ) {
-		
+		$html = '';
 		if ( is_a( $lesson, 'WP_Post' ) && 'lesson' == $lesson->post_type ) {
-			$html = '';
 			if ( '' != $lesson->post_excerpt ) {
 				$html .= wpautop( $lesson->post_excerpt );
 			}
-			return $html;
 		}
-
+		return apply_filters( 'sensei_lesson_excerpt', $html );
 	} // End lesson_excerpt()
 
 } // End Class
