@@ -1222,7 +1222,7 @@ class WooThemes_Sensei_Utils {
 				$user = get_userdata( $user_id );
 			}
 
-			$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $course_id );
+			$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $course_id );
 		    $lessons_completed = 0;
 		    foreach ( $course_lessons as $lesson ){
 		    	$single_lesson_complete = false;

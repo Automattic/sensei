@@ -120,7 +120,7 @@ class WooThemes_Sensei_Learners {
 		global $woothemes_sensei;
 		// Load Learners Classes
 		$classes_to_load = array(	'list-table',
-									'learners-main'
+									'learners-main',
 									);
 		foreach ( $classes_to_load as $class_file ) {
 			$woothemes_sensei->load_class( $class_file );
