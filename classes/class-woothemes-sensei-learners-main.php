@@ -61,7 +61,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				$this->columns = apply_filters( 'sensei_learners_learners_columns', array(
 					'learner' => __( 'Learner', 'woothemes-sensei' ),
 					'date_started' => __( 'Date Started', 'woothemes-sensei' ),
-					'status' => __( 'Status', 'woothemes-sensei' ),
+					'user_status' => __( 'Status', 'woothemes-sensei' ),
 					'action' => __( '', 'woothemes-sensei' ),
 				) );
 
@@ -199,12 +199,14 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			$activity = '';
 			$completed = false;
 			$object_type = __( 'course', 'woothemes-sensei' );
+			$post_type = 'course';
 
 			if( $this->lesson_id ) {
 				$post_id = intval( $this->lesson_id );
 				$activity = 'sensei_lesson_start';
 				$completed = WooThemes_Sensei_Utils::user_completed_lesson( $post_id, $user->ID );
 				$object_type = __( 'lesson', 'woothemes-sensei' );
+				$post_type = 'lesson';
 			} else {
 				if( $this->course_id ) {
 					$post_id = intval( $this->course_id );
@@ -224,9 +226,9 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			return apply_filters( 'sensei_learners_main_column_data', array(
 					'learner' => '<a href="' . admin_url( 'user-edit.php?user_id=' . $user->ID ) . '">' . $user->display_name . '</a>',
 					'date_started' => $start_date,
-					'status' => $status_html,
-					'action' => '<a href="" class="button">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>',
-			), $user->ID );
+					'user_status' => $status_html,
+					'action' => '<a class="remove-learner button" data-user_id="' . $user->ID . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>',
+			), $user->ID, $post_id );
 		}
 
 		if( $lesson ) {
@@ -237,8 +239,8 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					'lesson' => '<a href="' . admin_url( 'post.php?action=edit&post=' . $lesson->ID ) . '">' . get_the_title( $lesson->ID ) . '</a>',
 					'no_learners' => $lesson_learners,
 					'updated' => $lesson->post_modified,
-					'action' => '<a href="' . add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson->ID, 'course_id' => $this->course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '" class="button">' . __( 'Manage Learners', 'woothemes-sensei' ) . '</a>',
-			), $lesson->ID );
+					'action' => '<a href="' . add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson->ID, 'course_id' => $this->course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '" class="button">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a>',
+			), $lesson->ID, $this->course_id );
 		}
 
 		if( $course ) {
@@ -249,7 +251,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					'course' => '<a href="' . admin_url( 'post.php?action=edit&post=' . $course->ID ) . '">' . get_the_title( $course->ID ) . '</a>',
 					'no_learners' => $course_learners,
 					'updated' => $course->post_modified,
-					'action' => '<a href="' . add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '" class="button">' . __( 'Manage Learners', 'woothemes-sensei' ) . '</a>',
+					'action' => '<a href="' . add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '" class="button">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a>',
 			), $course->ID );
 		}
 	}

@@ -6,21 +6,11 @@ jQuery(document).ready( function($) {
 
 	 /**
 	 * exists checks if selector exists
-	 * @since  1.2.0
+	 * @since  1.6.0
 	 * @return boolean
 	 */
 	jQuery.fn.exists = function() {
 		return this.length>0;
-	}
-
-	jQuery.fn.getQueryVariable = function(variable) {
-	       var query = window.location.search.substring(1);
-	       var vars = query.split("&");
-	       for (var i=0;i<vars.length;i++) {
-               var pair = vars[i].split("=");
-               if(pair[0] == variable){return pair[1];}
-	       }
-	       return(false);
 	}
 
 	/***************************************************************************************************
@@ -37,7 +27,6 @@ jQuery(document).ready( function($) {
 
 	 	var dataToPost = 'course_cat=' + jQuery( this ).val();
 
-		// Perform the AJAX call to get the select box.
 		jQuery.post(
 			ajaxurl,
 			{
@@ -53,12 +42,37 @@ jQuery(document).ready( function($) {
 		);
 	});
 
+	jQuery( '.remove-learner' ).click( function() {
+		var dataToPost = '';
+
+		var user_id = jQuery( this ).attr( 'data-user_id' );
+		var post_id = jQuery( this ).attr( 'data-post_id' );
+		var post_type = jQuery( this ).attr( 'data-post_type' );
+
+		if( user_id && post_id && post_type ) {
+
+			dataToPost += 'user_id=' + user_id;
+			dataToPost += '&post_id=' + post_id;
+			dataToPost += '&post_type=' + post_type;
+
+			jQuery.post(
+				ajaxurl,
+				{
+					action : 'remove_user_from_post',
+					data : dataToPost
+				},
+				function( response ) {
+					alert( response );
+				}
+			);
+		}
+	});
+
 	/***************************************************************************************************
 	 * 	3 - Load Chosen Dropdowns.
 	 ***************************************************************************************************/
 
-	// Grading Overview Drop Downs
+	// Learner Management Drop Downs
 	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).chosen(); }
-
 
 });

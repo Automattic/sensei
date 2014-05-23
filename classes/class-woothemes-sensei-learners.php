@@ -63,6 +63,9 @@ class WooThemes_Sensei_Learners {
 		add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 		add_action( 'wp_ajax_nopriv_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 
+		add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
+		add_action( 'wp_ajax_nopriv_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
+
 	} // End __construct()
 
 	/**
@@ -234,10 +237,11 @@ class WooThemes_Sensei_Learners {
 	} // End learners_default_nav()
 
 	public function get_redirect_url() {
+
 		// Parse POST data
 		$data = $_POST['data'];
 		$course_data = array();
-		parse_str($data, $course_data);
+		parse_str( $data, $course_data );
 
 		$course_cat = intval( $course_data['course_cat'] );
 
@@ -245,6 +249,18 @@ class WooThemes_Sensei_Learners {
 
 		echo $redirect_url;
 		die();
+	}
+
+	public function remove_user_from_post() {
+
+		// Parse POST data
+		$data = $_POST['data'];
+		$action_data = array();
+		parse_str( $data, $action_data );
+
+		// echo '<pre>';print_r( $action_data );echo '</pre>';
+
+		die('');
 	}
 
 } // End Class
