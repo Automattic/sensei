@@ -99,6 +99,15 @@ class WooThemes_Sensei_Learners {
 		// Load Learners JS
 		wp_enqueue_script( 'sensei-learners-general', $woothemes_sensei->plugin_url . 'assets/js/learners-general' . $suffix . '.js', array( 'jquery' ), '1.6.0' );
 
+		$data = array(
+			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
+			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
+			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
+			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
+		);
+
+		wp_localize_script( 'sensei-learners-general', 'woo_localized_data', $data );
+
 	} // End enqueue_scripts()
 
 	/**
@@ -252,15 +261,51 @@ class WooThemes_Sensei_Learners {
 	}
 
 	public function remove_user_from_post() {
+		global $woothemes_sensei;
+
+		$return = '';
+
+		// Security check
+		$nonce = '';
+		if ( isset($_POST['remove_user_from_post_nonce']) ) {
+			$nonce = esc_html( $_POST['remove_user_from_post_nonce'] );
+		}
+		if ( ! wp_verify_nonce( $nonce, 'remove_user_from_post_nonce' ) ) {
+			die( $return );
+		}
 
 		// Parse POST data
 		$data = $_POST['data'];
 		$action_data = array();
 		parse_str( $data, $action_data );
 
-		// echo '<pre>';print_r( $action_data );echo '</pre>';
+		if( $action_data['user_id'] && $action_data['post_id'] && $action_data['post_type'] ) {
 
-		die('');
+			$user_id = $action_data['user_id'];
+			$post_id = $action_data['post_id'];
+			$post_type = $action_data['post_type'];
+
+			$user = get_userdata( $user_id );
+
+			switch( $post_type ) {
+
+				case 'course':
+					$removed = WooThemes_Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
+				break;
+
+				case 'lesson':
+					$removed = WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
+				break;
+
+			}
+
+			if( $removed ) {
+				$return = 'removed';
+			}
+
+		}
+
+		die( $return );
 	}
 
 } // End Class

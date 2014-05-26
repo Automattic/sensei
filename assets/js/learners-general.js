@@ -49,6 +49,21 @@ jQuery(document).ready( function($) {
 		var post_id = jQuery( this ).attr( 'data-post_id' );
 		var post_type = jQuery( this ).attr( 'data-post_type' );
 
+		var confirm_message = woo_localized_data.remove_generic_confirm;
+
+		switch( post_type ) {
+			case 'lesson': confirm_message = woo_localized_data.remove_from_lesson_confirm; break;
+			case 'course': confirm_message = woo_localized_data.remove_from_course_confirm; break;
+		}
+
+		var confirm_remove = confirm( confirm_message );
+
+		if( ! confirm_remove ) return;
+
+		var table_row = jQuery( this ).closest( 'tr' );
+
+		table_row.fadeTo( 'fast', 0.33 );
+
 		if( user_id && post_id && post_type ) {
 
 			dataToPost += 'user_id=' + user_id;
@@ -59,10 +74,13 @@ jQuery(document).ready( function($) {
 				ajaxurl,
 				{
 					action : 'remove_user_from_post',
+					remove_user_from_post_nonce : woo_localized_data.remove_user_from_post_nonce,
 					data : dataToPost
 				},
 				function( response ) {
-					alert( response );
+					if( response ) {
+						table_row.remove();
+					}
 				}
 			);
 		}

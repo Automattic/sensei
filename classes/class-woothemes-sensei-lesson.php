@@ -1139,6 +1139,8 @@ class WooThemes_Sensei_Lesson {
 
 	public function quiz_panel_add_existing_question( $question_id = 0, $row = 1 ) {
 
+		$html = '';
+
 		if( ! $question_id ) return;
 
 		$existing_class = '';
@@ -2240,7 +2242,6 @@ class WooThemes_Sensei_Lesson {
 	 */
 	public function lesson_quizzes( $lesson_id = 0, $post_status = 'publish' ) {
 
-		// V2 - refactor into post types class for further use
 		$posts_array = array();
 
 		$post_args = array(	'post_type' 		=> 'quiz',
