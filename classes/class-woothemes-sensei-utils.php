@@ -646,21 +646,27 @@ class WooThemes_Sensei_Utils {
 		return $activity_logged;
 	}
 
-	public function sensei_delete_question_grade( $question_id = 0 ) {
-		global $current_user;
+	public function sensei_delete_question_grade( $question_id = 0, $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			wp_get_current_user();
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
 
 		$activity_logged = false;
 		if( intval( $question_id ) > 0 ) {
 
 			$args = array(
 							    'post_id' => $question_id,
-							    'username' => $current_user->user_login,
-							    'user_email' => $current_user->user_email,
-							    'user_url' => $current_user->user_url,
+							    'username' => $user->user_login,
+							    'user_email' => $user->user_email,
+							    'user_url' => $user->user_url,
 							    'data' => '',
 							    'type' => 'sensei_user_grade', /* FIELD SIZE 20 */
 							    'parent' => 0,
-							    'user_id' => $current_user->ID,
+							    'user_id' => $user->ID,
 							    'action' => 'update'
 							);
 
@@ -675,9 +681,10 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $lesson_id ID of lesson
 	 * @return boolean
 	 */
-	public function sensei_start_lesson( $lesson_id = 0, $user_id = 0 ) {
+	public function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
+			wp_get_current_user();
 			$user_id = $current_user->ID;
 			$user = $current_user;
 		} else {
@@ -701,9 +708,116 @@ class WooThemes_Sensei_Utils {
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 
 			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
+
+			if( $complete ) {
+				$args = array(
+                                    'post_id' => $lesson_id,
+                                    'username' => $user->user_login,
+                                    'user_email' => $user->user_email,
+                                    'user_url' => $user->user_url,
+                                    'data' => __( 'Lesson completed and passed by the user', 'woothemes-sensei' ),
+                                    'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
+                                    'parent' => 0,
+                                    'user_id' => $user_id
+                                );
+                $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+                do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+            }
 		}
 
 		return $activity_logged;
+	}
+
+	public function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0 ) {
+
+		if( ! $lesson_id ) return false;
+
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			wp_get_current_user();
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
+
+		// Process all quizzes
+		$quizzes = WooThemes_Sensei_Lesson::lesson_quizzes( $lesson_id );
+		foreach( $quizzes as $quiz ) {
+
+			// Delete quiz answers
+			WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz->ID, $user->ID );
+
+			// Delete quiz grade
+			WooThemes_Sensei_Utils::sensei_delete_quiz_grade( $quiz->ID, $user->ID );
+
+			// Delete all question grades
+			$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz->ID );
+			foreach( $questions as $question ) {
+				WooThemes_Sensei_Utils::sensei_delete_question_grade( $question->ID, $user->ID );
+			}
+		}
+
+		// Delete lesson activities
+		$activities = array( 'sensei_lesson_start', 'sensei_lesson_end' );
+		foreach( $activities as $activity ) {
+
+			$args = array(
+			    'post_id' => $lesson_id,
+			    'username' => $user->user_login,
+			    'user_email' => $user->user_email,
+			    'user_url' => $user->user_url,
+			    'data' => '',
+			    'type' => $activity,
+			    'parent' => 0,
+			    'user_id' => $user->ID,
+			    'action' => 'update'
+			);
+
+			WooThemes_Sensei_Utils::sensei_delete_activities( $args );
+		}
+
+		return true;
+	}
+
+	public function sensei_remove_user_from_course( $course_id = 0, $user_id = 0 ) {
+
+		if( ! $course_id ) return false;
+
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			wp_get_current_user();
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
+
+		$lessons = WooThemes_Sensei_Course::course_lessons( $course_id );
+
+		foreach( $lessons as $lesson ) {
+			WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $lesson->ID, $user->ID );
+		}
+
+		// Delete course activities
+		$activities = array( 'sensei_course_start' );
+		foreach( $activities as $activity ) {
+
+			$args = array(
+			    'post_id' => $course_id,
+			    'username' => $user->user_login,
+			    'user_email' => $user->user_email,
+			    'user_url' => $user->user_url,
+			    'data' => '',
+			    'type' => $activity,
+			    'parent' => 0,
+			    'user_id' => $user->ID,
+			    'action' => 'update'
+			);
+
+			WooThemes_Sensei_Utils::sensei_delete_activities( $args );
+		}
+
+		return true;
 	}
 
 	public function sensei_get_quiz_questions( $quiz_id = 0 ) {
@@ -755,6 +869,7 @@ class WooThemes_Sensei_Utils {
 	public function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
+			wp_get_current_user();
 			$user_id = $current_user->ID;
 		}
 
@@ -764,6 +879,21 @@ class WooThemes_Sensei_Utils {
 			foreach( $questions as $question ) {
 				$delete_answers = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $question->ID, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ) );
 			}
+		}
+
+		return $delete_answers;
+	}
+
+	public function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			global $current_user;
+			wp_get_current_user();
+			$user_id = $current_user->ID;
+		}
+
+		$delete_answers = false;
+		if( intval( $quiz_id ) > 0 ) {
+			$delete_answers = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade' ) );
 		}
 
 		return $delete_answers;
@@ -1222,7 +1352,7 @@ class WooThemes_Sensei_Utils {
 				$user = get_userdata( $user_id );
 			}
 
-			$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $course_id );
+			$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $course_id );
 		    $lessons_completed = 0;
 		    foreach ( $course_lessons as $lesson ){
 		    	$single_lesson_complete = false;

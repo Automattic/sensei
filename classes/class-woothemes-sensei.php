@@ -107,26 +107,38 @@ class WooThemes_Sensei {
 		$this->course_results->token = $this->token;
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
+
 			// Load Admin Class
 			$this->load_class( 'admin' );
 			$this->admin = new WooThemes_Sensei_Admin( $file );
 			$this->admin->token = $this->token;
+
 			// Load Analysis Reports
 			$this->load_class( 'analysis' );
 			$this->analysis = new WooThemes_Sensei_Analysis( $file );
 			$this->analysis->token = $this->token;
+
 			// Load Grading Functionality
 			$this->load_class( 'grading' );
 			$this->grading = new WooThemes_Sensei_Grading( $file );
 			$this->grading->token = $this->token;
+
+			// Load Learner Management Functionality
+			$this->load_class( 'learners' );
+			$this->learners = new WooThemes_Sensei_Learners( $file );
+			$this->learners->token = $this->token;
+
 		} else {
+
 			// Load Frontend Class
 			$this->load_class( 'frontend' );
 			$this->frontend = new WooThemes_Sensei_Frontend();
 			$this->frontend->token = $this->token;
 			$this->frontend->init();
+
 			// Frontend Hooks
 			add_filter( 'template_include', array( $this, 'template_loader' ) );
+
 		}
 		// Image Sizes
 		$this->init_image_sizes();
