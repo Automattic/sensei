@@ -681,9 +681,10 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $lesson_id ID of lesson
 	 * @return boolean
 	 */
-	public function sensei_start_lesson( $lesson_id = 0, $user_id = 0 ) {
+	public function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
+			wp_get_current_user();
 			$user_id = $current_user->ID;
 			$user = $current_user;
 		} else {
@@ -707,6 +708,22 @@ class WooThemes_Sensei_Utils {
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 
 			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
+
+			if( $complete ) {
+				$args = array(
+                                    'post_id' => $lesson_id,
+                                    'username' => $user->user_login,
+                                    'user_email' => $user->user_email,
+                                    'user_url' => $user->user_url,
+                                    'data' => __( 'Lesson completed and passed by the user', 'woothemes-sensei' ),
+                                    'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
+                                    'parent' => 0,
+                                    'user_id' => $user_id
+                                );
+                $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+                do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+            }
 		}
 
 		return $activity_logged;

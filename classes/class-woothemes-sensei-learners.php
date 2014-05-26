@@ -58,6 +58,10 @@ class WooThemes_Sensei_Learners {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
+
+			add_action( 'admin_init', array( $this, 'add_new_learners' ) );
+
+			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
 		} // End If Statement
 
 		add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
@@ -65,6 +69,9 @@ class WooThemes_Sensei_Learners {
 
 		add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
 		add_action( 'wp_ajax_nopriv_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
+
+		add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
+		add_action( 'wp_ajax_nopriv_sensei_json_search_users', array( $this, 'json_search_users' ) );
 
 	} // End __construct()
 
@@ -193,15 +200,20 @@ class WooThemes_Sensei_Learners {
 		if( isset( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
 		}
-		$sensei_learners_overview = $this->load_data_object( 'Main', $course_id, $lesson_id );
+		$sensei_learners_main = $this->load_data_object( 'Main', $course_id, $lesson_id );
 		// Wrappers
 		do_action( 'learners_before_container' );
 		do_action( 'learners_wrapper_container', 'top' );
 		$this->learners_headers();
 		?><div id="poststuff" class="sensei-learners-wrap">
 				<div class="sensei-learners-main">
-					<?php $sensei_learners_overview->display(); ?>
+					<?php $sensei_learners_main->display(); ?>
 				</div>
+				<?php if( isset( $_GET['view'] ) && 'learners' == $_GET['view'] ) { ?>
+				<div class="sensei-learners-extra">
+					<?php $sensei_learners_main->add_learners_box(); ?>
+				</div>
+				<?php } ?>
 			</div>
 		<?php
 		do_action( 'learners_wrapper_container', 'bottom' );
@@ -306,6 +318,112 @@ class WooThemes_Sensei_Learners {
 		}
 
 		die( $return );
+	}
+
+	public function json_search_users() {
+
+		check_ajax_referer( 'search-users', 'security' );
+
+		$term = wc_clean( stripslashes( $_GET['term'] ) );
+
+		if ( empty( $term ) ) {
+			die();
+		}
+
+		$default = isset( $_GET['default'] ) ? $_GET['default'] : __( 'None', 'woocommerce' );
+
+		$found_users = array( '' => $default );
+
+		$users_query = new WP_User_Query( apply_filters( 'sensei_json_search_users_query', array(
+			'fields'         => 'all',
+			'orderby'        => 'display_name',
+			'search'         => '*' . $term . '*',
+			'search_columns' => array( 'ID', 'user_login', 'user_email', 'user_nicename' )
+		) ) );
+
+		$users = $users_query->get_results();
+
+		if ( $users ) {
+			foreach ( $users as $user ) {
+				$found_users[ $user->ID ] = $user->display_name . ' (#' . $user->ID . ' &ndash; ' . sanitize_email( $user->user_email ) . ')';
+			}
+		}
+
+		wp_send_json( $found_users );
+	}
+
+	public function add_new_learners() {
+
+		$result = false;
+
+		if( ! isset( $_POST['add_learner_submit'] ) ) return $result;
+
+		if ( ! isset( $_POST['add_learner_nonce'] ) || ! wp_verify_nonce( $_POST['add_learner_nonce'], 'add_learner_to_sensei' ) ) return $result;
+
+		if( ( ! isset( $_POST['add_user_id'] ) || '' ==  $_POST['add_user_id'] ) || ! isset( $_POST['add_post_type'] ) || ! isset( $_POST['add_course_id'] ) || ! isset( $_POST['add_lesson_id'] ) ) return $result;
+
+		$user_id = $_POST['add_user_id'];
+		$post_type = $_POST['add_post_type'];
+		$course_id = $_POST['add_course_id'];
+		$lesson_id = $_POST['add_lesson_id'];
+
+		switch( $post_type ) {
+			case 'course':
+				$result = WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+			break;
+
+			case 'lesson':
+				$complete = false;
+				if( isset( $_POST['add_complete_lesson'] ) && 'yes' == $_POST['add_complete_lesson'] ) {
+					$complete = true;
+				}
+				$result = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $complete );
+			break;
+		}
+
+		$query_args = array( 'page' => $this->page_slug, 'view' => 'learners' );
+
+		if( $result ) {
+
+			if( $course_id ) {
+				$query_args['course_id'] = $course_id;
+			}
+
+			if( $lesson_id ) {
+				$query_args['lesson_id'] = $lesson_id;
+			}
+
+			$query_args['message'] = 'success';
+
+		} else {
+			$query_args['message'] = 'error';
+		}
+
+		$redirect_url = add_query_arg( $query_args, admin_url( 'admin.php' ) );
+
+		wp_safe_redirect( $redirect_url );
+		exit;
+	}
+
+	public function add_learner_notices() {
+		if( isset( $_GET['message'] ) && $_GET['message'] ) {
+			if( 'success' == $_GET['message'] ) {
+				$msg = array(
+					'updated',
+					__( 'Learner added successfully!', 'woothemes-sensei' ),
+				);
+			} else {
+				$msg = array(
+					'error',
+					__( 'Error adding learner.', 'woothemes-sensei' ),
+				);
+			}
+			?>
+		    <div class="<?php echo $msg[0]; ?>">
+		        <p><?php echo $msg[1]; ?></p>
+		    </div>
+		    <?php
+		}
 	}
 
 } // End Class

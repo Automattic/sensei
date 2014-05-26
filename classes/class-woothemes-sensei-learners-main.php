@@ -475,6 +475,80 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		// Nothing right now
 	} // End data_table_footer()
 
+	public function add_learners_box() {
+
+		$post_type = '';
+		$post_title = '';
+		$form_post_type = '';
+		$form_course_id = 0;
+		$form_lesson_id = 0;
+		if( $this->course_id && ! $this->lesson_id ) {
+			$post_title = get_the_title( $this->course_id );
+			$post_type = __( 'Course', 'woothemes-sensei' );
+			$form_post_type = 'course';
+			$form_course_id = $this->course_id;
+		} elseif( $this->course_id && $this->lesson_id ) {
+			$post_title = get_the_title( $this->lesson_id );
+			$post_type = __( 'Lesson', 'woothemes-sensei' );
+			$form_post_type = 'lesson';
+			$form_course_id = $this->course_id;
+			$form_lesson_id = $this->lesson_id;
+		}
+
+		?>
+		<div class="postbox">
+			<h3><span><?php printf( __( 'Add Learner to %1$s', 'woothemes-sensei' ), $post_type ); ?></span></h3>
+			<div class="inside">
+				<form name="add_learner" action="" method="post">
+					<p>
+						<select name="add_user_id" id="add_learner_search">
+							<option value=""><?php _e( 'Select learner', 'woothemes-sensei' ); ?></option>
+						</select>
+						<?php
+						if( 'lesson' == $form_post_type ) {
+							?>
+							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson" checked="checked" value="yes" /> <?php _e( 'Complete lesson for learner', 'woothemes-sensei' ); ?></label>
+							<?php
+						}
+						?>
+					</p>
+					<p><?php submit_button( sprintf( __( 'Add to \'%1$s\'', 'woothemes-sensei' ), $post_title ), 'primary', 'add_learner_submit', false, array() ); ?></p>
+
+					<input type="hidden" name="add_post_type" value="<?php echo $form_post_type; ?>" />
+					<input type="hidden" name="add_course_id" value="<?php echo $form_course_id; ?>" />
+					<input type="hidden" name="add_lesson_id" value="<?php echo $form_lesson_id; ?>" />
+					<?php echo wp_nonce_field( 'add_learner_to_sensei', 'add_learner_nonce' ); ?>
+
+				</form>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+	        jQuery('select#add_learner_search').ajaxChosen({
+			    method: 		'GET',
+			    url: 			'<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
+			    dataType: 		'json',
+			    afterTypeDelay: 100,
+			    minTermLength: 	1,
+			    data:		{
+			    	action: 	'sensei_json_search_users',
+					security: 	'<?php echo esc_js( wp_create_nonce( "search-users" ) ); ?>',
+					default: 	''
+			    }
+			}, function (data) {
+
+				var users = {};
+
+			    jQuery.each(data, function (i, val) {
+			        users[i] = val;
+			    });
+
+			    return users;
+			});
+		</script>
+		<?php
+	}
+
 	public function search_button( $text = '' ) {
 
 		switch( $this->view ) {
