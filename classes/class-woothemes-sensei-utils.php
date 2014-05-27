@@ -694,6 +694,15 @@ class WooThemes_Sensei_Utils {
 		$activity_logged = false;
 
 		if( intval( $lesson_id ) > 0 ) {
+
+			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			if( $course_id ) {
+				$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $user->ID, 'type' => 'sensei_course_start' ) );
+				if( ! $is_user_taking_course ) {
+					WooThemes_Sensei_Utils::user_start_course( $user->ID, $course_id );
+				}
+			}
+
 			$args = array(
 							    'post_id' => $lesson_id,
 							    'username' => $user->user_login,

@@ -369,18 +369,32 @@ class WooThemes_Sensei_Learners {
 
 		switch( $post_type ) {
 			case 'course':
+
 				$result = WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+
+				// Complete each lesson if course is set to be completed
+				if( isset( $_POST['add_complete_course'] ) && 'yes' == $_POST['add_complete_course'] ) {
+					$lessons = WooThemes_Sensei_Course::course_lessons( $course_id );
+					foreach( $lessons as $lesson ) {
+						WooThemes_Sensei_Utils::sensei_start_lesson( $lesson->ID, $user_id, true );
+					}
+				}
+
 			break;
 
 			case 'lesson':
+
 				$complete = false;
 				if( isset( $_POST['add_complete_lesson'] ) && 'yes' == $_POST['add_complete_lesson'] ) {
 					$complete = true;
 				}
+
 				$result = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $complete );
+
 			break;
 		}
 
+		// Set redirect URL after adding user to course/lesson
 		$query_args = array( 'page' => $this->page_slug, 'view' => 'learners' );
 
 		if( $result ) {
