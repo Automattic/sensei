@@ -358,7 +358,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  string $input_name Name for textarea form element
 	 * @return void
 	 */
-	public function sensei_text_editor( $content = '', $editor_id = 'senseitexteditor', $input_name = '' ) {
+	public static function sensei_text_editor( $content = '', $editor_id = 'senseitexteditor', $input_name = '' ) {
 
 		if( ! $input_name ) $input_name = $editor_id;
 
@@ -387,7 +387,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  boolean $submitted User's quiz answers
 	 * @return boolean            Whether the answers were saved or not
 	 */
-	public function sensei_save_quiz_answers( $submitted = false, $user_id = 0 ) {
+	public static function sensei_save_quiz_answers( $submitted = false, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			$user_id = $current_user->ID;
@@ -464,7 +464,7 @@ class WooThemes_Sensei_Utils {
     	return $answers_saved;
 	} // End sensei_save_quiz_answers()
 
-	public function upload_file( $file = array() ) {
+	public static function upload_file( $file = array() ) {
 
 		require_once( ABSPATH . 'wp-admin/includes/admin.php' );
 
@@ -506,7 +506,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $total_questions Total questions in quiz
 	 * @return boolean                  Whether quiz was successfully graded or not
 	 */
-	public function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = false, $total_questions = 0, $quiz_grade_type = 'auto' ) {
+	public static function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = false, $total_questions = 0, $quiz_grade_type = 'auto' ) {
 		global $current_user;
 
 		$grade = 0;
@@ -541,7 +541,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $user_id ID of user being graded
 	 * @return boolean
 	 */
-	public function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0 ) {
+	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			$user_id = $current_user->ID;
@@ -580,7 +580,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  string  $answer      User's answer
 	 * @return integer              User's grade for question
 	 */
-	public function sensei_grade_question_auto( $question_id = 0, $answer = '', $user_id = 0 ) {
+	public static function sensei_grade_question_auto( $question_id = 0, $answer = '', $user_id = 0 ) {
         if( intval( $user_id ) == 0 ) {
             global $current_user;
             $user_id = $current_user->ID;
@@ -614,7 +614,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $grade       Grade received
 	 * @return boolean
 	 */
-	public function sensei_grade_question( $question_id = 0, $grade = 0, $user_id = 0 ) {
+	public static function sensei_grade_question( $question_id = 0, $grade = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			$user_id = $current_user->ID;
@@ -646,7 +646,7 @@ class WooThemes_Sensei_Utils {
 		return $activity_logged;
 	}
 
-	public function sensei_delete_question_grade( $question_id = 0, $user_id = 0 ) {
+	public static function sensei_delete_question_grade( $question_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			wp_get_current_user();
@@ -681,7 +681,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $lesson_id ID of lesson
 	 * @return boolean
 	 */
-	public function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false ) {
+	public static function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			wp_get_current_user();
@@ -729,7 +729,7 @@ class WooThemes_Sensei_Utils {
 		return $activity_logged;
 	}
 
-	public function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0 ) {
+	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0 ) {
 
 		if( ! $lesson_id ) return false;
 
@@ -780,7 +780,7 @@ class WooThemes_Sensei_Utils {
 		return true;
 	}
 
-	public function sensei_remove_user_from_course( $course_id = 0, $user_id = 0 ) {
+	public static function sensei_remove_user_from_course( $course_id = 0, $user_id = 0 ) {
 
 		if( ! $course_id ) return false;
 
@@ -820,7 +820,7 @@ class WooThemes_Sensei_Utils {
 		return true;
 	}
 
-	public function sensei_get_quiz_questions( $quiz_id = 0 ) {
+	public static function sensei_get_quiz_questions( $quiz_id = 0 ) {
 		global $woothemes_sensei;
 
 		$questions = array();
@@ -833,7 +833,7 @@ class WooThemes_Sensei_Utils {
 		return $questions;
 	}
 
-	public function sensei_get_quiz_total( $quiz_id = 0 ) {
+	public static function sensei_get_quiz_total( $quiz_id = 0 ) {
 
 		$quiz_total = 0;
 
@@ -852,7 +852,7 @@ class WooThemes_Sensei_Utils {
 		return $quiz_total;
 	}
 
-	public function sensei_get_user_question_grade( $question_id = 0, $user_id = 0 ) {
+	public static function sensei_get_user_question_grade( $question_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			$user_id = $current_user->ID;
@@ -866,7 +866,7 @@ class WooThemes_Sensei_Utils {
 		return $question_grade;
 	}
 
-	public function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ) {
+	public static function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			wp_get_current_user();
@@ -884,7 +884,7 @@ class WooThemes_Sensei_Utils {
 		return $delete_answers;
 	}
 
-	public function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ) {
+	public static function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			wp_get_current_user();
@@ -905,7 +905,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $user_id     ID of user
 	 * @return boolean
 	 */
-	public function sensei_add_answer_notes( $question_id = 0, $user_id = 0, $notes = '' ) {
+	public static function sensei_add_answer_notes( $question_id = 0, $user_id = 0, $notes = '' ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			$user_id = $current_user->ID;
@@ -942,7 +942,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  array $return_array data to be ordered
 	 * @return array $return_array ordered data
 	 */
-	public function array_sort_reorder( $return_array ) {
+	public static function array_sort_reorder( $return_array ) {
 		if ( isset( $_GET['orderby'] ) && '' != esc_html( $_GET['orderby'] ) ) {
 			$sort_key = '';
 			// if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->sortable_columns ) ) {
@@ -967,7 +967,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  $key string column name in array
 	 * @return void
 	 */
-	public function sort_array_by_key( $array, $key ) {
+	public static function sort_array_by_key( $array, $key ) {
 	    $sorter = array();
 	    $ret = array();
 	    reset( $array );
@@ -987,7 +987,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $quiz_id
 	 * @return array of quiz questions
 	 */
-	public function lesson_quiz_questions( $quiz_id = 0 ) {
+	public static function lesson_quiz_questions( $quiz_id = 0 ) {
 		$questions_array = array();
 		if ( 0 < $quiz_id ) {
 			$question_args = array( 'post_type'         => 'question',
@@ -1013,7 +1013,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $course_id ID of course
 	 * @return integer            Pass mark for course
 	 */
-	public function sensei_course_pass_grade( $course_id = 0 ) {
+	public static function sensei_course_pass_grade( $course_id = 0 ) {
 		global $woothemes_sensei;
 
 		$course_passmark = 0;
@@ -1051,7 +1051,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $user_id   ID of user
 	 * @return integer            User's total grade
 	 */
-	public function sensei_course_user_grade( $course_id = 0, $user_id = 0 ) {
+	public static function sensei_course_user_grade( $course_id = 0, $user_id = 0 ) {
 		global $current_user, $woothemes_sensei;
 
 		if( intval( $user_id ) == 0 ) {
@@ -1093,7 +1093,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $user_id   ID of user
 	 * @return boolean
 	 */
-	public function sensei_user_passed_course( $course_id = 0, $user_id = 0 ) {
+	public static function sensei_user_passed_course( $course_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			$user_id = $current_user->ID;
@@ -1119,7 +1119,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $user_id   ID of user
 	 * @return array              Status code and message
 	 */
-	public function sensei_user_course_status_message( $course_id = 0, $user_id = 0 ) {
+	public static function sensei_user_course_status_message( $course_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			$user_id = $current_user->ID;
@@ -1309,7 +1309,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $course_id Course ID
 	 * @return void
 	 */
-	public function user_start_course( $user_id = 0, $course_id = 0 ) {
+	public static function user_start_course( $user_id = 0, $course_id = 0 ) {
 
 		if( $user_id && $course_id ) {
 
@@ -1339,7 +1339,7 @@ class WooThemes_Sensei_Utils {
 		return false;
 	}
 
-	public function user_completed_course( $course_id = 0, $user_id = 0 ) {
+	public static function user_completed_course( $course_id = 0, $user_id = 0 ) {
 		global $woothemes_sensei;
 
 		if( $course_id ) {
@@ -1392,7 +1392,7 @@ class WooThemes_Sensei_Utils {
 		return false;
 	}
 
-	public function user_completed_lesson( $lesson_id = 0, $user_id = 0 ) {
+	public static function user_completed_lesson( $lesson_id = 0, $user_id = 0 ) {
 		global $woothemes_sensei;
 
 		if( $lesson_id ) {

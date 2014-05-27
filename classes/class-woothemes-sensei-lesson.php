@@ -1301,7 +1301,7 @@ class WooThemes_Sensei_Lesson {
 				    	if( $question_id && count( $answer_order ) > 0 ) {
 				    		$answers_sorted = array();
 				    		foreach( $answer_order as $answer_id ) {
-				    			if( $answers[ $answer_id ] ) {
+				    			if( isset( $answers[ $answer_id ] ) ) {
 				    				$answers_sorted[ $answer_id ] = $answers[ $answer_id ];
 				    				unset( $answers[ $answer_id ] );
 				    			}
