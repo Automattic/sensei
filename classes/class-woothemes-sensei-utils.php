@@ -1433,23 +1433,28 @@ class WooThemes_Sensei_Utils {
 
 			$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
 			if ( '' != $user_lesson_end ) {
+
 				//Check for Passed or Completed Setting
-                $course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
-                if ( 'passed' == $course_completion ) {
+                $lesson_completion = $woothemes_sensei->settings->settings['lesson_completion'];
+
+                if ( 'passed' == $lesson_completion ) {
                     // If Setting is Passed -> Check for Quiz Grades
                     $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
                     // Get Quiz ID
                     if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
                         foreach ($lesson_quizzes as $quiz_item) {
                             $lesson_quiz_id = $quiz_item->ID;
+                            break;
                         } // End For Loop
                         // Quiz Grade
-                        $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
-                        // Check if Grade is bigger than pass percentage
-                        $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
-                        if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
-                            return true;
-                        } // End If Statement
+                        $lesson_grade =  intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
+                        if( $lesson_grade ) {
+	                        // Check if Grade is bigger than pass percentage
+	                        $lesson_passmark = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
+	                        if ( $lesson_passmark <= intval( $lesson_grade ) ) {
+	                            return true;
+	                        } // End If Statement
+	                    }
                     } // End If Statement
                 } else {
                     return true;
