@@ -115,20 +115,31 @@ class WooThemes_Sensei_Lesson {
 	 * @return void
 	 */
 	public function meta_box_setup () {
+
 		// Add Meta Box for Prerequisite Lesson
 		add_meta_box( 'lesson-prerequisite', __( 'Lesson Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
+
 		// Add Meta Box for Lesson Course
 		add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
-		// Add Meta Box for Lesson Quiz information
+
+		// Add Meta Box for Lesson Information
 		add_meta_box( 'lesson-info', __( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
+
+		// Add Meta Box for Quiz Settings
+		add_meta_box( 'lesson-quiz-settings', __( 'Quiz Settings', 'woothemes-sensei' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
+
 		// Add Meta Box for Lesson Quiz Questions
 		add_meta_box( 'lesson-quiz', __( 'Lesson Quiz', 'woothemes-sensei' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
+
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
+
 		// Add JS scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
 		// Add CSS
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+
 	} // End meta_box_setup()
 
 
@@ -502,158 +513,160 @@ class WooThemes_Sensei_Lesson {
 
 		$html = '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 		$html .= '<div id="add-quiz-main">';
-		if ( 0 == $quiz_id ) {
-			$html .= '<p>';
-				// Default message and Add a Quiz button
-				$html .= esc_html( __( 'There is no quiz for this lesson yet. Please add one.', 'woothemes-sensei' ) );
-				$html .= '<button type="button" class="button button-highlighted add_quiz">' . esc_html( __( 'Add', 'woothemes-sensei' ) )  . '</button>';
-			$html .= '</p>';
-		}
-
-		$lesson_quiz_passmark = 0;
-		$quiz_grade_type_disabled = false;
-		$quiz_grade_type = 'auto';
-		if( $quiz_id ) {
-			$lesson_quiz_passmark = get_post_meta( $quiz_id, '_quiz_passmark', true );
-			$quiz_grade_type_disabled = get_post_meta( $quiz_id, '_quiz_grade_type_disabled', true );
-			if( $quiz_grade_type_disabled == 'disabled' ) {
-				$quiz_grade_type = 'manual';
-			} else {
-				$quiz_grade_type = get_post_meta( $quiz_id, '_quiz_grade_type', true );
-			}
-		}
-
-		$show_questions = intval( get_post_meta( $quiz_id, '_show_questions', true ) );
-		if( ! $show_questions || 0 == $show_questions ) {
-			$show_questions = '';
-		}
-
-		$random_question_order = get_post_meta( $quiz_id, '_random_question_order', true );
-		if( ! $random_question_order || '' == $random_question_order ) {
-			$random_question_order = 'no';
-		}
-
-		// Quiz Panel CSS Class
-		$quiz_class = '';
-		if ( 0 == $quiz_id ) {
-			$quiz_class = ' class="hidden"';
-		} // End If Statement
-		// Build the HTML to Output
-		$message_class = '';
-
-		// Setup Questions Query
-		$questions = array();
-		if ( 0 < $quiz_id ) {
-			$questions = $this->lesson_quiz_questions( $quiz_id );
-		} // End If Statement
-
-		$question_count = 0;
-		foreach( $questions as $question ) {
-
-			if( $question->post_type == 'multiple_question' ) {
-				$question_number = get_post_meta( $question->ID, 'number', true );
-				$question_count += $question_number;
-			} else {
-				++$question_count;
-			}
-
-		}
-
-		// Inner DIV
-		$html .= '<div id="add-quiz-metadata"' . $quiz_class . '>';
-
-			// Quiz Meta data
-			$html .= '<p>';
-
-				// Quiz ID
-				$html .= '<input type="hidden" name="quiz_id" id="quiz_id" value="' . esc_attr( $quiz_id ) . '" />';
-
-				// Quiz Pass Percentage
-				$html .= '<label for="quiz_passmark">' . __( 'Quiz passmark percentage' , 'woothemes-sensei' ) . '</label> ';
-				$html .= '<input type="number" min="0" max="100" id="quiz_passmark" name="quiz_passmark" value="' . esc_attr( $lesson_quiz_passmark ) . '" class="small-text" /> ';
-
-				// Number of questions to show
-				$html .= '<label for="show_questions">' . __( 'Number of questions to show' , 'woothemes-sensei' ) . '</label> ';
-				$html .= '<input type="number" min="0" max="' . $question_count . '" title="' . __( 'This setting will allow you to show a random selection of questions from this quiz each time a student views it.', 'woothemes-sensei' ) . '" id="show_questions" name="show_questions" value="' . esc_attr( $show_questions ) . '" placeholder="' . __( 'All', 'woothemes-sensei' ) . '" class="small-text" />';
-
-			// $html .= '<p>';
-			// $html .= '</p>';
-
-				// Quiz grade type
-				$html .= '<input type="hidden" id="quiz_grade_type_disabled" name="quiz_grade_type_disabled" value="' . esc_attr( $quiz_grade_type_disabled ) . '" /> ';
-				$html .= '<label class="grade-label" for="quiz_grade_type"><input type="checkbox" id="quiz_grade_type" name="quiz_grade_type"' . checked( $quiz_grade_type, 'auto', false ) . ' ' . disabled( $quiz_grade_type_disabled, 'disabled', false ) . ' /> ';
-				$html .= '' . __( 'Grade quiz automatically', 'woothemes-sensei' ) . '</label>';
-
-				// Random question order
-				$html .= '<label class="random-label" for="random_question_order"><input type="checkbox" id="random_question_order" name="random_question_order"' . checked( $random_question_order, 'yes', false ) . ' /> ';
-				$html .= '' . __( 'Randomise question order', 'woothemes-sensei' ) . '</label>';
-
-			$html .= '</p>';
-
-			// Default Message
 			if ( 0 == $quiz_id ) {
-				$html .= '<p class="save-note">';
-					$html .= esc_html( __( 'Please save your lesson in order to add questions to your quiz.', 'woothemes-sensei' ) );
+				$html .= '<p>';
+					// Default message and Add a Quiz button
+					$html .= esc_html( __( 'There is no quiz for this lesson yet. Please add one.', 'woothemes-sensei' ) );
+					$html .= '<button type="button" class="button button-highlighted add_quiz">' . esc_html( __( 'Add', 'woothemes-sensei' ) )  . '</button>';
 				$html .= '</p>';
+			}
+
+			$lesson_quiz_passmark = 0;
+			$quiz_grade_type_disabled = false;
+			$quiz_grade_type = 'auto';
+			if( $quiz_id ) {
+				$lesson_quiz_passmark = get_post_meta( $quiz_id, '_quiz_passmark', true );
+				$quiz_grade_type_disabled = get_post_meta( $quiz_id, '_quiz_grade_type_disabled', true );
+				if( $quiz_grade_type_disabled == 'disabled' ) {
+					$quiz_grade_type = 'manual';
+				} else {
+					$quiz_grade_type = get_post_meta( $quiz_id, '_quiz_grade_type', true );
+				}
+			}
+
+			$show_questions = intval( get_post_meta( $quiz_id, '_show_questions', true ) );
+			if( ! $show_questions || 0 == $show_questions ) {
+				$show_questions = '';
+			}
+
+			$random_question_order = get_post_meta( $quiz_id, '_random_question_order', true );
+			if( ! $random_question_order || '' == $random_question_order ) {
+				$random_question_order = 'no';
+			}
+
+			// Quiz Panel CSS Class
+			$quiz_class = '';
+			if ( 0 == $quiz_id ) {
+				$quiz_class = ' class="hidden"';
+			} // End If Statement
+			// Build the HTML to Output
+			$message_class = '';
+
+			// Setup Questions Query
+			$questions = array();
+			if ( 0 < $quiz_id ) {
+				$questions = $this->lesson_quiz_questions( $quiz_id );
 			} // End If Statement
 
-		$html .= '</div>';
+			$question_count = 0;
+			foreach( $questions as $question ) {
 
-		// Question Container DIV
-		$html .= '<div id="add-question-main"' . $quiz_class . '>';
+				if( $question->post_type == 'multiple_question' ) {
+					$question_number = get_post_meta( $question->ID, 'number', true );
+					$question_count += $question_number;
+				} else {
+					++$question_count;
+				}
+
+			}
+
 			// Inner DIV
-			$html .= '<div id="add-question-metadata">';
+			$html .= '<div id="add-quiz-metadata"' . $quiz_class . '>';
 
-				// Count of questions
-				$html .= '<input type="hidden" name="question_counter" id="question_counter" value="' . esc_attr( $question_count ) . '" />';
-				// Table headers
-				$html .= '<table class="widefat" id="sortable-questions">
-							<thead>
-							    <tr>
-							        <th class="question-count-column">#</th>
-							        <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
-							        <th style="width:45px;">' . __( 'Grade', 'woothemes-sensei' ) . '</th>
-							        <th style="width:125px;">' . __( 'Type', 'woothemes-sensei' ) . '</th>
-							        <th style="width:125px;">' . __( 'Action', 'woothemes-sensei' ) . '</th>
-							    </tr>
-							</thead>
-							<tfoot>
-							    <tr>
-								    <th class="question-count-column">#</th>
-								    <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
-								    <th>' . __( 'Grade', 'woothemes-sensei' ) . '</th>
-								    <th>' . __( 'Type', 'woothemes-sensei' ) . '</th>
-								    <th>' . __( 'Action', 'woothemes-sensei' ) . '</th>
-							    </tr>
-							</tfoot>';
+				// Quiz Meta data
+				$html .= '<p>';
 
-				$message_class = '';
-				if ( 0 < $question_count ) { $message_class = 'hidden'; }
+					// Quiz ID
+					$html .= '<input type="hidden" name="quiz_id" id="quiz_id" value="' . esc_attr( $quiz_id ) . '" />';
 
-				$html .= '<tbody id="no-questions-message" class="' . esc_attr( $message_class ) . '">';
-					$html .= '<tr>';
-						$html .= '<td colspan="5">' . __( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
-					$html .= '</tr>';
-				$html .= '</tbody>';
+					// Quiz Pass Percentage
+					$html .= '<label for="quiz_passmark">' . __( 'Quiz passmark percentage' , 'woothemes-sensei' ) . '</label> ';
+					$html .= '<input type="number" min="0" max="100" id="quiz_passmark" name="quiz_passmark" value="' . esc_attr( $lesson_quiz_passmark ) . '" class="small-text" /> ';
 
-				if( 0 < $question_count ) {
-					$html .= $this->quiz_panel_questions( $questions );
-				}
+					// Number of questions to show
+					$html .= '<label for="show_questions">' . __( 'Number of questions to show' , 'woothemes-sensei' ) . '</label> ';
+					$html .= '<input type="number" min="0" max="' . $question_count . '" title="' . __( 'This setting will allow you to show a random selection of questions from this quiz each time a student views it.', 'woothemes-sensei' ) . '" id="show_questions" name="show_questions" value="' . esc_attr( $show_questions ) . '" placeholder="' . __( 'All', 'woothemes-sensei' ) . '" class="small-text" />';
 
-				$html .= '</table>';
+				// $html .= '<p>';
+				// $html .= '</p>';
 
-				if( ! isset( $this->question_order ) ) {
-					$this->question_order = '';
-				}
+					// Quiz grade type
+					$html .= '<input type="hidden" id="quiz_grade_type_disabled" name="quiz_grade_type_disabled" value="' . esc_attr( $quiz_grade_type_disabled ) . '" /> ';
+					$html .= '<label class="grade-label" for="quiz_grade_type"><input type="checkbox" id="quiz_grade_type" name="quiz_grade_type"' . checked( $quiz_grade_type, 'auto', false ) . ' ' . disabled( $quiz_grade_type_disabled, 'disabled', false ) . ' /> ';
+					$html .= '' . __( 'Grade quiz automatically', 'woothemes-sensei' ) . '</label>';
 
-				$html .= '<input type="hidden" id="question-order" name="question-order" value="' . $this->question_order . '" />';
+					// Random question order
+					$html .= '<label class="random-label" for="random_question_order"><input type="checkbox" id="random_question_order" name="random_question_order"' . checked( $random_question_order, 'yes', false ) . ' /> ';
+					$html .= '' . __( 'Randomise question order', 'woothemes-sensei' ) . '</label>';
+
+				$html .= '</p>';
+
+				// Default Message
+				if ( 0 == $quiz_id ) {
+					$html .= '<p class="save-note">';
+						$html .= esc_html( __( 'Please save your lesson in order to add questions to your quiz.', 'woothemes-sensei' ) );
+					$html .= '</p>';
+				} // End If Statement
 
 			$html .= '</div>';
 
-			// Question Action Container DIV
-			$html .= '<div id="add-question-actions">';
+			// Question Container DIV
+			$html .= '<div id="add-question-main"' . $quiz_class . '>';
+				// Inner DIV
+				$html .= '<div id="add-question-metadata">';
 
-				$html .= $this->quiz_panel_add();
+					// Count of questions
+					$html .= '<input type="hidden" name="question_counter" id="question_counter" value="' . esc_attr( $question_count ) . '" />';
+					// Table headers
+					$html .= '<table class="widefat" id="sortable-questions">
+								<thead>
+								    <tr>
+								        <th class="question-count-column">#</th>
+								        <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
+								        <th style="width:45px;">' . __( 'Grade', 'woothemes-sensei' ) . '</th>
+								        <th style="width:125px;">' . __( 'Type', 'woothemes-sensei' ) . '</th>
+								        <th style="width:125px;">' . __( 'Action', 'woothemes-sensei' ) . '</th>
+								    </tr>
+								</thead>
+								<tfoot>
+								    <tr>
+									    <th class="question-count-column">#</th>
+									    <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
+									    <th>' . __( 'Grade', 'woothemes-sensei' ) . '</th>
+									    <th>' . __( 'Type', 'woothemes-sensei' ) . '</th>
+									    <th>' . __( 'Action', 'woothemes-sensei' ) . '</th>
+								    </tr>
+								</tfoot>';
+
+					$message_class = '';
+					if ( 0 < $question_count ) { $message_class = 'hidden'; }
+
+					$html .= '<tbody id="no-questions-message" class="' . esc_attr( $message_class ) . '">';
+						$html .= '<tr>';
+							$html .= '<td colspan="5">' . __( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
+						$html .= '</tr>';
+					$html .= '</tbody>';
+
+					if( 0 < $question_count ) {
+						$html .= $this->quiz_panel_questions( $questions );
+					}
+
+					$html .= '</table>';
+
+					if( ! isset( $this->question_order ) ) {
+						$this->question_order = '';
+					}
+
+					$html .= '<input type="hidden" id="question-order" name="question-order" value="' . $this->question_order . '" />';
+
+				$html .= '</div>';
+
+				// Question Action Container DIV
+				$html .= '<div id="add-question-actions">';
+
+					$html .= $this->quiz_panel_add();
+
+				$html .= '</div>';
 
 			$html .= '</div>';
 
@@ -1480,6 +1493,44 @@ class WooThemes_Sensei_Lesson {
 
 	} // End lesson_quiz_meta_box_content()
 
+	/**
+	 * Quiz settings metabox
+	 * @return void
+	 */
+	public function lesson_quiz_settings_meta_box_content() {
+		global $post;
+
+		$html = '';
+
+		// Get quiz panel
+		$quiz_id = 0;
+		$lesson_id = $post->ID;
+		$quizzes = array();
+		if ( 0 < $lesson_id ) {
+			$quizzes = $this->lesson_quizzes( $lesson_id, 'any' );
+		}
+
+		if ( $quizzes ) {
+			foreach ( $quizzes as $quiz ) {
+				$quiz_id = $quiz->ID;
+				break;
+			}
+		}
+
+		if( $quiz_id ) {
+			$html .= $this->quiz_settings_panel( $lesson_id, $quiz_id );
+		} else {
+			$html .= '<p><em>' . __( 'There is no quiz for this lesson yet - please add one in the \'Lesson Quiz\' box.', 'woothemes-sensei' ) . '</em></p>';
+		}
+
+		echo $html;
+	}
+
+	public function quiz_settings_panel( $lesson_id = 0, $quiz_id = 0 ) {
+
+		if( ! $lesson_id && ! $quiz_id ) return '';
+
+	}
 
 	/**
 	 * enqueue_scripts function.

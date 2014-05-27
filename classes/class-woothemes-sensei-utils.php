@@ -682,6 +682,8 @@ class WooThemes_Sensei_Utils {
 	 * @return boolean
 	 */
 	public static function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false ) {
+		global $woothemes_sensei;
+
 		if( intval( $user_id ) == 0 ) {
 			global $current_user;
 			wp_get_current_user();
@@ -733,7 +735,7 @@ class WooThemes_Sensei_Utils {
 
                 do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 
-                $quizzes = WooThemes_Sensei_Lesson::lesson_quizzes( $lesson_id );
+                $quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
 				foreach( $quizzes as $quiz ) {
 
 	                $quiz_args = array(
