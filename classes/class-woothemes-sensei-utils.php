@@ -729,9 +729,27 @@ class WooThemes_Sensei_Utils {
                                     'parent' => 0,
                                     'user_id' => $user_id
                                 );
-                $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+                WooThemes_Sensei_Utils::sensei_log_activity( $args );
 
                 do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+
+                $quizzes = WooThemes_Sensei_Lesson::lesson_quizzes( $lesson_id );
+				foreach( $quizzes as $quiz ) {
+
+	                $quiz_args = array(
+								    'post_id' => $quiz->ID,
+								    'username' => $user->user_login,
+								    'user_email' => $user->user_email,
+								    'user_url' => $user->user_url,
+								    'data' => 100,
+								    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
+								    'parent' => 0,
+								    'user_id' => $user_id,
+								    'action' => 'update'
+								);
+
+					WooThemes_Sensei_Utils::sensei_log_activity( $quiz_args );
+				}
             }
 		}
 
