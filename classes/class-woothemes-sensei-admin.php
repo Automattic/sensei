@@ -745,5 +745,152 @@ class WooThemes_Sensei_Admin {
 		}
 	}
 
+	public function render_settings( $settings = array(), $post_id = 0, $group_id = '' ) {
+
+		$html = '';
+
+		if( 0 == count( $settings ) ) return $html;
+
+		$html .= '<div class="sensei-options-panel">' . "\n";
+
+			$html .= '<div class="options_group" id="' . esc_attr( $group_id ) . '">' . "\n";
+
+				foreach( $settings as $field ) {
+
+					$data = '';
+
+					if( $post_id ) {
+						$data = get_post_meta( $post_id, '_' . $field['id'], true );
+						if( ! $data && isset( $field['default'] ) ) {
+							$data = $field['default'];
+						}
+					} else {
+						$option = get_option( $field['id'] );
+						if( isset( $field['default'] ) ) {
+							$data = $field['default'];
+							if( $option ) {
+								$data = $option;
+							}
+						}
+					}
+
+					$disabled = '';
+					if( isset( $field['disabled'] ) && $field['disabled'] ) {
+						$disabled = disabled( $field['disabled'], true, false );
+					}
+
+					if( 'hidden' != $field['type'] ) {
+						$html .= '<p class="form-field ' . esc_attr( $field['id'] ) . '">' . "\n";
+					}
+
+						if( ! in_array( $field['type'], array( 'hidden', 'checkbox_multi', 'radio' ) ) ) {
+							$html .= '<label for="' . esc_attr( $field['id'] ) . '">' . "\n";
+						}
+
+							if( $field['label'] ) {
+								$html .= '<span class="label">' . esc_html( $field['label'] ) . '</span>';
+							}
+
+							switch( $field['type'] ) {
+								case 'text':
+								case 'password':
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $data . '" ' . $disabled . ' />' . "\n";
+								break;
+
+								case 'number':
+
+									$min = '';
+									if( isset( $field['min'] ) && $field['min'] ) {
+										$min = 'min="' . esc_attr( $field['min'] ) . '"';
+									}
+
+									$max = '';
+									if( isset( $field['max'] ) && $field['max'] ) {
+										$max = 'max="' . esc_attr( $field['max'] ) . '"';
+									}
+
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $data . '" ' . $min . '  ' . $max . ' class="small-text" ' . $disabled . ' />' . "\n";
+								break;
+
+								case 'textarea':
+									$html .= '<textarea id="' . esc_attr( $field['id'] ) . '" rows="5" cols="50" name="' . esc_attr( $field['id'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" ' . $disabled . '>' . $data . '</textarea><br/>'. "\n";
+								break;
+
+								case 'checkbox':
+									$checked = checked( $field['checked'], $data, false );
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" ' . $checked . ' ' . $disabled . '/>' . "\n";
+								break;
+
+								case 'checkbox_multi':
+									foreach( $field['options'] as $k => $v ) {
+										$checked = false;
+										if( in_array( $k, $data ) ) {
+											$checked = true;
+										}
+										$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $field['id'] ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" ' . $disabled . ' /> ' . $v . '</label> ' . "\n";
+									}
+								break;
+
+								case 'radio':
+									foreach( $field['options'] as $k => $v ) {
+										$checked = false;
+										if( $k == $data ) {
+											$checked = true;
+										}
+										$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $field['id'] ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" ' . $disabled . ' /> ' . $v . '</label> ' . "\n";
+									}
+								break;
+
+								case 'select':
+									$html .= '<select name="' . esc_attr( $field['id'] ) . '" id="' . esc_attr( $field['id'] ) . '" ' . $disabled . '>' . "\n";
+									foreach( $field['options'] as $k => $v ) {
+										$selected = false;
+										if( $k == $data ) {
+											$selected = true;
+										}
+										$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>' . "\n";
+									}
+									$html .= '</select>' . "\n";
+								break;
+
+								case 'select_multi':
+									$html .= '<select name="' . esc_attr( $field['id'] ) . '[]" id="' . esc_attr( $field['id'] ) . '" multiple="multiple" ' . $disabled . '>' . "\n";
+									foreach( $field['options'] as $k => $v ) {
+										$selected = false;
+										if( in_array( $k, $data ) ) {
+											$selected = true;
+										}
+										$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '" />' . $v . '</option>' . "\n";
+									}
+									$html .= '</select> . "\n"';
+								break;
+
+								case 'hidden':
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" value="' . $data . '" ' . $disabled . '/>' . "\n";
+								break;
+
+							}
+
+							if( $field['description'] ) {
+								$html .= ' <span class="description">' . esc_html( $field['description'] ) . '</span>' . "\n";
+							}
+
+						if( ! in_array( $field['type'], array( 'hidden', 'checkbox_multi', 'radio' ) ) ) {
+							$html .= '</label>' . "\n";
+						}
+
+					if( 'hidden' != $field['type'] ) {
+						$html .= '</p>' . "\n";
+					}
+
+				}
+
+			$html .= '</div>' . "\n";
+
+		$html .= '</div>' . "\n";
+
+		return $html;
+	}
+
 } // End Class
 ?>

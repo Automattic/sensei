@@ -420,7 +420,7 @@ class WooThemes_Sensei_Learners {
 	}
 
 	public function add_learner_notices() {
-		if( $this->page_slug == $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
+		if( isset( $_GET['page'] ) && $this->page_slug == $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
 			if( 'success' == $_GET['message'] ) {
 				$msg = array(
 					'updated',

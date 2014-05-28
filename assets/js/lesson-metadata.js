@@ -1211,7 +1211,7 @@ jQuery(document).ready( function($) {
 		jQuery.fn.filterExistingQuestions( newPage );
 	});
 
-	jQuery( '#add-quiz-metadata' ).on( 'change', '#random_question_order', function() {
+	jQuery( '#quiz-settings' ).on( 'change', '#random_question_order', function() {
 		jQuery.fn.saveQuestionOrderRandom();
 	});
 
