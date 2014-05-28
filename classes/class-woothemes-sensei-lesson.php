@@ -283,33 +283,14 @@ class WooThemes_Sensei_Lesson {
 		$post_type = 'quiz';
 		$post_content = '';
 
-		$quiz_passmark = 0;
-		if ( isset( $_POST[ 'quiz_passmark' ] ) && ( 0 < absint( $_POST[ 'quiz_passmark' ] ) ) ) {
-			$quiz_passmark = absint( $_POST[ 'quiz_passmark' ] );
-		} // End If Statement
-
-		$show_questions = '';
-		if ( isset( $_POST[ 'show_questions' ] ) && ( 0 < absint( $_POST[ 'show_questions' ] ) ) ) {
-			$show_questions = absint( $_POST[ 'show_questions' ] );
-		} // End If Statement
-
-		if ( isset( $_POST[ 'quiz_grade_type' ] ) && $_POST[ 'quiz_grade_type' ] == 'on' ) {
-			$quiz_grade_type = 'auto';
-		} else {
-			$quiz_grade_type = 'manual';
-		}// End If Statement
-
-		$quiz_grade_type_disabled = '';
-		if ( isset( $_POST[ 'quiz_grade_type_disabled' ] ) ) {
-			$quiz_grade_type_disabled = esc_html( $_POST[ 'quiz_grade_type_disabled' ] );
-		}
-
 		// Setup Query Arguments
 		$post_type_args = array(	'post_content' => $post_content,
   		    						'post_status' => $post_status,
   		    						'post_title' => $post_title,
   		    						'post_type' => $post_type
   		    						);
+
+		$settings = $this->get_quiz_settings();
 
   		// Update or Insert the Lesson Quiz
 		if ( 0 < $quiz_id ) {
@@ -319,10 +300,15 @@ class WooThemes_Sensei_Lesson {
 
 		    // Update the post meta data
 		    update_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
-		    update_post_meta( $quiz_id, '_quiz_passmark', $quiz_passmark );
-		    update_post_meta( $quiz_id, '_show_questions', $show_questions );
-		    update_post_meta( $quiz_id, '_quiz_grade_type', $quiz_grade_type );
-		    update_post_meta( $quiz_id, '_quiz_grade_type_disabled', $quiz_grade_type_disabled );
+
+		    foreach( $settings as $field ) {
+		    	if( 'random_question_order' != $field['id'] ) {
+			    	$value = $this->get_submitted_setting_value( $field );
+			    	if( isset( $value ) ) {
+			    		update_post_meta( $quiz_id, '_' . $field['id'], $value );
+			    	}
+			    }
+		    }
 
 		    // Set the post terms for quiz-type
 		    wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' );
@@ -332,10 +318,15 @@ class WooThemes_Sensei_Lesson {
 
 		    // Add the post meta data
 		    add_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
-		    add_post_meta( $quiz_id, '_quiz_passmark', $quiz_passmark );
-		    add_post_meta( $quiz_id, '_show_questions', $show_questions );
-		    add_post_meta( $quiz_id, '_quiz_grade_type', $quiz_grade_type );
-		    add_post_meta( $quiz_id, '_quiz_grade_type_disabled', $quiz_grade_type_disabled );
+
+		    foreach( $settings as $field ) {
+		    	if( 'random_question_order' != $field['id'] ) {
+			    	$value = $this->get_submitted_setting_value( $field );
+			    	if( isset( $value ) ) {
+			    		add_post_meta( $quiz_id, '_' . $field['id'], $value );
+			    	}
+			    }
+		    }
 
 		    // Set the post terms for quiz-type
 		    wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' );
@@ -344,6 +335,30 @@ class WooThemes_Sensei_Lesson {
 		// Restore the previously disabled filter
     	add_action('save_post', array($this, __FUNCTION__));
 	} // End post_updated()
+
+	public function get_submitted_setting_value( $field = false ) {
+
+		if( ! $field ) return;
+
+		$value = false;
+
+		if( 'quiz_grade_type' == $field['id'] ) {
+			if( isset( $_POST[ $field['id'] ] ) && 'on' == $_POST[ $field['id'] ] ) {
+				$value = 'auto';
+			} else {
+				$value = 'manual';
+			}
+			return $value;
+		}
+
+		if ( isset( $_POST[ $field['id'] ] ) ) {
+			$value = $_POST[ $field['id'] ];
+		} else {
+			$value = $field['default'];
+		}
+
+		return $value;
+	}
 
 
 	/**
@@ -1498,39 +1513,44 @@ class WooThemes_Sensei_Lesson {
 
 	public function get_quiz_settings( $quiz_id = 0 ) {
 
-		if( ! $quiz_id ) return false;
-
-		$disable_type = false;
+		$disable_grade_type = false;
 		$quiz_grade_type_disabled = get_post_meta( $quiz_id, '_quiz_grade_type_disabled', true );
 		if( $quiz_grade_type_disabled == 'disabled' ) {
-			$disable_type = true;
+			$disable_grade_type = true;
 		}
 
 		// Setup Questions Query
 		$questions = array();
 		if ( 0 < $quiz_id ) {
 			$questions = $this->lesson_quiz_questions( $quiz_id );
-		} // End If Statement
+		}
 
+		// Count questions
 		$question_count = 0;
 		foreach( $questions as $question ) {
-
 			if( $question->post_type == 'multiple_question' ) {
 				$question_number = get_post_meta( $question->ID, 'number', true );
 				$question_count += $question_number;
 			} else {
 				++$question_count;
 			}
-
 		}
 
 		$settings = array(
+			array(
+				'id' 			=> 'pass_required',
+				'label'			=> __( 'Pass required to copmlete lesson', 'woothemes-sensei' ),
+				'description'	=> __( 'The passmark must be achieved before the lesson is complete.', 'woothemes-sensei' ),
+				'type'			=> 'checkbox',
+				'default'		=> '',
+				'checked'		=> 'on',
+			),
 			array(
 				'id' 			=> 'quiz_passmark',
 				'label'			=> __( 'Quiz passmark percentage', 'woothemes-sensei' ),
 				'description'	=> __( '', 'woothemes-sensei' ),
 				'type'			=> 'number',
-				'default'		=> '',
+				'default'		=> 0,
 				'placeholder'	=> 0,
 				'min'			=> 0,
 				'max'			=> 100
@@ -1546,9 +1566,18 @@ class WooThemes_Sensei_Lesson {
 				'max'			=> $question_count
 			),
 			array(
+				'id' 			=> 'random_question_order',
+				'label'			=> __( 'Randomise question order', 'woothemes-sensei' ),
+				'description'	=> '',
+				'type'			=> 'checkbox',
+				'default'		=> 'no',
+				'checked'		=> 'yes',
+			),
+			array(
 				'id' 			=> 'quiz_grade_type_disabled',
 				'label'			=> '',
 				'description'	=> '',
+				'default'		=> '',
 				'type'			=> 'hidden',
 				'default'		=> '',
 			),
@@ -1559,15 +1588,15 @@ class WooThemes_Sensei_Lesson {
 				'type'			=> 'checkbox',
 				'default'		=> 'auto',
 				'checked'		=> 'auto',
-				'disabled'		=> $disable_type,
+				'disabled'		=> $disable_grade_type,
 			),
 			array(
-				'id' 			=> 'random_question_order',
-				'label'			=> __( 'Randomise question order', 'woothemes-sensei' ),
-				'description'	=> '',
+				'id' 			=> 'enable_quiz_reset',
+				'label'			=> __( 'Allow user to retake the quiz', 'woothemes-sensei' ),
+				'description'	=> __( 'Enables the quiz reset button.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
-				'default'		=> 'no',
-				'checked'		=> 'yes',
+				'default'		=> '',
+				'checked'		=> 'on',
 			),
 		);
 
