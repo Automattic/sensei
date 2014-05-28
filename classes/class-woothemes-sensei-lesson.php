@@ -1539,7 +1539,7 @@ class WooThemes_Sensei_Lesson {
 		$settings = array(
 			array(
 				'id' 			=> 'pass_required',
-				'label'			=> __( 'Pass required to copmlete lesson', 'woothemes-sensei' ),
+				'label'			=> __( 'Pass required to complete lesson', 'woothemes-sensei' ),
 				'description'	=> __( 'The passmark must be achieved before the lesson is complete.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
 				'default'		=> '',

@@ -1436,18 +1436,21 @@ class WooThemes_Sensei_Utils {
 			$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
 			if ( '' != $user_lesson_end ) {
 
-				//Check for Passed or Completed Setting
-                $lesson_completion = $woothemes_sensei->settings->settings['lesson_completion'];
+				// Get lesson quizzes
+                $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
 
-                if ( 'passed' == $lesson_completion ) {
-                    // If Setting is Passed -> Check for Quiz Grades
-                    $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
-                    // Get Quiz ID
-                    if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
-                        foreach ($lesson_quizzes as $quiz_item) {
-                            $lesson_quiz_id = $quiz_item->ID;
-                            break;
-                        } // End For Loop
+                // Get Quiz ID
+                if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
+                    foreach ($lesson_quizzes as $quiz_item) {
+                        $lesson_quiz_id = $quiz_item->ID;
+                        break;
+                    } // End For Loop
+
+	                // Get quiz pass setting
+	        		$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+
+                	if ( $pass_required ) {
+
                         // Quiz Grade
                         $lesson_grade =  intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
                         if( $lesson_grade ) {
@@ -1457,6 +1460,7 @@ class WooThemes_Sensei_Utils {
 	                            return true;
 	                        } // End If Statement
 	                    }
+
                     } // End If Statement
                 } else {
                     return true;
