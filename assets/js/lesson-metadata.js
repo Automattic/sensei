@@ -148,9 +148,11 @@ jQuery(document).ready( function($) {
 		if( disableAuto ) {
 			jQuery( 'input#quiz_grade_type' ).prop( 'checked', false );
 			jQuery( 'input#quiz_grade_type' ).attr( 'disabled', 'disabled' );
+			jQuery( 'input#quiz_grade_type' ).closest('p.form-field').addClass( 'disabled' );
 			jQuery( 'input#quiz_grade_type_disabled' ).val( 'disabled' );
 		} else {
 			jQuery( 'input#quiz_grade_type' ).removeAttr( 'disabled' );
+			jQuery( 'input#quiz_grade_type' ).closest('p.form-field').removeClass( 'disabled' );
 			jQuery( 'input#quiz_grade_type_disabled' ).val( 'enabled' );
 		}
 
@@ -1211,7 +1213,17 @@ jQuery(document).ready( function($) {
 		jQuery.fn.filterExistingQuestions( newPage );
 	});
 
-	jQuery( '#add-quiz-metadata' ).on( 'change', '#random_question_order', function() {
+	jQuery( '#quiz-settings' ).on( 'change', '#pass_required', function() {
+		var checked = jQuery(this).attr( 'checked' );
+		if( 'checked' == checked ) {
+			jQuery( '.form-field.quiz_passmark' ).removeClass( 'hidden' );
+		} else {
+			jQuery( '.form-field.quiz_passmark' ).addClass( 'hidden' );
+			jQuery( '#quiz_passmark' ).val(0);
+		}
+	});
+
+	jQuery( '#quiz-settings' ).on( 'change', '#random_question_order', function() {
 		jQuery.fn.saveQuestionOrderRandom();
 	});
 
