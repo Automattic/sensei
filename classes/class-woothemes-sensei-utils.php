@@ -1455,15 +1455,11 @@ class WooThemes_Sensei_Utils {
 
                 	if ( $pass_required ) {
 
-                        // Quiz Grade
-                        $lesson_grade =  intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
-                        if( $lesson_grade ) {
-	                        // Check if Grade is bigger than pass percentage
-	                        $lesson_passmark = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
-	                        if ( $lesson_passmark <= intval( $lesson_grade ) ) {
-	                            return true;
-	                        } // End If Statement
-	                    }
+                		$passed_quiz = WooThemes_Sensei_Utils::user_passed_quiz( $lesson_quiz_id, $user->ID );
+
+                		if( $passed_quiz ) {
+                			return true;
+                		}
 
                     } else {
                     	return true;
@@ -1475,6 +1471,33 @@ class WooThemes_Sensei_Utils {
 		}
 
 		return false;
+	}
+
+	public function user_passed_quiz( $quiz_id = 0, $user_id = 0 ) {
+
+		if( ! $quiz_id  ) return false;
+
+		if( ! $user_id ) {
+			global $current_user;
+			wp_get_current_user();
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
+
+		// Quiz Grade
+        $quiz_grade =  intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
+        if( $quiz_grade ) {
+
+            // Check if Grade is greater than or equal to pass percentage
+            $quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+            if ( $quiz_passmark <= intval( $quiz_grade ) ) {
+                return true;
+            }
+
+        }
+
+        return false;
 	}
 
 } // End Class

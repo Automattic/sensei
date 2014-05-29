@@ -831,6 +831,9 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			input[type="checkbox"], input[type="radio"] {
 				width: auto;
 			}
+			&.disabled {
+				@include opacity(0.3);
+			}
 		}
 	}
 }

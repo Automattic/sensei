@@ -780,11 +780,18 @@ class WooThemes_Sensei_Admin {
 					}
 
 					if( 'hidden' != $field['type'] ) {
+
 						$class_tail = '';
+
 						if( isset( $field['class'] ) ) {
-							$class_tail = esc_attr( $field['class'] );
+							$class_tail .= $field['class'];
 						}
-						$html .= '<p class="form-field ' . esc_attr( $field['id'] ) . ' ' . $class_tail . '">' . "\n";
+
+						if( isset( $field['disabled'] ) && $field['disabled'] ) {
+							$class_tail .= ' disabled';
+						}
+
+						$html .= '<p class="form-field ' . esc_attr( $field['id'] ) . ' ' . esc_attr( $class_tail ) . '">' . "\n";
 					}
 
 						if( ! in_array( $field['type'], array( 'hidden', 'checkbox_multi', 'radio' ) ) ) {

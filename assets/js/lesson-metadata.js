@@ -148,9 +148,11 @@ jQuery(document).ready( function($) {
 		if( disableAuto ) {
 			jQuery( 'input#quiz_grade_type' ).prop( 'checked', false );
 			jQuery( 'input#quiz_grade_type' ).attr( 'disabled', 'disabled' );
+			jQuery( 'input#quiz_grade_type' ).closest('p.form-field').addClass( 'disabled' );
 			jQuery( 'input#quiz_grade_type_disabled' ).val( 'disabled' );
 		} else {
 			jQuery( 'input#quiz_grade_type' ).removeAttr( 'disabled' );
+			jQuery( 'input#quiz_grade_type' ).closest('p.form-field').removeClass( 'disabled' );
 			jQuery( 'input#quiz_grade_type_disabled' ).val( 'enabled' );
 		}
 
