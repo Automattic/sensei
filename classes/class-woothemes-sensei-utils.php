@@ -1486,7 +1486,7 @@ class WooThemes_Sensei_Utils {
 		}
 
 		// Quiz Grade
-        $quiz_grade =  intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
+        $quiz_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
         if( $quiz_grade ) {
 
             // Check if Grade is greater than or equal to pass percentage

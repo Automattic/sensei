@@ -1143,9 +1143,10 @@ class WooThemes_Sensei_Frontend {
 
 			if ( ! is_array($user_quizzes) ) { $user_quizzes = array(); }
 
-			// Check again that the lesson is complete
 			$quiz_lesson = absint( get_post_meta( $post->ID, '_quiz_lesson', true ) );
-			$user_lesson_end = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_lesson, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
+
+			// Check again that the lesson is complete
+			$user_lesson_end = WooThemes_Sensei_Utils::user_completed_lesson( $quiz_lesson, $current_user->ID );
 			$user_lesson_complete = false;
 			if ( '' != $user_lesson_end ) {
 				$user_lesson_complete = true;
@@ -1497,7 +1498,7 @@ class WooThemes_Sensei_Frontend {
 			// Get Reset Settings
 			$reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true ); ?>
 			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_noonce' ); ?>" value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_complete_quiz_noonce' ) ); ?>" />
-		    <?php if ( ( isset( $this->data->user_lesson_complete ) && !$this->data->user_lesson_complete ) ) { ?>
+		    <?php if ( ( isset( $this->data->user_quiz_grade ) && ! $this->data->user_quiz_grade ) ) { ?>
 		 	<span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		 	<span><input type="submit" name="quiz_complete" class="quiz-submit save" value="<?php echo apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		     <?php } // End If Statement ?>
