@@ -863,10 +863,11 @@ class WooThemes_Sensei_Lesson {
 	}
 
 	public function quiz_panel_add( $context = 'quiz' ) {
+		global $woothemes_sensei;
 
 		$html = '<div id="add-new-question">';
 
-			$question_types = WooThemes_Sensei_Question::question_types();
+			$question_types = $woothemes_sensei->post_types->question->question_types();
 
 			$question_cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
 
@@ -1121,6 +1122,7 @@ class WooThemes_Sensei_Lesson {
 	}
 
 	public function quiz_panel_add_existing_question( $question_id = 0, $row = 1 ) {
+		global $woothemes_sensei;
 
 		$html = '';
 
@@ -1129,7 +1131,7 @@ class WooThemes_Sensei_Lesson {
 		$existing_class = '';
 		if( $row % 2 ) { $existing_class = 'alternate'; }
 
-		$all_question_types = WooThemes_Sensei_Question::question_types();
+		$all_question_types = $woothemes_sensei->post_types->question->question_types();
 		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
 		$question_type = '';
 		if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
@@ -1515,8 +1517,14 @@ class WooThemes_Sensei_Lesson {
 
 		$disable_grade_type = false;
 		$quiz_grade_type_disabled = get_post_meta( $quiz_id, '_quiz_grade_type_disabled', true );
-		if( $quiz_grade_type_disabled == 'disabled' ) {
+		if( 'disabled' == $quiz_grade_type_disabled ) {
 			$disable_grade_type = true;
+		}
+
+		$disable_passmark = '';
+		$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+		if( ! $pass_required ) {
+			$disable_passmark = 'hidden';
 		}
 
 		// Setup Questions Query
@@ -1553,7 +1561,8 @@ class WooThemes_Sensei_Lesson {
 				'default'		=> 0,
 				'placeholder'	=> 0,
 				'min'			=> 0,
-				'max'			=> 100
+				'max'			=> 100,
+				'class'			=> $disable_passmark,
 			),
 			array(
 				'id' 			=> 'show_questions',
@@ -1563,7 +1572,7 @@ class WooThemes_Sensei_Lesson {
 				'default'		=> '',
 				'placeholder'	=> __( 'All', 'woothemes-sensei' ),
 				'min'			=> 1,
-				'max'			=> $question_count
+				'max'			=> $question_count,
 			),
 			array(
 				'id' 			=> 'random_question_order',

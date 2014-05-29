@@ -780,7 +780,11 @@ class WooThemes_Sensei_Admin {
 					}
 
 					if( 'hidden' != $field['type'] ) {
-						$html .= '<p class="form-field ' . esc_attr( $field['id'] ) . '">' . "\n";
+						$class_tail = '';
+						if( isset( $field['class'] ) ) {
+							$class_tail = esc_attr( $field['class'] );
+						}
+						$html .= '<p class="form-field ' . esc_attr( $field['id'] ) . ' ' . $class_tail . '">' . "\n";
 					}
 
 						if( ! in_array( $field['type'], array( 'hidden', 'checkbox_multi', 'radio' ) ) ) {
@@ -800,12 +804,12 @@ class WooThemes_Sensei_Admin {
 								case 'number':
 
 									$min = '';
-									if( isset( $field['min'] ) && $field['min'] ) {
+									if( isset( $field['min'] ) ) {
 										$min = 'min="' . esc_attr( $field['min'] ) . '"';
 									}
 
 									$max = '';
-									if( isset( $field['max'] ) && $field['max'] ) {
+									if( isset( $field['max'] ) ) {
 										$max = 'max="' . esc_attr( $field['max'] ) . '"';
 									}
 
