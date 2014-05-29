@@ -776,8 +776,10 @@ class WooThemes_Sensei_Updates {
 
 			if( ! isset( $quiz->ID ) ) continue;
 
-			if( isset( $lesson_completion ) && 'completed' == $lesson_completion ) {
+			if( isset( $lesson_completion ) && 'passed' == $lesson_completion ) {
 				update_post_meta( $quiz->ID, '_pass_required', 'on' );
+			} else {
+				update_post_meta( $quiz->ID, '_quiz_passmark', 0 );
 			}
 
 			if( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) {

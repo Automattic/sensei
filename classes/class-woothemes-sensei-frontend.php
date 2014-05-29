@@ -1221,9 +1221,11 @@ class WooThemes_Sensei_Frontend {
 
 		// Lesson quizzes
 		$lesson_quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $post->ID );
+		$pass_required = true;
 		if( is_array( $lesson_quizzes ) && 0 < count( $lesson_quizzes ) ) {
 			foreach ($lesson_quizzes as $quiz_item) {
-				$quiz_id = $quiz_item->ID ;
+				$quiz_id = $quiz_item->ID;
+				break;
 			}
 
 			// Get quiz pass setting
