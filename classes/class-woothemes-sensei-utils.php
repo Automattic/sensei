@@ -1467,5 +1467,18 @@ class WooThemes_Sensei_Utils {
 		return false;
 	}
 
+	public static function is_preview_lesson( $lesson_id ) {
+		$is_preview = false;
+
+		if( is_singular( 'lesson' ) ) {
+			$lesson_preview = get_post_meta( $lesson_id, '_lesson_preview', true );
+			if ( isset( $lesson_preview ) && '' != $lesson_preview ) {
+				$is_preview = true;
+			}
+		}
+
+		return $is_preview;
+	}
+
 } // End Class
 ?>

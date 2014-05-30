@@ -598,14 +598,14 @@ class WooThemes_Sensei {
 		// REFACTOR
 		global $current_user, $post;
 
+      	if ( WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
+      		return true;
+      	}
+
 		if ( ! isset( $current_user ) ) return;
 
 		// Get User Meta
 	 	get_currentuserinfo();
-
-      	if ( is_preview() ) {
-      		return true;
-      	} // End If Statement
 
       	$user_allowed = false;
 

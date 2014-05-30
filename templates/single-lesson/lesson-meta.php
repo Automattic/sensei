@@ -14,12 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 global $post, $woothemes_sensei, $current_user;
 // Get the meta info
 $lesson_course_id = absint( get_post_meta( $post->ID, '_lesson_course', true ) );
+$is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $post->ID );
 // Get User Meta
 get_currentuserinfo();
 // Complete Lesson Logic
 do_action( 'sensei_complete_lesson' );
 // Check that the course has been started
-if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) { ?>
+if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) || $is_preview ) { ?>
 	<section class="lesson-meta" id="lesson_complete">
 		<?php
 		if( apply_filters( 'sensei_video_position', 'top', $post->ID ) == 'bottom' ) {
@@ -27,7 +28,9 @@ if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $le
 		}
 		?>
         <?php do_action( 'sensei_frontend_messages' ); ?>
-        <?php do_action( 'sensei_lesson_quiz_meta', $post->ID, $current_user->ID  ); ?>
+        <?php if ( ! $is_preview ) {
+        	do_action( 'sensei_lesson_quiz_meta', $post->ID, $current_user->ID  );
+    	} ?>
     </section>
     <?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
 <?php } else {
