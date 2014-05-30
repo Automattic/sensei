@@ -1476,7 +1476,7 @@ class WooThemes_Sensei_Utils {
 	public static function is_preview_lesson( $lesson_id ) {
 		$is_preview = false;
 
-		if( is_singular( 'lesson' ) ) {
+		if( 'lesson' == get_post_type( $lesson_id ) ) {
 			$lesson_preview = get_post_meta( $lesson_id, '_lesson_preview', true );
 			if ( isset( $lesson_preview ) && '' != $lesson_preview ) {
 				$is_preview = true;
@@ -1511,7 +1511,7 @@ class WooThemes_Sensei_Utils {
         }
 
         return false;
-        
+
 	}
 
 } // End Class

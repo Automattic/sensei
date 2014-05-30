@@ -91,6 +91,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_woocommerce_in_cart_message', array( $this, 'sensei_woocommerce_in_cart_message' ), 10 );
 		add_action( 'sensei_course_start', array( $this, 'sensei_course_start' ), 10 );
 		add_filter( 'get_comments_number', array( $this, 'sensei_lesson_comment_count' ), 1 );
+		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 ); 
 		// 1.3.0
 		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
 		// Load post type classes
@@ -1317,6 +1318,7 @@ class WooThemes_Sensei_Frontend {
 		$author_display_name = get_the_author();
 		$author_id = get_the_author_meta('ID');
 		$category_output = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
+		$free_lesson_count = intval( $woothemes_sensei->post_types->course->course_lesson_preview_count( $post_id ) );
 		?><section class="entry">
         	<p class="sensei-course-meta">
            	<?php if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) { ?>
@@ -1329,6 +1331,10 @@ class WooThemes_Sensei_Frontend {
 		   	<?php sensei_simple_course_price( $post_id ); ?>
         	</p>
         	<p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
+        	<?php if ( 0 < $free_lesson_count ) {
+                    $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes_sensei' ), $free_lesson_count ); ?>
+                    <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes_sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
+            <?php } ?>
 		</section><?php
 	} // End sensei_course_archive_meta()
 
@@ -1525,6 +1531,18 @@ class WooThemes_Sensei_Frontend {
 		</section><?php
 		} // End If Statement
 	} // sensei_lesson_meta()
+
+	public function sensei_lesson_preview_title( $title, $id ) {
+		global $post, $current_user;
+		// Get the course ID
+		$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+		// Check if the user is taking the course
+		$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
+		if( is_singular( 'lesson' ) && WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) && !$is_user_taking_course && $post->ID == $id ) {
+			$title .= __( ' (Free Preview)', 'woothemes_sensei' );
+		}
+		return $title;
+	} // sensei_lesson_preview_title
 
 	public function sensei_course_start() {
 		global $post, $current_user;
