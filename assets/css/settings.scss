@@ -817,3 +817,23 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 		}
 	}
 }
+
+.sensei-options-panel {
+	.options_group {
+		.form-field {
+			margin: 10px 0px 10px 300px !important;
+			.label {
+				float: left;
+				display: inline-block;
+				width: 300px;
+				margin: 0 0 0 -300px;
+			}
+			input[type="checkbox"], input[type="radio"] {
+				width: auto;
+			}
+			&.disabled {
+				@include opacity(0.3);
+			}
+		}
+	}
+}

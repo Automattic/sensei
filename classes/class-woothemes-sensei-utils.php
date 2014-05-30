@@ -1233,6 +1233,12 @@ class WooThemes_Sensei_Utils {
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 			$quiz_passmark_float = (float) $quiz_passmark;
 
+			// Pass required
+			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+
+			// Quiz questions
+			$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
+
 			if ( ! $started_course ) {
 
 				$status = 'not_started_course';
@@ -1254,7 +1260,6 @@ class WooThemes_Sensei_Utils {
 						$status = 'passed';
 						$box_class = 'tick';
 						if( $is_lesson ) {
-							$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
 							if ( 0 < count( $quiz_questions ) ) {
 								$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
 							} else {
@@ -1266,21 +1271,30 @@ class WooThemes_Sensei_Utils {
 
 					} else {
 
-						$status = 'failed';
-						$box_class = 'alert';
-						if( $is_lesson ) {
-							$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
-						} else {
-							$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+						if( $pass_required ) {
+
+							$status = 'failed';
+							$box_class = 'alert';
+							if( $is_lesson ) {
+								$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+							} else {
+								$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+							}
+
 						}
 
 					}
 
 				} else {
+
 					$status = 'complete';
 					$box_class = 'info';
 					if( $is_lesson ) {
-						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
+						if ( $pass_required ) {
+							$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
+						} else {
+							$message = sprintf( __( 'Congratulations! You have passed this lesson.', 'woothemes-sensei' ) );
+						}
 					} else {
 						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$d%% to pass.', 'woothemes-sensei' ), round( $quiz_passmark ) );
 					}
@@ -1293,29 +1307,40 @@ class WooThemes_Sensei_Utils {
 						$status = 'passed';
 						$box_class = 'tick';
 						if( $is_lesson ) {
-							$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
+							if( $pass_required ) {
+								$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
+							} else {
+								$message = sprintf( __( 'Congratulations! You have passed this lesson.', 'woothemes-sensei' ) );
+							}
 						} else {
 							$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
 						}
 
 					} else {
 
-						$status = 'failed';
-						$box_class = 'alert';
-						if( $is_lesson ) {
-							$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
-						} else {
-							$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+						if( $pass_required ) {
+
+							$status = 'failed';
+							$box_class = 'alert';
+							if( $is_lesson ) {
+								$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+							} else {
+								$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+							}
+
 						}
 
 					}
 				} else {
-					$status = 'not_started';
-					$box_class = 'info';
-					if( $is_lesson ) {
-						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
-					} else {
-						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+
+					if( $pass_required ) {
+						$status = 'not_started';
+						$box_class = 'info';
+						if( $is_lesson ) {
+							$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+						} else {
+							$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+						}
 					}
 				}
 			}
@@ -1384,34 +1409,13 @@ class WooThemes_Sensei_Utils {
 			$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $course_id );
 		    $lessons_completed = 0;
 		    foreach ( $course_lessons as $lesson ){
-		    	$single_lesson_complete = false;
-		    	// Check if Lesson is complete
-		    	$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson->ID, 'user_id' => $user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
-				if ( '' != $user_lesson_end ) {
-					//Check for Passed or Completed Setting
-	                $course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
-	                if ( 'passed' == $course_completion ) {
-	                    // If Setting is Passed -> Check for Quiz Grades
-	                    $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson->ID );
-	                    // Get Quiz ID
-	                    if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
-	                        foreach ($lesson_quizzes as $quiz_item) {
-	                            $lesson_quiz_id = $quiz_item->ID;
-	                        } // End For Loop
-	                        // Quiz Grade
-	                        $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
-	                        // Check if Grade is bigger than pass percentage
-	                        $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
-	                        if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
-	                            $lessons_completed++;
-	                            $single_lesson_complete = true;
-	                        } // End If Statement
-	                    } // End If Statement
-	                } else {
-	                    $lessons_completed++;
-	                    $single_lesson_complete = true;
-	                } // End If Statement;
-				} // End If Statement
+
+		    	$single_lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( $lesson->ID, $user->ID );
+
+		    	if( $single_lesson_complete ) {
+		    		$lessons_completed++;
+		    	}
+
 		    } // End For Loop
 
 		    if ( absint( $lessons_completed ) == absint( count( $course_lessons ) ) && ( 0 < absint( count( $course_lessons ) ) ) && ( 0 < absint( $lessons_completed ) ) ) {
@@ -1436,27 +1440,29 @@ class WooThemes_Sensei_Utils {
 			$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
 			if ( '' != $user_lesson_end ) {
 
-				//Check for Passed or Completed Setting
-                $lesson_completion = $woothemes_sensei->settings->settings['lesson_completion'];
+				// Get lesson quizzes
+                $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
 
-                if ( 'passed' == $lesson_completion ) {
-                    // If Setting is Passed -> Check for Quiz Grades
-                    $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
-                    // Get Quiz ID
-                    if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
-                        foreach ($lesson_quizzes as $quiz_item) {
-                            $lesson_quiz_id = $quiz_item->ID;
-                            break;
-                        } // End For Loop
-                        // Quiz Grade
-                        $lesson_grade =  intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
-                        if( $lesson_grade ) {
-	                        // Check if Grade is bigger than pass percentage
-	                        $lesson_passmark = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
-	                        if ( $lesson_passmark <= intval( $lesson_grade ) ) {
-	                            return true;
-	                        } // End If Statement
-	                    }
+                // Get Quiz ID
+                if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
+                    foreach ($lesson_quizzes as $quiz_item) {
+                        $lesson_quiz_id = $quiz_item->ID;
+                        break;
+                    } // End For Loop
+
+	                // Get quiz pass setting
+	        		$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+
+                	if ( $pass_required ) {
+
+                		$passed_quiz = WooThemes_Sensei_Utils::user_passed_quiz( $lesson_quiz_id, $user->ID );
+
+                		if( $passed_quiz ) {
+                			return true;
+                		}
+
+                    } else {
+                    	return true;
                     } // End If Statement
                 } else {
                     return true;
@@ -1478,6 +1484,34 @@ class WooThemes_Sensei_Utils {
 		}
 
 		return $is_preview;
+	}
+
+	public function user_passed_quiz( $quiz_id = 0, $user_id = 0 ) {
+
+		if( ! $quiz_id  ) return false;
+
+		if( ! $user_id ) {
+			global $current_user;
+			wp_get_current_user();
+			$user = $current_user;
+		} else {
+			$user = get_userdata( $user_id );
+		}
+
+		// Quiz Grade
+        $quiz_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
+        if( $quiz_grade ) {
+
+            // Check if Grade is greater than or equal to pass percentage
+            $quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+            if ( $quiz_passmark <= intval( $quiz_grade ) ) {
+                return true;
+            }
+
+        }
+
+        return false;
+        
 	}
 
 } // End Class

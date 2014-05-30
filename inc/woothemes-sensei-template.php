@@ -544,15 +544,4 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		return sensei_has_user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_prerequisite_lesson()
 
-	function sensei_no_quiz_message( $no_quiz_count = 0 ) {
-		global $woothemes_sensei;
-		$disable_quiz_notice = false;
-        if ( isset( $woothemes_sensei->settings->settings[ 'lesson_no_quiz_notice' ] ) ) {
-            $disable_quiz_notice = $woothemes_sensei->settings->settings[ 'lesson_no_quiz_notice' ];
-        } // End If Statement
-        if ( !$disable_quiz_notice ) {
-            if ( $no_quiz_count == 0 ) { ?><div class="sensei-message alert"><?php _e( 'There is no Quiz for this Lesson yet. Check back soon.', 'woothemes-sensei' ); ?></div><?php $no_quiz_count++; }
-        } // End If Statement
-	} // End sensei_no_quiz_message()
-
 ?>

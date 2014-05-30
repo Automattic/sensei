@@ -63,7 +63,8 @@ class WooThemes_Sensei_Updates {
 												),
 								'1.6.0' => array( 	'auto' 		=> array( 'add_teacher_role' => array( 'title' => 'Add \'Teacher\' role', 'desc' => 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.' ),
 																		  'add_sensei_caps' => array( 'title' => 'Add administrator capabilities', 'desc' => 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.' ),
-																		  'restructure_question_meta' => array( 'title' => 'Restructure question meta data', 'desc' => 'Restructures the quesiton meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.' ) ),
+																		  'restructure_question_meta' => array( 'title' => 'Restructure question meta data', 'desc' => 'Restructures the quesiton meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.' ),
+																		  'update_quiz_settings' => array( 'title' => 'Add new quiz settings', 'desc' => 'Adds new settings to quizzes that were previously registered as global settings.' ) ),
 													'manual' 	=> array()
 												),
 							);
@@ -745,6 +746,47 @@ class WooThemes_Sensei_Updates {
 				update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
 			}
 		}
+		return true;
+	}
+
+	public function update_quiz_settings() {
+
+		$settings = get_option( 'woothemes-sensei-settings', array() );
+
+		$lesson_completion = false;
+		if( isset( $settings['lesson_completion'] ) ) {
+			$lesson_completion = $settings['lesson_completion'];
+		}
+
+		$reset_quiz_allowed = false;
+		if( isset( $settings['quiz_reset_allowed'] ) ) {
+			$reset_quiz_allowed = $settings['quiz_reset_allowed'];
+		}
+
+		$args = array(
+			'post_type' 		=> 'quiz',
+			'posts_per_page' 	=> -1,
+			'post_status'		=> 'any',
+			'suppress_filters' 	=> 0
+		);
+
+		$quizzes = get_posts( $args );
+
+		foreach( $quizzes as $quiz ) {
+
+			if( ! isset( $quiz->ID ) ) continue;
+
+			if( isset( $lesson_completion ) && 'passed' == $lesson_completion ) {
+				update_post_meta( $quiz->ID, '_pass_required', 'on' );
+			} else {
+				update_post_meta( $quiz->ID, '_quiz_passmark', 0 );
+			}
+
+			if( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) {
+				update_post_meta( $quiz->ID, '_enable_quiz_reset', 'on' );
+			}
+		}
+
 		return true;
 	}
 

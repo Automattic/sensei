@@ -104,7 +104,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		$pages_array = $this->pages_array();
 		$posts_per_page_array = array( '0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20' );
-		$complete_settings = array( 'passed' => __( 'Passed', 'woothemes-sensei' ), 'complete' => __( 'Completed', 'woothemes-sensei' ) );
+		$complete_settings = array( 'passed' => __( 'Once all the course lessons have been completed', 'woothemes-sensei' ), 'complete' => __( 'At any time (by clicking the \'Complete Course\' button)', 'woothemes-sensei' ) );
 
 	    $fields = array();
 
@@ -171,8 +171,8 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
     	// Course Settings
 
     	$fields['course_completion'] = array(
-								'name' => __( 'Courses are complete when:', 'woothemes-sensei' ),
-								'description' => __( 'This will determine whether a user has completed a course or not.', 'woothemes-sensei' ),
+								'name' => __( 'Courses are complete:', 'woothemes-sensei' ),
+								'description' => __( 'This will determine when courses are marked as complete.', 'woothemes-sensei' ),
 								'type' => 'select',
 								'default' => 'passed',
 								'section' => 'course-settings',
@@ -295,16 +295,6 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		// Lesson Settings
 
-		$fields['lesson_completion'] = array(
-								'name' => __( 'Lessons are complete when:', 'woothemes-sensei' ),
-								'description' => __( 'This will determine whether a user has completed a lesson or not.', 'woothemes-sensei' ),
-								'type' => 'select',
-								'default' => 'passed',
-								'section' => 'lesson-settings',
-								'required' => 0,
-								'options' => $complete_settings
-								);
-
 		$fields['lesson_comments'] = array(
 								'name' => __( 'Allow Comments for Lessons', 'woothemes-sensei' ),
 								'description' => __( 'This will allow learners to post comments on the single Lesson page, only learner who have access to the Lesson will be allowed to comment.', 'woothemes-sensei' ),
@@ -318,30 +308,6 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'description' => __( 'Output the Lesson Author on Course single page & Lesson archive page.', 'woothemes-sensei' ),
 								'type' => 'checkbox',
 								'default' => true,
-								'section' => 'lesson-settings'
-								);
-
-		$fields['quiz_reset_allowed'] = array(
-								'name' => __( 'Allow User to retake a Quiz', 'woothemes-sensei' ),
-								'description' => __( 'This will enable to Reset button for a Quiz.', 'woothemes-sensei' ),
-								'type' => 'checkbox',
-								'default' => true,
-								'section' => 'lesson-settings'
-								);
-
-		$fields['lesson_complete_button'] = array(
-								'name' => __( 'Allow Lesson Complete Button', 'woothemes-sensei' ),
-								'description' => __( 'This will allow learners to complete a Lesson without taking a Quiz. It will display the Complete Lesson button on the Lesson page.', 'woothemes-sensei' ),
-								'type' => 'checkbox',
-								'default' => false,
-								'section' => 'lesson-settings'
-								);
-
-		$fields['lesson_no_quiz_notice'] = array(
-								'name' => __( 'Disable no Quiz warning', 'woothemes-sensei' ),
-								'description' => __( 'This will disable the error notice when a Lesson has no Quiz on the Lesson page.', 'woothemes-sensei' ),
-								'type' => 'checkbox',
-								'default' => false,
 								'section' => 'lesson-settings'
 								);
 
