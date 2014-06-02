@@ -85,7 +85,8 @@ if ( 0 < $total_lessons ) {
             $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $lesson_item->ID );
             $preview_label = '';
             if ( $is_preview && !$is_user_taking_course ) {
-                $preview_label = '<span class="preview-heading">' . __( ' (Free Preview)', 'woothemes_sensei' ) . '</span>';
+                $preview_label = $woothemes_sensei->frontend->sensei_lesson_preview_title_text( $post->ID );
+                $preview_label = '<span class="preview-heading">' . $preview_label . '</span>';
                 $post_classes[] = 'lesson-preview';
             }
 
