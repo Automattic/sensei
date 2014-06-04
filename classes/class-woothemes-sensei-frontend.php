@@ -1866,7 +1866,9 @@ class WooThemes_Sensei_Frontend {
 								'key' => '_course_woocommerce_product',
 								'value' => $item['product_id']
 							)
-						)
+						),
+						'orderby' => 'menu_order date',
+						'order' => 'ASC',
 					);
 					$courses = get_posts( $args );
 
@@ -1936,7 +1938,9 @@ class WooThemes_Sensei_Frontend {
 								'key' => '_course_woocommerce_product',
 								'value' => $item['product_id']
 							)
-						)
+						),
+						'orderby' => 'menu_order date',
+						'order' => 'ASC',
 					);
 					$courses = get_posts( $args );
 
@@ -2027,7 +2031,9 @@ class WooThemes_Sensei_Frontend {
 						        'value' => $product_ids,
 						        'compare' => 'IN'
 				       		)
-						)
+						),
+						'orderby' => 'menu_order date',
+						'order' => 'ASC',
 					);
 					$courses = get_posts( $course_args );
 

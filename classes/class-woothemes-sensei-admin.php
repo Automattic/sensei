@@ -86,6 +86,9 @@ class WooThemes_Sensei_Admin {
 			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
 			$main_page = add_menu_page( __( 'Sensei', 'woothemes-sensei' ), __( 'Sensei', 'woothemes-sensei' ), $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
 		}
+
+		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
+		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'woothemes-sensei' ), __( 'Order Lessons', 'woothemes-sensei' ), 'manage_sensei', 'lesson-order', array( $this, 'lesson_order_screen' ) );
 	}
 
 	/**
@@ -631,6 +634,8 @@ class WooThemes_Sensei_Admin {
 				'post_type' => 'course',
 				'posts_per_page' => -1,
 				'suppress_filters' => 0,
+				'orderby' => 'menu_order date',
+				'order' => 'ASC',
 			);
 			$courses = get_posts( $args );
 
@@ -901,6 +906,146 @@ class WooThemes_Sensei_Admin {
 		$html .= '</div>' . "\n";
 
 		return $html;
+	}
+
+	/**
+	 * Dsplay Course Order screen
+	 * @return void
+	 */
+	public function course_order_screen() {
+		?><div id="course-order" class="wrap course-order">
+		<h2><?php _e( 'Order Courses', 'woothemes-sensei' ); ?></h2><?php
+
+		$html = '';
+
+		if( isset( $_POST['course-order'] ) && 0 < strlen( $_POST['course-order'] ) ) {
+			$ordered = $this->save_course_order( esc_attr( $_POST['course-order'] ) );
+
+			if( $ordered ) {
+				$html .= '<div class="updated fade">' . "\n";
+				$html .= '<p>' . __( 'The course order has been saved.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$html .= '</div>' . "\n";
+			}
+		}
+
+		$args = array(
+			'post_type' => 'course',
+			'posts_per_page' => -1,
+			'suppress_filters' => 0,
+			'orderby' => 'menu_order date',
+			'order' => 'ASC',
+		);
+
+		$courses = get_posts( $args );
+		if( 0 < count( $courses ) ) {
+
+			$order_string = $this->get_course_order();
+
+			$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
+			$html .= '<ul class="sortable-course-list">' . "\n";
+			$count = 0;
+			foreach ( $courses as $course ) {
+				$count++;
+				$class = 'course';
+				if ( $count == 1 ) { $class .= ' first'; }
+				if ( $count == count( $module ) ) { $class .= ' last'; }
+				if ( $count % 2 != 0 ) {
+					$class .= ' alternate';
+				}
+				$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $course->ID ) . '" style="width: 100%;"> ' . $course->post_title . '</span></li>' . "\n";
+			}
+			$html .= '</ul>' . "\n";
+
+			$html .= '<input type="hidden" name="course-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
+			$html .= '<input type="submit" class="button-primary" value="' . __( 'Save course order', 'woothemes-sensei' ) . '" />' . "\n";
+		}
+
+		echo $html;
+
+		?></div><?php
+	}
+
+	public function get_course_order() {
+		return get_option( 'sensei_course_order', '' );
+	}
+
+	public function save_course_order( $order_string = '' ) {
+		$order = explode( ',', $order_string );
+
+		update_option( 'sensei_course_order', $order_string );
+
+		$i = 1;
+		foreach( $order as $course_id ) {
+
+			if( $course_id ) {
+
+				$update_args = array(
+					'ID' => $course_id,
+					'menu_order' => $i,
+				);
+
+				wp_update_post( $update_args );
+
+				++$i;
+			}
+		}
+	}
+
+	/**
+	 * Dsplay Lesson Order screen
+	 * @return void
+	 */
+	public function lesson_order_screen() {
+		?><div id="lesson-order" class="wrap lesson-order">
+		<h2><?php _e( 'Order Lessons', 'woothemes-sensei' ); ?></h2><?php
+
+		$html = '';
+
+		if( isset( $_POST['lesson-order'] ) && 0 < strlen( $_POST['lesson-order'] ) ) {
+			$ordered = $this->save_course_order( esc_attr( $_POST['lesson-order'] ) );
+
+			if( $ordered ) {
+				$html .= '<div class="updated fade">' . "\n";
+				$html .= '<p>' . __( 'The lesson order has been saved.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$html .= '</div>' . "\n";
+			}
+		}
+
+		$args = array(
+			'post_type' => 'lesson',
+			'posts_per_page' => -1,
+			'suppress_filters' => 0,
+			'orderby' => 'menu_order date',
+			'order' => 'ASC',
+		);
+
+		$lessons = get_posts( $args );
+		if( 0 < count( $lessons ) ) {
+
+			$order_string = $this->get_course_order();
+
+			$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
+			$html .= '<ul class="sortable-lesson-list">' . "\n";
+			$count = 0;
+			foreach ( $lessons as $lesson ) {
+				$count++;
+				$class = 'lesson';
+				if ( $count == 1 ) { $class .= ' first'; }
+				if ( $count == count( $module ) ) { $class .= ' last'; }
+				if ( $count % 2 != 0 ) {
+					$class .= ' alternate';
+				}
+				$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
+			}
+			$html .= '</ul>' . "\n";
+
+			$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
+			$html .= '<input type="submit" class="button-primary" value="' . __( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
+		}
+
+		echo $html;
+
+		?></div><?php
 	}
 
 } // End Class
