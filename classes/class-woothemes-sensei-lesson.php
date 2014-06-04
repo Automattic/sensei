@@ -234,7 +234,8 @@ class WooThemes_Sensei_Lesson {
 	 	    $checked = checked( 'preview', $lesson_preview, false );
 	 	} // End If Statement
 
-	 	$html .= '<input type="checkbox" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . __( 'Allow this lesson to be viewed without purchase/login', 'woothemes-sensei' ) . '<br>';
+	 	$html .= '<label for="lesson_preview">';
+	 	$html .= '<input type="checkbox" id="lesson_preview" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . __( 'Allow this lesson to be viewed without purchase/login', 'woothemes-sensei' ) . '<br>';
 
 		// Output the HTML
 		echo $html;
