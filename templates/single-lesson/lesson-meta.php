@@ -28,7 +28,7 @@ if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $le
 		}
 		?>
         <?php do_action( 'sensei_frontend_messages' ); ?>
-        <?php if ( ! $is_preview ) {
+        <?php if ( ! $is_preview || sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) {
         	do_action( 'sensei_lesson_quiz_meta', $post->ID, $current_user->ID  );
     	} ?>
     </section>

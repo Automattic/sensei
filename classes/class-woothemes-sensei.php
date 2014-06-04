@@ -598,10 +598,6 @@ class WooThemes_Sensei {
 		// REFACTOR
 		global $current_user, $post;
 
-      	if ( WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
-      		return true;
-      	}
-
 		if ( ! isset( $current_user ) ) return;
 
 		// Get User Meta
@@ -666,6 +662,7 @@ class WooThemes_Sensei {
 				// Check for WC purchase
 				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course',true );
 				$update_course = $this->woocommerce_course_update( $lesson_course_id  );
+				$is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $post->ID );
 				if ( $this->access_settings() && WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) {
 					$user_allowed = true;
 				} elseif( $this->access_settings() ) {
@@ -675,9 +672,17 @@ class WooThemes_Sensei {
 					$course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 					$wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
 					if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
-						$this->permissions_message['message'] = sprintf( __('Please purchase the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
+						if ( $is_preview ) {
+							$this->permissions_message['message'] = sprintf( __('This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
+						} else {
+							$this->permissions_message['message'] = sprintf( __('Please purchase the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
+						}
 					} else {
-						$this->permissions_message['message'] = sprintf( __('Please sign up for the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
+						if ( $is_preview ) {
+							$this->permissions_message['message'] = sprintf( __('This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
+						} else {
+							$this->permissions_message['message'] = sprintf( __('Please sign up for the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
+						}
 					} // End If Statement
 				} // End If Statement
 				break;
@@ -732,7 +737,7 @@ class WooThemes_Sensei {
 
 		} // End Switch Statement
 
-		if( sensei_all_access() ) {
+		if( sensei_all_access() || WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
 			$user_allowed = true;
 		}
 

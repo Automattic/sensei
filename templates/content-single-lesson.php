@@ -81,6 +81,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 				if( $view_lesson ) { ?>
 				<section class="entry fix">
+				<?php if ( $is_preview && !$user_taking_course ) { ?>
+					<div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
+				<?php } ?>
+
                 	<?php
                 	if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) || $is_preview ) {
                 		if( apply_filters( 'sensei_video_position', 'top', $post->ID ) == 'top' ) {
