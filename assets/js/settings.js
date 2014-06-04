@@ -49,4 +49,20 @@ jQuery(document).ready(function($) {
         });
     });
 
+    /***** Course reordering *****/
+
+    jQuery( '.sortable-course-list' ).sortable();
+    jQuery( '.sortable-tab-list' ).disableSelection();
+
+    jQuery( '.sortable-course-list' ).bind( 'sortstop', function ( e, ui ) {
+        var orderString = '';
+
+        jQuery( this ).find( '.course' ).each( function ( i, e ) {
+            if ( i > 0 ) { orderString += ','; }
+            orderString += jQuery( this ).find( 'span' ).attr( 'rel' );
+        });
+
+        jQuery( 'input[name="course-order"]' ).attr( 'value', orderString );
+    });
+
 });

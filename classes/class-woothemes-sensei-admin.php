@@ -296,7 +296,7 @@ class WooThemes_Sensei_Admin {
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.5.2', 'screen' );
+		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.6.0', 'screen' );
 		wp_enqueue_style( $woothemes_sensei->token . '-global' );
 
 		// Test for Write Panel Pages
@@ -913,6 +913,11 @@ class WooThemes_Sensei_Admin {
 	 * @return void
 	 */
 	public function course_order_screen() {
+		global $woothemes_sensei;
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery' ), '1.6.0' );
+
 		?><div id="course-order" class="wrap course-order">
 		<h2><?php _e( 'Order Courses', 'woothemes-sensei' ); ?></h2><?php
 
@@ -989,6 +994,8 @@ class WooThemes_Sensei_Admin {
 				++$i;
 			}
 		}
+
+		return true;
 	}
 
 	/**
@@ -996,6 +1003,11 @@ class WooThemes_Sensei_Admin {
 	 * @return void
 	 */
 	public function lesson_order_screen() {
+		global $woothemes_sensei;
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery' ), '1.6.0' );
+
 		?><div id="lesson-order" class="wrap lesson-order">
 		<h2><?php _e( 'Order Lessons', 'woothemes-sensei' ); ?></h2><?php
 
