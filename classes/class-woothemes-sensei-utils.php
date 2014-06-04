@@ -1473,7 +1473,7 @@ class WooThemes_Sensei_Utils {
 		return false;
 	}
 
-	public function user_passed_quiz( $quiz_id = 0, $user_id = 0 ) {
+	public static function user_passed_quiz( $quiz_id = 0, $user_id = 0 ) {
 
 		if( ! $quiz_id  ) return false;
 
