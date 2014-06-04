@@ -1014,7 +1014,7 @@ class WooThemes_Sensei_Admin {
 		$html = '';
 
 		if( isset( $_POST['lesson-order'] ) && 0 < strlen( $_POST['lesson-order'] ) ) {
-			$ordered = $this->save_course_order( esc_attr( $_POST['lesson-order'] ) );
+			$ordered = $this->save_lesson_order( esc_attr( $_POST['lesson-order'] ), esc_attr( $_POST['course_id'] ) );
 
 			if( $ordered ) {
 				$html .= '<div class="updated fade">' . "\n";
@@ -1024,40 +1024,98 @@ class WooThemes_Sensei_Admin {
 		}
 
 		$args = array(
-			'post_type' => 'lesson',
+			'post_type' => 'course',
+			'post_status' => array('publish', 'draft', 'future', 'private'),
 			'posts_per_page' => -1,
-			'suppress_filters' => 0,
-			'orderby' => 'menu_order date',
+			'orderby' => 'name',
 			'order' => 'ASC',
 		);
+		$courses = get_posts( $args );
 
-		$lessons = get_posts( $args );
-		if( 0 < count( $lessons ) ) {
+		$html .= '<form action="' . admin_url( 'edit.php' ) . '" method="get">' . "\n";
+		$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
+		$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
+		$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
+		$html .= '<option value="">' . __( 'Select a course', 'woothemes-sensei' ) . '</option>' . "\n";
 
-			$order_string = $this->get_course_order();
-
-			$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
-			$html .= '<ul class="sortable-lesson-list">' . "\n";
-			$count = 0;
-			foreach ( $lessons as $lesson ) {
-				$count++;
-				$class = 'lesson';
-				if ( $count == 1 ) { $class .= ' first'; }
-				if ( $count == count( $module ) ) { $class .= ' last'; }
-				if ( $count % 2 != 0 ) {
-					$class .= ' alternate';
-				}
-				$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
+		foreach( $courses as $course ) {
+			$course_id = '';
+			if( isset( $_GET['course_id'] ) ) {
+				$course_id = intval( $_GET['course_id'] );
 			}
-			$html .= '</ul>' . "\n";
+			$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) .'>' . get_the_title( $course->ID ) . '</option>' . "\n";
+		}
 
-			$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
-			$html .= '<input type="submit" class="button-primary" value="' . __( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
+		$html .= '</select>' . "\n";
+		$html .= '<input type="submit" class="button-primary lesson-order-select-course-submit" value="' . __( 'Select', 'woothemes-sensei' ) . '" />' . "\n";
+		$html .= '</form>' . "\n";
+
+		$html .= '<script type="text/javascript">' . "\n";
+		$html .= 'jQuery( \'#lesson-order-course\' ).chosen();' . "\n";
+		$html .= '</script>' . "\n";
+
+		if( isset( $_GET['course_id'] ) ) {
+			$course_id = intval( $_GET['course_id'] );
+			if( $course_id > 0 ) {
+				$args = array(
+					'post_type' => 'lesson',
+					'posts_per_page' => -1,
+					'suppress_filters' => 0,
+					'orderby' => 'menu_order date',
+					'order' => 'ASC',
+					'meta_query' => array(
+						array(
+							'key' => '_lesson_course',
+							'value' => $course_id,
+						),
+					),
+				);
+
+				$lessons = get_posts( $args );
+				if( 0 < count( $lessons ) ) {
+
+					$order_string = $this->get_lesson_order( $course_id );
+
+					$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
+					$html .= '<ul class="sortable-lesson-list">' . "\n";
+					$count = 0;
+					foreach ( $lessons as $lesson ) {
+						$count++;
+						$class = 'lesson';
+						if ( $count == 1 ) { $class .= ' first'; }
+						if ( $count == count( $module ) ) { $class .= ' last'; }
+						if ( $count % 2 != 0 ) {
+							$class .= ' alternate';
+						}
+						$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
+					}
+					$html .= '</ul>' . "\n";
+
+					$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
+					$html .= '<input type="hidden" name="course_id" value="' . $course_id . '" />' . "\n";
+					$html .= '<input type="submit" class="button-primary" value="' . __( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
+				}
+			}
 		}
 
 		echo $html;
 
 		?></div><?php
+	}
+
+	public function get_lesson_order( $course_id = 0 ) {
+		return '';
+	}
+
+	public function save_lesson_order( $order_string = '', $course_id = 0 ) {
+
+		if( $order_string && $course_id ) {
+			$order = explode( ',', $order_string );
+
+			return true;
+		}
+
+		return false;
 	}
 
 } // End Class
