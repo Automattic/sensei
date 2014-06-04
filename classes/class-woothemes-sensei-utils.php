@@ -1048,7 +1048,7 @@ class WooThemes_Sensei_Utils {
 		$course_passmark = 0;
 
 		if( $course_id > 0 ) {
-			$lessons = $woothemes_sensei->frontend->course->course_lessons( $course_id );
+			$lessons = $woothemes_sensei->post_types->course->course_lessons( $course_id );
 			$lesson_count = 0;
 			$total_passmark = 0;
 			foreach( $lessons as $lesson ) {
@@ -1090,7 +1090,7 @@ class WooThemes_Sensei_Utils {
 		$total_grade = 0;
 
 		if( $course_id > 0 && $user_id > 0 ) {
-			$lessons = $woothemes_sensei->frontend->course->course_lessons( $course_id );
+			$lessons = $woothemes_sensei->post_types->course->course_lessons( $course_id );
 			$lesson_count = 0;
 			$total_grade = 0;
 			foreach( $lessons as $lesson ) {
