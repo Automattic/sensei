@@ -414,7 +414,7 @@ class WooThemes_Sensei_Settings_API {
 	 */
 	public function section_description ( $section ) {
 		if ( isset( $this->sections[$section['id']]['description'] ) ) {
-			echo wpautop( esc_html( $this->sections[$section['id']]['description'] ) );
+			echo wpautop( $this->sections[$section['id']]['description'] );
 		}
 	} // End section_description_main()
 
@@ -430,7 +430,24 @@ class WooThemes_Sensei_Settings_API {
 
 		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" value="' . esc_attr( $options[$args['key']] ) . '" />' . "\n";
 		if ( isset( $args['data']['description'] ) ) {
-			echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
+			echo '<span class="description">' . $args['data']['description'] . '</span>' . "\n";
+		}
+	} // End form_field_text()
+
+	/**
+	 * Generate color picker field.
+	 * @access public
+	 * @since  1.6.0
+	 * @param  array $args
+	 * @return void
+	 */
+	public function form_field_color ( $args ) {
+		$options = $this->get_settings();
+
+		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" class="color" value="' . esc_attr( $options[$args['key']] ) . '" />' . "\n";
+		echo '<div style="position:absolute;background:#FFF;z-index:99;border-radius:100%;" class="colorpicker"></div>';
+		if ( isset( $args['data']['description'] ) ) {
+			echo '<span class="description">' . $args['data']['description'] . '</span>' . "\n";
 		}
 	} // End form_field_text()
 
@@ -535,12 +552,18 @@ class WooThemes_Sensei_Settings_API {
 		$options = $this->get_settings();
 
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
-			$html = '<div class="multicheck-container" style="height: 100px; overflow-y: auto;">' . "\n";
+			$html = '<div class="multicheck-container" style="margin-bottom:10px;">' . "\n";
 			foreach ( $args['data']['options'] as $k => $v ) {
 				$checked = '';
 
-				if ( in_array( $k, (array)$options[$args['key']] ) ) { $checked = ' checked="checked"'; }
-				$html .= '<input type="checkbox" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . '][]" class="multicheck multicheck-' . esc_attr( $args['key'] ) . '" value="' . esc_attr( $k ) . '"' . $checked . ' /> ' . $v . '<br />' . "\n";
+				if( isset( $options[ $args['key'] ] ) ) {
+					if ( in_array( $k, (array)$options[ $args['key'] ] ) ) { $checked = ' checked="checked"'; }
+				} else {
+					if ( in_array( $k, $args['data']['defaults'] ) ) { $checked = ' checked="checked"'; }
+				}
+				$html .= '<label for="checkbox-' . esc_attr( $k ) . '">' . "\n";
+				$html .= '<input type="checkbox" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . '][]" class="multicheck multicheck-' . esc_attr( $args['key'] ) . '" value="' . esc_attr( $k ) . '" id="checkbox-' . esc_attr( $k ) . '" ' . $checked . ' /> ' . $v . "\n";
+				$html .= '</label><br />' . "\n";
 			}
 			$html .= '</div>' . "\n";
 			echo $html;
@@ -819,6 +842,9 @@ class WooThemes_Sensei_Settings_API {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
+		wp_enqueue_script( 'farbtastic' );
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'farbtastic' ), '1.6.0' );
+
 		if ( $this->has_range ) {
 			wp_enqueue_script( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/js/ranges' . $suffix . '.js' ), array( 'jquery-ui-slider' ), '1.5.2' );
 		}
@@ -829,9 +855,6 @@ class WooThemes_Sensei_Settings_API {
 			wp_enqueue_script( 'woothemes-sensei-settings-imageselectors' );
 		}
 
-		if ( $this->has_tabs ) {
-			wp_enqueue_script( 'woothemes-sensei-settings-tabs-navigation', esc_url( $woothemes_sensei->plugin_url . 'assets/js/tabs-navigation' . $suffix . '.js' ), array( 'jquery' ), '1.5.2' );
-		}
 	} // End enqueue_scripts()
 
 	/**
@@ -844,7 +867,8 @@ class WooThemes_Sensei_Settings_API {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.6.0' );
+		wp_enqueue_style( 'farbtastic' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), '1.6.0' );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()

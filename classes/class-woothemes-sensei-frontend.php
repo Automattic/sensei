@@ -915,7 +915,7 @@ class WooThemes_Sensei_Frontend {
 							} // End If Statement
 						} // End For Loop
 
-						do_action( 'sensei_user_course_end', $current_user->ID, $post->ID );
+						do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
 		    		} // End If Statement
 
 					// Success message
@@ -1081,6 +1081,11 @@ class WooThemes_Sensei_Frontend {
 							do_action( 'sensei_user_lesson_end', $current_user->ID, $quiz_lesson );
 
 						} // End If Statement
+
+						if( 'manual' == $quiz_grade_type ) {
+							do_action( 'sensei_user_quiz_submitted', $current_user->ID, $post->ID );
+						}
+
 					} // End If Statement
 
 					break;
