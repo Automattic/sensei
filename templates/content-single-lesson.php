@@ -74,6 +74,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 					$user_taking_course = true;
 				}
 
+				$is_preview = false;
 				if( WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
 					$is_preview = true;
 					$view_lesson = true;
