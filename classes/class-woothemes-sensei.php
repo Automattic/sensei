@@ -665,7 +665,7 @@ class WooThemes_Sensei {
 				$is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $post->ID );
 				if ( $this->access_settings() && WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) {
 					$user_allowed = true;
-				} elseif( $this->access_settings() ) {
+				} elseif( $this->access_settings() && false == WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
 					$user_allowed = true;
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
