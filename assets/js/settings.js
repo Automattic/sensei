@@ -65,4 +65,27 @@ jQuery(document).ready(function($) {
         jQuery( 'input[name="course-order"]' ).attr( 'value', orderString );
     });
 
+    /***** Lesson reordering *****/
+
+    jQuery( '.sortable-lesson-list' ).sortable();
+    jQuery( '.sortable-tab-list' ).disableSelection();
+
+    jQuery( '.sortable-lesson-list' ).bind( 'sortstop', function ( e, ui ) {
+        var orderString = '';
+
+        var module_id = jQuery( this ).attr( 'data-module_id' );
+        var order_input = 'lesson-order';
+        if( 0 != module_id ) {
+            order_input = 'lesson-order-module-' + module_id;
+        }
+
+
+        jQuery( this ).find( '.lesson' ).each( function ( i, e ) {
+            if ( i > 0 ) { orderString += ','; }
+            orderString += jQuery( this ).find( 'span' ).attr( 'rel' );
+        });
+
+        jQuery( 'input[name="' + order_input + '"]' ).attr( 'value', orderString );
+    });
+
 });

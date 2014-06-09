@@ -332,6 +332,14 @@ class WooThemes_Sensei_Lesson {
 		    wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' );
 		} // End If Statement
 
+		// Add default lesson order meta value
+		$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+		if( $course_id ) {
+			if( ! get_post_meta( $post->ID, '_order_' . $course_id, true ) ) {
+				update_post_meta( $post->ID, '_order_' . $course_id, 0 );
+			}
+		}
+
 		// Restore the previously disabled filter
     	add_action('save_post', array($this, __FUNCTION__));
 	} // End post_updated()
