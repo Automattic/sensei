@@ -191,7 +191,7 @@ class WooThemes_Sensei_Lesson {
 		$post_args = array(	'post_type' 		=> 'lesson',
 							'numberposts' 		=> -1,
 							'orderby'         	=> 'title',
-    						'order'           	=> 'DESC',
+    						'order'           	=> 'ASC',
     						'exclude' 			=> $post->ID,
 							'suppress_filters' 	=> 0
 							);

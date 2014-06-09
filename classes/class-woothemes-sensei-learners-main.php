@@ -349,11 +349,16 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			'post_type' => 'lesson',
 			'post_status' => 'publish',
 			'posts_per_page' => -1,
+			'meta_key' => '_order_' . $this->course_id,
+			'orderby' => 'meta_value_num date',
+			'order' => 'ASC',
 		);
 
 		if( $this->course_id ) {
-			$args['meta_key'] = '_lesson_course';
-			$args['meta_value'] = $this->course_id;
+			$args['meta_query'][] = array(
+				'key' => '_lesson_course',
+				'value' = $this->course_id,
+			);
 		}
 
 		if( $search ) {

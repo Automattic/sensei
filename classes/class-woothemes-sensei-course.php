@@ -783,10 +783,15 @@ class WooThemes_Sensei_Course {
 
 		$post_args = array(	'post_type' 		=> 'lesson',
 							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order',
+							'meta_key'        	=> '_order_' . $course_id,
+							'orderby'         	=> 'meta_value_num date',
     						'order'           	=> 'ASC',
-    						'meta_key'        	=> '_lesson_course',
-    						'meta_value'      	=> $course_id,
+    						'meta_query'		=> array(
+    							array(
+    								'key' => '_lesson_course',
+									'value' => intval( $course_id ),
+								),
+							),
     						'post_status'       => $post_status,
 							'suppress_filters' 	=> 0
 							);
@@ -839,10 +844,15 @@ class WooThemes_Sensei_Course {
 
 		$post_args = array(	'post_type' 		=> 'lesson',
 							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order',
+							'meta_key'        	=> '_order_' . $course_id,
+							'orderby'         	=> 'meta_value_num date',
     						'order'           	=> 'ASC',
-    						'meta_key'        	=> '_lesson_course',
-    						'meta_value'      	=> $course_id,
+    						'meta_query'		=> array(
+    							array(
+    								'key'		=> '_lesson_course',
+    								'value'		=> $course_id,
+								),
+							),
     						'post_status'       => $post_status,
 							'suppress_filters' 	=> 0
 							);

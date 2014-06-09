@@ -315,7 +315,7 @@ class WooThemes_Sensei_Grading {
 
 			$post_args = array(	'post_type' 		=> 'lesson',
 								'numberposts' 		=> -1,
-								'orderby'         	=> 'menu_order',
+								'orderby'         	=> 'name',
 	    						'order'           	=> 'ASC',
 	    						'meta_key'        	=> '_lesson_course',
 	    						'meta_value'      	=> $course_id,
