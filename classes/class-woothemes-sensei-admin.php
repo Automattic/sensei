@@ -916,7 +916,7 @@ class WooThemes_Sensei_Admin {
 		global $woothemes_sensei;
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery' ), '1.6.0' );
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
 
 		?><div id="course-order" class="wrap course-order">
 		<h2><?php _e( 'Order Courses', 'woothemes-sensei' ); ?></h2><?php
@@ -1006,7 +1006,7 @@ class WooThemes_Sensei_Admin {
 		global $woothemes_sensei;
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery' ), '1.6.0' );
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
 
 		?><div id="lesson-order" class="wrap lesson-order">
 		<h2><?php _e( 'Order Lessons', 'woothemes-sensei' ); ?></h2><?php
