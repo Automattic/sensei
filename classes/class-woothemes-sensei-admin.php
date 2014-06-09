@@ -678,7 +678,7 @@ class WooThemes_Sensei_Admin {
 	public function glance_items( $items = array() ) {
 		global $woothemes_sensei;
 
-		$types = array( 'course', 'lesson' );
+		$types = array( 'course', 'lesson', 'question' );
 
 		foreach( $types as $type ) {
 			if( ! post_type_exists( $type ) ) continue;

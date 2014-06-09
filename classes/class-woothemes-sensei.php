@@ -137,9 +137,15 @@ class WooThemes_Sensei {
 			$this->frontend->init();
 
 			// Frontend Hooks
-			add_filter( 'template_include', array( $this, 'template_loader' ) );
+			add_filter( 'template_include', array( $this, 'template_loader' ), 10, 1 );
 
 		}
+
+		// Load Email Class
+		$this->load_class( 'emails' );
+		$this->emails = new WooThemes_Sensei_Emails( $file );
+		$this->emails->token = $this->token;
+
 		// Image Sizes
 		$this->init_image_sizes();
 		// Force WooCommerce Required Settings
@@ -384,14 +390,20 @@ class WooThemes_Sensei {
 	 * @param mixed $template
 	 * @return void
 	 */
-	public function template_loader ( $template ) {
+	public function template_loader ( $template = '' ) {
 		// REFACTOR
-		global $post, $wp_query;
+		global $post, $wp_query, $email_template;
 
 		$find = array( 'woothemes-sensei.php' );
 		$file = '';
 
-		if ( is_single() && get_post_type() == 'course' ) {
+		if ( isset( $email_template ) && $email_template ) {
+
+			$file 	= 'emails/' . $email_template;
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
+		} elseif ( is_single() && get_post_type() == 'course' ) {
 
 		    if ( $this->check_user_permissions( 'course-single' ) ) {
 				$file 	= 'single-course.php';
@@ -466,9 +478,8 @@ class WooThemes_Sensei {
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
-		} // End If Statement
+		} // Load the template file
 
-		// Load the template file
 		if ( $file ) {
 			$template = locate_template( $find );
 			if ( ! $template ) $template = $this->plugin_path() . '/templates/' . $file;
