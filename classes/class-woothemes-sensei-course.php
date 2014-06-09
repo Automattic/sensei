@@ -902,6 +902,38 @@ class WooThemes_Sensei_Course {
 	} // End course_lesson_count()
 
 	/**
+	 * course_lesson_preview_count function.
+	 *
+	 * @access public
+	 * @param  int $course_id (default: 0)
+	 * @return int
+	 */
+	public function course_lesson_preview_count( $course_id = 0 ) {
+
+		$count = 0;
+
+		$lesson_args = array(	'post_type' 		=> 'lesson',
+								'numberposts' 		=> -1,
+    	    					'post_status'      	=> 'publish',
+    	    					'suppress_filters' 	=> 0,
+    	    					'meta_query' => array(
+									array(
+										'key' => '_lesson_course',
+										'value' => $course_id
+									),
+									array(
+										'key' => '_lesson_preview',
+										'value' => 'preview'
+									)
+								)
+		    				);
+		$lessons_array = get_posts( $lesson_args );
+		$count = count( $lessons_array );
+		return $count;
+
+	} // End course_lesson_count()
+
+	/**
 	 * get_product_courses function.
 	 *
 	 * @access public

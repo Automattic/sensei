@@ -47,7 +47,7 @@ class WooThemes_Sensei_Lesson {
 	 */
 	public function __construct () {
 		// Setup meta fields for this post type
-		$this->meta_fields = array( 'lesson_prerequisite', 'lesson_course', 'lesson_length', 'lesson_complexity', 'lesson_video_embed' );
+		$this->meta_fields = array( 'lesson_prerequisite', 'lesson_course', 'lesson_preview', 'lesson_length', 'lesson_complexity', 'lesson_video_embed' );
 		// Admin actions
 		if ( is_admin() ) {
 
@@ -121,6 +121,9 @@ class WooThemes_Sensei_Lesson {
 
 		// Add Meta Box for Lesson Course
 		add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
+
+		// Add Meta Box for Lesson Preview
+		add_meta_box( 'lesson-preview', __( 'Lesson Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'default' );
 
 		// Add Meta Box for Lesson Information
 		add_meta_box( 'lesson-info', __( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
@@ -212,6 +215,31 @@ class WooThemes_Sensei_Lesson {
 		// Output the HTML
 		echo $html;
 	} // End lesson_prerequisite_meta_box_content()
+
+	/**
+	 * lesson_preview_meta_box_content function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function lesson_preview_meta_box_content () {
+		global $post;
+		// Get existing post meta
+		$lesson_preview = get_post_meta( $post->ID, '_lesson_preview', true );
+		$html = '';
+		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+
+		$checked = '';
+		if ( isset( $lesson_preview ) && ( '' != $lesson_preview ) ) {
+	 	    $checked = checked( 'preview', $lesson_preview, false );
+	 	} // End If Statement
+
+	 	$html .= '<label for="lesson_preview">';
+	 	$html .= '<input type="checkbox" id="lesson_preview" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . __( 'Allow this lesson to be viewed without purchase/login', 'woothemes-sensei' ) . '<br>';
+
+		// Output the HTML
+		echo $html;
+	} // End lesson_preview_meta_box_content()
 
 	/**
 	 * meta_box_save function.

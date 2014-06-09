@@ -1473,6 +1473,19 @@ class WooThemes_Sensei_Utils {
 		return false;
 	}
 
+	public static function is_preview_lesson( $lesson_id ) {
+		$is_preview = false;
+
+		if( 'lesson' == get_post_type( $lesson_id ) ) {
+			$lesson_preview = get_post_meta( $lesson_id, '_lesson_preview', true );
+			if ( isset( $lesson_preview ) && '' != $lesson_preview ) {
+				$is_preview = true;
+			}
+		}
+
+		return $is_preview;
+	}
+
 	public static function user_passed_quiz( $quiz_id = 0, $user_id = 0 ) {
 
 		if( ! $quiz_id  ) return false;
@@ -1498,6 +1511,7 @@ class WooThemes_Sensei_Utils {
         }
 
         return false;
+
 	}
 
 } // End Class
