@@ -1027,7 +1027,9 @@ class WooThemes_Sensei {
 								'key' => '_course_woocommerce_product',
 								'value' => $item['product_id']
 							)
-						)
+						),
+						'orderby' => 'menu_order date',
+						'order' => 'ASC',
 					);
 					$courses = get_posts( $args );
 

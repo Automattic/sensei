@@ -64,7 +64,8 @@ class WooThemes_Sensei_Updates {
 								'1.6.0' => array( 	'auto' 		=> array( 'add_teacher_role' => array( 'title' => 'Add \'Teacher\' role', 'desc' => 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.' ),
 																		  'add_sensei_caps' => array( 'title' => 'Add administrator capabilities', 'desc' => 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.' ),
 																		  'restructure_question_meta' => array( 'title' => 'Restructure question meta data', 'desc' => 'Restructures the quesiton meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.' ),
-																		  'update_quiz_settings' => array( 'title' => 'Add new quiz settings', 'desc' => 'Adds new settings to quizzes that were previously registered as global settings.' ) ),
+																		  'update_quiz_settings' => array( 'title' => 'Add new quiz settings', 'desc' => 'Adds new settings to quizzes that were previously registered as global settings.' ),
+																		  'reset_lesson_order_meta' => array( 'title' => 'Set default order of lessons', 'desc' => 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.' ), ),
 													'manual' 	=> array()
 												),
 							);
@@ -784,6 +785,40 @@ class WooThemes_Sensei_Updates {
 
 			if( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) {
 				update_post_meta( $quiz->ID, '_enable_quiz_reset', 'on' );
+			}
+		}
+
+		return true;
+	}
+
+	public function reset_lesson_order_meta() {
+		$args = array(
+			'post_type' 		=> 'lesson',
+			'posts_per_page' 	=> -1,
+			'post_status'		=> 'any',
+			'suppress_filters' 	=> 0
+		);
+
+		$lessons = get_posts( $args );
+
+		foreach( $lessons as $lesson ) {
+
+			if( ! isset( $lesson->ID ) ) continue;
+
+			$course_id = get_post_meta( $lesson->ID, '_lesson_course', true);
+
+			if( $course_id ) {
+				update_post_meta( $lesson->ID, '_order_' . $course_id, 0 );
+			}
+
+			if( class_exists( 'Sensei_Modules' ) ) {
+				global $sensei_modules;
+
+				$module = $sensei_modules->get_lesson_module( $lesson->ID );
+
+				if( $module ) {
+					update_post_meta( $lesson->ID, '_order_module_' . $module->term_id, 0 );
+				}
 			}
 		}
 

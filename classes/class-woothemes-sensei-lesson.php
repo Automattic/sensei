@@ -194,7 +194,7 @@ class WooThemes_Sensei_Lesson {
 		$post_args = array(	'post_type' 		=> 'lesson',
 							'numberposts' 		=> -1,
 							'orderby'         	=> 'title',
-    						'order'           	=> 'DESC',
+    						'order'           	=> 'ASC',
     						'exclude' 			=> $post->ID,
 							'suppress_filters' 	=> 0
 							);
@@ -360,6 +360,14 @@ class WooThemes_Sensei_Lesson {
 		    wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' );
 		} // End If Statement
 
+		// Add default lesson order meta value
+		$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+		if( $course_id ) {
+			if( ! get_post_meta( $post->ID, '_order_' . $course_id, true ) ) {
+				update_post_meta( $post->ID, '_order_' . $course_id, 0 );
+			}
+		}
+
 		// Restore the previously disabled filter
     	add_action('save_post', array($this, __FUNCTION__));
 	} // End post_updated()
@@ -441,9 +449,9 @@ class WooThemes_Sensei_Lesson {
 		$post_args = array(	'post_type' 		=> 'course',
 							'numberposts' 		=> -1,
 							'orderby'         	=> 'title',
-    						'order'           	=> 'DESC',
+    						'order'           	=> 'ASC',
     						'post_status'      	=> 'any',
-    						'suppress_filters' 	=> 0
+    						'suppress_filters' 	=> 0,
 							);
 		$posts_array = get_posts( $post_args );
 		// Buid the HTML to Output
@@ -1651,7 +1659,7 @@ class WooThemes_Sensei_Lesson {
 
 		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings' ) );
+		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings', 'lesson-order' ) );
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {

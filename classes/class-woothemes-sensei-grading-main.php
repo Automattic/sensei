@@ -413,9 +413,9 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			$post_args = array(	'post_type' 		=> 'course',
 								'numberposts' 		=> -1,
 								'orderby'         	=> 'title',
-	    						'order'           	=> 'DESC',
+	    						'order'           	=> 'ASC',
 	    						'post_status'      	=> 'any',
-	    						'suppress_filters' 	=> 0
+	    						'suppress_filters' 	=> 0,
 								);
 			$posts_array = get_posts( $post_args );
 

@@ -72,7 +72,7 @@ class WooThemes_Sensei_PostTypes {
 
 		// Menu functions
 		if ( is_admin() ) {
-			add_action('admin_menu', array( $this, 'sensei_admin_menu_items' ), 10);
+			add_action('admin_menu', array( $this, 'sensei_admin_menu_items' ), 9);
 		} // End If Statement
 
 	} // End __construct()
@@ -156,7 +156,7 @@ class WooThemes_Sensei_PostTypes {
 						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
-		    'menu_position' => 20, // Below "Pages"
+		    'menu_position' => 20,
 		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'author' )
 		);
 
