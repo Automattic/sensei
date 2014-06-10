@@ -144,20 +144,23 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 							$user_id = $user_id[0];
 						}
 
-						$show_user = true;
-						if( $search ) {
-							$user = get_userdata( $user_id );
-							$show_user = $this->user_search( $user, $search );
-						}
+						$user = get_userdata( $user_id );
 
-						if( $show_user ) {
+						if( $user ) {
+							$show_user = true;
+							if( $search ) {
+								$show_user = $this->user_search( $user, $search );
+							}
 
-							// Get row data
-							$row_data = $this->row_data( $lesson_id, $user_id );
+							if( $show_user ) {
 
-							// Add row to table data
-							if( $row_data ) {
-								array_push( $return_array, $row_data );
+								// Get row data
+								$row_data = $this->row_data( $lesson_id, $user_id );
+
+								// Add row to table data
+								if( $row_data ) {
+									array_push( $return_array, $row_data );
+								}
 							}
 						}
 					}

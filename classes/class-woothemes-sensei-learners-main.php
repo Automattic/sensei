@@ -357,7 +357,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		if( $this->course_id ) {
 			$args['meta_query'][] = array(
 				'key' => '_lesson_course',
-				'value' = $this->course_id,
+				'value' => $this->course_id,
 			);
 		}
 
