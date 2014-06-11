@@ -363,10 +363,10 @@ class WooThemes_Sensei_Frontend {
 	 */
 	function sensei_nav_menu_items( $items, $args ) {
 		global $woothemes_sensei;
-		$add_menu_items = $woothemes_sensei->settings->settings[ 'menu_items' ];
-		// If setting is enabled
-		if ( isset($add_menu_items) && $add_menu_items) {
 
+		$menu_item_locations = apply_filters( 'sensei_menu_item_locations', $woothemes_sensei->settings->settings[ 'menu_item_locations' ] );
+		// If setting is enabled
+		if ( isset( $menu_item_locations ) && in_array( $args->theme_location, $menu_item_locations ) ) {
 			$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
 			$my_account_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
 			// Check for WooCommerce and Logged in User
