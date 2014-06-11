@@ -122,13 +122,18 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'section' => 'default-settings'
 								);
 
-		$fields['menu_items'] = array(
-								'name' => __( 'Add Nav Menu Links', 'woothemes-sensei' ),
-								'description' => __( 'Enabling this will add menu links for the Courses and My Courses pages, the Lesson Archive page, and a Login/Logout link. This will only work if you have a custom menu enabled.', 'woothemes-sensei' ),
-								'type' => 'checkbox',
-								'default' => true,
-								'section' => 'default-settings'
-								);
+		$menu_options = get_registered_nav_menus();
+
+		if( 0 < count( $menu_options ) ) {
+			$fields['menu_item_locations'] = array(
+									'name' => __( 'Add Sensei links to menus', 'woothemes-sensei' ),
+									'description' => __( 'Select the menus in which the Sensei links (Courses, My Courses, Lesson Archive & Login/Logout) will be included.', 'woothemes-sensei' ),
+									'type' => 'multicheck',
+									'options' => $menu_options,
+									'defaults' => array(),
+									'section' => 'default-settings'
+									);
+		}
 
 		$fields['course_page'] = array(
 								'name' => __( 'Course Archive Page', 'woothemes-sensei' ),
