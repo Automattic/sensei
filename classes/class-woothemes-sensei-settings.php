@@ -135,6 +135,14 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 									);
 		}
 
+		$fields['messages_disable'] = array(
+								'name' => __( 'Disable Private Messages', 'woothemes-sensei' ),
+								'description' => __( 'Disable the private message functions between learners and teachers.', 'woothemes-sensei' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'default-settings'
+								);
+
 		$fields['course_page'] = array(
 								'name' => __( 'Course Archive Page', 'woothemes-sensei' ),
 								'description' => __( 'The page to use to display courses. If you leave this blank the default custom post type archive will apply.', 'woothemes-sensei' ),
