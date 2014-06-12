@@ -1372,7 +1372,7 @@ class WooThemes_Sensei_Frontend {
 				$this->sensei_get_template( 'loop-course.php' );
 			} // End If Statement
 		} else {
-			?><p><?php _e( 'No courses found which match your selection.', 'woothemes-sensei' ); ?></p><?php
+			?><p><?php _e( 'No courses found that match your selection.', 'woothemes-sensei' ); ?></p><?php
 		} // End If Statement
 	} // End sensei_course_archive_main_content()
 
@@ -1380,7 +1380,7 @@ class WooThemes_Sensei_Frontend {
 		if ( have_posts() ) {
 			$this->sensei_get_template( 'loop-lesson.php' );
 		} else {
-			?><p><?php _e( 'No lessons found which match your selection.', 'woothemes-sensei' ); ?></p><?php
+			?><p><?php _e( 'No lessons found that match your selection.', 'woothemes-sensei' ); ?></p><?php
 		} // End If Statement
 	} // End sensei_lesson_archive_main_content()
 
@@ -1405,7 +1405,7 @@ class WooThemes_Sensei_Frontend {
 	    		<?php } // End While Loop ?>
 	    	</section>
 		<?php } else { ?>
-			<p><?php _e( 'No courses found which match your selection.', 'woothemes-sensei' ); ?></p>
+			<p><?php _e( 'No courses found that match your selection.', 'woothemes-sensei' ); ?></p>
 		<?php } // End If Statement
 	} // End sensei_course_category_main_content()
 
