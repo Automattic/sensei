@@ -301,7 +301,7 @@ class WooThemes_Sensei_Messages {
 		        // Add lesson/course ID to message meta
 		        $post = get_post( $post_id );
 		        add_post_meta( $message_id, '_posttype', $post->post_type );
-		        add_post_meta( $message_id, '_post', $post_id );
+		        add_post_meta( $message_id, '_post', $post->ID );
 
 		        do_action( 'sensei_new_private_message', $message_id );
 
