@@ -454,6 +454,12 @@ class WooThemes_Sensei {
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
+		} elseif ( is_post_type_archive( 'sensei_message' ) ) {
+
+		    $file 	= 'archive-message.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
 		} elseif( is_tax( 'course-category' ) ) {
 
 			$file 	= 'taxonomy-course-category.php';

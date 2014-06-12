@@ -24,7 +24,7 @@ global $post;
                 	if( $sender_username ) {
                 		$sender = get_user_by( 'login', $sender_username );
 	                	?>
-	                	<p class="message-meta"><small><em><?php printf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, $post->post_date ); ?></em></small></p>
+	                	<p class="message-meta"><small><em><?php printf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() ); ?></em></small></p>
                 	<?php } ?>
                 	<?php the_content(); ?>
 				</section>

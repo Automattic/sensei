@@ -65,6 +65,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_lesson_image', array( $this, 'sensei_lesson_image' ), 10, 5 );
 		add_action( 'sensei_course_archive_header', array( $this, 'sensei_course_archive_header' ), 10, 3 );
 		add_action( 'sensei_lesson_archive_header', array( $this, 'sensei_lesson_archive_header' ), 10, 3 );
+		add_action( 'sensei_message_archive_header', array( $this, 'sensei_message_archive_header' ), 10, 3 );
 		add_action( 'sensei_course_archive_course_title', array( $this, 'sensei_course_archive_course_title' ), 10, 1 );
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 		// 1.2.1
@@ -82,6 +83,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_single_main_content', array( $this, 'sensei_single_main_content' ), 10 );
 		add_action( 'sensei_course_archive_main_content', array( $this, 'sensei_course_archive_main_content' ), 10 );
 		add_action( 'sensei_lesson_archive_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
+		add_action( 'sensei_message_archive_main_content', array( $this, 'sensei_message_archive_main_content' ), 10 );
 		add_action( 'sensei_course_category_main_content', array( $this, 'sensei_course_category_main_content' ), 10 );
 		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
 		add_action( 'sensei_login_form', array( $this, 'sensei_login_form' ), 10 );
@@ -521,12 +523,12 @@ class WooThemes_Sensei_Frontend {
 	function sensei_single_title() {
 		global $post;
 
-		$title = '';
-
 		if( is_singular( 'sensei_message' ) ) {
 			$content_post_id = get_post_meta( $post->ID, '_post', true );
 			if( $content_post_id ) {
 				$title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), '<a href="' . get_permalink( $content_post_id ) . '">' . get_the_title( $content_post_id ) . '</a>' );
+			} else {
+				$title = get_the_title( $post->ID );
 			}
 		} else {
 			$title = get_the_title();
@@ -618,8 +620,16 @@ class WooThemes_Sensei_Frontend {
 		error_log( $before_html, 0 );
 		error_log( $after_html, 0 );
 		$html .= $before_html . apply_filters( 'sensei_lessons_archive_text', __( 'Lessons Archive', 'woothemes-sensei' ) ) . $after_html;
-		echo apply_filters( 'lesson_archive_title', $html );
+		echo apply_filters( 'sensei_lesson_archive_title', $html );
 	} // sensei_course_archive_header()
+
+	public function sensei_message_archive_header( $query_type = '', $before_html = '<header class="archive-header"><h1>', $after_html = '</h1></header>' ) {
+		$html = '';
+		error_log( $before_html, 0 );
+		error_log( $after_html, 0 );
+		$html .= $before_html . apply_filters( 'sensei_my_messages_text', __( 'My Messages', 'woothemes-sensei' ) ) . $after_html;
+		echo apply_filters( 'sensei_message_archive_title', $html );
+	} // sensei_message_archive_header()
 
 	/**
 	 * sensei_course_archive_course_title output for course archive page individual course title
@@ -1421,6 +1431,14 @@ class WooThemes_Sensei_Frontend {
 			$this->sensei_get_template( 'loop-lesson.php' );
 		} else {
 			?><p><?php _e( 'No lessons found that match your selection.', 'woothemes-sensei' ); ?></p><?php
+		} // End If Statement
+	} // End sensei_lesson_archive_main_content()
+
+	public function sensei_message_archive_main_content() {
+		if ( have_posts() ) {
+			$this->sensei_get_template( 'loop-message.php' );
+		} else {
+			?><p><?php _e( 'You do not have any messages.', 'woothemes-sensei' ); ?></p><?php
 		} // End If Statement
 	} // End sensei_lesson_archive_main_content()
 
