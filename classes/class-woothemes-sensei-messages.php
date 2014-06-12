@@ -243,18 +243,6 @@ class WooThemes_Sensei_Messages {
 		wp_set_comment_status( $comment_id, 'approve' );
 
 		do_action( 'sensei_private_message_reply', $comment, $message );
-
-		// // Get message permalink
-		// $message_url = get_permalink( $message->ID );
-
-  //   	// Get commenter data
-  //   	$commenter = $comment->comment_author;
-
-  //   	// Get original sender & receiver data
-  //   	$message_sender = get_post_meta( $message->ID, '_sender', true );
-  //   	$message_receiver = get_post_meta( $message->ID, '_receiver', true );
-
-  //   	$comment_link = get_comment_link( $comment );
 	}
 
 	/**

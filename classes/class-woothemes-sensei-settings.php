@@ -450,6 +450,10 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 			'teacher-new-message' => __( 'A learner sends a private message to a teacher', 'woothemes-sensei' ),
 		);
 
+		$global_email_options = array(
+			'new-message-reply' => __( 'They receive a reply to their private message', 'woothemes-sensei' ),
+		);
+
 		$fields['email_learners'] = array(
 								'name' => __( 'Emails Sent to Learners', 'woothemes-sensei' ),
 								'description' => __( 'Select the notifications that will be sent to learners.', 'woothemes-sensei' ),
@@ -464,7 +468,16 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'description' => __( 'Select the notifications that will be sent to teachers.', 'woothemes-sensei' ),
 								'type' => 'multicheck',
 								'options' => $teacher_email_options,
-								'defaults' => array( 'teacher-completed-course', 'teacher-started-course', 'teacher-quiz-submitted' ),
+								'defaults' => array( 'teacher-completed-course', 'teacher-started-course', 'teacher-quiz-submitted', 'teacher-new-message' ),
+								'section' => 'email-notification-settings'
+								);
+
+		$fields['email_global'] = array(
+								'name' => __( 'Emails Sent to All Users', 'woothemes-sensei' ),
+								'description' => __( 'Select the notifications that will be sent to all users.', 'woothemes-sensei' ),
+								'type' => 'multicheck',
+								'options' => $global_email_options,
+								'defaults' => array( 'new-message-reply' ),
 								'section' => 'email-notification-settings'
 								);
 

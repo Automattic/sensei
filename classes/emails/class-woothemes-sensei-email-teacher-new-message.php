@@ -7,7 +7,7 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_New_Message' ) ) :
 /**
  * Teacher New Message
  *
- * An email sent to the teacher when one of their students starts a course.
+ * An email sent to the teacher when one of their students sends them a private message.
  *
  * @class 		WooThemes_Sensei_Email_Teacher_New_Message
  * @version		1.6.0
@@ -32,7 +32,7 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 	 */
 	function __construct() {
 		$this->template = 'teacher-new-message';
-		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your received a new private message', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
+		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have received a new private message', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
 		$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has sent you a private message', 'woothemes-sensei' ), $this->template );
 	}
 
@@ -70,7 +70,7 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 			'content_type'		=> $content_type,
 		), $this->template );
 
-		// Set recipient (learner)
+		// Set recipient (teacher)
 		$this->recipient = stripslashes( $this->teacher->user_email );
 
 		// Send mail
