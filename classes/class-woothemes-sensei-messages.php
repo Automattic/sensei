@@ -200,6 +200,7 @@ class WooThemes_Sensei_Messages {
 				$html .= wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
 				$html .= '<input type="submit" class="send_message" value="' . __( 'Send Message', 'woothemes-sensei' ) . '" />';
 			$html .= '</p>';
+			$html .= '<div class="fix"></div>';
 		$html .= '</form>';
 
 		return $html;
@@ -361,19 +362,19 @@ class WooThemes_Sensei_Messages {
 
 		if( is_post_type_archive( $this->post_type ) && $query->is_main_query() ) {
 			wp_get_current_user();
-			$user_id = $current_user->ID;
+			$username = $current_user->user_login;
 
 			$meta_query['relation'] = 'OR';
 
 			$meta_query[] = array(
-				'key' => 'sender',
-				'value' => $user_id,
+				'key' => '_sender',
+				'value' => $username,
 				'compare' => '='
 			);
 
 			$meta_query[] = array(
-				'key' => 'receiver',
-				'value' => $user_id,
+				'key' => '_receiver',
+				'value' => $username,
 				'compare' => '='
 			);
 

@@ -395,6 +395,16 @@ class WooThemes_Sensei_Frontend {
 					} // End If Statement
 					$items .= apply_filters( 'sensei_my_courses_page_menu_link', '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">' . apply_filters( 'sensei_my_courses_text', __('My Courses', 'woothemes-sensei') ) . '</a></li>', $args->theme_location );
 				} // End If Statement
+
+				// My Messages link
+				if( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) {
+					$classes = '';
+					if ( is_post_type_archive( 'sensei_message' ) ) {
+						$classes = ' current-menu-item current_page_item';
+					} // End If Statement
+					$items .= apply_filters( 'sensei_my_messages_page_menu_link', '<li class="my-messages' . $classes . '"><a href="'. get_post_type_archive_link( 'sensei_message' ) .'">' . apply_filters( 'sensei_my_messages_text', __('My Messages', 'woothemes-sensei') ) . '</a></li>', $args->theme_location );
+				}
+
 				// Logout Link
 				$items .= apply_filters( 'sensei_logout_menu_link', '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">' . apply_filters( 'sensei_logout_text', __('Logout', 'woothemes-sensei') ) . '</a></li>', $args->theme_location );
 			} else {
@@ -422,6 +432,18 @@ class WooThemes_Sensei_Frontend {
 					} // End If Statement
 					$items .= apply_filters( 'sensei_my_courses_page_menu_link', '<li class="my-account' . $classes . '"><a href="'. get_permalink( $my_account_page_id ) .'">' . apply_filters( 'sensei_my_courses_text', __('My Courses', 'woothemes-sensei') ) . '</a></li>', $args->theme_location );
 				} // End If Statement
+
+				// My Messages link
+				if( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) {
+					if( is_user_logged_in() ) {
+						$classes = '';
+						if ( is_post_type_archive( 'sensei_message' ) ) {
+							$classes = ' current-menu-item current_page_item';
+						} // End If Statement
+						$items .= apply_filters( 'sensei_my_messages_page_menu_link', '<li class="my-messages' . $classes . '"><a href="'. get_post_type_archive_link( 'sensei_message' ) .'">' . apply_filters( 'sensei_my_messages_text', __('My Messages', 'woothemes-sensei') ) . '</a></li>', $args->theme_location );
+					}
+				}
+
 				// Logout Link
 				if ( is_user_logged_in() && !strstr( $items, wp_logout_url( home_url() ) ) ) {
 					$items .= apply_filters( 'sensei_logout_menu_link', '<li class="logout"><a href="'. wp_logout_url( home_url() ) .'">' . apply_filters( 'sensei_logout_text', __('Logout', 'woothemes-sensei') ) . '</a></li>', $args->theme_location );
@@ -1551,12 +1573,15 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_lesson_preview_title( $title = '', $id = 0 ) {
 		global $post, $current_user;
-		// Get the course ID
-		$course_id = get_post_meta( $post->ID, '_lesson_course', true );
-		// Check if the user is taking the course
-		$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
-		if( is_singular( 'lesson' ) && WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) && !$is_user_taking_course && $post->ID == $id ) {
-			$title .= ' ' . $this->sensei_lesson_preview_title_text( $course_id );
+
+		if( isset( $post->ID ) ) {
+			// Get the course ID
+			$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+			// Check if the user is taking the course
+			$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
+			if( is_singular( 'lesson' ) && WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) && !$is_user_taking_course && $post->ID == $id ) {
+				$title .= ' ' . $this->sensei_lesson_preview_title_text( $course_id );
+			}
 		}
 		return $title;
 	} // sensei_lesson_preview_title
