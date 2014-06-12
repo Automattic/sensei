@@ -341,7 +341,7 @@ class WooThemes_Sensei_PostTypes {
 			    'has_archive' => true,
 			    'hierarchical' => false,
 			    'menu_position' => 50,
-			    'supports' => array( 'title', 'editor', 'custom-fields', 'comments' ),
+			    'supports' => array( 'title', 'editor', 'comments' ),
 			);
 
 			register_post_type( 'sensei_message', $args );

@@ -31,6 +31,7 @@ class WooThemes_Sensei_Messages {
 
 		// Add Messages page to admin menu
 		add_action( 'admin_menu', array( $this, 'add_menu_item' ), 11 );
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
 
 		// Save new private message
@@ -39,8 +40,8 @@ class WooThemes_Sensei_Messages {
 		// Monitor when new reply is posted
 		add_action( 'comment_post', array( $this, 'message_reply_received' ), 10, 1 );
 
-		// Force comments open for all messages
-		add_action( 'save_post', array( $this, 'open_message_comments' ) );
+		// Process saving of message posts
+		add_action( 'save_post', array( $this, 'save_message' ) );
 
 		// Add message links to courses & lessons
 		add_action( 'sensei_course_single_lessons', array( $this, 'send_message_link' ), 1 );
@@ -62,15 +63,92 @@ class WooThemes_Sensei_Messages {
 		}
 	}
 
-	public function open_message_comments( $post_id = 0 ) {
+	public function add_meta_box( $post_type, $post ) {
 
-		if( $this->post_type != $_REQUEST['post_type'] ) return;
+		if( ! $post_type == $this->post_type ) return;
 
-		remove_action( 'save_post', array( $this, 'open_message_comments' ) );
+		add_meta_box( $this->post_type . '-data', __( 'Message Information', 'woothemes-sensei' ), array( $this, 'meta_box_content' ), $this->post_type, 'normal', 'default' );
+
+	}
+
+	public function meta_box_content() {
+		global $woothemes_sensei, $post;
+
+		$settings = array(
+			array(
+				'id' 			=> 'sender',
+				'label'			=> __( 'Message sent by:', 'woothemes-sensei' ),
+				'description'	=> __( 'The username of the learner who sent this message.', 'woothemes-sensei' ),
+				'type'			=> 'text',
+				'default'		=> '',
+				'placeholder'	=> __( 'Learner username', 'woothemes-sensei' ),
+			),
+			array(
+				'id' 			=> 'receiver',
+				'label'			=> __( 'Message received by:', 'woothemes-sensei' ),
+				'description'	=> __( 'The username of the teacher who received this message.', 'woothemes-sensei' ),
+				'type'			=> 'text',
+				'default'		=> '',
+				'placeholder'	=> __( 'Teacher username', 'woothemes-sensei' ),
+			),
+		);
+
+		$message_posttype = get_post_meta( $post->ID, '_posttype', true );
+
+		if( isset( $message_posttype ) && $message_posttype ) {
+
+			$args = array(
+				'post_type' => $message_posttype,
+				'posts_per_page' => -1,
+				'orderby' => 'name',
+				'order' => 'ASC',
+				'post_status' => 'publish',
+			);
+
+			$posts = get_posts( $args );
+
+			$post_options[0] = sprintf( __( 'Select %1$s', 'woothemes-sensei' ), $message_posttype );
+			foreach( $posts as $post_item ) {
+				$post_options[ $post_item->ID ] = $post_item->post_title;
+			}
+
+			$settings[] = array(
+				'id' 			=> 'post',
+				'label'			=> sprintf( __( 'Message from %1$s:', 'woothemes-sensei' ), $message_posttype ),
+				'description'	=> sprintf( __( 'The %1$s to which this message relates.', 'woothemes-sensei' ), $message_posttype ),
+				'type'			=> 'select',
+				'default'		=> 0,
+				'options'		=> $post_options,
+			);
+		}
+
+		$html = $woothemes_sensei->admin->render_settings( $settings, $post->ID, 'message-info' );
+
+		echo $html;
+	}
+
+	public function save_message( $post_id = 0 ) {
+		global $post;
+
+		if( $this->post_type != get_post_type() ) return;
+
+		if( isset( $_POST['sender'] ) && $_POST['sender'] ) {
+			update_post_meta( $post_id, '_sender', $_POST['sender'] );
+		}
+
+		if( isset( $_POST['receiver'] ) && $_POST['receiver'] ) {
+			update_post_meta( $post_id, '_receiver', $_POST['receiver'] );
+		}
+
+		if( isset( $_POST['post'] ) && $_POST['post'] ) {
+			update_post_meta( $post_id, '_post', $_POST['post'] );
+		}
+
+		remove_action( 'save_post', array( $this, 'save_message' ) );
 
 		wp_update_post( array( 'ID' => $post_id, 'comment_status' => 'open' ) );
 
-		add_action( 'save_post', array( $this, 'open_message_comments' ) );
+		add_action( 'save_post', array( $this, 'save_message' ) );
 	}
 
 	public function send_message_link() {
@@ -172,8 +250,8 @@ class WooThemes_Sensei_Messages {
   //   	$commenter = $comment->comment_author;
 
   //   	// Get original sender & receiver data
-  //   	$message_sender = get_post_meta( $message->ID, 'sender', true );
-  //   	$message_receiver = get_post_meta( $message->ID, 'receiver', true );
+  //   	$message_sender = get_post_meta( $message->ID, '_sender', true );
+  //   	$message_receiver = get_post_meta( $message->ID, '_receiver', true );
 
   //   	$comment_link = get_comment_link( $comment );
 	}
@@ -213,15 +291,16 @@ class WooThemes_Sensei_Messages {
 
 	        	// Add sender to message meta
 	        	$sender = get_userdata( $sender_id );
-	        	add_post_meta( $message_id, 'sender', $sender->user_login );
+	        	add_post_meta( $message_id, '_sender', $sender->user_login );
 
 	        	// Add receiver to message meta
 	        	$receiver = get_userdata( $receiver_id );
-		        add_post_meta( $message_id, 'receiver', $receiver->user_login );
+		        add_post_meta( $message_id, '_receiver', $receiver->user_login );
 
 		        // Add lesson/course ID to message meta
 		        $post = get_post( $post_id );
-		        add_post_meta( $message_id, $post->post_type, $post_id );
+		        add_post_meta( $message_id, '_posttype', $post->post_type );
+		        add_post_meta( $message_id, '_post', $post_id );
 
 		        do_action( 'sensei_new_private_message', $message_id );
 
@@ -250,8 +329,8 @@ class WooThemes_Sensei_Messages {
 		}
 
 		// Get allowed users
-		$receiver = get_post_meta( $message_id, 'receiver', true );
-		$sender = get_post_meta( $message_id, 'sender', true );
+		$receiver = get_post_meta( $message_id, '_receiver', true );
+		$sender = get_post_meta( $message_id, '_sender', true );
 
 		// Check if user is allowed to view the message
 		if( in_array( $user_login, array( $receiver, $sender ) ) ) {

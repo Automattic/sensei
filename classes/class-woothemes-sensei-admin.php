@@ -869,7 +869,7 @@ class WooThemes_Sensei_Admin {
 										}
 										$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>' . "\n";
 									}
-									$html .= '</select>' . "\n";
+									$html .= '</select><br/>' . "\n";
 								break;
 
 								case 'select_multi':
