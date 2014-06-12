@@ -138,6 +138,9 @@ class WooThemes_Sensei_Admin {
 		} elseif ( $screen->base == 'edit-tags' && $taxonomy == 'course-category' ) {
 			$submenu_file = 'edit-tags.php?taxonomy=course-category&post_type=course';
 			$parent_file  = 'edit.php?post_type=lesson';
+		} elseif ( in_array( $screen->id, array( 'sensei_message', 'edit-sensei_message' ) ) ) {
+			$submenu_file = 'edit.php?post_type=sensei_message';
+			$parent_file  = 'sensei';
 		}
 	}
 
@@ -866,7 +869,7 @@ class WooThemes_Sensei_Admin {
 										}
 										$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>' . "\n";
 									}
-									$html .= '</select>' . "\n";
+									$html .= '</select><br/>' . "\n";
 								break;
 
 								case 'select_multi':

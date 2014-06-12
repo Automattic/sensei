@@ -42,6 +42,7 @@ class WooThemes_Sensei_PostTypes {
 	 * @return  void
 	 */
 	public function __construct () {
+		global $woothemes_sensei;
 
 		// Setup Post Types
 		$this->labels = array();
@@ -51,15 +52,19 @@ class WooThemes_Sensei_PostTypes {
 		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_multiple_question_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_sensei_message_post_type' ), 100 );
+
 		// Setup Taxonomies
 		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_type_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_category_taxonomy' ), 100 );
 		add_action( 'init', array( $this, 'setup_lesson_tag_taxonomy' ), 100 );
+
 		// Load Post Type Objects
-		$default_post_types = array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question' ) ;
+		$default_post_types = array( 'course' => 'Course', 'lesson' => 'Lesson', 'quiz' => 'Quiz', 'question' => 'Question', 'messages' => 'Messages' ) ;
 		$this->load_posttype_objects( $default_post_types );
+
 		// Admin functions
 		if ( is_admin() ) {
 			$this->set_role_cap_defaults( $default_post_types );
@@ -312,6 +317,38 @@ class WooThemes_Sensei_PostTypes {
 	} // End setup_multiple_question_post_type()
 
 	/**
+	 * Setup the "sensei_message" post type, it's admin menu item and the appropriate labels and permissions.
+	 * @since  1.6.0
+	 * @return void
+	 */
+	public function setup_sensei_message_post_type () {
+		global $woothemes_sensei;
+
+		if( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) {
+
+			$args = array(
+			    'labels' => $this->create_post_type_labels( 'sensei_message', $this->labels['sensei_message']['singular'], $this->labels['sensei_message']['plural'], $this->labels['sensei_message']['menu'] ),
+			    'public' => true,
+			    'publicly_queryable' => true,
+			    'show_ui' => true,
+			    'show_in_menu' => 'admin.php?page=sensei',
+			    'show_in_nav_menus' => true,
+			    'query_var' => true,
+			    'exclude_from_search' => true,
+			    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => false, 'feeds' => false, 'pages' => false ),
+			    'map_meta_cap' => true,
+			    'capability_type' => 'question',
+			    'has_archive' => true,
+			    'hierarchical' => false,
+			    'menu_position' => 50,
+			    'supports' => array( 'title', 'editor', 'comments' ),
+			);
+
+			register_post_type( 'sensei_message', $args );
+		}
+	} // End setup_sensei_message_post_type()
+
+	/**
 	 * Setup the "course category" taxonomy, linked to the "course" post type.
 	 * @since  1.1.0
 	 * @return void
@@ -496,6 +533,7 @@ class WooThemes_Sensei_PostTypes {
 		$this->labels['quiz'] = array( 'singular' => __( 'Quiz', 'woothemes-sensei' ), 'plural' => __( 'Quizzes', 'woothemes-sensei' ), 'menu' => __( 'Quizzes', 'woothemes-sensei' ) );
 		$this->labels['question'] = array( 'singular' => __( 'Question', 'woothemes-sensei' ), 'plural' => __( 'Questions', 'woothemes-sensei' ), 'menu' => __( 'Questions', 'woothemes-sensei' ) );
 		$this->labels['multiple_question'] = array( 'singular' => __( 'Multiple Question', 'woothemes-sensei' ), 'plural' => __( 'Multiple Questions', 'woothemes-sensei' ), 'menu' => __( 'Multiple Questions', 'woothemes-sensei' ) );
+		$this->labels['sensei_message'] = array( 'singular' => __( 'Message', 'woothemes-sensei' ), 'plural' => __( 'Messages', 'woothemes-sensei' ), 'menu' => __( 'Messages', 'woothemes-sensei' ) );
 
 	} // End setup_post_type_labels_base()
 

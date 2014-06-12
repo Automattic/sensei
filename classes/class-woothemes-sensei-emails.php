@@ -52,6 +52,8 @@ class WooThemes_Sensei_Emails {
 		add_action( 'sensei_user_course_end', array( $this, 'teacher_completed_course' ), 10, 2 );
 		add_action( 'sensei_user_course_start', array( $this, 'teacher_started_course' ), 10, 2 );
 		add_action( 'sensei_user_quiz_submitted', array( $this, 'teacher_quiz_submitted' ), 10, 2 );
+		add_action( 'sensei_new_private_message', array( $this, 'teacher_new_message' ), 10, 1 );
+		add_action( 'sensei_private_message_reply', array( $this, 'new_message_reply' ), 10, 2 );
 
 		// Let 3rd parties unhook the above via this hook
 		do_action( 'sensei_emails', $this );
@@ -67,6 +69,8 @@ class WooThemes_Sensei_Emails {
 		$this->emails['teacher-completed-course'] = include( 'emails/class-woothemes-sensei-email-teacher-completed-course.php' );
 		$this->emails['teacher-started-course'] = include( 'emails/class-woothemes-sensei-email-teacher-started-course.php' );
 		$this->emails['teacher-quiz-submitted'] = include( 'emails/class-woothemes-sensei-email-teacher-quiz-submitted.php' );
+		$this->emails['teacher-new-message'] = include( 'emails/class-woothemes-sensei-email-teacher-new-message.php' );
+		$this->emails['new-message-reply'] = include( 'emails/class-woothemes-sensei-email-new-message-reply.php' );
 
 		$this->emails = apply_filters( 'sensei_email_classes', $this->emails );
 	}
@@ -135,15 +139,15 @@ class WooThemes_Sensei_Emails {
 	 * Wraps a message in the sensei mail template.
 	 *
 	 * @access public
-	 * @param mixed $message
+	 * @param mixed $content
 	 * @return string
 	 */
-	function wrap_message( $message ) {
+	function wrap_message( $content ) {
 
 		$html = '';
 
 		$html .= $this->load_template( 'header' );
-		$html .= wpautop( wptexturize( $message ) );
+		$html .= wpautop( wptexturize( $content ) );
 		$html .= $this->load_template( 'footer' );
 
 		return $html;
@@ -162,6 +166,7 @@ class WooThemes_Sensei_Emails {
 	 * @return void
 	 */
 	function send( $to, $subject, $message, $headers = "Content-Type: text/html\r\n", $attachments = "", $content_type = 'text/html' ) {
+		global $email_template;
 
 		// Set content type
 		$this->_content_type = $content_type;
@@ -328,6 +333,56 @@ class WooThemes_Sensei_Emails {
 		if( $send ) {
 			$email = $this->emails['teacher-quiz-submitted'];
 			$email->trigger( $learner_id, $quiz_id );
+		}
+	}
+
+	/**
+	 * Send email to teacher when a new private message is received
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function teacher_new_message( $message_id = 0 ) {
+		global $woothemes_sensei;
+
+		$send = false;
+
+		if( isset( $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+			if( in_array( 'teacher-new-message', (array) $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+				$send = true;
+			}
+		} else {
+			$send = true;
+		}
+
+		if( $send ) {
+			$email = $this->emails['teacher-new-message'];
+			$email->trigger( $message_id );
+		}
+	}
+
+	/**
+	 * Send email to a user when their private message receives a reply
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function new_message_reply( $comment, $message ) {
+		global $woothemes_sensei;
+
+		$send = false;
+
+		if( isset( $woothemes_sensei->settings->settings['email_global'] ) ) {
+			if( in_array( 'new-message-reply', (array) $woothemes_sensei->settings->settings['email_global'] ) ) {
+				$send = true;
+			}
+		} else {
+			$send = true;
+		}
+
+		if( $send ) {
+			$email = $this->emails['new-message-reply'];
+			$email->trigger( $comment, $message );
 		}
 	}
 

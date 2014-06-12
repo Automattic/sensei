@@ -1,12 +1,12 @@
 <?php
 /**
- * The Template for displaying all single lessons.
+ * The Template for displaying all single messages.
  *
- * Override this template by copying it to yourtheme/sensei/single-lesson.php
+ * Override this template by copying it to yourtheme/sensei/single-message.php
  *
  * @author 		WooThemes
  * @package 	Sensei/Templates
- * @version     1.0.0
+ * @version     1.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
