@@ -60,6 +60,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_course_single_title', array( $this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_lesson_single_title', array( $this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_quiz_single_title', array( $this, 'sensei_single_title' ), 10 );
+		add_action( 'sensei_message_single_title', array( $this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_course_image', array( $this, 'sensei_course_image' ), 10, 4 );
 		add_action( 'sensei_lesson_image', array( $this, 'sensei_lesson_image' ), 10, 5 );
 		add_action( 'sensei_course_archive_header', array( $this, 'sensei_course_archive_header' ), 10, 3 );
@@ -348,6 +349,8 @@ class WooThemes_Sensei_Frontend {
 		$allow_comments = $woothemes_sensei->settings->settings[ 'lesson_comments' ];
 		if ( is_user_logged_in() && $allow_comments && ( isset( $view_lesson ) && $view_lesson ) && ( isset( $user_taking_course ) && $user_taking_course ) ) {
 			comments_template();
+		} elseif( is_singular( 'sensei_message' ) ) {
+			comments_template();
 		} // End If Statement
 	} // End sensei_output_comments()
 
@@ -516,7 +519,19 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_single_title() {
-		?><header><h1><?php the_title(); ?></h1></header><?php
+		global $post;
+
+		$title = '';
+
+		if( is_singular( 'sensei_message' ) ) {
+			$content_post_id = get_post_meta( $post->ID, '_post', true );
+			if( $content_post_id ) {
+				$title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), '<a href="' . get_permalink( $content_post_id ) . '">' . get_the_title( $content_post_id ) . '</a>' );
+			}
+		} else {
+			$title = get_the_title();
+		}
+		?><header><h1><?php echo $title; ?></h1></header><?php
 	} // End sensei_single_title()
 
 	/**
@@ -1372,9 +1387,12 @@ class WooThemes_Sensei_Frontend {
 				$this->sensei_get_template_part( 'content', 'single-course' );
 			} elseif( is_singular( 'lesson' ) ) {
 				$this->sensei_get_template_part( 'content', 'single-lesson' );
-			do_action( 'sensei_comments' );
+				do_action( 'sensei_comments' );
 			} elseif( is_singular( 'quiz' ) ) {
 				$this->sensei_get_template_part( 'content', 'single-quiz' );
+			} elseif( is_singular( 'sensei_message' ) ) {
+				$this->sensei_get_template_part( 'content', 'single-message' );
+				do_action( 'sensei_comments' );
 			} // End If Statement
 		} // End While Loop
 	} // End sensei_single_main_content()

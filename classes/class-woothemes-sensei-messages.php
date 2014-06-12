@@ -392,7 +392,7 @@ class WooThemes_Sensei_Messages {
 	 */
 	public function message_title( $title, $post_id ) {
 
-		if( is_single() && is_singular( $this->post_type ) && in_the_loop() ) {
+		if( is_single() && is_singular( $this->post_type ) && in_the_loop() && get_post_type( $post_id ) == $this->post_type ) {
 			if( ! is_user_logged_in() || ! $this->view_message( $post_id ) ) {
 				$title = __( 'You are not allowed to view this message.', 'woothemes-sensei' );
 			}

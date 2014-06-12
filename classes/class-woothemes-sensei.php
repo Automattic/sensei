@@ -442,6 +442,12 @@ class WooThemes_Sensei {
 				$find[] = $this->template_url . $file;
 			} // End If Statement
 
+		} elseif ( is_single() && get_post_type() == 'sensei_message' ) {
+
+		    $file 	= 'single-message.php';
+	    	$find[] = $file;
+	    	$find[] = $this->template_url . $file;
+
 		} elseif ( is_post_type_archive( 'course' ) || is_page( $this->get_page_id( 'courses' ) ) ) {
 
 		    $file 	= 'archive-course.php';
