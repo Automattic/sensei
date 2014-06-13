@@ -509,6 +509,14 @@ jQuery(document).ready( function($) {
 		return false;
 	}
 
+	jQuery.fn.scrollToElement = function( target ) {
+	    var topoffset = 30;
+	    var speed = 800;
+	    var destination = jQuery( target ).offset().top - topoffset;
+	    jQuery( 'html:not(:animated),body:not(:animated)' ).animate( { scrollTop: destination}, speed );
+	    return false;
+	}
+
 	/***************************************************************************************************
 	 * 	2 - Lesson Quiz Functions.
 	 ***************************************************************************************************/
@@ -828,6 +836,8 @@ jQuery(document).ready( function($) {
 			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
 			 			max_questions++;
 			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+
+			 			jQuery.fn.scrollToElement( '#lesson-quiz' );
 	 		    	}
 	 		    }
 	 		);
@@ -895,6 +905,8 @@ jQuery(document).ready( function($) {
 			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
 			 			max_questions += questionNumber;
 			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+
+			 			jQuery.fn.scrollToElement( '#lesson-quiz' );
 	 		    	}
 	 		    }
 	 		);
@@ -1190,6 +1202,12 @@ jQuery(document).ready( function($) {
 			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
 			 			max_questions += i;
 			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+
+			 			jQuery.fn.scrollToElement( '#lesson-quiz' );
+
+			 			jQuery( '#existing-questions' ).find( 'input.existing-item' ).each( function() {
+			 				jQuery( this ).removeAttr( 'checked' );
+			 			});
  					}
  				}
  			);
