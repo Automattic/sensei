@@ -106,6 +106,9 @@ class WooThemes_Sensei_Frontend {
 		// Menu Item filters
 		add_filter( 'wp_nav_menu_items', array( $this, 'sensei_nav_menu_items' ), 10, 2 );
 		add_filter( 'wp_nav_menu_objects',  array( $this, 'sensei_nav_menu_item_classes' ), 2, 20 );
+		// Custom Menu Item filters
+		add_filter( 'wp_setup_nav_menu_item', array( $this, 'sensei_setup_nav_menu_item' ) );
+		add_filter( 'wp_nav_menu_objects', array( $this, 'sensei_wp_nav_menu_objects' ) );
 		// Search Results filters
 		add_filter( 'post_class', array( $this, 'sensei_search_results_classes' ), 10 );
 		// Comments Feed Actions
@@ -504,6 +507,115 @@ class WooThemes_Sensei_Frontend {
 
 		return $menu_items;
 	} // End sensei_nav_menu_item_classes()
+
+	/**
+	 * sensei_setup_nav_menu_item function.
+	 *
+	 * Generate the urls for Sensei custom menu items.
+	 *
+	 * @access public
+	 * @param object $item
+	 * @return object $item
+	 */
+	public function sensei_setup_nav_menu_item( $item ) {
+		global $pagenow, $wp_rewrite, $woothemes_sensei;
+		
+		if( 'nav-menus.php' != $pagenow && !defined('DOING_AJAX') && isset( $item->url ) && 'custom' == $item->type ) {
+
+			// Set up Sensei menu links
+			$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
+			$my_account_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
+
+			$course_page_url = ( 0 < $course_page_id ? get_permalink( $course_page_id ) : get_post_type_archive_link( 'course' ) );
+			$lesson_archive_url = get_post_type_archive_link( 'lesson' );
+			$my_courses_url = get_permalink( $my_account_page_id );
+			$my_messages_url = get_post_type_archive_link( 'sensei_message' );
+
+			switch ( $item->url ) {
+				case '#senseicourses':
+					$item->url = $course_page_url;
+					break;
+
+				case '#senseilessons':
+					$item->url = $lesson_archive_url;
+					break;
+
+				case '#senseimycourses':
+					$item->url = $my_courses_url;
+					break;
+
+				case '#senseimymessages':
+					$item->url = $my_messages_url;
+					break;
+
+				case '#senseilearnerprofile':
+					$item->url = esc_url( $woothemes_sensei->learner_profiles->get_permalink() );
+					break;
+				
+				default:
+					break;
+			}
+
+			$_root_relative_current = untrailingslashit( $_SERVER['REQUEST_URI'] );
+			$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_root_relative_current );
+			$item_url = untrailingslashit( $item->url );
+			$_indexless_current = untrailingslashit( preg_replace( '/' . preg_quote( $wp_rewrite->index, '/' ) . '$/', '', $current_url ) );
+			// Highlight current menu item
+			if ( $item_url && in_array( $item_url, array( $current_url, $_indexless_current, $_root_relative_current ) ) ) {
+				$item->classes[] = 'current-menu-item current_page_item';
+			}
+
+			$logout_url = wp_logout_url( home_url() );
+			// Login link links to the My Courses page, to avoid the WP dashboard.
+			$login_url = $my_courses_url;
+
+			// Set the correct title and URL for the login/logout link
+			if ( '#senseiloginlogout' == $item->url ) {
+				$item->url = ( is_user_logged_in() ? $logout_url : $login_url );
+				$item->title = $this->sensei_login_logout_title( $item->title );
+			}
+		}
+		return $item;
+	} // End sensei_setup_nav_menu_item()
+
+	/**
+	 * sensei_wp_nav_menu_objects function.
+	 *
+	 * Remove Sensei custom menu items depending on settings and logged in status.
+	 *
+	 * @access public
+	 * @param object $item
+	 * @return object $item
+	 */
+	public function sensei_wp_nav_menu_objects( $sorted_menu_items ) {
+		global $woothemes_sensei;
+
+		foreach( $sorted_menu_items as $k=>$item ) {
+			// Remove the My Messages link for logged out users or if Private Messages are disabled.	
+			if( get_post_type_archive_link( 'sensei_message' ) == $item->url ) {
+				if ( !is_user_logged_in() || ( isset( $woothemes_sensei->settings->settings['messages_disable'] ) && $woothemes_sensei->settings->settings['messages_disable'] ) ) {
+					unset( $sorted_menu_items[$k] );
+				}
+			}
+			// Remove the My Profile link for logged out users.
+			if( $woothemes_sensei->learner_profiles->get_permalink() == $item->url ) {
+				if ( !is_user_logged_in() || ! ( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) ) {
+					unset( $sorted_menu_items[$k] );
+				}
+			}
+		}
+		return $sorted_menu_items;
+	} // End sensei_wp_nav_menu_objects
+
+	public function sensei_login_logout_title( $title ) {
+		// Get the title of the login/logout link, from the pipe-separated values given e.g. "Sign In|Sign Out"
+		$titles = explode( '|', $title );
+		if ( is_user_logged_in() ) {
+			return esc_html( isset( $titles[1] ) ? $titles[1] : $title );
+		} else {
+			return esc_html( isset( $titles[0] ) ? $titles[0] : $title );
+		}
+	} // End sensei_login_logout_title()
 
 	// add category nicenames in body and post class
 	function sensei_search_results_classes($classes) {

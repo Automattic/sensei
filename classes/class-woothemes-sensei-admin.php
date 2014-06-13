@@ -43,6 +43,7 @@ class WooThemes_Sensei_Admin {
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'page_redirect' ) );
+		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
 
 		// Duplicate lesson & courses
 		add_filter( 'post_row_actions', array( $this, 'duplicate_action_link' ), 10, 2 );
@@ -1230,5 +1231,69 @@ class WooThemes_Sensei_Admin {
 		return false;
 	}
 
+	function sensei_add_custom_menu_items() {
+		global $pagenow;
+
+		if( 'nav-menus.php' == $pagenow ) {
+			add_meta_box( 'add-sensei-links', __( 'Sensei Links' ), array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
+		}
+	}
+
+	function wp_nav_menu_item_sensei_links_meta_box( $object ) {
+		global $nav_menu_selected_id, $woothemes_sensei;
+
+		$menu_items = array( 
+						'#senseicourses' => __( 'Courses', 'woothemes_sensei' ),
+						'#senseilessons' => __( 'Lessons', 'woothemes_sensei' ),
+						'#senseimycourses' => __( 'My Courses', 'woothemes_sensei' ),
+						'#senseilearnerprofile' => __( 'My Profile', 'woothemes_sensei' ),
+						'#senseimymessages' => __( 'My Messages', 'woothemes_sensei' ),
+						'#senseiloginlogout' => __( 'Login', 'woothemes_sensei' ) . '|' . __( 'Logout', 'woothemes_sensei' )
+						 );
+
+		$menu_items_obj = array();
+		foreach ( $menu_items as $value => $title ) {
+			$menu_items_obj[$title] = new senseiItems();
+			$menu_items_obj[$title]->object_id	= esc_attr( $value );
+			$menu_items_obj[$title]->title		= esc_attr( $title );
+			$menu_items_obj[$title]->url		= esc_attr( $value );
+			$menu_items_obj[$title]->description = 'description';
+		}
+
+		$walker = new Walker_Nav_Menu_Checklist( array() );
+		?>
+
+		<div id="sensei-links" class="senseidiv taxonomydiv">
+			<div id="tabs-panel-sensei-links-all" class="tabs-panel tabs-panel-view-all tabs-panel-active">
+			
+				<ul id="sensei-linkschecklist" class="list:sensei-links categorychecklist form-no-clear">
+					<?php echo walk_nav_menu_tree( array_map( 'wp_setup_nav_menu_item', $menu_items_obj ), 0, (object)array( 'walker' => $walker ) ); ?>
+				</ul>
+
+			</div>
+			<p class="button-controls">
+				<span class="add-to-menu">
+					<input type="submit"<?php disabled( $nav_menu_selected_id, 0 ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e('Add to Menu'); ?>" name="add-sensei-links-menu-item" id="submit-sensei-links" />
+					<span class="spinner"></span>
+				</span>
+			</p>
+		</div><!-- .senseidiv -->
+		<?php
+	}
+
 } // End Class
+
+class senseiItems {
+	public $db_id = 0;
+	public $object = 'sensei';
+	public $object_id;
+	public $menu_item_parent = 0;
+	public $type = 'custom';
+	public $title;
+	public $url;
+	public $target = '';
+	public $attr_title = '';
+	public $classes = array();
+	public $xfn = '';
+}
 ?>
