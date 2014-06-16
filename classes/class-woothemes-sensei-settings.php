@@ -122,19 +122,6 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'section' => 'default-settings'
 								);
 
-		$menu_options = get_registered_nav_menus();
-
-		if( 0 < count( $menu_options ) ) {
-			$fields['menu_item_locations'] = array(
-									'name' => __( 'Add Sensei links to menus', 'woothemes-sensei' ),
-									'description' => __( 'Select the menus in which the Sensei links (Courses, My Courses, Lesson Archive & Login/Logout) will be included.', 'woothemes-sensei' ),
-									'type' => 'multicheck',
-									'options' => $menu_options,
-									'defaults' => array(),
-									'section' => 'default-settings'
-									);
-		}
-
 		$fields['messages_disable'] = array(
 								'name' => __( 'Disable Private Messages', 'woothemes-sensei' ),
 								'description' => __( 'Disable the private message functions between learners and teachers.', 'woothemes-sensei' ),
@@ -425,14 +412,6 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 							'description' => __( 'Display the learner\'s active and completed courses on their profile.', 'woothemes-sensei' ),
 							'type' => 'checkbox',
 							'default' => true,
-							'section' => 'learner-profile-settings'
-							);
-
-		$fields['learner_profile_menu_link'] = array(
-							'name' => __( 'Add menu link', 'woothemes-sensei' ),
-							'description' => sprintf( __( 'Add a \'%s\' link to the main navigation. This will only work if you have a custom menu enabled.', 'woothemes-sensei' ), apply_filters( 'sensei_learner_profile_menu_link_text', __( 'My Profile', 'woothemes-sensei' ) ) ) ,
-							'type' => 'checkbox',
-							'default' => false,
 							'section' => 'learner-profile-settings'
 							);
 
