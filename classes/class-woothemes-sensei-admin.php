@@ -1235,7 +1235,7 @@ class WooThemes_Sensei_Admin {
 		global $pagenow;
 
 		if( 'nav-menus.php' == $pagenow ) {
-			add_meta_box( 'add-sensei-links', __( 'Sensei Links' ), array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
+			add_meta_box( 'add-sensei-links', __( 'Sensei' ), array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
 		}
 	}
 
