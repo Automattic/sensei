@@ -10,7 +10,7 @@
  * New - Ability to reorder all courses & lessons via drag-and-drop
  * New - Moving global quiz settings into new quiz settings panel to enable them to be configured per quiz
  * New - Grading notes for auto-graded questions
- * New - Fine-grained control over menu item visibility
+ * New - Sensei menu item control moved to Appearance > Menus
  * New - Adding 'manage_sensei' and 'manage_sensei_grades' capbilities to govern how users interact with dashboard pages
  * Tweak - Displaying lesson excerpt on single lesson page for unregistered users
  * Tweak - Converting all Less files to SASS
