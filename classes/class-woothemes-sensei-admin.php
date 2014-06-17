@@ -1235,14 +1235,14 @@ class WooThemes_Sensei_Admin {
 		global $pagenow;
 
 		if( 'nav-menus.php' == $pagenow ) {
-			add_meta_box( 'add-sensei-links', __( 'Sensei' ), array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
+			add_meta_box( 'add-sensei-links', __( 'Sensei', 'woothemes-sensei' ), array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
 		}
 	}
 
 	function wp_nav_menu_item_sensei_links_meta_box( $object ) {
 		global $nav_menu_selected_id, $woothemes_sensei;
 
-		$menu_items = array( 
+		$menu_items = array(
 						'#senseicourses' => __( 'Courses', 'woothemes_sensei' ),
 						'#senseilessons' => __( 'Lessons', 'woothemes_sensei' ),
 						'#senseimycourses' => __( 'My Courses', 'woothemes_sensei' ),
@@ -1273,7 +1273,7 @@ class WooThemes_Sensei_Admin {
 
 		<div id="sensei-links" class="senseidiv taxonomydiv">
 			<div id="tabs-panel-sensei-links-all" class="tabs-panel tabs-panel-view-all tabs-panel-active">
-			
+
 				<ul id="sensei-linkschecklist" class="list:sensei-links categorychecklist form-no-clear">
 					<?php echo walk_nav_menu_tree( array_map( 'wp_setup_nav_menu_item', $menu_items_obj ), 0, (object)array( 'walker' => $walker ) ); ?>
 				</ul>
@@ -1281,7 +1281,7 @@ class WooThemes_Sensei_Admin {
 			</div>
 			<p class="button-controls">
 				<span class="add-to-menu">
-					<input type="submit"<?php disabled( $nav_menu_selected_id, 0 ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e('Add to Menu'); ?>" name="add-sensei-links-menu-item" id="submit-sensei-links" />
+					<input type="submit"<?php disabled( $nav_menu_selected_id, 0 ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'woothemes-sensei' ); ?>" name="add-sensei-links-menu-item" id="submit-sensei-links" />
 					<span class="spinner"></span>
 				</span>
 			</p>
