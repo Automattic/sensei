@@ -1253,11 +1253,19 @@ class WooThemes_Sensei_Admin {
 
 		$menu_items_obj = array();
 		foreach ( $menu_items as $value => $title ) {
-			$menu_items_obj[$title] = new senseiItems();
-			$menu_items_obj[$title]->object_id	= esc_attr( $value );
-			$menu_items_obj[$title]->title		= esc_attr( $title );
-			$menu_items_obj[$title]->url		= esc_attr( $value );
-			$menu_items_obj[$title]->description = 'description';
+			$menu_items_obj[$title] = new stdClass;
+			$menu_items_obj[$title]->object_id			= esc_attr( $value );
+			$menu_items_obj[$title]->title				= esc_attr( $title );
+			$menu_items_obj[$title]->url				= esc_attr( $value );
+			$menu_items_obj[$title]->description 		= 'description';
+			$menu_items_obj[$title]->db_id 				= 0;
+			$menu_items_obj[$title]->object 			= 'sensei';
+			$menu_items_obj[$title]->menu_item_parent 	= 0;
+			$menu_items_obj[$title]->type 				= 'custom';
+			$menu_items_obj[$title]->target 			= '';
+			$menu_items_obj[$title]->attr_title 		= '';
+			$menu_items_obj[$title]->classes 			= array();
+			$menu_items_obj[$title]->xfn 				= '';
 		}
 
 		$walker = new Walker_Nav_Menu_Checklist( array() );
@@ -1283,17 +1291,4 @@ class WooThemes_Sensei_Admin {
 
 } // End Class
 
-class senseiItems {
-	public $db_id = 0;
-	public $object = 'sensei';
-	public $object_id;
-	public $menu_item_parent = 0;
-	public $type = 'custom';
-	public $title;
-	public $url;
-	public $target = '';
-	public $attr_title = '';
-	public $classes = array();
-	public $xfn = '';
-}
 ?>
