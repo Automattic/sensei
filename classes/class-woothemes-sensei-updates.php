@@ -86,8 +86,8 @@ class WooThemes_Sensei_Updates {
 	 * @return void
 	 */
 	public function add_update_admin_screen() {
-		if ( current_user_can( 'manage_sensei' ) ) {
-			add_submenu_page( 'sensei', 'Sensei Updates', 'Updates', 'manage_sensei', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+		if ( current_user_can( 'manage_options' ) ) {
+			add_submenu_page( 'sensei', 'Sensei Updates', 'Updates', 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
 		}
 	} // End add_update_admin_screen()
 
@@ -101,7 +101,7 @@ class WooThemes_Sensei_Updates {
 	public function sensei_updates_page() {
 
 		// Only allow admins to load this page and run the update functions
-		if( current_user_can( 'manage_sensei' ) ) {
+		if( current_user_can( 'manage_options' ) ) {
 			?>
 			<div class="wrap">
 
