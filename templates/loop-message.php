@@ -15,7 +15,7 @@ global $woothemes_sensei;
 ?>
 
     <?php if ( have_posts() ) { ?>
-		<section id="main-message" class="message-container">
+		<section id="main-sensei_message" class="sensei_message-container">
 
         	    <?php do_action( 'sensei_message_archive_header' ); ?>
 

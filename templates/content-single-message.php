@@ -1,12 +1,12 @@
 <?php
 /**
- * The template for displaying product content in the single-quiz.php template
+ * The template for displaying thew content on the single message page
  *
- * Override this template by copying it to yourtheme/sensei/content-single-quiz.php
+ * Override this template by copying it to yourtheme/sensei/content-single-message.php
  *
  * @author 		WooThemes
  * @package 	Sensei/Templates
- * @version     1.0.0
+ * @version     1.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
