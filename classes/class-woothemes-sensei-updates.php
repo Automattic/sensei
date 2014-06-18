@@ -285,7 +285,7 @@ class WooThemes_Sensei_Updates {
 	public function update ( $type = 'auto' ) {
 
 		// Only allow admins to run update functions
-		if( current_user_can( 'manage_sensei' ) ) {
+		if( current_user_can( 'manage_options' ) ) {
 
 			// Run through all functions
 			foreach ( $this->updates as $version => $value ) {
