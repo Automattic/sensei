@@ -24,7 +24,7 @@ global $woothemes_sensei;
         			$post_id = get_the_ID(); ?>
 
                     <?php
-                    $html = '<article class="' . esc_attr( join( ' ', get_post_class( array( 'lesson', 'course', 'post', 'message' ), $post_id ) ) ) . '">';
+                    $html = '<article class="' . esc_attr( join( ' ', get_post_class( array( 'lesson', 'course', 'post', 'sensei_message' ), $post_id ) ) ) . '">';
 
                         $html .= '<header>';
 
