@@ -339,7 +339,7 @@ class WooThemes_Sensei_Learners {
 			'orderby'        => 'display_name',
 			'search'         => '*' . $term . '*',
 			'search_columns' => array( 'ID', 'user_login', 'user_email', 'user_nicename' )
-		) ) );
+		), $term ) );
 
 		$users = $users_query->get_results();
 
