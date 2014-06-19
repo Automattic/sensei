@@ -11,7 +11,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-global $woothemes_sensei;
+global $woothemes_sensei, $post;
 ?>
         	<article <?php post_class(); ?>>
 
@@ -29,7 +29,7 @@ global $woothemes_sensei;
 
             		    <section class="entry fix">
             		    	<div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
-            		    	<?php the_content(); ?>
+            		    	<?php if ( 'full' == $woothemes_sensei->settings->settings[ 'course_single_content_display' ] ) { the_content(); } else { echo '<p class="course-excerpt">' . $post->post_excerpt . '</p>'; } ?>
             		    </section>
 
 						<?php course_single_meta(); ?>
@@ -42,7 +42,7 @@ global $woothemes_sensei;
 	                </header>
 
                 	<section class="entry fix">
-                        <?php if ( is_singular( 'lesson' ) ) { 
+                        <?php if ( is_singular( 'lesson' ) ) {
                             echo Woothemes_Sensei_Lesson::lesson_excerpt( $post );
                         } ?>
                 		<div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
