@@ -17,7 +17,7 @@ extract( $sensei_email_data );
 // For gmail compatibility, including CSS styles in head/body are stripped out therefore styles need to be inline. These variables contain rules which are added to the template inline. !important; is a gmail hack to prevent styles being stripped if it doesn't like something.
 $small = "text-align: center !important;";
 
-$large = "text-align: center !important;font-size: 350% !important;";
+$large = "text-align: center !important;font-size: 350% !important;line-height: 100% !important;";
 
 ?>
 
