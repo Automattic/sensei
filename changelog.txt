@@ -1,7 +1,7 @@
 *** Sensei Changelog ***
 
 2014.06.13 - version 1.6.0
- * New - Complete question bank functionality including question categories and the ability to re-use questions in multiple quizzes
+ * New - Comprehensive question bank functionality including question categories and the ability to re-use questions in multiple quizzes
  * New - New Learner Management dashboard that allows administrators to add/remove learners to/from and course or lesson
  * New - Secure private message functionality that allows learners to contact and interact with course & lesson teachers
  * New - Email notifications for learner and teacher activity

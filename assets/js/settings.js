@@ -49,6 +49,23 @@ jQuery(document).ready(function($) {
         });
     });
 
+    jQuery.fn.fixOrderingList = function( container, type ) {
+
+        container.find( '.' + type ).each( function( i, e ) {
+            jQuery( this ).removeClass( 'alternate' );
+            jQuery( this ).removeClass( 'first' );
+            jQuery( this ).removeClass( 'last' );
+            if( i == 0 ) {
+                jQuery( this ).addClass( 'first alternate' );
+            } else {
+                var r = ( i % 2 );
+                if( 0 == r ) {
+                    jQuery( this ).addClass( 'alternate' );
+                }
+            }
+        });
+    }
+
     /***** Course reordering *****/
 
     jQuery( '.sortable-course-list' ).sortable();
@@ -63,6 +80,8 @@ jQuery(document).ready(function($) {
         });
 
         jQuery( 'input[name="course-order"]' ).attr( 'value', orderString );
+
+        jQuery.fn.fixOrderingList( jQuery( this ), 'course' );
     });
 
     /***** Lesson reordering *****/
@@ -86,6 +105,8 @@ jQuery(document).ready(function($) {
         });
 
         jQuery( 'input[name="' + order_input + '"]' ).attr( 'value', orderString );
+
+        jQuery.fn.fixOrderingList( jQuery( this ), 'lesson' );
     });
 
 });
