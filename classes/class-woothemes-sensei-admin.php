@@ -65,6 +65,9 @@ class WooThemes_Sensei_Admin {
 		// Delete user activity when user is deleted
 		add_action( 'deleted_user', array( $this, 'delete_user_activity' ), 10, 1 );
 
+		// Add notices to WP dashboard
+		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
+
 	} // End __construct()
 
 	/**
@@ -1287,6 +1290,37 @@ class WooThemes_Sensei_Admin {
 			</p>
 		</div><!-- .senseidiv -->
 		<?php
+	}
+
+	/**
+	 * Adding admin notices
+	 * @return void
+	 */
+	public function admin_notices() {
+		global $current_user;
+		wp_get_current_user();
+        $user_id = $current_user->ID;
+
+        if( isset( $_GET['sensei_hide_notice'] ) ) {
+        	switch( esc_attr( $_GET['sensei_hide_notice'] ) ) {
+				case 'menu_settings': add_user_meta( $user_id, 'sensei_hide_menu_settings_notice', true ); break;
+			}
+        }
+
+        $screen = get_current_screen();
+
+        if( 'sensei_page_woothemes-sensei-settings' == $screen->id ) {
+
+	        $hide_menu_settings_notice = get_user_meta( $user_id, 'sensei_hide_menu_settings_notice', true );
+
+	        if( ! $hide_menu_settings_notice ) {
+	        	?>
+				<div class="updated fade">
+			        <p><?php printf( __( 'The settings for the Sensei menu items have been removed. Menu items can now be added individually via the %1$sWordPress menu editor%2$s.%3$s%4$sDismiss this notice%5$s', 'woothemes-sensei' ), '<a href="' . admin_url( 'nav-menus.php' ) . '">', '</a>', '<br/>', '<em><a href="' . add_query_arg( 'sensei_hide_notice', 'menu_settings' ) . '">', '</a></em>' ); ?></p>
+			    </div>
+			    <?php
+	        }
+	    }
 	}
 
 } // End Class
