@@ -1166,14 +1166,20 @@ class WooThemes_Sensei_Admin {
 							$class .= ' alternate';
 						}
 						$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
+
+						$displayed_lessons[] = $lesson->ID;
 					}
 					$html .= '</ul>' . "\n";
+				} else {
+					if( 0 == count( $displayed_lessons ) ) {
+						$html .= '<p><em>' . __( 'There are no lessons in this course.', 'woothemes-sensei' ) . '</em></p>';
+					}
+				}
 
+				if( 0 < count( $displayed_lessons ) ) {
 					$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
 					$html .= '<input type="hidden" name="course_id" value="' . $course_id . '" />' . "\n";
 					$html .= '<input type="submit" class="button-primary" value="' . __( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
-				} else {
-					$html .= '<p><em>' . __( 'There are no lessons in this course.', 'woothemes-sensei' ) . '</em></p>';
 				}
 			}
 		}
