@@ -1,17 +1,17 @@
 *** Sensei Changelog ***
 
-2014.06.13 - version 1.6.0
- * New - Comprehensive question bank functionality including question categories and the ability to re-use questions in multiple quizzes
- * New - New Learner Management dashboard that allows administrators to add/remove learners to/from and course or lesson
+2014.06.25 - version 1.6.0
+ * New - Comprehensive question bank functionality including question categories, the ability to re-use questions in multiple quizzes and bulk adding questions from a category
+ * New - New Learner Management dashboard that allows administrators to add/remove learners to/from any course or lesson
  * New - Secure private message functionality that allows learners to contact and interact with course & lesson teachers
  * New - Email notifications for learner and teacher activity
- * New - New 'Teacher' role that has access to Grading, Analysis & Learner Management
+ * New - Adding 'manage_sensei' and 'manage_sensei_grades' capbilities to govern how users interact with dashboard pages
+ * New - New 'Teacher' role that has the 'manage_sensei_grades' capability giving access to Grading, Analysis & Learner Management
  * New - Ability to set preview lessons that are available before starting a course
  * New - Ability to reorder all courses & lessons via drag-and-drop
  * New - Moving global quiz settings into new quiz settings panel to enable them to be configured per quiz
  * New - Grading notes for auto-graded questions
- * New - Sensei menu item control moved to Appearance > Menus
- * New - Adding 'manage_sensei' and 'manage_sensei_grades' capbilities to govern how users interact with dashboard pages
+ * New - Sensei menu item control moved to Appearance > Menus for fine-grained control over menu items
  * Tweak - Displaying lesson excerpt on single lesson page for unregistered users
  * Tweak - Converting all Less files to SASS
  * Fix - Making sure that courses are no longer available after subscription ends
