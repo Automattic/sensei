@@ -144,20 +144,23 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 							$user_id = $user_id[0];
 						}
 
-						$show_user = true;
-						if( $search ) {
-							$user = get_userdata( $user_id );
-							$show_user = $this->user_search( $user, $search );
-						}
+						$user = get_userdata( $user_id );
 
-						if( $show_user ) {
+						if( $user ) {
+							$show_user = true;
+							if( $search ) {
+								$show_user = $this->user_search( $user, $search );
+							}
 
-							// Get row data
-							$row_data = $this->row_data( $lesson_id, $user_id );
+							if( $show_user ) {
 
-							// Add row to table data
-							if( $row_data ) {
-								array_push( $return_array, $row_data );
+								// Get row data
+								$row_data = $this->row_data( $lesson_id, $user_id );
+
+								// Add row to table data
+								if( $row_data ) {
+									array_push( $return_array, $row_data );
+								}
 							}
 						}
 					}
@@ -237,7 +240,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		// Quiz Grade
 		$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
 		$quiz_grade = __( 'No Grade', 'woothemes-sensei' );
-		if ( 0 < intval( $lesson_grade ) ) {
+		if ( '' != $lesson_grade ) {
 	    	$quiz_grade = $lesson_grade . '%';
 	    } // End If Statement
 
@@ -247,7 +250,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	    	$status = 'ungraded';
 			$status_html = '<span class="ungraded">' . apply_filters( 'sensei_ungraded_text', __( 'Ungraded', 'woothemes-sensei' ) ) . '</span>';
 			$updated = $lesson_end_date;
-		} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
+		} elseif ( isset( $lesson_grade ) && '' != $lesson_grade ) {
 			if( $grading_status && $grading_status != 'graded' ) { return false; }
 			$status = 'graded';
 			$status_html = '<span class="graded">' . apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) ) . '</span>';
@@ -413,9 +416,9 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			$post_args = array(	'post_type' 		=> 'course',
 								'numberposts' 		=> -1,
 								'orderby'         	=> 'title',
-	    						'order'           	=> 'DESC',
+	    						'order'           	=> 'ASC',
 	    						'post_status'      	=> 'any',
-	    						'suppress_filters' 	=> 0
+	    						'suppress_filters' 	=> 0,
 								);
 			$posts_array = get_posts( $post_args );
 

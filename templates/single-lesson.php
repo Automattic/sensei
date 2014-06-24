@@ -1,6 +1,6 @@
 <?php
 /**
- * The Template for displaying all single lesons.
+ * The Template for displaying all single lessons.
  *
  * Override this template by copying it to yourtheme/sensei/single-lesson.php
  *

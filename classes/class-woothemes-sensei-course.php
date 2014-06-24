@@ -516,8 +516,8 @@ class WooThemes_Sensei_Course {
 		switch ($type) {
 			case 'usercourses':
 				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'date',
-    								'order'           	=> 'DESC',
+									'orderby'         	=> 'menu_order date',
+    								'order'           	=> 'ASC',
     								'post_status'      	=> 'publish',
     								'include'			=> $includes,
     								'exclude'			=> $excludes,
@@ -531,22 +531,24 @@ class WooThemes_Sensei_Course {
 							   'post_status' => 'publish',
 							   'posts_per_page' => -1,
 							   'meta_query' => array(
-							   							array(
-													        'key' => '_price',
-													        'value' => '0',
-													        'compare' => '=',
-													        'type' => 'NUMERIC'
-													       )
-													)
-								);
+		   							array(
+								        'key' => '_price',
+								        'value' => '0',
+								        'compare' => '=',
+								        'type' => 'NUMERIC'
+								       )
+								),
+								'orderby' => 'menu_order date',
+								'order' => 'ASC',
+				);
  				$posts = get_posts($args);
  				$free_wc_posts = array();
  				foreach ( $posts as $post_item ) {
  					array_push( $free_wc_posts , $post_item->ID );
  				} // End For Loop
  				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'date',
-    								'order'           	=> 'DESC',
+									'orderby'         	=> 'menu_order date',
+    								'order'           	=> 'ASC',
     								'post_status'      	=> 'publish',
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
@@ -596,8 +598,8 @@ class WooThemes_Sensei_Course {
  					array_push( $paid_wc_posts , $post_item->ID );
  				} // End For Loop
 				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'date',
-    								'order'           	=> 'DESC',
+									'orderby'         	=> 'menu_order date',
+    								'order'           	=> 'ASC',
     								'post_status'      	=> 'publish',
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
@@ -628,8 +630,8 @@ class WooThemes_Sensei_Course {
 				break;
 			case 'featuredcourses':
 				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'date',
-    								'order'           	=> 'DESC',
+									'orderby'         	=> 'menu_order date',
+    								'order'           	=> 'ASC',
     								'post_status'      	=> 'publish',
     								'meta_value' 		=> 'featured',
     								'meta_key' 			=> '_course_featured',
@@ -640,8 +642,8 @@ class WooThemes_Sensei_Course {
 				break;
 			default:
 				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'date',
-    								'order'           	=> 'DESC',
+									'orderby'         	=> 'menu_order date',
+    								'order'           	=> 'ASC',
     								'post_status'      	=> 'publish',
     								'include'			=> $includes,
     								'exclude'			=> $excludes,
@@ -755,7 +757,7 @@ class WooThemes_Sensei_Course {
 
 		$post_args = array(	'post_type' 		=> 'course',
 							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order',
+							'orderby'         	=> 'menu_order date',
     						'order'           	=> 'ASC',
     						'post_status'       => $post_status,
 							'suppress_filters' 	=> 0
@@ -781,10 +783,15 @@ class WooThemes_Sensei_Course {
 
 		$post_args = array(	'post_type' 		=> 'lesson',
 							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order',
+							'meta_key'        	=> '_order_' . $course_id,
+							'orderby'         	=> 'meta_value_num date',
     						'order'           	=> 'ASC',
-    						'meta_key'        	=> '_lesson_course',
-    						'meta_value'      	=> $course_id,
+    						'meta_query'		=> array(
+    							array(
+    								'key' => '_lesson_course',
+									'value' => intval( $course_id ),
+								),
+							),
     						'post_status'       => $post_status,
 							'suppress_filters' 	=> 0
 							);
@@ -837,10 +844,15 @@ class WooThemes_Sensei_Course {
 
 		$post_args = array(	'post_type' 		=> 'lesson',
 							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order',
+							'meta_key'        	=> '_order_' . $course_id,
+							'orderby'         	=> 'meta_value_num date',
     						'order'           	=> 'ASC',
-    						'meta_key'        	=> '_lesson_course',
-    						'meta_value'      	=> $course_id,
+    						'meta_query'		=> array(
+    							array(
+    								'key'		=> '_lesson_course',
+    								'value'		=> $course_id,
+								),
+							),
     						'post_status'       => $post_status,
 							'suppress_filters' 	=> 0
 							);
@@ -902,6 +914,38 @@ class WooThemes_Sensei_Course {
 	} // End course_lesson_count()
 
 	/**
+	 * course_lesson_preview_count function.
+	 *
+	 * @access public
+	 * @param  int $course_id (default: 0)
+	 * @return int
+	 */
+	public function course_lesson_preview_count( $course_id = 0 ) {
+
+		$count = 0;
+
+		$lesson_args = array(	'post_type' 		=> 'lesson',
+								'numberposts' 		=> -1,
+    	    					'post_status'      	=> 'publish',
+    	    					'suppress_filters' 	=> 0,
+    	    					'meta_query' => array(
+									array(
+										'key' => '_lesson_course',
+										'value' => $course_id
+									),
+									array(
+										'key' => '_lesson_preview',
+										'value' => 'preview'
+									)
+								)
+		    				);
+		$lessons_array = get_posts( $lesson_args );
+		$count = count( $lessons_array );
+		return $count;
+
+	} // End course_lesson_count()
+
+	/**
 	 * get_product_courses function.
 	 *
 	 * @access public
@@ -918,7 +962,9 @@ class WooThemes_Sensei_Course {
 								'meta_key'        	=> '_course_woocommerce_product',
 	    						'meta_value'      	=> $product_id,
 	    						'post_status'       => 'publish',
-								'suppress_filters' 	=> 0
+								'suppress_filters' 	=> 0,
+								'orderby' 			=> 'menu_order date',
+								'order' 			=> 'ASC',
 								);
 			$posts_array = get_posts( $post_args );
 		} // End If Statement
@@ -1089,7 +1135,7 @@ class WooThemes_Sensei_Course {
 
 			    				$active_html .= '<input type="hidden" name="course_complete_id" id="course-complete-id" value="' . esc_attr( absint( $course_item->ID ) ) . '" />';
 
-			    				if ( 0 < absint( count( $course_lessons ) ) && $woothemes_sensei->settings->settings['lesson_completion'] == 'complete' && $woothemes_sensei->settings->settings['course_completion'] == 'complete' ) {
+			    				if ( 0 < absint( count( $course_lessons ) ) && $woothemes_sensei->settings->settings['course_completion'] == 'complete' ) {
 			    					$active_html .= '<span><input name="course_complete" type="submit" class="course-complete" value="' . apply_filters( 'sensei_mark_as_complete_text', __( 'Mark as Complete', 'woothemes-sensei' ) ) . '"/></span>';
 			    				} // End If Statement
 
@@ -1192,8 +1238,16 @@ class WooThemes_Sensei_Course {
 						$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
 
 						if( $manage ) {
-							if( count( $woothemes_sensei->frontend->course->course_quizzes( $course_item->ID ) ) > 0 ) {
-								$complete_html .= '<p class="sensei-results-links"><a class="button view-results" href="' . $woothemes_sensei->course_results->get_permalink( $course_item->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a></p>';
+							$has_quizzes = count( $woothemes_sensei->frontend->course->course_quizzes( $course_item->ID ) ) > 0 ? true : false;
+							// Output only if there is content to display
+							if ( has_filter( 'sensei_results_links' ) || false != $has_quizzes ) {
+								$complete_html .= '<p class="sensei-results-links">';
+								$results_link = '';
+								if( false != $has_quizzes ) {
+									$results_link = '<a class="button view-results" href="' . $woothemes_sensei->course_results->get_permalink( $course_item->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+								}
+								$complete_html .= apply_filters( 'sensei_results_links', $results_link );
+								$complete_html .= '</p>';
 							}
 						}
 
@@ -1253,6 +1307,13 @@ class WooThemes_Sensei_Course {
 
 		<?php do_action( 'sensei_before_user_courses' ); ?>
 
+		<?php
+		if( $manage && ( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) ) {
+			?>
+			<p class="my-messages-link-container"><a class="my-messages-link" href="<?php echo get_post_type_archive_link( 'sensei_message' ); ?>" title="<?php _e( 'View & reply to private messages sent to your course & lesson teachers.', 'woothemes-sensei' ); ?>"><?php _e( 'My Messages', 'woothemes-sensei' ); ?></a></p>
+			<?php
+		}
+		?>
 		<div id="my-courses">
 
 		    <ul>

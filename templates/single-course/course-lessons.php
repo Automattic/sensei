@@ -41,7 +41,8 @@ if ( 0 < $total_lessons ) {
     	$lesson_count = 1;
     	$lessons_completed = 0;
         $show_lesson_numbers = false;
-    	foreach ($course_lessons as $lesson_item){
+        $post_classes = array( 'course', 'post' );
+    	foreach ( $course_lessons as $lesson_item ){
             $single_lesson_complete = false;
             $user_lesson_end = '';
     	    if ( is_user_logged_in() ) {
@@ -65,11 +66,13 @@ if ( 0 < $total_lessons ) {
                             if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
                                 $lessons_completed++;
                                 $single_lesson_complete = true;
+                                $post_classes[] = 'lesson-completed';
                             } // End If Statement
                         } // End If Statement
                     } else {
                         $lessons_completed++;
                         $single_lesson_complete = true;
+                        $post_classes[] = 'lesson-completed';
                     } // End If Statement;
 				} // End If Statement
 			} // End If Statement
@@ -79,9 +82,15 @@ if ( 0 < $total_lessons ) {
     	    $lesson_complexity = get_post_meta( $lesson_item->ID, '_lesson_complexity', true );
     	    if ( '' != $lesson_complexity ) { $lesson_complexity = $complexity_array[$lesson_complexity]; }
     	    $user_info = get_userdata( absint( $lesson_item->post_author ) );
-    	    if ( '' != $lesson_item->post_excerpt ) { $lesson_excerpt = $lesson_item->post_excerpt; } else { $lesson_excerpt = $lesson_item->post_content; }
+            $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $lesson_item->ID );
+            $preview_label = '';
+            if ( $is_preview && !$is_user_taking_course ) {
+                $preview_label = $woothemes_sensei->frontend->sensei_lesson_preview_title_text( $post->ID );
+                $preview_label = '<span class="preview-heading">' . $preview_label . '</span>';
+                $post_classes[] = 'lesson-preview';
+            }
 
-    	    $html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $lesson_item->ID ) ) ) . '">';
+    	    $html .= '<article class="' . esc_attr( join( ' ', get_post_class( $post_classes, $lesson_item->ID ) ) ) . '">';
 
     			$html .= '<header>';
 
@@ -91,7 +100,7 @@ if ( 0 < $total_lessons ) {
                         $html .= '<span class="lesson-number">' . $lesson_count . '. </span>';
                     }
 
-                    $html .= esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '</a></h2>';
+                    $html .= esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . $preview_label . '</a></h2>';
 
     	    		$html .= '<p class="lesson-meta">';
 
@@ -123,11 +132,7 @@ if ( 0 < $total_lessons ) {
 
     			$html .= '<section class="entry">';
 
-    	   		 	$html .= '<p class="lesson-excerpt">';
-
-    	   		 		$html .= '<span>' . $lesson_excerpt . '</span>';
-
-    	   		 	$html .= '</p>';
+                    $html .= WooThemes_Sensei_Lesson::lesson_excerpt( $lesson_item );
 
     	   		$html .= '</section>';
 

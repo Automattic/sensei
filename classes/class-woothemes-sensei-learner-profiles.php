@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - learner_profile_content()
  * - learner_profile_courses_heading()
  * - learner_profile_user_info()
- * - learner_profile_menu_item()
  */
 class WooThemes_Sensei_Learner_Profiles {
 	private $profile_url_base;
@@ -47,9 +46,6 @@ class WooThemes_Sensei_Learner_Profiles {
 
 		// Set heading for courses section of learner profiles
 		add_action( 'sensei_before_learner_course_content', array( $this, 'learner_profile_courses_heading' ), 10, 1 );
-
-		// Add profile link to main navigation
-		add_filter( 'wp_nav_menu_items', array( $this, 'learner_profile_menu_item' ), 11, 2 );
 
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
@@ -178,38 +174,6 @@ class WooThemes_Sensei_Learner_Profiles {
 			</div>
 		</div>
 		<?php
-	}
-
-	/**
-	 * Add learner profile link to main navigation
-	 * @since  1.4.0
-	 * @param  string $items Current menu items
-	 * @param  array  $args
-	 * @return string        Modified menu items
-	 */
-	public function learner_profile_menu_item( $items, $args ) {
-		global $woothemes_sensei, $wp_query, $current_user;
-
-		if( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) {
-
-			if( is_user_logged_in() ) {
-				$add_menu_item = $woothemes_sensei->settings->settings[ 'learner_profile_menu_link' ];
-
-				if( isset( $add_menu_item ) && $add_menu_item ) {
-
-					// Get User Meta
-					get_currentuserinfo();
-
-					$classes = '';
-					if ( isset( $wp_query->query_vars['learner_profile'] ) && $wp_query->query_vars['learner_profile'] == $current_user->user_nicename ) {
-						$classes = ' current-menu-item current_page_item';
-					} // End If Statement
-						$items .= apply_filters( 'sensei_learner_profile_menu_link', '<li class="learner-profile' . $classes . '"><a href="'. esc_url( $this->get_permalink() ) .'">' . apply_filters( 'sensei_learner_profile_menu_link_text', __( 'My Profile', 'woothemes-sensei' ) ) . '</a></li>' );
-				} // End If Statement
-			}
-		}
-
-		return apply_filters( 'sensei_custom_menu_links', $items );
 	}
 
 	/**

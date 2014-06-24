@@ -1,5 +1,23 @@
 *** Sensei Changelog ***
 
+2014.06.25 - version 1.6.0
+ * New - Comprehensive question bank functionality including question categories, the ability to re-use questions in multiple quizzes and bulk adding questions from a category
+ * New - New Learner Management dashboard that allows administrators to add/remove learners to/from any course or lesson
+ * New - Secure private message functionality that allows learners to contact and interact with course & lesson teachers
+ * New - Email notifications for learner and teacher activity
+ * New - Adding 'manage_sensei' and 'manage_sensei_grades' capbilities to govern how users interact with dashboard pages
+ * New - New 'Teacher' role that has the 'manage_sensei_grades' capability giving access to Grading, Analysis & Learner Management
+ * New - Ability to set preview lessons that are available before starting a course
+ * New - Ability to reorder all courses & lessons via drag-and-drop
+ * New - Moving global quiz settings into new quiz settings panel to enable them to be configured per quiz
+ * New - Grading notes for auto-graded questions
+ * New - Sensei menu item control moved to Appearance > Menus for fine-grained control over menu items
+ * Tweak - Displaying lesson excerpt on single lesson page for unregistered users
+ * Tweak - Converting all Less files to SASS
+ * Fix - Making sure that courses are no longer available after subscription ends
+ * Fix - Ensuring that only valid users are shown in the grading dashboard
+ * Fix - Fixing filter for quiz results link
+
 2014.03.21 - version 1.5.4
  * Fix - Fixing content formatting in TwentyTwelve theme
  * Fix - Fixing warning when number of questions to show is 1
@@ -28,43 +46,43 @@
  * Fix - Fixing course progress bars on My Courses page
 
 2014.03.04 - version 1.5.0
- * [QUIZZES] New - Completely refactored the quiz edit panel
- * [QUIZZES] New - Adding 'File Upload' question type
- * [QUIZZES] New - Adding ability to manually order quiz questions via drag-and-drop along with option to randomly order questions
- * [QUIZZES] New - Adding option to have any number of multiple choice answers
- * [QUIZZES] New - Adding ability to manually order multiple choice answers via drag-and-drop along with option to randomly order answers
- * [QUIZZES] New - Adding function to upload media files to quiz questions
- * [QUIZZES] New - Adding option to only show a limited number of quiz questions to each student
- * [QUIZZES] Tweak - Displaying grading notes on graded quizzes if quiz reset is disabled
- * [QUIZZES] Fix - Hiding grading notes with Javascript to cater for disabled CSS
- * [COURSES] New - Adding ablity to duplicate courses
- * [COURSES] New - Adding option to filter lessons by course in the dashboard
- * [COURSES] New - Adding pagination to My Courses page
- * [COURSES] Fix - Fixing number of courses shown on My Course page
- * [COURSES] Fix - Preventing purchased courses with incomplete prerequisites from being completed
- * [COURSES] Fix - Removing 'view results' link when no quizzes are present
- * [COURSES] Fix - Removing prerequisite course field when a prerequisite course is moved to trash
- * [LESSONS] New - Adding ablity to duplicate lessons
- * [LESSONS] New - Adding 'lesson tags' taxonomy for broader grouping of lessons
- * [LESSONS] Tweak - Removing numbering from lessons and adding filter to put them back
- * [LESSONS] Tweak - Moving videos to top of lessons and adding filter to choose the video location
- * [LESSONS] Fix - Making lesson archive display consistent in all areas
- * [LESSONS] Fix - Removing PHP notices from lesson archives
- * [LESSONS] Fix - Removing prerequisite lesson field when a prerequisite lesson is moved to trash
- * [GRADING] New - Enhancing grading dashboard to allow filtering by grade status
- * [GRADING] Tweak - Improving user search in grading dashboard
- * [DASHBOARD] New - Adding courses and lessons to the 'At a Glance' dashboard widget
- * [DASHBOARD] Tweak - Removing unused images and CSS
- * [WOOCOMMERCE] Tweak - Updating deprecated functions for WooCommerce 2.1
- * [WOOCOMMERCE] Fix - Fixing adding variable product course to cart
- * [PROFILES] Tweak - Switching profile URLs to use 'nicename' instead of 'username'
- * [ACCOUNT] New - Adding registration form to login page
- * [ACCOUNT] Tweak - Improving styling of login page
- * [WIDGETS] Fix - Fixing image display in widgets
- * [GENERAL] New - Adding is_sensei() conditional to check for Sensei pages
- * [GENERAL] New - Adding 'sensei' class to body tag for all Sensei pages
- * [GENERAL] New - Adding update to clean up Sensei activity for deleted users
- * [GENERAL] Fix - Ensuring that user Sensei activity is deleted when a user is deleted from WordPress
+ * New - Completely refactored the quiz edit panel
+ * New - Adding 'File Upload' question type
+ * New - Adding ability to manually order quiz questions via drag-and-drop along with option to randomly order questions
+ * New - Adding option to have any number of multiple choice answers
+ * New - Adding ability to manually order multiple choice answers via drag-and-drop along with option to randomly order answers
+ * New - Adding function to upload media files to quiz questions
+ * New - Adding option to only show a limited number of quiz questions to each student
+ * Tweak - Displaying grading notes on graded quizzes if quiz reset is disabled
+ * Fix - Hiding grading notes with Javascript to cater for disabled CSS
+ * New - Adding ablity to duplicate courses
+ * New - Adding option to filter lessons by course in the dashboard
+ * New - Adding pagination to My Courses page
+ * Fix - Fixing number of courses shown on My Course page
+ * Fix - Preventing purchased courses with incomplete prerequisites from being completed
+ * Fix - Removing 'view results' link when no quizzes are present
+ * Fix - Removing prerequisite course field when a prerequisite course is moved to trash
+ * New - Adding ablity to duplicate lessons
+ * New - Adding 'lesson tags' taxonomy for broader grouping of lessons
+ * Tweak - Removing numbering from lessons and adding filter to put them back
+ * Tweak - Moving videos to top of lessons and adding filter to choose the video location
+ * Fix - Making lesson archive display consistent in all areas
+ * Fix - Removing PHP notices from lesson archives
+ * Fix - Removing prerequisite lesson field when a prerequisite lesson is moved to trash
+ * New - Enhancing grading dashboard to allow filtering by grade status
+ * Tweak - Improving user search in grading dashboard
+ * New - Adding courses and lessons to the 'At a Glance' dashboard widget
+ * Tweak - Removing unused images and CSS
+ * Tweak - Updating deprecated functions for WooCommerce 2.1
+ * Fix - Fixing adding variable product course to cart
+ * Tweak - Switching profile URLs to use 'nicename' instead of 'username'
+ * New - Adding registration form to login page
+ * Tweak - Improving styling of login page
+ * Fix - Fixing image display in widgets
+ * New - Adding is_sensei() conditional to check for Sensei pages
+ * New - Adding 'sensei' class to body tag for all Sensei pages
+ * New - Adding update to clean up Sensei activity for deleted users
+ * Fix - Ensuring that user Sensei activity is deleted when a user is deleted from WordPress
 
 2014.02.13 - version 1.4.9
  * Fix - Fixing WooCommerce taxonomy templates when Sensei is active

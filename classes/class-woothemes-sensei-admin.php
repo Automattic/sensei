@@ -43,6 +43,7 @@ class WooThemes_Sensei_Admin {
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'page_redirect' ) );
+		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
 
 		// Duplicate lesson & courses
 		add_filter( 'post_row_actions', array( $this, 'duplicate_action_link' ), 10, 2 );
@@ -64,6 +65,9 @@ class WooThemes_Sensei_Admin {
 		// Delete user activity when user is deleted
 		add_action( 'deleted_user', array( $this, 'delete_user_activity' ), 10, 1 );
 
+		// Add notices to WP dashboard
+		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
+
 	} // End __construct()
 
 	/**
@@ -73,10 +77,22 @@ class WooThemes_Sensei_Admin {
 	 */
 	public function admin_menu() {
 		global $woothemes_sensei, $menu;
-		if( current_user_can( 'manage_options' ) ) {
-			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
-			$main_page = add_menu_page( __( 'Sensei', 'woothemes-sensei' ), __( 'Sensei', 'woothemes-sensei' ), 'manage_options', 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
+		$menu_cap = '';
+		if( current_user_can( 'manage_sensei' ) ) {
+			$menu_cap = 'manage_sensei';
+		} else {
+			if( current_user_can( 'manage_sensei_grades' ) ) {
+				$menu_cap = 'manage_sensei_grades';
+			}
 		}
+
+		if( $menu_cap ) {
+			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
+			$main_page = add_menu_page( __( 'Sensei', 'woothemes-sensei' ), __( 'Sensei', 'woothemes-sensei' ), $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
+		}
+
+		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
+		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'woothemes-sensei' ), __( 'Order Lessons', 'woothemes-sensei' ), 'manage_sensei', 'lesson-order', array( $this, 'lesson_order_screen' ) );
 	}
 
 	/**
@@ -126,6 +142,9 @@ class WooThemes_Sensei_Admin {
 		} elseif ( $screen->base == 'edit-tags' && $taxonomy == 'course-category' ) {
 			$submenu_file = 'edit-tags.php?taxonomy=course-category&post_type=course';
 			$parent_file  = 'edit.php?post_type=lesson';
+		} elseif ( in_array( $screen->id, array( 'sensei_message', 'edit-sensei_message' ) ) ) {
+			$submenu_file = 'edit.php?post_type=sensei_message';
+			$parent_file  = 'sensei';
 		}
 	}
 
@@ -279,18 +298,18 @@ class WooThemes_Sensei_Admin {
 	public function admin_styles_global ( $hook ) {
 		global $woothemes_sensei, $post_type, $wp_version;
 
-		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course' ) );
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_updates', 'woothemes-sensei-settings' ) );
+		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings', 'lesson-order', 'course-order' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.5.2', 'screen' );
+		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.6.0', 'screen' );
 		wp_enqueue_style( $woothemes_sensei->token . '-global' );
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
-			wp_register_style( $woothemes_sensei->token . '-admin-custom', $woothemes_sensei->plugin_url . 'assets/css/admin-custom.css', '', '1.5.2', 'screen' );
+			wp_register_style( $woothemes_sensei->token . '-admin-custom', $woothemes_sensei->plugin_url . 'assets/css/admin-custom.css', '', '1.6.0', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-admin-custom' );
 			wp_register_style( $woothemes_sensei->token . '-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.css', '', '1.5.2', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-chosen' );
@@ -491,8 +510,12 @@ class WooThemes_Sensei_Admin {
 			$question_args = array(
 				'post_type'	=> 'question',
 				'posts_per_page' => -1,
-				'meta_key' => '_quiz_id',
-				'meta_value' => $quiz->ID,
+				'meta_query'		=> array(
+					array(
+						'key'       => '_quiz_id',
+						'value'     => $quiz->ID,
+					)
+				),
 				'suppress_filters' => 0
 			);
 			$questions = get_posts( $question_args );
@@ -502,7 +525,7 @@ class WooThemes_Sensei_Admin {
 
 			foreach( $questions as $question ) {
 				$new_question = $this->duplicate_post( $question, '' );
-				add_post_meta( $new_question->ID, '_quiz_id', $new_quiz->ID );
+				add_post_meta( $new_question->ID, '_quiz_id', $new_quiz->ID, false );
 			}
 		}
 	}
@@ -618,6 +641,8 @@ class WooThemes_Sensei_Admin {
 				'post_type' => 'course',
 				'posts_per_page' => -1,
 				'suppress_filters' => 0,
+				'orderby' => 'menu_order date',
+				'order' => 'ASC',
 			);
 			$courses = get_posts( $args );
 
@@ -665,7 +690,7 @@ class WooThemes_Sensei_Admin {
 	public function glance_items( $items = array() ) {
 		global $woothemes_sensei;
 
-		$types = array( 'course', 'lesson' );
+		$types = array( 'course', 'lesson', 'question' );
 
 		foreach( $types as $type ) {
 			if( ! post_type_exists( $type ) ) continue;
@@ -732,5 +757,578 @@ class WooThemes_Sensei_Admin {
 		}
 	}
 
+	public function render_settings( $settings = array(), $post_id = 0, $group_id = '' ) {
+
+		$html = '';
+
+		if( 0 == count( $settings ) ) return $html;
+
+		$html .= '<div class="sensei-options-panel">' . "\n";
+
+			$html .= '<div class="options_group" id="' . esc_attr( $group_id ) . '">' . "\n";
+
+				foreach( $settings as $field ) {
+
+					$data = '';
+
+					if( $post_id ) {
+						$data = get_post_meta( $post_id, '_' . $field['id'], true );
+						if( ! $data && isset( $field['default'] ) ) {
+							$data = $field['default'];
+						}
+					} else {
+						$option = get_option( $field['id'] );
+						if( isset( $field['default'] ) ) {
+							$data = $field['default'];
+							if( $option ) {
+								$data = $option;
+							}
+						}
+					}
+
+					$disabled = '';
+					if( isset( $field['disabled'] ) && $field['disabled'] ) {
+						$disabled = disabled( $field['disabled'], true, false );
+					}
+
+					if( 'hidden' != $field['type'] ) {
+
+						$class_tail = '';
+
+						if( isset( $field['class'] ) ) {
+							$class_tail .= $field['class'];
+						}
+
+						if( isset( $field['disabled'] ) && $field['disabled'] ) {
+							$class_tail .= ' disabled';
+						}
+
+						$html .= '<p class="form-field ' . esc_attr( $field['id'] ) . ' ' . esc_attr( $class_tail ) . '">' . "\n";
+					}
+
+						if( ! in_array( $field['type'], array( 'hidden', 'checkbox_multi', 'radio' ) ) ) {
+							$html .= '<label for="' . esc_attr( $field['id'] ) . '">' . "\n";
+						}
+
+							if( $field['label'] ) {
+								$html .= '<span class="label">' . esc_html( $field['label'] ) . '</span>';
+							}
+
+							switch( $field['type'] ) {
+								case 'text':
+								case 'password':
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $data . '" ' . $disabled . ' />' . "\n";
+								break;
+
+								case 'number':
+
+									$min = '';
+									if( isset( $field['min'] ) ) {
+										$min = 'min="' . esc_attr( $field['min'] ) . '"';
+									}
+
+									$max = '';
+									if( isset( $field['max'] ) ) {
+										$max = 'max="' . esc_attr( $field['max'] ) . '"';
+									}
+
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $data . '" ' . $min . '  ' . $max . ' class="small-text" ' . $disabled . ' />' . "\n";
+								break;
+
+								case 'textarea':
+									$html .= '<textarea id="' . esc_attr( $field['id'] ) . '" rows="5" cols="50" name="' . esc_attr( $field['id'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" ' . $disabled . '>' . $data . '</textarea><br/>'. "\n";
+								break;
+
+								case 'checkbox':
+									$checked = checked( $field['checked'], $data, false );
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" ' . $checked . ' ' . $disabled . '/>' . "\n";
+								break;
+
+								case 'checkbox_multi':
+									foreach( $field['options'] as $k => $v ) {
+										$checked = false;
+										if( in_array( $k, $data ) ) {
+											$checked = true;
+										}
+										$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $field['id'] ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" ' . $disabled . ' /> ' . $v . '</label> ' . "\n";
+									}
+								break;
+
+								case 'radio':
+									foreach( $field['options'] as $k => $v ) {
+										$checked = false;
+										if( $k == $data ) {
+											$checked = true;
+										}
+										$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $field['id'] ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" ' . $disabled . ' /> ' . $v . '</label> ' . "\n";
+									}
+								break;
+
+								case 'select':
+									$html .= '<select name="' . esc_attr( $field['id'] ) . '" id="' . esc_attr( $field['id'] ) . '" ' . $disabled . '>' . "\n";
+									foreach( $field['options'] as $k => $v ) {
+										$selected = false;
+										if( $k == $data ) {
+											$selected = true;
+										}
+										$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>' . "\n";
+									}
+									$html .= '</select><br/>' . "\n";
+								break;
+
+								case 'select_multi':
+									$html .= '<select name="' . esc_attr( $field['id'] ) . '[]" id="' . esc_attr( $field['id'] ) . '" multiple="multiple" ' . $disabled . '>' . "\n";
+									foreach( $field['options'] as $k => $v ) {
+										$selected = false;
+										if( in_array( $k, $data ) ) {
+											$selected = true;
+										}
+										$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '" />' . $v . '</option>' . "\n";
+									}
+									$html .= '</select> . "\n"';
+								break;
+
+								case 'hidden':
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" value="' . $data . '" ' . $disabled . '/>' . "\n";
+								break;
+
+							}
+
+							if( $field['description'] ) {
+								$html .= ' <span class="description">' . esc_html( $field['description'] ) . '</span>' . "\n";
+							}
+
+						if( ! in_array( $field['type'], array( 'hidden', 'checkbox_multi', 'radio' ) ) ) {
+							$html .= '</label>' . "\n";
+						}
+
+					if( 'hidden' != $field['type'] ) {
+						$html .= '</p>' . "\n";
+					}
+
+				}
+
+			$html .= '</div>' . "\n";
+
+		$html .= '</div>' . "\n";
+
+		return $html;
+	}
+
+	/**
+	 * Dsplay Course Order screen
+	 * @return void
+	 */
+	public function course_order_screen() {
+		global $woothemes_sensei;
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
+
+		?><div id="course-order" class="wrap course-order">
+		<h2><?php _e( 'Order Courses', 'woothemes-sensei' ); ?></h2><?php
+
+		$html = '';
+
+		if( isset( $_POST['course-order'] ) && 0 < strlen( $_POST['course-order'] ) ) {
+			$ordered = $this->save_course_order( esc_attr( $_POST['course-order'] ) );
+
+			if( $ordered ) {
+				$html .= '<div class="updated fade">' . "\n";
+				$html .= '<p>' . __( 'The course order has been saved.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$html .= '</div>' . "\n";
+			}
+		}
+
+		$args = array(
+			'post_type' => 'course',
+			'posts_per_page' => -1,
+			'suppress_filters' => 0,
+			'orderby' => 'menu_order date',
+			'order' => 'ASC',
+		);
+
+		$courses = get_posts( $args );
+		if( 0 < count( $courses ) ) {
+
+			$order_string = $this->get_course_order();
+
+			$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
+			$html .= '<ul class="sortable-course-list">' . "\n";
+			$count = 0;
+			foreach ( $courses as $course ) {
+				$count++;
+				$class = 'course';
+				if ( $count == 1 ) { $class .= ' first'; }
+				if ( $count == count( $course ) ) { $class .= ' last'; }
+				if ( $count % 2 != 0 ) {
+					$class .= ' alternate';
+				}
+				$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $course->ID ) . '" style="width: 100%;"> ' . $course->post_title . '</span></li>' . "\n";
+			}
+			$html .= '</ul>' . "\n";
+
+			$html .= '<input type="hidden" name="course-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
+			$html .= '<input type="submit" class="button-primary" value="' . __( 'Save course order', 'woothemes-sensei' ) . '" />' . "\n";
+		}
+
+		echo $html;
+
+		?></div><?php
+	}
+
+	public function get_course_order() {
+		return get_option( 'sensei_course_order', '' );
+	}
+
+	public function save_course_order( $order_string = '' ) {
+		$order = explode( ',', $order_string );
+
+		update_option( 'sensei_course_order', $order_string );
+
+		$i = 1;
+		foreach( $order as $course_id ) {
+
+			if( $course_id ) {
+
+				$update_args = array(
+					'ID' => $course_id,
+					'menu_order' => $i,
+				);
+
+				wp_update_post( $update_args );
+
+				++$i;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Dsplay Lesson Order screen
+	 * @return void
+	 */
+	public function lesson_order_screen() {
+		global $woothemes_sensei;
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
+
+		?><div id="lesson-order" class="wrap lesson-order">
+		<h2><?php _e( 'Order Lessons', 'woothemes-sensei' ); ?></h2><?php
+
+		$html = '';
+
+		if( isset( $_POST['lesson-order'] ) ) {
+
+			$ordered = $this->save_lesson_order( esc_attr( $_POST['lesson-order'] ), esc_attr( $_POST['course_id'] ) );
+
+			if( $ordered ) {
+				$html .= '<div class="updated fade">' . "\n";
+				$html .= '<p>' . __( 'The lesson order has been saved.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$html .= '</div>' . "\n";
+			}
+		}
+
+		$args = array(
+			'post_type' => 'course',
+			'post_status' => array('publish', 'draft', 'future', 'private'),
+			'posts_per_page' => -1,
+			'orderby' => 'name',
+			'order' => 'ASC',
+		);
+		$courses = get_posts( $args );
+
+		$html .= '<form action="' . admin_url( 'edit.php' ) . '" method="get">' . "\n";
+		$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
+		$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
+		$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
+		$html .= '<option value="">' . __( 'Select a course', 'woothemes-sensei' ) . '</option>' . "\n";
+
+		foreach( $courses as $course ) {
+			$course_id = '';
+			if( isset( $_GET['course_id'] ) ) {
+				$course_id = intval( $_GET['course_id'] );
+			}
+			$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) .'>' . get_the_title( $course->ID ) . '</option>' . "\n";
+		}
+
+		$html .= '</select>' . "\n";
+		$html .= '<input type="submit" class="button-primary lesson-order-select-course-submit" value="' . __( 'Select', 'woothemes-sensei' ) . '" />' . "\n";
+		$html .= '</form>' . "\n";
+
+		$html .= '<script type="text/javascript">' . "\n";
+		$html .= 'jQuery( \'#lesson-order-course\' ).chosen();' . "\n";
+		$html .= '</script>' . "\n";
+
+		if( isset( $_GET['course_id'] ) ) {
+			$course_id = intval( $_GET['course_id'] );
+			if( $course_id > 0 ) {
+
+				$order_string = $this->get_lesson_order( $course_id );
+
+				$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
+
+				$displayed_lessons = array();
+
+				if( class_exists( 'Sensei_Modules' ) ) {
+					global $sensei_modules;
+
+					$modules = $sensei_modules->get_course_modules( intval( $course_id ) );
+
+					foreach( $modules as $module ) {
+
+						$args = array(
+		    				'post_type' => 'lesson',
+		    				'post_status' => 'publish',
+		    				'posts_per_page' => -1,
+		    				'meta_query' => array(
+		    					array(
+		    						'key' => '_lesson_course',
+		    						'value' => intval( $course_id ),
+		    						'compare' => '='
+								)
+							),
+							'tax_query' => array(
+								array(
+									'taxonomy' => $sensei_modules->taxonomy,
+									'field' => 'id',
+									'terms' => intval( $module->term_id )
+								)
+							),
+							'meta_key' => '_order_module_' . $module->term_id,
+							'orderby' => 'meta_value_num date',
+							'order' => 'ASC',
+							'suppress_filters' => 0
+						);
+
+						$lessons = get_posts( $args );
+
+						if( count( $lessons ) > 0 ) {
+							$html .= '<h3>' . $module->name . '</h3>' . "\n";
+							$html .= '<ul class="sortable-lesson-list" data-module_id="' . $module->term_id . '">' . "\n";
+
+							$count = 0;
+							foreach( $lessons as $lesson ) {
+								$count++;
+								$class = 'lesson';
+								if ( $count == 1 ) { $class .= ' first'; }
+								if ( $count == count( $lesson ) ) { $class .= ' last'; }
+								if ( $count % 2 != 0 ) {
+									$class .= ' alternate';
+								}
+
+								$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
+
+								$displayed_lessons[] = $lesson->ID;
+							}
+
+							$html .= '</ul>' . "\n";
+
+							$html .= '<input type="hidden" name="lesson-order-module-' . $module->term_id . '" value="" />' . "\n";
+						}
+					}
+				}
+
+				$args = array(
+					'post_type' => 'lesson',
+					'posts_per_page' => -1,
+					'suppress_filters' => 0,
+					'meta_key' => '_order_' . $course_id,
+					'orderby' => 'meta_value_num date',
+					'order' => 'ASC',
+					'meta_query' => array(
+						array(
+							'key' => '_lesson_course',
+							'value' => intval( $course_id ),
+						),
+					),
+					'post__not_in' => $displayed_lessons,
+				);
+
+				$lessons = get_posts( $args );
+
+				if( 0 < count( $lessons ) ) {
+
+					if( 0 < count( $displayed_lessons ) && class_exists( 'Sensei_Modules' ) ) {
+						$html .= '<h3>' . __( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
+					}
+
+					$html .= '<ul class="sortable-lesson-list" data-module_id="0">' . "\n";
+					$count = 0;
+					foreach ( $lessons as $lesson ) {
+						$count++;
+						$class = 'lesson';
+						if ( $count == 1 ) { $class .= ' first'; }
+						if ( $count == count( $lesson ) ) { $class .= ' last'; }
+						if ( $count % 2 != 0 ) {
+							$class .= ' alternate';
+						}
+						$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
+
+						$displayed_lessons[] = $lesson->ID;
+					}
+					$html .= '</ul>' . "\n";
+				} else {
+					if( 0 == count( $displayed_lessons ) ) {
+						$html .= '<p><em>' . __( 'There are no lessons in this course.', 'woothemes-sensei' ) . '</em></p>';
+					}
+				}
+
+				if( 0 < count( $displayed_lessons ) ) {
+					$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
+					$html .= '<input type="hidden" name="course_id" value="' . $course_id . '" />' . "\n";
+					$html .= '<input type="submit" class="button-primary" value="' . __( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
+				}
+			}
+		}
+
+		echo $html;
+
+		?></div><?php
+	}
+
+	public function get_lesson_order( $course_id = 0 ) {
+		$order_string = get_post_meta( $course_id, '_lesson_order', true );
+		return $order_string;
+	}
+
+	public function save_lesson_order( $order_string = '', $course_id = 0 ) {
+
+		if( $course_id ) {
+
+			if( class_exists( 'Sensei_Modules' ) ) {
+				global $sensei_modules;
+
+				$modules = $sensei_modules->get_course_modules( intval( $course_id ) );
+
+				foreach( $modules as $module ) {
+
+					$module_order_string = $_POST[ 'lesson-order-module-' . $module->term_id ];
+
+					if( $module_order_string ) {
+						$order = explode( ',', $module_order_string );
+						$i = 1;
+						foreach( $order as $lesson_id ) {
+							if( $lesson_id ) {
+								update_post_meta( $lesson_id, '_order_module_' . $module->term_id, $i );
+								++$i;
+							}
+						}
+					}
+				}
+			}
+
+			if( $order_string ) {
+				update_post_meta( $course_id, '_lesson_order', $order_string );
+
+				$order = explode( ',', $order_string );
+
+				$i = 1;
+				foreach( $order as $lesson_id ) {
+					if( $lesson_id ) {
+						update_post_meta( $lesson_id, '_order_' . $course_id, $i );
+						++$i;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	function sensei_add_custom_menu_items() {
+		global $pagenow;
+
+		if( 'nav-menus.php' == $pagenow ) {
+			add_meta_box( 'add-sensei-links', __( 'Sensei', 'woothemes-sensei' ), array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
+		}
+	}
+
+	function wp_nav_menu_item_sensei_links_meta_box( $object ) {
+		global $nav_menu_selected_id, $woothemes_sensei;
+
+		$menu_items = array(
+						'#senseicourses' => __( 'Courses', 'woothemes_sensei' ),
+						'#senseilessons' => __( 'Lessons', 'woothemes_sensei' ),
+						'#senseimycourses' => __( 'My Courses', 'woothemes_sensei' ),
+						'#senseilearnerprofile' => __( 'My Profile', 'woothemes_sensei' ),
+						'#senseimymessages' => __( 'My Messages', 'woothemes_sensei' ),
+						'#senseiloginlogout' => __( 'Login', 'woothemes_sensei' ) . '|' . __( 'Logout', 'woothemes_sensei' )
+						 );
+
+		$menu_items_obj = array();
+		foreach ( $menu_items as $value => $title ) {
+			$menu_items_obj[$title] = new stdClass;
+			$menu_items_obj[$title]->object_id			= esc_attr( $value );
+			$menu_items_obj[$title]->title				= esc_attr( $title );
+			$menu_items_obj[$title]->url				= esc_attr( $value );
+			$menu_items_obj[$title]->description 		= 'description';
+			$menu_items_obj[$title]->db_id 				= 0;
+			$menu_items_obj[$title]->object 			= 'sensei';
+			$menu_items_obj[$title]->menu_item_parent 	= 0;
+			$menu_items_obj[$title]->type 				= 'custom';
+			$menu_items_obj[$title]->target 			= '';
+			$menu_items_obj[$title]->attr_title 		= '';
+			$menu_items_obj[$title]->classes 			= array();
+			$menu_items_obj[$title]->xfn 				= '';
+		}
+
+		$walker = new Walker_Nav_Menu_Checklist( array() );
+		?>
+
+		<div id="sensei-links" class="senseidiv taxonomydiv">
+			<div id="tabs-panel-sensei-links-all" class="tabs-panel tabs-panel-view-all tabs-panel-active">
+
+				<ul id="sensei-linkschecklist" class="list:sensei-links categorychecklist form-no-clear">
+					<?php echo walk_nav_menu_tree( array_map( 'wp_setup_nav_menu_item', $menu_items_obj ), 0, (object)array( 'walker' => $walker ) ); ?>
+				</ul>
+
+			</div>
+			<p class="button-controls">
+				<span class="add-to-menu">
+					<input type="submit"<?php disabled( $nav_menu_selected_id, 0 ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'woothemes-sensei' ); ?>" name="add-sensei-links-menu-item" id="submit-sensei-links" />
+					<span class="spinner"></span>
+				</span>
+			</p>
+		</div><!-- .senseidiv -->
+		<?php
+	}
+
+	/**
+	 * Adding admin notices
+	 * @return void
+	 */
+	public function admin_notices() {
+		global $current_user;
+		wp_get_current_user();
+        $user_id = $current_user->ID;
+
+        if( isset( $_GET['sensei_hide_notice'] ) ) {
+        	switch( esc_attr( $_GET['sensei_hide_notice'] ) ) {
+				case 'menu_settings': add_user_meta( $user_id, 'sensei_hide_menu_settings_notice', true ); break;
+			}
+        }
+
+        $screen = get_current_screen();
+
+        if( 'sensei_page_woothemes-sensei-settings' == $screen->id ) {
+
+	        $hide_menu_settings_notice = get_user_meta( $user_id, 'sensei_hide_menu_settings_notice', true );
+
+	        if( ! $hide_menu_settings_notice ) {
+	        	?>
+				<div class="updated fade">
+			        <p><?php printf( __( 'The settings for the Sensei menu items have been removed. Menu items can now be added individually via the %1$sWordPress menu editor%2$s.%3$s%4$sDismiss this notice%5$s', 'woothemes-sensei' ), '<a href="' . admin_url( 'nav-menus.php' ) . '">', '</a>', '<br/>', '<em><a href="' . add_query_arg( 'sensei_hide_notice', 'menu_settings' ) . '">', '</a></em>' ); ?></p>
+			    </div>
+			    <?php
+	        }
+	    }
+	}
+
 } // End Class
+
 ?>

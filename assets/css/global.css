@@ -14,27 +14,22 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 
 /*  Sensei icon */
 body #toplevel_page_sensei div.wp-menu-image:before {
-	background: none;
-	-webkit-font-smoothing: antialiased;
-	font: normal 16px/1 'dashicons' !important;
   	content: "\f118" !important;
-  	vertical-align: top;
-  	display: inline-block;
 }
 
 /* Lessons Icon */
 body #menu-posts-lesson div.wp-menu-image:before {
-	background: none;
-	-webkit-font-smoothing: antialiased;
-	font: normal 16px/1 'dashicons' !important;
   	content: "\f331" !important;
-  	vertical-align: top;
-  	display: inline-block;
+}
+
+/* Questions Icon */
+body #menu-posts-question div.wp-menu-image:before {
+  	content: "\f223" !important;
 }
 
 #dashboard_right_now a.course-count:before, #dashboard_right_now span.course-count:before { content: "\f118"; }
 #dashboard_right_now a.lesson-count:before, #dashboard_right_now span.lesson-count:before { content: "\f331"; }
-#dashboard_right_now a.quizzes-count:before, #dashboard_right_now span.quizzes-count:before { content: "\f119"; }
+#dashboard_right_now a.question-count:before, #dashboard_right_now span.question-count:before { content: "\f223"; }
 
 /* Sensei Menu */
 #toplevel_page_sensei li.wp-first-item { display: none; }

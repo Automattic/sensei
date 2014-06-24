@@ -43,7 +43,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 	public function register_settings_screen () {
 		global $woothemes_sensei;
 		$this->settings_version = $woothemes_sensei->version; // Use the global plugin version on this settings screen.
-		$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_options', $this->page_slug, array( $this, 'settings_screen' ) );
+		$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
 		$this->hook = $hook;
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
@@ -77,6 +77,11 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 					'description'	=> __( 'Settings that apply to all Lessons.', 'woothemes-sensei' )
 				);
 
+		$sections['email-notification-settings'] = array(
+					'name' 			=> __( 'Email Notifications', 'woothemes-sensei' ),
+					'description'	=> __( 'Settings for email notifications sent from your site.', 'woothemes-sensei' )
+				);
+
 		$sections['learner-profile-settings'] = array(
 					'name' 			=> __( 'Learner Profiles', 'woothemes-sensei' ),
 					'description'	=> __( 'Settings for public Learner Profiles.', 'woothemes-sensei' )
@@ -104,7 +109,8 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		$pages_array = $this->pages_array();
 		$posts_per_page_array = array( '0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20' );
-		$complete_settings = array( 'passed' => __( 'Passed', 'woothemes-sensei' ), 'complete' => __( 'Completed', 'woothemes-sensei' ) );
+		$complete_settings = array( 'passed' => __( 'Once all the course lessons have been completed', 'woothemes-sensei' ), 'complete' => __( 'At any time (by clicking the \'Complete Course\' button)', 'woothemes-sensei' ) );
+		$course_display_settings = array( 'excerpt' => __( 'Course Excerpt', 'woothemes_sensei' ), 'full' => __( 'Full Course Content', 'woothemes_sensei' ) );
 
 	    $fields = array();
 
@@ -116,11 +122,11 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'section' => 'default-settings'
 								);
 
-		$fields['menu_items'] = array(
-								'name' => __( 'Add Nav Menu Links', 'woothemes-sensei' ),
-								'description' => __( 'Enabling this will add menu links for the Courses and My Courses pages, the Lesson Archive page, and a Login/Logout link. This will only work if you have a custom menu enabled.', 'woothemes-sensei' ),
+		$fields['messages_disable'] = array(
+								'name' => __( 'Disable Private Messages', 'woothemes-sensei' ),
+								'description' => __( 'Disable the private message functions between learners and teachers.', 'woothemes-sensei' ),
 								'type' => 'checkbox',
-								'default' => true,
+								'default' => false,
 								'section' => 'default-settings'
 								);
 
@@ -171,8 +177,8 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
     	// Course Settings
 
     	$fields['course_completion'] = array(
-								'name' => __( 'Courses are complete when:', 'woothemes-sensei' ),
-								'description' => __( 'This will determine whether a user has completed a course or not.', 'woothemes-sensei' ),
+								'name' => __( 'Courses are complete:', 'woothemes-sensei' ),
+								'description' => __( 'This will determine when courses are marked as complete.', 'woothemes-sensei' ),
 								'type' => 'select',
 								'default' => 'passed',
 								'section' => 'course-settings',
@@ -276,6 +282,16 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'section' => 'course-settings'
 								);
 
+		$fields['course_single_content_display'] = array(
+								'name' => __( 'Single Course page displays:', 'woothemes-sensei' ),
+								'description' => __( 'Determines what content to display on the single course page.', 'woothemes-sensei' ),
+								'type' => 'select',
+								'default' => 'excerpt',
+								'section' => 'course-settings',
+								'required' => 0,
+								'options' => $course_display_settings
+								);
+
 		$fields['course_archive_featured_enable'] = array(
 								'name' => __( 'Featured Courses Panel', 'woothemes-sensei' ),
 								'description' => __( 'Output the Featured Courses Panel on the Course Archive Page.', 'woothemes-sensei' ),
@@ -295,16 +311,6 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		// Lesson Settings
 
-		$fields['lesson_completion'] = array(
-								'name' => __( 'Lessons are complete when:', 'woothemes-sensei' ),
-								'description' => __( 'This will determine whether a user has completed a lesson or not.', 'woothemes-sensei' ),
-								'type' => 'select',
-								'default' => 'passed',
-								'section' => 'lesson-settings',
-								'required' => 0,
-								'options' => $complete_settings
-								);
-
 		$fields['lesson_comments'] = array(
 								'name' => __( 'Allow Comments for Lessons', 'woothemes-sensei' ),
 								'description' => __( 'This will allow learners to post comments on the single Lesson page, only learner who have access to the Lesson will be allowed to comment.', 'woothemes-sensei' ),
@@ -318,30 +324,6 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'description' => __( 'Output the Lesson Author on Course single page & Lesson archive page.', 'woothemes-sensei' ),
 								'type' => 'checkbox',
 								'default' => true,
-								'section' => 'lesson-settings'
-								);
-
-		$fields['quiz_reset_allowed'] = array(
-								'name' => __( 'Allow User to retake a Quiz', 'woothemes-sensei' ),
-								'description' => __( 'This will enable to Reset button for a Quiz.', 'woothemes-sensei' ),
-								'type' => 'checkbox',
-								'default' => true,
-								'section' => 'lesson-settings'
-								);
-
-		$fields['lesson_complete_button'] = array(
-								'name' => __( 'Allow Lesson Complete Button', 'woothemes-sensei' ),
-								'description' => __( 'This will allow learners to complete a Lesson without taking a Quiz. It will display the Complete Lesson button on the Lesson page.', 'woothemes-sensei' ),
-								'type' => 'checkbox',
-								'default' => false,
-								'section' => 'lesson-settings'
-								);
-
-		$fields['lesson_no_quiz_notice'] = array(
-								'name' => __( 'Disable no Quiz warning', 'woothemes-sensei' ),
-								'description' => __( 'This will disable the error notice when a Lesson has no Quiz on the Lesson page.', 'woothemes-sensei' ),
-								'type' => 'checkbox',
-								'default' => false,
 								'section' => 'lesson-settings'
 								);
 
@@ -433,13 +415,122 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 							'section' => 'learner-profile-settings'
 							);
 
-		$fields['learner_profile_menu_link'] = array(
-							'name' => __( 'Add menu link', 'woothemes-sensei' ),
-							'description' => sprintf( __( 'Add a \'%s\' link to the main navigation. This will only work if you have a custom menu enabled.', 'woothemes-sensei' ), apply_filters( 'sensei_learner_profile_menu_link_text', __( 'My Profile', 'woothemes-sensei' ) ) ) ,
-							'type' => 'checkbox',
-							'default' => false,
-							'section' => 'learner-profile-settings'
-							);
+		// Email notifications
+
+		$learner_email_options = array(
+			'learner-graded-quiz' => __( 'Their quiz is graded (auto and manual grading)', 'woothemes-sensei' ),
+			'learner-completed-course' => __( 'They complete a course', 'woothemes-sensei' ),
+		);
+
+		$teacher_email_options = array(
+			'teacher-completed-course' => __( 'A learner completes their course', 'woothemes-sensei' ),
+			'teacher-started-course' => __( 'A learner starts their course', 'woothemes-sensei' ),
+			'teacher-quiz-submitted' => __( 'A learner submits a quiz for grading', 'woothemes-sensei' ),
+			'teacher-new-message' => __( 'A learner sends a private message to a teacher', 'woothemes-sensei' ),
+		);
+
+		$global_email_options = array(
+			'new-message-reply' => __( 'They receive a reply to their private message', 'woothemes-sensei' ),
+		);
+
+		$fields['email_learners'] = array(
+								'name' => __( 'Emails Sent to Learners', 'woothemes-sensei' ),
+								'description' => __( 'Select the notifications that will be sent to learners.', 'woothemes-sensei' ),
+								'type' => 'multicheck',
+								'options' => $learner_email_options,
+								'defaults' => array( 'learner-graded-quiz', 'learner-completed-course' ),
+								'section' => 'email-notification-settings'
+								);
+
+		$fields['email_teachers'] = array(
+								'name' => __( 'Emails Sent to Teachers', 'woothemes-sensei' ),
+								'description' => __( 'Select the notifications that will be sent to teachers.', 'woothemes-sensei' ),
+								'type' => 'multicheck',
+								'options' => $teacher_email_options,
+								'defaults' => array( 'teacher-completed-course', 'teacher-started-course', 'teacher-quiz-submitted', 'teacher-new-message' ),
+								'section' => 'email-notification-settings'
+								);
+
+		$fields['email_global'] = array(
+								'name' => __( 'Emails Sent to All Users', 'woothemes-sensei' ),
+								'description' => __( 'Select the notifications that will be sent to all users.', 'woothemes-sensei' ),
+								'type' => 'multicheck',
+								'options' => $global_email_options,
+								'defaults' => array( 'new-message-reply' ),
+								'section' => 'email-notification-settings'
+								);
+
+		$fields['email_from_name'] = array(
+								'name' => __( '"From" Name', 'woothemes-sensei' ),
+								'description' => __( 'The name from which all emails will be sent.', 'woothemes-sensei' ),
+								'type' => 'text',
+								'default' => get_bloginfo( 'name' ),
+								'section' => 'email-notification-settings',
+								'required' => 1
+								);
+
+		$fields['email_from_address'] = array(
+								'name' => __( '"From" Address', 'woothemes-sensei' ),
+								'description' => __( 'The address from which all emails will be sent.', 'woothemes-sensei' ),
+								'type' => 'text',
+								'default' => get_bloginfo( 'admin_email' ),
+								'section' => 'email-notification-settings',
+								'required' => 1
+								);
+
+		$fields['email_header_image'] = array(
+								'name' => __( 'Header Image', 'woothemes-sensei' ),
+								'description' => sprintf( __( 'Enter a URL to an image you want to show in the email\'s header. Upload your image using the %1$smedia uploader%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'media-new.php' ) . '">', '</a>' ),
+								'type' => 'text',
+								'default' => '',
+								'section' => 'email-notification-settings',
+								'required' => 0
+								);
+
+		$fields['email_footer_text'] = array(
+								'name' => __( 'Email Footer Text', 'woothemes-sensei' ),
+								'description' => __( 'The text to appear in the footer of Sensei emails.', 'woothemes-sensei' ),
+								'type' => 'textarea',
+								'default' => sprintf( __( '%1$s - Powered by Sensei', 'woothemes-sensei' ), get_bloginfo( 'name' ) ),
+								'section' => 'email-notification-settings',
+								'required' => 0
+								);
+
+		$fields['email_base_color'] = array(
+								'name' => __( 'Base Colour', 'woothemes-sensei' ),
+								'description' => sprintf( __( 'The base colour for Sensei email templates. Default %1$s#557da1%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
+								'type' => 'color',
+								'default' => '#557da1',
+								'section' => 'email-notification-settings',
+								'required' => 1
+								);
+
+		$fields['email_background_color'] = array(
+								'name' => __( 'Background Colour', 'woothemes-sensei' ),
+								'description' => sprintf( __( 'The background colour for Sensei email templates. Default %1$s#f5f5f5%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
+								'type' => 'color',
+								'default' => '#f5f5f5',
+								'section' => 'email-notification-settings',
+								'required' => 1
+								);
+
+		$fields['email_body_background_color'] = array(
+								'name' => __( 'Body Background Colour', 'woothemes-sensei' ),
+								'description' => sprintf( __( 'The main body background colour for Sensei email templates. Default %1$s#fdfdfd%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
+								'type' => 'color',
+								'default' => '#fdfdfd',
+								'section' => 'email-notification-settings',
+								'required' => 1
+								);
+
+		$fields['email_text_color'] = array(
+								'name' => __( 'Body Text Colour', 'woothemes-sensei' ),
+								'description' => sprintf( __( 'The main body text colour for Sensei email templates. Default %1$s#505050%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
+								'type' => 'color',
+								'default' => '#505050',
+								'section' => 'email-notification-settings',
+								'required' => 1
+								);
 
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() ) {
 			// WooCommerce Settings

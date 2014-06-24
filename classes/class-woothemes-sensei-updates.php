@@ -61,6 +61,13 @@ class WooThemes_Sensei_Updates {
 																		  'set_default_show_question_count' => array( 'title' => 'Set all quizzes to show all questions', 'desc' => 'Sets all quizzes to show all questions - this can be changed per quiz.' ),
 																		  'remove_deleted_user_activity' => array( 'title' => 'Remove Sensei activity for deleted users', 'desc' => 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.' ) )
 												),
+								'1.6.0' => array( 	'auto' 		=> array( 'add_teacher_role' => array( 'title' => 'Add \'Teacher\' role', 'desc' => 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.' ),
+																		  'add_sensei_caps' => array( 'title' => 'Add administrator capabilities', 'desc' => 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.' ),
+																		  'restructure_question_meta' => array( 'title' => 'Restructure question meta data', 'desc' => 'Restructures the quesiton meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.' ),
+																		  'update_quiz_settings' => array( 'title' => 'Add new quiz settings', 'desc' => 'Adds new settings to quizzes that were previously registered as global settings.' ),
+																		  'reset_lesson_order_meta' => array( 'title' => 'Set default order of lessons', 'desc' => 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.' ), ),
+													'manual' 	=> array()
+												),
 							);
 
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
@@ -94,7 +101,7 @@ class WooThemes_Sensei_Updates {
 	public function sensei_updates_page() {
 
 		// Only allow admins to load this page and run the update functions
-		if( current_user_can( 'administrator' ) ) {
+		if( current_user_can( 'manage_options' ) ) {
 			?>
 			<div class="wrap">
 
@@ -278,7 +285,7 @@ class WooThemes_Sensei_Updates {
 	public function update ( $type = 'auto' ) {
 
 		// Only allow admins to run update functions
-		if( current_user_can( 'administrator' ) ) {
+		if( current_user_can( 'manage_options' ) ) {
 
 			// Run through all functions
 			foreach ( $this->updates as $version => $value ) {
@@ -558,7 +565,7 @@ class WooThemes_Sensei_Updates {
 
 			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
 			if( 0 < intval( $quiz_id ) ) {
-				add_post_meta( $question->ID, '_quiz_question_order', $quiz_id . '0000', true );
+				add_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $quiz_id . '0000', true );
 			}
 		}
 		return true;
@@ -702,6 +709,120 @@ class WooThemes_Sensei_Updates {
 			return false;
 		} // End If Statement
 
+	}
+
+	public function add_teacher_role() {
+		add_role( 'teacher', __( 'Teacher', 'woothemes-sensei' ), array( 'read' => true, 'manage_sensei_grades' => true ) );
+		return true;
+	}
+
+	public function add_sensei_caps() {
+		$role = get_role( 'administrator' );
+		$role->add_cap( 'manage_sensei' );
+		$role->add_cap( 'manage_sensei_grades' );
+		return true;
+	}
+
+	public function restructure_question_meta() {
+		$args = array(
+			'post_type' 		=> 'question',
+			'posts_per_page' 	=> -1,
+			'post_status'		=> 'any',
+			'suppress_filters' 	=> 0
+		);
+
+		$questions = get_posts( $args );
+
+		foreach( $questions as $question ) {
+
+			if( ! isset( $question->ID ) ) continue;
+
+			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
+
+			if( 0 == count( $quizzes ) ) continue;
+
+			// Update quesiton order to be used per quiz
+			foreach( $quizzes as $quiz_id ) {
+				$question_order = get_post_meta( $question->ID, '_quiz_question_order', true );
+				update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
+			}
+		}
+		return true;
+	}
+
+	public function update_quiz_settings() {
+
+		$settings = get_option( 'woothemes-sensei-settings', array() );
+
+		$lesson_completion = false;
+		if( isset( $settings['lesson_completion'] ) ) {
+			$lesson_completion = $settings['lesson_completion'];
+		}
+
+		$reset_quiz_allowed = false;
+		if( isset( $settings['quiz_reset_allowed'] ) ) {
+			$reset_quiz_allowed = $settings['quiz_reset_allowed'];
+		}
+
+		$args = array(
+			'post_type' 		=> 'quiz',
+			'posts_per_page' 	=> -1,
+			'post_status'		=> 'any',
+			'suppress_filters' 	=> 0
+		);
+
+		$quizzes = get_posts( $args );
+
+		foreach( $quizzes as $quiz ) {
+
+			if( ! isset( $quiz->ID ) ) continue;
+
+			if( isset( $lesson_completion ) && 'passed' == $lesson_completion ) {
+				update_post_meta( $quiz->ID, '_pass_required', 'on' );
+			} else {
+				update_post_meta( $quiz->ID, '_quiz_passmark', 0 );
+			}
+
+			if( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) {
+				update_post_meta( $quiz->ID, '_enable_quiz_reset', 'on' );
+			}
+		}
+
+		return true;
+	}
+
+	public function reset_lesson_order_meta() {
+		$args = array(
+			'post_type' 		=> 'lesson',
+			'posts_per_page' 	=> -1,
+			'post_status'		=> 'any',
+			'suppress_filters' 	=> 0
+		);
+
+		$lessons = get_posts( $args );
+
+		foreach( $lessons as $lesson ) {
+
+			if( ! isset( $lesson->ID ) ) continue;
+
+			$course_id = get_post_meta( $lesson->ID, '_lesson_course', true);
+
+			if( $course_id ) {
+				update_post_meta( $lesson->ID, '_order_' . $course_id, 0 );
+			}
+
+			if( class_exists( 'Sensei_Modules' ) ) {
+				global $sensei_modules;
+
+				$module = $sensei_modules->get_lesson_module( $lesson->ID );
+
+				if( $module ) {
+					update_post_meta( $lesson->ID, '_order_module_' . $module->term_id, 0 );
+				}
+			}
+		}
+
+		return true;
 	}
 
 } // End Class
