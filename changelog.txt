@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2014.06.25 - version 1.6.1
+* Tweak - Failed logins now redirect back to the front end login page classes/class-woothemes-sensei-frontend.php
+
 2014.06.25 - version 1.6.0
  * New - Comprehensive question bank functionality including question categories, the ability to re-use questions in multiple quizzes and bulk adding questions from a category
  * New - New Learner Management dashboard that allows administrators to add/remove learners to/from any course or lesson
