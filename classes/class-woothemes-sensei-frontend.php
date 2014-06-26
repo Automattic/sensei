@@ -1440,6 +1440,12 @@ class WooThemes_Sensei_Frontend {
 
 					<h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
 
+					<?php if ( ( isset( $_GET['login'] ) ) && ( $_GET['login'] == 'failed' ) ) { ?>
+						<ul class="sensei-error">
+							<li><strong>Error:</strong> Incorrect login details</li>
+						</ul>
+					<?php } ?>
+
 					<?php wp_login_form( array( 'redirect' => get_permalink() ) ); ?>
 
 			<?php
@@ -2231,11 +2237,19 @@ class WooThemes_Sensei_Frontend {
 	 * @return void redirect
 	 */
 	function sensei_empty_login_fail_redirect_to_front_end_login( $username ) {
-	    $referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER']);
+
+	    $referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER'] );
+
+	    //check if this request comes from wp-login and ignore it
+	   if( strstr($referrer,'wp-login') || strstr($referrer , 'wp-admin') || empty( $referrer ) ){
+		    return;
+		}
+
 	    if ( (!isset($_REQUEST['user_login']) || ( isset( $_REQUEST['user_login'] ) && trim( $_REQUEST['user_login'] ) == '' ) ) || (!isset($_REQUEST['user_pass']) || ( isset( $_REQUEST['user_pass'] ) && trim( $_REQUEST['user_pass'] ) == '' ) ) ){
 	        wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
 	        exit; 
 	    } 
+
 	} // End  sensei_login_fail_redirect_to_front_end_login
 
 } // End Class
