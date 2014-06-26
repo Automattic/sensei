@@ -97,6 +97,10 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 ); 
 		// 1.3.0
 		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
+		//1.6.0
+		add_filter( 'wp_login_failed', array( $this, 'sensei_normal_login_fail_redirect_to_front_end_login' ), 10 ); 
+		add_filter( 'login_head', array( $this, 'sensei_empty_login_fail_redirect_to_front_end_login' ), 10 ); 
+
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();
@@ -2200,6 +2204,39 @@ class WooThemes_Sensei_Frontend {
 
 		return $args;
 	} // End hide_sensei_activity()
+
+	/**
+	 * Redirect failed login attempts to the front end login page 
+	 * in the case where the login fields are not left empty
+	 * 
+	 * @param  string  $username
+	 * @return void redirect
+	 */
+	function sensei_normal_login_fail_redirect_to_front_end_login( $username ) {
+    	// Get the reffering page, where did the post submission come from?
+    	$referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER']);
+ 
+   		 // if there's a valid referrer, and it's not the default log-in screen
+	    if(!empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin')){
+	        // let's append some information (login=failed) to the URL for the theme to use
+	        wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+	    	exit;
+    	}
+	}// End sensei_login_fail_redirect_to_front_end_login
+
+	/**
+	 * Redirect failed login attempts to the front end login page 
+	 * in the case where the login fields were left empty.
+	 * 
+	 * @return void redirect
+	 */
+	function sensei_empty_login_fail_redirect_to_front_end_login( $username ) {
+	    $referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER']);
+	    if ( (!isset($_REQUEST['user_login']) || ( isset( $_REQUEST['user_login'] ) && trim( $_REQUEST['user_login'] ) == '' ) ) || (!isset($_REQUEST['user_pass']) || ( isset( $_REQUEST['user_pass'] ) && trim( $_REQUEST['user_pass'] ) == '' ) ) ){
+	        wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+	        exit; 
+	    } 
+	} // End  sensei_login_fail_redirect_to_front_end_login
 
 } // End Class
 ?>
