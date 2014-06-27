@@ -1441,9 +1441,7 @@ class WooThemes_Sensei_Frontend {
 					<h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
 
 					<?php if ( ( isset( $_GET['login'] ) ) && ( $_GET['login'] == 'failed' ) ) { ?>
-						<ul class="sensei-error">
-							<li><strong>Error:</strong> Incorrect login details</li>
-						</ul>
+						<div class="sensei-message alert"><strong>Error:</strong> Incorrect login details</div>
 					<?php } ?>
 
 					<?php wp_login_form( array( 'redirect' => get_permalink() ) ); ?>
