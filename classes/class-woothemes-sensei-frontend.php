@@ -97,9 +97,10 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 ); 
 		// 1.3.0
 		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
-		//1.6.0
+		//1.6.1
 		add_filter( 'wp_login_failed', array( $this, 'sensei_normal_login_fail_redirect_to_front_end_login' ), 10 ); 
-		add_filter( 'login_head', array( $this, 'sensei_empty_login_fail_redirect_to_front_end_login' ), 10 ); 
+		add_filter( 'wp_login_failed', array( $this, 'sensei_normal_login_fail_redirect_to_front_end_login' ), 10 ); 
+		add_filter( 'init', array( $this, 'sensei_empty_login_fail_redirect_to_front_end_login' ), 10 ); 
 
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
@@ -316,6 +317,7 @@ class WooThemes_Sensei_Frontend {
 	 * @access public
 	 * @return void
 	 */
+
 	function sensei_output_content_wrapper_end() {
 		$this->sensei_get_template( 'wrappers/wrapper-end.php' );
 	} // End sensei_output_content_wrapper_end()
@@ -1437,20 +1439,15 @@ class WooThemes_Sensei_Frontend {
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">
-
-					<h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
-
-					<?php if ( ( isset( $_GET['login'] ) ) && ( $_GET['login'] == 'failed' ) ) { ?>
-						<div class="sensei-message alert"><strong>Error:</strong> Incorrect login details</div>
-					<?php } ?>
-
-					<?php wp_login_form( array( 'redirect' => get_permalink() ) ); ?>
+					<?php	
+					// output the actul form markup		
+						$this->sensei_get_template( 'user/login-form.php');
+					?>
+				</div>
 
 			<?php
 			if ( get_option('users_can_register') ) {
 				?>
-
-				</div>
 
 				<div class="col-2">
 					<h2><?php _e( 'Register', 'woothemes-sensei' ); ?></h2>
@@ -2217,6 +2214,14 @@ class WooThemes_Sensei_Frontend {
 	 * @return void redirect
 	 */
 	function sensei_normal_login_fail_redirect_to_front_end_login( $username ) {
+
+		//if not posted from the sensei login form let 
+		// WordPress or any other party handle the failed request
+
+	    if( !isset( $_REQUEST['form'] ) &&  'sensei-login' != $_REQUEST['form'] ){
+	    	return ;
+	    }
+
     	// Get the reffering page, where did the post submission come from?
     	$referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER']);
  
@@ -2234,19 +2239,65 @@ class WooThemes_Sensei_Frontend {
 	 * 
 	 * @return void redirect
 	 */
-	function sensei_empty_login_fail_redirect_to_front_end_login( $username ) {
+	function sensei_empty_login_fail_redirect_to_front_end_login( ) {
 
-	    $referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER'] );
+		//check that it is a sensei  login request and if it has a valid nonce
+	    if( !isset( $_REQUEST['form'] ) &&  'sensei-login' != $_REQUEST['form'] ){
+	    	return ;
+	    }
 
-	    //check if this request comes from wp-login and ignore it
-	   if( strstr($referrer,'wp-login') || strstr($referrer , 'wp-admin') || empty( $referrer ) ){
-		    return;
-		}
+	    // validate the login request nonce
+	    if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'sensei-login' ) ){
+	    	return;
+	    }
 
-	    if ( (!isset($_REQUEST['user_login']) || ( isset( $_REQUEST['user_login'] ) && trim( $_REQUEST['user_login'] ) == '' ) ) || (!isset($_REQUEST['user_pass']) || ( isset( $_REQUEST['user_pass'] ) && trim( $_REQUEST['user_pass'] ) == '' ) ) ){
-	        wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
-	        exit; 
-	    } 
+	    //get the page where the sensei log form is located
+	    $referrer = $_REQUEST['_wp_http_referer'];
+	    //$redirect = $_REQUEST['_sensei_redirect'];
+
+	    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )  
+	    	 && ( isset( $_REQUEST['pwd'] ) && !empty( $_REQUEST['pwd'] ) ) ){
+
+	    	// when the user has entered a password or username do the sensei login
+	    	$creds = array();
+			$creds['user_login'] = sanitize_text_field( $_REQUEST['log'] ) ;
+			$creds['user_password'] = sanitize_text_field( $_REQUEST['pwd'] );
+			$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
+
+			//attempt logging in with the given details
+			$user = wp_signon( $creds, false ); 
+
+			if ( is_wp_error($user) ){ // on login failure
+
+				wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+	        	exit;
+
+			}else{ // on login success
+
+				/**
+				* change the redirect url programatically 
+				* 
+				* @since 1.6.1
+				*
+				* @param string $referrer the page where the current url wheresensei login form was posted from
+				*/
+
+				$success_redirect_url = apply_filters('sesei_login_success_redirect_url', remove_query_arg( 'login', $referrer ) );
+
+				wp_redirect( $success_redirect_url );
+	        	exit;
+
+			}	// end is_wp_error($user)
+
+	    }else{ // if username or password is empty 
+
+	    	wp_redirect( add_query_arg('login', 'emptyfields', $referrer) ); 
+	        exit;
+
+	    } // end if username $_REQUEST['log']  and password $_REQUEST['pwd'] is empty
+
+	    // continue with the default flow of things
+	    return;
 
 	} // End  sensei_login_fail_redirect_to_front_end_login
 
