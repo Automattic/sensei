@@ -98,9 +98,8 @@ class WooThemes_Sensei_Frontend {
 		// 1.3.0
 		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
 		//1.6.1
-		add_filter( 'wp_login_failed', array( $this, 'sensei_normal_login_fail_redirect_to_front_end_login' ), 10 ); 
-		add_filter( 'wp_login_failed', array( $this, 'sensei_normal_login_fail_redirect_to_front_end_login' ), 10 ); 
-		add_filter( 'init', array( $this, 'sensei_empty_login_fail_redirect_to_front_end_login' ), 10 ); 
+		add_filter( 'wp_login_failed', array( $this, 'sensei_login_fail_redirect' ), 10 ); 
+		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 ); 
 
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
@@ -2213,7 +2212,7 @@ class WooThemes_Sensei_Frontend {
 	 * @param  string  $username
 	 * @return void redirect
 	 */
-	function sensei_normal_login_fail_redirect_to_front_end_login( $username ) {
+	function sensei_login_fail_redirect( $username ) {
 
 		//if not posted from the sensei login form let 
 		// WordPress or any other party handle the failed request
@@ -2234,12 +2233,11 @@ class WooThemes_Sensei_Frontend {
 	}// End sensei_login_fail_redirect_to_front_end_login
 
 	/**
-	 * Redirect failed login attempts to the front end login page 
-	 * in the case where the login fields were left empty.
+	 * Handle the login reques from all sensei intiated login forms.
 	 * 
 	 * @return void redirect
 	 */
-	function sensei_empty_login_fail_redirect_to_front_end_login( ) {
+	function sensei_handle_login_request( ) {
 
 		//check that it is a sensei  login request and if it has a valid nonce
 	    if( !isset( $_REQUEST['form'] ) &&  'sensei-login' != $_REQUEST['form'] ){
