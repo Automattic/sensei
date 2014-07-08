@@ -3,6 +3,7 @@
 2014.06.30 - version 1.6.1
  * Fix - Making sure Learner Management page shows for users with 'manage_sensei_grades' capability
  * Fix - Fixing bug that prevented all email notifications from being deactivated
+ * Fix - Fixing lesson order in single lesson next/previous lesson navigation
  * Fix - Ensuring that modules display on single course page for courses with prerequisites
  * Fix - Making sure learner management user search works without WooCommerce activated
 
