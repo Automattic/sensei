@@ -33,7 +33,7 @@ global $woothemes_sensei, $post;
             		    </section>
 
 						<?php course_single_meta(); ?>
-	 					<?php course_single_lessons(); ?>
+	 					<?php do_action( 'sensei_course_single_lessons' ); ?>
 
             		</article><!-- .post -->
                 <?php } else { ?>
