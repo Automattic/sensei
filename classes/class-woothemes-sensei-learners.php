@@ -324,7 +324,7 @@ class WooThemes_Sensei_Learners {
 
 		check_ajax_referer( 'search-users', 'security' );
 
-		$term = wc_clean( stripslashes( $_GET['term'] ) );
+		$term = sanitize_text_field( stripslashes( $_GET['term'] ) );
 
 		if ( empty( $term ) ) {
 			die();
