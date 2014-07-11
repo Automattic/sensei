@@ -660,6 +660,7 @@ class WooThemes_Sensei_Settings_API {
 		foreach ( $this->fields as $k => $v ) {
 			// Make sure checkboxes are present even when false.
 			if ( $v['type'] == 'checkbox' && ! isset( $input[$k] ) ) { $input[$k] = false; }
+			if ( $v['type'] == 'multicheck' && ! isset( $input[$k] ) ) { $input[$k] = false; }
 
 			if ( isset( $input[$k] ) ) {
 				// Perform checks on required fields.
