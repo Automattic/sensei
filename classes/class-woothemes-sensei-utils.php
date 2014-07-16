@@ -1068,7 +1068,9 @@ class WooThemes_Sensei_Utils {
                 ++$lesson_count;
 			}
 
-			$course_passmark = ( $total_passmark / $lesson_count );
+			if( 0 < $lesson_count ) {
+				$course_passmark = ( $total_passmark / $lesson_count );
+			}
 		}
 
 		return round( $course_passmark );
