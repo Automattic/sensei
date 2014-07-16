@@ -74,8 +74,8 @@ if ( ! $paged || $paged < 2 ) {
                         </p>
                         <p class="course-excerpt"><?php echo $post_item->post_excerpt; ?></p>
                         <?php if ( 0 < $preview_lesson_count && !$is_user_taking_course ) {
-                                $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes_sensei' ), $preview_lesson_count ); ?>
-                                <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes_sensei' ) ?></a> - <?php echo $preview_lessons; ?></p>
+                                $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ); ?>
+                                <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $preview_lessons; ?></p>
                         <?php } ?> 
     				</section>
     			</article>
@@ -132,8 +132,8 @@ if ( ! $paged || $paged < 2 ) {
                     </p>
                     <p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post_item->post_excerpt ); ?></p>
                     <?php if ( 0 < $preview_lesson_count && !$is_user_taking_course ) {
-                            $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes_sensei' ), $preview_lesson_count ); ?>
-                            <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes_sensei' ) ?></a> - <?php echo $preview_lessons; ?></p>
+                            $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ); ?>
+                            <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $preview_lessons; ?></p>
                     <?php } ?>
     			</section>
     		</article>
