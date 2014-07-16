@@ -127,6 +127,9 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
                 }
             }
         }
+
+        $count = 0;
+
         ?>
         <li class="<?php esc_attr_e( $answer_class ); ?>"><input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count . '-true'; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="true" <?php echo checked( $user_quizzes[ $question_id ], 'true', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count . '-true'; ?>"><?php _e( 'True', 'woothemes-sensei' ); ?></label></li>
         <?php
