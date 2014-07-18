@@ -3,6 +3,7 @@
 2014.07.23 - version 1.6.2
  * New - Adding WPML compatibility
  * Fix - Fixing incorrect text domain references
+ * Fix - Fixing chosen input widths
 
 2014.06.30 - version 1.6.1
  * Fix - Making sure Learner Management page shows for users with 'manage_sensei_grades' capability
