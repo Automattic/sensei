@@ -4,6 +4,7 @@
  * New - Adding WPML compatibility
  * Fix - Fixing incorrect text domain references
  * Fix - Fixing chosen input widths
+ * Fix - Fixing learner profile URL when site URL is different from home URL
 
 2014.06.30 - version 1.6.1
  * Fix - Making sure Learner Management page shows for users with 'manage_sensei_grades' capability
