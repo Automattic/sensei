@@ -398,7 +398,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		// Learner Profile settings
 
 		$profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'woothemes-sensei') );
-		$profile_url_example = trailingslashit( get_site_url() ) . $profile_url_base . '/%username%';
+		$profile_url_example = trailingslashit( get_home_url() ) . $profile_url_base . '/%username%';
 		$fields['learner_profile_enable'] = array(
 							'name' => __( 'Public learner profiles', 'woothemes-sensei' ),
 							'description' => sprintf( __( 'Enable public learner profiles that will be accassible to everyone. Profile URL format: %s', 'woothemes-sensei' ), $profile_url_example ),
