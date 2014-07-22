@@ -739,13 +739,8 @@ class WooThemes_Sensei_Updates {
 
 			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
 
-			if( 0 == count( $quizzes ) ) continue;
-
-			// Update quesiton order to be used per quiz
-			foreach( $quizzes as $quiz_id ) {
-				$question_order = get_post_meta( $question->ID, '_quiz_question_order', true );
-				update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
-			}
+			$question_order = get_post_meta( $question->ID, '_quiz_question_order', true );
+			update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
 		}
 		return true;
 	}
