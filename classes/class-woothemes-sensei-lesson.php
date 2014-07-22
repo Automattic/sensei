@@ -1467,7 +1467,7 @@ class WooThemes_Sensei_Lesson {
 		$answer_id = '';
 
 		if( $answer ) {
-			$answer_id = strtolower( str_replace( array( ',', ' ', '-', '&', '\'', '"', '`', '?', ':', ';', '!', '<', '>', '/', '.' ), '', stripslashes( $answer ) ) );
+			$answer_id = md5( $answer );
 		}
 
 		return $answer_id;
