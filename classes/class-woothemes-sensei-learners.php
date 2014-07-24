@@ -84,7 +84,7 @@ class WooThemes_Sensei_Learners {
 	public function learners_admin_menu() {
 	    global $menu;
 
-	    if ( current_user_can( 'manage_sensei' ) ) {
+	    if ( current_user_can( 'manage_sensei_grades' ) ) {
 	    	$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
 	    }
 
@@ -324,7 +324,7 @@ class WooThemes_Sensei_Learners {
 
 		check_ajax_referer( 'search-users', 'security' );
 
-		$term = wc_clean( stripslashes( $_GET['term'] ) );
+		$term = sanitize_text_field( stripslashes( $_GET['term'] ) );
 
 		if ( empty( $term ) ) {
 			die();

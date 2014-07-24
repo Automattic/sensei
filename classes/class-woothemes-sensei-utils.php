@@ -123,7 +123,7 @@ class WooThemes_Sensei_Utils {
 		// Manually Flush the Cache
 		wp_cache_flush();
 
-		do_action( 'sensei_log_activity_after', $args, $data );
+		do_action( 'sensei_log_activity_after', $args, $data, $comment_id );
 
 		if ( 0 < $comment_id ) {
 			return true;
@@ -322,6 +322,9 @@ class WooThemes_Sensei_Utils {
 			if ( $order->status == 'completed' ) {
 				if ( 0 < sizeof( $order->get_items() ) ) {
 					foreach( $order->get_items() as $item ) {
+
+						// Allow product ID to be filtered
+						$product_id = apply_filters( 'sensei_bought_product_id', $product_id, $order );
 
 						// Check if user has bought product
 						if ( $item['product_id'] == $product_id || $item['variation_id'] == $product_id ) {
@@ -1068,7 +1071,9 @@ class WooThemes_Sensei_Utils {
                 ++$lesson_count;
 			}
 
-			$course_passmark = ( $total_passmark / $lesson_count );
+			if( 0 < $lesson_count ) {
+				$course_passmark = ( $total_passmark / $lesson_count );
+			}
 		}
 
 		return round( $course_passmark );

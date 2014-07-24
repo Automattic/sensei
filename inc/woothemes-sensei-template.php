@@ -502,23 +502,86 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		if ( 0 < $lesson_id ) {
 			// Get the List of Lessons in the Course
 			$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $lesson_course_id );
-			// Index the Lessons
-			if ( 0 < count( $course_lessons ) ) {
-				$found_index = false;
-				foreach ($course_lessons as $lesson_item){
-					if ( $found_index && $return_values['next_lesson'] == 0 ) {
-						$return_values['next_lesson'] = $lesson_item->ID;
+			$all_lessons = array();
+			if( class_exists( 'Sensei_Modules' ) ) {
+                global $sensei_modules;
+
+                $modules = $sensei_modules->get_course_modules( intval( $lesson_course_id ) );
+
+                foreach( $modules as $module ) {
+
+                    $args = array(
+                        'post_type' => 'lesson',
+                        'post_status' => 'publish',
+                        'posts_per_page' => -1,
+                        'meta_query' => array(
+                            array(
+                                'key' => '_lesson_course',
+                                'value' => intval( $lesson_course_id ),
+                                'compare' => '='
+                            )
+                        ),
+                        'tax_query' => array(
+                            array(
+                                'taxonomy' => $sensei_modules->taxonomy,
+                                'field' => 'id',
+                                'terms' => intval( $module->term_id )
+                            )
+                        ),
+                        'meta_key' => '_order_module_' . $module->term_id,
+                        'orderby' => 'meta_value_num date',
+                        'order' => 'ASC',
+                        'suppress_filters' => 0
+                    );
+
+                    $lessons = get_posts( $args );
+                    if ( 0 < count( $lessons ) ) {
+						foreach ($lessons as $lesson_item){
+							$all_lessons[] = $lesson_item->ID;
+						} // End For Loop
 					} // End If Statement
-					if ( $lesson_item->ID == $lesson_id ) {
+                }
+            }
+
+            $args = array(
+                'post_type' => 'lesson',
+                'posts_per_page' => -1,
+                'suppress_filters' => 0,
+                'meta_key' => '_order_' . $lesson_course_id,
+                'orderby' => 'meta_value_num date',
+                'order' => 'ASC',
+                'meta_query' => array(
+                    array(
+                        'key' => '_lesson_course',
+                        'value' => intval( $lesson_course_id ),
+                    ),
+                ),
+                'post__not_in' => $all_lessons,
+            );
+
+            $other_lessons = get_posts( $args );
+            if ( 0 < count( $other_lessons ) ) {
+				foreach ($other_lessons as $lesson_item){
+					$all_lessons[] = $lesson_item->ID;
+				} // End For Loop
+			} // End If Statement
+
+            if ( 0 < count( $all_lessons ) ) {
+				$found_index = false;
+				foreach ( $all_lessons as $lesson ){
+					if ( $found_index && $return_values['next_lesson'] == 0 ) {
+						$return_values['next_lesson'] = $lesson;
+					} // End If Statement
+					if ( $lesson == $lesson_id ) {
 						// Is the current post
 						$found_index = true;
 					} // End If Statement
 					if ( !$found_index ) {
-						$return_values['prev_lesson'] = $lesson_item->ID;
+						$return_values['prev_lesson'] = $lesson;
 					} // End If Statement
 				} // End For Loop
 			} // End If Statement
+
 		} // End If Statement
 		return $return_values;
 	} // End sensei_get_prev_next_lessons()

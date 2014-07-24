@@ -1349,8 +1349,8 @@ class WooThemes_Sensei_Frontend {
         	</p>
         	<p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
         	<?php if ( 0 < $free_lesson_count ) {
-                    $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes_sensei' ), $free_lesson_count ); ?>
-                    <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes_sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
+                    $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes-sensei' ), $free_lesson_count ); ?>
+                    <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
             <?php } ?>
 		</section><?php
 	} // End sensei_course_archive_meta()
@@ -1560,12 +1560,12 @@ class WooThemes_Sensei_Frontend {
 	} // sensei_lesson_meta()
 
 	public function sensei_lesson_preview_title_text( $course_id ) {
-		$preview_text = __( ' (Preview)', 'woothemes_sensei' );
+		$preview_text = __( ' (Preview)', 'woothemes-sensei' );
 		//if this is a paid course
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
     	    $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
-    	    	$preview_text = __( ' (Free Preview)', 'woothemes_sensei' );
+    	    	$preview_text = __( ' (Free Preview)', 'woothemes-sensei' );
     	    } // End If Statement
     	}
     	return $preview_text;
