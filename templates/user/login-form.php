@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @author 		WooThemes
  * @package 	Sensei/Templates
- * @version     1.0.0
+ * @version     1.6.2
  */
 
 if ( is_user_logged_in() ) {
@@ -54,7 +54,7 @@ if ( ( isset( $_GET['login'] ) ) ) {
 /**
  *  Executes inside the sensei login form before all the default fields.
  *
- * @since 1.6.1
+ * @since 1.6.2
  */
  	do_action( 'sensei_login_form_inside_before' ); 
 ?> 	
@@ -66,7 +66,7 @@ if ( ( isset( $_GET['login'] ) ) ) {
 	
 	<p class="sensei-login-password">
 				<label for="sensei_user_pass"> <?php _e('Password','woothemes-sensei')?>  </label>
-				<input type="password" name="pwd" id="sensei_user_pass" class="input" value="" size="20">
+				<input type="password" name="pwd" id="sensei_user_pass" class="input txt text" value="" size="20">
 	</p>
 
 <?php
@@ -75,14 +75,14 @@ if ( ( isset( $_GET['login'] ) ) ) {
  *
  *  You can use the action to add extra form login fields. 
  *
- * @since 1.6.1
+ * @since 1.6.2
  */
  	do_action( 'sensei_login_form_inside_after_password_field' ); 
 ?> 	
 	
 	<p class='sensei-login-submit'>
 		<input type="submit" class="button" name="login" value="<?php _e( 'Login', 'woothemes-sensei' ); ?>" />
-		<a href="<?php echo esc_url( wc_lostpassword_url() ); ?>"><?php _e( 'Lost your password?', 'woothemes-sensei' ); ?></a>
+		<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>"><?php _e( 'Lost your password?', 'woothemes-sensei' ); ?></a>
 	</p>	
 	<p class='remember_me' >
 		<label for="rememberme" class="inline">
@@ -94,7 +94,7 @@ if ( ( isset( $_GET['login'] ) ) ) {
 /**
  *  Executes inside the sensei login form after all the default fields.
  *
- * @since 1.6.1
+ * @since 1.6.2
  */
  	do_action( 'sensei_login_form_inside_after' ); 
 ?> 	
