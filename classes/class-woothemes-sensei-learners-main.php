@@ -269,7 +269,6 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			'posts_per_page' => -1,
 			'orderby' => 'menu_order date',
 			'order' => 'ASC',
-			'suppress_filters' => false,
 		);
 
 		if( 0 < $course_cat ) {

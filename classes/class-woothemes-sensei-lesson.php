@@ -2418,6 +2418,7 @@ class WooThemes_Sensei_Lesson {
     						'meta_key'        	=> '_quiz_lesson',
     						'meta_value'      	=> $lesson_id,
     						'post_status'		=> $post_status,
+							'suppress_filters' 	=> 0
 							);
 		$posts_array = get_posts( $post_args );
 
