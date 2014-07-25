@@ -1434,9 +1434,9 @@ class WooThemes_Sensei_Lesson {
 
 	public function quiz_panel_question_feedback( $question_counter = 0, $question_id = 0 ) {
 
-		$field_name = 'add_question_feedback';
+		$field_name = 'answer_feedback';
 		if( $question_counter ) {
-			$field_name = 'question_' . $question_counter . '_feedback';
+			$field_name = 'answer_' . $question_counter . '_feedback';
 		}
 
 		$feedback = '';
