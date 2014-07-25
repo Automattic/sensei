@@ -1729,14 +1729,16 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_course_meta_video()
 
 	public function sensei_woocommerce_in_cart_message() {
-		global $post, $woocommerce;
-		$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
-
-		if ( 0 < intval( $wc_post_id ) ) {
-			if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
-				echo '<div class="sensei-message info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
+			global $post, $woocommerce ;
+			$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
+			$current_user = wp_get_current_user();
+			$show_this_message = ! apply_filters('hide_sensei_woocommerce_in_cart_message', false );
+			if ( 0 < intval( $wc_post_id ) ) {
+	            $user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
+				if ( $show_this_message && sensei_check_if_product_is_in_cart( $wc_post_id ) && !$user_taking_course ) {
+					echo '<div class="sensei-message info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
+				} // End If Statement
 			} // End If Statement
-		} // End If Statement
 
 	} // End sensei_woocommerce_in_cart_message()
 
