@@ -54,7 +54,7 @@ if ( $u < 0 ) {
 } else {
     $upload_size_unit = (int) $upload_size_unit;
 }
-$max_upload_size = sprintf( __( 'Maximum upload file size: %d%s' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
+$max_upload_size = sprintf( __( 'Maximum upload file size: %d%s', 'woothemes-sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
 
 // Question media
 $question_media = get_post_meta( $question_id, '_question_media', true );
