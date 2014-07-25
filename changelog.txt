@@ -5,6 +5,8 @@
  * Fix - Fixing incorrect text domain references
  * Fix - Fixing chosen input widths
  * Fix - Fixing learner profile URL when site URL is different from home URL
+ * Tweak - hide the message "You have already added this Course to your cart" message if the user is enroled in the course and add a new filter: hide_sensei_woocommerce_in_cart_message, to allow the user to remove the notice completely
+
 
 2014.06.30 - version 1.6.1
  * Fix - Making sure Learner Management page shows for users with 'manage_sensei_grades' capability
