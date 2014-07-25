@@ -2530,7 +2530,7 @@ class WooThemes_Sensei_Lesson {
 						$qargs = array(
 							'post_type' 		=> 'question',
 							'numberposts' 		=> $question_number,
-							'orderby'         	=> 'rand',
+							'orderby'         	=> $orderby,
 							'tax_query'			=> array(
 								array(
 									'taxonomy'  => 'question-category',
