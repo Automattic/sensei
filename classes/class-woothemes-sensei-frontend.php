@@ -201,7 +201,7 @@ class WooThemes_Sensei_Frontend {
 		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
 
 		if ( ! $disable_styles ) {
-			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.6.0', 'screen' );
+			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.6.2', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
 
 			// Allow additional stylesheets to be loaded
@@ -2241,12 +2241,12 @@ class WooThemes_Sensei_Frontend {
 	 */
 	function sensei_handle_login_request( ) {
 
-		//check that it is a sensei  login request and if it has a valid nonce
-	    if( !isset( $_REQUEST['form'] ) &&  'sensei-login' != $_REQUEST['form'] ){
+		// Check that it is a sensei login request and if it has a valid nonce
+	    if( ! isset( $_REQUEST['form'] ) || ( isset( $_REQUEST['form'] ) && 'sensei-login' != $_REQUEST['form'] ) ) {
 	    	return ;
 	    }
 
-	    // validate the login request nonce
+	    // Validate the login request nonce
 	    if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'sensei-login' ) ){
 	    	return;
 	    }
