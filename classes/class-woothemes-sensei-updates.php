@@ -68,6 +68,9 @@ class WooThemes_Sensei_Updates {
 																		  'reset_lesson_order_meta' => array( 'title' => 'Set default order of lessons', 'desc' => 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.' ), ),
 													'manual' 	=> array()
 												),
+								'1.6.2' => array( 	'auto' 		=> array( 'restructure_question_meta' => array( 'title' => 'Restructure question meta data', 'desc' => 'Restructures the quesiton meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.' ), ),
+													'manual' 	=> array()
+												),
 							);
 
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
@@ -739,14 +742,11 @@ class WooThemes_Sensei_Updates {
 
 			$quiz_id = get_post_meta( $question->ID, '_quiz_id', true );
 
-			if( 0 == count( $quizzes ) ) continue;
+			$question_order = get_post_meta( $question->ID, '_quiz_question_order', true );
+			update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
 
-			// Update quesiton order to be used per quiz
-			foreach( $quizzes as $quiz_id ) {
-				$question_order = get_post_meta( $question->ID, '_quiz_question_order', true );
-				update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
-			}
 		}
+
 		return true;
 	}
 
