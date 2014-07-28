@@ -25,6 +25,21 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
   font-style: normal;
 }
 
+a.view-results,
+a.view-results-link,
+a.sensei-certificate-link {
+	display: inline-block;
+	padding: .236em .857em;
+	background: $border_main;
+	float: right;
+	margin-left: .236em;
+	padding: .382em 1em;
+	@include border_radius(5px);
+	color: #fff;
+	font-weight: bold;
+	text-decoration: none;
+}
+
 /* Courses */
 #main .course, #main .course-container {
 	@include clearfix();
@@ -38,11 +53,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	.course-meta  {
 		margin-bottom: 20px;
 		clear: both;
-		.view-results {
-			text-align: right;
-			margin: 5px 0;
-			font-size: 90%;
-		}
 		.single_add_to_cart_button  {
 			font-size: 1em;
 			position: relative;
@@ -118,6 +128,22 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				}
 			}
 		}
+	}
+}
+
+// Single Course
+.single-course {
+	.course-meta {
+		margin-bottom: 1.618em;
+		@include clearfix;
+
+		.status {
+			float: left;
+			margin-right: .236em;
+		}
+	}
+	.course-video {
+		margin-bottom: 1.618em;
 	}
 }
 
@@ -713,7 +739,7 @@ section.entry span.course-price { padding-left: 10px; }
 }
 
 .course-container, .course, .lesson, .quiz  {
-	a.button,
+	a.button, a.button:visited,
 	a.comment-reply-link,
 	#commentform #submit,
 	.submit,
