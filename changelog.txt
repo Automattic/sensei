@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2014.07.23 - version 1.6.2
+2014.07.28 - version 1.6.2
  * New - Adding WPML compatibility
  * Fix - Fixing incorrect text domain references
  * Fix - Fixing chosen input widths
