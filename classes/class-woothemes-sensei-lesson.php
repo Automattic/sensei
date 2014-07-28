@@ -1434,9 +1434,9 @@ class WooThemes_Sensei_Lesson {
 
 	public function quiz_panel_question_feedback( $question_counter = 0, $question_id = 0 ) {
 
-		$field_name = 'add_question_feedback';
+		$field_name = 'answer_feedback';
 		if( $question_counter ) {
-			$field_name = 'question_' . $question_counter . '_feedback';
+			$field_name = 'answer_' . $question_counter . '_feedback';
 		}
 
 		$feedback = '';
@@ -1467,7 +1467,7 @@ class WooThemes_Sensei_Lesson {
 		$answer_id = '';
 
 		if( $answer ) {
-			$answer_id = strtolower( str_replace( array( ',', ' ', '-', '&', '\'', '"', '`', '?', ':', ';', '!', '<', '>', '/', '.' ), '', stripslashes( $answer ) ) );
+			$answer_id = md5( $answer );
 		}
 
 		return $answer_id;
@@ -2418,7 +2418,6 @@ class WooThemes_Sensei_Lesson {
     						'meta_key'        	=> '_quiz_lesson',
     						'meta_value'      	=> $lesson_id,
     						'post_status'		=> $post_status,
-							'suppress_filters' 	=> 0
 							);
 		$posts_array = get_posts( $post_args );
 
@@ -2531,7 +2530,7 @@ class WooThemes_Sensei_Lesson {
 						$qargs = array(
 							'post_type' 		=> 'question',
 							'numberposts' 		=> $question_number,
-							'orderby'         	=> 'rand',
+							'orderby'         	=> $orderby,
 							'tax_query'			=> array(
 								array(
 									'taxonomy'  => 'question-category',

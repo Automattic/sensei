@@ -1,5 +1,19 @@
 *** Sensei Changelog ***
 
+2014.07.28 - version 1.6.2
+ * New - Adding WPML compatibility
+ * Fix - Fixing incorrect text domain references
+ * Fix - Fixing chosen input widths
+ * Fix - Fixing learner profile URL when site URL is different from home URL
+ * Fix - Fixing question order meta data update (kudos David Page)
+ * Fix - Fixing answer ID generation on quiz edit panel to ensure all answer types will be displayed (kudos David Page)
+ * Fix - Fixing answer feedback saving and generation (kudos David Page)
+ * Fix - Fixing ordering of questions loaded from existing questions (kudos David Page)
+ * Fix - Failed logins now redirect back to the frontend login page
+ * Fix - Ensuring all frontend Sensei messages are correctly styled
+ * Fix - Fixing Analysis export to export correct page
+ * Tweak - Hide the 'You have already added this Course to your cart' message if the user is enrolled in the course and add a new 'hide_sensei_woocommerce_in_cart_message' filter to remove the notice completely
+
 2014.06.30 - version 1.6.1
  * Fix - Making sure Learner Management page shows for users with 'manage_sensei_grades' capability
  * Fix - Fixing bug that prevented all email notifications from being deactivated

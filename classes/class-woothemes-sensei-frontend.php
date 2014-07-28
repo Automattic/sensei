@@ -97,6 +97,10 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 ); 
 		// 1.3.0
 		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
+		//1.6.1
+		add_filter( 'wp_login_failed', array( $this, 'sensei_login_fail_redirect' ), 10 ); 
+		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 ); 
+
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();
@@ -197,7 +201,7 @@ class WooThemes_Sensei_Frontend {
 		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
 
 		if ( ! $disable_styles ) {
-			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.6.0', 'screen' );
+			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', '1.6.2', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
 
 			// Allow additional stylesheets to be loaded
@@ -312,6 +316,7 @@ class WooThemes_Sensei_Frontend {
 	 * @access public
 	 * @return void
 	 */
+
 	function sensei_output_content_wrapper_end() {
 		$this->sensei_get_template( 'wrappers/wrapper-end.php' );
 	} // End sensei_output_content_wrapper_end()
@@ -1344,8 +1349,8 @@ class WooThemes_Sensei_Frontend {
         	</p>
         	<p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
         	<?php if ( 0 < $free_lesson_count ) {
-                    $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes_sensei' ), $free_lesson_count ); ?>
-                    <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes_sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
+                    $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes-sensei' ), $free_lesson_count ); ?>
+                    <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
             <?php } ?>
 		</section><?php
 	} // End sensei_course_archive_meta()
@@ -1433,16 +1438,15 @@ class WooThemes_Sensei_Frontend {
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">
-
-					<h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
-
-					<?php wp_login_form( array( 'redirect' => get_permalink() ) ); ?>
+					<?php	
+					// output the actul form markup		
+						$this->sensei_get_template( 'user/login-form.php');
+					?>
+				</div>
 
 			<?php
 			if ( get_option('users_can_register') ) {
 				?>
-
-				</div>
 
 				<div class="col-2">
 					<h2><?php _e( 'Register', 'woothemes-sensei' ); ?></h2>
@@ -1556,12 +1560,12 @@ class WooThemes_Sensei_Frontend {
 	} // sensei_lesson_meta()
 
 	public function sensei_lesson_preview_title_text( $course_id ) {
-		$preview_text = __( ' (Preview)', 'woothemes_sensei' );
+		$preview_text = __( ' (Preview)', 'woothemes-sensei' );
 		//if this is a paid course
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
     	    $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
-    	    	$preview_text = __( ' (Free Preview)', 'woothemes_sensei' );
+    	    	$preview_text = __( ' (Free Preview)', 'woothemes-sensei' );
     	    } // End If Statement
     	}
     	return $preview_text;
@@ -1725,14 +1729,16 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_course_meta_video()
 
 	public function sensei_woocommerce_in_cart_message() {
-		global $post, $woocommerce;
-		$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
-
-		if ( 0 < intval( $wc_post_id ) ) {
-			if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
-				echo '<div class="sensei-message info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
+			global $post, $woocommerce ;
+			$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
+			$current_user = wp_get_current_user();
+			$show_this_message = ! apply_filters('hide_sensei_woocommerce_in_cart_message', false );
+			if ( 0 < intval( $wc_post_id ) ) {
+	            $user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
+				if ( $show_this_message && sensei_check_if_product_is_in_cart( $wc_post_id ) && !$user_taking_course ) {
+					echo '<div class="sensei-message info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
+				} // End If Statement
 			} // End If Statement
-		} // End If Statement
 
 	} // End sensei_woocommerce_in_cart_message()
 
@@ -2200,6 +2206,100 @@ class WooThemes_Sensei_Frontend {
 
 		return $args;
 	} // End hide_sensei_activity()
+
+	/**
+	 * Redirect failed login attempts to the front end login page 
+	 * in the case where the login fields are not left empty
+	 * 
+	 * @param  string  $username
+	 * @return void redirect
+	 */
+	function sensei_login_fail_redirect( $username ) {
+
+		//if not posted from the sensei login form let 
+		// WordPress or any other party handle the failed request
+
+	    if( !isset( $_REQUEST['form'] ) &&  'sensei-login' != $_REQUEST['form'] ){
+	    	return ;
+	    }
+
+    	// Get the reffering page, where did the post submission come from?
+    	$referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER']);
+ 
+   		 // if there's a valid referrer, and it's not the default log-in screen
+	    if(!empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin')){
+	        // let's append some information (login=failed) to the URL for the theme to use
+	        wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+	    	exit;
+    	}
+	}// End sensei_login_fail_redirect_to_front_end_login
+
+	/**
+	 * Handle the login reques from all sensei intiated login forms.
+	 * 
+	 * @return void redirect
+	 */
+	function sensei_handle_login_request( ) {
+
+		// Check that it is a sensei login request and if it has a valid nonce
+	    if( ! isset( $_REQUEST['form'] ) || ( isset( $_REQUEST['form'] ) && 'sensei-login' != $_REQUEST['form'] ) ) {
+	    	return ;
+	    }
+
+	    // Validate the login request nonce
+	    if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'sensei-login' ) ){
+	    	return;
+	    }
+
+	    //get the page where the sensei log form is located
+	    $referrer = $_REQUEST['_wp_http_referer'];
+	    //$redirect = $_REQUEST['_sensei_redirect'];
+
+	    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )  
+	    	 && ( isset( $_REQUEST['pwd'] ) && !empty( $_REQUEST['pwd'] ) ) ){
+
+	    	// when the user has entered a password or username do the sensei login
+	    	$creds = array();
+			$creds['user_login'] = sanitize_text_field( $_REQUEST['log'] ) ;
+			$creds['user_password'] = sanitize_text_field( $_REQUEST['pwd'] );
+			$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
+
+			//attempt logging in with the given details
+			$user = wp_signon( $creds, false ); 
+
+			if ( is_wp_error($user) ){ // on login failure
+
+				wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+	        	exit;
+
+			}else{ // on login success
+
+				/**
+				* change the redirect url programatically 
+				* 
+				* @since 1.6.1
+				*
+				* @param string $referrer the page where the current url wheresensei login form was posted from
+				*/
+
+				$success_redirect_url = apply_filters('sesei_login_success_redirect_url', remove_query_arg( 'login', $referrer ) );
+
+				wp_redirect( $success_redirect_url );
+	        	exit;
+
+			}	// end is_wp_error($user)
+
+	    }else{ // if username or password is empty 
+
+	    	wp_redirect( add_query_arg('login', 'emptyfields', $referrer) ); 
+	        exit;
+
+	    } // end if username $_REQUEST['log']  and password $_REQUEST['pwd'] is empty
+
+	    // continue with the default flow of things
+	    return;
+
+	} // End  sensei_login_fail_redirect_to_front_end_login
 
 } // End Class
 ?>

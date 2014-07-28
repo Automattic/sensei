@@ -387,6 +387,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 	 * @return void
 	 */
 	public function data_table_header() {
+		// used to build quiry args to be added to the link
+		$query_args = array('page' => 'sensei_analysis');
+
 		switch ( $this->type ) {
 			case 'courses':
 				$report_id = 'courses-overview';
@@ -398,7 +401,19 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				$report_id = 'user-overview';
 			break;
 		} // End Switch Statement
-		echo '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'report_id' => $report_id ), admin_url( 'admin.php' ) ) . '">' . __( 'Export page (CSV)', 'woothemes-sensei' ) . '</a>';
+
+		//set report id to the query arguments
+		$query_args['report_id'] = $report_id;
+
+		// add pagination to export
+		if( isset($_GET['paged'] ) ){
+			$query_args[ 'paged'] =  $_GET['paged'];
+		}
+
+		// create the export link href attribute value
+		$export_link = add_query_arg( $query_args , admin_url( 'admin.php' ) );
+		
+		echo '<a href="' . $export_link . '">' . __( 'Export page (CSV)', 'woothemes-sensei' ) . '</a>';
 	} // End data_table_header()
 
 } // End Class
