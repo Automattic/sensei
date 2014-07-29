@@ -378,7 +378,7 @@ class WooThemes_Sensei_Messages {
 	 * @param  integer $post_id ID of post
 	 * @return string           Modified string if user does not have access to this message
 	 */
-	public function message_title( $title, $post_id ) {
+	public function message_title( $title = '', $post_id = null ) {
 
 		if( is_single() && is_singular( $this->post_type ) && in_the_loop() && get_post_type( $post_id ) == $this->post_type ) {
 			if( ! is_user_logged_in() || ! $this->view_message( $post_id ) ) {
