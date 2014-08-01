@@ -101,6 +101,9 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'wp_login_failed', array( $this, 'sensei_login_fail_redirect' ), 10 ); 
 		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 ); 
 
+		// Fix pagination for course archive pages when filtering by course type
+		add_filter( 'pre_get_posts', array( $this, 'sensei_course_archive_pagination' ) );
+
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
 		$this->lesson = new WooThemes_Sensei_Lesson();
@@ -526,6 +529,23 @@ class WooThemes_Sensei_Frontend {
 			echo $this->lesson->lesson_image( $lesson_id, $width, $height, $widget );
 		} // End If Statement
 	} // End sensei_lesson_image()
+
+	function sensei_course_archive_pagination( $query ) {
+
+		if( ! is_admin() && isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'newcourses', 'featuredcourses', 'freecourses', 'paidcourses' ) ) ) {
+			global $woothemes_sensei;
+
+			$amount = 0;
+			if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) {
+				$amount = absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] );
+			}
+
+			if( $amount ) {
+				$query->set( 'posts_per_page', $amount );
+			}
+
+		}
+	}
 
 	/**
 	 * sensei_course_archive_header function.
