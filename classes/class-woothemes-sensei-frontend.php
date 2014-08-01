@@ -544,6 +544,8 @@ class WooThemes_Sensei_Frontend {
 				$query->set( 'posts_per_page', $amount );
 			}
 
+			$query->set( 'orderby', 'menu_order date' );
+
 		}
 	}
 
