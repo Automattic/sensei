@@ -532,7 +532,7 @@ class WooThemes_Sensei_Frontend {
 
 	function sensei_course_archive_pagination( $query ) {
 
-		if( ! is_admin() && isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'newcourses', 'featuredcourses', 'freecourses', 'paidcourses' ) ) ) {
+		if( ! is_admin() && $query->is_main_query() && isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'newcourses', 'featuredcourses', 'freecourses', 'paidcourses' ) ) ) {
 			global $woothemes_sensei;
 
 			$amount = 0;
