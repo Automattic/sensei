@@ -171,8 +171,11 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 			    	foreach ($lesson_quizzes as $quiz_item) {
 			    		if ( 0 < count( $lesson_start_date ) ) {
 			    			// Quiz Grade
-			    			$quiz_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
-			    			if ( 0 < intval( $quiz_grade ) ) {
+			    			$quiz_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
+			    			if ( 0 < $quiz_grade ) {
+			    				if( 100 < $quiz_grade ) {
+									$quiz_grade = 100;
+								}
 			    				$lesson_grade = $quiz_grade . '%';
 			    			} else {
 			    				$user_lesson_end = '';
