@@ -510,7 +510,9 @@ class WooThemes_Sensei_Admin {
 			$question_args = array(
 				'post_type'	=> 'question',
 				'posts_per_page' => -1,
-				'meta_query'		=> array(
+				'orderby'        => 'meta_value_num title',
+				'order'          => 'ASC',
+				'meta_query'	 => array(
 					array(
 						'key'       => '_quiz_id',
 						'value'     => $quiz->ID,
@@ -523,9 +525,18 @@ class WooThemes_Sensei_Admin {
 			$new_quiz = $this->duplicate_post( $quiz, '' );
 			add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
 
+			$question_count = 1;
 			foreach( $questions as $question ) {
-				$new_question = $this->duplicate_post( $question, '' );
-				add_post_meta( $new_question->ID, '_quiz_id', $new_quiz->ID, false );
+
+				// Add to quiz
+				add_post_meta( $question->ID, '_quiz_id', $new_quiz->ID, false );
+
+				// Set order of question
+				$question_order = $new_quiz->ID . '000' . $question_count;
+				add_post_meta( $question->ID, '_quiz_question_order' . $new_quiz->ID, $question_order );
+
+				// Increment counter for question ordering
+				++$question_count;
 			}
 		}
 	}
