@@ -117,7 +117,7 @@ if ( ! $paged || $paged < 2 ) {
 
                 <?php do_action( 'sensei_course_image', $post_id ); ?>
 
-    			<?php do_action( 'sensei_course_archive_course_title' ); ?>
+    			<?php do_action( 'sensei_course_archive_course_title', $post ); ?>
 
     			<section class="entry">
                     <p class="sensei-course-meta">
@@ -130,7 +130,7 @@ if ( ! $paged || $paged < 2 ) {
                         <?php } // End If Statement ?>
                         <?php sensei_simple_course_price( $post_id ); ?>
                     </p>
-                    <p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post_item->post_excerpt ); ?></p>
+                    <p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
                     <?php if ( 0 < $preview_lesson_count && !$is_user_taking_course ) {
                             $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ); ?>
                             <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $preview_lessons; ?></p>
