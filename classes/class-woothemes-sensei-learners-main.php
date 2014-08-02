@@ -232,8 +232,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		}
 
 		if( $lesson ) {
-			$lesson_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson->ID, 'type' => 'sensei_lesson_start' ), true );
-			$lesson_learners = intval( count( $lesson_learners ) );
+			$lesson_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson->ID, 'type' => 'sensei_lesson_start' ) );
 
 			return apply_filters( 'sensei_learners_main_column_data', array(
 					'lesson' => '<a href="' . admin_url( 'post.php?action=edit&post=' . $lesson->ID ) . '">' . get_the_title( $lesson->ID ) . '</a>',
@@ -244,8 +243,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		}
 
 		if( $course ) {
-			$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course->ID, 'type' => 'sensei_course_start' ), true );
-			$course_learners = intval( count( $course_learners ) );
+			$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course->ID, 'type' => 'sensei_course_start' ) );
 
 			return apply_filters( 'sensei_learners_main_column_data', array(
 					'course' => '<a href="' . admin_url( 'post.php?action=edit&post=' . $course->ID ) . '">' . get_the_title( $course->ID ) . '</a>',

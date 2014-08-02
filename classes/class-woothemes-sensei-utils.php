@@ -146,6 +146,9 @@ class WooThemes_Sensei_Utils {
 		if ( is_admin() ) {
 			remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		} // End If Statement
+		if ( !$return_comments ) {
+			$args['count'] = true;
+		}
 		// Get comments
 		$comments = get_comments( $args );
 		if ( is_admin() ) {
@@ -156,11 +159,7 @@ class WooThemes_Sensei_Utils {
 			return $comments;
 		} // End If Statement
 		// Count comments
-		if ( is_array( $comments ) && ( 0 < intval( count( $comments ) ) ) ) {
-			return true;
-		} else {
-			return false;
-		} // End If Statement
+		return intval($comments); // This is the count, check the return from WP_Comment_Query
 	} // End sensei_check_for_activity()
 
 
@@ -212,9 +211,9 @@ class WooThemes_Sensei_Utils {
 	public static function sensei_delete_activities ( $args = array() ) {
 		$dataset_changes = false;
 		// If activity exists
-		if ( WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $args['post_id'] ), 'user_id' => intval( $args['user_id'] ), 'type' => esc_attr( $args['type'] ) ) ) ) {
-			// Remove activity from log
-    	    $comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $args['post_id'] ), 'user_id' => intval( $args['user_id'] ), 'type' => esc_attr( $args['type'] ) ), true );
+		// Remove activity from log
+   	    $comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $args['post_id'] ), 'user_id' => intval( $args['user_id'] ), 'type' => esc_attr( $args['type'] ) ), true );
+    	if( $comments ) {
     	    foreach ( $comments as $key => $value  ) {
     	    	if ( isset( $value->comment_ID ) && 0 < $value->comment_ID ) {
 		    		$dataset_changes = wp_delete_comment( intval( $value->comment_ID ), true );

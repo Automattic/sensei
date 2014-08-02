@@ -1745,13 +1745,13 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_lesson_comment_count( $count ) {
 		global $post, $current_user;
 		if ( is_singular( 'lesson' ) || is_singular( 'course' ) ) {
-			$lesson_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_start' ), true );
-			$lesson_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end' ), true );
-			$lesson_quiz_grade = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_grade' ), true );
-			$lesson_quiz_asked = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_asked' ), true );
-			$course_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_start' ), true );
-			$course_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_end' ), true );
-			return $count - intval( count( $lesson_comments_start ) ) - intval( count( $lesson_comments_end ) ) - intval( count( $lesson_quiz_grade ) ) - intval( count( $lesson_quiz_asked ) ) - intval( count( $course_comments_start ) ) - intval( count( $course_comments_end ) );
+			$lesson_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_start' ) );
+			$lesson_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end' ) );
+			$lesson_quiz_grade = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_grade' ) );
+			$lesson_quiz_asked = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_asked' ) );
+			$course_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_start' ) );
+			$course_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_end' ) );
+			return $count - $lesson_comments_start - $lesson_comments_end - $lesson_quiz_grade - $lesson_quiz_asked - $course_comments_start - $course_comments_end;
 		} else {
 			return $count;
 		} // End If Statement
