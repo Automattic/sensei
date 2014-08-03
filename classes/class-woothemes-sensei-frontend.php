@@ -2394,8 +2394,7 @@ class WooThemes_Sensei_Frontend {
 			$woothemes_sensei->notices->add_notice( $email_error_notice , 'alert');
 			return;
 		}
-
-
+		
 		//check user password
 
 		// exit on email address error
