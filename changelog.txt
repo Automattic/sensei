@@ -16,6 +16,10 @@
  * Fix - Fixing occasional 404 errors after after clicking 'more' link on course overview page
  * Fix - Fixing excerpts on course archive pages
 
+ Template files modified:
+ /templates/loop-course.php
+ /templates/single-course/course-lessons.php
+
 2014.07.28 - version 1.6.2
  * New - Adding WPML compatibility
  * Tweak - Hide the 'You have already added this Course to your cart' message if the user is enrolled in the course and add a new 'hide_sensei_woocommerce_in_cart_message' filter to remove the notice completely
