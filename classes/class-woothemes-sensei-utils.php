@@ -1444,34 +1444,44 @@ class WooThemes_Sensei_Utils {
 
 			$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
 			if ( '' != $user_lesson_end ) {
+				//Check for Passed or Completed Setting
+				$course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
 
-				// Get lesson quizzes
-                $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
+				if ( 'passed' == $course_completion ) {
 
-                // Get Quiz ID
-                if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
-                    foreach ($lesson_quizzes as $quiz_item) {
-                        $lesson_quiz_id = $quiz_item->ID;
-                        break;
-                    } // End For Loop
+					// If Setting is Passed -> Check for Quiz Grades
+					// Get lesson quizzes
+					$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
 
-	                // Get quiz pass setting
-	        		$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+					// Get Quiz ID
+					if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
+						foreach ($lesson_quizzes as $quiz_item) {
+							$lesson_quiz_id = $quiz_item->ID;
+							break;
+						} // End For Loop
 
-                	if ( $pass_required ) {
+						if ( $lesson_quiz_id ) {
+							// Get quiz pass setting
+							$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
 
-                		$passed_quiz = WooThemes_Sensei_Utils::user_passed_quiz( $lesson_quiz_id, $user->ID );
+							if ( $pass_required ) {
 
-                		if( $passed_quiz ) {
-                			return true;
-                		}
+								$passed_quiz = WooThemes_Sensei_Utils::user_passed_quiz( $lesson_quiz_id, $user_id );
 
-                    } else {
-                    	return true;
-                    } // End If Statement
-                } else {
-                    return true;
-                } // End If Statement;
+								if( $passed_quiz ) {
+									return true;
+								}
+
+							} else {
+								return true;
+							}
+						} // End If Statement
+					} else {
+						return true;
+					} // End If Statement;
+				} else {
+					return true;
+				} // End If Statement;
 			} // End If Statement
 		}
 
@@ -1504,18 +1514,14 @@ class WooThemes_Sensei_Utils {
 		}
 
 		// Quiz Grade
-        $quiz_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
-        if( $quiz_grade ) {
+		$quiz_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
+		// Check if Grade is greater than or equal to pass percentage
+		$quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+		if ( $quiz_passmark <= intval( $quiz_grade ) ) {
+			return true;
+		}
 
-            // Check if Grade is greater than or equal to pass percentage
-            $quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
-            if ( $quiz_passmark <= intval( $quiz_grade ) ) {
-                return true;
-            }
-
-        }
-
-        return false;
+		return false;
 
 	}
 
