@@ -5,6 +5,7 @@
  * Tweak - Adding missing text filter
  * Tweak - Adding 'button' class to course results link for more consistent display
  * Tweak - Significant improvements to Sensei activity functions that improve all-round performance (kudos David Page)
+ * Tweak - Retaining learner question & quiz data when they are removed from lessons & courses due to expired/cancelled subscriptions/orders
  * Fix - Improving registration to make sure duplicate email addresses are not allowed
  * Fix - Improving login and registration redirects and feedback notices
  * Fix - Ensuring that grades do not show over 100% for any courses or lessons
