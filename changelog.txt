@@ -1,7 +1,23 @@
 *** Sensei Changelog ***
 
+2014.08.05 - version 1.6.3
+ * New - Single class to manage Sensei notices
+ * Tweak - Adding missing text filter
+ * Tweak - Adding 'button' class to course results link for more consistent display
+ * Tweak - Significant improvements to Sensei activity functions that improve all-round performance (kudos David Page)
+ * Fix - Improving registration to make sure duplicate email addresses are not allowed
+ * Fix - Improving login and registration redirects and feedback notices
+ * Fix - Ensuring that grades do not show over 100% for any courses or lessons
+ * Fix - Fixing Analysis export to fetch correct page
+ * Fix - Fixing PHP Strict Standards warnings
+ * Fix - Fixing course price display
+ * Fix - Stopping question duplication when lessons are duplicated
+ * Fix - Fixing occasional 404 errors after after clicking 'more' link on course overview page
+ * Fix - Fixing excerpts on course archive pages
+
 2014.07.28 - version 1.6.2
  * New - Adding WPML compatibility
+ * Tweak - Hide the 'You have already added this Course to your cart' message if the user is enrolled in the course and add a new 'hide_sensei_woocommerce_in_cart_message' filter to remove the notice completely
  * Fix - Fixing incorrect text domain references
  * Fix - Fixing chosen input widths
  * Fix - Fixing learner profile URL when site URL is different from home URL
@@ -12,7 +28,6 @@
  * Fix - Failed logins now redirect back to the frontend login page
  * Fix - Ensuring all frontend Sensei messages are correctly styled
  * Fix - Fixing Analysis export to export correct page
- * Tweak - Hide the 'You have already added this Course to your cart' message if the user is enrolled in the course and add a new 'hide_sensei_woocommerce_in_cart_message' filter to remove the notice completely
 
 2014.06.30 - version 1.6.1
  * Fix - Making sure Learner Management page shows for users with 'manage_sensei_grades' capability
