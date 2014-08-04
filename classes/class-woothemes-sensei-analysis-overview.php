@@ -163,9 +163,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		// User Loop
 		foreach ( $users as $user_key => $user_item ) {
 			// Get Started Courses
-			$user_courses_started = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_course_start' ), true );
+			$user_courses_started = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_course_start' ) );
 			// Get Completed Courses
-			$user_courses_ended = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_course_end' ), true );
+			$user_courses_ended = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_course_end' ) );
 			// Get Quiz Grades
 			$user_quiz_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_item->ID, 'type' => 'sensei_quiz_grade' ), true );
 			// Calculate the average grade for the user
@@ -189,8 +189,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			} // End If Statement
 			array_push( $return_array, apply_filters( 'sensei_analysis_overview_users_column_data', array( 	'user_login' => $user_login,
 												'user_registered' => $user_item->user_registered,
-												'user_active_courses' => ( count( $user_courses_started ) - count( $user_courses_ended ) ),
-												'user_completed_courses' => count( $user_courses_ended ),
+												'user_active_courses' => ( $user_courses_started - $user_courses_ended ),
+												'user_completed_courses' => $user_courses_ended,
 												'user_average_grade' => $user_average_grade
 			 								), $user_item->ID )
 						);
@@ -221,11 +221,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			// If Matches are found
 			if ( 0 < intval( $title_keyword_count ) ) {
 				// Course Completions
-				$course_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_item->ID, 'type' => 'sensei_course_end' ), true );
-				$course_completions = intval( count( $course_completions ) );
+				$course_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_item->ID, 'type' => 'sensei_course_end' ) );
 				// Course Students
-				$course_students = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_item->ID, 'type' => 'sensei_course_start' ), true );
-				$course_students = intval( count( $course_students ) );
+				$course_students = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_item->ID, 'type' => 'sensei_course_start' ) );
 				// Course Lessons
 				$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $course_item->ID );
 				$course_lessons = intval( count( $course_lessons ) );
@@ -285,11 +283,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		    		$lesson_quiz_id = $quiz_item->ID;
 		    	} // End For Loop
 				// Lesson Students
-				$lesson_students = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_item->ID, 'type' => 'sensei_lesson_start' ), true );
-				$lesson_students = intval( count( $lesson_students ) );
+				$lesson_students = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_item->ID, 'type' => 'sensei_lesson_start' ) );
 				// Lesson Completions
-				$lesson_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_item->ID, 'type' => 'sensei_lesson_end' ), true );
-				$lesson_completions = intval( count( $lesson_completions ) );
+				$lesson_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_item->ID, 'type' => 'sensei_lesson_end' ) );
 				// Lesson Grades
 				$lesson_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_quiz_id, 'type' => 'sensei_quiz_grade' ), true );
 				$total_grade_count = 0;
@@ -350,9 +346,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			$total_grade_count = 1;
 		} // End If Statement
 		$this->total_average_grade = abs( round( doubleval( $total_grade_total / $total_grade_count ), 2 ) );
-		$this->total_courses_started = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'type' => 'sensei_course_start' ), true );
-		$this->total_courses_ended = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'type' => 'sensei_course_end' ), true );
-		$this->average_courses_per_learner = abs( round( doubleval( count( $this->total_courses_started ) / $this->user_count ), 2 ) );
+		$this->total_courses_started = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'type' => 'sensei_course_start' ) );
+		$this->total_courses_ended = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'type' => 'sensei_course_end' ) );
+		$this->average_courses_per_learner = abs( round( doubleval( $this->total_courses_started / $this->user_count ), 2 ) );
 	} // End load_stats()
 
 	/**
@@ -366,7 +362,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 									__( 'Total Learners', 'woothemes-sensei' ) => $this->user_count,
 									__( 'Average Courses per Learner', 'woothemes-sensei' ) => $this->average_courses_per_learner,
 									__( 'Average Grade', 'woothemes-sensei' ) => $this->total_average_grade . '%',
-									__( 'Total Completed Courses', 'woothemes-sensei' ) => count( $this->total_courses_ended ),
+									__( 'Total Completed Courses', 'woothemes-sensei' ) => $this->total_courses_ended,
 								);
 		return $stats_to_render;
 	} // End stats_boxes()
