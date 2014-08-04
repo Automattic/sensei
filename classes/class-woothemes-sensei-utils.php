@@ -76,7 +76,7 @@ class WooThemes_Sensei_Utils {
 	 * @return void
 	 */
 	public static function sensei_log_activity ( $args = array() ) {
-
+		global $wpdb;
 		// Setup & Prep Data
 		$time = current_time('mysql');
 		// Args
@@ -97,28 +97,15 @@ class WooThemes_Sensei_Utils {
 
 		// Custom Logic
 		// Check if comment exists first
-		if ( isset( $args['action'] ) && 'update' == $args['action'] ) {
-			// Get existing comments ids
-			$activity_ids = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'post_id' => intval( $args['post_id'] ), 'user_id' => intval( $args['user_id'] ), 'type' => esc_attr( $args['type'] ), 'field' => 'comment' ) );
-			if ( isset( $activity_ids[0] ) && 0 < $activity_ids[0] ) {
-				$comment_id = $activity_ids[0];
-			} // End If Statement
-			$commentarr = array();
-			if ( isset( $comment_id ) && 0 < $comment_id ) {
-				// Get the comment
-				$commentarr = get_comment( $comment_id, ARRAY_A );
-			} // End If Statement
-			if ( isset( $commentarr['comment_ID'] ) && 0 < $commentarr['comment_ID'] ) {
-				// Update the comment
-				$data['comment_ID'] = $commentarr['comment_ID'];
-				$comment_id = wp_update_comment( $data );
-			} else {
-				// Add the comment
-				$comment_id = wp_insert_comment( $data );
-			} // End If Statement
-		} else {
+		$comment_id = $wpdb->get_var( $wpdb->prepare( "SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s ", $args['post_id'], $args['user_id'], $args['type'] ) );
+		if ( ! $comment_id ) {
 			// Add the comment
 			$comment_id = wp_insert_comment( $data );
+		}
+		else {
+			// Update the comment
+			$data['comment_ID'] = $comment_id;
+			$comment_id = wp_update_comment( $data );
 		} // End If Statement
 		// Manually Flush the Cache
 		wp_cache_flush();
