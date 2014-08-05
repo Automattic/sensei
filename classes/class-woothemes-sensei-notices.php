@@ -46,10 +46,9 @@ class Woothemes_Sensei_Notices{
 	*/
 
 	public function add_notice( $content ,  $type = 'alert'   ){
-
 		// append the new notice
 		$this->notices[] = array('content' => $content , 'type'=> $type );
-	}
+	} // end add_notice()
 
 	/**
 	*  Output all notices added 
@@ -69,8 +68,20 @@ class Woothemes_Sensei_Notices{
 
 				echo $html; 
 			}
+			// empty the notice queue to avoid reprinting the same notices
+			$this->clear_notices();
 		}
-	}
+	} // end print_notice()
 
+	/**
+	*  Clear all notices  
+	* 
+	* @return void
+	*/
 
-}
+	public function clear_notices(){
+		// assign an empty array to clear all existing notices
+		$this->notices = array();
+	} // end clear_notices()
+
+} // end Woothemes_Sensei_Notices

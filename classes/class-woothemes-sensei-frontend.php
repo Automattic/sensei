@@ -1443,7 +1443,8 @@ class WooThemes_Sensei_Frontend {
 
 		?><div id="my-courses">
 			<?php $woothemes_sensei->notices->print_notices(); ?>
-
+			<?php $woothemes_sensei->notices->print_notices(); ?>
+			<?php $woothemes_sensei->notices->print_notices(); ?>
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">
@@ -1455,12 +1456,16 @@ class WooThemes_Sensei_Frontend {
 
 			<?php
 			if ( get_option('users_can_register') ) {
+
+				// get current url 
+				$action_url = get_permalink();
+
 				?>
 
 				<div class="col-2">
 					<h2><?php _e( 'Register', 'woothemes-sensei' ); ?></h2>
 
-					<form method="post" class="register">
+					<form method="post" class="register"  action="<?php echo esc_url( $action_url ); ?>" >
 
 						<?php do_action( 'sensei_register_form_start' ); ?>
 

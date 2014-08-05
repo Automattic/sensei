@@ -25,7 +25,7 @@ $current_page_url =  home_url( $wp->request );
 
 <h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
 
-<form method="post" name='sensi-login-form'action="<?php echo esc_url( $current_page_url ); ?>" id="loginform" class="login sensei">
+<form method="post" name='sensi-login-form' action="<?php echo esc_url( $current_page_url ); ?>" id="loginform" class="login sensei">
 
 <?php
 /**
