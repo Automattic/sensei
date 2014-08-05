@@ -827,7 +827,6 @@ class WooThemes_Sensei_Updates {
 
 	public function add_editor_caps() {
 		$role = get_role( 'editor' );
-		$role->add_cap( 'manage_sensei' );
 		$role->add_cap( 'manage_sensei_grades' );
 		return true;
 	}
