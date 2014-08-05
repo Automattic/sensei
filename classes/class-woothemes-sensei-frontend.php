@@ -2261,8 +2261,6 @@ class WooThemes_Sensei_Frontend {
 	
 			// setup the message variables
 			$message = '';
-			$before_message = '<div class="sensei-message alert"><strong>' . __('Error:', 'woothemes-sensei' ) . ' </strong>';
-			$after_message = '</div>'; 
 
 			//only output message if the url contains login=failed and login=emptyfields
 

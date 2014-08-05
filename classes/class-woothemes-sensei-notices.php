@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - __construct()
  * - add_notice()
  * - print_notices()
+ * - clear_notices()
  */
 
 class Woothemes_Sensei_Notices{
