@@ -238,9 +238,12 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		$lesson_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
 
 		// Quiz Grade
-		$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
+		$lesson_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
 		$quiz_grade = __( 'No Grade', 'woothemes-sensei' );
-		if ( '' != $lesson_grade ) {
+		if ( $lesson_grade ) {
+			if( 100 < $lesson_grade ) {
+				$lesson_grade = 100;
+			}
 	    	$quiz_grade = $lesson_grade . '%';
 	    } // End If Statement
 

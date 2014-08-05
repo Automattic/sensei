@@ -33,6 +33,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - sensei_lesson_image()
  * - sensei_course_archive_header()
  * - sensei_course_archive_course_title()
+ * - sensei_login_fail_redirect()
+ * - sensei_handle_login_request()
+ * - sensei_process_registration()
  */
 class WooThemes_Sensei_Frontend {
 	public $token;
@@ -97,9 +100,14 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 ); 
 		// 1.3.0
 		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
-		//1.6.1
+		//1.6.2
 		add_filter( 'wp_login_failed', array( $this, 'sensei_login_fail_redirect' ), 10 ); 
 		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 ); 
+		//1.6.3
+		add_action( 'init', array( $this, 'sensei_process_registration' ), 2 );
+
+		// Fix pagination for course archive pages when filtering by course type
+		add_filter( 'pre_get_posts', array( $this, 'sensei_course_archive_pagination' ) );
 
 		// Load post type classes
 		$this->course = new WooThemes_Sensei_Course();
@@ -526,6 +534,25 @@ class WooThemes_Sensei_Frontend {
 			echo $this->lesson->lesson_image( $lesson_id, $width, $height, $widget );
 		} // End If Statement
 	} // End sensei_lesson_image()
+
+	function sensei_course_archive_pagination( $query ) {
+
+		if( ! is_admin() && $query->is_main_query() && isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'newcourses', 'featuredcourses', 'freecourses', 'paidcourses' ) ) ) {
+			global $woothemes_sensei;
+
+			$amount = 0;
+			if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) {
+				$amount = absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] );
+			}
+
+			if( $amount ) {
+				$query->set( 'posts_per_page', $amount );
+			}
+
+			$query->set( 'orderby', 'menu_order date' );
+
+		}
+	}
 
 	/**
 	 * sensei_course_archive_header function.
@@ -1434,7 +1461,12 @@ class WooThemes_Sensei_Frontend {
 
 
 	public function sensei_login_form() {
+		global $woothemes_sensei;
+
 		?><div id="my-courses">
+			<?php $woothemes_sensei->notices->print_notices(); ?>
+			<?php $woothemes_sensei->notices->print_notices(); ?>
+			<?php $woothemes_sensei->notices->print_notices(); ?>
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">
@@ -1446,28 +1478,32 @@ class WooThemes_Sensei_Frontend {
 
 			<?php
 			if ( get_option('users_can_register') ) {
+
+				// get current url 
+				$action_url = get_permalink();
+
 				?>
 
 				<div class="col-2">
 					<h2><?php _e( 'Register', 'woothemes-sensei' ); ?></h2>
 
-					<form method="post" class="register">
+					<form method="post" class="register"  action="<?php echo esc_url( $action_url ); ?>" >
 
 						<?php do_action( 'sensei_register_form_start' ); ?>
 
 						<p class="form-row form-row-wide">
-							<label for="reg_username"><?php _e( 'Username', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
-							<input type="text" class="input-text" name="username" id="reg_username" value="<?php if ( ! empty( $_POST['username'] ) ) esc_attr_e( $_POST['username'] ); ?>" />
+							<label for="sensei_reg_username"><?php _e( 'Username', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="<?php if ( ! empty( $_POST['sensei_reg_username'] ) ) esc_attr_e( $_POST['sensei_reg_username'] ); ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
-							<label for="reg_email"><?php _e( 'Email address', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
-							<input type="email" class="input-text" name="email" id="reg_email" value="<?php if ( ! empty( $_POST['email'] ) ) esc_attr_e( $_POST['email'] ); ?>" />
+							<label for="sensei_reg_email"><?php _e( 'Email address', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="<?php if ( ! empty( $_POST['sensei_reg_email'] ) ) esc_attr_e( $_POST['sensei_reg_email'] ); ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
-							<label for="reg_password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
-							<input type="password" class="input-text" name="password" id="reg_password" value="<?php if ( ! empty( $_POST['password'] ) ) esc_attr_e( $_POST['password'] ); ?>" />
+							<label for="sensei_reg_password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
+							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="<?php if ( ! empty( $_POST['sensei_reg_password'] ) ) esc_attr_e( $_POST['sensei_reg_password'] ); ?>" />
 						</p>
 
 						<!-- Spam Trap -->
@@ -1745,13 +1781,13 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_lesson_comment_count( $count ) {
 		global $post, $current_user;
 		if ( is_singular( 'lesson' ) || is_singular( 'course' ) ) {
-			$lesson_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_start' ), true );
-			$lesson_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end' ), true );
-			$lesson_quiz_grade = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_grade' ), true );
-			$lesson_quiz_asked = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_asked' ), true );
-			$course_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_start' ), true );
-			$course_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_end' ), true );
-			return $count - intval( count( $lesson_comments_start ) ) - intval( count( $lesson_comments_end ) ) - intval( count( $lesson_quiz_grade ) ) - intval( count( $lesson_quiz_asked ) ) - intval( count( $course_comments_start ) ) - intval( count( $course_comments_end ) );
+			$lesson_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_start' ) );
+			$lesson_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_lesson_end' ) );
+			$lesson_quiz_grade = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_grade' ) );
+			$lesson_quiz_asked = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_quiz_asked' ) );
+			$course_comments_start = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_start' ) );
+			$course_comments_end = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'type' => 'sensei_course_end' ) );
+			return $count - $lesson_comments_start - $lesson_comments_end - $lesson_quiz_grade - $lesson_quiz_asked - $course_comments_start - $course_comments_end;
 		} else {
 			return $count;
 		} // End If Statement
@@ -2240,6 +2276,31 @@ class WooThemes_Sensei_Frontend {
 	 * @return void redirect
 	 */
 	function sensei_handle_login_request( ) {
+		global $woothemes_sensei;
+
+		// if this request is a redircect from a previous login request
+		if ( ( isset( $_GET['login'] ) ) ) { 
+	
+			// setup the message variables
+			$message = '';
+
+			//only output message if the url contains login=failed and login=emptyfields
+
+			if( $_GET['login'] == 'failed' ){
+
+				$message = __('Incorrect login details', 'woothemes-sensei' );
+
+			}elseif( $_GET['login'] == 'emptyfields'  ){
+
+				$message= __('Please enter your username and password', 'woothemes-sensei' );
+			}
+
+			$woothemes_sensei->notices->add_notice( $message, 'alert');
+			
+			//exit the handle login request function
+			return; 	
+		} 
+
 
 		// Check that it is a sensei login request and if it has a valid nonce
 	    if( ! isset( $_REQUEST['form'] ) || ( isset( $_REQUEST['form'] ) && 'sensei-login' != $_REQUEST['form'] ) ) {
@@ -2251,6 +2312,7 @@ class WooThemes_Sensei_Frontend {
 	    	return;
 	    }
 
+	    
 	    //get the page where the sensei log form is located
 	    $referrer = $_REQUEST['_wp_http_referer'];
 	    //$redirect = $_REQUEST['_sensei_redirect'];
@@ -2300,6 +2362,96 @@ class WooThemes_Sensei_Frontend {
 	    return;
 
 	} // End  sensei_login_fail_redirect_to_front_end_login
+
+	/**
+	 * handle sensei specific registration requests 
+	 * 
+	 * @return void redirect
+	 *
+	 */
+	public function sensei_process_registration(){
+		global 	$woothemes_sensei, $current_user;
+		// check the for the sensei specific registration requests
+		if( !isset( $_POST['sensei_reg_username'] ) && ! isset( $_POST['sensei_reg_email'] ) && !isset( $_POST['sensei_reg_password'] )){
+			// exit functionas this is not a sensei registration request
+			return ;
+		}
+		// check for spam throw cheating huh 
+		if( isset( $_POST['email_2'] ) &&  '' !== $_POST['email_2']   ){
+			$message = 'Error:  The spam field should be empty';
+			$woothemes_sensei->notices->add_notice( $message, 'alert');
+			return;
+		}
+			
+		// retreive form variables
+		$new_user_name		= sanitize_user( $_POST['sensei_reg_username'] );
+		$new_user_email		= $_POST['sensei_reg_email'];
+		$new_user_password	= $_POST['sensei_reg_password'];
+
+		// Check the username
+		$username_error_notice = '';
+		if ( $new_user_name == '' ) {
+			$username_error_notice =  __( '<strong>ERROR</strong>: Please enter a username.' );
+		} elseif ( ! validate_username( $new_user_name ) ) {
+			$username_error_notice =  __( '<strong>ERROR</strong>: This username is invalid because it uses illegal characters. Please enter a valid username.' );
+		} elseif ( username_exists( $new_user_name ) ) {
+			$username_error_notice =  __( '<strong>ERROR</strong>: This username is already registered. Please choose another one.' );
+		}
+
+		// exit on username error
+		if( '' !== $username_error_notice ){
+			$woothemes_sensei->notices->add_notice( $username_error_notice , 'alert');
+			return;
+		}
+
+		// Check the e-mail address
+		$email_error_notice = '';
+		if ( $new_user_email == '' ) {
+			$email_error_notice = __( '<strong>ERROR</strong>: Please type your e-mail address.' );
+		} elseif ( ! is_email( $new_user_email ) ) {
+			$email_error_notice = __( '<strong>ERROR</strong>: The email address isn&#8217;t correct.' );
+		} elseif ( email_exists( $new_user_email ) ) {
+			$email_error_notice = __( '<strong>ERROR</strong>: This email is already registered, please choose another one.' );
+		} 
+
+		// exit on email address error
+		if( '' !== $email_error_notice ){
+			$woothemes_sensei->notices->add_notice( $email_error_notice , 'alert');
+			return;
+		}
+		
+		//check user password
+
+		// exit on email address error
+		if( empty( $new_user_password ) ){
+			$woothemes_sensei->notices->add_notice(  __( '<strong>ERROR</strong>: The password field may not be empty, please enter a secure password.' )  , 'alert');
+			return;
+		}
+
+		// register user
+		$user_id = wp_create_user( $new_user_name, $new_user_password, $new_user_email );
+		if ( ! $user_id || is_wp_error( $user_id ) ) {
+			$woothemes_sensei->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert');
+		}
+
+		// notify the user 
+		wp_new_user_notification( $user_id, $new_user_password );
+
+		// set global current user aka log the user in
+		$current_user = get_user_by( 'id', $user_id );
+		wp_set_auth_cookie( $user_id, true );
+		
+		// Redirect
+		if ( wp_get_referer() ) {
+			$redirect = esc_url( wp_get_referer() );
+		} else {
+			$redirect = esc_url( home_url( $wp->request ) );
+		}
+
+		wp_redirect( apply_filters( 'sensei_registration_redirect', $redirect ) );
+		exit;
+
+	} // end  sensei_process_registration)()
 
 } // End Class
 ?>

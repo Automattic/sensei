@@ -357,7 +357,7 @@ class WooThemes_Sensei_Updates {
 		foreach ( $this->parent->post_types->role_caps as $role_cap_set  ) {
 			foreach ( $role_cap_set as $role_key => $capabilities_array ) {
 				/* Get the role. */
-				$role =& get_role( $role_key );
+				$role = get_role( $role_key );
 				foreach ( $capabilities_array as $cap_name  ) {
 					/* If the role exists, add required capabilities for the plugin. */
 					if ( !empty( $role ) ) {
