@@ -25,30 +25,7 @@ $current_page_url =  home_url( $wp->request );
 
 <h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
 
-<?php 
-if ( ( isset( $_GET['login'] ) ) ) { 
-	
-	// setup the message variables
-	$message = '';
-	$before_message = '<div class="sensei-message alert"><strong>' . __('Error:', 'woothemes-sensei' ) . ' </strong>';
-	$after_message = '</div>'; 
-
-	//only output message if the url contains login=failed and login=emptyfields
-
-	if( $_GET['login'] == 'failed' ){
-
-		$message = __('Incorrect login details', 'woothemes-sensei' );
-		echo $before_message . $message . $after_message;
-
-	}elseif( $_GET['login'] == 'emptyfields'  ){
-
-		$message= __('Please enter your username and password', 'woothemes-sensei' );
-		echo $before_message . $message . $after_message;
-	}
-} 
-?>
-
-<form method="post" name='sensi-login-form'action="<?php echo esc_url( $current_page_url ); ?>" id="loginform" class="login sensei">
+<form method="post" name='sensi-login-form' action="<?php echo esc_url( $current_page_url ); ?>" id="loginform" class="login sensei">
 
 <?php
 /**
@@ -59,12 +36,12 @@ if ( ( isset( $_GET['login'] ) ) ) {
  	do_action( 'sensei_login_form_inside_before' ); 
 ?> 	
 
-	<p class="sensei-login-username">
+	<p class="sensei-login-username form-row form-row-wide">
 				<label for="sensei_user_login"><?php _e('Username','woothemes-sensei')?> </label>
 				<input type="text" name="log" id="sensei_user_login" class="input" value="" size="20">
 	</p>
 	
-	<p class="sensei-login-password">
+	<p class="sensei-login-password form-row form-row-wide">
 				<label for="sensei_user_pass"> <?php _e('Password','woothemes-sensei')?>  </label>
 				<input type="password" name="pwd" id="sensei_user_pass" class="input txt text" value="" size="20">
 	</p>
