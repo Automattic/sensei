@@ -1518,6 +1518,7 @@ class WooThemes_Sensei_Frontend {
 			?>
 
 				</div>
+			</div>
 		</div>
 
 		<?php
