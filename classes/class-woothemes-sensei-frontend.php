@@ -609,16 +609,12 @@ class WooThemes_Sensei_Frontend {
 	 */
 	public function sensei_lesson_archive_header( $query_type = '', $before_html = '<header class="archive-header"><h1>', $after_html = '</h1></header>' ) {
 		$html = '';
-		error_log( $before_html, 0 );
-		error_log( $after_html, 0 );
 		$html .= $before_html . apply_filters( 'sensei_lessons_archive_text', __( 'Lessons Archive', 'woothemes-sensei' ) ) . $after_html;
 		echo apply_filters( 'sensei_lesson_archive_title', $html );
 	} // sensei_course_archive_header()
 
 	public function sensei_message_archive_header( $query_type = '', $before_html = '<header class="archive-header"><h1>', $after_html = '</h1></header>' ) {
 		$html = '';
-		error_log( $before_html, 0 );
-		error_log( $after_html, 0 );
 		$html .= $before_html . apply_filters( 'sensei_my_messages_text', __( 'My Messages', 'woothemes-sensei' ) ) . $after_html;
 		echo apply_filters( 'sensei_message_archive_title', $html );
 	} // sensei_message_archive_header()
