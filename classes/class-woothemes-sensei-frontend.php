@@ -1461,8 +1461,6 @@ class WooThemes_Sensei_Frontend {
 
 		?><div id="my-courses">
 			<?php $woothemes_sensei->notices->print_notices(); ?>
-			<?php $woothemes_sensei->notices->print_notices(); ?>
-			<?php $woothemes_sensei->notices->print_notices(); ?>
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">
@@ -1520,7 +1518,6 @@ class WooThemes_Sensei_Frontend {
 			?>
 
 				</div>
-			</div>
 		</div>
 
 		<?php
