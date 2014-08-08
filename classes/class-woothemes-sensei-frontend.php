@@ -72,8 +72,6 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_course_archive_course_title', array( $this, 'sensei_course_archive_course_title' ), 10, 1 );
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 		// 1.2.1
-		add_action( 'sensei_lesson_back_link', array( $this, 'sensei_lesson_back_to_course_link' ), 10, 1 );
-		add_action( 'sensei_quiz_back_link', array( $this, 'sensei_quiz_back_to_lesson_link' ), 10, 1 );
 		add_action( 'sensei_lesson_course_signup', array( $this, 'sensei_lesson_course_signup_link' ), 10, 1 );
 		add_action( 'sensei_complete_lesson', array( $this, 'sensei_complete_lesson' ) );
 		add_action( 'sensei_complete_course', array( $this, 'sensei_complete_course' ) );
@@ -105,6 +103,8 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 ); 
 		//1.6.3
 		add_action( 'init', array( $this, 'sensei_process_registration' ), 2 );
+		//1.7.0
+		add_action( 'sensei_breadcrumb', array( $this, 'sensei_breadcrumb' ), 10, 1 );
 
 		// Fix pagination for course archive pages when filtering by course type
 		add_filter( 'pre_get_posts', array( $this, 'sensei_course_archive_pagination' ) );
@@ -647,26 +647,32 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_lesson_archive_lesson_title()
 
 	/**
-	 * sensei_lesson_back_to_course_link back link to the lessons course
-	 * @since  1.2.1
-	 * @param  integer $course_id id of the lessons course
+	 * sensei_breadcrumb outputs Sensei breadcrumb trail on lesson & quiz pages
+	 * @since  1.7.0
+	 * @param  integer $id course, lesson or quiz id
 	 * @return void
 	 */
-	public function sensei_lesson_back_to_course_link( $course_id = 0 ) {
-		if ( 0 < intval( $course_id ) ) {
-		?><section class="lesson-course">
-    		<?php _e( 'Back to ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_back_to_course_text', __( 'Back to the course', 'woothemes-sensei' ) ) ); ?>"><?php echo get_the_title( $course_id ); ?></a>
-    	</section><?php
-    	} // End If Statement
-	} // End sensei_lesson_back_to_course_link()
+	public function sensei_breadcrumb( $id = 0 ) {
+		// Only output on lesson, quiz and taxonomy (module) pages
+		if( ! ( is_tax() || is_singular( 'lesson' ) || is_singular( 'quiz' ) ) ) return;
 
-	public function sensei_quiz_back_to_lesson_link( $quiz_id = 0 ) {
-		if ( 0 < intval( $quiz_id ) ) {
-		?><section class="lesson-course">
-    		<?php _e( 'Back to ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_back_to_lesson_text', __( 'Back to the lesson', 'woothemes-sensei' ) ) ); ?>"><?php echo get_the_title( $quiz_id ); ?></a>
-		</section><?php
-		} // End If Statement
-	} // End sensei_quiz_back_to_lesson_link()
+		$sensei_breadcrumb_prefix = __( 'Back to: ', 'woothemes-sensei' );
+		$separator = apply_filters( 'sensei_breadcrumb_separator', '&gt;' );
+		$html = '';
+		$html .= '<section class="sensei-breadcrumb">' . $sensei_breadcrumb_prefix;
+		// Lesson
+		if ( is_singular( 'lesson' ) && 0 < intval( $id ) ) {
+			 $html .= '<a href="' . esc_url( get_permalink( $id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_back_to_course_text', __( 'Back to the course', 'woothemes-sensei' ) ) ) . '">' . get_the_title( $id ) . '</a>';
+    	} // End If Statement
+    	// Quiz
+		if ( is_singular( 'quiz' ) && 0 < intval( $id ) ) {
+			 $html .= '<a href="' . esc_url( get_permalink( $id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_back_to_lesson_text', __( 'Back to the lesson', 'woothemes-sensei' ) ) ) . '">' . get_the_title( $id ) . '</a>';
+    	} // End If Statement
+    	// Allow other plugins to filter html
+    	$html = apply_filters ( 'sensei_breadcrumb_output', $html, $separator );
+    	$html .= '</section>';
+    	echo $html;
+	} // End sensei_breadcrumb()
 
 	public function sensei_lesson_course_signup_link( $course_id = 0 ) {
 		if ( 0 < intval( $course_id ) ) {
