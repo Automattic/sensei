@@ -987,7 +987,7 @@ class WooThemes_Sensei_Lesson {
 
 		    if( 'quiz' == $context ) {
 
-			    $html .= '<div class="tab-content hidden" id="tab-existing-content">';
+			    $html .= '<div class="tab-content" id="tab-existing-content">';
 
 			    	$html .= '<p><em>' . sprintf( __( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
 
@@ -1062,7 +1062,7 @@ class WooThemes_Sensei_Lesson {
 			    $html .= '</div>';
 
 			    if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
-				    $html .= '<div class="tab-content hidden" id="tab-multiple-content">';
+				    $html .= '<div class="tab-content" id="tab-multiple-content">';
 
 				    	$html .= '<p><em>' . sprintf( __( 'Add any number of questions from a specified category. Edit your question categories %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) . '">', '</a>' ) . '</em></p>';
 
