@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2014.08.13 - version 1.6.4
+ * Fix - Fixing chosen input width in Category Questions tab
+
 2014.08.05 - version 1.6.3
  * New - Single class to manage Sensei notices
  * Tweak - Adding missing text filter
