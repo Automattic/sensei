@@ -476,7 +476,7 @@ class WooThemes_Sensei_Lesson {
 					$html .= '</p>';
 				$html .= '</div>';
 				// Add a course input fields
-				$html .= '<div id="lesson-course-details" class="hidden">';
+				$html .= '<div id="lesson-course-details">';
 					$html .= '<p>';
 						// Course Title input
 						$html .= '<label>' . __( 'Course Title' , 'woothemes-sensei' ) . '</label> ';
