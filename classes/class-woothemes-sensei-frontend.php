@@ -1933,7 +1933,7 @@ class WooThemes_Sensei_Frontend {
 		global $post;
 
 		if( is_search() && in_array( $post->post_type, array( 'course', 'lesson' ) ) ) {
-			$content = '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $post->post_excerpt ) . '</p>';
+			$content = '<p class="course-excerpt">' . $post->post_excerpt . '</p>';
 		}
 
 		return $content;

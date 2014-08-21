@@ -702,7 +702,7 @@ class WooThemes_Sensei {
 						if ( $is_preview ) {
 							$this->permissions_message['message'] = sprintf( __('This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
 						} else {
-							$this->permissions_message['message'] = sprintf( __('Please purchase the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
+							$this->permissions_message['message'] = apply_filters( 'sensei_please_purchase_course_text', sprintf( __('Please purchase the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link ) );
 						}
 					} else {
 						if ( $is_preview ) {
