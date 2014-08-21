@@ -71,7 +71,7 @@ class WooThemes_Sensei_Learner_Profiles {
 	 * @param  string $sep   Seeparator string
 	 * @return string        Modified title
 	 */
-	public function page_title( $title, $sep ) {
+	public function page_title( $title, $sep = null ) {
 		global $wp_query;
 		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
 			$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );

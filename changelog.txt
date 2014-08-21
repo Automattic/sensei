@@ -1,5 +1,16 @@
 *** Sensei Changelog ***
 
+2014.08.21 - version 1.6.5
+ * Fix - Fixing chosen input width in New Course panel in Lesson edit screen
+ * Fix - Adds a missing sensei_please_purchase_course_text filter
+ * Fix - Fixes a potential error in the page titles of course results and learner profiles
+ * Fix - Fixes an issue with search when Sensei is activated
+ * Tweak - Adds a 'send-message-button' class to the contact teacher button
+ * Tweak - Prevents Sensei settings from being deleted when the plugin is uninstalled
+
+2014.08.13 - version 1.6.4
+ * Fix - Fixing chosen input width in Category Questions tab
+
 2014.08.05 - version 1.6.3
  * New - Single class to manage Sensei notices
  * Tweak - Adding missing text filter
