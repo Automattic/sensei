@@ -67,7 +67,7 @@ class WooThemes_Sensei_Course_Results {
 	 * @param  string $sep   Seeparator string
 	 * @return string        Modified title
 	 */
-	public function page_title( $title, $sep ) {
+	public function page_title( $title, $sep = null ) {
 		global $wp_query;
 		if( isset( $wp_query->query_vars['course_results'] ) ) {
 			$course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );

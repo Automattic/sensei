@@ -166,7 +166,7 @@ class WooThemes_Sensei_Messages {
 				$html .= $this->teacher_contact_form( $post );
 			} else {
 				$href = add_query_arg( array( 'contact' => $post->post_type ) );
-				$html .= '<p><a class="button" href="' . $href . '#private_message">' . sprintf( __( 'Contact %1$s Teacher', 'woothemes-sensei' ), ucfirst( $post->post_type ) ) . '</a></p>';
+				$html .= '<p><a class="button send-message-button" href="' . $href . '#private_message">' . sprintf( __( 'Contact %1$s Teacher', 'woothemes-sensei' ), ucfirst( $post->post_type ) ) . '</a></p>';
 			}
 
 			if( isset( $this->message_notice ) && isset( $this->message_notice['type'] ) && isset( $this->message_notice['notice'] ) ) {
