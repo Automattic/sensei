@@ -193,15 +193,15 @@ a.sensei-certificate-link {
 	}
 }
 
-.lesson-course  {
+.sensei-breadcrumb  {
+	background: $bg_light;
 	margin: 2em 0;
+	padding: 0.5em 1em;
 	font-style: italic;
 	color: lighten($color_body, 20%);
-	font-size: .9em;
-	a:after  {
-		@include iconafter();
+	&:before  {
+		@include iconbefore();
 		content: '\f112';
-		margin-left: 3px;
 	}
 }
 
