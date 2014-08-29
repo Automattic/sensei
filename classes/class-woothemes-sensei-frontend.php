@@ -1540,11 +1540,11 @@ class WooThemes_Sensei_Frontend {
 						<?php do_action( 'sensei_register_form_end' ); ?>
 
 					</form>
+				</div>
 				<?php
 			}
 			?>
 
-				</div>
 			</div>
 		</div>
 
