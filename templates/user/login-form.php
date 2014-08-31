@@ -25,7 +25,7 @@ $current_page_url =  home_url( $wp->request );
 
 <h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
 
-<form method="post" name='sensi-login-form' action="<?php echo esc_url( $current_page_url ); ?>" id="loginform" class="login sensei">
+<form method="post" name="sensi-login-form" id="loginform" class="login sensei">
 
 <?php
 /**
@@ -37,7 +37,7 @@ $current_page_url =  home_url( $wp->request );
 ?> 	
 
 	<p class="sensei-login-username form-row form-row-wide">
-				<label for="sensei_user_login"><?php _e('Username','woothemes-sensei')?> </label>
+				<label for="sensei_user_login"><?php _e('Username or Email','woothemes-sensei')?> </label>
 				<input type="text" name="log" id="sensei_user_login" class="input" value="" size="20">
 	</p>
 	

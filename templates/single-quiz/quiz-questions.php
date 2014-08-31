@@ -77,4 +77,4 @@ $quiz_passmark_float = (float) $quiz_passmark;
     <?php } // End If Statement ?>
 </div>
 
-<?php do_action( 'sensei_quiz_back_link', $quiz_lesson  ); ?>
+<?php do_action( 'sensei_breadcrumb', $quiz_lesson ); ?>
