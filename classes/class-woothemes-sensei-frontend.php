@@ -2343,7 +2343,30 @@ class WooThemes_Sensei_Frontend {
 
 	    	// when the user has entered a password or username do the sensei login
 	    	$creds = array();
-			$creds['user_login'] = sanitize_text_field( $_REQUEST['log'] ) ;
+
+	    	// check if the requests login is an email address
+	    	if( is_email(  trim( $_REQUEST['log'] ) )  ){
+	    		// query wordpress for the users details
+	    		$user =	get_user_by( 'email', sanitize_email( $_REQUEST['log'] )  );
+
+	    		// validate the user object
+	    		if( !$user ){
+	    			// the email doesnt exist
+	    			wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+	        		exit;
+	    		}
+
+	    		//assigne the username to the creds array for further processing 
+	    		$creds['user_login'] =  $user->user_login ;
+
+	    	}else{
+	    
+	    		// process this as a default username login
+	    		$creds['user_login'] = sanitize_text_field( $_REQUEST['log'] ) ;
+	    	
+	    	}
+			
+			// get setup the rest of the creds array
 			$creds['user_password'] = sanitize_text_field( $_REQUEST['pwd'] );
 			$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
 

@@ -37,7 +37,7 @@ $current_page_url =  home_url( $wp->request );
 ?> 	
 
 	<p class="sensei-login-username form-row form-row-wide">
-				<label for="sensei_user_login"><?php _e('Username','woothemes-sensei')?> </label>
+				<label for="sensei_user_login"><?php _e('Username or Email','woothemes-sensei')?> </label>
 				<input type="text" name="log" id="sensei_user_login" class="input" value="" size="20">
 	</p>
 	
