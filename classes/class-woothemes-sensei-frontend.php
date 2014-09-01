@@ -2386,6 +2386,9 @@ class WooThemes_Sensei_Frontend {
 			return; 
 	    }
 
+	    // if none of the above
+	    return;
+
 	} // End  sensei_login_fail_redirect_to_front_end_login
 
 	/**
