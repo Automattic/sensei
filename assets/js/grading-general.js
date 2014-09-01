@@ -149,7 +149,7 @@ jQuery(document).ready( function($) {
 					if ( jQuery( '#grading-lesson-options' ).exists() ) {
 						// Show the Lessons label
 						jQuery( '#grading-lesson-options-label' ).show();
-						jQuery( '#grading-lesson-options' ).trigger("chosen:updated");
+						jQuery( '#grading-lesson-options' ).trigger("change");
 					} // End If Statement
 				} else {
 					// Failed
@@ -268,8 +268,8 @@ jQuery(document).ready( function($) {
 	 ***************************************************************************************************/
 
 	// Grading Overview Drop Downs
-	if ( jQuery( '#grading-course-options' ).exists() ) { jQuery( '#grading-course-options' ).chosen(); }
-	if ( jQuery( '#grading-lesson-options' ).exists() ) { jQuery( '#grading-lesson-options' ).chosen(); }
+	if ( jQuery( '#grading-course-options' ).exists() ) { jQuery( '#grading-course-options' ).select2(); }
+	if ( jQuery( '#grading-lesson-options' ).exists() ) { jQuery( '#grading-lesson-options' ).select2(); }
 
 
 });

@@ -91,6 +91,6 @@ jQuery(document).ready( function($) {
 	 ***************************************************************************************************/
 
 	// Learner Management Drop Downs
-	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).chosen(); }
+	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).select2(); }
 
 });

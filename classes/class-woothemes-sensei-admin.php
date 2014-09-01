@@ -1070,7 +1070,7 @@ class WooThemes_Sensei_Admin {
 		$html .= '</form>' . "\n";
 
 		$html .= '<script type="text/javascript">' . "\n";
-		$html .= 'jQuery( \'#lesson-order-course\' ).chosen();' . "\n";
+		$html .= 'jQuery( \'#lesson-order-course\' ).select2({width:"resolve"});' . "\n";
 		$html .= '</script>' . "\n";
 
 		if( isset( $_GET['course_id'] ) ) {

@@ -576,7 +576,7 @@ jQuery(document).ready( function($) {
 	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).select2({width:"resolve"}); }
 	if ( jQuery( '#lesson-course-details #course-prerequisite-options' ).exists() ) { jQuery( '#lesson-course-details #course-prerequisite-options' ).select2({width:"resolve"}); }
 	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#course-woocommerce-product-options' ).exists() && '-' != jQuery( '#course-woocommerce-product-options' ).val() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:"resolve"}); }
+	if ( jQuery( '#course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:"resolve"}); }
 
 	// Quiz edit panel
 	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:"resolve"}); }
@@ -660,7 +660,7 @@ jQuery(document).ready( function($) {
 							jQuery( '#lesson-course-details' ).addClass( 'hidden' );
 							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(  jQuery( '#course-title' ).attr( 'value' ) ) );
 							jQuery( '#lesson-course-options' ).val( response );
-							jQuery( '#lesson-course-options' ).trigger( 'chosen:updated' );
+							jQuery( '#lesson-course-options' ).trigger( 'change' );
 	 					} else {
 	 						// TODO - course creation fail message
 	 					}
