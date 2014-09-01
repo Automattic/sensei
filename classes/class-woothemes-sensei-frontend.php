@@ -2299,87 +2299,94 @@ class WooThemes_Sensei_Frontend {
 	function sensei_handle_login_request( ) {
 		global $woothemes_sensei;
 
-		// if this request is a redircect from a previous login request
-		if ( ( isset( $_GET['login'] ) ) ) { 
+		// Check that it is a sensei login request and if it has a valid nonce
+	    if(  isset( $_REQUEST['form'] ) && 'sensei-login' == $_REQUEST['form'] ) {
 	
-			// setup the message variables
-			$message = '';
+	    	// Validate the login request nonce
+		    if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'sensei-login' ) ){
+		    	return;
+		    }
 
-			//only output message if the url contains login=failed and login=emptyfields
+		    
+		    //get the page where the sensei log form is located
+		    $referrer = $_REQUEST['_wp_http_referer'];
+		    //$redirect = $_REQUEST['_sensei_redirect'];
 
-			if( $_GET['login'] == 'failed' ){
+		    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )  
+		    	 && ( isset( $_REQUEST['pwd'] ) && !empty( $_REQUEST['pwd'] ) ) ){
 
-				$message = __('Incorrect login details', 'woothemes-sensei' );
+		    	// when the user has entered a password or username do the sensei login
+		    	$creds = array();
 
-			}elseif( $_GET['login'] == 'emptyfields'  ){
+		    	// check if the requests login is an email address
+		    	if( is_email(  trim( $_REQUEST['log'] ) )  ){
+		    		// query wordpress for the users details
+		    		$user =	get_user_by( 'email', sanitize_email( $_REQUEST['log'] )  );
 
-				$message= __('Please enter your username and password', 'woothemes-sensei' );
-			}
+		    		// validate the user object
+		    		if( !$user ){
+		    			// the email doesnt exist
+		    			wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+		        		exit;
+		    		}
 
-			$woothemes_sensei->notices->add_notice( $message, 'alert');
+		    		//assigne the username to the creds array for further processing 
+		    		$creds['user_login'] =  $user->user_login ;
+
+		    	}else{
+		    
+		    		// process this as a default username login
+		    		$creds['user_login'] = sanitize_text_field( $_REQUEST['log'] ) ;
+		    	
+		    	}
+				
+				// get setup the rest of the creds array
+				$creds['user_password'] = sanitize_text_field( $_REQUEST['pwd'] );
+				$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
+
+				//attempt logging in with the given details
+				$user = wp_signon( $creds, false ); 
+
+				if ( is_wp_error($user) ){ // on login failure
+
+					wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+		        	exit;
+
+				}else{ // on login success
+
+					/**
+					* change the redirect url programatically 
+					* 
+					* @since 1.6.1
+					*
+					* @param string $referrer the page where the current url wheresensei login form was posted from
+					*/
+
+					$success_redirect_url = apply_filters('sesei_login_success_redirect_url', remove_query_arg( 'login', $referrer ) );
+
+					wp_redirect( $success_redirect_url );
+		        	exit;
+
+				}	// end is_wp_error($user)
+
+		    }else{ // if username or password is empty 
+
+		    	wp_redirect( add_query_arg('login', 'emptyfields', $referrer) ); 
+		        exit;
+
+		    } // end if username $_REQUEST['log']  and password $_REQUEST['pwd'] is empty
+
+	    	return ;
+
+	    }elseif( ( isset( $_GET['login'] ) ) ) { 
+	    	// else if this request is a redircect from a previously faile login request
+	    	$this->login_message_process();
 			
 			//exit the handle login request function
-			return; 	
-		} 
-
-
-		// Check that it is a sensei login request and if it has a valid nonce
-	    if( ! isset( $_REQUEST['form'] ) || ( isset( $_REQUEST['form'] ) && 'sensei-login' != $_REQUEST['form'] ) ) {
-	    	return ;
+			return; 
 	    }
 
-	    // Validate the login request nonce
-	    if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'sensei-login' ) ){
-	    	return;
-	    }
-
-	    
-	    //get the page where the sensei log form is located
-	    $referrer = $_REQUEST['_wp_http_referer'];
-	    //$redirect = $_REQUEST['_sensei_redirect'];
-
-	    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )  
-	    	 && ( isset( $_REQUEST['pwd'] ) && !empty( $_REQUEST['pwd'] ) ) ){
-
-	    	// when the user has entered a password or username do the sensei login
-	    	$creds = array();
-			$creds['user_login'] = sanitize_text_field( $_REQUEST['log'] ) ;
-			$creds['user_password'] = sanitize_text_field( $_REQUEST['pwd'] );
-			$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
-
-			//attempt logging in with the given details
-			$user = wp_signon( $creds, false ); 
-
-			if ( is_wp_error($user) ){ // on login failure
-
-				wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
-	        	exit;
-
-			}else{ // on login success
-
-				/**
-				* change the redirect url programatically 
-				* 
-				* @since 1.6.1
-				*
-				* @param string $referrer the page where the current url wheresensei login form was posted from
-				*/
-
-				$success_redirect_url = apply_filters('sesei_login_success_redirect_url', remove_query_arg( 'login', $referrer ) );
-
-				wp_redirect( $success_redirect_url );
-	        	exit;
-
-			}	// end is_wp_error($user)
-
-	    }else{ // if username or password is empty 
-
-	    	wp_redirect( add_query_arg('login', 'emptyfields', $referrer) ); 
-	        exit;
-
-	    } // end if username $_REQUEST['log']  and password $_REQUEST['pwd'] is empty
-
-	    // continue with the default flow of things
+	    // if none of the above
 	    return;
 
 	} // End  sensei_login_fail_redirect_to_front_end_login
@@ -2473,6 +2480,33 @@ class WooThemes_Sensei_Frontend {
 		exit;
 
 	} // end  sensei_process_registration)()
+
+	/**
+	 * login_message_process(). handle the login message displayed on faile login 
+	 * 
+	 * @return void redirect
+	 * @since 1.7.0
+	 */
+	public function login_message_process(){
+			global $woothemes_sensei;
+
+		    // setup the message variables
+			$message = '';
+
+			//only output message if the url contains login=failed and login=emptyfields
+
+			if( $_GET['login'] == 'failed' ){
+
+				$message = __('Incorrect login details', 'woothemes-sensei' );
+
+			}elseif( $_GET['login'] == 'emptyfields'  ){
+
+				$message= __('Please enter your username and password', 'woothemes-sensei' );
+			}
+
+			$woothemes_sensei->notices->add_notice( $message, 'alert');
+
+	}// end login_message_process
 
 } // End Class
 ?>
