@@ -1060,11 +1060,11 @@ jQuery(document).ready( function($) {
  						var newQuestionTitle , newGradeTotal;
 	 					
 	 					// update the question title :
- 						newQuestionTitle = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question] ').val()
+ 						newQuestionTitle = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question] ').val();
  						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-title-column').html( newQuestionTitle );
  							
  						// update the grade total		
-						newGradeTotal = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question_grade] ').val()
+						newGradeTotal = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question_grade] ').val();
  						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-grade-column').html( newGradeTotal );
  							
  						// hide the update field
