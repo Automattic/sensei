@@ -858,7 +858,6 @@ jQuery(document).ready( function($) {
 	 		    function( response ) {
 	 		    	// Check for a valid response
 	 		    	if ( response ) {
-
 	 		    		jQuery.fn.updateQuestionCount( 1, '+' );
 	 		    		jQuery( '#add-question-metadata table' ).append( response );
 			    		jQuery.fn.resetAddQuestionForm();
@@ -1057,6 +1056,18 @@ jQuery(document).ready( function($) {
  				},
  				function( response ) {
  					if ( response ) {
+ 						// show the user the of the succesful update:
+ 						var newQuestionTitle , newGradeTotal;
+	 					
+	 					// update the question title :
+ 						newQuestionTitle = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question] ').val()
+ 						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-title-column').html( newQuestionTitle );
+ 							
+ 						// update the grade total		
+						newGradeTotal = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question_grade] ').val()
+ 						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-grade-column').html( newGradeTotal );
+ 							
+ 						// hide the update field
  						jQuery( '#question_' + tableRowId ).closest('tr').addClass( 'hidden' );
  					}
  				}

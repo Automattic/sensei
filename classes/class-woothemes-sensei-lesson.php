@@ -806,7 +806,7 @@ class WooThemes_Sensei_Lesson {
 						if( $question_type != 'category' ) {
 
 							$html .= '<td class="table-count question-number question-count-column"><span class="number">' . $question_counter . '</span></td>';
-							$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
+							$html .= '<td class="question-title-column">' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
 							$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 							$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', __( 'True/False', 'woothemes-sensei' ) ), $question_type ) );
 							$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
