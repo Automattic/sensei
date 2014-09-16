@@ -1363,6 +1363,10 @@ class WooThemes_Sensei_Admin {
 		}
 	}
 
+	/**
+	 * Reset theme check notice
+	 * @return void
+	 */
 	public function reset_theme_check_notices() {
 		global $current_user;
 		wp_get_current_user();
