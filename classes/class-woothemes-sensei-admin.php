@@ -1321,6 +1321,7 @@ class WooThemes_Sensei_Admin {
         if( isset( $_GET['sensei_hide_notice'] ) ) {
         	switch( esc_attr( $_GET['sensei_hide_notice'] ) ) {
 				case 'menu_settings': add_user_meta( $user_id, 'sensei_hide_menu_settings_notice', true ); break;
+				case 'theme_check': add_user_meta( $user_id, 'sensei_hide_theme_check_notice', true ); break;
 			}
         }
 
@@ -1338,6 +1339,21 @@ class WooThemes_Sensei_Admin {
 			    <?php
 	        }
 	    }
+
+	    if ( ! current_theme_supports( 'sensei' ) ) {
+	    	$hide_theme_check_notice = get_user_meta( $user_id, 'sensei_hide_theme_check_notice', true );
+
+	    	if( ! $hide_theme_check_notice ) {
+			    ?>
+			    <div id="message" class="error sensei-message sensei-connect">
+			    	<div class="squeezer">
+		    			<p><?php _e( '<strong>Your theme does not declare Sensei support</strong> &#8211; if you encounter layout issues please read our integration guide or choose a Sensei theme :)', 'woothemes-sensei' ); ?></p>
+						<p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-theming/#section-16', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-primary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
+		    		</div>
+		    	</div>
+		    	<?php
+		    }
+		}
 	}
 
 } // End Class
