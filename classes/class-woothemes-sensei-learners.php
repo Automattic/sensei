@@ -212,6 +212,7 @@ class WooThemes_Sensei_Learners {
 				<?php if( isset( $_GET['view'] ) && 'learners' == $_GET['view'] ) { ?>
 				<div class="sensei-learners-extra">
 					<?php $sensei_learners_main->add_learners_box(); ?>
+					<?php do_action( 'sensei_learners_extra' ); ?>
 				</div>
 				<?php } ?>
 			</div>
