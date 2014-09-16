@@ -68,6 +68,9 @@ class WooThemes_Sensei_Admin {
 		// Add notices to WP dashboard
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 
+		// Reset theme notices when switching themes
+		add_action( 'switch_theme', array( $this, 'reset_theme_check_notices' ) );
+
 	} // End __construct()
 
 	/**
@@ -1354,6 +1357,14 @@ class WooThemes_Sensei_Admin {
 		    	<?php
 		    }
 		}
+	}
+
+	public function reset_theme_check_notices() {
+		global $current_user;
+		wp_get_current_user();
+        $user_id = $current_user->ID;
+
+		delete_user_meta( $user_id, 'sensei_hide_theme_check_notice' );
 	}
 
 } // End Class
