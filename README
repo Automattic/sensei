@@ -11,6 +11,8 @@ This covers the current changes between our fork of Sensei (and it's correspondi
 
 ### Changes Overview
 
+Note that many changes have occurred to the Learner Management, Grading and Analysis admin screens of Sensei. These are temporary, and done just to get the system working. You'll see lots of filters in those 3 admin areas that the /extended/sensei_admin_additions/ uses. These areas are in the process of being rebuilt.
+
 Below are rough notes on what changes have occurred to Sensei
 
 - Change sensei_check_for_activity() so that unless return comments is true, add an arg of 'count' to get_comments() and return the value rather than simply true leaving the database to do the counting - ( already submitted to Github )
