@@ -1,0 +1,202 @@
+# Copyright (C) 2014 Sensei Modules
+# This file is distributed under the same license as the Sensei Modules package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Sensei Modules 1.0.3\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/sensei-modules\n"
+"POT-Creation-Date: 2014-01-30 13:07:29+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: classes/class-sensei-modules.php:98 classes/class-sensei-modules.php:108
+#: classes/class-sensei-modules.php:471
+msgid "Modules"
+msgstr ""
+
+#: classes/class-sensei-modules.php:99 classes/class-sensei-modules.php:1175
+#: classes/class-sensei-modules.php:1215
+msgid "Module"
+msgstr ""
+
+#: classes/class-sensei-modules.php:100
+msgid "Search Modules"
+msgstr ""
+
+#: classes/class-sensei-modules.php:101
+msgid "All Modules"
+msgstr ""
+
+#: classes/class-sensei-modules.php:102
+msgid "Parent Module"
+msgstr ""
+
+#: classes/class-sensei-modules.php:103
+msgid "Parent Module:"
+msgstr ""
+
+#: classes/class-sensei-modules.php:104
+msgid "Edit Module"
+msgstr ""
+
+#: classes/class-sensei-modules.php:105
+msgid "Update Module"
+msgstr ""
+
+#: classes/class-sensei-modules.php:106
+msgid "Add New Module"
+msgstr ""
+
+#: classes/class-sensei-modules.php:107
+msgid "New Module Name"
+msgstr ""
+
+#: classes/class-sensei-modules.php:137
+msgid "Lesson Module"
+msgstr ""
+
+#: classes/class-sensei-modules.php:173
+msgid "None"
+msgstr ""
+
+#: classes/class-sensei-modules.php:184
+msgid "No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s"
+msgstr ""
+
+#: classes/class-sensei-modules.php:188
+msgid "No modules are available for this lesson yet. %1$sPlease select a course first.%2$s"
+msgstr ""
+
+#: classes/class-sensei-modules.php:239 classes/class-sensei-modules.php:303
+msgid "Course(s)"
+msgstr ""
+
+#: classes/class-sensei-modules.php:240 classes/class-sensei-modules.php:305
+msgid "Search for courses..."
+msgstr ""
+
+#: classes/class-sensei-modules.php:241 classes/class-sensei-modules.php:306
+msgid "Search for and select the courses that this module will belong to."
+msgstr ""
+
+#: classes/class-sensei-modules.php:392
+msgid "No course"
+msgstr ""
+
+#: classes/class-sensei-modules.php:466
+msgid "Currently completed %1$s lesson(s) of %2$s in total"
+msgstr ""
+
+#: classes/class-sensei-modules.php:492 classes/class-sensei-modules.php:791
+msgid "Completed"
+msgstr ""
+
+#: classes/class-sensei-modules.php:495 classes/class-sensei-modules.php:794
+msgid "In progress"
+msgstr ""
+
+#: classes/class-sensei-modules.php:531 classes/class-sensei-modules.php:1123
+msgid "Lessons"
+msgstr ""
+
+#: classes/class-sensei-modules.php:582
+msgid "Other Lessons"
+msgstr ""
+
+#: classes/class-sensei-modules.php:608
+msgid "Start %s"
+msgstr ""
+
+#: classes/class-sensei-modules.php:608
+msgid "%s"
+msgstr ""
+
+#: classes/class-sensei-modules.php:612
+msgid "Length: "
+msgstr ""
+
+#: classes/class-sensei-modules.php:612
+msgid " minutes"
+msgstr ""
+
+#: classes/class-sensei-modules.php:614
+msgid "Author: "
+msgstr ""
+
+#: classes/class-sensei-modules.php:616
+msgid "Complexity: "
+msgstr ""
+
+#: classes/class-sensei-modules.php:618
+msgid "Complete"
+msgstr ""
+
+#: classes/class-sensei-modules.php:626
+msgid "In Progress"
+msgstr ""
+
+#: classes/class-sensei-modules.php:729
+msgid "Back to "
+msgstr ""
+
+#: classes/class-sensei-modules.php:729
+msgid "Back to the module"
+msgstr ""
+
+#: classes/class-sensei-modules.php:842
+msgid "Next module"
+msgstr ""
+
+#: classes/class-sensei-modules.php:847
+msgid "Previous module"
+msgstr ""
+
+#: classes/class-sensei-modules.php:966 classes/class-sensei-modules.php:978
+msgid "Order Modules"
+msgstr ""
+
+#: classes/class-sensei-modules.php:987
+msgid "The module order has been saved for this course."
+msgstr ""
+
+#: classes/class-sensei-modules.php:1016
+msgid "Select"
+msgstr ""
+
+#: classes/class-sensei-modules.php:1051
+msgid "Save module order"
+msgstr ""
+
+#: classes/class-sensei-modules.php:1052
+msgid "Edit course"
+msgstr ""
+
+#: classes/class-sensei-modules.php:1068
+msgid "Module order"
+msgstr ""
+
+#: classes/class-sensei-modules.php:1081
+msgid "Order modules"
+msgstr ""
+#. Plugin Name of the plugin/theme
+msgid "Sensei Modules"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.woothemes.com/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Give your lessons more structure by grouping them into modules inside their courses."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "WooThemes"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.woothemes.com/"
+msgstr ""

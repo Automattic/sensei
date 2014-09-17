@@ -1,0 +1,81 @@
+.widget_sensei_course_progress {
+	padding: 0 !important;
+	background: rgba(0,0,0,0.02) !important;
+	border-radius: 5px;
+	header {
+		padding: 1.618em 1.618em 0;
+		h2 {
+			font-size: 1.618em;
+			margin-bottom: 0.618em;
+			a {
+				text-decoration: none;
+			}
+		}
+		h3 {
+		  	padding-bottom: 0.618em;
+			margin-bottom: 0.168em !important;
+			border: none;
+		}
+	}
+	.course-progress-lessons {
+		list-style: none;
+		#sidebar & {
+			margin: 0;
+		}
+		.course-progress-lesson {
+			border: none;
+			margin: 0;
+			padding: 0;
+			a, span {
+				display: block;
+				border-bottom: 1px solid rgba(0,0,0,0.05);
+				padding: 0.618em 1.618em 0.618em 3.618em;
+				font-weight: bold;
+				background: rgba(255,255,255,0.8);
+				position: relative;
+				&:before {
+					font-family: FontAwesomeSensei, FontAwesome;
+					display: inline-block;
+					font-size: 150%;
+					margin-right: 0.618em;
+					font-weight: 400;
+					line-height: 1em;
+					width: 1em;
+					position: absolute;
+					left: 1em;
+					top: 0.5em;
+					content: '\f10c';
+					color: rgba(0,0,0,0.1);
+				}
+			}
+			a:hover {
+				background: rgba(255,255,255,1);
+				text-decoration: none;
+			}
+			&:first-child {
+				a, span {
+					border-top: 1px solid rgba(0,0,0,0.1);
+				}
+			}
+			&.current span {
+				background: rgba(0,0,0,0.01);
+				color: rgba(0,0,0,0.5);
+				border-top: 1px solid rgba(0,0,0,0.04);
+				&:before {
+					content: '\f138';
+					color: rgba(0,0,0,0.2);
+				}
+			}
+			&.completed {
+				a, span {
+					color: rgba(0,0,0,0.4);
+					font-weight: normal;
+					&:before {
+						content: '\f058';
+						color: #63a95f;
+					}
+				}
+			}
+		}
+	}
+}

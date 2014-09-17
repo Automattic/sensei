@@ -1,0 +1,38 @@
+/*
+Plugin Name: Sensei
+Plugin URI: http://woothemes.com/
+Description: Sensei by WooThemes is the best Learning Management System ever!
+Version: 1.4.5
+Author: WooThemes
+Author URI: http://woothemes.com/
+License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+*/
+
+/*-----------------------------------------------------------------------------------*/
+/* Backend Global Stylesheet */
+/*-----------------------------------------------------------------------------------*/
+
+/*  Sensei icon */
+body #toplevel_page_sensei div.wp-menu-image:before {
+  	content: "\f118" !important;
+}
+
+/* Lessons Icon */
+body #menu-posts-lesson div.wp-menu-image:before {
+  	content: "\f331" !important;
+}
+
+/* Questions Icon */
+body #menu-posts-question div.wp-menu-image:before {
+  	content: "\f223" !important;
+}
+
+#dashboard_right_now a.course-count:before, #dashboard_right_now span.course-count:before { content: "\f118"; }
+#dashboard_right_now a.lesson-count:before, #dashboard_right_now span.lesson-count:before { content: "\f331"; }
+#dashboard_right_now a.question-count:before, #dashboard_right_now span.question-count:before { content: "\f223"; }
+
+/* Sensei Menu */
+#toplevel_page_sensei li.wp-first-item { display: none; }
+
+/* Course Menu Icons */
+li.menu-icon-lesson .wp-menu-image img, li.menu-icon-course .wp-menu-image img { display: none; }

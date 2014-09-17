@@ -1,0 +1,46 @@
+## Psycle Sensei
+
+This covers the current changes between our fork of Sensei (and it's corresponding plugins) and the v1.6.1 of Sensei.
+
+### Directory overview
+
+* 	/plugins/ - Covers the changes made to Sensei plugins. Most changes are on woothemes-sensei
+* 	/extended/ - A collection of includes that are part of an overriding plugin we use. This makes changes to how Sensei works, 
+	and generally covers the bridging of Sensei to the other areas of the system.
+* 	/theme_templates/ - Covers the 'sensei' directory in our theme, overriding (some of) the default Sensei templates.
+
+### Changes Overview
+
+Below are rough notes on what changes have occurred to Sensei
+
+- Change sensei_check_for_activity() so that unless return comments is true, add an arg of 'count' to get_comments() and return the value rather than simply true leaving the database to do the counting - ( already submitted to Github )
+- Answer IDs strip characters that make answers unique, create ID instead from md5 - ( already submitted to Github )
+- Question metadata re-structure upgrade routine won't run - ( already submitted to Github )
+- Questions loaded from a category (multiple_question type) uses orderby 'rand' always - ( already submitted to Github )
+- Answer feedback text area incorrectly named based on underlying php code - ( already submitted to Github )
+- Check for 'course_completion' and allow quiz passmark of 0 within Utils - ( already submitted to Github )
+- To ensure the dates of sensei log entries are accurate, only update an existing activity log entry if the action requested is update.
+- Slashes in Lessons/Questions
+- - Duplicating content (such as Courses/Lessons) causes slashes in content to be stripped, this is because unlike wp_update_post() the duplicate_post() within sensei-admin.php doesn't slash all data
+- - Only stripslashes when needed (i.e. no magic quotes) for incoming user answers. Data is then encoded before dB entry
+- - Add slashes to question answers for admin because all data needs this before using update_post_meta()
+- - Use of stripslashes everywhere! No need, causing big issues with math based questions
+- Update auto grading of quizzes to error if a question type is not autogradable. Use the error to effectively mark the Quiz as requiring manual grading. Add filters around the question types and the grading for hooking in extras
+- Don't save sensei_answer_notes when it'd be empty content, the same for '_answer_feedback' on questions (see lesson_save_question() )
+- Change sensei_count_comments to not use "NOT LIKE 'sensei%'" as it doesn't scale
+- Ensure 'previous' pagination link doesn't show when the current page is 1 on My Courses 
+- Database: add index to comments table on comment_type "ALTER TABLE jk34s_comments ADD INDEX comment_type (comment_type)"
+- Rebuild the Lesson <=> Quiz relationship to ensure 1-1 relationship. Use post_parent field and change get_posts to restrict to ids (with parent ids?) ( Redundant as in the future Quiz content type will be dropped )
+- Duplicate the 'sensei_complete_lesson_button' as 'sensei_reset_lesson_button'
+ 
+### Additional Features
+
+- Add a bulk auto grade option on the Grading screen, select to auto grade all entries of the current Lesson that were marked as 'manual'
+- Allow use of question post_content for expanded questions, slight conflict with some question types that use the 'wrong' answer to store similar info (see file upload)
+- Convert multiple choice to allow multiple correct answers
+- Mark against a Lesson with a meta field on admin save if the Lesson has questions. Saves having the (optional) function do so much work, plus allows restricting the Grading screen to Lesson with quizzes
+- Quiz Additions:
+- - Quiz password before accessing Quiz
+- - Quiz number of attempts before lockout
+- - Quiz countdown before submission, JS based, on reload after deadline submission buttons no longer show
+

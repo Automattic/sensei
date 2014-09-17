@@ -1,0 +1,45 @@
+# Copyright (C) 2014 Sensei Course Progress
+# This file is distributed under the same license as the Sensei Course Progress package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Sensei Course Progress 1.0.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/sensei-course-progress\n"
+"POT-Creation-Date: 2014-06-23 09:12:21+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: includes/class-sensei-course-progress-widget.php:28
+msgid "Displays the current learners progress within the current course/module (only displays on single lesson page)."
+msgstr ""
+
+#: includes/class-sensei-course-progress-widget.php:30
+msgid "Sensei - Course Progress"
+msgstr ""
+
+#: includes/class-sensei-course-progress.php:170
+#: includes/class-sensei-course-progress.php:179
+msgid "Cheatin&#8217; huh?"
+msgstr ""
+#. Plugin Name of the plugin/theme
+msgid "Sensei Course Progress"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.woothemes.com/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Sensei extension that displays the learner's progress in the current course/module in a widget on lesson pages."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "WooThemes"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.woothemes.com/"
+msgstr ""

@@ -1,0 +1,108 @@
+/*
+Plugin Name: Sensei
+Plugin URI: http://woothemes.com/
+Description: Sensei by WooThemes is the best Learning Management System ever!
+Version: 1.4.5
+Author: WooThemes
+Author URI: http://woothemes.com/
+License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+*/
+
+/* Lesson Write Panel Styling */
+a.lesson_course_cancel { text-decoration: underline; }
+a.lesson_question_cancel { text-decoration: underline; }
+#lesson-info input[type=text] { margin-bottom: 10px; }
+#lesson-info label { vertical-align: top; }
+#lesson-quiz input[type=text], #lesson-quiz input[type=number] { margin-bottom: 10px; }
+#lesson-course-details input, #lesson-course-details select { margin-bottom: 10px; }
+tr.question-quick-edit td { padding-bottom: 10px; }
+#add-quiz-main button.add_quiz { margin-left: 5px; }
+select.question-type-select { margin-bottom: 10px; }
+div.question_boolean_fields { margin-bottom: 10px; }
+/* Course Write Panel Styling */
+/* Grading */
+.wrap div.grading-notice { margin: 25px 0 0px; }
+
+/* Lesson & Course reordering */
+
+.course-order-select-course-submit {
+	vertical-align: top;
+}
+.sortable-course-list {
+	border: 1px solid #e5e5e5;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,.04);
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+.sortable-course-list .course {
+	cursor: move;
+	background: #FFF;
+	margin: 0;
+	padding: 10px;
+	font-weight: bold;
+}
+.sortable-course-list .course span:before {
+	font-family: dashicons;
+	content: "\f333";
+	font-size: 170%;
+	vertical-align: bottom;
+	margin-right: 10px;
+	color: #BDBDBD;
+}
+.sortable-course-list .course.ui-sortable-helper {
+	zoom: 1;
+	filter: alpha(opacity=70);
+	opacity: 0.7;
+}
+.sortable-course-list .course.ui-sortable-helper span:before {
+	color: #444;
+}
+.sortable-course-list .course.alternate {
+	background: #F9F9F9;
+}
+.sortable-course-list .ui-sortable-placeholder {
+	background: #EBEBEB !important;
+	border: 1px dashed #DDDDDD;
+	visibility: visible !important;
+	margin: 3px;
+}
+
+.lesson-order-select-lesson-submit {
+	vertical-align: top;
+}
+.sortable-lesson-list {
+	border: 1px solid #e5e5e5;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,.04);
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+.sortable-lesson-list .lesson {
+	cursor: move;
+	background: #FFF;
+	margin: 0;
+	padding: 10px;
+	font-weight: bold;
+}
+.sortable-lesson-list .lesson span:before {
+	font-family: dashicons;
+	content: "\f333";
+	font-size: 170%;
+	vertical-align: bottom;
+	margin-right: 10px;
+	color: #BDBDBD;
+}
+.sortable-lesson-list .lesson.ui-sortable-helper {
+	zoom: 1;
+	filter: alpha(opacity=70);
+	opacity: 0.7;
+}
+.sortable-lesson-list .lesson.ui-sortable-helper span:before {
+	color: #444;
+}
+.sortable-lesson-list .lesson.alternate {
+	background: #F9F9F9;
+}
+.sortable-lesson-list .ui-sortable-placeholder {
+	background: #EBEBEB !important;
+	border: 1px dashed #DDDDDD;
+	visibility: visible !important;
+	margin: 3px;
+}

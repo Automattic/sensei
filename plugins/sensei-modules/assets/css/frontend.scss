@@ -1,0 +1,174 @@
+$fontawesome: FontAwesomeSensei, FontAwesome;
+.module-archive #main .status, #main .course .module-status {
+	padding:.382em 1em;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	-moz-background-clip:padding;
+	-webkit-background-clip:padding-box;
+	background-clip:padding-box;
+	color:#fff;
+	font-weight:bold;
+	background:#c6c6c6;
+	clear: both;
+	display: inline-block;
+}
+.module-archive #main .status:before, #main .course .module-status:before {
+	font-family: $fontawesome;
+	display:inline-block;
+	font-size:100%;
+	margin-right:.618em;
+	font-weight:normal;
+	line-height:1em;
+	width:1em;
+}
+.module-archive #main .status.completed, #main .course .module-status.completed {
+	background:#63a95f;
+}
+.module-archive #main .status.completed:before, #main .course .module-status.completed:before {
+	content:"\f00c";
+}
+.module-archive #main .status.in-progress:before, #main .course .module-status.in-progress:before {
+	content:"\f110";
+}
+.module-lessons .lesson-status  {
+	font-style: normal;
+}
+.module-lessons .lesson-status.complete  {
+	color: #63a95f;
+}
+.module-lessons .lesson-status.complete:before  {
+	font-family: $fontawesome;
+    display: inline-block;
+    font-size:100%;
+    margin-right:.618em;
+    font-weight: normal;
+    line-height: 1em;
+    width:1em;
+	content: '\f00c';
+}
+
+.single-course {
+	.course-lessons {
+		> header {
+			h2 {
+				margin-bottom: 1em;
+			}
+		}
+	}
+}
+
+.module {
+	position: relative;
+	margin: 0 0 1em 0 !important;
+	border: none !important;
+	header {
+		background: rgba(0,0,0,0.05);
+		margin-bottom: 0 !important;
+		h2 {
+			font-size: 1.8em;
+			padding: 0.6em 0 0.6em 20px;
+			margin: 0 !important;
+		}
+	}
+	.module-description {
+		padding: 1em 20px;
+		background: rgba(0,0,0,0.015);
+		margin: 0;
+		font-style: italic;
+	}
+	.module-lessons {
+		header {
+			margin: 0 !important;
+			padding: 0.6em 0.6em 0.6em 20px !important;
+			border-top: 1px solid rgba(0,0,0,0.05) !important;
+			border-bottom: 1px solid rgba(0,0,0,0.05);
+			background: rgba(0,0,0,0.03);
+			h3 {
+				margin: 0;
+				font-size: 1.2em;
+			}
+		}
+		ul {
+			margin: 0 !important;
+			padding: 0 !important;
+			margin-bottom: 2em !important;
+			list-style: none !important;
+			li {
+				list-style: none !important;
+				margin: 0 !important;
+				position: relative;
+				a {
+					display: block;
+					border-bottom: 1px solid rgba(0,0,0,0.05);
+					padding: 0.618em 0.618em 0.618em 3.618em;
+					background: rgba(0,0,0,0.01);
+					position: relative;
+					font-size: 1.1em;
+					text-decoration: none;
+					&:before {
+						font-family: $fontawesome;
+						display: inline-block;
+						font-size: 150%;
+						margin-right: 0.618em;
+						font-weight: 400;
+						line-height: 1em;
+						width: 1em;
+						position: absolute;
+						left: 20px;
+						top: 0.5em;
+						content: '\f10c';
+						color: rgba(0,0,0,0.1);
+					}
+					&:hover {
+						background: rgba(255,255,255,1);
+						border-bottom: 1px solid rgba(0,0,0,0.05);
+						text-decoration: none;
+						&:before {
+							content: '\f138';
+							color: rgba(0,0,0,0.2);
+						}
+					}
+					.preview-label {
+						float: right;
+						color: rgba(255,255,255,1);
+						background: #63a95f;
+						padding:.2em 1em;
+						-webkit-border-radius:5px;
+						border-radius:5px;
+						-moz-background-clip:padding;
+						-webkit-background-clip:padding-box;
+						background-clip:padding-box;
+						clear: both;
+						display: inline-block;
+						position: relative;
+						top: -0.2em;
+						&:before {
+							font-family: $fontawesome;
+							display: inline-block;
+							margin-right: 0.168em;
+							line-height: 1em;
+							width: 1em;
+							content: '\f13e';
+						}
+					}
+				}
+				&.completed {
+					a {
+						color: rgba(0,0,0,0.4);
+						&:before {
+							content: '\f058';
+							color: #63a95f;
+						}
+					}
+				}
+			}
+		}
+	}
+	.module-status {
+		position: absolute;
+		right: 20px;
+		top: 1em;
+		margin: 0 !important;
+		font-size: inherit !important;
+	}
+}

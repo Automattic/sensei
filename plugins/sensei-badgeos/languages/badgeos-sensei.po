@@ -1,0 +1,181 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BadgeOS Sensei Add-on\n"
+"POT-Creation-Date: 2013-05-08 14:35-0500\n"
+"PO-Revision-Date: 2013-05-08 14:36-0500\n"
+"Last-Translator: Brian Richards <brian@rzen.net>\n"
+"Language-Team: Credly, LLC\n"
+"Language: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../badgeos-sensei.php:51
+msgid "Profile/Independent Actions"
+msgstr ""
+
+#: ../badgeos-sensei.php:52
+msgid "Activated Account"
+msgstr ""
+
+#: ../badgeos-sensei.php:53
+msgid "Change Profile Avatar"
+msgstr ""
+
+#: ../badgeos-sensei.php:54
+msgid "Update Profile Information"
+msgstr ""
+
+#: ../badgeos-sensei.php:56
+msgid "Social Actions"
+msgstr ""
+
+#: ../badgeos-sensei.php:57
+msgid "Write an Activity Stream message"
+msgstr ""
+
+#: ../badgeos-sensei.php:58
+msgid "Write a Group Activity Stream message"
+msgstr ""
+
+#: ../badgeos-sensei.php:59
+msgid "Reply to an item in an Activity Stream"
+msgstr ""
+
+#: ../badgeos-sensei.php:60
+msgid "Favorite an Activity Stream item"
+msgstr ""
+
+#: ../badgeos-sensei.php:61
+msgid "Send a Friendship Request"
+msgstr ""
+
+#: ../badgeos-sensei.php:62
+msgid "Accept a Friendship Request"
+msgstr ""
+
+#: ../badgeos-sensei.php:63
+msgid "Send/Reply to a Private Message"
+msgstr ""
+
+#: ../badgeos-sensei.php:65
+msgid "Group Actions"
+msgstr ""
+
+#: ../badgeos-sensei.php:66
+msgid "Create a Group"
+msgstr ""
+
+#: ../badgeos-sensei.php:67
+msgid "Join a Group"
+msgstr ""
+
+#: ../badgeos-sensei.php:68
+msgid "Join a Specific Group"
+msgstr ""
+
+#: ../badgeos-sensei.php:69
+msgid "Invite someone to Join a Group"
+msgstr ""
+
+#: ../badgeos-sensei.php:70
+msgid "Promoted to Group Moderator/Administrator"
+msgstr ""
+
+#: ../badgeos-sensei.php:71
+msgid "Promote another Group Member to Moderator/Administrator"
+msgstr ""
+
+#: ../badgeos-sensei.php:73
+msgid "Discussion Forum Actions"
+msgstr ""
+
+#: ../badgeos-sensei.php:74
+msgid "Create a Forum Topic"
+msgstr ""
+
+#: ../badgeos-sensei.php:75
+msgid "Reply to a Forum Topic"
+msgstr ""
+
+#: ../badgeos-sensei.php:167
+#, php-format
+msgid ""
+"BadgeOS Sensei Add-On requires BadgeOS and has been <a href=\"%s"
+"\">deactivated</a>. Please install and activate BadgeOS and then reactivate "
+"this plugin."
+msgstr ""
+
+#: ../badgeos-sensei.php:169
+#, php-format
+msgid ""
+"BadgeOS Sensei Add-On requires BuddyPress and has been <a href=\"%s"
+"\">deactivated</a>. Please install and activate BuddyPress and then "
+"reactivate this plugin."
+msgstr ""
+
+#: ../includes/bp-activity.php:46
+#, php-format
+msgid "%1$s earned a %2$s: %3$s"
+msgstr ""
+
+#: ../includes/bp-activity.php:89
+msgid "BuddyPress Member Activity"
+msgstr ""
+
+#: ../includes/bp-activity.php:96
+msgid "Activity Posts"
+msgstr ""
+
+#: ../includes/bp-activity.php:97
+msgid ""
+"When a user earns any achievements of this type create an activity entry on "
+"their profile."
+msgstr ""
+
+#: ../includes/bp-activity.php:102
+msgid "Profile Achievements"
+msgstr ""
+
+#: ../includes/bp-activity.php:103
+msgid ""
+"Display earned achievements of this type in the user profile \"Achievements"
+"\" section."
+msgstr ""
+
+#: ../includes/bp-members.php:78
+msgid "Badge Sharing"
+msgstr ""
+
+#: ../includes/bp-members.php:80
+msgid "Send eligible earned badges to Credly"
+msgstr ""
+
+#: ../includes/bp-members.php:93
+msgid "Your settings have been saved."
+msgstr ""
+
+#: ../includes/bp-members.php:110
+msgid "BadgeOS"
+msgstr ""
+
+#: ../includes/bp-members.php:171
+msgid "Achievements"
+msgstr ""
+
+#: ../includes/steps-ui.php:54
+msgid "Select a Community Trigger"
+msgstr ""
+
+#: ../includes/steps-ui.php:85
+msgid "Select a Group"
+msgstr ""
+
+#: ../includes/steps-ui.php:128
+#, php-format
+msgid "Join group \"%s\""
+msgstr ""
