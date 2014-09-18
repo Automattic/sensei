@@ -193,7 +193,6 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 			$total_items = count ( $this->user_ids );
 		} else {
 			$total_items = count( $this->items );
-			// Subset for pagination
 			$this->set_pagination_args( array(
 				'total_items' => $total_items,
 				'per_page' => $per_page,
