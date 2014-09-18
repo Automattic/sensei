@@ -105,6 +105,12 @@ class WooThemes_Sensei {
 		$this->load_class( 'course-results' );
 		$this->course_results = new WooThemes_Sensei_Course_Results();
 		$this->course_results->token = $this->token;
+
+		// Load the Course class
+		$this->load_class( 'course' );
+		$this->course = new WooThemes_Sensei_Course();
+		$this->course->token = $this->token;
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 
