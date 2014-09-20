@@ -2,7 +2,7 @@
 /**
  * The Template for displaying Multiple Choice Questions.
  *
- * Over-ride this template by copying it to yourtheme/sensei/single-quiz/question_type-multiple-choice.php
+ * Over-ride -  this template by copying it to yourtheme/sensei/single-quiz/question_type-multiple-choice.php
  *
  * @author 		WooThemes
  * @package 	Sensei/Templates
