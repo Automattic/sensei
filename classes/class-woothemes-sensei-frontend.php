@@ -770,9 +770,6 @@ class WooThemes_Sensei_Frontend {
 		    switch ($sanitized_submit) {
 		        case apply_filters( 'sensei_complete_lesson_text', __( 'Complete Lesson', 'woothemes-sensei' ) ):
 
-		            // Manual Grade
-		            $grade = 100;
-
 		            // Force Start the Lesson
                     $args = array(
                                         'post_id' => $post->ID,
@@ -788,63 +785,87 @@ class WooThemes_Sensei_Frontend {
 
                     do_action( 'sensei_user_lesson_start', $current_user->ID, $post->ID );
 
-		            // Save Quiz Grade
-	                $args = array(
-	                                    'post_id' => $lesson_quiz_id,
-	                                    'username' => $current_user->user_login,
-	                                    'user_email' => $current_user->user_email,
-	                                    'user_url' => $current_user->user_url,
-	                                    'data' => $grade,
-	                                    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
-	                                    'parent' => 0,
-	                                    'user_id' => $current_user->ID,
-	                                    'action' => 'update'
-	                                );
-	                $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+                    if ( 0 < count($lesson_quizzes) )  {
 
-	                $quiz_passmark = absint( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) );
-	                do_action( 'sensei_user_quiz_grade', $current_user->ID, $lesson_quiz_id, $grade, $quiz_passmark );
+	                    // Manual Grade
+			            $grade = 100;
 
-	                // Get quiz pass setting
-	                $pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
+			            // Save Quiz Grade
+		                $args = array(
+		                                    'post_id' => $lesson_quiz_id,
+		                                    'username' => $current_user->user_login,
+		                                    'user_email' => $current_user->user_email,
+		                                    'user_url' => $current_user->user_url,
+		                                    'data' => $grade,
+		                                    'type' => 'sensei_quiz_grade', /* FIELD SIZE 20 */
+		                                    'parent' => 0,
+		                                    'user_id' => $current_user->ID,
+		                                    'action' => 'update'
+		                                );
+		                $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 
-	                // Get Lesson Grading Setting
-	                if ( $activity_logged && $pass_required ) {
-	                    $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
-	                    if ( $lesson_prerequisite <= $grade ) {
-	                        // Student has reached the pass mark and lesson is complete
-	                        $args = array(
-	                                            'post_id' => $post->ID,
-	                                            'username' => $current_user->user_login,
-	                                            'user_email' => $current_user->user_email,
-	                                            'user_url' => $current_user->user_url,
-	                                            'data' => __( 'Lesson completed and passed by the user', 'woothemes-sensei' ),
-	                                            'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
-	                                            'parent' => 0,
-	                                            'user_id' => $current_user->ID
-	                                        );
-	                        $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+		                $quiz_passmark = absint( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) );
+		                do_action( 'sensei_user_quiz_grade', $current_user->ID, $lesson_quiz_id, $grade, $quiz_passmark );
 
-	                        do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
+		                // Get quiz pass setting
+		                $pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
 
-	                    } // End If Statement
-	                } elseif ($activity_logged) {
-	                    // Mark lesson as complete
-	                    $args = array(
-	                                        'post_id' => $post->ID,
-	                                        'username' => $current_user->user_login,
-	                                        'user_email' => $current_user->user_email,
-	                                        'user_url' => $current_user->user_url,
-	                                        'data' => __( 'Lesson completed by the user', 'woothemes-sensei' ),
-	                                        'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
-	                                        'parent' => 0,
-	                                        'user_id' => $current_user->ID
-	                                    );
-	                    $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+		                // Get Lesson Grading Setting
+		                if ( $activity_logged && $pass_required ) {
+		                    $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
+		                    if ( $lesson_prerequisite <= $grade ) {
+		                        // Student has reached the pass mark and lesson is complete
+		                        $args = array(
+		                                            'post_id' => $post->ID,
+		                                            'username' => $current_user->user_login,
+		                                            'user_email' => $current_user->user_email,
+		                                            'user_url' => $current_user->user_url,
+		                                            'data' => __( 'Lesson completed and passed by the user', 'woothemes-sensei' ),
+		                                            'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
+		                                            'parent' => 0,
+		                                            'user_id' => $current_user->ID
+		                                        );
+		                        $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 
-	                    do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
+		                        do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
 
-	                } // End If Statement
+		                    } // End If Statement
+		                } elseif ($activity_logged) {
+		                    // Mark lesson as complete
+		                    $args = array(
+		                                        'post_id' => $post->ID,
+		                                        'username' => $current_user->user_login,
+		                                        'user_email' => $current_user->user_email,
+		                                        'user_url' => $current_user->user_url,
+		                                        'data' => __( 'Lesson completed by the user', 'woothemes-sensei' ),
+		                                        'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
+		                                        'parent' => 0,
+		                                        'user_id' => $current_user->ID
+		                                    );
+		                    $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+		                    do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
+
+		                } // End If Statement
+	                } else { // Lesson has no quiz
+		                if ($activity_logged) {
+		                    // Mark lesson as complete
+		                    $args = array(
+		                                        'post_id' => $post->ID,
+		                                        'username' => $current_user->user_login,
+		                                        'user_email' => $current_user->user_email,
+		                                        'user_url' => $current_user->user_url,
+		                                        'data' => __( 'Lesson completed by the user', 'woothemes-sensei' ),
+		                                        'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
+		                                        'parent' => 0,
+		                                        'user_id' => $current_user->ID
+		                                    );
+		                    $activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+		                    do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
+
+		                } // End If Statement
+		            }
 		            break;
 		        case apply_filters( 'sensei_reset_lesson_text', __( 'Reset Lesson', 'woothemes-sensei' ) ):
 		            // Remove existing user quiz meta
@@ -1519,11 +1540,11 @@ class WooThemes_Sensei_Frontend {
 						<?php do_action( 'sensei_register_form_end' ); ?>
 
 					</form>
+				</div>
 				<?php
 			}
 			?>
 
-				</div>
 			</div>
 		</div>
 
@@ -2278,87 +2299,94 @@ class WooThemes_Sensei_Frontend {
 	function sensei_handle_login_request( ) {
 		global $woothemes_sensei;
 
-		// if this request is a redircect from a previous login request
-		if ( ( isset( $_GET['login'] ) ) ) { 
+		// Check that it is a sensei login request and if it has a valid nonce
+	    if(  isset( $_REQUEST['form'] ) && 'sensei-login' == $_REQUEST['form'] ) {
 	
-			// setup the message variables
-			$message = '';
+	    	// Validate the login request nonce
+		    if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'sensei-login' ) ){
+		    	return;
+		    }
 
-			//only output message if the url contains login=failed and login=emptyfields
+		    
+		    //get the page where the sensei log form is located
+		    $referrer = $_REQUEST['_wp_http_referer'];
+		    //$redirect = $_REQUEST['_sensei_redirect'];
 
-			if( $_GET['login'] == 'failed' ){
+		    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )  
+		    	 && ( isset( $_REQUEST['pwd'] ) && !empty( $_REQUEST['pwd'] ) ) ){
 
-				$message = __('Incorrect login details', 'woothemes-sensei' );
+		    	// when the user has entered a password or username do the sensei login
+		    	$creds = array();
 
-			}elseif( $_GET['login'] == 'emptyfields'  ){
+		    	// check if the requests login is an email address
+		    	if( is_email(  trim( $_REQUEST['log'] ) )  ){
+		    		// query wordpress for the users details
+		    		$user =	get_user_by( 'email', sanitize_email( $_REQUEST['log'] )  );
 
-				$message= __('Please enter your username and password', 'woothemes-sensei' );
-			}
+		    		// validate the user object
+		    		if( !$user ){
+		    			// the email doesnt exist
+		    			wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+		        		exit;
+		    		}
 
-			$woothemes_sensei->notices->add_notice( $message, 'alert');
+		    		//assigne the username to the creds array for further processing 
+		    		$creds['user_login'] =  $user->user_login ;
+
+		    	}else{
+		    
+		    		// process this as a default username login
+		    		$creds['user_login'] = sanitize_text_field( $_REQUEST['log'] ) ;
+		    	
+		    	}
+				
+				// get setup the rest of the creds array
+				$creds['user_password'] = sanitize_text_field( $_REQUEST['pwd'] );
+				$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
+
+				//attempt logging in with the given details
+				$user = wp_signon( $creds, false ); 
+
+				if ( is_wp_error($user) ){ // on login failure
+
+					wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+		        	exit;
+
+				}else{ // on login success
+
+					/**
+					* change the redirect url programatically 
+					* 
+					* @since 1.6.1
+					*
+					* @param string $referrer the page where the current url wheresensei login form was posted from
+					*/
+
+					$success_redirect_url = apply_filters('sesei_login_success_redirect_url', remove_query_arg( 'login', $referrer ) );
+
+					wp_redirect( $success_redirect_url );
+		        	exit;
+
+				}	// end is_wp_error($user)
+
+		    }else{ // if username or password is empty 
+
+		    	wp_redirect( add_query_arg('login', 'emptyfields', $referrer) ); 
+		        exit;
+
+		    } // end if username $_REQUEST['log']  and password $_REQUEST['pwd'] is empty
+
+	    	return ;
+
+	    }elseif( ( isset( $_GET['login'] ) ) ) { 
+	    	// else if this request is a redircect from a previously faile login request
+	    	$this->login_message_process();
 			
 			//exit the handle login request function
-			return; 	
-		} 
-
-
-		// Check that it is a sensei login request and if it has a valid nonce
-	    if( ! isset( $_REQUEST['form'] ) || ( isset( $_REQUEST['form'] ) && 'sensei-login' != $_REQUEST['form'] ) ) {
-	    	return ;
+			return; 
 	    }
 
-	    // Validate the login request nonce
-	    if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'sensei-login' ) ){
-	    	return;
-	    }
-
-	    
-	    //get the page where the sensei log form is located
-	    $referrer = $_REQUEST['_wp_http_referer'];
-	    //$redirect = $_REQUEST['_sensei_redirect'];
-
-	    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )  
-	    	 && ( isset( $_REQUEST['pwd'] ) && !empty( $_REQUEST['pwd'] ) ) ){
-
-	    	// when the user has entered a password or username do the sensei login
-	    	$creds = array();
-			$creds['user_login'] = sanitize_text_field( $_REQUEST['log'] ) ;
-			$creds['user_password'] = sanitize_text_field( $_REQUEST['pwd'] );
-			$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
-
-			//attempt logging in with the given details
-			$user = wp_signon( $creds, false ); 
-
-			if ( is_wp_error($user) ){ // on login failure
-
-				wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
-	        	exit;
-
-			}else{ // on login success
-
-				/**
-				* change the redirect url programatically 
-				* 
-				* @since 1.6.1
-				*
-				* @param string $referrer the page where the current url wheresensei login form was posted from
-				*/
-
-				$success_redirect_url = apply_filters('sesei_login_success_redirect_url', remove_query_arg( 'login', $referrer ) );
-
-				wp_redirect( $success_redirect_url );
-	        	exit;
-
-			}	// end is_wp_error($user)
-
-	    }else{ // if username or password is empty 
-
-	    	wp_redirect( add_query_arg('login', 'emptyfields', $referrer) ); 
-	        exit;
-
-	    } // end if username $_REQUEST['log']  and password $_REQUEST['pwd'] is empty
-
-	    // continue with the default flow of things
+	    // if none of the above
 	    return;
 
 	} // End  sensei_login_fail_redirect_to_front_end_login
@@ -2452,6 +2480,33 @@ class WooThemes_Sensei_Frontend {
 		exit;
 
 	} // end  sensei_process_registration)()
+
+	/**
+	 * login_message_process(). handle the login message displayed on faile login 
+	 * 
+	 * @return void redirect
+	 * @since 1.7.0
+	 */
+	public function login_message_process(){
+			global $woothemes_sensei;
+
+		    // setup the message variables
+			$message = '';
+
+			//only output message if the url contains login=failed and login=emptyfields
+
+			if( $_GET['login'] == 'failed' ){
+
+				$message = __('Incorrect login details', 'woothemes-sensei' );
+
+			}elseif( $_GET['login'] == 'emptyfields'  ){
+
+				$message= __('Please enter your username and password', 'woothemes-sensei' );
+			}
+
+			$woothemes_sensei->notices->add_notice( $message, 'alert');
+
+	}// end login_message_process
 
 } // End Class
 ?>
