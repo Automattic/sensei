@@ -191,8 +191,8 @@ class WooThemes_Sensei_Messages {
 
 		$html .= '<h3 id="private_message">' . __( 'Send Private Message', 'woothemes-sensei' ) . '</h3>';
 
-		$html .= '<form name="contact-teacher" action="" method="post">';
-			$html .= '<p class="form-row">';
+		$html .= '<form name="contact-teacher" action="" method="post" class="contact-teacher">';
+			$html .= '<p class="form-row form-row-wide">';
 				$html .= '<textarea name="contact_message" placeholder="' . __( 'Enter your private message.', 'woothemes-sensei' ) . '"></textarea>';
 			$html .= '</p>';
 			$html .= '<p class="form-row">';
