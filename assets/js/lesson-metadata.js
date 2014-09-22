@@ -578,6 +578,9 @@ jQuery(document).ready( function($) {
 	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).select2({width:"resolve"}); }
 	if ( jQuery( '#course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:"resolve"}); }
 
+	// Courses Edit/New screen
+	if ( jQuery( '#course-prerequisite #course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite #course-prerequisite-options' ).select2({width:"resolve"}); }
+	
 	// Quiz edit panel
 	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:"resolve"}); }
 	if ( jQuery( '#add-question-category-options' ).exists() ) { jQuery( '#add-question-category-options' ).select2({width:"resolve"}); }

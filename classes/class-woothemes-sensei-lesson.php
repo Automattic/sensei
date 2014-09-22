@@ -166,7 +166,7 @@ class WooThemes_Sensei_Lesson {
 		$html .= '<input type="number" id="lesson-length" name="lesson_length" class="small-text" value="' . esc_attr( $lesson_length ) . '" /></p>' . "\n";
 		// Lesson Complexity
 		$html .= '<p><label for="lesson_complexity">' . __( 'Lesson Complexity', 'woothemes-sensei' ) . ': </label>';
-		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="chosen_select lesson-complexity-select">';
+		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="lesson-complexity-select">';
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 			foreach ($complexity_array as $key => $value){
 				$html .= '<option value="' . esc_attr( $key ) . '"' . selected( $key, $lesson_complexity, false ) . '>' . esc_html( $value ) . '</option>' . "\n";
@@ -203,7 +203,7 @@ class WooThemes_Sensei_Lesson {
 		$html = '';
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="chosen_select widefat">' . "\n";
+			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="widefat">' . "\n";
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -459,7 +459,7 @@ class WooThemes_Sensei_Lesson {
 		// Nonce
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 			// Select the course for the lesson
-			$html .= '<select id="lesson-course-options" name="lesson_course" class="chosen_select widefat">' . "\n";
+			$html .= '<select id="lesson-course-options" name="lesson_course" class="widefat">' . "\n";
 				$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				if ( count( $posts_array ) > 0 ) {
 				foreach ($posts_array as $post_item){
@@ -486,7 +486,7 @@ class WooThemes_Sensei_Lesson {
 	  					$html .= '<textarea rows="10" cols="40" id="course-content" name="course_content" value="" size="300" class="widefat"></textarea>';
 	  					// Course Prerequisite
 	  					$html .= '<label>' . __( 'Course Prerequisite' , 'woothemes-sensei' ) . '</label> ';
-	  					$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="chosen_select widefat">' . "\n";
+	  					$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="widefat">' . "\n";
 							$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 							foreach ($posts_array as $post_item){
 								$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -514,7 +514,7 @@ class WooThemes_Sensei_Lesson {
 													);
 							$products_array = get_posts( $product_args );
 							$html .= '<label>' . __( 'WooCommerce Product' , 'woothemes-sensei' ) . '</label> ';
-	  						$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
+	  						$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
 								$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 								$prev_parent_id = 0;
 								foreach ($products_array as $products_item){
@@ -932,7 +932,7 @@ class WooThemes_Sensei_Lesson {
 
 	  					// Question type
 						$html .= '<p><label>' . __( 'Question Type:' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<select id="add-question-type-options" name="question_type" class="chosen_select widefat question-type-select">' . "\n";
+						$html .= '<select id="add-question-type-options" name="question_type" class="widefat question-type-select">' . "\n";
 							foreach ( $question_types as $type => $label ) {
 								$html .= '<option value="' . esc_attr( $type ) . '">' . esc_html( $label ) . '</option>' . "\n";
 							} // End For Loop
@@ -942,7 +942,7 @@ class WooThemes_Sensei_Lesson {
 						if( 'quiz' == $context ) {
 							if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
 								$html .= '<p><label>' . __( 'Question Category:' , 'woothemes-sensei' ) . '</label> ';
-								$html .= '<select id="add-question-category-options" name="question_category" class="chosen_select widefat question-category-select">' . "\n";
+								$html .= '<select id="add-question-category-options" name="question_category" class="widefat question-category-select">' . "\n";
 								$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>' . "\n";
 								foreach( $question_cats as $cat ) {
 									$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';
@@ -1066,7 +1066,7 @@ class WooThemes_Sensei_Lesson {
 
 				    	$html .= '<p><em>' . sprintf( __( 'Add any number of questions from a specified category. Edit your question categories %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) . '">', '</a>' ) . '</em></p>';
 
-						$html .= '<p><select id="add-multiple-question-category-options" name="multiple_category" class="chosen_select widefat question-category-select">' . "\n";
+						$html .= '<p><select id="add-multiple-question-category-options" name="multiple_category" class="widefat question-category-select">' . "\n";
 						$html .= '<option value="">' . __( 'Select a Question Category', 'woothemes-sensei' ) . '</option>' . "\n";
 						foreach( $question_cats as $cat ) {
 							$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';

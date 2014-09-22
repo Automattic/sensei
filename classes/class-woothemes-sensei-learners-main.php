@@ -454,7 +454,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 				echo '<div class="select-box">' . "\n";
 
-					echo '<select id="course-category-options" data-placeholder="' . __( 'Course Category', 'woothemes-sensei' ) . '" name="learners_course_cat" class="chosen_select widefat">' . "\n";
+					echo '<select id="course-category-options" data-placeholder="' . __( 'Course Category', 'woothemes-sensei' ) . '" name="learners_course_cat" class="widefat">' . "\n";
 
 						echo '<option value="0">' . __( 'All Course Categories', 'woothemes-sensei' ) . '</option>' . "\n";
 
