@@ -539,7 +539,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		        url: '<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
 		        dataType: 'json',
 		        cache: true,
-		        id: function(user){ console.log('id function needed bro'); return bond._id; },
+		        id: function(user){ return user.id; },
 		        data: function (input, page) { // page is the one-based page number tracked by Select2
 		            return {
 		                term: input, //search term
