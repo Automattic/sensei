@@ -578,6 +578,9 @@ jQuery(document).ready( function($) {
 	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).select2({width:"resolve"}); }
 	if ( jQuery( '#course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:"resolve"}); }
 
+	// Courses Edit/New screen
+	if ( jQuery( '#course-prerequisite #course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite #course-prerequisite-options' ).select2({width:"resolve"}); }
+	
 	// Quiz edit panel
 	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:"resolve"}); }
 	if ( jQuery( '#add-question-category-options' ).exists() ) { jQuery( '#add-question-category-options' ).select2({width:"resolve"}); }
@@ -858,7 +861,6 @@ jQuery(document).ready( function($) {
 	 		    function( response ) {
 	 		    	// Check for a valid response
 	 		    	if ( response ) {
-
 	 		    		jQuery.fn.updateQuestionCount( 1, '+' );
 	 		    		jQuery( '#add-question-metadata table' ).append( response );
 			    		jQuery.fn.resetAddQuestionForm();
@@ -1057,6 +1059,18 @@ jQuery(document).ready( function($) {
  				},
  				function( response ) {
  					if ( response ) {
+ 						// show the user the of the succesful update:
+ 						var newQuestionTitle , newGradeTotal;
+	 					
+	 					// update the question title :
+ 						newQuestionTitle = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question] ').val();
+ 						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-title-column').html( newQuestionTitle );
+ 							
+ 						// update the grade total		
+						newGradeTotal = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question_grade] ').val();
+ 						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-grade-column').html( newGradeTotal );
+ 							
+ 						// hide the update field
  						jQuery( '#question_' + tableRowId ).closest('tr').addClass( 'hidden' );
  					}
  				}

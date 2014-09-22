@@ -432,7 +432,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<div class="select-box">' . "\n";
 
-				echo '<select id="grading-course-options" name="grading_course" class="chosen_select widefat">' . "\n";
+				echo '<select id="grading-course-options" name="grading_course" class="widefat">' . "\n";
 					echo '<option value="">' . __( 'Select a course', 'woothemes-sensei' ) . '</option>';
 					if ( count( $posts_array ) > 0 ) {
 						foreach ($posts_array as $post_item){
@@ -445,7 +445,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<div class="select-box">' . "\n";
 
-				echo '<select id="grading-lesson-options" data-placeholder="&larr; Select a course" name="grading_lesson" class="chosen_select widefat">' . "\n";
+				echo '<select id="grading-lesson-options" data-placeholder="&larr; Select a course" name="grading_lesson" class="widefat">' . "\n";
 
 					if ( 0 < $selected_course_id ) {
 						$selected_lesson_id = 0;
