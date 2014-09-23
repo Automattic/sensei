@@ -448,7 +448,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 				echo '<div class="select-box">' . "\n";
 
-					echo '<select id="course-category-options" data-placeholder="' . __( 'Course Category', 'woothemes-sensei' ) . '" name="learners_course_cat" class="chosen_select widefat">' . "\n";
+					echo '<select id="course-category-options" data-placeholder="' . __( 'Course Category', 'woothemes-sensei' ) . '" name="learners_course_cat" class="widefat">' . "\n";
 
 						echo '<option value="0">' . __( 'All Course Categories', 'woothemes-sensei' ) . '</option>' . "\n";
 
@@ -502,9 +502,9 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
-						<select name="add_user_id" id="add_learner_search">
-							<option value=""><?php _e( 'Select learner', 'woothemes-sensei' ); ?></option>
-						</select>
+						<input type="hidden" name="add_user_id" id="add_learner_search" />
+					</p>
+					<p>
 						<?php if( 'lesson' == $form_post_type ) { ?>
 							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson" checked="checked" value="yes" /> <?php _e( 'Complete lesson for learner', 'woothemes-sensei' ); ?></label>
 						<?php } elseif( 'course' == $form_post_type ) { ?>
@@ -526,27 +526,53 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		</div>
 
 		<script type="text/javascript">
-	        jQuery('select#add_learner_search').ajaxChosen({
-			    method: 		'GET',
-			    url: 			'<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
-			    dataType: 		'json',
-			    afterTypeDelay: 100,
-			    minTermLength: 	1,
-			    data:		{
-			    	action: 	'sensei_json_search_users',
-					security: 	'<?php echo esc_js( wp_create_nonce( "search-users" ) ); ?>',
-					default: 	''
-			    }
-			}, function (data) {
 
-				var users = {};
+		jQuery('input#add_learner_search').select2({
+			minimumInputLength: 2,
+			placeholder: '<?php _e( 'Select learner', 'woothemes-sensei' ); ?>',
+			width:'300px',
+			ajax: {
+		        url: '<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
+		        dataType: 'json',
+		        cache: true,
+		        id: function(user){ return user.id; },
+		        data: function (input, page) { // page is the one-based page number tracked by Select2
+		            return {
+		                term: input, //search term
+		                page: page || 1,
+		               	action: 'sensei_json_search_users',
+		               	security: 	'<?php echo esc_js( wp_create_nonce( "search-users" ) ); ?>',
+		               	default: '',
+		            };
+		        },
 
-			    jQuery.each(data, function (i, val) {
-			        users[i] = val;
-			    });
+		        results: function (users, page) {
+		        	var validUsers = [];
 
-			    return users;
-			});
+		        	jQuery.each( users, function (i, val) {
+		        		if( ! jQuery.isEmptyObject( val )  ){
+		        			validUser = { id: i , details: val  };
+				        	validUsers.push( validUser ); 
+				        }		   		
+				    });
+
+		        	// wrap the users inside results for select 2 usage
+			    	return {  results: validUsers };
+		        },
+	     	},
+	     	
+	     	initSelection: function (element, callback) {
+         			//callback();
+     		},
+
+	        formatResult: function( user ){
+	   			return  user.details ;
+	        },
+
+	        formatSelection: function( user ){
+	        	return user.details;
+	        },
+		}); // end select2
 		</script>
 		<?php
 	}

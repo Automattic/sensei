@@ -314,8 +314,8 @@ class WooThemes_Sensei_Admin {
 
 			wp_register_style( $woothemes_sensei->token . '-admin-custom', $woothemes_sensei->plugin_url . 'assets/css/admin-custom.css', '', '1.6.0', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-admin-custom' );
-			wp_register_style( $woothemes_sensei->token . '-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.css', '', '1.5.2', 'screen' );
-			wp_enqueue_style( $woothemes_sensei->token . '-chosen' );
+			wp_register_style( $woothemes_sensei->token . '-select2', $woothemes_sensei->plugin_url . 'assets/select2/select2.css', '', '1.5.2', 'screen' );
+			wp_enqueue_style( $woothemes_sensei->token . '-select2' );
 
 		}
 
@@ -1073,7 +1073,7 @@ class WooThemes_Sensei_Admin {
 		$html .= '</form>' . "\n";
 
 		$html .= '<script type="text/javascript">' . "\n";
-		$html .= 'jQuery( \'#lesson-order-course\' ).chosen();' . "\n";
+		$html .= 'jQuery( \'#lesson-order-course\' ).select2({width:"resolve"});' . "\n";
 		$html .= '</script>' . "\n";
 
 		if( isset( $_GET['course_id'] ) ) {

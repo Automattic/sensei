@@ -19,6 +19,7 @@ tr.question-quick-edit td { padding-bottom: 10px; }
 #add-quiz-main button.add_quiz { margin-left: 5px; }
 select.question-type-select { margin-bottom: 10px; }
 div.question_boolean_fields { margin-bottom: 10px; }
+.select2-container { margin-bottom: 10px !important; }
 /* Course Write Panel Styling */
 /* Grading */
 .wrap div.grading-notice { margin: 25px 0 0px; }
