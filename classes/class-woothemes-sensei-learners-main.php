@@ -503,6 +503,8 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				<form name="add_learner" action="" method="post">
 					<p>
 						<input type="hidden" name="add_user_id" id="add_learner_search" />
+					</p>
+					<p>
 						<?php if( 'lesson' == $form_post_type ) { ?>
 							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson" checked="checked" value="yes" /> <?php _e( 'Complete lesson for learner', 'woothemes-sensei' ); ?></label>
 						<?php } elseif( 'course' == $form_post_type ) { ?>
