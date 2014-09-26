@@ -170,10 +170,18 @@ class WooThemes_Sensei_Admin {
 	 * @return void
 	 */
 	function comments_admin_filter( $pieces ) {
+		global $wpdb;
 
 		// Filter Admin Comments Area to not display Sensei's use of commenting system
 		if( is_admin() && !( isset($_GET['page']) && 'sensei_analysis' == $_GET['page'] ) ) {
-			$pieces['where'] .= " AND comment_type NOT LIKE 'sensei_%' ";
+			$statuses = array( '' ); // Default to the WP normal comments
+			$stati = $wpdb->get_results( "SELECT comment_type FROM {$wpdb->comments} GROUP BY comment_type", ARRAY_A );
+			foreach ( (array) $stati AS $status ) {
+				if ( 'sensei_' != substr($status['comment_type'], 0, 7 ) ) {
+					$statuses[] = $status['comment_type'];
+				}
+			}
+			$pieces['where'] .= " AND comment_type IN ('" . join("', '", array_unique( $statuses ) ) . "') ";
 		} // End If Statement
 
 		return $pieces;
