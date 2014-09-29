@@ -2,6 +2,15 @@
 
 This covers the current changes between our fork of Sensei (and it's corresponding plugins) and the v1.6.1 of Sensei.
 
+### Reloaded Changes (new)
+
+This branch of the Sensei plugin has almost completely rewritten the class-woothemes-sensei-list-table.php and class-woothemes-sensei-learners-main.php so that Learner Management is correctly paginated. Corresponding changes are in other Sensei files.
+
+The Learner Management, once showing the users themselves, is using either 'sensei_course_status' or 'sensei_lesson_status'. These statuses are set/updated via Sensei actions, the functions are in extended/sensei-changes.php. At a later date these will be merged into core Sensei, replacing the existing log entries.
+
+Finally there is extended/command.php which defines new WP-CLI ( http://wp-cli.org/ ) commands 'sensei convert-lesson-activities', 'sensei convert-question-activities' and 'sensei convert-course-activities' which converts the existing 9 different Sensei log activities to just 3. 
+
+
 ### Directory overview
 
 * 	/plugins/ - Covers the changes made to Sensei plugins. Most changes are on woothemes-sensei

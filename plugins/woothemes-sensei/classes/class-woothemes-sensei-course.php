@@ -778,7 +778,7 @@ class WooThemes_Sensei_Course {
 	 * @param string $post_status (default: 'publish')
 	 * @return void
 	 */
-	public function course_lessons( $course_id = 0, $post_status = 'publish' ) {
+	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
 
 		$posts_array = array();
 
@@ -794,7 +794,8 @@ class WooThemes_Sensei_Course {
 								),
 							),
     						'post_status'       => $post_status,
-							'suppress_filters' 	=> 0
+							'suppress_filters' 	=> 0,
+							'fields' => $fields,
 							);
 		$posts_array = get_posts( $post_args );
 

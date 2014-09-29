@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - sensei_check_for_activity()
  * - sensei_activity_ids()
  * - sensei_delete_activites()
- * - sensei_ get_activity_value()
+ * - sensei_get_activity_value()
  * - sensei_customer_bought_product()
  */
 class WooThemes_Sensei_Utils {
@@ -77,22 +77,31 @@ class WooThemes_Sensei_Utils {
 	 */
 	public static function sensei_log_activity ( $args = array() ) {
 		global $wpdb;
-		// Setup & Prep Data
-		$time = current_time('mysql');
-		// Args
-		$data = array(
-					    'comment_post_ID' => intval( $args['post_id'] ),
-					    'comment_author' => sanitize_user( $args['username'] ),
-					    'comment_author_email' => sanitize_email( $args['user_email'] ),
-					    'comment_author_url' => esc_url( $args['user_url'] ),
-					    'comment_content' => esc_html( $args['data'] ),
-					    'comment_type' => esc_attr( $args['type'] ),
-					    'comment_parent' => $args['parent'],
-					    'user_id' => intval( $args['user_id'] ),
-					    'comment_date' => $time,
-					    'comment_approved' => 1,
-					);
 
+		// Args, minimum data required for WP
+		$data = array(
+					'comment_post_ID' => intval( $args['post_id'] ),
+					'comment_author' => '', // Not needed
+					'comment_author_email' => '', // Not needed
+					'comment_author_url' => '', // Not needed
+					'comment_content' => esc_html( $args['data'] ),
+					'comment_type' => esc_attr( $args['type'] ),
+					'user_id' => intval( $args['user_id'] ),
+					'comment_approved' => 1,
+				);
+		// Allow extra data
+		if ( !empty($args['username']) ) {
+			$data['comment_author'] = sanitize_user( $args['username'] );
+		}
+		if ( !empty($args['user_email']) ) {
+			$data['comment_author_email'] = sanitize_email( $args['user_email'] );
+		}
+		if ( !empty($args['user_url']) ) {
+			$data['comment_author_url'] = esc_url( $args['user_url'] );
+		}
+		if ( !empty($args['parent']) ) {
+			$data['comment_parent'] = $args['parent'];
+		}
 		do_action( 'sensei_log_activity_before', $args, $data );
 
 		$flush_cache = false;
@@ -107,7 +116,11 @@ class WooThemes_Sensei_Utils {
 		elseif ( isset( $args['action'] ) && 'update' == $args['action'] ) {
 			// Update the comment if an update was requested
 			$data['comment_ID'] = $comment_id;
-			$comment_id = wp_update_comment( $data );
+			// By default update the timestamp of the comment
+			if ( empty($args['keep_time']) ) {
+				$data['comment_date'] = current_time('mysql');
+			}
+			wp_update_comment( $data );
 			$flush_cache = true;
 		} // End If Statement
 		// Manually Flush the Cache
@@ -118,7 +131,8 @@ class WooThemes_Sensei_Utils {
 		do_action( 'sensei_log_activity_after', $args, $data );
 
 		if ( 0 < $comment_id ) {
-			return true;
+			// Return the ID so that it can be used for meta data storage
+			return $comment_id;
 		} else {
 			return false;
 		} // End If Statement
@@ -501,6 +515,9 @@ class WooThemes_Sensei_Utils {
 	public static function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = false, $total_questions = 0, $quiz_grade_type = 'auto' ) {
 		global $current_user;
 
+		if( intval( $user_id ) == 0 ) {
+			$user_id = get_current_user_id();
+		}
 		$grade = 0;
 		$correct_answers = 0;
 		$quiz_graded = false;
@@ -518,7 +535,7 @@ class WooThemes_Sensei_Utils {
 					$question_type = $question_type[0]->slug;
 					if ( in_array( $question_type, $autogradable_question_types ) ) {
 						// Get user question grade
-						$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer );
+						$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
 						$grade_total += $question_grade;
 					}
 					else {
@@ -532,7 +549,7 @@ class WooThemes_Sensei_Utils {
 
 					$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
 
-					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade );
+					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
 				}
 				else {
 					$grade = new WP_Error('autograde', __('Quiz is not fully autogradeable due to questions used.', 'woothemes-sensei'));
@@ -550,7 +567,7 @@ class WooThemes_Sensei_Utils {
 	 * @param  integer $user_id ID of user being graded
 	 * @return boolean
 	 */
-	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0 ) {
+	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0, $quiz_grade_type = 'auto' ) {
 		if( intval( $user_id ) == 0 ) {
 			$user = wp_get_current_user();
 			$user_id = $user->ID;
@@ -576,7 +593,7 @@ class WooThemes_Sensei_Utils {
 			$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
 
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark );
+			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
 		}
 
 		return $activity_logged;
@@ -1149,7 +1166,7 @@ class WooThemes_Sensei_Utils {
 			}
 		}
 
-		return $pass;
+		return $pass; // Should add the $passmark and $user_grade as part of the return!
 	}
 
 	/**
@@ -1173,8 +1190,8 @@ class WooThemes_Sensei_Utils {
 			$started_course = sensei_has_user_started_course( $course_id, $user_id );
 
 			if( $started_course ) {
-				$passmark = WooThemes_Sensei_Utils::sensei_course_pass_grade( $course_id );
-				$user_grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $course_id, $user_id );
+				$passmark = WooThemes_Sensei_Utils::sensei_course_pass_grade( $course_id ); // This happens inside sensei_user_passed_course()!
+				$user_grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $course_id, $user_id ); // This happens inside sensei_user_passed_course()!
 				$user_pass = WooThemes_Sensei_Utils::sensei_user_passed_course( $course_id, $user_id );
 
 				if( $user_pass ) {

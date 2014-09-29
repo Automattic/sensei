@@ -1074,7 +1074,7 @@ class WooThemes_Sensei_Frontend {
 
 						} // End If Statement
 
-						do_action( 'sensei_user_quiz_submitted', $current_user->ID, $post->ID, $quiz_grade_type, $grade );
+						do_action( 'sensei_user_quiz_submitted', $current_user->ID, $post->ID, $grade, $quiz_passmark, $quiz_grade_type );
 
 					} // End If Statement
 

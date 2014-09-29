@@ -65,13 +65,13 @@ class WooThemes_Sensei_Learners {
 		} // End If Statement
 
 		add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
-		add_action( 'wp_ajax_nopriv_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
+//		add_action( 'wp_ajax_nopriv_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 
 		add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
-		add_action( 'wp_ajax_nopriv_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
+//		add_action( 'wp_ajax_nopriv_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
 
 		add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
-		add_action( 'wp_ajax_nopriv_sensei_json_search_users', array( $this, 'json_search_users' ) );
+//		add_action( 'wp_ajax_nopriv_sensei_json_search_users', array( $this, 'json_search_users' ) );
 
 	} // End __construct()
 
@@ -82,11 +82,11 @@ class WooThemes_Sensei_Learners {
 	 * @return void
 	 */
 	public function learners_admin_menu() {
-	    global $menu;
+		global $menu;
 
-	    if ( current_user_can( 'manage_sensei_grades' ) ) {
-	    	$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
-	    }
+		if ( current_user_can( 'manage_sensei_grades' ) ) {
+			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
+		}
 
 	} // End analysis_admin_menu()
 
@@ -205,16 +205,12 @@ class WooThemes_Sensei_Learners {
 		do_action( 'learners_before_container' );
 		do_action( 'learners_wrapper_container', 'top' );
 		$this->learners_headers();
-		?><div id="poststuff" class="sensei-learners-wrap">
-				<div class="sensei-learners-main">
-					<?php $sensei_learners_main->display(); ?>
-				</div>
-				<?php if( isset( $_GET['view'] ) && 'learners' == $_GET['view'] ) { ?>
-				<div class="sensei-learners-extra">
-					<?php $sensei_learners_main->add_learners_box(); ?>
-				</div>
-				<?php } ?>
+		?>
+		<div id="poststuff" class="sensei-learners-wrap">
+			<div class="sensei-learners-main">
+				<?php $sensei_learners_main->display(); ?>
 			</div>
+		</div>
 		<?php
 		do_action( 'learners_wrapper_container', 'bottom' );
 		do_action( 'learners_after_container' );
@@ -252,8 +248,16 @@ class WooThemes_Sensei_Learners {
 	 */
 	public function learners_default_nav() {
 		global $woothemes_sensei;
-		?><?php screen_icon( 'woothemes-sensei' ); ?>
-			<h2><?php echo esc_html( $this->name ); ?><?php if ( isset( $_GET['course_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ); } ?><?php if ( isset( $_GET['lesson_id'] ) ) { echo '&nbsp;&nbsp;&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['lesson_id'] ) ); } ?></h2>
+		
+		$title = esc_html( $this->name );
+		if ( isset( $_GET['course_id'] ) ) { 
+			$title .= '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ) . '</span>'; 
+		} 
+		if ( isset( $_GET['lesson_id'] ) ) { 
+			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['lesson_id'] ) ) . '</span>'; 
+		}
+		?>
+			<h2><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?></h2>
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 			<?php
 	} // End learners_default_nav()

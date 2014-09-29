@@ -467,7 +467,7 @@ class WooThemes_Sensei_Lesson {
 				$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				if ( count( $posts_array ) > 0 ) {
 				foreach ($posts_array as $post_item){
-					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
+					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( get_the_title( $post_item ) ) . '</option>' . "\n";
 				} // End For Loop
 				} // End If Statement
 			$html .= '</select>' . "\n";

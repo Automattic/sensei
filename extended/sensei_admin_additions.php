@@ -159,8 +159,8 @@ function imperial_sensei_filter_users_by_programme( $args ) {
 	}
 	return $args;
 }
-add_filter( 'sensei_grading_filter_users', 'imperial_sensei_filter_users_by_programme' );
-add_filter( 'sensei_analysis_filter_users', 'imperial_sensei_filter_users_by_programme' );
+//add_filter( 'sensei_grading_filter_users', 'imperial_sensei_filter_users_by_programme' );
+//add_filter( 'sensei_analysis_filter_users', 'imperial_sensei_filter_users_by_programme' );
 
 /**
  * 
@@ -180,15 +180,15 @@ function imperial_sensei_filter_activity_by_programme_users( $args ) {
 	}
 	return $args;
 }
-add_filter( 'sensei_learners_filter_activity_users', 'imperial_sensei_filter_activity_by_programme_users' );
-add_filter( 'sensei_activity_total_courses_started', 'imperial_sensei_filter_activity_by_programme_users' );
-add_filter( 'sensei_activity_total_courses_ended', 'imperial_sensei_filter_activity_by_programme_users' );
-add_filter( 'sensei_activity_total_quiz_grades', 'imperial_sensei_filter_activity_by_programme_users' );
-add_filter( 'sensei_analysis_activity_courses_started', 'imperial_sensei_filter_activity_by_programme_users' );
-add_filter( 'sensei_analysis_activity_courses_ended', 'imperial_sensei_filter_activity_by_programme_users' );
-add_filter( 'sensei_analysis_activity_lessons_started', 'imperial_sensei_filter_activity_by_programme_users' );
-add_filter( 'sensei_analysis_activity_lessons_ended', 'imperial_sensei_filter_activity_by_programme_users' );
-add_filter( 'sensei_analysis_activity_lesson_grades', 'imperial_sensei_filter_activity_by_programme_users' );
+//add_filter( 'sensei_learners_filter_activity_users', 'imperial_sensei_filter_activity_by_programme_users' );
+//add_filter( 'sensei_activity_total_courses_started', 'imperial_sensei_filter_activity_by_programme_users' );
+//add_filter( 'sensei_activity_total_courses_ended', 'imperial_sensei_filter_activity_by_programme_users' );
+//add_filter( 'sensei_activity_total_quiz_grades', 'imperial_sensei_filter_activity_by_programme_users' );
+//add_filter( 'sensei_analysis_activity_courses_started', 'imperial_sensei_filter_activity_by_programme_users' );
+//add_filter( 'sensei_analysis_activity_courses_ended', 'imperial_sensei_filter_activity_by_programme_users' );
+//add_filter( 'sensei_analysis_activity_lessons_started', 'imperial_sensei_filter_activity_by_programme_users' );
+//add_filter( 'sensei_analysis_activity_lessons_ended', 'imperial_sensei_filter_activity_by_programme_users' );
+//add_filter( 'sensei_analysis_activity_lesson_grades', 'imperial_sensei_filter_activity_by_programme_users' );
 
 
 /**
@@ -234,7 +234,7 @@ function imperial_sensei_grading_filter_lessons_pieces( $pieces ) {
 	}
 	return $pieces;
 }
-add_filter( 'sensei_grading_filter_lessons_pieces', 'imperial_sensei_grading_filter_lessons_pieces' );
+//add_filter( 'sensei_grading_filter_lessons_pieces', 'imperial_sensei_grading_filter_lessons_pieces' );
 
 
 /**
@@ -264,8 +264,8 @@ function imperial_sensei_before_dropdown_filters() {
 
 	echo '</div>' . "\n";
 }
-add_action( 'sensei_learners_before_dropdown_filters', 'imperial_sensei_before_dropdown_filters' );
-add_action( 'sensei_analysis_after_headers', 'imperial_sensei_before_dropdown_filters' );
+//add_action( 'sensei_learners_before_dropdown_filters', 'imperial_sensei_before_dropdown_filters' );
+//add_action( 'sensei_analysis_after_headers', 'imperial_sensei_before_dropdown_filters' );
 
 /**
  * Add a Programme dropdown to the Sensei Grading
@@ -291,7 +291,7 @@ function imperial_sensei_grading_before_dropdown_filters() {
 	echo '</div>' . "\n";
 
 }
-add_action( 'sensei_grading_before_dropdown_filters', 'imperial_sensei_grading_before_dropdown_filters' );
+//add_action( 'sensei_grading_before_dropdown_filters', 'imperial_sensei_grading_before_dropdown_filters' );
 
 /**
  * 
@@ -315,10 +315,10 @@ function imperial_sensei_filter_courses_by_programme( $args ) {
 	}
 	return $args;
 }
-add_filter( 'sensei_course_count', 'imperial_sensei_filter_courses_by_programme' );
-add_filter( 'sensei_grading_filter_courses', 'imperial_sensei_filter_courses_by_programme' );
-add_filter( 'sensei_learners_filter_courses', 'imperial_sensei_filter_courses_by_programme' );
-add_filter( 'sensei_analysis_filter_courses', 'imperial_sensei_filter_courses_by_programme' );
+//add_filter( 'sensei_course_count', 'imperial_sensei_filter_courses_by_programme' );
+//add_filter( 'sensei_grading_filter_courses', 'imperial_sensei_filter_courses_by_programme' );
+//add_filter( 'sensei_learners_filter_courses', 'imperial_sensei_filter_courses_by_programme' );
+//add_filter( 'sensei_analysis_filter_courses', 'imperial_sensei_filter_courses_by_programme' );
 
 /**
  * 
@@ -344,9 +344,9 @@ function imperial_sensei_filter_lessons_by_programme( $args ) {
 	}
 	return $args;
 }
-add_filter( 'sensei_lesson_count', 'imperial_sensei_filter_lessons_by_programme' );
-add_filter( 'sensei_analysis_filter_lessons', 'imperial_sensei_filter_lessons_by_programme' );
-add_filter( 'sensei_learners_filter_lessons', 'imperial_sensei_filter_lessons_by_programme' );
+//add_filter( 'sensei_lesson_count', 'imperial_sensei_filter_lessons_by_programme' );
+//add_filter( 'sensei_analysis_filter_lessons', 'imperial_sensei_filter_lessons_by_programme' );
+//add_filter( 'sensei_learners_filter_lessons', 'imperial_sensei_filter_lessons_by_programme' );
 
 /**
  * 
@@ -365,10 +365,10 @@ function imperial_sensei_filter_lessons_by_quiz( $args ) {
 		);
 	return $args;
 }
-//add_filter( 'sensei_lesson_count', 'imperial_sensei_filter_lessons_by_quiz' );
-add_filter( 'sensei_analysis_filter_lessons', 'imperial_sensei_filter_lessons_by_quiz' );
-add_filter( 'sensei_grading_filter_lessons', 'imperial_sensei_filter_lessons_by_quiz' );
-add_filter( 'sensei_learners_filter_lessons', 'imperial_sensei_filter_lessons_by_quiz' );
+////add_filter( 'sensei_lesson_count', 'imperial_sensei_filter_lessons_by_quiz' );
+//add_filter( 'sensei_analysis_filter_lessons', 'imperial_sensei_filter_lessons_by_quiz' );
+//add_filter( 'sensei_grading_filter_lessons', 'imperial_sensei_filter_lessons_by_quiz' );
+//add_filter( 'sensei_learners_filter_lessons', 'imperial_sensei_filter_lessons_by_quiz' );
 
 /**
  * 
@@ -381,7 +381,7 @@ function imperial_sensei_analysis_total_users( $total, $user_counts ) {
 	}
 	return $user_counts['avail_roles']['subscriber'];
 }
-add_filter( 'sensei_analysis_total_users', 'imperial_sensei_analysis_total_users', 10, 2 );
+//add_filter( 'sensei_analysis_total_users', 'imperial_sensei_analysis_total_users', 10, 2 );
 
 /**
  * 
@@ -426,26 +426,36 @@ function imperial_sensei_get_courses_dropdown() {
 	echo $html;
 	die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 }
-add_action( 'wp_ajax_get_courses_dropdown', 'imperial_sensei_get_courses_dropdown' );
+//add_action( 'wp_ajax_get_courses_dropdown', 'imperial_sensei_get_courses_dropdown' );
 
 /**
  * 
  * @param type $args
  * @return type
  */
-function imperial_sensei_learners_main_column_data( $args ) {
-	if ( !empty( $_GET['programme_id'] ) ) {
-		$selected_programme_id = intval( $_GET['programme_id'] );
-		preg_match( '/href="([^"]+)"/', $args['action'], $url );
-		$args['action'] = str_replace( $url[1], add_query_arg( array( 'programme_id' => $selected_programme_id ), $url[1] ), $args['action'] );
+function imperial_sensei_learners_main_column_data( $data, $item, $secondary_id = 0, $post_type = '' ) {
+	// Check for users, add data to row
+	if ( !empty($item->comment_ID) ) {
+		$data['date_completed'] = $item->comment_date;
+//		if ( 'course' == $post_type ) {
+//			$data['percent_complete'] = get_comment_meta( $item->comment_ID, 'percent', true);
+//		}
+//		if ( 'lesson' == $post_type ) {
+//			$data['grade'] = get_comment_meta( $item->comment_ID, 'grade', true);
+//		}
 	}
-	if ( false !== strstr( $args['action'], 'view=learners' ) && false === strstr( $args['action'], 'lesson_id=' ) ) {
-		preg_match( '/href="([^"]+)"/', $args['action'], $url );
-		$args['action'] = str_replace( $url[1], add_query_arg( array( 'view' => 'lessons' ), $url[1] ), $args['action'] );
-	}
-	return $args;
+//	if ( !empty( $_GET['programme_id'] ) ) {
+//		$selected_programme_id = intval( $_GET['programme_id'] );
+//		preg_match( '/href="([^"]+)"/', $data['action'], $url );
+//		$data['action'] = str_replace( $url[1], add_query_arg( array( 'programme_id' => $selected_programme_id ), $url[1] ), $data['action'] );
+//	}
+//	if ( false !== strstr( $args['action'], 'view=learners' ) && false === strstr( $data['action'], 'lesson_id=' ) ) {
+//		preg_match( '/href="([^"]+)"/', $data['action'], $url );
+//		$data['action'] = str_replace( $url[1], add_query_arg( array( 'view' => 'lessons' ), $url[1] ), $data['action'] );
+//	}
+	return $data;
 }
-add_filter( 'sensei_learners_main_column_data', 'imperial_sensei_learners_main_column_data' );
+add_action( 'sensei_learners_main_column_data', 'imperial_sensei_learners_main_column_data', 9, 4 );
 
 /**
  * Filter the column data shown, remove general admin edit links, add Programme ID to the other links, change text
@@ -480,11 +490,11 @@ function imperial_sensei_analysis_main_column_data( $args ) {
 	
 	return $args;
 }
-add_filter( 'sensei_analysis_overview_columns_column_data', 'imperial_sensei_analysis_main_column_data' );
-add_filter( 'sensei_analysis_overview_lessons_column_data', 'imperial_sensei_analysis_main_column_data' );
-add_filter( 'sensei_analysis_lesson_column_data', 'imperial_sensei_analysis_main_column_data' );
-add_filter( 'sensei_analysis_course_lesson_column_data', 'imperial_sensei_analysis_main_column_data' );
-add_filter( 'sensei_learners_main_column_data', 'imperial_sensei_analysis_main_column_data' );
+//add_filter( 'sensei_analysis_overview_columns_column_data', 'imperial_sensei_analysis_main_column_data' );
+//add_filter( 'sensei_analysis_overview_lessons_column_data', 'imperial_sensei_analysis_main_column_data' );
+//add_filter( 'sensei_analysis_lesson_column_data', 'imperial_sensei_analysis_main_column_data' );
+//add_filter( 'sensei_analysis_course_lesson_column_data', 'imperial_sensei_analysis_main_column_data' );
+//add_filter( 'sensei_learners_main_column_data', 'imperial_sensei_analysis_main_column_data' );
 
 
 /**
@@ -499,7 +509,7 @@ function imperial_sensei_ajax_redirect_url( $url ) {
 	$selected_programme_id = intval( $lesson_data['programme_id'] );
 	return add_query_arg( array( 'programme_id' => $selected_programme_id ), $url );
 }
-add_filter( 'sensei_ajax_redirect_url', 'imperial_sensei_ajax_redirect_url' );
+//add_filter( 'sensei_ajax_redirect_url', 'imperial_sensei_ajax_redirect_url' );
 
 /**
  * This adds JS for the Admin to help with Imperial Sensei changes
@@ -511,7 +521,7 @@ function imperial_sensei_admin_scripts() {
 		wp_enqueue_script( 'imperial_sensei', $sensei_js, array( 'jquery' ), $imp->version, $in_footer = true );
 	}
 }
-add_action( 'admin_print_scripts', 'imperial_sensei_admin_scripts', 20 );
+//add_action( 'admin_print_scripts', 'imperial_sensei_admin_scripts', 20 );
 
 /**
  * 
@@ -523,7 +533,7 @@ function imperial_sensei_grading_no_items_text( $no_items_text ) {
 	}
 	return $no_items_text;
 }
-add_filter( 'sensei_grading_no_items_text', 'imperial_sensei_grading_no_items_text' );
+//add_filter( 'sensei_grading_no_items_text', 'imperial_sensei_grading_no_items_text' );
 
 /**
  * 
@@ -535,7 +545,7 @@ function imperial_sensei_learners_no_items_text( $no_items_text ) {
 	}
 	return $no_items_text;
 }
-add_filter( 'sensei_learners_no_items_text', 'imperial_sensei_learners_no_items_text' );
+//add_filter( 'sensei_learners_no_items_text', 'imperial_sensei_learners_no_items_text' );
 
 /**
  * 
@@ -548,7 +558,7 @@ function imperial_sensei_learners_add_learner_form() {
 <?php
 	}
 }
-add_action( 'sensei_learners_add_learner_form', 'imperial_sensei_learners_add_learner_form' );
+//add_action( 'sensei_learners_add_learner_form', 'imperial_sensei_learners_add_learner_form' );
 
 /**
  * 
@@ -562,7 +572,7 @@ function imperial_sensei_learners_add_learner_redirect_url( $url ) {
 	}
 	return $url;
 }
-add_filter( 'sensei_learners_add_learner_redirect_url', 'imperial_sensei_learners_add_learner_redirect_url' );
+//add_filter( 'sensei_learners_add_learner_redirect_url', 'imperial_sensei_learners_add_learner_redirect_url' );
 
 /**
  * 
@@ -570,7 +580,7 @@ add_filter( 'sensei_learners_add_learner_redirect_url', 'imperial_sensei_learner
 function imperial_sensei_after_list_table_capture() {
 	ob_start();
 }
-add_action( 'sensei_after_list_table', 'imperial_sensei_after_list_table_capture', 5 );
+//add_action( 'sensei_after_list_table', 'imperial_sensei_after_list_table_capture', 5 );
 
 /**
  * 
@@ -583,17 +593,149 @@ function imperial_sensei_after_list_table_output() {
 	}
 	echo $html;
 }
-add_action( 'sensei_after_list_table', 'imperial_sensei_after_list_table_output', 20 );
+//add_action( 'sensei_after_list_table', 'imperial_sensei_after_list_table_output', 20 );
 
 
 // Remove all column ordering
-add_filter( 'sensei_grading_main_columns_sortable', '__return_empty_array' );
-add_filter( 'sensei_analysis_overview_courses_columns_sortable', '__return_empty_array' );
-add_filter( 'sensei_analysis_overview_lessons_columns_sortable', '__return_empty_array' );
-add_filter( 'sensei_analysis_overview_users_columns_sortable', '__return_empty_array' );
-add_filter( 'sensei_analysis_lesson_columns_sortable', '__return_empty_array' );
-add_filter( 'sensei_analysis_user_profile_columns_sortable', '__return_empty_array' );
-add_filter( 'sensei_analysis_course_user_columns_sortable', '__return_empty_array' );
-add_filter( 'sensei_analysis_course_lesson_columns_sortable', '__return_empty_array' );
-add_filter( 'sensei_learners_learners_columns_sortable', '__return_empty_array' );
-add_filter( 'sensei_learners_default_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_grading_main_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_analysis_overview_courses_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_analysis_overview_lessons_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_analysis_overview_users_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_analysis_lesson_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_analysis_user_profile_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_analysis_course_user_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_analysis_course_lesson_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_learners_learners_columns_sortable', '__return_empty_array' );
+//add_filter( 'sensei_learners_default_columns_sortable', '__return_empty_array' );
+
+/**
+ * Adds Analysis columns for Imperial use
+ *
+ * @param  array $columns existing columns
+ * @return array $columns existing and new columns
+ */
+function imperial_sensei_analysis_course_user_columns( $columns ) {
+	$add_columns = array(
+		'last_active' => __('Last Login', 'imperial'),
+		'percent_complete' => __('Percentage Complete', 'imperial'),
+	);
+	$slice_point = 0;
+	foreach ( $columns AS $key => $val ) {
+		if ( 'user_course_date_completed' == $key ) {
+			break;
+		}
+		$slice_point++;
+	}
+	if ( $slice_point ) {
+		$options_s = array_slice( $columns, 0, $slice_point );
+		$options_e = array_slice( $columns, $slice_point );
+
+		$columns = array_merge( $options_s, $add_columns, $options_e );
+	}
+	else {
+		$columns = array_merge( $columns, $add_columns );
+	}
+	return $columns;
+}
+add_action( 'sensei_analysis_course_user_columns', 'imperial_sensei_analysis_course_user_columns', 9, 1 );
+
+/**
+ * Populate the new columns for Imperial Sensei Analysis
+ *
+ * @param  array $content output
+ * @param  int $course_id course post id
+ * @param  int $user_id  course learner user id
+ * @return array $content modified output
+ */
+function imperial_sensei_analysis_course_user_column_data( $content, $course_id, $user_id ) {
+	global $woothemes_sensei;
+error_log( "imperial_sensei_analysis_course_user_column_data for $user_id");
+//	$content['last_active'] = bp_get_last_activity( $user_id );
+
+	$latest_activity = false;
+	$course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
+	$percent_complete = 0;
+	// Get lessions for the course.
+	$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $course_id );
+	// Set counter values.
+	$total_lessons = count( $course_lessons );
+	// avoid division by 0
+	if ( $total_lessons ) {
+		$first_lesson = 1;
+		$lessons_completed = 0;
+		// Work out progress from completed lessons.
+		foreach ($course_lessons as $lesson_item) {
+			if ( $first_lesson ) {
+				$content['user_course_date_started'] = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $user_id, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
+				$first_lesson = false;
+			}
+			// Check if Lesson is complete
+			$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $user_id, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
+			if ( '' != $user_lesson_end ) {
+				$latest_activity = $user_lesson_end;
+				// Check for Passed or Completed Setting
+				if ( 'passed' == $course_completion ) {
+					// If Setting is Passed -> Check for Quiz Grades
+					// Get Quiz ID
+					$lesson_quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_item->ID );
+					if ( $lesson_quiz_id ) {
+						// Quiz Grade
+						$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
+						// Check if Grade is bigger than pass percentage
+						$lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
+						if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
+							$lessons_completed++;
+						}
+					}
+				} else {
+					$lessons_completed++;
+				}
+			}
+		}
+		$percent_complete = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
+	}
+	$content['last_active'] = $latest_activity;
+	$content['percent_complete'] = $percent_complete . '%';
+
+	return $content;
+}
+//add_action( 'sensei_analysis_course_user_column_data', 'imperial_sensei_analysis_course_user_column_data', 9, 3 );
+
+/**
+ * 
+ * @param type $columns
+ * @param type $view
+ * @return type
+ */
+function imperial_sensei_learners_default_columns( $columns, $view ) {
+	if ( 'learners' == $view ) {
+		$add_columns = array(
+			'date_completed' => __('Date Completed', 'imperial'),
+		);
+//		if ( !empty($_GET['lesson_id']) ) {
+//			$add_columns['grade'] = __('Grade', 'imperial');
+//		}
+//		else {
+//			$add_columns['percent_complete'] = __('Percentage Complete', 'imperial');
+//		}
+
+		$slice_point = 0;
+		foreach ( $columns AS $key => $val ) {
+			$slice_point++;
+			if ( 'date_started' == $key ) {
+				break;
+			}
+		}
+		if ( $slice_point ) {
+			$options_s = array_slice( $columns, 0, $slice_point );
+			$options_e = array_slice( $columns, $slice_point );
+
+			$columns = array_merge( $options_s, $add_columns, $options_e );
+		}
+		else {
+			$columns = array_merge( $columns, $add_columns );
+		}
+	}
+	return $columns;
+}
+add_action( 'sensei_learners_default_columns', 'imperial_sensei_learners_default_columns', 9, 2 );
