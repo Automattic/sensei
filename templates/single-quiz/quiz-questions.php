@@ -47,6 +47,7 @@ $quiz_passmark_float = (float) $quiz_passmark;
     if( !is_user_logged_in() ){
         
         // do not show quiz realted information 
+        $woothemes_sensei->utils->sensei_register_button( '<div class="status register">', '</div>' );
 
     }elseif ( 0 < count( $lesson_quiz_questions ) )  {
     	$question_count = 1;
