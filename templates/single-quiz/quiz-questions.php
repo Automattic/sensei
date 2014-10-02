@@ -44,7 +44,11 @@ $quiz_passmark_float = (float) $quiz_passmark;
     echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
 
     // Lesson Quiz Meta
-    if ( 0 < count( $lesson_quiz_questions ) )  {
+    if( !is_user_logged_in() ){
+        
+        // do not show quiz realted information 
+
+    }elseif ( 0 < count( $lesson_quiz_questions ) )  {
     	$question_count = 1;
     	?>
     	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data">
