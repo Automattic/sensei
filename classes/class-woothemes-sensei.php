@@ -79,6 +79,8 @@ class WooThemes_Sensei {
 		register_activation_hook( $this->file, array( $this, 'activation' ) );
 		// Load the Utils class.
 		$this->load_class( 'utils' );
+		$this->utils = new WooThemes_Sensei_Utils;
+		
 		// Setup post types.
 		$this->load_class( 'posttypes' );
 		$this->post_types = new WooThemes_Sensei_PostTypes();
