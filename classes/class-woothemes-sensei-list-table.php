@@ -302,7 +302,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	 * @since  1.2.0
 	 * @return void
 	 */
-	public function bulk_actions() {
+	public function bulk_actions( $which = '' ) {
 		// This will be output Above the table headers on the left
 	} // End bulk_actions()
 
