@@ -2101,7 +2101,7 @@ class WooThemes_Sensei_Frontend {
 				// Get all user's orders
 				$order_args = array(
 					'post_type' => 'shop_order',
-					'post_status' => array( 'completed', 'processing' ),
+					'post_status' =>  array( 'wc-processing', 'wc-completed' ),
 					'posts_per_page' => -1,
 					'meta_query' => array(
 						array(
@@ -2214,7 +2214,7 @@ class WooThemes_Sensei_Frontend {
 			$order_args = array(
 				'post_type' => 'shop_order',
 				'posts_per_page' => -1,
-				'post_satus' => array( 'completed', 'processing' ),
+				'post_satus' => array( 'wc-processing', 'wc-completed' ),
 				'meta_query' => array(
 					array(
 						'key' => '_customer_user',
