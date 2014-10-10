@@ -95,12 +95,12 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_woocommerce_in_cart_message', array( $this, 'sensei_woocommerce_in_cart_message' ), 10 );
 		add_action( 'sensei_course_start', array( $this, 'sensei_course_start' ), 10 );
 		add_filter( 'get_comments_number', array( $this, 'sensei_lesson_comment_count' ), 1 );
-		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 ); 
+		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 );
 		// 1.3.0
 		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
 		//1.6.2
-		add_filter( 'wp_login_failed', array( $this, 'sensei_login_fail_redirect' ), 10 ); 
-		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 ); 
+		add_filter( 'wp_login_failed', array( $this, 'sensei_login_fail_redirect' ), 10 );
+		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 );
 		//1.6.3
 		add_action( 'init', array( $this, 'sensei_process_registration' ), 2 );
 		//1.7.0
@@ -170,6 +170,7 @@ class WooThemes_Sensei_Frontend {
 	 */
 	public function enqueue_scripts () {
 		global $woothemes_sensei;
+
 		$disable_js = false;
 		if ( isset( $woothemes_sensei->settings->settings[ 'js_disable' ] ) ) {
 			$disable_js = $woothemes_sensei->settings->settings[ 'js_disable' ];
@@ -380,7 +381,7 @@ class WooThemes_Sensei_Frontend {
 	 */
 	public function sensei_setup_nav_menu_item( $item ) {
 		global $pagenow, $wp_rewrite, $woothemes_sensei;
-		
+
 		if( 'nav-menus.php' != $pagenow && !defined('DOING_AJAX') && isset( $item->url ) && 'custom' == $item->type ) {
 
 			// Set up Sensei menu links
@@ -412,7 +413,7 @@ class WooThemes_Sensei_Frontend {
 				case '#senseilearnerprofile':
 					$item->url = esc_url( $woothemes_sensei->learner_profiles->get_permalink() );
 					break;
-				
+
 				default:
 					break;
 			}
@@ -452,7 +453,7 @@ class WooThemes_Sensei_Frontend {
 		global $woothemes_sensei;
 
 		foreach( $sorted_menu_items as $k=>$item ) {
-			// Remove the My Messages link for logged out users or if Private Messages are disabled.	
+			// Remove the My Messages link for logged out users or if Private Messages are disabled.
 			if( get_post_type_archive_link( 'sensei_message' ) == $item->url ) {
 				if ( !is_user_logged_in() || ( isset( $woothemes_sensei->settings->settings['messages_disable'] ) && $woothemes_sensei->settings->settings['messages_disable'] ) ) {
 					unset( $sorted_menu_items[$k] );
@@ -1491,8 +1492,8 @@ class WooThemes_Sensei_Frontend {
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">
-					<?php	
-					// output the actul form markup		
+					<?php
+					// output the actul form markup
 						$this->sensei_get_template( 'user/login-form.php');
 					?>
 				</div>
@@ -1500,7 +1501,7 @@ class WooThemes_Sensei_Frontend {
 			<?php
 			if ( get_option('users_can_register') ) {
 
-				// get current url 
+				// get current url
 				$action_url = get_permalink();
 
 				?>
@@ -2100,6 +2101,7 @@ class WooThemes_Sensei_Frontend {
 				// Get all user's orders
 				$order_args = array(
 					'post_type' => 'shop_order',
+					'post_status' => array( 'completed', 'processing' ),
 					'posts_per_page' => -1,
 					'meta_query' => array(
 						array(
@@ -2107,14 +2109,8 @@ class WooThemes_Sensei_Frontend {
 							'value' => $user_id
 						)
 					),
-					'tax_query' => array(
-						array(
-							'taxonomy' => 'shop_order_status',
-							'field' => 'slug',
-							'terms' => array( 'completed', 'processing' )
-						)
-					)
 				);
+
 				$orders = get_posts( $order_args );
 
 				$product_ids = array();
@@ -2218,19 +2214,13 @@ class WooThemes_Sensei_Frontend {
 			$order_args = array(
 				'post_type' => 'shop_order',
 				'posts_per_page' => -1,
+				'post_satus' => array( 'completed', 'processing' ),
 				'meta_query' => array(
 					array(
 						'key' => '_customer_user',
 						'value' => $user_id
 					)
 				),
-				'tax_query' => array(
-					array(
-						'taxonomy' => 'shop_order_status',
-						'field' => 'slug',
-						'terms' => array( 'completed', 'processing' )
-					)
-				)
 			);
 			$orders = get_posts( $order_args );
 
@@ -2265,15 +2255,15 @@ class WooThemes_Sensei_Frontend {
 	} // End hide_sensei_activity()
 
 	/**
-	 * Redirect failed login attempts to the front end login page 
+	 * Redirect failed login attempts to the front end login page
 	 * in the case where the login fields are not left empty
-	 * 
+	 *
 	 * @param  string  $username
 	 * @return void redirect
 	 */
 	function sensei_login_fail_redirect( $username ) {
 
-		//if not posted from the sensei login form let 
+		//if not posted from the sensei login form let
 		// WordPress or any other party handle the failed request
 
 	    if( !isset( $_REQUEST['form'] ) &&  'sensei-login' != $_REQUEST['form'] ){
@@ -2282,18 +2272,18 @@ class WooThemes_Sensei_Frontend {
 
     	// Get the reffering page, where did the post submission come from?
     	$referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER']);
- 
+
    		 // if there's a valid referrer, and it's not the default log-in screen
 	    if(!empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin')){
 	        // let's append some information (login=failed) to the URL for the theme to use
-	        wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+	        wp_redirect( add_query_arg('login', 'failed', $referrer) );
 	    	exit;
     	}
 	}// End sensei_login_fail_redirect_to_front_end_login
 
 	/**
 	 * Handle the login reques from all sensei intiated login forms.
-	 * 
+	 *
 	 * @return void redirect
 	 */
 	function sensei_handle_login_request( ) {
@@ -2301,18 +2291,18 @@ class WooThemes_Sensei_Frontend {
 
 		// Check that it is a sensei login request and if it has a valid nonce
 	    if(  isset( $_REQUEST['form'] ) && 'sensei-login' == $_REQUEST['form'] ) {
-	
+
 	    	// Validate the login request nonce
 		    if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'sensei-login' ) ){
 		    	return;
 		    }
 
-		    
+
 		    //get the page where the sensei log form is located
 		    $referrer = $_REQUEST['_wp_http_referer'];
 		    //$redirect = $_REQUEST['_sensei_redirect'];
 
-		    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )  
+		    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )
 		    	 && ( isset( $_REQUEST['pwd'] ) && !empty( $_REQUEST['pwd'] ) ) ){
 
 		    	// when the user has entered a password or username do the sensei login
@@ -2326,37 +2316,37 @@ class WooThemes_Sensei_Frontend {
 		    		// validate the user object
 		    		if( !$user ){
 		    			// the email doesnt exist
-		    			wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+		    			wp_redirect( add_query_arg('login', 'failed', $referrer) );
 		        		exit;
 		    		}
 
-		    		//assigne the username to the creds array for further processing 
+		    		//assigne the username to the creds array for further processing
 		    		$creds['user_login'] =  $user->user_login ;
 
 		    	}else{
-		    
+
 		    		// process this as a default username login
 		    		$creds['user_login'] = sanitize_text_field( $_REQUEST['log'] ) ;
-		    	
+
 		    	}
-				
+
 				// get setup the rest of the creds array
 				$creds['user_password'] = sanitize_text_field( $_REQUEST['pwd'] );
 				$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
 
 				//attempt logging in with the given details
-				$user = wp_signon( $creds, false ); 
+				$user = wp_signon( $creds, false );
 
 				if ( is_wp_error($user) ){ // on login failure
 
-					wp_redirect( add_query_arg('login', 'failed', $referrer) ); 
+					wp_redirect( add_query_arg('login', 'failed', $referrer) );
 		        	exit;
 
 				}else{ // on login success
 
 					/**
-					* change the redirect url programatically 
-					* 
+					* change the redirect url programatically
+					*
 					* @since 1.6.1
 					*
 					* @param string $referrer the page where the current url wheresensei login form was posted from
@@ -2369,21 +2359,21 @@ class WooThemes_Sensei_Frontend {
 
 				}	// end is_wp_error($user)
 
-		    }else{ // if username or password is empty 
+		    }else{ // if username or password is empty
 
-		    	wp_redirect( add_query_arg('login', 'emptyfields', $referrer) ); 
+		    	wp_redirect( add_query_arg('login', 'emptyfields', $referrer) );
 		        exit;
 
 		    } // end if username $_REQUEST['log']  and password $_REQUEST['pwd'] is empty
 
 	    	return ;
 
-	    }elseif( ( isset( $_GET['login'] ) ) ) { 
+	    }elseif( ( isset( $_GET['login'] ) ) ) {
 	    	// else if this request is a redircect from a previously faile login request
 	    	$this->login_message_process();
-			
+
 			//exit the handle login request function
-			return; 
+			return;
 	    }
 
 	    // if none of the above
@@ -2392,8 +2382,8 @@ class WooThemes_Sensei_Frontend {
 	} // End  sensei_login_fail_redirect_to_front_end_login
 
 	/**
-	 * handle sensei specific registration requests 
-	 * 
+	 * handle sensei specific registration requests
+	 *
 	 * @return void redirect
 	 *
 	 */
@@ -2404,13 +2394,13 @@ class WooThemes_Sensei_Frontend {
 			// exit functionas this is not a sensei registration request
 			return ;
 		}
-		// check for spam throw cheating huh 
+		// check for spam throw cheating huh
 		if( isset( $_POST['email_2'] ) &&  '' !== $_POST['email_2']   ){
 			$message = 'Error:  The spam field should be empty';
 			$woothemes_sensei->notices->add_notice( $message, 'alert');
 			return;
 		}
-			
+
 		// retreive form variables
 		$new_user_name		= sanitize_user( $_POST['sensei_reg_username'] );
 		$new_user_email		= $_POST['sensei_reg_email'];
@@ -2440,14 +2430,14 @@ class WooThemes_Sensei_Frontend {
 			$email_error_notice = __( '<strong>ERROR</strong>: The email address isn&#8217;t correct.' );
 		} elseif ( email_exists( $new_user_email ) ) {
 			$email_error_notice = __( '<strong>ERROR</strong>: This email is already registered, please choose another one.' );
-		} 
+		}
 
 		// exit on email address error
 		if( '' !== $email_error_notice ){
 			$woothemes_sensei->notices->add_notice( $email_error_notice , 'alert');
 			return;
 		}
-		
+
 		//check user password
 
 		// exit on email address error
@@ -2462,13 +2452,13 @@ class WooThemes_Sensei_Frontend {
 			$woothemes_sensei->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert');
 		}
 
-		// notify the user 
+		// notify the user
 		wp_new_user_notification( $user_id, $new_user_password );
 
 		// set global current user aka log the user in
 		$current_user = get_user_by( 'id', $user_id );
 		wp_set_auth_cookie( $user_id, true );
-		
+
 		// Redirect
 		if ( wp_get_referer() ) {
 			$redirect = esc_url( wp_get_referer() );
@@ -2482,8 +2472,8 @@ class WooThemes_Sensei_Frontend {
 	} // end  sensei_process_registration)()
 
 	/**
-	 * login_message_process(). handle the login message displayed on faile login 
-	 * 
+	 * login_message_process(). handle the login message displayed on faile login
+	 *
 	 * @return void redirect
 	 * @since 1.7.0
 	 */
