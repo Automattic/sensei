@@ -382,6 +382,22 @@ class WooThemes_Sensei_Learners {
 						WooThemes_Sensei_Utils::sensei_start_lesson( $lesson->ID, $user_id, true );
 					}
 
+					// Log course end activity
+					$user = get_userdata( $user_id );
+					$args = array(
+					    'post_id' => $course_id,
+					    'username' => $user->user_login,
+					    'user_email' => $user->user_email,
+					    'user_url' => $user->user_url,
+					    'data' => __( 'Course completed by the user', 'woothemes-sensei' ),
+					    'type' => 'sensei_course_end', /* FIELD SIZE 20 */
+					    'parent' => 0,
+					    'user_id' => $user_id,
+					    'action' => 'update'
+					);
+					$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+					// Run course completion hook
 					do_action( 'sensei_user_course_end', $user_id, $course_id );
 				}
 
