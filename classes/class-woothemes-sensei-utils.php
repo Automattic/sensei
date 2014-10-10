@@ -300,7 +300,7 @@ class WooThemes_Sensei_Utils {
 		    'meta_key'    => '_customer_user',
 		    'meta_value'  => intval( $user_id ),
 		    'post_type'   => 'shop_order',
-		    'post_status' => 'publish'
+		    'post_status' => array( 'completed', 'processing' ),
 		) );
 
 		foreach ( $orders as $order_id ) {
