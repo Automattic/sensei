@@ -1771,17 +1771,17 @@ class WooThemes_Sensei_Lesson {
 			case 'lesson-course':
 				$lesson_course_id = get_post_meta( $id, '_lesson_course', true);
 				if ( 0 < absint( $lesson_course_id )
-                    && !isset( $woothemes_sensei->globals['lesson-course-column-data-added'] ) ) {
+                    && !isset( $woothemes_sensei->globals['lesson-course-column-data-added'][$id] ) ) {
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_course_id ) ) ) ) . '">' . get_the_title( absint( $lesson_course_id ) ) . '</a>';
-                    $woothemes_sensei->globals['lesson-course-column-data-added'] = true;
+                    $woothemes_sensei->globals['lesson-course-column-data-added'][$id] = true;
 				} // End If Statement
 			break;
 			case 'lesson-prerequisite':
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true);
 				if ( 0 < absint( $lesson_prerequisite_id )
-                    && !isset( $woothemes_sensei->globals['lesson-prerequisite-column-data-added'] ) ) {
+                    && !isset( $woothemes_sensei->globals['lesson-prerequisite-column-data-added'][$id] ) ) {
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) ) . '">' . get_the_title( absint( $lesson_prerequisite_id ) ) . '</a>';
-                    $woothemes_sensei->globals['lesson-prerequisite-column-data-added'] = true;
+                    $woothemes_sensei->globals['lesson-prerequisite-column-data-added'][$id] = true;
 				} // End If Statement
 			break;
 			default:

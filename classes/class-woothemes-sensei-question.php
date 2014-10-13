@@ -89,24 +89,24 @@ class WooThemes_Sensei_Question {
                 echo $id;
                 break;
             case 'question-type':
-                if( !isset($woothemes_sensei->globals['question-type-column-data-added'] ) ) {
+                if( !isset($woothemes_sensei->globals['question-type-column-data-added'][$id] ) ) {
                     $question_type = strip_tags(get_the_term_list($id, 'question-type', '', ', ', ''));
                     $output = $this->question_types[$question_type];
                     if (!$output) {
                         $output = '&mdash;';
                     } // End If Statement
                     echo $output;
-                    $woothemes_sensei->globals['question-type-column-data-added'] = true;
+                    $woothemes_sensei->globals['question-type-column-data-added'][$id] = true;
                 }
                 break;
             case 'question-category':
-                if( !isset( $woothemes_sensei->globals['question-category-column-data-added'] ) ){
+                if( !isset( $woothemes_sensei->globals['question-category-column-data-added'][$id] ) ){
                     $output = strip_tags(get_the_term_list($id, 'question-category', '', ', ', ''));
                     if (!$output) {
                         $output = '&mdash;';
                     }
                     echo $output;
-                    $woothemes_sensei->globals['question-category-column-data-added'] = true;
+                    $woothemes_sensei->globals['question-category-column-data-added'][$id] = true;
                 }
 			break;
 			default:
