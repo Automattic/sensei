@@ -1,5 +1,20 @@
 *** Sensei Changelog ***
 
+2014.10.09 - version 1.6.6
+ * Fix - bug where in certain cases the next lesson doesn't become available when the pre requisite is completed
+ * Fix - Resolved php notices and warnings
+ * Fix - My Courses login issues on certain server setup
+ * Fix - Move misplaced div tag on the login page
+ * Fix - Prevent sending a quiz graded email when there is no quiz
+ * Tweak - Replaces back links with a single breadcrumb trail.
+ * Tweak - Ensure contact teacher button still shows on lessons.
+ * Tweak - Standardises sensei_view_lesson_quiz_text filter
+ * Tweak - Allow users to login with email
+ * Tweak - When updating a quiz title, update the quiz title immediately without the need for a page refresh
+ * Tweak - Makes private message textarea full width
+ * New - More hooks and filters
+ * New - Sensei theme notices for theme unsupported themes and a link to the documentation theme page
+
 2014.08.21 - version 1.6.5
  * Fix - Fixing chosen input width in New Course panel in Lesson edit screen
  * Fix - Adds a missing sensei_please_purchase_course_text filter

@@ -68,6 +68,9 @@ class WooThemes_Sensei_Admin {
 		// Add notices to WP dashboard
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 
+		// Reset theme notices when switching themes
+		add_action( 'switch_theme', array( $this, 'reset_theme_check_notices' ) );
+
 	} // End __construct()
 
 	/**
@@ -88,7 +91,7 @@ class WooThemes_Sensei_Admin {
 
 		if( $menu_cap ) {
 			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
-			$main_page = add_menu_page( __( 'Sensei', 'woothemes-sensei' ), __( 'Sensei', 'woothemes-sensei' ), $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
+			$main_page = add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
 		}
 
 		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
@@ -1255,7 +1258,7 @@ class WooThemes_Sensei_Admin {
 		global $pagenow;
 
 		if( 'nav-menus.php' == $pagenow ) {
-			add_meta_box( 'add-sensei-links', __( 'Sensei', 'woothemes-sensei' ), array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
+			add_meta_box( 'add-sensei-links', 'Sensei', array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
 		}
 	}
 
@@ -1321,6 +1324,7 @@ class WooThemes_Sensei_Admin {
         if( isset( $_GET['sensei_hide_notice'] ) ) {
         	switch( esc_attr( $_GET['sensei_hide_notice'] ) ) {
 				case 'menu_settings': add_user_meta( $user_id, 'sensei_hide_menu_settings_notice', true ); break;
+				case 'theme_check': add_user_meta( $user_id, 'sensei_hide_theme_check_notice', true ); break;
 			}
         }
 
@@ -1338,6 +1342,37 @@ class WooThemes_Sensei_Admin {
 			    <?php
 	        }
 	    }
+
+	    if ( ! current_theme_supports( 'sensei' ) ) {
+	    	$template = get_option( 'template' );
+
+	    	if ( ! in_array( $template, array( 'twentyfourteen', 'twentyeleven', 'twentytwelve' ) ) ) {
+		    	$hide_theme_check_notice = get_user_meta( $user_id, 'sensei_hide_theme_check_notice', true );
+
+		    	if( ! $hide_theme_check_notice ) {
+				    ?>
+				    <div id="message" class="error sensei-message sensei-connect">
+				    	<div class="squeezer">
+			    			<p><?php printf( __( '<strong>Your theme does not declare Sensei support</strong> &#8211; if you encounter layout issues please read our integration guide or choose a %1$sSensei theme%2$s :)', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/product-category/themes/sensei-themes/">', '</a>' ); ?></p>
+							<p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-theming/#section-16', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-primary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
+			    		</div>
+			    	</div>
+			    	<?php
+			    }
+			}
+		}
+	}
+
+	/**
+	 * Reset theme check notice
+	 * @return void
+	 */
+	public function reset_theme_check_notices() {
+		global $current_user;
+		wp_get_current_user();
+        $user_id = $current_user->ID;
+
+		delete_user_meta( $user_id, 'sensei_hide_theme_check_notice' );
 	}
 
 } // End Class

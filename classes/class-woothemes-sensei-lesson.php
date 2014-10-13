@@ -659,11 +659,9 @@ class WooThemes_Sensei_Lesson {
 
 					$html .= '</table>';
 
-					if( ! isset( $this->question_order ) ) {
-						$this->question_order = '';
-					}
+					$question_order_sting = $this->get_question_order( $questions );
 
-					$html .= '<input type="hidden" id="question-order" name="question-order" value="' . $this->question_order . '" />';
+					$html .= '<input type="hidden" id="question-order" name="question-order" value="' . $question_order_sting . '" />';
 
 				$html .= '</div>';
 
@@ -686,6 +684,7 @@ class WooThemes_Sensei_Lesson {
 		global $quiz_questions;
 
 		$quiz_questions = $questions;
+		$question_order = ''; 
 
 		$html = '';
 
@@ -725,15 +724,45 @@ class WooThemes_Sensei_Lesson {
 				// Row with question and actions
 				$html .= $this->quiz_panel_question( $question_type, $question_counter, $question_id, 'quiz', $multiple_data );
 				$question_counter += $question_increment;
-
-				if( isset( $this->question_order ) && strlen( $this->question_order ) > 0 ) { $this->question_order .= ','; }
-				$this->question_order .= $question_id;
 			} // End For Loop
 		}
 
 		return $html;
 
 	}
+
+	/**
+	* return the string of concatenated question id.
+	*
+	* @access public
+	* @since 1.7.0
+	* @param array $questions
+	* @return string $question_order_csv 
+	*/
+	public function  get_question_order( $questions ){
+
+		$question_order_csv = '';
+
+		foreach ( $questions as $index => $question ) {
+			$question_id = $question->ID;
+
+			// setup for the current question id
+			$question_id_string = '';
+
+			// all items after the firs one should have a comma pre-appended
+			if( $index == 0 ){
+				$question_id_string = $question_id;
+			}else{
+				$question_id_string = ','. $question_id;
+			}
+
+			// append to the existing list of questions
+			$question_order_csv .= $question_id_string;
+
+		} // End For Loop
+
+		return $question_order_csv;
+	}// end get_question_order
 
 	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz', $multiple_data = array() ) {
 		global $row_counter, $woothemes_sensei, $quiz_questions;
@@ -806,7 +835,7 @@ class WooThemes_Sensei_Lesson {
 						if( $question_type != 'category' ) {
 
 							$html .= '<td class="table-count question-number question-count-column"><span class="number">' . $question_counter . '</span></td>';
-							$html .= '<td>' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
+							$html .= '<td class="question-title-column">' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
 							$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 							$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', __( 'True/False', 'woothemes-sensei' ) ), $question_type ) );
 							$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
@@ -1734,21 +1763,25 @@ class WooThemes_Sensei_Lesson {
 	 * @return void
 	 */
 	public function add_column_data ( $column_name, $id ) {
-		global $wpdb, $post;
+		global $wpdb, $post, $woothemes_sensei;
 		switch ( $column_name ) {
 			case 'id':
 				echo $id;
 			break;
 			case 'lesson-course':
 				$lesson_course_id = get_post_meta( $id, '_lesson_course', true);
-				if ( 0 < absint( $lesson_course_id ) ) {
+				if ( 0 < absint( $lesson_course_id )
+                    && !isset( $woothemes_sensei->globals['lesson-course-column-data-added'][$id] ) ) {
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_course_id ) ) ) ) . '">' . get_the_title( absint( $lesson_course_id ) ) . '</a>';
+                    $woothemes_sensei->globals['lesson-course-column-data-added'][$id] = true;
 				} // End If Statement
 			break;
 			case 'lesson-prerequisite':
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true);
-				if ( 0 < absint( $lesson_prerequisite_id ) ) {
+				if ( 0 < absint( $lesson_prerequisite_id )
+                    && !isset( $woothemes_sensei->globals['lesson-prerequisite-column-data-added'][$id] ) ) {
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) ) . '">' . get_the_title( absint( $lesson_prerequisite_id ) ) . '</a>';
+                    $woothemes_sensei->globals['lesson-prerequisite-column-data-added'][$id] = true;
 				} // End If Statement
 			break;
 			default:

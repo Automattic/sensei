@@ -105,6 +105,17 @@ class WooThemes_Sensei {
 		$this->load_class( 'course-results' );
 		$this->course_results = new WooThemes_Sensei_Course_Results();
 		$this->course_results->token = $this->token;
+
+		// Load the Course class
+		$this->load_class( 'course' );
+		$this->course = new WooThemes_Sensei_Course();
+		$this->course->token = $this->token;
+
+		// Load the lesson class
+		$this->load_class( 'lesson' );
+		$this->lesson = new WooThemes_Sensei_Lesson();
+		$this->lesson->token = $this->token;
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 
@@ -539,7 +550,7 @@ class WooThemes_Sensei {
 	 * @return void
 	 */
 	public function woocommerce_course_update ( $course_id = 0, $order_user = array()  ) {
-		global $current_user;
+		global $current_user,  $woothemes_sensei;
 
 		if ( ! isset( $current_user ) ) return;
 
@@ -570,7 +581,7 @@ class WooThemes_Sensei {
 	    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_end' ) );
 
 	    		// Get all course lessons
-	    		$course_lessons = WooThemes_Sensei_Course::course_lessons( $course_id );
+	    		$course_lessons = $woothemes_sensei->course->course_lessons( $course_id );
 
 	    		// Remove all lesson user meta in course
 	    		if( isset( $course_lessons) && is_array( $course_lessons ) && count( $course_lessons ) > 0 ) {

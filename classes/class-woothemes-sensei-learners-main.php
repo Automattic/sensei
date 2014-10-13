@@ -311,11 +311,6 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 		$total = count( $user_ids );
 
-		$offset = '';
-		if ( isset( $_GET['paged'] ) && 0 < intval( $_GET['paged'] ) ) {
-			$offset = $this->per_page * ( $_GET['paged'] - 1 );
-		} // End If Statement
-
 		// Don't run the query if there are no users taking this course.
 		if ( empty($user_ids) ) return false;
 
@@ -327,7 +322,6 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		$args = array(
 			'number' => $total,
 			'include' => $user_ids,
-			'offset' => $offset,
 			'search' => $search,
 			'fields' => 'all_with_meta'
 		);

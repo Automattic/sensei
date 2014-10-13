@@ -57,7 +57,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 							break;
 
 							case 'complete':
-								$user_lesson_end = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_start', 'field' => 'comment_content' ) );
+								$user_lesson_end = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
 								if ( ! $user_lesson_end || $user_lesson_end == '' || strlen( $user_lesson_end ) == 0 ) {
 									$view_lesson = false;
 								}
@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
 				$user_taking_course = sensei_has_user_started_course( $lesson_course_id, $current_user->ID );
 
-				if( current_user_can( 'administrator' ) ) {
+				if( sensei_all_access() ) {
 					$view_lesson = true;
 					$user_taking_course = true;
 				}
@@ -81,30 +81,30 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				};
 
 				if( $view_lesson ) { ?>
-				<section class="entry fix">
-				<?php if ( $is_preview && !$user_taking_course ) { ?>
-					<div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
-				<?php } ?>
+					<section class="entry fix">
+					<?php if ( $is_preview && !$user_taking_course ) { ?>
+						<div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
+					<?php } ?>
 
-                	<?php
-                	if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) || $is_preview ) {
-                		if( apply_filters( 'sensei_video_position', 'top', $post->ID ) == 'top' ) {
-                			do_action( 'sensei_lesson_video', $post->ID );
-                		}
-                		the_content();
-                	} else {
-                		echo '<p>' . $post->post_excerpt . '</p>';
-                	}
-            		?>
-				</section>
+	                	<?php
+	                	if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) || $is_preview ) {
+	                		if( apply_filters( 'sensei_video_position', 'top', $post->ID ) == 'top' ) {
+	                			do_action( 'sensei_lesson_video', $post->ID );
+	                		}
+	                		the_content();
+	                	} else {
+	                		echo '<p>' . $post->post_excerpt . '</p>';
+	                	}
+	            		?>
+					</section>
 
-				<?php if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) || $is_preview ) {
-					do_action( 'sensei_lesson_single_meta' );
-				} else {
-					do_action( 'sensei_lesson_course_signup', $lesson_course_id );
-				} ?>
+					<?php if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) || $is_preview ) {
+						do_action( 'sensei_lesson_single_meta' );
+					} else {
+						do_action( 'sensei_lesson_course_signup', $lesson_course_id );
+					} ?>
 
-				<?php
+					<?php
 
 				} else {
 					if ( $lesson_prerequisite > 0 ) {
