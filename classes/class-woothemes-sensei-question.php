@@ -82,7 +82,7 @@ class WooThemes_Sensei_Question {
 	 * @return void
 	 */
 	public function add_column_data ( $column_name, $id ) {
-		global $wpdb, $post;
+		global $wpdb, $post, $woothemes_sensei;
 
 		switch ( $column_name ) {
             case 'id':
