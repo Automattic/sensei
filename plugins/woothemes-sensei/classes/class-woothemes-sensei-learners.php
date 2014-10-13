@@ -22,17 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - load_data_object()
  * - learners_page()
  * - learners_default_view()
- * - learners_user_quiz_view()
  * - learners_headers()
  * - wrapper_container()
  * - learners_default_nav()
- * - learners_user_quiz_nav()
- * - get_lessons_dropdown()
- * - lessons_drop_down_html()
- * - get_lessons_html()
- * - process_learners()
- * - get_direct_url()
- * - sensei_learners_notices()
+ * - get_redirect_url()
+ * - remove_user_from_post()
+ * - json_search_users()
+ * - add_new_learners()
+ * - add_learner_notices()
  */
 class WooThemes_Sensei_Learners {
 	public $token;
@@ -88,7 +85,7 @@ class WooThemes_Sensei_Learners {
 			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
 		}
 
-	} // End analysis_admin_menu()
+	} // End learners_admin_menu()
 
 	/**
 	 * enqueue_scripts function.
@@ -176,20 +173,6 @@ class WooThemes_Sensei_Learners {
 	 */
 	public function learners_page() {
 		global $woothemes_sensei;
-		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) && isset( $_GET['quiz_id'] ) && 0 < intval( $_GET['quiz_id'] ) ) {
-			$this->learners_user_quiz_view();
-		} else {
-			$this->learners_default_view();
-		} // End If Statement
-	} // End analysis_page()
-
-	/**
-	 * learners_default_view default view for learners page
-	 * @since  1.6.0
-	 * @return void
-	 */
-	public function learners_default_view( $type = '' ) {
-		global $woothemes_sensei;
 		// Load Learners data
 		$this->load_data_table_files();
 		$course_id = 0;
@@ -210,6 +193,9 @@ class WooThemes_Sensei_Learners {
 			<div class="sensei-learners-main">
 				<?php $sensei_learners_main->display(); ?>
 			</div>
+			<div class="sensei-learners-extra">
+				<?php do_action( 'sensei_learners_extra' ); ?>
+			</div>
 		</div>
 		<?php
 		do_action( 'learners_wrapper_container', 'bottom' );
@@ -217,18 +203,23 @@ class WooThemes_Sensei_Learners {
 	} // End learners_default_view()
 
 	/**
-	 * analysis_headers outputs analysis general headers
+	 * learners_headers outputs Learners general headers
 	 * @since  1.6.0
 	 * @return void
 	 */
 	public function learners_headers( $args = array( 'nav' => 'default' ) ) {
+		global $woothemes_sensei;
+
 		$function = 'learners_' . $args['nav'] . '_nav';
 		$this->$function();
+		?>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+		<?php
 		do_action( 'sensei_learners_after_headers' );
 	} // End learners_headers()
 
 	/**
-	 * wrapper_container wrapper for analysis area
+	 * wrapper_container wrapper for Learners area
 	 * @since  1.6.0
 	 * @param $which string
 	 * @return void
@@ -242,24 +233,24 @@ class WooThemes_Sensei_Learners {
 	} // End wrapper_container()
 
 	/**
-	 * learners_default_nav default nav area for analysis
+	 * learners_default_nav default nav area for Learners
 	 * @since  1.6.0
 	 * @return void
 	 */
 	public function learners_default_nav() {
-		global $woothemes_sensei;
-		
-		$title = esc_html( $this->name );
+		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['course_id'] ) ) { 
-			$title .= '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['course_id'] ) ) . '</span>'; 
-		} 
+			$course_id = intval( $_GET['course_id'] );
+			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) );
+			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, get_the_title( $course_id ) ); 
+		}
 		if ( isset( $_GET['lesson_id'] ) ) { 
-			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $_GET['lesson_id'] ) ) . '</span>'; 
+			$lesson_id = intval( $_GET['lesson_id'] );
+			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>'; 
 		}
 		?>
 			<h2><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?></h2>
-			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
-			<?php
+		<?php
 	} // End learners_default_nav()
 
 	public function get_redirect_url() {
@@ -442,12 +433,11 @@ class WooThemes_Sensei_Learners {
 				);
 			}
 			?>
-		    <div class="<?php echo $msg[0]; ?>">
-		        <p><?php echo $msg[1]; ?></p>
-		    </div>
-		    <?php
+			<div class="learners-notice <?php echo $msg[0]; ?>">
+				<p><?php echo $msg[1]; ?></p>
+			</div>
+			<?php
 		}
 	}
 
 } // End Class
-?>

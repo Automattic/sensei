@@ -15,12 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
- * - build_data_array()
- * - load_stats()
- * - stats_boxes()
+ * - get_columns()
+ * - get_sortable_columns()
+ * - prepare_items()
+ * - single_row()
+ * - get_courses()
+ * - get_lessons()
+ * - get_learners()
  * - no_items()
  * - data_table_header()
  * - data_table_footer()
+ * - search_button()
  */
 class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	public $course_id = 0;
@@ -33,34 +38,33 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	 * @since  1.6.0
 	 * @return  void
 	 */
-	public function __construct () {
-
-		// Load Parent token into constructor
-		parent::__construct( 'learners_main' );
+	public function __construct ( $course_id = 0, $lesson_id = 0 ) {
+		$this->course_id = intval( $course_id );
+		$this->lesson_id = intval( $lesson_id );
 
 		if( isset( $_GET['view'] ) && '' != $_GET['view'] ) {
 			$this->view = $_GET['view'];
 		}
 
-		if( isset( $_GET['course_id'] )  && 0 < intval( $_GET['course_id'] ) ) {
-			$this->course_id = intval( $_GET['course_id'] );
-		}
-
-		if( isset( $_GET['lesson_id'] )  && 0 < intval( $_GET['lesson_id'] ) ) {
-			$this->lesson_id = intval( $_GET['lesson_id'] );
+		// Viewing a single lesson always sets the view to Learners
+		if( $this->lesson_id ) {
 			$this->view = 'learners';
 		}
+
+		// Load Parent token into constructor
+		parent::__construct( 'learners_main' );
 
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+		add_action( 'sensei_learners_extra', array( $this, 'add_learners_box' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	} // End __construct()
 
 	/**
 	 * get_columns Define the columns that are going to be used in the table
-	 * @since  1.X
+	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_columns() {
@@ -101,7 +105,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 	/**
 	 * get_columns Define the columns that are going to be used in the table
-	 * @since  1.X
+	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_sortable_columns() {
@@ -137,7 +141,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 	/**
 	 * Prepare the table with different parameters, pagination, columns and table elements
-	 * @since  1.2.0
+	 * @since  1.7.0
 	 * @return void
 	 */
 	public function prepare_items() {
@@ -219,7 +223,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	/**
 	 * Generates content for a single row of the table
 	 *
-	 * @since  1.X.0
+	 * @since  1.7.0
 	 * @param object $item The current item
 	 */
 	function single_row( $item ) {
@@ -318,7 +322,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 	/**
 	 * X
-	 * @since  1.X.0
+	 * @since  1.7.0
 	 * @return X
 	 */
 	private function get_courses( $args ) {
@@ -383,7 +387,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 	/**
 	 * X
-	 * @since  1.X.0
+	 * @since  1.7.0
 	 * @return X
 	 */
 	private function get_learners( $args ) {
@@ -415,16 +419,21 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			'order' => $args['order'],
 		);
 
+		// Searching users on statuses requires sub-selecting the statuses by user_ids
 		if ( $args['search'] ) {
 			$user_args = array(
 				'search' => '*' . $args['search'] . '*',
 				'fields' => 'ID'
 			);
-			$learners_search = new WP_User_Query( apply_filters( 'sensei_learners_search_users', $user_args ) );
-			$activity_args['user_id'] = $learners_search->get_results();
+			// Filter for extending
+			$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
+			if ( !empty( $user_args ) ) {
+				$learners_search = new WP_User_Query( $user_args );
+				$activity_args['user_id'] = $learners_search->get_results();
+			}
 		}
 
-		$activity_args = $count_activity_args = apply_filters( 'sensei_learners_filter_activity_users', $activity_args );
+		$activity_args = $count_activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
 		unset($count_activity_args['number']);
 		unset($count_activity_args['offset']);
 
@@ -554,6 +563,15 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_footer() {
+		// Nothing right now
+	} // End data_table_footer()
+
+	/**
+	 * add_learners_box to bottom of table display
+	 * @since  1.6.0
+	 * @return void
+	 */
+	public function add_learners_box() {
 		$post_type = '';
 		$post_title = '';
 		$form_post_type = '';
@@ -577,7 +595,6 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			return;
 		}
 		?>
-	<div class="sensei-learners-extra">
 		<div class="postbox">
 			<h3><span><?php printf( __( 'Add Learner to %1$s', 'woothemes-sensei' ), $post_type ); ?></span></h3>
 			<div class="inside">
@@ -609,33 +626,36 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		</div>
 
 		<script type="text/javascript">
-	        jQuery('select#add_learner_search').ajaxChosen({
-			    method: 		'GET',
-			    url: 			'<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
-			    dataType: 		'json',
-			    afterTypeDelay: 100,
-			    minTermLength: 	1,
-			    data:		{
-			    	action: 	'sensei_json_search_users',
+			jQuery('select#add_learner_search').ajaxChosen({
+				method: 		'GET',
+				url: 			'<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
+				dataType: 		'json',
+				afterTypeDelay: 100,
+				minTermLength: 	1,
+				data:		{
+					action: 	'sensei_json_search_users',
 					security: 	'<?php echo esc_js( wp_create_nonce( "search-users" ) ); ?>',
 					default: 	''
-			    }
+				}
 			}, function (data) {
 
 				var users = {};
 
-			    jQuery.each(data, function (i, val) {
-			        users[i] = val;
-			    });
+				jQuery.each(data, function (i, val) {
+					users[i] = val;
+				});
 
-			    return users;
+				return users;
 			});
 		</script>
-		<?php do_action( 'sensei_learners_extra' ); ?>
-	</div>
 		<?php
 	}
 
+	/**
+	 * the text for the search button
+	 * @since  1.X.0
+	 * @return void
+	 */
 	public function search_button( $text = '' ) {
 
 		switch( $this->view ) {
