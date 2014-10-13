@@ -155,11 +155,31 @@ class WooThemes_Sensei_Utils {
 		if ( !$return_comments ) {
 			$args['count'] = true;
 		}
+		// Sensei comments are always approved, this speeds up the WP query by removing the " comment_approved = '0' OR "
+		$args['status'] = 'approve';
+		// Are we only retrieving a single entry...
+		if ( isset($args['post_id']) && isset($args['post_id']) && isset($args['post_id']) ) {
+			// ...then we don't need to ask the db to order the results, this overrides WP default behaviour
+			add_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
+		}
+		// Are we checking for specific comment_content?
+		if ( isset($args['content']) ) {
+			// Temporarily store as a custom status...
+			if ( is_array( $args['content'] ) ) {
+				// If array, encoded now, decode later
+				$args['content'] = '%%' . implode( "|", $args['content'] ) . '%%';
+			}
+			$args['status'] = $args['content'];
+			// ...use a filter to switch the column back to using comment_content
+			add_filter( 'comments_clauses', array( __CLASS__, 'comment_content_filter' ) );
+		}
 		// Get comments
 		$comments = get_comments( $args );
 		if ( is_admin() ) {
 			add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		} // End If Statement
+		remove_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
+		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_content_filter' ) );
 		// Return comments
 		if ( $return_comments ) {
 			return $comments;
@@ -1377,7 +1397,7 @@ class WooThemes_Sensei_Utils {
 			$extra = '<p><a class="button" href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_view_quiz_text', __( 'View the lesson quiz', 'woothemes-sensei' ) ) ) . '">' . apply_filters( 'sensei_view_quiz_text', __( 'View the lesson quiz', 'woothemes-sensei' ) ) . '</a></p>';
 		}
 
-		return array( 'status' => $status, 'box_class' => $box_class, 'message' => $message, 'extra' => $extra );
+		return apply_filters( 'sensei_user_quiz_status', array( 'status' => $status, 'box_class' => $box_class, 'message' => $message, 'extra' => $extra ) );
 	}
 
 	/**
@@ -1548,5 +1568,44 @@ class WooThemes_Sensei_Utils {
 
 	}
 
+	/**
+	 * Remove the orderby for comments
+	 * @access public
+	 * @since  1.7.0
+	 * @param  array $pieces (default: array())
+	 * @return array
+	 */
+	public static function single_comment_filter( $pieces ) {
+		unset( $pieces['orderby'] );
+		unset( $pieces['order'] );
+		return $pieces;
+	}
+
+	/**
+	 * Allow restricting comments to those with specific comment_content, little bypass to allow multiple comment_content types
+	 * @access public
+	 * @since  1.7.0
+	 * @param  array $pieces (default: array())
+	 * @return array
+	 */
+	public static function comment_content_filter( $pieces ) {
+
+		// Double check for the 'placeholder' column
+		if ( 0 == strpos( $pieces['where'], 'comment_approved' ) ) {
+			// Switch the 'approved' column name to comment_content
+			$pieces['where'] = preg_replace( '/^comment_approved = /', 'comment_content = ', $pieces['where'] );
+			// Check if the 'status' is for multiple statuses (which are encoded to get through  WP_Comment)
+			if ( 0 == strpos( $pieces['where'], "comment_content = '%%" ) ) {
+				preg_match( "/^comment_content = '(%%[a-z\-\|]+%%)'/", $pieces['where'], $placeholder );
+				$statuses = explode( '|', trim($placeholder[1], '%') );
+				$pieces['where'] = str_replace( "comment_content = '" . $placeholder[1] . "'", "comment_content IN ('". implode( "', '", $statuses ) . "')", $pieces['where'] );
+			}
+			// Restore the approved check
+			$pieces['where'] = "comment_approved = '1' AND " . $pieces['where'];
+		}
+
+		return $pieces;
+	}
+
 } // End Class
-?>
+
