@@ -37,7 +37,7 @@ Tested up to: 4.0
 
     global $woothemes_sensei;
 	$woothemes_sensei = new WooThemes_Sensei( __FILE__ );
-	$woothemes_sensei->version = '1.7.0';
+	$woothemes_sensei->version = '1.6.6';
 
     /**
      * Plugin updates
