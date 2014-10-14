@@ -248,10 +248,10 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					$post_type = 'course';
 				}
 
-				if( 'complete' == $item->comment_content || 'graded' == $item->comment_content || 'passed' == $item->comment_content ) {
+				if( 'complete' == $item->comment_approved || 'graded' == $item->comment_approved || 'passed' == $item->comment_approved ) {
 					$status_html = '<span class="graded">' . apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) ) . '</span>';
 				}
-//				elseif( 'failed' == $item->comment_content ) {
+//				elseif( 'failed' == $item->comment_approved ) {
 //					$status_html = '<span class="failed">' . apply_filters( 'sensei_failed_text', __( 'Failed', 'woothemes-sensei' ) ) . '</span>';
 //				}
 				else {
@@ -271,7 +271,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				break;
 
 			case 'lessons' :
-				$lesson_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status' ) ) );
+				$lesson_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status', 'status' => 'all' ) ) );
 				$title = get_the_title( $item );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
@@ -285,7 +285,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			case '' :
 			default:
-				$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status' ) ) );
+				$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'all' ) ) );
 				$title = get_the_title( $item );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
@@ -413,11 +413,12 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		$activity_args = array(
 			'post_id' => $post_id,
 			'type' => $activity,
+			'status' => 'all',
 			'number' => $args['per_page'],
 			'offset' => $args['offset'],
 			'orderby' => $args['orderby'],
 			'order' => $args['order'],
-		);
+			);
 
 		// Searching users on statuses requires sub-selecting the statuses by user_ids
 		if ( $args['search'] ) {

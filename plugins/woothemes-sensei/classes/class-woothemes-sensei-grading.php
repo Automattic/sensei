@@ -184,7 +184,7 @@ class WooThemes_Sensei_Grading {
 	 * @since  1.3.0
 	 * @return void
 	 */
-	public function grading_default_view( $type = '' ) {
+	public function grading_default_view() {
 		global $woothemes_sensei;
 		// Load Grading data
 		$this->load_data_table_files();
@@ -361,6 +361,7 @@ class WooThemes_Sensei_Grading {
 
 	/**
 	 * Count the various statuses for Course or Lesson
+	 * Very similar to get_comment_count()
 	 * @since  1.7.0
 	 * @param  array $args (default: array())
 	 * @return object
@@ -376,7 +377,7 @@ class WooThemes_Sensei_Grading {
 		}
 		$cache_key = 'sensei-' . $args['type'] . '-statuses';
 
-		$query = "SELECT comment_content AS comment_status, COUNT( * ) AS num_posts FROM {$wpdb->comments} WHERE comment_type = %s ";
+		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
 		// Restrict to specific posts
 		if ( is_array( $args['post_id'] ) ) {
 			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post_id'] ) ) . ')';
@@ -391,7 +392,7 @@ class WooThemes_Sensei_Grading {
 		elseif ( !empty( $args['user_id'] ) ) {
 			$query .= $wpdb->prepare( ' AND user_id = %d', $args['user_id'] );
 		}
-		$query .= ' GROUP BY comment_status';
+		$query .= ' GROUP BY comment_approved';
 
 		$counts = wp_cache_get( $cache_key, 'counts' );
 		if ( false === $counts ) {
@@ -401,7 +402,7 @@ class WooThemes_Sensei_Grading {
 			$counts = array_fill_keys( $this->get_stati( $type ), 0 );
 
 			foreach ( $results as $row ) {
-				$counts[ $row['comment_status'] ] = $row['num_posts'];
+				$counts[ $row['comment_approved'] ] = $row['total'];
 			}
 //			wp_cache_set( $cache_key, $counts, 'counts' );
 		}

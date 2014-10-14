@@ -123,7 +123,8 @@ class Imperial_Courses_Feed_Command extends Imperial_Base_CLI_Command {
 			if ( !empty($url) ) {
 				$result = $feeds->process_course_feed( $course->ID, $url );
 				if ( is_wp_error( $result ) ) {
-					$errors[] = $result->get_error_messages();
+					$error = $result->get_error_messages();
+					$errors[] = implode( "\n", $error );
 				}
 				else {
 					$cnt++;
@@ -171,7 +172,8 @@ class Imperial_Courses_Feed_Command extends Imperial_Base_CLI_Command {
 			if ( !empty($url) ) {
 				$result = $feeds->process_lecture_feed( $course->ID, $url );
 				if ( is_wp_error( $result ) ) {
-					$errors[] = $result->get_error_messages();
+					$error = $result->get_error_messages();
+					$errors[] = implode( "\n", $error );
 				}
 				else {
 					$cnt++;
@@ -1397,7 +1399,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 					$data = array(
 						// This is the minimum data needed, the db defaults handle the rest
 							'comment_post_ID' => $lesson_id,
-							'comment_content' => $status,
+							'comment_approved' => $status,
 							'comment_type' => 'sensei_lesson_status',
 							'comment_date' => $status_date,
 							'user_id' => $user_id,
@@ -1492,7 +1494,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 
 		$users_sql = "SELECT ID FROM $wpdb->users WHERE ID > %d LIMIT $per_page";
 		$start_sql = "SELECT comment_post_ID, comment_date FROM $wpdb->comments WHERE comment_type = 'sensei_course_start' AND user_id = %d GROUP BY comment_post_ID ";
-		$lessons_sql = "SELECT comment_content, comment_date FROM $wpdb->comments WHERE comment_type = 'sensei_lesson_status' AND user_id = %d AND comment_post_ID IN ( %s ) ORDER BY comment_date_gmt ASC";
+		$lessons_sql = "SELECT comment_approved AS status, comment_date FROM $wpdb->comments WHERE comment_type = 'sensei_lesson_status' AND user_id = %d AND comment_post_ID IN ( %s ) ORDER BY comment_date_gmt ASC";
 		$check_existing_sql = "SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = 'sensei_course_status' ";
 
 		// $per_page users at a time, could be batch run via an admin ajax command, 1 user at a time?
@@ -1532,7 +1534,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 						// Count each lesson to work out the overall percentage
 						foreach ( $lesson_statuses as $lesson_status ) {
 							$status_date = $lesson_status['comment_date'];
-							switch ( $lesson_status['comment_content'] ) {
+							switch ( $lesson_status['status'] ) {
 								case 'complete': // Lesson has no quiz/questions
 								case 'graded': // Lesson has quiz, but it's not important what the grade was
 								case 'passed': 
@@ -1555,7 +1557,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 					$data = array(
 						// This is the minimum data needed, the db defaults handle the rest
 							'comment_post_ID' => $course_id,
-							'comment_content' => $status,
+							'comment_approved' => $status,
 							'comment_type' => 'sensei_course_status',
 							'comment_date' => $status_date,
 							'user_id' => $user_id,
@@ -1694,6 +1696,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 							'comment_author_url' => '',
 							'comment_author_IP' => '',
 							'comment_agent' => '',
+//							'comment_approved' => 'log', // New status for 'sensei_user_answer'
 						);
 					$data = array_merge($answer, $data);
 //					error_log( print_r($data, true));

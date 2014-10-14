@@ -87,7 +87,7 @@ class WooThemes_Sensei_Utils {
 					'comment_content' => esc_html( $args['data'] ),
 					'comment_type' => esc_attr( $args['type'] ),
 					'user_id' => intval( $args['user_id'] ),
-					'comment_approved' => 1,
+					'comment_approved' => !empty($args['status']) ? esc_html( $args['status'] ) : 1, // 'log', // 'log' == 'sensei_user_answer'
 				);
 		// Allow extra data
 		if ( !empty($args['username']) ) {
@@ -155,23 +155,26 @@ class WooThemes_Sensei_Utils {
 		if ( !$return_comments ) {
 			$args['count'] = true;
 		}
-		// Sensei comments are always approved, this speeds up the WP query by removing the " comment_approved = '0' OR "
-		$args['status'] = 'approve';
 		// Are we only retrieving a single entry...
-		if ( isset($args['post_id']) && isset($args['post_id']) && isset($args['post_id']) ) {
+		if ( isset($args['count']) || ( isset($args['post_id']) && isset($args['post_id']) && isset($args['post_id']) ) ){
 			// ...then we don't need to ask the db to order the results, this overrides WP default behaviour
 			add_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
 		}
-		// Are we checking for specific comment_content?
-		if ( isset($args['content']) ) {
-			// Temporarily store as a custom status...
-			if ( is_array( $args['content'] ) ) {
-				// If array, encoded now, decode later
-				$args['content'] = '%%' . implode( "|", $args['content'] ) . '%%';
+		// Are we checking for specific comment_approved statuses?
+		if ( isset($args['status']) ) {
+			// Temporarily store as a custom status if requesting an array...
+			if ( is_array( $args['status'] ) ) {
+				// Encode now, decode later
+				$args['status'] = '%%' . implode( "|", $args['status'] ) . '%%';
+				// ...use a filter to switch the encoding back
+				add_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
 			}
-			$args['status'] = $args['content'];
-			// ...use a filter to switch the column back to using comment_content
-			add_filter( 'comments_clauses', array( __CLASS__, 'comment_content_filter' ) );
+			elseif ( 'all' == $args['status'] ) {
+				add_filter( 'comments_clauses', array( __CLASS__, 'comment_all_status_filter' ) );
+			}
+		}
+		else {
+			$args['status'] = 1; // 'log'; // 'log' == 'sensei_user_answer'
 		}
 		// Get comments
 		$comments = get_comments( $args );
@@ -179,7 +182,8 @@ class WooThemes_Sensei_Utils {
 			add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		} // End If Statement
 		remove_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
-		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_content_filter' ) );
+		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
+		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_all_status_filter' ) );
 		// Return comments
 		if ( $return_comments ) {
 			return $comments;
@@ -1582,26 +1586,33 @@ class WooThemes_Sensei_Utils {
 	}
 
 	/**
-	 * Allow restricting comments to those with specific comment_content, little bypass to allow multiple comment_content types
+	 * Allow retrieving comments with any comment_approved status, little bypass to WP_Comment
 	 * @access public
 	 * @since  1.7.0
 	 * @param  array $pieces (default: array())
 	 * @return array
 	 */
-	public static function comment_content_filter( $pieces ) {
+	public static function comment_all_status_filter( $pieces ) {
 
-		// Double check for the 'placeholder' column
-		if ( 0 == strpos( $pieces['where'], 'comment_approved' ) ) {
-			// Switch the 'approved' column name to comment_content
-			$pieces['where'] = preg_replace( '/^comment_approved = /', 'comment_content = ', $pieces['where'] );
-			// Check if the 'status' is for multiple statuses (which are encoded to get through  WP_Comment)
-			if ( 0 == strpos( $pieces['where'], "comment_content = '%%" ) ) {
-				preg_match( "/^comment_content = '(%%[a-z\-\|]+%%)'/", $pieces['where'], $placeholder );
-				$statuses = explode( '|', trim($placeholder[1], '%') );
-				$pieces['where'] = str_replace( "comment_content = '" . $placeholder[1] . "'", "comment_content IN ('". implode( "', '", $statuses ) . "')", $pieces['where'] );
-			}
-			// Restore the approved check
-			$pieces['where'] = "comment_approved = '1' AND " . $pieces['where'];
+		$pieces['where'] = str_replace( "( comment_approved = '0' OR comment_approved = '1' ) AND", '', $pieces['where'] );
+
+		return $pieces;
+	}
+
+	/**
+	 * Allow retrieving comments within multiple statuses, little bypass to WP_Comment
+	 * @access public
+	 * @since  1.7.0
+	 * @param  array $pieces (default: array())
+	 * @return array
+	 */
+	public static function comment_multiple_status_filter( $pieces ) {
+
+		// Double check if the 'status' is for multiple statuses (which are encoded to get through WP_Comment)
+		if ( 0 == strpos( $pieces['where'], "comment_approved = '%%" ) ) {
+			preg_match( "/^comment_approved = '(%%[a-z\-\|]+%%)'/", $pieces['where'], $placeholder );
+			$statuses = explode( '|', trim($placeholder[1], '%') );
+			$pieces['where'] = str_replace( "comment_approved = '" . $placeholder[1] . "'", "comment_approved IN ('". implode( "', '", $statuses ) . "')", $pieces['where'] );
 		}
 
 		return $pieces;

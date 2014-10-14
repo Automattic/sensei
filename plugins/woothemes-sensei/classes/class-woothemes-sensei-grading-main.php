@@ -162,15 +162,15 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 		switch( $this->view ) {
 			case 'in-progress' :
-				$activity_args['content'] = 'in-progress';
+				$activity_args['status'] = 'in-progress';
 				break;
 
 			case 'ungraded' :
-				$activity_args['content'] = 'ungraded';
+				$activity_args['status'] = 'ungraded';
 				break;
 
 			case 'graded' :
-				$activity_args['content'] = array( 'graded', 'passed', 'failed' );
+				$activity_args['status'] = array( 'graded', 'passed', 'failed' );
 				break;
 
 			case 'all' :
@@ -221,23 +221,23 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		echo '<tr' . $row_class . '>';
 
 		$grade = '';
-		if( 'complete' == $item->comment_content ) {
+		if( 'complete' == $item->comment_approved ) {
 			$status_html = '<span class="graded">' . apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) ) . '</span>';
 			$grade = apply_filters( 'sensei_no_grade_text', __( 'No Grade', 'woothemes-sensei' ) );
 		}
-		elseif( 'graded' == $item->comment_content ) {
+		elseif( 'graded' == $item->comment_approved ) {
 			$status_html = '<span class="graded">' . apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) ) . '</span>';
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true) . '%';
 		}
-		elseif( 'passed' == $item->comment_content ) {
+		elseif( 'passed' == $item->comment_approved ) {
 			$status_html = '<span class="graded">' . apply_filters( 'sensei_passed_text', __( 'Passed', 'woothemes-sensei' ) ) . '</span>';
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true) . '%';
 		}
-		elseif( 'failed' == $item->comment_content ) {
+		elseif( 'failed' == $item->comment_approved ) {
 			$status_html = '<span class="failed">' . apply_filters( 'sensei_failed_text', __( 'Failed', 'woothemes-sensei' ) ) . '</span>';
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true) . '%';
 		}
-		elseif( 'ungraded' == $item->comment_content ) {
+		elseif( 'ungraded' == $item->comment_approved ) {
 			$status_html = '<span class="ungraded">' . apply_filters( 'sensei_ungraded_text', __( 'Ungraded', 'woothemes-sensei' ) ) . '</span>';
 		}
 		else {
@@ -253,7 +253,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		$quiz_link = add_query_arg( array( 'page' => 'sensei_grading', 'user' => $item->user_id, 'quiz_id' => $quiz_id ), admin_url( 'admin.php' ) );
 
 		$grade_link = '';
-		switch( $item->comment_content ) {
+		switch( $item->comment_approved ) {
 			case 'ungraded': 
 				$grade_link = '<a class="button-primary button" href="' . $quiz_link . '">' . __('Grade quiz', 'woothemes-sensei' ) . '</a>'; 
 				break;
@@ -306,7 +306,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		echo apply_filters( 'sensei_grading_no_items_text', __( 'No statuses found.', 'woothemes-sensei' ) );
+		echo apply_filters( 'sensei_grading_no_items_text', __( 'No entries found.', 'woothemes-sensei' ) );
 	} // End no_items()
 
 	/**
