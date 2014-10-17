@@ -1193,7 +1193,13 @@ class WooThemes_Sensei_Utils {
 		$message = __( 'You have not taken this lesson\'s quiz yet', 'woothemes-sensei' );
 		$extra = '';
 
-		if( $lesson_id > 0 && $user_id > 0 ) {
+		if( ! is_user_logged_in() ){
+				
+				$status = 'login_required';
+				$box_class = 'info';
+				$message = __( 'You must be logged in to take this quiz', 'woothemes-sensei' );
+
+		}elseif( $lesson_id > 0 && $user_id > 0 ) {
 
 			// Prerequisite lesson
 			$prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
@@ -1230,17 +1236,17 @@ class WooThemes_Sensei_Utils {
 			// Quiz questions
 			$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
 
-			if ( ! $started_course ) {
+			if ( ! is_user_logged_in() ) {
+
+				$status = 'login_required';
+				$box_class = 'info';
+				$message = __( 'You must be logged in to view this quiz', 'woothemes-sensei' );
+
+			} elseif ( ! $started_course ) {
 
 				$status = 'not_started_course';
 				$box_class = 'info';
 				$message = sprintf( __( 'Please sign up for %1$sthe course%2$s before taking this quiz', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">', '</a>' );
-
-			} elseif ( ! is_user_logged_in() ) {
-
-				$status = 'login_required';
-				$box_class = 'info';
-				$message = __( 'You must be logged in to take this quiz', 'woothemes-sensei' );
 
 			} elseif ( isset( $lesson_complete ) && $lesson_complete ) {
 

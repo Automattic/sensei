@@ -1363,14 +1363,14 @@ class WooThemes_Sensei_Frontend {
     				} // End If Statement
     			} // End If Statement
         	?>
-        <?php } elseif( $show_actions && 0 < count($lesson_quizzes) && $woothemes_sensei->access_settings() ) { ?>
+        <?php } elseif( $show_actions && 0 < count($lesson_quizzes) && $woothemes_sensei->access_settings() &&  is_user_logged_in() ) { ?>
     		<?php
         		$quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
         		if( 0 < count( $quiz_questions ) ) { ?>
         			<p><a class="button" href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ) ); ?>"><?php echo apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?></a></p>
         		<?php } ?>
         <?php } // End If Statement
-        if ( $show_actions && ! $has_user_completed_lesson ) {
+        if ( $show_actions && ! $has_user_completed_lesson &&  is_user_logged_in()  ) {
         	sensei_complete_lesson_button();
         } elseif( $show_actions ) {
         	sensei_reset_lesson_button();
