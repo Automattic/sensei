@@ -1372,7 +1372,7 @@ class WooThemes_Sensei_Frontend {
 
         if( !is_user_logged_in() ){
         	//all the user to login / rigister or enrol
-        	$woothemes_sensei->utils->sensei_register_button( '<div class="status register">', '</div>' );
+            WooThemes_Sensei_Utils::sensei_register_button( '<div class="status register">', '</div>' );
         	
         } elseif ( $show_actions && ! $has_user_completed_lesson  ) {
         	sensei_complete_lesson_button();

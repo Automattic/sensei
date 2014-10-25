@@ -775,7 +775,7 @@ class WooThemes_Sensei_Course {
 	 * @access public
 	 * @param int $course_id (default: 0)
 	 * @param string $post_status (default: 'publish')
-	 * @return void
+	 * @return $posts_array array
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish' ) {
 

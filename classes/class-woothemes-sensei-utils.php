@@ -1527,9 +1527,9 @@ class WooThemes_Sensei_Utils {
 	* @param string $before
 	* @param string $after 
 	* @param bool $echo default false
-	* @return string $button html linkk button
+	* @return string $button html link button
 	*/
-	public function sensei_register_button( $before = '', $after = '', $echo = true ) {
+	public static function sensei_register_button( $before = '', $after = '', $echo = true ) {
 		if( is_user_logged_in()  ){
 			// exit adn do not show anything for logged in users
 			return;
