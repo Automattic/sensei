@@ -764,6 +764,7 @@ class WooThemes_Sensei_Frontend {
 		        } // End For Loop
 		    } // End If Statement
 
+		    $quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $lesson_quiz_id );
 		    $sanitized_submit = esc_html( $_POST['quiz_complete'] );
 
 		    $answers_array = array();
@@ -786,7 +787,7 @@ class WooThemes_Sensei_Frontend {
 
                     do_action( 'sensei_user_lesson_start', $current_user->ID, $post->ID );
 
-                    if ( 0 < count($lesson_quizzes) )  {
+                    if ( 0 < count($quiz_questions) )  {
 
 	                    // Manual Grade
 			            $grade = 100;
@@ -848,7 +849,7 @@ class WooThemes_Sensei_Frontend {
 		                    do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
 
 		                } // End If Statement
-	                } else { // Lesson has no quiz
+	                } else { // Lesson quiz has no questions
 		                if ($activity_logged) {
 		                    // Mark lesson as complete
 		                    $args = array(
