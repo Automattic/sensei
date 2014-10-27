@@ -46,9 +46,11 @@ $quiz_passmark_float = (float) $quiz_passmark;
     // Lesson Quiz Meta
     if( !is_user_logged_in() ){
         
-        // do not show quiz realted information 
+        // do not show quiz related information
+        WooThemes_Sensei_Utils::sensei_register_button( '<div class="status register">', '</div>' );
 
     }elseif ( 0 < count( $lesson_quiz_questions ) )  {
+
     	$question_count = 1;
     	?>
     	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data">

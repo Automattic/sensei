@@ -581,7 +581,7 @@ class WooThemes_Sensei {
 	    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_end' ) );
 
 	    		// Get all course lessons
-	    		$course_lessons = WooThemes_Sensei_Course::course_lessons( $course_id );
+	    		$course_lessons = $this->course->course_lessons( $course_id );
 
 	    		// Remove all lesson user meta in course
 	    		if( isset( $course_lessons) && is_array( $course_lessons ) && count( $course_lessons ) > 0 ) {

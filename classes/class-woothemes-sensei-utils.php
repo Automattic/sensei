@@ -1517,5 +1517,57 @@ class WooThemes_Sensei_Utils {
 
 	}
 
+	/**
+	* Generate a sensei specific register button
+	*
+	* This function returns or echos a link to the my accounts page 
+	* This returns nothing if ther user is logged in already. If there is no may courses page
+	* this function will return the WordPress register 
+	*
+	* @param string $before
+	* @param string $after 
+	* @param bool $echo default false
+	* @return string $button html link button
+	*/
+	public static function sensei_register_button( $before = '', $after = '', $echo = true ) {
+		if( is_user_logged_in()  ){
+			// exit adn do not show anything for logged in users
+			return;
+		}
+
+		global $woothemes_sensei;
+		$button = '';
+
+		// get the accounts page ID
+		$my_account_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
+
+		// get the button URL
+		$button_url = '';
+
+		if( empty( $my_account_page_id ) ){
+			$registration_url = wp_registration_url(); 
+		}else{
+			$registration_url = get_permalink( $my_account_page_id );
+		}
+
+		// crate the link element
+		
+		/**
+		* Action filter sensei_register_button_url
+		* 
+		* @param $registration_url
+		*/
+		$button_link_element = '<a href="'. esc_attr( apply_filters( 'sensei_register_button_url',  $registration_url ) ).'">' .__( 'Register', 'woothemes-sensei') . '</a>' ;
+
+		// generate button
+		$button = $before . $button_link_element . $after;
+
+		// return or output
+		if( $echo ){
+			echo $button ;
+		}else{
+			return $button;
+		}
+	}// end sensei_register_button
 } // End Class
 ?>
