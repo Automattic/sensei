@@ -499,24 +499,40 @@ class WooThemes_Sensei_Utils {
 		global $current_user;
 
 		$grade = 0;
-		$correct_answers = 0;
-		$quiz_graded = false;
+		$correct_answers = 0; // not used
+		$quiz_graded = false; // not used
 
 		if( intval( $quiz_id ) > 0 && $submitted ) {
 
 			if( $quiz_grade_type == 'auto' ) {
+				// Can only autograde these question types
+				$autogradable_question_types = apply_filters( 'sensei_autogradable_question_types', array( 'multiple-choice', 'boolean', 'gap-fill' ) );
 				$grade_total = 0;
 				foreach( $submitted as $question_id => $answer ) {
-					// Get user question grade
-					$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $answer );
-					$grade_total += $question_grade;
+					// check if the question is autogradable
+					$question_type = get_the_terms( $question_id, 'question-type' );
+					$question_type = $question_type[0]->slug;
+					if ( in_array( $question_type, $autogradable_question_types ) ) {
+						// Get user question grade
+						$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer );
+						$grade_total += $question_grade;
+					}
+					else {
+						// There is a question that cannot be autograded
+						$quiz_autogradable = false;
+					}
 				}
+				// Only if the whole quiz was autogradable do we set a grade
+				if ( $quiz_autogradable ) {
+					$quiz_total = WooThemes_Sensei_Utils::sensei_get_quiz_total( $quiz_id );
 
-				$quiz_total = WooThemes_Sensei_Utils::sensei_get_quiz_total( $quiz_id );
+					$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
 
-				$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
-
-				$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade );
+					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade );
+				}
+				else {
+					$grade = new WP_Error('autograde', __('Quiz is not fully autogradeable due to questions used.', 'woothemes-sensei'));
+				}
 			}
 		}
 
@@ -565,37 +581,72 @@ class WooThemes_Sensei_Utils {
 
 	/**
 	 * Grade question automatically
-	 * @param  integer $question_id ID of question
-	 * @param  string  $answer      User's answer
-	 * @return integer              User's grade for question
+	 * @param  integer $question_id   ID of question
+	 * @param  string  $question_type Type of question
+	 * @param  string  $answer        User's answer
+	 * @return integer                User's grade for question
 	 */
-	public static function sensei_grade_question_auto( $question_id = 0, $answer = '', $user_id = 0 ) {
-        if( intval( $user_id ) == 0 ) {
-            global $current_user;
-            $user_id = $current_user->ID;
-        }
+	public static function sensei_grade_question_auto( $question_id = 0, $question_type = '', $answer = '', $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			$user_id = get_current_user_id();
+		}
 
-        $question_grade = 0;
-        if( intval( $question_id ) > 0 ) {
+		$question_grade = false;
+		if( intval( $question_id ) > 0 ) {
+			if ( empty($question_type) ) {
+				$question_type = get_the_terms( $question_id, 'question-type' );
+				$question_type = $question_type[0]->slug;
+			}
+			// Allow full override of autograding
+			$question_grade = apply_filters( 'sensei_pre_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
+			if ( false === $question_grade ) {
+				switch( $question_type ) {
+					case 'multiple-choice':
+					case 'boolean' :
+						$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 
-            $right_answer = get_post_meta( $question_id, '_question_right_answer', true );
+						if( 0 == get_magic_quotes_gpc() ) {
+							$answer = wp_unslash( $answer );
+						}
 
-            if( 0 == get_magic_quotes_gpc() ) {
-                $answer = stripslashes( $answer );
-            }
+						if ( 0 == strcmp( $right_answer, $answer ) ) {
+							$question_grade = get_post_meta( $question_id, '_question_grade', true );
+							if( ! $question_grade || $question_grade == '' ) {
+								$question_grade = 1;
+							}
+						}
 
-            if ( 0 == strcmp( $right_answer, $answer ) ) {
-                $question_grade = get_post_meta( $question_id, '_question_grade', true );
-                if( ! $question_grade || $question_grade == '' ) {
-                	$question_grade = 1;
-                }
-            }
+						break;
 
-            $activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
-        }
+					case 'gap-fill' :
+						$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 
-        return $question_grade;
-    }
+						if( 0 == get_magic_quotes_gpc() ) {
+							$answer = wp_unslash( $answer );
+						}
+
+						$gapfill_array = explode( '|', $right_answer );
+
+						// Check that the 'gap' is "exactly" equal to the given answer
+						if ( 0 == strcmp( $gapfill_array[1], $answer ) ) {
+							$question_grade = get_post_meta( $question_id, '_question_grade', true );
+							if ( empty($question_grade) ) {
+								$question_grade = 1;
+							}
+						}
+						break;
+
+					default:
+						// Allow autograding of any other question type
+						$question_grade = apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
+						break;
+				} // switch question_type
+			}
+			$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
+		}
+
+		return $question_grade;
+	}
 
 	/**
 	 * Grade question

@@ -1110,7 +1110,7 @@ class WooThemes_Sensei_Frontend {
 	                	$pass_required = get_post_meta( $post->ID, '_pass_required', true );
 
 						// Get Lesson Grading Setting
-						if ( 'auto' == $quiz_grade_type && $pass_required ) {
+						if ( 'auto' == $quiz_grade_type && $pass_required && !is_wp_error( $grade) ) {
 							if ( $quiz_passmark <= $grade ) {
 								// Student has reached the pass mark and lesson is complete
 								$args = array(
@@ -1146,9 +1146,7 @@ class WooThemes_Sensei_Frontend {
 
 						} // End If Statement
 
-						if( 'manual' == $quiz_grade_type ) {
-							do_action( 'sensei_user_quiz_submitted', $current_user->ID, $post->ID );
-						}
+						do_action( 'sensei_user_quiz_submitted', $current_user->ID, $post->ID, $quiz_grade_type, $grade );
 
 					} // End If Statement
 
