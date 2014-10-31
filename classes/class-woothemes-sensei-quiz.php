@@ -38,7 +38,7 @@ class WooThemes_Sensei_Quiz {
 	public function update_author( $post_id ){
 		global $woothemes_sensei;
 
-		// If this isn't a 'book' post, don't update it.
+		// If this isn't a 'lesson' post, don't update it.
 	    if ( 'lesson' != $_POST['post_type'] ) {
 	        return;
 	    }
