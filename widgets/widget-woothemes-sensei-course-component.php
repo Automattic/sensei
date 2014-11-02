@@ -203,7 +203,8 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 			$course_ids_include = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
 			$course_ids_exclude = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
-            $args = $woothemes_sensei->post_types->course->get_archive_query_args( $component_type,  intval( $instance['limit'] ) , $course_ids_include , $course_ids_exclude   );
+            $course_includes = array_diff($course_ids_include, $course_ids_exclude  );
+            $args = $woothemes_sensei->post_types->course->get_archive_query_args( $component_type,  intval( $instance['limit'] ) , $course_includes );
 
 		} elseif ( 'completedcourses' == $component_type  ) {
 
@@ -216,7 +217,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
         }else{ //defaults to  usercourses
 
-            $args = $woothemes_sensei->post_types->course->get_archive_query_args( $component_type, intval( $instance['limit'] ) , esc_attr( $instance['component'] ) );
+            $args = $woothemes_sensei->post_types->course->get_archive_query_args( $component_type, intval( $instance['limit'] ) );
 
         } // End If Statement
 
