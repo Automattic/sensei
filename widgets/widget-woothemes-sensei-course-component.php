@@ -176,41 +176,57 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	/**
 	 * Load the desired component, if a method is available for it.
 	 * @param  string $component The component to potentially be loaded.
+     *
+     * This widget checks for the following component widget instances
+     * - usercourses
+     * - featuredcourses
+     * - activecourses
+     * - completedcourses
+     *
 	 * @since  5.0.8
 	 * @return void
 	 */
 	protected function load_component ( $instance ) {
+
+        //initialize vars
 		global $woothemes_sensei, $current_user;
+        $posts_array = array();
+        $course_ids = array();
+        $args = array();
+        $component_type = esc_attr( $instance['component']);
+
 		// Get User Meta
 		get_currentuserinfo();
-		/*
-		usercourses
-		freecourses
-		paidcourses
-		featuredcourses
-		activecourses
-		completedcourses
-		*/
-		$course_ids = array();
-		if ( 'activecourses' == esc_attr( $instance['component'] ) ) {
+
+        // set up the query args
+		if ( 'activecourses' == $component_type  ) {
+
 			$course_ids_include = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
 			$course_ids_exclude = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
-			$course_ids = array_diff( $course_ids_include, $course_ids_exclude );
-		} elseif( 'completedcourses' == esc_attr( $instance['component'] ) ) {
-			$course_ids = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
-		} // End If Statement
+            $args = $woothemes_sensei->post_types->course->get_archive_query_args( $component_type,  intval( $instance['limit'] ) , $course_ids_include , $course_ids_exclude   );
 
-		$posts_array = array();
+		} elseif ( 'completedcourses' == $component_type  ) {
 
-		if ( ! empty( $course_ids ) ) {
-			$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ), $course_ids );
-		} else {
-			if ( 'activecourses' == esc_attr( $instance['component'] ) || 'completedcourses' == esc_attr( $instance['component'] ) ) {
-				$posts_array = array();
-			} else {
-				$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ) );
-			}
-		} // End If Statement
+            $course_ids = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_end' ) );
+            $args = $woothemes_sensei->post_types->course->get_archive_query_args( $component_type,  intval( $instance['limit'] ) ,  $course_ids );
+
+        }elseif( 'featuredcourses' == $component_type ) {
+
+            $args = $woothemes_sensei->post_types->course->get_archive_query_args( $component_type, intval( $instance['limit'] ) );
+
+        }else{ //defaults to  usercourses
+
+            $args = $woothemes_sensei->post_types->course->get_archive_query_args( $component_type, intval( $instance['limit'] ) , esc_attr( $instance['component'] ) );
+
+        } // End If Statement
+
+        // get the posts
+        if( !empty( $args ) ){
+            //remove pagination query parameter
+            $args['posts_per_page'] = intval( $instance['limit'] );
+            $args['paged'] = 1;
+            $posts_array = get_posts( $args );
+        }
 
 		if ( count( $posts_array ) > 0 ) { ?>
 			<ul>
