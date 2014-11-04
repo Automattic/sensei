@@ -63,7 +63,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	} // End __construct()
 
 	/**
-	 * get_columns Define the columns that are going to be used in the table
+	 * Define the columns that are going to be used in the table
 	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
@@ -94,7 +94,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				);
 				break;
 		}
-		$columns['action'] = __( '', 'woothemes-sensei' );
+		$columns['actions'] = __( '', 'woothemes-sensei' );
 		// Backwards compatible
 		if ( 'learners' == $this->view ) {
 			$columns = apply_filters( 'sensei_learners_learners_columns', $columns, $this->view );
@@ -104,7 +104,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	}
 
 	/**
-	 * get_columns Define the columns that are going to be used in the table
+	 * Define the columns that are going to be used in the table
 	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
@@ -146,8 +146,6 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	 */
 	public function prepare_items() {
 		global $avail_stati, $wpdb, $per_page;
-
-//		$avail_stati = apply_filters( 'sensei_comment_statuses', array( 'in-progress', 'complete' ,'graded' ) );
 
 		// Handle orderby
 		$orderby = '';
@@ -222,16 +220,11 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 	/**
 	 * Generates content for a single row of the table
-	 *
 	 * @since  1.7.0
 	 * @param object $item The current item
 	 */
-	function single_row( $item ) {
-		global $woothemes_sensei;
-		static $row_class = '';
-		$row_class = ( $row_class == '' ? ' class="alternate"' : '' );
-
-		echo '<tr' . $row_class . '>';
+	function get_row_data( $item ) {
+		global $wp_version;
 
 		switch ( $this->view ) {
 			case 'learners' :
@@ -266,64 +259,56 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'user-edit.php?user_id=' . $user->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
 						'date_started' => get_comment_meta( $item->comment_ID, 'start', true),
 						'user_status' => $status_html,
-						'action' => '<a class="remove-learner button" data-user_id="' . $user->ID . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>',
+						'actions' => '<a class="remove-learner button" data-user_id="' . $user->ID . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>',
 					), $item, $post_id, $post_type );
 				break;
 
 			case 'lessons' :
-				$lesson_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status', 'status' => 'all' ) ) );
+				$lesson_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
+
+				$grading_action = '';
+				if ( get_post_meta( $item->ID, '_quiz_has_questions', true ) ) {
+					$grading_action = ' <a class="button" href="' . add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => $item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">' . __( 'Grading', 'woothemes-sensei' ) . '</a>';
+				}
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'post.php?action=edit&post=' . $item->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
 						'no_learners' => $lesson_learners,
 						'updated' => $item->post_modified,
-						'action' => '<a class="button" href="' . add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->ID, 'course_id' => $this->course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a>',
+						'actions' => '<a class="button" href="' . add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->ID, 'course_id' => $this->course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
 					), $item, $this->course_id );
 				break;
 
 			case '' :
 			default:
-				$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'all' ) ) );
+				$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
+
+				$grading_action = '';
+				if ( version_compare($wp_version, '4.1', '>=') ) {
+					$grading_action = ' <a class="button" href="' . add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => $item->ID ), admin_url( 'admin.php' ) ) . '">' . __( 'Grading', 'woothemes-sensei' ) . '</a>';
+				}
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'post.php?action=edit&post=' . $item->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
 						'no_learners' => $course_learners,
 						'updated' => $item->post_modified,
-						'action' => '<a class="button" href="' . add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a>',
+						'actions' => '<a class="button" href="' . add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
 					), $item );
 
 				break;
 		} // switch
 
-		list( $columns, $hidden ) = $this->get_column_info();
-
-		foreach ( $columns as $column_name => $column_display_name ) {
-			$class = "class='$column_name column-$column_name'";
-
-			$style = '';
-			if ( in_array( $column_name, $hidden ) )
-				$style = ' style="display:none;"';
-
-			$attributes = "$class$style";
-
-			echo "<td $attributes>";
-			if ( isset($column_data[$column_name]) ) {
-				echo $column_data[$column_name];
-			}
-			echo "</td>";
-		}
-
-		echo '</tr>';
+		return $column_data;
 	}
 
 	/**
-	 * X
+	 * Return array of course
 	 * @since  1.7.0
-	 * @return X
+	 * @return array courses
 	 */
 	private function get_courses( $args ) {
 		$course_args = array(
@@ -354,9 +339,9 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	} // End get_courses()
 
 	/**
-	 * X
-	 * @since  1.X.0
-	 * @return X
+	 * Return array of lessons
+	 * @since  1.7.0
+	 * @return array lessons
 	 */
 	private function get_lessons( $args ) {
 		$lesson_args = array(
@@ -386,9 +371,9 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	} // End get_lessons()
 
 	/**
-	 * X
+	 * Return array of learners
 	 * @since  1.7.0
-	 * @return X
+	 * @return array learners
 	 */
 	private function get_learners( $args ) {
 
@@ -413,7 +398,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		$activity_args = array(
 			'post_id' => $post_id,
 			'type' => $activity,
-			'status' => 'all',
+			'status' => 'any',
 			'number' => $args['per_page'],
 			'offset' => $args['offset'],
 			'orderby' => $args['orderby'],
@@ -434,12 +419,10 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			}
 		}
 
-		$activity_args = $count_activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
-		unset($count_activity_args['number']);
-		unset($count_activity_args['offset']);
+		$activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$total_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( $count_activity_args );
+		$total_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $total_learners < $activity_args['offset'] ) {
 			$new_paged = floor( $total_learners / $activity_args['number'] );
@@ -452,24 +435,23 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	} // End get_learners()
 
 	/**
-	 * no_items sets output when no items are found
+	 * Sets output when no items are found
 	 * Overloads the parent method
 	 * @since  1.6.0
 	 * @return void
 	 */
 	public function no_items() {
-
 		if( ! $this->view || 'default' == $this->view ) {
 			$type = 'courses';
 		} else {
 			$type = $this->view;
 		}
 
-		echo apply_filters( 'sensei_learners_no_items_text', sprintf( __( '%1$sNo %2$s found%3$s', 'woothemes-sensei' ), '<em>', $type, '</em>' ) );
+		echo apply_filters( 'sensei_learners_no_items_text', sprintf( __( '%1$sNo %2$s found%3$s', 'woothemes-sensei' ), '<em>', $type, '</em>' ), $type );
 	} // End no_items()
 
 	/**
-	 * data_table_header output for table heading
+	 * Output for table heading
 	 * @since  1.6.0
 	 * @return void
 	 */
@@ -559,7 +541,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	} // End data_table_header()
 
 	/**
-	 * data_table_footer output for table footer
+	 * Output for table footer
 	 * @since  1.6.0
 	 * @return void
 	 */
@@ -568,7 +550,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	} // End data_table_footer()
 
 	/**
-	 * add_learners_box to bottom of table display
+	 * Add learners (to Course or Lesson) box to bottom of table display
 	 * @since  1.6.0
 	 * @return void
 	 */
@@ -653,8 +635,8 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	}
 
 	/**
-	 * the text for the search button
-	 * @since  1.X.0
+	 * The text for the search button
+	 * @since  1.7.0
 	 * @return void
 	 */
 	public function search_button( $text = '' ) {

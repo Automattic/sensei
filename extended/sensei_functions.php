@@ -53,3 +53,40 @@ function imperial_sensei_get_the_password_form( $post = 0 ) {
 	return apply_filters( 'sensei_the_quiz_password_form', $output );
 }
 
+/**
+ * Display help text for when an admin user is on the Sensei page
+ * 
+ * @param string $contextual_help
+ * @param type $screen_id
+ * @param type $screen
+ * @return string
+ */
+function imperial_sensei_help_text( $contextual_help, $screen_id, $screen ) { 
+
+	// The add_help_tab function for screen was introduced in WordPress 3.3. Add it only to the following pages.
+	if( ! method_exists($screen, 'add_help_tab') || ! in_array($screen_id, array('question')) ) {
+		return $contextual_help;
+	}
+
+	switch($screen_id):
+		//Add help for Question editing / creating page
+		case 'question':
+			$screen->add_help_tab( array(
+				'id' => 'gap-fill',
+				'title' => __('Gap Fill'),
+				'content' =>
+					'<h3>' . __('Regular Expressions', 'imperial') . '</h3>' .
+					'<p>' . __("The Gap within Gap Fill questions can contain a regular expression to validate the answer that students submit. <br>An overview reference to regular expressions is available at <a href='http://webcheatsheet.com/php/regular_expressions.php' target='_blank'>http://webcheatsheet.com/php/regular_expressions.php</a>.",'imperial'). '</p>' .
+					'<p>' . __('Examples:','imperial'). '</p><ol>' .
+					'<li>"(alice|bob|charlie)" - ' . __("This will effectively check that the answer is either 'alice', 'bob' or 'charlie'. <a href='#fn-1'>[1]</a>",'imperial'). '</li>' .
+					'<li>"c[o]+kies" - ' . __("This will effectively check that the answer is 'cookies' with any number of 'o's as long as there is at least 1.",'imperial'). '</li>' .
+					'<li>"0?\.[5-8][0-9]*%?" - ' . __("This will effectively check that the answer is >=0.5 and <0.9 to any number of decimal places with the 0 at the front and the percentage at the end both optional. Valid answers include '.51234', '0.6' and '.81%",'imperial'). '</li>' .
+					'</ol>' .
+					'<p id="fn-1">' . __("[1] All expressions are case insensitive, a student typing 'BOB' is the same as 'bob'.",'imperial'). '</p>' 
+			));
+			break;
+	endswitch;
+
+	return $contextual_help;
+}
+add_action( 'contextual_help', 'imperial_sensei_help_text', 10, 3 );

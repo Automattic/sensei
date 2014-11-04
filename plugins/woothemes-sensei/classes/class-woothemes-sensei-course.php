@@ -751,22 +751,23 @@ class WooThemes_Sensei_Course {
 	 * @param string $post_status (default: 'publish')
 	 * @return void
 	 */
-	public function course_count( $exclude = array(), $post_status = 'publish' ) {
+	public function course_count( $post_status = 'publish' ) {
 
-		$posts_array = array();
-
-		$post_args = array(	'post_type' 		=> 'course',
-							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order date',
-    						'order'           	=> 'ASC',
-    						'post_status'       => $post_status,
-							'suppress_filters' 	=> 0,
-							'fields'            => 'ids'
+		$post_args = array(	'post_type'         => 'course',
+							'posts_per_page'    => -1,
+//							'orderby'           => 'menu_order date',
+//							'order'             => 'ASC',
+							'post_status'       => $post_status,
+							'suppress_filters'  => 0,
+							'fields'            => 'ids',
 							);
-		$posts_array = get_posts( apply_filters( 'sensei_course_count', $post_args ) );
 
-		return intval( count( $posts_array ) );
+		// Allow WP to generate the complex final query, just shortcut to only do an overall count
+		add_filter( 'posts_clauses', array( WooThemes_Sensei_Utils, 'get_posts_count_only_filter' ) );
+		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
+		remove_filter( 'posts_clauses', array( WooThemes_Sensei_Utils, 'get_posts_count_only_filter' ) );
 
+		return intval( $courses_query->posts[0] );
 	} // End course_count()
 
 
@@ -776,26 +777,27 @@ class WooThemes_Sensei_Course {
 	 * @access public
 	 * @param int $course_id (default: 0)
 	 * @param string $post_status (default: 'publish')
+	 * @param string $fields (default: 'all')
 	 * @return void
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
 
 		$posts_array = array();
 
-		$post_args = array(	'post_type' 		=> 'lesson',
-							'numberposts' 		=> -1,
-							'meta_key'        	=> '_order_' . $course_id,
-							'orderby'         	=> 'meta_value_num date',
-    						'order'           	=> 'ASC',
-    						'meta_query'		=> array(
-    							array(
-    								'key' => '_lesson_course',
+		$post_args = array(	'post_type'         => 'lesson',
+							'numberposts'       => -1,
+							'meta_key'          => '_order_' . $course_id,
+							'orderby'           => 'meta_value_num date',
+							'order'             => 'ASC',
+							'meta_query'        => array(
+								array(
+									'key' => '_lesson_course',
 									'value' => intval( $course_id ),
 								),
 							),
-    						'post_status'       => $post_status,
-							'suppress_filters' 	=> 0,
-							'fields' => $fields,
+							'post_status'       => $post_status,
+							'suppress_filters'  => 0,
+							'fields'            => $fields,
 							);
 		$posts_array = get_posts( $post_args );
 
@@ -831,7 +833,7 @@ class WooThemes_Sensei_Course {
 
 
 	/**
-	 * course_lessons_completed function.
+	 * course_lessons_completed function. Appears to be completely unused and a duplicate of course_lessons()!
 	 *
 	 * @access public
 	 * @param  int $course_id (default: 0)
@@ -840,25 +842,7 @@ class WooThemes_Sensei_Course {
 	 */
 	public function course_lessons_completed( $course_id = 0, $post_status = 'publish' ) {
 
-		$posts_array = array();
-
-		$post_args = array(	'post_type' 		=> 'lesson',
-							'numberposts' 		=> -1,
-							'meta_key'        	=> '_order_' . $course_id,
-							'orderby'         	=> 'meta_value_num date',
-    						'order'           	=> 'ASC',
-    						'meta_query'		=> array(
-    							array(
-    								'key'		=> '_lesson_course',
-    								'value'		=> $course_id,
-								),
-							),
-    						'post_status'       => $post_status,
-							'suppress_filters' 	=> 0
-							);
-		$posts_array = get_posts( $post_args );
-
-		return $posts_array;
+		return $this->course_lessons( $course_id, $post_status );
 
 	} // End course_lessons_completed()
 

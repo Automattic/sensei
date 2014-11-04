@@ -115,7 +115,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				case 'gap-fill':
 					$type_name = __( 'Gap Fill', 'woothemes-sensei' );
 
-					$right_answer_array = explode( '|', $right_answer );
+					$right_answer_array = explode( '||', $right_answer );
 					if ( isset( $right_answer_array[0] ) ) { $gapfill_pre = $right_answer_array[0]; } else { $gapfill_pre = ''; }
 					if ( isset( $right_answer_array[1] ) ) { $gapfill_gap = $right_answer_array[1]; } else { $gapfill_gap = ''; }
 					if ( isset( $right_answer_array[2] ) ) { $gapfill_post = $right_answer_array[2]; } else { $gapfill_post = ''; }
@@ -146,11 +146,11 @@ class WooThemes_Sensei_Grading_User_Quiz {
 						$attachment_id = $user_answer;
 						$answer_media_url = $answer_media_filename = '';
 						if( 0 < intval( $attachment_id ) ) {
-						    $answer_media_url = wp_get_attachment_url( $attachment_id );
-						    $answer_media_filename = basename( $answer_media_url );
-						    if( $answer_media_url && $answer_media_filename ) {
-						    	$user_answer = sprintf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
-						    }
+							$answer_media_url = wp_get_attachment_url( $attachment_id );
+							$answer_media_filename = basename( $answer_media_url );
+							if( $answer_media_url && $answer_media_filename ) {
+								$user_answer = sprintf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
+							}
 						}
 					} else {
 						$user_answer = '';
@@ -250,4 +250,3 @@ class WooThemes_Sensei_Grading_User_Quiz {
 	} // End display()
 
 } // End Class
-?>

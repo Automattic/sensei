@@ -71,10 +71,10 @@ class Sensei_Modules {
         add_action( 'sensei_lesson_back_link', array( $this, 'back_to_module_link' ), 9, 1 );
 
         // Add 'Modules' columns to Analysis tables
-        add_filter( 'sensei_analysis_overview_lessons_columns', array( $this, 'analysis_overview_column_title' ), 10, 1 );
-        add_filter( 'sensei_analysis_overview_lessons_column_data', array( $this, 'analysis_overview_column_data' ), 10, 2 );
-        add_filter( 'sensei_analysis_course_lesson_columns', array( $this, 'analysis_course_column_title' ), 10, 1 );
-        add_filter( 'sensei_analysis_course_lesson_column_data', array( $this, 'analysis_course_column_data' ), 10, 3 );
+        add_filter( 'sensei_analysis_overview_columns', array( $this, 'analysis_overview_column_title' ), 10, 2 );
+        add_filter( 'sensei_analysis_overview_column_data', array( $this, 'analysis_overview_column_data' ), 10, 3 );
+        add_filter( 'sensei_analysis_course_columns', array( $this, 'analysis_course_column_title' ), 10, 2 );
+        add_filter( 'sensei_analysis_course_column_data', array( $this, 'analysis_course_column_data' ), 10, 4 );
 
         // Manage module taxonomy columns
         add_filter( 'manage_edit-' . $this->taxonomy . '_columns', array( $this, 'taxonomy_column_headings' ), 1, 1 );
@@ -1264,20 +1264,22 @@ class Sensei_Modules {
      * @param  array $columns Default columns
      * @return array          Modified columns
      */
-    public function analysis_overview_column_title( $columns ) {
-    	$new_columns = array();
-    	if( is_array( $columns ) && 0 < count( $columns ) ) {
-    		foreach( $columns as $column => $title ) {
-    			$new_columns[ $column ] = $title;
-    			if( $column == 'lesson_course' ) {
-    				$new_columns['lesson_module'] = __( 'Module', 'sensei_modules' );
-    			}
-    		}
-    	}
+    public function analysis_overview_column_title( $columns, $type ) {
+		if ( 'lessons' == $type ) {
+			$new_columns = array();
+			if( is_array( $columns ) && 0 < count( $columns ) ) {
+				foreach( $columns as $column => $title ) {
+					$new_columns[ $column ] = $title;
+					if( $column == 'title' ) {
+						$new_columns['lesson_module'] = __( 'Module', 'sensei_modules' );
+					}
+				}
+			}
 
-    	if( 0 < count( $new_columns ) ) {
-    		return $new_columns;
-    	}
+			if( 0 < count( $new_columns ) ) {
+				return $new_columns;
+			}
+		}
 
     	return $columns;
     }
@@ -1288,19 +1290,20 @@ class Sensei_Modules {
      * @param  integer $lesson_id Lesson ID
      * @return array              Updated column data
      */
-    public function analysis_overview_column_data( $columns, $lesson_id ) {
+    public function analysis_overview_column_data( $columns, $item, $type ) {
 
-    	$lesson_module = '';
-		$lesson_module_list = wp_get_post_terms( $lesson_id, $this->taxonomy );
-		if( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
-			foreach( $lesson_module_list as $single_module ) {
-				$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
-				break;
+		if ( 'lessons' == $type ) {
+			$lesson_module = '';
+			$lesson_module_list = wp_get_post_terms( $item->ID, $this->taxonomy );
+			if( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
+				foreach( $lesson_module_list as $single_module ) {
+					$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
+					break;
+				}
 			}
+
+			$columns['lesson_module'] = $lesson_module;
 		}
-
-		$columns['lesson_module'] = $lesson_module;
-
     	return $columns;
     }
 
@@ -1309,8 +1312,10 @@ class Sensei_Modules {
      * @param  array $columns Default columns
      * @return array          Modified columns
      */
-    public function analysis_course_column_title( $columns ) {
-		$columns['lesson_module'] = __( 'Module', 'sensei_modules' );
+    public function analysis_course_column_title( $columns, $type ) {
+		if ( 'lesson' == $type ) {
+			$columns['lesson_module'] = __( 'Module', 'sensei_modules' );
+		}
 		return $columns;
     }
 
@@ -1321,18 +1326,20 @@ class Sensei_Modules {
      * @param  integer $user_id   User ID
      * @return array              Updated columns data
      */
-    public function analysis_course_column_data( $columns, $lesson_id, $user_id ) {
-    	$lesson_module = '';
-		$lesson_module_list = wp_get_post_terms( $lesson_id, $this->taxonomy );
-		if( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
-			foreach( $lesson_module_list as $single_module ) {
-				$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
-				break;
+    public function analysis_course_column_data( $columns, $item, $type, $user_id ) {
+		if ( 'lesson' == $type ) {
+			$lesson_module = '';
+
+			$lesson_module_list = wp_get_post_terms( $item->ID, $this->taxonomy );
+			if( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
+				foreach( $lesson_module_list as $single_module ) {
+					$lesson_module = '<a href="' . esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=' . urlencode( $this->taxonomy ) . '&tag_ID=' . urlencode( $single_module->term_id ) ) ) . '">' . $single_module->name . '</a>';
+					break;
+				}
 			}
+
+			$columns['lesson_module'] = $lesson_module;
 		}
-
-		$columns['lesson_module'] = $lesson_module;
-
     	return $columns;
     }
 

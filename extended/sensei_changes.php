@@ -4,6 +4,7 @@
 
 // This file contains the primary changes to Sensei, the deep rooted aspects. More generic filters (and actions) are in the sensei_filters.php file
 
+define('EP_COURSE', 67108864); // 67108864 = 2^26
 /**
  * Modifies the Sensei content types, changing menu positions and icons
  * 
@@ -22,7 +23,13 @@ function imperial_modify_sensei_content_type( $post_type, $args ) {
 		$args->has_archive = false;
 //		error_log( print_r($args, true));
 		// ... and re-save back
+		// This is used along with ep_mask ( in register_post_type() ) to target WP end points to particular post_types
+		$args->rewrite['ep_mask'] = EP_COURSE;
 		$wp_post_types[ $post_type ] = $args;
+		
+		// Need to re-trigger this to get the rewrite changes
+		$permastruct_args = $args->rewrite;
+		add_permastruct( $post_type, "{$args->rewrite['slug']}/%$post_type%", $permastruct_args );
 	}
 	elseif ( 'lesson' == $post_type ) {
 		// Adjust the args...
@@ -149,298 +156,6 @@ function imperial_sensei_quiz_titles( $data, $postarr ) {
 add_filter( 'wp_insert_post_data', 'imperial_sensei_quiz_titles', 10, 2 );
 
 /**
- * Update the overall Sensei lesson status, switching between 'in-progress', 'complete'
- * 
- * @param type $user_id
- * @param type $lesson_id
- */
-function imperial_sensei_user_lesson_status( $user_id, $lesson_id ) {
-	global $wpdb, $woothemes_sensei, $wp_current_filter;
-error_log(__FUNCTION__);
-
-	$status = '';
-	$metadata = array();
-	// Mark lesson as in-progress
-	if ( doing_action('sensei_user_lesson_start') ) {
-		$status = 'in-progress';
-		// Store when we started
-		$metadata['start'] = current_time('mysql');
-	}
-	// Potentially mark lesson as complete...
-	else if ( doing_action('sensei_user_lesson_end') ) {
-		// 'sensei_user_lesson_end' triggers generally after 'sensei_user_quiz_grade', sometimes before and sometimes not at all
-		// ...but only if we have no questions
-		$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
-		if ( !$has_questions ) {
-			$status = 'complete'; // No quiz set
-		}
-
-		// This is quicker than going through WooThemes_Sensei_Utils::sensei_check_for_activity()
-		$existing_status = $wpdb->get_var( $wpdb->prepare( "SELECT comment_content FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s ", $lesson_id, $user_id, 'sensei_lesson_status' ) );
-		// TO FIX: Sometimes 'sensei_user_lesson_end' triggers after the grading of a Quiz, so don't duplicate the status update
-		if ( !in_array( $existing_status, array( 'in-progress', 'ungraded' ) ) ) {
-			return; // nothing to do
-		}
-	}
-
-	if ( !empty( $status ) ) {
-		$args = array(
-				'user_id' => $user_id,
-				'post_id' => $lesson_id,
-				'data' => $status,
-				'type' => 'sensei_lesson_status', /* FIELD SIZE 20 */
-				'action' => 'update' // Important to only have 1 entry
-			);
-
-error_log(" => Logging lesson status of '$status' for user $user_id on lesson $lesson_id, called from " .print_r($wp_current_filter, true));
-		$comment_id = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-		if ( $comment_id && !empty($metadata) ) {
-			foreach( $metadata as $key => $value ) {
-				update_comment_meta( $comment_id, $key, $value );
-			}
-		}
-		do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
-	}
-}
-add_action( 'sensei_user_lesson_start', 'imperial_sensei_user_lesson_status', 10, 2 );
-add_action( 'sensei_user_lesson_end', 'imperial_sensei_user_lesson_status', 10, 2 );
-
-/**
- * Update the overall Sensei lesson status (when called for a quiz), switching between 'ungraded', 'complete', 'graded', 'failed', 'passed'
-
- * 
- * @param type $user_id
- * @param type $quiz_id
- * @param type $grade
- * @param type $passmark
- */
-function imperial_sensei_user_lesson_quiz_status( $user_id, $quiz_id, $grade, $passmark, $quiz_grade_type = 'auto' ) {
-	global $wpdb, $wp_current_filter;
-error_log(__FUNCTION__);
-
-	$status = '';
-	$metadata = array();
-	// Check if the lesson has questions...
-	$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-	$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
-	// ...if the lesson doesn't have questions the ultimate status is simple
-	if ( !$has_questions ) {
-		$status = 'complete'; // No quiz set
-	}
-	else if( !doing_action('sensei_user_quiz_submitted') ) {
-		$lesson_quiz_id = get_post_meta( $lesson_id, '_lesson_quiz', true ); // Something we store to save time
-		$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
-		if ( $pass_required ) {
-			// ...check user has passed
-			if ( $passmark <= $grade ) {
-				$status = 'passed';
-			}
-			else {
-				$status = 'failed';
-			}
-		}
-		else {
-			$status = 'graded'; // Passing quiz not required
-		}
-		$metadata['grade'] = $grade;
-	}
-	elseif ( is_wp_error( $grade ) || 'auto' != $quiz_grade_type ) {
-		$status = 'ungraded'; // Quiz is manually graded and this was a user submission via 'sensei_user_quiz_submitted'
-	}
-
-	if ( !empty( $status ) ) {
-		$existing_args = array(
-				'user_id' => $user_id,
-				'post_id' => $lesson_id,
-				'type' => 'sensei_lesson_status', /* FIELD SIZE 20 */
-			);
-		$existing_status = WooThemes_Sensei_Utils::sensei_check_for_activity( $existing_args, true );
-		if ( is_array( $existing_status ) ) {
-			$existing_status = $existing_status[0];
-		}
-		// This is quicker than going through WooThemes_Sensei_Utils::sensei_check_for_activity()
-//		$existing_status = $wpdb->get_var( $wpdb->prepare( "SELECT comment_content FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s ", $lesson_id, $user_id, 'sensei_lesson_status' ) );
-		$args = array(
-				'user_id' => $user_id,
-				'post_id' => $lesson_id,
-				'data' => $status,
-				'type' => 'sensei_lesson_status', /* FIELD SIZE 20 */
-				'action' => 'update', // Important to only have 1 entry
-			);
-
-		// Don't update the time, it should stay as what the user last set
-		if ( 'ungraded' == $existing_status->comment_content ) {
-			$args['keep_time'] = true;
-		}
-
-error_log(" => Logging lesson status of '$status' for user $user_id on lesson $lesson_id, called from " .print_r($wp_current_filter, true));
-		$comment_id = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-		if ( $comment_id && !empty($metadata) ) {
-			foreach( $metadata as $key => $value ) {
-				update_comment_meta( $comment_id, $key, $value );
-			}
-		}
-		do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
-	}
-}
-// 'sensei_user_quiz_grade' triggers within frontend::sensei_complete_lesson(), frontend::sensei_complete_quiz() and frontend::sensei_complete_course()
-add_action( 'sensei_user_quiz_grade', 'imperial_sensei_user_lesson_quiz_status', 10, 5 );
-// 'sensei_user_quiz_submitted' triggers within frontend::sensei_complete_quiz()
-add_action( 'sensei_user_quiz_submitted', 'imperial_sensei_user_lesson_quiz_status', 10, 5 );
-
-
-/**
- * Update the overall Sensei Course status, switching betweem 'in-progress' and 'complete'
- * 
- * @param type $lesson_status
- * @param type $user_id
- * @param type $lesson_id
- * @param type $comment_id
- */
-function imperial_sensei_lesson_status_updated_course( $lesson_status, $user_id, $lesson_id, $comment_id ) { 
-	global $woothemes_sensei;
-error_log(__FUNCTION__);
-
-	$status = 'in-progress';
-	$metadata = array();
-	$course_id = get_post_meta( $lesson_id, '_lesson_course', $single = true );
-	$course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
-	// If the lesson 'completed' then update the overall Course percentage
-	if ( !in_array( $lesson_status, array( 'in-progress', 'ungraded' ) ) ) {
-error_log(" => processing percentage");
-		// Now effectively copy utils::user_completed_course() but track the overall percentage
-		$lessons_completed = $total_lessons = 0;
-		$lesson_status_args = array(
-				'user_id' => $user_id,
-				'type' => 'sensei_lesson_status', /* FIELD SIZE 20 */
-			);
-		// Grab all of this Courses' lessons, looping through each...
-		$lesson_ids = $woothemes_sensei->post_types->course->course_lessons( $course_id, 'publish', 'ids' );
-		$total_lessons = count( $lesson_ids );
-			// ...if course completion not set to 'passed', and all lessons are complete or graded, 
-			// ......then all lessons are 'passed'
-			// ...else if course completion is set to 'passed', check if each lesson has questions...
-			// ......if no questions yet the status is 'complete'
-			// .........then the lesson is 'passed'
-			// ......else if questions check the lesson status has a grade and that the grade is greater than the lesson passmark
-			// .........then the lesson is 'passed'
-			// ...if all lessons 'passed' then update the course status to complete
-		foreach( $lesson_ids as $lesson_id ) {
-			// The below checks if a lesson is fully completed, though should be Utils::user_completed_lesson()
-			// WP get_comments() doesn't allow multiple post_IDs, so check each one? (or have custom SQL?)
-			$lesson_status_args['post_id'] = $lesson_id;
-			$this_lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
-			if ( is_array( $this_lesson_status ) ) {
-				$this_lesson_status = $this_lesson_status[0];
-			}
-			// If lessons are complete without needing quizzes to be passed
-			if ( 'passed' != $course_completion ) {
-				switch ( $this_lesson_status->comment_content ) {
-					// A user cannot 'complete' a course if a lesson...
-					case 'in-progress': // ...is still in progress
-					case 'ungraded': // ...hasn't yet been graded
-						break;
-
-					default:
-						$lessons_completed++;
-						break;
-				}
-			}
-			else {
-				switch ( $this_lesson_status->comment_content ) {
-					case 'complete': // Lesson has no quiz/questions
-					case 'graded': // Lesson has quiz, but it's not important what the grade was
-					case 'passed': // Lesson has quiz and the user passed
-						$lessons_completed++;
-						break;
-
-					// A user cannot 'complete' a course if on a lesson...
-					case 'failed': // ...a user failed the passmark on a quiz
-					default:
-						break;
-				}
-			}
-		} // Each lesson
-		if ( $lessons_completed == $total_lessons ) {
-			$status = 'complete';
-		}
-		// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
-		$metadata['percent'] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
-	}
-	imperial_sensei_update_course_status( $user_id, $course_id, $status, $metadata );
-}
-add_action( 'sensei_lesson_status_updated', 'imperial_sensei_lesson_status_updated_course', 10, 4 );
-
-/**
- * Wrapper to start off a 
- * 
- * @param type $user_id
- * @param type $course_id
- * @param type $status
- * @param type $metadata
- */
-function imperial_sensei_user_course_status( $user_id, $course_id ) {
-error_log(__FUNCTION__);
-
-	$status = '';
-	$metadata = array();
-	if ( doing_action('sensei_user_course_start') ) {
-		// Mark course as in-progress
-		$status = 'in-progress';
-		$metadata['start'] = current_time('mysql');
-		$metadata['percent'] = 0; // No completed lessons yet
-	}
-//	elseif ( doing_action('sensei_user_course_end') ) {
-//		// Mark course as complete
-//		$status = 'complete';
-//	}
-	imperial_sensei_update_course_status( $user_id, $course_id, $status, $metadata );
-}
-// 'sensei_user_course_start' triggers within utils::user_start_course() and frontend::sensei_course_start() 
-add_action( 'sensei_user_course_start', 'imperial_sensei_user_course_status', 10, 2 );
-// 'sensei_user_course_end' triggers within utils::user_completed_course() and frontend::sensei_complete_course() and frontend::sensei_completed_course()
-//add_action( 'sensei_user_course_end', 'imperial_sensei_user_course_status', 10, 2 );
-
-
-/**
- * Sets the actual statuses for the Course
- * 
- * @param type $user_id
- * @param type $course_id
- * @param type $status
- * @param type $metadata
- */
-function imperial_sensei_update_course_status( $user_id, $course_id, $status = '', $metadata = array() ) {
-	global $wp_current_filter;
-error_log(__FUNCTION__);
-
-	if ( !empty($status) ) {
-		$args = array(
-				'user_id'   => $user_id,
-				'post_id'   => $course_id,
-				'data'      => $status,
-				'type'      => 'sensei_course_status', /* FIELD SIZE 20 */
-				'action'    => 'update',// Update the existing status...
-				'keep_time' => true, // ...but don't change the existing timestamp
-			);
-		switch( $status ) {
-			case 'in-progress' :
-				unset( $args['keep_time'] ); // Keep updating what's happened
-				break;
-		}
-
-error_log(" => Logging course status of '$status' for user $user_id on course $course_id, called from " .print_r($wp_current_filter, true));
-		$comment_id = WooThemes_Sensei_Utils::sensei_log_activity( $args );
-		if ( $comment_id && !empty($metadata) ) {
-			foreach( $metadata as $key => $value ) {
-				update_comment_meta( $comment_id, $key, $value );
-			}
-		}
-		do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id );
-	}
-}
-
-/**
  * Change the meta boxes used across Sensei
  */
 function imperial_modify_sensei_meta_boxes() {
@@ -493,5 +208,4 @@ function imperial_lesson_prerequisite_meta_box_content_restricted_to_course() {
 	// Output the HTML
 	echo $html;
 } // End imperial_lesson_prerequisite_meta_box_content_restricted_to_course()
-
 

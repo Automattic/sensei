@@ -1395,7 +1395,7 @@ class WooThemes_Sensei_Lesson {
 					$html .= '</div>';
 				break;
 				case 'gap-fill':
-					$gapfill_array = explode( '|', $right_answer );
+					$gapfill_array = explode( '||', $right_answer );
 					if ( isset( $gapfill_array[0] ) ) { $gapfill_pre = $gapfill_array[0]; } else { $gapfill_pre = ''; }
 					if ( isset( $gapfill_array[1] ) ) { $gapfill_gap = $gapfill_array[1]; } else { $gapfill_gap = ''; }
 					if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { $gapfill_post = ''; }
@@ -2204,7 +2204,7 @@ class WooThemes_Sensei_Lesson {
 		} // End If Statement
 		// Handle Gap Fill Fields
 		if ( isset( $data[ 'add_question_right_answer_gapfill_pre' ] ) && ( '' != $data[ 'add_question_right_answer_gapfill_pre' ] ) ) {
-			$question_right_answer = $data[ 'add_question_right_answer_gapfill_pre' ] . '|' . $data[ 'add_question_right_answer_gapfill_gap' ] . '|' . $data[ 'add_question_right_answer_gapfill_post' ];
+			$question_right_answer = $data[ 'add_question_right_answer_gapfill_pre' ] . '||' . $data[ 'add_question_right_answer_gapfill_gap' ] . '||' . $data[ 'add_question_right_answer_gapfill_post' ];
 		} // End If Statement
 		// Handle Multi Line Fields
 		if ( isset( $data[ 'add_question_right_answer_multiline' ] ) && ( '' != $data[ 'add_question_right_answer_multiline' ] ) ) {
@@ -2434,26 +2434,37 @@ class WooThemes_Sensei_Lesson {
 	 * @param string $post_status (default: 'publish')
 	 * @return void
 	 */
-	public function lesson_count( $post_status = 'publish' ) {
+	public function lesson_count( $post_status = 'publish', $course_id = false ) {
 
-		$posts_array = array();
-
-		$post_args = array(	'post_type' 		=> 'lesson',
-							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order',
-    						'order'           	=> 'ASC',
-    						'meta_key'        	=> '_lesson_course',
-    						'meta_value_num'   	=> 0,
-    						'meta_compare'		=> '>=',
-    						'post_status'       => $post_status,
-							'suppress_filters' 	=> 0,
-							'fields'            => 'ids'
+		$post_args = array(	'post_type'         => 'lesson',
+							'posts_per_page'    => -1,
+//							'orderby'           => 'menu_order date',
+//							'order'             => 'ASC',
+							'post_status'       => $post_status,
+							'suppress_filters'  => 0,
+							'fields'            => 'ids',
 							);
+		if( $course_id ) {
+			$post_args['meta_query'][] = array(
+				'key' => '_lesson_course',
+				'value' => $course_id,
+			);
+		}
+		else {
+			// Simple check for connection to a Course
+			$post_args['meta_query'][] = array(
+				'key' => '_lesson_course',
+				'value' => 0,
+				'compare' => '>=',
+			);
+		}
 
-		$posts_array = get_posts( apply_filters( 'sensei_lesson_count', $post_args ) );
+		// Allow WP to generate the complex final query, just shortcut to only do an overall count
+		add_filter( 'posts_clauses', array( WooThemes_Sensei_Utils, 'get_posts_count_only_filter' ) );
+		$lessons_query = new WP_Query( apply_filters( 'sensei_lesson_count', $post_args ) );
+		remove_filter( 'posts_clauses', array( WooThemes_Sensei_Utils, 'get_posts_count_only_filter' ) );
 
-		return intval( count( $posts_array ) );
-
+		return intval( $lessons_query->posts[0] );
 	} // End lesson_count()
 
 
@@ -2466,7 +2477,7 @@ class WooThemes_Sensei_Lesson {
 	 * @param string $fields (default: 'ids')
 	 * @return void
 	 */
-	public function lesson_quizzes( $lesson_id = 0, $post_status = 'publish', $fields = 'ids' ) {
+	public function lesson_quizzes( $lesson_id = 0, $post_status = 'any', $fields = 'ids' ) {
 
 		$posts_array = array();
 

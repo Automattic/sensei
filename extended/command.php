@@ -23,6 +23,7 @@ class Imperial_Base_CLI_Command extends WP_CLI_Command {
 		$headers[] = 'Content-Type: ' . get_option('html_type') . "; charset=\"". get_option('blog_charset') . "\"";
 
 		$to = $this->notify_emails;
+		$message = str_replace( "\n", '<br>', $message );
 		WP_CLI::line( "Emailing $to; $subject; $message;" );
 		if ( defined('LIVE_ENVIRONMENT') && LIVE_ENVIRONMENT ) {
 			$result = wp_mail( $to, $subject, $message, $headers );
@@ -94,6 +95,7 @@ class Imperial_CLI_Command extends Imperial_Base_CLI_Command {
 		}
 		WP_CLI::success( $message );
 	}
+
 } // END Imperial_CLI_Command
 
 
@@ -245,8 +247,10 @@ class Imperial_Users_Feed_Command extends Imperial_Base_CLI_Command {
 			$this->_notify( 'Automated Update: ' . get_bloginfo('name') . ': Student feed: ERROR ', $message );
 			WP_CLI::error( $message );
 		}
-		// Load the data from the given url
+
+		// As per http://php.net/manual/en/filesystem.configuration.php#ini.auto-detect-line-endings to allow PHP to "interoperate with Macintosh systems"
 		ini_set('auto_detect_line_endings', '1');
+
 		$data = $this->_get_csv_data_from_file( $feed_file, $this->student_fields );
 		if ( WP_DEBUG ) {
 			WP_CLI::line( sprintf( __( 'Memory: %s, %s secs', 'imperial' ), size_format( memory_get_usage() ), timer_stop() ) );
@@ -263,9 +267,8 @@ class Imperial_Users_Feed_Command extends Imperial_Base_CLI_Command {
 		// Process the data
 		$result = $this->_process_student_feed( $data );
 		$message = sprintf( __('Student feed has imported, with the message: %s', 'imperial'), "\n" . $result['summary'] );
-		$email_message = str_replace( "\n", '<br>', $message );
 		if ( $notify ) {
-			$this->_notify( 'Automated Update: ' . get_bloginfo('name') . ': Student feed: ' . strtoupper( $result['status'] ), $email_message );
+			$this->_notify( 'Automated Update: ' . get_bloginfo('name') . ': Student feed: ' . strtoupper( $result['status'] ), $message );
 		}
 		if ( 'error' == $result['status'] ) {
 			WP_CLI::error( $message );
@@ -595,9 +598,8 @@ class Imperial_Users_Feed_Command extends Imperial_Base_CLI_Command {
 		// Process the data
 		$result = $this->_process_staff_feed( $data );
 		$message = sprintf( __('Staff feed has imported, with the message: %s', 'imperial'), "\n" . $result['summary'] );
-		$email_message = str_replace( "\n", '<br>', $message );
 		if ( $notify ) {
-			$this->_notify( 'Automated Update: ' . get_bloginfo('name') . ': Staff feed: ' . strtoupper( $result['status'] ), $email_message );
+			$this->_notify( 'Automated Update: ' . get_bloginfo('name') . ': Staff feed: ' . strtoupper( $result['status'] ), $message );
 		}
 		if ( 'error' == $result['status'] ) {
 			WP_CLI::error( $message );
@@ -726,11 +728,19 @@ class Imperial_Users_Feed_Command extends Imperial_Base_CLI_Command {
 			}
 		} // END each CSV row
 
+		// Collect all Programme/Course relationships
+		$programme_course_ids = array();
+		$connections = p2p_get_connections( 'course_programme' );
+		foreach( $connections AS $connection ) {
+			$programme_course_ids[ $connection->p2p_to ][] = $connection->p2p_from;
+		}
+
 		// Clear some memory
 		unset($data);
 		unset($userData);
 		unset($courseCodes);
 		unset($programmeCodes);
+		unset($connections);
 
 		if ( WP_DEBUG ) {
 			WP_CLI::line('step1 finished. Memory: '.size_format(memory_get_usage()) . ', ' . timer_stop() . ' secs');
@@ -744,7 +754,7 @@ class Imperial_Users_Feed_Command extends Imperial_Base_CLI_Command {
 //			// Remove all pre-existing Staff Course Connections
 //			p2p_delete_connections( 'staff_courses', array( 'from' => $userID ) );
 //		}
-//
+
 		// Briefly turn off the Activity component of BuddyPress, we don't want 100s of 'joined_group' entries
 		$bp = buddypress();
 		$restore_activity = false;
@@ -771,6 +781,17 @@ class Imperial_Users_Feed_Command extends Imperial_Base_CLI_Command {
 							$supportGroupIDs[ $programmeGroupIDs[$programmeID] ] = array();
 						}
 						$supportGroupIDs[ $programmeGroupIDs[$programmeID] ][] = $userID;
+					}
+					// Programme Team Members need access to *all* Course forums ( see https://psycle.basecamphq.com/projects/11941639-imp013-redesign-of-business-school-hub/todo_items/190645552/comments )
+					foreach( $programme_course_ids[$programmeID] AS $course_id ) {
+						if ( !empty($courseGroupIDs[$course_id]) ) {
+							groups_join_group( $courseGroupIDs[$course_id], $userID );
+							// Promote user to group admin (can't use groups_promote_member() as it checks for the current user permission)...
+//							groups_promote_member( $userID, $programmeGroupIDs[$programmeID], $status = 'admin');
+							// .. so we do it direct
+							$member = new BP_Groups_Member( $userID, $courseGroupIDs[$course_id] );
+							$member->promote( $status = 'admin' );
+						}
 					}
 				}
 			}
@@ -1191,18 +1212,18 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 		$args = array(
 			'post_type' => 'lesson',
 			'numberposts' => -1,
-			'meta_query' => array(
-				array(
-					'key' => '_quiz_has_questions',
-					'value' => 1,
-				),
-			),
+//			'meta_query' => array(
+//				array(
+//					'key' => '_quiz_has_questions',
+//					'value' => 1,
+//				),
+//			),
 			'fields' => 'ids'
 		);
-		$lesson_ids_with_quizzes = get_posts( $args );
+		$lesson_ids = get_posts( $args );
 
 		// ...get all Quiz IDs for the above Lessons
-		$id_list = join( ',', $lesson_ids_with_quizzes );
+		$id_list = join( ',', $lesson_ids );
 		$meta_list = $wpdb->get_results( "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = '_lesson_quiz' AND post_id IN ($id_list)", ARRAY_A );
 		$lesson_quiz_ids = array();
 		if ( !empty($meta_list) ) {
@@ -1225,7 +1246,8 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 		}
 
 		// For each quiz check there are questions, if not remove the corresponding meta keys from Quizzes and Lessons
-		$count = 0;
+		// if there are questions on the quiz add the corresponding meta keys to Quizzes and Lessons
+		$d_count = $a_count =0;
 		foreach ( $lesson_quiz_ids AS $lesson_id => $quiz_id ) {
 			if ( !in_array( $quiz_id, $lesson_quiz_ids_with_questions ) ) {
 //				error_log( "Error with quiz $quiz_id and lesson $lesson_id ");
@@ -1233,10 +1255,16 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 				delete_post_meta( $quiz_id, '_pass_required' );
 				delete_post_meta( $quiz_id, '_quiz_passmark' );
 				delete_post_meta( $lesson_id, '_quiz_has_questions' );
-				$count++;
+				$d_count++;
+			}
+			else if ( in_array( $quiz_id, $lesson_quiz_ids_with_questions ) ) {
+//				error_log( "Error with quiz $quiz_id and lesson $lesson_id ");
+				// Quiz has no questions, drop the corresponding data
+				update_post_meta( $lesson_id, '_quiz_has_questions', true );
+				$a_count++;
 			}
 		}
-		WP_CLI::success( sprintf( __("Fixed %s Lessons!", 'imperial'), $count ) );
+		WP_CLI::success( sprintf( __("Adjusted %s Lessons!", 'imperial'), $d_count + $a_count ) );
 	}
 
 	/**

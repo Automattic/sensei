@@ -148,29 +148,37 @@ class WooThemes_Sensei_Utils {
 	 * @return void
 	 */
 	public static function sensei_check_for_activity ( $args = array(), $return_comments = false ) {
-		global $woothemes_sensei;
+		global $woothemes_sensei, $wp_version;
 		if ( is_admin() ) {
 			remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		} // End If Statement
 		if ( !$return_comments ) {
 			$args['count'] = true;
 		}
-		// Are we only retrieving a single entry...
-		if ( isset($args['count']) || ( isset($args['post_id']) && isset($args['post_id']) && isset($args['post_id']) ) ){
+		// Are we only retrieving a single entry, or not care about the order...
+		if ( isset($args['count']) || isset($args['post_id']) ){
 			// ...then we don't need to ask the db to order the results, this overrides WP default behaviour
-			add_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
+			if ( version_compare($wp_version, '4.1', '<') ) {
+				add_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
+			}
+			else {
+				$args['order'] = false;
+				$args['orderby'] = false;
+			}
 		}
 		// Are we checking for specific comment_approved statuses?
 		if ( isset($args['status']) ) {
 			// Temporarily store as a custom status if requesting an array...
 			if ( is_array( $args['status'] ) ) {
-				// Encode now, decode later
-				$args['status'] = '%%' . implode( "|", $args['status'] ) . '%%';
-				// ...use a filter to switch the encoding back
-				add_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
+				if ( version_compare($wp_version, '4.1', '<') ) {
+					// Encode now, decode later
+					$args['status'] = implode( ",", $args['status'] );
+					// ...use a filter to switch the encoding back
+					add_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
+				}
 			}
-			elseif ( 'all' == $args['status'] ) {
-				add_filter( 'comments_clauses', array( __CLASS__, 'comment_all_status_filter' ) );
+			elseif ( 'any' == $args['status'] && version_compare($wp_version, '4.1', '<') ) {
+				add_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
 			}
 		}
 		else {
@@ -183,9 +191,10 @@ class WooThemes_Sensei_Utils {
 		} // End If Statement
 		remove_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
 		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
-		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_all_status_filter' ) );
+		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
 		// Return comments
 		if ( $return_comments ) {
+			// Could check for array of 1 and just return the 1 item?
 			return $comments;
 		} // End If Statement
 		// Count comments
@@ -1582,25 +1591,26 @@ class WooThemes_Sensei_Utils {
 	public static function single_comment_filter( $pieces ) {
 		unset( $pieces['orderby'] );
 		unset( $pieces['order'] );
+
 		return $pieces;
 	}
 
 	/**
-	 * Allow retrieving comments with any comment_approved status, little bypass to WP_Comment
+	 * Allow retrieving comments with any comment_approved status, little bypass to WP_Comment. Required only for WP < 4.1
 	 * @access public
 	 * @since  1.7.0
 	 * @param  array $pieces (default: array())
 	 * @return array
 	 */
-	public static function comment_all_status_filter( $pieces ) {
+	public static function comment_any_status_filter( $pieces ) {
 
-		$pieces['where'] = str_replace( "( comment_approved = '0' OR comment_approved = '1' ) AND", '', $pieces['where'] );
+		$pieces['where'] = str_replace( array( "( comment_approved = '0' OR comment_approved = '1' ) AND", "comment_approved = 'any' AND" ), '', $pieces['where'] );
 
 		return $pieces;
 	}
 
 	/**
-	 * Allow retrieving comments within multiple statuses, little bypass to WP_Comment
+	 * Allow retrieving comments within multiple statuses, little bypass to WP_Comment. Required only for WP < 4.1
 	 * @access public
 	 * @since  1.7.0
 	 * @param  array $pieces (default: array())
@@ -1608,12 +1618,44 @@ class WooThemes_Sensei_Utils {
 	 */
 	public static function comment_multiple_status_filter( $pieces ) {
 
-		// Double check if the 'status' is for multiple statuses (which are encoded to get through WP_Comment)
-		if ( 0 == strpos( $pieces['where'], "comment_approved = '%%" ) ) {
-			preg_match( "/^comment_approved = '(%%[a-z\-\|]+%%)'/", $pieces['where'], $placeholder );
-			$statuses = explode( '|', trim($placeholder[1], '%') );
+		preg_match( "/^comment_approved = '([a-z\-\,]+)'/", $pieces['where'], $placeholder );
+		if ( !empty($placeholder[1]) ) {
+			$statuses = explode( ',', $placeholder[1] );
 			$pieces['where'] = str_replace( "comment_approved = '" . $placeholder[1] . "'", "comment_approved IN ('". implode( "', '", $statuses ) . "')", $pieces['where'] );
 		}
+
+		return $pieces;
+	}
+
+	/**
+	 * Adjust the comment query to be faster on the database, used by Analysis admin
+	 * @since  1.7.0
+	 * @return array
+	 */
+	public static function comment_total_sum_meta_value_filter( $pieces ) {
+		global $wpdb;
+
+		$pieces['fields'] = " COUNT(*) AS total, SUM($wpdb->commentmeta.meta_value) AS meta_sum ";
+		unset( $pieces['groupby'] );
+		unset( $pieces['orderby'] );
+		unset( $pieces['order'] );
+
+		return $pieces;
+	}
+
+	/**
+	 * Shifts counting of posts to the database where it should be
+	 * @access public
+	 * @since  1.7.0
+	 * @param  array $pieces (default: array())
+	 * @return array
+	 */
+	public static function get_posts_count_only_filter( $pieces ) {
+
+		$pieces['fields'] = " COUNT(*) AS total ";
+		unset( $pieces['groupby'] );
+		unset( $pieces['orderby'] );
+		unset( $pieces['order'] );
 
 		return $pieces;
 	}

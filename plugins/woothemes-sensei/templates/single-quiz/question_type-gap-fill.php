@@ -67,7 +67,7 @@ if( 0 < intval( $question_media ) ) {
 
 // Gap Fill data
 $question_text = $question_item->post_title;
-$gapfill_array = explode( '|', $question_right_answer );
+$gapfill_array = explode( '||', $question_right_answer );
 if ( isset( $gapfill_array[0] ) ) { $gapfill_pre = $gapfill_array[0]; } else { $gapfill_pre = ''; }
 if ( isset( $gapfill_array[1] ) ) { $gapfill_gap = $gapfill_array[1]; } else { $gapfill_gap = ''; }
 if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { $gapfill_post = ''; }

@@ -38,7 +38,7 @@ function imperial_sensei_bulk_autograde_quizzes_form() {
  */
 function imperial_sensei_bulk_autograde_quizzes() {
 	// Ensure the form is added, and after the normal filters are shown
-	add_action( 'sensei_before_list_table', 'imperial_sensei_bulk_autograde_quizzes_form', 20 );
+	add_action( 'sensei_grading_extra', 'imperial_sensei_bulk_autograde_quizzes_form', 20 );
 	$lesson_id = intval( $_POST['lesson_id'] );
 	if ( isset( $_POST['bulk-auto-grade'] ) && wp_verify_nonce( $_REQUEST['_wp_bag_nonce'], 'sensei_bulk_autograde-' . $lesson_id ) ) {
 		global $woothemes_sensei, $current_user;
@@ -160,7 +160,7 @@ function imperial_sensei_filter_users_by_programme( $args ) {
 	return $args;
 }
 //add_filter( 'sensei_grading_filter_users', 'imperial_sensei_filter_users_by_programme' );
-//add_filter( 'sensei_analysis_filter_users', 'imperial_sensei_filter_users_by_programme' );
+add_filter( 'sensei_analysis_filter_users', 'imperial_sensei_filter_users_by_programme' );
 
 /**
  * 
@@ -399,25 +399,25 @@ function imperial_sensei_get_courses_dropdown() {
 	if ( 0 < intval( $selected_programme_id ) ) {
 
 		$courses_ids = imperial()->get_courses_by_programme( $selected_programme_id, false, 'ids' );
-		if ( empty($courses_ids) ) {
-			$courses_ids = array( 0 );
-		}
+//		if ( empty($courses_ids) ) {
+//			$courses_ids = array( 0 );
+//		}
 //		error_log(__FUNCTION__ .':'.print_r($courses_ids, true));
-		$post_args = array(	'post_type' 		=> 'course',
-							'numberposts' 		=> -1,
-							'orderby'         	=> 'title',
-							'order'           	=> 'ASC',
-							'post_status'      	=> 'any',
-							'suppress_filters' 	=> 0,
-							'post__in'          => $courses_ids,
-							);
-//		error_log(__FUNCTION__ .':'.print_r($post_args, true));
-		$posts_array = get_posts( $post_args );
+//		$course_args = array(	'post_type' 		=> 'course',
+//							'numberposts' 		=> -1,
+//							'orderby'         	=> 'title',
+//							'order'           	=> 'ASC',
+//							'post_status'      	=> 'any',
+//							'suppress_filters' 	=> 0,
+//							'post__in'          => $courses_ids,
+//							);
+////		error_log(__FUNCTION__ .':'.print_r($post_args, true));
+//		$courses = get_posts( $course_args );
 
 		$html .= '<option value="">' . __( 'Select a course', 'woothemes-sensei' ) . '</option>';
-		if ( count( $posts_array ) > 0 ) {
-			foreach ($posts_array as $post_item){
-				$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
+		if ( count( $courses_ids ) > 0 ) {
+			foreach ($courses_ids as $course_id){
+				$html .= '<option value="' . esc_attr( absint( $course_id ) ) . '">' . esc_html( get_the_title( $course_id ) ) . '</option>' . "\n";
 			} // End For Loop
 		} // End If Statement
 
@@ -429,20 +429,61 @@ function imperial_sensei_get_courses_dropdown() {
 //add_action( 'wp_ajax_get_courses_dropdown', 'imperial_sensei_get_courses_dropdown' );
 
 /**
+ * Add column headings to Sensei Learners admin screens
  * 
- * @param type $args
- * @return type
+ * @param array $columns
+ * @param string $view
+ * @return array
+ */
+function imperial_sensei_learners_default_columns( $columns, $view ) {
+	if ( 'learners' == $view ) {
+		$add_columns = array(
+			'date_completed' => __('Date Completed', 'imperial'),
+		);
+		if ( !empty($_GET['lesson_id']) ) {
+			$add_columns['grade'] = __('Grade', 'imperial');
+		}
+		else {
+			$add_columns['percent_complete'] = __('Percentage Complete', 'imperial');
+		}
+
+		$slice_point = 0;
+		foreach ( $columns AS $key => $val ) {
+			$slice_point++;
+			if ( 'date_started' == $key ) {
+				break;
+			}
+		}
+		if ( $slice_point ) {
+			$options_s = array_slice( $columns, 0, $slice_point );
+			$options_e = array_slice( $columns, $slice_point );
+
+			$columns = array_merge( $options_s, $add_columns, $options_e );
+		}
+		else {
+			$columns = array_merge( $columns, $add_columns );
+		}
+	}
+	return $columns;
+}
+//add_action( 'sensei_learners_default_columns', 'imperial_sensei_learners_default_columns', 9, 2 );
+
+/**
+ * Add column data to Sensei Learners admin screens
+ * 
+ * @param array $args
+ * @return array
  */
 function imperial_sensei_learners_main_column_data( $data, $item, $secondary_id = 0, $post_type = '' ) {
 	// Check for users, add data to row
-	if ( !empty($item->comment_ID) ) {
+	if ( !empty($item->comment_ID) && 'in-progress' != $item->comment_approved ) {
 		$data['date_completed'] = $item->comment_date;
-//		if ( 'course' == $post_type ) {
-//			$data['percent_complete'] = get_comment_meta( $item->comment_ID, 'percent', true);
-//		}
-//		if ( 'lesson' == $post_type ) {
-//			$data['grade'] = get_comment_meta( $item->comment_ID, 'grade', true);
-//		}
+		if ( 'lesson' == $post_type ) {
+			$data['grade'] = get_comment_meta( $item->comment_ID, 'grade', true);
+		}
+	}
+	if ( 'course' == $post_type ) {
+		$data['percent_complete'] = get_comment_meta( $item->comment_ID, 'percent', true);
 	}
 //	if ( !empty( $_GET['programme_id'] ) ) {
 //		$selected_programme_id = intval( $_GET['programme_id'] );
@@ -455,7 +496,7 @@ function imperial_sensei_learners_main_column_data( $data, $item, $secondary_id 
 //	}
 	return $data;
 }
-add_action( 'sensei_learners_main_column_data', 'imperial_sensei_learners_main_column_data', 9, 4 );
+//add_action( 'sensei_learners_main_column_data', 'imperial_sensei_learners_main_column_data', 9, 4 );
 
 /**
  * Filter the column data shown, remove general admin edit links, add Programme ID to the other links, change text
@@ -464,24 +505,18 @@ add_action( 'sensei_learners_main_column_data', 'imperial_sensei_learners_main_c
  */
 function imperial_sensei_analysis_main_column_data( $args ) {
 	if ( !empty( $_GET['programme_id'] ) ) {
-		$arr_arg = '';
+		$arr_arg = 'title';
 		$selected_programme_id = intval( $_GET['programme_id'] );
-		if ( !empty( $args['lesson_title'] ) ) {
-			$arr_arg = 'lesson_title';
-		} elseif ( !empty( $args['course_title'] ) ) {
-			$arr_arg = 'course_title';
-		} elseif ( !empty( $args['user_login'] ) ) {
-			$arr_arg = 'user_login';
-		}
-		if ( $arr_arg ) {
-			preg_match( '/href="([^"]+)"/', $args[$arr_arg], $url );
-			$args[$arr_arg] = str_replace( $url[1], add_query_arg( array( 'programme_id' => $selected_programme_id ), $url[1] ), $args[$arr_arg] );
-		}
+		preg_match( '/href="([^"]+)"/', $args[$arr_arg], $url );
+		$args[$arr_arg] = str_replace( $url[1], add_query_arg( array( 'programme_id' => $selected_programme_id ), $url[1] ), $args[$arr_arg] );
 	}
 	foreach ( $args as $key => $value ) {
 		// Remove admin "edit" links
-		if ( strpos( $value, 'action=edit' ) && preg_match( '/href="[^"]+' . 'action=edit' . '[^>]+>([^<]+)</', $value, $match ) ) {
-			$args[ $key ] = $match[1];
+		if ( strpos( $value, 'action=edit' ) ) {
+			$args[ $key ] = preg_replace( '/<a[^>]+href="[^"]+action=edit[^>]+>(.+)<\/a>/', '$1', $value );
+		}
+		if ( strpos( $value, 'user-edit' ) ) {
+			$args[ $key ] = preg_replace( '/<a[^>]+href="[^"]+user-edit[^>]+>(.+)<\/a>/', '$1', $value );
 		}
 		if ( strpos( $value, 'Remove from activity' ) ) {
 			$args[ $key ] = str_replace( 'Remove from activity', 'Reset activity', $value );
@@ -637,7 +672,7 @@ function imperial_sensei_analysis_course_user_columns( $columns ) {
 	}
 	return $columns;
 }
-add_action( 'sensei_analysis_course_user_columns', 'imperial_sensei_analysis_course_user_columns', 9, 1 );
+//add_action( 'sensei_analysis_course_user_columns', 'imperial_sensei_analysis_course_user_columns', 9, 1 );
 
 /**
  * Populate the new columns for Imperial Sensei Analysis
@@ -701,41 +736,3 @@ error_log( "imperial_sensei_analysis_course_user_column_data for $user_id");
 }
 //add_action( 'sensei_analysis_course_user_column_data', 'imperial_sensei_analysis_course_user_column_data', 9, 3 );
 
-/**
- * 
- * @param type $columns
- * @param type $view
- * @return type
- */
-function imperial_sensei_learners_default_columns( $columns, $view ) {
-	if ( 'learners' == $view ) {
-		$add_columns = array(
-			'date_completed' => __('Date Completed', 'imperial'),
-		);
-//		if ( !empty($_GET['lesson_id']) ) {
-//			$add_columns['grade'] = __('Grade', 'imperial');
-//		}
-//		else {
-//			$add_columns['percent_complete'] = __('Percentage Complete', 'imperial');
-//		}
-
-		$slice_point = 0;
-		foreach ( $columns AS $key => $val ) {
-			$slice_point++;
-			if ( 'date_started' == $key ) {
-				break;
-			}
-		}
-		if ( $slice_point ) {
-			$options_s = array_slice( $columns, 0, $slice_point );
-			$options_e = array_slice( $columns, $slice_point );
-
-			$columns = array_merge( $options_s, $add_columns, $options_e );
-		}
-		else {
-			$columns = array_merge( $columns, $add_columns );
-		}
-	}
-	return $columns;
-}
-add_action( 'sensei_learners_default_columns', 'imperial_sensei_learners_default_columns', 9, 2 );

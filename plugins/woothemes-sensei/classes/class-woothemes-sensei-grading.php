@@ -68,11 +68,7 @@ class WooThemes_Sensei_Grading {
 		// Ajax functions
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_lessons_dropdown', array( $this, 'get_lessons_dropdown' ) );
-//			add_action( 'wp_ajax_nopriv_get_lessons_dropdown', array( $this, 'get_lessons_dropdown' ) );
-//			add_action( 'wp_ajax_get_lessons_html', array( $this, 'get_lessons_html' ) ); // Never used
-//			add_action( 'wp_ajax_nopriv_get_lessons_html', array( $this, 'get_lessons_html' ) );
 			add_action( 'wp_ajax_get_redirect_url', array( $this, 'get_redirect_url' ) );
-//			add_action( 'wp_ajax_nopriv_get_redirect_url', array( $this, 'get_redirect_url' ) );
 		} // End If Statement
 	} // End __construct()
 
@@ -250,7 +246,7 @@ class WooThemes_Sensei_Grading {
 	} // End grading_user_quiz_view()
 
 	/**
-	 * grading_headers outputs Grading general headers
+	 * Outputs Grading general headers
 	 * @since  1.3.0
 	 * @return void
 	 */
@@ -280,7 +276,7 @@ class WooThemes_Sensei_Grading {
 	} // End wrapper_container()
 
 	/**
-	 * grading_default_nav default nav area for Grading
+	 * Default nav area for Grading
 	 * @since  1.3.0
 	 * @return void
 	 */
@@ -303,7 +299,7 @@ class WooThemes_Sensei_Grading {
 	} // End grading_default_nav()
 
 	/**
-	 * grading_user_quiz_nav nav area for grading user quiz answers
+	 * Nav area for Grading specific users' quiz answers
 	 * @since  1.3.0
 	 * @return void
 	 */
@@ -330,7 +326,7 @@ class WooThemes_Sensei_Grading {
 	} // End grading_user_quiz_nav()
 
 	/**
-	 * grading_user_quiz_nav nav area for grading user quiz answers
+	 * Return array of valid statuses for either Course or Lesson
 	 * @since  1.7.0
 	 * @return array
 	 */
@@ -489,123 +485,6 @@ class WooThemes_Sensei_Grading {
 
 		return $html;
 	} // End lessons_drop_down_html()
-
-	/**
-	 * This function is not used at any point
-	 * @global type $woothemes_sensei
-	 */
-	public function get_lessons_html() {
-		global $woothemes_sensei;
-		$posts_array = array();
-
-		// Parse POST data
-		$data = $_POST['data'];
-		$lesson_data = array();
-		parse_str($data, $lesson_data);
-
-		$lesson_id = intval( $lesson_data['lesson_id'] );
-
-		$args_array = array();
-		// Get the data required
-		$wp_user_search = new WP_User_Query( $args_array );
-		$users = $wp_user_search->get_results();
-
-		$output_counter = 0;
-		$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
-		// Get Quiz ID
-		foreach ($lesson_quizzes as $quiz_item) {
-			$lesson_quiz_id = $quiz_item->ID;
-		} // End For Loop
-		// Output the users data
-		$html = '<table class="widefat">
-					<thead>
-						<tr>
-							<th class="hidden">#</th>
-							<th>' . __( 'User', 'woothemes-sensei' ) . '</th>
-							<th style="width:125px;">' . __( 'Status', 'woothemes-sensei' ) . '</th>
-							<th style="width:125px;">' . __( 'Grade', 'woothemes-sensei' ) . '</th>
-						</tr>
-					</thead>
-					<tfoot>
-						<tr>
-							<th class="hidden">#</th>
-							<th>' . __( 'User', 'woothemes-sensei' ) . '</th>
-							<th>' . __( 'Status', 'woothemes-sensei' ) . '</th>
-							<th>' . __( 'Grade', 'woothemes-sensei' ) . '</th>
-						</tr>
-					</tfoot>
-					<tbody>';
-		$html .= '<h3>' . __( 'Learners to be Graded', 'woothemes-sensei' ) . '</h3>';
-		$to_be_graded_count = 0;
-		$in_progress_count = 0;
-		$graded_count = 0;
-		foreach ( $users as $user_key => $user_item ) {
-			// Get Quiz Answers
-			$lesson_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_item->ID, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
-			// Check if Lesson is complete
-			$lesson_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_item->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_date' ) );
-			// Quiz Grade
-			$lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $user_item->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
-			$quiz_grade = __( 'No Grade', 'woothemes-sensei' );
-			if ( 0 < intval( $lesson_grade ) ) {
-				$quiz_grade = $lesson_grade . '%';
-			} // End If Statement
-
-			/**
-			 * Logic Rules
-			 *
-			 * To be Graded
-			 * sensei_lesson_end AND !sensei_quiz_grade
-			 *
-			 * In Progress
-			 * sensei_lesson_start AND !sensei_lesson_end
-			 *
-			 * Graded
-			 * sensei_quiz_grade
-			 */
-			if ( ( isset( $lesson_end_date ) && '' != $lesson_end_date ) && ( isset( $lesson_grade ) && '' == $lesson_grade ) ) {
-				// To Be Graded
-				$html .= '<tr>';
-					$html .= '<td class="table-count hidden">Test</td>';
-						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a></td>';
-						$html .= '<td>' . apply_filters( 'sensei_submitted_text', __( 'Submitted for Grading', 'woothemes-sensei' ) ) . '</td>';
-						$html .= '<td>' . $quiz_grade . '</td>';
-				$html .= '</tr>';
-				$to_be_graded_count++;
-			} elseif ( ( isset( $lesson_start_date ) && '' != $lesson_start_date ) && ( isset( $lesson_end_date ) && '' == $lesson_end_date  ) ) {
-				// In Progress
-				$html .= '<tr>';
-					$html .= '<td class="table-count hidden">Test</td>';
-						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a></td>';
-						$html .= '<td>' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</td>';
-						$html .= '<td>' . $quiz_grade . '</td>';
-				$html .= '</tr>';
-				$in_progress_count++;
-			} elseif ( isset( $lesson_grade ) && 0 < intval( $lesson_grade ) ) {
-				// Graded
-				$html .= '<tr>';
-					$html .= '<td class="table-count hidden">Test</td>';
-						$html .= '<td><a href="' . add_query_arg( array( 'page' => 'sensei_grading', 'user' => $user_item->ID, 'quiz_id' => $lesson_quiz_id ), admin_url( 'admin.php' ) ) . '">'.$user_item->display_name.'</a></td>';
-						$html .= '<td>' . apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) ) . '</td>';
-						$html .= '<td>' . $quiz_grade . '</td>';
-				$html .= '</tr>';
-				$graded_count++;
-			} // End If Statement
-
-		} // End For Loop
-
-		// Handle zero results
-		if ( ( 0 == $to_be_graded_count ) && ( 0 == $in_progress_count ) && ( 0 == $graded_count ) ) {
-			$html .= '<tr>';
-				$html .= '<td colspan="4">' . __( 'There are no Learners in this Lesson to be graded right now.', 'woothemes-sensei' ) . '</td>';
-			$html .= '</tr>';
-		} // End If Statement
-
-		$html .= '</tbody></table>';
-
-		echo $html;
-		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
-	}
 
 	public function process_grading() {
 		if( isset( $_POST['sensei_manual_grade'] ) && isset( $_GET['quiz_id'] ) ) {

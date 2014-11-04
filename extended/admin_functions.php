@@ -7,14 +7,14 @@
  ***************************************************/
 
 /**
- * Auto create a Forum for published Programmes and Courses
+ * Auto create a Forum for published Programmes and Courses, only if bbPress active
  * 
  * @param type $post_ID
  * @param type $post
  * @param type $update
  */
 function imperial_auto_create_forum( $post_ID, $post, $update ) {
-	if ( ( 'programme' == $post->post_type || 'course' == $post->post_type ) && 'publish' == $post->post_status && !empty($post->post_name) ) {
+	if ( ( 'programme' == $post->post_type || 'course' == $post->post_type ) && 'publish' == $post->post_status && !empty($post->post_name) && function_exists( 'bbp_insert_forum' ) ) {
 		// Check via P2P for Forum(s)...
 		$forums = p2p_type( $post->post_type . '_forum' )->get_connected( $post_ID );
 		if ( !$forums->have_posts() ) {
@@ -55,14 +55,14 @@ function imperial_auto_create_forum( $post_ID, $post, $update ) {
 add_action( 'wp_insert_post', 'imperial_auto_create_forum', 10, 3 );
 
 /**
- * Auto create a Group for published Programmes and Courses
+ * Auto create a Group for published Programmes and Courses, only if BuddyPress Groups is active
  * 
  * @param type $post_ID
  * @param type $post
  * @param type $update
  */
 function imperial_auto_create_group( $post_ID, $post, $update ) {
-	if ( ( 'programme' == $post->post_type || 'course' == $post->post_type ) && 'publish' == $post->post_status && !empty($post->post_name) ) {
+	if ( ( 'programme' == $post->post_type || 'course' == $post->post_type ) && 'publish' == $post->post_status && !empty($post->post_name) && bp_is_active('groups') ) {
 		// We require minimal info to check
 		$code = strtoupper( $post->__get($post->post_type . '_code') );
 		$year = strtoupper( $post->__get($post->post_type . '_year') );
@@ -247,3 +247,28 @@ function imperial_move_eml_menu() {
 	add_action('admin_print_scripts-' . $eml_mimetype_options_suffix, 'wpuxss_eml_admin_settings_pages_scripts');
 }
 add_action('admin_menu', 'imperial_move_eml_menu');
+
+/**
+ * Upon saving a Lesson calls imperial_sensei_update_restrict_lesson_completion()
+ * 
+ * @param type $post_ID
+ * @param type $post
+ * @param type $update
+ * @return null
+ */
+function imperial_sensei_lesson_selective_release( $post_ID, $post, $update ) {
+
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+	if ( !$post_ID || empty($post->post_type) || 'lesson' != $post->post_type ) {
+		return;
+	}
+	if ( ! current_user_can( 'edit_post', $post_ID ) ) {
+		return;
+	}
+
+	imperial_sensei_update_restrict_lesson_completion( $post_ID );
+}
+add_action( 'wp_insert_post', 'imperial_sensei_lesson_selective_release', 10, 3 ); // Not using 'save_post' as we want to access the meta data fields
+

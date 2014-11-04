@@ -15,28 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
+ * - remove_sortable_columns()
  * - extra_tablenav()
  * - table_search_form()
  * - get_columns()
  * - get_sortable_columns()
- * - build_data_array()
- * - array_sort_reorder()
- * - prepare_items()
- * - display_rows()
- * - sort_array_by_key()
- * - column_default()
+ * - get_column_info()
+ * - single_row()
+ * - get_row_data()
  * - no_items()
  * - get_bulk_actions()
  * - bulk_actions()
  */
 class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public $token;
-//	public $columns;
-//	public $sortable_columns;
-//	public $hidden_columns;
-//	public $per_page;
-//	public $use_users;
-//	public $total_items;
 
 	/**
 	 * Constructor
@@ -46,12 +38,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public function __construct ( $token ) {
 		// Class Variables
 		$this->token = $token;
-//		$this->columns = array();
-//		$this->sortable_columns = array();
-//		$this->hidden_columns = array();
-//		$this->per_page = 10;
-//		$this->use_users = false;
-//		$this->total_items = 0;
+
 		parent::__construct( array(
 								'singular' => 'wp_list_table_' . $this->token, // Singular label
 								'plural'   => 'wp_list_table_' . $this->token . 's', // Plural label
@@ -59,16 +46,6 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 		) );
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
-
-//		// Filters to remove sortabel columns from Analysis & Grading (to be updated in future versions)
-//		add_filter( 'sensei_analysis_overview_courses_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-//		add_filter( 'sensei_analysis_overview_lessons_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-//		add_filter( 'sensei_analysis_overview_users_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-//		add_filter( 'sensei_analysis_lesson_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-//		add_filter( 'sensei_analysis_user_profile_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-//		add_filter( 'sensei_analysis_course_user_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-//		add_filter( 'sensei_analysis_course_lesson_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-
 	} // End __construct()
 
 	/**
@@ -138,9 +115,9 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	} // End get_sortable_columns()
 
 	/**
-	 * X
-	 * @since  1.X.0
-	 * @return X
+	 * Overriding parent WP-List-Table get_column_info()
+	 * @since  1.7.0
+	 * @return array
 	 */
 	function get_column_info() {
 		if ( isset( $this->_column_headers ) )
@@ -180,12 +157,47 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * X
-	 * @since  1.X.0
-	 * @return X
+	 * Called by WP-List-Table and wrapping get_row_data() (needs overriding) with the elements needed for HTML output
+	 *
+	 * @since  1.7.0
+	 * @param object $item The current item
 	 */
-	function has_items() {
-		return count( $this->items );
+	function single_row( $item ) {
+		static $row_class = '';
+		$row_class = ( $row_class == '' ? ' class="alternate"' : '' );
+
+		echo '<tr' . $row_class . '>';
+
+		$column_data = $this->get_row_data( $item );
+
+		list( $columns, $hidden ) = $this->get_column_info();
+
+		foreach ( $columns as $column_name => $column_display_name ) {
+			$class = "class='$column_name column-$column_name'";
+
+			$style = '';
+			if ( in_array( $column_name, $hidden ) )
+				$style = ' style="display:none;"';
+
+			$attributes = "$class$style";
+
+			echo "<td $attributes>";
+			if ( isset($column_data[$column_name]) ) {
+				echo $column_data[$column_name];
+			}
+			echo "</td>";
+		}
+
+		echo '</tr>';
+	}
+
+	/**
+	 * @since 1.7.0
+	 * @access public
+	 * @abstract
+	 */
+	protected function get_row_data() {
+		die( 'either function WooThemes_Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or WooThemes_Sensei_List_Table::single_row() should be.' );
 	}
 
 	/**

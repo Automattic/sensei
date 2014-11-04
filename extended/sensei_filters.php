@@ -169,6 +169,20 @@ function imperial_sensei_staff_access( $access ) {
 }
 add_filter( 'sensei_all_access', 'imperial_sensei_staff_access' );
 
+/**
+ * Filter the Sensei messages shown on the frontend
+ * 
+ * @param type $args
+ */
+function imperial_sensei_user_quiz_status( $args ) {
+	$args['message'] = str_replace( 'You require 0% to pass this quiz.', '', $args['message'] );
+	$args['message'] = str_replace( 'You require 0% to pass.', '', $args['message'] );
+	if ( empty($args['message']) ) {
+		$args = array();
+	}
+	return $args;
+}
+add_filter( 'sensei_user_quiz_status', 'imperial_sensei_user_quiz_status' );
 
 /**
  * Filters the questions that are autogradable to add more question types
@@ -193,12 +207,20 @@ function imperial_sensei_grade_question_auto( $question_grade, $question_id, $qu
 			if( 0 == get_magic_quotes_gpc() ) {
 				$answer = wp_unslash( $answer );
 			}
-			$gapfill_array = explode( '|', $right_answer );
+			$gapfill_array = explode( '||', $right_answer );
 			// Check that the 'gap' is "exactly" equal to the given answer
 			if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
 				$question_grade = get_post_meta( $question_id, '_question_grade', true );
 				if ( empty($question_grade) ) {
 					$question_grade = 1;
+				}
+			}
+			else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
+				if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
+					$question_grade = get_post_meta( $question_id, '_question_grade', true );
+					if ( empty($question_grade) ) {
+						$question_grade = 1;
+					}
 				}
 			}
 			break;
@@ -342,6 +364,31 @@ function imperial_sensei_track_quiz_attempts( $user_id, $quiz_id, $quiz_grade_ty
 	}
 }
 add_action( 'sensei_user_quiz_submitted', 'imperial_sensei_track_quiz_attempts', 10, 4 );
+
+/**
+ * User notification for quiz submission
+ * 
+ * @uses 'sensei_user_quiz_submitted' on quiz submission to trigger
+ * @param type $current_user_id
+ * @param type $quiz_id
+ * @param type $quiz_grade_type
+ * @param type $grade
+ */
+function imperial_sensei_quiz_notification( $user_id, $quiz_id, $quiz_grade_type, $grade) {
+    // We using notifications?
+    if ( !bp_is_active( 'notifications' ) ) {
+        return;
+    }
+    $args = array(
+        'item_id'           => $quiz_id,
+        'secondary_item_id' => 0,
+        'component_name'    => 'imperial',
+        'component_action'  => 'quiz_submission',
+        'user_id'           => $user_id,
+    );
+    bp_notifications_add_notification( $args );
+}
+add_action( 'sensei_user_quiz_submitted', 'imperial_sensei_quiz_notification', 10, 4 );
 
 /**
  * Cannot set a cookie within imperial_sensei_check_quiz_password() normally as the headers will have already been sent,
