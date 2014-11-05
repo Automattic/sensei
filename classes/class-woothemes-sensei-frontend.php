@@ -696,7 +696,17 @@ class WooThemes_Sensei_Frontend {
 					<div class="sensei-message info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
 				<?php } ?>
 			<?php } else { ?>
-				<div class="sensei-message info"><?php echo apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
+				<div class="sensei-message info">
+                    <?php
+                        /**
+                         * Filter the Sensei please sign up message
+                         * @since 1.4.0
+                         *
+                         * @param string  $signup_text
+                         */
+                        echo apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) );
+                    ?>
+                </div>
 			<?php } // End If Statement ?>
     	</section><?php
     	} // End If Statement
