@@ -76,9 +76,9 @@ add_action( 'sensei_user_lesson_end', 'imperial_sensei_user_lesson_status', 10, 
  * @param type $quiz_id
  * @param type $grade
  * @param type $passmark
+ * @param type $quiz_grade_type
  */
-function imperial_sensei_user_lesson_quiz_status( $user_id, $quiz_id, $quiz_grade_type = 'auto', $grade = 0 ) {
-//function imperial_sensei_user_lesson_quiz_status( $user_id, $quiz_id, $grade, $passmark, $quiz_grade_type = 'auto' ) {
+function imperial_sensei_user_lesson_quiz_status( $user_id, $quiz_id, $grade, $passmark, $quiz_grade_type = 'auto' ) {
 	global $wpdb, $wp_current_filter;
 //error_log(__FUNCTION__ . ':' .print_r( func_get_args(), true ));
 
@@ -99,7 +99,6 @@ function imperial_sensei_user_lesson_quiz_status( $user_id, $quiz_id, $quiz_grad
 		// Quiz has been automatically Graded
 		$lesson_quiz_id = get_post_meta( $lesson_id, '_lesson_quiz', true ); // Something we store to save time
 		$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
-		$passmark = get_post_meta( $lesson_quiz_id, '_quiz_passmark', true );
 		if ( $pass_required ) {
 			// ...check user has passed
 			if ( $passmark <= $grade ) {
@@ -154,7 +153,7 @@ function imperial_sensei_user_lesson_quiz_status( $user_id, $quiz_id, $quiz_grad
 // 'sensei_user_quiz_grade' triggers within frontend::sensei_complete_lesson(), frontend::sensei_complete_quiz() and frontend::sensei_complete_course()
 //add_action( 'sensei_user_quiz_grade', 'imperial_sensei_user_lesson_quiz_status', 10, 5 );
 // 'sensei_user_quiz_submitted' triggers within frontend::sensei_complete_quiz()
-add_action( 'sensei_user_quiz_submitted', 'imperial_sensei_user_lesson_quiz_status', 10, 4 );
+add_action( 'sensei_user_quiz_submitted', 'imperial_sensei_user_lesson_quiz_status', 10, 5 );
 
 
 /**
