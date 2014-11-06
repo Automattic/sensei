@@ -224,9 +224,11 @@ class WooThemes_Sensei_Analysis {
 		<div id="poststuff" class="sensei-analysis-wrap">
 			<div class="sensei-analysis-sidebar">
 				<?php
+				do_action( 'sensei_analysis_before_stats_boxes' );
 				foreach ( $sensei_analysis_overview->stats_boxes() as $key => $value ) {
 					$this->render_stats_box( esc_html( $key ), esc_html( $value ) );
 				} // End For Loop
+				do_action( 'sensei_analysis_after_stats_boxes' );
 				?>
 			</div>
 			<div class="sensei-analysis-main">

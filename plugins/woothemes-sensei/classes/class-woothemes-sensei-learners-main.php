@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	public $course_id = 0;
 	public $lesson_id = 0;
-	public $view = 'default';
+	public $view = 'courses';
 	public $page_slug = 'sensei_learners';
 
 	/**
@@ -42,7 +42,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		$this->course_id = intval( $course_id );
 		$this->lesson_id = intval( $lesson_id );
 
-		if( isset( $_GET['view'] ) && '' != $_GET['view'] ) {
+		if( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'courses', 'lessons', 'learners' ) ) ) {
 			$this->view = $_GET['view'];
 		}
 
@@ -86,6 +86,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				);
 				break;
 
+			case 'courses':
 			default:
 				$columns = array(
 					'title' => __( 'Course', 'woothemes-sensei' ),
@@ -281,7 +282,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					), $item, $this->course_id );
 				break;
 
-			case '' :
+			case 'courses' :
 			default:
 				$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
@@ -441,13 +442,22 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		if( ! $this->view || 'default' == $this->view ) {
-			$type = 'courses';
-		} else {
-			$type = $this->view;
-		}
+		switch( $this->view ) {
+			case 'learners' :
+				$text = __( 'No learners found.', 'woothemes-sensei' );
+				break;
 
-		echo apply_filters( 'sensei_learners_no_items_text', sprintf( __( '%1$sNo %2$s found%3$s', 'woothemes-sensei' ), '<em>', $type, '</em>' ), $type );
+			case 'lessons' :
+				$text = __( 'No lessons found.', 'woothemes-sensei' );
+				break;
+
+			case 'courses':
+			case 'default':
+			default:
+				$text = __( 'No courses found.', 'woothemes-sensei' );
+				break;
+		}
+		echo apply_filters( 'sensei_learners_no_items_text', $text );
 	} // End no_items()
 
 	/**
@@ -461,7 +471,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		do_action( 'sensei_learners_before_dropdown_filters' );
 
 		// Display Course Categories only on default view
-		if( 'default' == $this->view ) {
+		if( 'courses' == $this->view ) {
 
 			$selected_cat = 0;
 			if ( isset( $_GET['course_cat'] ) && '' != esc_html( $_GET['course_cat'] ) ) {
@@ -512,7 +522,6 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			$menu['learners'] = '<a class="' . $learners_class . '" href="' . add_query_arg( $learner_args, admin_url( 'admin.php' ) ) . '">' . __( 'Learners', 'woothemes-sensei' ) . '</a>';
 			$menu['lessons'] = '<a class="' . $lessons_class . '" href="' . add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) . '">' . __( 'Lessons', 'woothemes-sensei' ) . '</a>';
-
 
 		} 
 		// Have Course and Lesson

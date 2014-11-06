@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class WooThemes_Sensei_Grading_User_Quiz {
 	public $user_id;
+	public $quiz_id;
 
 	/**
 	 * Constructor

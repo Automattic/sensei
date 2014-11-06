@@ -24,11 +24,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - data_table_footer()
  */
 class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
-	public $user_id = 0;
-	public $course_id = 0;
-	public $lesson_id = 0;
+	public $user_id;
+	public $course_id;
+	public $lesson_id;
+	public $view;
 	public $user_ids = false;
-	public $view = 'ungraded';
 	public $page_slug = 'sensei_grading';
 
 	/**
@@ -36,14 +36,24 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @since  1.3.0
 	 * @return  void
 	 */
-	public function __construct ( $course_id = 0, $lesson_id = 0 ) {
-		global $woothemes_sensei;
+	public function __construct ( $args = null ) {
 
-		$this->course_id = intval( $course_id );
-		$this->lesson_id = intval( $lesson_id );
+		$defaults = array(
+			'course_id' => 0,
+			'lesson_id' => 0,
+			'user_id' => false,
+			'view' => 'ungraded',
+		);
+		$args = wp_parse_args( $args, $defaults );
 
-		if( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'in-progress', 'graded', 'ungraded', 'all' ) ) ) {
-			$this->view = $_GET['view'];
+		$this->course_id = intval( $args['course_id'] );
+		$this->lesson_id = intval( $args['lesson_id'] );
+		if ( !empty($args['user_id']) ) {
+			$this->user_id = intval( $args['user_id'] );
+		}
+
+		if( !empty( $args['view'] ) && in_array( $args['view'], array( 'in-progress', 'graded', 'ungraded', 'all' ) ) ) {
+			$this->view = $args['view'];
 		}
 
 		// Load Parent token into constructor
@@ -164,6 +174,15 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 				$activity_args['post__in'] = $woothemes_sensei->post_types->course->course_lessons( $this->course_id, 'any', 'ids' );
 			}
 		}
+		// Sub select to group of learners
+		if ( $this->user_ids ) {
+			$activity_args['user_id'] = (array) $this->user_ids;
+		}
+		// Restrict to a single Learner
+		if( $this->user_id ) {
+			$activity_args['user_id'] = $this->user_id;
+		}
+
 
 		switch( $this->view ) {
 			case 'in-progress' :
@@ -183,10 +202,6 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 				$activity_args['status'] = 'any';
 				break;
 		} // End switch
-
-		if ( $this->user_ids ) {
-			$activity_args['user_id'] = (array) $this->user_ids;
-		}
 
 		$activity_args = apply_filters( 'sensei_grading_filter_statuses', $activity_args );
 
@@ -218,6 +233,8 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	function get_row_data( $item ) {
+		global $wp_version;
+
 		$grade = '';
 		if( 'complete' == $item->comment_approved ) {
 			$status_html = '<span class="graded">' . apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) ) . '</span>';
@@ -244,11 +261,10 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 		$user = get_user_by( 'id', $item->user_id );
 		$title = $user->display_name;
-		$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
 		// QuizID to be deprecated
 		$quiz_id = get_post_meta( $item->comment_post_ID, '_lesson_quiz', true );
-		$quiz_link = add_query_arg( array( 'page' => 'sensei_grading', 'user' => $item->user_id, 'quiz_id' => $quiz_id ), admin_url( 'admin.php' ) );
+		$quiz_link = add_query_arg( array( 'page' => $this->page_slug, 'user' => $item->user_id, 'quiz_id' => $quiz_id ), admin_url( 'admin.php' ) );
 
 		$grade_link = '';
 		switch( $item->comment_approved ) {
@@ -264,17 +280,24 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		}
 
 		$course_id = get_post_meta( $item->comment_post_ID, '_lesson_course', true );
-		$course_title = $course_id ? get_the_title( $course_id ) : '';
+		$course_title = '';
+		if ( !empty($course_id) && version_compare($wp_version, '4.1', '>=') ) {
+			$course_title = '<a href="' . add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) ) . '">' . get_the_title( $course_id ) . '</a>';
+		}
+		else if ( !empty($course_id) ) {
+			$course_title = get_the_title( $course_id );
+		}
+		$lesson_title = '<a href="' . add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->comment_post_ID ), admin_url( 'admin.php' ) ) . '">' . get_the_title( $item->comment_post_ID ) . '</a>';
 
 		$column_data = apply_filters( 'sensei_grading_main_column_data', array(
-				'title' => '<strong><a class="row-title" href="' . admin_url( 'user-edit.php?user_id=' . $user->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
+				'title' => '<strong><a class="row-title" href="' . add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id ), admin_url( 'admin.php' ) ) . '"">' . $title . '</a></strong>',
 				'course' => $course_title,
-				'lesson' => get_the_title( $item->comment_post_ID ),
+				'lesson' => $lesson_title,
 				'updated' => $item->comment_date,
 				'user_status' => $status_html,
 				'user_grade' => $grade,
 				'action' => $grade_link,
-			), $item );
+			), $item, $course_id );
 
 		return $column_data;
 	}
@@ -342,13 +365,11 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			'page' => $this->page_slug,
 		);
 		if( $this->course_id ) {
-			// Currently not possible to restrict to a single Course, as that requires WP_Comment to 
-			// support multiple post_id (i.e. every lesson within the Course)
+			// Currently not possible to restrict to a single Course, as that requires WP_Comment to support multiple
+			// post_ids (i.e. every lesson within the Course), WP 4.1 ( https://core.trac.wordpress.org/changeset/29808 )
 			$query_args['course_id'] = $this->course_id;
-			// Supported in WP 4.1 ( https://core.trac.wordpress.org/changeset/29808 )
-			if ( version_compare($wp_version, '4.1', '<') ) {
-				$ids = $woothemes_sensei->post_types->course->course_lessons( $this->course_id, 'any', 'ids' );
-				$count_args['post_id'] = $woothemes_sensei->post_types->course->course_lessons( $this->course_id, 'any', 'ids' );
+			if ( version_compare($wp_version, '4.1', '>=') ) {
+				$count_args['post__in'] = $woothemes_sensei->post_types->course->course_lessons( $this->course_id, 'any', 'ids' );
 			}
 		}
 		if( $this->lesson_id ) {
@@ -361,6 +382,10 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		}
 		if ( !empty($this->user_ids) ) {
 			$count_args['user_id'] = $this->user_ids;
+		}
+		if( !empty($this->user_id) ) {
+			$query_args['user_id'] = $this->user_id;
+			$count_args['user_id'] = $this->user_id;
 		}
 
 		$all_lessons_count = $ungraded_lessons_count = $graded_lessons_count = $inprogress_lessons_count = 0;
@@ -397,11 +422,11 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		$graded_args['view'] = 'graded';
 		$inprogress_args['view'] = 'in-progress';
 
-		$format = '<a class="%s" href="%s">%s <span class="count">(%s)</span></a>';
-		$menu['all'] = sprintf( $format, $all_class, add_query_arg( $all_args, admin_url( 'admin.php' ) ), __( 'All', 'woothemes-sensei' ), $all_lessons_count );
-		$menu['ungraded'] = sprintf( $format, $ungraded_class, add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ), __( 'Ungraded', 'woothemes-sensei' ), $ungraded_lessons_count );
-		$menu['graded'] = sprintf( $format, $graded_class, add_query_arg( $graded_args, admin_url( 'admin.php' ) ), __( 'Graded', 'woothemes-sensei' ), $graded_lessons_count );
-		$menu['in-progress'] = sprintf( $format, $inprogress_class, add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ), __( 'In Progress', 'woothemes-sensei' ), $inprogress_lessons_count );
+		$format = '<a class="%s" href="%s">%s <span class="count">(%d)</span></a>';
+		$menu['all'] = sprintf( $format, $all_class, add_query_arg( $all_args, admin_url( 'admin.php' ) ), __( 'All', 'woothemes-sensei' ), (int) $all_lessons_count );
+		$menu['ungraded'] = sprintf( $format, $ungraded_class, add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ), __( 'Ungraded', 'woothemes-sensei' ), (int) $ungraded_lessons_count );
+		$menu['graded'] = sprintf( $format, $graded_class, add_query_arg( $graded_args, admin_url( 'admin.php' ) ), __( 'Graded', 'woothemes-sensei' ), (int) $graded_lessons_count );
+		$menu['in-progress'] = sprintf( $format, $inprogress_class, add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ), __( 'In Progress', 'woothemes-sensei' ), (int) $inprogress_lessons_count );
 
 		$menu = apply_filters( 'sensei_grading_sub_menu', $menu );
 		if ( !empty($menu) ) {

@@ -151,7 +151,8 @@ class WooThemes_Sensei_Grading {
 		$object_name = 'WooThemes_Sensei_Grading_' . $name;
 		if ( is_null($optional_data) ) {
 			$sensei_grading_object = new $object_name( $data );
-		} else {
+		}
+		else {
 			$sensei_grading_object = new $object_name( $data, $optional_data );
 		} // End If Statement
 		if ( 'Main' == $name ) {
@@ -168,9 +169,10 @@ class WooThemes_Sensei_Grading {
 	 */
 	public function grading_page() {
 		global $woothemes_sensei;
-		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) && isset( $_GET['quiz_id'] ) && 0 < intval( $_GET['quiz_id'] ) ) {
+		if ( isset( $_GET['quiz_id'] ) && 0 < intval( $_GET['quiz_id'] ) && isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 			$this->grading_user_quiz_view();
-		} else {
+		}
+		else {
 			$this->grading_default_view();
 		} // End If Statement
 	} // End grading_page()
@@ -184,15 +186,20 @@ class WooThemes_Sensei_Grading {
 		global $woothemes_sensei;
 		// Load Grading data
 		$this->load_data_table_files();
-		$course_id = 0;
-		$lesson_id = 0;
-		if( isset( $_GET['course_id'] ) ) {
+
+		if( !empty( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 		}
-		if( isset( $_GET['lesson_id'] ) ) {
+		if( !empty( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
 		}
-		$sensei_grading_overview = $this->load_data_object( 'Main', $course_id, $lesson_id );
+		if( !empty( $_GET['user_id'] ) ) {
+			$user_id = intval( $_GET['user_id'] );
+		}
+		if( !empty( $_GET['view'] ) ) {
+			$view = esc_html( $_GET['view'] );
+		}
+		$sensei_grading_overview = $this->load_data_object( 'Main', compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
@@ -281,18 +288,27 @@ class WooThemes_Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_default_nav() {
-		global $woothemes_sensei;
+		global $woothemes_sensei, $wp_version;
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['course_id'] ) ) { 
 			$course_id = intval( $_GET['course_id'] );
-			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
-			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, get_the_title( $course_id ) ); 
+			if ( version_compare($wp_version, '4.1', '>=') ) {
+				$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, get_the_title( $course_id ) );
+			}
+			else {
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', get_the_title( $course_id ) ); 
+			}
 		}
 		if ( isset( $_GET['lesson_id'] ) ) { 
 			$lesson_id = intval( $_GET['lesson_id'] );
 			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>'; 
 		}
+		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
+			$user_data = get_userdata( intval( $_GET['user_id'] ) );
+			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_data->display_name . '</span>'; 
+		} // End If Statement
 		?>
 			<h2><?php echo apply_filters( 'sensei_grading_nav_title', $title ); ?></h2>
 		<?php
@@ -304,15 +320,20 @@ class WooThemes_Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_user_quiz_nav() {
-		global $woothemes_sensei;
+		global $woothemes_sensei, $wp_version;
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['quiz_id'] ) ) { 
 			$quiz_id = intval( $_GET['quiz_id'] );
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-//			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-//			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
-//			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, get_the_title( $course_id ) ); 
+			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			if ( version_compare($wp_version, '4.1', '>=') ) {
+				$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, get_the_title( $course_id ) );
+			}
+			else {
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', get_the_title( $course_id ) ); 
+			}
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id ), admin_url( 'admin.php' ) );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, get_the_title( $lesson_id ) ); 
 		}
@@ -375,8 +396,8 @@ class WooThemes_Sensei_Grading {
 
 		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
 		// Restrict to specific posts
-		if ( is_array( $args['post_id'] ) ) {
-			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post_id'] ) ) . ')';
+		if ( is_array( $args['post__in'] ) ) {
+			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post__in'] ) ) . ')';
 		}
 		elseif ( !empty( $args['post_id'] ) ) {
 			$query .= $wpdb->prepare( ' AND comment_post_ID = %d', $args['post_id'] );

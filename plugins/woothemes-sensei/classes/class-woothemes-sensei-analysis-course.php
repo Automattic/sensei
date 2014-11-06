@@ -403,7 +403,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 						$lesson_title = apply_filters( 'the_title', $item->post_title, $item->ID );
 					}
 					else {
-						$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id, 'lesson_id' => $item->ID ), admin_url( 'admin.php' ) );
+						$url = add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->ID ), admin_url( 'admin.php' ) );
 						$lesson_title = '<strong><a class="row-title" href="' . $url . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
 						$status = sprintf( '<span class="%s">%s</span>', $status_class, $status );
