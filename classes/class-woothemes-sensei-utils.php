@@ -511,7 +511,7 @@ class WooThemes_Sensei_Utils {
 				foreach( $submitted as $question_id => $answer ) {
 					// check if the question is autogradable
 					$question_type = get_the_terms( $question_id, 'question-type' );
-					$question_type = $question_type[0]->slug;
+					$question_type = array_shift($question_type)->slug;
 					if ( in_array( $question_type, $autogradable_question_types ) ) {
 						// Get user question grade
 						$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer );
