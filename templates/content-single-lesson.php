@@ -42,7 +42,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 					$view_lesson = false;
                     if ( ( isset( $user_lesson_prerequisite_complete ) && $user_lesson_prerequisite_complete ) ) {
                     	$view_lesson = true;
-                    	$completion = $woothemes_sensei->settings->settings['lesson_completion'];
+                        if (isset( $woothemes_sensei->settings->settings['lesson_completion'] ) ) {
+                            $completion = $woothemes_sensei->settings->settings['lesson_completion'];
+                        }else{
+                            $completion = '';
+                        }
+
 						switch( $completion ) {
 							case 'passed':
 								$quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_prerequisite );
