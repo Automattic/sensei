@@ -198,7 +198,7 @@ function imperial_sensei_lesson_status_updated_course( $lesson_status, $user_id,
 		// The below checks if a lesson is fully completed, though maybe should be Utils::user_completed_lesson()
 		$all_lesson_statuses = array();
 		// In WordPress 4.1 get_comments() allows a single query to cover multiple comment_post_IDs
-		if ( version_compare($wp_version, '4.1', '<') ) {
+		if ( version_compare($wp_version, '4.1', '>=') ) {
 			$lesson_status_args['post__in'] = $lesson_ids;
 			$all_lesson_statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
 		}

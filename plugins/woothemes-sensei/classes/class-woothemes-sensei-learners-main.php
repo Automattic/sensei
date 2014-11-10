@@ -98,9 +98,9 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		$columns['actions'] = __( '', 'woothemes-sensei' );
 		// Backwards compatible
 		if ( 'learners' == $this->view ) {
-			$columns = apply_filters( 'sensei_learners_learners_columns', $columns, $this->view );
+			$columns = apply_filters( 'sensei_learners_learners_columns', $columns, $this );
 		}
-		$columns = apply_filters( 'sensei_learners_default_columns', $columns, $this->view );
+		$columns = apply_filters( 'sensei_learners_default_columns', $columns, $this );
 		return $columns;
 	}
 
@@ -134,9 +134,9 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		}
 		// Backwards compatible
 		if ( 'learners' == $this->view ) {
-			$columns = apply_filters( 'sensei_learners_learners_columns_sortable', $columns, $this->view );
+			$columns = apply_filters( 'sensei_learners_learners_columns_sortable', $columns, $this );
 		}
-		$columns = apply_filters( 'sensei_learners_default_columns_sortable', $columns, $this->view );
+		$columns = apply_filters( 'sensei_learners_default_columns_sortable', $columns, $this );
 		return $columns;
 	}
 
@@ -224,7 +224,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	 * @since  1.7.0
 	 * @param object $item The current item
 	 */
-	function get_row_data( $item ) {
+	protected function get_row_data( $item ) {
 		global $wp_version;
 
 		switch ( $this->view ) {

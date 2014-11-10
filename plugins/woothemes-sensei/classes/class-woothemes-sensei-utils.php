@@ -643,15 +643,15 @@ class WooThemes_Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		$question_grade = 0;
+		$question_grade = false;
 		if( intval( $question_id ) > 0 ) {
 			if ( empty($question_type) ) {
 				$question_type = get_the_terms( $question_id, 'question-type' );
-				$question_type = $question_type[0]->slug;
+				$question_type = array_shift($question_type)->slug;
 			}
 			// Allow full override of autograding
 			$question_grade = apply_filters( 'sensei_pre_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
-			if ( !$question_grade ) {
+			if ( false === $question_grade ) {
 				switch( $question_type ) {
 					case 'multiple-choice':
 					case 'boolean' :

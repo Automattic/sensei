@@ -80,7 +80,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			'action' => __( '', 'woothemes-sensei' ),
 		);
 
-		$columns = apply_filters( 'sensei_grading_default_columns', $columns );
+		$columns = apply_filters( 'sensei_grading_default_columns', $columns, $this );
 		return $columns;
 	}
 
@@ -98,7 +98,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			'user_status' => array( 'user_status', false ),
 			'user_grade' => array( 'user_grade', false ),
 		);
-		$columns = apply_filters( 'sensei_grading_default_columns_sortable', $columns );
+		$columns = apply_filters( 'sensei_grading_default_columns_sortable', $columns, $this );
 		return $columns;
 	}
 
@@ -232,7 +232,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @since  1.7.0
 	 * @param object $item The current item
 	 */
-	function get_row_data( $item ) {
+	protected function get_row_data( $item ) {
 		global $wp_version;
 
 		$grade = '';

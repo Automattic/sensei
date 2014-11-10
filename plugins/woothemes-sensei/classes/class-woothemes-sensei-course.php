@@ -763,11 +763,11 @@ class WooThemes_Sensei_Course {
 							);
 
 		// Allow WP to generate the complex final query, just shortcut to only do an overall count
-		add_filter( 'posts_clauses', array( WooThemes_Sensei_Utils, 'get_posts_count_only_filter' ) );
+//		add_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
-		remove_filter( 'posts_clauses', array( WooThemes_Sensei_Utils, 'get_posts_count_only_filter' ) );
+//		remove_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 
-		return intval( $courses_query->posts[0] );
+		return count( $courses_query->posts );
 	} // End course_count()
 
 

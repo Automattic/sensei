@@ -65,7 +65,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 			'status' => __( 'Status', 'woothemes-sensei' ),
 			'grade' => __( 'Grade', 'woothemes-sensei' ),
 		);
-		$columns = apply_filters( 'sensei_analysis_lesson_columns', $columns );
+		$columns = apply_filters( 'sensei_analysis_lesson_columns', $columns, $this );
 		return $columns;
 	}
 
@@ -82,7 +82,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 			'status' => array( 'status', false ),
 			'grade' => array( 'grade', false ),
 		);
-		$columns = apply_filters( 'sensei_analysis_lesson_columns_sortable', $columns );
+		$columns = apply_filters( 'sensei_analysis_lesson_columns_sortable', $columns, $this );
 		return $columns;
 	}
 
@@ -267,7 +267,7 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 										'completed' => $user_end_date,
 										'status' => $status,
 										'grade' => $grade,
-									), $item );
+									), $item, $this );
 
 		return $column_data;
 	}

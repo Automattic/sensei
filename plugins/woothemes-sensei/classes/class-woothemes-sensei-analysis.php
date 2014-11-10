@@ -437,7 +437,8 @@ class WooThemes_Sensei_Analysis {
 		global $woothemes_sensei;
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
-		switch ( $_GET['view'] ) { 
+		$view = isset($_GET['view']) ? esc_html( $_GET['view'] ) : '';
+		switch ( $view ) { 
 			case 'courses' :
 				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', __( 'Courses', 'woothemes-sensei' ) );
 				break;

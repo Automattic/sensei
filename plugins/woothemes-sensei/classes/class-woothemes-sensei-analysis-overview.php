@@ -93,8 +93,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				break;
 		}
 		// Backwards compatible filter name, moving forward should have single filter name
-		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns', $columns, $this->type );
-		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this->type );
+		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns', $columns, $this );
+		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this );
 		return $columns;
 	}
 
@@ -138,8 +138,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				break;
 		}
 		// Backwards compatible filter name, moving forward should have single filter name
-		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns_sortable', $columns, $this->type );
-		$columns = apply_filters( 'sensei_analysis_overview_columns_sortable', $columns, $this->type );
+		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns_sortable', $columns, $this );
+		$columns = apply_filters( 'sensei_analysis_overview_columns_sortable', $columns, $this );
 		return $columns;
 	}
 
@@ -303,7 +303,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 						'type' => 'sensei_course_status',
 						'status' => 'any',
 					);
-				$course_students = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_students', $course_args, $item ) );
+				$course_students = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_learners', $course_args, $item ) );
 
 				// Get Course Completions
 				$course_args = array( 
@@ -314,7 +314,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				$course_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
 				// Course Lessons
-				$course_lessons = $woothemes_sensei->post_types->lesson->lesson_count( 'publish', $item->ID );
+				$course_lessons = $woothemes_sensei->post_types->lesson->lesson_count( array('publish', 'private'), $item->ID );
 
 				// Get Percent Complete
 				$grade_args = array( 
@@ -323,9 +323,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 						'status' => 'any',
 						'meta_key' => 'percent',
 					);
-				add_filter( 'comments_clauses', array( WooThemes_Sensei_Utils, 'comment_total_sum_meta_value_filter' ) );
+				add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 				$course_percentage = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), true );
-				remove_filter( 'comments_clauses', array( WooThemes_Sensei_Utils, 'comment_total_sum_meta_value_filter' ) );
+				remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 				$course_percentage = $course_percentage[0];
 				$percent_count = !empty( $course_percentage->total ) ? $course_percentage->total : 1;
 				$percent_total = !empty( $course_percentage->meta_sum ) ? doubleval( $course_percentage->meta_sum ) : 0;
@@ -346,7 +346,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 												'lessons' => $course_lessons,
 												'completions' => $course_completions,
 												'average_percent' => $course_average_percent,
-											), $item, $this->type );
+											), $item, $this );
 				break;
 
 			case 'lessons' :
@@ -356,7 +356,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 						'type' => 'sensei_lesson_status',
 						'status' => 'any',
 					);
-				$lesson_students = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_students', $lesson_args, $item ) );
+				$lesson_students = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
 
 				// Get Course Completions
 				$lesson_args = array( 
@@ -380,9 +380,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 							'status' => array( 'graded', 'passed', 'failed' ),
 							'meta_key' => 'grade',
 						);
-					add_filter( 'comments_clauses', array( WooThemes_Sensei_Utils, 'comment_total_sum_meta_value_filter' ) );
+					add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 					$lesson_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
-					remove_filter( 'comments_clauses', array( WooThemes_Sensei_Utils, 'comment_total_sum_meta_value_filter' ) );
+					remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 					$lesson_grades = $lesson_grades[0];
 					$grade_count = !empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
 					$grade_total = !empty( $lesson_grades->meta_sum ) ? doubleval( $lesson_grades->meta_sum ) : 0;
@@ -412,7 +412,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 												'course' => $course_title,
 												'completions' => $lesson_completions,
 												'average_grade' => $lesson_average_grade,
-											), $item, $this->type );
+											), $item, $this );
 				break;
 
 			case 'users' :
@@ -440,9 +440,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 						'status' => 'any',
 						'meta_key' => 'grade',
 					);
-				add_filter( 'comments_clauses', array( WooThemes_Sensei_Utils, 'comment_total_sum_meta_value_filter' ) );
+				add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 				$user_quiz_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), true );
-				remove_filter( 'comments_clauses', array( WooThemes_Sensei_Utils, 'comment_total_sum_meta_value_filter' ) );
+				remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 				$user_quiz_grades = $user_quiz_grades[0];
 				$grade_count = !empty( $user_quiz_grades->total ) ? $user_quiz_grades->total : 1;
 				$grade_total = !empty( $user_quiz_grades->meta_sum ) ? doubleval( $user_quiz_grades->meta_sum ) : 0;
@@ -462,7 +462,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 												'active_courses' => ( $user_courses_started - $user_courses_ended ),
 												'completed_courses' => $user_courses_ended,
 												'average_grade' => $user_average_grade,
-											), $item, $this->type );
+											), $item, $this );
 				break;
 		} // end switch
 		return $column_data;
@@ -535,7 +535,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 	 */
 	private function get_learners( $args ) {
 
-		if ( $args['search'] ) {
+		if ( !empty($args['search']) ) {
 			$args = array(
 				'search' => '*' . trim( $args['search'], '*' ) . '*',
 			);
@@ -563,8 +563,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		// Get the data required
 		$user_count = count_users();
 		$user_count = apply_filters( 'sensei_analysis_total_users', $user_count['total_users'], $user_count );
-		$total_courses = $woothemes_sensei->post_types->course->course_count();
-		$total_lessons = $woothemes_sensei->post_types->lesson->lesson_count();
+		$total_courses = $woothemes_sensei->post_types->course->course_count( array('publish', 'private') );
+		$total_lessons = $woothemes_sensei->post_types->lesson->lesson_count( array('publish', 'private') );
 
 		$grade_args = array( 
 				'type' => 'sensei_lesson_status',
@@ -572,9 +572,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				'meta_key' => 'grade',
 			);
 
-		add_filter( 'comments_clauses', array( WooThemes_Sensei_Utils, 'comment_total_sum_meta_value_filter' ) );
+		add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 		$total_quiz_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_total_quiz_grades', $grade_args ), true );
-		remove_filter( 'comments_clauses', array( WooThemes_Sensei_Utils, 'comment_total_sum_meta_value_filter' ) );
+		remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 		$total_quiz_grades = $total_quiz_grades[0];
 
 		$total_grade_count = !empty( $total_quiz_grades->total ) ? $total_quiz_grades->total : 1;

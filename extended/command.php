@@ -1100,8 +1100,13 @@ class Imperial_Users_Feed_Command extends Imperial_Base_CLI_Command {
 				if ( WP_DEBUG ) {
 					WP_CLI::line( "Disabling $userID;" );
 				}
+				$user = get_user_by( 'id', $userID );
 				// Mark them as cannot login in
 				update_user_meta( $userID, 'disabled', true );
+				// Ensure that their status is correct
+				update_user_meta( $userID, 'status', 'Disabled' );
+				// Remove all roles and user levels
+				$user->set_role('');
 			}
 			wp_cache_flush();
 		}
@@ -1172,9 +1177,14 @@ class Imperial_Users_Feed_Command extends Imperial_Base_CLI_Command {
 				// Remove their Programme and Course relationships
 				$userProgrammes = p2p_delete_connections( 'student_programme', array( 'from' => $userID, 'fields' => 'p2p_to' ) );
 				$userCourses = p2p_delete_connections( 'student_course', array( 'from' => $userID, 'fields' => 'p2p_to' ) );
-				
+
+				$user = get_user_by( 'id', $userID );
 				// Mark User to not show in the admin (a filter that is part of BuddyPress), but has to be a direct call, there is no function for this
 				$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->users} SET user_status = 2 WHERE ID = %d", $userID ) );
+				// Ensure that their status is correct
+				update_user_meta( $userID, 'status', 'Removed' );
+				// Remove all roles and user levels
+				$user->set_role('');
 				$disabled++;
 			}
 			wp_cache_flush();
@@ -1287,6 +1297,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 		// Get all Lessons with Quizzes...
 		$args = array(
 			'post_type' => 'lesson',
+			'post_status' => 'any',
 			'numberposts' => -1,
 			'meta_query' => array(
 				array(
@@ -1522,7 +1533,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 
 		$users_sql = "SELECT ID FROM $wpdb->users WHERE ID > %d LIMIT $per_page";
 		$start_sql = "SELECT comment_post_ID, comment_date FROM $wpdb->comments WHERE comment_type = 'sensei_course_start' AND user_id = %d GROUP BY comment_post_ID ";
-		$lessons_sql = "SELECT comment_approved AS status, comment_date FROM $wpdb->comments WHERE comment_type = 'sensei_lesson_status' AND user_id = %d AND comment_post_ID IN ( %s ) ORDER BY comment_date_gmt ASC";
+		$lessons_sql = "SELECT comment_approved AS status, comment_date FROM $wpdb->comments WHERE comment_type = 'sensei_lesson_status' AND user_id = %d AND comment_post_ID IN ( %s ) GROUP BY comment_post_ID ORDER BY comment_date_gmt DESC ";
 		$check_existing_sql = "SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = 'sensei_course_status' ";
 
 		// $per_page users at a time, could be batch run via an admin ajax command, 1 user at a time?
@@ -1645,7 +1656,115 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Example command
+	 * Repairs Course statuses that have greater than 100% completion
+	 *
+	 * @subcommand repair-course-statuses
+	 */
+	function repair_course_statuses() {
+		global $woothemes_sensei,$wpdb;
+
+		$course_lesson_ids = $lesson_user_statuses = array();
+
+		// Get all Lesson => Course relationships
+		$meta_list = $wpdb->get_results( "SELECT $wpdb->postmeta.post_id, $wpdb->postmeta.meta_value FROM $wpdb->postmeta INNER JOIN $wpdb->posts ON ($wpdb->posts.ID = $wpdb->postmeta.post_id) WHERE $wpdb->posts.post_type = 'lesson' AND $wpdb->postmeta.meta_key = '_lesson_course' ", ARRAY_A );
+		if ( !empty($meta_list) ) {
+			foreach ( $meta_list as $metarow ) {
+				$lesson_id = $metarow['post_id'];
+				$course_id = $metarow['meta_value'];
+				$course_lesson_ids[ $course_id ][] = $lesson_id;
+			}
+		}
+
+		// Get all Lesson => Course relationships
+		$status_list = $wpdb->get_results( "SELECT user_id, comment_post_ID, comment_approved FROM $wpdb->comments WHERE comment_type = 'sensei_lesson_status' GROUP BY user_id, comment_post_ID ", ARRAY_A );
+		if ( !empty($status_list) ) {
+			foreach ( $status_list as $status ) {
+				$lesson_user_statuses[ $status['comment_post_ID'] ][ $status['user_id'] ] = $status['comment_approved'];
+			}
+		}
+		WP_CLI::line( 'Timer end: ' . timer_stop() . ' secs' );
+		WP_CLI::line( 'Memory used: ' . size_format(memory_get_usage()) );
+
+		$course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
+
+		$per_page = 40;
+		$comment_id_offset = $count = 0;
+
+		$course_sql = "SELECT * FROM $wpdb->comments WHERE comment_type = 'sensei_course_status' AND comment_ID > %d LIMIT $per_page";
+		// $per_page users at a time
+		while ( $course_statuses = $wpdb->get_results( $wpdb->prepare($course_sql, $comment_id_offset) ) ) {
+
+			foreach ( $course_statuses AS $course_status ) {
+				$user_id = $course_status->user_id;
+				$course_id = $course_status->comment_post_ID;
+				$total_lessons = count( $course_lesson_ids[ $course_id ] );
+				if ( $total_lessons <= 0 ) {
+					$total_lessons = 1; // Fix division of zero error, some courses have no lessons
+				}
+				$lessons_completed = 0;
+				$status = 'in-progress';
+
+				// Some Courses have no lessons... (can they ever be complete?)
+				if ( !empty($course_lesson_ids[ $course_id ]) ) {
+					foreach( $course_lesson_ids[ $course_id ] AS $lesson_id ) {
+						$lesson_status = $lesson_user_statuses[ $lesson_id ][ $user_id ];
+//						error_log( "Lesson: $lesson_id; User $user_id; ".print_r($lesson_status, true));
+						// If lessons are complete without needing quizzes to be passed
+						if ( 'passed' != $course_completion ) {
+							switch ( $lesson_status ) {
+								// A user cannot 'complete' a course if a lesson...
+								case 'in-progress': // ...is still in progress
+								case 'ungraded': // ...hasn't yet been graded
+									break;
+
+								default:
+									$lessons_completed++;
+									break;
+							}
+						}
+						else {
+							switch ( $lesson_status ) {
+								case 'complete': // Lesson has no quiz/questions
+								case 'graded': // Lesson has quiz, but it's not important what the grade was
+								case 'passed': // Lesson has quiz and the user passed
+									$lessons_completed++;
+									break;
+
+								// A user cannot 'complete' a course if on a lesson...
+								case 'failed': // ...a user failed the passmark on a quiz
+								default:
+									break;
+							}
+						}
+					} // Each lesson
+				} // Check for lessons
+				if ( $lessons_completed == $total_lessons ) {
+					$status = 'complete';
+				}
+//				error_log(" => total lessons: $total_lessons, lessons completed: $lessons_completed");
+				// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
+				$metadata = array(
+					'percent' => abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) ),
+				);
+//				error_log(print_r($metadata, true));
+				imperial_sensei_update_course_status( $user_id, $course_id, $status, $metadata );
+				$count++;
+//				break 2; // Handbreak to stop rather than process it all
+				if ( 0 == ( $count % 100 ) ) {
+					WP_CLI::line( '.' );
+//					break 2; // Handbreak to stop rather than process it all
+				}
+			} // per course status
+			$comment_id_offset = $course_status->comment_ID;
+		} // all course statuses
+
+		WP_CLI::line( 'Timer end: ' . timer_stop() . ' secs' );
+		WP_CLI::line( 'Memory used: ' . size_format(memory_get_usage()) );
+		WP_CLI::success( sprintf( __('%s course statuses fixed.', 'imperial'), $count ) );
+	}
+
+	/**
+	 * Example command ( NOT YET COMPLETE )
 	 *
 	 * @subcommand convert-question-activities
 	 */

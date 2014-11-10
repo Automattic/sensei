@@ -196,7 +196,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	 * @access public
 	 * @abstract
 	 */
-	protected function get_row_data() {
+	protected function get_row_data( $item ) {
 		die( 'either function WooThemes_Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or WooThemes_Sensei_List_Table::single_row() should be.' );
 	}
 

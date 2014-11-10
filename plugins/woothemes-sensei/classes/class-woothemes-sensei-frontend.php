@@ -1233,8 +1233,18 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_complete_lesson_button()
 
 	public function sensei_reset_lesson_button() {
-		global $woothemes_sensei;
-		if ( isset( $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ] ) && $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ] ) {
+		global $woothemes_sensei, $post;
+
+		$quiz_id = 0;
+
+		// Lesson quizzes
+		$quiz_id = $woothemes_sensei->frontend->lesson->lesson_quizzes( $post->ID );
+		$reset_allowed = true;
+		if( $quiz_id ) {
+			// Get quiz pass setting
+			$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
+		}
+		if ( ! $quiz_id || !empty($reset_allowed) ) {
 		?>
 		<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
             <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
