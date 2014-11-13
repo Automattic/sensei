@@ -65,6 +65,7 @@ class WooThemes_Sensei_Grading {
 			add_action( 'admin_notices', array( $this, 'add_grading_notices' ) );
 //			add_action( 'sensei_grading_notices', array( $this, 'sensei_grading_notices' ) );
 		} // End If Statement
+
 		// Ajax functions
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_lessons_dropdown', array( $this, 'get_lessons_dropdown' ) );
@@ -568,7 +569,7 @@ class WooThemes_Sensei_Grading {
 
 		$lesson_id = intval( $lesson_data['lesson_id'] );
 		$course_id = intval( $lesson_data['course_id'] );
-		$grading_view = $lesson_data['view'];
+		$grading_view = sanitize_text_field( $lesson_data['view'] );
 
 		$redirect_url = '';
 		if ( 0 < $lesson_id && 0 < $course_id ) {

@@ -578,7 +578,7 @@ class WooThemes_Sensei_Analysis {
 			}
 
 			// Setup the variables we might need
-			$filename = $report;
+			$filename = apply_filters( 'sensei_csv_export_filename', $report );
 			$course_id = 0;
 			$lesson_id = 0;
 			$user_id = 0;

@@ -422,11 +422,11 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		$graded_args['view'] = 'graded';
 		$inprogress_args['view'] = 'in-progress';
 
-		$format = '<a class="%s" href="%s">%s <span class="count">(%d)</span></a>';
-		$menu['all'] = sprintf( $format, $all_class, add_query_arg( $all_args, admin_url( 'admin.php' ) ), __( 'All', 'woothemes-sensei' ), (int) $all_lessons_count );
-		$menu['ungraded'] = sprintf( $format, $ungraded_class, add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ), __( 'Ungraded', 'woothemes-sensei' ), (int) $ungraded_lessons_count );
-		$menu['graded'] = sprintf( $format, $graded_class, add_query_arg( $graded_args, admin_url( 'admin.php' ) ), __( 'Graded', 'woothemes-sensei' ), (int) $graded_lessons_count );
-		$menu['in-progress'] = sprintf( $format, $inprogress_class, add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ), __( 'In Progress', 'woothemes-sensei' ), (int) $inprogress_lessons_count );
+		$format = '<a class="%s" href="%s">%s <span class="count">(%s)</span></a>';
+		$menu['all'] = sprintf( $format, $all_class, add_query_arg( $all_args, admin_url( 'admin.php' ) ), __( 'All', 'woothemes-sensei' ), number_format( (int) $all_lessons_count ) );
+		$menu['ungraded'] = sprintf( $format, $ungraded_class, add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ), __( 'Ungraded', 'woothemes-sensei' ), number_format( (int) $ungraded_lessons_count ) );
+		$menu['graded'] = sprintf( $format, $graded_class, add_query_arg( $graded_args, admin_url( 'admin.php' ) ), __( 'Graded', 'woothemes-sensei' ), number_format( (int) $graded_lessons_count ) );
+		$menu['in-progress'] = sprintf( $format, $inprogress_class, add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ), __( 'In Progress', 'woothemes-sensei' ), number_format( (int) $inprogress_lessons_count ) );
 
 		$menu = apply_filters( 'sensei_grading_sub_menu', $menu );
 		if ( !empty($menu) ) {

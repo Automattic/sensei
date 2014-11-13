@@ -81,7 +81,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			case 'lessons':
 				$columns = array(
 					'title' => __( 'Lesson', 'woothemes-sensei' ),
-					'no_learners' => __( '# Learners', 'woothemes-sensei' ),
+					'num_learners' => __( '# Learners', 'woothemes-sensei' ),
 					'updated' => __( 'Last Updated', 'woothemes-sensei' ),
 				);
 				break;
@@ -90,7 +90,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			default:
 				$columns = array(
 					'title' => __( 'Course', 'woothemes-sensei' ),
-					'no_learners' => __( '# Learners', 'woothemes-sensei' ),
+					'num_learners' => __( '# Learners', 'woothemes-sensei' ),
 					'updated' => __( 'Last Updated', 'woothemes-sensei' ),
 				);
 				break;
@@ -265,7 +265,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				break;
 
 			case 'lessons' :
-				$lesson_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status', 'status' => 'any' ) ) );
+				$lesson_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_lesson_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
@@ -276,7 +276,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'post.php?action=edit&post=' . $item->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
-						'no_learners' => $lesson_learners,
+						'num_learners' => $lesson_learners,
 						'updated' => $item->post_modified,
 						'actions' => '<a class="button" href="' . add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->ID, 'course_id' => $this->course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
 					), $item, $this->course_id );
@@ -284,7 +284,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			case 'courses' :
 			default:
-				$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_filter_activity_users', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
+				$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_course_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
@@ -295,7 +295,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'post.php?action=edit&post=' . $item->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
-						'no_learners' => $course_learners,
+						'num_learners' => $course_learners,
 						'updated' => $item->post_modified,
 						'actions' => '<a class="button" href="' . add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
 					), $item );

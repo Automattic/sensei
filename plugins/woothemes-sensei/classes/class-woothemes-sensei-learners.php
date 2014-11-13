@@ -61,15 +61,12 @@ class WooThemes_Sensei_Learners {
 			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
 		} // End If Statement
 
-		add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
-//		add_action( 'wp_ajax_nopriv_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
-
-		add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
-//		add_action( 'wp_ajax_nopriv_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
-
-		add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
-//		add_action( 'wp_ajax_nopriv_sensei_json_search_users', array( $this, 'json_search_users' ) );
-
+		// Ajax functions
+		if ( is_admin() ) {
+			add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
+			add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
+			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
+		}
 	} // End __construct()
 
 	/**
@@ -262,7 +259,7 @@ class WooThemes_Sensei_Learners {
 
 		$course_cat = intval( $course_data['course_cat'] );
 
-		$redirect_url = add_query_arg( array( 'page' => $this->page_slug, 'course_cat' => $course_cat ), admin_url( 'admin.php' ) );
+		$redirect_url = apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'course_cat' => $course_cat ), admin_url( 'admin.php' ) ) );
 
 		echo $redirect_url;
 		die();
@@ -289,9 +286,9 @@ class WooThemes_Sensei_Learners {
 
 		if( $action_data['user_id'] && $action_data['post_id'] && $action_data['post_type'] ) {
 
-			$user_id = $action_data['user_id'];
-			$post_id = $action_data['post_id'];
-			$post_type = $action_data['post_type'];
+			$user_id = intval( $action_data['user_id'] );
+			$post_id = intval( $action_data['post_id'] );
+			$post_type = sanitize_text_field( $action_data['post_type'] );
 
 			$user = get_userdata( $user_id );
 

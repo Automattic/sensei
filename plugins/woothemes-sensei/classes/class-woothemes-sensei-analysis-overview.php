@@ -408,8 +408,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 					}
 				} // End If Statement
 				$column_data = apply_filters( 'sensei_analysis_overview_column_data', array( 'title' => $lesson_title,
-												'students' => $lesson_students,
 												'course' => $course_title,
+												'students' => $lesson_students,
 												'completions' => $lesson_completions,
 												'average_grade' => $lesson_average_grade,
 											), $item, $this );
