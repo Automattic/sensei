@@ -1,5 +1,14 @@
 *** Sensei Changelog ***
 
+2014.11.06 - version 1.6.7
+ * Fix   - Lesson complete class assigned to the right lessons.
+ * Fix   - Remove pagination from the courses widget component
+ * Fix   - Remove php notice on accessing lesson_completion and using undefined variables
+ * Tweak - Prevents sending email when a lesson has no quiz questions.
+ * Tweak - Update the quiz author when to be the same as the lesson author.
+ * Tweak - Add existing filter to the sign up message
+ * Tweak - Hide reset and view quiz button for non logged in users and Update the access settings text to reflect the correct logic
+
 2014.10.09 - version 1.6.6
  * Fix - bug where in certain cases the next lesson doesn't become available when the pre requisite is completed
  * Fix - Resolved php notices and warnings
