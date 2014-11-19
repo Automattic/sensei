@@ -3,7 +3,7 @@
 2014.11.06 - version 1.6.7
 * tweak - Prevents sending email when a lesson has no quiz questions.
 * tweak - Update the quiz author when to be the same as the lesson author.
-* Fix   -  Lesson complete class assigned to the right lessons.
+* Fix   - Lesson complete class assigned to the right lessons.
 * Fix   - Remove pagination from the courses widget component
 * Fix   - Remove php notice on accessing lesson_completion and using undefined variables
 * tweak -	add existing filter to the sign up message closes #556	a0f1d73
