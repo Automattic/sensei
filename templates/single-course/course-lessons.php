@@ -41,9 +41,9 @@ if ( 0 < $total_lessons ) {
     	$lesson_count = 1;
     	$lessons_completed = 0;
         $show_lesson_numbers = false;
-        $post_classes = array( 'course', 'post' );
     	foreach ( $course_lessons as $lesson_item ){
             $single_lesson_complete = false;
+            $post_classes = array( 'course', 'post' );
             $user_lesson_end = '';
     	    if ( is_user_logged_in() ) {
     	    	// Check if Lesson is complete

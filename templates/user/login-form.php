@@ -18,6 +18,7 @@ if ( is_user_logged_in() ) {
 // get the current page url
 global $wp;
 $current_page_url =  home_url( $wp->request );
+$redirect = $current_page_url;
 
 // get the referer url for redirecting after authentication
 

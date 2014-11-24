@@ -417,7 +417,7 @@ class WooThemes_Sensei_Course {
 	 * @return void
 	 */
 	public function add_column_data ( $column_name, $id ) {
-		global $wpdb, $post;
+		global $wpdb, $post, $woothemes_sensei;
 
 		switch ( $column_name ) {
 			case 'id':
@@ -426,14 +426,18 @@ class WooThemes_Sensei_Course {
 
 			case 'course-prerequisite':
 				$course_prerequisite_id = get_post_meta( $id, '_course_prerequisite', true);
-				if ( 0 < absint( $course_prerequisite_id ) ) { echo '<a href="' . esc_url( get_edit_post_link( absint( $course_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_prerequisite_id ) ) ) ) . '">' . get_the_title( absint( $course_prerequisite_id ) ) . '</a>'; }
-
+				if ( 0 < absint( $course_prerequisite_id )
+                    && !isset( $woothemes_sensei->globals['course-prerequisite-column-data-added'][$id] ) ) {
+                    echo '<a href="' . esc_url( get_edit_post_link( absint( $course_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_prerequisite_id ) ) ) ) . '">' . get_the_title( absint( $course_prerequisite_id ) ) . '</a>';
+                    $woothemes_sensei->globals['course-prerequisite-column-data-added'][$id] = true;
+                }
 			break;
 
 			case 'course-woocommerce-product':
 				if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
 					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true);
-					if ( 0 < absint( $course_woocommerce_product_id ) ) {
+					if ( 0 < absint( $course_woocommerce_product_id )
+                        && !isset( $woothemes_sensei->globals['course-woocommerce-product-column-data-added'][$id] ) ) {
 						if ( 'product_variation' == get_post_type( $course_woocommerce_product_id ) ) {
 							$product_object = get_product( $course_woocommerce_product_id );
 							if( sensei_check_woocommerce_version( '2.1' ) ) {
@@ -446,16 +450,20 @@ class WooThemes_Sensei_Course {
 							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
 						} // End If Statement
 						echo '<a href="' . esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $product_name ) ) . '">' . $product_name . '</a>';
+                        $woothemes_sensei->globals['course-woocommerce-product-column-data-added'][$id] = true;
 					} // End If Statement
 				} // End If Statement
 			break;
 
 			case 'course-category':
-				$output = get_the_term_list( $id, 'course-category', '', ', ', '' );
-				if ( '' == $output ) {
-					$output = __( 'None', 'woothemes-sensei' );
-				} // End If Statement
-				echo $output;
+                if( !isset( $woothemes_sensei->globals['course-category-column-data-added'][$id] ) ) {
+                    $output = get_the_term_list($id, 'course-category', '', ', ', '');
+                    if ('' == $output) {
+                        $output = __('None', 'woothemes-sensei');
+                    } // End If Statement
+                    echo $output;
+                    $woothemes_sensei->globals['course-category-column-data-added'][$id] = true;
+                }
 			break;
 
 			default:
