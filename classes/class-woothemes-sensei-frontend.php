@@ -696,7 +696,17 @@ class WooThemes_Sensei_Frontend {
 					<div class="sensei-message info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
 				<?php } ?>
 			<?php } else { ?>
-				<div class="sensei-message info"><?php echo apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
+				<div class="sensei-message info">
+                    <?php
+                        /**
+                         * Filter the Sensei please sign up message
+                         * @since 1.4.0
+                         *
+                         * @param string  $signup_text
+                         */
+                        echo apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) );
+                    ?>
+                </div>
 			<?php } // End If Statement ?>
     	</section><?php
     	} // End If Statement
@@ -764,6 +774,7 @@ class WooThemes_Sensei_Frontend {
 		        } // End For Loop
 		    } // End If Statement
 
+		    $quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $lesson_quiz_id );
 		    $sanitized_submit = esc_html( $_POST['quiz_complete'] );
 
 		    $answers_array = array();
@@ -786,7 +797,7 @@ class WooThemes_Sensei_Frontend {
 
                     do_action( 'sensei_user_lesson_start', $current_user->ID, $post->ID );
 
-                    if ( 0 < count($lesson_quizzes) )  {
+                    if ( 0 < count($quiz_questions) )  {
 
 	                    // Manual Grade
 			            $grade = 100;
@@ -848,7 +859,7 @@ class WooThemes_Sensei_Frontend {
 		                    do_action( 'sensei_user_lesson_end', $current_user->ID, $post->ID );
 
 		                } // End If Statement
-	                } else { // Lesson has no quiz
+	                } else { // Lesson quiz has no questions
 		                if ($activity_logged) {
 		                    // Mark lesson as complete
 		                    $args = array(
@@ -1323,7 +1334,7 @@ class WooThemes_Sensei_Frontend {
 			$quiz_id = $quiz_item->ID ;
 		}
 		$has_user_completed_lesson = WooThemes_Sensei_Utils::user_completed_lesson( $post_id, $user_id );
-		$show_actions = true;
+		$show_actions = is_user_logged_in() ? true : false;
 
 		if( intval( $lesson_prerequisite ) > 0 ) {
 
@@ -2106,7 +2117,7 @@ class WooThemes_Sensei_Frontend {
 				// Get all user's orders
 				$order_args = array(
 					'post_type' => 'shop_order',
-					'post_status' => array( 'completed', 'processing' ),
+					'post_status' =>  array( 'wc-processing', 'wc-completed' ),
 					'posts_per_page' => -1,
 					'meta_query' => array(
 						array(
@@ -2219,7 +2230,7 @@ class WooThemes_Sensei_Frontend {
 			$order_args = array(
 				'post_type' => 'shop_order',
 				'posts_per_page' => -1,
-				'post_satus' => array( 'completed', 'processing' ),
+				'post_status' => array( 'wc-processing', 'wc-completed' ),
 				'meta_query' => array(
 					array(
 						'key' => '_customer_user',
