@@ -378,6 +378,7 @@ class WooThemes_Sensei_Frontend {
 	 * @access public
 	 * @param object $item
 	 * @return object $item
+     * todo: refactor the navigation so that the #name doesn't affect how it works. Reason for this is when a user change the menu itme link it will no longer work.
 	 */
 	public function sensei_setup_nav_menu_item( $item ) {
 		global $pagenow, $wp_rewrite, $woothemes_sensei;
