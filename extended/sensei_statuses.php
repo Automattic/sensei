@@ -166,7 +166,7 @@ add_action( 'sensei_user_quiz_submitted', 'imperial_sensei_user_lesson_quiz_stat
  */
 function imperial_sensei_lesson_status_updated_course( $lesson_status, $user_id, $lesson_id, $comment_id ) { 
 	global $woothemes_sensei, $wp_version;
-//error_log(__FUNCTION__);
+//error_log(__FUNCTION__ . ", $lesson_status, $user_id, $lesson_id, $comment_id");
 
 	$status = 'in-progress';
 	$metadata = array();
@@ -206,12 +206,20 @@ function imperial_sensei_lesson_status_updated_course( $lesson_status, $user_id,
 		else {
 			foreach( $lesson_ids as $lesson_id ) {
 				$lesson_status_args['post_id'] = $lesson_id;
-	//			error_log( print_r($lesson_status_args, true));
-				$all_lesson_statuses[] = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
+//				error_log( print_r($lesson_status_args, true));
+				$_lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
+				if ( is_array( $_lesson_status ) ) {
+					$_lesson_status = array_shift( $_lesson_status );
+				}
+				$all_lesson_statuses[] = $_lesson_status;
 			}
 		}
 		foreach( $all_lesson_statuses as $lesson_status ) {
 //			error_log( print_r($lesson_status, true));
+			// No status??
+			if ( empty($lesson_status->comment_approved) ) {
+				continue;
+			}
 			// If lessons are complete without needing quizzes to be passed
 			if ( 'passed' != $course_completion ) {
 				switch ( $lesson_status->comment_approved ) {
