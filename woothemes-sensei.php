@@ -44,4 +44,23 @@ Tested up to: 4.0
      * @since  1.0.1
      */
     woothemes_queue_update( plugin_basename( __FILE__ ), 'bad2a02a063555b7e2bee59924690763', 152116 );
-?>
+
+    /**
+     * Sensei Activation Hook registration
+     * @since 1.7.0
+     */
+    register_activation_hook( __FILE__, 'activate_sensei' );
+
+    /**
+     * Activate_sensei
+     *
+     * All the activation checks needed to ensure Sensei is ready for use
+     * @since 1.7.0
+     */
+    function activate_sensei () {
+        global $woothemes_sensei;
+
+        // create the teacher role on activation and ensure that it has all the needed capabilities
+        $woothemes_sensei->teacher->activate_role();
+
+    }// end activate_sensei
