@@ -158,10 +158,7 @@ class WooThemes_Sensei_Utils {
 		// Are we only retrieving a single entry, or not care about the order...
 		if ( isset($args['count']) || isset($args['post_id']) ){
 			// ...then we don't need to ask the db to order the results, this overrides WP default behaviour
-			if ( version_compare($wp_version, '4.1', '<') ) {
-				add_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
-			}
-			else {
+			if ( version_compare($wp_version, '4.1', '>=') ) {
 				$args['order'] = false;
 				$args['orderby'] = false;
 			}
@@ -189,7 +186,6 @@ class WooThemes_Sensei_Utils {
 		if ( is_admin() ) {
 			add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
 		} // End If Statement
-		remove_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
 		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
 		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
 		// Return comments
@@ -1582,20 +1578,6 @@ class WooThemes_Sensei_Utils {
 	}
 
 	/**
-	 * Remove the orderby for comments
-	 * @access public
-	 * @since  1.7.0
-	 * @param  array $pieces (default: array())
-	 * @return array
-	 */
-	public static function single_comment_filter( $pieces ) {
-		unset( $pieces['orderby'] );
-		unset( $pieces['order'] );
-
-		return $pieces;
-	}
-
-	/**
 	 * Allow retrieving comments with any comment_approved status, little bypass to WP_Comment. Required only for WP < 4.1
 	 * @access public
 	 * @since  1.7.0
@@ -1633,30 +1615,34 @@ class WooThemes_Sensei_Utils {
 	 * @return array
 	 */
 	public static function comment_total_sum_meta_value_filter( $pieces ) {
-		global $wpdb;
+		global $wpdb, $wp_version;
 
 		$pieces['fields'] = " COUNT(*) AS total, SUM($wpdb->commentmeta.meta_value) AS meta_sum ";
 		unset( $pieces['groupby'] );
-		unset( $pieces['orderby'] );
-		unset( $pieces['order'] );
+		if ( version_compare($wp_version, '4.1', '>=') ) {
+			$args['order'] = false;
+			$args['orderby'] = false;
+		}
 
 		return $pieces;
 	}
 
 	/**
-	 * Shifts counting of posts to the database where it should be
+	 * Shifts counting of posts to the database where it should be. Likely not to be used due to knock on issues.
 	 * @access public
 	 * @since  1.7.0
 	 * @param  array $pieces (default: array())
 	 * @return array
 	 */
 	public static function get_posts_count_only_filter( $pieces ) {
+		global $wp_version;
 
 		$pieces['fields'] = " COUNT(*) AS total ";
 		unset( $pieces['groupby'] );
-		unset( $pieces['orderby'] );
-		unset( $pieces['order'] );
-
+		if ( version_compare($wp_version, '4.1', '>=') ) {
+			$args['order'] = false;
+			$args['orderby'] = false;
+		}
 		return $pieces;
 	}
 
