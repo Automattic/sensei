@@ -111,6 +111,11 @@ class WooThemes_Sensei {
 		$this->course = new WooThemes_Sensei_Course();
 		$this->course->token = $this->token;
 
+        //Teacher class
+        $this->load_class( 'teacher' );
+        $this->teacher = new WooThemes_Sensei_Teacher();
+        $this->teacher->token = $this->token;
+
 		// Load the lesson class
 		$this->load_class( 'lesson' );
 		$this->lesson = new WooThemes_Sensei_Lesson();
