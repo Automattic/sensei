@@ -47,8 +47,10 @@ class WooThemes_Sensei_PostTypes {
 		// Setup Post Types
 		$this->labels = array();
 		$this->setup_post_type_labels_base();
-		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
+
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
+        add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
+        add_action( 'admin_menu', array( $this, 'setup_course_post_type_menu' ), 8 );
 		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_multiple_question_post_type' ), 100 );
@@ -130,7 +132,7 @@ class WooThemes_Sensei_PostTypes {
 		    'public' => true,
 		    'publicly_queryable' => true,
 		    'show_ui' => true,
-		    'show_in_menu' => 'edit.php?post_type=lesson',
+		    'show_in_menu' => false,
 		    'query_var' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
@@ -167,6 +169,26 @@ class WooThemes_Sensei_PostTypes {
 
 		register_post_type( 'course', $args );
 	} // End setup_course_post_type()
+
+
+    /**
+     * WooThemes_Sensei_PostTypes::setup_course_post_type_menu
+     *
+     * Setup the menu items inside the Lessons main menu
+     *
+     * @access public
+     * @since 1.7.0
+     * @return void
+     */
+    public function setup_course_post_type_menu ( ) {
+
+        // all courses menu item
+        add_submenu_page( 'edit.php?post_type=lesson' ,'All Courses' , 'All Courses', 'edit_courses','edit.php?post_type=course' );
+
+        // Add new course menu item
+        add_submenu_page( 'edit.php?post_type=lesson' ,'New Courses' , 'New Courses', 'edit_courses', 'post-new.php?post_type=course' );
+
+    }// end setup_course_post_type_menu()
 
 	/**
 	 * Setup the "lesson" post type, it's admin menu item and the appropriate labels and permissions.
