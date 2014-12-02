@@ -52,7 +52,7 @@ class WooThemes_Sensei_Teacher {
     public function __construct ( ) {
 
         add_action( 'add_meta_boxes_course', array( $this , 'teacher_meta_box' ) , 10, 2 );
-        add_action( admin_init, array( $this, 'save_teacher_meta_box' ) );
+        add_action( 'save_post',  array( $this, 'save_teacher_meta_box' ) );
 
     } // end __constructor()
 
@@ -142,11 +142,11 @@ class WooThemes_Sensei_Teacher {
             'delete_published_courses' => true,
 
             // Quiz
-            'publish_quizes'	 => true,
-            'edit_quizeses'	 => true,
-            'edit_published_quizes'  => true,
-            'edit_private_quizes' => true,
-            'read_private_quizes' => true,
+            'publish_quizzes'	 => true,
+            'edit_quizzes'	 => true,
+            'edit_published_quizzes'  => true,
+            'edit_private_quizzes' => true,
+            'read_private_quizzes' => true,
 
             // Questions
             'publish_questions'	 => true,
@@ -266,59 +266,96 @@ class WooThemes_Sensei_Teacher {
 
     }// end get_teachers_and_authors
 
+
+
     /**
      * WooThemes_Sensei_Teacher::save_teacher_meta_box
      *
-     * Hook into admin_init and save the teacher course selection metabox
+     * Hook into admin_init and save the new teacher to all course lessons
      *
      * @since 1.7.0
      * @access public
      * @parameters
      * @return array $users user id array
      */
-    public function save_teacher_meta_box ( ){
+    public function save_teacher_meta_box ( $post_id ){
 
         // check if this is a post from saving the teacher, if not exit early
         if(! isset( $_POST[ 'sensei-course-teacher-author' ] ) || ! isset( $_POST['post_ID'] )  ){
             return;
         }
 
-        // get the post for the current saving post
-        $post = get_post( $_POST['post_ID']  );
+        // get the current post object
+        $post = get_post( $post_id );
 
         // get the current teacher/author
         $current_author = absint( $post->post_author );
+        $new_author = absint( $_POST[ 'sensei-course-teacher-author' ] );
 
         // do not do any processing if the selected author is the same as the current author
-        if( $current_author == absint( $_POST[ 'sensei-course-teacher-author' ] ) ){
+        if( $current_author == $new_author ){
             return;
         }
 
-        $updated_post = array(
-            'ID'           => $post->ID ,
-            'post_author' => sanitize_post_field( 'post_author', $_POST[ 'sensei-course-teacher-author' ]  , $post->ID , 'db'  )
+        // save the course  author
+        $post_updates = array(
+            'ID' => $post->ID ,
+            'post_author' => $new_author
         );
-
-        wp_update_post( $updated_post );
+        wp_update_post( $post_updates );
 
         // loop through all post lessons to update their authors as well
-        //$this->update_course_lessons_author( $course_id , $author_id );
+        $this->update_course_lessons_author( $post_id , $new_author  );
 
-
-    }// end save_teacher_meta_box
+    } // end save_teacher_meta_box
 
     /**
-     * WooThemes_Sensei_Teacher::update_course_lesson_author
+     * WooThemes_Sensei_Teacher::update_course_lessons_author
      *
-     * Loop through all lessons assigned to a course and change the lesson author
+     * Update all course lessons and their quiz with a new author
      *
      * @since 1.7.0
-     * @param int $course_id
-     * @param int $new_author_id
-     * @return void
+     * @access public
+     * @parameters
+     * @return array $users user id array
      */
-    public function update_course_lessons_author( $course_id , $new_author_id ){
+    public function update_course_lessons_author ( $course_id, $new_author  ){
+        global $woothemes_sensei;
 
-    }// end update_course_lesson_author
+        if( empty( $course_id ) || empty( $new_author ) ){
+            return false;
+        }
+
+        //get a list of course lessons
+        $lessons = $woothemes_sensei->course->course_lessons( $course_id );
+
+        if( empty( $lessons )  ||  ! is_array( $lessons )  ){
+            return false;
+        }
+
+        // update each lesson and quiz author
+        foreach( $lessons as $lesson ){
+            // update lesson author
+            wp_update_post( array(
+                'ID'=> $lesson->ID,
+                'post_author' => $new_author
+                ) );
+
+            // update quiz author
+            //get the lessons quiz
+            $lesson_quizzes = $woothemes_sensei->lesson->lesson_quizzes( $course_id );
+            foreach ( $lesson_quizzes as $quiz_item ) {
+                // update quiz with new author
+                wp_update_post( array(
+                    'ID'           => $quiz_item->ID,
+                    'post_author' =>  $new_author
+                ) );
+            }
+
+        } // end for each lessons
+
+        return true;
+
+    }// end update_course_lessons_author
 
 } // End Class
