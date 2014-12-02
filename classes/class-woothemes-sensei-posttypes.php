@@ -137,34 +137,10 @@ class WooThemes_Sensei_PostTypes {
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'course',
-		    // 'capabilities' => array(
-						// 				// meta caps (don't assign these to roles)
-						// 				'edit_post'              => 'edit_course',
-						// 				'read_post'              => 'read_course',
-						// 				'delete_post'            => 'delete_course',
-
-						// 				// primitive/meta caps
-						// 				'create_posts'           => 'create_courses',
-
-						// 				// primitive caps used outside of map_meta_cap()
-						// 				'edit_posts'             => 'edit_courses',
-						// 				'edit_others_posts'      => 'edit_others_courses',
-						// 				'publish_posts'          => 'publish_courses',
-						// 				'read_private_posts'     => 'read_private_courses',
-
-						// 				// primitive caps used inside of map_meta_cap()
-						// 				'read'                   => 'read',
-						// 				'delete_posts'           => 'delete_courses',
-						// 				'delete_private_posts'   => 'delete_private_courses',
-						// 				'delete_published_posts' => 'delete_published_courses',
-						// 				'delete_others_posts'    => 'delete_others_courses',
-						// 				'edit_private_posts'     => 'edit_private_courses',
-						// 				'edit_published_posts'   => 'edit_published_courses'
-						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 20,
-		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'author' )
+		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail' )
 		);
 
 		register_post_type( 'course', $args );
@@ -218,30 +194,6 @@ class WooThemes_Sensei_PostTypes {
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'lesson',
-		    // 'capabilities' => array(
-						// 				// meta caps (don't assign these to roles)
-						// 				'edit_post'              => 'edit_lesson',
-						// 				'read_post'              => 'read_lesson',
-						// 				'delete_post'            => 'delete_lesson',
-
-						// 				// primitive/meta caps
-						// 				'create_posts'           => 'create_lessons',
-
-						// 				// primitive caps used outside of map_meta_cap()
-						// 				'edit_posts'             => 'edit_lessons',
-						// 				'edit_others_posts'      => 'edit_others_lessons',
-						// 				'publish_posts'          => 'publish_lessons',
-						// 				'read_private_posts'     => 'read_private_lessons',
-
-						// 				// primitive caps used inside of map_meta_cap()
-						// 				'read'                   => 'read',
-						// 				'delete_posts'           => 'delete_lessons',
-						// 				'delete_private_posts'   => 'delete_private_lessons',
-						// 				'delete_published_posts' => 'delete_published_lessons',
-						// 				'delete_others_posts'    => 'delete_others_lessons',
-						// 				'edit_private_posts'     => 'edit_private_lessons',
-						// 				'edit_published_posts'   => 'edit_published_lessons'
-						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 51,
