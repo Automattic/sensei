@@ -54,6 +54,7 @@ class WooThemes_Sensei_Teacher {
         add_action( 'add_meta_boxes_course', array( $this , 'teacher_meta_box' ) , 10, 2 );
         add_action( 'save_post',  array( $this, 'save_teacher_meta_box' ) );
         add_filter( 'parse_query', array( $this, 'limit_teacher_edit_screen_post_types' ));
+        add_filter( 'pre_get_posts', array( $this, 'course_analysis_teacher_access_limit' ) );
 
     } // end __constructor()
 
@@ -366,20 +367,18 @@ class WooThemes_Sensei_Teacher {
      *
      * @since 1.7.0
      * @access public
-     * @parameters
-     * @return array $users user id array
+     * @parameters array $wp_query
+     * @return WP_Query $wp_query
      */
-    function limit_teacher_edit_screen_post_types( $wp_query ) {
+    public function limit_teacher_edit_screen_post_types( $wp_query ) {
 
         global $current_user;
         $pagenow = get_current_screen();
-        $user_roles = $current_user->roles;
 
-        //exit early for the following conditions
-        if( !is_admin()   || current_user_can( 'update_core' )
-            || in_array(  'author',  $user_roles )  || in_array( 'editor', $user_roles ) ){
+        //exit early
+        if( ! $this->is_admin_teacher() ){
 
-            return;
+            return $wp_query;
 
         }
 
@@ -390,6 +389,68 @@ class WooThemes_Sensei_Teacher {
             // set the query author to the current user to only show those those posts
             $wp_query->set( 'author', $current_user->id );
         }
+
+        return $wp_query;
+
     } // end limit_teacher_edit_screen_post_types()
+
+    /**
+     * WooThemes_Sensei_Teacher::course_analysis_teacher_access_limit
+     *
+     * Alter the query so that users can only see their courses on the analysis page
+     *
+     * @since 1.7.0
+     * @access public
+     * @parameters $query
+     * @return array $users user id array
+     */
+    public function course_analysis_teacher_access_limit ( $query ) {
+
+        $pagenow = get_current_screen();
+        $sensei_post_types = array('course', 'lesson', 'question' );
+
+        //exit early for the following conditions
+        if( ! $this->is_admin_teacher( ) || empty( $pagenow )
+            ||'sensei_page_sensei_analysis' != $pagenow->id
+            || ! in_array(  $query->query['post_type'] , $sensei_post_types )   ){
+
+            return $query;
+        }
+
+        global $current_user;
+        // set the query author to the current user to only show those those posts
+        $query->set( 'author', $current_user->id );
+        return $query;
+
+    }// end course_analysis_teacher_access_limit
+
+
+    /**
+     * WooThemes_Sensei_Teacher::limit_teacher_edit_screen_post_types
+     *
+     * Determine if we're in admin and the current logged in use is a teacher
+     *
+     * @since 1.7.0
+     * @access public
+     * @parameters array $wp_query
+     * @return bool $is_admin_teacher
+     */
+    public function is_admin_teacher ( ){
+
+        global $current_user;
+        $is_admin_teacher = false;
+        $user_roles = $current_user->roles;
+
+        if( is_admin() &&  in_array(  'teacher',  $user_roles )   ){
+
+            $is_admin_teacher = true;
+
+        }
+
+        return $is_admin_teacher;
+
+    } // end is_admin_teacher
+
+
 
 } // End Class
