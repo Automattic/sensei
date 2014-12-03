@@ -53,6 +53,7 @@ class WooThemes_Sensei_Teacher {
 
         add_action( 'add_meta_boxes_course', array( $this , 'teacher_meta_box' ) , 10, 2 );
         add_action( 'save_post',  array( $this, 'save_teacher_meta_box' ) );
+        add_filter( 'parse_query', array( $this, 'limit_teacher_edit_screen_post_types' ));
 
     } // end __constructor()
 
@@ -357,5 +358,38 @@ class WooThemes_Sensei_Teacher {
         return true;
 
     }// end update_course_lessons_author
+
+    /**
+     * WooThemes_Sensei_Teacher::limit_teacher_edit_screen_post_types
+     *
+     * Limit teachers to only see their courses, lessons and questions
+     *
+     * @since 1.7.0
+     * @access public
+     * @parameters
+     * @return array $users user id array
+     */
+    function limit_teacher_edit_screen_post_types( $wp_query ) {
+
+        global $current_user;
+        $pagenow = get_current_screen();
+        $user_roles = $current_user->roles;
+
+        //exit early for the following conditions
+        if( !is_admin()   || current_user_can( 'update_core' )
+            || in_array(  'author',  $user_roles )  || in_array( 'editor', $user_roles ) ){
+
+            return;
+
+        }
+
+        // for any of these conditions limit what the teacher will see
+        if( 'edit-lesson' == $pagenow->id || 'edit-course' == $pagenow->id
+            || 'edit-question' == $pagenow->id ){
+
+            // set the query author to the current user to only show those those posts
+            $wp_query->set( 'author', $current_user->id );
+        }
+    } // end limit_teacher_edit_screen_post_types()
 
 } // End Class
