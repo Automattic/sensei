@@ -24,6 +24,7 @@ do_action( 'sensei_before_main_content' );
  * sensei_single_main_content hook
  *
  * @hooked sensei_single_main_content - 10 (outputs main content)
+ * @hooked sensei_lesson_video_layout_bottom (lesson class) - 90 (optionally output video at the bottom of lesson )
  */
 do_action( 'sensei_single_main_content' );
 

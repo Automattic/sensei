@@ -104,8 +104,6 @@ class WooThemes_Sensei_Lesson {
 			add_action( 'wp_ajax_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 			add_action( 'wp_ajax_nopriv_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 
-
-
 		} else {
         /*
         * Frontend actions
@@ -2750,7 +2748,7 @@ class WooThemes_Sensei_Lesson {
 	} // End lesson_excerpt()
 
     /**
-     * show_lesson_quiz_details
+     * WooThemes_Sensei_Lesson::show_lesson_quiz_details
      *
      * Optionally show the lesson quiz meta information
      * since 1.6.8
@@ -2843,32 +2841,6 @@ class WooThemes_Sensei_Lesson {
                 ?></header><?php
 
         } // end IF
-
-///
-        ///
-        ///
-    ///
-       ///
-       ////
-        /*-> Oringal code below:
-        if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) || $is_preview ) { ?>
-            ///\\\\\ these must hook into sensei_single_lesson_meta
-            <?php
-
-            ?>
-            <?php do_action( 'sensei_frontend_messages' ); ?>
-
-
-            <?php do_action( 'sensei_breadcrumb', $lesson_course_id ); ?>
-
-            \\\\\\\
-        <?php } else {
-            do_action( 'sensei_lesson_course_signup', $lesson_course_id );
-        } // End If Statement
-
-        #END original code */
-
-
-    }// end show_lesson_quiz
+    }// end show_lesson_quiz_details
 }// End Class
 ?>
