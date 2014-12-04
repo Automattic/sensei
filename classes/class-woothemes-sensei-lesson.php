@@ -2453,8 +2453,8 @@ class WooThemes_Sensei_Lesson {
 
 		$post_args = array(	'post_type' 		=> 'quiz',
 							'numberposts' 		=> -1,
-							'orderby'         	=> 'title',
-    						'order'           	=> 'DESC',
+							'orderby'         	=> 'ID',
+    						'order'           	=> 'ASC',
     						'meta_key'        	=> '_quiz_lesson',
     						'meta_value'      	=> $lesson_id,
     						'post_status'		=> $post_status,
@@ -2756,11 +2756,15 @@ class WooThemes_Sensei_Lesson {
      */
     public function show_lesson_quiz_details ( ) {
 
-        global $post, $current_user, $woothemes_sensei;
+        global $post, $current_user, $woothemes_sensei , $show_lesson_quiz_details_ran;
 
-        if( empty( $post ) || empty( $current_user ) ){
+        // todo: remove $show_lesson_quiz_details_ran when the class interfaces are simplified, only one instance of all main classes
+
+        // makes sure this doesn't run twice
+        if( !empty( $show_lesson_quiz_details_ran ) || empty( $post ) || empty( $current_user ) ){
             return;
         }
+        $show_lesson_quiz_details_ran = true;
 
         // Get the meta info
         $lesson_course_id = absint( get_post_meta( $post->ID, '_lesson_course', true ) );
@@ -2777,9 +2781,12 @@ class WooThemes_Sensei_Lesson {
 
                 // Lesson Quiz Meta
                 $lesson_quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $post_id );
-                foreach ($lesson_quizzes as $quiz_item) {
-                    $quiz_id = $quiz_item->ID ;
+
+                // make sure we have at least on quiz set for this lesson
+                if( isset( $lesson_quizzes[0] ) ) {
+                    $quiz_id = $lesson_quizzes[0]->ID;
                 }
+
                 $has_user_completed_lesson = WooThemes_Sensei_Utils::user_completed_lesson( $post_id, $user_id );
                 $show_actions = is_user_logged_in() ? true : false;
 
@@ -2811,7 +2818,7 @@ class WooThemes_Sensei_Lesson {
                 if ( 0 < count($lesson_quizzes) && is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $user_id ) ) { ?>
                     <?php $no_quiz_count = 0; ?>
                     <?php
-                    $quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
+                    $quiz_questions = $woothemes_sensei->lesson->lesson_quiz_questions( $quiz_id );
                     // Display lesson quiz status message
                     if ( $has_user_completed_lesson || 0 < count( $quiz_questions ) ) {
                         $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $post_id, $user_id, true );
@@ -2823,7 +2830,7 @@ class WooThemes_Sensei_Lesson {
                     ?>
                 <?php } elseif( $show_actions && 0 < count($lesson_quizzes) && $woothemes_sensei->access_settings() &&  is_user_logged_in() ) { ?>
                     <?php
-                    $quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
+                    $quiz_questions = $woothemes_sensei->lesson->lesson_quiz_questions( $quiz_id );
                     if( 0 < count( $quiz_questions ) ) { ?>
                         <p><a class="button" href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ) ); ?>"><?php echo apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?></a></p>
                     <?php } ?>
