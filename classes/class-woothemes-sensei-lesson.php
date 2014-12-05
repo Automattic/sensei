@@ -103,9 +103,16 @@ class WooThemes_Sensei_Lesson {
 			// Filter existing questions
 			add_action( 'wp_ajax_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 			add_action( 'wp_ajax_nopriv_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
+
 		} else {
-			// Frontend actions
+        /*
+        * Frontend actions
+        */
+            //load the single lesson question details (buttons etc.)
+            add_action( 'sensei_single_lesson_meta', array( $this, 'show_lesson_quiz_details' ) , 40 , 0 );
+
 		} // End If Statement
+
 	} // End __construct()
 
 	/**
@@ -2446,8 +2453,8 @@ class WooThemes_Sensei_Lesson {
 
 		$post_args = array(	'post_type' 		=> 'quiz',
 							'numberposts' 		=> -1,
-							'orderby'         	=> 'title',
-    						'order'           	=> 'DESC',
+							'orderby'         	=> 'ID',
+    						'order'           	=> 'ASC',
     						'meta_key'        	=> '_quiz_lesson',
     						'meta_value'      	=> $lesson_id,
     						'post_status'		=> $post_status,
@@ -2740,5 +2747,107 @@ class WooThemes_Sensei_Lesson {
 		return apply_filters( 'sensei_lesson_excerpt', $html );
 	} // End lesson_excerpt()
 
-} // End Class
+    /**
+     * WooThemes_Sensei_Lesson::show_lesson_quiz_details
+     *
+     * Optionally show the lesson quiz meta information
+     * since 1.6.8
+     * @return void
+     */
+    public function show_lesson_quiz_details ( ) {
+
+        global $post, $current_user, $woothemes_sensei , $show_lesson_quiz_details_ran;
+
+        // todo: remove $show_lesson_quiz_details_ran when the class interfaces are simplified, only one instance of all main classes
+
+        // makes sure this doesn't run twice
+        if( !empty( $show_lesson_quiz_details_ran ) || empty( $post ) || empty( $current_user ) ){
+            return;
+        }
+        $show_lesson_quiz_details_ran = true;
+
+        // Get the meta info
+        $lesson_course_id = absint( get_post_meta( $post->ID, '_lesson_course', true ) );
+        $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $post->ID );
+        $post_id =  $post->ID;
+        $user_id = $current_user->ID;
+
+        // do the lesson quiz meta action if the current user is taking the course or if it is administrator
+        if ( $woothemes_sensei->access_settings() || $is_preview || current_user_can( 'manage_options' )
+            || sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) {
+
+                // Get the prerequisite lesson
+                $lesson_prerequisite = get_post_meta( $post_id, '_lesson_prerequisite', true );
+
+                // Lesson Quiz Meta
+                $lesson_quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $post_id );
+
+                // make sure we have at least on quiz set for this lesson
+                if( isset( $lesson_quizzes[0] ) ) {
+                    $quiz_id = $lesson_quizzes[0]->ID;
+                }
+
+                $has_user_completed_lesson = WooThemes_Sensei_Utils::user_completed_lesson( $post_id, $user_id );
+                $show_actions = is_user_logged_in() ? true : false;
+
+                if( intval( $lesson_prerequisite ) > 0 ) {
+
+                    // Lesson Quiz Meta
+                    $prereq_lesson_quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson_prerequisite );
+                    foreach ($prereq_lesson_quizzes as $quiz_item) {
+                        $prerequisite_quiz_id = $quiz_item->ID ;
+                    }
+
+                    // Get quiz pass setting
+                    $prereq_pass_required = get_post_meta( $prerequisite_quiz_id, '_pass_required', true );
+
+                    if( $prereq_pass_required ) {
+                        $quiz_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $prerequisite_quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
+                        $quiz_passmark = intval( get_post_meta( $prerequisite_quiz_id, '_quiz_passmark', true ) );
+                        if( $quiz_grade < $quiz_passmark ) {
+                            $show_actions = false;
+                        }
+                    } else {
+                        $user_lesson_end = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite, 'user_id' => $user_id, 'type' => 'sensei_lesson_start', 'field' => 'comment_content' ) );
+                        if ( ! $user_lesson_end || $user_lesson_end == '' || strlen( $user_lesson_end ) == 0 ) {
+                            $show_actions = false;
+                        }
+                    }
+                }
+                ?><header><?php
+                if ( 0 < count($lesson_quizzes) && is_user_logged_in() && sensei_has_user_started_course( $lesson_course_id, $user_id ) ) { ?>
+                    <?php $no_quiz_count = 0; ?>
+                    <?php
+                    $quiz_questions = $woothemes_sensei->lesson->lesson_quiz_questions( $quiz_id );
+                    // Display lesson quiz status message
+                    if ( $has_user_completed_lesson || 0 < count( $quiz_questions ) ) {
+                        $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $post_id, $user_id, true );
+                        echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+                        if( 0 < count( $quiz_questions ) ) {
+                            echo $status['extra'];
+                        } // End If Statement
+                    } // End If Statement
+                    ?>
+                <?php } elseif( $show_actions && 0 < count($lesson_quizzes) && $woothemes_sensei->access_settings() &&  is_user_logged_in() ) { ?>
+                    <?php
+                    $quiz_questions = $woothemes_sensei->lesson->lesson_quiz_questions( $quiz_id );
+                    if( 0 < count( $quiz_questions ) ) { ?>
+                        <p><a class="button" href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ) ); ?>"><?php echo apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?></a></p>
+                    <?php } ?>
+                <?php } // End If Statement
+
+                if( !is_user_logged_in() ){
+                    //all the user to login / rigister or enrol
+                    WooThemes_Sensei_Utils::sensei_register_button( '<div class="status register">', '</div>' );
+
+                } elseif ( $show_actions && ! $has_user_completed_lesson  ) {
+                    sensei_complete_lesson_button();
+                } elseif( $show_actions ) {
+                    sensei_reset_lesson_button();
+                } // End If Statement
+                ?></header><?php
+
+        } // end IF
+    }// end show_lesson_quiz_details
+}// End Class
 ?>
