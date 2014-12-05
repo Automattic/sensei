@@ -1,9 +1,10 @@
 *** Sensei Changelog ***
 
 2014.12.05 - version 1.6.8
- * Fix   - Ensure the “View Quiz” button would not show up for lessons that have a quiz attached.
- * Fix   - Quiz submission email was will no be  sent out to the course teacher instead of the admin account.
- * Fix   - The login|logout now allows you to specify multiple words so it accounts for languages where login or logout is more than one word.
+ * Fix   - The “View Quiz” button now shows up for all lessons that have a quiz attached.
+ * Fix   - When a learner submits a quiz the email will now be sent to the course teacher and not the admin account.
+ * Fix   - The login|logout now accounts for all languages where login/logout each can be multiple words.tatus
+
 
 2014.11.06 - version 1.6.7
  * Fix   - Lesson complete class assigned to the right lessons.
