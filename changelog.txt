@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2014.12.05 - version 1.6.8
+ * Fix   - Ensure the “View Quiz” button would not show up for lessons that have a quiz attached.
+ * Fix   - Quiz submission email was will no be  sent out to the course teacher instead of the admin account.
+ * Fix   - The login|logout now allows you to specify multiple words so it accounts for languages where login or logout is more than one word.
+
 2014.11.06 - version 1.6.7
  * Fix   - Lesson complete class assigned to the right lessons.
  * Fix   - Remove pagination from the courses widget component
