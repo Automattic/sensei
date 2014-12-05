@@ -3,8 +3,7 @@
 2014.12.05 - version 1.6.8
  * Fix   - The “View Quiz” button now shows up for all lessons that have a quiz attached.
  * Fix   - When a learner submits a quiz the email will now be sent to the course teacher and not the admin account.
- * Fix   - The login|logout now accounts for all languages where login/logout each can be multiple words.tatus
-
+ * Fix   - The login|logout now accounts for all languages where login/logout each can be multiple words.
 
 2014.11.06 - version 1.6.7
  * Fix   - Lesson complete class assigned to the right lessons.
