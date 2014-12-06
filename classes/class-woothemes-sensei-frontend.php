@@ -444,6 +444,7 @@ class WooThemes_Sensei_Frontend {
                     $menu_title =  __( 'Login'  ,'woothemes-sensei');
                 }
 
+
                 /**
                  * Action Filter: login/logout menu title
                  *
@@ -511,7 +512,11 @@ class WooThemes_Sensei_Frontend {
 			} else {
 				$title = get_the_title( $post->ID );
 			}
-		} else {
+		} elseif( is_singular('quiz') ){
+
+            $title = get_the_title() . ' ' . __( 'Quiz', 'woothemes-sensei' );
+
+        }else {
 			$title = get_the_title();
 		}
 		?><header><h1><?php echo $title; ?></h1></header><?php
