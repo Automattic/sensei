@@ -71,7 +71,6 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_message_archive_header', array( $this, 'sensei_message_archive_header' ), 10, 3 );
 		add_action( 'sensei_course_archive_course_title', array( $this, 'sensei_course_archive_course_title' ), 10, 1 );
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
-
 		// 1.2.1
 		add_action( 'sensei_lesson_course_signup', array( $this, 'sensei_lesson_course_signup_link' ), 10, 1 );
 		add_action( 'sensei_complete_lesson', array( $this, 'sensei_complete_lesson' ) );
@@ -383,6 +382,7 @@ class WooThemes_Sensei_Frontend {
 	 * @access public
 	 * @param object $item
 	 * @return object $item
+     * todo: refactor the navigation so that the #name doesn't affect how it works. Reason for this is when a user change the menu itme link it will no longer work.
 	 */
 	public function sensei_setup_nav_menu_item( $item ) {
 		global $pagenow, $wp_rewrite, $woothemes_sensei;
@@ -439,7 +439,25 @@ class WooThemes_Sensei_Frontend {
 			// Set the correct title and URL for the login/logout link
 			if ( '#senseiloginlogout' == $item->url ) {
 				$item->url = ( is_user_logged_in() ? $logout_url : $login_url );
-				$item->title = $this->sensei_login_logout_title( $item->title );
+
+                // determine the menu title login or logout
+                $menu_title ='';
+
+                if ( is_user_logged_in() ) {
+                    $menu_title =  __( 'Logout'  ,'woothemes-sensei');
+                } else {
+                    $menu_title =  __( 'Login'  ,'woothemes-sensei');
+                }
+
+
+                /**
+                 * Action Filter: login/logout menu title
+                 *
+                 * With this filter you can alter the login / login menu item title string
+                 *
+                 * @param $menu_title
+                 */
+				$item->title = apply_filters( 'sensei_login_logout_menu_title', $menu_title );
 			}
 		}
 		return $item;
@@ -475,16 +493,6 @@ class WooThemes_Sensei_Frontend {
 		return $sorted_menu_items;
 	} // End sensei_wp_nav_menu_objects
 
-	public function sensei_login_logout_title( $title ) {
-		// Get the title of the login/logout link, from the pipe-separated values given e.g. "Sign In|Sign Out"
-		$titles = explode( '|', $title );
-		if ( is_user_logged_in() ) {
-			return esc_html( isset( $titles[1] ) ? $titles[1] : $title );
-		} else {
-			return esc_html( isset( $titles[0] ) ? $titles[0] : $title );
-		}
-	} // End sensei_login_logout_title()
-
 	// add category nicenames in body and post class
 	function sensei_search_results_classes($classes) {
 	    global $post;
@@ -510,7 +518,11 @@ class WooThemes_Sensei_Frontend {
 			} else {
 				$title = get_the_title( $post->ID );
 			}
-		} else {
+		} elseif( is_singular('quiz') ){
+
+            $title = get_the_title() . ' ' . __( 'Quiz', 'woothemes-sensei' );
+
+        }else {
 			$title = get_the_title();
 		}
 		?><header><h1><?php echo $title; ?></h1></header><?php

@@ -103,6 +103,7 @@ class WooThemes_Sensei_Lesson {
 			// Filter existing questions
 			add_action( 'wp_ajax_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 			add_action( 'wp_ajax_nopriv_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
+
 		} else {
 			// Frontend actions
 		} // End If Statement
@@ -306,7 +307,11 @@ class WooThemes_Sensei_Lesson {
 		$quiz_id = $this->lesson_quizzes( $post->ID, 'any');
 
 		 // Sanitize and setup the post data
-		$post_title = esc_html( $_POST[ 'post_title' ] ) . ' ' . __( 'Quiz', 'woothemes-sensei' );
+		$_POST = stripslashes_deep( $_POST );
+		if ( isset( $_POST[ 'quiz_id' ] ) && ( 0 < absint( $_POST[ 'quiz_id' ] ) ) ) {
+			$quiz_id = absint( $_POST[ 'quiz_id' ] );
+		} // End If Statement
+		$post_title = esc_html( $_POST[ 'post_title' ] );
 		$post_author = esc_html( $_POST[ 'post_author' ] );
 		$post_status = esc_html( $_POST[ 'post_status' ] );
 		$post_content = '';
