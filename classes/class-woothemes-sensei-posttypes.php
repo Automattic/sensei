@@ -596,20 +596,17 @@ class WooThemes_Sensei_PostTypes {
 		if ( ! isset( $this->labels[$post_type] ) ) { return array(); }
 
 		$messages = array(
-			0 => '', // Unused. Messages start at index 1.
-			1 => sprintf( __( '%s updated.' ), esc_attr( $this->labels[$post_type]['singular'] ) ),
-			2 => __( 'Custom field updated.', 'woothemes-sensei' ),
-			3 => __( 'Custom field deleted.', 'woothemes-sensei' ),
-			4 => sprintf( __( '%s updated.', 'woothemes-sensei' ), esc_attr( $this->labels[$post_type]['singular'] ) ),
-			/* translators: %s: date and time of the revision */
-			5 => isset( $_GET['revision']) ? sprintf( __('%2$s restored to revision from %1$s', 'woothemes-sensei' ), wp_post_revision_title( (int) $_GET['revision'], false ), esc_attr( $this->labels[$post_type]['singular'] ) ) : false,
-			6 => sprintf( __('%2$s published.' ), esc_url( get_permalink($post_ID) ), esc_attr( $this->labels[$post_type]['singular'] ) ),
-			7 => sprintf( __( '%s saved.', 'woothemes-sensei' ),  esc_attr( $this->labels[$post_type]['singular'] ) ),
-			8 => sprintf( __( '%2$s submitted.', 'woothemes-sensei' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), esc_attr( $this->labels[$post_type]['singular'] ) ),
-			9 => sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'woothemes-sensei' ),
-			// translators: Publish box date format, see http://php.net/date
-			date_i18n( __( ' M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink($post_ID) ), strtolower( esc_attr( $this->labels[$post_type]['singular'] ) ) ),
-			10 => sprintf( __( '%s draft updated.', 'woothemes-sensei' ), esc_attr( $this->labels[$post_type]['singular'] ) ),
+			0 => '',
+			1 => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			2 => __( 'Custom field updated.' , 'woothemes-sensei' ),
+			3 => __( 'Custom field deleted.' , 'woothemes-sensei' ),
+			4 => sprintf( __( '%1$s updated.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'] ),
+			5 => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			6 => sprintf( __( '%1$s published. %2$sView %1$s%3$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			7 => sprintf( __( '%1$s saved.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'] ),
+			8 => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			9 => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i' , 'woothemes-sensei' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $this->labels[$post_type]['singular'], '</a>' ),
+			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $this->labels[$post_type]['singular'], '</a>' ),
 		);
 
 		return $messages;

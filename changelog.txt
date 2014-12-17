@@ -1,5 +1,12 @@
 *** Sensei Changelog ***
 
+2014.12.18 - version 1.6.9
+ * Fix - Fixing Chosen drop down menus on course edit screen
+ * Fix - Fixing Analysis export to select entire data set
+ * Fix - Fixing quiz duplication when lessons are published
+ * Fix - Updating theme integration guide link
+ * Tweak - Adding view links after saving courses & lessons
+
 2014.12.05 - version 1.6.8
  * Fix   - The “View Quiz” button now shows up for all lessons that have a quiz attached.
  * Fix   - When a learner submits a quiz the email will now be sent to the course teacher and not the admin account.
