@@ -522,18 +522,6 @@ jQuery(document).ready( function($) {
 	 ***************************************************************************************************/
 
 	/**
-	 * Add Quiz Click Event.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	jQuery( '#add-quiz-main button.add_quiz' ).click( function() {
-		// Display add quiz form and hide add quiz button
-		jQuery( '#add-quiz-metadata' ).show();
-		jQuery( '#add-quiz-main > p:first' ).hide();
-	});
-
-	/**
 	 * Gap Fill text change events
 	 *
 	 * @since 1.3.0
