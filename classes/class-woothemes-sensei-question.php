@@ -186,7 +186,7 @@ class WooThemes_Sensei_Question {
 			return;
 		}
 
-		$quizzes = get_post_meta( $post->ID, '_quizzes', true );
+		$quizzes = get_post_meta( $post->ID, '_quiz_id', true );
 
 		if( ! $quizzes ) {
 			echo $no_lessons;
