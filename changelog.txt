@@ -4,6 +4,7 @@
  * Fix - Fixing Chosen drop down menus on course edit screen
  * Fix - Fixing Analysis export to select entire data set
  * Fix - Fixing quiz duplication when lessons are published
+ * Fix - Ensure question edit screen shows the quizzes that the question is used in
  * Fix - Updating theme integration guide link in unsupported theme notice
  * Tweak - Adding view links after saving courses & lessons
  * Tweak - Updating 'course' post type so that it shows in the admin bar
