@@ -302,8 +302,10 @@ class WooThemes_Sensei_Lesson {
 				return false;
 			} // End If Statement
 		} // End If Statement
+
 		// Temporarily disable the filter
-   		remove_action('save_post', array($this, __FUNCTION__));
+   		remove_action( 'save_post', array( $this, 'post_updated' ) );
+
 		// Save the Quiz
 		$quiz_id = 0;
 
@@ -326,6 +328,13 @@ class WooThemes_Sensei_Lesson {
   		    						);
 
 		$settings = $this->get_quiz_settings();
+
+		if ( 0 == $quiz_id ) {
+			$quiz_id = get_post_meta( $post->ID, '_quiz_id', true );
+			if( ! $quiz_id ) {
+				$quiz_id = 0;
+			}
+		}
 
   		// Update or Insert the Lesson Quiz
 		if ( 0 < $quiz_id ) {
@@ -376,7 +385,8 @@ class WooThemes_Sensei_Lesson {
 		}
 
 		// Restore the previously disabled filter
-    	add_action('save_post', array($this, __FUNCTION__));
+    	remove_action( 'save_post', array( $this, 'post_updated' ) );
+
 	} // End post_updated()
 
 	public function get_submitted_setting_value( $field = false ) {
@@ -574,12 +584,11 @@ class WooThemes_Sensei_Lesson {
 
 		$html = '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 		$html .= '<div id="add-quiz-main">';
+
 			if ( 0 == $quiz_id ) {
-				$html .= '<p>';
-					// Default message and Add a Quiz button
-					$html .= esc_html( __( 'There is no quiz for this lesson yet. Please add one.', 'woothemes-sensei' ) );
-					$html .= '<button type="button" class="button button-highlighted add_quiz">' . esc_html( __( 'Add', 'woothemes-sensei' ) )  . '</button>';
-				$html .= '</p>';
+				$html .= '<p><em>';
+					$html .= esc_html( __( 'Please save your lesson to start creating your quiz.', 'woothemes-sensei' ) );
+				$html .= '</em></p>';
 			}
 
 			// Quiz Panel CSS Class
@@ -1564,7 +1573,7 @@ class WooThemes_Sensei_Lesson {
 		if( $quiz_id ) {
 			$html .= $this->quiz_settings_panel( $lesson_id, $quiz_id );
 		} else {
-			$html .= '<p><em>' . __( 'There is no quiz for this lesson yet - please add one in the \'Lesson Quiz\' box.', 'woothemes-sensei' ) . '</em></p>';
+			$html .= '<p><em>' . __( 'Please save your lesson to start creating your quiz.', 'woothemes-sensei' ) . '</em></p>';
 		}
 
 		echo $html;
@@ -1703,7 +1712,7 @@ class WooThemes_Sensei_Lesson {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			// Load the lessons script
-			wp_enqueue_script( 'sensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
+			wp_enqueue_script( 'sensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'jquery-ui-sortable' ), '1.6.9' );
 			wp_enqueue_script( 'sensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), '1.5.2' );
 			wp_enqueue_script( 'sensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), '1.5.2' );
 
@@ -2836,11 +2845,7 @@ class WooThemes_Sensei_Lesson {
                     <?php } ?>
                 <?php } // End If Statement
 
-                if( !is_user_logged_in() ){
-                    //all the user to login / rigister or enrol
-                    WooThemes_Sensei_Utils::sensei_register_button( '<div class="status register">', '</div>' );
-
-                } elseif ( $show_actions && ! $has_user_completed_lesson  ) {
+                if ( $show_actions && ! $has_user_completed_lesson  ) {
                     sensei_complete_lesson_button();
                 } elseif( $show_actions ) {
                     sensei_reset_lesson_button();

@@ -522,18 +522,6 @@ jQuery(document).ready( function($) {
 	 ***************************************************************************************************/
 
 	/**
-	 * Add Quiz Click Event.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	jQuery( '#add-quiz-main button.add_quiz' ).click( function() {
-		// Display add quiz form and hide add quiz button
-		jQuery( '#add-quiz-metadata' ).show();
-		jQuery( '#add-quiz-main > p:first' ).hide();
-	});
-
-	/**
 	 * Gap Fill text change events
 	 *
 	 * @since 1.3.0
@@ -574,7 +562,7 @@ jQuery(document).ready( function($) {
 	if ( jQuery( '#lesson-complexity-options' ).exists() ) { jQuery( '#lesson-complexity-options' ).chosen(); }
 	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) { jQuery( '#lesson-prerequisite-options' ).chosen(); }
 	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).chosen(); }
-	if ( jQuery( '#lesson-course-details #course-prerequisite-options' ).exists() ) { jQuery( '#lesson-course-details #course-prerequisite-options' ).chosen(); }
+	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).chosen(); }
 	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).chosen(); }
 	if ( jQuery( '#course-woocommerce-product-options' ).exists() && '-' != jQuery( '#course-woocommerce-product-options' ).val() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
 

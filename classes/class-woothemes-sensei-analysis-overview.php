@@ -147,12 +147,16 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		$usersearch = isset( $_GET['s'] ) ? trim( $_GET['s'] ) : '';
 		$role = isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '';
 		$args_array = array(
-			'number' => $this->per_page,
-			'offset' => $offset,
 			'role' => $role,
 			'search' => $usersearch,
 			'fields' => 'all_with_meta'
 		);
+
+		if( ! isset( $_GET['report_id'] ) ) {
+			$args_array['number'] = $this->per_page;
+			$args_array['offset'] = $offset;
+		}
+
 		if ( '' !== $args_array['search'] ) {
 			$args_array['search'] = '*' . $args_array['search'] . '*';
 		} // End If Statement
@@ -408,8 +412,8 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
 		// create the export link href attribute value
 		$export_link = add_query_arg( $query_args , admin_url( 'admin.php' ) );
-		
-		echo '<a href="' . $export_link . '">' . __( 'Export page (CSV)', 'woothemes-sensei' ) . '</a>';
+
+		echo '<a href="' . $export_link . '">' . __( 'Export all data (CSV)', 'woothemes-sensei' ) . '</a>';
 	} // End data_table_header()
 
 } // End Class
