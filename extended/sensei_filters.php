@@ -112,6 +112,7 @@ function imperial_sensei_adjust_various_elements() {
 	remove_action( 'sensei_reset_lesson_button', array( $woothemes_sensei->frontend, 'sensei_reset_lesson_button' ) );
 	remove_action( 'sensei_quiz_back_link', array( $woothemes_sensei->frontend, 'sensei_quiz_back_to_lesson_link' ), 10, 1 );
 	remove_filter( 'the_title', array( $woothemes_sensei->frontend, 'sensei_lesson_preview_title' ), 10, 2 ); 
+	remove_filter( 'sensei_module_lesson_list_title', array( $sensei_modules, 'sensei_course_preview_titles' ), 10, 2 );
 }
 add_action( 'wp_loaded', 'imperial_sensei_adjust_various_elements' );
 
@@ -310,14 +311,8 @@ function imperial_sensei_restrict_quiz_attempts() {
 		return;
 	}
 	// Get users current attempt number
-	$args = array(
-		'post_id' => $lesson_id,
-		'user_id' => $current_user->ID,
-		'type' => 'sensei_lesson_start',
-		'field' => 'comment_ID',
-	);
-	$comment_id = WooThemes_Sensei_Utils::sensei_get_activity_value( $args );
-	$current_attempts = absint( get_comment_meta( $comment_id, '_quiz_attempts', true ) );
+	$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
+	$current_attempts = absint( get_comment_meta( $user_lesson_status->comment_ID, '_quiz_attempts', true ) );
 
 	// Save data for later in template
 	$woothemes_sensei->frontend->data->reset_quiz_attempts = $max_attempts;
@@ -345,14 +340,8 @@ function imperial_sensei_track_quiz_attempts( $user_id, $quiz_id, $quiz_grade_ty
 
 	if ( $reset_allowed && $max_attempts ) {
 		$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-		// Get users current attempt number
-		$args = array(
-			'post_id' => $lesson_id,
-			'user_id' => $user_id,
-			'type' => 'sensei_lesson_start',
-			'field' => 'comment_ID',
-		);
-		$comment_id = WooThemes_Sensei_Utils::sensei_get_activity_value( $args );
+		// Set users current attempt number
+		$comment_id = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 		if ( !$comment_id ) {
 			return; // oops
 		}
@@ -399,7 +388,7 @@ function imperial_sensei_detect_quiz_password_submission() {
 		ob_start();
 	}
 }
-//add_action( 'parse_request', 'imperial_sensei_detect_quiz_password_submission' );
+add_action( 'parse_request', 'imperial_sensei_detect_quiz_password_submission' );
 
 /**
  * Restricts the total number of attempts for a single Quiz
@@ -448,24 +437,15 @@ function imperial_sensei_track_quiz_time_limit() {
 	$time_limit = $time_limit * 60; // Time limit is in minutes, convert to seconds
 
 	// Get users current start time
-	$args = array(
-		'post_id' => $lesson_id,
-		'user_id' => $current_user->ID,
-		'type' => 'sensei_lesson_start',
-	);
-	$comment = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
-	if ( is_array($comment) ) {
-		$comment = array_shift( $comment );
-	}
-	if ( !$comment ) {
+	$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
+	if ( !$user_lesson_status ) {
 		// No existing start time, so record it!
-		WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID );
-		$comment = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
-		if ( is_array($comment) ) {
-			$comment = array_shift( $comment );
-		}
+		$comment_id = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID );
+		$start = time();
 	}
-	$start = strtotime( $comment->comment_date_gmt );
+	else {
+		$start = strtotime( $user_lesson_status->comment_date_gmt );
+	}
 
 	// Save data for later in template
 	$woothemes_sensei->frontend->data->quiz_start_time = $start;

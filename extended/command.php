@@ -17,7 +17,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 	function fix_lessons() {
 		global $wpdb;
 
-		// Get all Lessons with (and without) Quizzes...
+		// Get all Lessons with Quizzes...
 		$args = array(
 			'post_type' => 'lesson',
 			'numberposts' => -1,
@@ -386,6 +386,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 									break;
 							}
 						}
+						$meta_data['complete'] = $lessons_completed;
 						$meta_data['percent'] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
 					}
 					else {
@@ -543,6 +544,7 @@ class Imperial_Sensei_CLI_Command extends WP_CLI_Command {
 //				error_log(" => total lessons: $total_lessons, lessons completed: $lessons_completed");
 				// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
 				$metadata = array(
+					'complete' => $lessons_completed,
 					'percent' => abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) ),
 				);
 //				error_log(print_r($metadata, true));

@@ -60,39 +60,30 @@ function imperial_sensei_bulk_autograde_quizzes() {
 			$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
 			// Get quiz pass setting
 			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+			$quiz_grade_type = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 			$_GET['quiz_id'] = $quiz_id; // Used later
 
 			$cnt = 0;
 			// Any user who has answered questions should have a Grade
-			$quiz_submissions = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_asked' ), true );
-//			error_log(print_r($quiz_submissions, true));
+			$quiz_submissions = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'type' => 'sensei_lesson_status' ), true );
+			// We need the result always as an array
+			if ( !is_array($quiz_submissions) ) {
+				$quiz_submissions = array( $quiz_submissions );
+			}
 			foreach( $quiz_submissions as $submission ) {
 				$user_id = $submission->user_id;
 				$bulk_grade = false;
 				if ( $force_regrading ) {
 					$bulk_grade = true;
 				}
+				elseif ( 'ungraded' == $submission->comment_approved ) {
+					$bulk_grade = true;
+				}
 				else {
 					// Has the user got a grade already?
-					$quiz_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
+					$quiz_grade = get_comment_meta( $submission->comment_ID, 'grade', true );
 					if ( empty($quiz_grade) ) {
 						$bulk_grade = true;
-					}
-					else {
-						// ...and check the new format if it's "incorrectly" set
-						$lesson_status_args = array( 
-							'post_id' => $lesson_id,
-							'user_id' => $user_id,
-							'type' => 'sensei_lesson_status',
-							'status' => 'any',
-						);
-						$lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
-						if ( is_array($lesson_status) ) {
-							$lesson_status = array_shift($lesson_status);
-						}
-						if ( 'ungraded' == $lesson_status->comment_approved ) {
-							$bulk_grade = true;
-						}
 					}
 				}
 //				error_log( "Submission: $submission->comment_ID; User: $user_id; quiz: $quiz_id; grade: $quiz_grade; grade2: ".print_r($lesson_status, true));
@@ -119,43 +110,44 @@ function imperial_sensei_bulk_autograde_quizzes() {
 					$quiz_grade = WooThemes_Sensei_Utils::sensei_grade_quiz_auto( $quiz_id, $fake_posted_answers ); // Don't need to provide the other 2 args
 
 					// This bit duplicates some of Sensei => Frontend->sensei_complete_quiz()
-						if ( $pass_required && !is_wp_error( $quiz_grade) ) {
-							if ( $quiz_passmark <= $quiz_grade ) {
+						$lesson_metadata = array();
+						// Get Lesson Grading Setting
+						if ( is_wp_error( $quiz_grade ) ) { // || 'auto' != $quiz_grade_type ) {
+							$lesson_status = 'ungraded'; // Had an error is forced grading, will have to be manual
+						}
+						else {
+							// Quiz has been automatically Graded
+							if ( $pass_required ) {
 								// Student has reached the pass mark and lesson is complete
-								$args = array(
-											'post_id' => $lesson_id,
-											'username' => $current_user->user_login,
-											'user_email' => $current_user->user_email,
-											'user_url' => $current_user->user_url,
-											'data' => __( 'Lesson completed and passed by the user', 'woothemes-sensei' ),
-											'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
-											'parent' => 0,
-											'user_id' => $current_user->ID
-										);
-								$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+								if ( $quiz_passmark <= $quiz_grade ) {
+									$lesson_status = 'passed';
+								}
+								else {
+									$lesson_status = 'failed';
+								} // End If Statement
+							}
+							// Student only has to partake the quiz
+							else {
+								$lesson_status = 'graded';
+							}
+							$lesson_metadata['grade'] = $quiz_grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz_auto()" above
+						}
 
+						WooThemes_Sensei_Utils::update_lesson_status( $current_user->ID, $lesson_id, $lesson_status, $lesson_metadata );
+
+						switch( $lesson_status ) {
+							case 'passed' :
+							case 'graded' :
 								do_action( 'sensei_user_lesson_end', $current_user->ID, $lesson_id );
+								// As the frontend isn't getting added we need to manually call the check for Course completion
+								$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+								WooThemes_Sensei_Utils::user_complete_course( $course_id, $current_user->ID );
 
-							} // End If Statement
-						} else {
-							// Mark lesson as complete
-							$args = array(
-										'post_id' => $lesson_id,
-										'username' => $current_user->user_login,
-										'user_email' => $current_user->user_email,
-										'user_url' => $current_user->user_url,
-										'data' => __( 'Lesson completed by the user', 'woothemes-sensei' ),
-										'type' => 'sensei_lesson_end', /* FIELD SIZE 20 */
-										'parent' => 0,
-										'user_id' => $current_user->ID
-									);
-							$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+							break;
+						}
 
-							do_action( 'sensei_user_lesson_end', $current_user->ID, $lesson_id );
-
-						} // End If Statement
-						// Fake as if it was an auto quiz (bulk grading is to turn a manual quiz to auto
-						do_action( 'sensei_user_quiz_submitted', $current_user->ID, $quiz_id, $quiz_grade, $quiz_passmark );
+						// Fake as if it was an auto quiz (bulk grading is to turn a manual quiz to auto)
+						do_action( 'sensei_user_quiz_submitted', $current_user->ID, $quiz_id, $quiz_grade, $quiz_passmark, $quiz_grade_type );
 
 					$cnt++;
 				} // No grade so auto grade
@@ -377,7 +369,9 @@ function imperial_sensei_export_quiz_questions() {
 		);
 		$sql_count++;
 		$users_question_asked = WooThemes_Sensei_Utils::sensei_check_for_activity( $question_args, true );
-
+		if ( !is_array($users_question_asked) ) {
+			$users_question_asked = array( $users_question_asked );
+		}
 		$user_cache = $question_cache = $report_data = $dup_check = array();
 
 		// Loop through each user/questions asked ...
@@ -418,9 +412,6 @@ function imperial_sensei_export_quiz_questions() {
 					);
 					$sql_count++;
 					$user_answer = WooThemes_Sensei_Utils::sensei_check_for_activity( $answer_args, true );
-					if ( is_array($user_answer) ) {
-						$user_answer = array_shift($user_answer);
-					}
 //					error_log(print_r($user_answer, true));
 					$dup_check[ $question_id ][ $questions_asked->user_id ] = $user_answer->comment_ID;
 					$dup2_check[ $questions_asked->user_id ][ $question_id ] = $user_answer->comment_ID;

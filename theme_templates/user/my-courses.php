@@ -17,9 +17,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 global $woothemes_sensei, $post, $current_user, $wp_query;
 
-// Get User Meta
-get_currentuserinfo();
-
+// Switch user to show depending on new My Learning BP component...
+if ( function_exists('imperial_bp_is_learning_component') && imperial_bp_is_learning_component() ) {
+	$user_to_show = get_user_by( 'id', bp_displayed_user_id() );
+}
+// ...or old shortcode only method on global page
+else {
+	// Get User Meta
+	get_currentuserinfo();
+	$user_to_show = $current_user;
+}
 // Check if the user is logged in
 if ( is_user_logged_in() ) {
 	// Handle completion of a course
@@ -30,11 +37,11 @@ if ( is_user_logged_in() ) {
 
 		do_action( 'sensei_frontend_messages' );
 
-		do_action( 'sensei_before_user_course_content', $current_user );
+		do_action( 'sensei_before_user_course_content', $user_to_show );
 
-		echo WooThemes_Sensei_Course::load_user_courses_content( $current_user, false );
+		echo imperial_sensei_load_user_courses_content( $user_to_show, false );
 
-		do_action( 'sensei_after_user_course_content', $current_user );
+		do_action( 'sensei_after_user_course_content', $user_to_show );
 
 		?>
 	</section>

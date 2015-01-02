@@ -66,8 +66,8 @@ function imperial_sensei_user_lesson_status( $user_id, $lesson_id ) {
 		do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
 	}
 }
-add_action( 'sensei_user_lesson_start', 'imperial_sensei_user_lesson_status', 10, 2 );
-add_action( 'sensei_user_lesson_end', 'imperial_sensei_user_lesson_status', 10, 2 );
+//add_action( 'sensei_user_lesson_start', 'imperial_sensei_user_lesson_status', 10, 2 );
+//add_action( 'sensei_user_lesson_end', 'imperial_sensei_user_lesson_status', 10, 2 );
 
 /**
  * Update the overall Sensei lesson status (when called for a quiz), switching between 'ungraded', 'complete', 'graded', 'failed', 'passed'
@@ -150,10 +150,10 @@ function imperial_sensei_user_lesson_quiz_status( $user_id, $quiz_id, $grade, $p
 		do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
 	}
 }
-// 'sensei_user_quiz_grade' triggers within frontend::sensei_complete_lesson(), frontend::sensei_complete_quiz() and frontend::sensei_complete_course()
-//add_action( 'sensei_user_quiz_grade', 'imperial_sensei_user_lesson_quiz_status', 10, 5 );
-// 'sensei_user_quiz_submitted' triggers within frontend::sensei_complete_quiz()
-add_action( 'sensei_user_quiz_submitted', 'imperial_sensei_user_lesson_quiz_status', 10, 5 );
+//// 'sensei_user_quiz_grade' triggers within frontend::sensei_complete_lesson(), frontend::sensei_complete_quiz() and frontend::sensei_complete_course()
+////add_action( 'sensei_user_quiz_grade', 'imperial_sensei_user_lesson_quiz_status', 10, 5 );
+//// 'sensei_user_quiz_submitted' triggers within frontend::sensei_complete_quiz()
+//add_action( 'sensei_user_quiz_submitted', 'imperial_sensei_user_lesson_quiz_status', 10, 5 );
 
 
 /**
@@ -257,7 +257,7 @@ function imperial_sensei_lesson_status_updated_course( $lesson_status, $user_id,
 	}
 	imperial_sensei_update_course_status( $user_id, $course_id, $status, $metadata );
 }
-add_action( 'sensei_lesson_status_updated', 'imperial_sensei_lesson_status_updated_course', 10, 4 );
+//add_action( 'sensei_lesson_status_updated', 'imperial_sensei_lesson_status_updated_course', 10, 4 );
 
 /**
  * Wrapper to start off a 
@@ -284,10 +284,10 @@ function imperial_sensei_user_course_status( $user_id, $course_id ) {
 //	}
 	imperial_sensei_update_course_status( $user_id, $course_id, $status, $metadata );
 }
-// 'sensei_user_course_start' triggers within utils::user_start_course() and frontend::sensei_course_start() 
-add_action( 'sensei_user_course_start', 'imperial_sensei_user_course_status', 10, 2 );
-// 'sensei_user_course_end' triggers within utils::user_completed_course() and frontend::sensei_complete_course() and frontend::sensei_completed_course()
-//add_action( 'sensei_user_course_end', 'imperial_sensei_user_course_status', 10, 2 );
+//// 'sensei_user_course_start' triggers within utils::user_start_course() and frontend::sensei_course_start() 
+//add_action( 'sensei_user_course_start', 'imperial_sensei_user_course_status', 10, 2 );
+//// 'sensei_user_course_end' triggers within utils::user_completed_course() and frontend::sensei_complete_course() and frontend::sensei_completed_course()
+////add_action( 'sensei_user_course_end', 'imperial_sensei_user_course_status', 10, 2 );
 
 
 /**

@@ -23,7 +23,7 @@ get_currentuserinfo();
 // Complete Lesson Logic
 //do_action( 'sensei_complete_lesson' );
 // Check that the course has been started
-if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) || $is_preview ) { ?>
+if ( $woothemes_sensei->access_settings() || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) || $is_preview ) { ?>
 	<section class="lesson-meta" id="lesson_complete">
 		<?php
 		// These 3 lines have been moved to the primary content-single-lesson.php template
@@ -31,14 +31,14 @@ if ( $woothemes_sensei->access_settings() || sensei_has_user_started_course( $le
 //			do_action( 'sensei_lesson_video', $post->ID );
 //		}
 		?>
-        <?php do_action( 'sensei_frontend_messages' ); ?>
-        <?php if ( ! $is_preview || sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) ) {
-        	do_action( 'sensei_lesson_quiz_meta', $post->ID, $current_user->ID  );
-    	} ?>
-    </section>
-    <?php // do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
+		<?php do_action( 'sensei_frontend_messages' ); ?>
+		<?php if ( ! $is_preview || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
+			do_action( 'sensei_lesson_quiz_meta', $post->ID, $current_user->ID  );
+		} ?>
+	</section>
+	<?php // do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
 <?php } else {
-	 do_action( 'sensei_lesson_course_signup', $lesson_course_id );
+	do_action( 'sensei_lesson_course_signup', $lesson_course_id );
 } // End If Statement
 //do_action( 'sensei_lesson_meta_extra', $post->ID );
 ?>

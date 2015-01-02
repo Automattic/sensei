@@ -48,10 +48,14 @@ if ( 1 == $current_user->ID || in_array( $imp->course->ID, $user_course_ids ) ||
 	do_action( 'sensei_course_meta' );
 	$course_meta = ob_get_clean();
 	// Check for 'onground' (don't hide for us!)
-	if ( 'onground' == ( $course_type = get_post_meta( $imp->course->ID, 'course_type', true ) ) && 1 != $current_user->ID) {
+	if ( 'onground' == ( $course_type = get_post_meta( $imp->course->ID, 'course_type', true ) ) && 1 != $current_user->ID ) {
 		// Remove "start course" form
 		$course_meta = preg_replace( '|<form.*woothemes_sensei_start_course_noonce.*<\/form>|Us', '', $course_meta );
+		// Remove 'status' element
+		$course_meta = preg_replace( '|<div.*class="status.*<\/div>|Us', '', $course_meta );
 	}
+	$pdf_link = do_shortcode( '[pdf-download-link]' );
+	$course_meta = str_replace( '</section>', $pdf_link . '</section>', $course_meta );
 	echo $course_meta;
 }
 

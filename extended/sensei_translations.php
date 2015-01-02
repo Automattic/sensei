@@ -26,7 +26,7 @@ function imperial_sensei_filter_gettext( $translation, $text, $domain_context, $
 		if ( 'Please sign up for %1$sthe course%2$s before taking this quiz' == $text ) {
 			return $translations->translate( 'Please click here to %1$sstart the course%2$s before taking this quiz', $domain_context );
 		}
-		if ( 'Congratulations! You have passed this lesson.' == $text ) {
+		if ( 'Congratulations! You have passed this lesson.' == $text || 'Congratulations! You have completed this lesson.' == $text ) {
 			return $translations->translate( 'Activity marked as complete.', $domain_context );
 		}
 		if ( 'Congratulations! You have passed this lesson\'s quiz achieving %d%%' == $text ) {
