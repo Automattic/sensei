@@ -31,40 +31,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 wp_get_current_user();
 
                 $lesson_prerequisite = absint( get_post_meta( $post->ID, '_lesson_prerequisite', true ) );
-                // Check for prerequisite lesson completions
-				$user_prerequisite_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
-				$user_lesson_prerequisite_complete = false;
-				if ( '' != $user_prerequisite_lesson_end ) {
-				    $user_lesson_prerequisite_complete = true;
-				}
 
 				if ( $lesson_prerequisite > 0 ) {
-					$view_lesson = false;
-                    if ( ( isset( $user_lesson_prerequisite_complete ) && $user_lesson_prerequisite_complete ) ) {
-                    	$view_lesson = true;
-                    	$completion = $woothemes_sensei->settings->settings['lesson_completion'];
-						switch( $completion ) {
-							case 'passed':
-								$prerequisite_quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_prerequisite );
-								$quiz_grade = intval( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $prerequisite_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ) );
-								$quiz_passmark = intval( get_post_meta( $prerequisite_quiz_id, '_quiz_passmark', true ) );
-								if( $quiz_grade < $quiz_passmark ) {
-									$view_lesson = false;
-								}
-							break;
-
-							case 'complete':
-								$user_lesson_end = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_start', 'field' => 'comment_content' ) );
-								if ( ! $user_lesson_end || $user_lesson_end == '' || strlen( $user_lesson_end ) == 0 ) {
-									$view_lesson = false;
-								}
-							break;
-						}
-                 	}
+					// Check for prerequisite lesson completions
+					$view_lesson = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $current_user->ID );
 				}
 
 				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
-				$user_taking_course = sensei_has_user_started_course( $lesson_course_id, $current_user->ID );
+				$user_taking_course = WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID );
 
 				if( current_user_can( 'administrator' ) ) {
 					$view_lesson = true;

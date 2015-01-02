@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class WooThemes_Sensei_Grading_User_Quiz {
 	public $user_id;
+	public $lesson_id;
 	public $quiz_id;
 
 	/**
@@ -30,6 +31,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 	public function __construct ( $user_id = 0, $quiz_id = 0 ) {
 		$this->user_id = intval( $user_id );
 		$this->quiz_id = intval( $quiz_id );
+		$this->lesson_id = get_post_meta( $this->quiz_id, '_quiz_lesson', true );
 	} // End __construct()
 
 	/**
@@ -73,7 +75,8 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			</div>
 			<div class="clear"></div><br/><?php
 
-		$user_quiz_grade = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->quiz_id, 'user_id' => $this->user_id, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
+		$lesson_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->lesson_id, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_status', 'field' => 'comment_ID' ) );
+		$user_quiz_grade = get_comment_meta( $lesson_status_id, 'grade', true );
 		$correct_answers = 0;
 
 		foreach( $questions as $question ) {
@@ -89,7 +92,8 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				break;
 			}
 
-			$question_answer_notes = base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_answer_notes', 'field' => 'comment_content' ) ) );
+			$user_answer = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_answer' ), true );
+			$question_answer_notes = WooThemes_Sensei_Utils::sensei_get_user_question_answer_notes( $user_answer );
 
 			$question_grade_total = get_post_meta( $question_id, '_question_grade', true );
 			if( ! $question_grade_total || 0 == intval( $question_grade_total ) ) {
@@ -98,7 +102,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$quiz_grade_total += $question_grade_total;
 
 			$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-			$user_answer = maybe_unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_content' ) ) ) );
+			$user_answer = maybe_unserialize( base64_decode( $user_answer->comment_content ) );
 			$type_name = __( 'Multiple Choice', 'woothemes-sensei' );
 			$grade_type = 'manual-grade';
 
@@ -166,7 +170,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$question_title = sprintf( __( 'Question %d: ', 'woothemes-sensei' ), $count ) . $type_name;
 
 			$graded_class = '';
-			$user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $question_id, $this->user_id );
+			$user_question_grade = get_comment_meta( $user_answer->comment_ID, 'user_grade', true );
 			$graded_class = 'ungraded';
 			if( intval( $user_question_grade ) > 0 ) {
 				$graded_class = 'user_right';

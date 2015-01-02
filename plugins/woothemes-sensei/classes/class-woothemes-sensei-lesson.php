@@ -371,7 +371,9 @@ class WooThemes_Sensei_Lesson {
 		if( 0 < count( $quiz_questions ) ) {
 			update_post_meta( $post->ID, '_quiz_has_questions', '1' );
 		}
-
+		else {
+			delete_post_meta( $post->ID, '_quiz_has_questions' );
+		}
 		// Restore the previously disabled filter
     	add_action('save_post', array($this, __FUNCTION__));
 	} // End post_updated()
@@ -2557,7 +2559,8 @@ class WooThemes_Sensei_Lesson {
 			}
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it
-			$questions_asked_string = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_asked', 'field' => 'comment_content' ) );
+			$lesson_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status', 'field' => 'comment_ID' ) );
+			$questions_asked_string = !empty($lesson_status_id) ? get_post_meta( $lesson_status_id, 'questions_asked', true ) : false;
 			if( $questions_asked_string ) {
 
 				$selected_questions = explode( ',', $questions_asked_string );

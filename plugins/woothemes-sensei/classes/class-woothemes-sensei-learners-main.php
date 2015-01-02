@@ -430,7 +430,10 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$learners = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-
+		// Need to always return an array, even with only 1 item
+		if ( 1 == $total_learners ) {
+			$learners = array( $learners );
+		}
 		$this->total_items = $total_learners;
 		return $learners;
 	} // End get_learners()

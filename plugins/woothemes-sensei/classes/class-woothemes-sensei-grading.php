@@ -415,14 +415,13 @@ class WooThemes_Sensei_Grading {
 		$counts = wp_cache_get( $cache_key, 'counts' );
 		if ( false === $counts ) {
 			$sql = $wpdb->prepare( $query, $type );
-//			error_log( __FUNCTION__ . ": $sql");
 			$results = (array) $wpdb->get_results( $sql, ARRAY_A );
 			$counts = array_fill_keys( $this->get_stati( $type ), 0 );
 
 			foreach ( $results as $row ) {
 				$counts[ $row['comment_approved'] ] = $row['total'];
 			}
-//			wp_cache_set( $cache_key, $counts, 'counts' );
+			wp_cache_set( $cache_key, $counts, 'counts' );
 		}
 
 		return apply_filters( 'sensei_count_statuses', $counts, $type );
@@ -509,6 +508,7 @@ class WooThemes_Sensei_Grading {
 	} // End lessons_drop_down_html()
 
 	public function process_grading() {
+		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry
 		if( isset( $_POST['sensei_manual_grade'] ) && isset( $_GET['quiz_id'] ) ) {
 //			error_log( __CLASS__ . ':' . __FUNCTION__ . ':' . print_r($_POST, true));
 			$quiz_id = $_GET['quiz_id'];

@@ -76,8 +76,8 @@ class WooThemes_Sensei_Updates {
 													'manual' 	=> array( 'status_changes_fix_lessons' => array( 'title' => '(1) Status Changes: Fix lesson statuses', 'desc' => 'Fix existing lesson statuses.' ),
 																		  'status_changes_convert_lessons' => array( 'title' => '(2) Status Changes: Convert lesson statuses', 'desc' => 'Convert to new lesson statuses.' ),
 																		  'status_changes_convert_courses' => array( 'title' => '(3) Status Changes: Convert course statuses', 'desc' => 'Convert to new course statuses.' ),
-																		  'status_changes_repair_course_statuses' => array( 'title' => '(4) Status Changes: Repair course statuses', 'desc' => 'Repair all course statuses.' ),
-																		  'status_changes_convert_questions' => array( 'title' => '(5) Status Changes: Convert question statuses', 'desc' => 'Convert to new question statuses.' ),)
+//																		  'status_changes_repair_course_statuses' => array( 'title' => '(4) Status Changes: Repair course statuses', 'desc' => 'Repair all course statuses.' ),
+																		  'status_changes_convert_questions' => array( 'title' => '(4) Status Changes: Convert question statuses', 'desc' => 'Convert to new question statuses.' ),)
 												),
 							);
 
@@ -998,7 +998,6 @@ class WooThemes_Sensei_Updates {
 			'fields' => 'ids'
 		);
 		$lesson_ids_with_quizzes = get_posts( $args );
-//		error_log('$lesson_ids_with_quizzes: ' . print_r($lesson_ids_with_quizzes, true));
 		// ...get all Quiz IDs for the above Lessons
 		$id_list = join( ',', $lesson_ids_with_quizzes );
 		$meta_list = $wpdb->get_results( "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = '_quiz_lesson' AND meta_value IN ($id_list)", ARRAY_A );
@@ -1010,7 +1009,6 @@ class WooThemes_Sensei_Updates {
 				$lesson_quiz_ids[ $lesson_id ] = $quiz_id;
 			}
 		}
-//		error_log('$lesson_quiz_ids: ' . print_r($lesson_quiz_ids, true));
 
 		// ...get all Pass Required & Passmarks for the above Lesson/Quizzes
 		$id_list = join( ',', array_values($lesson_quiz_ids) );
@@ -1031,11 +1029,6 @@ class WooThemes_Sensei_Updates {
 				}
 			}
 		}
-//		error_log('$quizzes_passmarks: ' . print_r($quizzes_passmarks, true));
-
-//		$statuses_to_check = array( 'in-progress' => 1, 'complete' => 1, 'ungraded' => 1, 'graded' => 1, 'passed' => 1, 'failed' => 1 );
-
-//		$count = $statuses_added = $dup_logs = $dup_statuses = 0;
 
 		$users_sql = "SELECT ID FROM $wpdb->users ORDER BY ID ASC LIMIT %d OFFSET %d";
 		$start_sql = "SELECT comment_post_ID, comment_date FROM $wpdb->comments WHERE comment_type = 'sensei_lesson_start' AND user_id = %d GROUP BY comment_post_ID ";
@@ -1046,137 +1039,122 @@ class WooThemes_Sensei_Updates {
 
 		// $per_page users at a time, could be batch run via an admin ajax command, 1 user at a time?
 		$user_ids = $wpdb->get_col( $wpdb->prepare($users_sql, $n, $offset) );
-//			error_log('$user_ids: ' . print_r($user_ids, true));
 
-			foreach ( $user_ids AS $user_id ) {
+		foreach ( $user_ids AS $user_id ) {
 
-				$lesson_ends = $lesson_grades = $lesson_answers = array();
+			$lesson_ends = $lesson_grades = $lesson_answers = array();
 
-				// Pre-process the lesson ends
-				$_lesson_ends = $wpdb->get_results( $wpdb->prepare($end_sql, $user_id), ARRAY_A );
-				foreach ( $_lesson_ends as $lesson_end ) {
-					// This will overwrite existing entries with the newer ones
-					$lesson_ends[ $lesson_end['comment_post_ID'] ] = $lesson_end['comment_date'];
+			// Pre-process the lesson ends
+			$_lesson_ends = $wpdb->get_results( $wpdb->prepare($end_sql, $user_id), ARRAY_A );
+			foreach ( $_lesson_ends as $lesson_end ) {
+				// This will overwrite existing entries with the newer ones
+				$lesson_ends[ $lesson_end['comment_post_ID'] ] = $lesson_end['comment_date'];
+			}
+			unset( $_lesson_ends );
+
+			// Pre-process the lesson grades
+			$_lesson_grades = $wpdb->get_results( $wpdb->prepare($grade_sql, $user_id), ARRAY_A );
+			foreach ( $_lesson_grades as $lesson_grade ) {
+				// This will overwrite existing entries with the newer ones (assuming the grade is higher)
+				if ( empty($lesson_grades[ $lesson_grade['comment_post_ID'] ]) || $lesson_grades[ $lesson_grade['comment_post_ID'] ] < $lesson_grade['comment_content'] ) {
+					$lesson_grades[ $lesson_grade['comment_post_ID'] ] = $lesson_grade['comment_content'];
 				}
-				unset( $_lesson_ends );
+			}
+			unset( $_lesson_grades );
 
-				// Pre-process the lesson grades
-				$_lesson_grades = $wpdb->get_results( $wpdb->prepare($grade_sql, $user_id), ARRAY_A );
-				foreach ( $_lesson_grades as $lesson_grade ) {
-					// This will overwrite existing entries with the newer ones (assuming the grade is higher)
-					if ( empty($lesson_grades[ $lesson_grade['comment_post_ID'] ]) || $lesson_grades[ $lesson_grade['comment_post_ID'] ] < $lesson_grade['comment_content'] ) {
-						$lesson_grades[ $lesson_grade['comment_post_ID'] ] = $lesson_grade['comment_content'];
-					}
-				}
-				unset( $_lesson_grades );
+			// Pre-process the lesson answers
+			$_lesson_answers = $wpdb->get_results( $wpdb->prepare($answers_sql, $user_id), ARRAY_A );
+			foreach ( $_lesson_answers as $lesson_answer ) {
+				// This will overwrite existing entries with the newer ones
+				$lesson_answers[ $lesson_answer['comment_post_ID'] ] = $lesson_answer['comment_content'];
+			}
+			unset( $_lesson_answers );
 
-				// Pre-process the lesson answers
-				$_lesson_answers = $wpdb->get_results( $wpdb->prepare($answers_sql, $user_id), ARRAY_A );
-				foreach ( $_lesson_answers as $lesson_answer ) {
-					// This will overwrite existing entries with the newer ones
-					$lesson_answers[ $lesson_answer['comment_post_ID'] ] = $lesson_answer['comment_content'];
-				}
-				unset( $_lesson_answers );
+			// Grab all the lesson starts for the user
+			$lesson_starts = $wpdb->get_results( $wpdb->prepare($start_sql, $user_id), ARRAY_A );
+			foreach ( $lesson_starts as $lesson_log ) {
 
-				// Grab all the lesson starts for the user
-				$lesson_starts = $wpdb->get_results( $wpdb->prepare($start_sql, $user_id), ARRAY_A );
-				foreach ( $lesson_starts as $lesson_log ) {
+				$lesson_id = $lesson_log['comment_post_ID'];
 
-					$lesson_id = $lesson_log['comment_post_ID'];
+				// Default status
+				$status = 'in-progress';
 
-					// Default status
-					$status = 'in-progress';
-
-					$status_date = $lesson_log['comment_date'];
-					// Additional data for the lesson
-					$meta_data = array(
-						'start' => $status_date,
-					);
-					// Check if there is a lesson end
-					if ( !empty($lesson_ends[$lesson_id]) ) {
-						$status_date = $lesson_ends[$lesson_id];
-						// Check lesson has quiz
-						if ( !empty( $lesson_quiz_ids[$lesson_id] ) ) {
-							// Check for the quiz answers
-							if ( !empty($lesson_answers[$quiz_id]) ) {
-								$meta_data['questions_asked'] = $lesson_answers[$quiz_id];
+				$status_date = $lesson_log['comment_date'];
+				// Additional data for the lesson
+				$meta_data = array(
+					'start' => $status_date,
+				);
+				// Check if there is a lesson end
+				if ( !empty($lesson_ends[$lesson_id]) ) {
+					$status_date = $lesson_ends[$lesson_id];
+					// Check lesson has quiz
+					if ( !empty( $lesson_quiz_ids[$lesson_id] ) ) {
+						// Check for the quiz answers
+						if ( !empty($lesson_answers[$quiz_id]) ) {
+							$meta_data['questions_asked'] = $lesson_answers[$quiz_id];
+						}
+						// Check if there is a quiz grade
+						$quiz_id = $lesson_quiz_ids[$lesson_id];
+						if ( !empty($lesson_grades[$quiz_id]) ) {
+							$meta_data['grade'] = $quiz_grade = $lesson_grades[$quiz_id];
+							// Check if the user has to get the passmark and has or not
+							if ( !empty( $quizzes_pass_required[$quiz_id] ) && $quizzes_passmarks[$quiz_id] <= $quiz_grade ) {
+								$status = 'passed';
 							}
-							// Check if there is a quiz grade
-							$quiz_id = $lesson_quiz_ids[$lesson_id];
-							if ( !empty($lesson_grades[$quiz_id]) ) {
-								$meta_data['grade'] = $quiz_grade = $lesson_grades[$quiz_id];
-								// Check if the user has to get the passmark and has or not
-								if ( !empty( $quizzes_pass_required[$quiz_id] ) && $quizzes_passmarks[$quiz_id] <= $quiz_grade ) {
-									$status = 'passed';
-								}
-								elseif ( !empty( $quizzes_pass_required[$quiz_id] ) && $quizzes_passmarks[$quiz_id] > $quiz_grade ) {
-									$status = 'failed';
-								}
-								else {
-									$status = 'graded';
-								}
+							elseif ( !empty( $quizzes_pass_required[$quiz_id] ) && $quizzes_passmarks[$quiz_id] > $quiz_grade ) {
+								$status = 'failed';
 							}
 							else {
-								// If the lesson has a quiz, but the user doesn't have a grade, it's not yet been graded
-								$status = 'ungraded';
+								$status = 'graded';
 							}
 						}
 						else {
-							// Lesson has no quiz, so it can only ever be this status
-							$status = 'complete';
+							// If the lesson has a quiz, but the user doesn't have a grade, it's not yet been graded
+							$status = 'ungraded';
 						}
-					}
-					$data = array(
-						// This is the minimum data needed, the db defaults handle the rest
-							'comment_post_ID' => $lesson_id,
-							'comment_approved' => $status,
-							'comment_type' => 'sensei_lesson_status',
-							'comment_date' => $status_date,
-							'user_id' => $user_id,
-							'comment_date_gmt' => get_gmt_from_date($status_date),
-							'comment_author' => '',
-						);
-					// Check it doesn't already exist
-					$sql = $wpdb->prepare( $check_existing_sql, $lesson_id, $user_id );
-					$comment_ID = $wpdb->get_var( $sql );
-					if ( !$comment_ID ) {
-//						if ( array_key_exists( $status, $statuses_to_check ) ) {
-//							unset( $statuses_to_check[$status] );
-							error_log( 'Adding: ' . print_r($data, true) . ' with meta: '.print_r($meta_data, true));
-//						}
-						// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
-						$wpdb->insert($wpdb->comments, $data);
-						$comment_ID = (int) $wpdb->insert_id;
-
-						if ( $comment_ID && !empty($meta_data) ) {
-							foreach ( $meta_data as $key => $value ) {
-								// Bypassing WP add_comment_meta(() so no actions/filters are run
-								if ( $wpdb->get_var( $wpdb->prepare(
-										"SELECT COUNT(*) FROM $wpdb->commentmeta WHERE comment_id = %d AND meta_key = %s ",
-										$comment_ID, $key ) ) ) {
-										continue; // Found the meta data already
-								}
-								$result = $wpdb->insert( $wpdb->commentmeta, array(
-									'comment_id' => $comment_ID,
-									'meta_key' => $key,
-									'meta_value' => $value
-								) );
-							}
-						}
-//						$statuses_added++;
 					}
 					else {
-						error_log( 'Duplicate: ' . print_r($data, true));
-//						$dup_statuses++;
+						// Lesson has no quiz, so it can only ever be this status
+						$status = 'complete';
 					}
 				}
-//				$count++;
-//				if ( 0 == ( $count % 100 ) ) {
-//				}
+				$data = array(
+					// This is the minimum data needed, the db defaults handle the rest
+						'comment_post_ID' => $lesson_id,
+						'comment_approved' => $status,
+						'comment_type' => 'sensei_lesson_status',
+						'comment_date' => $status_date,
+						'user_id' => $user_id,
+						'comment_date_gmt' => get_gmt_from_date($status_date),
+						'comment_author' => '',
+					);
+				// Check it doesn't already exist
+				$sql = $wpdb->prepare( $check_existing_sql, $lesson_id, $user_id );
+				$comment_ID = $wpdb->get_var( $sql );
+				if ( !$comment_ID ) {
+					// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
+					$wpdb->insert($wpdb->comments, $data);
+					$comment_ID = (int) $wpdb->insert_id;
+
+					if ( $comment_ID && !empty($meta_data) ) {
+						foreach ( $meta_data as $key => $value ) {
+							// Bypassing WP add_comment_meta(() so no actions/filters are run
+							if ( $wpdb->get_var( $wpdb->prepare(
+									"SELECT COUNT(*) FROM $wpdb->commentmeta WHERE comment_id = %d AND meta_key = %s ",
+									$comment_ID, $key ) ) ) {
+									continue; // Found the meta data already
+							}
+							$result = $wpdb->insert( $wpdb->commentmeta, array(
+								'comment_id' => $comment_ID,
+								'meta_key' => $key,
+								'meta_value' => $value
+							) );
+						}
+					}
+				}
 			}
-			$wpdb->flush();
-//			$user_id_offset = $user_id; // Next set of users, basically an offset
-//		}
+		}
+		$wpdb->flush();
 
 		if ( $current_page == $total_pages ) {
 			return true;
@@ -1209,12 +1187,6 @@ class WooThemes_Sensei_Updates {
 			}
 		}
 
-//		$statuses_to_check = array( 'in-progress' => 1, 'complete' => 1 );
-
-//		$per_page = 40;
-//		$user_id_offset = 0;
-//		$count = $statuses_added = $dup_logs = $dup_statuses = 0;
-
 		$users_sql = "SELECT ID FROM $wpdb->users ORDER BY ID ASC LIMIT %d OFFSET %d";
 		$start_sql = "SELECT comment_post_ID, comment_date FROM $wpdb->comments WHERE comment_type = 'sensei_course_start' AND user_id = %d GROUP BY comment_post_ID ";
 		$lessons_sql = "SELECT comment_approved AS status, comment_date FROM $wpdb->comments WHERE comment_type = 'sensei_lesson_status' AND user_id = %d AND comment_post_ID IN ( %s ) GROUP BY comment_post_ID ORDER BY comment_date_gmt DESC ";
@@ -1223,110 +1195,99 @@ class WooThemes_Sensei_Updates {
 		// $per_page users at a time, could be batch run via an admin ajax command, 1 user at a time?
 		$user_ids = $wpdb->get_col( $wpdb->prepare($users_sql, $n, $offset) );
 
-			foreach ( $user_ids AS $user_id ) {
+		foreach ( $user_ids AS $user_id ) {
 
-				// Grab all the course starts for the user
-				$course_starts = $wpdb->get_results( $wpdb->prepare($start_sql, $user_id), ARRAY_A );
-				foreach ( $course_starts as $course_log ) {
+			// Grab all the course starts for the user
+			$course_starts = $wpdb->get_results( $wpdb->prepare($start_sql, $user_id), ARRAY_A );
+			foreach ( $course_starts as $course_log ) {
 
-					$course_id = $course_log['comment_post_ID'];
+				$course_id = $course_log['comment_post_ID'];
 
-					// Default status
-					$status = 'complete';
+				// Default status
+				$status = 'complete';
 
-					$status_date = $course_log['comment_date'];
-					// Additional data for the course
-					$meta_data = array(
-						'start' => $status_date,
-						'percent' => 0,
-					);
-					// Check if the course has lessons
-					if ( !empty( $course_lesson_ids[$course_id] ) ) {
+				$status_date = $course_log['comment_date'];
+				// Additional data for the course
+				$meta_data = array(
+					'start' => $status_date,
+					'complete' => 0,
+					'percent' => 0,
+				);
+				// Check if the course has lessons
+				if ( !empty( $course_lesson_ids[$course_id] ) ) {
 
-						$lessons_completed = 0;
-						$total_lessons = count( $course_lesson_ids[ $course_id ] );
+					$lessons_completed = 0;
+					$total_lessons = count( $course_lesson_ids[ $course_id ] );
 
-						// Don't use prepare as we need to provide the id join
-						$sql = sprintf($lessons_sql, $user_id, join(', ', $course_lesson_ids[ $course_id ]) );
-						// Get all lesson statuses for this Courses' lessons
-						$lesson_statuses = $wpdb->get_results( $sql, ARRAY_A );
-						// Not enough lesson statuses, thus cannot be complete
-						if ( $total_lessons > count($lesson_statuses) ) {
-							$status = 'in-progress';
-						}
-						// Count each lesson to work out the overall percentage
-						foreach ( $lesson_statuses as $lesson_status ) {
-							$status_date = $lesson_status['comment_date'];
-							switch ( $lesson_status['status'] ) {
-								case 'complete': // Lesson has no quiz/questions
-								case 'graded': // Lesson has quiz, but it's not important what the grade was
-								case 'passed':
-									$lessons_completed++;
-									break;
-
-								case 'in-progress':
-								case 'ungraded': // Lesson has quiz, but it hasn't been graded
-								case 'failed': // User failed the passmark on the lesson/quiz
-									$status = 'in-progress';
-									break;
-							}
-						}
-						$meta_data['percent'] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
-					}
-					else {
-						// Course has no lessons, therefore cannot be 'complete'
+					// Don't use prepare as we need to provide the id join
+					$sql = sprintf($lessons_sql, $user_id, join(', ', $course_lesson_ids[ $course_id ]) );
+					// Get all lesson statuses for this Courses' lessons
+					$lesson_statuses = $wpdb->get_results( $sql, ARRAY_A );
+					// Not enough lesson statuses, thus cannot be complete
+					if ( $total_lessons > count($lesson_statuses) ) {
 						$status = 'in-progress';
 					}
-					$data = array(
-						// This is the minimum data needed, the db defaults handle the rest
-							'comment_post_ID' => $course_id,
-							'comment_approved' => $status,
-							'comment_type' => 'sensei_course_status',
-							'comment_date' => $status_date,
-							'user_id' => $user_id,
-							'comment_date_gmt' => get_gmt_from_date($status_date),
-							'comment_author' => '',
-						);
-					// Check it doesn't already exist
-					$sql = $wpdb->prepare( $check_existing_sql, $course_id, $user_id );
-					$comment_ID = $wpdb->get_var( $sql );
-					if ( !$comment_ID ) {
-//						if ( array_key_exists( $status, $statuses_to_check ) ) {
-//							unset( $statuses_to_check[$status] );
-//							error_log( 'Adding: ' . print_r($data, true) . ' with meta: '.print_r($meta_data, true));
-//						}
-						// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
-						$wpdb->insert($wpdb->comments, $data);
-						$comment_ID = (int) $wpdb->insert_id;
+					// Count each lesson to work out the overall percentage
+					foreach ( $lesson_statuses as $lesson_status ) {
+						$status_date = $lesson_status['comment_date'];
+						switch ( $lesson_status['status'] ) {
+							case 'complete': // Lesson has no quiz/questions
+							case 'graded': // Lesson has quiz, but it's not important what the grade was
+							case 'passed':
+								$lessons_completed++;
+								break;
 
-						if ( $comment_ID && !empty($meta_data) ) {
-							foreach ( $meta_data as $key => $value ) {
-								// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
-								if ( $wpdb->get_var( $wpdb->prepare(
-										"SELECT COUNT(*) FROM $wpdb->commentmeta WHERE comment_id = %d AND meta_key = %s ",
-										$comment_ID, $key ) ) ) {
-										continue; // Found the meta data already
-								}
-								$result = $wpdb->insert( $wpdb->commentmeta, array(
-									'comment_id' => $comment_ID,
-									'meta_key' => $key,
-									'meta_value' => $value
-								) );
-							}
+							case 'in-progress':
+							case 'ungraded': // Lesson has quiz, but it hasn't been graded
+							case 'failed': // User failed the passmark on the lesson/quiz
+								$status = 'in-progress';
+								break;
 						}
-//						$statuses_added++;
 					}
-//					else {
-//						$dup_statuses++;
-//					}
+					$meta_data['complete'] = $lessons_completed;
+					$meta_data['percent'] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
 				}
-//				$count++;
-//				if ( 0 == ( $count % 100 ) ) {
-//				}
+				else {
+					// Course has no lessons, therefore cannot be 'complete'
+					$status = 'in-progress';
+				}
+				$data = array(
+					// This is the minimum data needed, the db defaults handle the rest
+						'comment_post_ID' => $course_id,
+						'comment_approved' => $status,
+						'comment_type' => 'sensei_course_status',
+						'comment_date' => $status_date,
+						'user_id' => $user_id,
+						'comment_date_gmt' => get_gmt_from_date($status_date),
+						'comment_author' => '',
+					);
+				// Check it doesn't already exist
+				$sql = $wpdb->prepare( $check_existing_sql, $course_id, $user_id );
+				$comment_ID = $wpdb->get_var( $sql );
+				if ( !$comment_ID ) {
+					// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
+					$wpdb->insert($wpdb->comments, $data);
+					$comment_ID = (int) $wpdb->insert_id;
+
+					if ( $comment_ID && !empty($meta_data) ) {
+						foreach ( $meta_data as $key => $value ) {
+							// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
+							if ( $wpdb->get_var( $wpdb->prepare(
+									"SELECT COUNT(*) FROM $wpdb->commentmeta WHERE comment_id = %d AND meta_key = %s ",
+									$comment_ID, $key ) ) ) {
+									continue; // Found the meta data already
+							}
+							$result = $wpdb->insert( $wpdb->commentmeta, array(
+								'comment_id' => $comment_ID,
+								'meta_key' => $key,
+								'meta_value' => $value
+							) );
+						}
+					}
+				}
 			}
-			$wpdb->flush();
-//			$user_id_offset = $user_id; // Next set of users, basically an offset
-//		}
+		}
+		$wpdb->flush();
 
 		if ( $current_page == $total_pages ) {
 			return true;
@@ -1335,6 +1296,15 @@ class WooThemes_Sensei_Updates {
 		}
 	}
 
+	/**
+	 * Force the re-calculation of all Course statuses working from all Lesson statuses
+	 * 
+	 * @global type $woothemes_sensei
+	 * @global type $wpdb
+	 * @param type $n
+	 * @param type $offset
+	 * @return boolean
+	 */
 	function status_changes_repair_course_statuses( $n = 10, $offset = 0 ) {
 		global $woothemes_sensei,$wpdb;
 
@@ -1392,7 +1362,6 @@ class WooThemes_Sensei_Updates {
 				if ( !empty($course_lesson_ids[ $course_id ]) ) {
 					foreach( $course_lesson_ids[ $course_id ] AS $lesson_id ) {
 						$lesson_status = $lesson_user_statuses[ $lesson_id ][ $user_id ];
-//						error_log( "Lesson: $lesson_id; User $user_id; ".print_r($lesson_status, true));
 						// If lessons are complete without needing quizzes to be passed
 						if ( 'passed' != $course_completion ) {
 							switch ( $lesson_status ) {
@@ -1425,13 +1394,12 @@ class WooThemes_Sensei_Updates {
 				if ( $lessons_completed == $total_lessons ) {
 					$status = 'complete';
 				}
-//				error_log(" => total lessons: $total_lessons, lessons completed: $lessons_completed");
 				// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
 				$metadata = array(
+					'complete' => $lessons_completed,
 					'percent' => abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) ),
 				);
-//				error_log(print_r($metadata, true));
-				imperial_sensei_update_course_status( $user_id, $course_id, $status, $metadata );
+				WooThemes_Sensei_Utils::update_course_status( $user_id, $course_id, $status, $metadata );
 				$count++;
 
 			} // per course status
@@ -1459,9 +1427,6 @@ class WooThemes_Sensei_Updates {
 		$user_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users " );
 		$total_pages = ceil( $user_count_result / $n );
 
-//		$per_page = 40;
-//		$count = $questions_updated = 0;
-
 		$users_sql = "SELECT ID FROM $wpdb->users ORDER BY ID ASC LIMIT %d OFFSET %d";
 		$answers_sql = "SELECT * FROM $wpdb->comments WHERE comment_type = 'sensei_user_answer' AND user_id = %d GROUP BY comment_post_ID ";
 		$grades_sql = "SELECT comment_post_ID, comment_content FROM $wpdb->comments WHERE comment_type = 'sensei_user_grade' AND user_id = %d GROUP BY comment_post_ID ";
@@ -1469,89 +1434,78 @@ class WooThemes_Sensei_Updates {
 
 		$user_ids = $wpdb->get_col( $wpdb->prepare($users_sql, $n, $offset) );
 
-			foreach ( $user_ids AS $user_id ) {
+		foreach ( $user_ids AS $user_id ) {
 
-				$answer_grades = $answer_notes = array();
+			$answer_grades = $answer_notes = array();
 
-				// Pre-process the answer grades
-				$_answer_grades = $wpdb->get_results( $wpdb->prepare($grades_sql, $user_id), ARRAY_A );
-				foreach ( $_answer_grades as $answer_grade ) {
-					// This will overwrite existing entries with the newer ones
-					$answer_grades[ $answer_grade['comment_post_ID'] ] = $answer_grade['comment_content'];
-				}
-				unset( $_answer_grades );
-//	error_log(count($answer_grades) . ' : ' . print_r($answer_grades, true));
-
-				// Pre-process the answer notes
-				$_answer_notes = $wpdb->get_results( $wpdb->prepare($notes_sql, $user_id), ARRAY_A );
-				foreach ( $_answer_notes as $answer_note ) {
-					// This will overwrite existing entries with the newer ones
-					$answer_notes[ $answer_note['comment_post_ID'] ] = $answer_note['comment_content'];
-				}
-				unset( $_answer_notes );
-//	error_log(count($answer_notes) . ' : ' . print_r($answer_notes, true));
-
-				// Grab all the questions for the user
-				$sql = $wpdb->prepare($answers_sql, $user_id);
-//	error_log($sql);
-				$answers = $wpdb->get_results( $sql, ARRAY_A );
-//	error_log(count($answers) . ' : ' . print_r($answers, true));
-				foreach ( $answers as $answer ) {
-
-					// Excape data
-					$answer = wp_slash($answer);
-
-					$comment_ID = $answer['comment_ID'];
-
-					$meta_data = array();
-
-					// Check if the question has been graded, add as meta
-					if ( !empty($answer_grades[ $answer['comment_post_ID'] ]) ) {
-						$meta_data['user_grade'] = $answer_grades[ $answer['comment_post_ID'] ];
-					}
-					// Check if there is an answer note, add as meta
-					if ( !empty($answer_notes[ $answer['comment_post_ID'] ]) ) {
-						$meta_data['answer_note'] = $answer_notes[ $answer['comment_post_ID'] ];
-					}
-
-					// Wipe the unnessary data from the main comment
-					$data = array(
-							'comment_author' => '',
-							'comment_author_email' => '',
-							'comment_author_url' => '',
-							'comment_author_IP' => '',
-							'comment_agent' => '',
-//							'comment_approved' => 'log', // New status for 'sensei_user_answer'
-						);
-					$data = array_merge($answer, $data);
-//					error_log( print_r($data, true));
-
-					$rval = $wpdb->update( $wpdb->comments, $data, compact( 'comment_ID' ) );
-					if ( $rval ) {
-						if ( !empty($meta_data) ) {
-							foreach ( $meta_data as $key => $value ) {
-								// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
-								if ( $wpdb->get_var( $wpdb->prepare(
-										"SELECT COUNT(*) FROM $wpdb->commentmeta WHERE comment_id = %d AND meta_key = %s ",
-										$comment_ID, $key ) ) ) {
-										continue; // Found the meta data already
-								}
-								$result = $wpdb->insert( $wpdb->commentmeta, array(
-									'comment_id' => $comment_ID,
-									'meta_key' => $key,
-									'meta_value' => $value
-								) );
-							}
-						}
-//						$questions_updated++;
-					}
-				}
-//				$count++;
+			// Pre-process the answer grades
+			$_answer_grades = $wpdb->get_results( $wpdb->prepare($grades_sql, $user_id), ARRAY_A );
+			foreach ( $_answer_grades as $answer_grade ) {
+				// This will overwrite existing entries with the newer ones
+				$answer_grades[ $answer_grade['comment_post_ID'] ] = $answer_grade['comment_content'];
 			}
-			$wpdb->flush();
-//			$user_id_offset = $user_id;
-//		}
-//		wp_defer_comment_counting( false );
+			unset( $_answer_grades );
+
+			// Pre-process the answer notes
+			$_answer_notes = $wpdb->get_results( $wpdb->prepare($notes_sql, $user_id), ARRAY_A );
+			foreach ( $_answer_notes as $answer_note ) {
+				// This will overwrite existing entries with the newer ones
+				$answer_notes[ $answer_note['comment_post_ID'] ] = $answer_note['comment_content'];
+			}
+			unset( $_answer_notes );
+
+			// Grab all the questions for the user
+			$sql = $wpdb->prepare($answers_sql, $user_id);
+			$answers = $wpdb->get_results( $sql, ARRAY_A );
+			foreach ( $answers as $answer ) {
+
+				// Excape data
+				$answer = wp_slash($answer);
+
+				$comment_ID = $answer['comment_ID'];
+
+				$meta_data = array();
+
+				// Check if the question has been graded, add as meta
+				if ( !empty($answer_grades[ $answer['comment_post_ID'] ]) ) {
+					$meta_data['user_grade'] = $answer_grades[ $answer['comment_post_ID'] ];
+				}
+				// Check if there is an answer note, add as meta
+				if ( !empty($answer_notes[ $answer['comment_post_ID'] ]) ) {
+					$meta_data['answer_note'] = $answer_notes[ $answer['comment_post_ID'] ];
+				}
+
+				// Wipe the unnessary data from the main comment
+				$data = array(
+						'comment_author' => '',
+						'comment_author_email' => '',
+						'comment_author_url' => '',
+						'comment_author_IP' => '',
+						'comment_agent' => '',
+					);
+				$data = array_merge($answer, $data);
+
+				$rval = $wpdb->update( $wpdb->comments, $data, compact( 'comment_ID' ) );
+				if ( $rval ) {
+					if ( !empty($meta_data) ) {
+						foreach ( $meta_data as $key => $value ) {
+							// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
+							if ( $wpdb->get_var( $wpdb->prepare(
+									"SELECT COUNT(*) FROM $wpdb->commentmeta WHERE comment_id = %d AND meta_key = %s ",
+									$comment_ID, $key ) ) ) {
+									continue; // Found the meta data already
+							}
+							$result = $wpdb->insert( $wpdb->commentmeta, array(
+								'comment_id' => $comment_ID,
+								'meta_key' => $key,
+								'meta_value' => $value
+							) );
+						}
+					}
+				}
+			}
+		}
+		$wpdb->flush();
 
 		if ( $current_page == $total_pages ) {
 			return true;

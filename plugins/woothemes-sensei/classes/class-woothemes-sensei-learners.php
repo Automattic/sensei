@@ -300,6 +300,9 @@ class WooThemes_Sensei_Learners {
 
 				case 'lesson':
 					$removed = WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
+					$course_id = get_post_meta( $post_id, '_lesson_course', true );
+					// Updates the Course status and it's meta data
+					WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
 				break;
 
 			}
@@ -368,11 +371,14 @@ class WooThemes_Sensei_Learners {
 				// Complete each lesson if course is set to be completed
 				if( isset( $_POST['add_complete_course'] ) && 'yes' == $_POST['add_complete_course'] ) {
 
-					$lessons = WooThemes_Sensei_Course::course_lessons( $course_id );
+					$lesson_ids = WooThemes_Sensei_Course::course_lessons( $course_id, 'any', 'ids' );
 
-					foreach( $lessons as $lesson ) {
-						WooThemes_Sensei_Utils::sensei_start_lesson( $lesson->ID, $user_id, true );
+					foreach( $lesson_ids as $lesson_id ) {
+						WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
 					}
+
+					// Updates the Course status and it's meta data
+					WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
 
 					do_action( 'sensei_user_course_end', $user_id, $course_id );
 				}
@@ -387,6 +393,9 @@ class WooThemes_Sensei_Learners {
 				}
 
 				$result = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $complete );
+
+				// Updates the Course status and it's meta data
+				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
 
 			break;
 		}

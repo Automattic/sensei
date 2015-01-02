@@ -19,7 +19,7 @@ $lessons_completed = 0;
 $course_lessons = $woothemes_sensei->frontend->course->course_lessons( $post->ID );
 $total_lessons = count( $course_lessons );
 // Check if the user is taking the course
-$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
+$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status' ) );
 
 // Get User Meta
 get_currentuserinfo();
@@ -43,34 +43,14 @@ if ( 0 < $total_lessons ) {
         $show_lesson_numbers = false;
         $post_classes = array( 'course', 'post' );
     	foreach ( $course_lessons as $lesson_item ){
-            $single_lesson_complete = false;
-            $user_lesson_end = '';
-    	    if ( is_user_logged_in() ) {
-    	    	// Check if Lesson is complete
-    	    	$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
-				if ( '' != $user_lesson_end ) {
-					//Check for Passed or Completed Setting
-                    $course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
-                    if ( 'passed' == $course_completion ) {
-                        // If Setting is Passed -> Check for Quiz Grades
-                        // Get Quiz ID
-                        $lesson_quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_item->ID );
-                        if ( $lesson_quiz_id ) {
-                            // Quiz Grade
-                            $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
-                            // Check if Grade is bigger than pass percentage
-                            $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
-                            if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
-                                $lessons_completed++;
-                                $single_lesson_complete = true;
-                                $post_classes[] = 'lesson-completed';
-                            } // End If Statement
-                        } // End If Statement
-                    } else {
-                        $lessons_completed++;
-                        $single_lesson_complete = true;
-                        $post_classes[] = 'lesson-completed';
-                    } // End If Statement;
+			$single_lesson_complete = false;
+			$user_lesson_status = false;
+			if ( is_user_logged_in() ) {
+				// Check if Lesson is complete
+				$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_item->ID, $current_user->ID );
+				if ( WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status ) ) {
+					$lessons_completed++;
+					$post_classes[] = 'lesson-completed';
 				} // End If Statement
 			} // End If Statement
     	    // Get Lesson data
@@ -106,19 +86,12 @@ if ( 0 < $total_lessons ) {
     	   		 			$html .= '<span class="lesson-author">' . apply_filters( 'sensei_author_text', __( 'Author: ', 'woothemes-sensei' ) ) . '<a href="' . get_author_posts_url( absint( $lesson_item->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
     	   		 		} // End If Statement
     	   		 		if ( '' != $lesson_complexity ) { $html .= '<span class="lesson-complexity">' . apply_filters( 'sensei_complexity_text', __( 'Complexity: ', 'woothemes-sensei' ) ) . $lesson_complexity .'</span>'; }
-    	   		 	    if ( '' != $user_lesson_end && $single_lesson_complete ) {
-                            $html .= '<span class="lesson-status complete">' . apply_filters( 'sensei_complete_text', __( 'Complete', 'woothemes-sensei' ) ) .'</span>';
-                        } else {
-                            // Get Lesson Status
-                            $lesson_quiz_id = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson_item->ID );
-                            if ( $lesson_quiz_id )  {
-                                // Check if user has started the lesson and has saved answers
-                                $user_lesson_start =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
-                                if ( '' != $user_lesson_start ) {
-                                    $html .= '<span class="lesson-status in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) .'</span>';
-                                } // End If Statement
-                            } // End If Statement
-                        }
+						if ( $single_lesson_complete ) {
+							$html .= '<span class="lesson-status complete">' . apply_filters( 'sensei_complete_text', __( 'Complete', 'woothemes-sensei' ) ) .'</span>';
+						}
+						elseif ( $user_lesson_status ) {
+							$html .= '<span class="lesson-status in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) .'</span>';
+						} // End If Statement
 
     	   		 	$html .= '</p>';
 

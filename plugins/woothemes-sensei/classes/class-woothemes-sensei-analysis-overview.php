@@ -326,7 +326,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 				$course_percentage = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), true );
 				remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-				$course_percentage = $course_percentage[0];
+
 				$percent_count = !empty( $course_percentage->total ) ? $course_percentage->total : 1;
 				$percent_total = !empty( $course_percentage->meta_sum ) ? doubleval( $course_percentage->meta_sum ) : 0;
 				$course_average_percent = abs( round( doubleval( $percent_total / $percent_count ), 2 ) );
@@ -383,7 +383,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 					add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 					$lesson_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
 					remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-					$lesson_grades = $lesson_grades[0];
+
 					$grade_count = !empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
 					$grade_total = !empty( $lesson_grades->meta_sum ) ? doubleval( $lesson_grades->meta_sum ) : 0;
 					$lesson_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
@@ -443,7 +443,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 				$user_quiz_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), true );
 				remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-				$user_quiz_grades = $user_quiz_grades[0];
+
 				$grade_count = !empty( $user_quiz_grades->total ) ? $user_quiz_grades->total : 1;
 				$grade_total = !empty( $user_quiz_grades->meta_sum ) ? doubleval( $user_quiz_grades->meta_sum ) : 0;
 				$user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
@@ -575,7 +575,6 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 		$total_quiz_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_total_quiz_grades', $grade_args ), true );
 		remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-		$total_quiz_grades = $total_quiz_grades[0];
 
 		$total_grade_count = !empty( $total_quiz_grades->total ) ? $total_quiz_grades->total : 1;
 		$total_grade_total = !empty( $total_quiz_grades->meta_sum ) ? doubleval( $total_quiz_grades->meta_sum ) : 0;

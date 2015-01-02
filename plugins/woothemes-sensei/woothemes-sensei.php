@@ -32,8 +32,6 @@ Tested up to: 3.9.1
     require_once( 'inc/woo-functions.php' );
     require_once( 'inc/woothemes-sensei-functions.php' );
 
-    require_once( 'inc/woothemes-sensei-new-statuses.php' );
-
 	if ( ! is_admin() ) {
         require_once( 'inc/woothemes-sensei-template.php' );
     }

@@ -806,24 +806,31 @@ class WooThemes_Sensei_Course {
 	} // End course_lessons()
 
 	/**
-	 * Fetch all quizzes in a course
+	 * Fetch all quiz ids in a course
 	 * @since  1.5.0
 	 * @param  integer $course_id ID of course
+	 * @param  boolean $boolean_check True if a simple yes/no is required
 	 * @return array              Array of quiz post objects
 	 */
-	public function course_quizzes( $course_id = 0 ) {
+	public function course_quizzes( $course_id = 0, $boolean_check = false ) {
 		global $woothemes_sensei;
 
 		$course_quizzes = array();
 
 		if( $course_id ) {
-			$lessons = $woothemes_sensei->frontend->course->course_lessons( $course_id );
+			$lesson_ids = $woothemes_sensei->frontend->course->course_lessons( $course_id, 'any', 'ids' );
 
-			foreach( $lessons as $lesson ) {
-				$quiz_id = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson->ID );
-				$questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
-				if( count( $questions ) > 0 ) {
-					$course_quizzes[] = $quiz_id;
+			foreach( $lesson_ids as $lesson_id ) {
+				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+				if ( $has_questions && $boolean_check ) {
+					return true;
+				}
+				elseif ( $has_questions ) {
+					$quiz_id = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson_id );
+//					$questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
+//					if( count( $questions ) > 0 ) {
+						$course_quizzes[] = $quiz_id;
+//					}
 				}
 			}
 		}
@@ -865,7 +872,8 @@ class WooThemes_Sensei_Course {
 		    					'meta_key'        	=> '_lesson_course',
     							'meta_value'      	=> $course_id,
     	    					'post_status'      	=> 'publish',
-    	    					'suppress_filters' 	=> 0
+    	    					'suppress_filters' 	=> 0,
+								'fields'            => 'ids', // less data to retrieve
 		    				);
 		$lessons_array = get_posts( $lesson_args );
 		$count = count( $lessons_array );
@@ -889,7 +897,8 @@ class WooThemes_Sensei_Course {
 		    					'meta_key'        	=> '_lesson_course',
     							'meta_value'      	=> $course_id,
     	    					'post_status'      	=> 'publish',
-    	    					'suppress_filters' 	=> 0
+    	    					'suppress_filters' 	=> 0,
+								'fields'            => 'ids', // less data to retrieve
 		    				);
 		$lessons_array = get_posts( $lesson_args );
 		$count = count( $lessons_array );
@@ -921,7 +930,8 @@ class WooThemes_Sensei_Course {
 										'key' => '_lesson_preview',
 										'value' => 'preview'
 									)
-								)
+								),
+								'fields'            => 'ids', // less data to retrieve
 		    				);
 		$lessons_array = get_posts( $lesson_args );
 		$count = count( $lessons_array );
@@ -1010,14 +1020,13 @@ class WooThemes_Sensei_Course {
 				$per_page = absint( $woothemes_sensei->settings->settings[ 'my_course_amount' ] );
 			}
 
-			$course_ids = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $user->ID, 'type' => 'sensei_course_start' ) );
-
+			$course_statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user->ID, 'type' => 'sensei_course_status' ), true );
 			$completed_ids = $active_ids = array();
-			foreach( $course_ids as $course_id ) {
-				if ( WooThemes_Sensei_Utils::user_completed_course( $course_id, $user->ID ) ) {
-					$completed_ids[] = $course_id;
+			foreach( $course_statuses as $course_status ) {
+				if ( WooThemes_Sensei_Utils::user_completed_course( $course_status, $user->ID ) ) {
+					$completed_ids[] = $course_status->comment_post_ID;
 				} else {
-					$active_ids[] = $course_id;
+					$active_ids[] = $course_status->comment_post_ID;
 				}
 			}
 
@@ -1048,7 +1057,6 @@ class WooThemes_Sensei_Course {
 				$completed_page = $_GET['completed_page'];
 			}
 			foreach ( $active_courses as $course_item ) {
-				$course = $course_item;
 
 				$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $course_item->ID );
 				$lessons_completed = 0;

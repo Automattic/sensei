@@ -357,9 +357,6 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 					$lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_user_lesson', $lesson_args, $item, $this->user_id ), true );
 
 					if ( !empty($lesson_status) ) {
-						if ( is_array($lesson_status) ) {
-							$lesson_status = $lesson_status[0];
-						}
 						$user_start_date = get_comment_meta( $lesson_status->comment_ID, 'start', true );
 						$user_end_date = $lesson_status->comment_date;
 
@@ -449,7 +446,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 						add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 						$lesson_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
 						remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-						$lesson_grades = $lesson_grades[0];
+
 						$grade_count = !empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
 						$grade_total = !empty( $lesson_grades->meta_sum ) ? doubleval( $lesson_grades->meta_sum ) : 0;
 						$lesson_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
@@ -521,7 +518,10 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-
+		// Need to always return an array, even with only 1 item
+		if ( 1 == $this->total_items ) {
+			$statuses = array( $statuses );
+		}
 		return $statuses;
 	} // End get_course_statuses()
 

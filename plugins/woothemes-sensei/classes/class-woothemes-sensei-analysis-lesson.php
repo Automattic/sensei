@@ -315,7 +315,10 @@ class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-
+		// Need to always return an array, even with only 1 item
+		if ( 1 == $this->total_items ) {
+			$statuses = array( $statuses );
+		}
 		return $statuses;
 	} // End get_lesson_statuses()
 

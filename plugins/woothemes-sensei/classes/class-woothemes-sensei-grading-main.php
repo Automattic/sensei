@@ -214,7 +214,10 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-
+		// Need to always return an array, even with only 1 item
+		if ( 1 == $total_statuses ) {
+			$statuses = array( $statuses );
+		}
 		$this->total_items = $total_statuses;
 		$this->items = $statuses;
 
