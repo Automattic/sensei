@@ -74,7 +74,7 @@ class Sensei_Modules {
         add_filter( 'sensei_analysis_overview_columns', array( $this, 'analysis_overview_column_title' ), 10, 2 );
         add_filter( 'sensei_analysis_overview_column_data', array( $this, 'analysis_overview_column_data' ), 10, 3 );
         add_filter( 'sensei_analysis_course_columns', array( $this, 'analysis_course_column_title' ), 10, 2 );
-        add_filter( 'sensei_analysis_course_column_data', array( $this, 'analysis_course_column_data' ), 10, 4 );
+        add_filter( 'sensei_analysis_course_column_data', array( $this, 'analysis_course_column_data' ), 10, 3 );
 
         // Manage module taxonomy columns
         add_filter( 'manage_edit-' . $this->taxonomy . '_columns', array( $this, 'taxonomy_column_headings' ), 1, 1 );
@@ -458,12 +458,13 @@ class Sensei_Modules {
     		get_currentuserinfo();
 
     		// Check if user is taking this course
-    		$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $course_id ), 'user_id' => intval( $current_user->ID ), 'type' => 'sensei_course_start' ) );
+    		$course_status_id = WooThemes_Sensei_Utils::user_started_course( intval( $course_id ), intval( $current_user->ID ) );
+			$is_user_taking_course = !empty( $course_status_id ) ? true : false;
 
     		// Get all modules
     		$modules = $this->get_course_modules( intval( $course_id ) );
 
-    		$lessons_completed = 0;
+//    		$lessons_completed = 0;
 
     		// Start building HTML
     		$html .= '<section class="course-lessons">';
@@ -555,12 +556,12 @@ class Sensei_Modules {
 
 										foreach( $lessons as $lesson ) {
 											$status = '';
-											$lesson_completed = $this->user_completed_lesson( $lesson, $current_user );
+											$lesson_completed = WooThemes_Sensei_Utils::user_completed_lesson( $lesson->ID, $current_user->ID );
 											$title = esc_attr( get_the_title( intval( $lesson->ID ) ) );
 
 											if( $lesson_completed ) {
 												// Increment completed lesson counter
-												++$lessons_completed;
+//												++$lessons_completed;
 												$status = 'completed';
 											}
 
@@ -618,10 +619,11 @@ class Sensei_Modules {
 		    			foreach( $lessons as $lesson ) {
 
 		    				// Increment completed lessons counter and note if current lesson has been completed
-		    				$single_lesson_complete = false;
-				            if( $this->user_completed_lesson( $lesson, $current_user ) ) {
-								++$lessons_completed;
+							$single_lesson_complete = false;
+							$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( intval( $lesson->ID ), intval( $current_user->ID ) );
+							if ( WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status ) ) {
 								$single_lesson_complete = true;
+//								++$lessons_completed;
 							}
 
 				    	    // Get Lesson data
@@ -649,17 +651,10 @@ class Sensei_Modules {
 				    	   		 		if ( '' != $lesson_complexity ) { $html .= '<span class="lesson-complexity">' . apply_filters( 'sensei_complexity_text', __( 'Complexity: ', 'woothemes-sensei' ) ) . $lesson_complexity .'</span>'; }
 				    	   		 	    if ( $single_lesson_complete ) {
 				                            $html .= '<span class="lesson-status complete">' . apply_filters( 'sensei_complete_text', __( 'Complete', 'woothemes-sensei' ) ) .'</span>';
-				                        } else {
-				                            // Get Lesson Status
-				                            $lesson_quiz_id = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson->ID );
-				                            if ( $lesson_quiz_id )  {
-				                                // Check if user has started the lesson and has saved answers
-				                                $user_lesson_start =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval( $lesson->ID ), 'user_id' => intval( $current_user->ID ), 'type' => 'sensei_lesson_start', 'field' => 'comment_date' ) );
-				                                if ( '' != $user_lesson_start ) {
-				                                    $html .= '<span class="lesson-status in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) .'</span>';
-				                                }
-				                            } // End If Statement
 				                        }
+										elseif ( $user_lesson_status ) {
+											$html .= '<span class="lesson-status in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) .'</span>';
+										} // End If Statement
 
 				    	   		 	$html .= '</p>';
 
@@ -690,9 +685,11 @@ class Sensei_Modules {
     		// Replace place holders in course progress widget
     		if ( is_user_logged_in() && $is_user_taking_course ) {
 
+				$lessons_completed = get_comment_meta( $course_status_id, 'complete', true );
 	    		// Add dynamic data to the output
 	    		$html = str_replace( '######', $lessons_completed, $html );
-	    		$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
+				$progress_percentage = get_comment_meta( $course_status_id, 'percent', true );
+//	    		$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
 
 	    		$html = str_replace( '@@@@@', $progress_percentage, $html );
 	    		if ( 50 < $progress_percentage ) { $class = ' green'; } elseif ( 25 <= $progress_percentage && 50 >= $progress_percentage ) { $class = ' orange'; } else { $class = ' red'; }
@@ -714,56 +711,21 @@ class Sensei_Modules {
 
     	$course_id = $post->ID;
     	$title_text = '';
-    	if ( method_exists( 'WooThemes_Sensei_Frontend', 'sensei_lesson_preview_title_text' ) ) {
-    		$title_text = $woothemes_sensei->frontend->sensei_lesson_preview_title_text( $course_id );
-    		// Remove brackets for display here
-    		$title_text = str_replace( '(', '', $title_text );
-    		$title_text = str_replace( ')', '', $title_text );
-	    	$title_text = '<span class="preview-label">' . $title_text . '</span>';
-	    }
- 
-    	$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
-		if( method_exists( 'WooThemes_Sensei_Utils', 'is_preview_lesson' ) && WooThemes_Sensei_Utils::is_preview_lesson( $lesson_id ) && !$is_user_taking_course ) {
-			$title .= ' ' . $title_text;
+
+		if( method_exists( 'WooThemes_Sensei_Utils', 'is_preview_lesson' ) && WooThemes_Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
+			$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status' ) );
+			if ( !$is_user_taking_course ) {
+				if ( method_exists( 'WooThemes_Sensei_Frontend', 'sensei_lesson_preview_title_text' ) ) {
+					$title_text = $woothemes_sensei->frontend->sensei_lesson_preview_title_text( $course_id );
+					// Remove brackets for display here
+					$title_text = str_replace( '(', '', $title_text );
+					$title_text = str_replace( ')', '', $title_text );
+					$title_text = '<span class="preview-label">' . $title_text . '</span>';
+				}
+				$title .= ' ' . $title_text;
+			}
 		}
     	return $title;
-    }
-
-    /**
-     * Check if a user has completed a lesson
-     * @param  object  $lesson Lesson post object
-     * @param  object  $user   User object
-     * @return boolean         True if the user has completed the lesson
-     */
-    private function user_completed_lesson( $lesson, $user ) {
-    	global $woothemes_sensei;
-
-    	if ( is_user_logged_in() ) {
-	    	// Check if Lesson is complete
-	    	$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval( $lesson->ID ), 'user_id' => intval( $user->ID ), 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
-			if ( '' != $user_lesson_end ) {
-				//Check for Passed or Completed Setting
-                $course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
-                if ( 'passed' == $course_completion ) {
-                    // If Setting is Passed -> Check for Quiz Grades
-                    // Get Quiz ID
-                    $lesson_quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson->ID );
-                    if ( $lesson_quiz_id ) {
-                        // Quiz Grade
-                        $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval( $lesson_quiz_id ), 'user_id' => intval( $user->ID ), 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
-                        // Check if Grade is bigger than pass percentage
-                        $lesson_prerequisite = abs( round( doubleval( get_post_meta( intval( $lesson_quiz_id ), '_quiz_passmark', true ) ), 2 ) );
-                        if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
-                            return true;
-                        }
-                    } // End If Statement
-                } else {
-                    return true;
-                }
-			} // End If Statement
-		}
-
-		return false;
     }
 
     /**
@@ -1264,8 +1226,8 @@ class Sensei_Modules {
      * @param  array $columns Default columns
      * @return array          Modified columns
      */
-    public function analysis_overview_column_title( $columns, $type ) {
-		if ( 'lessons' == $type ) {
+    public function analysis_overview_column_title( $columns, $overview ) {
+		if ( 'lessons' == $overview->type ) {
 			$new_columns = array();
 			if( is_array( $columns ) && 0 < count( $columns ) ) {
 				foreach( $columns as $column => $title ) {
@@ -1290,10 +1252,11 @@ class Sensei_Modules {
      * @param  integer $lesson_id Lesson ID
      * @return array              Updated column data
      */
-    public function analysis_overview_column_data( $columns, $item, $type ) {
+    public function analysis_overview_column_data( $columns, $item, $overview ) {
 
-		if ( 'lessons' == $type ) {
+		if ( 'lessons' == $overview->type ) {
 			$lesson_module = '';
+			error_log(__FUNCTION__ . ":$item->ID");
 			$lesson_module_list = wp_get_post_terms( $item->ID, $this->taxonomy );
 			if( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
 				foreach( $lesson_module_list as $single_module ) {
@@ -1312,8 +1275,8 @@ class Sensei_Modules {
      * @param  array $columns Default columns
      * @return array          Modified columns
      */
-    public function analysis_course_column_title( $columns, $type ) {
-		if ( 'lesson' == $type ) {
+    public function analysis_course_column_title( $columns, $overview ) {
+		if ( 'lesson' == $overview->view ) {
 			$columns['lesson_module'] = __( 'Module', 'sensei_modules' );
 		}
 		return $columns;
@@ -1323,13 +1286,11 @@ class Sensei_Modules {
      * Data for 'Module' column in Analysis Course table
      * @param  array   $columns   Table column data
      * @param  integer $lesson_id Lesson ID
-     * @param  integer $user_id   User ID
      * @return array              Updated columns data
      */
-    public function analysis_course_column_data( $columns, $item, $type, $user_id ) {
-		if ( 'lesson' == $type ) {
+    public function analysis_course_column_data( $columns, $item, $overview ) {
+		if ( 'lesson' == $overview->view ) {
 			$lesson_module = '';
-
 			$lesson_module_list = wp_get_post_terms( $item->ID, $this->taxonomy );
 			if( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
 				foreach( $lesson_module_list as $single_module ) {
