@@ -1,0 +1,137 @@
+#certificate_image_wrapper .certificate_field {
+	background-color: #CCCCCC;
+	border: 1px dashed #888888;
+	opacity: 0.5;
+	position: absolute;
+	text-align: center;
+}
+
+.colorpick-form-field {
+	position:relative;
+}
+
+.certificate_templates_options_panel, .panel {
+	padding: 9px 9px 9px 9px;
+	color:  #555;
+}
+
+.certificate_templates_options_panel p {
+	margin: 0 0 9px;
+	font-size: 12px;
+	padding: 5px 9px;
+	line-height: 24px;
+	clear: both;
+}
+
+
+.certificate_templates_options_panel .checkbox {
+	vertical-align: middle;
+	margin: 7px 0;
+	width: auto;
+}
+.certificate_templates_options_panel p {
+	margin: 9px 0 9px;
+}
+
+.certificate_templates_options_panel label, legend {
+	float: left;
+	width: 150px;
+	padding: 0;
+}
+.certificate_templates_options_panel label.req, legend.req {
+	font-weight: bold;
+	font-style: normal;
+	color: red;
+}
+.certificate_templates_options_panel .description {
+	padding: 0;
+	margin: 0 0 0 7px;
+}
+.certificate_templates_options_panel .description-block {
+	margin-left: 0;
+	display: block;
+}
+.certificate_templates_options_panel textarea, input, select {
+	margin: 0;
+}
+.certificate_templates_options_panel textarea {
+	vertical-align: top;
+	height: 10.5em;
+	line-height: 1.5em;
+}
+.certificate_templates_options_panel input {
+	width: 50%;
+	float: left;
+}
+.certificate_templates_options_panel input.button {
+	width: auto;
+	margin-left: 8px;
+}
+.certificate_templates_options_panel select {
+	float: left;
+}
+.certificate_templates_options_panel .short {
+	width: 20%;
+}
+.certificate_templates_options_panel .medium {
+	width: 40%;
+}
+.certificate_templates_options_panel .threequarter {
+	width: 70%;
+}
+.certificate_templates_options_panel .sized {
+	width: auto !important;
+	margin-right: 6px;
+}
+.certificate_templates_options_panel .options_group {
+	border-top: 1px solid white;
+	border-bottom: 1px solid #DFDFDF;
+}
+.certificate_templates_options_panel .options_group:first-child {
+	border-top: 0;
+}
+.certificate_templates_options_panel .options_group:last-child {
+	border-bottom: 0;
+}
+.certificate_templates_options_panel .options_group fieldset {
+		margin: 9px 0;
+		font-size: 12px;
+		padding: 5px 9px;
+		line-height: 24px;
+	}
+.certificate_templates_options_panel .options_group fieldset label {
+	width: auto;
+	float: none;
+}
+.certificate_templates_options_panel .options_group fieldset ul {
+	float: left;
+	width: 50%;
+	margin: 0;
+	padding: 0;
+}
+.certificate_templates_options_panel .options_group fieldset ul li {
+	margin: 0;
+	width: auto;
+}
+.certificate_templates_options_panel .options_group fieldset ul li input {
+	width: auto;
+	float: none;
+	margin-right: 4px;
+}
+
+.certificate_templates_options_panel .dimensions_field .wrap input {
+	margin-right: .2%;
+	width: 6.6%;
+}
+.certificate_templates_options_panel .dimensions_field .wrap .last {
+	margin-right: 0;
+}
+
+
+.certificate_templates_options_panel .upload_file_button {
+	padding-left: 20px;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAQ0lEQVQYV3WPUQoAMAhC1+E6tYdrFBgiW185X7biSAGolpkZfN6GJg1CA7ip0CYo+FzxBTqeE/7J1qGAXsTEAdxQfQHJTymZe4oqiAAAAABJRU5ErkJggg==) !important;
+	background-color: #FEFEFE !important;
+	background-repeat: no-repeat !important;
+	background-position: 8px 7px !important;
+}
