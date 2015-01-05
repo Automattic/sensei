@@ -38,7 +38,7 @@ class WooThemes_Sensei_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_styles_global' ) );
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
-		add_filter( 'comments_clauses', array( $this, 'comments_admin_filter' ), 10, 1 );
+//		add_filter( 'comments_clauses', array( $this, 'comments_admin_filter' ), 10, 1 );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
@@ -172,6 +172,7 @@ class WooThemes_Sensei_Admin {
 	function comments_admin_filter( $pieces ) {
 		global $wpdb;
 
+		// This is no longer needed as no sensei activity items use a comment_approved of 1 or 0
 		// Filter Admin Comments Area to not display Sensei's use of commenting system
 		if( is_admin() && !( isset($_GET['page']) && 'sensei_analysis' == $_GET['page'] ) ) {
 			$statuses = array( '' ); // Default to the WP normal comments

@@ -156,9 +156,6 @@ class WooThemes_Sensei_Utils {
 	 */
 	public static function sensei_check_for_activity ( $args = array(), $return_comments = false ) {
 		global $woothemes_sensei, $wp_version;
-		if ( is_admin() ) {
-			remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
-		} // End If Statement
 		if ( !$return_comments ) {
 			$args['count'] = true;
 		}
@@ -203,9 +200,6 @@ class WooThemes_Sensei_Utils {
 		}
 		// Get comments
 		$comments = get_comments( $args );
-		if ( is_admin() ) {
-			add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
-		} // End If Statement
 //		remove_filter( 'comments_clauses', array( __CLASS__, 'single_comment_filter' ) );
 		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
 		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
