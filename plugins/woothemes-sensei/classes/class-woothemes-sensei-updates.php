@@ -77,7 +77,9 @@ class WooThemes_Sensei_Updates {
 																		  'status_changes_convert_lessons' => array( 'title' => '(2) Status Changes: Convert lesson statuses', 'desc' => 'Convert to new lesson statuses.' ),
 																		  'status_changes_convert_courses' => array( 'title' => '(3) Status Changes: Convert course statuses', 'desc' => 'Convert to new course statuses.' ),
 //																		  'status_changes_repair_course_statuses' => array( 'title' => '(4) Status Changes: Repair course statuses', 'desc' => 'Repair all course statuses.' ),
-																		  'status_changes_convert_questions' => array( 'title' => '(4) Status Changes: Convert question statuses', 'desc' => 'Convert to new question statuses.' ),)
+																		  'status_changes_convert_questions' => array( 'title' => '(4) Status Changes: Convert question statuses', 'desc' => 'Convert to new question statuses.' ),
+																		  'update_legacy_sensei_comments_status' => array( 'title' => '(5) Status Changes: Convert legacy sensei types', 'desc' => 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.' ),
+																		  'update_comment_course_lesson_comment_counts' => array( 'title' => '(6) Status Changes: Update comment counts', 'desc' => 'Update comment counts on Courses and Lessons due to status changes.' ),)
 												),
 							);
 
@@ -1513,5 +1515,64 @@ class WooThemes_Sensei_Updates {
 			return false;
 		}
 	}
+
+	/**
+	 * Updates all pre-existing Sensei activity types with a new status value
+	 * 
+	 * @global type $wpdb
+	 * @return boolean
+	 */
+	public function update_legacy_sensei_comments_status() {
+		global $wpdb;
+
+		$wpdb->hide_errors();
+		// Update 'sensei_user_answer' entries to use comment_approved = 'log' so they don't appear in counts
+		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'log' WHERE comment_type = 'sensei_user_answer' " );
+
+		// Mark all old Sensei comment types with comment_approved = 'legacy' so they no longer appear in counts, but can be restored if required
+		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'legacy' WHERE comment_type IN ('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_answer_notes', 'sensei_quiz_grade') " );
+
+		$wpdb->show_errors();
+
+		return true;
+	}
+
+	/**
+	 * Update the comment counts for all Courses and Lessons now that sensei comments will no longer be counted.
+	 * 
+	 * @global type $wpdb
+	 * @param type $n
+	 * @param type $offset
+	 * @return boolean
+	 */
+	public function update_comment_course_lesson_comment_counts( $n = 10, $offset = 0 ) {
+		global $wpdb;
+
+		// Calculate if this is the last page
+		if ( 0 == $offset ) {
+			$current_page = 1;
+		} else {
+			$current_page = intval( $offset / $n );
+		}
+		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') " );
+		$total_pages = ceil( $item_count_result / $n );
+
+		// Recalculate all counts
+		$items = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') LIMIT %d OFFSET %d", $n, $offset ) );
+		foreach ( (array) $items as $post ) {
+			// Code copied from wp_update_comment_count_now()
+			$new = (int) $wpdb->get_var( $wpdb->prepare("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_approved = '1'", $post->ID) );
+			$wpdb->update( $wpdb->posts, array('comment_count' => $new), array('ID' => $post->ID) );
+
+			clean_post_cache( $post->ID );
+		}
+
+		if ( $current_page == $total_pages ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 } // End Class
 ?>
