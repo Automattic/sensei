@@ -2,13 +2,13 @@
 
 This covers the current changes between our fork of Sensei (and it's corresponding plugins) and the v1.6.1 of Sensei.
 
-### Reloaded Changes (new)
+### 1.7.0 Alpha Changes (new)
 
-This branch of the Sensei plugin has almost completely rewritten the class-woothemes-sensei-list-table.php and class-woothemes-sensei-learners-main.php so that Learner Management is correctly paginated. Corresponding changes are in other Sensei files.
+This branch of the Sensei plugin has almost completely rewritten the classes involved with the Learner Management, Grading and Analysis admin screens. All screens are correctly paginated.
 
-The Learner Management, once showing the users themselves, is using either 'sensei_course_status' or 'sensei_lesson_status'. These statuses are set/updated via Sensei actions, the functions are in extended/sensei-changes.php. At a later date these will be merged into core Sensei, replacing the existing log entries.
+The only comment type remaining is 'sensei_user_answer', joined with the new 'sensei_lesson_status' and 'sensei_course_status', all others have been converted to comment meta data or merged together using the comment_approved column of the database to store the different statuses of Courses and Lessons.
 
-Finally there is extended/command.php which defines new WP-CLI ( http://wp-cli.org/ ) commands 'sensei convert-lesson-activities', 'sensei convert-question-activities' and 'sensei convert-course-activities' which converts the existing 9 different Sensei log activities to just 3. 
+Large changes have occurred to WooThemes_Sensei_Utils and WooThemes_Sensei_Frontend. For example on the frontend the functions 'sensei_complete_lesson' and 'sensei_complete_quiz' use more Util functions rather than repeating work.
 
 
 ### Directory overview
@@ -46,12 +46,12 @@ Below are rough notes on what changes have occurred to Sensei
  
 ### Additional Features
 
-- Add a bulk auto grade option on the Grading screen, select to auto grade all entries of the current Lesson that were marked as 'manual'
+- Add a bulk auto grade option on the Grading screen, select to auto grade all entries of the current Lesson that were marked as 'manual' (code within 'extended')
 - Allow use of question post_content for expanded questions, slight conflict with some question types that use the 'wrong' answer to store similar info (see file upload)
 - Convert multiple choice to allow multiple correct answers
 - Mark against a Lesson with a meta field on admin save if the Lesson has questions. Saves having the (optional) function do so much work, plus allows restricting the Grading screen to Lesson with quizzes
 - Quiz Additions:
-- - Quiz password before accessing Quiz
-- - Quiz number of attempts before lockout
-- - Quiz countdown before submission, JS based, on reload after deadline submission buttons no longer show
+- - Quiz password before accessing Quiz (code within 'extended')
+- - Quiz number of attempts before lockout (code within 'extended')
+- - Quiz countdown before submission, JS based, on reload after deadline submission buttons no longer show (code within 'extended')
 
