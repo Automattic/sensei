@@ -855,7 +855,7 @@ class WooThemes_Sensei_Updates {
 			'offset' => $offset,
 			'post_status' => 'any'
 		);
-		error_log(print_r($args,true));
+
 		$quizzes = get_posts( $args );
 
 		foreach( $quizzes as $quiz ) {
