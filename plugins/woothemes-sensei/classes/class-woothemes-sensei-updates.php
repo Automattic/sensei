@@ -68,18 +68,19 @@ class WooThemes_Sensei_Updates {
 																		  'reset_lesson_order_meta' => array( 'title' => 'Set default order of lessons', 'desc' => 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.' ), ),
 													'manual' 	=> array()
 												),
-								'1.6.3' => array( 	'auto' 		=> array(),
-													'manual' 	=> array( 'update_quiz_lesson_relationship' => array( 'title' => 'Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
-																		  'update_lesson_quiz_questions' => array( 'title' => 'Update lessons quiz data', 'desc' => 'Adds data to lessons to mark if the corresponding quiz has questions or not.' ), )
-												),
+//								'1.6.3' => array( 	'auto' 		=> array(),
+//													'manual' 	=> array( 'update_quiz_lesson_relationship' => array( 'title' => 'Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
+//																		  'update_lesson_quiz_questions' => array( 'title' => 'Update lessons quiz data', 'desc' => 'Adds data to lessons to mark if the corresponding quiz has questions or not.' ), )
+//												),
 								'1.7.0-alpha' => array( 	'auto' 		=> array(),
-													'manual' 	=> array( 'status_changes_fix_lessons' => array( 'title' => '(1) Status Changes: Fix lesson statuses', 'desc' => 'Fix existing lesson statuses.' ),
-																		  'status_changes_convert_lessons' => array( 'title' => '(2) Status Changes: Convert lesson statuses', 'desc' => 'Convert to new lesson statuses.' ),
-																		  'status_changes_convert_courses' => array( 'title' => '(3) Status Changes: Convert course statuses', 'desc' => 'Convert to new course statuses.' ),
+													'manual' 	=> array( 'update_quiz_lesson_relationship' => array( 'title' => '(1) Status Changes: Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
+																		  'status_changes_fix_lessons' => array( 'title' => '(2) Status Changes: Fix lesson statuses', 'desc' => 'Fix existing lesson statuses.' ),
+																		  'status_changes_convert_lessons' => array( 'title' => '(3) Status Changes: Convert lesson statuses', 'desc' => 'Convert to new lesson statuses.' ),
+																		  'status_changes_convert_courses' => array( 'title' => '(4) Status Changes: Convert course statuses', 'desc' => 'Convert to new course statuses.' ),
 //																		  'status_changes_repair_course_statuses' => array( 'title' => '(4) Status Changes: Repair course statuses', 'desc' => 'Repair all course statuses.' ),
-																		  'status_changes_convert_questions' => array( 'title' => '(4) Status Changes: Convert question statuses', 'desc' => 'Convert to new question statuses.' ),
-																		  'update_legacy_sensei_comments_status' => array( 'title' => '(5) Status Changes: Convert legacy sensei types', 'desc' => 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.' ),
-																		  'update_comment_course_lesson_comment_counts' => array( 'title' => '(6) Status Changes: Update comment counts', 'desc' => 'Update comment counts on Courses and Lessons due to status changes.' ),)
+																		  'status_changes_convert_questions' => array( 'title' => '(5) Status Changes: Convert question statuses', 'desc' => 'Convert to new question statuses.' ),
+																		  'update_legacy_sensei_comments_status' => array( 'title' => '(6) Status Changes: Convert legacy sensei types', 'desc' => 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.' ),
+																		  'update_comment_course_lesson_comment_counts' => array( 'title' => '(7) Status Changes: Update comment counts', 'desc' => 'Update comment counts on Courses and Lessons due to status changes.' ),)
 												),
 							);
 
@@ -833,14 +834,28 @@ class WooThemes_Sensei_Updates {
 		return true;
 	}
 
-	public function update_quiz_lesson_relationship() {
-		$args = array(
-			'post_type'         => 'quiz',
-			'posts_per_page'    => -1,
-			'post_status'       => 'any',
-			'suppress_filters'  => 0
-		);
+	public function update_quiz_lesson_relationship( $n = 10, $offset = 0 ) {
+		$count_object = wp_count_posts( 'quiz' );
+		$count_published = 0;
+		foreach ( $count_object AS $status => $count ) {
+			$count_published += $count;
+		}
 
+		// Calculate if this is the last page
+		if ( 0 == $offset ) {
+			$current_page = 1;
+		} else {
+			$current_page = intval( $offset / $n );
+		}
+		$total_pages = ceil( $count_published / $n );
+
+		$args = array(
+			'post_type' => 'quiz',
+			'numberposts' => $n,
+			'offset' => $offset,
+			'post_status' => 'any'
+		);
+		error_log(print_r($args,true));
 		$quizzes = get_posts( $args );
 
 		foreach( $quizzes as $quiz ) {
@@ -860,41 +875,45 @@ class WooThemes_Sensei_Updates {
 			update_post_meta( $lesson_id, '_lesson_quiz', $quiz->ID );
 		}
 
-		return true;
-	}
-
-	public function update_lesson_quiz_questions() {
-		global $woothemes_sensei;
-		$args = array(
-			'post_type'         => 'lesson',
-			'posts_per_page'    => -1,
-			'post_status'       => 'any',
-			'suppress_filters'  => 0
-		);
-
-		$lessons = get_posts( $args );
-
-		foreach( $lessons as $lesson ) {
-
-			if( ! isset( $lesson->ID ) ) continue;
-
-			$has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
-
-			// Skip previously calculated lessons (in case runnning multiple times)
-			if( ! empty( $has_questions ) ) continue;
-
-			$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson->ID );
-
-			if( empty( $quiz_id ) ) continue;
-
-			$quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
-			if( 0 < count( $quiz_questions ) ) {
-				update_post_meta( $lesson->ID, '_quiz_has_questions', '1' );
-			}
+		if ( $current_page == $total_pages ) {
+			return true;
+		} else {
+			return false;
 		}
-
-		return true;
 	}
+
+//	public function update_lesson_quiz_questions() {
+//		global $woothemes_sensei;
+//		$args = array(
+//			'post_type'         => 'lesson',
+//			'posts_per_page'    => -1,
+//			'post_status'       => 'any',
+//			'suppress_filters'  => 0
+//		);
+//
+//		$lessons = get_posts( $args );
+//
+//		foreach( $lessons as $lesson ) {
+//
+//			if( ! isset( $lesson->ID ) ) continue;
+//
+//			$has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
+//
+//			// Skip previously calculated lessons (in case runnning multiple times)
+//			if( ! empty( $has_questions ) ) continue;
+//
+//			$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson->ID );
+//
+//			if( empty( $quiz_id ) ) continue;
+//
+//			$quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
+//			if( 0 < count( $quiz_questions ) ) {
+//				update_post_meta( $lesson->ID, '_quiz_has_questions', '1' );
+//			}
+//		}
+//
+//		return true;
+//	}
 
 	function status_changes_fix_lessons( $n = 10, $offset = 0 ) {
 		global $wpdb;
