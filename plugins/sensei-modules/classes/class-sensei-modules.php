@@ -1256,7 +1256,6 @@ class Sensei_Modules {
 
 		if ( 'lessons' == $overview->type ) {
 			$lesson_module = '';
-			error_log(__FUNCTION__ . ":$item->ID");
 			$lesson_module_list = wp_get_post_terms( $item->ID, $this->taxonomy );
 			if( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
 				foreach( $lesson_module_list as $single_module ) {
