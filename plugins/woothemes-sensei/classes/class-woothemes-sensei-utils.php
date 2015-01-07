@@ -1064,16 +1064,22 @@ class WooThemes_Sensei_Utils {
 				// Get Quiz ID
 				$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson->ID );
 
-				// Get quiz passmark
-				$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
+				// Check for a pass being required
+				$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+				if ( $pass_required ) {
+					// Get quiz passmark
+					$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 
-				// Add up total passmark
-				$total_passmark += $quiz_passmark;
+					// Add up total passmark
+					$total_passmark += $quiz_passmark;
 
-				++$lesson_count;
+					++$lesson_count;
+				}
 			}
-
-			$course_passmark = ( $total_passmark / $lesson_count );
+			// Might be a case of no required lessons
+			if ( $lesson_count ) {
+				$course_passmark = ( $total_passmark / $lesson_count );
+			}
 		}
 
 		return round( $course_passmark );
@@ -1100,17 +1106,23 @@ class WooThemes_Sensei_Utils {
 			$total_grade = 0;
 			foreach( $lessons as $lesson ) {
 
-				$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
-				// Get user quiz grade
-				$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+				// Check for lesson having questions, thus a quiz, thus having a grade
+				$has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
+				if ( $has_questions ) {
+					$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
+					// Get user quiz grade
+					$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
 
-				// Add up total grade
-				$total_grade += $quiz_grade;
+					// Add up total grade
+					$total_grade += $quiz_grade;
 
-				++$lesson_count;
+					++$lesson_count;
+				}
 			}
-
-			$total_grade = ( $total_grade / $lesson_count );
+			// Might be a case of no lessons with quizzes
+			if ( $lesson_count ) {
+				$total_grade = ( $total_grade / $lesson_count );
+			}
 		}
 
 		return round( $total_grade );
@@ -1163,9 +1175,9 @@ class WooThemes_Sensei_Utils {
 			if( $started_course ) {
 				$passmark = WooThemes_Sensei_Utils::sensei_course_pass_grade( $course_id ); // This happens inside sensei_user_passed_course()!
 				$user_grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $course_id, $user_id ); // This happens inside sensei_user_passed_course()!
-				$user_pass = WooThemes_Sensei_Utils::sensei_user_passed_course( $course_id, $user_id );
-
-				if( $user_pass ) {
+//				$user_pass = WooThemes_Sensei_Utils::sensei_user_passed_course( $course_id, $user_id );
+				// Duplicate sensei_user_passed_course() check rather than run sensei_course_pass_grade() and sensei_course_user_grade() twice
+				if( $user_grade >= $passmark ) {
 					$status = 'passed';
 					$box_class = 'tick';
 					$message = sprintf( __( 'You have passed this course with a grade of %1$d%%.', 'woothemes-sensei' ), $user_grade );
