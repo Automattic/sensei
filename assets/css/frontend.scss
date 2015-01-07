@@ -25,21 +25,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
   font-style: normal;
 }
 
-a.view-results,
-a.view-results-link,
-a.sensei-certificate-link {
-	display: inline-block;
-	padding: .236em .857em;
-	background: $border_main;
-	float: right;
-	margin-left: .236em;
-	padding: .382em 1em;
-	@include border_radius(5px);
-	color: #fff;
-	font-weight: bold;
-	text-decoration: none;
-}
-
 /* Courses */
 #main .course, #main .course-container {
 	@include clearfix();
@@ -53,6 +38,11 @@ a.sensei-certificate-link {
 	.course-meta  {
 		margin-bottom: 20px;
 		clear: both;
+		.view-results {
+			text-align: right;
+			margin: 5px 0;
+			font-size: 90%;
+		}
 		.single_add_to_cart_button  {
 			font-size: 1em;
 			position: relative;
@@ -67,8 +57,13 @@ a.sensei-certificate-link {
 			color: #555;
 		}
 		.course-price  {
+			position: absolute;
+			top: 0;
+			right: 0;
+			display: block;
 			font-style: normal;
 			font-weight: bold;
+			font-size: 2.244em;
 			color: darken($color_body, 20%);
 			@include border_radius(300px);
 		}
@@ -131,22 +126,6 @@ a.sensei-certificate-link {
 	}
 }
 
-// Single Course
-.single-course {
-	.course-meta {
-		margin-bottom: 1.618em;
-		@include clearfix;
-
-		.status {
-			float: left;
-			margin-right: .236em;
-		}
-	}
-	.course-video {
-		margin-bottom: 1.618em;
-	}
-}
-
 #main .course-container .module-lessons {
 	> header {
 		margin: 0 0 1.618em;
@@ -193,15 +172,15 @@ a.sensei-certificate-link {
 	}
 }
 
-.sensei-breadcrumb  {
-	background: $bg_light;
+.lesson-course  {
 	margin: 2em 0;
-	padding: 0.5em 1em;
 	font-style: italic;
 	color: lighten($color_body, 20%);
-	&:before  {
-		@include iconbefore();
+	font-size: .9em;
+	a:after  {
+		@include iconafter();
 		content: '\f112';
+		margin-left: 3px;
 	}
 }
 
@@ -655,7 +634,7 @@ section.entry span.course-price { padding-left: 10px; }
 /*-------------------------------------------------------------------------------------------*/
 /* 1. Info Boxes */
 /*-------------------------------------------------------------------------------------------*/
-.sensei, .course-container, .course, .lesson, .quiz, .learner-info  {
+.course-container, .course, .lesson, .quiz, .learner-info  {
 	p.sensei-message, div.sensei-message {
 		clear: both;
 		margin: 1.387em 0 1.618em 0;
@@ -739,7 +718,7 @@ section.entry span.course-price { padding-left: 10px; }
 }
 
 .course-container, .course, .lesson, .quiz  {
-	a.button, a.button:visited,
+	a.button,
 	a.comment-reply-link,
 	#commentform #submit,
 	.submit,

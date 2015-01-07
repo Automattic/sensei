@@ -28,13 +28,6 @@ do_action('sensei_before_main_content');
 do_action( 'sensei_lesson_archive_main_content' );
 
 /**
- * sensei_breadcrumb hook
- *
- * @hooked sensei_breadcrumb - 10 (outputs sensei breadcrumb trail)
- */
-do_action('sensei_breadcrumb');
-
-/**
  * sensei_pagination hook
  *
  * @hooked sensei_pagination - 10 (outputs archive pagination)

@@ -71,7 +71,7 @@ class WooThemes_Sensei_Learner_Profiles {
 	 * @param  string $sep   Seeparator string
 	 * @return string        Modified title
 	 */
-	public function page_title( $title, $sep = null ) {
+	public function page_title( $title, $sep ) {
 		global $wp_query;
 		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
 			$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );
@@ -108,9 +108,9 @@ class WooThemes_Sensei_Learner_Profiles {
 
 		if( $user ) {
 			if ( get_option('permalink_structure') ) {
-				$permalink = trailingslashit( get_home_url() ) . $this->profile_url_base . '/' . $user->user_nicename;
+				$permalink = trailingslashit( get_site_url() ) . $this->profile_url_base . '/' . $user->user_nicename;
 			} else {
-				$permalink = trailingslashit( get_home_url() ) . '?learner_profile=' . $user->user_nicename;
+				$permalink = trailingslashit( get_site_url() ) . '?learner_profile=' . $user->user_nicename;
 			}
 		}
 

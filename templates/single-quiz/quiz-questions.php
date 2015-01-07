@@ -30,51 +30,51 @@ $lesson_quiz_questions = $woothemes_sensei->frontend->data->lesson_quiz_question
 
 // Check if the user has started the course
 $lesson_course_id = absint( get_post_meta( $quiz_lesson, '_lesson_course', true ) );
-$has_user_start_the_course = sensei_has_user_started_course( $lesson_course_id, $current_user->ID );
+$has_user_start_the_course = WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID );
 
 // Get the meta info
 $quiz_passmark = absint( get_post_meta( $post->ID, '_quiz_passmark', true ) );
 $quiz_passmark_float = (float) $quiz_passmark;
 ?>
 <div class="lesson-meta">
-    <?php
+	<?php
 
-    // Display user's quiz status
-    $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $quiz_lesson, $current_user->ID );
-    echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+	// Display user's quiz status
+	$status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $quiz_lesson, $current_user->ID );
+	echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
 
-    // Lesson Quiz Meta
-    if ( 0 < count( $lesson_quiz_questions ) )  {
-    	$question_count = 1;
-    	?>
-    	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data">
-    		<ol id="sensei-quiz-list">
-    			<?php foreach ($lesson_quiz_questions as $question_item) {
+	// Lesson Quiz Meta
+	if ( 0 < count( $lesson_quiz_questions ) )  {
+		$question_count = 1;
+		?>
+		<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data">
+			<ol id="sensei-quiz-list">
+				<?php foreach ($lesson_quiz_questions as $question_item) {
 
-                    // Setup current Frontend Question
-                    $woothemes_sensei->frontend->data->question_item = $question_item;
-                    $woothemes_sensei->frontend->data->question_count = $question_count;
-                    // Question Type
-                    $question_type = 'multiple-choice';
-                    $question_types_array = wp_get_post_terms( $question_item->ID, 'question-type', array( 'fields' => 'names' ) );
-                    if ( isset( $question_types_array[0] ) && '' != $question_types_array[0] ) {
-                        $question_type = $question_types_array[0];
-                    } // End If Statement
+					// Setup current Frontend Question
+					$woothemes_sensei->frontend->data->question_item = $question_item;
+					$woothemes_sensei->frontend->data->question_count = $question_count;
+					// Question Type
+					$question_type = 'multiple-choice';
+					$question_types_array = wp_get_post_terms( $question_item->ID, 'question-type', array( 'fields' => 'names' ) );
+					if ( isset( $question_types_array[0] ) && '' != $question_types_array[0] ) {
+						$question_type = $question_types_array[0];
+					} // End If Statement
 
-                    echo '<input type="hidden" name="questions_asked[]" value="' . $question_item->ID . '" />';
+					echo '<input type="hidden" name="questions_asked[]" value="' . $question_item->ID . '" />';
 
-    				do_action( 'sensei_quiz_question_type', $question_type );
+					do_action( 'sensei_quiz_question_type', $question_type );
 
-                    $question_count++;
+					$question_count++;
 
-    			} // End For Loop ?>
+				} // End For Loop ?>
 
-    		</ol>
-            <?php do_action( 'sensei_quiz_action_buttons' ); ?>
-    	</form>
-    <?php } else { ?>
-    	<div class="sensei-message alert"><?php _e( 'There are no questions for this Quiz yet. Check back soon.', 'woothemes-sensei' ); ?></div>
-    <?php } // End If Statement ?>
+			</ol>
+			<?php do_action( 'sensei_quiz_action_buttons' ); ?>
+		</form>
+	<?php } else { ?>
+		<div class="sensei-message alert"><?php _e( 'There are no questions for this Quiz yet. Check back soon.', 'woothemes-sensei' ); ?></div>
+	<?php } // End If Statement ?>
 </div>
 
-<?php do_action( 'sensei_breadcrumb', $quiz_lesson ); ?>
+<?php do_action( 'sensei_quiz_back_link', $quiz_lesson  ); ?>
