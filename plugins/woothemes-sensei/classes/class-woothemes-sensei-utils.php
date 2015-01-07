@@ -1669,7 +1669,7 @@ class WooThemes_Sensei_Utils {
 
 		// Quiz Grade
 		$lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-		$quiz_grade = get_comment_meta( $lesson_status->comment_ID, 'user_grade', true );
+		$quiz_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
 		// Check if Grade is greater than or equal to pass percentage
 		$quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
 		if ( $quiz_passmark <= intval( $quiz_grade ) ) {
