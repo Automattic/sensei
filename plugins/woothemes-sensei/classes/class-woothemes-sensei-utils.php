@@ -1330,9 +1330,8 @@ class WooThemes_Sensei_Utils {
 		$activity_logged = false;
 
 		if( $user_id && $course_id ) {
-
 			// Check if user is already on the Course
-			$activity_logged = WooThemes_Sensei_Utils::user_started_course( $user_id, $course_id );
+			$activity_logged = WooThemes_Sensei_Utils::user_started_course( $course_id, $user_id );
 			if ( ! $activity_logged ) {
 
 				// Add user to course
