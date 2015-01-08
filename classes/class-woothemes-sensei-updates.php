@@ -68,19 +68,15 @@ class WooThemes_Sensei_Updates {
 																		  'reset_lesson_order_meta' => array( 'title' => 'Set default order of lessons', 'desc' => 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.' ), ),
 													'manual' 	=> array()
 												),
-//								'1.6.3' => array( 	'auto' 		=> array(),
-//													'manual' 	=> array( 'update_quiz_lesson_relationship' => array( 'title' => 'Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
-//																		  'update_lesson_quiz_questions' => array( 'title' => 'Update lessons quiz data', 'desc' => 'Adds data to lessons to mark if the corresponding quiz has questions or not.' ), )
-//												),
-								'1.7.0-alpha' => array( 	'auto' 		=> array(),
-													'manual' 	=> array( 'update_quiz_lesson_relationship' => array( 'title' => '(1) Status Changes: Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
-																		  'status_changes_fix_lessons' => array( 'title' => '(2) Status Changes: Fix lesson statuses', 'desc' => 'Fix existing lesson statuses.' ),
-																		  'status_changes_convert_lessons' => array( 'title' => '(3) Status Changes: Convert lesson statuses', 'desc' => 'Convert to new lesson statuses.' ),
-																		  'status_changes_convert_courses' => array( 'title' => '(4) Status Changes: Convert course statuses', 'desc' => 'Convert to new course statuses.' ),
-//																		  'status_changes_repair_course_statuses' => array( 'title' => '(4) Status Changes: Repair course statuses', 'desc' => 'Repair all course statuses.' ),
-																		  'status_changes_convert_questions' => array( 'title' => '(5) Status Changes: Convert question statuses', 'desc' => 'Convert to new question statuses.' ),
-																		  'update_legacy_sensei_comments_status' => array( 'title' => '(6) Status Changes: Convert legacy sensei types', 'desc' => 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.' ),
-																		  'update_comment_course_lesson_comment_counts' => array( 'title' => '(7) Status Changes: Update comment counts', 'desc' => 'Update comment counts on Courses and Lessons due to status changes.' ),)
+								'1.7.0' => array( 	'auto' 		=> array(),
+													'forced' 	=> array( 'update_quiz_lesson_relationship' => array( 'title' => 'Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
+																		  'status_changes_fix_lessons' => array( 'title' => 'Fix lesson statuses', 'desc' => 'Fix existing lesson statuses.' ),
+																		  'status_changes_convert_lessons' => array( 'title' => 'Convert lesson statuses', 'desc' => 'Convert to new lesson statuses.' ),
+																		  'status_changes_convert_courses' => array( 'title' => 'Convert course statuses', 'desc' => 'Convert to new course statuses.' ),
+																		  'status_changes_convert_questions' => array( 'title' => 'Convert question statuses', 'desc' => 'Convert to new question statuses.' ),
+																		  'update_legacy_sensei_comments_status' => array( 'title' => 'Convert legacy Sensei activity types', 'desc' => 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.' ),
+																		  'update_comment_course_lesson_comment_counts' => array( 'title' => 'Update comment counts', 'desc' => 'Update comment counts on Courses and Lessons due to status changes.' ), ),
+													'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => 'Remove legacy Sensei activity types', 'desc' => 'Remove all legacy Sensei comment types - only run this update once the update to v1.7 is complete and evertything is stable.' ) )
 												),
 							);
 
@@ -201,6 +197,31 @@ class WooThemes_Sensei_Updates {
 						<p><strong><?php _e( 'Update completed successfully!', 'woothemes-sensei' ); ?></strong></p>
 						<p><a href="<?php echo admin_url('edit.php?post_type=lesson'); ?>"><?php _e( 'Create a new lesson', 'woothemes-sensei' ); ?></a> or <a href="<?php echo admin_url('admin.php?page=sensei_updates'); ?>"><?php _e( 'run some more updates', 'woothemes-sensei' ); ?></a>.</p>
 
+						<?php
+
+						$use_the_force = false;
+
+						foreach ( $this->updates as $version => $value ) {
+							foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
+								if ( $upgrade_type == 'forced' ) {
+									foreach ( $function_to_run as $function_name => $update_data ) {
+										$update_run = $this->has_update_run( $function_name );
+										if( ! $update_run ) {
+											$use_the_force = true;
+										}
+									}
+								}
+							}
+						}
+
+						if( $use_the_force ) {
+
+							
+
+						}
+
+						?>
+
 					<?php } // End If Statement
 
 				} else { ?>
@@ -252,7 +273,13 @@ class WooThemes_Sensei_Updates {
 														<em><?php printf( __( 'Originally included in %s v%s', 'woothemes-sensei' ), $product, $version ); ?></em>
 													</p>
 												</td>
-												<td><p><?php echo ucfirst( $type ); ?></p></td>
+												<?php
+												$type_label = __( 'Auto', 'woothemes-sensei' );
+												if( $type != 'auto' ) {
+													$type_label = __( 'Manual', 'woothemes-sensei' );
+												}
+												?>
+												<td><p><?php echo $type_label; ?></p></td>
 												<td><p><input onclick="javascript:return confirm('<?php echo addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'woothemes-sensei' ), $data['title'] ) ); ?>');" id="update-sensei" class="button<?php if( ! $update_run ) { echo ' button-primary'; } ?>" type="submit" value="<?php if( $update_run ) { _e( 'Re-run Update', 'woothemes-sensei' ); } else { _e( 'Run Update', 'woothemes-sensei' ); } ?>" name="update"></p></td>
 											</tr>
 										</form>
@@ -301,6 +328,8 @@ class WooThemes_Sensei_Updates {
 		// Only allow admins to run update functions
 		if( current_user_can( 'manage_options' ) ) {
 
+			$this->force_updates();
+
 			// Run through all functions
 			foreach ( $this->updates as $version => $value ) {
 				foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
@@ -334,6 +363,70 @@ class WooThemes_Sensei_Updates {
 		}
 		return false;
 	} // End update()
+
+	private function force_updates() {
+
+		if( ! isset( $_GET['page'] ) || 'sensei_updates' != $_GET['page'] ) {
+
+			$use_the_force = false;
+
+			$updates_to_run = array();
+
+			foreach ( $this->updates as $version => $value ) {
+				foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
+					if ( $upgrade_type == 'forced' ) {
+						foreach ( $function_to_run as $function_name => $update_data ) {
+
+							$update_run = $this->has_update_run( $function_name );
+
+							if( ! $update_run ) {
+								$use_the_force = true;
+								$updates_to_run[ $function_name ] = $update_data;
+							}
+						}
+					}
+				}
+			}
+
+			if( $use_the_force && 0 < count( $updates_to_run ) ) {
+
+				$update_title = __( 'Important Sensei update required', 'woothemes-sensei' );
+
+				$update_message = '<h1>' . __( 'Important Sensei upgrades required!', 'woothemes-sensei' ) . '</h1>' . "\n";
+
+				$update_message .= '<p>' . __( 'The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'woothemes-sensei' ) . '</p>' . "\n";
+
+				$update_message .= '<p><b>' . __( 'To run the upgrades click on each of the links below in the order that they appear.', 'woothemes-sensei' ) . '</b></p>' . "\n";
+
+				$update_message .= '<p>' . __( 'Clicking each link will open up a new window/tab - do not close that window/tab until you see the message \'Update completed successfully\'. Once you see that message you can close the window/tab and start the next upgrade by clicking on the next link in the list.', 'woothemes-sensei' ) . '</p>' . "\n";
+
+				$update_message .= '<p><b>' . __( 'Once all the upgrades have been completed you will be able to use your WordPress site again.', 'woothemes-sensei' ) . '</b></p>' . "\n";
+
+				$update_message .= '<ol>' . "\n";
+
+					foreach( $updates_to_run as $function => $data ) {
+
+						if( ! isset( $data['title'] ) ) {
+							break;
+						}
+
+						$update_message .= '<li style="margin:5px 0;"><a href="' . admin_url( 'admin.php?page=sensei_updates&action=update&n=0&functions[]=' . $function ) . '" target="_blank">' . $data['title'] . '</a></li>';
+					}
+
+				$update_message .= '</ol>' . "\n";
+
+				switch( $version ) {
+
+					case '1.7.0':
+						$update_message .= '<p><em>' . sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'woothemes-sensei' ), '<a href"http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) . '</em></p>' . "\n";
+					break;
+
+				}
+
+				wp_die( $update_message, $update_title );
+			}
+		}
+	}
 
 	/**
 	 * Check if specified update has already been run
@@ -1544,14 +1637,11 @@ class WooThemes_Sensei_Updates {
 	public function update_legacy_sensei_comments_status() {
 		global $wpdb;
 
-		$wpdb->hide_errors();
 		// Update 'sensei_user_answer' entries to use comment_approved = 'log' so they don't appear in counts
 		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'log' WHERE comment_type = 'sensei_user_answer' " );
 
 		// Mark all old Sensei comment types with comment_approved = 'legacy' so they no longer appear in counts, but can be restored if required
 		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'legacy' WHERE comment_type IN ('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_answer_notes', 'sensei_quiz_grade') " );
-
-		$wpdb->show_errors();
 
 		return true;
 	}
@@ -1591,6 +1681,16 @@ class WooThemes_Sensei_Updates {
 		} else {
 			return false;
 		}
+	}
+
+	public function remove_legacy_comments () {
+		global $wpdb;
+
+		$wpdb->hide_errors();
+
+		$wpdb->show_errors();
+
+		return true;
 	}
 
 } // End Class
