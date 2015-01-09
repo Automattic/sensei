@@ -731,7 +731,7 @@ class WooThemes_Sensei_Frontend {
 
 					// Update course completion
 					$course_id = get_post_meta( $post->ID, '_lesson_course' ,true );
-					WooThemes_Sensei_Utils::update_course_status( $course_id, $current_user->ID );
+					WooThemes_Sensei_Utils::update_course_status( $current_user->ID, $course_id );
 
 					// Run any action on lesson reset (previously this was 'sensei_user_course_reset')
 					do_action( 'sensei_user_course_reset', $current_user->ID, $lesson_id );
@@ -916,7 +916,7 @@ class WooThemes_Sensei_Frontend {
 
 					// Update course completion
 					$course_id = get_post_meta( $quiz_lesson_id, '_lesson_course' ,true );
-					WooThemes_Sensei_Utils::update_course_status( $course_id, $current_user->ID );
+					WooThemes_Sensei_Utils::update_course_status( $current_user->ID, $course_id );
 
 					// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
 					do_action( 'sensei_user_lesson_reset', $current_user->ID, $quiz_lesson_id );
