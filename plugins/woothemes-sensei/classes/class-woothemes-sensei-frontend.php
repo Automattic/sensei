@@ -912,7 +912,11 @@ class WooThemes_Sensei_Frontend {
 					break;
 
 				case apply_filters( 'sensei_reset_quiz_text', __( 'Reset Quiz', 'woothemes-sensei' ) ):
-					WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $quiz_lesson_id, $current_user->ID );
+					// Don't want to remove the lesson status (such as start meta data etc), just remove the answers, the questions asked meta and any grade meta
+
+					// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
+					WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $post->ID, $user_id );
+					WooThemes_Sensei_Utils::update_lesson_status( $current_user->ID, $quiz_lesson_id, 'in-progress', array( 'questions_asked' => '', 'grade' => '' ) );
 
 					// Update course completion
 					$course_id = get_post_meta( $quiz_lesson_id, '_lesson_course' ,true );
