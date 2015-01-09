@@ -2561,7 +2561,7 @@ class WooThemes_Sensei_Lesson {
 			// Fetch the questions that the user was asked in their quiz if they have already completed it
 			$quiz_lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 			$lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
-			$questions_asked_string = !empty($lesson_status_id) ? get_post_meta( $lesson_status->comment_ID, 'questions_asked', true ) : false;
+			$questions_asked_string = !empty($lesson_status->comment_ID) ? get_comment_meta( $lesson_status->comment_ID, 'questions_asked', true ) : false;
 			if( !empty($questions_asked_string) ) {
 
 				$selected_questions = explode( ',', $questions_asked_string );
