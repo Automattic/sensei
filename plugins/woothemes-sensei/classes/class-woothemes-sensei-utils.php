@@ -1531,7 +1531,7 @@ class WooThemes_Sensei_Utils {
 	 */
 	public static function user_started_lesson( $lesson_id = 0, $user_id = 0 ) {
 
-		if( $course_id ) {
+		if( $lesson_id ) {
 			if( ! $user_id ) {
 				$user_id = get_current_user_id();
 			}
