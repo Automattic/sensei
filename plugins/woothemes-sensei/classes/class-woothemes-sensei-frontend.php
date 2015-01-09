@@ -840,7 +840,7 @@ class WooThemes_Sensei_Frontend {
 				case apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ):
 
 					// Mark the Lesson as in-progress (if it isn't already), the entry is needed for WooThemes_Sensei_Utils::sensei_grade_quiz_auto() (optimise at some point?)
-					WooThemes_Sensei_Utils::sensei_start_lesson( $quiz_lesson_id );
+					$activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $quiz_lesson_id );
 
 					$lesson_status = 'ungraded'; // Default when completing a quiz
 
