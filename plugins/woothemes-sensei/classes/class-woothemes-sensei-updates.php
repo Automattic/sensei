@@ -1591,11 +1591,11 @@ class WooThemes_Sensei_Updates {
 		} else {
 			$current_page = intval( $offset / $n );
 		}
-		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') " );
+		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson', 'quiz', 'question') " );
 		$total_pages = ceil( $item_count_result / $n );
 
 		// Recalculate all counts
-		$items = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') LIMIT %d OFFSET %d", $n, $offset ) );
+		$items = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type IN ('course', 'lesson', 'quiz', 'question') LIMIT %d OFFSET %d", $n, $offset ) );
 		foreach ( (array) $items as $post ) {
 			// Code copied from wp_update_comment_count_now()
 			$new = (int) $wpdb->get_var( $wpdb->prepare("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_approved = '1'", $post->ID) );
