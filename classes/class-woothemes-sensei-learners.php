@@ -358,10 +358,10 @@ class WooThemes_Sensei_Learners {
 
 		if( ( ! isset( $_POST['add_user_id'] ) || '' ==  $_POST['add_user_id'] ) || ! isset( $_POST['add_post_type'] ) || ! isset( $_POST['add_course_id'] ) || ! isset( $_POST['add_lesson_id'] ) ) return $result;
 
-		$user_id = $_POST['add_user_id'];
 		$post_type = $_POST['add_post_type'];
-		$course_id = $_POST['add_course_id'];
-		$lesson_id = $_POST['add_lesson_id'];
+		$user_id = absint( $_POST['add_user_id'] );
+		$course_id = absint( $_POST['add_course_id'] );
+		$lesson_id = absint( $_POST['add_lesson_id'] );
 
 		switch( $post_type ) {
 			case 'course':
