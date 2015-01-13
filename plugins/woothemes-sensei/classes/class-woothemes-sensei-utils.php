@@ -1570,7 +1570,12 @@ class WooThemes_Sensei_Utils {
 				}
 
 				$_user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson, $user_id );
-				$user_lesson_status = $_user_lesson_status->comment_approved;
+				if ( $_user_lesson_status ) {
+					$user_lesson_status = $_user_lesson_status->comment_approved;
+				}
+				else {
+					return false; // No status means not complete
+				}
 				$lesson_id = $lesson;
 			}
 			if ( 'in-progress' != $user_lesson_status ) {
