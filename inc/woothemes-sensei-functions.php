@@ -33,7 +33,7 @@ function is_sensei() {
 
 function sensei_all_access() {
 	$access = false;
-	if( current_user_can( 'manage_sensei' ) || current_user_can( 'editor' ) ) {
+	if( current_user_can( 'manage_sensei' ) ) {
 		$access = true;
 	}
 	return apply_filters( 'sensei_all_access', $access );

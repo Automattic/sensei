@@ -18,6 +18,8 @@ get_currentuserinfo();
 
 if ( is_user_logged_in() ) {
 
+	// WooThemes_Sensei_Utils::sensei_course_user_grade() loops through every Lesson to find it's grade and total for the Course
+	// but then we re-loop every lesson below and do the same again, REFACTOR!
     $course_user_grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $course->ID, $current_user->ID );
 
     $html = '';
@@ -71,14 +73,9 @@ if ( is_user_logged_in() ) {
                         $count = 0;
                         foreach( $lessons as $lesson_item ) {
 
-                            // Get Quiz ID
-                            $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_item->ID );
-                            foreach ($lesson_quizzes as $quiz_item) {
-                                $lesson_quiz_id = $quiz_item->ID;
-                                break;
-                            }
-
-                            $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
+							$lesson_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_status', 'field' => 'comment_ID' ) );
+							// Get user quiz grade
+							$lesson_grade = get_comment_meta( $lesson_status_id, 'user_grade', true );
 
                             $html .= '<h2><a href="' . esc_url( get_permalink( $lesson_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '">' . esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '</a> <span class="lesson-grade">' . $lesson_grade . '%</span></h2>';
 
@@ -112,13 +109,9 @@ if ( is_user_logged_in() ) {
 
             foreach ( $lessons as $lesson_item ) {
 
-                // Get Quiz ID
-                $lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_item->ID );
-                foreach ($lesson_quizzes as $quiz_item) {
-                    $lesson_quiz_id = $quiz_item->ID;
-                }
-
-                $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) );
+				$lesson_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_status', 'field' => 'comment_ID' ) );
+				// Get user quiz grade
+				$lesson_grade = get_comment_meta( $lesson_status_id, 'user_grade', true );
 
                 $html .= '<h2><a href="' . esc_url( get_permalink( $lesson_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '">' . esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '</a> <span class="lesson-grade">' . $lesson_grade . '%</span></h2>';
 

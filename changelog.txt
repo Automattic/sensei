@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2015.01.12 - version 1.7.0
+ * Fix - Everything #boom
+
 2014.12.18 - version 1.6.9
  * Fix - Fixing Chosen drop down menus on course edit screen
  * Fix - Fixing Analysis export to select entire data set

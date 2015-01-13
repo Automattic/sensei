@@ -45,7 +45,7 @@ class WooThemes_Sensei_Messages {
 
 		// Add message links to courses & lessons
 		add_action( 'sensei_course_single_lessons', array( $this, 'send_message_link' ), 1 );
-		add_action( 'sensei_breadcrumb', array( $this, 'send_message_link' ), 1 );
+		add_action( 'sensei_lesson_back_link', array( $this, 'send_message_link' ), 1 );
 
 		// Hide messages and replies from users who do not have access
         add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
@@ -154,8 +154,6 @@ class WooThemes_Sensei_Messages {
 	public function send_message_link() {
 		global $woothemes_sensei, $post;
 
-		if ( ! ( is_singular( 'course' ) || is_singular( 'lesson' ) ) ) return;
-
 		$html = '';
 
 		if( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) {
@@ -166,7 +164,7 @@ class WooThemes_Sensei_Messages {
 				$html .= $this->teacher_contact_form( $post );
 			} else {
 				$href = add_query_arg( array( 'contact' => $post->post_type ) );
-				$html .= '<p><a class="button send-message-button" href="' . $href . '#private_message">' . sprintf( __( 'Contact %1$s Teacher', 'woothemes-sensei' ), ucfirst( $post->post_type ) ) . '</a></p>';
+				$html .= '<p><a class="button" href="' . $href . '#private_message">' . sprintf( __( 'Contact %1$s Teacher', 'woothemes-sensei' ), ucfirst( $post->post_type ) ) . '</a></p>';
 			}
 
 			if( isset( $this->message_notice ) && isset( $this->message_notice['type'] ) && isset( $this->message_notice['notice'] ) ) {
@@ -191,8 +189,8 @@ class WooThemes_Sensei_Messages {
 
 		$html .= '<h3 id="private_message">' . __( 'Send Private Message', 'woothemes-sensei' ) . '</h3>';
 
-		$html .= '<form name="contact-teacher" action="" method="post" class="contact-teacher">';
-			$html .= '<p class="form-row form-row-wide">';
+		$html .= '<form name="contact-teacher" action="" method="post">';
+			$html .= '<p class="form-row">';
 				$html .= '<textarea name="contact_message" placeholder="' . __( 'Enter your private message.', 'woothemes-sensei' ) . '"></textarea>';
 			$html .= '</p>';
 			$html .= '<p class="form-row">';
@@ -380,7 +378,7 @@ class WooThemes_Sensei_Messages {
 	 * @param  integer $post_id ID of post
 	 * @return string           Modified string if user does not have access to this message
 	 */
-	public function message_title( $title = '', $post_id = null ) {
+	public function message_title( $title, $post_id ) {
 
 		if( is_single() && is_singular( $this->post_type ) && in_the_loop() && get_post_type( $post_id ) == $this->post_type ) {
 			if( ! is_user_logged_in() || ! $this->view_message( $post_id ) ) {

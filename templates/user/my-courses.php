@@ -28,7 +28,7 @@ if ( is_user_logged_in() ) {
 
 		do_action( 'sensei_before_user_course_content', $current_user );
 
-		echo $woothemes_sensei->course->load_user_courses_content( $current_user, true );
+		echo WooThemes_Sensei_Course::load_user_courses_content( $current_user, true );
 
 		do_action( 'sensei_after_user_course_content', $current_user );
 
