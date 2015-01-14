@@ -1,4 +1,0 @@
-*** Sensei Course Progress Changelog ***
-
-2014.06.23 - version 1.0.0
-* First release

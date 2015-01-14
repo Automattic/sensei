@@ -1,4 +1,0 @@
-*** Sensei BadgeOS Changelog ***
-
-2013.09.24 - version 1.0.0
- * First release. Woo!
