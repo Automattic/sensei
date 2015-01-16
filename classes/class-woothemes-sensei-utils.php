@@ -752,6 +752,7 @@ class WooThemes_Sensei_Utils {
 			$metadata = array();
 			$status = 'in-progress';
 
+			// Note: When this action runs the lesson status may not yet exist
 			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
 
 			if( $complete ) {
@@ -764,7 +765,6 @@ class WooThemes_Sensei_Utils {
 				else {
 					$status = 'complete';
 				}
-				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 			}
 
 			// Check if user is already taking the lesson
@@ -772,6 +772,11 @@ class WooThemes_Sensei_Utils {
 			if( ! $activity_logged ) {
 				$metadata['start'] = current_time('mysql');
 				$activity_logged = WooThemes_Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $status, $metadata );
+			}
+
+			if ( $complete ) {
+				// Run this *after* the lesson status has been created/updated
+				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 			}
 
 		}
@@ -1636,7 +1641,7 @@ class WooThemes_Sensei_Utils {
 	 * Returns the requested course status
 	 *
 	 * @since 1.7.0
-	 * @param type $lesson_id
+	 * @param type $course_id
 	 * @param type $user_id
 	 * @return object
 	 */

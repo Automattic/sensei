@@ -790,7 +790,7 @@ class WooThemes_Sensei_Frontend {
 					WooThemes_Sensei_Utils::update_course_status( $current_user->ID, $course_id );
 
 					// Run any action on lesson reset (previously this was 'sensei_user_course_reset')
-					do_action( 'sensei_user_course_reset', $current_user->ID, $lesson_id );
+					do_action( 'sensei_user_lesson_reset', $current_user->ID, $post->ID );
 					$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_lesson_reset_text', __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 					break;
 
@@ -1444,7 +1444,7 @@ class WooThemes_Sensei_Frontend {
 
 		    } elseif ( is_user_logged_in() ) {
 		    	// Check if course is completed
-				$user_course_status = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status' ), true );
+				$user_course_status = WooThemes_Sensei_Utils::user_course_status( $post->ID, $current_user->ID );
 				$completed_course = WooThemes_Sensei_Utils::user_completed_course( $user_course_status );
 				// Success message
 		   		if ( $completed_course ) { ?>
@@ -1741,7 +1741,7 @@ class WooThemes_Sensei_Frontend {
 
 					foreach( $course_ids as $course_id ) {
 
-						$user_course_status = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval($course_id), 'user_id' => $user_id, 'type' => 'sensei_course_status' ), true );
+						$user_course_status = WooThemes_Sensei_Utils::user_course_status( intval($course_id), $user_id );
 
 						// Ignore course if already completed
 						if( WooThemes_Sensei_Utils::user_completed_course( $user_course_status ) ) {
@@ -1787,7 +1787,8 @@ class WooThemes_Sensei_Frontend {
 				return;
 			}
 
-			$user_course_status = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval($course_id), 'user_id' => $user_id, 'type' => 'sensei_course_status' ), true );
+			$user_course_status = WooThemes_Sensei_Utils::user_course_status( intval($course_id), $user_id );
+
 			// Ignore course if already completed
 			if( WooThemes_Sensei_Utils::user_completed_course( $user_course_status ) ) {
 

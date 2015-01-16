@@ -1547,7 +1547,7 @@ class WooThemes_Sensei_Lesson {
 		if( $quiz_id ) {
 			$html .= $this->quiz_settings_panel( $lesson_id, $quiz_id );
 		} else {
-			$html .= '<p><em>' . __( 'There is no quiz for this lesson yet - please add one in the \'Lesson Quiz\' box.', 'woothemes-sensei' ) . '</em></p>';
+			$html .= '<p><em>' . __( 'There is no quiz for this lesson yet - please add one in the \'Quiz Questions\' box.', 'woothemes-sensei' ) . '</em></p>';
 		}
 
 		echo $html;
