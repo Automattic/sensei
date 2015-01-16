@@ -102,7 +102,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$quiz_grade_total += $question_grade_total;
 
 			$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-			$user_answer = maybe_unserialize( base64_decode( $user_answer->comment_content ) );
+			$user_answer_content = maybe_unserialize( base64_decode( $user_answer->comment_content ) );
 			$type_name = __( 'Multiple Choice', 'woothemes-sensei' );
 			$grade_type = 'manual-grade';
 
@@ -110,7 +110,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				case 'boolean':
 					$type_name = __( 'True/False', 'woothemes-sensei' );
 					$right_answer = ucfirst( $right_answer );
-					$user_answer = ucfirst( $user_answer );
+					$user_answer_content = ucfirst( $user_answer_content );
 					$grade_type = 'auto-grade';
 				break;
 				case 'multiple-choice':
@@ -125,12 +125,12 @@ class WooThemes_Sensei_Grading_User_Quiz {
 					if ( isset( $right_answer_array[1] ) ) { $gapfill_gap = $right_answer_array[1]; } else { $gapfill_gap = ''; }
 					if ( isset( $right_answer_array[2] ) ) { $gapfill_post = $right_answer_array[2]; } else { $gapfill_post = ''; }
 
-					if( ! $user_answer ) {
-						$user_answer = '______';
+					if( ! $user_answer_content ) {
+						$user_answer_content = '______';
 					}
 
 					$right_answer = $gapfill_pre . ' <span class="highlight">' . $gapfill_gap . '</span> ' . $gapfill_post;
-					$user_answer = $gapfill_pre . ' <span class="highlight">' . $user_answer . '</span> ' . $gapfill_post;
+					$user_answer_content = $gapfill_pre . ' <span class="highlight">' . $user_answer_content . '</span> ' . $gapfill_post;
 					$grade_type = 'auto-grade';
 
 				break;
@@ -147,25 +147,25 @@ class WooThemes_Sensei_Grading_User_Quiz {
 					$grade_type = 'manual-grade';
 
 					// Get uploaded file
-					if( $user_answer ) {
-						$attachment_id = $user_answer;
+					if( $user_answer_content ) {
+						$attachment_id = $user_answer_content;
 						$answer_media_url = $answer_media_filename = '';
 						if( 0 < intval( $attachment_id ) ) {
 							$answer_media_url = wp_get_attachment_url( $attachment_id );
 							$answer_media_filename = basename( $answer_media_url );
 							if( $answer_media_url && $answer_media_filename ) {
-								$user_answer = sprintf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
+								$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
 							}
 						}
 					} else {
-						$user_answer = '';
+						$user_answer_content = '';
 					}
 				break;
 				default:
 					// Nothing
 				break;
 			}
-			$user_answer = (array) $user_answer;
+			$user_answer_content = (array) $user_answer_content;
 			$right_answer = (array) $right_answer;
 			$question_title = sprintf( __( 'Question %d: ', 'woothemes-sensei' ), $count ) . $type_name;
 
@@ -203,7 +203,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 						<h4><?php echo $question->post_title; ?></h4>
 						<?php echo apply_filters( 'the_content', $question->post_content, $question->ID );?>
 						<p class="user-answer"><?php 
-							foreach ( $user_answer as $_user_answer ) {
+							foreach ( $user_answer_content as $_user_answer ) {
 								echo $_user_answer . "<br>";
 							}
 						?></p>

@@ -284,7 +284,7 @@ class WooThemes_Sensei_Admin {
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings', 'lesson-order', 'course-order' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.6.0', 'screen' );
+		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.7.0', 'screen' );
 		wp_enqueue_style( $woothemes_sensei->token . '-global' );
 
 		// Test for Write Panel Pages

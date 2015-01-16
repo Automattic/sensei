@@ -397,14 +397,14 @@ class WooThemes_Sensei_Grading {
 
 		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
 		// Restrict to specific posts
-		if ( is_array( $args['post__in'] ) ) {
+		if ( isset( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post__in'] ) ) . ')';
 		}
 		elseif ( !empty( $args['post_id'] ) ) {
 			$query .= $wpdb->prepare( ' AND comment_post_ID = %d', $args['post_id'] );
 		}
 		// Restrict to specific users
-		if ( is_array( $args['user_id'] ) ) {
+		if ( isset( $args['user_id'] ) && is_array( $args['user_id'] ) ) {
 			$query .= ' AND user_id IN (' . implode( ',', array_map( 'absint', $args['user_id'] ) ) . ')';
 		}
 		elseif ( !empty( $args['user_id'] ) ) {
@@ -422,6 +422,30 @@ class WooThemes_Sensei_Grading {
 				$counts[ $row['comment_approved'] ] = $row['total'];
 			}
 			wp_cache_set( $cache_key, $counts, 'counts' );
+		}
+
+		if( ! isset( $counts['graded'] ) ) {
+			$counts['graded'] = 0;
+		}
+
+		if( ! isset( $counts['ungraded'] ) ) {
+			$counts['ungraded'] = 0;
+		}
+
+		if( ! isset( $counts['passed'] ) ) {
+			$counts['passed'] = 0;
+		}
+
+		if( ! isset( $counts['failed'] ) ) {
+			$counts['failed'] = 0;
+		}
+
+		if( ! isset( $counts['in-progress'] ) ) {
+			$counts['in-progress'] = 0;
+		}
+
+		if( ! isset( $counts['complete'] ) ) {
+			$counts['complete'] = 0;
 		}
 
 		return apply_filters( 'sensei_count_statuses', $counts, $type );
