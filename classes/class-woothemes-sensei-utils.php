@@ -591,9 +591,8 @@ class WooThemes_Sensei_Utils {
 					$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
 
 					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
-				}
-				else {
-					$grade = new WP_Error('autograde', __('Quiz is not fully autogradeable due to questions used.', 'woothemes-sensei'));
+				} else {
+					$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'woothemes-sensei' ) );
 				}
 			}
 		}
@@ -620,6 +619,19 @@ class WooThemes_Sensei_Utils {
 			$activity_logged = update_comment_meta( $user_lesson_status->comment_ID, 'grade', $grade );
 
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
+
+			if( $quiz_passmark ) {
+				if( $grade >= $quiz_passmark ) {
+					$status = 'passed';
+				} else {
+					$status = 'failed';
+				}
+			} else {
+				$status = 'graded';
+			}
+
+			WooThemes_Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $status );
+
 			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
 		}
 

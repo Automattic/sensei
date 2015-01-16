@@ -576,8 +576,7 @@ class WooThemes_Sensei_Lesson {
 			if ( 0 == $quiz_id ) {
 				$html .= '<p>';
 					// Default message and Add a Quiz button
-					$html .= esc_html( __( 'There is no quiz for this lesson yet. Please add one.', 'woothemes-sensei' ) );
-					$html .= '<button type="button" class="button button-highlighted add_quiz">' . esc_html( __( 'Add', 'woothemes-sensei' ) )  . '</button>';
+					$html .= esc_html( __( 'Once you have saved your lesson you will be able to add questions.', 'woothemes-sensei' ) );
 				$html .= '</p>';
 			}
 
