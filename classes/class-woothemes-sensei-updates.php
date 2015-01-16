@@ -934,6 +934,10 @@ class WooThemes_Sensei_Updates {
 			$count_published += $count;
 		}
 
+		if( 0 == $count_published ) {
+			return true;
+		}
+
 		// Calculate if this is the last page
 		if ( 0 == $offset ) {
 			$current_page = 1;
