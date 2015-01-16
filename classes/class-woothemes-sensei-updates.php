@@ -216,7 +216,7 @@ class WooThemes_Sensei_Updates {
 
 						if( $use_the_force ) {
 
-							
+
 
 						}
 
@@ -934,7 +934,7 @@ class WooThemes_Sensei_Updates {
 			$count_published += $count;
 		}
 
-		if( 0 == $count_published ) {
+		if ( 0 == $count_published ) {
 			return true;
 		}
 
@@ -979,39 +979,6 @@ class WooThemes_Sensei_Updates {
 		}
 	}
 
-//	public function update_lesson_quiz_questions() {
-//		global $woothemes_sensei;
-//		$args = array(
-//			'post_type'         => 'lesson',
-//			'posts_per_page'    => -1,
-//			'post_status'       => 'any',
-//			'suppress_filters'  => 0
-//		);
-//
-//		$lessons = get_posts( $args );
-//
-//		foreach( $lessons as $lesson ) {
-//
-//			if( ! isset( $lesson->ID ) ) continue;
-//
-//			$has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
-//
-//			// Skip previously calculated lessons (in case runnning multiple times)
-//			if( ! empty( $has_questions ) ) continue;
-//
-//			$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson->ID );
-//
-//			if( empty( $quiz_id ) ) continue;
-//
-//			$quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
-//			if( 0 < count( $quiz_questions ) ) {
-//				update_post_meta( $lesson->ID, '_quiz_has_questions', '1' );
-//			}
-//		}
-//
-//		return true;
-//	}
-
 	function status_changes_fix_lessons( $n = 10, $offset = 0 ) {
 		global $wpdb;
 
@@ -1019,6 +986,10 @@ class WooThemes_Sensei_Updates {
 		$count_published = 0;
 		foreach ( $count_object AS $status => $count ) {
 			$count_published += $count;
+		}
+
+		if ( 0 == $count_published ) {
+			return true;
 		}
 
 		// Calculate if this is the last page
@@ -1094,12 +1065,18 @@ class WooThemes_Sensei_Updates {
 
 		wp_defer_comment_counting( true );
 
+		$user_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users " );
+
+		if ( 0 == $user_count_result ) {
+			return true;
+		}
+
 		if ( 0 == $offset ) {
 			$current_page = 1;
 		} else {
 			$current_page = intval( $offset / $n );
 		}
-		$user_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users " );
+
 		$total_pages = ceil( $user_count_result / $n );
 
 		// Get all Lessons with Quizzes...
@@ -1286,12 +1263,18 @@ class WooThemes_Sensei_Updates {
 
 		wp_defer_comment_counting( true );
 
+		$user_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users " );
+
+		if ( 0 == $user_count_result ) {
+			return true;
+		}
+
 		if ( 0 == $offset ) {
 			$current_page = 1;
 		} else {
 			$current_page = intval( $offset / $n );
 		}
-		$user_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users " );
+
 		$total_pages = ceil( $user_count_result / $n );
 
 		// Get all Lesson => Course relationships
@@ -1416,7 +1399,7 @@ class WooThemes_Sensei_Updates {
 
 	/**
 	 * Force the re-calculation of all Course statuses working from all Lesson statuses
-	 * 
+	 *
 	 * @global type $woothemes_sensei
 	 * @global type $wpdb
 	 * @param type $n
@@ -1428,6 +1411,10 @@ class WooThemes_Sensei_Updates {
 
 		$count_object = wp_count_posts( 'lesson' );
 		$count_published = $count_object->publish;
+
+		if ( 0 == $count_published ) {
+			return true;
+		}
 
 		// Calculate if this is the last page
 		if ( 0 == $offset ) {
@@ -1536,13 +1523,19 @@ class WooThemes_Sensei_Updates {
 
 		wp_defer_comment_counting( true );
 
+		$user_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users " );
+
+		if ( 0 == $user_count_result ) {
+			return true;
+		}
+
 		// Calculate if this is the last page
 		if ( 0 == $offset ) {
 			$current_page = 1;
 		} else {
 			$current_page = intval( $offset / $n );
 		}
-		$user_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users " );
+
 		$total_pages = ceil( $user_count_result / $n );
 
 		$users_sql = "SELECT ID FROM $wpdb->users ORDER BY ID ASC LIMIT %d OFFSET %d";
@@ -1634,7 +1627,7 @@ class WooThemes_Sensei_Updates {
 
 	/**
 	 * Updates all pre-existing Sensei activity types with a new status value
-	 * 
+	 *
 	 * @global type $wpdb
 	 * @return boolean
 	 */
@@ -1652,7 +1645,7 @@ class WooThemes_Sensei_Updates {
 
 	/**
 	 * Update the comment counts for all Courses and Lessons now that sensei comments will no longer be counted.
-	 * 
+	 *
 	 * @global type $wpdb
 	 * @param type $n
 	 * @param type $offset
@@ -1661,13 +1654,19 @@ class WooThemes_Sensei_Updates {
 	public function update_comment_course_lesson_comment_counts( $n = 10, $offset = 0 ) {
 		global $wpdb;
 
+		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') " );
+
+		if ( 0 == $item_count_result ) {
+			return true;
+		}
+
 		// Calculate if this is the last page
 		if ( 0 == $offset ) {
 			$current_page = 1;
 		} else {
 			$current_page = intval( $offset / $n );
 		}
-		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') " );
+
 		$total_pages = ceil( $item_count_result / $n );
 
 		// Recalculate all counts
@@ -1690,9 +1689,9 @@ class WooThemes_Sensei_Updates {
 	public function remove_legacy_comments () {
 		global $wpdb;
 
-		$wpdb->hide_errors();
+		// $wpdb->hide_errors();
 
-		$wpdb->show_errors();
+		// $wpdb->show_errors();
 
 		return true;
 	}
