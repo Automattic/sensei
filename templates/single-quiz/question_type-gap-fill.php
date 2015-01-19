@@ -92,7 +92,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 
 ?>
 <li class="gap-fill">
-	<span><?php echo esc_html( stripslashes( $question_text ) ); ?> <span>[<?php echo $question_grade; ?>]</span></span>
+	<span class="question"><?php echo esc_html( $question_text ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
 	<?php if( $question_media_link ) { ?>
 		<div class="question_media_display">
 			<?php echo $question_media_link; ?>
@@ -108,7 +108,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	<?php } ?>
 	<?php if( $answer_message ) { ?>
 		<div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
-			<span><?php echo $answer_message; ?></span>
+			<span class="grade"><?php echo $answer_message; ?></span>
 		</div>
 	<?php } ?>
 	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
