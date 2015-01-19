@@ -23,9 +23,9 @@ $reset_quiz_allowed = $woothemes_sensei->frontend->data->reset_quiz_allowed;
 $question_id = $question_item->ID;
 $question_right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 $question_wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
-$question_description = '';
+$question_helptext = '';
 if( isset( $question_wrong_answers[0] ) ) {
-	$question_description = $question_wrong_answers[0];
+	$question_helptext = $question_wrong_answers[0];
 }
 $question_grade = get_post_meta( $question_id, '_question_grade', true );
 if( ! $question_grade || $question_grade == '' ) {
@@ -95,6 +95,7 @@ if( 0 < intval( $question_media ) ) {
 }
 
 $question_text = $question_item->post_title;
+$question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
 
 $answer_message = false;
 $answer_notes = false;
@@ -116,6 +117,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 ?>
 <li class="file-upload">
 	<span><?php echo esc_html( stripslashes( $question_text ) ); ?> <span>[<?php echo $question_grade; ?>]</span></span>
+	<?php echo $question_description; ?>
 	<?php if( $question_media_link ) { ?>
 		<div class="question_media_display">
 			<?php echo $question_media_link; ?>
@@ -135,8 +137,8 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 		</div>
 	<?php } ?>
 	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
-	<?php if( $question_description ) { ?>
-		<p><?php echo $question_description; ?></p>
+	<?php if( $question_helptext ) { ?>
+		<p><?php echo $question_helptext; ?></p>
 	<?php } ?>
 	<?php if ( $answer_media_url && $answer_media_filename ) { ?>
 		<p class="submitted_file"><?php printf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' ); ?></p>
