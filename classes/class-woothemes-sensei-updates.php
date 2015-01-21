@@ -174,9 +174,7 @@ class WooThemes_Sensei_Updates {
 								$functions_list .= '+' . $value;
 							} // End If Statement
 
-							if( $done_processing ) {
-								$this->set_update_run( $value );
-							}
+							$this->set_update_run( $value );
 
 						} // End For Loop
 
