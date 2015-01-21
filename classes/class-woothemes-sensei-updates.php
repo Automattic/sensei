@@ -174,6 +174,10 @@ class WooThemes_Sensei_Updates {
 								$functions_list .= '+' . $value;
 							} // End If Statement
 
+							if( $done_processing ) {
+								$this->set_update_run( $value );
+							}
+
 						} // End For Loop
 
 					} // End If Statement
@@ -196,31 +200,6 @@ class WooThemes_Sensei_Updates {
 
 						<p><strong><?php _e( 'Update completed successfully!', 'woothemes-sensei' ); ?></strong></p>
 						<p><a href="<?php echo admin_url('edit.php?post_type=lesson'); ?>"><?php _e( 'Create a new lesson', 'woothemes-sensei' ); ?></a> or <a href="<?php echo admin_url('admin.php?page=sensei_updates'); ?>"><?php _e( 'run some more updates', 'woothemes-sensei' ); ?></a>.</p>
-
-						<?php
-
-						$use_the_force = false;
-
-						foreach ( $this->updates as $version => $value ) {
-							foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
-								if ( $upgrade_type == 'forced' ) {
-									foreach ( $function_to_run as $function_name => $update_data ) {
-										$update_run = $this->has_update_run( $function_name );
-										if( ! $update_run ) {
-											$use_the_force = true;
-										}
-									}
-								}
-							}
-						}
-
-						if( $use_the_force ) {
-
-
-
-						}
-
-						?>
 
 					<?php } // End If Statement
 
