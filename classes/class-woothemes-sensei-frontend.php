@@ -685,7 +685,7 @@ class WooThemes_Sensei_Frontend {
 		if ( 0 < intval( $course_id ) ) {
 		?><section class="lesson-meta"><?php
 			$course_link = '<a href="' . esc_url( get_permalink( $course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
-			$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
+			$wc_post_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
 			if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
 				global $current_user;
 				if( is_user_logged_in() ) {
@@ -786,7 +786,7 @@ class WooThemes_Sensei_Frontend {
 					WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $post->ID, $current_user->ID );
 
 					// Update course completion
-					$course_id = get_post_meta( $post->ID, '_lesson_course' ,true );
+					$course_id = (int) get_post_meta( $post->ID, '_lesson_course' ,true );
 					WooThemes_Sensei_Utils::update_course_status( $current_user->ID, $course_id );
 
 					// Run any action on lesson reset (previously this was 'sensei_user_course_reset')
@@ -1334,9 +1334,9 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_quiz_action_buttons() {
 		global $post, $current_user, $woothemes_sensei;
-		$lesson_id = get_post_meta( $post->ID, '_quiz_lesson', true );
-		$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-		$lesson_prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+		$lesson_id = (int) get_post_meta( $post->ID, '_quiz_lesson', true );
+		$lesson_course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
+		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 		$show_actions = true;
 		if( intval( $lesson_prerequisite ) > 0 ) {
 			// If the user hasn't completed the prereq then hide the current actions
@@ -1530,7 +1530,7 @@ class WooThemes_Sensei_Frontend {
 		$completed_course = false;
 
 		// Get Course ID
-		$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 
 		if ( 0 < intval( $course_id ) ) {
 
@@ -1785,7 +1785,7 @@ class WooThemes_Sensei_Frontend {
 
 			$user_id = $current_user->ID;
 			$course_id = $post->ID;
-			$course_product_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
+			$course_product_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
 			if( ! $course_product_id ) {
 				return;
 			}
