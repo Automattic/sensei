@@ -107,11 +107,13 @@ class WooThemes_Sensei_PostTypes {
 	public function load_posttype_objects( $posttypes = array() ) {
 
 		foreach ( $posttypes as $posttype_token => $posttype_name ) {
+
 			// Load the files
 			$this->load_class( $posttype_token );
 			$class_name = 'WooThemes_Sensei_' . $posttype_name;
 			$this->$posttype_token = new $class_name();
 			$this->$posttype_token->token = $posttype_token;
+
 		} // End For Loop
 
 	} // End load_posttype_objects
