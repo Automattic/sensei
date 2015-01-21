@@ -628,13 +628,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 }
 
 .sensei-grading-main  {
-	.tablenav {
-		&.top {
-			.tablenav-pages {
-				margin: -30px 0 5px 0;
-			}
-		}
-	}
 	.question_box {
 		@include clearfix();
 		&.ungraded {
