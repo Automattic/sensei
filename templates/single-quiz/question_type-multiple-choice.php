@@ -63,9 +63,17 @@ if( 0 < intval( $question_media ) ) {
 		}
 	}
 }
-
+$answer_type = 'radio';
 // Merge right and wrong answers
-array_push( $question_wrong_answers, $question_right_answer );
+if ( is_array($question_right_answer) ) {
+	if ( 1 < count($question_right_answer) ) {
+		$answer_type = 'checkbox';
+	}
+	$question_wrong_answers = array_merge( $question_wrong_answers, $question_right_answer );
+}
+else {
+	array_push( $question_wrong_answers, $question_right_answer );
+}
 
 // Setup answer array
 foreach( $question_wrong_answers as $answer ) {
@@ -153,36 +161,41 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 		</div>
 	<?php } ?>
 	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
-	<ul>
-	<?php $count = 0; ?>
-	<?php foreach( $answers_sorted as $id => $question ) {
+	<ul class="answers">
+	<?php 
+	$count = 0;
+	foreach( $answers_sorted as $id => $answer ) {
 		$checked = '';
 		$count++;
 
 		$answer_class = '';
 		if( isset( $user_correct ) ) {
-			if( $user_quizzes[ $question_id ] == $question ) {
+			if ( is_array($question_right_answer) && in_array($answer, $question_right_answer) ) {
+				$answer_class .= ' right_answer';
+			}
+			elseif( !is_array($question_right_answer) && $question_right_answer == $answer ) {
+				$answer_class .= ' right_answer';
+			}
+			elseif( ( is_array($user_quizzes[ $question_id ]) && in_array($answer, $user_quizzes[ $question_id ]) ) ||
+					( !is_array($user_quizzes[ $question_id ]) && $user_quizzes[ $question_id ] == $answer ) ) {
 				$answer_class = 'user_wrong';
 				if( $user_correct ) {
 					$answer_class = 'user_right';
 				}
 			}
-			if( $question_right_answer == $question ) {
-				$answer_class .= ' right_answer';
-			}
 		}
 
-		if ( isset( $user_quizzes[ $question_id ] ) && ( '' != $user_quizzes[ $question_id ] ) ) {
-			if( 0 == get_magic_quotes_gpc() ) {
-				$user_answer = stripslashes( $user_quizzes[ $question_id ] );
-			} else {
-				$user_answer = $user_quizzes[ $question_id ];
+		if ( isset( $user_quizzes[ $question_id ] ) && 0 < count( $user_quizzes[ $question_id ] ) ) {
+			if ( is_array( $user_quizzes[ $question_id ] ) && in_array( $answer, $user_quizzes[ $question_id ] ) ) {
+				$checked = 'checked="checked"';
 			}
-			$checked = checked( $question, $user_answer, false );
+			elseif ( !is_array( $user_quizzes[ $question_id ] ) ) {
+				$checked = checked( $answer, $user_quizzes[ $question_id ], false );
+			}
 		} // End If Statement ?>
 		<li class="<?php esc_attr_e( $answer_class ); ?>">
-			<input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="<?php echo esc_attr( stripslashes( $question ) ); ?>" <?php echo $checked; ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;
-			<label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count; ?>"><?php echo esc_html( stripslashes( $question ) ); ?></label>
+			<input type="<?php echo $answer_type; ?>" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>[]" value="<?php echo esc_attr( $answer ); ?>" <?php echo $checked; ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;
+			<label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count; ?>"><?php echo apply_filters( 'sensei_answer_text', $answer ); ?></label>
 		</li>
 	<?php } // End For Loop ?>
 	</ul>
