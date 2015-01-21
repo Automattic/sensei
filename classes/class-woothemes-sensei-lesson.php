@@ -285,7 +285,7 @@ class WooThemes_Sensei_Lesson {
 	 * @access public
 	 * @return void
 	 */
-	public function post_updated() {
+	public function post_updated( $post_id ) {
 		global $post, $woothemes_sensei;
 		// Verify the nonce before proceeding.
 		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename(__FILE__) ) ) {
@@ -295,8 +295,13 @@ class WooThemes_Sensei_Lesson {
 				return false;
 			} // End If Statement
 		} // End If Statement
+
+		if( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+
 		// Temporarily disable the filter
-   		remove_action('save_post', array($this, __FUNCTION__));
+   		remove_action( 'save_post', array( $this, 'post_updated' ) );
 		// Save the Quiz
 		$quiz_id = $this->lesson_quizzes( $post->ID, 'any');
 
@@ -304,14 +309,13 @@ class WooThemes_Sensei_Lesson {
 		$post_title = esc_html( $_POST[ 'post_title' ] ) . ' ' . __( 'Quiz', 'woothemes-sensei' );
 		$post_author = esc_html( $_POST[ 'post_author' ] );
 		$post_status = esc_html( $_POST[ 'post_status' ] );
-		$post_type = 'quiz';
 		$post_content = '';
 
 		// Setup Query Arguments
 		$post_type_args = array(	'post_content' => $post_content,
   		    						'post_status' => $post_status,
   		    						'post_title' => $post_title,
-  		    						'post_type' => $post_type,
+  		    						'post_type' => 'quiz',
   		    						'post_parent' => $post->ID,
   		    						);
 
@@ -374,8 +378,10 @@ class WooThemes_Sensei_Lesson {
 		else {
 			delete_post_meta( $post->ID, '_quiz_has_questions' );
 		}
+
 		// Restore the previously disabled filter
-    	add_action('save_post', array($this, __FUNCTION__));
+    	add_action( 'save_post', array( $this, 'post_updated' ) );
+
 	} // End post_updated()
 
 	public function get_submitted_setting_value( $field = false ) {

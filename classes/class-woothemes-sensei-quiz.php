@@ -49,6 +49,11 @@ class WooThemes_Sensei_Quiz {
 	    //get the lessons quiz
 		$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $post_id );
 	    foreach ( (array) $lesson_quizzes as $quiz_item ) {
+
+	    	if( ! isset( $quiz_item->ID ) ) {
+	    		continue;
+	    	}
+
 		    // setup the quiz items new author value
 			$my_post = array(
 			      'ID'           => $quiz_item->ID,
