@@ -1117,8 +1117,8 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_lesson_quiz_meta( $post_id = 0, $user_id = 0 ) {
 		global $woothemes_sensei;
 		// Get the prerequisite lesson
-		$lesson_prerequisite = get_post_meta( $post_id, '_lesson_prerequisite', true );
-		$lesson_course_id = get_post_meta( $post_id, '_lesson_course', true );
+		$lesson_prerequisite = (int) get_post_meta( $post_id, '_lesson_prerequisite', true );
+		$lesson_course_id = (int) get_post_meta( $post_id, '_lesson_course', true );
 
 		// Lesson Quiz Meta
 		$quiz_id = $woothemes_sensei->frontend->lesson->lesson_quizzes( $post_id );

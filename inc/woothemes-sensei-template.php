@@ -495,7 +495,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
                 $modules = $sensei_modules->get_course_modules( intval( $lesson_course_id ) );
 
-                foreach( $modules as $module ) {
+                foreach( (array) $modules as $module ) {
 
                     $args = array(
                         'post_type' => 'lesson',
