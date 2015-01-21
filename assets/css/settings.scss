@@ -212,6 +212,10 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	}
 }
 
+#course_prerequisite_options_chosen, #course_category_options_chosen, #course_woocommerce_product_options_chosen {
+	width: 100% !important;
+}
+
 #course-video-embed  {
 	display: block;
 	width: 98%;
