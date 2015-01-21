@@ -48,8 +48,8 @@ class WooThemes_Sensei_Emails {
 
 		// Hooks for sending emails during Sensei events
 		add_action( 'sensei_user_quiz_grade', array( $this, 'learner_graded_quiz' ), 10, 4 );
-		add_action( 'sensei_user_course_end', array( $this, 'learner_completed_course' ), 10, 2 );
-		add_action( 'sensei_user_course_end', array( $this, 'teacher_completed_course' ), 10, 2 );
+		add_action( 'sensei_course_status_updated', array( $this, 'learner_completed_course' ), 10, 4 );
+		add_action( 'sensei_course_status_updated', array( $this, 'teacher_completed_course' ), 10, 4 );
 		add_action( 'sensei_user_course_start', array( $this, 'teacher_started_course' ), 10, 2 );
 		add_action( 'sensei_user_quiz_submitted', array( $this, 'teacher_quiz_submitted' ), 10, 5 );
 		add_action( 'sensei_new_private_message', array( $this, 'teacher_new_message' ), 10, 1 );
@@ -242,8 +242,12 @@ class WooThemes_Sensei_Emails {
 	 * @access public
 	 * @return void
 	 */
-	function learner_completed_course( $user_id = 0, $course_id = 0 ) {
+	function learner_completed_course( $status = 'in-progress', $user_id = 0, $course_id = 0, $comment_id = 0 ) {
 		global $woothemes_sensei;
+
+		if( 'complete' != $status ) {
+			return;
+		}
 
 		$send = false;
 
@@ -267,8 +271,12 @@ class WooThemes_Sensei_Emails {
 	 * @access public
 	 * @return void
 	 */
-	function teacher_completed_course( $learner_id = 0, $course_id = 0 ) {
+	function teacher_completed_course( $status = 'in-progress', $learner_id = 0, $course_id = 0, $comment_id = 0 ) {
 		global $woothemes_sensei;
+
+		if( 'complete' != $status ) {
+			return;
+		}
 
 		$send = false;
 
