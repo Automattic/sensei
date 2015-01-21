@@ -68,6 +68,8 @@ if( 0 < intval( $question_media ) ) {
 
 // Gap Fill data
 $question_text = $question_item->post_title;
+$question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
+
 $gapfill_array = explode( '||', $question_right_answer );
 if ( isset( $gapfill_array[0] ) ) { $gapfill_pre = $gapfill_array[0]; } else { $gapfill_pre = ''; }
 if ( isset( $gapfill_array[1] ) ) { $gapfill_gap = $gapfill_array[1]; } else { $gapfill_gap = ''; }
@@ -93,6 +95,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 ?>
 <li class="gap-fill">
 	<span><?php echo esc_html( stripslashes( $question_text ) ); ?> <span>[<?php echo $question_grade; ?>]</span></span>
+	<?php echo $question_description; ?>
 	<?php if( $question_media_link ) { ?>
 		<div class="question_media_display">
 			<?php echo $question_media_link; ?>

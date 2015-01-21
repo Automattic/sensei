@@ -73,6 +73,7 @@ if( 0 < intval( $question_media ) ) {
 array_push( $question_wrong_answers, $question_right_answer );
 shuffle($question_wrong_answers);
 $question_text = $question_item->post_title;
+$question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
 
 $answer_message = false;
 $answer_notes = false;
@@ -94,6 +95,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 ?>
 <li class="boolean">
 	<span><?php echo esc_html( stripslashes( $question_text ) ); ?> <span>[<?php echo $question_grade; ?>]</span></span>
+	<?php echo $question_description; ?>
 	<?php if( $question_media_link ) { ?>
 		<div class="question_media_display">
 			<?php echo $question_media_link; ?>
