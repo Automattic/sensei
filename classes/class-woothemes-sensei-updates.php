@@ -76,7 +76,7 @@ class WooThemes_Sensei_Updates {
 																		  'status_changes_convert_questions' => array( 'title' => 'Convert question statuses', 'desc' => 'Convert to new question statuses.' ),
 																		  'update_legacy_sensei_comments_status' => array( 'title' => 'Convert legacy Sensei activity types', 'desc' => 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.' ),
 																		  'update_comment_course_lesson_comment_counts' => array( 'title' => 'Update comment counts', 'desc' => 'Update comment counts on Courses and Lessons due to status changes.' ), ),
-													'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => 'Remove legacy Sensei activity types', 'desc' => 'Remove all legacy Sensei comment types - only run this update once the update to v1.7 is complete and evertything is stable.' ) )
+													// 'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => 'Remove legacy Sensei activity types', 'desc' => 'Remove all legacy Sensei comment types - only run this update once the update to v1.7 is complete and evertything is stable.' ) )
 												),
 							);
 

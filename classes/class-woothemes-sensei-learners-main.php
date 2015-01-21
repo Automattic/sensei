@@ -595,14 +595,16 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
-						<select name="add_user_id" id="add_learner_search">
-							<option value=""><?php _e( 'Select learner', 'woothemes-sensei' ); ?></option>
-						</select>
+						<select name="add_user_id" id="add_learner_search" style="min-width:300px;">
+							<option value=""><?php _e( 'Find learner', 'woothemes-sensei' ); ?></option>
+						</select>&nbsp;&nbsp;
 						<?php if( 'lesson' == $form_post_type ) { ?>
 							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php _e( 'Complete lesson for learner', 'woothemes-sensei' ); ?></label>
 						<?php } elseif( 'course' == $form_post_type ) { ?>
 							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php _e( 'Complete course for learner', 'woothemes-sensei' ); ?></label>
 						<?php } ?>
+						<br/>
+						<span class="description"><?php _e( 'Search for a user by typing their name or username.', 'woothemes-sensei' ); ?></span>
 					</p>
 					<p><?php submit_button( sprintf( __( 'Add to \'%1$s\'', 'woothemes-sensei' ), $post_title ), 'primary', 'add_learner_submit', false, array() ); ?></p>
 					<?php if( 'lesson' == $form_post_type ) { ?>
