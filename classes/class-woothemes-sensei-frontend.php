@@ -1003,7 +1003,10 @@ class WooThemes_Sensei_Frontend {
 		// Get latest quiz answers and grades
 		$user_quizzes = $this->sensei_get_user_quiz_answers( $post->ID );
 		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
-		$user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+		$user_quiz_grade = 0;
+		if( isset( $user_lesson_status->comment_ID ) ) {
+			$user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+		}
 
 		if ( ! is_array($user_quizzes) ) { $user_quizzes = array(); }
 

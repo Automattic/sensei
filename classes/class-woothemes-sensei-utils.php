@@ -1322,7 +1322,7 @@ class WooThemes_Sensei_Utils {
 			// Lesson/Quiz not complete
 			else {
 				// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete)
-				if ( 'ungraded' == $user_lesson_status->comment_approved ) {
+				if ( isset( $user_lesson_status->comment_approved ) && 'ungraded' == $user_lesson_status->comment_approved ) {
 					$status = 'complete';
 					$box_class = 'info';
 					if( $is_lesson ) {
@@ -1332,7 +1332,7 @@ class WooThemes_Sensei_Utils {
 					}
 				}
 				// Lesson status must be "failed"
-				elseif ( 'failed' == $user_lesson_status->comment_approved ) {
+				elseif ( isset( $user_lesson_status->comment_approved ) && 'failed' == $user_lesson_status->comment_approved ) {
 					$status = 'failed';
 					$box_class = 'alert';
 					if( $is_lesson ) {
@@ -1606,6 +1606,7 @@ class WooThemes_Sensei_Utils {
 				}
 
 				$_user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson, $user_id );
+
 				if ( $_user_lesson_status ) {
 					$user_lesson_status = $_user_lesson_status->comment_approved;
 				}

@@ -678,8 +678,9 @@ class WooThemes_Sensei {
 
 				$update_course = $this->woocommerce_course_update( $lesson_course_id );
 				if ( ( $this->access_settings() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) || sensei_all_access() ) {
+
 					// Check for prerequisite lesson for this quiz
-					$lesson_prerequisite_id = get_post_meta( $lesson_id, '_lesson_prerequisite', true);
+					$lesson_prerequisite_id = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true);
 					$user_lesson_prerequisite_complete = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite_id, $current_user->ID);
 
 					// Handle restrictions
