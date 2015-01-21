@@ -342,13 +342,18 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				}
 			}
 		}
-		.add_answer_option {
-			cursor: pointer;
-			&:before {
-				font-family: dashicons;
-				content: "\f132";
-				vertical-align: middle;
-				margin-right: 5px;
+		#add_answer_options {
+			margin-bottom: 20px;
+			.add_answer_option {
+				&.add_right_answer_option {
+					margin-right: 20px;
+				}
+				&:before {
+					font-family: dashicons;
+					content: "\f132";
+					vertical-align: middle;
+					margin-right: 5px;
+				}
 			}
 		}
 	}
@@ -614,7 +619,15 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				background: #ffffe0;
 			}
 			.graded  {
+				background: #52a8e8;
+				color: #fff;
+			}
+			.passed  {
 				background: $success;
+				color: #fff;
+			}
+			.failed  {
+				background: #ed6c6c;
 				color: #fff;
 			}
 		}

@@ -92,10 +92,10 @@ class WooThemes_Sensei_Question {
 
 			case 'question-type':
 				$question_type = strip_tags( get_the_term_list( $id, 'question-type', '', ', ', '' ) );
-				$output = $this->question_types[ $question_type ];
-				if ( ! $output ) {
-					$output = '&mdash;';
-				} // End If Statement
+				$output = '&mdash;';
+				if( isset( $this->question_types[ $question_type ] ) ) {
+					$output = $this->question_types[ $question_type ];
+				}
 				echo $output;
 			break;
 

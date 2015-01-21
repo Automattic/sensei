@@ -857,7 +857,7 @@ class WooThemes_Sensei_Lesson {
 
 						    	// Question description
 						    	$html .= '<div>';
-							    	$html .= '<label for="question_' . $question_counter . '_desc">' . __( 'Question Description:', 'woothemes-sensei' ) . ' (' . __( 'optional additional long description', 'woothemes-sensei' ) . ')</label> ';
+							    	$html .= '<label for="question_' . $question_counter . '_desc">' . __( 'Question Description (optional):', 'woothemes-sensei' ) . '</label> ';
 						    	$html .= '</div>';
 									$full_question = get_post( $question_id );
 							    	$html .= '<textarea id="question_' . $question_counter . '_desc" name="question_description" class="widefat" rows="4">' . esc_textarea( $full_question->post_content ) . '</textarea>';
@@ -944,7 +944,7 @@ class WooThemes_Sensei_Lesson {
 
 						// Question description
 						$html .= '<p>';
-							$html .= '<label for="question_desc">' . __( 'Question Description:', 'woothemes-sensei' ) . ' (' . __( 'optional additional long description', 'woothemes-sensei' ) . ')</label> ';
+							$html .= '<label for="question_desc">' . __( 'Question Description (optional):', 'woothemes-sensei' ) . '</label> ';
 						$html .= '</p>';
 						$html .= '<textarea id="question_desc" name="question_description" class="widefat" rows="4"></textarea>';
 
@@ -1332,7 +1332,7 @@ class WooThemes_Sensei_Lesson {
 				    		$total_wrong = get_post_meta( $question_id, '_wrong_answer_count', true );
 				    	}
 				    	if( 0 == intval( $total_wrong ) ) {
-				    		$total_wrong = 4;
+				    		$total_wrong = 1;
 				    	}
 
 					    // Setup Wrong Answer HTML
@@ -1364,8 +1364,6 @@ class WooThemes_Sensei_Lesson {
 						    }
 				    	}
 
-				    	$html .= '<a class="add_right_answer_option add_answer_option" rel="' . $question_counter . '">' . __( 'Add right answer', 'woothemes-sensei' ) . '</a>';
-
 						foreach( $answers_sorted as $id => $answer ) {
 				    		$html .= $answer;
 				    	}
@@ -1374,7 +1372,10 @@ class WooThemes_Sensei_Lesson {
 				    	$html .= '<span class="hidden right_answer_count">' . $total_right . '</span>';
 				    	$html .= '<span class="hidden wrong_answer_count">' . $total_wrong . '</span>';
 
-				    	$html .= '<a class="add_wrong_answer_option add_answer_option" rel="' . $question_counter . '">' . __( 'Add wrong answer', 'woothemes-sensei' ) . '</a>';
+				    	$html .= '<div id="add_answer_options">';
+					    	$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . $question_counter . '">' . __( 'Add right answer', 'woothemes-sensei' ) . '</a>';
+					    	$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . $question_counter . '">' . __( 'Add wrong answer', 'woothemes-sensei' ) . '</a>';
+				    	$html .= '</div>';
 
 				    	$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id );
 

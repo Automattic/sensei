@@ -248,7 +248,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true) . '%';
 		}
 		elseif( 'passed' == $item->comment_approved ) {
-			$status_html = '<span class="graded">' . apply_filters( 'sensei_passed_text', __( 'Passed', 'woothemes-sensei' ) ) . '</span>';
+			$status_html = '<span class="passed">' . apply_filters( 'sensei_passed_text', __( 'Passed', 'woothemes-sensei' ) ) . '</span>';
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true) . '%';
 		}
 		elseif( 'failed' == $item->comment_approved ) {
