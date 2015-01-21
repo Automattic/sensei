@@ -1727,7 +1727,7 @@ class WooThemes_Sensei_Lesson {
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
-			wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.6.0' );
+			wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.7.0' );
 		}
 
 	} // End enqueue_styles()
