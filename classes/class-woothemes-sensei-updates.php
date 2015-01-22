@@ -906,13 +906,10 @@ class WooThemes_Sensei_Updates {
 
 	public function update_quiz_lesson_relationship( $n = 10, $offset = 0 ) {
 		$count_object = wp_count_posts( 'quiz' );
+
 		$count_published = 0;
 		foreach ( $count_object AS $status => $count ) {
 			$count_published += $count;
-		}
-
-		if ( 0 == $count_published ) {
-			return true;
 		}
 
 		// Calculate if this is the last page
@@ -949,7 +946,7 @@ class WooThemes_Sensei_Updates {
 			update_post_meta( $lesson_id, '_lesson_quiz', $quiz->ID );
 		}
 
-		if ( $current_page == $total_pages ) {
+		if ( $current_page == $total_pages || 0 == $total_pages ) {
 			return true;
 		} else {
 			return false;
