@@ -1021,6 +1021,10 @@ class WooThemes_Sensei_Course {
 			}
 
 			$course_statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user->ID, 'type' => 'sensei_course_status' ), true );
+			// User may only be on 1 Course
+			if ( !is_array($course_statuses) ) {
+				$course_statuses = array( $course_statuses );
+			}
 			$completed_ids = $active_ids = array();
 			foreach( $course_statuses as $course_status ) {
 				if ( WooThemes_Sensei_Utils::user_completed_course( $course_status, $user->ID ) ) {
