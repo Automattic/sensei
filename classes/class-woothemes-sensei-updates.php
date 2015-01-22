@@ -70,7 +70,7 @@ class WooThemes_Sensei_Updates {
 												),
 								'1.7.0' => array( 	'auto' 		=> array(),
 													'forced' 	=> array( 'update_quiz_lesson_relationship' => array( 'title' => 'Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
-																		  'status_changes_fix_lessons' => array( 'title' => 'Fix lesson statuses', 'desc' => 'Fix existing lesson statuses.' ),
+																		  'status_changes_fix_lessons' => array( 'title' => 'Update lesson statuses', 'desc' => 'Update existing lesson statuses.' ),
 																		  'status_changes_convert_lessons' => array( 'title' => 'Convert lesson statuses', 'desc' => 'Convert to new lesson statuses.' ),
 																		  'status_changes_convert_courses' => array( 'title' => 'Convert course statuses', 'desc' => 'Convert to new course statuses.' ),
 																		  'status_changes_convert_questions' => array( 'title' => 'Convert question statuses', 'desc' => 'Convert to new question statuses.' ),
@@ -133,9 +133,9 @@ class WooThemes_Sensei_Updates {
 
 							// Dynamic function call
 							if ( method_exists( $this, $value) ) {
-								$done_processing = call_user_func_array( array( $this, $value ), array( 10, $n ) );
+								$done_processing = call_user_func_array( array( $this, $value ), array( 50, $n ) );
 							} else {
-								$done_processing = call_user_func_array( $value, array( 10, $n ) );
+								$done_processing = call_user_func_array( $value, array( 50, $n ) );
 							} // End If Statement
 
 							// Add to functions list get args
@@ -162,9 +162,9 @@ class WooThemes_Sensei_Updates {
 
 							// Dynamic function call
 							if ( method_exists( $this, $value) ) {
-								$done_processing = call_user_func_array( array( $this, $value ), array( 10, $n ) );
+								$done_processing = call_user_func_array( array( $this, $value ), array( 50, $n ) );
 							} else {
-								$done_processing = call_user_func_array( $value, array( 10, $n ) );
+								$done_processing = call_user_func_array( $value, array( 50, $n ) );
 							} // End If Statement
 
 							// Add to functions list get args
@@ -182,13 +182,13 @@ class WooThemes_Sensei_Updates {
 
 					if ( ! $done_processing ) { ?>
 
-						<h3><?php _e( 'Processing Updates......', 'woothemes-sensei' ); ?></h3>
+						<h3><?php _e( 'Processing Updates...', 'woothemes-sensei' ); ?></h3>
 
-						<p><?php _e( 'If your browser doesn&#8217;t start loading the next page automatically, click this link:', 'woothemes-sensei' ); ?>&nbsp;&nbsp;<a class="button" href="admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 1) ?>&functions[]=<?php echo $functions_list; ?>"><?php _e( 'Next', 'woothemes-sensei' ); ?></a></p>
+						<p><?php _e( 'If your browser doesn&#8217;t start loading the next page automatically, click this button:', 'woothemes-sensei' ); ?>&nbsp;&nbsp;<a class="button" href="admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 50) ?>&functions[]=<?php echo $functions_list; ?>"><?php _e( 'Next', 'woothemes-sensei' ); ?></a></p>
 						<script type='text/javascript'>
 						<!--
 						function sensei_nextpage() {
-							location.href = "admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 10) ?>&functions[]=<?php echo $functions_list; ?>";
+							location.href = "admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 50) ?>&functions[]=<?php echo $functions_list; ?>";
 						}
 						setTimeout( "sensei_nextpage()", 250 );
 						//-->
@@ -395,7 +395,7 @@ class WooThemes_Sensei_Updates {
 				switch( $version ) {
 
 					case '1.7.0':
-						$update_message .= '<p><em>' . sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'woothemes-sensei' ), '<a href"http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) . '</em></p>' . "\n";
+						$update_message .= '<p><em>' . sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'woothemes-sensei' ), '<a href="http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) . '</em></p>' . "\n";
 					break;
 
 				}
@@ -514,7 +514,7 @@ class WooThemes_Sensei_Updates {
 	 * @access public
 	 * @return void
 	 */
-	public function update_question_answer_data( $n = 10, $offset = 0 ) {
+	public function update_question_answer_data( $n = 50, $offset = 0 ) {
 
 		// Get Total Number of Updates to run
 		$quiz_count_object = wp_count_posts( 'quiz' );
@@ -661,7 +661,7 @@ class WooThemes_Sensei_Updates {
 	 * @since  1.5.0
 	 * @return boolean
 	 */
-	public function set_random_question_order( $n = 10, $offset = 0 ) {
+	public function set_random_question_order( $n = 50, $offset = 0 ) {
 
 		// Get Total Number of Updates to run
 		$quiz_count_object = wp_count_posts( 'quiz' );
@@ -701,7 +701,7 @@ class WooThemes_Sensei_Updates {
 	 * @since  1.5.0
 	 * @return boolean
 	 */
-	public function set_default_show_question_count( $n = 10, $offset = 0 ) {
+	public function set_default_show_question_count( $n = 50, $offset = 0 ) {
 
 		$args = array(	'post_type' 		=> 'quiz',
 						'post_status'		=> 'any',
@@ -739,7 +739,7 @@ class WooThemes_Sensei_Updates {
 
 	}
 
-	public function remove_deleted_user_activity( $n = 10, $offset = 0 ) {
+	public function remove_deleted_user_activity( $n = 50, $offset = 0 ) {
 		global $woothemes_sensei;
 
 //		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
@@ -904,7 +904,7 @@ class WooThemes_Sensei_Updates {
 		return true;
 	}
 
-	public function update_quiz_lesson_relationship( $n = 10, $offset = 0 ) {
+	public function update_quiz_lesson_relationship( $n = 50, $offset = 0 ) {
 		$count_object = wp_count_posts( 'quiz' );
 
 		$count_published = 0;
@@ -953,7 +953,7 @@ class WooThemes_Sensei_Updates {
 		}
 	}
 
-	function status_changes_fix_lessons( $n = 10, $offset = 0 ) {
+	function status_changes_fix_lessons( $n = 50, $offset = 0 ) {
 		global $wpdb;
 
 		$count_object = wp_count_posts( 'lesson' );
@@ -1034,7 +1034,7 @@ class WooThemes_Sensei_Updates {
 		}
 	}
 
-	function status_changes_convert_lessons( $n = 10, $offset = 0 ) {
+	function status_changes_convert_lessons( $n = 50, $offset = 0 ) {
 		global $wpdb;
 
 		wp_defer_comment_counting( true );
@@ -1232,7 +1232,7 @@ class WooThemes_Sensei_Updates {
 		}
 	}
 
-	function status_changes_convert_courses( $n = 10, $offset = 0 ) {
+	function status_changes_convert_courses( $n = 50, $offset = 0 ) {
 		global $wpdb;
 
 		wp_defer_comment_counting( true );
@@ -1380,7 +1380,7 @@ class WooThemes_Sensei_Updates {
 	 * @param type $offset
 	 * @return boolean
 	 */
-	function status_changes_repair_course_statuses( $n = 10, $offset = 0 ) {
+	function status_changes_repair_course_statuses( $n = 50, $offset = 0 ) {
 		global $woothemes_sensei,$wpdb;
 
 		$count_object = wp_count_posts( 'lesson' );
@@ -1492,7 +1492,7 @@ class WooThemes_Sensei_Updates {
 		}
 	}
 
-	function status_changes_convert_questions( $n = 10, $offset = 0 ) {
+	function status_changes_convert_questions( $n = 50, $offset = 0 ) {
 		global $wpdb;
 
 		wp_defer_comment_counting( true );
@@ -1625,7 +1625,7 @@ class WooThemes_Sensei_Updates {
 	 * @param type $offset
 	 * @return boolean
 	 */
-	public function update_comment_course_lesson_comment_counts( $n = 10, $offset = 0 ) {
+	public function update_comment_course_lesson_comment_counts( $n = 50, $offset = 0 ) {
 		global $wpdb;
 
 		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') " );
