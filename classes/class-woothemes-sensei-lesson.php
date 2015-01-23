@@ -1654,7 +1654,7 @@ class WooThemes_Sensei_Lesson {
 			array(
 				'id' 			=> 'quiz_grade_type',
 				'label'			=> __( 'Grade quiz automatically', 'woothemes-sensei' ),
-				'description'	=> __( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice & True/False questions.', 'woothemes-sensei' ),
+				'description'	=> __( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
 				'default'		=> 'auto',
 				'checked'		=> 'auto',
