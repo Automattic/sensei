@@ -1314,18 +1314,18 @@ jQuery(document).ready( function($) {
 
 	jQuery( '#add-question-main' ).on( 'click', '.add_wrong_answer_option', function() {
 		var question_counter = jQuery( this ).attr( 'rel' );
-		var answer_count = jQuery( this ).closest( 'div' ).find( '.wrong_answer_count' ).text();
+		var answer_count = jQuery( this ).closest( 'div.multiple-choice-answers' ).find( '.wrong_answer_count' ).text();
 		answer_count++;
 		var html = '<label class="answer" for="question_' + question_counter + '_wrong_answer_' + answer_count + '"><span>' + woo_localized_data.wrong_colon + '</span> <input type="text" id="question_' + question_counter + '_wrong_answer_' + answer_count + '" name="question_wrong_answers[]" value="" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
-		jQuery( '#add_answer_options' ).before( html );
+		jQuery( this ).closest( 'div' ).before( html );
 	});
 
 	jQuery( '#add-question-main' ).on( 'click', '.add_right_answer_option', function() {
 		var question_counter = jQuery( this ).attr( 'rel' );
-		var answer_count = jQuery( this ).closest( 'div' ).find( '.right_answer_count' ).text();
+		var answer_count = jQuery( this ).closest( 'div.multiple-choice-answers' ).find( '.right_answer_count' ).text();
 		answer_count++;
 		var html = '<label class="answer" for="question_' + question_counter + '_right_answer_' + answer_count + '"><span>' + woo_localized_data.right_colon + '</span> <input type="text" id="question_' + question_counter + '_right_answer_' + answer_count + '" name="question_right_answers[]" value="" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
-		jQuery( '#add_answer_options' ).before( html );
+		jQuery( this ).closest( 'div' ).before( html );
 	});
 
 	jQuery( '#add-question-main' ).on( 'click', '.remove_answer_option', function() {

@@ -1378,7 +1378,7 @@ class WooThemes_Sensei_Lesson {
 				    	$html .= '<span class="hidden right_answer_count">' . $total_right . '</span>';
 				    	$html .= '<span class="hidden wrong_answer_count">' . $total_wrong . '</span>';
 
-				    	$html .= '<div id="add_answer_options">';
+				    	$html .= '<div class="add_answer_options">';
 					    	$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . $question_counter . '">' . __( 'Add right answer', 'woothemes-sensei' ) . '</a>';
 					    	$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . $question_counter . '">' . __( 'Add wrong answer', 'woothemes-sensei' ) . '</a>';
 				    	$html .= '</div>';
