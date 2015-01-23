@@ -571,9 +571,17 @@ class WooThemes_Sensei_Utils {
 				$autogradable_question_types = apply_filters( 'sensei_autogradable_question_types', array( 'multiple-choice', 'boolean' ) );
 				$grade_total = 0;
 				foreach( $submitted as $question_id => $answer ) {
+
 					// check if the question is autogradable
 					$question_type = get_the_terms( $question_id, 'question-type' );
-					$question_type = array_shift($question_type)->slug;
+
+					// Set default question type if one does not exist - prevents errors when grading
+					if( ! $question_type || is_wp_error( $question_type ) || ! is_array( $question_type ) ) {
+						$question_type = 'multiple-choice';
+					} else {
+						$question_type = array_shift($question_type)->slug;
+					}
+
 					if ( in_array( $question_type, $autogradable_question_types ) ) {
 						// Get user question grade
 						$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
