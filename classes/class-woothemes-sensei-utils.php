@@ -846,6 +846,7 @@ class WooThemes_Sensei_Utils {
 	 * @return boolean
 	 */
 	public static function sensei_remove_user_from_course( $course_id = 0, $user_id = 0 ) {
+		global $woothemes_sensei;
 
 		if( ! $course_id ) return false;
 
@@ -853,7 +854,7 @@ class WooThemes_Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		$lesson_ids = WooThemes_Sensei_Course::course_lessons( $course_id, 'any', 'ids' );
+		$lesson_ids = $woothemes_sensei->post_types->course->course_lessons( $course_id, 'any', 'ids' );
 
 		foreach( $lesson_ids as $lesson_id ) {
 			WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id );

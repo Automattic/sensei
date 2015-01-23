@@ -77,7 +77,7 @@ else {
 
 // Setup answer array
 foreach( $question_wrong_answers as $answer ) {
-	$answer_id = WooThemes_Sensei_Lesson::get_answer_id( $answer );
+	$answer_id = $woothemes_sensei->post_types->lesson->get_answer_id( $answer );
 	$question_answers[ $answer_id ] = $answer;
 }
 

@@ -28,6 +28,13 @@ do_action( 'sensei_before_main_content' );
 do_action( 'sensei_single_main_content' );
 
 /**
+ * sensei_breadcrumb hook
+ *
+ * @hooked sensei_breadcrumb - 10 (outputs sensei breadcrumb trail)
+ */
+do_action( 'sensei_breadcrumb', $post->ID );
+
+/**
  * sensei_after_main_content hook
  *
  * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)

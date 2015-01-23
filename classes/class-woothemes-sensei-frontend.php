@@ -660,24 +660,35 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	public function sensei_breadcrumb( $id = 0 ) {
+
 		// Only output on lesson, quiz and taxonomy (module) pages
-		if( ! ( is_tax() || is_singular( 'lesson' ) || is_singular( 'quiz' ) ) ) return;
+		if( ! ( is_tax( 'module' ) || is_singular( 'lesson' ) || is_singular( 'quiz' ) ) ) return;
 
 		$sensei_breadcrumb_prefix = __( 'Back to: ', 'woothemes-sensei' );
 		$separator = apply_filters( 'sensei_breadcrumb_separator', '&gt;' );
-		$html = '';
-		$html .= '<section class="sensei-breadcrumb">' . $sensei_breadcrumb_prefix;
+
+		$html = '<section class="sensei-breadcrumb">' . $sensei_breadcrumb_prefix;
 		// Lesson
 		if ( is_singular( 'lesson' ) && 0 < intval( $id ) ) {
-			 $html .= '<a href="' . esc_url( get_permalink( $id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_back_to_course_text', __( 'Back to the course', 'woothemes-sensei' ) ) ) . '">' . get_the_title( $id ) . '</a>';
+			$course_id = intval( get_post_meta( $id, '_lesson_course', true ) );
+			if( ! $course_id ) {
+				return;
+			}
+			$html .= '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_back_to_course_text', __( 'Back to the course', 'woothemes-sensei' ) ) ) . '">' . get_the_title( $course_id ) . '</a>';
     	} // End If Statement
     	// Quiz
 		if ( is_singular( 'quiz' ) && 0 < intval( $id ) ) {
-			 $html .= '<a href="' . esc_url( get_permalink( $id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_back_to_lesson_text', __( 'Back to the lesson', 'woothemes-sensei' ) ) ) . '">' . get_the_title( $id ) . '</a>';
+			$lesson_id = intval( get_post_meta( $id, '_quiz_lesson', true ) );
+			if( ! $lesson_id ) {
+				return;
+			}
+			 $html .= '<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_back_to_lesson_text', __( 'Back to the lesson', 'woothemes-sensei' ) ) ) . '">' . get_the_title( $lesson_id ) . '</a>';
     	} // End If Statement
+
     	// Allow other plugins to filter html
     	$html = apply_filters ( 'sensei_breadcrumb_output', $html, $separator );
     	$html .= '</section>';
+
     	echo $html;
 	} // End sensei_breadcrumb()
 
