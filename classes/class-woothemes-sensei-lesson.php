@@ -1831,7 +1831,9 @@ class WooThemes_Sensei_Lesson {
 		parse_str($data, $question_data);
 		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()),
 		// except AJAX encoded POST data bypasses this, so ensure consistancy for lesson_save_question()
+		$question_title = $question_data['question']; // Don't slash the title, backup...
 		$question_data = wp_slash( $question_data );
+		$question_data['question'] = $question_title; // ...and reset
 		// Save the question
 		$return = false;
 		// Question Save and Delete logic
