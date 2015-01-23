@@ -31,7 +31,7 @@ switch( $template ) {
 	// IF Canvas
 	case 'canvas' :
 		echo '<div id="content" class="col-full"><div id="main-sidebar-container"><div id="main">';
-		break;	
+		break;
 
 	// Default
 	default :

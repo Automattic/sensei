@@ -39,7 +39,7 @@ class WooThemes_Sensei_Quiz {
 		global $woothemes_sensei;
 
 		// If this isn't a 'lesson' post, don't update it.
-	    if ( 'lesson' != $_POST['post_type'] ) {
+	    if ( isset( $_POST['post_type'] ) && 'lesson' != $_POST['post_type'] ) {
 	        return;
 	    }
 	    // get the lesson author id to be use late
@@ -48,10 +48,15 @@ class WooThemes_Sensei_Quiz {
 
 	    //get the lessons quiz
 		$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $post_id );
-	    foreach ( $lesson_quizzes as $quiz_item ) {
+	    foreach ( (array) $lesson_quizzes as $quiz_item ) {
+
+	    	if( ! $quiz_item ) {
+	    		continue;
+	    	}
+
 		    // setup the quiz items new author value
 			$my_post = array(
-			      'ID'           => $quiz_item->ID,
+			      'ID'           => $quiz_item,
 			      'post_author' =>  $new_lesson_author_id
 			);
 

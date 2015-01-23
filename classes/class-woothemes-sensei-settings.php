@@ -110,13 +110,13 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		$pages_array = $this->pages_array();
 		$posts_per_page_array = array( '0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20' );
 		$complete_settings = array( 'passed' => __( 'Once all the course lessons have been completed', 'woothemes-sensei' ), 'complete' => __( 'At any time (by clicking the \'Complete Course\' button)', 'woothemes-sensei' ) );
-		$course_display_settings = array( 'excerpt' => __( 'Course Excerpt', 'woothemes-sensei' ), 'full' => __( 'Full Course Content', 'woothemes-sensei' ) );
+		$course_display_settings = array( 'excerpt' => __( 'Course Excerpt', 'woothemes_sensei' ), 'full' => __( 'Full Course Content', 'woothemes_sensei' ) );
 
 	    $fields = array();
 
 		$fields['access_permission'] = array(
 								'name' => __( 'Access Permissions', 'woothemes-sensei' ),
-								'description' => __( 'Users must be logged in to view Course and Lesson content.', 'woothemes-sensei' ),
+								'description' => __( 'Users must be logged in to view Course, Lesson, and Quiz content.', 'woothemes-sensei' ),
 								'type' => 'checkbox',
 								'default' => true,
 								'section' => 'default-settings'
@@ -398,7 +398,8 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		// Learner Profile settings
 
 		$profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'woothemes-sensei') );
-		$profile_url_example = trailingslashit( get_home_url() ) . $profile_url_base . '/%username%';
+		$profile_url_example = trailingslashit( get_site_url() ) . $profile_url_base . '/%username%';
+
 		$fields['learner_profile_enable'] = array(
 							'name' => __( 'Public learner profiles', 'woothemes-sensei' ),
 							'description' => sprintf( __( 'Enable public learner profiles that will be accassible to everyone. Profile URL format: %s', 'woothemes-sensei' ), $profile_url_example ),
