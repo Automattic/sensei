@@ -568,7 +568,7 @@ class WooThemes_Sensei_Utils {
 
 			if( $quiz_grade_type == 'auto' ) {
 				// Can only autograde these question types
-				$autogradable_question_types = apply_filters( 'sensei_autogradable_question_types', array( 'multiple-choice', 'boolean' ) );
+				$autogradable_question_types = apply_filters( 'sensei_autogradable_question_types', array( 'multiple-choice', 'boolean', 'gap-fill' ) );
 				$grade_total = 0;
 				foreach( $submitted as $question_id => $answer ) {
 
@@ -661,7 +661,13 @@ class WooThemes_Sensei_Utils {
 		if( intval( $question_id ) > 0 ) {
 			if ( empty($question_type) ) {
 				$question_type = get_the_terms( $question_id, 'question-type' );
-				$question_type = array_shift($question_type)->slug;
+
+				// Set default question type if one does not exist - prevents errors when grading
+				if( ! $question_type || is_wp_error( $question_type ) || ! is_array( $question_type ) ) {
+					$question_type = 'multiple-choice';
+				} else {
+					$question_type = array_shift($question_type)->slug;
+				}
 			}
 			// Allow full override of autograding
 			$question_grade = apply_filters( 'sensei_pre_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
@@ -692,6 +698,29 @@ class WooThemes_Sensei_Utils {
 							}
 						}
 						break;
+						case 'gap-fill' :
+							$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
+
+							if( 0 == get_magic_quotes_gpc() ) {
+								$answer = wp_unslash( $answer );
+							}
+							$gapfill_array = explode( '||', $right_answer );
+							// Check that the 'gap' is "exactly" equal to the given answer
+							if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
+								$question_grade = get_post_meta( $question_id, '_question_grade', true );
+								if ( empty($question_grade) ) {
+									$question_grade = 1;
+								}
+							}
+							else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
+								if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
+									$question_grade = get_post_meta( $question_id, '_question_grade', true );
+									if ( empty($question_grade) ) {
+										$question_grade = 1;
+									}
+								}
+							}
+							break;
 					default:
 						// Allow autograding of any other question type
 						$question_grade = apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
