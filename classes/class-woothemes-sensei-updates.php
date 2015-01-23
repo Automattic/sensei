@@ -69,7 +69,8 @@ class WooThemes_Sensei_Updates {
 													'manual' 	=> array()
 												),
 								'1.7.0' => array( 	'auto' 		=> array(),
-													'forced' 	=> array( 'update_quiz_lesson_relationship' => array( 'title' => 'Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
+													'forced' 	=> array(  'update_question_gap_fill_separators' => array( 'title' => 'Update Gap Fill questions', 'desc' => 'Updates the format of gap fill questions to allow auto grading and greater flexibility in matching.' ),
+																		  'update_quiz_lesson_relationship' => array( 'title' => 'Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
 																		  'status_changes_fix_lessons' => array( 'title' => 'Update lesson statuses', 'desc' => 'Update existing lesson statuses.' ),
 																		  'status_changes_convert_lessons' => array( 'title' => 'Convert lesson statuses', 'desc' => 'Convert to new lesson statuses.' ),
 																		  'status_changes_convert_courses' => array( 'title' => 'Convert course statuses', 'desc' => 'Convert to new course statuses.' ),
@@ -914,6 +915,24 @@ class WooThemes_Sensei_Updates {
 				}
 			}
 		}
+
+		return true;
+	}
+
+	/**
+	 * Updates all gap fill questions, converting the | separator to || matching the changes in code. Using || allows the use of | within the pre, gap or post field.
+	 * 
+	 * @global type $wpdb
+	 * @return boolean
+	 */
+	public function update_question_gap_fill_separators() {
+		global $wpdb;
+
+		$sql = "UPDATE $wpdb->postmeta AS m, $wpdb->term_relationships AS tr, $wpdb->term_taxonomy AS tt, $wpdb->terms AS t SET m.meta_value = replace(m.meta_value, '|', '||')
+					WHERE m.meta_key = '_question_right_answer' AND m.meta_value LIKE '%|%' AND m.meta_value NOT LIKE '%||%'
+						AND m.post_id = tr.object_id AND tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.term_id = t.term_id
+						AND tt.taxonomy = 'question-type' AND t.slug = 'gap-fill'";
+		$wpdb->query( $sql );
 
 		return true;
 	}
