@@ -51,6 +51,7 @@ jQuery(document).ready( function($) {
 	 		jQuery( '#all_questions_graded' ).val( 'no' );
 	 		jQuery( '.grade-button' ).val( 'Save' );
 	 	}
+
 	}
 
 	/**
@@ -88,6 +89,7 @@ jQuery(document).ready( function($) {
 		 		}
 		 	}
 	 	});
+
 	 	jQuery.fn.calculateTotalGrade();
 	}
 

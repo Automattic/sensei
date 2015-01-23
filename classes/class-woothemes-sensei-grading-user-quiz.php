@@ -92,6 +92,10 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				break;
 			}
 
+			if( ! $type ) {
+				$type = 'multiple-choice';
+			}
+
 			$user_answer = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_answer' ), true );
 			$question_answer_notes = WooThemes_Sensei_Utils::sensei_get_user_question_answer_notes( $user_answer );
 
@@ -178,7 +182,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				$user_quiz_grade_total += $user_question_grade;
 				++$graded_count;
 			} else {
-				if( ! is_bool( $user_question_grade ) && intval( $user_question_grade ) == 0 ) {
+				if( ! is_string( $user_question_grade ) && intval( $user_question_grade ) == 0 ) {
 					$graded_class = 'user_wrong';
 					++$graded_count;
 				}
@@ -202,14 +206,14 @@ class WooThemes_Sensei_Grading_User_Quiz {
 					<div class="sensei-grading-answer">
 						<h4><?php echo $question->post_title; ?></h4>
 						<?php echo apply_filters( 'the_content', $question->post_content, $question->ID );?>
-						<p class="user-answer"><?php 
+						<p class="user-answer"><?php
 							foreach ( $user_answer_content as $_user_answer ) {
 								echo $_user_answer . "<br>";
 							}
 						?></p>
 						<div class="right-answer">
 							<h5><?php _e( 'Correct answer', 'woothemes-sensei' ) ?></h5>
-							<span class="correct-answer"><?php 
+							<span class="correct-answer"><?php
 								foreach ( $right_answer as $_right_answer ) {
 									echo $_right_answer . "<br>";
 								}
@@ -248,7 +252,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			<script type="text/javascript">
 				jQuery( window ).load( function() {
 					// Calculate total grade on page load to make sure everything is set up correctly
-					jQuery.fn.calculateTotalGrade();
+					jQuery.fn.autoGrade();
 				});
 			</script>
 		</form><?php

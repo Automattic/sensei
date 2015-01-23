@@ -257,9 +257,11 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		}
 		elseif( 'ungraded' == $item->comment_approved ) {
 			$status_html = '<span class="ungraded">' . apply_filters( 'sensei_ungraded_text', __( 'Ungraded', 'woothemes-sensei' ) ) . '</span>';
+			$grade = __( 'N/A', 'woothemes-sensei' );
 		}
 		else {
 			$status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
+			$grade = __( 'N/A', 'woothemes-sensei' );
 		}
 
 		$user = get_user_by( 'id', $item->user_id );
@@ -271,14 +273,14 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 		$grade_link = '';
 		switch( $item->comment_approved ) {
-			case 'ungraded': 
-				$grade_link = '<a class="button-primary button" href="' . $quiz_link . '">' . __('Grade quiz', 'woothemes-sensei' ) . '</a>'; 
+			case 'ungraded':
+				$grade_link = '<a class="button-primary button" href="' . $quiz_link . '">' . __('Grade quiz', 'woothemes-sensei' ) . '</a>';
 				break;
 
-			case 'graded': 
-			case 'passed': 
-			case 'failed': 
-				$grade_link = '<a class="button-secondary button" href="' . $quiz_link . '">' . __('Review grade', 'woothemes-sensei' ) . '</a>'; 
+			case 'graded':
+			case 'passed':
+			case 'failed':
+				$grade_link = '<a class="button-secondary button" href="' . $quiz_link . '">' . __('Review grade', 'woothemes-sensei' ) . '</a>';
 				break;
 		}
 
@@ -396,17 +398,17 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 		switch( $this->view ) :
 			case 'all':
-				$all_class = 'current'; 
+				$all_class = 'current';
 				break;
 			case 'ungraded' :
 			default:
-				$ungraded_class = 'current'; 
+				$ungraded_class = 'current';
 				break;
 			case 'graded' :
-				$graded_class = 'current'; 
+				$graded_class = 'current';
 				break;
 			case 'in-progress' :
-				$inprogress_class = 'current'; 
+				$inprogress_class = 'current';
 				break;
 		endswitch;
 
