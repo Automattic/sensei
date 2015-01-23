@@ -345,6 +345,11 @@ class WooThemes_Sensei_Updates {
 
 		if( ! isset( $_GET['page'] ) || 'sensei_updates' != $_GET['page'] ) {
 
+			$new_install = false;
+			if( ! get_option( 'woothemes-sensei-force-updates', false ) ) {
+				$new_install = true;
+			}
+
 			$use_the_force = false;
 
 			$updates_to_run = array();
@@ -353,6 +358,11 @@ class WooThemes_Sensei_Updates {
 				foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
 					if ( $upgrade_type == 'forced' ) {
 						foreach ( $function_to_run as $function_name => $update_data ) {
+
+							if( $new_install ) {
+								$this->set_update_run( $function_name );
+								continue;
+							}
 
 							$update_run = $this->has_update_run( $function_name );
 
@@ -363,6 +373,10 @@ class WooThemes_Sensei_Updates {
 						}
 					}
 				}
+			}
+
+			if( $new_install ) {
+				return;
 			}
 
 			if( $use_the_force && 0 < count( $updates_to_run ) ) {
