@@ -340,7 +340,7 @@ class WooThemes_Sensei_PostTypes {
 			    'show_in_nav_menus' => true,
 			    'query_var' => true,
 			    'exclude_from_search' => true,
-			    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => false, 'feeds' => false, 'pages' => false ),
+			    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => false, 'feeds' => false, 'pages' => true ),
 			    'map_meta_cap' => true,
 			    'capability_type' => 'question',
 			    'has_archive' => true,
