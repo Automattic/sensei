@@ -94,7 +94,7 @@ if( 0 < intval( $question_media ) ) {
 	}
 }
 
-$question_text = $question_item->post_title;
+$question_text = get_the_title( $question_item );
 $question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
 
 $answer_message = false;

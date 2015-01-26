@@ -70,7 +70,7 @@ if( 0 < intval( $question_media ) ) {
 // Merge right and wrong answers and randomize
 array_push( $question_wrong_answers, $question_right_answer );
 shuffle($question_wrong_answers);
-$question_text = $question_item->post_title;
+$question_text = get_the_title( $question_item );
 $question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
 
 $answer_message = false;
