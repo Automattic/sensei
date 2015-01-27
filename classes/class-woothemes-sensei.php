@@ -191,6 +191,8 @@ class WooThemes_Sensei {
 
 		add_action( 'body_class', array( $this, 'body_class' ) );
 
+		// Check for and activate JetPack LaTeX support
+		add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support'), 200 ); // Runs after Jetpack has loaded it's modules
 	} // End __construct()
 
 	/**
@@ -1137,6 +1139,17 @@ class WooThemes_Sensei {
 		return $classes;
 	}
 
-} // End Class
+	/**
+	 * Checks that the Jetpack Beautiful Maths module has been activated to support LaTeX within question titles and answers
+	 *
+	 * @return null
+	 * @since 1.7.0
+	 */
+	public function jetpack_latex_support() {
+		if ( function_exists( 'latex_markup') ) {
+			add_filter( 'sensei_question_title', 'latex_markup' );
+			add_filter( 'sensei_answer_text', 'latex_markup' );
+		}
+	}
 
-?>
+} // End Class
