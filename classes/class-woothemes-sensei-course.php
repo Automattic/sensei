@@ -481,7 +481,19 @@ class WooThemes_Sensei_Course {
 		if( $my_courses_page ) { add_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
 
 		$post_args = $this->get_archive_query_args( $type, $amount, $includes, $excludes );
-		$results_array = get_posts( $post_args );
+
+		// get the posts
+		if( empty( $post_args ) ) {
+
+			return $results_array;
+
+		}else{
+
+			//reset the pagination as this widgets do not need it
+			$post_args['paged'] = 1;
+			$results_array = get_posts( $post_args );
+
+		}
 
 		if( $my_courses_page ) { remove_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
 
