@@ -116,7 +116,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	<?php } ?>
 	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
 	<p class="gapfill-answer">
-		<span class="gapfill-answer-pre"><?php echo esc_html( apply_filters( 'sensei_answer_text', $gapfill_pre ) ); ?></span>&nbsp;<input type="text" id="<?php echo esc_attr( 'question_' . $question_id ); ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="<?php echo esc_attr( $user_quizzes[ $question_id ] ); ?>" class="gapfill-answer-gap" />&nbsp;<span class="gapfill-answer-post"><?php echo esc_html( apply_filters( 'sensei_answer_text', $gapfill_post ) ); ?></span>
+		<span class="gapfill-answer-pre"><?php echo apply_filters( 'sensei_answer_text', esc_html( $gapfill_pre ) ); ?></span>&nbsp;<input type="text" id="<?php echo esc_attr( 'question_' . $question_id ); ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="<?php echo esc_attr( $user_quizzes[ $question_id ] ); ?>" class="gapfill-answer-gap" />&nbsp;<span class="gapfill-answer-post"><?php echo apply_filters( 'sensei_answer_text', esc_html( $gapfill_post ) ); ?></span>
 	</p>
 	<?php if( $answer_notes ) { ?>
 		<div class="sensei-message info info-special"><?php echo apply_filters( 'the_content', $answer_notes ); ?></div>
