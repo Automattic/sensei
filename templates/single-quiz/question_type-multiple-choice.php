@@ -118,7 +118,7 @@ if( ! $question_grade || $question_grade == '' ) {
 $user_answer_entry = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $current_user->ID, 'type' => 'sensei_user_answer' ), true );
 $user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $user_answer_entry );
 
-$question_text = $question_item->post_title;
+$question_text = get_the_title( $question_item );
 $question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
 
 $answer_message = false;

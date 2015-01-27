@@ -67,7 +67,7 @@ if( 0 < intval( $question_media ) ) {
 }
 
 // Gap Fill data
-$question_text = $question_item->post_title;
+$question_text = get_the_title( $question_item );
 $question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
 
 $gapfill_array = explode( '||', $question_right_answer );

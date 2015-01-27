@@ -820,9 +820,9 @@ class WooThemes_Sensei_Lesson {
 				if( 'quiz' == $context ) {
 					$html .= '<tr>';
 						if( $question_type != 'category' ) {
-
+							$question = get_post( $question_id );
 							$html .= '<td class="table-count question-number question-count-column"><span class="number">' . $question_counter . '</span></td>';
-							$html .= '<td>' . esc_html( get_the_title( $question_id ) ) . '</td>';
+							$html .= '<td>' . esc_html( $question->post_title ) . '</td>';
 							$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 							$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', __( 'True/False', 'woothemes-sensei' ) ), $question_type ) );
 							$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
@@ -855,6 +855,7 @@ class WooThemes_Sensei_Lesson {
 						$edit_class = 'hidden';
 					}
 
+					$question = get_post( $question_id );
 					$html .= '<tr class="question-quick-edit ' . esc_attr( $edit_class ) . '">';
 						$html .= '<td colspan="5">';
 							$html .= '<span class="hidden question_original_counter">' . $question_counter . '</span>';
@@ -863,15 +864,14 @@ class WooThemes_Sensei_Lesson {
 						    	// Question title
 						    	$html .= '<div>';
 							    	$html .= '<label for="question_' . $question_counter . '">' . __( 'Question:', 'woothemes-sensei' ) . '</label> ';
-							    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( htmlspecialchars( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
+							    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( htmlspecialchars( $question->post_title ) ) . '" size="25" class="widefat" />';
 						    	$html .= '</div>';
 
 						    	// Question description
 						    	$html .= '<div>';
 							    	$html .= '<label for="question_' . $question_counter . '_desc">' . __( 'Question Description (optional):', 'woothemes-sensei' ) . '</label> ';
 						    	$html .= '</div>';
-									$full_question = get_post( $question_id );
-							    	$html .= '<textarea id="question_' . $question_counter . '_desc" name="question_description" class="widefat" rows="4">' . esc_textarea( $full_question->post_content ) . '</textarea>';
+							    	$html .= '<textarea id="question_' . $question_counter . '_desc" name="question_description" class="widefat" rows="4">' . esc_textarea( $question->post_content ) . '</textarea>';
 
 						    	// Question grade
 						    	$html .= '<div>';
@@ -1834,11 +1834,8 @@ class WooThemes_Sensei_Lesson {
 		$data = $_POST['data'];
 		$question_data = array();
 		parse_str($data, $question_data);
-		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()),
-		// except AJAX encoded POST data bypasses this, so ensure consistancy for lesson_save_question()
-		$question_title = $question_data['question']; // Don't slash the title, backup...
-		$question_data = wp_slash( $question_data );
-		$question_data['question'] = $question_title; // ...and reset
+		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), except AJAX
+		// encoded POST data bypasses this, so ensure consistancy for lesson_save_question() but not doing anything
 		// Save the question
 		$return = false;
 		// Question Save and Delete logic
