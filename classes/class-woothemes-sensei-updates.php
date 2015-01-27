@@ -382,7 +382,7 @@ class WooThemes_Sensei_Updates {
 
 			if( $use_the_force && 0 < count( $updates_to_run ) ) {
 
-				$update_title = __( 'Important Sensei update required', 'woothemes-sensei' );
+				$update_title = __( 'Important Sensei updates required', 'woothemes-sensei' );
 
 				$update_message = '<h1>' . __( 'Important Sensei upgrades required!', 'woothemes-sensei' ) . '</h1>' . "\n";
 
@@ -410,6 +410,7 @@ class WooThemes_Sensei_Updates {
 				switch( $version ) {
 
 					case '1.7.0':
+						$update_message .= '<p>' . sprintf( __( 'Updates running too slowly? %1$sFind out how to run them from the command line here%2$s.', 'woothemes-sensei' ), '<a href="https://support.woothemes.com/hc/en-us/articles/203468315-Course-lesson-status-changes-in-Sensei-1-7" target="_blank">', '</a>' ) . '</p>';
 						$update_message .= '<p><em>' . sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'woothemes-sensei' ), '<a href="http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) . '</em></p>' . "\n";
 					break;
 
