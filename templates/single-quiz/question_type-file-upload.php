@@ -95,7 +95,7 @@ if( 0 < intval( $question_media ) ) {
 }
 
 $question_text = get_the_title( $question_item );
-$question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
+$question_description = apply_filters( 'the_content', $question_item->post_content );
 
 $answer_message = false;
 $answer_notes = false;
@@ -116,7 +116,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 
 ?>
 <li class="file-upload">
-	<span class="question"><?php echo esc_html( $question_text ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
+	<span class="question"><?php echo apply_filters( 'sensei_question_title', esc_html( $question_text ) ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
 	<?php echo $question_description; ?>
 	<?php if( $question_media_link ) { ?>
 		<div class="question_media_display">
@@ -138,7 +138,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	<?php } ?>
 	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
 	<?php if( $question_helptext ) { ?>
-		<p><?php echo $question_helptext; ?></p>
+		<?php echo apply_filters( 'the_content', $question_helptext ); ?>
 	<?php } ?>
 	<?php if ( $answer_media_url && $answer_media_filename ) { ?>
 		<p class="submitted_file"><?php printf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' ); ?></p>
@@ -152,6 +152,6 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 		<aside class="max_upload_size"><?php echo $max_upload_size; ?></aside>
 	<?php } ?>
 	<?php if( $answer_notes ) { ?>
-		<div class="sensei-message info info-special"><?php echo $answer_notes; ?></div>
+		<div class="sensei-message info info-special"><?php echo apply_filters( 'the_content', $answer_notes ); ?></div>
 	<?php } ?>
 </li>

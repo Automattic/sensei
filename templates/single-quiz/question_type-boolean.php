@@ -73,7 +73,7 @@ if( 0 < intval( $question_media ) ) {
 array_push( $question_wrong_answers, $question_right_answer );
 shuffle($question_wrong_answers);
 $question_text = get_the_title( $question_item );
-$question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
+$question_description = apply_filters( 'the_content', $question_item->post_content );
 
 $answer_message = false;
 $answer_notes = false;
@@ -94,7 +94,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 
 ?>
 <li class="boolean">
-	<span class="question"><?php echo esc_html( $question_text ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
+	<span class="question"><?php echo apply_filters( 'sensei_question_title', esc_html( $question_text ) ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
 	<?php echo $question_description; ?>
 	<?php if( $question_media_link ) { ?>
 		<div class="question_media_display">
@@ -150,6 +150,6 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 		<li class="<?php esc_attr_e( $answer_class ); ?>"><input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count . '-false'; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="false" <?php echo checked( $user_quizzes[ $question_id ], 'false', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count . '-false'; ?>"><?php _e( 'False', 'woothemes-sensei' ); ?></label></li>
 	</ul>
 	<?php if( $answer_notes ) { ?>
-		<div class="sensei-message info info-special"><?php echo $answer_notes; ?></div>
+		<div class="sensei-message info info-special"><?php echo apply_filters( 'the_content', $answer_notes ); ?></div>
 	<?php } ?>
 </li>

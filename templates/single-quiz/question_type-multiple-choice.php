@@ -119,7 +119,7 @@ $user_answer_entry = WooThemes_Sensei_Utils::sensei_check_for_activity( array( '
 $user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $user_answer_entry );
 
 $question_text = get_the_title( $question_item );
-$question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
+$question_description = apply_filters( 'the_content', $question_item->post_content );
 
 $answer_message = false;
 $answer_notes = false;
@@ -140,7 +140,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 
 ?>
 <li class="multiple-choice">
-	<span class="question"><?php echo esc_html( $question_text ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
+	<span class="question"><?php echo apply_filters( 'sensei_question_title', esc_html( $question_text ) ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
 	<?php echo $question_description; ?>
 	<?php if( $question_media_link ) { ?>
 		<div class="question_media_display">
@@ -200,6 +200,6 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	<?php } // End For Loop ?>
 	</ul>
 	<?php if( $answer_notes ) { ?>
-		<div class="sensei-message info info-special"><?php echo $answer_notes; ?></div>
+		<div class="sensei-message info info-special"><?php echo apply_filters( 'the_content', $answer_notes ); ?></div>
 	<?php } ?>
 </li>

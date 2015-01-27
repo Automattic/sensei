@@ -68,7 +68,7 @@ if( 0 < intval( $question_media ) ) {
 
 // Gap Fill data
 $question_text = get_the_title( $question_item );
-$question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
+$question_description = apply_filters( 'the_content', $question_item->post_content );
 
 $gapfill_array = explode( '||', $question_right_answer );
 if ( isset( $gapfill_array[0] ) ) { $gapfill_pre = $gapfill_array[0]; } else { $gapfill_pre = ''; }
@@ -94,7 +94,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 
 ?>
 <li class="gap-fill">
-	<span class="question"><?php echo esc_html( $question_text ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
+	<span class="question"><?php echo apply_filters( 'sensei_question_title', esc_html( $question_text ) ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
 	<?php echo $question_description; ?>
 	<?php if( $question_media_link ) { ?>
 		<div class="question_media_display">
@@ -116,9 +116,9 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	<?php } ?>
 	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
 	<p class="gapfill-answer">
-		<span class="gapfill-answer-pre"><?php echo esc_html( $gapfill_pre ); ?></span>&nbsp;<input type="text" id="<?php echo esc_attr( 'question_' . $question_id ); ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="<?php echo esc_attr( $user_quizzes[ $question_id ] ); ?>" class="gapfill-answer-gap" />&nbsp;<span class="gapfill-answer-post"><?php echo esc_html( $gapfill_post ); ?></span>
+		<span class="gapfill-answer-pre"><?php echo esc_html( apply_filters( 'sensei_answer_text', $gapfill_pre ) ); ?></span>&nbsp;<input type="text" id="<?php echo esc_attr( 'question_' . $question_id ); ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="<?php echo esc_attr( $user_quizzes[ $question_id ] ); ?>" class="gapfill-answer-gap" />&nbsp;<span class="gapfill-answer-post"><?php echo esc_html( apply_filters( 'sensei_answer_text', $gapfill_post ) ); ?></span>
 	</p>
 	<?php if( $answer_notes ) { ?>
-		<div class="sensei-message info info-special"><?php echo $answer_notes; ?></div>
+		<div class="sensei-message info info-special"><?php echo apply_filters( 'the_content', $answer_notes ); ?></div>
 	<?php } ?>
 </li>
