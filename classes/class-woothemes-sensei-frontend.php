@@ -1221,6 +1221,7 @@ class WooThemes_Sensei_Frontend {
 				$this->sensei_get_template_part( 'content', 'single-course' );
 			} elseif( is_singular( 'lesson' ) ) {
 				$this->sensei_get_template_part( 'content', 'single-lesson' );
+				do_action( 'sensei_breadcrumb', get_the_ID() );
 				do_action( 'sensei_comments' );
 			} elseif( is_singular( 'quiz' ) ) {
 				$this->sensei_get_template_part( 'content', 'single-quiz' );
