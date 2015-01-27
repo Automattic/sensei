@@ -419,6 +419,33 @@ class WooThemes_Sensei_Frontend {
 					$item->url = esc_url( $woothemes_sensei->learner_profiles->get_permalink() );
 					break;
 
+				case '#senseiloginlogout':
+						$logout_url = wp_logout_url( home_url() );
+						// Login link links to the My Courses page, to avoid the WP dashboard.
+						$login_url = $my_courses_url;
+
+						$item->url = ( is_user_logged_in() ? $logout_url : $login_url );
+
+						// determine the menu title login or logout
+						$menu_title ='';
+
+						if ( is_user_logged_in() ) {
+							$menu_title =  __( 'Logout'  ,'woothemes-sensei');
+						} else {
+							$menu_title =  __( 'Login'  ,'woothemes-sensei');
+						}
+
+						/**
+						 * Action Filter: login/logout menu title
+						 *
+						 * With this filter you can alter the login / login menu item title string
+						 *
+						 * @param $menu_title
+						 */
+						$item->title = apply_filters( 'sensei_login_logout_menu_title', $menu_title );
+
+					break;
+
 				default:
 					break;
 			}
@@ -432,17 +459,10 @@ class WooThemes_Sensei_Frontend {
 				$item->classes[] = 'current-menu-item current_page_item';
 			}
 
-			$logout_url = wp_logout_url( home_url() );
-			// Login link links to the My Courses page, to avoid the WP dashboard.
-			$login_url = $my_courses_url;
+		} // end if 'nav-menus.php' != $pagenow ...
 
-			// Set the correct title and URL for the login/logout link
-			if ( '#senseiloginlogout' == $item->url ) {
-				$item->url = ( is_user_logged_in() ? $logout_url : $login_url );
-				$item->title = $this->sensei_login_logout_title( $item->title );
-			}
-		}
 		return $item;
+
 	} // End sensei_setup_nav_menu_item()
 
 	/**
@@ -474,16 +494,6 @@ class WooThemes_Sensei_Frontend {
 		}
 		return $sorted_menu_items;
 	} // End sensei_wp_nav_menu_objects
-
-	public function sensei_login_logout_title( $title ) {
-				// Get the title of the login/logout link, from the pipe-separated values given e.g. "Sign In|Sign Out"
-				$titles = explode( '|', $title );
-				if ( is_user_logged_in() ) {
-						return esc_html( isset( $titles[1] ) ? $titles[1] : $title );
-		} else {
-						return esc_html( isset( $titles[0] ) ? $titles[0] : $title );
-		}
-	} // End sensei_login_logout_title()
 
 	// add category nicenames in body and post class
 	function sensei_search_results_classes($classes) {
