@@ -71,7 +71,7 @@ if( 0 < intval( $question_media ) ) {
 array_push( $question_wrong_answers, $question_right_answer );
 shuffle($question_wrong_answers);
 $question_text = get_the_title( $question_item );
-$question_description = apply_filters( 'the_content', $question_item->post_content, $question_item->ID );
+$question_description = apply_filters( 'the_content', $question_item->post_content );
 
 $answer_message = false;
 $answer_notes = false;
@@ -92,7 +92,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 
 ?>
 <li class="multi-line">
-	<span class="question"><?php echo esc_html( $question_text ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
+	<span class="question"><?php echo apply_filters( 'sensei_question_title', esc_html( $question_text ) ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
 	<?php echo $question_description; ?>
 	<?php if( $question_media_link ) { ?>
 		<div class="question_media_display">
@@ -115,6 +115,6 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
 	<?php WooThemes_Sensei_Utils::sensei_text_editor( $user_quizzes[ $question_id ], 'textquestion' . $question_id, 'sensei_question[' . $question_id . ']' ); ?>
 	<?php if( $answer_notes ) { ?>
-		<div class="sensei-message info info-special"><?php echo $answer_notes; ?></div>
+		<div class="sensei-message info info-special"><?php echo apply_filters( 'the_content', $answer_notes ); ?></div>
 	<?php } ?>
 </li>
