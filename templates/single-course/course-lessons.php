@@ -45,14 +45,15 @@ if ( 0 < $total_lessons ) {
     	$lessons_completed = 0;
         $show_lesson_numbers = false;
 
-        $post_classes = array( 'course', 'post' );
     	foreach ( $course_lessons as $lesson_item ){
 			$single_lesson_complete = false;
+			$post_classes = array( 'course', 'post' );
 			$user_lesson_status = false;
 			if ( is_user_logged_in() ) {
 				// Check if Lesson is complete
 				$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_item->ID, $current_user->ID );
-				if ( WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status ) ) {
+				$single_lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
+				if ( $single_lesson_complete ) {
 					$lessons_completed++;
 					$post_classes[] = 'lesson-completed';
 				} // End If Statement
