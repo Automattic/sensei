@@ -559,7 +559,9 @@ class WooThemes_Sensei_Grading {
 					} else {
 						WooThemes_Sensei_Utils::sensei_delete_question_grade( $question_id );
 					}
-					$answer_notes = $_POST[ 'question_' . $question_id . '_notes' ];
+					// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), but 
+					// as an answer note is not direct post_content it won't have slashes removed, so we need to do it
+					$answer_notes = wp_unslash( $_POST[ 'question_' . $question_id . '_notes' ] );
 					if( ! $answer_notes || $answer_notes == '' ) {
 						$answer_notes = '';
 					}

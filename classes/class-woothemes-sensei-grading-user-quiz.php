@@ -204,18 +204,18 @@ class WooThemes_Sensei_Grading_User_Quiz {
 						</div>
 					</div>
 					<div class="sensei-grading-answer">
-						<h4><?php echo $question->post_title; ?></h4>
-						<?php echo apply_filters( 'the_content', $question->post_content, $question->ID );?>
+						<h4><?php echo apply_filters( 'sensei_question_title', $question->post_title ); ?></h4>
+						<?php echo apply_filters( 'the_content', $question->post_content );?>
 						<p class="user-answer"><?php
 							foreach ( $user_answer_content as $_user_answer ) {
-								echo $_user_answer . "<br>";
+								echo apply_filters( 'sensei_answer_text', $_user_answer ) . "<br>";
 							}
 						?></p>
 						<div class="right-answer">
 							<h5><?php _e( 'Correct answer', 'woothemes-sensei' ) ?></h5>
 							<span class="correct-answer"><?php
 								foreach ( $right_answer as $_right_answer ) {
-									echo $_right_answer . "<br>";
+									echo apply_filters( 'sensei_answer_text', $_right_answer ) . "<br>";
 								}
 							?></span>
 						</div>
