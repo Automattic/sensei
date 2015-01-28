@@ -68,7 +68,7 @@ class WooThemes_Sensei_Updates {
 																		  'reset_lesson_order_meta' => array( 'title' => 'Set default order of lessons', 'desc' => 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.' ), ),
 													'manual' 	=> array()
 												),
-								'1.7.0' => array( 	'auto' 		=> array(),
+								'1.7.0' => array( 	'auto' 		=> array( 'add_editor_caps' => array( 'title' => 'Add Editor capabilities', 'desc' => 'Adds the \'manage_sensei_grades\' capability to the Editor role.' ), ),
 													'forced' 	=> array(  'update_question_gap_fill_separators' => array( 'title' => 'Update Gap Fill questions', 'desc' => 'Updates the format of gap fill questions to allow auto grading and greater flexibility in matching.' ),
 																		  'update_quiz_lesson_relationship' => array( 'title' => 'Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
 																		  'status_changes_fix_lessons' => array( 'title' => 'Update lesson statuses', 'desc' => 'Update existing lesson statuses.' ),
@@ -920,9 +920,15 @@ class WooThemes_Sensei_Updates {
 		return true;
 	}
 
+	public function add_editor_caps() {
+		$role = get_role( 'editor' );
+		$role->add_cap( 'manage_sensei_grades' );
+		return true;
+	}
+
 	/**
 	 * Updates all gap fill questions, converting the | separator to || matching the changes in code. Using || allows the use of | within the pre, gap or post field.
-	 * 
+	 *
 	 * @global type $wpdb
 	 * @return boolean
 	 */
