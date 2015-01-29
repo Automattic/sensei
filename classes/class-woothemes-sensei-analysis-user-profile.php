@@ -279,6 +279,10 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		// Need to always return an array, even with only 1 item
+		if ( !is_array($statuses) ) {
+			$statuses = array( $statuses );
+		}
 
 		return $statuses;
 	} // End get_course_statuses()

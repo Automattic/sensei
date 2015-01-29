@@ -230,6 +230,10 @@ class WooThemes_Sensei_Utils {
 		global $woothemes_sensei;
 
 		$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
+		// Need to always use an array, even with only 1 item
+		if ( !is_array($comments) ) {
+			$comments = array( $comments );
+		}
 
 		$post_ids = array();
 		// Count comments
@@ -1506,6 +1510,10 @@ class WooThemes_Sensei_Utils {
 			if ( version_compare($wp_version, '4.1', '>=') ) {
 				$lesson_status_args['post__in'] = $lesson_ids;
 				$all_lesson_statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
+				// Need to always return an array, even with only 1 item
+				if ( !is_array($all_lesson_statuses) ) {
+					$all_lesson_statuses = array( $all_lesson_statuses );
+				}
 			}
 			// ...otherwise check each one
 			else {
