@@ -90,7 +90,7 @@ class WooThemes_Sensei_Admin {
 
 		if( $menu_cap ) {
 			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
-			$main_page = add_menu_page( __( 'Sensei', 'woothemes-sensei' ), __( 'Sensei', 'woothemes-sensei' ), $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
+			$main_page = add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
 		}
 
 		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
@@ -1238,7 +1238,7 @@ class WooThemes_Sensei_Admin {
 		global $pagenow;
 
 		if( 'nav-menus.php' == $pagenow ) {
-			add_meta_box( 'add-sensei-links', __( 'Sensei', 'woothemes-sensei' ), array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
+			add_meta_box( 'add-sensei-links', 'Sensei', array( $this, 'wp_nav_menu_item_sensei_links_meta_box' ), 'nav-menus', 'side', 'low' );
 		}
 	}
 
