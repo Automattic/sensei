@@ -521,7 +521,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 		}
 		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 		// Need to always return an array, even with only 1 item
-		if ( 1 == $this->total_items ) {
+		if ( !is_array($statuses) ) {
 			$statuses = array( $statuses );
 		}
 		return $statuses;
