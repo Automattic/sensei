@@ -32,10 +32,6 @@ Tested up to: 4.1
     require_once( 'inc/woo-functions.php' );
     require_once( 'inc/woothemes-sensei-functions.php' );
 
-	if ( defined ( 'WP_CLI' ) && WP_CLI ) {
-		require_once( 'classes/class-woothemes-sensei-command.php' );
-	}
-
     if ( ! is_admin() ) {
         require_once( 'inc/woothemes-sensei-template.php' );
     }
