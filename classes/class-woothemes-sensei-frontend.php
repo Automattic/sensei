@@ -1147,7 +1147,7 @@ class WooThemes_Sensei_Frontend {
 		// Lesson Quiz Meta
 		$quiz_id = $woothemes_sensei->frontend->lesson->lesson_quizzes( $post_id );
 		$has_user_completed_lesson = WooThemes_Sensei_Utils::user_completed_lesson( $post_id, $user_id );
-		$show_actions = true;
+		$show_actions = is_user_logged_in() ? true : false;
 
 		if( intval( $lesson_prerequisite ) > 0 ) {
 
