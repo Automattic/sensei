@@ -1,5 +1,13 @@
 *** Sensei Changelog ***
 
+2015.02.02 - version 1.7.0
+ * New - Completely new data structure that improves site performace and fixes numerous data-consistency issues
+ * New - Multiple choice questions can now accept multiple correct answers
+ * New - LaTeX support for all questions, answers and answer notes (requires Jetpack's Beautiful Math module)
+ * New - Gap Fill questions can now be auto-graded
+ * New - New 'Question Description' field to give your learners more clarity
+ * New - Loads of new actions and filters to make Sensei more extensible
+
 2014.12.18 - version 1.6.9
  * Fix - Fixing Chosen drop down menus on course edit screen
  * Fix - Fixing Analysis export to select entire data set

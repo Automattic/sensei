@@ -53,7 +53,7 @@ if ( ! $paged || $paged < 2 ) {
     			$author_id = $post_item->post_author;
                 $category_output = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
                 $preview_lesson_count = intval( $woothemes_sensei->post_types->course->course_lesson_preview_count( $post_id ) );
-                $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
+				$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $post_id, $current_user->ID );
     			?>
     			<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $post_id ) ) ); ?>">
 
@@ -74,9 +74,11 @@ if ( ! $paged || $paged < 2 ) {
                         </p>
                         <p class="course-excerpt"><?php echo $post_item->post_excerpt; ?></p>
                         <?php if ( 0 < $preview_lesson_count && !$is_user_taking_course ) {
-                                $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ); ?>
-                                <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $preview_lessons; ?></p>
-                        <?php } ?> 
+
+                            $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ); ?>
+                            <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $preview_lessons; ?></p>
+
+                        <?php } ?>
     				</section>
     			</article>
     			<?php
@@ -110,7 +112,7 @@ if ( ! $paged || $paged < 2 ) {
     			$author_id = get_the_author_meta('ID');
                 $category_output = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
                 $preview_lesson_count = intval( $woothemes_sensei->post_types->course->course_lesson_preview_count( $post_id ) );
-                $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) );
+				$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $post_id, $current_user->ID );
  			?>
 
 			<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ) ); ?>">
@@ -130,11 +132,13 @@ if ( ! $paged || $paged < 2 ) {
                         <?php } // End If Statement ?>
                         <?php sensei_simple_course_price( $post_id ); ?>
                     </p>
+
                     <p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
                     <?php if ( 0 < $preview_lesson_count && !$is_user_taking_course ) {
                             $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ); ?>
                             <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $preview_lessons; ?></p>
                     <?php } ?>
+
     			</section>
     		</article>
 

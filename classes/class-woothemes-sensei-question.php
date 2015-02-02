@@ -82,36 +82,36 @@ class WooThemes_Sensei_Question {
 	 * @return void
 	 */
 	public function add_column_data ( $column_name, $id ) {
-		global $wpdb, $post, $woothemes_sensei;
+		global $wpdb, $post;
 
 		switch ( $column_name ) {
-            case 'id':
-                echo $id;
-                break;
-            case 'question-type':
-                if( !isset($woothemes_sensei->globals['question-type-column-data-added'][$id] ) ) {
-                    $question_type = strip_tags(get_the_term_list($id, 'question-type', '', ', ', ''));
-                    $output = $this->question_types[$question_type];
-                    if (!$output) {
-                        $output = '&mdash;';
-                    } // End If Statement
-                    echo $output;
-                    $woothemes_sensei->globals['question-type-column-data-added'][$id] = true;
-                }
-                break;
-            case 'question-category':
-                if( !isset( $woothemes_sensei->globals['question-category-column-data-added'][$id] ) ){
-                    $output = strip_tags(get_the_term_list($id, 'question-category', '', ', ', ''));
-                    if (!$output) {
-                        $output = '&mdash;';
-                    }
-                    echo $output;
-                    $woothemes_sensei->globals['question-category-column-data-added'][$id] = true;
-                }
+
+			case 'id':
+				echo $id;
 			break;
+
+			case 'question-type':
+				$question_type = strip_tags( get_the_term_list( $id, 'question-type', '', ', ', '' ) );
+				$output = '&mdash;';
+				if( isset( $this->question_types[ $question_type ] ) ) {
+					$output = $this->question_types[ $question_type ];
+				}
+				echo $output;
+			break;
+
+			case 'question-category':
+				$output = strip_tags( get_the_term_list( $id, 'question-category', '', ', ', '' ) );
+				if( ! $output ) {
+					$output = '&mdash;';
+				}
+				echo $output;
+			break;
+
 			default:
 			break;
+
 		}
+
 	} // End add_column_data()
 
 	public function question_edit_panel_metabox( $post_type, $post ) {

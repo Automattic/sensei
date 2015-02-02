@@ -106,15 +106,11 @@ class WooThemes_Sensei {
 		$this->course_results = new WooThemes_Sensei_Course_Results();
 		$this->course_results->token = $this->token;
 
-		// Load the Course class
-		$this->load_class( 'course' );
-		$this->course = new WooThemes_Sensei_Course();
-		$this->course->token = $this->token;
+		// Add the Course class
+		$this->course = $this->post_types->course;
 
-		// Load the lesson class
-		$this->load_class( 'lesson' );
-		$this->lesson = new WooThemes_Sensei_Lesson();
-		$this->lesson->token = $this->token;
+		// Add the lesson class
+		$this->lesson = $this->post_types->lesson;
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
@@ -147,7 +143,7 @@ class WooThemes_Sensei {
 			$this->frontend->token = $this->token;
 			$this->frontend->init();
 
-			// Load notice Class 
+			// Load notice Class
 			$this->load_class( 'notices' );
 			$this->notices = new WooThemes_Sensei_Notices();
 
@@ -181,16 +177,22 @@ class WooThemes_Sensei {
 		add_action( 'subscription_end_of_prepaid_term' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'cancelled_subscription' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
 		add_action( 'subscription_put_on-hold' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
+
 		// Add Email link to course orders
         add_action( 'woocommerce_email_after_order_table', array( $this, 'sensei_woocommerce_email_course_details' ), 10, 1 );
+
 		// Filter comment counts
 		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
+
 		// Run Upgrades once the WP functions have loaded
 		if ( is_admin() ) {
 			add_action( 'wp_loaded', array( $this, 'run_updates' ), 10 );
 		} // End If Statement
 
 		add_action( 'body_class', array( $this, 'body_class' ) );
+
+		// Check for and activate JetPack LaTeX support
+		add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support'), 200 ); // Runs after Jetpack has loaded it's modules
 	} // End __construct()
 
 	/**
@@ -383,7 +385,16 @@ class WooThemes_Sensei {
 	 */
 	private function register_plugin_version () {
 		if ( $this->version != '' ) {
-			update_option( 'woothemes-sensei' . '-version', $this->version );
+
+			// Check previous version to see if forced updates must run
+			$old_version = get_option( 'woothemes-sensei-version', false );
+			if( $old_version && version_compare( $old_version, '1.7.0', '<' )  ) {
+				update_option( 'woothemes-sensei-force-updates', $this->version );
+			} else {
+				delete_option( 'woothemes-sensei-force-updates' );
+			}
+
+			update_option( 'woothemes-sensei-version', $this->version );
 		}
 	} // End register_plugin_version()
 
@@ -572,46 +583,23 @@ class WooThemes_Sensei {
 			$user_id = $current_user->ID;
 		} // End If Statement
 
-	 	$course_prereq = get_post_meta( $course_id, '_course_prerequisite', true );
-	 	if( $course_prereq && 0 < intval( $course_prereq ) ) {
-	 		$prereq_course_complete =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval( $course_prereq ), 'user_id' => intval( $user_id ), 'type' => 'sensei_course_end', 'field' => 'comment_content' ) );
-			if ( ! $prereq_course_complete || '' == $prereq_course_complete ) {
+		// This doesn't appear to be purely WooCommerce related. Should it be in a separate function?
+		$course_prereq = get_post_meta( $course_id, '_course_prerequisite', true );
+		if( $course_prereq && 0 < intval( $course_prereq ) ) {
+			$prereq_course_complete = WooThemes_Sensei_Utils::user_completed_course( intval( $course_prereq ), intval( $user_id ) );
+			if ( ! $prereq_course_complete ) {
 				// Remove all course user meta
-	    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_start' ) );
-	    		$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_end' ) );
-
-	    		// Get all course lessons
-	    		$course_lessons = $woothemes_sensei->course->course_lessons( $course_id );
-
-	    		// Remove all lesson user meta in course
-	    		if( isset( $course_lessons) && is_array( $course_lessons ) && count( $course_lessons ) > 0 ) {
-	    			foreach ( $course_lessons as $lesson_item ) {
-	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $user_id, 'type' => 'sensei_lesson_start' ) );
-	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $lesson_item->ID, 'user_id' => $user_id, 'type' => 'sensei_lesson_end' ) );
-	    			}
-	    		}
-				return true;
+				return WooThemes_Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
 			}
-	 	}
+		}
 
-	 	$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $course_id ), 'user_id' => intval( $user_id ), 'type' => 'sensei_course_start' ) );
+		$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
 
-	 	if( ! $is_user_taking_course ) {
+		if( ! $is_user_taking_course ) {
 
 			if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && WooThemes_Sensei_Utils::sensei_customer_bought_product( $user_email, $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) ) {
 
-				$args = array(
-								    'post_id' => intval( $course_id ),
-								    'username' => sanitize_user( $user_login ),
-								    'user_email' => sanitize_email( $user_email ),
-								    'user_url' => esc_url( $user_url ),
-								    'data' => __('Course started by the user', 'woothemes-sensei' ),
-								    'type' => 'sensei_course_start', /* FIELD SIZE 20 */
-								    'parent' => 0,
-								    'user_id' => intval( $user_id )
-								);
-
-				$activity_logged = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+				$activity_logged = WooThemes_Sensei_Utils::user_start_course( intval( $user_id), intval( $course_id ) );
 
 				$is_user_taking_course = false;
 				if ( true == $activity_logged ) {
@@ -639,71 +627,41 @@ class WooThemes_Sensei {
 		if ( ! isset( $current_user ) ) return;
 
 		// Get User Meta
-	 	get_currentuserinfo();
+		get_currentuserinfo();
 
-      	$user_allowed = false;
+		$user_allowed = false;
 
 		switch ( $page ) {
 			case 'course-single':
-
-					// check for prerequisite course or lesson,
-					$course_prerequisite_id = get_post_meta( $post->ID, '_course_prerequisite', true);
-					$update_course = $this->woocommerce_course_update( $post->ID  );
-					// Count completed lessons
-					$lessons_completed = 0;
-					$course_lessons = $this->frontend->course->course_lessons( $course_prerequisite_id );
-		    		$lessons_completed = 0;
-		    		foreach ($course_lessons as $lesson_item){
-		    			// Check if Lesson is complete
-    					$user_lesson_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_item->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
-						if ( '' != $user_lesson_end ) {
-							//Check for Passed or Completed Setting
-		                    $course_completion = $this->settings->settings[ 'course_completion' ];
-		                    if ( 'passed' == $course_completion ) {
-		                        // If Setting is Passed -> Check for Quiz Grades
-		                        $lesson_quizzes = $this->post_types->lesson->lesson_quizzes( $lesson_item->ID );
-		                        // Get Quiz ID
-		                        if ( is_array( $lesson_quizzes ) || is_object( $lesson_quizzes ) ) {
-		                            foreach ($lesson_quizzes as $quiz_item) {
-		                                $lesson_quiz_id = $quiz_item->ID;
-		                            } // End For Loop
-		                            // Quiz Grade
-		                            $lesson_grade =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_quiz_id, 'user_id' => $current_user->ID, 'type' => 'sensei_quiz_grade', 'field' => 'comment_content' ) ); // Check for wrapper
-		                            // Check if Grade is bigger than pass percentage
-		                            $lesson_prerequisite = abs( round( doubleval( get_post_meta( $lesson_quiz_id, '_quiz_passmark', true ) ), 2 ) );
-		                            if ( $lesson_prerequisite <= intval( $lesson_grade ) ) {
-		                                $lessons_completed++;
-		                                $single_lesson_complete = true;
-		                            } // End If Statement
-		                        } // End If Statement
-		                    } else {
-		                        $lessons_completed++;
-		                        $single_lesson_complete = true;
-		                    } // End If Statement;
-						} // End If Statement
-		    		} // End For Loop
-		    		// Check prerequisites
-		    		$prerequisite_complete = false;
-					if ( absint( $lessons_completed ) == absint( count( $course_lessons ) ) && ( 0 < absint( count( $course_lessons ) ) ) && ( 0 < absint( $lessons_completed ) ) ) {
-						$prerequisite_complete = true;
-					} // End If Statement
-					// Handles restrictions
-					if ( !$prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) {
-						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
-						$course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
-						$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link );
-					} else {
-						$user_allowed = true;
-					} // End If Statement
+				// check for prerequisite course or lesson,
+				$course_prerequisite_id = get_post_meta( $post->ID, '_course_prerequisite', true);
+				$update_course = $this->woocommerce_course_update( $post->ID );
+				// Count completed lessons
+				if ( 0 < absint( $course_prerequisite_id ) ) {
+					$prerequisite_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
+				}
+				else {
+					$prerequisite_complete = true;
+				} // End If Statement
+				// Handles restrictions
+				if ( !$prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) {
+					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
+					$course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+					$this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link );
+				} else {
+					$user_allowed = true;
+				} // End If Statement
 				break;
 			case 'lesson-single':
 				// Check for WC purchase
 				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course',true );
-				$update_course = $this->woocommerce_course_update( $lesson_course_id  );
+
+				$update_course = $this->woocommerce_course_update( $lesson_course_id );
 				$is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $post->ID );
-				if ( $this->access_settings() && WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) {
+				if ( $this->access_settings() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
 					$user_allowed = true;
-				} elseif( $this->access_settings() && false == WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
+				} elseif( $this->access_settings() && false == $is_preview ) {
+
 					$user_allowed = true;
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
@@ -728,15 +686,14 @@ class WooThemes_Sensei {
 			case 'quiz-single':
 				$lesson_id = get_post_meta( $post->ID, '_quiz_lesson',true );
 				$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course',true );
-				$update_course = $this->woocommerce_course_update( $lesson_course_id  );
-				if ( ( $this->access_settings() && WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_start' ) ) ) || sensei_all_access() ) {
+
+				$update_course = $this->woocommerce_course_update( $lesson_course_id );
+				if ( ( $this->access_settings() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) || sensei_all_access() ) {
+
 					// Check for prerequisite lesson for this quiz
-					$lesson_prerequisite_id = get_post_meta( $lesson_id, '_lesson_prerequisite', true);
-					$user_lesson_prerequisite_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_prerequisite_id, 'user_id' => $current_user->ID, 'type' => 'sensei_lesson_end', 'field' => 'comment_content' ) );
-					$user_lesson_prerequisite_complete = false;
-					if ( '' != $user_lesson_prerequisite_end ) {
-						$user_lesson_prerequisite_complete = true;
-					} // End If Statement
+					$lesson_prerequisite_id = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true);
+					$user_lesson_prerequisite_complete = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite_id, $current_user->ID);
+
 					// Handle restrictions
 					if( sensei_all_access() ) {
 						$user_allowed = true;
@@ -751,7 +708,9 @@ class WooThemes_Sensei {
 					} // End If Statement
 				} elseif( $this->access_settings() ) {
 					// Check if the user has started the course
-					if ( is_user_logged_in() && !sensei_has_user_started_course( $lesson_course_id, $current_user->ID ) && ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) ) {
+
+					if ( is_user_logged_in() && ! WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) && ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) ) {
+
 						$user_allowed = false;
 						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
 						$course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
@@ -883,13 +842,7 @@ class WooThemes_Sensei {
 				// Loop and update those courses
 				foreach ($courses as $course_item){
 					// Check and Remove course from courses user meta
-					$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $course_item->ID ), 'user_id' => $user_id, 'type' => 'sensei_course_start' ) );
-					// Get all course lessons
-	    			$course_lessons = $this->post_types->course->course_lessons( $course_item->ID );
-	    			foreach ($course_lessons as $lesson_item){
-	    				// Check for lesson complete
-	    				$dataset_changes = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => intval( $lesson_item->ID ), 'user_id' => $user_id, 'type' => 'sensei_lesson_start' ) );
-	    			} // End For Loop
+					$dataset_changes = WooThemes_Sensei_Utils::sensei_remove_user_from_course( $course_item->ID, $user_id );
 				} // End For Loop
 			} // End For Loop
 		} // End If Statement
@@ -1081,10 +1034,19 @@ class WooThemes_Sensei {
 
 		$count = wp_cache_get("comments-{$post_id}", 'counts');
 
-		if ( false !== $count )
+		if ( false !== $count ) {
 			return $count;
+		}
 
-		$where = "WHERE comment_type NOT LIKE 'sensei%'";
+		$statuses = array( '' ); // Default to the WP normal comments
+		$stati = $wpdb->get_results( "SELECT comment_type FROM {$wpdb->comments} GROUP BY comment_type", ARRAY_A );
+		foreach ( (array) $stati AS $status ) {
+			if ( 'sensei_' != substr($status['comment_type'], 0, 7 ) ) {
+				$statuses[] = $status['comment_type'];
+			}
+		}
+		$where = "WHERE comment_type IN ('" . join("', '", array_unique( $statuses ) ) . "')";
+
 		if ( $post_id > 0 )
 			$where .= $wpdb->prepare( " AND comment_post_ID = %d", $post_id );
 
@@ -1177,5 +1139,17 @@ class WooThemes_Sensei {
 		return $classes;
 	}
 
+	/**
+	 * Checks that the Jetpack Beautiful Maths module has been activated to support LaTeX within question titles and answers
+	 *
+	 * @return null
+	 * @since 1.7.0
+	 */
+	public function jetpack_latex_support() {
+		if ( function_exists( 'latex_markup') ) {
+			add_filter( 'sensei_question_title', 'latex_markup' );
+			add_filter( 'sensei_answer_text', 'latex_markup' );
+		}
+	}
+
 } // End Class
-?>

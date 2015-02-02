@@ -125,7 +125,7 @@ jQuery(document).ready( function($) {
 						disableAuto = false;
 					break;
 					case 'gap-fill':
-						disableAuto = true;
+						disableAuto = false;
 					break;
 					case 'multi-line':
 						disableAuto = true;
@@ -592,6 +592,7 @@ jQuery(document).ready( function($) {
 	 * @since 1.0.0
 	 * @access public
 	 */
+
 	// Hide the add course panel
 	jQuery( '#lesson-course-details' ).addClass( 'hidden' );
 	// Display on click
@@ -629,8 +630,8 @@ jQuery(document).ready( function($) {
 	 			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
 	 			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
 	 			dataToPost += '&course_category' + '=' + jQuery( '#course-category-options' ).val();
-	 			dataToPost += '&course_title' + '=' + encodeURIComponent( jQuery( '#course-title' ).attr( 'value' ) );
-	 			dataToPost += '&course_content' + '=' + encodeURIComponent( jQuery( '#course-content' ).attr( 'value' ) );
+	 			dataToPost += '&course_title' + '=' + jQuery( '#course-title' ).attr( 'value' );
+	 			dataToPost += '&course_content' + '=' + jQuery( '#course-content' ).attr( 'value' );
 	 			dataToPost += '&action=add';
 	 			// Perform the AJAX call.
 	 			jQuery.post(
@@ -783,12 +784,19 @@ jQuery(document).ready( function($) {
 					divFieldsClass = 'question_fileupload_fields';
 				break;
 			} // End Switch Statement
+
 			// Handle Required Fields
 			jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'input' ).each( function() {
 	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
-	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
 	 			} // End If Statement
  			});
+
+			// Handle textarea required field
+			if ( jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).val() != '' ) {
+	 			dataToPost += '&' + jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).val();
+	 		} // End If Statement
+
 	 		// Handle Question Input Fields
 	 		var radioCount = 0;
 	 		jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).find( 'input' ).each( function() {
@@ -800,15 +808,15 @@ jQuery(document).ready( function($) {
 	 					radioCount++;
 	 				} // End If Statement
  				} else {
- 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+ 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
  				} // End If Statement
 	 		});
 	 		// Handle Question Textarea Fields
 	 		if ( jQuery( '#add_question_right_answer_essay' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
-	 			dataToPost += '&' + jQuery( '#add_question_right_answer_essay' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_essay' ).val() );
+	 			dataToPost += '&' + jQuery( '#add_question_right_answer_essay' ).attr( 'name' ) + '=' + jQuery( '#add_question_right_answer_essay' ).val();
 	 		} // End If Statement
  			if ( jQuery( '#add_question_right_answer_multiline' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
- 				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_multiline' ).val() );
+ 				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + jQuery( '#add_question_right_answer_multiline' ).val();
 	 		} // End If Statement
 	 		dataToPost += '&' + 'question_type' + '=' + questionType;
 	 		dataToPost += '&' + 'question_category' + '=' + questionCategory;
@@ -950,7 +958,7 @@ jQuery(document).ready( function($) {
  			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
  			dataToPost += '&action=save';
  			jQuery( this ).closest( 'td' ).children( 'input' ).each( function() {
- 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+ 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
  			});
  			tableRowId = jQuery( this ).closest('td').find('span.question_original_counter').text();
  			if ( jQuery( this ).closest('td').find( 'input.question_type' ).val() != '' ) {
@@ -983,9 +991,15 @@ jQuery(document).ready( function($) {
 			// Handle Required Fields
 			jQuery( this ).closest('td').find( 'div.question_required_fields' ).find( 'input' ).each( function() {
 	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
-	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
 	 			} // End If Statement
  			});
+
+			// Handle textarea required field
+			if ( jQuery( this ).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).val() != '' ) {
+	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).val();
+	 		} // End If Statement
+
 	 		// Handle Question Input Fields
 	 		var radioCount = 0;
 	 		jQuery( this ).closest('td').find( 'div.' + divFieldsClass ).find( 'input' ).each( function() {
@@ -996,17 +1010,17 @@ jQuery(document).ready( function($) {
 	 					radioCount++;
 	 				} // End If Statement
  				} else {
- 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+ 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
  				} // End If Statement
 	 		});
 
 	 		// Handle Question Textarea Fields
 	 		if ( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
-	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
+	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' + jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val();
 	 		} // End If Statement
 	 		if ( divFieldsClass == 'question_fileupload_fields' ) {
 	 			jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).each( function() {
-	 				dataToPost += '&' +  jQuery(this).attr( 'name' ) + '=' +  encodeURIComponent( jQuery(this).val() );
+	 				dataToPost += '&' +  jQuery(this).attr( 'name' ) + '=' + jQuery(this).val();
 	 			});
 	 		} // End If Statement
 
@@ -1044,17 +1058,18 @@ jQuery(document).ready( function($) {
  				},
  				function( response ) {
  					if ( response ) {
+
  						// show the user the of the succesful update:
  						var newQuestionTitle , newGradeTotal;
-	 					
+
 	 					// update the question title :
  						newQuestionTitle = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question] ').val();
  						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-title-column').html( newQuestionTitle );
- 							
- 						// update the grade total		
+
+ 						// update the grade total
 						newGradeTotal = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question_grade] ').val();
  						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-grade-column').html( newGradeTotal );
- 							
+
  						// hide the update field
  						jQuery( '#question_' + tableRowId ).closest('tr').addClass( 'hidden' );
  					}
@@ -1297,12 +1312,20 @@ jQuery(document).ready( function($) {
 		return false;
 	});
 
-	jQuery( '#add-question-main' ).on( 'click', '.add_answer_option', function() {
+	jQuery( '#add-question-main' ).on( 'click', '.add_wrong_answer_option', function() {
 		var question_counter = jQuery( this ).attr( 'rel' );
-		var answer_count = jQuery( this ).closest( 'div' ).find( '.wrong_answer_count' ).text();
+		var answer_count = jQuery( this ).closest( 'div.multiple-choice-answers' ).find( '.wrong_answer_count' ).text();
 		answer_count++;
 		var html = '<label class="answer" for="question_' + question_counter + '_wrong_answer_' + answer_count + '"><span>' + woo_localized_data.wrong_colon + '</span> <input type="text" id="question_' + question_counter + '_wrong_answer_' + answer_count + '" name="question_wrong_answers[]" value="" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
-		jQuery( this ).before( html );
+		jQuery( this ).closest( 'div' ).before( html );
+	});
+
+	jQuery( '#add-question-main' ).on( 'click', '.add_right_answer_option', function() {
+		var question_counter = jQuery( this ).attr( 'rel' );
+		var answer_count = jQuery( this ).closest( 'div.multiple-choice-answers' ).find( '.right_answer_count' ).text();
+		answer_count++;
+		var html = '<label class="answer" for="question_' + question_counter + '_right_answer_' + answer_count + '"><span>' + woo_localized_data.right_colon + '</span> <input type="text" id="question_' + question_counter + '_right_answer_' + answer_count + '" name="question_right_answers[]" value="" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+		jQuery( this ).closest( 'div' ).before( html );
 	});
 
 	jQuery( '#add-question-main' ).on( 'click', '.remove_answer_option', function() {
@@ -1386,6 +1409,34 @@ jQuery(document).ready( function($) {
 		jQuery( this ).closest( 'tr' ).find( ':checkbox' ).each( function() {
 			jQuery( this ).prop( 'checked', ! jQuery( this ).prop( 'checked' ) );
 		});
+	});
+
+	/***************************************************************************************************
+	 * 	5 - Load Chosen Dropdowns.
+	 ***************************************************************************************************/
+
+	// Lessons Write Panel
+	if ( jQuery( '#lesson-complexity-options' ).exists() ) { jQuery( '#lesson-complexity-options' ).chosen(); }
+	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) { jQuery( '#lesson-prerequisite-options' ).chosen(); }
+	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).chosen(); }
+	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).chosen(); }
+	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).chosen(); }
+	if ( jQuery( '#course-woocommerce-product-options' ).exists() && '-' != jQuery( '#course-woocommerce-product-options' ).val() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
+
+	// Quiz edit panel
+	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).chosen(); }
+	if ( jQuery( '#add-question-category-options' ).exists() ) { jQuery( '#add-question-category-options' ).chosen(); }
+	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).chosen(); }
+
+	// Courses Write Panel
+	if ( jQuery( '#course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).chosen(); }
+	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) { jQuery( '#add-multiple-question-category-options' ).chosen(); }
+
+	// Sensei Settings Panel
+	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {
+		if ( !jQuery( this ).hasClass( 'range-input' ) ) {
+			jQuery( this ).chosen();
+		} // End If Statement
 	});
 
 	/***************************************************************************************************

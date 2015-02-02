@@ -38,7 +38,6 @@ class WooThemes_Sensei_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_styles_global' ) );
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
-		add_filter( 'comments_clauses', array( $this, 'comments_admin_filter' ), 10, 1 );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
@@ -164,27 +163,6 @@ class WooThemes_Sensei_Admin {
 	}
 
 	/**
-	 * comments_admin_filter function.
-	 *
-	 * Filters the backend commenting system to not include the sensei prefixed comments
-	 *
-	 * @access public
-	 * @param mixed $pieces
-	 * @return void
-	 */
-	function comments_admin_filter( $pieces ) {
-
-		// Filter Admin Comments Area to not display Sensei's use of commenting system
-		if( is_admin() && !( isset($_GET['page']) && 'sensei_analysis' == $_GET['page'] ) ) {
-			$pieces['where'] .= " AND comment_type NOT LIKE 'sensei_%' ";
-		} // End If Statement
-
-		return $pieces;
-
-	} // End comments_admin_filter()
-
-
-	/**
 	 * install_pages_output function.
 	 *
 	 * Handles installation of the 2 pages needs for courses and my courses
@@ -306,7 +284,7 @@ class WooThemes_Sensei_Admin {
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings', 'lesson-order', 'course-order' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.6.0', 'screen' );
+		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.7.0', 'screen' );
 		wp_enqueue_style( $woothemes_sensei->token . '-global' );
 
 		// Test for Write Panel Pages
@@ -501,46 +479,44 @@ class WooThemes_Sensei_Admin {
 
 		$quiz_args = array(
 			'post_type' => 'quiz',
-			'posts_per_page' => -1,
-			'meta_key' => '_quiz_lesson',
-			'meta_value' => $old_lesson_id,
+			'posts_per_page' => 1,
+			'post_parent' => $old_lesson_id,
 			'suppress_filters' 	=> 0
 		);
-		$quizzes = get_posts( $quiz_args );
+		$quiz = array_shift( get_posts( $quiz_args ) );
 
-		foreach( $quizzes as $quiz ) {
+		$question_args = array(
+			'post_type'	=> 'question',
+			'posts_per_page' => -1,
+			'orderby'        => 'meta_value_num title',
+			'order'          => 'ASC',
+			'meta_query'	 => array(
+				array(
+					'key'       => '_quiz_id',
+					'value'     => $quiz->ID,
+				)
+			),
+			'suppress_filters' => 0
+		);
+		$questions = get_posts( $question_args );
 
-			$question_args = array(
-				'post_type'	=> 'question',
-				'posts_per_page' => -1,
-				'orderby'        => 'meta_value_num title',
-				'order'          => 'ASC',
-				'meta_query'	 => array(
-					array(
-						'key'       => '_quiz_id',
-						'value'     => $quiz->ID,
-					)
-				),
-				'suppress_filters' => 0
-			);
-			$questions = get_posts( $question_args );
+		$quiz->post_parent = $new_lesson_id;
+		$new_quiz = $this->duplicate_post( $quiz, '' );
+		add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
+		add_post_meta( $new_lesson_id, '_lesson_quiz', $new_quiz->ID );
 
-			$new_quiz = $this->duplicate_post( $quiz, '' );
-			add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
+		$question_count = 1;
+		foreach( $questions as $question ) {
 
-			$question_count = 1;
-			foreach( $questions as $question ) {
+			// Add to quiz
+			add_post_meta( $question->ID, '_quiz_id', $new_quiz->ID, false );
 
-				// Add to quiz
-				add_post_meta( $question->ID, '_quiz_id', $new_quiz->ID, false );
+			// Set order of question
+			$question_order = $new_quiz->ID . '000' . $question_count;
+			add_post_meta( $question->ID, '_quiz_question_order' . $new_quiz->ID, $question_order );
 
-				// Set order of question
-				$question_order = $new_quiz->ID . '000' . $question_count;
-				add_post_meta( $question->ID, '_quiz_question_order' . $new_quiz->ID, $question_order );
-
-				// Increment counter for question ordering
-				++$question_count;
-			}
+			// Increment counter for question ordering
+			++$question_count;
 		}
 	}
 
@@ -599,6 +575,9 @@ class WooThemes_Sensei_Admin {
 			case 'question': $new_post['post_status'] = 'publish'; break;
 		}
 
+		// As per wp_update_post() we need to escape the data from the db.
+		$new_post = wp_slash( $new_post );
+
 		$new_post_id = wp_insert_post( $new_post );
 
 		if( ! is_wp_error( $new_post_id ) ) {
@@ -606,7 +585,8 @@ class WooThemes_Sensei_Admin {
 			$post_meta = get_post_custom( $post->ID );
 			if( $post_meta && count( $post_meta ) > 0 ) {
 
-				$ignore_meta = array( '_quiz_lesson', '_quiz_id' );
+				$ignore_meta = array( '_quiz_lesson', '_quiz_id', '_lesson_quiz' );
+
 				if( $ignore_course ) {
 					$ignore_meta[] = '_lesson_course';
 				}
@@ -1266,13 +1246,13 @@ class WooThemes_Sensei_Admin {
 		global $nav_menu_selected_id, $woothemes_sensei;
 
 		$menu_items = array(
-						'#senseicourses' => __( 'Courses', 'woothemes-sensei' ),
-						'#senseilessons' => __( 'Lessons', 'woothemes-sensei' ),
-						'#senseimycourses' => __( 'My Courses', 'woothemes-sensei' ),
-						'#senseilearnerprofile' => __( 'My Profile', 'woothemes-sensei' ),
-						'#senseimymessages' => __( 'My Messages', 'woothemes-sensei' ),
-						'#senseiloginlogout' => __( 'Login', 'woothemes-sensei' ) . '|' . __( 'Logout', 'woothemes-sensei' )
-						 );
+			'#senseicourses' => __( 'Courses', 'woothemes_sensei' ),
+			'#senseilessons' => __( 'Lessons', 'woothemes_sensei' ),
+			'#senseimycourses' => __( 'My Courses', 'woothemes_sensei' ),
+			'#senseilearnerprofile' => __( 'My Profile', 'woothemes_sensei' ),
+			'#senseimymessages' => __( 'My Messages', 'woothemes_sensei' ),
+			'#senseiloginlogout' => __( 'Login', 'woothemes_sensei' ) . '|' . __( 'Logout', 'woothemes_sensei' )
+		);
 
 		$menu_items_obj = array();
 		foreach ( $menu_items as $value => $title ) {

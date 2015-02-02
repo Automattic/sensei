@@ -45,7 +45,8 @@ class WooThemes_Sensei_Messages {
 
 		// Add message links to courses & lessons
 		add_action( 'sensei_course_single_lessons', array( $this, 'send_message_link' ), 1 );
-		add_action( 'sensei_breadcrumb', array( $this, 'send_message_link' ), 1 );
+
+		add_action( 'sensei_lesson_quiz_meta', array( $this, 'send_message_link' ), 20, 2 );
 
 		// Hide messages and replies from users who do not have access
         add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
@@ -151,10 +152,12 @@ class WooThemes_Sensei_Messages {
 		add_action( 'save_post', array( $this, 'save_message' ) );
 	}
 
-	public function send_message_link() {
+	public function send_message_link( $post_id = 0, $user_id = 0 ) {
 		global $woothemes_sensei, $post;
 
-		if ( ! ( is_singular( 'course' ) || is_singular( 'lesson' ) ) ) return;
+		if ( ! ( is_singular( 'course' ) || is_singular( 'lesson' ) ) ) {
+			return;
+		}
 
 		$html = '';
 

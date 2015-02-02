@@ -79,6 +79,8 @@ class WooThemes_Sensei_PostTypes {
 		if ( is_admin() ) {
 			add_action('admin_menu', array( $this, 'sensei_admin_menu_items' ), 9);
 		} // End If Statement
+		// Add 'Edit Quiz' link to admin bar
+		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
 	} // End __construct()
 
@@ -107,11 +109,13 @@ class WooThemes_Sensei_PostTypes {
 	public function load_posttype_objects( $posttypes = array() ) {
 
 		foreach ( $posttypes as $posttype_token => $posttype_name ) {
+
 			// Load the files
 			$this->load_class( $posttype_token );
 			$class_name = 'WooThemes_Sensei_' . $posttype_name;
 			$this->$posttype_token = new $class_name();
 			$this->$posttype_token->token = $posttype_token;
+
 		} // End For Loop
 
 	} // End load_posttype_objects
@@ -336,7 +340,7 @@ class WooThemes_Sensei_PostTypes {
 			    'show_in_nav_menus' => true,
 			    'query_var' => true,
 			    'exclude_from_search' => true,
-			    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => false, 'feeds' => false, 'pages' => false ),
+			    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => false, 'feeds' => false, 'pages' => true ),
 			    'map_meta_cap' => true,
 			    'capability_type' => 'question',
 			    'has_archive' => true,
@@ -696,6 +700,26 @@ class WooThemes_Sensei_PostTypes {
 		} // End For Loop
 
 	} // End set_role_cap_defaults()
+
+	/**
+	 * Adds a 'Edit Quiz' link to the admin bar when viewing a Quiz linked to a corresponding Lesson
+	 * 
+	 * @since  1.7.0
+	 * @return void
+	 */
+	public function quiz_admin_bar_menu( $bar ) {
+		if ( is_single() && 'quiz' == get_queried_object()->post_type ) {
+			$lesson_id = get_post_meta( get_queried_object()->ID, '_quiz_lesson', true );
+			if ( $lesson_id ) {
+				$object_type = get_post_type_object('quiz');
+				$bar->add_menu( array(
+					'id' => 'edit',
+					'title' => $object_type->labels->edit_item,
+					'href' => get_edit_post_link( $lesson_id ),
+				) );
+			}
+		}
+	}
 
 	/**
 	 * load_class loads in class files

@@ -15,14 +15,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
- * - build_data_array()
- * - load_stats()
- * - stats_boxes()
+ * - get_columns()
+ * - get_sortable_columns()
+ * - prepare_items()
+ * - single_row()
+ * - generate_report()
+ * - get_row_data()
+ * - get_course_statuses()
  * - no_items()
  * - data_table_header()
+ * - data_table_footer()
+ * - search_button()
  */
 class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Table {
 	public $user_id;
+	public $csv_output = false;
+	public $page_slug = 'sensei_analysis';
 
 	/**
 	 * Constructor
@@ -31,112 +39,266 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 	 */
 	public function __construct ( $user_id = 0 ) {
 		$this->user_id = intval( $user_id );
+
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_user_profile' );
-		// Default Columns
-		$this->columns = apply_filters( 'sensei_analysis_user_profile_columns', array(
-			'course_title' => __( 'Course', 'woothemes-sensei' ),
-			'course_started' => __( 'Date Started', 'woothemes-sensei' ),
-			'course_completed' => __( 'Date Completed', 'woothemes-sensei' ),
-			'course_status' => __( 'Status', 'woothemes-sensei' ),
-			'course_grade' => __( 'Grade', 'woothemes-sensei' )
-		) );
-		// Sortable Columns
-		$this->sortable_columns = apply_filters( 'sensei_analysis_user_profile_columns_sortable', array(
-			'course_title' => array( 'course_title', false ),
-			'course_started' => array( 'course_started', false ),
-			'course_completed' => array( 'course_completed', false ),
-			'course_status' => array( 'course_status', false ),
-			'course_grade' => array( 'course_grade', false )
-		) );
-		$this->hidden_columns = apply_filters( 'sensei_analysis_user_profile_columns_hidden', array(
-			'course_grade'
-		) );
+
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
+		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+
+		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	} // End __construct()
 
 	/**
-	 * build_data_array builds the data for use in the table
-	 * Overloads the parent method
-	 * @since  1.2.0
-	 * @return array
+	 * Define the columns that are going to be used in the table
+	 * @since  1.7.0
+	 * @return array $columns, the array of columns to use with the table
 	 */
-	public function build_data_array() {
-
-		global $woothemes_sensei;
-
-		$return_array = array();
-
-		$course_start_date = '';
-
-		$course_ids = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $this->user_id, 'type' => 'sensei_course_start' ) );
-		$posts_array = array();
-		if ( 0 < intval( count( $course_ids ) ) ) {
-			$posts_array = $woothemes_sensei->post_types->course->course_query( -1, 'usercourses', $course_ids );
-		} // End If Statement
-
-		// MAIN LOOP
-		foreach ($posts_array as $course_item) {
-			$title_keyword_count = 1;
-			if ( isset( $_GET['s'] ) && '' != $_GET['s'] ) {
-			$title_keyword_count = substr_count( strtolower( sanitize_title( $course_item->post_title ) ) , strtolower( sanitize_title( $_GET['s'] ) ) );
-			} // End If Statement
-			if ( 0 < intval( $title_keyword_count ) ) {
-				$course_status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
-				$course_end_date = '';
-				// Check if Course is complete
-		    	$user_course_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_course_end', 'field' => 'comment_content' ) );
-		    	$course_start_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_course_start', 'field' => 'comment_date' ) );
-		    	if ( isset( $user_course_end ) && '' != $user_course_end ) {
-		    		$course_status = __( 'Complete', 'woothemes-sensei' );
-		    		$course_end_date =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_item->ID, 'user_id' => $this->user_id, 'type' => 'sensei_course_end', 'field' => 'comment_date' ) );
-		    	} // End If Statement
-
-				array_push( $return_array, apply_filters( 'sensei_analysis_user_profile_column_data', array( 	'course_title' => '<a href="' . add_query_arg( array( 'page' => 'sensei_analysis', 'user' => $this->user_id, 'course_id' => $course_item->ID ), admin_url( 'admin.php' ) ) . '">'.$course_item->post_title.'</a>',
-													'course_started' => $course_start_date,
-													'course_completed' => $course_end_date,
-													'course_status' => $course_status,
-													'course_grade' => 'TODO'
-				 								), $course_item->ID )
-							);
-			} // End If Statement
-		} // End For Loop
-		$return_array = $this->array_sort_reorder( $return_array );
-		return $return_array;
-	} // End build_data_array()
+	function get_columns() {
+		$columns = array(
+			'title' => __( 'Course', 'woothemes-sensei' ),
+			'started' => __( 'Date Started', 'woothemes-sensei' ),
+			'completed' => __( 'Date Completed', 'woothemes-sensei' ),
+			'status' => __( 'Status', 'woothemes-sensei' ),
+//			'grade' => __( 'Grade', 'woothemes-sensei' ),
+			'percent' => __( 'Percent Complete', 'woothemes-sensei' ),
+		);
+		$columns = apply_filters( 'sensei_analysis_user_profile_columns', $columns );
+		return $columns;
+	}
 
 	/**
-	 * load_stats loads stats into object
-	 * @since  1.2.0
+	 * Define the columns that are going to be used in the table
+	 * @since  1.7.0
+	 * @return array $columns, the array of columns to use with the table
+	 */
+	function get_sortable_columns() {
+		$columns = array(
+			'title' => array( 'title', false ),
+			'started' => array( 'started', false ),
+			'completed' => array( 'completed', false ),
+			'status' => array( 'status', false ),
+//			'grade' => array( 'grade', false ),
+			'percent' => array( 'percent', false )
+		);
+		$columns = apply_filters( 'sensei_analysis_user_profile_columns_sortable', $columns );
+		return $columns;
+	}
+
+	/**
+	 * Prepare the table with different parameters, pagination, columns and table elements
+	 * @since  1.7.0
 	 * @return void
 	 */
-	public function load_stats() {
-		global $woothemes_sensei;
-	} // End load_stats()
+	public function prepare_items() {
+		global $woothemes_sensei, $per_page;
+
+		// Handle orderby (needs work)
+		$orderby = '';
+		if ( !empty( $_GET['orderby'] ) ) {
+			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
+				$orderby = esc_html( $_GET['orderby'] );
+			} // End If Statement
+		}
+
+		// Handle order
+		$order = 'ASC';
+		if ( !empty( $_GET['order'] ) ) {
+			$order = ( 'ASC' == strtoupper($_GET['order']) ) ? 'ASC' : 'DESC';
+		}
+
+		// Handle search, need 4.1 version of WP to be able to restrict statuses to known post_ids
+		$search = false;
+		if ( !empty( $_GET['s'] ) ) {
+			$search = esc_html( $_GET['s'] );
+		} // End If Statement
+		$this->search = $search;
+
+		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
+		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
+
+		$paged = $this->get_pagenum();
+		$offset = 0;
+		if ( !empty($paged) ) {
+			$offset = $per_page * ( $paged - 1 );
+		} // End If Statement
+
+		$args = array(
+			'number' => $per_page,
+			'offset' => $offset,
+			'orderby' => $orderby,
+			'order' => $order,
+		);
+		if ( $this->search ) {
+			$args['search'] = $this->search;
+		} // End If Statement
+
+		$this->items = $this->get_course_statuses( $args );
+
+		$total_items = $this->total_items;
+		$total_pages = ceil( $total_items / $per_page );
+		$this->set_pagination_args( array(
+			'total_items' => $total_items,
+			'total_pages' => $total_pages,
+			'per_page' => $per_page
+		) );
+	}
 
 	/**
-	 * stats_boxes loads which stats boxes to render
-	 * @since  1.2.0
-	 * @return $stats_to_render array of stats boxes and values
+	 * Generate a csv report with different parameters, pagination, columns and table elements
+	 * @since  1.7.0
+	 * @return data
 	 */
-	public function stats_boxes () {
-		$stats_to_render = array();
-		return $stats_to_render;
-	} // End stats_boxes
+	public function generate_report( $report ) {
+
+		$data = array();
+
+		$this->csv_output = true;
+
+		// Handle orderby
+		$orderby = '';
+		if ( !empty( $_GET['orderby'] ) ) {
+			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
+				$orderby = esc_html( $_GET['orderby'] );
+			} // End If Statement
+		}
+
+		// Handle order
+		$order = 'ASC';
+		if ( !empty( $_GET['order'] ) ) {
+			$order = ( 'ASC' == strtoupper($_GET['order']) ) ? 'ASC' : 'DESC';
+		}
+
+		// Handle search
+		$search = false;
+		if ( !empty( $_GET['s'] ) ) {
+			$search = esc_html( $_GET['s'] );
+		} // End If Statement
+		$this->search = $search;
+
+		$args = array(
+			'orderby' => $orderby,
+			'order' => $order,
+		);
+		if ( $this->search ) {
+			$args['search'] = $this->search;
+		} // End If Statement
+
+		// Start the csv with the column headings
+		$column_headers = array();
+		$columns = $this->get_columns();
+		foreach( $columns AS $key => $title ) {
+			$column_headers[] = $title;
+		}
+		$data[] = $column_headers;
+
+		$this->items = $this->get_course_statuses( $args );
+
+		// Process each row
+		foreach( $this->items AS $item) {
+			$data[] = $this->get_row_data( $item );
+		}
+
+		return $data;
+	}
 
 	/**
-	 * no_items sets output when no items are found
+	 * Generates the overall array for a single item in the display
+	 * @since  1.7.0
+	 * @param object $item The current item
+	 */
+	protected function get_row_data( $item ) {
+		global $woothemes_sensei;
+
+		$course_title =  get_the_title( $item->comment_post_ID );
+		$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
+		$course_start_date = get_comment_meta( $item->comment_ID, 'start', true );
+		$course_end_date = $status_class = $grade = '';
+
+		if( 'complete' == $item->comment_approved ) {
+			$status = apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) );
+			$status_class = 'graded';
+
+			// Use class-woothemes-sensei-utils::sensei_course_user_grade() once converted to use new statuses
+//			$grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $item->comment_post_ID, $this->user_id ) . '%';
+			$course_end_date = $item->comment_date;
+		}
+		else {
+			$status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
+			$status_class = 'in-progress';
+		}
+		$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
+
+		// Output users data
+		if ( !$this->csv_output ) {
+			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $this->user_id, 'course_id' => $item->comment_post_ID ), admin_url( 'admin.php' ) );
+
+			$course_title = '<strong><a class="row-title" href="' . $url . '">' . $course_title . '</a></strong>';
+			$status = sprintf( '<span class="%s">%s</span>', $status_class, $status );
+			if ( is_numeric($course_percent) ) {
+				$course_percent .= '%';
+			}
+		} // End If Statement
+		$column_data = apply_filters( 'sensei_analysis_user_profile_column_data', array( 'title' => $course_title,
+										'started' => $course_start_date,
+										'completed' => $course_end_date,
+										'status' => $status,
+										'percent' => $course_percent,
+//										'grade' => $grade,
+									), $item );
+
+		return $column_data;
+	}
+
+	/**
+	 * Return array of Course statuses
+	 * @since  1.7.0
+	 * @return array statuses
+	 */
+	private function get_course_statuses( $args ) {
+
+		$activity_args = array( 
+				'user_id' => $this->user_id,
+				'type' => 'sensei_course_status',
+				'number' => $args['number'],
+				'offset' => $args['offset'],
+				'orderby' => $args['orderby'],
+				'order' => $args['order'],
+				'status' => 'any',
+			);
+
+		$activity_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $activity_args );
+
+		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
+		$this->total_items = WooThemes_Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
+
+		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
+		if ( $this->total_items < $activity_args['offset'] ) {
+			$new_paged = floor( $total_statuses / $activity_args['number'] );
+			$activity_args['offset'] = $new_paged * $activity_args['number'];
+		}
+		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		// Need to always return an array, even with only 1 item
+		if ( !is_array($statuses) ) {
+			$statuses = array( $statuses );
+		}
+
+		return $statuses;
+	} // End get_course_statuses()
+
+	/**
+	 * Sets output when no items are found
 	 * Overloads the parent method
 	 * @since  1.2.0
 	 * @return void
 	 */
 	public function no_items() {
-  		_e( 'No courses found.', 'woothemes-sensei' );
+		echo apply_filters( 'sensei_analysis_user_profile_no_items_text', __( 'No courses found.', 'woothemes-sensei' ) );
 	} // End no_items()
 
 	/**
-	 * course_data_table_header output for table heading
+	 * Output for table heading
 	 * @since  1.2.0
 	 * @return void
 	 */
@@ -144,5 +306,25 @@ class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei
 		echo '<strong>' . __( 'Courses', 'woothemes-sensei' ) . '</strong>';
 	}
 
+	/**
+	 * Output for table footer
+	 * @since  1.7.0
+	 * @return void
+	 */
+	public function data_table_footer() {
+		$user = get_user_by( 'id', $this->user_id );
+		$report = sanitize_title( $user->display_name ) . '-course-overview';
+		$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $this->user_id, 'sensei_report_download' => $report ), admin_url( 'admin.php' ) );
+		echo '<a class="button button-primary" href="' . wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) . '">' . __( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
+	}
+
+	/**
+	 * The text for the search button
+	 * @since  1.7.0
+	 * @return void
+	 */
+	public function search_button( $text = '' ) {
+		return __( 'Search Courses', 'woothemes-sensei' );;
+	}
+
 } // End Class
-?>

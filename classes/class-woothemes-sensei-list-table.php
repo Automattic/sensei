@@ -15,28 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
+ * - remove_sortable_columns()
  * - extra_tablenav()
  * - table_search_form()
  * - get_columns()
  * - get_sortable_columns()
- * - build_data_array()
- * - array_sort_reorder()
- * - prepare_items()
- * - display_rows()
- * - sort_array_by_key()
- * - column_default()
+ * - get_column_info()
+ * - single_row()
+ * - get_row_data()
  * - no_items()
  * - get_bulk_actions()
  * - bulk_actions()
  */
 class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public $token;
-	public $columns;
-	public $sortable_columns;
-	public $hidden_columns;
-	public $per_page;
-	public $use_users;
-	public $total_items;
 
 	/**
 	 * Constructor
@@ -46,29 +38,14 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public function __construct ( $token ) {
 		// Class Variables
 		$this->token = $token;
-		$this->columns = array();
-		$this->sortable_columns = array();
-		$this->hidden_columns = array();
-		$this->per_page = 10;
-		$this->use_users = false;
-		$this->total_items = 0;
+
 		parent::__construct( array(
-									'singular'=> 'wp_list_table_' . $this->token, // Singular label
-									'plural' => 'wp_list_table_' . $this->token . 's', // Plural label
-									'ajax'	=> false // No Ajax for this table
+								'singular' => 'wp_list_table_' . $this->token, // Singular label
+								'plural'   => 'wp_list_table_' . $this->token . 's', // Plural label
+								'ajax'     => false // No Ajax for this table
 		) );
 		// Actions
-		add_action( 'sensei_before_list_table', array( $this, 'table_search_form' ) );
-
-		// Filters to remove sortabel columns from Analysis & Grading (to be updated in future versions)
-		add_filter( 'sensei_analysis_overview_courses_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-		add_filter( 'sensei_analysis_overview_lessons_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-		add_filter( 'sensei_analysis_overview_users_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-		add_filter( 'sensei_analysis_lesson_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-		add_filter( 'sensei_analysis_user_profile_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-		add_filter( 'sensei_analysis_course_user_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-		add_filter( 'sensei_analysis_course_lesson_columns_sortable', array( $this, 'remove_sortable_columns' ) );
-
+		add_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
 	} // End __construct()
 
 	/**
@@ -102,18 +79,21 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) && !$this->has_items() ) {
+			return;
+		}
 		?><form method="get">
-  				<?php
-  				if( isset( $_GET ) && count( $_GET ) > 0 ) {
-  					foreach( $_GET as $k => $v ) {
-  						if( 's' != $k ) {
-  							?><input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" /><?php
-  						}
-  					}
-  				}
-  				?>
-  				<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users' ,'woothemes-sensei' ) ), 'search_id'); ?>
-			</form><?php
+			<?php
+			if( isset( $_GET ) && count( $_GET ) > 0 ) {
+				foreach( $_GET as $k => $v ) {
+					if( 's' != $k ) {
+						?><input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" /><?php
+					}
+				}
+			}
+			?>
+			<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users' ,'woothemes-sensei' ) ), 'search_id'); ?>
+		</form><?php
 	} // End table_search_form()
 
 	/**
@@ -135,148 +115,90 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	} // End get_sortable_columns()
 
 	/**
-	 * build_data_array build the data array for output
-	 * @since  1.2.0
+	 * Overriding parent WP-List-Table get_column_info()
+	 * @since  1.7.0
 	 * @return array
 	 */
-	public function build_data_array() {
-		return array();
-	} // End build_data_array()
+	function get_column_info() {
+		if ( isset( $this->_column_headers ) )
+			return $this->_column_headers;
 
-	/**
-	 * array_sort_reorder handle sorting of table data
-	 * @since  1.2.0
-	 * @param  array $return_array data to be ordered
-	 * @return array $return_array ordered data
-	 */
-	public function array_sort_reorder( $return_array ) {
-		if ( isset( $_GET['orderby'] ) && '' != esc_html( $_GET['orderby'] ) ) {
-			$sort_key = '';
-			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->sortable_columns ) ) {
-				$sort_key = esc_html( $_GET['orderby'] );
-			} // End If Statement
-			if ( '' != $sort_key ) {
-					$return_array = $this->sort_array_by_key($return_array,$sort_key);
-				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
-					$return_array = array_reverse( $return_array, true );
-				} // End If Statement
-			} // End If Statement
-			return $return_array;
-		} else {
-			return $return_array;
-		} // End If Statement
-	} // End array_sort_reorder()
-
-	/**
-	 * Prepare the table with different parameters, pagination, columns and table elements
-	 * @since  1.2.0
-	 * @return void
-	 */
-	public function prepare_items() {
-		// Register Columns
 		$columns = $this->get_columns();
-		$hidden = $this->hidden_columns;
-		$sortable = $this->get_sortable_columns();
-		$this->_column_headers = array($columns, $hidden, $sortable);
-		// Get Table Data and build Pagination
-		$this->items = $this->build_data_array();
-		$per_page = $this->per_page;
-		$current_page = $this->get_pagenum();
-		if ( $this->use_users ) {
-			if( intval( $this->total_items ) > 0 ) {
-				$total_items = $this->total_items;
-			} else {
-				$user_count = count_users();
-				$total_items = $user_count['total_users'];
-			}
-		} elseif ( isset( $this->user_ids ) && 0 < intval( $this->user_ids ) ) {
-			$total_items = count ( $this->user_ids );
-		} else {
-			$total_items = count( $this->items );
-			// Subset for pagination
-			$this->items = array_slice($this->items,(($current_page-1)*$per_page),$per_page);
-			$this->set_pagination_args( array(
-				'total_items' => $total_items,
-				'per_page' => $per_page,
-			) );
-		} // End If Statement
-	} // End prepare_items()
+		$hidden = get_hidden_columns( $this->screen );
+
+		$sortable_columns = $this->get_sortable_columns();
+		/**
+		 * Filter the list table sortable columns for a specific screen.
+		 *
+		 * The dynamic portion of the hook name, $this->screen->id, refers
+		 * to the ID of the current screen, usually a string.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param array $sortable_columns An array of sortable columns.
+		 */
+		$_sortable = apply_filters( "manage_{$this->screen->id}_sortable_columns", $sortable_columns );
+
+		$sortable = array();
+		foreach ( $_sortable as $id => $data ) {
+			if ( empty( $data ) )
+				continue;
+
+			$data = (array) $data;
+			if ( !isset( $data[1] ) )
+				$data[1] = false;
+
+			$sortable[$id] = $data;
+		}
+
+		$this->_column_headers = array( $columns, $hidden, $sortable );
+
+		return $this->_column_headers;
+	}
 
 	/**
-	 * Display the rows of records in the table
-	 * Overloads the parent method
-	 * @since  1.2.0
-	 * @return echo the markup of the rows
+	 * Called by WP-List-Table and wrapping get_row_data() (needs overriding) with the elements needed for HTML output
+	 *
+	 * @since  1.7.0
+	 * @param object $item The current item
 	 */
-	public function display_rows() {
-		//Get the records registered in the prepare_items method
-		$records = $this->items;
-		//Get the columns registered in the get_columns and get_sortable_columns methods
+	function single_row( $item ) {
+		static $row_class = '';
+		$row_class = ( $row_class == '' ? ' class="alternate"' : '' );
+
+		echo '<tr' . $row_class . '>';
+
+		$column_data = $this->get_row_data( $item );
+
 		list( $columns, $hidden ) = $this->get_column_info();
-		// Loop for each record
-		$record_count = 0;
-		if( !empty( $records ) ) {
-			foreach( $records as $rec ) {
-				// Row class
-				$class = '';
-				if( ! ( $record_count % 2 ) ) {
-					$class = 'alternate';
-				}
-				// Table Row
-				echo '<tr class="' . $class . '" id="record_'.$record_count.'">';
-				// Table Columns Loop
-				foreach ( $columns as $column_name => $column_display_name ) {
-					$class = "class='$column_name column-$column_name'";
-					$style = "";
-					if ( in_array( $column_name, $hidden ) ) $style = ' style="display:none;"';
-					$attributes = $class . $style;
-					//Display the cell
-					echo '<td '.$attributes.'>'.stripslashes($rec[$column_name]).'</td>';
-				} // End For Loop
-				$record_count++;
-				echo '</tr>';
-			} // End For Loop
-		} // End If Statement
-	} // End display_rows()
+
+		foreach ( $columns as $column_name => $column_display_name ) {
+			$class = "class='$column_name column-$column_name'";
+
+			$style = '';
+			if ( in_array( $column_name, $hidden ) )
+				$style = ' style="display:none;"';
+
+			$attributes = "$class$style";
+
+			echo "<td $attributes>";
+			if ( isset($column_data[$column_name]) ) {
+				echo $column_data[$column_name];
+			}
+			echo "</td>";
+		}
+
+		echo '</tr>';
+	}
 
 	/**
-	 * sort_array_by_key sorts array by key
-	 * @since  1.2.0
-	 * @param  $array by ref
-	 * @param  $key string column name in array
-	 * @return void
+	 * @since 1.7.0
+	 * @access public
+	 * @abstract
 	 */
-	public function sort_array_by_key( $array, $key ) {
-	    $sorter = array();
-	    $ret = array();
-	    reset( $array );
-	    foreach ( $array as $ii => $va ) {
-	    	// Remove HTML tags for proper sorting
-	        $sorter[$ii] = strip_tags( $va[$key] );
-	    } // End For Loop
-	    natcasesort( $sorter );
-	    foreach ( $sorter as $ii => $va ) {
-	        $ret[$ii] = $array[$ii];
-	    } // End For Loop
-	    $array = $ret;
-	    return $array;
-	} // End sort_array_by_key()
-
-	/**
-	 * column_default handles default column output
-	 * Overloads the parent method
-	 * @since  1.2.0
-	 * @param  $item array of columns
-	 * @param  $column_name string column name
-	 * @return string output
-	 */
-	public function column_default( $item, $column_name ) {
-		if ( array_key_exists( $column_name, $this->columns ) ) {
-			return $item[ $column_name ];
-		} else {
-			return print_r( $item, true ) ;
-		} // End If Statement
-	} // End column_default()
+	protected function get_row_data( $item ) {
+		die( 'either function WooThemes_Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or WooThemes_Sensei_List_Table::single_row() should be.' );
+	}
 
 	/**
 	 * no_items sets output when no items are found
@@ -284,8 +206,8 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	 * @since  1.2.0
 	 * @return void
 	 */
-	public function no_items() {
-  		_e( 'No items found.', 'woothemes-sensei' );
+	function no_items() {
+		echo apply_filters( 'sensei_list_table_no_items_text', __( 'No items found.', 'woothemes-sensei' ) );
 	} // End no_items()
 
 	/**
@@ -304,23 +226,7 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	 */
 	public function bulk_actions( $which = '' ) {
 		// This will be output Above the table headers on the left
+		echo apply_filters( 'sensei_list_bulk_actions', '' );
 	} // End bulk_actions()
 
-	/**
-	 * user_query_results wrapper for user query
-	 * @since  1.4.1
-	 * @return array
-	 */
-	public function user_query_results( $args_array ) {
-		// User Query
-		$wp_user_search = new WP_User_Query( $args_array );
-		$users = $wp_user_search->get_results();
-		$this->set_pagination_args( array(
-			'total_items' => $wp_user_search->get_total(),
-			'per_page' => $this->per_page,
-		) );
-		return $users;
-	} // End user_query_results()
-
 } // End Class
-?>

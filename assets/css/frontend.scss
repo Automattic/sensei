@@ -199,6 +199,7 @@ a.sensei-certificate-link {
 	padding: 0.5em 1em;
 	font-style: italic;
 	color: lighten($color_body, 20%);
+	clear: both;
 	&:before  {
 		@include iconbefore();
 		content: '\f112';
