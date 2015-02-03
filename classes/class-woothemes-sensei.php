@@ -387,12 +387,12 @@ class WooThemes_Sensei {
 		if ( $this->version != '' ) {
 
 			// Check previous version to see if forced updates must run
-			$old_version = get_option( 'woothemes-sensei-version', false );
-			if( $old_version && version_compare( $old_version, '1.7.0', '<' )  ) {
-				update_option( 'woothemes-sensei-force-updates', $this->version );
-			} else {
-				delete_option( 'woothemes-sensei-force-updates' );
-			}
+			// $old_version = get_option( 'woothemes-sensei-version', false );
+			// if( $old_version && version_compare( $old_version, '1.7.0', '<' )  ) {
+			// 	update_option( 'woothemes-sensei-force-updates', $this->version );
+			// } else {
+			// 	delete_option( 'woothemes-sensei-force-updates' );
+			// }
 
 			update_option( 'woothemes-sensei-version', $this->version );
 		}

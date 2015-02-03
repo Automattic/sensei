@@ -1,5 +1,8 @@
 *** Sensei Changelog ***
 
+2015.02.03 - version 1.7.1
+ * Tweak - Giving option to skip forced updates for new users
+
 2015.02.02 - version 1.7.0
  * New - Completely new data structure that improves site performace and fixes numerous data-consistency issues
  * New - Multiple choice questions can now accept multiple correct answers
