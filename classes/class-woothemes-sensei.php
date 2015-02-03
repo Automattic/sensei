@@ -896,7 +896,9 @@ class WooThemes_Sensei {
 		$wc_product_object = false;
 		if ( 0 < intval( $wc_product_id ) ) {
 			// Get the product
-			if ( function_exists( 'get_product' ) ) {
+			if ( function_exists( 'wc_get_product' ) ) {
+				$wc_product_object = wc_get_product( $wc_product_id ); // Post WC 2.3
+			} elseif ( function_exists( 'get_product' ) ) {
 				$wc_product_object = get_product( $wc_product_id ); // Post WC 2.0
 			} else {
 				// Pre WC 2.0
