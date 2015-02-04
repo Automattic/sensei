@@ -375,9 +375,12 @@ class WooThemes_Sensei_Utils {
 		) );
 
 		foreach ( $orders as $order_id ) {
+
 			$order = new WC_Order( $order_id->ID );
-			if ( $order->status == 'completed' ) {
+			if ( $order->post_status == 'wc-completed' || $order->post_status == 'wc-processing' ) {
+
 				if ( 0 < sizeof( $order->get_items() ) ) {
+
 					foreach( $order->get_items() as $item ) {
 
 						// Allow product ID to be filtered
@@ -388,27 +391,43 @@ class WooThemes_Sensei_Utils {
 
 							// Check if user has an active subscription for product
 							if( class_exists( 'WC_Subscriptions_Manager' ) ) {
+
 								$sub_key = WC_Subscriptions_Manager::get_subscription_key( $order_id->ID, $product_id );
+
 								if( $sub_key ) {
 									$sub = WC_Subscriptions_Manager::get_subscription( $sub_key );
+
 									if( $sub && isset( $sub['status'] ) ) {
+
 										if( 'active' == $sub['status'] ) {
+
 											return true;
+
 										} else {
+
 											return false;
-										}
-									}
-								}
-							}
+
+										} // end if 'active' == $sub['status']
+
+									} // end if $sub && isset( $sub['status']
+
+								}// end if $sub_key
+
+							}// end if class_exists( 'WC_Subscriptions_Manager' )
 
 							// Customer has bought product
 							return true;
-						} // End If Statement
+
+						} // End If $item['product_id'] == $product_id ...
 
 					} // End For Loop
+
 				} // End If Statement
+
 			} // End If Statement
+
 		} // End For Loop
+
 	} // End sensei_customer_bought_product()
 
 	/**
