@@ -351,8 +351,10 @@ class WooThemes_Sensei_Updates {
 			// 	$skip_forced_updates = true;
 			// }
 
+			// Force critical updates if only if lessons already exist
 			$skip_forced_updates = false;
-			if( isset( $_GET['sensei_skip_forced_updates'] ) ) {
+			$lesson_posts = wp_count_posts( 'lesson' );
+			if( ! isset( $lesson_posts->publish ) || ! $lesson_posts->publish ) {
 				$skip_forced_updates = true;
 			}
 
@@ -391,7 +393,7 @@ class WooThemes_Sensei_Updates {
 
 				$update_message = '<h1>' . __( 'Important Sensei upgrades required!', 'woothemes-sensei' ) . '</h1>' . "\n";
 
-				$update_message .= '<h4>' . sprintf( __( 'These updates are only required if you are updating from a previous version of Sensei. If you are installing Sensei for the first time, %1$syou can dismiss this page by clicking here%2$s.', 'woothemes-sensei' ), '<a href="' . add_query_arg( array( 'sensei_skip_forced_updates' => 'true' ) ) . '">', '</a>' ) . '</h4>' ."\n";
+				// $update_message .= '<h4>' . sprintf( __( 'These updates are only required if you are updating from a previous version of Sensei. If you are installing Sensei for the first time, %1$syou can dismiss this page by clicking here%2$s.', 'woothemes-sensei' ), '<a href="' . add_query_arg( array( 'sensei_skip_forced_updates' => 'true' ) ) . '">', '</a>' ) . '</h4>' ."\n";
 
 				$update_message .= '<p>' . __( 'The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'woothemes-sensei' ) . '</p>' . "\n";
 
