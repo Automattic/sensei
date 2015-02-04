@@ -346,9 +346,16 @@ class WooThemes_Sensei_Updates {
 
 		if( ! isset( $_GET['page'] ) || 'sensei_updates' != $_GET['page'] ) {
 
-			$new_install = false;
-			if( ! get_option( 'woothemes-sensei-force-updates', false ) ) {
-				$new_install = true;
+			// $skip_forced_updates = false;
+			// if( ! get_option( 'woothemes-sensei-force-updates', false ) ) {
+			// 	$skip_forced_updates = true;
+			// }
+
+			// Force critical updates if only if lessons already exist
+			$skip_forced_updates = false;
+			$lesson_posts = wp_count_posts( 'lesson' );
+			if( ! isset( $lesson_posts->publish ) || ! $lesson_posts->publish ) {
+				$skip_forced_updates = true;
 			}
 
 			$use_the_force = false;
@@ -360,7 +367,7 @@ class WooThemes_Sensei_Updates {
 					if ( $upgrade_type == 'forced' ) {
 						foreach ( $function_to_run as $function_name => $update_data ) {
 
-							if( $new_install ) {
+							if( $skip_forced_updates ) {
 								$this->set_update_run( $function_name );
 								continue;
 							}
@@ -376,7 +383,7 @@ class WooThemes_Sensei_Updates {
 				}
 			}
 
-			if( $new_install ) {
+			if( $skip_forced_updates ) {
 				return;
 			}
 
@@ -385,6 +392,8 @@ class WooThemes_Sensei_Updates {
 				$update_title = __( 'Important Sensei updates required', 'woothemes-sensei' );
 
 				$update_message = '<h1>' . __( 'Important Sensei upgrades required!', 'woothemes-sensei' ) . '</h1>' . "\n";
+
+				// $update_message .= '<h4>' . sprintf( __( 'These updates are only required if you are updating from a previous version of Sensei. If you are installing Sensei for the first time, %1$syou can dismiss this page by clicking here%2$s.', 'woothemes-sensei' ), '<a href="' . add_query_arg( array( 'sensei_skip_forced_updates' => 'true' ) ) . '">', '</a>' ) . '</h4>' ."\n";
 
 				$update_message .= '<p>' . __( 'The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'woothemes-sensei' ) . '</p>' . "\n";
 

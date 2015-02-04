@@ -409,7 +409,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     	    if ( 0 < $wc_post_id ) {
     	    	// Get the product
     	    	$product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
-    	    	if ( $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
+
+    	    	if ( isset( $product ) && !empty( $product )  &&  $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
     	    		<span class="course-price"><?php echo $product->get_price_html(); ?></span>
     	    	<?php } // End If Statement
     	    } // End If Statement

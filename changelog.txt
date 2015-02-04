@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2015.02.04 - version 1.7.1
+ * Tweak - Improving detection for whether critical updates are needed or not
+ * Tweak - Updating code for WooCommerce 2.2+
+ * Fix - Fixing display of 'Delete Course' button on paid courses
+
 2015.02.02 - version 1.7.0
  * New - Completely new data structure that improves site performace and fixes numerous data-consistency issues
  * New - Multiple choice questions can now accept multiple correct answers

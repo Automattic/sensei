@@ -387,12 +387,12 @@ class WooThemes_Sensei {
 		if ( $this->version != '' ) {
 
 			// Check previous version to see if forced updates must run
-			$old_version = get_option( 'woothemes-sensei-version', false );
-			if( $old_version && version_compare( $old_version, '1.7.0', '<' )  ) {
-				update_option( 'woothemes-sensei-force-updates', $this->version );
-			} else {
-				delete_option( 'woothemes-sensei-force-updates' );
-			}
+			// $old_version = get_option( 'woothemes-sensei-version', false );
+			// if( $old_version && version_compare( $old_version, '1.7.0', '<' )  ) {
+			// 	update_option( 'woothemes-sensei-force-updates', $this->version );
+			// } else {
+			// 	delete_option( 'woothemes-sensei-force-updates' );
+			// }
 
 			update_option( 'woothemes-sensei-version', $this->version );
 		}
@@ -885,29 +885,49 @@ class WooThemes_Sensei {
 	} // End sensei_woocommerce_reactivate_subscription
 
 	/**
-	 * Returns the WooCommerce Product Object for pre and post WooCommerce 2.0 installations.
+	 * Returns the WooCommerce Product Object
+	 *
+	 * The code caters for pre and post WooCommerce 2.2 installations.
+	 *
 	 * @since   1.1.1
 	 * @access  public
 	 * @param   integer $wc_product_id Product ID or Variation ID
 	 * @param   string  $product_type  '' or 'variation'
-	 * @return  woocommerce product object $wc_product_object
+	 * @return   WC_Product $wc_product_object
 	 */
 	public function sensei_get_woocommerce_product_object ( $wc_product_id = 0, $product_type = '' ) {
+
 		$wc_product_object = false;
 		if ( 0 < intval( $wc_product_id ) ) {
+
 			// Get the product
-			if ( function_exists( 'get_product' ) ) {
+			if ( function_exists( 'wc_get_product' ) ) {
+
+				$wc_product_object = wc_get_product( $wc_product_id ); // Post WC 2.3
+
+			} elseif ( function_exists( 'get_product' ) ) {
+
 				$wc_product_object = get_product( $wc_product_id ); // Post WC 2.0
+
 			} else {
-				// Pre WC 2.0
-				if ( 'variation' == $product_type || 'subscription_variation' == $product_type ) {
-					$wc_product_object = new WC_Product_Variation( $wc_product_id );
-				} else {
-					$wc_product_object = new WC_Product( $wc_product_id );
+
+					// Pre WC 2.0
+					if ( 'variation' == $product_type || 'subscription_variation' == $product_type ) {
+
+						$wc_product_object = new WC_Product_Variation( $wc_product_id );
+
+					} else {
+
+						$wc_product_object = new WC_Product( $wc_product_id );
+
+					} // End If Statement
+
 				} // End If Statement
-			} // End If Statement
+
 		} // End If Statement
+
 		return $wc_product_object;
+
 	} // End sensei_get_woocommerce_product_object()
 
 	/**
