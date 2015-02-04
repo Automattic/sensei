@@ -188,13 +188,14 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		$course_ids = array();
 		if ( 'activecourses' == esc_attr( $instance['component'] ) ) {
 			$courses = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_status', 'status' => 'in-progress' ), true );
-			foreach( $courses AS $course_id ) {
-				$course_ids[] = $course_id;
+
+			foreach( $courses AS $course ) {
+				$course_ids[] = $course->comment_post_ID;
 			}
 		} elseif( 'completedcourses' == esc_attr( $instance['component'] ) ) {
 			$courses = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_status', 'status' => 'complete' ), true );
-			foreach( $courses AS $course_id ) {
-				$course_ids[] = $course_id;
+			foreach( $courses AS $course ) {
+				$course_ids[] = $course->comment_post_ID;
 			}
 		} // End If Statement
 
