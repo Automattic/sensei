@@ -121,10 +121,8 @@ class WooThemes_Sensei_Lesson {
 		add_meta_box( 'lesson-prerequisite', __( 'Lesson Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
 
 		// Add Meta Box for Lesson Course
-		if( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated()  ){
-			add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
-		}
-
+		add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
+		
 		// Add Meta Box for Lesson Preview
 		add_meta_box( 'lesson-preview', __( 'Lesson Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'default' );
 
