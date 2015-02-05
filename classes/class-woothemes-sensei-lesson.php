@@ -1831,11 +1831,15 @@ class WooThemes_Sensei_Lesson {
 			die('');
 		} // End If Statement
 		// Parse POST data
-		$data = $_POST['data'];
+		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that 
+		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed. 
+		// So first restore the original unslashed apostrophes by removing those slashes
+		$data = wp_unslash( $_POST['data'] );
+		// Then parse the string to an array (note that parse_str automatically urldecodes all the variables)
 		$question_data = array();
 		parse_str($data, $question_data);
-		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), except AJAX
-		// encoded POST data bypasses this, so ensure consistancy for lesson_save_question() but not doing anything
+		// Finally re-slash all elements to ensure consistancy for lesson_save_question()
+		$question_data = wp_slash( $question_data );
 		// Save the question
 		$return = false;
 		// Question Save and Delete logic
