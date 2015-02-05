@@ -18,6 +18,6 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		global $woothemes_sensei;
 
 		//test if the lesson object is loaded
-		$this->assertTrue( isset($woothemes_sensei->lessons ), 'Sensei lesson object loaded'  );
+		$this->assertTrue( isset($woothemes_sensei->lesson ), 'Sensei lesson is not object loaded'  );
 	}
 }
