@@ -1,8 +1,17 @@
+/**
+ * Gulp File
+ *
+ * 1) Install all the modules:
+ * $ npm install --save-dev gulp orchestrator del gulp-rename gulp-uglify gulp-minify-css
+ *
+ * 2) Run gulp to mifiy javascript and css using the 'gulp' command.
+ */
+
 var gulp = require('gulp');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var minifyCSS = require('gulp-minify-css');
-del = require('del');
+var del = require('del');
 
 var paths = {
     scripts: ['assets/js/*.js'],
@@ -40,5 +49,4 @@ gulp.task('watch', function() {
     // Watch .js files
     //gulp.watch( ['assets/js/*.js' , '!assets/js/*.js' ], ['javascript']);
    // gulp.watch('assets/css/*.css', ['css']);
-
 });
