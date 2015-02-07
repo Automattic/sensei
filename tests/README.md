@@ -6,14 +6,14 @@
 
 1) `$ vagrant SSH` into the machine running your Sensei setup.
 
-2) `$ cd /srv/www/ ` into the www folder.
+2) `$ cd /srv/www/wp-trunk ` or `$ cd /srv/www/wp-trunk wp-develop` depending on where you run Sensei from.
 
-3) Proceed to the folder where you've installed Sensei.
+3) Proceed to `cd wp-content/plugins/sensei/` or to directory where you've installed Sensei
 
 4) Install the tests:
 
     ```
-    $ tests/bin/install.sh wordpress_unit_tests root root localhost
+    $ tests/bin/install_vvv.sh
     ```
 
 ### In your local machine
@@ -31,7 +31,7 @@
 
 Sample usage:
 
-    $ tests/bin/install.sh woocommerce_tests root root
+    $ tests/bin/install.sh woocommerce_tests root root localhost
 
 **Important**: The `<db-name>` database will be created if it doesn't exist and all data will be removed during testing.
 
