@@ -112,6 +112,11 @@ class WooThemes_Sensei {
 		// Add the lesson class
 		$this->lesson = $this->post_types->lesson;
 
+		//Add the quiz class
+		$this->load_class( 'admin' );
+		$this->quiz = new WooThemes_Sensei_Quiz( $file );
+		$this->quiz->token = $this->token;
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 

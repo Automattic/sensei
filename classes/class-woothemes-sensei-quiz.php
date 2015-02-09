@@ -19,12 +19,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WooThemes_Sensei_Quiz {
 	public $token;
 	public $meta_fields;
+	public $file;
 
 	/**
 	 * Constructor.
 	 * @since  1.0.0
+	 *
+	 * @param $file
 	 */
-	public function __construct () {
+	public function __construct ( $file = __FILE__ ) {
+		$this->file = $file;
 		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type' );
 		add_action( 'save_post', array( $this, 'update_author' ));
 	} // End __construct()
@@ -67,5 +71,44 @@ class WooThemes_Sensei_Quiz {
 	    return;
 	}// end update_author
 
+	/**
+	 * Save the user answers for the given lesson's quiz
+	 *
+	 * @param int $lesson_id
+	 * @param int $user_id
+	 * @param
+	 * @return bool $success
+	 */
+	public function save_user_answers( $lesson_id, $user_id, $quiz_answers  ){
+		$success = false;
+
+		if( empty( $lesson_id ) || empty( $user_id )  ){
+			return $success;
+		}
+
+		if( 'lesson' != get_post_type( $lesson_id ) ){
+			return $success;
+		}
+
+		if( !get_userdata( $user_id ) ){
+			return $success;
+		}
+
+
+		return true;
+	}// end save_user_answers
+
+	/**
+	 * Get the user answers for the given lesson's quiz
+	 *
+	 * @param int $lesson_id
+	 * @param int $user_id
+	 * @return array $answers
+	 */
+	public function get_user_answers( $lesson_id, $user_id ){
+		$answers = [];
+
+		return $answers;
+	}// end save_user_answers
+
 } // End Class
-?>
