@@ -122,7 +122,7 @@ class WooThemes_Sensei_Lesson {
 
 		// Add Meta Box for Lesson Course
 		add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
-
+		
 		// Add Meta Box for Lesson Preview
 		add_meta_box( 'lesson-preview', __( 'Lesson Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'default' );
 
