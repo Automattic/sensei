@@ -1811,6 +1811,10 @@ class WooThemes_Sensei_Utils {
 				}
 			}
 			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
+
+			if( 'complete' == $status ) {
+				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+			}
 		}
 		return $comment_id;
 	}

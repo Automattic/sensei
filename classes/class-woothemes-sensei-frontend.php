@@ -1478,7 +1478,12 @@ class WooThemes_Sensei_Frontend {
 		   		if ( $completed_course ) { ?>
 		   			<div class="status completed"><?php echo apply_filters( 'sensei_complete_text', __( 'Completed', 'woothemes-sensei' ) ); ?></div>
 		   			<?php if( $woothemes_sensei->frontend->course->course_quizzes( $post->ID, true ) ) { ?>
-		   				<p class="sensei-results-links"><a class="view-results" href="<?php echo $woothemes_sensei->course_results->get_permalink( $post->ID ); ?>"><?php echo apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ); ?></a></p>
+		   				<p class="sensei-results-links">
+		   				<?php
+		   				$results_link = '<a class="view-results" href="' . $woothemes_sensei->course_results->get_permalink( $post->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+		   				$results_link = apply_filters( 'sensei_results_links', $results_link );
+		   				echo $results_link;
+		   				?></p>
 		   			<?php } ?>
 		   		<?php } else { ?>
 		    		<div class="status in-progress"><?php echo apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ); ?></div>
