@@ -562,12 +562,14 @@ class WooThemes_Sensei_Updates {
 
 				// Get current user answers
 				$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
-				if( is_array( $comments ) ) {
-					foreach ( $comments as $comment ) {
-						$user_id = $comment->user_id;
-						$content = maybe_unserialize( base64_decode( $comment->comment_content ) );
-						$old_user_answers[ $quiz_id ][ $user_id ] = $content;
-					}
+				// Need to always return an array, even with only 1 item
+				if ( !is_array($comments) ) {
+					$comments = array( $comments );
+				}
+				foreach ( $comments as $comment ) {
+					$user_id = $comment->user_id;
+					$content = maybe_unserialize( base64_decode( $comment->comment_content ) );
+					$old_user_answers[ $quiz_id ][ $user_id ] = $content;
 				}
 
 				// Get correct answers
