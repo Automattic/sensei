@@ -630,8 +630,8 @@ jQuery(document).ready( function($) {
 	 			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
 	 			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
 	 			dataToPost += '&course_category' + '=' + jQuery( '#course-category-options' ).val();
-	 			dataToPost += '&course_title' + '=' + jQuery( '#course-title' ).attr( 'value' );
-	 			dataToPost += '&course_content' + '=' + jQuery( '#course-content' ).attr( 'value' );
+	 			dataToPost += '&course_title' + '=' + encodeURIComponent( jQuery( '#course-title' ).attr( 'value' ) );
+	 			dataToPost += '&course_content' + '=' + encodeURIComponent( jQuery( '#course-content' ).attr( 'value' ) );
 	 			dataToPost += '&action=add';
 	 			// Perform the AJAX call.
 	 			jQuery.post(
@@ -788,13 +788,13 @@ jQuery(document).ready( function($) {
 			// Handle Required Fields
 			jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'input' ).each( function() {
 	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
-	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
 	 			} // End If Statement
  			});
 
 			// Handle textarea required field
 			if ( jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).val() != '' ) {
-	 			dataToPost += '&' + jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).val();
+	 			dataToPost += '&' + jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).val() );
 	 		} // End If Statement
 
 	 		// Handle Question Input Fields
@@ -804,19 +804,19 @@ jQuery(document).ready( function($) {
 	 				// Only get the selected radio button
 	 				if ( radioCount == 0 ) {
 	 					radioValue = jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
-	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + radioValue;
+	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( radioValue );
 	 					radioCount++;
 	 				} // End If Statement
  				} else {
- 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+ 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
  				} // End If Statement
 	 		});
 	 		// Handle Question Textarea Fields
 	 		if ( jQuery( '#add_question_right_answer_essay' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
-	 			dataToPost += '&' + jQuery( '#add_question_right_answer_essay' ).attr( 'name' ) + '=' + jQuery( '#add_question_right_answer_essay' ).val();
+	 			dataToPost += '&' + jQuery( '#add_question_right_answer_essay' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_essay' ).val() );
 	 		} // End If Statement
  			if ( jQuery( '#add_question_right_answer_multiline' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
- 				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + jQuery( '#add_question_right_answer_multiline' ).val();
+ 				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_multiline' ).val() );
 	 		} // End If Statement
 	 		dataToPost += '&' + 'question_type' + '=' + questionType;
 	 		dataToPost += '&' + 'question_category' + '=' + questionCategory;
@@ -834,7 +834,7 @@ jQuery(document).ready( function($) {
 
  			if ( '' != jQuery( 'div#add-new-question' ).find( 'div.' + divFieldsClass ).find( '.answer_feedback' ).exists() ) {
 	 			var answer_feedback = jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).find( '.answer_feedback' ).attr( 'value' );
-	 			dataToPost += '&' + 'answer_feedback' + '=' + answer_feedback;
+	 			dataToPost += '&' + 'answer_feedback' + '=' + encodeURIComponent( answer_feedback );
 	 		}
 
  			var random_order = 'no';
@@ -958,7 +958,7 @@ jQuery(document).ready( function($) {
  			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
  			dataToPost += '&action=save';
  			jQuery( this ).closest( 'td' ).children( 'input' ).each( function() {
- 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+ 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
  			});
  			tableRowId = jQuery( this ).closest('td').find('span.question_original_counter').text();
  			if ( jQuery( this ).closest('td').find( 'input.question_type' ).val() != '' ) {
@@ -991,13 +991,13 @@ jQuery(document).ready( function($) {
 			// Handle Required Fields
 			jQuery( this ).closest('td').find( 'div.question_required_fields' ).find( 'input' ).each( function() {
 	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
-	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
 	 			} // End If Statement
  			});
 
 			// Handle textarea required field
 			if ( jQuery( this ).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).val() != '' ) {
-	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).val();
+	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).val() );
 	 		} // End If Statement
 
 	 		// Handle Question Input Fields
@@ -1006,21 +1006,21 @@ jQuery(document).ready( function($) {
 	 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
 	 				// Only get the selected radio button
 	 				if ( radioCount == 0 ) {
-	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
+	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' ) );
 	 					radioCount++;
 	 				} // End If Statement
  				} else {
- 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + jQuery( this ).attr( 'value' );
+ 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
  				} // End If Statement
 	 		});
 
 	 		// Handle Question Textarea Fields
 	 		if ( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
-	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' + jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val();
+	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
 	 		} // End If Statement
 	 		if ( divFieldsClass == 'question_fileupload_fields' ) {
 	 			jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).each( function() {
-	 				dataToPost += '&' +  jQuery(this).attr( 'name' ) + '=' + jQuery(this).val();
+	 				dataToPost += '&' +  jQuery(this).attr( 'name' ) + '=' + encodeURIComponent( jQuery(this).val() );
 	 			});
 	 		} // End If Statement
 
@@ -1039,7 +1039,7 @@ jQuery(document).ready( function($) {
 
  			if ( '' != jQuery( this ).closest('td').find( '.answer_feedback' ).exists() ) {
 	 			var answer_feedback = jQuery( this ).closest('td').find( '.answer_feedback' ).attr( 'value' );
-	 			dataToPost += '&' + 'answer_feedback' + '=' + answer_feedback;
+	 			dataToPost += '&' + 'answer_feedback' + '=' + encodeURIComponent( answer_feedback );
 	 		}
 
  			var random_order = 'no';
