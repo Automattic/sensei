@@ -933,7 +933,7 @@ class WooThemes_Sensei_Frontend {
 
 					// Save Quiz Answers
 					if( isset( $_POST['sensei_question'] ) ) {
-						WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
+						WooThemes_Sensei_Quiz::sensei_save_quiz_answers( $_POST['sensei_question'] );
 					}
 
 					// Grade quiz
@@ -986,7 +986,7 @@ class WooThemes_Sensei_Frontend {
 						}
 
 						if( isset( $_POST['sensei_question'] ) ) {
-							WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
+							WooThemes_Sensei_Quiz::sensei_save_quiz_answers( $_POST['sensei_question'] );
 						}
 					}
 					// Need message in case the data wasn't saved?

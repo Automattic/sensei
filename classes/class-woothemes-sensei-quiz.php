@@ -76,27 +76,85 @@ class WooThemes_Sensei_Quiz {
 	 *
 	 * @param int $lesson_id
 	 * @param int $user_id
+	 * @param array $quiz_answers
 	 * @param
 	 * @return bool $success
 	 */
-	public function save_user_answers( $lesson_id, $user_id, $quiz_answers  ){
-		$success = false;
+	public function save_user_answers( $quiz_answers, $user_id, $lesson_id   ){
 
-		if( empty( $lesson_id ) || empty( $user_id )  ){
-			return $success;
+		// get the user_id if none was passed in
+		if( intval( $user_id ) == 0 ) {
+			$user_id = get_current_user_id();
+		}
+		$answers_saved = false;
+
+		// make sure the parameters are valid before continuing
+		if( empty( $lesson_id ) || empty( $user_id )
+			|| 'lesson' != get_post_type( $lesson_id )
+			||!get_userdata( $user_id )
+			|| !is_array( $quiz_answers ) ){
+
+			return $answers_saved; // answers save is false at this point
 		}
 
-		if( 'lesson' != get_post_type( $lesson_id ) ){
-			return $success;
+		// Loop through submitted quiz answers and save them appropriately
+		foreach( $quiz_answers as $question_id => $answer ) {
+
+			//Setup the question types
+			$question_types = wp_get_post_terms( $question_id, 'question-type' );
+			foreach( $question_types as $type ) {
+				$question_type = $type->slug;
+			}
+			if( ! $question_type ) {
+				$question_type = 'multiple-choice';
+			}
+
+			// Sanitise answer
+			if( 0 == get_magic_quotes_gpc() ) {
+				$answer = wp_unslash( $answer );
+			}
+			switch( $question_type ) {
+				case 'multi-line': $answer = nl2br( $answer ); break;
+				case 'single-line': break;
+				case 'gap-fill': break;
+				default: $answer = maybe_serialize( $answer ); break;
+			}
+			$args = array(
+				'post_id' => $question_id,
+				'data' => base64_encode( $answer ),
+				'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
+				'user_id' => $user_id,
+				'action' => 'update'
+			);
+			$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+		}// end for each $quiz_answers
+
+
+		// Handle file upload questions
+		if( isset( $_FILES ) ) {
+			foreach( $_FILES as $field => $file ) {
+				if( strpos( $field, 'file_upload_' ) !== false ) {
+					$question_id = str_replace( 'file_upload_', '', $field );
+					if( $file && $question_id ) {
+						$attachment_id = self::upload_file( $file );
+						if( $attachment_id ) {
+							$args = array(
+								'post_id' => $question_id,
+								'data' => base64_encode( $attachment_id ),
+								'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
+								'user_id' => $user_id,
+								'action' => 'update'
+							);
+							$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+						}
+					}
+				}
+			}
 		}
 
-		if( !get_userdata( $user_id ) ){
-			return $success;
-		}
-
-
-		return true;
-	}// end save_user_answers
+		return $answers_saved;
+	}// end save_user_answers()
 
 	/**
 	 * Get the user answers for the given lesson's quiz
@@ -109,6 +167,6 @@ class WooThemes_Sensei_Quiz {
 		$answers = [];
 
 		return $answers;
-	}// end save_user_answers
+	}// end get_user_answers()
 
 } // End Class
