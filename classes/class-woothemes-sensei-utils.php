@@ -1810,9 +1810,10 @@ class WooThemes_Sensei_Utils {
 					update_comment_meta( $comment_id, $key, $value );
 				}
 			}
+
 			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
 
-			if( 'complete' == $status ) {
+			if( in_array( $status, array( 'complete', 'passed' ) ) ) {
 				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 			}
 		}
