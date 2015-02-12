@@ -563,7 +563,7 @@ class WooThemes_Sensei_Admin {
 
 		$new_post['post_title'] .= __( $suffix, 'woothemes-sensei' );
 
-		$new_post['post_date'] = date( 'Y-m-d H:i:s' );
+		$new_post['post_date'] = current_time( 'mysql' );
 		$new_post['post_date_gmt'] = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified'] = $new_post['post_date'];
 		$new_post['post_modified_gmt'] = $new_post['post_date_gmt'];
