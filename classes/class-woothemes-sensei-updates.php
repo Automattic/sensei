@@ -77,7 +77,6 @@ class WooThemes_Sensei_Updates {
 																		  'status_changes_convert_questions' => array( 'title' => 'Convert question statuses', 'desc' => 'Convert to new question statuses.' ),
 																		  'update_legacy_sensei_comments_status' => array( 'title' => 'Convert legacy Sensei activity types', 'desc' => 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.' ),
 																		  'update_comment_course_lesson_comment_counts' => array( 'title' => 'Update comment counts', 'desc' => 'Update comment counts on Courses and Lessons due to status changes.' ), ),
-													'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => 'Remove legacy Sensei activity types', 'desc' => 'Remove all legacy Sensei comment types - only run this update once the update to v1.7 is complete and evertything is stable.' ) )
 												),
 								'1.7.2' => array( 	'auto' 		=> array( 'index_comment_status_field' => array( 'title' => 'Add database index to comment statuses', 'desc' => 'This indexes the comment statuses in the database, which will speed up all Sensei activity queries.' ), ),
 													'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => 'Remove legacy Sensei activity types', 'desc' => 'This removes all legacy (pre-1.7) Sensei activity types - only run this update once the update to v1.7 is complete and everything is stable.' ) )
@@ -822,8 +821,12 @@ class WooThemes_Sensei_Updates {
 
 	public function add_sensei_caps() {
 		$role = get_role( 'administrator' );
-		$role->add_cap( 'manage_sensei' );
-		$role->add_cap( 'manage_sensei_grades' );
+
+		if( ! is_null( $role ) ) {
+			$role->add_cap( 'manage_sensei' );
+			$role->add_cap( 'manage_sensei_grades' );
+		}
+
 		return true;
 	}
 
@@ -926,7 +929,11 @@ class WooThemes_Sensei_Updates {
 
 	public function add_editor_caps() {
 		$role = get_role( 'editor' );
-		$role->add_cap( 'manage_sensei_grades' );
+
+		if( ! is_null( $role ) ) {
+			$role->add_cap( 'manage_sensei_grades' );
+		}
+
 		return true;
 	}
 
