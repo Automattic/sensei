@@ -208,6 +208,10 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 		$posts_array = array();
 
+		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes
+		if ( intval( $instance['limit'] ) < count($course_ids) ) {
+			$course_ids = array_slice( $course_ids, 0, intval( $instance['limit'] ) ); // This does mean the order by is effectively ignored
+		}
 		if ( ! empty( $course_ids ) ) {
 			$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ), $course_ids );
 		} else {
