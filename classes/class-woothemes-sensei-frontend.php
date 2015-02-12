@@ -89,6 +89,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_lesson_archive_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_message_archive_main_content', array( $this, 'sensei_message_archive_main_content' ), 10 );
 		add_action( 'sensei_course_category_main_content', array( $this, 'sensei_course_category_main_content' ), 10 );
+		add_action( 'sensei_lesson_tag_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
 		add_action( 'sensei_login_form', array( $this, 'sensei_login_form' ), 10 );
 		add_action( 'sensei_quiz_action_buttons', array( $this, 'sensei_quiz_action_buttons' ), 10 );
@@ -1288,7 +1289,6 @@ class WooThemes_Sensei_Frontend {
 			<p><?php _e( 'No courses found that match your selection.', 'woothemes-sensei' ); ?></p>
 		<?php } // End If Statement
 	} // End sensei_course_category_main_content()
-
 
 	public function sensei_login_form() {
 		global $woothemes_sensei;

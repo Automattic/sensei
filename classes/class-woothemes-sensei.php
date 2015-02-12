@@ -492,6 +492,12 @@ class WooThemes_Sensei {
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
+		} elseif( is_tax( 'lesson-tag' ) ) {
+
+			$file 	= 'taxonomy-lesson-tag.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
 		} elseif ( is_post_type_archive( 'lesson' ) ) {
 
 		    $file 	= 'archive-lesson.php';
