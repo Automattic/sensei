@@ -1814,6 +1814,11 @@ class WooThemes_Sensei_Utils {
 			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
 
 			if( in_array( $status, array( 'complete', 'passed' ) ) ) {
+
+				$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+
+				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
+
 				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 			}
 		}

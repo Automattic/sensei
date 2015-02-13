@@ -112,12 +112,6 @@ class WooThemes_Sensei {
 		// Add the lesson class
 		$this->lesson = $this->post_types->lesson;
 
-		// Load Frontend Class
-		$this->load_class( 'frontend' );
-		$this->frontend = new WooThemes_Sensei_Frontend();
-		$this->frontend->token = $this->token;
-		$this->frontend->init();
-
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 
@@ -142,6 +136,12 @@ class WooThemes_Sensei {
 			$this->learners->token = $this->token;
 
 		} else {
+
+			// Load Frontend Class
+			$this->load_class( 'frontend' );
+			$this->frontend = new WooThemes_Sensei_Frontend();
+			$this->frontend->token = $this->token;
+			$this->frontend->init();
 
 			// Load notice Class
 			$this->load_class( 'notices' );
