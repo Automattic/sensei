@@ -442,6 +442,79 @@ class WooThemes_Sensei_Utils {
 
 	} // End sensei_text_editor()
 
+	/**
+	 * Save quiz answers submitted by users
+	 * @param  boolean $submitted User's quiz answers
+	 * @return boolean            Whether the answers were saved or not
+	 */
+	public static function sensei_save_quiz_answers( $submitted = false, $user_id = 0 ) {
+		if( intval( $user_id ) == 0 ) {
+			$user_id = get_current_user_id();
+		}
+
+		$answers_saved = false;
+
+		if( $submitted && intval( $user_id ) > 0 ) {
+
+			foreach( $submitted as $question_id => $answer ) {
+
+				// Get question type
+				$question_types = wp_get_post_terms( $question_id, 'question-type' );
+				foreach( $question_types as $type ) {
+					$question_type = $type->slug;
+				}
+
+				if( ! $question_type ) {
+					$question_type = 'multiple-choice';
+				}
+
+				// Sanitise answer
+				if( 0 == get_magic_quotes_gpc() ) {
+					$answer = wp_unslash( $answer );
+				}
+				switch( $question_type ) {
+					case 'multi-line': $answer = nl2br( $answer ); break;
+					case 'single-line': break;
+					case 'gap-fill': break;
+					default: $answer = maybe_serialize( $answer ); break;
+				}
+				$args = array(
+							'post_id' => $question_id,
+							'data' => base64_encode( $answer ),
+							'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
+							'user_id' => $user_id,
+							'action' => 'update'
+						);
+				$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+			}
+
+			// Handle file upload questions
+			if( isset( $_FILES ) ) {
+				foreach( $_FILES as $field => $file ) {
+					if( strpos( $field, 'file_upload_' ) !== false ) {
+						$question_id = str_replace( 'file_upload_', '', $field );
+						if( $file && $question_id ) {
+							$attachment_id = self::upload_file( $file );
+							if( $attachment_id ) {
+								$args = array(
+									'post_id' => $question_id,
+									'data' => base64_encode( $attachment_id ),
+									'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
+									'user_id' => $user_id,
+									'action' => 'update'
+								);
+								$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $answers_saved;
+
+	} // End sensei_save_quiz_answers()
+
 	public static function upload_file( $file = array() ) {
 
 		require_once( ABSPATH . 'wp-admin/includes/admin.php' );
