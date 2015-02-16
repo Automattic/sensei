@@ -1408,7 +1408,7 @@ class WooThemes_Sensei_Frontend {
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
     	    $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
-    	    	$preview_text = __( ' (Free Preview)', 'woothemes_sensei' );
+    	    	$preview_text = __( ' (Free Preview)', 'woothemes-sensei' );
     	    } // End If Statement
     	}
     	return $preview_text;
