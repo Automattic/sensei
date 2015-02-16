@@ -304,37 +304,23 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         // types.
         $quiz_question_posts = $woothemes_sensei->lesson->lesson_quiz_questions( $quiz_id_1  );
 
-        // setup the sample
-        // Save each respective array for each quiz id
         /*
+         * This is how the Saved answers array should look:
         array(
-            mcq : $question_id => array(
-               0 = 12
-            )
-
-            mcq with multiple right : $question_id => array(
-               0 = "b",
-               1 = "b"
-               2 = 'c'
-            )
-
-           bool : $question_id => 'true' / 'false'
-           gap file : $question_id => 'fill'
-           single line $question_id => 'Single line scentence'
-           multiline : $question_id => 'Long paragarph, very long paragrap,Long paragarph, very long paragrap,Long paragarph,'
-                                        . ' very long paragrap,Long paragarph, very long paragrap,' ;
+            mcq : $question_id => array(  0 = 12  )
+            mcq with multiple right : $question_id => array( 0 = "b", 1 = "b" , 2 = 'c' )
+            bool : $question_id => 'true' / 'false'
+            gap file : $question_id => 'fill'
+            single line $question_id => 'Single line scentence'
+            multiline : $question_id => 'Long paragarph, very long paragrap,Long paragarph, very long ..'
             file upload: $question_id => base64 encode ( uploaded attachent ID  ) optionaly
-            you'll need to load the file in the array
-
-        $_FILES=> array (size=1)
-  'file_upload_7741' =>git
-    array (size=5)
-      'name' => string 'apple.jpg' (length=9)
-      'type' => string 'image/jpeg' (length=10)
-      'tmp_name' => string '/tmp/phpsP0RJH' (length=14)
-      'error' => int 0
-      'size' => int 36414
-        }
+            $_FILES=> array (size=1)  'file_upload_$question_id' => git  array (size=5)
+                         'name' => string 'apple.jpg' (length=9)
+                         'type' => string 'image/jpeg' (length=10)
+                         'tmp_name' => string '/tmp/phpsP0RJH' (length=14)
+                         'error' => int 0
+                         'size' => int 36414
+            }
         */
 
         // loop through all question posts and create random dummy save quiz answers array for each quiz
@@ -384,24 +370,20 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
             }
         }// end for quiz_question_posts
 
+        // assign the user to the lessons
+        WooThemes_Sensei_Utils::sensei_start_lesson( $this->test_data->lesson_ids[0], $test_user_id  );
+        WooThemes_Sensei_Utils::sensei_start_lesson( $this->test_data->lesson_ids[1], $test_user_id  );
+
         // save the data for each quiz
-        $comment_id_1 = $woothemes_sensei->quiz->save_user_answers( $saved_answers_quiz_1, $this->test_data->lesson_ids[0],  $test_user_id  ) ;
-        $comment_id_2 = $woothemes_sensei->quiz->save_user_answers( $saved_answers_quiz_2, $this->test_data->lesson_ids[1] , $test_user_id );
+        $lesson_1_data_saved = $woothemes_sensei->quiz->save_user_answers( $saved_answers_quiz_1, $this->test_data->lesson_ids[0],  $test_user_id  ) ;
+        $lesson_2_data_saved = $woothemes_sensei->quiz->save_user_answers( $saved_answers_quiz_2, $this->test_data->lesson_ids[1] , $test_user_id );
 
         // did the correct data return a valid comment id on the lesson as a result?
-        $this->assertTrue(  intval( $comment_id_1 ) > 0 , 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
+        $this->assertTrue(  $lesson_1_data_saved && $lesson_2_data_saved , 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
 
         // was the data that was just stored stored correctly ? Check the comment meta on the lesson id
-        $comments = get_comments( array( 'post_id' => $this->test_data->lesson_ids[0] ) );
-        $comment_found = false;
-        foreach( $comments as $comment  ){
-            if( $comment_id_1 == $comment->comment_id ){
-                $comment_found = true;
-            }
-        }
-        $this->assertTrue( $comment_found , 'The saved answers were not stored correctly on the Quiz');
-
-        // was check if the data that was saved on the different quizzes are not the same
+        $sensei_activity_logged = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $this->test_data->lesson_ids[0], 'user_id'=> $test_user_id ) );
+        $this->assertTrue( (bool ) $sensei_activity_logged , 'The saved answers were not stored correctly on the Quiz');
 
     } // end testSaveUserAnswers
 
