@@ -304,16 +304,10 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         // types.
         $quiz_question_posts = $woothemes_sensei->lesson->lesson_quiz_questions( $quiz_id_1  );
 
-        /*
-         * This is how the Saved answers array should look:
-        array(
-            mcq : $question_id => array(  0 = 12  )
-            mcq with multiple right : $question_id => array( 0 = "b", 1 = "b" , 2 = 'c' )
-            bool : $question_id => 'true' / 'false'
-            gap file : $question_id => 'fill'
-            single line $question_id => 'Single line scentence'
-            multiline : $question_id => 'Long paragarph, very long paragrap,Long paragarph, very long ..'
-            file upload: $question_id => base64 encode ( uploaded attachent ID  ) optionaly
+        /* todo: test the file saving process
+           This is how the incomming data will look
+            * we already have the test images which we can use to alter the global $_FILES
+            * get the tests/imges/ file size
             $_FILES=> array (size=1)  'file_upload_$question_id' => git  array (size=5)
                          'name' => string 'apple.jpg' (length=9)
                          'type' => string 'image/jpeg' (length=10)
@@ -379,13 +373,31 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $lesson_2_data_saved = $woothemes_sensei->quiz->save_user_answers( $saved_answers_quiz_2, $this->test_data->lesson_ids[1] , $test_user_id );
 
         // did the correct data return a valid comment id on the lesson as a result?
-        $this->assertTrue(  $lesson_1_data_saved && $lesson_2_data_saved , 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
+        $this->assertTrue(  intval(  $lesson_1_data_saved ) > 0  && intval(  $lesson_2_data_saved ) > 0 , 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
 
         // was the data that was just stored stored correctly ? Check the comment meta on the lesson id
         $sensei_activity_logged = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $this->test_data->lesson_ids[0], 'user_id'=> $test_user_id ) );
         $this->assertTrue( (bool ) $sensei_activity_logged , 'The saved answers were not stored correctly on the Quiz');
 
+        // was check if the data that was saved on the different quizzes are not the same
+        $activity_value = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $this->test_data->lesson_ids[0], 'user_id'=> $test_user_id ) , true );//WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->test_data->lesson_ids[0], 'user_id'=> $test_user_id ) );
+
+
     } // end testSaveUserAnswers
+
+
+    /**
+     * This test Woothemes_Sensei()->quiz->sensei_save_quiz_answers
+     */
+    public function testSenseiSaveQuizAnswers(){
+        // todo : test the function instance ,
+        // todo: setup a few test users added to lessons in the setup function and remove it in teardown
+        // todo: create get random user function
+        // todo: alter the global post variable to be a quiz that the user is taking
+        // todo: setup the global current user
+        // todo : test if it returns success when it should and also failure
+    }
+
 
     /**
      * This test Woothemes_Sensei()->lesson->lesson_quizzes( $lesson_id )
@@ -402,6 +414,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertTrue( 0 == $invalid_lesson_quiz_id, 'Get quiz id does not return Zero for an invalid lesson ID'  );
 
         //test with a valid lesson that has a quiz
+        // the get_random_lesson_id gets a lesson that is already setup with quizzes and questions
         $valid_lesson_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $this->get_random_lesson_id() );
         $this->assertTrue( $valid_lesson_quiz_id > 0 , 'Get quiz id should return a valid quiz id if a valid  lesson ID is passed in'  );
 
@@ -419,15 +432,103 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertTrue( method_exists( $woothemes_sensei->quiz, 'get_user_answers'),
             'The quiz class function `get_user_answers` does not exist ' );
 
-        // get the answers
+        // create a user
+        $test_user_id = wp_create_user( 'StudentTest', 'samplestudent', 'samplestudent@test.com' );
+        $this->assertTrue( intval( $test_user_id ) > 0 && get_userdata( $test_user_id ) ,
+            'WordPress did not give us a valid user id.' );
 
-        // assert if this is valid results
-        // make sure it is the same as the saved answers
-        // make sure the answer retrieved
+        // get a lesson and assign the user to the lesson
+        $test_lesson_id = $this->get_random_lesson_id();
+        $this->assertTrue( intval( $test_lesson_id ) > 0 && 'lesson' == get_post_type( $test_lesson_id )  ,
+            'The random lesson id need for the rest of this test is not a valid lesson' );
+
+        //get the lessons quiz
+        $test_lesson_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
+        $this->assertTrue( intval( $test_lesson_quiz_id ) > 0 && 'quiz' == get_post_type( $test_lesson_quiz_id )  ,
+            'The random lesson id need for the rest of this test is not a valid lesson.' );
+
+        // get the quiz questions
+        $quiz_question_posts = $woothemes_sensei->lesson->lesson_quiz_questions( $test_lesson_quiz_id  );
+        $this->assertTrue( is_array( $quiz_question_posts )
+            && isset( $quiz_question_posts[ 0 ] ) && isset( $quiz_question_posts[ 0 ]->ID )
+            && 'question' == get_post_type( $quiz_question_posts[ 0 ]->ID ) ,
+            'The quiz questions for quiz_id: ' . $test_lesson_quiz_id . ' does not exist or is not returned as expected.'  );
+
+        // create the sample data to save
+
+        $user_quiz_answers = array();
+
+        // loop through all the question and generate random answer data
+        foreach( $quiz_question_posts as $question ){
+
+            // get the current question type
+            $question_types_array = wp_get_post_terms( $question->ID, 'question-type', array( 'fields' => 'names' ) );
+            if ( isset( $question_types_array[0] ) && '' != $question_types_array[0] ) {
+                $type = $question_types_array[0];
+            }else{
+                $type = 'multiple-choice';
+            }
+
+            // setup the demo data and store it in the respective array
+            if ('multiple-choice' == $type ) {
+                // these answer can be found the question generate and attach answers function
+                $user_quiz_answers[ $question->ID ] = array( 0 => 'wrong1' );
+
+            } elseif ('boolean' == $type ) {
+
+                $user_quiz_answers[ $question->ID ] = 'true';
+
+            } elseif ( 'single-line' == $type  ) {
+
+                $user_quiz_answers[ $question->ID ] = 'Single lin answer for basic testing';
+
+            } elseif ( 'gap-fill' == $type ) {
+
+                $user_quiz_answers[ $question->ID ] = 'OneWordScentencesForSampleAnswer';
+
+            } elseif ( 'multi-line' == $type  ) {
+
+                $user_quiz_answers[ $question->ID ] = 'Sample paragraph to test the answer';
+
+            } elseif ( 'file-upload' == $type ) {
+
+                $user_quiz_answers[ $question->ID ] = '';
+            }
+
+        }// end for quiz_question_posts
+
+        // assign the user to the lesson
+        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id  );
+
+        // test for when there is no answers saved.
+        $is_false_when_no_answers_saved = $woothemes_sensei->quiz->get_user_answers( $test_lesson_id, $test_user_id);
+        $this->assertFalse(  $is_false_when_no_answers_saved  , 'The function should return false when no answers are saved on the Lesson' );
+
+        // save the test users answers on the tes lesson
+        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $user_quiz_answers, $test_lesson_id,  $test_user_id  ) ;
+        $this->assertTrue(  intval(  $lesson_data_saved ) > 0, 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
+
+        // test the function with the wrong parameters
+        $result_for_invalid_user = $woothemes_sensei->quiz->get_user_answers('', $test_user_id);
+        $this->assertFalse(  $result_for_invalid_user , 'The function should return false for and invalid user id' );
+
+        $result_invalid_lesson = $woothemes_sensei->quiz->get_user_answers($test_lesson_id, '');
+        $this->assertFalse( $result_invalid_lesson, 'The function should return false for and invalid lesson id' );
+
+        // test with the correct parameters
+        $user_saved_lesson_answers = $woothemes_sensei->quiz->get_user_answers($test_lesson_id, $test_user_id);
+        $this->assertTrue( is_array( $user_saved_lesson_answers ), 'The function should return and array when an exiting user and lesson with saved answers is passed in' );
+
+        // check all the answers returned
+        foreach( $user_saved_lesson_answers as $question_id => $answer ) {
+            // test if the returned questions relate to valid question post types
+            $this->assertTrue( 'question' == get_post_type( $question_id )  , 'The answers returned  does not relate to valid question post types');
+            // make sure it is the same as the saved answers
+            $this->assertTrue( $user_quiz_answers[$question_id] == $user_saved_lesson_answers[$question_id]   , 'The answers returned are not the same as the answers saved');
+
+        }
 
 
     } // end testGetUserAnswers
-
-
 
 }
