@@ -72,21 +72,72 @@ class WooThemes_Sensei_Quiz {
 	}// end update_author
 
 	/**
+	 * Get the lesson this quiz belongs to
+	 *
+	 * @since 1.7.2
+	 * @param int $quiz_id
+	 * @return int @lesson_id
+	 */
+	public function get_lesson_id( $quiz_id ){
+
+		if( empty( $quiz_id ) || ! intval( $quiz_id ) > 0 ){
+			global $post;
+			if( 'quiz' == get_post_type( $post ) ){
+				$quiz_id = $post->ID;
+			}else{
+				return false;
+			}
+
+		}
+
+		$quiz = get_post( $quiz_id );
+		$lesson_id = $quiz->post_parent;
+
+		return $lesson_id;
+
+	} // end lesson
+
+	/**
+	 * sensei_save_quiz_answers
+	 *
+	 * This answer calls the main save_user_answers function. It was added for backwards compatibility . It als a more
+	 * forgiving function the simply takes the answers and then finds the user and the lesson id.
+	 *
+	 * @param array $quiz_answers
+	 * @return bool $saved;
+	 */
+	public function sensei_save_quiz_answers( $quiz_answers ){
+		global $post;
+
+		$quiz_id = $post->ID;
+		$lesson_id = WooThemes_Sensei_Quiz::get_lesson_id( $quiz_id );
+		$saved = WooThemes_Sensei_Quiz::save_user_answers( $quiz_answers,  $lesson_id  , get_current_user_id() );
+		return $saved;
+
+	}// end sensei_save_quiz_answers
+
+	/**
 	 * Save the user answers for the given lesson's quiz
 	 *
+	 * For this function you must supply all three parameters. If will return false one is left out.
+	 *
+	 * @since 1.7.2
+	 * @access public
+	 *
+	 * @param array $quiz_answers
 	 * @param int $lesson_id
 	 * @param int $user_id
-	 * @param array $quiz_answers
-	 * @param
+	 *
 	 * @return bool $success
 	 */
-	public function save_user_answers( $quiz_answers, $user_id, $lesson_id   ){
+	public function save_user_answers( $quiz_answers, $lesson_id , $user_id = 0 ){
 
-		// get the user_id if none was passed in
-		if( intval( $user_id ) == 0 ) {
+		$answers_saved = false;
+
+		// get the user_id if none was passed in use the current logged in user
+		if( ! intval( $user_id ) > 0 ) {
 			$user_id = get_current_user_id();
 		}
-		$answers_saved = false;
 
 		// make sure the parameters are valid before continuing
 		if( empty( $lesson_id ) || empty( $user_id )
@@ -94,10 +145,11 @@ class WooThemes_Sensei_Quiz {
 			||!get_userdata( $user_id )
 			|| !is_array( $quiz_answers ) ){
 
-			return $answers_saved; // answers save is false at this point
+			return $answers_saved; // answers_saved is false at this point
 		}
 
 		// Loop through submitted quiz answers and save them appropriately
+		$prepared_answers = array();
 		foreach( $quiz_answers as $question_id => $answer ) {
 
 			//Setup the question types
@@ -119,16 +171,12 @@ class WooThemes_Sensei_Quiz {
 				case 'gap-fill': break;
 				default: $answer = maybe_serialize( $answer ); break;
 			}
-			$args = array(
-				'post_id' => $question_id,
-				'data' => base64_encode( $answer ),
-				'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
-				'user_id' => $user_id,
-				'action' => 'update'
-			);
-			$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+
+			$prepared_answers[ $question_id ] =  base64_encode( $answer );
 
 		}// end for each $quiz_answers
+
 
 
 		// Handle file upload questions
@@ -139,18 +187,21 @@ class WooThemes_Sensei_Quiz {
 					if( $file && $question_id ) {
 						$attachment_id = self::upload_file( $file );
 						if( $attachment_id ) {
-							$args = array(
-								'post_id' => $question_id,
-								'data' => base64_encode( $attachment_id ),
-								'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
-								'user_id' => $user_id,
-								'action' => 'update'
-							);
-							$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+							$prepared_answers[ $question_id ] = base64_encode( $attachment_id );
+
 						}
 					}
 				}
 			}
+		}
+
+		// get the lesson status comment type on the lesson
+		$user_lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ), true );//WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+		// if this is not set the user is has not started this lesson
+		if( ! empty( $user_lesson_status )  && isset( $user_lesson_status->comment_ID )  ){
+			$answers_saved  = update_comment_meta( $user_lesson_status->comment_ID, 'quiz_answers' , $prepared_answers  ) ;
 		}
 
 		return $answers_saved;
@@ -166,7 +217,21 @@ class WooThemes_Sensei_Quiz {
 	public function get_user_answers( $lesson_id, $user_id ){
 		$answers = [];
 
+
+		global $current_user, $woothemes_sensei;
+
+		$user_answers = array();
+
+		if ( 0 < intval( $lesson_id ) ) {
+			$lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $lesson_id );
+			foreach( $lesson_quiz_questions as $question ) {
+				$answer = maybe_unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_user_answer', 'field' => 'comment_content' ) ) ) );
+				$user_answers[ $question->ID ] = $answer;
+			}
+		}
+
+
+
 		return $answers;
 	}// end get_user_answers()
-
 } // End Class
