@@ -1025,7 +1025,8 @@ class WooThemes_Sensei_Frontend {
 		$this->data = new stdClass();
 
 		// Get latest quiz answers and grades
-		$user_quizzes = $this->sensei_get_user_quiz_answers( $post->ID );
+		$lesson_id = $woothemes_sensei->quiz->get_lesson_id( $post->ID );
+		$user_quizzes = $woothemes_sensei->quiz->get_user_answers( $lesson_id, get_current_user_id() );
 		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
 		$user_quiz_grade = 0;
 		if( isset( $user_lesson_status->comment_ID ) ) {
@@ -1055,22 +1056,6 @@ class WooThemes_Sensei_Frontend {
 		$this->data->reset_quiz_allowed = $reset_allowed;
 
 	} // End sensei_complete_quiz()
-
-	public function sensei_get_user_quiz_answers( $lesson_id = 0 ) {
-		global $current_user, $woothemes_sensei;
-
-		$user_answers = array();
-
-		if ( 0 < intval( $lesson_id ) ) {
-			$lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $lesson_id );
-			foreach( $lesson_quiz_questions as $question ) {
-				$answer = maybe_unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_user_answer', 'field' => 'comment_content' ) ) ) );
-				$user_answers[ $question->ID ] = $answer;
-			}
-		}
-
-		return $user_answers;
-	} // End sensei_get_user_quiz_answers()
 
 	public function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
 		_deprecated_function( __FUNCTION__, '1.7', "WooThemes_Sensei_Utils::user_completed_lesson()" );

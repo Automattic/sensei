@@ -128,7 +128,7 @@ class WooThemes_Sensei_Quiz {
 	 * @param int $lesson_id
 	 * @param int $user_id
 	 *
-	 * @return bool $success
+	 * @return false or int $answers_saved
 	 */
 	public function save_user_answers( $quiz_answers, $lesson_id , $user_id = 0 ){
 
@@ -197,7 +197,7 @@ class WooThemes_Sensei_Quiz {
 		}
 
 		// get the lesson status comment type on the lesson
-		$user_lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ), true );//WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 
 		// if this is not set the user is has not started this lesson
 		if( ! empty( $user_lesson_status )  && isset( $user_lesson_status->comment_ID )  ){
@@ -208,29 +208,41 @@ class WooThemes_Sensei_Quiz {
 	}// end save_user_answers()
 
 	/**
-	 * Get the user answers for the given lesson's quiz
+	 * Get the user answers for the given lesson's quiz.
+	 *
+	 *
+	 * @since 1.7.2
+	 * @access public
 	 *
 	 * @param int $lesson_id
 	 * @param int $user_id
-	 * @return array $answers
+	 *
+	 * @return array $answers or false
 	 */
 	public function get_user_answers( $lesson_id, $user_id ){
-		$answers = [];
 
-
-		global $current_user, $woothemes_sensei;
+		$answers = false;
+		global $woothemes_sensei;
 
 		$user_answers = array();
 
-		if ( 0 < intval( $lesson_id ) ) {
-			$lesson_quiz_questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $lesson_id );
-			foreach( $lesson_quiz_questions as $question ) {
-				$answer = maybe_unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_user_answer', 'field' => 'comment_content' ) ) ) );
-				$user_answers[ $question->ID ] = $answer;
-			}
+		if ( ! intval( $lesson_id ) > 0 || 'lesson' != get_post_type( $lesson_id )
+		|| ! intval( $user_id )  > 0 || !get_userdata( $user_id )  ) {
+			return false;
+		}
+		// get the lesson status comment type on the lesson
+
+		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$encoded_user_answers  = get_comment_meta( $user_lesson_status->comment_ID, 'quiz_answers', true) ;
+
+		if( ! is_array( $encoded_user_answers ) ){
+			return false;
 		}
 
-
+		foreach( $encoded_user_answers as $question_id => $encoded_answer ) {
+			$decoded_answer = base64_decode( $encoded_answer );
+			$answers[$question_id] = maybe_unserialize( $decoded_answer );
+		}
 
 		return $answers;
 	}// end get_user_answers()
