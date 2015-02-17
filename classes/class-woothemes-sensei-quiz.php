@@ -31,6 +31,10 @@ class WooThemes_Sensei_Quiz {
 		$this->file = $file;
 		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type' );
 		add_action( 'save_post', array( $this, 'update_author' ));
+
+		// listen to the reset button click
+		add_action( 'template_redirect', array( $this, 'reset_button_click_response'  ) );
+
 	} // End __construct()
 
 	/**
@@ -70,6 +74,7 @@ class WooThemes_Sensei_Quiz {
 
 	    return;
 	}// end update_author
+
 
 	/**
 	 * Get the lesson this quiz belongs to
@@ -239,6 +244,7 @@ class WooThemes_Sensei_Quiz {
 			return false;
 		}
 
+		// decode an unserialize all answers
 		foreach( $encoded_user_answers as $question_id => $encoded_answer ) {
 			$decoded_answer = base64_decode( $encoded_answer );
 			$answers[$question_id] = maybe_unserialize( $decoded_answer );
@@ -246,4 +252,64 @@ class WooThemes_Sensei_Quiz {
 
 		return $answers;
 	}// end get_user_answers()
+
+
+	/**
+	 *
+	 * This function runs on the init hook and checks if the reset quiz button was clicked.
+	 *
+	 * @since 1.7.2
+	 * @hooked init
+	 *
+	 * @return void;
+	 */
+	public function reset_button_click_response( ){
+
+		if( ! isset( $_POST[ 'quiz_complete' ])
+			||  'Reset Quiz'  != $_POST[ 'quiz_complete' ]
+			||  ! wp_verify_nonce( $_POST['woothemes_sensei_reset_quiz_click_nonce'], 'woothemes_sensei_reset_quiz_click_nonce'  ) > 1 ) {
+
+			return; // exit
+		}
+
+		global $post;
+		$current_quiz_id = $post->ID;
+		$lesson_id = $this->get_lesson_id( $current_quiz_id );
+		$this->reset_user_saved_answers( $lesson_id, get_current_user_id() );
+
+		//this function should only run once
+		remove_action( 'template_redirect', array( $this, 'reset_button_click_response'  ) );
+	}
+
+	/**
+	 * Reset the users answers saved on a given lesson.
+	 *
+	 * @since 1.7.2
+	 * @access public
+	 *
+	 * @param int $lesson_id
+	 * @param int $user_id
+	 * @return bool @success
+	 */
+	public function reset_user_saved_answers ( $lesson_id, $user_id  ){
+
+		if( empty( $lesson_id ) || ! get_post( $lesson_id )
+			|| empty( $user_id ) || ! get_userdata( $user_id ) ){
+			return false;
+		}
+
+		// get the user data on the lesson
+		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+
+		if( empty( $user_lesson_status ) || ! isset( $user_lesson_status->comment_ID )  ){
+			return false;
+		}
+
+		$success = update_comment_meta( $user_lesson_status->comment_ID , 'quiz_answers', '' );
+
+		return $success;
+
+	}// end reset_user_saved_answers()
+
 } // End Class
