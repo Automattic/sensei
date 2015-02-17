@@ -1357,6 +1357,8 @@ class WooThemes_Sensei_Frontend {
 			// Get Reset Settings
 			$reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true ); ?>
 			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_noonce' ); ?>" value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_complete_quiz_noonce' ) ); ?>" />
+			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_reset_quiz_click_nonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_reset_quiz_click_nonce' ); ?>" value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_reset_quiz_click_nonce' ) ); ?>" />
+
 		    <?php if ( '' == $this->data->user_quiz_grade ) { ?>
 		 	<span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		 	<span><input type="submit" name="quiz_complete" class="quiz-submit save" value="<?php echo apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ); ?>"/></span>
