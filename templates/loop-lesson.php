@@ -32,7 +32,7 @@ $lesson_count = 1;
 					$user_lesson_status = false;
 					if ( is_user_logged_in() ) {
 						// Check if Lesson is complete
-						$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson->ID, $current_user->ID );
+						$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $post_id, $current_user->ID );
 						if ( WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status ) ) {
 							$single_lesson_complete = true;
 						}

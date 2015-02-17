@@ -12,6 +12,7 @@
  * Fix - Ensuring only valid unragded quizzes are displayed in the grading dashboard
  * Fix - Standardising excerpt display on lesson tag archives
  * Fix - Making sure that lesson preview title text only runs in correct locations
+ * Fix - Restores lesson statuses on lesson archive page
 
 2015.02.04 - version 1.7.1
  * Tweak - Improving detection for whether critical updates are needed or not
