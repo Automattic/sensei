@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2015.02.02 - version 1.7.2
+2015.02.17 - version 1.7.2
  * Tweak - Removing localisation from empty strings
  * Tweak - Adding localistion to Sensei menu items
  * Fix - Preventing completion of first lesson from marking entire course as complete
