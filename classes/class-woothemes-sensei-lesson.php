@@ -1622,7 +1622,7 @@ class WooThemes_Sensei_Lesson {
 			array(
 				'id' 			=> 'quiz_passmark',
 				'label'			=> __( 'Quiz passmark percentage', 'woothemes-sensei' ),
-				'description'	=> __( '', 'woothemes-sensei' ),
+				'description'	=> '',
 				'type'			=> 'number',
 				'default'		=> 0,
 				'placeholder'	=> 0,
