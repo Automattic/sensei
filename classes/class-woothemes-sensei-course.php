@@ -1156,7 +1156,7 @@ class WooThemes_Sensei_Course {
 			    					} // End If Statement
 			    				} // End If Statement
 
-			    				if ( !$course_purchased ) {
+			    				if ( ! $course_purchased ) {
 			    					$active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="' . apply_filters( 'sensei_delete_course_text', __( 'Delete Course', 'woothemes-sensei' ) ) . '"/></span>';
 			    				} // End If Statement
 
