@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sensei 1.7.2\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/woothemes-sensei\n"
-"POT-Creation-Date: 2015-02-17 12:39:37+00:00\n"
+"POT-Creation-Date: 2015-02-18 08:34:01+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -876,48 +876,48 @@ msgstr ""
 msgid "complete the purchase"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:1695
-#: classes/class-woothemes-sensei.php:1019
+#: classes/class-woothemes-sensei-frontend.php:1704
+#: classes/class-woothemes-sensei.php:1023
 msgid "View course: %1$s"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2044
+#: classes/class-woothemes-sensei-frontend.php:2054
 msgid "<strong>ERROR</strong>: Please enter a username."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2046
+#: classes/class-woothemes-sensei-frontend.php:2056
 msgid "<strong>ERROR</strong>: This username is invalid because it uses illegal characters. Please enter a valid username."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2048
+#: classes/class-woothemes-sensei-frontend.php:2058
 msgid "<strong>ERROR</strong>: This username is already registered. Please choose another one."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2060
+#: classes/class-woothemes-sensei-frontend.php:2070
 msgid "<strong>ERROR</strong>: Please type your e-mail address."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2062
+#: classes/class-woothemes-sensei-frontend.php:2072
 msgid "<strong>ERROR</strong>: The email address isn&#8217;t correct."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2064
+#: classes/class-woothemes-sensei-frontend.php:2074
 msgid "<strong>ERROR</strong>: This email is already registered, please choose another one."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2077
+#: classes/class-woothemes-sensei-frontend.php:2087
 msgid "<strong>ERROR</strong>: The password field may not be empty, please enter a secure password."
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2084
+#: classes/class-woothemes-sensei-frontend.php:2094
 msgid "<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href=\"mailto:%s\">webmaster</a> !"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2122
+#: classes/class-woothemes-sensei-frontend.php:2132
 msgid "Incorrect login details"
 msgstr ""
 
-#: classes/class-woothemes-sensei-frontend.php:2126
+#: classes/class-woothemes-sensei-frontend.php:2136
 msgid "Please enter your username and password"
 msgstr ""
 
@@ -2988,7 +2988,7 @@ msgstr ""
 msgid "Please sign up for the %1$s before taking this Quiz."
 msgstr ""
 
-#: classes/class-woothemes-sensei.php:1018
+#: classes/class-woothemes-sensei.php:1022
 msgid "Course details"
 msgstr ""
 
