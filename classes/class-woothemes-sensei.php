@@ -273,7 +273,7 @@ class WooThemes_Sensei {
 	public function virtual_order_payment_complete( $order_status, $order_id ) {
 		$order = new WC_Order( $order_id );
 		if ( ! isset ( $order ) ) return;
-		if ( $order_status == 'processing' && ( $order->status == 'on-hold' || $order->status == 'pending' || $order->status == 'failed' ) ) {
+		if ( $order_status == 'wc-processing' && ( $order->post_status == 'wc-on-hold' || $order->post_status == 'wc-pending' || $order->post_status == 'wc-failed' ) ) {
 			$virtual_order = true;
 
 			if ( count( $order->get_items() ) > 0 ) {
@@ -489,6 +489,12 @@ class WooThemes_Sensei {
 		} elseif( is_tax( 'course-category' ) ) {
 
 			$file 	= 'taxonomy-course-category.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
+		} elseif( is_tax( 'lesson-tag' ) ) {
+
+			$file 	= 'taxonomy-lesson-tag.php';
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
@@ -986,13 +992,17 @@ class WooThemes_Sensei {
 	 * sensei_woocommerce_email_course_details adds detail to email
 	 * @since   1.4.5
 	 * @access  public
-	 * @param   integer $order_id order ID
+	 * @param   WC_Order $order
 	 * @return  void
 	 */
 	public function sensei_woocommerce_email_course_details( $order ) {
 		global $woocommerce, $woothemes_sensei;
 
-		if( 'completed' != $order->status ) return;
+		// exit early if not wc-completed or wc-processing
+		if( 'wc-completed' != $order->post_status
+			&& 'wc-processing' != $order->post_status  ) {
+			return;
+		}
 
 		$order_items = $order->get_items();
 		$order_id = $order->id;

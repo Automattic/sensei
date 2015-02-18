@@ -89,6 +89,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_lesson_archive_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_message_archive_main_content', array( $this, 'sensei_message_archive_main_content' ), 10 );
 		add_action( 'sensei_course_category_main_content', array( $this, 'sensei_course_category_main_content' ), 10 );
+		add_action( 'sensei_lesson_tag_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
 		add_action( 'sensei_login_form', array( $this, 'sensei_login_form' ), 10 );
 		add_action( 'sensei_quiz_action_buttons', array( $this, 'sensei_quiz_action_buttons' ), 10 );
@@ -141,7 +142,7 @@ class WooThemes_Sensei_Frontend {
 
 		// Add course link to order page
 		add_action( 'woocommerce_thankyou', array( $this, 'course_link_from_order' ), 10, 1 );
-		add_action( 'woocommerce_view_order', array( $this, 'course_link_from_order' ), 10, 1 );
+		add_action( 'woocommerce_order_details_after_order_table', array( $this, 'course_link_from_order' ), 10, 1 );
 
 		// Make sure correct courses are marked as active for users
 		add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
@@ -1289,7 +1290,6 @@ class WooThemes_Sensei_Frontend {
 		<?php } // End If Statement
 	} // End sensei_course_category_main_content()
 
-
 	public function sensei_login_form() {
 		global $woothemes_sensei;
 
@@ -1408,7 +1408,7 @@ class WooThemes_Sensei_Frontend {
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
     	    $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
-    	    	$preview_text = __( ' (Free Preview)', 'woothemes_sensei' );
+    	    	$preview_text = __( ' (Free Preview)', 'woothemes-sensei' );
     	    } // End If Statement
     	}
     	return $preview_text;
@@ -1417,13 +1417,20 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_lesson_preview_title( $title = '', $id = 0 ) {
 		global $post, $current_user;
 
-		// Limit to lessons, see https://github.com/woothemes/sensei/issues/574
-		if( isset( $post->ID ) && 'lesson' == get_post_type( $post ) ) {
-			// Get the course ID
-			$course_id = get_post_meta( $post->ID, '_lesson_course', true );
-			// Check if the user is taking the course
-			if( is_singular( 'lesson' ) && WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) && ! WooThemes_Sensei_Utils::user_started_course( $course_id, $current_user->ID ) && $post->ID == $id ) {
-				$title .= ' ' . $this->sensei_lesson_preview_title_text( $course_id );
+		// Limit to lessons and check if lesson ID matches filtered post ID
+		// @see https://github.com/woothemes/sensei/issues/574
+		if( isset( $post->ID ) && $id == $post->ID && 'lesson' == get_post_type( $post ) ) {
+
+			// Limit to main query only
+			if( is_main_query() ) {
+
+				// Get the course ID
+				$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+
+				// Check if the user is taking the course
+				if( is_singular( 'lesson' ) && WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) && ! WooThemes_Sensei_Utils::user_started_course( $course_id, $current_user->ID ) && $post->ID == $id ) {
+					$title .= ' ' . $this->sensei_lesson_preview_title_text( $course_id );
+				}
 			}
 		}
 		return $title;
@@ -1478,7 +1485,12 @@ class WooThemes_Sensei_Frontend {
 		   		if ( $completed_course ) { ?>
 		   			<div class="status completed"><?php echo apply_filters( 'sensei_complete_text', __( 'Completed', 'woothemes-sensei' ) ); ?></div>
 		   			<?php if( $woothemes_sensei->frontend->course->course_quizzes( $post->ID, true ) ) { ?>
-		   				<p class="sensei-results-links"><a class="view-results" href="<?php echo $woothemes_sensei->course_results->get_permalink( $post->ID ); ?>"><?php echo apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ); ?></a></p>
+		   				<p class="sensei-results-links">
+		   				<?php
+		   				$results_link = '<a class="view-results" href="' . $woothemes_sensei->course_results->get_permalink( $post->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+		   				$results_link = apply_filters( 'sensei_results_links', $results_link );
+		   				echo $results_link;
+		   				?></p>
 		   			<?php } ?>
 		   		<?php } else { ?>
 		    		<div class="status in-progress"><?php echo apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ); ?></div>
@@ -1635,8 +1647,11 @@ class WooThemes_Sensei_Frontend {
 	} // End remove_active_course()
 
 	/**
-	 * Add course link to order thank you and details pages
+	 * Add course link to order thank you and details pages.
+	 *
 	 * @since  1.4.5
+	 * @access public
+	 *
 	 * @param  integer $order_id ID of order
 	 * @return void
 	 */
@@ -1645,7 +1660,11 @@ class WooThemes_Sensei_Frontend {
 
 		$order = new WC_Order( $order_id );
 
-		if( 'completed' != $order->status ) return;
+		// exit early if not wc-completed or wc-processing
+		if( 'wc-completed' != $order->post_status
+			&& 'wc-processing' != $order->post_status  ) {
+			return;
+		}
 
 		$order_items = $order->get_items();
 
@@ -1675,26 +1694,29 @@ class WooThemes_Sensei_Frontend {
 					$courses = get_posts( $args );
 
 					if( $courses && count( $courses ) > 0 ) {
+
+						echo ' <p><div id= "message" class="updated fade woocommerce-info" >';
 						foreach( $courses as $course ) {
 
 							$title = $course->post_title;
 							$permalink = get_permalink( $course->ID );
 
-							$messages[] = sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '">' . $title . '</a>' );
+							echo '<strong>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</strong> <br/>';
 
 							$update_course = $woothemes_sensei->woocommerce_course_update( $course->ID  );
-						}
-					}
+
+						} // end for each
+
+						// close the message div
+						echo ' </div></p>';
+
+					}// end if $courses check
 				}
 			}
 		}
+		// show the links to the course
 
-		foreach( $messages as $message ) {
-			$woocommerce->add_message( $message, 'woocommerce' );
-		}
-
-		$woocommerce->show_messages();
-	}
+	} // end course_link_order_form
 
 	/**
 	 * Activate all purchased courses for user

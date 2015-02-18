@@ -45,39 +45,41 @@ class WooThemes_Sensei_Updates {
 		$this->updates_run = get_option( $this->token . '-upgrades', array() );
 
 		// The list of upgrades to run
-		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => 'Assign role capbilities', 'desc' => 'Assigns Sensei capabilites to the relevant user roles.', 'product' => 'Sensei' ) ),
+		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => __( 'Assign role capbilities', 'woothemes-sensei' ), 'desc' => __( 'Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei' ), 'product' => 'Sensei' ) ),
 													'manual' 	=> array()
 												),
-								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type' => array( 'title' => 'Set default quiz grade type', 'desc' => 'Sets all quizzes to the default \'auto\' grade type.' ),
-																		  'set_default_question_type' => array( 'title' => 'Set default question type', 'desc' => 'Sets all questions to the default \'multiple choice\' type.' )
+								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type' => array( 'title' => __( 'Set default quiz grade type', 'woothemes-sensei' ), 'desc' => __( 'Sets all quizzes to the default \'auto\' grade type.', 'woothemes-sensei' ) ),
+																		  'set_default_question_type' => array( 'title' => __( 'Set default question type', 'woothemes-sensei' ), 'desc' => __( 'Sets all questions to the default \'multiple choice\' type.', 'woothemes-sensei' ) )
 													),
-													'manual' 	=> array( 'update_question_answer_data' => array( 'title' => 'Update question answer data', 'desc' => 'Updates questions to use the new question types structure.' ) )
+													'manual' 	=> array( 'update_question_answer_data' => array( 'title' => __( 'Update question answer data', 'woothemes-sensei' ), 'desc' => __( 'Updates questions to use the new question types structure.', 'woothemes-sensei' ) ) )
 												),
-								'1.4.0' => array( 	'auto' 		=> array( 'update_question_grade_points' => array( 'title' => 'Update question grade points', 'desc' => 'Sets all question grade points to the default value of \'1\'.' ) ),
+								'1.4.0' => array( 	'auto' 		=> array( 'update_question_grade_points' => array( 'title' => __( 'Update question grade points', 'woothemes-sensei' ), 'desc' => __( 'Sets all question grade points to the default value of \'1\'.', 'woothemes-sensei' ) ) ),
 													'manual' 	=> array()
 												),
-								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => 'Convert essay paste questions into multi-line questions', 'desc' => 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.' ) ),
-													'manual' 	=> array( 'set_random_question_order' => array( 'title' => 'Set all quizzes to have a random question order', 'desc' => 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.' ),
-																		  'set_default_show_question_count' => array( 'title' => 'Set all quizzes to show all questions', 'desc' => 'Sets all quizzes to show all questions - this can be changed per quiz.' ),
-																		  'remove_deleted_user_activity' => array( 'title' => 'Remove Sensei activity for deleted users', 'desc' => 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.' ) )
+								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => __( 'Convert essay paste questions into multi-line questions', 'woothemes-sensei' ), 'desc' => __( 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.', 'woothemes-sensei' ) ) ),
+													'manual' 	=> array( 'set_random_question_order' => array( 'title' => __( 'Set all quizzes to have a random question order', 'woothemes-sensei' ), 'desc' => __( 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.', 'woothemes-sensei' ) ),
+																		  'set_default_show_question_count' => array( 'title' => __( 'Set all quizzes to show all questions', 'woothemes-sensei' ), 'desc' => __( 'Sets all quizzes to show all questions - this can be changed per quiz.', 'woothemes-sensei' ) ),
+																		  'remove_deleted_user_activity' => array( 'title' => __( 'Remove Sensei activity for deleted users', 'woothemes-sensei' ), 'desc' => __( 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.', 'woothemes-sensei' ) ) )
 												),
-								'1.6.0' => array( 	'auto' 		=> array( 'add_teacher_role' => array( 'title' => 'Add \'Teacher\' role', 'desc' => 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.' ),
-																		  'add_sensei_caps' => array( 'title' => 'Add administrator capabilities', 'desc' => 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.' ),
-																		  'restructure_question_meta' => array( 'title' => 'Restructure question meta data', 'desc' => 'Restructures the quesiton meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.' ),
-																		  'update_quiz_settings' => array( 'title' => 'Add new quiz settings', 'desc' => 'Adds new settings to quizzes that were previously registered as global settings.' ),
-																		  'reset_lesson_order_meta' => array( 'title' => 'Set default order of lessons', 'desc' => 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.' ), ),
+								'1.6.0' => array( 	'auto' 		=> array( 'add_teacher_role' => array( 'title' => __( 'Add \'Teacher\' role', 'woothemes-sensei' ), 'desc' => __( 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.', 'woothemes-sensei' ) ),
+																		  'add_sensei_caps' => array( 'title' => __( 'Add administrator capabilities', 'woothemes-sensei' ), 'desc' => __( 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.', 'woothemes-sensei' ) ),
+																		  'restructure_question_meta' => array( 'title' => __( 'Restructure question meta data', 'woothemes-sensei' ), 'desc' => __( 'Restructures the quesiton meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.', 'woothemes-sensei' ) ),
+																		  'update_quiz_settings' => array( 'title' => __( 'Add new quiz settings', 'woothemes-sensei' ), 'desc' => __( 'Adds new settings to quizzes that were previously registered as global settings.', 'woothemes-sensei' ) ),
+																		  'reset_lesson_order_meta' => array( 'title' => __( 'Set default order of lessons', 'woothemes-sensei' ), 'desc' => __( 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.', 'woothemes-sensei' ) ), ),
 													'manual' 	=> array()
 												),
-								'1.7.0' => array( 	'auto' 		=> array( 'add_editor_caps' => array( 'title' => 'Add Editor capabilities', 'desc' => 'Adds the \'manage_sensei_grades\' capability to the Editor role.' ), ),
-													'forced' 	=> array(  'update_question_gap_fill_separators' => array( 'title' => 'Update Gap Fill questions', 'desc' => 'Updates the format of gap fill questions to allow auto grading and greater flexibility in matching.' ),
-																		  'update_quiz_lesson_relationship' => array( 'title' => 'Restructure quiz lesson relationship', 'desc' => 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.' ),
-																		  'status_changes_fix_lessons' => array( 'title' => 'Update lesson statuses', 'desc' => 'Update existing lesson statuses.' ),
-																		  'status_changes_convert_lessons' => array( 'title' => 'Convert lesson statuses', 'desc' => 'Convert to new lesson statuses.' ),
-																		  'status_changes_convert_courses' => array( 'title' => 'Convert course statuses', 'desc' => 'Convert to new course statuses.' ),
-																		  'status_changes_convert_questions' => array( 'title' => 'Convert question statuses', 'desc' => 'Convert to new question statuses.' ),
-																		  'update_legacy_sensei_comments_status' => array( 'title' => 'Convert legacy Sensei activity types', 'desc' => 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.' ),
-																		  'update_comment_course_lesson_comment_counts' => array( 'title' => 'Update comment counts', 'desc' => 'Update comment counts on Courses and Lessons due to status changes.' ), ),
-													// 'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => 'Remove legacy Sensei activity types', 'desc' => 'Remove all legacy Sensei comment types - only run this update once the update to v1.7 is complete and evertything is stable.' ) )
+								'1.7.0' => array( 	'auto' 		=> array( 'add_editor_caps' => array( 'title' => __( 'Add Editor capabilities', 'woothemes-sensei' ), 'desc' => __( 'Adds the \'manage_sensei_grades\' capability to the Editor role.', 'woothemes-sensei' ) ), ),
+													'forced' 	=> array(  'update_question_gap_fill_separators' => array( 'title' => __( 'Update Gap Fill questions', 'woothemes-sensei' ), 'desc' => __( 'Updates the format of gap fill questions to allow auto grading and greater flexibility in matching.', 'woothemes-sensei' ) ),
+																		  'update_quiz_lesson_relationship' => array( 'title' => __( 'Restructure quiz lesson relationship', 'woothemes-sensei' ), 'desc' => __( 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.', 'woothemes-sensei' ) ),
+																		  'status_changes_fix_lessons' => array( 'title' => __( 'Update lesson statuses', 'woothemes-sensei' ), 'desc' => __( 'Update existing lesson statuses.', 'woothemes-sensei' ) ),
+																		  'status_changes_convert_lessons' => array( 'title' => __( 'Convert lesson statuses', 'woothemes-sensei' ), 'desc' => __( 'Convert to new lesson statuses.', 'woothemes-sensei' ) ),
+																		  'status_changes_convert_courses' => array( 'title' => __( 'Convert course statuses', 'woothemes-sensei' ), 'desc' => __( 'Convert to new course statuses.', 'woothemes-sensei' ) ),
+																		  'status_changes_convert_questions' => array( 'title' => __( 'Convert question statuses', 'woothemes-sensei' ), 'desc' => __( 'Convert to new question statuses.', 'woothemes-sensei' ) ),
+																		  'update_legacy_sensei_comments_status' => array( 'title' => __( 'Convert legacy Sensei activity types', 'woothemes-sensei' ), 'desc' => __( 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.', 'woothemes-sensei' ) ),
+																		  'update_comment_course_lesson_comment_counts' => array( 'title' => __( 'Update comment counts', 'woothemes-sensei' ), 'desc' => __( 'Update comment counts on Courses and Lessons due to status changes.', 'woothemes-sensei' ) ), ),
+												),
+								'1.7.2' => array( 	'auto' 		=> array( 'index_comment_status_field' => array( 'title' => __( 'Add database index to comment statuses', 'woothemes-sensei' ), 'desc' => __( 'This indexes the comment statuses in the database, which will speed up all Sensei activity queries.', 'woothemes-sensei' ) ), ),
+													'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => __( 'Remove legacy Sensei activity types', 'woothemes-sensei' ), 'desc' => __( 'This removes all legacy (pre-1.7) Sensei activity types - only run this update once the update to v1.7 is complete and everything is stable.', 'woothemes-sensei' ) ) )
 												),
 							);
 
@@ -98,7 +100,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	public function add_update_admin_screen() {
 		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page( 'sensei', 'Sensei Updates', 'Updates', 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+			add_submenu_page( 'sensei', __( 'Sensei Updates', 'woothemes-sensei' ), __( 'Updates', 'woothemes-sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
 		}
 	} // End add_update_admin_screen()
 
@@ -571,12 +573,14 @@ class WooThemes_Sensei_Updates {
 
 				// Get current user answers
 				$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
-				if( is_array( $comments ) ) {
-					foreach ( $comments as $comment ) {
-						$user_id = $comment->user_id;
-						$content = maybe_unserialize( base64_decode( $comment->comment_content ) );
-						$old_user_answers[ $quiz_id ][ $user_id ] = $content;
-					}
+				// Need to always return an array, even with only 1 item
+				if ( !is_array($comments) ) {
+					$comments = array( $comments );
+				}
+				foreach ( $comments as $comment ) {
+					$user_id = $comment->user_id;
+					$content = maybe_unserialize( base64_decode( $comment->comment_content ) );
+					$old_user_answers[ $quiz_id ][ $user_id ] = $content;
 				}
 
 				// Get correct answers
@@ -826,8 +830,12 @@ class WooThemes_Sensei_Updates {
 
 	public function add_sensei_caps() {
 		$role = get_role( 'administrator' );
-		$role->add_cap( 'manage_sensei' );
-		$role->add_cap( 'manage_sensei_grades' );
+
+		if( ! is_null( $role ) ) {
+			$role->add_cap( 'manage_sensei' );
+			$role->add_cap( 'manage_sensei_grades' );
+		}
+
 		return true;
 	}
 
@@ -930,7 +938,11 @@ class WooThemes_Sensei_Updates {
 
 	public function add_editor_caps() {
 		$role = get_role( 'editor' );
-		$role->add_cap( 'manage_sensei_grades' );
+
+		if( ! is_null( $role ) ) {
+			$role->add_cap( 'manage_sensei_grades' );
+		}
+
 		return true;
 	}
 
@@ -1711,11 +1723,20 @@ class WooThemes_Sensei_Updates {
 	public function remove_legacy_comments () {
 		global $wpdb;
 
-		// $wpdb->hide_errors();
-
-		// $wpdb->show_errors();
+		$result = $wpdb->delete( $wpdb->comments, array( 'comment_approved' => 'legacy' ) );
 
 		return true;
+	}
+
+	public function index_comment_status_field () {
+		global $wpdb;
+
+		$wpdb->query("ALTER TABLE `$wpdb->comments` ADD INDEX `comment_type` ( `comment_type` )");
+		$wpdb->query("ALTER TABLE `$wpdb->comments` ADD INDEX `comment_type_user_id` ( `comment_type`, `user_id` )");
+
+		return true;
+
+
 	}
 
 } // End Class

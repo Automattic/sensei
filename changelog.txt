@@ -1,5 +1,22 @@
 *** Sensei Changelog ***
 
+2015.02.17 - version 1.7.2
+ * Update - Adding database table indexes to comments table to improve performance
+ * Update - Adding manual update to allow removal of legacy Sensei activity data
+ * Tweak - Removing localisation from empty strings
+ * Tweak - Adding localistion to Sensei menu items
+ * Fix - Preventing completion of first lesson from marking entire course as complete
+ * Fix - Fixing Course Component widget item loading and display
+ * Fix - Preventing 'Delete Course' button from displaying on purchased courses
+ * Fix - Fixing occassional javascript error when editing lesson quizzes
+ * Fix - Reinstating filter that allowed certificate link on single course page
+ * Fix - Ensuring duplicated lessons use the correct timezone for publication date
+ * Fix - Ensuring only valid unragded quizzes are displayed in the grading dashboard
+ * Fix - Standardising excerpt display on lesson tag archives
+ * Fix - Making sure that lesson preview title text only runs in correct locations
+ * Fix - Restores lesson statuses on lesson archive page
+ * Fix - Updating for WooCommerce 2.3 compatibility
+
 2015.02.04 - version 1.7.1
  * Tweak - Improving detection for whether critical updates are needed or not
  * Tweak - Updating code for WooCommerce 2.2+

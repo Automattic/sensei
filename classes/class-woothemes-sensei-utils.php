@@ -375,12 +375,9 @@ class WooThemes_Sensei_Utils {
 		) );
 
 		foreach ( $orders as $order_id ) {
-
 			$order = new WC_Order( $order_id->ID );
-			if ( $order->post_status == 'wc-completed' || $order->post_status == 'wc-processing' ) {
-
+			if ( $order->post_status == 'wc-completed' ) {
 				if ( 0 < sizeof( $order->get_items() ) ) {
-
 					foreach( $order->get_items() as $item ) {
 
 						// Allow product ID to be filtered
@@ -391,43 +388,27 @@ class WooThemes_Sensei_Utils {
 
 							// Check if user has an active subscription for product
 							if( class_exists( 'WC_Subscriptions_Manager' ) ) {
-
 								$sub_key = WC_Subscriptions_Manager::get_subscription_key( $order_id->ID, $product_id );
-
 								if( $sub_key ) {
 									$sub = WC_Subscriptions_Manager::get_subscription( $sub_key );
-
 									if( $sub && isset( $sub['status'] ) ) {
-
 										if( 'active' == $sub['status'] ) {
-
 											return true;
-
 										} else {
-
 											return false;
-
-										} // end if 'active' == $sub['status']
-
-									} // end if $sub && isset( $sub['status']
-
-								}// end if $sub_key
-
-							}// end if class_exists( 'WC_Subscriptions_Manager' )
+										}
+									}
+								}
+							}
 
 							// Customer has bought product
 							return true;
-
-						} // End If $item['product_id'] == $product_id ...
+						} // End If Statement
 
 					} // End For Loop
-
 				} // End If Statement
-
 			} // End If Statement
-
 		} // End For Loop
-
 	} // End sensei_customer_bought_product()
 
 	/**
@@ -1829,7 +1810,17 @@ class WooThemes_Sensei_Utils {
 					update_comment_meta( $comment_id, $key, $value );
 				}
 			}
+
 			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
+
+			if( in_array( $status, array( 'complete', 'passed' ) ) ) {
+
+				$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+
+				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
+
+				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+			}
 		}
 		return $comment_id;
 	}

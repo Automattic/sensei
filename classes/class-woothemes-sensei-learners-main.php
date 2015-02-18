@@ -102,7 +102,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				);
 				break;
 		}
-		$columns['actions'] = __( '', 'woothemes-sensei' );
+		$columns['actions'] = '';
 		// Backwards compatible
 		if ( 'learners' == $this->view ) {
 			$columns = apply_filters( 'sensei_learners_learners_columns', $columns, $this );

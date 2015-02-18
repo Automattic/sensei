@@ -77,7 +77,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			'updated' => __( 'Updated', 'woothemes-sensei' ),
 			'user_status' => __( 'Status', 'woothemes-sensei' ),
 			'user_grade' => __( 'Grade', 'woothemes-sensei' ),
-			'action' => __( '', 'woothemes-sensei' ),
+			'action' => '',
 		);
 
 		$columns = apply_filters( 'sensei_grading_default_columns', $columns, $this );
