@@ -376,7 +376,7 @@ class WooThemes_Sensei_Utils {
 
 		foreach ( $orders as $order_id ) {
 			$order = new WC_Order( $order_id->ID );
-			if ( $order->status == 'completed' ) {
+			if ( $order->post_status == 'wc-completed' ) {
 				if ( 0 < sizeof( $order->get_items() ) ) {
 					foreach( $order->get_items() as $item ) {
 

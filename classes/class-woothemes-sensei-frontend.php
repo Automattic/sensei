@@ -142,7 +142,7 @@ class WooThemes_Sensei_Frontend {
 
 		// Add course link to order page
 		add_action( 'woocommerce_thankyou', array( $this, 'course_link_from_order' ), 10, 1 );
-		add_action( 'woocommerce_view_order', array( $this, 'course_link_from_order' ), 10, 1 );
+		add_action( 'woocommerce_order_details_after_order_table', array( $this, 'course_link_from_order' ), 10, 1 );
 
 		// Make sure correct courses are marked as active for users
 		add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
@@ -1647,8 +1647,11 @@ class WooThemes_Sensei_Frontend {
 	} // End remove_active_course()
 
 	/**
-	 * Add course link to order thank you and details pages
+	 * Add course link to order thank you and details pages.
+	 *
 	 * @since  1.4.5
+	 * @access public
+	 *
 	 * @param  integer $order_id ID of order
 	 * @return void
 	 */
@@ -1657,7 +1660,11 @@ class WooThemes_Sensei_Frontend {
 
 		$order = new WC_Order( $order_id );
 
-		if( 'completed' != $order->status ) return;
+		// exit early if not wc-completed or wc-processing
+		if( 'wc-completed' != $order->post_status
+			&& 'wc-processing' != $order->post_status  ) {
+			return;
+		}
 
 		$order_items = $order->get_items();
 
@@ -1687,26 +1694,29 @@ class WooThemes_Sensei_Frontend {
 					$courses = get_posts( $args );
 
 					if( $courses && count( $courses ) > 0 ) {
+
+						echo ' <p><div id= "message" class="updated fade woocommerce-info" >';
 						foreach( $courses as $course ) {
 
 							$title = $course->post_title;
 							$permalink = get_permalink( $course->ID );
 
-							$messages[] = sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '">' . $title . '</a>' );
+							echo '<strong>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</strong> <br/>';
 
 							$update_course = $woothemes_sensei->woocommerce_course_update( $course->ID  );
-						}
-					}
+
+						} // end for each
+
+						// close the message div
+						echo ' </div></p>';
+
+					}// end if $courses check
 				}
 			}
 		}
+		// show the links to the course
 
-		foreach( $messages as $message ) {
-			$woocommerce->add_message( $message, 'woocommerce' );
-		}
-
-		$woocommerce->show_messages();
-	}
+	} // end course_link_order_form
 
 	/**
 	 * Activate all purchased courses for user
