@@ -2202,40 +2202,40 @@ class WooThemes_Sensei_Lesson {
 		} // End If Statement
 		$post_title = $question_text;
 		// Handle Default Fields (multiple choice)
-		if ( isset( $data[ 'question_right_answers' ] ) && ( '' != $data[ 'question_right_answers' ] ) ) {
+		if ( 'multiple-choice' == $question_type && isset( $data[ 'question_right_answers' ] ) && ( '' != $data[ 'question_right_answers' ] ) ) {
 			$question_right_answers = $data[ 'question_right_answers' ];
 		} // End If Statement
-		elseif ( isset( $data[ 'question_right_answer' ] ) && ( '' != $data[ 'question_right_answer' ] ) ) {
+		elseif ( 'multiple-choice' == $question_type && isset( $data[ 'question_right_answer' ] ) && ( '' != $data[ 'question_right_answer' ] ) ) {
 			$question_right_answer = $data[ 'question_right_answer' ];
 		} // End If Statement
-		if ( isset( $data[ 'question_wrong_answers' ] ) && ( '' != $data[ 'question_wrong_answers' ] ) ) {
+		if ( 'multiple-choice' == $question_type && isset( $data[ 'question_wrong_answers' ] ) && ( '' != $data[ 'question_wrong_answers' ] ) ) {
 			$question_wrong_answers = $data[ 'question_wrong_answers' ];
 		} // End If Statement
 		// Handle Boolean Fields - Edit
-		if ( isset( $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && ( '' != $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && 'boolean' == $question_type ) {
+		if ( 'boolean' == $question_type && isset( $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && ( '' != $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) ) {
 			$question_right_answer = $data[ 'question_' . $question_id . '_right_answer_boolean' ];
 		} // End If Statement
 		// Handle Boolean Fields - Add
-		if ( isset( $data[ 'question_right_answer_boolean' ] ) && ( '' != $data[ 'question_right_answer_boolean' ] ) && 'boolean' == $question_type ) {
+		if ( 'boolean' == $question_type && isset( $data[ 'question_right_answer_boolean' ] ) && ( '' != $data[ 'question_right_answer_boolean' ] ) ) {
 			$question_right_answer = $data[ 'question_right_answer_boolean' ];
 		} // End If Statement
 		// Handle Gap Fill Fields
-		if ( isset( $data[ 'add_question_right_answer_gapfill_pre' ] ) && ( '' != $data[ 'add_question_right_answer_gapfill_pre' ] ) ) {
+		if ( 'gap-fill' == $question_type && isset( $data[ 'add_question_right_answer_gapfill_gap' ] ) && '' != $data[ 'add_question_right_answer_gapfill_gap' ] ) {
 			$question_right_answer = $data[ 'add_question_right_answer_gapfill_pre' ] . '||' . $data[ 'add_question_right_answer_gapfill_gap' ] . '||' . $data[ 'add_question_right_answer_gapfill_post' ];
 		} // End If Statement
 		// Handle Multi Line Fields
-		if ( isset( $data[ 'add_question_right_answer_multiline' ] ) && ( '' != $data[ 'add_question_right_answer_multiline' ] ) ) {
+		if ( 'multi-line' == $question_type && isset( $data[ 'add_question_right_answer_multiline' ] ) && ( '' != $data[ 'add_question_right_answer_multiline' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_multiline' ];
 		} // End If Statement
 		// Handle Single Line Fields
-		if ( isset( $data[ 'add_question_right_answer_singleline' ] ) && ( '' != $data[ 'add_question_right_answer_singleline' ] ) ) {
+		if ( 'single-line' == $question_type && isset( $data[ 'add_question_right_answer_singleline' ] ) && ( '' != $data[ 'add_question_right_answer_singleline' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_singleline' ];
 		} // End If Statement
 		// Handle File Upload Fields
-		if ( isset( $data[ 'add_question_right_answer_fileupload' ] ) && ( '' != $data[ 'add_question_right_answer_fileupload' ] ) ) {
+		if ( 'file-upload' == $question_type && isset( $data[ 'add_question_right_answer_fileupload' ] ) && ( '' != $data[ 'add_question_right_answer_fileupload' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_fileupload' ];
 		} // End If Statement
-		if ( isset( $data[ 'add_question_wrong_answer_fileupload' ] ) && ( '' != $data[ 'add_question_wrong_answer_fileupload' ] ) ) {
+		if ( 'file-upload' == $question_type && isset( $data[ 'add_question_wrong_answer_fileupload' ] ) && ( '' != $data[ 'add_question_wrong_answer_fileupload' ] ) ) {
 			$question_wrong_answers = array( $data[ 'add_question_wrong_answer_fileupload' ] );
 		} // End If Statement
 
