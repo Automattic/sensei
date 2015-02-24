@@ -1091,7 +1091,9 @@ class WooThemes_Sensei_Frontend {
         		// V2 - make width and height a setting for video embed
         		$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed )/*, array( 'width' => 100 , 'height' => 100)*/ );
         	} // End If Statement
+        	if ( '' != $lesson_video_embed ) {
         	?><div class="video"><?php echo html_entity_decode($lesson_video_embed); ?></div><?php
+        	} // End If Statement
         } // End If Statement
 	} // End sensei_lesson_video()
 
@@ -1520,7 +1522,9 @@ class WooThemes_Sensei_Frontend {
 		    // V2 - make width and height a setting for video embed
 		    $course_video_embed = wp_oembed_get( esc_url( $course_video_embed )/*, array( 'width' => 100 , 'height' => 100)*/ );
 		} // End If Statement
+		if ( '' != $course_video_embed ) {
 		?><div class="course-video"><?php echo html_entity_decode($course_video_embed); ?></div><?php
+		} // End If Statement
 	} // End sensei_course_meta_video()
 
 	public function sensei_woocommerce_in_cart_message() {
