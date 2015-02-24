@@ -54,7 +54,7 @@ class WooThemes_Sensei_Analysis {
 	 * @return  void
 	 */
 	public function __construct ( $file ) {
-		$this->name = 'Analysis';
+		$this->name = __('Analysis', 'woothemes-sensei');
 		$this->file = $file;
 		$this->page_slug = 'sensei_analysis';
 
