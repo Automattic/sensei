@@ -125,8 +125,6 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'wp_nav_menu_objects', array( $this, 'sensei_wp_nav_menu_objects' ) );
 		// Search Results filters
 		add_filter( 'post_class', array( $this, 'sensei_search_results_classes' ), 10 );
-		// Comments Feed Actions
-		add_filter( 'comment_feed_where', array( $this, 'comments_rss_item_filter' ), 10, 1 );
 		// Checks if Course is complete when completing a Lesson or Quiz
 		add_action( 'sensei_user_lesson_end', array( $this, 'sensei_completed_course' ), 10, 2 );
 		// Only show course & lesson excerpts in search results
@@ -1540,20 +1538,6 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_lesson_comment_count( $count ) {
 		return $count;
 	} // End sensei_lesson_comment_count()
-
-	/**
-	 * comments_rss_item_filter function.
-	 *
-	 * Filters the frontend comments feed to not include the sensei prefixed comments
-	 *
-	 * @access public
-	 * @param mixed $pieces
-	 * @return void
-	 */
-	function comments_rss_item_filter( $pieces ) {
-		$pieces .= " AND comment_type NOT LIKE 'sensei_%' ";
-		return $pieces;
-	} // End comments_rss_item_filter()
 
 	/**
 	 * sensei_completed_course hooks onto everywhere a lesson ends to check if course is complete
