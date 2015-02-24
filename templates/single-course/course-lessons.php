@@ -16,7 +16,7 @@ global $post, $woothemes_sensei, $current_user;
 $html = '';
 // Get Course Lessons
 $lessons_completed = 0;
-$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $post->ID );
+$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $post->ID );
 $total_lessons = count( $course_lessons );
 // Check if the user is taking the course
 
@@ -60,7 +60,7 @@ if ( 0 < $total_lessons ) {
 			} // End If Statement
 
     	    // Get Lesson data
-    	    $complexity_array = $woothemes_sensei->frontend->lesson->lesson_complexities();
+    	    $complexity_array = $woothemes_sensei->post_types->lesson->lesson_complexities();
     	    $lesson_length = get_post_meta( $lesson_item->ID, '_lesson_length', true );
     	    $lesson_complexity = get_post_meta( $lesson_item->ID, '_lesson_complexity', true );
     	    if ( '' != $lesson_complexity ) { $lesson_complexity = $complexity_array[$lesson_complexity]; }
