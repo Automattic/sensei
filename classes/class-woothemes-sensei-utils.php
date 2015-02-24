@@ -1563,10 +1563,10 @@ class WooThemes_Sensei_Utils {
 			$activity_logged = WooThemes_Sensei_Utils::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
 
 			// Allow further actions
-			if ( $activity_logged ) {
+			if ( 'complete' == $course_status ) {
 				do_action( 'sensei_user_course_end', $user_id, $course_id );
-				return $activity_logged;
 			}
+			return $activity_logged;
 		}
 
 		return false;
