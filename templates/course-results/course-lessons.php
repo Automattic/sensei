@@ -130,7 +130,7 @@ if ( is_user_logged_in() ) {
 
 		} // End For Loop
 
-		$html .= '<h2 class="total-grade">' . apply_filters( 'sensei_total_grade_text', __( 'TOTAL GRADE', 'woothemes-sensei' ) ) . '<span class="lesson-grade">' . $course_user_grade . '%</span></h2>';
+		$html .= '<h2 class="total-grade">' . apply_filters( 'sensei_total_grade_text', __( 'Total Grade', 'woothemes-sensei' ) ) . '<span class="lesson-grade">' . $course_user_grade . '%</span></h2>';
 
 		$html .= '</article>';
 
