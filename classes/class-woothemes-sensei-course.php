@@ -830,7 +830,7 @@ class WooThemes_Sensei_Course {
 		$course_quizzes = array();
 
 		if( $course_id ) {
-			$lesson_ids = $woothemes_sensei->frontend->course->course_lessons( $course_id, 'any', 'ids' );
+			$lesson_ids = $woothemes_sensei->post_types->course->course_lessons( $course_id, 'any', 'ids' );
 
 			foreach( $lesson_ids as $lesson_id ) {
 				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
@@ -838,8 +838,8 @@ class WooThemes_Sensei_Course {
 					return true;
 				}
 				elseif ( $has_questions ) {
-					$quiz_id = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson_id );
-//					$questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz_id );
+					$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
+//					$questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
 //					if( count( $questions ) > 0 ) {
 						$course_quizzes[] = $quiz_id;
 //					}
@@ -1074,7 +1074,7 @@ class WooThemes_Sensei_Course {
 			}
 			foreach ( $active_courses as $course_item ) {
 
-				$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $course_item->ID );
+				$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $course_item->ID );
 				$lessons_completed = 0;
 				foreach ( $course_lessons as $lesson ) {
 					if ( WooThemes_Sensei_Utils::user_completed_lesson( $lesson->ID, $user->ID ) ) {
@@ -1246,7 +1246,7 @@ class WooThemes_Sensei_Course {
 						$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
 
 						if( $manage ) {
-							$has_quizzes = count( $woothemes_sensei->frontend->course->course_quizzes( $course_item->ID ) ) > 0 ? true : false;
+							$has_quizzes = count( $woothemes_sensei->post_types->course->course_quizzes( $course_item->ID ) ) > 0 ? true : false;
 							// Output only if there is content to display
 							if ( has_filter( 'sensei_results_links' ) || false != $has_quizzes ) {
 								$complete_html .= '<p class="sensei-results-links">';

@@ -38,7 +38,7 @@ $lesson_count = 1;
 						}
 					} // End If Statement
 
-                    $complexity_array = $woothemes_sensei->frontend->lesson->lesson_complexities();
+                    $complexity_array = $woothemes_sensei->post_types->lesson->lesson_complexities();
                     $lesson_length = get_post_meta( $post_id, '_lesson_length', true );
                     $lesson_complexity = get_post_meta( $post_id, '_lesson_complexity', true );
                     if ( '' != $lesson_complexity ) { $lesson_complexity = $complexity_array[$lesson_complexity]; }
