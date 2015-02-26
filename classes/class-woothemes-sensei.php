@@ -590,9 +590,9 @@ class WooThemes_Sensei {
 		} // End If Statement
 
 		// This doesn't appear to be purely WooCommerce related. Should it be in a separate function?
-		$course_prereq = get_post_meta( $course_id, '_course_prerequisite', true );
-		if( $course_prereq && 0 < intval( $course_prereq ) ) {
-			$prereq_course_complete = WooThemes_Sensei_Utils::user_completed_course( intval( $course_prereq ), intval( $user_id ) );
+		$course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true );
+		if( 0 < absint( $course_prerequisite_id ) ) {
+			$prereq_course_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, intval( $user_id ) );
 			if ( ! $prereq_course_complete ) {
 				// Remove all course user meta
 				return WooThemes_Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
@@ -640,7 +640,7 @@ class WooThemes_Sensei {
 		switch ( $page ) {
 			case 'course-single':
 				// check for prerequisite course or lesson,
-				$course_prerequisite_id = get_post_meta( $post->ID, '_course_prerequisite', true);
+				$course_prerequisite_id = (int) get_post_meta( $post->ID, '_course_prerequisite', true);
 				$update_course = $this->woocommerce_course_update( $post->ID );
 				// Count completed lessons
 				if ( 0 < absint( $course_prerequisite_id ) ) {
