@@ -120,8 +120,6 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'wp_nav_menu_objects', array( $this, 'sensei_wp_nav_menu_objects' ) );
 		// Search Results filters
 		add_filter( 'post_class', array( $this, 'sensei_search_results_classes' ), 10 );
-		// Checks if Course is complete when completing a Lesson or Quiz
-		add_action( 'sensei_user_lesson_end', array( $this, 'sensei_completed_course' ), 10, 2 );
 		// Only show course & lesson excerpts in search results
 		add_filter( 'the_content', array( $this, 'sensei_search_results_excerpt' ) );
 
@@ -825,10 +823,6 @@ class WooThemes_Sensei_Frontend {
 
 					WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $post->ID, $current_user->ID );
 
-					// Update course completion
-					$course_id = (int) get_post_meta( $post->ID, '_lesson_course' ,true );
-					WooThemes_Sensei_Utils::update_course_status( $current_user->ID, $course_id );
-
 					// Run any action on lesson reset (previously this was 'sensei_user_course_reset')
 					do_action( 'sensei_user_lesson_reset', $current_user->ID, $post->ID );
 					$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_lesson_reset_text', __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
@@ -1015,10 +1009,6 @@ class WooThemes_Sensei_Frontend {
 					// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
 					WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $post->ID, $user_id );
 					WooThemes_Sensei_Utils::update_lesson_status( $current_user->ID, $quiz_lesson_id, 'in-progress', array( 'questions_asked' => '', 'grade' => '' ) );
-
-					// Update course completion
-					$course_id = get_post_meta( $quiz_lesson_id, '_lesson_course' ,true );
-					WooThemes_Sensei_Utils::update_course_status( $current_user->ID, $course_id );
 
 					// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
 					do_action( 'sensei_user_lesson_reset', $current_user->ID, $quiz_lesson_id );
@@ -1559,37 +1549,6 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_lesson_comment_count( $count ) {
 		return $count;
 	} // End sensei_lesson_comment_count()
-
-	/**
-	 * sensei_completed_course hooks onto everywhere a lesson ends to check if course is complete
-	 * @param  integer $user_id   User ID overload - todo in future version
-	 * @param  integer $lesson_id lesson ID
-	 * @return boolen			  returns true if successful
-	 */
-	public function sensei_completed_course( $user_id = 0, $lesson_id = 0 ) {
-		global $woothemes_sensei, $current_user;
-
-		$completed_course = false;
-
-		// Get Course ID
-		$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
-
-		if ( 0 < intval( $course_id ) ) {
-
-			$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $course_id, $current_user->ID );
-
-			if ( is_user_logged_in() && $is_user_taking_course ) {
-
-				// Checks if course is completed
-				return WooThemes_Sensei_Utils::user_complete_course( $course_id, $current_user->ID );
-
-			} // End If Statement
-
-		} // End If Statement
-
-		return $completed_course;
-
-	} // End sensei_completed_course()
 
 	/**
 	 * Only show excerpts for lessons and courses in search results

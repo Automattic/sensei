@@ -569,8 +569,37 @@ class WooThemes_Sensei_Grading {
 				}
 
 				if( $_POST['all_questions_graded'] == 'yes' ) {
-					$quiz_percent = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
-					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $quiz_percent, $user_id );
+					$grade = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
+					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
+
+					// Duplicating what Frontend->sensei_complete_quiz() does
+					$quiz_lesson_id = absint( get_post_meta( $quiz_id, '_quiz_lesson', true ) );
+					$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+					$quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+					$lesson_metadata = array();
+					if ( $pass_required ) {
+						// Student has reached the pass mark and lesson is complete
+						if ( $quiz_passmark <= $grade ) {
+							$lesson_status = 'passed';
+						}
+						else {
+							$lesson_status = 'failed';
+						} // End If Statement
+					}
+					// Student only has to partake the quiz
+					else {
+						$lesson_status = 'graded';
+					}
+					$lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz()" above
+
+					WooThemes_Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
+
+					switch( $lesson_status ) {
+						case 'passed' :
+						case 'graded' :
+							do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
+						break;
+					}
 				}
 
 				if( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
