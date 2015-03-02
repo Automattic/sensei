@@ -1475,7 +1475,7 @@ class WooThemes_Sensei_Utils {
 	 * @return int
 	 */
 	public static function user_complete_course( $course_id = 0, $user_id = 0 ) {
-		global $woothemes_sensei;
+		global $woothemes_sensei, $wp_version;
 
 		if( $course_id ) {
 			if( ! $user_id ) {
@@ -1519,7 +1519,11 @@ class WooThemes_Sensei_Utils {
 			else {
 				foreach( $lesson_ids as $lesson_id ) {
 					$lesson_status_args['post_id'] = $lesson_id;
-					$all_lesson_statuses[] = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
+					$each_lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
+					// Check for valid return before using
+					if ( !empty($each_lesson_status->comment_approved) ) {
+						$all_lesson_statuses[] = $each_lesson_status;
+					}
 				}
 			}
 			foreach( $all_lesson_statuses as $lesson_status ) {
