@@ -14,6 +14,7 @@
  * Fix - Removing HTML container element for course video when no video is present
  * Fix - Making sure gap fill questions work even if you leave out the pre- and/or post-gap text
  * Fix - Allowing 'Analysis' menu label and page heading to be translated
+ * Fix - Ensures course component widget works correctly when 'limit' is not set
 
 2015.02.17 - version 1.7.2
  * Update - Adding database table indexes to comments table to improve performance
