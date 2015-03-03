@@ -84,7 +84,7 @@ class WooThemes_Sensei_Utils {
 					'comment_author' => '', // Not needed
 					'comment_author_email' => '', // Not needed
 					'comment_author_url' => '', // Not needed
-					'comment_content' => esc_html( $args['data'] ),
+					'comment_content' => !empty($args['data']) ? esc_html( $args['data'] ) : '',
 					'comment_type' => esc_attr( $args['type'] ),
 					'user_id' => intval( $args['user_id'] ),
 					'comment_approved' => !empty($args['status']) ? esc_html( $args['status'] ) : 'log', // 'log' == 'sensei_user_answer'
@@ -178,7 +178,7 @@ class WooThemes_Sensei_Utils {
 			return false;
 		}
 		// Check for legacy code
-		if ( in_array($args['type'], array('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_quiz_grade', 'sense_answer_notes') ) ) {
+		if ( isset($args['type']) && in_array($args['type'], array('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_quiz_grade', 'sense_answer_notes') ) ) {
 			_deprecated_argument( __FUNCTION__, '1.7', sprintf( __('Sensei activity type %s is no longer used.', 'woothemes-sensei'), $args['type'] ) );
 			return false;
 		}
@@ -331,13 +331,14 @@ class WooThemes_Sensei_Utils {
 	public static function sensei_get_activity_value ( $args = array() ) {
 		global $woothemes_sensei;
 
-		$comment = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
 		$activity_value = false;
+		if ( !empty($args['field']) ) {
+			$comment = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
 
-		if ( isset( $comment->{$args['field']} ) && '' != $comment->{$args['field']} ) {
-			$activity_value = $comment->{$args['field']};
-		} // End If Statement
-
+			if ( isset( $comment->{$args['field']} ) && '' != $comment->{$args['field']} ) {
+				$activity_value = $comment->{$args['field']};
+			} // End If Statement
+		}
 		return $activity_value;
 	} // End sensei_get_activity_value()
 
