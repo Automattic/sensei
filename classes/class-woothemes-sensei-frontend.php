@@ -1501,10 +1501,15 @@ class WooThemes_Sensei_Frontend {
 				// Success message
 		   		if ( $completed_course ) { ?>
 		   			<div class="status completed"><?php echo apply_filters( 'sensei_complete_text', __( 'Completed', 'woothemes-sensei' ) ); ?></div>
-		   			<?php if( $woothemes_sensei->post_types->course->course_quizzes( $post->ID, true ) ) { ?>
+		   			<?php 
+					$has_quizzes = $woothemes_sensei->post_types->course->course_quizzes( $post->ID, true );
+					if( has_filter( 'sensei_results_links' ) || $has_quizzes ) { ?>
 		   				<p class="sensei-results-links">
 		   				<?php
-		   				$results_link = '<a class="view-results" href="' . $woothemes_sensei->course_results->get_permalink( $post->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+						$results_link = '';
+						if( $has_quizzes ) {
+							$results_link = '<a class="view-results" href="' . $woothemes_sensei->course_results->get_permalink( $post->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+						}
 		   				$results_link = apply_filters( 'sensei_results_links', $results_link );
 		   				echo $results_link;
 		   				?></p>

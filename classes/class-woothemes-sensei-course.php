@@ -846,7 +846,9 @@ class WooThemes_Sensei_Course {
 				}
 			}
 		}
-
+		if ( $boolean_check && empty($course_quizzes) ) {
+			$course_quizzes = false;
+		}
 		return $course_quizzes;
 	}
 
@@ -1246,12 +1248,12 @@ class WooThemes_Sensei_Course {
 						$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
 
 						if( $manage ) {
-							$has_quizzes = count( $woothemes_sensei->post_types->course->course_quizzes( $course_item->ID ) ) > 0 ? true : false;
+							$has_quizzes = $woothemes_sensei->post_types->course->course_quizzes( $course_item->ID, true );
 							// Output only if there is content to display
-							if ( has_filter( 'sensei_results_links' ) || false != $has_quizzes ) {
+							if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
 								$complete_html .= '<p class="sensei-results-links">';
 								$results_link = '';
-								if( false != $has_quizzes ) {
+								if( $has_quizzes ) {
 									$results_link = '<a class="button view-results" href="' . $woothemes_sensei->course_results->get_permalink( $course_item->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
 								}
 								$complete_html .= apply_filters( 'sensei_results_links', $results_link );
