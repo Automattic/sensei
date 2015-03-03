@@ -56,7 +56,43 @@ class WooThemes_Sensei_Course {
 			$this->my_courses_page = false;
 		} // End If Statement
 
+		// Update course completion upon completion of a lesson
+		add_action( 'sensei_user_lesson_end', array( $this, 'update_status_after_lesson_change' ), 10, 2 );
+		// Update course completion upon reset of a lesson
+		add_action( 'sensei_user_lesson_reset', array( $this, 'update_status_after_lesson_change' ), 10, 2 );
+		// Update course completion upon grading of a quiz
+		add_action( 'sensei_user_quiz_grade', array( $this, 'update_status_after_quiz_submission' ), 10, 2 );
+
 	} // End __construct()
+
+	/**
+	 * Fires when a quiz has been graded to check if the Course status needs changing
+	 * 
+	 * @param type $user_id
+	 * @param type $quiz_id
+	 */
+	public function update_status_after_quiz_submission( $user_id, $quiz_id ) {
+		if ( intval( $user_id ) > 0 && intval( $quiz_id ) > 0 ) {
+			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+			$this->update_status_after_lesson_change( $user_id, $lesson_id );
+		}
+	}
+
+	/**
+	 * Fires when a lesson has changed to check if the Course status needs changing
+	 * 
+	 * @param int $user_id
+	 * @param int $lesson_id
+	 */
+	public function update_status_after_lesson_change( $user_id, $lesson_id ) {
+		if ( intval( $user_id ) > 0 && intval( $lesson_id ) > 0 ) {
+			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			if ( intval( $course_id ) > 0 ) { 
+				// Updates the Course status and it's meta data
+				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
+			}
+		}
+	}
 
 	/**
 	 * meta_box_setup function.

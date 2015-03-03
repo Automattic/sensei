@@ -632,18 +632,6 @@ class WooThemes_Sensei_Utils {
 
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 
-			if( $quiz_passmark ) {
-				if( $grade >= $quiz_passmark ) {
-					$status = 'passed';
-				} else {
-					$status = 'failed';
-				}
-			} else {
-				$status = 'graded';
-			}
-
-			WooThemes_Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $status );
-
 			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
 		}
 
@@ -1812,15 +1800,6 @@ class WooThemes_Sensei_Utils {
 			}
 
 			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
-
-			if( in_array( $status, array( 'complete', 'passed' ) ) ) {
-
-				$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-
-				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
-
-				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
-			}
 		}
 		return $comment_id;
 	}
