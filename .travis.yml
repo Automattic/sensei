@@ -20,6 +20,5 @@ matrix:
 
 before_script:
   - bash tests/bin/install.sh sensei_test root '' localhost $WP_VERSION
-  - bash tests/bin/travis.sh before
 
 script: phpunit -c phpunit.xml.dist
