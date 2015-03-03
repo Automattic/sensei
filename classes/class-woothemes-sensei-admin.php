@@ -195,7 +195,7 @@ class WooThemes_Sensei_Admin {
 			?>
 	    	<div id="message" class="updated sensei-message sensei-connect">
 				<div class="squeezer">
-					<h4><?php _e( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and setup.', 'woothemes-sensei' ); ?></h4>
+					<h4><?php _e( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'woothemes-sensei' ); ?></h4>
 					<p><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">Tweet</a>
 		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
 				</div>
@@ -563,7 +563,7 @@ class WooThemes_Sensei_Admin {
 
 		$new_post['post_title'] .= __( $suffix, 'woothemes-sensei' );
 
-		$new_post['post_date'] = date( 'Y-m-d H:i:s' );
+		$new_post['post_date'] = current_time( 'mysql' );
 		$new_post['post_date_gmt'] = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified'] = $new_post['post_date'];
 		$new_post['post_modified_gmt'] = $new_post['post_date_gmt'];
@@ -1309,19 +1309,6 @@ class WooThemes_Sensei_Admin {
         }
 
         $screen = get_current_screen();
-
-        if( 'sensei_page_woothemes-sensei-settings' == $screen->id ) {
-
-	        $hide_menu_settings_notice = get_user_meta( $user_id, 'sensei_hide_menu_settings_notice', true );
-
-	        if( ! $hide_menu_settings_notice ) {
-	        	?>
-				<div class="updated fade">
-			        <p><?php printf( __( 'The settings for the Sensei menu items have been removed. Menu items can now be added individually via the %1$sWordPress menu editor%2$s.%3$s%4$sDismiss this notice%5$s', 'woothemes-sensei' ), '<a href="' . admin_url( 'nav-menus.php' ) . '">', '</a>', '<br/>', '<em><a href="' . add_query_arg( 'sensei_hide_notice', 'menu_settings' ) . '">', '</a></em>' ); ?></p>
-			    </div>
-			    <?php
-	        }
-	    }
 
 	    if ( ! current_theme_supports( 'sensei' ) ) {
 	    	$template = get_option( 'template' );

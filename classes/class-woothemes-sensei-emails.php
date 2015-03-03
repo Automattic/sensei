@@ -205,7 +205,7 @@ class WooThemes_Sensei_Emails {
 		ob_start();
 
 		do_action( 'sensei_before_email_template', $email_template );
-		include_once( $template );
+		include( $template );
 		do_action( 'sensei_after_email_template', $email_template );
 
 		return ob_get_clean();

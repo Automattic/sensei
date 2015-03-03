@@ -47,9 +47,9 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 		$this->user = new WP_User( $user_id );
 
 		// Get passed flag
-		$passed = 'failed';
+		$passed = __( 'failed', 'woothemes-sensei' );
 		if( $grade >= $passmark ) {
-			$passed = 'passed';
+			$passed = __( 'passed', 'woothemes-sensei' );
 		}
 
 		// Get grade tye (auto/manual)

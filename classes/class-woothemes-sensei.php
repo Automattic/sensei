@@ -278,7 +278,7 @@ class WooThemes_Sensei {
 	public function virtual_order_payment_complete( $order_status, $order_id ) {
 		$order = new WC_Order( $order_id );
 		if ( ! isset ( $order ) ) return;
-		if ( $order_status == 'processing' && ( $order->status == 'on-hold' || $order->status == 'pending' || $order->status == 'failed' ) ) {
+		if ( $order_status == 'wc-processing' && ( $order->post_status == 'wc-on-hold' || $order->post_status == 'wc-pending' || $order->post_status == 'wc-failed' ) ) {
 			$virtual_order = true;
 
 			if ( count( $order->get_items() ) > 0 ) {
@@ -392,12 +392,12 @@ class WooThemes_Sensei {
 		if ( $this->version != '' ) {
 
 			// Check previous version to see if forced updates must run
-			$old_version = get_option( 'woothemes-sensei-version', false );
-			if( $old_version && version_compare( $old_version, '1.7.0', '<' )  ) {
-				update_option( 'woothemes-sensei-force-updates', $this->version );
-			} else {
-				delete_option( 'woothemes-sensei-force-updates' );
-			}
+			// $old_version = get_option( 'woothemes-sensei-version', false );
+			// if( $old_version && version_compare( $old_version, '1.7.0', '<' )  ) {
+			// 	update_option( 'woothemes-sensei-force-updates', $this->version );
+			// } else {
+			// 	delete_option( 'woothemes-sensei-force-updates' );
+			// }
 
 			update_option( 'woothemes-sensei-version', $this->version );
 		}
@@ -497,6 +497,12 @@ class WooThemes_Sensei {
 		    $find[] = $file;
 		    $find[] = $this->template_url . $file;
 
+		} elseif( is_tax( 'lesson-tag' ) ) {
+
+			$file 	= 'taxonomy-lesson-tag.php';
+		    $find[] = $file;
+		    $find[] = $this->template_url . $file;
+
 		} elseif ( is_post_type_archive( 'lesson' ) ) {
 
 		    $file 	= 'archive-lesson.php';
@@ -589,9 +595,9 @@ class WooThemes_Sensei {
 		} // End If Statement
 
 		// This doesn't appear to be purely WooCommerce related. Should it be in a separate function?
-		$course_prereq = get_post_meta( $course_id, '_course_prerequisite', true );
-		if( $course_prereq && 0 < intval( $course_prereq ) ) {
-			$prereq_course_complete = WooThemes_Sensei_Utils::user_completed_course( intval( $course_prereq ), intval( $user_id ) );
+		$course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true );
+		if( 0 < absint( $course_prerequisite_id ) ) {
+			$prereq_course_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, intval( $user_id ) );
 			if ( ! $prereq_course_complete ) {
 				// Remove all course user meta
 				return WooThemes_Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
@@ -639,7 +645,7 @@ class WooThemes_Sensei {
 		switch ( $page ) {
 			case 'course-single':
 				// check for prerequisite course or lesson,
-				$course_prerequisite_id = get_post_meta( $post->ID, '_course_prerequisite', true);
+				$course_prerequisite_id = (int) get_post_meta( $post->ID, '_course_prerequisite', true);
 				$update_course = $this->woocommerce_course_update( $post->ID );
 				// Count completed lessons
 				if ( 0 < absint( $course_prerequisite_id ) ) {
@@ -890,29 +896,49 @@ class WooThemes_Sensei {
 	} // End sensei_woocommerce_reactivate_subscription
 
 	/**
-	 * Returns the WooCommerce Product Object for pre and post WooCommerce 2.0 installations.
+	 * Returns the WooCommerce Product Object
+	 *
+	 * The code caters for pre and post WooCommerce 2.2 installations.
+	 *
 	 * @since   1.1.1
 	 * @access  public
 	 * @param   integer $wc_product_id Product ID or Variation ID
 	 * @param   string  $product_type  '' or 'variation'
-	 * @return  woocommerce product object $wc_product_object
+	 * @return   WC_Product $wc_product_object
 	 */
 	public function sensei_get_woocommerce_product_object ( $wc_product_id = 0, $product_type = '' ) {
+
 		$wc_product_object = false;
 		if ( 0 < intval( $wc_product_id ) ) {
+
 			// Get the product
-			if ( function_exists( 'get_product' ) ) {
+			if ( function_exists( 'wc_get_product' ) ) {
+
+				$wc_product_object = wc_get_product( $wc_product_id ); // Post WC 2.3
+
+			} elseif ( function_exists( 'get_product' ) ) {
+
 				$wc_product_object = get_product( $wc_product_id ); // Post WC 2.0
+
 			} else {
-				// Pre WC 2.0
-				if ( 'variation' == $product_type || 'subscription_variation' == $product_type ) {
-					$wc_product_object = new WC_Product_Variation( $wc_product_id );
-				} else {
-					$wc_product_object = new WC_Product( $wc_product_id );
+
+					// Pre WC 2.0
+					if ( 'variation' == $product_type || 'subscription_variation' == $product_type ) {
+
+						$wc_product_object = new WC_Product_Variation( $wc_product_id );
+
+					} else {
+
+						$wc_product_object = new WC_Product( $wc_product_id );
+
+					} // End If Statement
+
 				} // End If Statement
-			} // End If Statement
+
 		} // End If Statement
+
 		return $wc_product_object;
+
 	} // End sensei_get_woocommerce_product_object()
 
 	/**
@@ -971,13 +997,17 @@ class WooThemes_Sensei {
 	 * sensei_woocommerce_email_course_details adds detail to email
 	 * @since   1.4.5
 	 * @access  public
-	 * @param   integer $order_id order ID
+	 * @param   WC_Order $order
 	 * @return  void
 	 */
 	public function sensei_woocommerce_email_course_details( $order ) {
 		global $woocommerce, $woothemes_sensei;
 
-		if( 'completed' != $order->status ) return;
+		// exit early if not wc-completed or wc-processing
+		if( 'wc-completed' != $order->post_status
+			&& 'wc-processing' != $order->post_status  ) {
+			return;
+		}
 
 		$order_items = $order->get_items();
 		$order_id = $order->id;

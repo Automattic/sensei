@@ -310,9 +310,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		global $current_user;
 		// Get User Meta
 		get_currentuserinfo();
-		$course_prerequisite_id = get_post_meta( $course_id, '_course_prerequisite', true);
+		$course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true);
 		$prequisite_complete = false;
-		if ( 0 < $course_prerequisite_id ) {
+		if ( 0 < absint( $course_prerequisite_id ) ) {
 			$prequisite_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
 		} else {
 			$prequisite_complete = true;
@@ -409,7 +409,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     	    if ( 0 < $wc_post_id ) {
     	    	// Get the product
     	    	$product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
-    	    	if ( $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
+
+    	    	if ( isset( $product ) && !empty( $product )  &&  $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
     	    		<span class="course-price"><?php echo $product->get_price_html(); ?></span>
     	    	<?php } // End If Statement
     	    } // End If Statement

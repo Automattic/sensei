@@ -188,18 +188,30 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		$course_ids = array();
 		if ( 'activecourses' == esc_attr( $instance['component'] ) ) {
 			$courses = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_status', 'status' => 'in-progress' ), true );
-			foreach( $courses AS $course_id ) {
-				$course_ids[] = $course_id;
+			// Need to always return an array, even with only 1 item
+			if ( !is_array($courses) ) {
+				$courses = array( $courses );
+			}
+			foreach( $courses AS $course ) {
+				$course_ids[] = $course->comment_post_ID;
 			}
 		} elseif( 'completedcourses' == esc_attr( $instance['component'] ) ) {
 			$courses = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_status', 'status' => 'complete' ), true );
-			foreach( $courses AS $course_id ) {
-				$course_ids[] = $course_id;
+			// Need to always return an array, even with only 1 item
+			if ( !is_array($courses) ) {
+				$courses = array( $courses );
+			}
+			foreach( $courses AS $course ) {
+				$course_ids[] = $course->comment_post_ID;
 			}
 		} // End If Statement
 
 		$posts_array = array();
 
+		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes
+		if ( !empty($instance['limit']) && intval( $instance['limit'] ) >= 1 && intval( $instance['limit'] ) < count($course_ids) ) {
+			$course_ids = array_slice( $course_ids, 0, intval( $instance['limit'] ) ); // This does mean the order by is effectively ignored
+		}
 		if ( ! empty( $course_ids ) ) {
 			$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ), $course_ids );
 		} else {

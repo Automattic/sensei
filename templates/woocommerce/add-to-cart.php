@@ -52,4 +52,12 @@ if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user
              <?php } // End If Statement
         } // End If Statement
     } // End If Statement
-} // End If Statement ?>
+} // End If Statement
+
+if ( !is_user_logged_in() ) {
+    $my_courses_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
+    $login_link =  '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>'; ?>
+    <p class="add-to-cart-login">
+        <?php echo sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link ); ?>
+    </p>
+<?php } ?>

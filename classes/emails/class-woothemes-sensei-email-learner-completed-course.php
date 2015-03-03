@@ -47,9 +47,9 @@ class WooThemes_Sensei_Email_Learner_Completed_Course {
 		$this->user = new WP_User( $user_id );
 
 		// Get passed status
-		$passed = 'passed';
+		$passed = __( 'passed', 'woothemes-sensei' );
 		if( ! WooThemes_Sensei_Utils::sensei_user_passed_course( $course_id, $user_id ) ) {
-			$passed = 'failed';
+			$passed = __( 'failed', 'woothemes-sensei' );
 		}
 
 		// Construct data array

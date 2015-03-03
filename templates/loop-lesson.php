@@ -32,13 +32,13 @@ $lesson_count = 1;
 					$user_lesson_status = false;
 					if ( is_user_logged_in() ) {
 						// Check if Lesson is complete
-						$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson->ID, $current_user->ID );
+						$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $post_id, $current_user->ID );
 						if ( WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status ) ) {
 							$single_lesson_complete = true;
 						}
 					} // End If Statement
 
-                    $complexity_array = $woothemes_sensei->frontend->lesson->lesson_complexities();
+                    $complexity_array = $woothemes_sensei->post_types->lesson->lesson_complexities();
                     $lesson_length = get_post_meta( $post_id, '_lesson_length', true );
                     $lesson_complexity = get_post_meta( $post_id, '_lesson_complexity', true );
                     if ( '' != $lesson_complexity ) { $lesson_complexity = $complexity_array[$lesson_complexity]; }
