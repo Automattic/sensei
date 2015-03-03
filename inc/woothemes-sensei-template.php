@@ -310,9 +310,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		global $current_user;
 		// Get User Meta
 		get_currentuserinfo();
-		$course_prerequisite_id = get_post_meta( $course_id, '_course_prerequisite', true);
+		$course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true);
 		$prequisite_complete = false;
-		if ( 0 < $course_prerequisite_id ) {
+		if ( 0 < absint( $course_prerequisite_id ) ) {
 			$prequisite_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
 		} else {
 			$prequisite_complete = true;
