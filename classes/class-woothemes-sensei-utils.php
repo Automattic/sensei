@@ -331,13 +331,14 @@ class WooThemes_Sensei_Utils {
 	public static function sensei_get_activity_value ( $args = array() ) {
 		global $woothemes_sensei;
 
-		$comment = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
 		$activity_value = false;
+		if ( !empty($args['field']) ) {
+			$comment = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
 
-		if ( isset( $comment->{$args['field']} ) && '' != $comment->{$args['field']} ) {
-			$activity_value = $comment->{$args['field']};
-		} // End If Statement
-
+			if ( isset( $comment->{$args['field']} ) && '' != $comment->{$args['field']} ) {
+				$activity_value = $comment->{$args['field']};
+			} // End If Statement
+		}
 		return $activity_value;
 	} // End sensei_get_activity_value()
 
