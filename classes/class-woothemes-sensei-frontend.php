@@ -1063,6 +1063,11 @@ class WooThemes_Sensei_Frontend {
 
 	} // End sensei_complete_quiz()
 
+	/**
+	 * @deprecated use WooThemes_Sensei_Quiz::get_user_answers
+	 * @param int $lesson_id
+	 * @return array
+	 */
 	public function sensei_get_user_quiz_answers( $lesson_id = 0 ) {
 		global $current_user, $woothemes_sensei;
 
