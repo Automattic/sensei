@@ -84,7 +84,7 @@ class WooThemes_Sensei_Utils {
 					'comment_author' => '', // Not needed
 					'comment_author_email' => '', // Not needed
 					'comment_author_url' => '', // Not needed
-					'comment_content' => esc_html( $args['data'] ),
+					'comment_content' => !empty($args['data']) ? esc_html( $args['data'] ) : '',
 					'comment_type' => esc_attr( $args['type'] ),
 					'user_id' => intval( $args['user_id'] ),
 					'comment_approved' => !empty($args['status']) ? esc_html( $args['status'] ) : 'log', // 'log' == 'sensei_user_answer'
