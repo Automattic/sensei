@@ -113,7 +113,7 @@ class WooThemes_Sensei {
 		$this->lesson = $this->post_types->lesson;
 
 		//Add the quiz class
-		$this->load_class( 'admin' );
+		$this->load_class( 'quiz' );
 		$this->quiz = new WooThemes_Sensei_Quiz( $file );
 		$this->quiz->token = $this->token;
 
