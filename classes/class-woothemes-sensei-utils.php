@@ -520,7 +520,22 @@ class WooThemes_Sensei_Utils {
 
 		require_once( ABSPATH . 'wp-admin/includes/admin.php' );
 
-        $file_return = wp_handle_upload( $file, array('test_form' => false ) );
+        /**
+         * Filter the data array for the Sensei wp_handle_upload function call
+         *
+         * This filter was mainly added for Unit Testing purposes.
+         *
+         * @since 1.7.4
+         *
+         * @param array  $file_upload_args {
+         *      array of current values
+         *
+         *     @type string test_form set to false by default
+         * }
+         */
+        $file_upload_args = apply_filters( 'sensei_file_upload_args', array('test_form' => false ) );
+
+        $file_return = wp_handle_upload( $file, $file_upload_args );
 
         if( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
             return false;
