@@ -334,6 +334,53 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
     }// end generate_and_attach_questions
 
     /**
+     * This functions take answers submitted by a user, extracts ones that is of type file-upload
+     * and then creates and array of test $_FILES
+     *
+     * @param array $test_user_quiz_answers
+     * @return array $files
+     */
+    public function generate_test_files( $test_user_quiz_answers ){
+
+        $files = array();
+        //check if there are any file-upload question types and generate the dummy file data
+        foreach( $test_user_quiz_answers as $question_id => $answer ){
+
+            //Setup the question types
+            $question_types = wp_get_post_terms( $question_id, 'question-type' );
+            foreach( $question_types as $type ) {
+                $question_type = $type->slug;
+            }
+
+            if( 'file-upload' == $question_type){
+                //setup the sample image file location within the test folders
+                $test_images_directory = dirname( __FILE__) . '/images/';
+
+                // make a copy of the file intended for upload as
+                // it will be moved to the new location during the upload
+                // and no longer available for the next test
+                $new_test_image_name = 'test-question-' . $question_id . '-greenapple.jpg';
+                $new_test_image_location = $test_images_directory . $new_test_image_name  ;
+                copy ( $test_images_directory . 'greenapple.jpg', $new_test_image_location   );
+
+                $file = array(
+                    'name' => $new_test_image_name,
+                    'type' => 'image/jpeg' ,
+                    'tmp_name' => $new_test_image_location ,
+                    'error' => 0,
+                    'size' => 4576 );
+
+                // pop the file on top of the car
+                $files[ 'file_upload_' . $question_id ] = $file;
+            }
+
+        } // end for each $test_user_quiz_answers
+
+        return $files;
+
+    }// end generate_test_files()
+
+    /**
      * Testing the quiz class to make sure it is loaded
      */
     public function testClassInstance() {
