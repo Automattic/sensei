@@ -1222,10 +1222,15 @@ class WooThemes_Sensei_Frontend {
 			$reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true ); ?>
 
             <!-- Action Nonce's -->
-            <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_nonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_nonce' ); ?>" value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
-			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_reset_quiz_click_nonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_reset_quiz_click_nonce' ); ?>" value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_reset_quiz_click_nonce' ) ); ?>" />
+            <input type="hidden" name="woothemes_sensei_complete_quiz_nonce" id="woothemes_sensei_complete_quiz_nonce"
+                   value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
+			<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce"
+                   value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+            <input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce"
+                   value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
+            <!--#end Action Nonce's -->
 
-		    <?php if ( '' == $this->data->user_quiz_grade ) { ?>
+            <?php if ( '' == $this->data->user_quiz_grade ) { ?>
 		 	<span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		 	<span><input type="submit" name="quiz_complete" class="quiz-submit save" value="<?php echo apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		     <?php } // End If Statement ?>
