@@ -125,9 +125,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         // loop through all the question and generate random answer data
         foreach( $quiz_question_posts as $question ){
 
-
             // get the current question type
-            $question_types_array = wp_get_post_terms( $question->ID, 'question-type', array( 'fields' => 'names' ) );
+            $question_types_array = wp_get_post_terms( $question->ID, 'question-type', array( 'fields' => 'slugs' ) );
+
             if ( isset( $question_types_array[0] ) && '' != $question_types_array[0] ) {
                 $type = $question_types_array[0];
             }else{
@@ -167,19 +167,18 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
                 $user_quiz_answers[ $question->ID ] = '';
 
-
             }
-
-            return $user_quiz_answers;
 
         }// end for quiz_question_posts
 
-    }
+        return $user_quiz_answers;
+
+    }// end generate_user_quiz_answers()
 
     /**
      * Generate and attach lesson questions.
      *
-     * This will create a set of questions. These set of question will be added to every lesson.
+     * This will create a set of questions. These set of questions will be added to every lesson.
      * So all lessons the makes use of this function will have the same set of questions in their
      * quiz.
      *
@@ -197,7 +196,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
             throw new Exception('Generate questions needs a valid lesson ID.');
         }
 
-        // create a new lesson quiz post type and attach it to to the lesson
+        // create a new quiz and attach it to the lesson
         $new_quiz_args = array(
             'post_type' => 'quiz',
             'post_name' => 'lesson_id_ ' .  $lesson_id . '_quiz' ,
@@ -210,7 +209,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
         // if the database already contains questions don't create more but add
         // the existing questions to the passed in lesson id's lesson
-        $questions = get_posts( array( 'post_type' => 'question' )  );
+        $question_post_query = new WP_Query( array( 'post_type' => 'question' ) );
+        $questions = $question_post_query->get_posts();
 
         if( ! count( $questions ) > 0 ){
 
@@ -263,8 +263,25 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         //'multiple-choice' 'boolean' 'gap-fill' 'single-line' 'multi-line' 'file-upload'
         $question_types = $woothemes_sensei->post_types->question->question_types();
 
-        // create test data array of questions
-        foreach( $question_types as $type => $translation_string  ){
+        // get the question type slug as this is used to determine the slug and not the string type
+        $question_type_slugs = array_keys($question_types);
+
+        // generate ten random-ish questions
+        foreach( range( 0, ( $number - 1 ) )  as $count ) {
+
+              //make sure that at least on question from each type is included
+            if( $count < ( count( $question_types ) )  ){
+
+                //setup the question type at the current index
+                $type =  $question_type_slugs[ $count ];
+
+            }else{
+
+                // setup a random question type
+                $random_index = rand( 0, count( $question_types ) - 1 );
+                $type =  $question_type_slugs[$random_index];
+
+              }
 
             $test_question_data = array(
                 'question_type' => $type ,
@@ -598,5 +615,51 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertTrue($lesson_data_reset  , 'The lesson data was not reset for a valid use case'  );
 
     }// end testGetQuizId
+
+    /**
+     * This tests Woothemes_Sensei()->quiz->prepare_form_submitted_answers
+     */
+    public function testPrepareFormSubmittedAnswers(){
+        global $woothemes_sensei;
+
+        // make sure the method is in the class before we proceed
+        $this->assertTrue( method_exists ( $woothemes_sensei->quiz,'prepare_form_submitted_answers' ),
+            'The prepare_form_submitted_answers method is not in class WooThemes_Sensei_Quiz' );
+
+        //does it return false for empty and non array parameters
+        $this->assertFalse( $woothemes_sensei->quiz->prepare_form_submitted_answers('', '' ) ,
+            'prepare_form_submitted_answers should return false for a non array parameter ' );
+
+        //setup valid data
+        $test_lesson_id = $this->get_random_lesson_id();
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
+        $test_user_quiz_answers = $this->generate_user_quiz_answers( $test_quiz_id  );
+        $files = $this->generate_test_files( $test_user_quiz_answers );
+
+        // setup for the next group of assertions
+        //setup this function to override the arguments passed to WordPress upload function
+        function unit_test_override_sensei_file_upload_args( $args ){
+            $args['action'] = 'custom_testing_upload_function';
+            return $args;
+        }
+
+        // for the valid data does it return an array ?
+        add_filter( 'sensei_file_upload_args', 'unit_test_override_sensei_file_upload_args' );
+        $prepared_test_data = $woothemes_sensei->quiz->prepare_form_submitted_answers( $test_user_quiz_answers , $files );
+        $this->assertTrue( is_array( $prepared_test_data ) ,
+        'function function does not return an array for valid parameters' );
+        $this->assertTrue( count( $prepared_test_data ) == count( $test_user_quiz_answers ) ,
+            'function does not return the same number of items that was passed in' );
+        $this->assertTrue( array_keys( $prepared_test_data ) == array_keys( $test_user_quiz_answers ) ,
+            'function does not return the same array keys( question ids ) that was passed in' );
+
+        // for valid data, is the answers in the array returned the same as the values passed in
+        $random_index = array_rand( $prepared_test_data  );
+        $input_array_sample_element_val = $test_user_quiz_answers[$random_index];
+        $output_array_sample_element_val =  base64_decode( maybe_unserialize( $prepared_test_data[ $random_index ] ) );
+        $this->assertTrue( $input_array_sample_element_val == $output_array_sample_element_val ,
+            'The function changes the array values so much that they are not the same as when passed in'  );
+
+    }// end testPrepareFormSubmittedAnswers()
 
 }// end class Sensei_Class_Quiz_Test
