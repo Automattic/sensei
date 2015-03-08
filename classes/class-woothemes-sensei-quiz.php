@@ -50,6 +50,7 @@ class WooThemes_Sensei_Quiz {
 		global $woothemes_sensei;
 
 		// If this isn't a 'lesson' post, don't update it.
+        //todo: make sure this doesn't fire on ajax and auto-save
 	    if ( isset( $_POST['post_type'] ) && 'lesson' != $_POST['post_type'] ) {
 	        return;
 	    }
@@ -70,6 +71,8 @@ class WooThemes_Sensei_Quiz {
 			      'ID'           => $quiz_item,
 			      'post_author' =>  $new_lesson_author_id
 			);
+
+            //todo: remove this hook so it doesn't run for the next post update again
 
 			// Update the post into the database
 		  	wp_update_post( $my_post );
@@ -109,7 +112,7 @@ class WooThemes_Sensei_Quiz {
 	 * sensei_save_quiz_answers
 	 *
 	 * This answer calls the main save_user_answers function. It was added for backwards compatibility . It als a more
-	 * forgiving function the simply takes the answers and then finds the user and the lesson id.
+	 * forgiving function that simply takes the answers and then finds the user and the lesson id.
 	 *
 	 * @param array $quiz_answers
 	 * @return bool $saved;
@@ -535,6 +538,6 @@ class WooThemes_Sensei_Quiz {
 		}
 
 		return $prepared_answers;
-	}
+	} // prepare_form_submitted_answers
 
 } // End Class WooThemes_Sensei_Quiz
