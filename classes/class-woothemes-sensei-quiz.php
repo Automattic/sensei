@@ -306,8 +306,8 @@ class WooThemes_Sensei_Quiz {
 		// Get quiz pass mark
 		$quiz_passmark = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
 
-		// Handle Quiz Completion
-		if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_quiz_noonce' ], 'woothemes_sensei_complete_quiz_noonce' ) ) {
+		// Handle Quiz Completion submit for grading
+		if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_quiz_nonce' ], 'woothemes_sensei_complete_quiz_nonce' ) ) {
 
 			$sanitized_submit = esc_html( $_POST['quiz_complete'] );
 
