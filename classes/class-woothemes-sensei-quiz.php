@@ -125,22 +125,6 @@ class WooThemes_Sensei_Quiz {
 	}// end sensei_save_quiz_answers
 
 	/**
-	 * This function converts the submitted array and readies it for storage
-	 *
-	 * @since 1.7.4
-	 * @access public
-	 *
-	 * @param array $unprepared_answers
-	 *
-	 * @return array
-	 */
-	public function prepare_form_submitted_answers( $unprepared_answers ){
-		$answers = array();
-
-		return $answers;
-	}
-
-	/**
 	 * Save the user answers for the given lesson's quiz
 	 *
 	 * For this function you must supply all three parameters. If will return false one is left out.
@@ -169,56 +153,13 @@ class WooThemes_Sensei_Quiz {
 			||!get_userdata( $user_id )
 			|| !is_array( $quiz_answers ) ){
 
-			return $answers_saved; // answers_saved is false at this point
+			return false;
+
 		}
 
-		// Loop through submitted quiz answers and save them appropriately
-		$prepared_answers = array();
-		foreach( $quiz_answers as $question_id => $answer ) {
+		//prepare the answers
+		$prepared_answers = $this->prepare_form_submitted_answers( $quiz_answers , $_FILES );
 
-			//Setup the question types
-			$question_types = wp_get_post_terms( $question_id, 'question-type' );
-			foreach( $question_types as $type ) {
-				$question_type = $type->slug;
-			}
-			if( ! $question_type ) {
-				$question_type = 'multiple-choice';
-			}
-
-			// Sanitise answer
-			if( 0 == get_magic_quotes_gpc() ) {
-				$answer = wp_unslash( $answer );
-			}
-			switch( $question_type ) {
-				case 'multi-line': $answer = nl2br( $answer ); break;
-				case 'single-line': break;
-				case 'gap-fill': break;
-				default: $answer = maybe_serialize( $answer ); break;
-			}
-
-
-			$prepared_answers[ $question_id ] =  base64_encode( $answer );
-
-		}// end for each $quiz_answers
-
-
-
-		// Handle file upload questions
-		if( isset( $_FILES ) ) {
-			foreach( $_FILES as $field => $file ) {
-				if( strpos( $field, 'file_upload_' ) !== false ) {
-					$question_id = str_replace( 'file_upload_', '', $field );
-					if( $file && $question_id ) {
-						$attachment_id = self::upload_file( $file );
-						if( $attachment_id ) {
-
-							$prepared_answers[ $question_id ] = base64_encode( $attachment_id );
-
-						}
-					}
-				}
-			}
-		}
 
 		// get the lesson status comment type on the lesson
 		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
@@ -522,5 +463,78 @@ class WooThemes_Sensei_Quiz {
 	public function submit_user_answers( $quiz_answers, $lesson_id , $user_id = 0 ){
 
 	} //submit_user_answers
+
+	/**
+	 * This function converts the submitted array and makes it ready it for storage
+	 *
+	 * Creating a single array of all question types including file id's to be stored
+	 * as comment meta by the calling function.
+	 *
+	 * @since 1.7.4
+	 * @access public
+	 *
+	 * @param array $unprepared_answers
+	 * @param $files
+	 * @return array
+	 */
+	public function prepare_form_submitted_answers( $unprepared_answers,  $files ){
+
+		$prepared_answers = array();
+
+		// validate incoming answers
+		if( empty( $unprepared_answers  ) || ! is_array( $unprepared_answers ) ){
+			return false;
+		}
+
+		// Loop through submitted quiz answers and save them appropriately
+		foreach( $unprepared_answers as $question_id => $answer ) {
+
+			//Setup the question types
+			$question_types = wp_get_post_terms( $question_id, 'question-type' );
+			foreach( $question_types as $type ) {
+				$question_type = $type->slug;
+			}
+
+			if( ! $question_type ) {
+				$question_type = 'multiple-choice';
+			}
+
+			// Sanitise answer
+			if( 0 == get_magic_quotes_gpc() ) {
+				$answer = wp_unslash( $answer );
+			}
+			switch( $question_type ) {
+				case 'multi-line': $answer = nl2br( $answer ); break;
+				case 'single-line': break;
+				case 'gap-fill': break;
+				default: $answer = maybe_serialize( $answer ); break;
+			}
+
+
+			$prepared_answers[ $question_id ] =  base64_encode( $answer );
+
+		}// end for each $quiz_answers
+
+
+
+		// Handle file upload questions
+		if( isset( $files ) && ! empty( $files  ) ) {
+			foreach( $files as $field => $file ) {
+				if( strpos( $field, 'file_upload_' ) !== false ) {
+					$question_id = str_replace( 'file_upload_', '', $field );
+					if( $file && $question_id ) {
+						$attachment_id = WooThemes_Sensei_Utils::upload_file( $file );
+						if( $attachment_id ) {
+
+							$prepared_answers[ $question_id ] = base64_encode( $attachment_id );
+
+						}
+					}
+				}
+			}
+		}
+
+		return $prepared_answers;
+	}
 
 } // End Class WooThemes_Sensei_Quiz
