@@ -33,7 +33,7 @@ class WooThemes_Sensei_Quiz {
 		add_action( 'save_post', array( $this, 'update_author' ));
 
 		// listen to the reset button click
-		add_action( 'template_redirect', array( $this, 'reset_button_click_response'  ) );
+		add_action( 'template_redirect', array( $this, 'reset_button_click_listener'  ) );
 
 		// fire the complete quiz button submit action
 		add_action( 'sensei_complete_quiz', array( $this, 'user_answers_submit_listener' ) );
@@ -223,7 +223,7 @@ class WooThemes_Sensei_Quiz {
 	 *
 	 * @return void;
 	 */
-	public function reset_button_click_response( ){
+	public function reset_button_click_listener( ){
 
 		if( ! isset( $_POST[ 'quiz_complete' ])
 			||  'Reset Quiz'  != $_POST[ 'quiz_complete' ]
