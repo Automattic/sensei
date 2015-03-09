@@ -656,7 +656,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         // for valid data, is the answers in the array returned the same as the values passed in
         $random_index = array_rand( $prepared_test_data  );
         $input_array_sample_element_val = $test_user_quiz_answers[$random_index];
-        $output_array_sample_element_val =  base64_decode( maybe_unserialize( $prepared_test_data[ $random_index ] ) );
+        $output_array_sample_element_val =  maybe_unserialize( base64_decode(  $prepared_test_data[ $random_index ] ));
         $this->assertTrue( $input_array_sample_element_val == $output_array_sample_element_val ,
             'The function changes the array values so much that they are not the same as when passed in'  );
 
