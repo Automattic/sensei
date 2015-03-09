@@ -135,12 +135,8 @@ class WooThemes_Sensei_Quiz {
         global $post;
         $lesson_id = $this->get_lesson_id( $post->ID );
         $quiz_answers = $_POST[ 'sensei_question' ];
-        return self::save_user_answers( $quiz_answers,  $lesson_id  , get_current_user_id() );
-
-        // reset the user submitted answer and update their status on the lesson
-        self::reset_user_submitted_answers( $lesson_id, get_current_user_id()   );
-
-    }
+        self::save_user_answers( $quiz_answers,  $lesson_id  , get_current_user_id() );
+    } // end user_save_quiz_answers_listener
 
 	/**
 	 * Save the user answers for the given lesson's quiz
