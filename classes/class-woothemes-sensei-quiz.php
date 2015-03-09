@@ -356,11 +356,19 @@ class WooThemes_Sensei_Quiz {
             }
 
             // Save Quiz Answers for grading
+            // Currently it is saved in multiple place
+            // 1. for the new quiz saved data
+            // 2. for the old per question saved data
+            // this will be resolved when we convert grading to use the new question saved data
             if( isset( $_POST['sensei_question'] ) ) {
 
+                // the old way
                 WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
 
-            }
+                // the new way
+                self::save_user_answers( $_POST[ 'sensei_question' ], $quiz_lesson_id , $current_user->ID );
+
+            } // end if isset $_POST['sensei_question']
 
             // Grade quiz
             // 3rd arg is count of total number of questions but it's not used by sensei_grade_quiz_auto()
