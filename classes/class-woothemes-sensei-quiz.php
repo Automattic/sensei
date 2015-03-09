@@ -173,7 +173,7 @@ class WooThemes_Sensei_Quiz {
 
         global $woothemes_sensei;
         // start the lesson before saving the data in case the user has not started the lesson
-        $activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id );
+        $activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
         if( $activity_logged ) {
             // Save questions that were asked in this quiz
