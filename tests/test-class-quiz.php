@@ -70,7 +70,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
      */
     protected function generate_test_lessons( $number = 10  ){
 
-        $lesson_ids = [];
+        $lesson_ids = array();
 
         // create random $number of test lessons needed in the class tests
         foreach (range( 0, $number ) as $count ) {
