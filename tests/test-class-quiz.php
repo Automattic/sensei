@@ -256,8 +256,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
     protected function generate_questions( $number = 10 ){
 
         global $woothemes_sensei;
-        $chosen_questions =  []; // will be used to store generated question
-        $sample_questions = []; // will be used to store 1 sample from each question type
+        $chosen_questions =  array(); // will be used to store generated question
+        $sample_questions = array(); // will be used to store 1 sample from each question type
 
         // get all allowed question data
         //'multiple-choice' 'boolean' 'gap-fill' 'single-line' 'multi-line' 'file-upload'
@@ -425,7 +425,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
                             'The quiz class function `save_user_answers` does not exist ' );
 
         // does this save_user_answers return false for bogus data
-        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( [] ,-1000, -200 ) , 'save_user_answers does not return false for no existent users and lesson ' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( array() ,-1000, -200 ) , 'save_user_answers does not return false for no existent users and lesson ' );
         $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '', '' , '' ) , 'save_user_answers does not return false for empty parameters' );
 
         // does the function return the correct information when a user doesn't exist?
