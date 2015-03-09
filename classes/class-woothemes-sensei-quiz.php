@@ -137,7 +137,8 @@ class WooThemes_Sensei_Quiz {
         $quiz_answers = $_POST[ 'sensei_question' ];
         return self::save_user_answers( $quiz_answers,  $lesson_id  , get_current_user_id() );
 
-    }
+        // reset the user submitted answer and update their status on the lesson
+        self::reset_user_submitted_answers( $lesson_id, get_current_user_id()   );
 
 	/**
 	 * sensei_save_quiz_answers
@@ -588,5 +589,46 @@ class WooThemes_Sensei_Quiz {
 
 		return $prepared_answers;
 	} // prepare_form_submitted_answers
+
+    /**
+     * Reset user submitted questions
+     *
+     * This function resets the quiz data for a user that has been submitted fro grading already. It is different to
+     * the save_user_answers as currently the saved and submitted answers are stored differently.
+     *
+     * @since 1.7.4
+     * @access public
+     *
+     * @return bool $reset_success
+     * @param int $user_id
+     * @param int $lesson_id
+     */
+    public function reset_user_submitted_answers( $lesson_id , $user_id = 0 ){
+
+        //make sure the parameters are valid
+        if( empty( $lesson_id ) || empty( $user_id )
+            || 'lesson' != get_post_type( $lesson_id
+            || ! get_userdata( $user_id )) ){
+            return false;
+        }
+
+        global $woothemes_sensei;
+
+        //get the lesson quiz and course
+        $quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $lesson_id );
+        $course_id = $woothemes_sensei->lesson->get_course_id( $lesson_id );
+
+        // Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
+        WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+        WooThemes_Sensei_Utils::update_lesson_status( $user_id , $lesson_id, 'in-progress', array( 'questions_asked' => '', 'grade' => '' ) );
+
+        // Update course completion
+        WooThemes_Sensei_Utils::update_course_status( $user_id, $course_id );
+
+        // Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
+        do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
+        $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
+
+    } // end reset_user_submitted_answers
 
 } // End Class WooThemes_Sensei_Quiz
