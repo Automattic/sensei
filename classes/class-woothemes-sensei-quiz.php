@@ -257,9 +257,8 @@ class WooThemes_Sensei_Quiz {
 	 */
 	public function reset_button_click_listener( ){
 
-		if( ! isset( $_POST[ 'quiz_complete' ])
-			||  'Reset Quiz'  != $_POST[ 'quiz_complete' ]
-			||  ! wp_verify_nonce( $_POST['woothemes_sensei_reset_quiz_click_nonce'], 'woothemes_sensei_reset_quiz_click_nonce'  ) > 1 ) {
+		if( ! isset( $_POST[ 'quiz_reset' ])
+			||  ! wp_verify_nonce( $_POST['woothemes_sensei_reset_quiz_nonce'], 'woothemes_sensei_reset_quiz_nonce'  ) > 1 ) {
 
 			return; // exit
 		}
