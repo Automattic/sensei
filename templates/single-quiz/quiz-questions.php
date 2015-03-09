@@ -20,13 +20,13 @@ get_currentuserinfo();
 do_action( 'sensei_complete_quiz' );
 
 // Get Frontend data
-$user_quizzes = $woothemes_sensei->frontend->data->user_quizzes;
-$user_quiz_grade = $woothemes_sensei->frontend->data->user_quiz_grade;
-$quiz_lesson = $woothemes_sensei->frontend->data->quiz_lesson;
-$quiz_grade_type = $woothemes_sensei->frontend->data->quiz_grade_type;
-$user_lesson_end = $woothemes_sensei->frontend->data->user_lesson_end;
-$user_lesson_complete = $woothemes_sensei->frontend->data->user_lesson_complete;
-$lesson_quiz_questions = $woothemes_sensei->frontend->data->lesson_quiz_questions;
+$user_quizzes = $woothemes_sensei->quiz->data->user_quizzes;
+$user_quiz_grade = $woothemes_sensei->quiz->data->user_quiz_grade;
+$quiz_lesson = $woothemes_sensei->quiz->data->quiz_lesson;
+$quiz_grade_type = $woothemes_sensei->quiz->data->quiz_grade_type;
+$user_lesson_end = $woothemes_sensei->quiz->data->user_lesson_end;
+$user_lesson_complete = $woothemes_sensei->quiz->data->user_lesson_complete;
+$lesson_quiz_questions = $woothemes_sensei->quiz->data->lesson_quiz_questions;
 
 // Check if the user has started the course
 $lesson_course_id = absint( get_post_meta( $quiz_lesson, '_lesson_course', true ) );
@@ -52,8 +52,8 @@ $quiz_passmark_float = (float) $quiz_passmark;
 				<?php foreach ($lesson_quiz_questions as $question_item) {
 
 					// Setup current Frontend Question
-					$woothemes_sensei->frontend->data->question_item = $question_item;
-					$woothemes_sensei->frontend->data->question_count = $question_count;
+					$woothemes_sensei->quiz->data->question_item = $question_item;
+					$woothemes_sensei->quiz->data->question_count = $question_count;
 					// Question Type
 					$question_type = 'multiple-choice';
 					$question_types_array = wp_get_post_terms( $question_item->ID, 'question-type', array( 'fields' => 'names' ) );

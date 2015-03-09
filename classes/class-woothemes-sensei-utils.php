@@ -84,7 +84,7 @@ class WooThemes_Sensei_Utils {
 					'comment_author' => '', // Not needed
 					'comment_author_email' => '', // Not needed
 					'comment_author_url' => '', // Not needed
-					'comment_content' => esc_html( $args['data'] ),
+					'comment_content' => !empty($args['data']) ? esc_html( $args['data'] ) : '',
 					'comment_type' => esc_attr( $args['type'] ),
 					'user_id' => intval( $args['user_id'] ),
 					'comment_approved' => !empty($args['status']) ? esc_html( $args['status'] ) : 'log', // 'log' == 'sensei_user_answer'
@@ -173,12 +173,12 @@ class WooThemes_Sensei_Utils {
 		}
 
 		// A user ID of 0 is in valid, so shortcut this
-		if ( isset($args['user_id']) && !is_array($args['user_id']) && 0 == $args['user_id'] ) {
+		if ( isset( $args['user_id'] ) && 0 == intval ( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', __('At no point should user_id be equal to 0.', 'woothemes-sensei') );
 			return false;
 		}
 		// Check for legacy code
-		if ( in_array($args['type'], array('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_quiz_grade', 'sense_answer_notes') ) ) {
+		if ( isset($args['type']) && in_array($args['type'], array('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_quiz_grade', 'sense_answer_notes') ) ) {
 			_deprecated_argument( __FUNCTION__, '1.7', sprintf( __('Sensei activity type %s is no longer used.', 'woothemes-sensei'), $args['type'] ) );
 			return false;
 		}
@@ -331,13 +331,14 @@ class WooThemes_Sensei_Utils {
 	public static function sensei_get_activity_value ( $args = array() ) {
 		global $woothemes_sensei;
 
-		$comment = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
 		$activity_value = false;
+		if ( !empty($args['field']) ) {
+			$comment = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
 
-		if ( isset( $comment->{$args['field']} ) && '' != $comment->{$args['field']} ) {
-			$activity_value = $comment->{$args['field']};
-		} // End If Statement
-
+			if ( isset( $comment->{$args['field']} ) && '' != $comment->{$args['field']} ) {
+				$activity_value = $comment->{$args['field']};
+			} // End If Statement
+		}
 		return $activity_value;
 	} // End sensei_get_activity_value()
 
@@ -519,7 +520,22 @@ class WooThemes_Sensei_Utils {
 
 		require_once( ABSPATH . 'wp-admin/includes/admin.php' );
 
-        $file_return = wp_handle_upload( $file, array('test_form' => false ) );
+        /**
+         * Filter the data array for the Sensei wp_handle_upload function call
+         *
+         * This filter was mainly added for Unit Testing purposes.
+         *
+         * @since 1.7.4
+         *
+         * @param array  $file_upload_args {
+         *      array of current values
+         *
+         *     @type string test_form set to false by default
+         * }
+         */
+        $file_upload_args = apply_filters( 'sensei_file_upload_args', array('test_form' => false ) );
+
+        $file_return = wp_handle_upload( $file, $file_upload_args );
 
         if( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
             return false;
@@ -631,18 +647,6 @@ class WooThemes_Sensei_Utils {
 			$activity_logged = update_comment_meta( $user_lesson_status->comment_ID, 'grade', $grade );
 
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-
-			if( $quiz_passmark ) {
-				if( $grade >= $quiz_passmark ) {
-					$status = 'passed';
-				} else {
-					$status = 'failed';
-				}
-			} else {
-				$status = 'graded';
-			}
-
-			WooThemes_Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $status );
 
 			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
 		}
@@ -1475,7 +1479,7 @@ class WooThemes_Sensei_Utils {
 	 * @return int
 	 */
 	public static function user_complete_course( $course_id = 0, $user_id = 0 ) {
-		global $woothemes_sensei;
+		global $woothemes_sensei, $wp_version;
 
 		if( $course_id ) {
 			if( ! $user_id ) {
@@ -1519,7 +1523,11 @@ class WooThemes_Sensei_Utils {
 			else {
 				foreach( $lesson_ids as $lesson_id ) {
 					$lesson_status_args['post_id'] = $lesson_id;
-					$all_lesson_statuses[] = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
+					$each_lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
+					// Check for valid return before using
+					if ( !empty($each_lesson_status->comment_approved) ) {
+						$all_lesson_statuses[] = $each_lesson_status;
+					}
 				}
 			}
 			foreach( $all_lesson_statuses as $lesson_status ) {
@@ -1563,10 +1571,10 @@ class WooThemes_Sensei_Utils {
 			$activity_logged = WooThemes_Sensei_Utils::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
 
 			// Allow further actions
-			if ( $activity_logged ) {
+			if ( 'complete' == $course_status ) {
 				do_action( 'sensei_user_course_end', $user_id, $course_id );
-				return $activity_logged;
 			}
+			return $activity_logged;
 		}
 
 		return false;
@@ -1812,15 +1820,6 @@ class WooThemes_Sensei_Utils {
 			}
 
 			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
-
-			if( in_array( $status, array( 'complete', 'passed' ) ) ) {
-
-				$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-
-				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
-
-				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
-			}
 		}
 		return $comment_id;
 	}

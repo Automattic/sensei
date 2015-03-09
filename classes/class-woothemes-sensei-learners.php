@@ -296,13 +296,12 @@ class WooThemes_Sensei_Learners {
 
 				case 'course':
 					$removed = WooThemes_Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
+					do_action( 'sensei_user_course_reset', $user_id, $post_id );
 				break;
 
 				case 'lesson':
 					$removed = WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
-					$course_id = get_post_meta( $post_id, '_lesson_course', true );
-					// Updates the Course status and it's meta data
-					WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
+					do_action( 'sensei_user_lesson_reset', $user_id, $post_id );
 				break;
 
 			}

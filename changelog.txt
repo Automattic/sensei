@@ -1,5 +1,21 @@
 *** Sensei Changelog ***
 
+2015.03.03 - version 1.7.3
+ * Tweak - Removing Canvas them wrappers (this will now be handled in the theme directly)
+ * Tweak - Decapitalising 'Total Grade' text on Course Results page
+ * Tweak - Moving course logic from frontend class to its proper place in the course class
+ * Tweak - Moving lesson logic from frontend class to its proper place in the lesson class
+ * Tweak - Removing `comments_rss_item_filter` as it is no longer needed - this should improve frontend performace
+ * Tweak - Making sure the `sensei_user_course_end` action is only fired at the correct times
+ * Tweak - Ensuring consistency on course prerequisite checks
+ * Tweak - Ensuring consistency of course completion checks
+ * Tweak - Adding sanity checks to ensure that data received by `sensei_check_for_activity()` is always valid
+ * Tweak - Removing 'by' from course author link
+ * Fix - Removing HTML container element for course video when no video is present
+ * Fix - Making sure gap fill questions work even if you leave out the pre- and/or post-gap text
+ * Fix - Allowing 'Analysis' menu label and page heading to be translated
+ * Fix - Ensures course component widget works correctly when 'limit' is not set
+
 2015.02.17 - version 1.7.2
  * Update - Adding database table indexes to comments table to improve performance
  * Update - Adding manual update to allow removal of legacy Sensei activity data

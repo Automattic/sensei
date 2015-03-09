@@ -12,14 +12,14 @@
 global $post, $woothemes_sensei, $current_user;
 
 // Get Frontend Data
-$user_quizzes = $woothemes_sensei->frontend->data->user_quizzes;
-$question_item = $woothemes_sensei->frontend->data->question_item;
-$question_count = $woothemes_sensei->frontend->data->question_count;
-$quiz_passmark = $woothemes_sensei->frontend->data->quiz_passmark;
-$user_quiz_grade = $woothemes_sensei->frontend->data->user_quiz_grade;
-$lesson_complete = $woothemes_sensei->frontend->data->user_lesson_complete;
-$reset_quiz_allowed = $woothemes_sensei->frontend->data->reset_quiz_allowed;
-$quiz_grade_type = $woothemes_sensei->frontend->data->quiz_grade_type;
+$user_quizzes = $woothemes_sensei->quiz->data->user_quizzes;
+$question_item = $woothemes_sensei->quiz->data->question_item;
+$question_count = $woothemes_sensei->quiz->data->question_count;
+$quiz_passmark = $woothemes_sensei->quiz->data->quiz_passmark;
+$user_quiz_grade = $woothemes_sensei->quiz->data->user_quiz_grade;
+$lesson_complete = $woothemes_sensei->quiz->data->user_lesson_complete;
+$reset_quiz_allowed = $woothemes_sensei->quiz->data->reset_quiz_allowed;
+$quiz_grade_type = $woothemes_sensei->quiz->data->quiz_grade_type;
 
 // Question Meta
 $question_id = $question_item->ID;
