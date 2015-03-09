@@ -108,6 +108,31 @@ class WooThemes_Sensei_Quiz {
 
 	} // end lesson
 
+
+    /**
+     * user_save_quiz_answers_listener
+     *
+     * This function hooks into the quiz page and accepts the answer form save post.
+     *
+     * @param array $quiz_answers
+     * @return bool $saved;
+     */
+    public function user_save_quiz_answers_listener(){
+
+        if( ! isset( $_POST[ 'quiz_save' ])
+            || !isset( $_POST[ 'sensei_question' ] )
+            || empty( $_POST[ 'sensei_question' ] )
+            ||  ! wp_verify_nonce( $_POST['woothemes_sensei_save_quiz_nonce'], 'woothemes_sensei_save_quiz_nonce'  ) > 1 ) {
+            return;
+        }
+
+        global $post;
+        $lesson_id = $this->get_lesson_id( $post->ID );
+        $quiz_answers = $_POST[ 'sensei_question' ];
+        return self::save_user_answers( $quiz_answers,  $lesson_id  , get_current_user_id() );
+
+    }
+
 	/**
 	 * sensei_save_quiz_answers
 	 *
