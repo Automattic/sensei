@@ -147,7 +147,7 @@ class WooThemes_Sensei_Quiz {
 
 		$quiz_id = $post->ID;
 		$lesson_id = WooThemes_Sensei_Quiz::get_lesson_id( $quiz_id );
-		$saved = WooThemes_Sensei_Quiz::save_user_answers( $quiz_answers,  $lesson_id  , get_current_user_id() );
+		$saved = self::save_user_answers( $quiz_answers,  $lesson_id  , get_current_user_id() );
 		return $saved;
 
 	}// end sensei_save_quiz_answers
