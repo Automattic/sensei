@@ -202,9 +202,12 @@ class WooThemes_Sensei_Quiz {
 
 	/**
 	 * Get the user answers for the given lesson's quiz.
+     *
+     * This function returns the data that is stored on the lesson as meta and is not compatible with
+     * retrieving data for quiz answer before sensei 1.7.4
 	 *
 	 *
-	 * @since 1.7.2
+	 * @since 1.7.4
 	 * @access public
 	 *
 	 * @param int $lesson_id
@@ -239,6 +242,7 @@ class WooThemes_Sensei_Quiz {
 		}
 
 		return $answers;
+
 	}// end get_user_answers()
 
 
