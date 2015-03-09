@@ -185,6 +185,24 @@ class WooThemes_Sensei_Quiz {
 
 		}
 
+        global $woothemes_sensei;
+        // start the lesson before saving the data in case the user has not started the lesson
+        $activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id );
+
+        if( $activity_logged ) {
+            // Save questions that were asked in this quiz
+            if( !empty( $questions_asked_string ) ) {
+                update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_string );
+            }
+
+            if( isset( $_POST['sensei_question'] ) ) {
+                WooThemes_Sensei_Quiz::sensei_save_quiz_answers( $_POST['sensei_question'] );
+            }
+        }
+
+        // Need message in case the data wasn't saved?
+        $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
+
 		//prepare the answers
 		$prepared_answers = $this->prepare_form_submitted_answers( $quiz_answers , $_FILES );
 
