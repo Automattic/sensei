@@ -408,80 +408,71 @@ class WooThemes_Sensei_Quiz {
 
 	} // End sensei_complete_quiz()
 
-					// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
-					WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $post->ID, $user_id );
-					WooThemes_Sensei_Utils::update_lesson_status( $current_user->ID, $quiz_lesson_id, 'in-progress', array( 'questions_asked' => '', 'grade' => '' ) );
+    /**
+     * This function set's up the data need for the quiz page
+     *
+     * This function hooks into sensei_complete_quiz and load the global data for the
+     * current quiz.
+     *
+     * @since 1.7.4
+     * @access public
+     *
+     */
+    public function load_global_quiz_data(){
 
-					// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
-					do_action( 'sensei_user_lesson_reset', $current_user->ID, $quiz_lesson_id );
-					$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
-					break;
+        global $woothemes_sensei, $post, $current_user;
+        $this->data = new stdClass();
 
-				default:
-					// Nothing
-					break;
+        // Default grade
+        $grade = 0;
 
-			} // End Switch Statement
+        // Get Quiz Questions
+        $lesson_quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $post->ID );
 
-			// Refresh page to avoid re-posting
-			?>
-			<script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
-		<?php
+        $quiz_lesson_id = absint( get_post_meta( $post->ID, '_quiz_lesson', true ) );
 
-		} // End If Statement, submission of quiz
+        // Get quiz grade type
+        $quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
 
-		$this->data = new stdClass();
+        // Get quiz pass setting
+        $pass_required = get_post_meta( $post->ID, '_pass_required', true );
 
-		// Get latest quiz answers and grades
-		$lesson_id = $woothemes_sensei->quiz->get_lesson_id( $post->ID );
-		$user_quizzes = $woothemes_sensei->quiz->get_user_answers( $lesson_id, get_current_user_id() );
-		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
-		$user_quiz_grade = 0;
-		if( isset( $user_lesson_status->comment_ID ) ) {
-			$user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
-		}
+        // Get quiz pass mark
+        $quiz_passmark = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
 
-		if ( ! is_array($user_quizzes) ) { $user_quizzes = array(); }
+        // Get latest quiz answers and grades
+        $lesson_id = $woothemes_sensei->quiz->get_lesson_id( $post->ID );
+        $user_quizzes = $woothemes_sensei->quiz->get_user_answers( $lesson_id, get_current_user_id() );
+        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
+        $user_quiz_grade = 0;
+        if( isset( $user_lesson_status->comment_ID ) ) {
+            $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+        }
 
-		// Check again that the lesson is complete
-		$user_lesson_end = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
-		$user_lesson_complete = false;
-		if ( $user_lesson_end ) {
-			$user_lesson_complete = true;
-		} // End If Statement
+        if ( ! is_array($user_quizzes) ) { $user_quizzes = array(); }
 
-		$reset_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
+        // Check again that the lesson is complete
+        $user_lesson_end = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
+        $user_lesson_complete = false;
+        if ( $user_lesson_end ) {
+            $user_lesson_complete = true;
+        } // End If Statement
 
-		// Build frontend data object
-		$this->data->user_quizzes = $user_quizzes;
-		$this->data->user_quiz_grade = $user_quiz_grade;
-		$this->data->quiz_passmark = $quiz_passmark;
-		$this->data->quiz_lesson = $quiz_lesson_id;
-		$this->data->quiz_grade_type = $quiz_grade_type;
-		$this->data->user_lesson_end = $user_lesson_end;
-		$this->data->user_lesson_complete = $user_lesson_complete;
-		$this->data->lesson_quiz_questions = $lesson_quiz_questions;
-		$this->data->reset_quiz_allowed = $reset_allowed;
+        $reset_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
 
-	} // End sensei_complete_quiz()
+        // Build frontend data object
+        $this->data->user_quizzes = $user_quizzes;
+        $this->data->user_quiz_grade = $user_quiz_grade;
+        $this->data->quiz_passmark = $quiz_passmark;
+        $this->data->quiz_lesson = $quiz_lesson_id;
+        $this->data->quiz_grade_type = $quiz_grade_type;
+        $this->data->user_lesson_end = $user_lesson_end;
+        $this->data->user_lesson_complete = $user_lesson_complete;
+        $this->data->lesson_quiz_questions = $lesson_quiz_questions;
+        $this->data->reset_quiz_allowed = $reset_allowed;
 
-	/**
-	 * Complete quiz function
-	 *
-	 * This function submits the given users quiz answers for grading
-	 *
-	 * @since  1.7.4
-	 * @access public
-	 *
-	 * @param array $quiz_answers
-	 * @param int $lesson_id
-	 * @param int $user_id
-	 *
-	 * @return bool
-	 */
-	public function submit_user_answers( $quiz_answers, $lesson_id , $user_id = 0 ){
+    } // end load_global_quiz_data
 
-	} //submit_user_answers
 
 	/**
 	 * This function converts the submitted array and makes it ready it for storage
