@@ -173,7 +173,7 @@ class WooThemes_Sensei_Utils {
 		}
 
 		// A user ID of 0 is in valid, so shortcut this
-		if ( isset($args['user_id']) && !is_array($args['user_id']) && 0 == $args['user_id'] ) {
+		if ( isset( $args['user_id'] ) && 0 == intval ( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', __('At no point should user_id be equal to 0.', 'woothemes-sensei') );
 			return false;
 		}
