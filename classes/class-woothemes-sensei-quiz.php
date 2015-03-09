@@ -157,7 +157,7 @@ class WooThemes_Sensei_Quiz {
 	 *
 	 * For this function you must supply all three parameters. If will return false one is left out.
 	 *
-	 * @since 1.7.2
+	 * @since 1.7.4
 	 * @access public
 	 *
 	 * @param array $quiz_answers
