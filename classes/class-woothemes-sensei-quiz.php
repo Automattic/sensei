@@ -67,10 +67,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		global $woothemes_sensei;
 
 		// If this isn't a 'lesson' post, don't update it.
-        //todo: make sure this doesn't fire on ajax and auto-save
-	    if ( isset( $_POST['post_type'] ) && 'lesson' != $_POST['post_type'] ) {
-	        return;
-	    }
+        // if this is a revision don't save it
+	    if ( isset( $_POST['post_type'] ) && 'lesson' != $_POST['post_type']
+            || wp_is_post_revision( $post_id ) ) {
+
+                return;
+
+        }
 	    // get the lesson author id to be use late
 	    $saved_post = get_post( $post_id );
 	    $new_lesson_author_id =  $saved_post->post_author;
@@ -89,7 +92,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			      'post_author' =>  $new_lesson_author_id
 			);
 
-            //todo: remove this hook so it doesn't run for the next post update again
+            // remove the action so that it doesn't fire again
+            remove_action( 'save_post', array( $this, 'update_author' ));
 
 			// Update the post into the database
 		  	wp_update_post( $my_post );
@@ -418,7 +422,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
             do_action( 'sensei_user_quiz_submitted', $current_user->ID, $post->ID, $grade, $quiz_passmark, $quiz_grade_type );
 
-			// Refresh page to avoid re-posting todo: figure out what this does and fix it in php
 			?>
             <script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
 		<?php
