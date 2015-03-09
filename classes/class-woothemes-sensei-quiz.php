@@ -564,8 +564,8 @@ class WooThemes_Sensei_Quiz {
 
         //make sure the parameters are valid
         if( empty( $lesson_id ) || empty( $user_id )
-            || 'lesson' != get_post_type( $lesson_id
-            || ! get_userdata( $user_id )) ){
+            || 'lesson' != get_post_type( $lesson_id )
+            || ! get_userdata( $user_id ) ){
             return false;
         }
 
