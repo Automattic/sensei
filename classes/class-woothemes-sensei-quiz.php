@@ -338,99 +338,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 */
 	public function user_quiz_submit_listener() {
 
-		global $post, $woothemes_sensei, $current_user;
+        // only respond to valid quiz completion submissions
+        if( ! isset( $_POST[ 'quiz_complete' ])
+            || !isset( $_POST[ 'sensei_question' ] )
+            || empty( $_POST[ 'sensei_question' ] )
+            ||  ! wp_verify_nonce( $_POST['woothemes_sensei_complete_quiz_nonce'], 'woothemes_sensei_complete_quiz_nonce'  ) > 1 ) {
+            return;
+        }
 
-		// Default grade
-		$grade = 0;
+        global $post, $current_user;
+        $lesson_id = $this->get_lesson_id( $post->ID );
+        $quiz_answers = $_POST[ 'sensei_question' ];
 
-		// Get Quiz Questions
-		$lesson_quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $post->ID );
-
-		$quiz_lesson_id = absint( get_post_meta( $post->ID, '_quiz_lesson', true ) );
-
-		// Get quiz grade type
-		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
-
-		// Get quiz pass setting
-		$pass_required = get_post_meta( $post->ID, '_pass_required', true );
-
-		// Get quiz pass mark
-		$quiz_passmark = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
-
-		// Handle Quiz Completion submit for grading
-		if ( isset( $_POST['quiz_complete'] )
-            && wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_quiz_nonce' ], 'woothemes_sensei_complete_quiz_nonce' ) ) {
-
-			$questions_asked = array_filter( array_map( 'absint', $_POST['questions_asked'] ) );
-			$questions_asked_string = implode( ',', $questions_asked );
-
-            // Mark the Lesson as in-progress (if it isn't already), the entry is needed for WooThemes_Sensei_Utils::sensei_grade_quiz_auto() (optimise at some point?)
-            $activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $quiz_lesson_id );
-
-            $lesson_status = 'ungraded'; // Default when completing a quiz
-
-            // Save questions that were asked in this quiz
-            if( !empty( $questions_asked_string ) ) {
-                update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_string );
-            }
-
-            // Save Quiz Answers for grading
-            // Currently it is saved in multiple place
-            // 1. for the new quiz saved data
-            // 2. for the old per question saved data
-            // this will be resolved when we convert grading to use the new question saved data
-            if( isset( $_POST['sensei_question'] ) ) {
-
-                // the old way
-                WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
-
-                // the new way
-                self::save_user_answers( $_POST[ 'sensei_question' ], $quiz_lesson_id , $current_user->ID );
-
-            } // end if isset $_POST['sensei_question']
-
-            // Grade quiz
-            // 3rd arg is count of total number of questions but it's not used by sensei_grade_quiz_auto()
-            $grade = WooThemes_Sensei_Utils::sensei_grade_quiz_auto( $post->ID, $_POST['sensei_question'], count( $lesson_quiz_questions ), $quiz_grade_type );
-            $lesson_metadata = array();
-            // Get Lesson Grading Setting
-            if ( is_wp_error( $grade ) || 'auto' != $quiz_grade_type ) {
-                $lesson_status = 'ungraded'; // Quiz is manually graded and this was a user submission
-            }
-            else {
-                // Quiz has been automatically Graded
-                if ( $pass_required ) {
-                    // Student has reached the pass mark and lesson is complete
-                    if ( $quiz_passmark <= $grade ) {
-                        $lesson_status = 'passed';
-                    }
-                    else {
-                        $lesson_status = 'failed';
-                    } // End If Statement
-                }
-                // Student only has to partake the quiz
-                else {
-                    $lesson_status = 'graded';
-                }
-                $lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz_auto()" above
-            }
-
-            WooThemes_Sensei_Utils::update_lesson_status( $current_user->ID, $quiz_lesson_id, $lesson_status, $lesson_metadata );
-
-            switch( $lesson_status ) {
-                case 'passed' :
-                case 'graded' :
-                    do_action( 'sensei_user_lesson_end', $current_user->ID, $quiz_lesson_id );
-                    break;
-            }
-
-            do_action( 'sensei_user_quiz_submitted', $current_user->ID, $post->ID, $grade, $quiz_passmark, $quiz_grade_type );
-
-			?>
-            <script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
-		<?php
-
-		} // End If Statement, submission of quiz
+        self::submit_answers_for_grading( $quiz_answers,  $lesson_id  , $current_user->ID );
 
 	} // End sensei_complete_quiz()
 
