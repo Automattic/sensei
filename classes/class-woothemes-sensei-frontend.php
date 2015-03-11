@@ -198,9 +198,6 @@ class WooThemes_Sensei_Frontend {
 			wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), '1.5.2', true );
 			wp_enqueue_script( $this->token . '-user-dashboard' );
 
-			// Load the general script
-			wp_enqueue_script( 'sensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend' . $suffix . '.js', array( 'jquery' ), '1.6.0' );
-
 			// Allow additional scripts to be loaded
 			do_action( 'sensei_additional_scripts' );
 
