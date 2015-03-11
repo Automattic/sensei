@@ -2492,7 +2492,7 @@ class WooThemes_Sensei_Lesson {
 	 * @param int $lesson_id (default: 0)
 	 * @param string $post_status (default: 'publish')
 	 * @param string $fields (default: 'ids')
-	 * @return void
+	 * @return int $quiz_id
 	 */
 	public function lesson_quizzes( $lesson_id = 0, $post_status = 'any', $fields = 'ids' ) {
 
@@ -2508,9 +2508,9 @@ class WooThemes_Sensei_Lesson {
 							'fields'            => $fields
 							);
 		$posts_array = get_posts( $post_args );
+        $quiz_id = array_shift($posts_array);
 
-		return array_shift($posts_array);
-
+		return $quiz_id;
 	} // End lesson_quizzes()
 
 
