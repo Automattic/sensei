@@ -662,4 +662,39 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
     }// end testPrepareFormSubmittedAnswers()
 
+    /**
+     * This tests Woothemes_Sensei()->quiz->submit_answers_for_grading
+     */
+    public function testSubmitAnswersForGrading(){
+
+        //setup test data
+        global $woothemes_sensei;
+        $test_lesson_id = $this->get_random_lesson_id();
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
+        $test_user_quiz_answers = $this->generate_user_quiz_answers( $test_quiz_id  );
+        $files = $this->generate_test_files( $test_user_quiz_answers );
+        $test_user_id = wp_create_user( 'student_submitting', 'student_submitting', 'student_submiting@test.com' );
+
+        // make sure the function exists
+        $this->assertTrue( method_exists( 'WooThemes_Sensei_Quiz', 'submit_answers_for_grading'  ) ,
+                            'The method submit_answers_for_grading does not exist ');
+
+        // Doest this function return false for bogus data?
+        $this->assertFalse( WooThemes_Sensei_Quiz::submit_answers_for_grading('', '','' ),
+                            'The function should return false for the wrong parameters' );
+        $this->assertFalse( WooThemes_Sensei_Quiz::submit_answers_for_grading('-100', '-1000','-90909' ),
+            'The function should return false for the wrong parameters' );
+        $this->assertFalse( WooThemes_Sensei_Quiz::submit_answers_for_grading( array(), '20000','30000' ),
+            'The function should return false for the wrong parameters' );
+
+        // Doest this function return true for valid data?
+        $result_for_valid_data =  WooThemes_Sensei_Quiz::submit_answers_for_grading( $test_user_quiz_answers,
+                                                                                $test_lesson_id , $test_user_id );
+        $this->assertTrue( $result_for_valid_data ,
+            'The function should return true for valid parameters' );
+
+        // todo: setup quizzes that can be autograded and create a function that can get auto and manual randoms
+
+    }// end testSubmittedAnswersForGrading
+
 }// end class Sensei_Class_Quiz_Test
