@@ -151,6 +151,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $lesson_id = $this->get_lesson_id( $post->ID );
         $quiz_answers = $_POST[ 'sensei_question' ];
         self::save_user_answers( $quiz_answers,  $lesson_id  , get_current_user_id() );
+
+        // remove the hook as it should only fire once per click
+        remove_action( 'sensei_complete_quiz', 'user_save_quiz_answers_listener' );
+
     } // end user_save_quiz_answers_listener
 
 	/**
@@ -201,7 +205,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
 
 		//prepare the answers
-		$prepared_answers = $this->prepare_form_submitted_answers( $quiz_answers , $_FILES );
+		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers , $_FILES );
 
 		// get the lesson status comment type on the lesson
 		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
@@ -509,7 +513,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 * @param $files
 	 * @return array
 	 */
-	public function prepare_form_submitted_answers( $unprepared_answers,  $files ){
+	public static function prepare_form_submitted_answers( $unprepared_answers,  $files ){
 
 		$prepared_answers = array();
 
