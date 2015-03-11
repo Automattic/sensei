@@ -2798,4 +2798,3 @@ class WooThemes_Sensei_Lesson {
 	} // End lesson_excerpt()
 
 } // End Class
-?>
