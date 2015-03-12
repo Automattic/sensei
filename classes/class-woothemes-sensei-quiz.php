@@ -446,27 +446,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		// Loop through submitted quiz answers and save them appropriately
 		foreach( $unprepared_answers as $question_id => $answer ) {
 
-			//Setup the question types
-			$question_types = wp_get_post_terms( $question_id, 'question-type' );
-			foreach( $question_types as $type ) {
-				$question_type = $type->slug;
-			}
-
-			if( ! $question_type ) {
-				$question_type = 'multiple-choice';
-			}
+			//get the current questions question type
+            $question_type = $woothemes_sensei->question->get_question_type( $question_id );
 
 			// Sanitise answer
 			if( 0 == get_magic_quotes_gpc() ) {
 				$answer = wp_unslash( $answer );
 			}
-			switch( $question_type ) {
-				case 'multi-line': $answer = nl2br( $answer ); break;
-				case 'single-line': break;
-				case 'gap-fill': break;
-				default: $answer = maybe_serialize( $answer ); break;
-			}
 
+            // compress the answer for saving
+            $answer = maybe_serialize( $answer );
+			if( 'multi-line' == $question_type ) {
+                $answer = nl2br( $answer );
+            }
 
 			$prepared_answers[ $question_id ] =  base64_encode( $answer );
 
