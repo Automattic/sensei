@@ -435,6 +435,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 */
 	public static function prepare_form_submitted_answers( $unprepared_answers,  $files ){
 
+        global $woothemes_sensei;
 		$prepared_answers = array();
 
 		// validate incoming answers

@@ -300,12 +300,17 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertTrue( array_keys( $prepared_test_data ) == array_keys( $test_user_quiz_answers ) ,
             'function does not return the same array keys( question ids ) that was passed in' );
 
-        // for valid data, is the answers in the array returned the same as the values passed in
+        /**
+         * For valid data, is the answers in the array returned the same as the values passed in
+         */
         $random_index = array_rand( $prepared_test_data  );
         $input_array_sample_element_val = $test_user_quiz_answers[$random_index];
         $output_array_sample_element_val =  maybe_unserialize( base64_decode(  $prepared_test_data[ $random_index ] ));
-        $this->assertTrue( $input_array_sample_element_val == $output_array_sample_element_val ,
-            'The function changes the array values so much that they are not the same as when passed in'  );
+        $question_type = $woothemes_sensei->question->get_question_type( $random_index );
+        $test_message = 'The function changes the array values so much that they are not the same as when passed in. ';
+        $test_message .= 'We inspected a random answer saved for the "' . strtoupper( $question_type ) . '" question type' ;
+        $this->assertEquals( $input_array_sample_element_val, $output_array_sample_element_val ,
+           $test_message  );
 
     }// end testPrepareFormSubmittedAnswers()
 
