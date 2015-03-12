@@ -205,7 +205,14 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
             'post_parent' => $lesson_id
 
         );
+
         $quiz_id = wp_insert_post( $new_quiz_args );
+
+        // setup quiz meta
+        update_post_meta( $quiz_id, '_quiz_grade_type', 'manual' );
+        update_post_meta( $quiz_id, '_pass_required', 'on' );
+        update_post_meta( $quiz_id, '_quiz_passmark' , 50 );
+
 
         // if the database already contains questions don't create more but add
         // the existing questions to the passed in lesson id's lesson
