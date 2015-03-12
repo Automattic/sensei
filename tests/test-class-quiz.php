@@ -97,7 +97,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertTrue( ( bool ) $sensei_activity_logged , 'The saved answers were not stored correctly on the Quiz');
 
         // was check if the data that was saved on the different quizzes are not the same
-        $activity_value = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) , true );//WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->test_data->lesson_ids[0], 'user_id'=> $test_user_id ) );
+        $activity_value = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) , true );
 
         /* todo: test the file saving process
             This is how the incomming data will look
