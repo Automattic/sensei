@@ -112,6 +112,9 @@ class WooThemes_Sensei {
 		// Add the lesson class
 		$this->lesson = $this->post_types->lesson;
 
+        // Add the question class
+        $this->question = $this->post_types->question;
+
 		//Add the quiz class
 		$this->load_class( 'quiz' );
 		$this->quiz = new WooThemes_Sensei_Quiz( $file );
