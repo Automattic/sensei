@@ -680,6 +680,11 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
         $test_user_quiz_answers = $this->generate_user_quiz_answers( $test_quiz_id  );
         $files = $this->generate_test_files( $test_user_quiz_answers );
+
+        // remove the hooks within the submit function to avoid side effects
+        remove_all_actions( 'sensei_user_quiz_submitted' );
+        remove_all_actions( 'sensei_user_lesson_end' );
+
         $test_user_id = wp_create_user( 'student_submitting', 'student_submitting', 'student_submiting@test.com' );
 
         // make sure the function exists
