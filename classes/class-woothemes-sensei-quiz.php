@@ -171,7 +171,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 *
 	 * @return false or int $answers_saved
 	 */
-	public function save_user_answers( $quiz_answers, $lesson_id , $user_id = 0 ){
+	public static function save_user_answers( $quiz_answers, $lesson_id , $user_id = 0 ){
 
 		$answers_saved = false;
 
