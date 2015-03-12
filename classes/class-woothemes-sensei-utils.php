@@ -574,9 +574,8 @@ class WooThemes_Sensei_Utils {
 	 * @return boolean                  Whether quiz was successfully graded or not
 	 */
 	public static function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = false, $total_questions = 0, $quiz_grade_type = 'auto' ) {
-		if( intval( $user_id ) == 0 ) {
-			$user_id = get_current_user_id();
-		}
+
+		$user_id = get_current_user_id();
 
 		$grade = 0;
 		$correct_answers = 0;
