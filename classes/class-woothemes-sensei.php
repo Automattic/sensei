@@ -116,9 +116,7 @@ class WooThemes_Sensei {
         $this->question = $this->post_types->question;
 
 		//Add the quiz class
-		$this->load_class( 'quiz' );
-		$this->quiz = new WooThemes_Sensei_Quiz( $file );
-		$this->quiz->token = $this->token;
+		$this->quiz = $this->post_types->quiz;
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
