@@ -70,6 +70,9 @@ class WooThemes_Sensei_Admin {
 		// Reset theme notices when switching themes
 		add_action( 'switch_theme', array( $this, 'reset_theme_check_notices' ) );
 
+		// Allow Teacher access the admin area
+		add_filter( 'woocommerce_prevent_admin_access', array( $this, 'admin_access' ) );
+
 	} // End __construct()
 
 	/**
@@ -1342,6 +1345,19 @@ class WooThemes_Sensei_Admin {
 		delete_user_meta( $user_id, 'sensei_hide_theme_check_notice' );
 	}
 
-} // End Class
+	/**
+	 * Set Sensei users access to the admin area when WooCommerce is installed
+	 * Allow Teachers to access the admin area
+	 *
+	 * @param  bool $prevent_access
+	 * @return bool
+	 */
+	public function admin_access( $prevent_access ) {
+		if ( current_user_can( 'manage_sensei_grades' ) ) {
+			return false;
+		}
 
-?>
+		return $prevent_access;
+	}
+
+} // End Class
