@@ -394,4 +394,70 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
     }// end generate_test_files()
 
+    /**
+     * Returns a random none file question id from the given user input array
+     *
+     * @since 1.7.4
+     * @param array $user_answers
+     *
+     * @return int $index
+     */
+    public function get_random_none_file_question_index( $user_answers  ){
+
+        if( empty( $user_answers )
+            || ! is_array( $user_answers ) ){
+
+            return false;
+
+        }
+
+        global $woothemes_sensei;
+        // create a new array without questions of type file
+        $answers_without_files = array();
+        foreach( $user_answers as $question_id => $answer  ){
+
+          $type  = $woothemes_sensei->question->get_question_type( $question_id );
+
+          if( 'file-upload' !=  $type  ){
+              $answers_without_files[ $question_id ] = $answer;
+          }
+        }// end foreach
+
+        $index = array_rand( $answers_without_files );
+        return $index;
+    }// end get_random_none_file_question_index
+
+
+    /**
+     * Returns a random file question id from the given user input array
+     *
+     * @since 1.7.4
+     * @param array $user_answers
+     *
+     * @return int $index
+     */
+    public function get_random_file_question_index( $user_answers  ){
+
+        if( empty( $user_answers )
+            || ! is_array( $user_answers ) ){
+
+            return false;
+
+        }
+
+        global $woothemes_sensei;
+        // create a new array without questions of type file
+        $file_type_answers = array();
+        foreach( $user_answers as $question_id => $answer  ){
+
+            $type  = $woothemes_sensei->question->get_question_type( $question_id );
+
+            if( 'file-upload' ==  $type  ){
+                $file_type_answers[ $question_id ] = $answer;
+            }
+        }// end foreach
+
+        $index = array_rand( $file_type_answers );
+        return $index;
+    }// end get_random_none_file_question_index
 }// end Sensei Factory class
