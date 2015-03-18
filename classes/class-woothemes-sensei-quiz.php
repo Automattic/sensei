@@ -135,7 +135,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
      *
      * This function hooks into the quiz page and accepts the answer form save post.
      *
-     * @param array $quiz_answers
      * @return bool $saved;
      */
     public function user_save_quiz_answers_listener(){
