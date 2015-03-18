@@ -193,7 +193,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertFalse(  $is_false_when_no_answers_saved  , 'The function should return false when no answers are saved on the Lesson' );
 
         // save the test users answers on the tes lesson
-        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $user_quiz_answers, $test_lesson_id,  $test_user_id  ) ;
+        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $user_quiz_answers, array() ,$test_lesson_id,  $test_user_id  ) ;
         $this->assertTrue(  intval(  $lesson_data_saved ) > 0, 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
 
         // test the function with the wrong parameters
@@ -255,7 +255,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         // test for a valid user and lesson that has a sensei_lesson_status comment by this user
         $user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
         WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
-        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $user_quiz_answers, $test_lesson_id,  $test_user_id  ) ;
+        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $user_quiz_answers, array(), $test_lesson_id,  $test_user_id  ) ;
         $this->assertTrue(  intval( $lesson_data_saved ) > 0  ,
             'The lesson quiz answers was not saved' );
         $lesson_data_reset = $woothemes_sensei->quiz->reset_user_saved_answers( $test_lesson_id,  $test_user_id  ) ;
@@ -337,15 +337,15 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
                             'The method submit_answers_for_grading does not exist ');
 
         // Doest this function return false for bogus data?
-        $this->assertFalse( WooThemes_Sensei_Quiz::submit_answers_for_grading('', '','' ),
+        $this->assertFalse( WooThemes_Sensei_Quiz::submit_answers_for_grading('', '' ,'','' ),
                             'The function should return false for the wrong parameters' );
-        $this->assertFalse( WooThemes_Sensei_Quiz::submit_answers_for_grading('-100', '-1000','-90909' ),
+        $this->assertFalse( WooThemes_Sensei_Quiz::submit_answers_for_grading('-100',array(), '-1000','-90909' ),
             'The function should return false for the wrong parameters' );
-        $this->assertFalse( WooThemes_Sensei_Quiz::submit_answers_for_grading( array(), '20000','30000' ),
+        $this->assertFalse( WooThemes_Sensei_Quiz::submit_answers_for_grading( array(),array(), '20000','30000' ),
             'The function should return false for the wrong parameters' );
 
         // Doest this function return true for valid data?
-        $result_for_valid_data =  WooThemes_Sensei_Quiz::submit_answers_for_grading( $test_user_quiz_answers,
+        $result_for_valid_data =  WooThemes_Sensei_Quiz::submit_answers_for_grading( $test_user_quiz_answers, $files,
                                                                                 $test_lesson_id , $test_user_id );
         $this->assertTrue( $result_for_valid_data ,
             'The function should return true for valid parameters' );

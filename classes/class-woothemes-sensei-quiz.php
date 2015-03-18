@@ -149,7 +149,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         global $post;
         $lesson_id = $this->get_lesson_id( $post->ID );
         $quiz_answers = $_POST[ 'sensei_question' ];
-        self::save_user_answers( $quiz_answers,  $lesson_id  , get_current_user_id() );
+        // call the save function
+        self::save_user_answers( $quiz_answers, $_FILES , $lesson_id  , get_current_user_id() );
 
         // remove the hook as it should only fire once per click
         remove_action( 'sensei_complete_quiz', 'user_save_quiz_answers_listener' );
@@ -165,12 +166,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 * @access public
 	 *
 	 * @param array $quiz_answers
+     * @param array $files from global $_FILES
 	 * @param int $lesson_id
 	 * @param int $user_id
 	 *
 	 * @return false or int $answers_saved
 	 */
-	public static function save_user_answers( $quiz_answers, $lesson_id , $user_id = 0 ){
+	public static function save_user_answers( $quiz_answers, $files = array(), $lesson_id , $user_id = 0 ){
 
 		$answers_saved = false;
 
@@ -204,7 +206,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
 
 		//prepare the answers
-		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers , $_FILES );
+		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers , $files );
 
 		// get the lesson status comment type on the lesson
 		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
@@ -349,7 +351,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $lesson_id = $this->get_lesson_id( $post->ID );
         $quiz_answers = $_POST[ 'sensei_question' ];
 
-        self::submit_answers_for_grading( $quiz_answers,  $lesson_id  , $current_user->ID );
+        self::submit_answers_for_grading( $quiz_answers, $_FILES ,  $lesson_id  , $current_user->ID );
 
 	} // End sensei_complete_quiz()
 
@@ -536,12 +538,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       * @access public
       *
       * @param array $quiz_answers
+      * @param array $files from $_FILES
       * @param int $user_id
       * @param int $lesson_id
       *
       * @return bool $answers_submitted
       */
-     public static function submit_answers_for_grading( $quiz_answers , $lesson_id , $user_id = 0 ){
+     public static function submit_answers_for_grading( $quiz_answers , $files = array() , $lesson_id , $user_id = 0 ){
 
          $answers_submitted = false;
 
@@ -603,7 +606,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          // the old way
          WooThemes_Sensei_Utils::sensei_save_quiz_answers( $quiz_answers );
          // the new way
-         self::save_user_answers( $quiz_answers , $lesson_id , $user_id );
+         self::save_user_answers( $quiz_answers , $files , $lesson_id , $user_id );
 
          // Grade quiz
          $grade = WooThemes_Sensei_Utils::sensei_grade_quiz_auto( $quiz_id, $quiz_answers, 0 , $quiz_grade_type );
