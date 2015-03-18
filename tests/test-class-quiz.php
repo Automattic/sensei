@@ -72,61 +72,81 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
                             'The quiz class function `save_user_answers` does not exist ' );
 
         // does this save_user_answers return false for bogus data
-        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( array() ,-1000, -200 ) , 'save_user_answers does not return false for no existent users and lesson ' );
-        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '', '' , '' ) , 'save_user_answers does not return false for empty parameters' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( array(), array() ,-1000, -200 ) , 'save_user_answers does not return false for no existent users and lesson ' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '', array(), '' , '' ) , 'save_user_answers does not return false for empty parameters' );
 
         // does the function return the correct information when a user doesn't exist?
-        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '' , '', $test_lesson_id ) , 'save_user_answers does not return false for empty user' );
-        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '' ,  -500 ,  $test_lesson_id ) , 'save_user_answers does not return false for a non existant user' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '' , array() , '', $test_lesson_id ) , 'save_user_answers does not return false for empty user' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '' , array() ,  -500 ,  $test_lesson_id ) , 'save_user_answers does not return false for a non existant user' );
 
         // Test the answers_array parameter
-        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( 'Answers Text', $test_lesson_id, $test_user_id ) , 'save_user_answers does not return false if answers is not passed in as an array' );
-        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '' , $test_lesson_id , $test_user_id  ) , 'save_user_answers does not return false for empty answer array' );
-        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '', '' , '' ) , 'save_user_answers does not return false incorrectly formatted answers' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( 'Answers Text', array(), $test_lesson_id, $test_user_id ) , 'save_user_answers does not return false if answers is not passed in as an array' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '' , array(), $test_lesson_id , $test_user_id  ) , 'save_user_answers does not return false for empty answer array' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '', array(), '' , '' ) , 'save_user_answers does not return false incorrectly formatted answers' );
+
+        add_filter( 'sensei_file_upload_args', 'testSaveUserAnswers_override_file_upload_args' );
+        function testSaveUserAnswers_override_file_upload_args( $args ){
+            $args['action'] = 'custom_testing_upload_function';
+            return $args;
+        }
 
         // Test a case that is setup correctly which should return a positive result
         $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id  );
         WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
-        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $test_user_quiz_answers, $test_lesson_id  ,  $test_user_id  ) ;
+        $files = $this->factory->generate_test_files( $test_user_quiz_answers );
+        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $test_user_quiz_answers, $files , $test_lesson_id  ,  $test_user_id  ) ;
 
         // did the correct data return a valid comment id on the lesson as a result?
         $this->assertTrue(  intval(  $lesson_data_saved ) > 0 , 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
 
-        // was the data that was just stored stored correctly ? Check the comment meta on the lesson id
+        //setup for the next group of assertions
         $sensei_activity_logged = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) );
+        $status_comment = WooThemes_Sensei_Utils::user_lesson_status( $test_lesson_id, $test_user_id );
+        $saved_data = get_comment_meta( $status_comment->comment_ID, 'quiz_answers', true );
+
+        // was the data that was just stored stored correctly ? Check the comment meta on the lesson id
         $this->assertTrue( ( bool ) $sensei_activity_logged , 'The saved answers were not stored correctly on the Quiz');
+        $this->assertFalse( empty($saved_data) , 'The saved answers were not stored correctly on the Quiz');
+        $this->assertTrue( is_array( maybe_unserialize( $saved_data) ), 'The saved answers were not stored correctly on the Quiz');
 
-        // was check if the data that was saved on the different quizzes are not the same
-        $activity_value = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) , true );
+        // can you retrieve data and is it the same as what was stored?
+        //compare every single answer
+        $retrieved_saved_array = maybe_unserialize( $saved_data );
 
-        /* todo: test the file saving process
-            This is how the incomming data will look
-             * we already have the test images which we can use to alter the global $_FILES
-             * get the tests/imges/ file size
-             $_FILES=> array (size=1)  'file_upload_$question_id' => git  array (size=5)
-                          'name' => string 'apple.jpg' (length=9)
-                          'type' => string 'image/jpeg' (length=10)
-                          'tmp_name' => string '/tmp/phpsP0RJH' (length=14)
-                          'error' => int 0
-                          'size' => int 36414
-             }
-         */
+        foreach( $test_user_quiz_answers as $question_id => $answer ){
+
+            $type = $woothemes_sensei->question->get_question_type( $question_id );
+            //if file skip it because  files going in comes out as attachment ids
+            if( 'file-upload'== $type ){
+                continue;
+            }
+            $saved_single_answer = $retrieved_saved_array[ $question_id ];
+            $assert_message = 'The saved answer of type "'. strtoupper( $type )
+                                . '" does not correspond to what was passed into the function';
+            $this->assertEquals( $answer  , maybe_unserialize( base64_decode( $saved_single_answer ) ) ,
+                $assert_message );
+
+        }// end for each
+
+        // was the files submitted uploaded and saved correctly?
+        if( isset( $files ) && !empty( $files )   ) {
+            $file_keys = array_keys($files);
+            foreach ($file_keys as $key) {
+
+                $question_id = str_replace('file_upload_', '', $key);
+                $attachment_id = base64_decode($retrieved_saved_array[$question_id]);
+                // make sure this is an attachment
+                $image_location = get_attached_file($attachment_id, false);
+                $this->assertFalse( empty($image_location), 'The ' . $files[ $key ][ 'name' ] . ' image was not attached');
+
+            }// end for each $file_keys
+        }
+         // todo: the qustion types are too random. We need at least one of each. Sometimes files do not show up.
+        // todo: the tests pass for files but I'M not sure it really works
+        // todo: was check if the data that was saved on the different quizzes are not the same
+        //$activity_value = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) , true );
 
     } // end testSaveUserAnswers
-
-
-    /**
-     * This test Woothemes_Sensei()->quiz->sensei_save_quiz_answers
-     */
-    public function testSenseiSaveQuizAnswers(){
-        // todo : test the function instance ,
-        // todo: setup a few test users added to lessons in the setup function and remove it in teardown
-        // todo: create get random user function
-        // todo: alter the global post variable to be a quiz that the user is taking
-        // todo: setup the global current user
-        // todo : test if it returns success when it should and also failure
-    }
-
 
     /**
      * This test Woothemes_Sensei()->lesson->lesson_quizzes( $lesson_id )
@@ -285,13 +305,14 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
         // setup for the next group of assertions
         //setup this function to override the arguments passed to WordPress upload function
+        add_filter( 'sensei_file_upload_args', 'unit_test_override_sensei_file_upload_args' );
         function unit_test_override_sensei_file_upload_args( $args ){
             $args['action'] = 'custom_testing_upload_function';
             return $args;
         }
 
         // for the valid data does it return an array ?
-        add_filter( 'sensei_file_upload_args', 'unit_test_override_sensei_file_upload_args' );
+
         $prepared_test_data = $woothemes_sensei->quiz->prepare_form_submitted_answers( $test_user_quiz_answers , $files );
         $this->assertTrue( is_array( $prepared_test_data ) ,
         'function function does not return an array for valid parameters' );
@@ -303,7 +324,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         /**
          * For valid data, is the answers in the array returned the same as the values passed in
          */
-        $random_index = array_rand( $prepared_test_data  );
+
+        // testing non file questions
+        $random_index = $this->factory->get_random_none_file_question_index(  $prepared_test_data  );
         $input_array_sample_element_val = $test_user_quiz_answers[$random_index];
         $output_array_sample_element_val =  maybe_unserialize( base64_decode(  $prepared_test_data[ $random_index ] ));
         $question_type = $woothemes_sensei->question->get_question_type( $random_index );
@@ -312,6 +335,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertEquals( $input_array_sample_element_val, $output_array_sample_element_val ,
            $test_message  );
 
+        // testing file type questions
+        if( isset( $files ) && !empty( $files ) ) {
+            $random_file_index = $this->factory->get_random_file_question_index( $prepared_test_data );
+            $file_answer =   $prepared_test_data[ $random_file_index ];
+            $this->assertFalse( empty( $file_answer ),
+            'The file type question returns nothing, it should return an attachment ID');
+        }
     }// end testPrepareFormSubmittedAnswers()
 
     /**
