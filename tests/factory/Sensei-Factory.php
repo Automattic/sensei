@@ -128,7 +128,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
             if ('multiple-choice' == $type ) {
                 // these answer can be found the question generate and attach answers function
                 $question_meta = get_post_meta( $question->ID );
-                $user_quiz_answers[ $question->ID ] = array( 0 => 'wrong1' );
+                $user_quiz_answers[ $question->ID ] = array( 0 => 'wrong1'.rand() );
 
             } elseif ('boolean' == $type ) {
 
@@ -143,15 +143,15 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
             } elseif ( 'single-line' == $type  ) {
 
-                $user_quiz_answers[ $question->ID ] = 'Single lin answer for basic testing';
+                $user_quiz_answers[ $question->ID ] = 'Single line answer for basic testing '. rand() ;
 
             } elseif ( 'gap-fill' == $type ) {
 
-                $user_quiz_answers[ $question->ID ] = 'OneWordScentencesForSampleAnswer';
+                $user_quiz_answers[ $question->ID ] = 'OneWordScentencesForSampleAnswer '.rand();
 
             } elseif ( 'multi-line' == $type  ) {
 
-                $user_quiz_answers[ $question->ID ] = 'Sample paragraph to test the answer';
+                $user_quiz_answers[ $question->ID ] = 'Sample paragraph to test the answer '. rand();
 
             } elseif ( 'file-upload' == $type ) {
 

@@ -214,7 +214,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		// if this is not set the user is has not started this lesson
 		if( ! empty( $user_lesson_status )  && isset( $user_lesson_status->comment_ID )  ){
 			$answers_saved  = update_comment_meta( $user_lesson_status->comment_ID, 'quiz_answers' , $prepared_answers  ) ;
-		}
+
+            // save transient to make retrieval faster
+            $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
+            set_site_transient( $transient_key, $prepared_answers, 30 * DAY_IN_SECONDS );
+        }
 
 		return $answers_saved;
 

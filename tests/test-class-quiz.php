@@ -141,12 +141,56 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
             }// end for each $file_keys
         }
-         // todo: the qustion types are too random. We need at least one of each. Sometimes files do not show up.
-        // todo: the tests pass for files but I'M not sure it really works
+
+        // todo: the qustion types are too random. We need at least one of each. Sometimes files do not show up.
         // todo: was check if the data that was saved on the different quizzes are not the same
         //$activity_value = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) , true );
 
     } // end testSaveUserAnswers
+
+    /**
+     * This test is for Woothemes_Sensei()->quiz->save_user_answers. We check the transients only.
+     */
+    public function testSaveUserAnswersTransients(){
+
+        // setup the data and objects needed for this test
+        global $woothemes_sensei;
+        $test_user_id = wp_create_user('studentTransients', 'transients', 'transients@test.com');
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes($test_lesson_id);
+
+        // generate and save the test data
+        $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        $files = $this->factory->generate_test_files( $test_user_quiz_answers );
+        $woothemes_sensei->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+        $users_retrieved_answers = $woothemes_sensei->quiz->get_user_answers( $test_lesson_id, $test_user_id );
+
+        // was it saved correctly?
+        $transient_key = 'sensei_answers_'.$test_user_id.'_'.$test_lesson_id;
+        $transient_val = get_site_transient( $transient_key );
+        $decoded_transient_val = array();
+        if( is_array( $transient_val ) ) {
+            foreach ($transient_val as $question_id => $encoded_answer) {
+                $decoded_transient_val[$question_id] = maybe_unserialize( base64_decode($encoded_answer) );
+            }
+        }
+
+        $this->assertFalse( empty( $transient_val ) , 'Transients are not saved correctly for user answers ' );
+        $this->assertEquals( $users_retrieved_answers ,$decoded_transient_val ,
+            'The transient should be the same as the prepared answer which was base64 encoded' );
+
+        // if saved again will the transient be updated
+        $old_transient_value = $decoded_transient_val;
+        $new_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+        $new_files = $this->factory->generate_test_files( $test_user_quiz_answers );
+        $woothemes_sensei->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+        $new_users_retrieved_answers = $woothemes_sensei->quiz->get_user_answers( $test_lesson_id, $test_user_id );
+
+        $this->assertNotEquals( $old_transient_value, $new_users_retrieved_answers ,
+            'Transient not updated on new save for the same user lesson combination' );
+
+    } // end testSaveUserAnswersTransients
 
     /**
      * This test Woothemes_Sensei()->lesson->lesson_quizzes( $lesson_id )
