@@ -155,6 +155,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
     /**
      * This test is for Woothemes_Sensei()->quiz->save_user_answers. We check the transients only.
+     *
+     * @group transient
      */
     public function testSaveUserAnswersTransients(){
 
@@ -199,6 +201,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
     /**
      * This test Woothemes_Sensei()->quiz->get_user_answers transients only
+     *
+     * @group transient
      */
     function testGetUserAnswersTransient(){
 
@@ -336,6 +340,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
     /**
      * This test Woothemes_Sensei()->quiz->reset_user_saved_answers( $lesson_id, $user_id )
+     *
+     * @group transient
      */
     public function testResetQuizSavedAnswers(){
 
