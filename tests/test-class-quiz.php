@@ -26,9 +26,11 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
         // override the default upload to ensure file upload tests pass
         add_filter( 'sensei_file_upload_args', 'testSaveUserAnswers_override_file_upload_args' );
-        function testSaveUserAnswers_override_file_upload_args( $args ){
-            $args['action'] = 'custom_testing_upload_function';
-            return $args;
+        if( ! function_exists( 'testSaveUserAnswers_override_file_upload_args'  ) ) {
+            function testSaveUserAnswers_override_file_upload_args($args){
+                $args['action'] = 'custom_testing_upload_function';
+                return $args;
+            }
         }
 
     }// end function setup()
