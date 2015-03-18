@@ -344,7 +344,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			return false;
 		}
 
+        // reset the transient
+        $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
+        delete_site_transient( $transient_key );
+        // reset the quiz answers
 		$success = update_comment_meta( $user_lesson_status->comment_ID , 'quiz_answers', '' );
+
 		return $success;
 
 	}// end reset_user_saved_answers()

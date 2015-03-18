@@ -376,6 +376,11 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $lesson_data_reset = $woothemes_sensei->quiz->reset_user_saved_answers( $test_lesson_id,  $test_user_id  ) ;
         $this->assertTrue($lesson_data_reset  , 'The lesson data was not reset for a valid use case'  );
 
+        //make sure transients are remove as well
+        $transient_key = 'sensei_answers_'.$test_user_id.'_'.$test_lesson_id;
+        $transient_data  = get_site_transient( $transient_key );
+        $this->assertFalse( $transient_data, 'The transient was not reset along with the users saved data. The result should be false.'  );
+
     }// end testGetQuizId
 
     /**
