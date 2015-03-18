@@ -23,6 +23,14 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
     public function setup(){
         // load the factory class
         $this->factory = new Sensei_Factory();
+
+        // override the default upload to ensure file upload tests pass
+        add_filter( 'sensei_file_upload_args', 'testSaveUserAnswers_override_file_upload_args' );
+        function testSaveUserAnswers_override_file_upload_args( $args ){
+            $args['action'] = 'custom_testing_upload_function';
+            return $args;
+        }
+
     }// end function setup()
 
     /**
@@ -84,11 +92,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '' , array(), $test_lesson_id , $test_user_id  ) , 'save_user_answers does not return false for empty answer array' );
         $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers( '', array(), '' , '' ) , 'save_user_answers does not return false incorrectly formatted answers' );
 
-        add_filter( 'sensei_file_upload_args', 'testSaveUserAnswers_override_file_upload_args' );
-        function testSaveUserAnswers_override_file_upload_args( $args ){
-            $args['action'] = 'custom_testing_upload_function';
-            return $args;
-        }
 
         // Test a case that is setup correctly which should return a positive result
         $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id  );
