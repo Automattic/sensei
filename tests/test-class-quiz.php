@@ -187,13 +187,59 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $old_transient_value = $decoded_transient_val;
         $new_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
         $new_files = $this->factory->generate_test_files( $test_user_quiz_answers );
-        $woothemes_sensei->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+        $woothemes_sensei->quiz->save_user_answers( $new_answers, $new_files, $test_lesson_id, $test_user_id );
         $new_users_retrieved_answers = $woothemes_sensei->quiz->get_user_answers( $test_lesson_id, $test_user_id );
 
         $this->assertNotEquals( $old_transient_value, $new_users_retrieved_answers ,
             'Transient not updated on new save for the same user lesson combination' );
 
     } // end testSaveUserAnswersTransients
+
+    /**
+     * This test Woothemes_Sensei()->quiz->get_user_answers transients only
+     */
+    function testGetUserAnswersTransient(){
+
+        // setup the test data
+        global $woothemes_sensei;
+        $test_user_id = wp_create_user('studentTransientsGet', 'transientsGet', 'transientsGet@test.com');
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $transient_key = 'sensei_answers_'.$test_user_id.'_'.$test_lesson_id;
+        $transient_get_test = array( base64_encode( 'transientGetTest' )  );
+        $transient_get_test_decoded = array( 'transientGetTest' );
+        set_site_transient( $transient_key, $transient_get_test  );
+        $users_retrieved_answers = $woothemes_sensei->quiz->get_user_answers( $test_lesson_id, $test_user_id );
+
+        // test if the answer is taken from the transient
+        $this->assertEquals( $transient_get_test_decoded , $users_retrieved_answers ,
+            'The transient was not used before proceeding to get the users answers from DB' );
+
+
+        //setup next assertion
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes($test_lesson_id);
+        $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        $files = $this->factory->generate_test_files( $test_user_quiz_answers );
+        $woothemes_sensei->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+        delete_site_transient( $transient_key );
+        $woothemes_sensei->quiz->get_user_answers( $test_lesson_id, $test_user_id );
+        $transient_data_after_retrieval = get_site_transient( $transient_key );
+
+        // test if a transient is created when one does not exist
+        // in this test we first delete the transient after it is been added in the save_user_answers
+        // function above, then we get the data again and test if the function added the transient
+        $this->assertNotFalse( $transient_data_after_retrieval,
+                ' The get_user_answers function does not set the transient after retrieving the data ');
+
+        // make sure the one of the keys passed in is in the transient
+        $random_key = array_rand( $test_user_quiz_answers  );
+        $this->assertArrayHasKey( $random_key , $transient_data_after_retrieval  ,
+            'The transient does not contain the same elements that we passed in' );
+
+        //make sure the number of elements passes in is the same as what is in the new transient cache
+        $this->assertEquals( count( $test_user_quiz_answers ), count( $transient_data_after_retrieval ),
+            'The number of elements in the transient does not match those the user submitted');
+    } // testGetUserAnswersTransient
 
     /**
      * This test Woothemes_Sensei()->lesson->lesson_quizzes( $lesson_id )

@@ -250,14 +250,34 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		|| ! intval( $user_id )  > 0 || !get_userdata( $user_id )  ) {
 			return false;
 		}
-		// get the lesson status comment type on the lesson
 
-		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-		$encoded_user_answers  = get_comment_meta( $user_lesson_status->comment_ID, 'quiz_answers', true) ;
+        // save some time and get the transient cached data
+        $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
+        $transient_cached_answers = get_site_transient( $transient_key );
+
+        // return the transient or get the values get the values from the comment meta
+        if( !empty( $transient_cached_answers  ) && false != $transient_cached_answers ){
+
+            $encoded_user_answers = $transient_cached_answers;
+
+        }else{
+            // get the lesson status comment type on the lesson
+            $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+            if( !isset( $user_lesson_status  )  || empty( $user_lesson_status ) ){
+                return false;
+            }
+
+            $encoded_user_answers  = get_comment_meta( $user_lesson_status->comment_ID, 'quiz_answers', true) ;
+
+        } // end if transient check
 
 		if( ! is_array( $encoded_user_answers ) ){
 			return false;
 		}
+
+        //set the transient with the new valid data for faster retrieval in future
+        set_site_transient( $transient_key,  $encoded_user_answers);
 
 		// decode an unserialize all answers
 		foreach( $encoded_user_answers as $question_id => $encoded_answer ) {
