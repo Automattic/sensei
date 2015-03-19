@@ -169,7 +169,14 @@ class WooThemes_Sensei_Messages {
 				$html .= $this->teacher_contact_form( $post );
 			} else {
 				$href = add_query_arg( array( 'contact' => $post->post_type ) );
-				$html .= '<p><a class="button send-message-button" href="' . $href . '#private_message">' . sprintf( __( 'Contact %1$s Teacher', 'woothemes-sensei' ), ucfirst( $post->post_type ) ) . '</a></p>';
+
+				if( 'lesson' == $post->post_type ) {
+					$contact_button_text = __( 'Contact Lesson Teacher', 'woothemes-sensei' );
+				} else {
+					$contact_button_text = __( 'Contact Course Teacher', 'woothemes-sensei' );
+				}
+
+				$html .= '<p><a class="button send-message-button" href="' . $href . '#private_message">' . $contact_button_text . '</a></p>';
 			}
 
 			if( isset( $this->message_notice ) && isset( $this->message_notice['type'] ) && isset( $this->message_notice['notice'] ) ) {
