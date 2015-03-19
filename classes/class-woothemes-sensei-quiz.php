@@ -710,4 +710,53 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
      }// end submit_answers_for_grading
 
+     /**
+      * Get the user question answer
+      *
+      * This function gets the the users saved answer on given quiz for the given question parameter
+      * this function allows for a fallback to users still using the question saved data from before 1.7.4
+      *
+      * @since 1.7.4
+      *
+      * @param int  $lesson_id
+      * @param int $question_id
+      * @param int  $user_id ( optional )
+      *
+      * @return bool $answers_submitted
+      */
+     public function get_user_question_answer( $lesson_id, $question_id, $user_id = 0 ){
+
+         // parameter validation
+         if( empty( $lesson_id ) || empty( $question_id )
+             || ! ( intval( $lesson_id  ) > 0 )
+             || ! ( intval( $question_id  ) > 0 )
+             || 'lesson' != get_post_type( $lesson_id )
+             || 'question' != get_post_type( $question_id )) {
+
+             return false;
+         }
+
+         if( ! ( intval( $user_id ) > 0 )   ){
+             $user_id = get_current_user_id();
+         }
+
+         $users_answers = $this->get_user_answers( $lesson_id, $user_id );
+
+         if( !$users_answers || empty( $users_answers )
+         ||  ! is_array( $users_answers ) ){
+
+             //Fallback for pre 1.7.4 data
+             $comment =  WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ), true );
+
+             if( ! isset( $comment->comment_content ) ){
+                 return false;
+             }
+
+             return maybe_unserialize( base64_decode( $comment->comment_content ) );
+         }
+
+         return $users_answers[ $question_id ];
+
+     }// end get_user_question_answer
+
 } // End Class WooThemes_Sensei_Quiz

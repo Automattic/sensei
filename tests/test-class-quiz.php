@@ -486,8 +486,83 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertTrue( $result_for_valid_data ,
             'The function should return true for valid parameters' );
 
-        // todo: setup quizzes that can be autograded and create a function that can get auto and manual randoms
-
     }// end testSubmittedAnswersForGrading
+
+    /**
+     * This tests Woothemes_Sensei()->quiz->get_user_question_answer
+     */
+    public function testGetUserQuestionAnswer(){
+        global $woothemes_sensei;
+
+        //setup the data needed for the assertions
+        $test_user_id = wp_create_user( 'studentGetQuestionAnswer', 'studentGetQuestionAnswer', 'studentGetQuestionAnswer@test.com' );
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
+        $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id  );
+        $files = $this->factory->generate_test_files( $test_user_quiz_answers );
+        $woothemes_sensei->quiz->save_user_answers( $test_user_quiz_answers, $files , $test_lesson_id  ,  $test_user_id  );
+
+        // make sure the method is in the class before we proceed
+        $this->assertTrue( method_exists ( $woothemes_sensei->quiz,'get_user_question_answer' ),
+            'The get_user_question_answer method is not in class WooThemes_Sensei_Quiz' );
+
+        // does it return false for invalid data
+        $invalid_data_message = 'This function does not check false data correctly';
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_answer('','','')  ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_answer(' ',' ',' ') ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_answer( -2, -3, -1 ) , $invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_answer( 3000, 5000, 5000 ) , $invalid_data_message );
+
+        // setup data for the next assertion
+        $assertion_message = ' Comparing the answer retrieved with the answer saved ';
+        $random_question_id = array_rand( $test_user_quiz_answers );
+        $users_saved_answers = $woothemes_sensei->quiz->get_user_answers( $test_lesson_id, $test_user_id  );
+        $question_answer = $woothemes_sensei->quiz->get_user_question_answer( $test_lesson_id, $random_question_id, $test_user_id );
+
+        // testing if the data is returned
+        $this->assertEquals( $users_saved_answers[ $random_question_id ] ,$question_answer, $assertion_message  );
+
+        //setup the data for the next assertion
+        $assertion_message = 'This function does not fall back to the old data';
+        $question_id = $random_question_id;
+        $answer = $users_saved_answers[ $question_id ];
+        $old_data_user_id = wp_create_user( 'olddata', 'olddata', 'olddata@test.com' );
+        $question_types = wp_get_post_terms( $question_id , 'question-type' );
+
+        foreach( $question_types as $type ) {
+            $question_type = $type->slug;
+        }
+
+        if( ! $question_type ) {
+            $question_type = 'multiple-choice';
+        }
+
+        // Sanitise answer
+        if( 0 == get_magic_quotes_gpc() ) {
+            $answer = wp_unslash( $answer );
+        }
+        switch( $question_type ) {
+            case 'multi-line': $answer = nl2br( $answer ); break;
+            case 'single-line': break;
+            case 'gap-fill': break;
+            default: $answer = maybe_serialize( $answer ); break;
+        }
+        $args = array(
+            'post_id' => $question_id,
+            'data' => base64_encode( $answer ),
+            'type' => 'sensei_user_answer', /* FIELD SIZE 20 */
+            'user_id' => $old_data_user_id,
+            'action' => 'update'
+        );
+        WooThemes_Sensei_Utils::sensei_log_activity( $args );
+
+        $old_data_answer = $woothemes_sensei->quiz->get_user_question_answer( $test_lesson_id, $random_question_id, $old_data_user_id );
+
+        // testing for users on the pre 1.7.4 data
+        $this->assertEquals( maybe_unserialize( $answer ) ,$old_data_answer, $assertion_message  );
+
+        // make sure that after a reset this function returns false
+
+    }// end testGetUserQuestionAnswer
 
 }// end class Sensei_Class_Quiz_Test
