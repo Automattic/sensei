@@ -485,33 +485,21 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			}
 
             // compress the answer for saving
-            $answer = maybe_serialize( $answer );
 			if( 'multi-line' == $question_type ) {
                 $answer = nl2br( $answer );
-            }
+            }elseif( 'file-upload' == $question_type  ){
+                $file_key = 'file_upload_' . $question_id;
+                if( isset( $files[ $file_key ] ) ) {
+                        $attachment_id = WooThemes_Sensei_Utils::upload_file(  $files[ $file_key ] );
+                        if( $attachment_id ) {
+                            $answer = $attachment_id;
+                        }
+                    }
+            } // end if
 
-			$prepared_answers[ $question_id ] =  base64_encode( $answer );
+			$prepared_answers[ $question_id ] =  base64_encode( maybe_serialize( $answer ) );
 
 		}// end for each $quiz_answers
-
-
-
-		// Handle file upload questions
-		if( isset( $files ) && ! empty( $files  ) ) {
-			foreach( $files as $field => $file ) {
-				if( strpos( $field, 'file_upload_' ) !== false ) {
-					$question_id = str_replace( 'file_upload_', '', $field );
-					if( $file && $question_id ) {
-						$attachment_id = WooThemes_Sensei_Utils::upload_file( $file );
-						if( $attachment_id ) {
-
-							$prepared_answers[ $question_id ] = base64_encode( $attachment_id );
-
-						}
-					}
-				}
-			}
-		}
 
 		return $prepared_answers;
 	} // prepare_form_submitted_answers
