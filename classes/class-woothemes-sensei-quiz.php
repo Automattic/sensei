@@ -631,10 +631,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          }
 
          // Save Quiz Answers for grading:
-
-         // the old way
-         WooThemes_Sensei_Utils::sensei_save_quiz_answers( $quiz_answers );
-         // the new way
          self::save_user_answers( $quiz_answers , $files , $lesson_id , $user_id );
 
          // Grade quiz
