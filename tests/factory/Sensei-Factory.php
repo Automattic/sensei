@@ -166,6 +166,29 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
     }// end generate_user_quiz_answers()
 
     /**
+     * Generate an array of user quiz grades
+     *
+     * @param int $number number of questions to generate. Default 10
+     * @trows new 'Generate questions needs a valid lesson ID.' if the ID passed in is not a valid lesson
+     */
+    public function generate_user_quiz_grades( $quiz_answers ){
+
+        if( empty( $quiz_answers ) || ! is_array( $quiz_answers )  ){
+            throw new Exception(' The generate_user_quiz_grades parameter must be a valid array ');
+        }
+
+        $quiz_grades = array();
+        foreach( $quiz_answers as $question_id => $answer  ){
+
+            $quiz_grades[ $question_id ] = rand( 1 , 5);
+
+        }//  end foreach
+
+        return $quiz_grades;
+
+    }// generate_user_quiz_grades
+
+    /**
      * Generate and attach lesson questions.
      *
      * This will create a set of questions. These set of questions will be added to every lesson.
