@@ -1961,5 +1961,74 @@ class WooThemes_Sensei_Utils {
 		return $pieces;
 	}
 
+    /**
+     *
+     * Alias to Woothemes_Sensei_Utils::update_user_data
+     * @since 1.7.4
+     *
+     * @param int $post_id
+     * @param string $data_key maximum 39 characters allowed
+     * @param mixed $value
+     * @param int $user_id
+     *
+     * @return bool $success
+     */
+    public static function add_user_data( $post_id, $data_key, $value = '' , $user_id = 0  ){
+
+        return update_user_data( $post_id, $data_key, $value , $user_id );
+
+    }// end add_user_data
+
+    /**
+     * add user specific data to the passed in sensei post type id
+     *
+     * This function saves comment meta on the users current status. If no status is available
+     * status will be created. It only operates on the available sensei Post types: course, lesson, quiz.
+     *
+     * @since 1.7.4
+     *
+     * @param int $post_id
+     * @param string $data_key maximum 39 characters allowed
+     * @param mixed $value
+     * @param int $user_id
+     *
+     * @return bool $success
+     */
+    public static function update_user_data( $post_id, $data_key, $value = '' , $user_id = 0  ){
+
+        if( ! ( $user_id > 0 ) ){
+            $user_id = get_current_user_id();
+        }
+
+        $supported_post_types = array( 'course', 'lesson' );
+        $post_type = get_post_type( $post_id );
+        if( empty( $post_id ) || empty( $data_key )
+            || ! is_int( $post_id ) || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
+            || !get_userdata( $user_id )
+            || ! in_array( $post_type, $supported_post_types )  ){
+
+            return false;
+        }
+
+        // check if there and existing Sensei status on this post type if not create it
+        // and get the  activity ID
+        $status_function = 'user_'.$post_type.'_status';
+        $sensei_user_status = self::$status_function( $post_id ,$user_id  );
+        if( ! isset( $sensei_user_status->comment_ID ) ){
+
+            $start_function = 'user_start_'.$post_type;
+            $sensei_user_activity_id = self::$start_function( $user_id, $post_id );
+
+        }else{
+
+            $sensei_user_activity_id = $sensei_user_status->comment_ID;
+
+        }
+
+        // store the data
+        $success = update_comment_meta( $sensei_user_activity_id, $data_key, $value );
+
+       return $success;
+    }//add_user_data
 
 } // End Class
