@@ -781,6 +781,24 @@ class WooThemes_Sensei_Utils {
 		return $activity_logged;
 	}
 
+
+    /**
+     * Alias to Woothemes_Sensei_Utils::sensei_start_lesson
+     *
+     * @since 1.7.4
+     *
+     * @param integer $user_id
+     * @param integer $lesson_id
+     * @param bool $complete
+     *
+     * @return mixed boolean or comment_ID
+     */
+    public static function user_start_lesson(  $user_id = 0, $lesson_id = 0, $complete = false ) {
+
+        return self::sensei_start_lesson( $lesson_id, $user_id, $complete );
+
+    }// end user_start_lesson()
+
 	/**
 	 * Marked lesson as started for user
 	 * @param  integer $lesson_id ID of lesson
