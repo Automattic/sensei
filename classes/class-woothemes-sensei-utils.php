@@ -1975,7 +1975,7 @@ class WooThemes_Sensei_Utils {
      */
     public static function add_user_data( $post_id, $data_key, $value = '' , $user_id = 0  ){
 
-        return update_user_data( $post_id, $data_key, $value , $user_id );
+        return self::update_user_data( $post_id, $data_key, $value , $user_id );
 
     }// end add_user_data
 

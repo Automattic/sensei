@@ -174,14 +174,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 */
 	public static function save_user_answers( $quiz_answers, $files = array(), $lesson_id , $user_id = 0 ){
 
-		$answers_saved = false;
+        if( ! ( $user_id > 0 ) ){
+            $user_id = get_current_user_id();
+        }
 
-		// get the user_id if none was passed in use the current logged in user
-		if( ! intval( $user_id ) > 0 ) {
-			$user_id = get_current_user_id();
-		}
-
-		// make sure the parameters are valid before continuing
+        // make sure the parameters are valid before continuing
 		if( empty( $lesson_id ) || empty( $user_id )
 			|| 'lesson' != get_post_type( $lesson_id )
 			||!get_userdata( $user_id )
@@ -238,9 +235,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	public function get_user_answers( $lesson_id, $user_id ){
 
 		$answers = false;
-		global $woothemes_sensei;
-
-		$user_answers = array();
 
 		if ( ! intval( $lesson_id ) > 0 || 'lesson' != get_post_type( $lesson_id )
 		|| ! intval( $user_id )  > 0 || !get_userdata( $user_id )  ) {
@@ -257,14 +251,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             $encoded_user_answers = $transient_cached_answers;
 
         }else{
-            // get the lesson status comment type on the lesson
-            $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 
-            if( !isset( $user_lesson_status  )  || empty( $user_lesson_status ) ){
-                return false;
-            }
-
-            $encoded_user_answers  = get_comment_meta( $user_lesson_status->comment_ID, 'quiz_answers', true) ;
+            $encoded_user_answers = WooThemes_Sensei_Utils::get_user_data( $lesson_id, 'quiz_answers' , $user_id );
 
         } // end if transient check
 
@@ -332,19 +320,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			return false;
 		}
 
-		// get the user data on the lesson
-		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-
-
-		if( empty( $user_lesson_status ) || ! isset( $user_lesson_status->comment_ID )  ){
-			return false;
-		}
-
         // reset the transient
         $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
         delete_site_transient( $transient_key );
+
         // reset the quiz answers
-		$success = update_comment_meta( $user_lesson_status->comment_ID , 'quiz_answers', '' );
+		$success = WooThemes_Sensei_Utils::delete_user_data($lesson_id,'quiz_answers', $user_id );
 
 		return $success;
 
