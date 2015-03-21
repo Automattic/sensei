@@ -786,8 +786,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       */
      public function get_user_grades( $lesson_id, $user_id = 0 ){
 
-         global $woothemes_sensei;
-         $user_quiz_grades = array();
+         $user_grades = array();
 
          // get the user_id if none was passed in use the current logged in user
          if( ! intval( $user_id ) > 0 ) {
@@ -799,7 +798,28 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              return false;
          }
 
-         return$user_quiz_grades;
+         // save some time and get the transient cached data
+         $transient_key = 'quiz_grades_'. $user_id . '_' . $lesson_id;
+         $user_grades = get_site_transient( $transient_key );
+
+         // get the data if nothing was stored in the transient
+         if( empty( $user_grades  ) || false != $user_grades ){
+
+             $user_grades = WooThemes_Sensei_Utils::get_user_data( $lesson_id, 'quiz_grades' , $user_id );
+
+             //set the transient with the new valid data for faster retrieval in future
+             set_site_transient( $transient_key,  $user_grades);
+
+
+         } // end if transient check
+
+         // if there is no data for this user
+         if( ! is_array( $user_grades ) ){
+             return false;
+         }
+
+         return $user_grades;
+
      }// end  get_user_grades
 
 } // End Class WooThemes_Sensei_Quiz

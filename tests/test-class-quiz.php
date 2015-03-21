@@ -652,6 +652,26 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertFalse( $woothemes_sensei->quiz->get_user_grades( -3, -1 ) , $invalid_data_message );
         $this->assertFalse( $woothemes_sensei->quiz->get_user_grades( 5000, 5000 ) , $invalid_data_message );
 
+        //setup the next assertion
+        $woothemes_sensei->quiz->set_user_grades($test_user_grades, $test_lesson_id, $test_user_id);
+        $retrieved_grades = $woothemes_sensei->quiz->get_user_grades( $test_lesson_id, $test_user_id  );
+
+        //doest this function return the saved data correctly?
+        $this->assertEquals( $test_user_grades , $retrieved_grades, 'The grades saved and retrieved do not match.' );
+
+        //set up the next assertion data
+        $transient_key = 'quiz_grades_'. $test_user_id . '_' . $test_lesson_id;
+        $woothemes_sensei->quiz->set_user_grades($test_user_grades, $test_lesson_id, $test_user_id);
+        delete_site_transient( $transient_key );
+        $woothemes_sensei->quiz->get_user_grades( $test_lesson_id, $test_user_id );
+        $transient_val = get_site_transient( $transient_key );
+
+        //ensure the transients work
+        $this->assertEquals( $test_user_grades, $transient_val,
+                            'The empty transient was not set after querying for the quiz answers data.' );
+
+
+
     } // end testGetUserGrades
 
 }// end class Sensei_Class_Quiz_Test
