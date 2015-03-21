@@ -720,4 +720,89 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
      }// end get_user_question_answer
 
+     /**
+      * Saving the users quiz question grades
+      *
+      * This function save all the grades for all the question in a given quiz on the lesson
+      * comment meta. It makes use of transients to save the grades for easier access at a later stage
+      *
+      * @since 1.7.4
+      *
+      * @param array $quiz_grades{
+      *      @type int $question_id
+      *      @type int $question_grade
+      * }
+      * @param $lesson_id
+      * @param $user_id (Optional) will use the current user if not supplied
+      *
+      * @return bool
+      */
+     public function set_user_quiz_grades( $quiz_grades, $lesson_id, $user_id = 0 ){
+
+         global $woothemes_sensei;
+
+         // get the user_id if none was passed in use the current logged in user
+         if( ! intval( $user_id ) > 0 ) {
+             $user_id = get_current_user_id();
+         }
+
+         // make sure the parameters are valid before continuing
+         if( empty( $lesson_id ) || empty( $user_id )
+             || 'lesson' != get_post_type( $lesson_id )
+             ||!get_userdata( $user_id )
+             || !is_array( $quiz_grades ) ){
+
+             return false;
+
+         }
+
+         $success = false;
+
+         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+         // if this is not set the user is has not started this lesson
+         if( ! empty( $user_lesson_status )  && isset( $user_lesson_status->comment_ID )  ) {
+
+             $success = update_comment_meta($user_lesson_status->comment_ID, 'quiz_grades', $quiz_grades );
+
+             // save transient
+             $transient_key = 'quiz_grades_'. $user_id . '_' . $lesson_id;
+             set_site_transient( $transient_key, $quiz_grades, 30 * DAY_IN_SECONDS );
+         }
+         // save transient to make retrieval faster
+
+         return ( int ) $success > 0;
+
+     }// end set_user_quiz_grades
+
+     /**
+      * Retrieve the users quiz question grades
+      *
+      * This function gets all the grades for all the questions in the given lesson quiz for a specific user.
+      *
+      * @since 1.7.4
+      *
+      * @param $lesson_id
+      * @param $user_id (Optional) will use the current user if not supplied
+      *
+      * @return array $user_quiz_grades or false if none exists for this users
+      */
+     public function get_user_quiz_grades( $lesson_id, $user_id = 0 ){
+
+         global $woothemes_sensei;
+         $user_quiz_grades = array();
+
+         // get the user_id if none was passed in use the current logged in user
+         if( ! intval( $user_id ) > 0 ) {
+             $user_id = get_current_user_id();
+         }
+
+         if ( ! intval( $lesson_id ) > 0 || 'lesson' != get_post_type( $lesson_id )
+             || ! intval( $user_id )  > 0 || !get_userdata( $user_id )  ) {
+             return false;
+         }
+
+         return$user_quiz_grades;
+     }// end  get_user_quiz_grades
+
 } // End Class WooThemes_Sensei_Quiz
