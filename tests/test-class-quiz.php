@@ -670,8 +670,42 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertEquals( $test_user_grades, $transient_val,
                             'The empty transient was not set after querying for the quiz answers data.' );
 
-
-
     } // end testGetUserGrades
+
+    /**
+     * Testing $woothemes->quiz->get_user_question_grade
+     */
+    public function testGetUserQuestionGrade(){
+
+        global $woothemes_sensei;
+
+        //make sure the method exists
+        $this->assertTrue( method_exists( $woothemes_sensei->quiz,
+            'get_user_question_grade'), 'The function get_user_question_grade does not exist within the quiz class.' );
+
+
+        // does it return false for invalid data
+        $invalid_data_message = 'This function does not check false data correctly';
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_grade('','','')  ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_grade(' ',' ',' ') ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_grade( -2, -3, -1 ) , $invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_grade( 3000, 5000, 5000 ) , $invalid_data_message );
+
+        //setup the data needed for the assertions in this test
+        $test_user_id = wp_create_user( 'testGetUserQuestionGrade', 'testGetUserQuestionGrade', 'testGetUserQuestionGrade@test.com' );
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
+        $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id  );
+        $test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
+        $woothemes_sensei->quiz->set_user_grades( $test_user_grades, $test_lesson_id, $test_user_id  );
+        $test_question_id = array_rand( $test_user_grades );
+        $retrieved_grade = $woothemes_sensei->quiz-> get_user_question_grade( $test_lesson_id, $test_question_id, $test_user_id );
+
+        //test if the the question grade can be retrieved
+        $this->assertEquals( $test_user_grades[ $test_question_id ], $retrieved_grade,
+            'The grade retrieved is not equal to the one that was set for this question ID' );
+
+    }// end testGetUserQuestionGrade
+
 
 }// end class Sensei_Class_Quiz_Test

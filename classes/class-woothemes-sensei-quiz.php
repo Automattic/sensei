@@ -822,4 +822,41 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
      }// end  get_user_grades
 
+     /**
+      * Get the user question grade
+      *
+      * This function gets the grade on a quiz for the given question parameter
+      * It does NOT do any grading. It simply retrieves the data that was stored during grading.
+      * this function allows for a fallback to users still using the question saved data from before 1.7.4
+      *
+      * @since 1.7.4
+      *
+      * @param int  $lesson_id
+      * @param int $question_id
+      * @param int  $user_id ( optional )
+      *
+      * @return bool $question_grade
+      */
+     public function get_user_question_grade( $lesson_id, $question_id, $user_id = 0 ){
+
+         // parameter validation
+         if( empty( $lesson_id ) || empty( $question_id )
+             || ! ( intval( $lesson_id  ) > 0 )
+             || ! ( intval( $question_id  ) > 0 )
+             || 'lesson' != get_post_type( $lesson_id )
+             || 'question' != get_post_type( $question_id )) {
+
+             return false;
+         }
+
+         $all_user_grades = self::get_user_grades( $lesson_id,$user_id );
+
+         if( ! $all_user_grades || ! isset(  $all_user_grades[ $question_id ] ) ){
+             return false;
+         }
+
+         return $all_user_grades[ $question_id ];
+
+     }// end get_user_question_grade
+
 } // End Class WooThemes_Sensei_Quiz
