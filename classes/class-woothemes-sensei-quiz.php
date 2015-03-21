@@ -739,8 +739,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       */
      public function set_user_grades( $quiz_grades, $lesson_id, $user_id = 0 ){
 
-         global $woothemes_sensei;
-
          // get the user_id if none was passed in use the current logged in user
          if( ! intval( $user_id ) > 0 ) {
              $user_id = get_current_user_id();
@@ -758,20 +756,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          $success = false;
 
-         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+         // save that data for the user on the lesson comment meta
+         $comment_meta_id = WooThemes_Sensei_Utils::add_user_data( $lesson_id, 'quiz_grades', $quiz_grades, $user_id   );
 
-         // if this is not set the user is has not started this lesson
-         if( ! empty( $user_lesson_status )  && isset( $user_lesson_status->comment_ID )  ) {
+         // were the grades save successfully ?
+         if( intval( $comment_meta_id ) > 0 ) {
 
-             $success = update_comment_meta($user_lesson_status->comment_ID, 'quiz_grades', $quiz_grades );
-
+             $success = true;
              // save transient
              $transient_key = 'quiz_grades_'. $user_id . '_' . $lesson_id;
              set_site_transient( $transient_key, $quiz_grades, 30 * DAY_IN_SECONDS );
          }
-         // save transient to make retrieval faster
 
-         return ( int ) $success > 0;
+         return $success;
 
      }// end set_user_grades
 

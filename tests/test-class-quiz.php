@@ -615,8 +615,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
         // if saved again will the transient be updated
         $old_transient_value = $transient_val;
-        $new_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
-        $new_files = $this->factory->generate_test_files( $test_user_quiz_answers );
         $new_test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
 
         $woothemes_sensei->quiz->set_user_grades( $new_test_user_grades, $test_lesson_id, $test_user_id );
