@@ -195,29 +195,25 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         // start the lesson before saving the data in case the user has not started the lesson
         $activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
-        if( $activity_logged ) {
-            // Save questions that were asked in this quiz
-            if( !empty( $questions_asked_string ) ) {
-                update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_string );
-            }
-        } // end if $activity_logged
-
-        // Need message in case the data wasn't saved?
-        $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
-
 		//prepare the answers
 		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers , $files );
 
-		// get the lesson status comment type on the lesson
-		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		// save the user data
+        $answers_saved = WooThemes_Sensei_Utils::add_user_data( $lesson_id, 'quiz_answers' , $prepared_answers, $user_id ) ;
 
-		// if this is not set the user is has not started this lesson
-		if( ! empty( $user_lesson_status )  && isset( $user_lesson_status->comment_ID )  ){
-			$answers_saved  = update_comment_meta( $user_lesson_status->comment_ID, 'quiz_answers' , $prepared_answers  ) ;
+		// were the answers saved correctly?
+		if( intval( $answers_saved ) > 0){
+
+            // questions asked stored because the quiz can show different questions for each learner
+            $questions_asked_string = implode( ',', array_keys( $quiz_answers ) );
+            update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_string );
 
             // save transient to make retrieval faster
             $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
             set_site_transient( $transient_key, $prepared_answers, 30 * DAY_IN_SECONDS );
+
+            // update the message showed to user
+            $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
         }
 
 		return $answers_saved;
