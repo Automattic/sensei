@@ -20,6 +20,10 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
     public function setup(){
         // load the factory class
         $this->factory = new Sensei_Factory();
+
+        //remove this action so that no emails are sent during this test
+        remove_all_actions( 'sensei_user_course_start' );
+
     }// end function setup()
 
     /**
@@ -40,9 +44,6 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
         //setup data needed for this test
         $test_user_id = wp_create_user( 'testUpdateUserData', 'testUpdateUserData', 'testUpdateUserData@test.com' );
-
-        //remove this action so that no emails are sent during this test
-        remove_all_actions( 'sensei_user_course_start' );
 
         // does this function add_user_data exist?
         $this->assertTrue( method_exists( 'WooThemes_Sensei_Utils', 'update_user_data'),
@@ -82,5 +83,43 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
         $this->assertEquals( $test_array, $retrieved_array, 'The saved and retrieved data does not match' );
 
     }// end testUpdateUserData
+
+    /**
+     * This tests Woothemes_Sensei_Utils::get_user_data
+     */
+    public function testGetUserData(){
+
+        //setup data needed for this test
+        $test_user_id = wp_create_user( 'testGetUserData', 'testGetUserData', 'testGetUserData@test.com' );
+
+        // does this function add_user_data exist?
+        $this->assertTrue( method_exists( 'WooThemes_Sensei_Utils', 'get_user_data'),
+            'The utils class function `get_user_data` does not exist ' );
+
+        // does it return false for invalid the parameters?
+        $invalid_data_message = 'This function does not check false data correctly';
+        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data('','','')  ,
+            $invalid_data_message. ": '','','' "  );
+        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( ' ', ' ',' ') ,
+            $invalid_data_message . ": ' ', ' ', ' ' " );
+        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( -1,-2, -3) ,
+            $invalid_data_message.": -1,-2, -3 " );
+        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( 500, 'key', 5000 ) ,
+            $invalid_data_message.": 500, 'key', 5000" );
+
+        // doest this function return the data that was saved?
+        $test_array = array( 1, 2, 3 , 4);
+        $test_course_id = $this->factory->post->create(array( 'post_type'=>"course" ) );
+        $test_data_key = 'test_key';
+
+        //does this function return false when there is no lesson status?
+        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( $test_course_id, $test_data_key , $test_user_id ),
+            'This function should return false when the status has not be set for the given post type');
+        WooThemes_Sensei_Utils::update_user_data( $test_course_id, $test_data_key ,$test_array, $test_user_id  );
+        $retrieved_value = WooThemes_Sensei_Utils::get_user_data( $test_course_id, $test_data_key , $test_user_id );
+
+        $this->assertEquals( $test_array, $retrieved_value, 'This function does not retrieve the data that was saved' );
+
+    }// end testGetUserData()
 
 }// end test class

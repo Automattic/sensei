@@ -2029,6 +2029,53 @@ class WooThemes_Sensei_Utils {
         $success = update_comment_meta( $sensei_user_activity_id, $data_key, $value );
 
        return $success;
-    }//add_user_data
+
+    }//update_user_data
+
+    /**
+     * Get the user data stored on the passed in post type
+     *
+     * This function gets the comment meta on the lesson or course status
+     *
+     * @since 1.7.4
+     *
+     * @param $post_id
+     * @param $data_key
+     * @param int $user_id
+     *
+     * @return mixed $user_data_value
+     */
+    public static function get_user_data( $post_id, $data_key, $user_id = 0  ){
+
+        $user_data_value = true;
+
+        if( ! ( $user_id > 0 ) ){
+            $user_id = get_current_user_id();
+        }
+
+        $supported_post_types = array( 'course', 'lesson' );
+        $post_type = get_post_type( $post_id );
+        if( empty( $post_id ) || empty( $data_key )
+            || ! is_int( $post_id ) || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
+            || ! get_userdata( $user_id )
+            || !in_array( $post_type, $supported_post_types )  ){
+
+            return false;
+        }
+
+        // check if there and existing Sensei status on this post type if not create it
+        // and get the  activity ID
+        $status_function = 'user_'.$post_type.'_status';
+        $sensei_user_status = self::$status_function( $post_id ,$user_id  );
+        if( ! isset( $sensei_user_status->comment_ID ) ){
+            return false;
+        }
+
+        $sensei_user_activity_id = $sensei_user_status->comment_ID;
+        $user_data_value = get_comment_meta( $sensei_user_activity_id , $data_key, true );
+
+        return $user_data_value;
+
+    }// end get_user_data
 
 } // End Class
