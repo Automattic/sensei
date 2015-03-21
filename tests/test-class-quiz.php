@@ -566,9 +566,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
     }// end testGetUserQuestionAnswer
 
     /**
-     * Testing $woothemes->quiz->set_user_quiz_grades
+     * Testing $woothemes->quiz->set_user_grades
      */
-    public function testSetUserQuizGrades(){
+    public function testSetUserGrades(){
 
         global $woothemes_sensei;
 
@@ -582,18 +582,18 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
 
         // make sure the method is in the class before we proceed
-        $this->assertTrue( method_exists ( $woothemes_sensei->quiz,'set_user_quiz_grades' ),
-            'The set_user_quiz_grades method is not in class WooThemes_Sensei_quiz' );
+        $this->assertTrue( method_exists ( $woothemes_sensei->quiz,'set_user_grades' ),
+            'The set_user_grades method is not in class WooThemes_Sensei_quiz' );
 
         //does this function return false for the invalid parameters
         $invalid_data_message = 'This function does not check invalid parameters correctly';
-        $this->assertFalse( $woothemes_sensei->quiz->set_user_quiz_grades('','','')  ,$invalid_data_message );
-        $this->assertFalse( $woothemes_sensei->quiz->set_user_quiz_grades(' ',' ',' ') ,$invalid_data_message );
-        $this->assertFalse( $woothemes_sensei->quiz->set_user_quiz_grades( -2, -3, -1 ) , $invalid_data_message );
-        $this->assertFalse( $woothemes_sensei->quiz->set_user_quiz_grades( 3000, 5000, 5000 ) , $invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->set_user_grades('','','')  ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->set_user_grades(' ',' ',' ') ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->set_user_grades( -2, -3, -1 ) , $invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->set_user_grades( 3000, 5000, 5000 ) , $invalid_data_message );
 
         // does it return true for the right data?
-        $this->assertTrue( $woothemes_sensei->quiz->set_user_quiz_grades( $test_user_grades , $test_lesson_id , $test_user_id),
+        $this->assertTrue( $woothemes_sensei->quiz->set_user_grades( $test_user_grades , $test_lesson_id , $test_user_id),
             'The function should return success for valid parameters');
 
         //setup for the next assertions
@@ -619,18 +619,18 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $new_files = $this->factory->generate_test_files( $test_user_quiz_answers );
         $new_test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
 
-        $woothemes_sensei->quiz->set_user_quiz_grades( $new_test_user_grades, $test_lesson_id, $test_user_id );
+        $woothemes_sensei->quiz->set_user_grades( $new_test_user_grades, $test_lesson_id, $test_user_id );
         $new_transient_val = get_site_transient( $transient_key );
 
         $this->assertNotEquals( $new_transient_val, $old_transient_value,
             'Transient not updated on new save for the same user lesson combination' );
 
-    }// end testSetUserQuizGrades
+    }// end testSetUserGrades
 
     /**
-     * Testing $woothemes->quiz->get_user_quiz_grades
+     * Testing $woothemes->quiz->get_user_grades
      */
-    public function testGetUserQuizGrades(){
+    public function testGetUserGrades(){
 
         global $woothemes_sensei;
 
@@ -644,16 +644,16 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
 
         // make sure the method is in the class before we proceed
-        $this->assertTrue( method_exists ( $woothemes_sensei->quiz,'get_user_quiz_grades' ),
-            'The set_user_quiz_grades method is not in class WooThemes_Sensei_quiz' );
+        $this->assertTrue( method_exists ( $woothemes_sensei->quiz,'get_user_grades' ),
+            'The get_user_grades method is not in class WooThemes_Sensei_quiz' );
 
         //does this function return false for the invalid parameters
         $invalid_data_message = 'This function does not check invalid parameters correctly';
-        $this->assertFalse( $woothemes_sensei->quiz->get_user_quiz_grades('','')  ,$invalid_data_message );
-        $this->assertFalse( $woothemes_sensei->quiz->get_user_quiz_grades(' ',' ') ,$invalid_data_message );
-        $this->assertFalse( $woothemes_sensei->quiz->get_user_quiz_grades( -3, -1 ) , $invalid_data_message );
-        $this->assertFalse( $woothemes_sensei->quiz->get_user_quiz_grades( 5000, 5000 ) , $invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_grades('','')  ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_grades(' ',' ') ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_grades( -3, -1 ) , $invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_grades( 5000, 5000 ) , $invalid_data_message );
 
-    } // end testGetUserQuizGrades
+    } // end testGetUserGrades
 
 }// end class Sensei_Class_Quiz_Test

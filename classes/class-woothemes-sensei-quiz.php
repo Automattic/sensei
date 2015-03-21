@@ -737,7 +737,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       *
       * @return bool
       */
-     public function set_user_quiz_grades( $quiz_grades, $lesson_id, $user_id = 0 ){
+     public function set_user_grades( $quiz_grades, $lesson_id, $user_id = 0 ){
 
          global $woothemes_sensei;
 
@@ -773,7 +773,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          return ( int ) $success > 0;
 
-     }// end set_user_quiz_grades
+     }// end set_user_grades
 
      /**
       * Retrieve the users quiz question grades
@@ -787,7 +787,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       *
       * @return array $user_quiz_grades or false if none exists for this users
       */
-     public function get_user_quiz_grades( $lesson_id, $user_id = 0 ){
+     public function get_user_grades( $lesson_id, $user_id = 0 ){
 
          global $woothemes_sensei;
          $user_quiz_grades = array();
@@ -803,6 +803,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          }
 
          return$user_quiz_grades;
-     }// end  get_user_quiz_grades
+     }// end  get_user_grades
 
 } // End Class WooThemes_Sensei_Quiz
