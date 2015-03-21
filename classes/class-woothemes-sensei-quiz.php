@@ -704,7 +704,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          $users_answers = $this->get_user_answers( $lesson_id, $user_id );
 
          if( !$users_answers || empty( $users_answers )
-         ||  ! is_array( $users_answers ) ){
+         ||  ! is_array( $users_answers ) || ! isset( $users_answers[ $question_id ] ) ){
 
              //Fallback for pre 1.7.4 data
              $comment =  WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ), true );
