@@ -852,8 +852,23 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          $all_user_grades = self::get_user_grades( $lesson_id,$user_id );
 
          if( ! $all_user_grades || ! isset(  $all_user_grades[ $question_id ] ) ){
-             return false;
-         }
+
+             //fallback to data pre 1.7.4
+             $args = array(
+                 'post_id' => $question_id,
+                 'user_id' => $user_id,
+                 'type'    => 'sensei_user_answer'
+             );
+
+             $question_activity = WooThemes_Sensei_Utils::sensei_check_for_activity( $args , true );
+             $fall_back_grade = false;
+             if( isset( $question_activity->comment_ID ) ){
+                 $fall_back_grade = get_comment_meta(  $question_activity->comment_ID , 'user_grade', true );
+             }
+
+             return $fall_back_grade;
+
+         } // end if $all_user_grades...
 
          return $all_user_grades[ $question_id ];
 

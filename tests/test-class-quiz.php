@@ -699,13 +699,28 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
         $woothemes_sensei->quiz->set_user_grades( $test_user_grades, $test_lesson_id, $test_user_id  );
         $test_question_id = array_rand( $test_user_grades );
-        $retrieved_grade = $woothemes_sensei->quiz-> get_user_question_grade( $test_lesson_id, $test_question_id, $test_user_id );
+        $retrieved_grade = $woothemes_sensei->quiz->get_user_question_grade( $test_lesson_id, $test_question_id, $test_user_id );
 
         //test if the the question grade can be retrieved
         $this->assertEquals( $test_user_grades[ $test_question_id ], $retrieved_grade,
             'The grade retrieved is not equal to the one that was set for this question ID' );
 
-    }// end testGetUserQuestionGrade
+        //setup the next assertion
+        $transient_key = 'quiz_grades_'. $test_user_id . '_' . $test_lesson_id;
+        delete_site_transient( $transient_key );
+        WooThemes_Sensei_Utils::delete_user_data( $test_lesson_id, 'quiz_grades', $test_user_id );
+        $random_question_id = array_rand( $test_user_grades );
+        $old_data_args = array( 'post_id' => $random_question_id ,
+                                'user_id' => $test_user_id,
+                                'type' => 'sensei_user_answer',
+                                'data' => 'test answer' );
+        $old_data_activity_id = WooThemes_Sensei_Utils::sensei_log_activity( $old_data_args );
+        update_comment_meta( $old_data_activity_id, 'user_grade', 1950  );
+        $retrieved_grade = $woothemes_sensei->quiz->get_user_question_grade( $test_lesson_id, $random_question_id, $test_user_id );
 
+        // Does the fall back to 1.7.3 data work?
+        $this->assertEquals( 1950, $retrieved_grade, 'The get user question grade does not fall back th old data' );
+
+    }// end testGetUserQuestionGrade
 
 }// end class Sensei_Class_Quiz_Test
