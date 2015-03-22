@@ -46,7 +46,10 @@ class WooThemes_Sensei_Grading_User_Quiz {
 	} // End build_data_array()
 
 	/**
-	 * display output to the admin view
+	 * Display output to the admin view
+     *
+     * This view is shown when grading a quiz for a single user in admin under grading
+     *
 	 * @since  1.3.0
 	 * @return html
 	 */
