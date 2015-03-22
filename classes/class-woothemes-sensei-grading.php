@@ -61,7 +61,7 @@ class WooThemes_Sensei_Grading {
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 
-			add_action( 'admin_init', array( $this, 'process_grading' ) );
+			add_action( 'admin_init', array( $this, 'admin_process_grading_submission' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_grading_notices' ) );
 //			add_action( 'sensei_grading_notices', array( $this, 'sensei_grading_notices' ) );
@@ -532,90 +532,141 @@ class WooThemes_Sensei_Grading {
 		return $html;
 	} // End lessons_drop_down_html()
 
-	public function process_grading() {
-		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry
-		if( isset( $_POST['sensei_manual_grade'] ) && isset( $_GET['quiz_id'] ) ) {
-//			error_log( __CLASS__ . ':' . __FUNCTION__ . ':' . print_r($_POST, true));
-			$quiz_id = $_GET['quiz_id'];
-			$user_id = $_GET['user'];
-			$verify_nonce = wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' );
-			if( $verify_nonce && $quiz_id == $_POST['sensei_manual_grade'] ) {
-				$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
-				$quiz_grade = 0;
-				$count = 0;
-				$quiz_grade_total = $_POST['quiz_grade_total'];
-				foreach( $questions as $question ) {
-					++$count;
-					$question_id = $question->ID;
-					if( isset( $_POST[ 'question_' . $question_id ] ) ) {
-						$correct = false;
-						$question_grade = 0;
-						$question_total_grade = $_POST['question_total_grade'];
-						if( $_POST[ 'question_' . $question_id ] == 'right' ) {
-							$correct = true;
-							$question_grade = $_POST[ 'question_' . $question_id . '_grade' ];
-						}
-						$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
-						$quiz_grade += $question_grade;
-					} else {
-						WooThemes_Sensei_Utils::sensei_delete_question_grade( $question_id );
-					}
-					// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), but 
-					// as an answer note is not direct post_content it won't have slashes removed, so we need to do it
-					$answer_notes = wp_unslash( $_POST[ 'question_' . $question_id . '_notes' ] );
-					if( ! $answer_notes || $answer_notes == '' ) {
-						$answer_notes = '';
-					}
-					WooThemes_Sensei_Utils::sensei_add_answer_notes( $question_id, $user_id, $answer_notes );
-				}
+    /**
+     * The process grading function handles admin grading submissions.
+     *
+     * This function is hooked on to admin_init. It simply accepts
+     * the grades as the Grader selected theme and saves the total grade and
+     * individual question grades.
+     *
+     * @return bool
+     */
+    public function admin_process_grading_submission() {
 
-				if( $_POST['all_questions_graded'] == 'yes' ) {
-					$grade = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
-					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
+        // NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry
+        if( ! isset( $_POST['sensei_manual_grade'] )
+            || ! wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' )
+            || ! isset( $_GET['quiz_id'] )
+            || $_GET['quiz_id'] != $_POST['sensei_manual_grade'] ) {
 
-					// Duplicating what Frontend->sensei_complete_quiz() does
-					$quiz_lesson_id = absint( get_post_meta( $quiz_id, '_quiz_lesson', true ) );
-					$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
-					$quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
-					$lesson_metadata = array();
-					if ( $pass_required ) {
-						// Student has reached the pass mark and lesson is complete
-						if ( $quiz_passmark <= $grade ) {
-							$lesson_status = 'passed';
-						}
-						else {
-							$lesson_status = 'failed';
-						} // End If Statement
-					}
-					// Student only has to partake the quiz
-					else {
-						$lesson_status = 'graded';
-					}
-					$lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz()" above
+            return false; //exit and do not grade
 
-					WooThemes_Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
+        }
 
-					switch( $lesson_status ) {
-						case 'passed' :
-						case 'graded' :
-							do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
-						break;
-					}
-				}
+        $quiz_id = $_GET['quiz_id'];
+        $user_id = $_GET['user'];
 
-				if( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
-					$load_url = add_query_arg( array( 'message' => 'graded' ) );
-				} elseif ( isset( $_POST['_wp_http_referer'] ) ) {
-					$load_url = add_query_arg( array( 'message' => 'graded' ), $_POST['_wp_http_referer'] );
-				} else {
-					$load_url = add_query_arg( array( 'message' => 'graded' ) );
-				}
+        global $woothemes_sensei;
+        $questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+        $quiz_lesson_id =  $woothemes_sensei->quiz->get_lesson_id( $quiz_id );
+        $quiz_grade = 0;
+        $count = 0;
+        $quiz_grade_total = $_POST['quiz_grade_total'];
+        $all_question_grades = array();
 
-				wp_safe_redirect( $load_url );
-				exit;
-			}
-		}
-	}
+        foreach( $questions as $question ) {
+
+            ++$count;
+            $question_id = $question->ID;
+
+            if( isset( $_POST[ 'question_' . $question_id ] ) ) {
+
+                $correct = false;
+                $question_grade = 0;
+                $question_total_grade = $_POST['question_total_grade'];
+                if( $_POST[ 'question_' . $question_id ] == 'right' ) {
+
+                    $correct = true;
+                    $question_grade = $_POST[ 'question_' . $question_id . '_grade' ];
+
+                }
+
+                // add data to the array that will, after the loop, be stored on the lesson status
+                $all_question_grades[ $question_id ] = $question_grade;
+
+                // tally up the total quiz grade
+                $quiz_grade += $question_grade;
+
+            } // end isset $_POST[ 'question_'...
+
+            // WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), but
+            // as an answer note is not direct post_content it won't have slashes removed, so we need to do it
+            $answer_notes = wp_unslash( $_POST[ 'question_' . $question_id . '_notes' ] );
+            if( ! $answer_notes || $answer_notes == '' ) {
+                $answer_notes = '';
+            }
+            WooThemes_Sensei_Utils::sensei_add_answer_notes( $question_id, $user_id, $answer_notes );
+
+        } // end for each $questions
+
+        //store all question grades on the lesson status
+        $woothemes_sensei->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id , $user_id );
+
+        // $_POST['all_questions_graded'] is set when all questions have been graded
+        // in the class sensei grading user quiz -> display()
+        if( $_POST['all_questions_graded'] == 'yes' ) {
+
+            // set the users total quiz grade
+            $grade = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
+            WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
+
+            // Duplicating what Frontend->sensei_complete_quiz() does
+            $pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+            $quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+            $lesson_metadata = array();
+            if ( $pass_required ) {
+                // Student has reached the pass mark and lesson is complete
+                if ( $quiz_passmark <= $grade ) {
+                    $lesson_status = 'passed';
+                }
+                else {
+                    $lesson_status = 'failed';
+                } // End If Statement
+            }
+            // Student only has to partake the quiz
+            else {
+                $lesson_status = 'graded';
+            }
+            $lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz()" above
+
+            WooThemes_Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
+
+            if(  in_array( $lesson_status, array( 'passed', 'graded'  ) ) ) {
+
+                /**
+                 * Summary.
+                 *
+                 * Description.
+                 *
+                 * @since 1.7.0
+                 *
+                 * @param int  $user_id
+                 * @param int $quiz_lesson_id
+                 */
+                do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
+
+            } // end if in_array
+
+        }// end if $_POST['all_que...
+
+        if( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
+
+            $load_url = add_query_arg( array( 'message' => 'graded' ) );
+
+        } elseif ( isset( $_POST['_wp_http_referer'] ) ) {
+
+            $load_url = add_query_arg( array( 'message' => 'graded' ), $_POST['_wp_http_referer'] );
+
+        } else {
+
+            $load_url = add_query_arg( array( 'message' => 'graded' ) );
+
+        }
+
+        wp_safe_redirect( $load_url );
+        exit;
+
+    } // end admin_process_grading_submission
 
 	public function get_redirect_url() {
 		// Parse POST data
