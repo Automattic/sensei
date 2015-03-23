@@ -781,7 +781,7 @@ class WooThemes_Sensei_Grading {
                 }
                 // If all correct then grade
                 if ( $all_correct ) {
-                    $question_grade = get_post_meta( $question_id, '_question_grade', true );
+                    $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
                     if( ! $question_grade || $question_grade == '' ) {
                         $question_grade = 1;
                     }
@@ -798,14 +798,14 @@ class WooThemes_Sensei_Grading {
             $gapfill_array = explode( '||', $right_answer );
             // Check that the 'gap' is "exactly" equal to the given answer
             if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
-                $question_grade = get_post_meta( $question_id, '_question_grade', true );
+                $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
                 if ( empty($question_grade) ) {
                     $question_grade = 1;
                 }
             }
             else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
                 if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
-                    $question_grade = get_post_meta( $question_id, '_question_grade', true );
+                    $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
                     if ( empty($question_grade) ) {
                         $question_grade = 1;
                     }
@@ -825,8 +825,7 @@ class WooThemes_Sensei_Grading {
              * @param string $question_type one of the Sensei question type.
              * @param string $answer user supplied question answer
              */
-
-            $question_grade = apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
+            $question_grade = ( int ) apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
 
         } // end if $question_type
 
