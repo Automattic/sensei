@@ -712,6 +712,94 @@ class WooThemes_Sensei_Grading {
 	} // End sensei_grading_notices()
 
     /**
+     * Grade quiz automatically
+     *
+     * This function grades each question automatically if there all questions are auto gradable. If not
+     * the quiz will not be auto gradable.
+     *
+     * @since 1.7.4
+     *
+     * @param  integer $quiz_id         ID of quiz
+     * @param  array $submitted questions id ans answers {
+     *          @type int $question_id
+     *          @type mixed $answer
+     * }
+     * @param  integer $total_questions Total questions in quiz (not used)
+     * @param string $quiz_grade_type Optional defaults to auto
+     *
+     * @return int $quiz_grade total sum of all question grades
+     */
+    public static function grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
+
+        if( ! ( intval( $quiz_id ) > 0 )  || ! $submitted
+            || $quiz_grade_type != 'auto' ) {
+            return false; // exit early
+        }
+
+        global $woothemes_sensei;
+        $user_id = get_current_user_id();
+        $grade = 0;
+        $lesson_id =  $woothemes_sensei->quiz->get_lesson_id(  $quiz_id ) ;
+        $quiz_autogradable = true;
+
+        /**
+         * Filter the types of question types that can be automatically graded.
+         *
+         * This filter fires inside the auto grade quiz function and provides you with the default list.
+         *
+         * @param array {
+         *      'multiple-choice',
+         *      'boolean',
+         *      'gap-fill'.
+         * }
+         */
+        $autogradable_question_types = apply_filters( 'sensei_autogradable_question_types', array( 'multiple-choice', 'boolean', 'gap-fill' ) );
+
+        $grade_total = 0;
+        $all_question_grades = array();
+        foreach( $submitted as $question_id => $answer ) {
+
+            // check if the question is autogradable
+            $question_type = $woothemes_sensei->question->get_question_type( $question_id );
+            if ( in_array( $question_type, $autogradable_question_types ) ) {
+
+                // Get user question grade
+                $question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
+                $all_question_grades[ $question_id ] = $grade;
+                $grade_total += $question_grade;
+
+            } else {
+
+                // There is a question that cannot be autograded
+                $quiz_autogradable = false;
+
+            } // end if in_array( $question_type...
+
+        }// end for each question
+
+        // Only if the whole quiz was autogradable do we set a grade
+        if ( $quiz_autogradable ) {
+
+            $quiz_total = WooThemes_Sensei_Utils::sensei_get_quiz_total( $quiz_id );
+
+            $grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
+            WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
+
+        } else {
+
+            $grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'woothemes-sensei' ) );
+
+        }
+
+        // store the auto gradable grades. If the quiz is not auto gradable the grades can be use as the default
+        // when doing manual grading.
+        $woothemes_sensei->quiz-> set_user_grades( $all_question_grades, $lesson_id, $user_id );
+
+        return $grade;
+
+    } // End grade_quiz_auto()
+
+    /**
      * Grade question automatically
      *
      * This function checks the question typ and then grades it accordingly.
