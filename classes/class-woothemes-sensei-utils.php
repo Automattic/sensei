@@ -1951,7 +1951,7 @@ class WooThemes_Sensei_Utils {
         $supported_post_types = array( 'course', 'lesson' );
         $post_type = get_post_type( $post_id );
         if( empty( $post_id ) || empty( $data_key )
-            || ! is_int( $post_id ) || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
+            || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
             || ! get_userdata( $user_id )
             || !in_array( $post_type, $supported_post_types )  ){
 
