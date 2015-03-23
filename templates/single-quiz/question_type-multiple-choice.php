@@ -10,7 +10,9 @@
  */
 
 global $post, $woothemes_sensei, $current_user;
+
 // Get Frontend Data
+$lesson_id = $woothemes_sensei->quiz->get_lesson_id( $post->ID );
 $user_quizzes = $woothemes_sensei->quiz->data->user_quizzes;
 $question_item = $woothemes_sensei->quiz->data->question_item;
 $question_count = $woothemes_sensei->quiz->data->question_count;
@@ -19,6 +21,7 @@ $user_quiz_grade = $woothemes_sensei->quiz->data->user_quiz_grade;
 $lesson_complete = $woothemes_sensei->quiz->data->user_lesson_complete;
 $reset_quiz_allowed = $woothemes_sensei->quiz->data->reset_quiz_allowed;
 $quiz_grade_type = $woothemes_sensei->quiz->data->quiz_grade_type;
+
 
 // Question ID
 $question_id = $question_item->ID;
@@ -115,8 +118,10 @@ $question_grade = get_post_meta( $question_id, '_question_grade', true );
 if( ! $question_grade || $question_grade == '' ) {
 	$question_grade = 1;
 }
-$user_answer_entry = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $current_user->ID, 'type' => 'sensei_user_answer' ), true );
-$user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $user_answer_entry );
+
+// retrieve users stored data.
+$user_answer_entry = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
+$user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
 
 $question_text = get_the_title( $question_item );
 $question_description = apply_filters( 'the_content', $question_item->post_content );

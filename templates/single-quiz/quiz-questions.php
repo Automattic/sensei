@@ -54,12 +54,9 @@ $quiz_passmark_float = (float) $quiz_passmark;
 					// Setup current Frontend Question
 					$woothemes_sensei->quiz->data->question_item = $question_item;
 					$woothemes_sensei->quiz->data->question_count = $question_count;
+
 					// Question Type
-					$question_type = 'multiple-choice';
-					$question_types_array = wp_get_post_terms( $question_item->ID, 'question-type', array( 'fields' => 'names' ) );
-					if ( isset( $question_types_array[0] ) && '' != $question_types_array[0] ) {
-						$question_type = $question_types_array[0];
-					} // End If Statement
+					$question_type = $woothemes_sensei->question->get_question_type( $question_item->ID );
 
 					echo '<input type="hidden" name="questions_asked[]" value="' . $question_item->ID . '" />';
 
