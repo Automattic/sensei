@@ -118,6 +118,11 @@ class WooThemes_Sensei {
 		//Add the quiz class
 		$this->quiz = $this->post_types->quiz;
 
+        // Load Grading Functionality
+        $this->load_class( 'grading' );
+        $this->grading = new WooThemes_Sensei_Grading( $file );
+        $this->grading->token = $this->token;
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 
@@ -130,11 +135,6 @@ class WooThemes_Sensei {
 			$this->load_class( 'analysis' );
 			$this->analysis = new WooThemes_Sensei_Analysis( $file );
 			$this->analysis->token = $this->token;
-
-			// Load Grading Functionality
-			$this->load_class( 'grading' );
-			$this->grading = new WooThemes_Sensei_Grading( $file );
-			$this->grading->token = $this->token;
 
 			// Load Learner Management Functionality
 			$this->load_class( 'learners' );
