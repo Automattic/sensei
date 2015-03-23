@@ -1212,9 +1212,12 @@ class WooThemes_Sensei_Frontend {
 		$lesson_course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 		$show_actions = true;
+        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
+        $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+
 		if( intval( $lesson_prerequisite ) > 0 ) {
 			// If the user hasn't completed the prereq then hide the current actions
-			$show_actions = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
+			$show_actions = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $current_user->ID );
 		}
 		if ( $show_actions && is_user_logged_in() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
 
@@ -1230,7 +1233,7 @@ class WooThemes_Sensei_Frontend {
                    value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
             <!--#end Action Nonce's -->
 
-            <?php if ( '' == $this->data->user_quiz_grade ) { ?>
+            <?php if ( '' == $user_quiz_grade) { ?>
 		 	<span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		 	<span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php echo apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		     <?php } // End If Statement ?>
