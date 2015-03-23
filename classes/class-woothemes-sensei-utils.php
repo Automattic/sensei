@@ -655,90 +655,23 @@ class WooThemes_Sensei_Utils {
 
 	/**
 	 * Grade question automatically
-	 * @param  integer $question_id ID of question
-	 * @param  string  $answer      User's answer
-	 * @return integer              User's grade for question
+     *
+     * This function checks the question typ and then grades it accordingly.
+     *
+     * @deprecated since 1.7.4 use WooThemes_Sensei_Grading::grade_question_auto instead
+     *
+	 * @param integer $question_id
+     * @param string $question_type of the standard Sensei question types
+	 * @param string $answer
+     * @param int $user_id
+     *
+	 * @return int $question_grade
 	 */
 	public static function sensei_grade_question_auto( $question_id = 0, $question_type = '', $answer = '', $user_id = 0 ) {
-		if( intval( $user_id ) == 0 ) {
-			$user_id = get_current_user_id();
-		}
 
-		$question_grade = false;
-		if( intval( $question_id ) > 0 ) {
-			if ( empty($question_type) ) {
-				$question_type = get_the_terms( $question_id, 'question-type' );
+       return  WooThemes_Sensei_Grading::grade_question_auto( $question_id, $question_type, $answer, $user_id  );
 
-				// Set default question type if one does not exist - prevents errors when grading
-				if( ! $question_type || is_wp_error( $question_type ) || ! is_array( $question_type ) ) {
-					$question_type = 'multiple-choice';
-				} else {
-					$question_type = array_shift($question_type)->slug;
-				}
-			}
-			// Allow full override of autograding
-			$question_grade = apply_filters( 'sensei_pre_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
-			if ( false === $question_grade ) {
-				switch( $question_type ) {
-					case 'multiple-choice':
-					case 'boolean' :
-						$right_answer = (array) get_post_meta( $question_id, '_question_right_answer', true );
-
-						if( 0 == get_magic_quotes_gpc() ) {
-							$answer = wp_unslash( $answer );
-						}
-						$answer = (array) $answer;
-						if ( is_array( $right_answer ) && count( $right_answer ) == count( $answer ) ) {
-							// Loop through all answers ensure none are 'missing'
-							$all_correct = true;
-							foreach ( $answer as $check_answer ) {
-								if ( !in_array( $check_answer, $right_answer ) ) {
-									$all_correct = false;
-								}
-							}
-							// If all correct then grade
-							if ( $all_correct ) {
-								$question_grade = get_post_meta( $question_id, '_question_grade', true );
-								if( ! $question_grade || $question_grade == '' ) {
-									$question_grade = 1;
-								}
-							}
-						}
-						break;
-						case 'gap-fill' :
-							$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-
-							if( 0 == get_magic_quotes_gpc() ) {
-								$answer = wp_unslash( $answer );
-							}
-							$gapfill_array = explode( '||', $right_answer );
-							// Check that the 'gap' is "exactly" equal to the given answer
-							if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
-								$question_grade = get_post_meta( $question_id, '_question_grade', true );
-								if ( empty($question_grade) ) {
-									$question_grade = 1;
-								}
-							}
-							else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
-								if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
-									$question_grade = get_post_meta( $question_id, '_question_grade', true );
-									if ( empty($question_grade) ) {
-										$question_grade = 1;
-									}
-								}
-							}
-							break;
-					default:
-						// Allow autograding of any other question type
-						$question_grade = apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
-						break;
-				} // switch question_type
-			}
-			$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
-		}
-
-		return $question_grade;
-	}
+	} // end sensei_grade_question_auto
 
 	/**
 	 * Grade question
