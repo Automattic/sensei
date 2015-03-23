@@ -31,8 +31,8 @@ if( ! $question_grade || $question_grade == '' ) {
 }
 
 // retrieve users stored data.
-$user_answer_entry = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
-$user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
+$user_answer_entry = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $current_user->ID );
+$user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $current_user->ID );
 
 // Question media
 $question_media = get_post_meta( $question_id, '_question_media', true );
