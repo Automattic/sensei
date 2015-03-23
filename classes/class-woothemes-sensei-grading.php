@@ -765,7 +765,7 @@ class WooThemes_Sensei_Grading {
 
                 // Get user question grade
                 $question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
-                $all_question_grades[ $question_id ] = $grade;
+                $all_question_grades[ $question_id ] = $question_grade;
                 $grade_total += $question_grade;
 
             } else {
