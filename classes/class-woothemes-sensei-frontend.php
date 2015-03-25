@@ -823,8 +823,6 @@ class WooThemes_Sensei_Frontend {
 
 					WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $post->ID, $current_user->ID );
 
-					// Run any action on lesson reset (previously this was 'sensei_user_course_reset')
-					do_action( 'sensei_user_lesson_reset', $current_user->ID, $post->ID );
 					$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_lesson_reset_text', __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 					break;
 
@@ -873,23 +871,19 @@ class WooThemes_Sensei_Frontend {
 						$activity_logged = WooThemes_Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'complete', $course_metadata );
 
 						do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
-					} // End If Statement
 
-					// Success message
-					if ( $dataset_changes ) {
+						// Success message
 						$this->messages = '<header class="archive-header"><div class="sensei-message tick">' . sprintf( __( '%1$s marked as complete.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
 					} // End If Statement
+
 					break;
 
 				case apply_filters( 'sensei_delete_course_text', __( 'Delete Course', 'woothemes-sensei' ) ):
 
 					WooThemes_Sensei_Utils::sensei_remove_user_from_course( $sanitized_course_id, $current_user->ID );
-					// Run any action on course reset
-					do_action( 'sensei_user_course_reset', $current_user->ID, $sanitized_course_id );
+
 					// Success message
-					if ( $dataset_changes ) {
-						$this->messages = '<header class="archive-header"><div class="sensei-message tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
-					} // End If Statement
+					$this->messages = '<header class="archive-header"><div class="sensei-message tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
 					break;
 
 				default:
