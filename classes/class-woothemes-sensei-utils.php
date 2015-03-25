@@ -833,7 +833,7 @@ class WooThemes_Sensei_Utils {
 	 * @param type $user_id
 	 * @return boolean
 	 */
-	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0 ) {
+	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0, $from_course = false ) {
 		global $woothemes_sensei;
 
 		if( ! $lesson_id ) return false;
@@ -857,6 +857,10 @@ class WooThemes_Sensei_Utils {
 		// This auto deletes the corresponding meta data, such as the quiz grade, and questions asked
 		WooThemes_Sensei_Utils::sensei_delete_activities( $args );
 
+		if( ! $from_course ) {
+			do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
+		}
+
 		return true;
 	}
 
@@ -879,7 +883,7 @@ class WooThemes_Sensei_Utils {
 		$lesson_ids = $woothemes_sensei->post_types->course->course_lessons( $course_id, 'any', 'ids' );
 
 		foreach( $lesson_ids as $lesson_id ) {
-			WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id );
+			WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id, true );
 		}
 
 		// Delete course status
@@ -890,6 +894,8 @@ class WooThemes_Sensei_Utils {
 		);
 
 		WooThemes_Sensei_Utils::sensei_delete_activities( $args );
+
+		do_action( 'sensei_user_course_reset', $user_id, $course_id );
 
 		return true;
 	}
