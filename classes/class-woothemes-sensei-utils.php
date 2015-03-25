@@ -854,8 +854,11 @@ class WooThemes_Sensei_Utils {
 			'type' => 'sensei_lesson_status',
 			'user_id' => $user_id,
 		);
+
 		// This auto deletes the corresponding meta data, such as the quiz grade, and questions asked
 		WooThemes_Sensei_Utils::sensei_delete_activities( $args );
+
+		do_action( 'sensei_user_lesson_removed', $user_id, $lesson_id );
 
 		return true;
 	}
@@ -890,6 +893,8 @@ class WooThemes_Sensei_Utils {
 		);
 
 		WooThemes_Sensei_Utils::sensei_delete_activities( $args );
+
+		do_action( 'sensei_user_course_removed', $user_id, $course_id );
 
 		return true;
 	}
