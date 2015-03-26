@@ -15,6 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
+ * - question_types()
+ * -add_column_headings()
+ * -add_column_data()
+ * -question_edit_panel_metabox()
+ * -question_edit_panel()
+ * -question_lessons_panel()
+ * -save_question()
+ * -filter_options()
+ * -filter_actions()
+ * -get_question_type()
  */
 class WooThemes_Sensei_Question {
 	public $token;

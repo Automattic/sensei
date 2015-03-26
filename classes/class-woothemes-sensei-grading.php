@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * TABLE OF CONTENTS
  *
- * - __construct()
+ * - __construct
  * - grading_admin_menu()
  * - enqueue_scripts()
  * - enqueue_styles()
@@ -27,13 +27,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - wrapper_container()
  * - grading_default_nav()
  * - grading_user_quiz_nav()
+ * - get_stati()
+ * - count_statuses()
+ * - courses_drop_down_html()
  * - get_lessons_dropdown()
  * - lessons_drop_down_html()
- * - get_lessons_html()
- * - process_grading()
- * - get_direct_url()
+ * - admin_process_grading_submission()
+ * - get_redirect_url()
  * - add_grading_notices()
  * - sensei_grading_notices()
+ * - grade_quiz_auto()
+ * - grade_question_auto()
  */
 class WooThemes_Sensei_Grading {
 	public $token;
