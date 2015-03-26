@@ -437,8 +437,6 @@ class WooThemes_Sensei_Frontend {
 						$item->url = ( is_user_logged_in() ? $logout_url : $login_url );
 
 						// determine the menu title login or logout
-						$menu_title ='';
-
 						if ( is_user_logged_in() ) {
 							$menu_title =  __( 'Logout'  ,'woothemes-sensei');
 						} else {
@@ -469,7 +467,7 @@ class WooThemes_Sensei_Frontend {
 				$item->classes[] = 'current-menu-item current_page_item';
 			}
 
-		} // end if 'nav-menus.php' != $pagenow ...
+		} // endif nav
 
 		return $item;
 
