@@ -409,55 +409,57 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 
     /**
-     * This test Woothemes_Sensei()->quiz->reset_user_saved_answers( $lesson_id, $user_id )
+     * This test Woothemes_Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id )
      *
      * @group transient
      */
-    public function testResetQuizSavedAnswers(){
+    public function testResetUserLessonData(){
 
         // setup globals for access by this method
         global $woothemes_sensei;
         $test_lesson_id = $this->factory->get_random_lesson_id();
         $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
         // save the user answers
-        $this->assertTrue( method_exists( $woothemes_sensei->quiz, 'reset_user_saved_answers'),
+        $this->assertTrue( method_exists( $woothemes_sensei->quiz, 'reset_user_lesson_data'),
             'The quiz class method `reset_user_saved_answers` does not exist ' );
 
         $test_user_id = wp_create_user( 'testUserReset', '$%##$#', 'test@reset.users' );
 
         // test the function with the wrong parameters
-        $result_for_empty_lesson_id = $woothemes_sensei->quiz->reset_user_saved_answers('', $test_user_id);
+        $result_for_empty_lesson_id = $woothemes_sensei->quiz->reset_user_lesson_data('', $test_user_id);
         $this->assertFalse(  $result_for_empty_lesson_id , 'The function should return false for an empty lesson id.' );
 
-        $result_for_invalid_lesson_id = $woothemes_sensei->quiz->reset_user_saved_answers(-4000 , $test_user_id);
+        $result_for_invalid_lesson_id = $woothemes_sensei->quiz->reset_user_lesson_data(-4000 , $test_user_id);
         $this->assertFalse(  $result_for_invalid_lesson_id , 'The function should return false for an invalid lesson id.' );
 
-        $result_for_empty_user_id = $woothemes_sensei->quiz->reset_user_saved_answers( $this->factory->get_random_lesson_id() , '');
+        $result_for_empty_user_id = $woothemes_sensei->quiz->reset_user_lesson_data( $this->factory->get_random_lesson_id() , '');
         $this->assertFalse(  $result_for_empty_user_id , 'The function should return false for an empty user id.' );
 
-        $result_for_invalid_user_id = $woothemes_sensei->quiz->reset_user_saved_answers( $this->factory->get_random_lesson_id() , -500 );
+        $result_for_invalid_user_id = $woothemes_sensei->quiz->reset_user_lesson_data( $this->factory->get_random_lesson_id() , -500 );
         $this->assertFalse(  $result_for_invalid_user_id , 'The function should return false for an invalid user id.' );
 
         // test for a valid user and lesson that has no lesson_status comment on the lesson
         $valid_parameters_for_user_with_no_lesson_status =
-            $woothemes_sensei->quiz->reset_user_saved_answers( $test_lesson_id , $test_user_id );
+            $woothemes_sensei->quiz->reset_user_lesson_data( $test_lesson_id , $test_user_id );
         $this->assertFalse(  $valid_parameters_for_user_with_no_lesson_status ,
             'The function should return false if the user that has no lesson status data stored' );
         // test for a valid user and lesson that has a sensei_lesson_status comment by this user
         $user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+        $user_quiz_grades = $this->factory->generate_user_quiz_grades( $user_quiz_answers );
         WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
-        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $user_quiz_answers, array(), $test_lesson_id,  $test_user_id  ) ;
-        $this->assertTrue(  intval( $lesson_data_saved ) > 0  ,
-            'The lesson quiz answers was not saved' );
-        $lesson_data_reset = $woothemes_sensei->quiz->reset_user_saved_answers( $test_lesson_id,  $test_user_id  ) ;
-        $this->assertTrue($lesson_data_reset  , 'The lesson data was not reset for a valid use case'  );
+        $woothemes_sensei->quiz->save_user_answers( $user_quiz_answers, array(), $test_lesson_id,  $test_user_id  ) ;
+        $woothemes_sensei->quiz->set_user_grades( $user_quiz_grades, $test_lesson_id,  $test_user_id );
+
+        // was the lesson data reset?
+        $lesson_data_reset = $woothemes_sensei->quiz->reset_user_lesson_data( $test_lesson_id,  $test_user_id  ) ;
+        $this->assertTrue( $lesson_data_reset  , 'The lesson data was not reset for a valid use case'  );
 
         //make sure transients are remove as well
         $transient_key = 'sensei_answers_'.$test_user_id.'_'.$test_lesson_id;
         $transient_data  = get_site_transient( $transient_key );
         $this->assertFalse( $transient_data, 'The transient was not reset along with the users saved data. The result should be false.'  );
 
-    }// end testGetQuizId
+    }// end testResetUserLessonData
 
     /**
      * This tests Woothemes_Sensei()->quiz->prepare_form_submitted_answers

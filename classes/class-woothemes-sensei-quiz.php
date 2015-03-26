@@ -294,42 +294,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		global $post;
 		$current_quiz_id = $post->ID;
 		$lesson_id = $this->get_lesson_id( $current_quiz_id );
-		$this->reset_user_saved_answers( $lesson_id, get_current_user_id() );
 
-        // reset the user submitted answer and update their status on the lesson
-        self::reset_user_submitted_answers( $lesson_id, get_current_user_id()   );
+        // reset all user data
+        self::reset_user_lesson_data( $lesson_id, get_current_user_id() );
 
 		//this function should only run once
 		remove_action( 'template_redirect', array( $this, 'reset_button_click_response'  ) );
-	}
 
-	/**
-	 * Reset the users answers saved on a given lesson.
-	 *
-	 * @since 1.7.2
-	 * @access public
-	 *
-	 * @param int $lesson_id
-	 * @param int $user_id
-	 * @return bool @success
-	 */
-	public function reset_user_saved_answers ( $lesson_id, $user_id  ){
-
-		if( empty( $lesson_id ) || ! get_post( $lesson_id )
-			|| empty( $user_id ) || ! get_userdata( $user_id ) ){
-			return false;
-		}
-
-        // reset the transient
-        $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
-        delete_site_transient( $transient_key );
-
-        // reset the quiz answers
-		$success = WooThemes_Sensei_Utils::delete_user_data($lesson_id,'quiz_answers', $user_id );
-
-		return $success;
-
-	}// end reset_user_saved_answers()
+	} // end reset_button_click_listener
 
 	/**
 	 * Complete/ submit  quiz hooked function
@@ -494,7 +466,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
      * @param int $user_id
      * @param int $lesson_id
      */
-    public function reset_user_submitted_answers( $lesson_id , $user_id = 0 ){
+    public function reset_user_lesson_data( $lesson_id , $user_id = 0 ){
 
         //make sure the parameters are valid
         if( empty( $lesson_id ) || empty( $user_id )
@@ -505,12 +477,31 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         global $woothemes_sensei;
 
+        //get the users lesson status to make
+        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+        if( ! isset( $user_lesson_status->comment_ID ) ) {
+            // this user is not taking this lesson so this process is not needed
+            return false;
+        }
+
         //get the lesson quiz and course
         $quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $lesson_id );
         $course_id = $woothemes_sensei->lesson->get_course_id( $lesson_id );
 
+        // reset the transients
+        $answers_transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
+        $grades_transient_key = 'quiz_grades_'.$user_id.'_'.$lesson_id;
+        delete_site_transient( $answers_transient_key );
+        delete_site_transient( $grades_transient_key );
+
+        // reset the quiz answers
+        $deleted_answers = WooThemes_Sensei_Utils::delete_user_data( $lesson_id,'quiz_answers', $user_id );
+        $deleted_grades = WooThemes_Sensei_Utils::delete_user_data( $lesson_id,'quiz_grades', $user_id );
+        var_dump( $deleted_answers );
+        var_dump( $deleted_grades );
         // Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
         WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+
         WooThemes_Sensei_Utils::update_lesson_status( $user_id , $lesson_id, 'in-progress', array( 'questions_asked' => '', 'grade' => '' ) );
 
         // Update course completion
@@ -520,7 +511,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
         $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 
-    } // end reset_user_submitted_answers
+        return ( $deleted_answers && $deleted_grades ) ;
+
+    } // end reset_user_lesson_data
 
      /**
       * Submit the users quiz answers for grading
