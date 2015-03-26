@@ -20,7 +20,6 @@ get_currentuserinfo();
 do_action( 'sensei_complete_quiz' );
 
 // Get Frontend data
-$user_quizzes = $woothemes_sensei->quiz->data->user_quizzes;
 $user_quiz_grade = $woothemes_sensei->quiz->data->user_quiz_grade;
 $quiz_lesson = $woothemes_sensei->quiz->data->quiz_lesson;
 $quiz_grade_type = $woothemes_sensei->quiz->data->quiz_grade_type;

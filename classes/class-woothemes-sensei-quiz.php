@@ -386,7 +386,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $reset_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
 
         // Build frontend data object
-        $this->data->user_quizzes = $user_quizzes;
         $this->data->user_quiz_grade = $user_quiz_grade;
         $this->data->quiz_passmark = $quiz_passmark;
         $this->data->quiz_lesson = $quiz_lesson_id;

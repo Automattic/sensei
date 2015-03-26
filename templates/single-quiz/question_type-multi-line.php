@@ -13,7 +13,6 @@ global $post, $woothemes_sensei, $current_user;
 
 // Get Frontend Data
 $lesson_id = $woothemes_sensei->quiz->get_lesson_id( $post->ID );
-$user_quizzes = $woothemes_sensei->quiz->data->user_quizzes;
 $question_item = $woothemes_sensei->quiz->data->question_item;
 $question_count = $woothemes_sensei->quiz->data->question_count;
 $quiz_passmark = $woothemes_sensei->quiz->data->quiz_passmark;
@@ -117,7 +116,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 		</div>
 	<?php } ?>
 	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
-	<?php WooThemes_Sensei_Utils::sensei_text_editor( $user_quizzes[ $question_id ], 'textquestion' . $question_id, 'sensei_question[' . $question_id . ']' ); ?>
+	<?php WooThemes_Sensei_Utils::sensei_text_editor( $user_answer_entry , 'textquestion' . $question_id, 'sensei_question[' . $question_id . ']' ); ?>
 	<?php if( $answer_notes ) { ?>
 		<div class="sensei-message info info-special"><?php echo apply_filters( 'the_content', $answer_notes ); ?></div>
 	<?php } ?>

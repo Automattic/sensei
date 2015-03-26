@@ -13,7 +13,6 @@ global $post, $woothemes_sensei, $current_user;
 
 // Get Frontend Data
 $lesson_id = $woothemes_sensei->quiz->get_lesson_id( $post->ID );
-$user_quizzes = $woothemes_sensei->quiz->data->user_quizzes;
 $question_item = $woothemes_sensei->quiz->data->question_item;
 $question_count = $woothemes_sensei->quiz->data->question_count;
 $quiz_passmark = $woothemes_sensei->quiz->data->quiz_passmark;
@@ -181,8 +180,8 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 			elseif( !is_array($question_right_answer) && $question_right_answer == $answer ) {
 				$answer_class .= ' right_answer';
 			}
-			elseif( ( is_array($user_quizzes[ $question_id ]) && in_array($answer, $user_quizzes[ $question_id ]) ) ||
-					( !is_array($user_quizzes[ $question_id ]) && $user_quizzes[ $question_id ] == $answer ) ) {
+			elseif( ( is_array( $user_answer_entry  ) && in_array($answer, $user_answer_entry ) ) ||
+					( !is_array( $user_answer_entry ) && $user_answer_entry == $answer ) ) {
 				$answer_class = 'user_wrong';
 				if( $user_correct ) {
 					$answer_class = 'user_right';
@@ -190,12 +189,12 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 			}
 		}
 
-		if ( isset( $user_quizzes[ $question_id ] ) && 0 < count( $user_quizzes[ $question_id ] ) ) {
-			if ( is_array( $user_quizzes[ $question_id ] ) && in_array( $answer, $user_quizzes[ $question_id ] ) ) {
+		if ( isset( $user_answer_entry ) && 0 < count( $user_answer_entry ) ) {
+			if ( is_array( $user_answer_entry ) && in_array( $answer, $user_answer_entry ) ) {
 				$checked = 'checked="checked"';
 			}
-			elseif ( !is_array( $user_quizzes[ $question_id ] ) ) {
-				$checked = checked( $answer, $user_quizzes[ $question_id ], false );
+			elseif ( !is_array( $user_answer_entry ) ) {
+				$checked = checked( $answer, $user_answer_entry , false );
 			}
 		} // End If Statement ?>
 		<li class="<?php esc_attr_e( $answer_class ); ?>">
