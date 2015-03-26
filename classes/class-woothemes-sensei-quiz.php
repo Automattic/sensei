@@ -497,8 +497,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         // reset the quiz answers
         $deleted_answers = WooThemes_Sensei_Utils::delete_user_data( $lesson_id,'quiz_answers', $user_id );
         $deleted_grades = WooThemes_Sensei_Utils::delete_user_data( $lesson_id,'quiz_grades', $user_id );
-        var_dump( $deleted_answers );
-        var_dump( $deleted_grades );
+
         // Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
         WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
 
