@@ -148,10 +148,80 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         }
 
         // todo: the qustion types are too random. We need at least one of each. Sometimes files do not show up.
-        // todo: was check if the data that was saved on the different quizzes are not the same
         //$activity_value = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) , true );
 
     } // end testSaveUserAnswers
+
+    /**
+     * This test Woothemes_Sensei()->quiz->save_user_answers
+     *
+     * The test confirms that a user can have unique answers for the same question in different lesson quizzes.
+     *
+     * @ticket 618 ( GitHub issue)
+     */
+    public function testSaveUserAnswersUniquelyPerQuiz(){
+
+        global $woothemes_sensei;
+
+        // setup data for the tests assertions
+        $test_user_id = wp_create_user( 'UniquelyPerQuiz' , 'UniquelyPerQuiz','UniquelyPerQuiz@test-unique.com' );
+        $test_lessons = $this->factory->get_random_lesson_id( 3 );
+        $lesson_1 = $test_lessons[ 0 ];
+        $lesson_2 = $test_lessons[ 1 ];
+        $lesson_3 = $test_lessons[ 2 ];
+
+        $lesson_1_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $lesson_1 );
+        $lesson_2_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $lesson_2 );
+        $lesson_3_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $lesson_3 );
+
+        $test_question_data = array(
+            'question_type' => 'single-line' ,
+            'question_category' => 'undefined' ,
+            'action' => 'add',
+            'question' => 'Is this a sample' . 'single-line'  . ' question ? _ ' . rand() ,
+            'question_grade' => '1' ,
+            'answer_feedback' => 'Answer Feedback sample ' . rand() ,
+            'question_description' => ' Basic description for the question' ,
+            'question_media' => '' ,
+            'answer_order' => '' ,
+            'random_order' => 'yes' ,
+            'question_count' => 1,
+            'add_question_right_answer_singleline' => '',
+            'quiz_id' => $lesson_1_quiz_id,
+            'post_author' => 1
+        );
+
+        // add question to the the first quiz
+        $test_question_id = $woothemes_sensei->lesson->lesson_save_question( $test_question_data );
+
+        // add question to quiz 2
+        add_post_meta( $test_question_id, '_quiz_id', $lesson_2_quiz_id , false );
+        $question_order = $lesson_2_quiz_id . '0001' ;
+        add_post_meta( $test_question_id, '_quiz_question_order' . $lesson_2_quiz_id , $question_order );
+
+        // add question to quiz 3
+        add_post_meta( $test_question_id, '_quiz_id', $lesson_3_quiz_id , false );
+        $question_order = $lesson_3_quiz_id . '0001' ;
+        add_post_meta( $test_question_id, '_quiz_question_order' . $lesson_3_quiz_id , $question_order );
+
+        //create sample answer array and save it on each lesson
+        foreach ( $test_lessons as $lesson_id ){
+            $answers = array( $test_question_id => 'Sample Answer for lesson '. $lesson_id  );
+            $woothemes_sensei->quiz->save_user_answers( $answers, array(), $lesson_id, $test_user_id  );
+        }
+
+        //check if the answers are not the same
+        $answer_from_lesson_1 = $woothemes_sensei->quiz->get_user_question_answer( $lesson_1  , $test_question_id , $test_user_id  );
+        $answer_from_lesson_2 = $woothemes_sensei->quiz->get_user_question_answer( $lesson_2  , $test_question_id , $test_user_id  );
+        $answer_from_lesson_3 = $woothemes_sensei->quiz->get_user_question_answer( $lesson_3  , $test_question_id , $test_user_id  );
+
+        $answers_the_same = $answer_from_lesson_1 == $answer_from_lesson_2
+                            && $answer_from_lesson_2 == $answer_from_lesson_3
+                            && $answer_from_lesson_1 == $answer_from_lesson_3;
+
+        $this->assertFalse( $answers_the_same, 'The unique answer saved by one user for the same question on different lessons was not really saved uniquely.' );
+
+    }// en testSaveUserAnswersUniquelyPerQuiz
 
     /**
      * This test is for Woothemes_Sensei()->quiz->save_user_answers. We check the transients only.
