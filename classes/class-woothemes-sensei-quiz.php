@@ -579,16 +579,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          $questions_asked_string = implode( ',', $questions_asked );
 
-         // Mark the Lesson as in-progress (if it isn't already), the entry is needed for WooThemes_Sensei_Utils::sensei_grade_quiz_auto()
-         $activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+         // Save Quiz Answers for grading, the save function also calls the sensei_start_lesson
+         self::save_user_answers( $quiz_answers , $files , $lesson_id , $user_id );
 
          // Save questions that were asked in this quiz
-         if( !empty( $questions_asked_string ) ) {
-             update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_string );
+         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+         if( isset( $user_lesson_status->comment_ID ) ) {
+             update_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', $questions_asked_string );
          }
-
-         // Save Quiz Answers for grading:
-         self::save_user_answers( $quiz_answers , $files , $lesson_id , $user_id );
 
          // Grade quiz
          $grade = WooThemes_Sensei_Utils::sensei_grade_quiz_auto( $quiz_id, $quiz_answers, 0 , $quiz_grade_type );
