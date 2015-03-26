@@ -347,7 +347,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
             } elseif ( 'single-line' == $type  ) {
 
-                $test_question_data[ 'add_question_right_answer_multiline' ] = '';
+                $test_question_data[ 'add_question_right_answer_singleline' ] = '';
 
             } elseif ( 'gap-fill' == $type ) {
 
@@ -357,7 +357,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
             } elseif ( 'multi-line' == $type  ) {
 
-                $test_question_data [ 'add_question_right_answer_singleline' ] = '';
+                $test_question_data [ 'add_question_right_answer_multiline' ] = '';
 
             } elseif ( 'file-upload' == $type ) {
 
