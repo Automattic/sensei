@@ -365,4 +365,3 @@ class WooThemes_Sensei_Question {
     }// end get_question_type
 
 } // End Class
-?>

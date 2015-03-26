@@ -300,7 +300,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		$lesson_id = $this->get_lesson_id( $current_quiz_id );
 
         // reset all user data
-        self::reset_user_lesson_data( $lesson_id, get_current_user_id() );
+        $this->reset_user_lesson_data( $lesson_id, get_current_user_id() );
 
 		//this function should only run once
 		remove_action( 'template_redirect', array( $this, 'reset_button_click_response'  ) );
