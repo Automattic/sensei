@@ -44,11 +44,29 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
      * Accesses the test_data lesson_id's and return any one of them
      *
      * @since 1.7.2
+     *
+     * @param int $number_of_items optional, defaults to 1
+     *
+     * @return int | array $result. If number of items is greater than one, this function will return an array
      */
-    public function get_random_lesson_id(){
+    public function get_random_lesson_id( $number_of_items = 1 ){
 
-        $random_index = rand( 1 , count( $this->lesson_ids )  ) - 1;
-        return $this->lesson_ids[ $random_index ] ;
+        if( $number_of_items> 1 ){
+
+            $result = array();
+            $random_index_s = array_rand( $this->lesson_ids, $number_of_items );
+            foreach( $random_index_s as $index ){
+                array_push( $result, $this->lesson_ids[ $index ] );
+            }// end for each
+
+        }else{
+
+            $random_index = array_rand( $this->lesson_ids );
+            $result = $this->lesson_ids[ $random_index ];
+
+        }
+
+        return $result;
 
     } // end get_random_valid_lesson_id()
 
