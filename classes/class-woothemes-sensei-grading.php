@@ -575,12 +575,9 @@ class WooThemes_Sensei_Grading {
 
             if( isset( $_POST[ 'question_' . $question_id ] ) ) {
 
-                $correct = false;
                 $question_grade = 0;
-                $question_total_grade = $_POST['question_total_grade'];
                 if( $_POST[ 'question_' . $question_id ] == 'right' ) {
 
-                    $correct = true;
                     $question_grade = $_POST[ 'question_' . $question_id . '_grade' ];
 
                 }
@@ -591,7 +588,7 @@ class WooThemes_Sensei_Grading {
                 // tally up the total quiz grade
                 $quiz_grade += $question_grade;
 
-            } // end isset $_POST[ 'question_'...
+            } // endif
 
             // WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), but
             // as an answer note is not direct post_content it won't have slashes removed, so we need to do it
@@ -742,7 +739,6 @@ class WooThemes_Sensei_Grading {
 
         global $woothemes_sensei;
         $user_id = get_current_user_id();
-        $grade = 0;
         $lesson_id =  $woothemes_sensei->quiz->get_lesson_id(  $quiz_id ) ;
         $quiz_autogradable = true;
 

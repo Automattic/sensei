@@ -202,7 +202,7 @@ class WooThemes_Sensei_Utils {
 	 * @since  1.0.0
 	 * @param  array $args (default: array())
 	 * @param  bool $return_comments (default: false)
-	 * @return void
+	 * @return mixed | int
 	 */
 	public static function sensei_check_for_activity ( $args = array(), $return_comments = false ) {
 
