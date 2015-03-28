@@ -17,12 +17,61 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - get_placeholder_image()
  * - sensei_is_woocommerce_present()
  * - sensei_is_woocommerce_activated()
- * - sensei_log_Activity()
+ * - sensei_log_activity()
  * - sensei_check_for_activity()
  * - sensei_activity_ids()
- * - sensei_delete_activites()
+ * - sensei_delete_activities()
+ * - delete_all_user_activity()
  * - sensei_get_activity_value()
  * - sensei_customer_bought_product()
+ * - sensei_text_editor()
+ * - sensei_save_quiz_answers()
+ * - upload_file()
+ * - sensei_grade_quiz_auto()
+ * - sensei_grade_quiz()
+ * - sensei_grade_question_auto()
+ * - sensei_grade_question()
+ * - sensei_delete_question_grade()
+ * - user_start_lesson()
+ * - sensei_start_lesson()
+ * - sensei_remove_user_from_lesson()
+ * - sensei_remove_user_from_course()
+ * - sensei_get_quiz_questions()
+ * - sensei_get_quiz_total()
+ * - sensei_get_user_question_grade()
+ * - sensei_get_user_question_answer_notes()
+ * - sensei_delete_quiz_answers()
+ * - sensei_delete_quiz_grade()
+ * - sensei_add_answer_notes()
+ * - array_sort_reorder()
+ * - sort_array_by_key()
+ * - lesson_quiz_questions()
+ * - sensei_course_pass_grade()
+ * - sensei_course_user_grade()
+ * - sensei_user_passed_course()
+ * - sensei_user_course_status_message()
+ * - sensei_user_quiz_status_message()
+ * - user_start_course()
+ * - user_started_course()
+ * - user_complete_course()
+ * - user_completed_course()
+ * - user_started_lesson()
+ * - user_completed_lesson()
+ * - user_course_status()
+ * - user_lesson_status()
+ * - is_preview_lesson()
+ * - user_passed_quiz()
+ * - update_lesson_status()
+ * - update_course_status()
+ * - single_comment_filter()
+ * - comment_any_status_filter()
+ * - comment_multiple_status_filter()
+ * - comment_total_sum_meta_value_filter()
+ * - get_posts_count_only_filter()
+ * - add_user_data()
+ * - update_user_data()
+ * - get_user_data()
+ * - delete_user_data()
  */
 class WooThemes_Sensei_Utils {
 	/**
@@ -153,7 +202,7 @@ class WooThemes_Sensei_Utils {
 	 * @since  1.0.0
 	 * @param  array $args (default: array())
 	 * @param  bool $return_comments (default: false)
-	 * @return void
+	 * @return mixed | int
 	 */
 	public static function sensei_check_for_activity ( $args = array(), $return_comments = false ) {
 
@@ -173,7 +222,7 @@ class WooThemes_Sensei_Utils {
 		}
 
 		// A user ID of 0 is in valid, so shortcut this
-		if ( isset($args['user_id']) && !is_array($args['user_id']) && 0 == $args['user_id'] ) {
+		if ( isset( $args['user_id'] ) && 0 == intval ( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', __('At no point should user_id be equal to 0.', 'woothemes-sensei') );
 			return false;
 		}
@@ -520,7 +569,22 @@ class WooThemes_Sensei_Utils {
 
 		require_once( ABSPATH . 'wp-admin/includes/admin.php' );
 
-        $file_return = wp_handle_upload( $file, array('test_form' => false ) );
+        /**
+         * Filter the data array for the Sensei wp_handle_upload function call
+         *
+         * This filter was mainly added for Unit Testing purposes.
+         *
+         * @since 1.7.4
+         *
+         * @param array  $file_upload_args {
+         *      array of current values
+         *
+         *     @type string test_form set to false by default
+         * }
+         */
+        $file_upload_args = apply_filters( 'sensei_file_upload_args', array('test_form' => false ) );
+
+        $file_return = wp_handle_upload( $file, $file_upload_args );
 
         if( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
             return false;
@@ -552,65 +616,26 @@ class WooThemes_Sensei_Utils {
 
 	/**
 	 * Grade quiz automatically
+     *
+     * This function grades each question automatically if the are auto gradable.
+     * It store all question grades.
+     *
+     * @deprecated since 1.7.4 use WooThemes_Sensei_Grading::grade_quiz_auto instead
+     *
 	 * @param  integer $quiz_id         ID of quiz
-	 * @param  integer $lesson_id       ID of lesson
-	 * @param  boolean $submitted       Submitted answers
+	 * @param  array $submitted questions id ans answers {
+     *          @type int $question_id
+     *          @type mixed $answer
+     * }
 	 * @param  integer $total_questions Total questions in quiz (not used)
-	 * @return boolean                  Whether quiz was successfully graded or not
+     * @param string $quiz_grade_type Optional defaults to auto
+     *
+	 * @return int $quiz_grade total sum of all question grades
 	 */
-	public static function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = false, $total_questions = 0, $quiz_grade_type = 'auto' ) {
-		if( intval( $user_id ) == 0 ) {
-			$user_id = get_current_user_id();
-		}
+	public static function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
 
-		$grade = 0;
-		$correct_answers = 0;
-		$quiz_graded = false;
+        return WooThemes_Sensei_Grading::grade_quiz_auto( $quiz_id, $submitted, $total_questions, $quiz_grade_type );
 
-		$quiz_autogradable = true;
-
-		if( intval( $quiz_id ) > 0 && $submitted ) {
-
-			if( $quiz_grade_type == 'auto' ) {
-				// Can only autograde these question types
-				$autogradable_question_types = apply_filters( 'sensei_autogradable_question_types', array( 'multiple-choice', 'boolean', 'gap-fill' ) );
-				$grade_total = 0;
-				foreach( $submitted as $question_id => $answer ) {
-
-					// check if the question is autogradable
-					$question_type = get_the_terms( $question_id, 'question-type' );
-
-					// Set default question type if one does not exist - prevents errors when grading
-					if( ! $question_type || is_wp_error( $question_type ) || ! is_array( $question_type ) ) {
-						$question_type = 'multiple-choice';
-					} else {
-						$question_type = array_shift($question_type)->slug;
-					}
-
-					if ( in_array( $question_type, $autogradable_question_types ) ) {
-						// Get user question grade
-						$question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
-						$grade_total += $question_grade;
-					}
-					else {
-						// There is a question that cannot be autograded
-						$quiz_autogradable = false;
-					}
-				}
-				// Only if the whole quiz was autogradable do we set a grade
-				if ( $quiz_autogradable ) {
-					$quiz_total = WooThemes_Sensei_Utils::sensei_get_quiz_total( $quiz_id );
-
-					$grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
-
-					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
-				} else {
-					$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'woothemes-sensei' ) );
-				}
-			}
-		}
-
-		return $grade;
 	} // End sensei_grade_quiz_auto()
 
 	/**
@@ -641,90 +666,23 @@ class WooThemes_Sensei_Utils {
 
 	/**
 	 * Grade question automatically
-	 * @param  integer $question_id ID of question
-	 * @param  string  $answer      User's answer
-	 * @return integer              User's grade for question
+     *
+     * This function checks the question typ and then grades it accordingly.
+     *
+     * @deprecated since 1.7.4 use WooThemes_Sensei_Grading::grade_question_auto instead
+     *
+	 * @param integer $question_id
+     * @param string $question_type of the standard Sensei question types
+	 * @param string $answer
+     * @param int $user_id
+     *
+	 * @return int $question_grade
 	 */
 	public static function sensei_grade_question_auto( $question_id = 0, $question_type = '', $answer = '', $user_id = 0 ) {
-		if( intval( $user_id ) == 0 ) {
-			$user_id = get_current_user_id();
-		}
 
-		$question_grade = false;
-		if( intval( $question_id ) > 0 ) {
-			if ( empty($question_type) ) {
-				$question_type = get_the_terms( $question_id, 'question-type' );
+       return  WooThemes_Sensei_Grading::grade_question_auto( $question_id, $question_type, $answer, $user_id  );
 
-				// Set default question type if one does not exist - prevents errors when grading
-				if( ! $question_type || is_wp_error( $question_type ) || ! is_array( $question_type ) ) {
-					$question_type = 'multiple-choice';
-				} else {
-					$question_type = array_shift($question_type)->slug;
-				}
-			}
-			// Allow full override of autograding
-			$question_grade = apply_filters( 'sensei_pre_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
-			if ( false === $question_grade ) {
-				switch( $question_type ) {
-					case 'multiple-choice':
-					case 'boolean' :
-						$right_answer = (array) get_post_meta( $question_id, '_question_right_answer', true );
-
-						if( 0 == get_magic_quotes_gpc() ) {
-							$answer = wp_unslash( $answer );
-						}
-						$answer = (array) $answer;
-						if ( is_array( $right_answer ) && count( $right_answer ) == count( $answer ) ) {
-							// Loop through all answers ensure none are 'missing'
-							$all_correct = true;
-							foreach ( $answer as $check_answer ) {
-								if ( !in_array( $check_answer, $right_answer ) ) {
-									$all_correct = false;
-								}
-							}
-							// If all correct then grade
-							if ( $all_correct ) {
-								$question_grade = get_post_meta( $question_id, '_question_grade', true );
-								if( ! $question_grade || $question_grade == '' ) {
-									$question_grade = 1;
-								}
-							}
-						}
-						break;
-						case 'gap-fill' :
-							$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-
-							if( 0 == get_magic_quotes_gpc() ) {
-								$answer = wp_unslash( $answer );
-							}
-							$gapfill_array = explode( '||', $right_answer );
-							// Check that the 'gap' is "exactly" equal to the given answer
-							if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
-								$question_grade = get_post_meta( $question_id, '_question_grade', true );
-								if ( empty($question_grade) ) {
-									$question_grade = 1;
-								}
-							}
-							else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
-								if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
-									$question_grade = get_post_meta( $question_id, '_question_grade', true );
-									if ( empty($question_grade) ) {
-										$question_grade = 1;
-									}
-								}
-							}
-							break;
-					default:
-						// Allow autograding of any other question type
-						$question_grade = apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
-						break;
-				} // switch question_type
-			}
-			$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
-		}
-
-		return $question_grade;
-	}
+	} // end sensei_grade_question_auto
 
 	/**
 	 * Grade question
@@ -766,6 +724,24 @@ class WooThemes_Sensei_Utils {
 
 		return $activity_logged;
 	}
+
+
+    /**
+     * Alias to Woothemes_Sensei_Utils::sensei_start_lesson
+     *
+     * @since 1.7.4
+     *
+     * @param integer $user_id
+     * @param integer $lesson_id
+     * @param bool $complete
+     *
+     * @return mixed boolean or comment_ID
+     */
+    public static function user_start_lesson(  $user_id = 0, $lesson_id = 0, $complete = false ) {
+
+        return self::sensei_start_lesson( $lesson_id, $user_id, $complete );
+
+    }// end user_start_lesson()
 
 	/**
 	 * Marked lesson as started for user
@@ -1935,5 +1911,160 @@ class WooThemes_Sensei_Utils {
 		return $pieces;
 	}
 
+    /**
+     *
+     * Alias to Woothemes_Sensei_Utils::update_user_data
+     * @since 1.7.4
+     *
+     * @param int $post_id
+     * @param string $data_key maximum 39 characters allowed
+     * @param mixed $value
+     * @param int $user_id
+     *
+     * @return bool $success
+     */
+    public static function add_user_data( $post_id, $data_key, $value = '' , $user_id = 0  ){
+
+        return self::update_user_data( $post_id, $data_key, $value , $user_id );
+
+    }// end add_user_data
+
+    /**
+     * add user specific data to the passed in sensei post type id
+     *
+     * This function saves comment meta on the users current status. If no status is available
+     * status will be created. It only operates on the available sensei Post types: course, lesson, quiz.
+     *
+     * @since 1.7.4
+     *
+     * @param int $post_id
+     * @param string $data_key maximum 39 characters allowed
+     * @param mixed $value
+     * @param int $user_id
+     *
+     * @return bool $success
+     */
+    public static function update_user_data( $post_id, $data_key, $value = '' , $user_id = 0  ){
+
+        if( ! ( $user_id > 0 ) ){
+            $user_id = get_current_user_id();
+        }
+
+        $supported_post_types = array( 'course', 'lesson' );
+        $post_type = get_post_type( $post_id );
+        if( empty( $post_id ) || empty( $data_key )
+            || ! is_int( $post_id ) || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
+            || !get_userdata( $user_id )
+            || ! in_array( $post_type, $supported_post_types )  ){
+
+            return false;
+        }
+
+        // check if there and existing Sensei status on this post type if not create it
+        // and get the  activity ID
+        $status_function = 'user_'.$post_type.'_status';
+        $sensei_user_status = self::$status_function( $post_id ,$user_id  );
+        if( ! isset( $sensei_user_status->comment_ID ) ){
+
+            $start_function = 'user_start_'.$post_type;
+            $sensei_user_activity_id = self::$start_function( $user_id, $post_id );
+
+        }else{
+
+            $sensei_user_activity_id = $sensei_user_status->comment_ID;
+
+        }
+
+        // store the data
+        $success = update_comment_meta( $sensei_user_activity_id, $data_key, $value );
+
+       return $success;
+
+    }//update_user_data
+
+    /**
+     * Get the user data stored on the passed in post type
+     *
+     * This function gets the comment meta on the lesson or course status
+     *
+     * @since 1.7.4
+     *
+     * @param $post_id
+     * @param $data_key
+     * @param int $user_id
+     *
+     * @return mixed $user_data_value
+     */
+    public static function get_user_data( $post_id, $data_key, $user_id = 0  ){
+
+        $user_data_value = true;
+
+        if( ! ( $user_id > 0 ) ){
+            $user_id = get_current_user_id();
+        }
+
+        $supported_post_types = array( 'course', 'lesson' );
+        $post_type = get_post_type( $post_id );
+        if( empty( $post_id ) || empty( $data_key )
+            || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
+            || ! get_userdata( $user_id )
+            || !in_array( $post_type, $supported_post_types )  ){
+
+            return false;
+        }
+
+        // check if there and existing Sensei status on this post type if not create it
+        // and get the  activity ID
+        $status_function = 'user_'.$post_type.'_status';
+        $sensei_user_status = self::$status_function( $post_id ,$user_id  );
+        if( ! isset( $sensei_user_status->comment_ID ) ){
+            return false;
+        }
+
+        $sensei_user_activity_id = $sensei_user_status->comment_ID;
+        $user_data_value = get_comment_meta( $sensei_user_activity_id , $data_key, true );
+
+        return $user_data_value;
+
+    }// end get_user_data
+
+    /**
+     * @param int $post_id
+     * @param int $data_key
+     * @param int $user_id
+     *
+     * @return bool $deleted
+     */
+    public static function delete_user_data( $post_id, $data_key, $user_id ){
+        $deleted = true;
+
+        if( ! ( $user_id > 0 ) ){
+            $user_id = get_current_user_id();
+        }
+
+        $supported_post_types = array( 'course', 'lesson' );
+        $post_type = get_post_type( $post_id );
+        if( empty( $post_id ) || empty( $data_key )
+            || ! is_int( $post_id ) || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
+            || ! get_userdata( $user_id )
+            || !in_array( $post_type, $supported_post_types )  ){
+
+            return false;
+        }
+
+        // check if there and existing Sensei status on this post type if not create it
+        // and get the  activity ID
+        $status_function = 'user_'.$post_type.'_status';
+        $sensei_user_status = self::$status_function( $post_id ,$user_id  );
+        if( ! isset( $sensei_user_status->comment_ID ) ){
+            return false;
+        }
+
+        $sensei_user_activity_id = $sensei_user_status->comment_ID;
+        $deleted = delete_comment_meta( $sensei_user_activity_id , $data_key );
+
+        return $deleted;
+
+    }// end delete_user_data
 
 } // End Class

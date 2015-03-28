@@ -46,7 +46,10 @@ class WooThemes_Sensei_Grading_User_Quiz {
 	} // End build_data_array()
 
 	/**
-	 * display output to the admin view
+	 * Display output to the admin view
+     *
+     * This view is shown when grading a quiz for a single user in admin under grading
+     *
 	 * @since  1.3.0
 	 * @return html
 	 */
@@ -54,11 +57,14 @@ class WooThemes_Sensei_Grading_User_Quiz {
 		// Get data for the user
 		$questions = $this->build_data_array();
 
+        global $woothemes_sensei;
 		$count = 0;
 		$graded_count = 0;
 		$user_quiz_grade_total = 0;
 		$quiz_grade_total = 0;
 		$quiz_grade = 0;
+        $lesson_id = $this->lesson_id;
+        $user_id = $this->user_id;
 
 		?><form name="<?php esc_attr_e( 'quiz_' . $this->quiz_id ); ?>" action="" method="post">
 			<?php wp_nonce_field( 'sensei_manual_grading', '_wp_sensei_manual_grading_nonce' ); ?>
@@ -96,8 +102,8 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				$type = 'multiple-choice';
 			}
 
-			$user_answer = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_answer' ), true );
-			$question_answer_notes = WooThemes_Sensei_Utils::sensei_get_user_question_answer_notes( $user_answer );
+            $legacy_user_answer = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_answer' ), true );
+			$question_answer_notes = WooThemes_Sensei_Utils::sensei_get_user_question_answer_notes( $legacy_user_answer );
 
 			$question_grade_total = get_post_meta( $question_id, '_question_grade', true );
 			if( ! $question_grade_total || 0 == intval( $question_grade_total ) ) {
@@ -106,7 +112,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$quiz_grade_total += $question_grade_total;
 
 			$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-			$user_answer_content = maybe_unserialize( base64_decode( $user_answer->comment_content ) );
+			$user_answer_content = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
 			$type_name = __( 'Multiple Choice', 'woothemes-sensei' );
 			$grade_type = 'manual-grade';
 
@@ -174,7 +180,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$question_title = sprintf( __( 'Question %d: ', 'woothemes-sensei' ), $count ) . $type_name;
 
 			$graded_class = '';
-			$user_question_grade = get_comment_meta( $user_answer->comment_ID, 'user_grade', true );
+			$user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
 			$graded_class = 'ungraded';
 			if( intval( $user_question_grade ) > 0 ) {
 				$graded_class = 'user_right';
