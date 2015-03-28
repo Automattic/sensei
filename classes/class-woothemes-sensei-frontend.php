@@ -73,7 +73,6 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_lesson_course_signup', array( $this, 'sensei_lesson_course_signup_link' ), 10, 1 );
 		add_action( 'sensei_complete_lesson', array( $this, 'sensei_complete_lesson' ) );
 		add_action( 'sensei_complete_course', array( $this, 'sensei_complete_course' ) );
-		add_action( 'sensei_complete_quiz', array( $this, 'sensei_complete_quiz' ) );
 		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
 		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
 		add_action( 'sensei_complete_lesson_button', array( $this, 'sensei_complete_lesson_button' ) );
@@ -438,8 +437,6 @@ class WooThemes_Sensei_Frontend {
 						$item->url = ( is_user_logged_in() ? $logout_url : $login_url );
 
 						// determine the menu title login or logout
-						$menu_title ='';
-
 						if ( is_user_logged_in() ) {
 							$menu_title =  __( 'Logout'  ,'woothemes-sensei');
 						} else {
@@ -470,7 +467,7 @@ class WooThemes_Sensei_Frontend {
 				$item->classes[] = 'current-menu-item current_page_item';
 			}
 
-		} // end if 'nav-menus.php' != $pagenow ...
+		} // endif nav
 
 		return $item;
 
@@ -894,168 +891,11 @@ class WooThemes_Sensei_Frontend {
 		} // End If Statement
 	} // End sensei_complete_course()
 
-	public function sensei_complete_quiz() {
-		global $post, $woothemes_sensei, $current_user;
-
-		// Default grade
-		$grade = 0;
-
-		// Get Quiz Questions
-		$lesson_quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $post->ID );
-
-		$quiz_lesson_id = absint( get_post_meta( $post->ID, '_quiz_lesson', true ) );
-
-		// Get quiz grade type
-		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
-
-		// Get quiz pass setting
-		$pass_required = get_post_meta( $post->ID, '_pass_required', true );
-
-		// Get quiz pass mark
-		$quiz_passmark = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
-
-		// Handle Quiz Completion
-		if ( isset( $_POST['quiz_complete'] ) && wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_quiz_noonce' ], 'woothemes_sensei_complete_quiz_noonce' ) ) {
-
-			$sanitized_submit = esc_html( $_POST['quiz_complete'] );
-
-			$questions_asked = array_filter( array_map( 'absint', $_POST['questions_asked'] ) );
-			$questions_asked_string = implode( ',', $questions_asked );
-
-			switch ($sanitized_submit) {
-				case apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ):
-
-					// Mark the Lesson as in-progress (if it isn't already), the entry is needed for WooThemes_Sensei_Utils::sensei_grade_quiz_auto() (optimise at some point?)
-					$activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $quiz_lesson_id );
-
-					$lesson_status = 'ungraded'; // Default when completing a quiz
-
-					// Save questions that were asked in this quiz
-					if( !empty( $questions_asked_string ) ) {
-						update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_string );
-					}
-
-					// Save Quiz Answers
-					if( isset( $_POST['sensei_question'] ) ) {
-						WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
-					}
-
-					// Grade quiz
-					// 3rd arg is count of total number of questions but it's not used by sensei_grade_quiz_auto()
-					$grade = WooThemes_Sensei_Utils::sensei_grade_quiz_auto( $post->ID, $_POST['sensei_question'], count( $lesson_quiz_questions ), $quiz_grade_type );
-					$lesson_metadata = array();
-					// Get Lesson Grading Setting
-					if ( is_wp_error( $grade ) || 'auto' != $quiz_grade_type ) {
-						$lesson_status = 'ungraded'; // Quiz is manually graded and this was a user submission
-					}
-					else {
-						// Quiz has been automatically Graded
-						if ( $pass_required ) {
-							// Student has reached the pass mark and lesson is complete
-							if ( $quiz_passmark <= $grade ) {
-								$lesson_status = 'passed';
-							}
-							else {
-								$lesson_status = 'failed';
-							} // End If Statement
-						}
-						// Student only has to partake the quiz
-						else {
-							$lesson_status = 'graded';
-						}
-						$lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz_auto()" above
-					}
-
-					WooThemes_Sensei_Utils::update_lesson_status( $current_user->ID, $quiz_lesson_id, $lesson_status, $lesson_metadata );
-
-					switch( $lesson_status ) {
-						case 'passed' :
-						case 'graded' :
-							do_action( 'sensei_user_lesson_end', $current_user->ID, $quiz_lesson_id );
-						break;
-					}
-
-					do_action( 'sensei_user_quiz_submitted', $current_user->ID, $post->ID, $grade, $quiz_passmark, $quiz_grade_type );
-
-					break;
-
-				case apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ):
-
-					$activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $quiz_lesson_id );
-
-					if( $activity_logged ) {
-						// Save questions that were asked in this quiz
-						if( !empty( $questions_asked_string ) ) {
-							update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_string );
-						}
-
-						if( isset( $_POST['sensei_question'] ) ) {
-							WooThemes_Sensei_Utils::sensei_save_quiz_answers( $_POST['sensei_question'] );
-						}
-					}
-					// Need message in case the data wasn't saved?
-					$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
-					break;
-
-				case apply_filters( 'sensei_reset_quiz_text', __( 'Reset Quiz', 'woothemes-sensei' ) ):
-					// Don't want to remove the lesson status (such as start meta data etc), just remove the answers, the questions asked meta and any grade meta
-
-					// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
-					WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $post->ID, $user_id );
-					WooThemes_Sensei_Utils::update_lesson_status( $current_user->ID, $quiz_lesson_id, 'in-progress', array( 'questions_asked' => '', 'grade' => '' ) );
-
-					// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
-					do_action( 'sensei_user_lesson_reset', $current_user->ID, $quiz_lesson_id );
-					$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
-					break;
-
-				default:
-					// Nothing
-					break;
-
-			} // End Switch Statement
-
-			// Refresh page to avoid re-posting
-			?>
-			<script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
-			<?php
-
-		} // End If Statement, submission of quiz
-
-		$this->data = new stdClass();
-
-		// Get latest quiz answers and grades
-		$user_quizzes = $this->sensei_get_user_quiz_answers( $post->ID );
-		$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
-		$user_quiz_grade = 0;
-		if( isset( $user_lesson_status->comment_ID ) ) {
-			$user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
-		}
-
-		if ( ! is_array($user_quizzes) ) { $user_quizzes = array(); }
-
-		// Check again that the lesson is complete
-		$user_lesson_end = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
-		$user_lesson_complete = false;
-		if ( $user_lesson_end ) {
-			$user_lesson_complete = true;
-		} // End If Statement
-
-		$reset_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
-
-		// Build frontend data object
-		$this->data->user_quizzes = $user_quizzes;
-		$this->data->user_quiz_grade = $user_quiz_grade;
-		$this->data->quiz_passmark = $quiz_passmark;
-		$this->data->quiz_lesson = $quiz_lesson_id;
-		$this->data->quiz_grade_type = $quiz_grade_type;
-		$this->data->user_lesson_end = $user_lesson_end;
-		$this->data->user_lesson_complete = $user_lesson_complete;
-		$this->data->lesson_quiz_questions = $lesson_quiz_questions;
-		$this->data->reset_quiz_allowed = $reset_allowed;
-
-	} // End sensei_complete_quiz()
-
+	/**
+	 * @deprecated use WooThemes_Sensei_Quiz::get_user_answers
+	 * @param int $lesson_id
+	 * @return array
+	 */
 	public function sensei_get_user_quiz_answers( $lesson_id = 0 ) {
 		global $current_user, $woothemes_sensei;
 
@@ -1364,21 +1204,33 @@ class WooThemes_Sensei_Frontend {
 		$lesson_course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 		$show_actions = true;
+        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
+        $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+
 		if( intval( $lesson_prerequisite ) > 0 ) {
 			// If the user hasn't completed the prereq then hide the current actions
-			$show_actions = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
+			$show_actions = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $current_user->ID );
 		}
 		if ( $show_actions && is_user_logged_in() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
 
 			// Get Reset Settings
 			$reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true ); ?>
-			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_quiz_noonce' ); ?>" value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_complete_quiz_noonce' ) ); ?>" />
-		    <?php if ( '' == $this->data->user_quiz_grade ) { ?>
+
+            <!-- Action Nonce's -->
+            <input type="hidden" name="woothemes_sensei_complete_quiz_nonce" id="woothemes_sensei_complete_quiz_nonce"
+                   value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
+			<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce"
+                   value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+            <input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce"
+                   value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
+            <!--#end Action Nonce's -->
+
+            <?php if ( '' == $user_quiz_grade) { ?>
 		 	<span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ); ?>"/></span>
-		 	<span><input type="submit" name="quiz_complete" class="quiz-submit save" value="<?php echo apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ); ?>"/></span>
+		 	<span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php echo apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		     <?php } // End If Statement ?>
 	          <?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
-		 	   <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php echo apply_filters( 'sensei_reset_quiz_text', __( 'Reset Quiz', 'woothemes-sensei' ) ); ?>"/></span>
+		 	   <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php echo apply_filters( 'sensei_reset_quiz_text', __( 'Reset Quiz', 'woothemes-sensei' ) ); ?>"/></span>
 		     <?php } ?>
         <?php }
 	} // End sensei_quiz_action_buttons()
@@ -1485,7 +1337,7 @@ class WooThemes_Sensei_Frontend {
 				// Success message
 		   		if ( $completed_course ) { ?>
 		   			<div class="status completed"><?php echo apply_filters( 'sensei_complete_text', __( 'Completed', 'woothemes-sensei' ) ); ?></div>
-		   			<?php 
+		   			<?php
 					$has_quizzes = $woothemes_sensei->post_types->course->course_quizzes( $post->ID, true );
 					if( has_filter( 'sensei_results_links' ) || $has_quizzes ) { ?>
 		   				<p class="sensei-results-links">
@@ -2102,5 +1954,4 @@ class WooThemes_Sensei_Frontend {
 			$woothemes_sensei->notices->add_notice( $message, 'alert');
 
 	}// end login_message_process
-
 } // End Class

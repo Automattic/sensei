@@ -15,6 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * TABLE OF CONTENTS
  *
  * - __construct()
+ * - question_types()
+ * -add_column_headings()
+ * -add_column_data()
+ * -question_edit_panel_metabox()
+ * -question_edit_panel()
+ * -question_lessons_panel()
+ * -save_question()
+ * -filter_options()
+ * -filter_actions()
+ * -get_question_type()
  */
 class WooThemes_Sensei_Question {
 	public $token;
@@ -324,5 +334,34 @@ class WooThemes_Sensei_Question {
 
 		return $request;
 	}
+
+    /**
+     * Get the type of question by id
+     *
+     * This function uses the post terms to determine which question type
+     * the passed question id belongs to.
+     *
+     * @since 1.7.4
+     *
+     * @param int $question_id
+     *
+     * @return string $question_type | bool
+     */
+    public function get_question_type( $question_id ){
+
+        if( empty( $question_id ) || ! intval( $question_id ) > 0
+            || 'question' != get_post_type( $question_id )   ){
+            return false;
+        }
+
+        $question_type = 'multiple-choice';
+        $question_types = wp_get_post_terms( $question_id, 'question-type' );
+        foreach( $question_types as $type ) {
+            $question_type = $type->slug;
+        }
+
+        return $question_type;
+
+    }// end get_question_type
 
 } // End Class

@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * TABLE OF CONTENTS
  *
- * - __construct()
+ * - __construct
  * - grading_admin_menu()
  * - enqueue_scripts()
  * - enqueue_styles()
@@ -27,13 +27,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - wrapper_container()
  * - grading_default_nav()
  * - grading_user_quiz_nav()
+ * - get_stati()
+ * - count_statuses()
+ * - courses_drop_down_html()
  * - get_lessons_dropdown()
  * - lessons_drop_down_html()
- * - get_lessons_html()
- * - process_grading()
- * - get_direct_url()
+ * - admin_process_grading_submission()
+ * - get_redirect_url()
  * - add_grading_notices()
  * - sensei_grading_notices()
+ * - grade_quiz_auto()
+ * - grade_question_auto()
  */
 class WooThemes_Sensei_Grading {
 	public $token;
@@ -44,7 +48,8 @@ class WooThemes_Sensei_Grading {
 	/**
 	 * Constructor
 	 * @since  1.3.0
-	 * @return  void
+     *
+     * @param $file
 	 */
 	public function __construct ( $file ) {
 		$this->name = __( 'Grading', 'woothemes-sensei' );
@@ -60,7 +65,7 @@ class WooThemes_Sensei_Grading {
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 
-			add_action( 'admin_init', array( $this, 'process_grading' ) );
+			add_action( 'admin_init', array( $this, 'admin_process_grading_submission' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_grading_notices' ) );
 //			add_action( 'sensei_grading_notices', array( $this, 'sensei_grading_notices' ) );
@@ -531,90 +536,138 @@ class WooThemes_Sensei_Grading {
 		return $html;
 	} // End lessons_drop_down_html()
 
-	public function process_grading() {
-		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry
-		if( isset( $_POST['sensei_manual_grade'] ) && isset( $_GET['quiz_id'] ) ) {
-//			error_log( __CLASS__ . ':' . __FUNCTION__ . ':' . print_r($_POST, true));
-			$quiz_id = $_GET['quiz_id'];
-			$user_id = $_GET['user'];
-			$verify_nonce = wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' );
-			if( $verify_nonce && $quiz_id == $_POST['sensei_manual_grade'] ) {
-				$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
-				$quiz_grade = 0;
-				$count = 0;
-				$quiz_grade_total = $_POST['quiz_grade_total'];
-				foreach( $questions as $question ) {
-					++$count;
-					$question_id = $question->ID;
-					if( isset( $_POST[ 'question_' . $question_id ] ) ) {
-						$correct = false;
-						$question_grade = 0;
-						$question_total_grade = $_POST['question_total_grade'];
-						if( $_POST[ 'question_' . $question_id ] == 'right' ) {
-							$correct = true;
-							$question_grade = $_POST[ 'question_' . $question_id . '_grade' ];
-						}
-						$activity_logged = WooThemes_Sensei_Utils::sensei_grade_question( $question_id, $question_grade, $user_id );
-						$quiz_grade += $question_grade;
-					} else {
-						WooThemes_Sensei_Utils::sensei_delete_question_grade( $question_id );
-					}
-					// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), but 
-					// as an answer note is not direct post_content it won't have slashes removed, so we need to do it
-					$answer_notes = wp_unslash( $_POST[ 'question_' . $question_id . '_notes' ] );
-					if( ! $answer_notes || $answer_notes == '' ) {
-						$answer_notes = '';
-					}
-					WooThemes_Sensei_Utils::sensei_add_answer_notes( $question_id, $user_id, $answer_notes );
-				}
+    /**
+     * The process grading function handles admin grading submissions.
+     *
+     * This function is hooked on to admin_init. It simply accepts
+     * the grades as the Grader selected theme and saves the total grade and
+     * individual question grades.
+     *
+     * @return bool
+     */
+    public function admin_process_grading_submission() {
 
-				if( $_POST['all_questions_graded'] == 'yes' ) {
-					$grade = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
-					$activity_logged = WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
+        // NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry
+        if( ! isset( $_POST['sensei_manual_grade'] )
+            || ! wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' )
+            || ! isset( $_GET['quiz_id'] )
+            || $_GET['quiz_id'] != $_POST['sensei_manual_grade'] ) {
 
-					// Duplicating what Frontend->sensei_complete_quiz() does
-					$quiz_lesson_id = absint( get_post_meta( $quiz_id, '_quiz_lesson', true ) );
-					$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
-					$quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
-					$lesson_metadata = array();
-					if ( $pass_required ) {
-						// Student has reached the pass mark and lesson is complete
-						if ( $quiz_passmark <= $grade ) {
-							$lesson_status = 'passed';
-						}
-						else {
-							$lesson_status = 'failed';
-						} // End If Statement
-					}
-					// Student only has to partake the quiz
-					else {
-						$lesson_status = 'graded';
-					}
-					$lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz()" above
+            return false; //exit and do not grade
 
-					WooThemes_Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
+        }
 
-					switch( $lesson_status ) {
-						case 'passed' :
-						case 'graded' :
-							do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
-						break;
-					}
-				}
+        $quiz_id = $_GET['quiz_id'];
+        $user_id = $_GET['user'];
 
-				if( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
-					$load_url = add_query_arg( array( 'message' => 'graded' ) );
-				} elseif ( isset( $_POST['_wp_http_referer'] ) ) {
-					$load_url = add_query_arg( array( 'message' => 'graded' ), $_POST['_wp_http_referer'] );
-				} else {
-					$load_url = add_query_arg( array( 'message' => 'graded' ) );
-				}
+        global $woothemes_sensei;
+        $questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+        $quiz_lesson_id =  $woothemes_sensei->quiz->get_lesson_id( $quiz_id );
+        $quiz_grade = 0;
+        $count = 0;
+        $quiz_grade_total = $_POST['quiz_grade_total'];
+        $all_question_grades = array();
 
-				wp_safe_redirect( $load_url );
-				exit;
-			}
-		}
-	}
+        foreach( $questions as $question ) {
+
+            ++$count;
+            $question_id = $question->ID;
+
+            if( isset( $_POST[ 'question_' . $question_id ] ) ) {
+
+                $question_grade = 0;
+                if( $_POST[ 'question_' . $question_id ] == 'right' ) {
+
+                    $question_grade = $_POST[ 'question_' . $question_id . '_grade' ];
+
+                }
+
+                // add data to the array that will, after the loop, be stored on the lesson status
+                $all_question_grades[ $question_id ] = $question_grade;
+
+                // tally up the total quiz grade
+                $quiz_grade += $question_grade;
+
+            } // endif
+
+            // WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), but
+            // as an answer note is not direct post_content it won't have slashes removed, so we need to do it
+            $answer_notes = wp_unslash( $_POST[ 'question_' . $question_id . '_notes' ] );
+            if( ! $answer_notes || $answer_notes == '' ) {
+                $answer_notes = '';
+            }
+            WooThemes_Sensei_Utils::sensei_add_answer_notes( $question_id, $user_id, $answer_notes );
+
+        } // end for each $questions
+
+        //store all question grades on the lesson status
+        $woothemes_sensei->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id , $user_id );
+
+        // $_POST['all_questions_graded'] is set when all questions have been graded
+        // in the class sensei grading user quiz -> display()
+        if( $_POST['all_questions_graded'] == 'yes' ) {
+
+            // set the users total quiz grade
+            $grade = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
+            WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
+
+            // Duplicating what Frontend->sensei_complete_quiz() does
+            $pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+            $quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+            $lesson_metadata = array();
+            if ( $pass_required ) {
+                // Student has reached the pass mark and lesson is complete
+                if ( $quiz_passmark <= $grade ) {
+                    $lesson_status = 'passed';
+                }
+                else {
+                    $lesson_status = 'failed';
+                } // End If Statement
+            }
+            // Student only has to partake the quiz
+            else {
+                $lesson_status = 'graded';
+            }
+            $lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz()" above
+
+            WooThemes_Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
+
+            if(  in_array( $lesson_status, array( 'passed', 'graded'  ) ) ) {
+
+                /**
+                 * Summary.
+                 *
+                 * Description.
+                 *
+                 * @since 1.7.0
+                 *
+                 * @param int  $user_id
+                 * @param int $quiz_lesson_id
+                 */
+                do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
+
+            } // end if in_array
+
+        }// end if $_POST['all_que...
+
+        if( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
+
+            $load_url = add_query_arg( array( 'message' => 'graded' ) );
+
+        } elseif ( isset( $_POST['_wp_http_referer'] ) ) {
+
+            $load_url = add_query_arg( array( 'message' => 'graded' ), $_POST['_wp_http_referer'] );
+
+        } else {
+
+            $load_url = add_query_arg( array( 'message' => 'graded' ) );
+
+        }
+
+        wp_safe_redirect( $load_url );
+        exit;
+
+    } // end admin_process_grading_submission
 
 	public function get_redirect_url() {
 		// Parse POST data
@@ -658,5 +711,213 @@ class WooThemes_Sensei_Grading {
 			echo '</div>';
 		} // End If Statement
 	} // End sensei_grading_notices()
+
+    /**
+     * Grade quiz automatically
+     *
+     * This function grades each question automatically if there all questions are auto gradable. If not
+     * the quiz will not be auto gradable.
+     *
+     * @since 1.7.4
+     *
+     * @param  integer $quiz_id         ID of quiz
+     * @param  array $submitted questions id ans answers {
+     *          @type int $question_id
+     *          @type mixed $answer
+     * }
+     * @param  integer $total_questions Total questions in quiz (not used)
+     * @param string $quiz_grade_type Optional defaults to auto
+     *
+     * @return int $quiz_grade total sum of all question grades
+     */
+    public static function grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
+
+        if( ! ( intval( $quiz_id ) > 0 )  || ! $submitted
+            || $quiz_grade_type != 'auto' ) {
+            return false; // exit early
+        }
+
+        global $woothemes_sensei;
+        $user_id = get_current_user_id();
+        $lesson_id =  $woothemes_sensei->quiz->get_lesson_id(  $quiz_id ) ;
+        $quiz_autogradable = true;
+
+        /**
+         * Filter the types of question types that can be automatically graded.
+         *
+         * This filter fires inside the auto grade quiz function and provides you with the default list.
+         *
+         * @param array {
+         *      'multiple-choice',
+         *      'boolean',
+         *      'gap-fill'.
+         * }
+         */
+        $autogradable_question_types = apply_filters( 'sensei_autogradable_question_types', array( 'multiple-choice', 'boolean', 'gap-fill' ) );
+
+        $grade_total = 0;
+        $all_question_grades = array();
+        foreach( $submitted as $question_id => $answer ) {
+
+            // check if the question is autogradable
+            $question_type = $woothemes_sensei->question->get_question_type( $question_id );
+            if ( in_array( $question_type, $autogradable_question_types ) ) {
+
+                // Get user question grade
+                $question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
+                $all_question_grades[ $question_id ] = $question_grade;
+                $grade_total += $question_grade;
+
+            } else {
+
+                // There is a question that cannot be autograded
+                $quiz_autogradable = false;
+
+            } // end if in_array( $question_type...
+
+        }// end for each question
+
+        // Only if the whole quiz was autogradable do we set a grade
+        if ( $quiz_autogradable ) {
+
+            $quiz_total = WooThemes_Sensei_Utils::sensei_get_quiz_total( $quiz_id );
+
+            $grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
+            WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
+
+        } else {
+
+            $grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'woothemes-sensei' ) );
+
+        }
+
+        // store the auto gradable grades. If the quiz is not auto gradable the grades can be use as the default
+        // when doing manual grading.
+        $woothemes_sensei->quiz-> set_user_grades( $all_question_grades, $lesson_id, $user_id );
+
+        return $grade;
+
+    } // End grade_quiz_auto()
+
+    /**
+     * Grade question automatically
+     *
+     * This function checks the question typ and then grades it accordingly.
+     *
+     * @since 1.7.4
+     *
+     * @param integer $question_id
+     * @param string $question_type of the standard Sensei question types
+     * @param string $answer
+     * @param int $user_id
+     *
+     * @return int $question_grade
+     */
+    public static function grade_question_auto( $question_id = 0, $question_type = '', $answer = '', $user_id = 0 ) {
+
+        if( intval( $user_id ) == 0 ) {
+
+            $user_id = get_current_user_id();
+
+        }
+
+        if( ! ( intval( $question_id ) > 0 ) ) {
+
+            return false;
+
+        }
+
+        global $woothemes_sensei;
+        $woothemes_sensei->question->get_question_type( $question_id );
+
+        /**
+         * Applying a grade before the auto grading takes place.
+         *
+         * This filter is applied just before the question is auto graded. It fires in the context of ta single question
+         * in the sensei_grade_question_auto function. It fire irrespective of the question type. If you return a grade
+         * more than 0 the auto grade functionality with be ignored and your supplied grade will be user for this question.
+         *
+         * @param int $question_grade default zero
+         * @param int $question_id
+         * @param string $question_type one of the Sensei question type.
+         * @param string $answer user supplied question answer
+         */
+        $question_grade = apply_filters( 'sensei_pre_grade_question_auto',0 , $question_id, $question_type, $answer );
+
+        if ( $question_grade > 0  ) {
+
+            return $question_grade;
+
+        }
+
+        // auto grading core
+        if( in_array( $question_type ,  array( 'multiple-choice'  , 'boolean'  ) )   ){
+
+            $right_answer = (array) get_post_meta( $question_id, '_question_right_answer', true );
+
+            if( 0 == get_magic_quotes_gpc() ) {
+                $answer = wp_unslash( $answer );
+            }
+            $answer = (array) $answer;
+            if ( is_array( $right_answer ) && count( $right_answer ) == count( $answer ) ) {
+                // Loop through all answers ensure none are 'missing'
+                $all_correct = true;
+                foreach ( $answer as $check_answer ) {
+                    if ( !in_array( $check_answer, $right_answer ) ) {
+                        $all_correct = false;
+                    }
+                }
+                // If all correct then grade
+                if ( $all_correct ) {
+                    $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
+                    if( ! $question_grade || $question_grade == '' ) {
+                        $question_grade = 1;
+                    }
+                }
+            }
+
+        } elseif( 'gap-fill' == $question_type ){
+
+            $right_answer = get_post_meta( $question_id, '_question_right_answer', true );
+
+            if( 0 == get_magic_quotes_gpc() ) {
+                $answer = wp_unslash( $answer );
+            }
+            $gapfill_array = explode( '||', $right_answer );
+            // Check that the 'gap' is "exactly" equal to the given answer
+            if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
+                $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
+                if ( empty($question_grade) ) {
+                    $question_grade = 1;
+                }
+            }
+            else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
+                if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
+                    $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
+                    if ( empty($question_grade) ) {
+                        $question_grade = 1;
+                    }
+                }
+            }
+
+        } else{
+
+            /**
+             * Grading questions that are not auto gradable.
+             *
+             * This filter is applied the context of ta single question within the sensei_grade_question_auto function.
+             * It fires for all other questions types. It does not apply to 'multiple-choice'  , 'boolean' and gap-fill.
+             *
+             * @param int $question_grade default zero
+             * @param int $question_id
+             * @param string $question_type one of the Sensei question type.
+             * @param string $answer user supplied question answer
+             */
+            $question_grade = ( int ) apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
+
+        } // end if $question_type
+
+        return $question_grade;
+    } // end grade_question_auto
 
 } // End Class
