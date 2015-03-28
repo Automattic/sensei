@@ -472,4 +472,3 @@ class WooThemes_Sensei_Messages {
 	}
 
 } // End Class
-?>

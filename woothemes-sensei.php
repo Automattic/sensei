@@ -45,4 +45,3 @@ Tested up to: 4.1.1
      * @since  1.0.1
      */
     woothemes_queue_update( plugin_basename( __FILE__ ), 'bad2a02a063555b7e2bee59924690763', 152116 );
-?>

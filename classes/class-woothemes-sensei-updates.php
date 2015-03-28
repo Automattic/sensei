@@ -1738,6 +1738,4 @@ class WooThemes_Sensei_Updates {
 
 
 	}
-
 } // End Class
-?>

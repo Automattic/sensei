@@ -894,4 +894,3 @@ class WooThemes_Sensei_Settings_API {
 		}
 	} // End enqueue_field_styles()
 } // End Class
-?>

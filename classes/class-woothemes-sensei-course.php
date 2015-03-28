@@ -1411,4 +1411,3 @@ class WooThemes_Sensei_Course {
 	}
 
 } // End Class
-?>

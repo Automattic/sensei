@@ -326,4 +326,3 @@ class WooThemes_Sensei_Question {
 	}
 
 } // End Class
-?>

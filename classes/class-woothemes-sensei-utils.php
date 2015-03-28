@@ -1934,6 +1934,4 @@ class WooThemes_Sensei_Utils {
 		}
 		return $pieces;
 	}
-
-
 } // End Class

@@ -68,4 +68,3 @@ class WooThemes_Sensei_Quiz {
 	}// end update_author
 
 } // End Class
-?>

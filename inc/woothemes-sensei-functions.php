@@ -146,5 +146,3 @@ if ( ! function_exists( 'sensei_hex_lighter' ) ) {
 	   	return $color;
 	}
 }
-
-?>
