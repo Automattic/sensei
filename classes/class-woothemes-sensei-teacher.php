@@ -465,6 +465,7 @@ class WooThemes_Sensei_Teacher {
             switch( $_GET['page'] ) {
                 case 'sensei_grading':
                 case 'sensei_analysis':
+                case 'sensei_learners':
                     $query->set( 'author', $current_user->ID );
                 break;
             }
