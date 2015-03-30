@@ -56,6 +56,7 @@ class WooThemes_Sensei_Teacher {
         add_filter( 'parse_query', array( $this, 'limit_teacher_edit_screen_post_types' ));
         add_filter( 'pre_get_posts', array( $this, 'course_analysis_teacher_access_limit' ) );
 
+        add_action( 'pre_get_posts', array( $this, 'filter_queries' ) );
     } // end __constructor()
 
 
@@ -103,9 +104,9 @@ class WooThemes_Sensei_Teacher {
      * @access protected
      */
     protected function add_capabilities ( ) {
-        // if this is not a valid WP_Role object exit without adding anything
-        if(  !is_a( $this->teacher_role, 'WP_Role' ) || empty( $this->teacher_role ) ) {
 
+        // if this is not a valid WP_Role object exit without adding anything
+        if(  ! is_a( $this->teacher_role, 'WP_Role' ) || empty( $this->teacher_role ) ) {
             return;
         }
 
@@ -452,5 +453,22 @@ class WooThemes_Sensei_Teacher {
     } // end is_admin_teacher
 
 
+
+    public function filter_queries ( $query ) {
+        global $current_user;
+
+        if( ! $this->is_admin_teacher() ) {
+            return;
+        }
+
+        if( isset( $_GET['page'] ) ) {
+            switch( $_GET['page'] ) {
+                case 'sensei_grading':
+                case 'sensei_analysis':
+                    $query->set( 'author', $current_user->ID );
+                break;
+            }
+        }
+    }
 
 } // End Class
