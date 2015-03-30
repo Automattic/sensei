@@ -44,11 +44,6 @@ class WooThemes_Sensei_Updates {
 		$this->parent = $parent;
 		$this->updates_run = get_option( $this->token . '-upgrades', array() );
 
-        // 1.7.0 updates
-        $_1_7_0 = array(    'auto' => array( 'enhance_teacher_role' => array( 'title' => 'Enhance the \'Teacher\' role', 'desc' => 'Adds the ability for a \'Teacher\' to create courses, lessons , quizes and manage their learners.' ),),
-                            'manual' 	=> array()
-                    );
-
 
 		// The list of upgrades to run
 		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => 'Assign role capbilities', 'desc' => 'Assigns Sensei capabilites to the relevant user roles.', 'product' => 'Sensei' ) ),
@@ -74,7 +69,9 @@ class WooThemes_Sensei_Updates {
 																		  'reset_lesson_order_meta' => array( 'title' => 'Set default order of lessons', 'desc' => 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.' ), ),
 													'manual' 	=> array()
 												),
-                                '1.7.0' => $_1_7_0 ,
+                                '1.8.0' => array(   'auto' => array( 'enhance_teacher_role' => array( 'title' => 'Enhance the \'Teacher\' role', 'desc' => 'Adds the ability for a \'Teacher\' to create courses, lessons , quizes and manage their learners.' ), ),
+                            						'manual' 	=> array()
+                    							),
 							);
 
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
