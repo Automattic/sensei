@@ -1,5 +1,11 @@
 *** Sensei Changelog ***
 
+2015.03.31 - version 1.7.4
+ * Fix - Allow users to save their answers uniquely for questions shared across multiple quizzes
+ * Fix - Bug that blocked teacher to access the admin area when WooCommerce is active
+ * Tweak - Allow contact teach button to be localized
+ * Fix - Sensei start lesson function error if the data argument is not passed in.
+
 2015.03.03 - version 1.7.3
  * Tweak - Removing Canvas them wrappers (this will now be handled in the theme directly)
  * Tweak - Decapitalising 'Total Grade' text on Course Results page

@@ -190,4 +190,3 @@ class WooThemes_Sensei_Learner_Profiles {
 	}
 
 } // End Class
-?>

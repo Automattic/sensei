@@ -399,4 +399,4 @@ class WooThemes_Sensei_Emails {
 		}
 	}
 
-}
+}//end class
