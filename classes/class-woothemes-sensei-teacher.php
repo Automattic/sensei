@@ -481,18 +481,21 @@ class WooThemes_Sensei_Teacher {
     public function filter_queries ( $query ) {
         global $current_user;
 
+        $screen = get_current_screen();
+
         if( ! $this->is_admin_teacher() ) {
             return;
         }
 
-        if( isset( $_GET['page'] ) ) {
-            switch( $_GET['page'] ) {
-                case 'sensei_grading':
-                case 'sensei_analysis':
-                case 'sensei_learners':
-                    $query->set( 'author', $current_user->ID );
-                break;
-            }
+        switch( $screen->id ) {
+            case 'sensei_page_sensei_grading':
+            case 'sensei_page_sensei_analysis':
+            case 'sensei_page_sensei_learners':
+            case 'lesson':
+            case 'course':
+            case 'question':
+                $query->set( 'author', $current_user->ID );
+            break;
         }
     }
 
