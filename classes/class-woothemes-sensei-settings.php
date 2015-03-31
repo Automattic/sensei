@@ -638,4 +638,3 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		return $pages_array;
 	} // End pages_array()
 } // End Class
-?>

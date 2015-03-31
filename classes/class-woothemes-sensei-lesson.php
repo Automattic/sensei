@@ -18,16 +18,40 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - meta_box_setup()
  * - lesson_info_meta_box_content()
  * - lesson_prerequisite_meta_box_content()
+ * = lesson_preview_meta_box_content()
  * - meta_box_save()
+ * - get_submitted_setting_value()
  * - post_updated()
  * - save_post_meta()
  * - lesson_course_meta_box_content()
+ * - quiz_panel()
+ * - quiz_panel_questions()
+ * - quiz_panel_question()
+ * - quiz_panel_add()
+ * - quiz_panel_get_existing_questions()
+ * - quiz_panel_add_existing_question()
+ * - quiz_panel_filter_existing_questions()
+ * - quiz_panel_question_field()
+ * - quiz_panel_question_feedback()
+ * - question_get_answer_id()
+ * - get_answer_id()
  * - lesson_quiz_meta_box_content()
+ * - lesson_quiz_settings_meta_box_content()
+ * - quiz_settings_panel()
+ * - get_quiz_settings()
  * - enqueue_scripts()
+ * - enqueue_styles()
  * - add_column_headings()
  * - add_column_data()
  * - lesson_add_course()
- * - lesson_update_questions()
+ * - lesson_update_question()
+ * - lesson_add_multiple_questions()
+ * - lesson_remove_multiple_questions()
+ * - get_question_category_limit()
+ * - lesson_add_existing_questions()
+ * - lesson_update_grade_type()
+ * - lesson_update_question_order()
+ * - lesson_update_question_order_random()
  * - lesson_save_course()
  * - lesson_save_question()
  * - lesson_delete_question()
@@ -35,7 +59,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - lesson_count()
  * - lesson_quizzes()
  * - lesson_quiz_questions()
+ * - set_default_question_order()
  * - lesson_image()
+ * - lesson_excerpt()
+ * - get_course_id ()
  */
 class WooThemes_Sensei_Lesson {
 	public $token;
@@ -2492,7 +2519,7 @@ class WooThemes_Sensei_Lesson {
 	 * @param int $lesson_id (default: 0)
 	 * @param string $post_status (default: 'publish')
 	 * @param string $fields (default: 'ids')
-	 * @return void
+	 * @return int $quiz_id
 	 */
 	public function lesson_quizzes( $lesson_id = 0, $post_status = 'any', $fields = 'ids' ) {
 
@@ -2508,9 +2535,9 @@ class WooThemes_Sensei_Lesson {
 							'fields'            => $fields
 							);
 		$posts_array = get_posts( $post_args );
+        $quiz_id = array_shift($posts_array);
 
-		return array_shift($posts_array);
-
+		return $quiz_id;
 	} // End lesson_quizzes()
 
 
@@ -2796,5 +2823,37 @@ class WooThemes_Sensei_Lesson {
 		}
 		return apply_filters( 'sensei_lesson_excerpt', $html );
 	} // End lesson_excerpt()
+
+    /**
+     * Returns the course for a given lesson
+     *
+     * @since 1.7.4
+     * @access public
+     *
+     * @param int $lesson_id
+     * @return int $course_id or bool when nothing is found.
+     */
+     public function get_course_id( $lesson_id ){
+
+         if( ! isset( $lesson_id ) || empty( $lesson_id )
+         ||  'lesson' != get_post_type( $lesson_id ) ){
+             return false;
+         }
+
+         $lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true);
+
+         // make sure the course id is valid
+         if( empty( $lesson_course_id )
+             || is_array( $lesson_course_id )
+             || intval( $lesson_course_id ) < 1
+             || 'course' != get_post_type( $lesson_course_id ) ){
+
+             return false;
+
+         }
+
+         return $lesson_course_id;
+
+     }// en get_course_id
 
 } // End Class

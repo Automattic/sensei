@@ -10,14 +10,15 @@
  */
 
 global $post, $woothemes_sensei, $current_user;
+
 // Get Frontend Data
-$user_quizzes = $woothemes_sensei->frontend->data->user_quizzes;
-$question_item = $woothemes_sensei->frontend->data->question_item;
-$question_count = $woothemes_sensei->frontend->data->question_count;
-$quiz_passmark = $woothemes_sensei->frontend->data->quiz_passmark;
-$user_quiz_grade = $woothemes_sensei->frontend->data->user_quiz_grade;
-$lesson_complete = $woothemes_sensei->frontend->data->user_lesson_complete;
-$reset_quiz_allowed = $woothemes_sensei->frontend->data->reset_quiz_allowed;
+$lesson_id = $woothemes_sensei->quiz->get_lesson_id( $post->ID );
+$question_item = $woothemes_sensei->quiz->data->question_item;
+$question_count = $woothemes_sensei->quiz->data->question_count;
+$quiz_passmark = $woothemes_sensei->quiz->data->quiz_passmark;
+$user_quiz_grade = $woothemes_sensei->quiz->data->user_quiz_grade;
+$lesson_complete = $woothemes_sensei->quiz->data->user_lesson_complete;
+$reset_quiz_allowed = $woothemes_sensei->quiz->data->reset_quiz_allowed;
 
 // Question Meta
 $question_id = $question_item->ID;
@@ -31,11 +32,13 @@ $question_grade = get_post_meta( $question_id, '_question_grade', true );
 if( ! $question_grade || $question_grade == '' ) {
 	$question_grade = 1;
 }
-$user_answer_entry = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $current_user->ID, 'type' => 'sensei_user_answer' ), true );
-$user_question_grade = WooThemes_Sensei_Utils::sensei_get_user_question_grade( $user_answer_entry );
+
+// retrieve users stored data.
+$user_answer_entry = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $current_user->ID );
+$user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $current_user->ID );
 
 // Get uploaded file
-$attachment_id = $user_quizzes[ $question_id ];
+$attachment_id = $user_answer_entry;
 $answer_media_url = $answer_media_filename = '';
 if( 0 < intval( $attachment_id ) ) {
 	$answer_media_url = wp_get_attachment_url( $attachment_id );
@@ -148,7 +151,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	<?php } ?>
 	<?php if( ! $lesson_complete ) { ?>
 		<input type="file" name="file_upload_<?php echo $question_id; ?>" />
-		<input type="hidden" name="sensei_question[<?php echo $question_id; ?>]" value="<?php echo esc_attr( $user_quizzes[ $question_id ] ); ?>" />
+		<input type="hidden" name="sensei_question[<?php echo $question_id; ?>]" value="<?php echo esc_attr( $user_answer_entry ); ?>" />
 		<aside class="max_upload_size"><?php echo $max_upload_size; ?></aside>
 	<?php } ?>
 	<?php if( $answer_notes ) { ?>

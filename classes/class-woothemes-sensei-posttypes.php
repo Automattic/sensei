@@ -733,4 +733,3 @@ class WooThemes_Sensei_PostTypes {
 	} // End load_class()
 
 } // End Class
-?>
