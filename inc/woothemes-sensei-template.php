@@ -309,16 +309,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	function sensei_check_prerequisite_course( $course_id ) {
 		global $current_user;
 		// Get User Meta
-	 	get_currentuserinfo();
-		$course_prerequisite_id = get_post_meta( $course_id, '_course_prerequisite', true);
+		get_currentuserinfo();
+		$course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true);
 		$prequisite_complete = false;
-		if ( 0 < $course_prerequisite_id ) {
-			$user_course_end =  WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_prerequisite_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_end', 'field' => 'comment_content' ) );
-
-			$completed_course = false;
-			if ( '' != $user_course_end ) {
-				$prequisite_complete = true;
-			} // End If Statement
+		if ( 0 < absint( $course_prerequisite_id ) ) {
+			$prequisite_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
 		} else {
 			$prequisite_complete = true;
 		} // End If Statement
@@ -414,7 +409,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     	    if ( 0 < $wc_post_id ) {
     	    	// Get the product
     	    	$product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
-    	    	if ( $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
+
+    	    	if ( isset( $product ) && !empty( $product )  &&  $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
     	    		<span class="course-price"><?php echo $product->get_price_html(); ?></span>
     	    	<?php } // End If Statement
     	    } // End If Statement
@@ -477,15 +473,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 * @return html
 	 */
 	function sensei_reset_lesson_button() {
-		global $woothemes_sensei;
-		if ( isset( $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ] ) && $woothemes_sensei->settings->settings[ 'quiz_reset_allowed' ] ) {
-		?>
-		<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
-            <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
-            <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php echo apply_filters( 'sensei_reset_lesson_text', __( 'Reset Lesson', 'woothemes-sensei' ) ); ?>"/></span>
-        </form>
-		<?php
-		} // End If Statement
+		do_action( 'sensei_reset_lesson_button' );
 	} // End sensei_reset_lesson_button()
 
 	/**
@@ -508,7 +496,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
                 $modules = $sensei_modules->get_course_modules( intval( $lesson_course_id ) );
 
-                foreach( $modules as $module ) {
+                foreach( (array) $modules as $module ) {
 
                     $args = array(
                         'post_type' => 'lesson',
@@ -587,24 +575,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	} // End sensei_get_prev_next_lessons()
 
 	function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
-		$has_user_started_the_course = false;
-		if ( 0 < intval( $post_id ) && 0 < intval( $user_id ) ) {
-			$has_user_started_the_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post_id, 'user_id' => $user_id, 'type' => 'sensei_course_start' ) );
-		} // End If Statement
-		return $has_user_started_the_course;
+		_deprecated_function( __FUNCTION__, '1.7', "WooThemes_Sensei_Utils::user_started_course()" );
+		return WooThemes_Sensei_Utils::user_started_course( $post_id, $user_id );
 	} // End sensei_has_user_started_course()
 
 	function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
-		global $woothemes_sensei;
-		$user_lesson_complete = false;
-		if ( 0 < intval( $post_id ) && 0 < intval( $user_id ) ) {
-			$user_lesson_complete = $woothemes_sensei->frontend->sensei_has_user_completed_lesson( $post_id, $user_id );
-		} // End If Statement
-		return $user_lesson_complete;
+		_deprecated_function( __FUNCTION__, '1.7', "WooThemes_Sensei_Utils::user_completed_lesson()" );
+		return WooThemes_Sensei_Utils::user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_lesson()
 
 	function sensei_has_user_completed_prerequisite_lesson( $post_id = 0, $user_id = 0 ) {
 		return sensei_has_user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_prerequisite_lesson()
-
-?>

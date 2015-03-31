@@ -57,6 +57,7 @@ a.sensei-certificate-link {
 			font-size: 1em;
 			position: relative;
 			top: .2em;
+			margin-bottom: 0.618em;
 		}
 	}
 	.sensei-course-meta  {
@@ -199,6 +200,7 @@ a.sensei-certificate-link {
 	padding: 0.5em 1em;
 	font-style: italic;
 	color: lighten($color_body, 20%);
+	clear: both;
 	&:before  {
 		@include iconbefore();
 		content: '\f112';

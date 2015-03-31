@@ -51,6 +51,7 @@ jQuery(document).ready( function($) {
 	 		jQuery( '#all_questions_graded' ).val( 'no' );
 	 		jQuery( '.grade-button' ).val( 'Save' );
 	 	}
+
 	}
 
 	/**
@@ -88,6 +89,7 @@ jQuery(document).ready( function($) {
 		 		}
 		 	}
 	 	});
+
 	 	jQuery.fn.calculateTotalGrade();
 	}
 
@@ -173,11 +175,11 @@ jQuery(document).ready( function($) {
 	 	dataToPost += 'lesson_id' + '=' + lessonId;
 	 	dataToPost += '&course_id' + '=' + courseId;
 
-	 	var gradingStatus = jQuery.fn.getQueryVariable( 'grading_status' );
-	 	if( gradingStatus ) {
-	 		dataToPost += '&grading_status' + '=' + gradingStatus;
+	 	var gradingView = jQuery.fn.getQueryVariable( 'view' );
+	 	if( gradingView ) {
+	 		dataToPost += '&view' + '=' + gradingView;
 	 	} else {
-	 		dataToPost += '&grading_status' + '=ungraded';
+	 		dataToPost += '&view' + '=ungraded';
 	 	}
 
 		// Perform the AJAX call to get the select box.

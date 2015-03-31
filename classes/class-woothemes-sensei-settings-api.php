@@ -869,7 +869,7 @@ class WooThemes_Sensei_Settings_API {
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
 		wp_enqueue_style( 'farbtastic' );
-		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), '1.6.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), '1.7.0' );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()
@@ -894,4 +894,3 @@ class WooThemes_Sensei_Settings_API {
 		}
 	} // End enqueue_field_styles()
 } // End Class
-?>

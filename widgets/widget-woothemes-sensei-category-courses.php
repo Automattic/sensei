@@ -207,4 +207,3 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 		<?php } // End If Statement
 	} // End load_component()
 } // End Class
-?>
