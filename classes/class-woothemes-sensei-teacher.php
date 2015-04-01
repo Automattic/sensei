@@ -368,6 +368,10 @@ class WooThemes_Sensei_Teacher {
             return $wp_query;
         }
 
+        if ( ! function_exists( 'get_current_screen' ) ) {
+            return $wp_query;
+        }
+
         $screen = get_current_screen();
 
         // for any of these conditions limit what the teacher will see
