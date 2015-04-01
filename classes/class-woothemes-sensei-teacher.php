@@ -361,20 +361,17 @@ class WooThemes_Sensei_Teacher {
      * @return WP_Query $wp_query
      */
     public function limit_teacher_edit_screen_post_types( $wp_query ) {
-
         global $current_user;
-        $pagenow = get_current_screen();
 
         //exit early
         if( ! $this->is_admin_teacher() ){
-
             return $wp_query;
-
         }
 
+        $screen = get_current_screen();
+
         // for any of these conditions limit what the teacher will see
-        if( 'edit-lesson' == $pagenow->id || 'edit-course' == $pagenow->id
-            || 'edit-question' == $pagenow->id ){
+        if( 'edit-lesson' == $screen->id || 'edit-course' == $screen->id || 'edit-question' == $screen->id ) {
 
             // set the query author to the current user to only show those those posts
             $wp_query->set( 'author', $current_user->id );
@@ -395,6 +392,10 @@ class WooThemes_Sensei_Teacher {
      * @return array $users user id array
      */
     public function course_analysis_teacher_access_limit ( $query ) {
+
+        if( ! is_admin() ) {
+            return $query;
+        }
 
         $pagenow = get_current_screen();
         $sensei_post_types = array('course', 'lesson', 'question' );
@@ -481,11 +482,11 @@ class WooThemes_Sensei_Teacher {
     public function filter_queries ( $query ) {
         global $current_user;
 
-        $screen = get_current_screen();
-
         if( ! $this->is_admin_teacher() ) {
             return;
         }
+
+        $screen = get_current_screen();
 
         switch( $screen->id ) {
             case 'sensei_page_sensei_grading':
