@@ -1249,12 +1249,12 @@ class WooThemes_Sensei_Admin {
 		global $nav_menu_selected_id, $woothemes_sensei;
 
 		$menu_items = array(
-			'#senseicourses' => __( 'Courses', 'woothemes_sensei' ),
-			'#senseilessons' => __( 'Lessons', 'woothemes_sensei' ),
-			'#senseimycourses' => __( 'My Courses', 'woothemes_sensei' ),
-			'#senseilearnerprofile' => __( 'My Profile', 'woothemes_sensei' ),
-			'#senseimymessages' => __( 'My Messages', 'woothemes_sensei' ),
-			'#senseiloginlogout' => __( 'Login', 'woothemes_sensei' ) . '|' . __( 'Logout', 'woothemes_sensei' )
+			'#senseicourses' => __( 'Courses', 'woothemes-sensei' ),
+			'#senseilessons' => __( 'Lessons', 'woothemes-sensei' ),
+			'#senseimycourses' => __( 'My Courses', 'woothemes-sensei' ),
+			'#senseilearnerprofile' => __( 'My Profile', 'woothemes-sensei' ),
+			'#senseimymessages' => __( 'My Messages', 'woothemes-sensei' ),
+			'#senseiloginlogout' => __( 'Login', 'woothemes-sensei' ) . '|' . __( 'Logout', 'woothemes-sensei' )
 		);
 
 		$menu_items_obj = array();
