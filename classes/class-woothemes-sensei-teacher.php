@@ -504,6 +504,7 @@ class WooThemes_Sensei_Teacher {
             case 'lesson':
             case 'course':
             case 'question':
+            case 'lesson_page_module-order':
                 $query->set( 'author', $current_user->ID );
             break;
         }
