@@ -393,18 +393,19 @@ class WooThemes_Sensei_Teacher {
      */
     public function course_analysis_teacher_access_limit ( $query ) {
 
-        if( ! is_admin() ) {
+        if( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
             return $query;
         }
 
-        $pagenow = get_current_screen();
+        if ( ! function_exists( 'get_current_screen' ) ) {
+            return $query;
+        }
+
+        $screen = get_current_screen();
         $sensei_post_types = array('course', 'lesson', 'question' );
 
-        //exit early for the following conditions
-        if( ! $this->is_admin_teacher() || empty( $pagenow )
-            ||'sensei_page_sensei_analysis' != $pagenow->id
-            || ! in_array(  $query->query['post_type'] , $sensei_post_types )   ){
-
+        // exit early for the following conditions
+        if( ! $this->is_admin_teacher() || empty( $screen ) ||'sensei_page_sensei_analysis' != $screen->id || ! in_array( $query->query['post_type'], $sensei_post_types ) ){
             return $query;
         }
 
