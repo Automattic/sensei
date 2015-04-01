@@ -491,6 +491,10 @@ class WooThemes_Sensei_Teacher {
             return;
         }
 
+        if ( ! function_exists( 'get_current_screen' ) ) {
+            return;
+        }
+
         $screen = get_current_screen();
 
         switch( $screen->id ) {
