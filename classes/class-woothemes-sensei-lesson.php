@@ -1415,7 +1415,7 @@ class WooThemes_Sensei_Lesson {
 					    	$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . $question_counter . '">' . __( 'Add wrong answer', 'woothemes-sensei' ) . '</a>';
 				    	$html .= '</div>';
 
-				    	$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id );
+                        $html .= $this->quiz_panel_question_feedback( $question_counter, $question_id , 'multiple-choice' );
 
 			    	$html .= '</div>';
 				break;
@@ -1430,7 +1430,7 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<label for="question_' . $question_id . '_boolean_true"><input id="question_' . $question_id . '_boolean_true" type="radio" name="' . $field_name . '" value="true" '. checked( $right_answer, 'true', false ) . ' /> ' . __( 'True', 'woothemes-sensei' ) . '</label>';
 						$html .= '<label for="question_' . $question_id . '_boolean_false"><input id="question_' . $question_id . '_boolean_false" type="radio" name="' . $field_name . '" value="false" '. checked( $right_answer, 'false', false ) . ' /> ' . __( 'False', 'woothemes-sensei' ) . '</label>';
 
-						$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id );
+                    $html .= $this->quiz_panel_question_feedback( $question_counter, $question_id, 'boolean' );
 
 					$html .= '</div>';
 				break;
@@ -1503,9 +1503,20 @@ class WooThemes_Sensei_Lesson {
 		return $html;
 	}
 
-	public function quiz_panel_question_feedback( $question_counter = 0, $question_id = 0 ) {
+	public function quiz_panel_question_feedback( $question_counter = 0, $question_id = 0, $question_type = '' ) {
 
-		$field_name = 'answer_feedback';
+        // default field name
+        $field_name = 'answer_feedback';
+        if( 'boolean' == $question_type ){
+
+            $field_name = 'answer_feedback_boolean';
+
+        }elseif( 'multiple-choice' == $question_type ){
+
+            $field_name = 'answer_feedback_multiple_choice';
+
+        }// end if
+
 		if( $question_counter ) {
 			$field_name = 'answer_' . $question_counter . '_feedback';
 		}
@@ -2273,9 +2284,19 @@ class WooThemes_Sensei_Lesson {
 
 		// Handle Answer Feedback
 		$answer_feedback = '';
-		if ( isset( $data[ 'answer_feedback' ] ) ) {
-			$answer_feedback = $data[ 'answer_feedback' ];
-		} // End If Statement
+		if ( isset( $data[ 'answer_feedback_boolean' ] ) && !empty( $data[ 'answer_feedback_boolean' ] ) ) {
+
+            $answer_feedback = $data[ 'answer_feedback_boolean' ];
+
+		}elseif( isset( $data[ 'answer_feedback_multiple_choice' ] ) && !empty( $data[ 'answer_feedback_multiple_choice' ] ) ){
+
+            $answer_feedback = $data[ 'answer_feedback_multiple_choice' ];
+
+        }elseif( isset( $data[ 'answer_feedback' ] )  ){
+
+            $answer_feedback = $data[ 'answer_feedback' ];
+
+        } // End If Statement
 
 		$post_title = $question_text;
 		$post_author = $data[ 'post_author' ];
