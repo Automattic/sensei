@@ -377,8 +377,8 @@ class WooThemes_Sensei_Lesson {
 			// Create the Quiz
 		    $quiz_id = wp_insert_post($post_type_args);
 
-		    // Add the post meta data
-		    add_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
+		    // Add the post meta data WP will add it if it doesn't exist
+            update_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
 
 		    foreach( $settings as $field ) {
 		    	if( 'random_question_order' != $field['id'] ) {
