@@ -45,6 +45,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - get_image_size()
  */
 class WooThemes_Sensei {
+
+    /**
+     * @var $_instance reference to the the main and only instance of the Sensei class.
+     * @since 1.8.0
+     */
+    protected static $_instance = null;
+
 	public $admin;
 	public $frontend;
 	public $post_types;
@@ -201,7 +208,49 @@ class WooThemes_Sensei {
 
 		// Check for and activate JetPack LaTeX support
 		add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support'), 200 ); // Runs after Jetpack has loaded it's modules
-	} // End __construct()
+
+    } // End __construct()
+
+    /**
+     * Global Sensei Instance
+     *
+     * Ensure that only one instance of the main Sensei class can be loaded.
+     *
+     * @since 1.8.0
+     * @static
+     * @see WC()
+     * @return WooCommerce - Main instance
+     */
+    public static function instance() {
+
+        if ( is_null( self::$_instance ) ) {
+
+            //Sensei requires a reference to the main Sensei plugin file
+            $sensei_main_plugin_file = dirname ( dirname( __FILE__ ) ) . '/woothemes-sensei.php';
+
+            self::$_instance = new self( $sensei_main_plugin_file  );
+
+        }
+
+        return self::$_instance;
+
+    } // end instance()
+
+    /**
+     * Cloning is forbidden.
+     * @since 1.8.0
+     */
+    public function __clone() {
+        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '2.1' );
+    }
+
+    /**
+     * Unserializing instances of this class is forbidden.
+     * @since 1.8.0
+     */
+    public function __wakeup() {
+        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '2.1' );
+    }
 
 	/**
 	 * Run Sensei updates.

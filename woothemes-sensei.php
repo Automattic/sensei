@@ -36,9 +36,23 @@ Tested up to: 4.1.1
         require_once( 'inc/woothemes-sensei-template.php' );
     }
 
+    /**
+     * Returns the global Sensei Instance.
+     *
+     * @since 1.8.0
+     */
+    function Sensei(){
+
+        return WooThemes_Sensei::instance();
+
+    }
+
+    // set the sensei version number
+    Sensei()->version = '1.7.4';
+
+    //backwards compatibility
     global $woothemes_sensei;
-    $woothemes_sensei = new WooThemes_Sensei( __FILE__ );
-    $woothemes_sensei->version = '1.7.4';
+    $woothemes_sensei = Sensei();
 
     /**
      * Plugin updates
