@@ -40,6 +40,9 @@ class WooThemes_Sensei_Messages {
 		// Monitor when new reply is posted
 		add_action( 'comment_post', array( $this, 'message_reply_received' ), 10, 1 );
 
+        // Block WordPress from sending comment update emails for the messages post type
+        add_filter('comment_notification_recipients', array( $this, 'stop_wp_comment_emails' ),  20, 2  );
+
 		// Process saving of message posts
 		add_action( 'save_post', array( $this, 'save_message' ) );
 
@@ -256,6 +259,30 @@ class WooThemes_Sensei_Messages {
 
 		do_action( 'sensei_private_message_reply', $comment, $message );
 	}
+
+    /**
+     * This function stops WordPress from sending the default comment update emails.
+     *
+     * This function is hooked into comment_notification_recipients. It will simply return
+     * an empty array if the current passed in comment is on a message post type.
+     *
+     * @param array $emails
+     * @param int $comment_id
+     * @return array;
+     */
+    public function stop_wp_comment_emails( $emails , $comment_id ){
+
+        $comment = get_comment( $comment_id );
+        if( isset( $comment->comment_post_ID ) &&
+            'sensei_message' == get_post_type( $comment->comment_post_ID )  ){
+
+            // empty the emails array to ensure no emails are sent for this comment
+            $emails = array();
+
+        }
+        return $emails;
+
+    }// end stop_wp_comment_emails
 
 	/**
      * Save new message post
