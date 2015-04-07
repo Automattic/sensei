@@ -43,6 +43,9 @@ class WooThemes_Sensei_Messages {
         // Block WordPress from sending comment update emails for the messages post type
         add_filter('comment_notification_recipients', array( $this, 'stop_wp_comment_emails' ),  20, 2  );
 
+        // Block WordPress from sending comment moderator emails on the sensei messages post types
+        add_filter('comment_moderation_recipients', array( $this, 'stop_wp_comment_emails' ),  20, 2  );
+
 		// Process saving of message posts
 		add_action( 'save_post', array( $this, 'save_message' ) );
 
