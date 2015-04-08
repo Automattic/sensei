@@ -314,6 +314,7 @@ class WooThemes_Sensei_Learners {
 	}
 
 	public function json_search_users() {
+        global $woothemes_sensei;
 
 		check_ajax_referer( 'search-users', 'security' );
 
@@ -331,14 +332,26 @@ class WooThemes_Sensei_Learners {
 			'fields'         => 'all',
 			'orderby'        => 'display_name',
 			'search'         => '*' . $term . '*',
-			'search_columns' => array( 'ID', 'user_login', 'user_email', 'user_nicename' )
+			'search_columns' => array( 'ID', 'user_login', 'user_email', 'user_nicename','user_firstname','user_lastname' )
 		), $term ) );
 
 		$users = $users_query->get_results();
 
 		if ( $users ) {
 			foreach ( $users as $user ) {
-				$found_users[ $user->ID ] = $user->display_name . ' (#' . $user->ID . ' &ndash; ' . sanitize_email( $user->user_email ) . ')';
+                $full_name = $woothemes_sensei->learners->get_learner_full_name( $user->ID );
+
+                if( trim($user->display_name ) == trim( $full_name ) ){
+
+                    $name = $full_name;
+
+                }else{
+
+                    $name = $full_name . ' ['. $user->display_name .']';
+
+                }
+
+                $found_users[ $user->ID ] = $name  . ' (#' . $user->ID . ' &ndash; ' . sanitize_email( $user->user_email ) . ')';
 			}
 		}
 
@@ -442,5 +455,49 @@ class WooThemes_Sensei_Learners {
 			<?php
 		}
 	}
+
+    /**
+     * Return the full name and surname or the display name of the user.
+     *
+     * The user must have both name and surname otherwise display name will be returned.
+     *
+     * @since 1.8.0
+     *
+     * @param int $user_id | bool false for an invalid $user_id
+     *
+     * @return string $full_name
+     */
+    public function get_learner_full_name( $user_id ){
+
+        $full_name = '';
+
+        if( empty( $user_id ) || ! ( 0 < intval( $user_id ) )
+            || !( get_userdata( $user_id ) ) ){
+            return false;
+        }
+
+        // get the user details
+        $user = get_user_by( 'id', $user_id );
+
+        if( ! empty( $user->first_name  ) && ! empty( $user->last_name  )  ){
+
+            $full_name = trim( $user->first_name   ) . ' ' . trim( $user->last_name  );
+
+        }else{
+
+            $full_name =  $user->display_name;
+
+        }
+
+        /**
+         * Filter the user full name from the get_learner_full_name function.
+         *
+         * @since 1.8.0
+         * @param $full_name
+         * @param $user_id
+         */
+        return apply_filters( 'sensei_learner_full_name' , $full_name , $user_id );
+
+    } // end get_learner_full_name
 
 } // End Class

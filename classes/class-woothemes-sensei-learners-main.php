@@ -232,7 +232,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-		global $wp_version;
+		global $wp_version, $woothemes_sensei;
 
 		switch ( $this->view ) {
 			case 'learners' :
@@ -259,8 +259,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					$status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
 				}
 
-				$user = get_user_by( 'id', $item->user_id );
-				$title = $user->display_name;
+                $title = $woothemes_sensei->learners->get_learner_full_name( $item->user_id );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
