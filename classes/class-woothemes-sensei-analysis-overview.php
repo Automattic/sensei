@@ -450,11 +450,11 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
 				// Output the users data
 				if ( $this->csv_output ) {
-					$user_name = $item->display_name;
-				}
+                    $user_name = $woothemes_sensei->learners->get_learner_full_name( $item->ID );
+                }
 				else {
 					$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->ID ), admin_url( 'admin.php' ) );
-					$user_name = '<strong><a class="row-title" href="' . $url . '">' . $item->display_name . '</a></strong>';
+					$user_name = '<strong><a class="row-title" href="' . $url . '">' . $woothemes_sensei->learners->get_learner_full_name( $item->ID ) . '</a></strong>';
 					$user_average_grade .= '%';
 				} // End If Statement
 				$column_data = apply_filters( 'sensei_analysis_overview_column_data', array( 'title' => $user_name,

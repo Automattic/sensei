@@ -470,7 +470,8 @@ class WooThemes_Sensei_Analysis {
 			$user_id = intval( $_GET['user_id'] );
 			$user_data = get_userdata( $user_id );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user' => $user_id ), admin_url( 'admin.php' ) );
-			$title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, $user_data->display_name ); 
+            $user_name = $woothemes_sensei->learners->get_learner_full_name( $user_id );
+			$title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, $user_name );
 		} // End If Statement
 		?>
 			<h2><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h2>
@@ -490,7 +491,8 @@ class WooThemes_Sensei_Analysis {
 			$user_id = intval( $_GET['user_id'] );
 			$user_data = get_userdata( $user_id );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $user_id ), admin_url( 'admin.php' ) );
-			$title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, $user_data->display_name ); 
+            $user_name = $woothemes_sensei->learners->get_learner_full_name( $user_id );
+            $title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, $user_name );
 		} // End If Statement
 		if ( isset( $_GET['course_id'] ) ) { 
 			$course_id = intval( $_GET['course_id'] );

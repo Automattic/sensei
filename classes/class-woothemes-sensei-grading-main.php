@@ -236,7 +236,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-		global $wp_version;
+		global $wp_version, $woothemes_sensei;
 
 		$grade = '';
 		if( 'complete' == $item->comment_approved ) {
@@ -264,8 +264,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			$grade = __( 'N/A', 'woothemes-sensei' );
 		}
 
-		$user = get_user_by( 'id', $item->user_id );
-		$title = $user->display_name;
+        $title = $woothemes_sensei->learners->get_learner_full_name( $item->user_id );
 
 		// QuizID to be deprecated
 		$quiz_id = get_post_meta( $item->comment_post_ID, '_lesson_quiz', true );

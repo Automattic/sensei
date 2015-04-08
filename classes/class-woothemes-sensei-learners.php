@@ -314,6 +314,7 @@ class WooThemes_Sensei_Learners {
 	}
 
 	public function json_search_users() {
+        global $woothemes_sensei;
 
 		check_ajax_referer( 'search-users', 'security' );
 
@@ -331,14 +332,26 @@ class WooThemes_Sensei_Learners {
 			'fields'         => 'all',
 			'orderby'        => 'display_name',
 			'search'         => '*' . $term . '*',
-			'search_columns' => array( 'ID', 'user_login', 'user_email', 'user_nicename' )
+			'search_columns' => array( 'ID', 'user_login', 'user_email', 'user_nicename','user_firstname','user_lastname' )
 		), $term ) );
 
 		$users = $users_query->get_results();
 
 		if ( $users ) {
 			foreach ( $users as $user ) {
-				$found_users[ $user->ID ] = $user->display_name . ' (#' . $user->ID . ' &ndash; ' . sanitize_email( $user->user_email ) . ')';
+                $full_name = $woothemes_sensei->learners->get_learner_full_name( $user->ID );
+
+                if( trim($user->display_name ) == trim( $full_name ) ){
+
+                    $name = $full_name;
+
+                }else{
+
+                    $name = $full_name . ' ['. $user->display_name .']';
+
+                }
+
+                $found_users[ $user->ID ] = $name  . ' (#' . $user->ID . ' &ndash; ' . sanitize_email( $user->user_email ) . ')';
 			}
 		}
 

@@ -312,8 +312,10 @@ class WooThemes_Sensei_Grading {
 			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>'; 
 		}
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
-			$user_data = get_userdata( intval( $_GET['user_id'] ) );
-			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_data->display_name . '</span>'; 
+
+            $user_name = $woothemes_sensei->learners->get_learner_full_name( $_GET['user_id'] );
+			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
+
 		} // End If Statement
 		?>
 			<h2><?php echo apply_filters( 'sensei_grading_nav_title', $title ); ?></h2>
@@ -344,8 +346,10 @@ class WooThemes_Sensei_Grading {
 			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, get_the_title( $lesson_id ) ); 
 		}
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
-			$user_data = get_userdata( intval( $_GET['user'] ) );
-			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_data->display_name . '</span>'; 
+
+            $user_name = $woothemes_sensei->learners->get_learner_full_name( $_GET['user'] );
+			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
+
 		} // End If Statement
 		?>
 			<h2><?php echo apply_filters( 'sensei_grading_nav_title', $title ); ?></h2>
