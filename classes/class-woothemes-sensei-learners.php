@@ -49,7 +49,7 @@ class WooThemes_Sensei_Learners {
 
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 10);
+			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30);
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container'  ) );
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );

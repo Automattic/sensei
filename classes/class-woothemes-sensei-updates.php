@@ -87,7 +87,7 @@ class WooThemes_Sensei_Updates {
 		$this->version = get_option( $this->token . '-version' );
 
 		// Manual Update Screen
-		add_action('admin_menu', array( $this, 'add_update_admin_screen' ) );
+		add_action('admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
 
 	} // End __construct()
 

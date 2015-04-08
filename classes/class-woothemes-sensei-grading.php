@@ -58,7 +58,7 @@ class WooThemes_Sensei_Grading {
 
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( $this, 'grading_admin_menu' ), 10);
+			add_action( 'admin_menu', array( $this, 'grading_admin_menu' ), 20);
 			add_action( 'grading_wrapper_container', array( $this, 'wrapper_container'  ) );
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
