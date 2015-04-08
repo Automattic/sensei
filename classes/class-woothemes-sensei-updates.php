@@ -100,7 +100,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	public function add_update_admin_screen() {
 		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page( 'sensei', __( 'Sensei Updates', 'woothemes-sensei' ), __( 'Updates', 'woothemes-sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+			add_submenu_page( 'sensei', __( 'Sensei Updates', 'woothemes-sensei' ), __( 'Data Updates', 'woothemes-sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
 		}
 	} // End add_update_admin_screen()
 
