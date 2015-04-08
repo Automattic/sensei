@@ -219,7 +219,7 @@ class WooThemes_Sensei {
      * @since 1.8.0
      * @static
      * @see WC()
-     * @return WooCommerce - Main instance
+     * @return WooThemes_Sensei Instance.
      */
     public static function instance() {
 
