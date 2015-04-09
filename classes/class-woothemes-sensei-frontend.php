@@ -1383,15 +1383,25 @@ class WooThemes_Sensei_Frontend {
 		} // End If Statement
 	} // End sensei_course_meta_video()
 
-	public function sensei_woocommerce_in_cart_message() {
+    /**
+     * This function shows the WooCommerce cart notice if the user has
+     * added the current course to cart. It does not show if the user is already taking
+     * the course.
+     *
+     * @since 1.0.2
+     * @return void;
+     */
+    public function sensei_woocommerce_in_cart_message() {
 		global $post, $woocommerce;
 
 		$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
+        $user_course_status_id = WooThemes_Sensei_Utils::user_started_course($post->ID , get_current_user_id() );
+		if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
 
-		if ( 0 < intval( $wc_post_id ) ) {
 			if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
 				echo '<div class="sensei-message info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
 			} // End If Statement
+
 		} // End If Statement
 
 	} // End sensei_woocommerce_in_cart_message()
