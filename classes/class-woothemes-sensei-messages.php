@@ -30,7 +30,7 @@ class WooThemes_Sensei_Messages {
 		$this->meta_fields = array( 'sender', 'receiver' );
 
 		// Add Messages page to admin menu
-		add_action( 'admin_menu', array( $this, 'add_menu_item' ), 11 );
+		add_action( 'admin_menu', array( $this, 'add_menu_item' ), 40 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
 

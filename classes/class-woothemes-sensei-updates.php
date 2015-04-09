@@ -87,7 +87,7 @@ class WooThemes_Sensei_Updates {
 		$this->version = get_option( $this->token . '-version' );
 
 		// Manual Update Screen
-		add_action('admin_menu', array( $this, 'add_update_admin_screen' ) );
+		add_action('admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
 
 	} // End __construct()
 
@@ -100,7 +100,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	public function add_update_admin_screen() {
 		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page( 'sensei', __( 'Sensei Updates', 'woothemes-sensei' ), __( 'Updates', 'woothemes-sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+			add_submenu_page( 'sensei', __( 'Sensei Updates', 'woothemes-sensei' ), __( 'Data Updates', 'woothemes-sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
 		}
 	} // End add_update_admin_screen()
 
