@@ -227,7 +227,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 						</div>
 						<div class="answer-notes">
 							<h5><?php _e( 'Grading Notes', 'woothemes-sensei' ) ?></h5>
-							<textarea class="correct-answer" name="<?php esc_attr_e( 'question_' . $question_id . '_notes' ); ?>" placeholder="<?php _e( 'Add notes here...', 'woothemes-sensei' ) ?>"><?php echo $question_answer_notes; ?></textarea>
+							<textarea class="correct-answer" name="questions_feedback[<?php esc_attr_e( $question_id ); ?>]" placeholder="<?php _e( 'Add notes here...', 'woothemes-sensei' ) ?>"><?php echo $question_answer_notes; ?></textarea>
 						</div>
 					</div>
 				</div>

@@ -567,6 +567,7 @@ class WooThemes_Sensei_Grading {
         $count = 0;
         $quiz_grade_total = $_POST['quiz_grade_total'];
         $all_question_grades = array();
+        $all_answers_feedback = array();
 
         foreach( $questions as $question ) {
 
@@ -590,18 +591,22 @@ class WooThemes_Sensei_Grading {
 
             } // endif
 
-            // WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), but
-            // as an answer note is not direct post_content it won't have slashes removed, so we need to do it
-            $answer_notes = wp_unslash( $_POST[ 'question_' . $question_id . '_notes' ] );
-            if( ! $answer_notes || $answer_notes == '' ) {
-                $answer_notes = '';
+            // Question answer feedback / notes
+            $question_feedback = '';
+            if( isset( $_POST[ 'questions_feedback' ][ $question_id ] ) ){
+
+                $question_feedback = wp_unslash( $_POST[ 'questions_feedback' ][ $question_id ] );
+
             }
-            WooThemes_Sensei_Utils::sensei_add_answer_notes( $question_id, $user_id, $answer_notes );
+            $all_answers_feedback[ $question_id ] = $question_feedback;
 
         } // end for each $questions
 
         //store all question grades on the lesson status
         $woothemes_sensei->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id , $user_id );
+
+        //store the feedback from grading
+        $woothemes_sensei->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id , $user_id );
 
         // $_POST['all_questions_graded'] is set when all questions have been graded
         // in the class sensei grading user quiz -> display()
