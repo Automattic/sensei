@@ -856,4 +856,79 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
     } // end testSaveUserAnswersFeedback
 
+    /**
+     * This tests Sensei()->quiz->get_user_answers_feedback
+     */
+    public function testGetUserAnswersFeedback(){
+
+        // setup the data and objects needed for this test
+        global $woothemes_sensei;
+        $test_user_id = wp_create_user( 'studentFeedbackGet', 'studentFeedbackGet', 'studentFeedbackGet@test.com' );
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
+
+        // does the save_user_answers function exist?
+        $this->assertTrue( method_exists( $woothemes_sensei->quiz, 'get_user_answers_feedback'),
+            'The quiz class function `get_user_answers_feedback` does not exist ' );
+
+        //Does this function handle incorrect parameters correctly?
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_answers_feedback( '', ''  )  , 'The function should return false for incorrect parameters');
+        $this->assertFalse($woothemes_sensei->quiz->get_user_answers_feedback( 5000, 1000 ) , 'The function should return false for incorrect parameters');
+        $this->assertFalse($woothemes_sensei->quiz->get_user_answers_feedback( -1000, -121 ) , 'The function should return false for incorrect parameters');
+
+        // save the answers to setup the next assertion
+        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
+        $woothemes_sensei->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
+        $retrieved_answer_feedback = $woothemes_sensei->quiz->get_user_answers_feedback(  $test_lesson_id  ,  $test_user_id  );
+
+        $this->assertEquals( $test_user_answers_feedback, $retrieved_answer_feedback, 'Feedback retrieved does not match the saved data.' );
+
+        /*
+        // get the quiz questions
+        $quiz_question_posts = $woothemes_sensei->lesson->lesson_quiz_questions( $test_lesson_quiz_id  );
+        $this->assertTrue( is_array( $quiz_question_posts )
+            && isset( $quiz_question_posts[ 0 ] ) && isset( $quiz_question_posts[ 0 ]->ID )
+            && 'question' == get_post_type( $quiz_question_posts[ 0 ]->ID ) ,
+            'The quiz questions for quiz_id: ' . $test_lesson_quiz_id . ' does not exist or is not returned as expected.'  );
+
+        // create the sample data to save
+        $user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_lesson_quiz_id  );
+
+        // assign the user to the lesson
+        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id  );
+
+        // test for when there is no answers saved.
+        $is_false_when_no_answers_saved = $woothemes_sensei->quiz->get_user_answers( $test_lesson_id, $test_user_id);
+        $this->assertFalse(  $is_false_when_no_answers_saved  , 'The function should return false when no answers are saved on the Lesson' );
+
+        // save the test users answers on the tes lesson
+        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $user_quiz_answers, array() ,$test_lesson_id,  $test_user_id  ) ;
+        $this->assertTrue(  intval(  $lesson_data_saved ) > 0, 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
+
+        // test the function with the wrong parameters
+        $result_for_invalid_user = $woothemes_sensei->quiz->get_user_answers('', $test_user_id);
+        $this->assertFalse(  $result_for_invalid_user , 'The function should return false for and invalid lesson id' );
+
+        $result_invalid_lesson = $woothemes_sensei->quiz->get_user_answers($test_lesson_id, '');
+        $this->assertFalse( $result_invalid_lesson, 'The function should return false for and invalid user id' );
+
+        // test with the correct parameters
+        $user_saved_lesson_answers = $woothemes_sensei->quiz->get_user_answers($test_lesson_id, $test_user_id);
+        $this->assertTrue( is_array( $user_saved_lesson_answers ), 'The function should return an array when an exiting user and lesson with saved answers is passed in' );
+
+        // check all the answers returned
+        foreach( $user_saved_lesson_answers as $question_id => $answer ) {
+            // test if the returned questions relate to valid question post types
+            $this->assertTrue( 'question' == get_post_type( $question_id )  , 'The answers returned  does not relate to valid question post types');
+            // make sure it is the same as the saved answers
+            $this->assertTrue( $user_quiz_answers[$question_id] == $user_saved_lesson_answers[$question_id]   , 'The answers returned are not the same as the answers saved');
+
+        }
+         */
+
+    } //end testGetUserAnswersFeedback
+
+
 }// end class Sensei_Class_Quiz_Test

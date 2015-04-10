@@ -925,4 +925,64 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
     } // end save_user_answers_feedback
 
+     /**
+      * Get the user's answers feedback.
+      *
+      * This function returns the feedback submitted by the teacher/admin
+      * during grading. Grading occurs manually or automatically.
+      *
+      * @since 1.7.5
+      * @access public
+      *
+      * @param int $lesson_id
+      * @param int $user_id
+      *
+      * @return false | array $answers_feedback{
+      *  $type int $question_id
+      *  $type string $question_feedback
+      * }
+      */
+     public function get_user_answers_feedback( $lesson_id , $user_id = 0 ){
+
+         $answers_feedback = array();
+
+         // get the user_id if none was passed in use the current logged in user
+         if( ! intval( $user_id ) > 0 ) {
+             $user_id = get_current_user_id();
+         }
+
+         if ( ! intval( $lesson_id ) > 0 || 'lesson' != get_post_type( $lesson_id )
+             || ! intval( $user_id )  > 0 || !get_userdata( $user_id )  ) {
+             return false;
+         }
+
+         // first check the transient to save a few split seconds
+         $transient_key = 'sensei_answers_feedback_'.$user_id.'_'.$lesson_id;
+         $encoded_feedback = get_site_transient( $transient_key );
+
+         // get the data if nothing was stored in the transient
+         if( empty( $encoded_feedback  ) || false != $encoded_feedback ){
+
+             $encoded_feedback = WooThemes_Sensei_Utils::get_user_data( $lesson_id, 'quiz_answers_feedback' , $user_id );
+
+             //set the transient with the new valid data for faster retrieval in future
+             set_site_transient( $transient_key,  $encoded_feedback);
+
+         } // end if transient check
+
+         // if there is no data for this user
+         if( ! is_array( $encoded_feedback ) ){
+             return false;
+         }
+
+         foreach( $encoded_feedback as $question_id => $feedback ){
+
+             $answers_feedback[ $question_id ] = base64_decode( $feedback );
+
+         }
+
+         return $answers_feedback;
+
+     } // end get_user_answers_feedback
+
 } // End Class WooThemes_Sensei_Quiz
