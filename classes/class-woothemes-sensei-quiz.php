@@ -200,7 +200,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers , $files );
 
 		// save the user data
-        $answers_saved = WooThemes_Sensei_Utils::add_user_data( $lesson_id, 'quiz_answers' , $prepared_answers, $user_id ) ;
+        $answers_saved = WooThemes_Sensei_Utils::add_user_data( 'quiz_answers', $lesson_id, $prepared_answers, $user_id ) ;
 
 		// were the answers saved correctly?
 		if( intval( $answers_saved ) > 0){
@@ -256,7 +256,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         }else{
 
-            $encoded_user_answers = WooThemes_Sensei_Utils::get_user_data( $lesson_id, 'quiz_answers' , $user_id );
+            $encoded_user_answers = WooThemes_Sensei_Utils::get_user_data( 'quiz_answers', $lesson_id  , $user_id );
 
         } // end if transient check
 
@@ -498,8 +498,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         delete_site_transient( $grades_transient_key );
 
         // reset the quiz answers
-        $deleted_answers = WooThemes_Sensei_Utils::delete_user_data( $lesson_id,'quiz_answers', $user_id );
-        $deleted_grades = WooThemes_Sensei_Utils::delete_user_data( $lesson_id,'quiz_grades', $user_id );
+        $deleted_answers = WooThemes_Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
+        $deleted_grades = WooThemes_Sensei_Utils::delete_user_data( 'quiz_grades', $lesson_id, $user_id );
 
         // Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
         WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
@@ -750,7 +750,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          $success = false;
 
          // save that data for the user on the lesson comment meta
-         $comment_meta_id = WooThemes_Sensei_Utils::add_user_data( $lesson_id, 'quiz_grades', $quiz_grades, $user_id   );
+         $comment_meta_id = WooThemes_Sensei_Utils::add_user_data( 'quiz_grades', $lesson_id, $quiz_grades, $user_id   );
 
          // were the grades save successfully ?
          if( intval( $comment_meta_id ) > 0 ) {
@@ -798,7 +798,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          // get the data if nothing was stored in the transient
          if( empty( $user_grades  ) || false != $user_grades ){
 
-             $user_grades = WooThemes_Sensei_Utils::get_user_data( $lesson_id, 'quiz_grades' , $user_id );
+             $user_grades = WooThemes_Sensei_Utils::get_user_data( 'quiz_grades', $lesson_id, $user_id );
 
              //set the transient with the new valid data for faster retrieval in future
              set_site_transient( $transient_key,  $user_grades);
@@ -910,7 +910,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         }
 
         // save the user data
-        $feedback_saved = WooThemes_Sensei_Utils::add_user_data( $lesson_id, 'quiz_answers_feedback' , $encoded_answers_feedback, $user_id ) ;
+        $feedback_saved = WooThemes_Sensei_Utils::add_user_data( 'quiz_answers_feedback', $lesson_id , $encoded_answers_feedback, $user_id ) ;
 
         //Were the the question feedback save correctly?
         if( intval( $feedback_saved ) > 0){
@@ -963,7 +963,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          // get the data if nothing was stored in the transient
          if( empty( $encoded_feedback  ) || false != $encoded_feedback ){
 
-             $encoded_feedback = WooThemes_Sensei_Utils::get_user_data( $lesson_id, 'quiz_answers_feedback' , $user_id );
+             $encoded_feedback = WooThemes_Sensei_Utils::get_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
 
              //set the transient with the new valid data for faster retrieval in future
              set_site_transient( $transient_key,  $encoded_feedback);

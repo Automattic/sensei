@@ -780,7 +780,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         //setup the next assertion
         $transient_key = 'quiz_grades_'. $test_user_id . '_' . $test_lesson_id;
         delete_site_transient( $transient_key );
-        WooThemes_Sensei_Utils::delete_user_data( $test_lesson_id, 'quiz_grades', $test_user_id );
+        WooThemes_Sensei_Utils::delete_user_data( 'quiz_grades',$test_lesson_id,  $test_user_id );
         $random_question_id = array_rand( $test_user_grades );
         $old_data_args = array( 'post_id' => $random_question_id ,
                                 'user_id' => $test_user_id,

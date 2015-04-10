@@ -57,19 +57,19 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
                             $invalid_data_message . ": ' ', ' ', ' ', ' ' " );
         $this->assertFalse( WooThemes_Sensei_Utils::update_user_data( -1,-2, -3, -1 ) ,
                             $invalid_data_message.": -1,-2, -3, -1 " );
-        $this->assertFalse( WooThemes_Sensei_Utils::update_user_data(500, 'key', 'val', 5000 ) ,
-                            $invalid_data_message.": 500, 'key', 'val', 5000 " );
+        $this->assertFalse( WooThemes_Sensei_Utils::update_user_data( 'key',500, 'val', 5000 ) ,
+                            $invalid_data_message.": 'key', 500, 'val', 5000 " );
 
         //does this function return false when attempting to add user data on non sensei post types
         $test_post = $this->factory->post->create();
-        $this->assertFalse( WooThemes_Sensei_Utils::update_user_data( $test_post , 'key', 'val', $test_user_id ) ,
+        $this->assertFalse( WooThemes_Sensei_Utils::update_user_data( 'key', $test_post, 'val', $test_user_id ) ,
             'This function does not reject unsupported post types' );
 
         //does this function return false when attempting to add user data on non sensei post types
         $test_array = array( 1, 2, 3 , 4);
         $test_course_id = $this->factory->post->create(array( 'post_type'=>"course" ) );
         $test_data_key = 'test_key';
-        WooThemes_Sensei_Utils::update_user_data( $test_course_id, $test_data_key ,$test_array, $test_user_id  );
+        WooThemes_Sensei_Utils::update_user_data( $test_data_key, $test_course_id, $test_array, $test_user_id  );
         $course_status = WooThemes_Sensei_Utils::user_course_status( $test_course_id, $test_user_id );
 
         // is the status updated on the passed in sensei post type ?
@@ -104,8 +104,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
             $invalid_data_message . ": ' ', ' ', ' ' " );
         $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( -1,-2, -3) ,
             $invalid_data_message.": -1,-2, -3 " );
-        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( 500, 'key', 5000 ) ,
-            $invalid_data_message.": 500, 'key', 5000" );
+        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data('key', 500, 5000 ) ,
+            $invalid_data_message.": Key, '500', 5000" );
 
         // setup the data for the next assertions
         $test_array = array( 1, 2, 3 , 4);
@@ -113,12 +113,12 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
         $test_data_key = 'test_key';
 
         //does this function return false when there is no lesson status?
-        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( $test_course_id, $test_data_key , $test_user_id ),
+        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( $test_data_key ,$test_course_id,  $test_user_id ),
             'This function should return false when the status has not be set for the given post type');
 
         //setup assertion data
-        WooThemes_Sensei_Utils::update_user_data( $test_course_id, $test_data_key ,$test_array, $test_user_id  );
-        $retrieved_value = WooThemes_Sensei_Utils::get_user_data( $test_course_id, $test_data_key , $test_user_id );
+        WooThemes_Sensei_Utils::update_user_data( $test_data_key, $test_course_id, $test_array, $test_user_id  );
+        $retrieved_value = WooThemes_Sensei_Utils::get_user_data( $test_data_key ,$test_course_id,  $test_user_id );
 
         // doest this function return the data that was saved?
         $this->assertEquals( $test_array, $retrieved_value, 'This function does not retrieve the data that was saved' );
@@ -142,7 +142,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
             $invalid_data_message . ": ' ', ' ', ' ' " );
         $this->assertFalse( WooThemes_Sensei_Utils::delete_user_data( -1,-2, -3) ,
             $invalid_data_message.": -1,-2, -3 " );
-        $this->assertFalse( WooThemes_Sensei_Utils::delete_user_data( 500, 'key', 5000 ) ,
+        $this->assertFalse( WooThemes_Sensei_Utils::delete_user_data( 'key',500, 5000 ) ,
             $invalid_data_message.": 500, 'key', 5000" );
 
         // setup the data for the next assertions
@@ -152,15 +152,15 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
         $test_data_key = 'test_key';
 
         //does this function return false when there is no lesson status?
-        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( $test_lesson_id, $test_data_key , $test_user_id ),
+        $this->assertFalse( WooThemes_Sensei_Utils::get_user_data( $test_data_key, $test_lesson_id, $test_user_id ),
             'This function should return false when the status has not be set for the given post type');
 
         //setup assertion data
-        WooThemes_Sensei_Utils::update_user_data( $test_lesson_id, $test_data_key ,$test_array, $test_user_id  );
-        $deleted = WooThemes_Sensei_Utils::delete_user_data( $test_lesson_id, $test_data_key, $test_user_id );
-        $retrieved_value = WooThemes_Sensei_Utils::get_user_data( $test_lesson_id, $test_data_key , $test_user_id );
+        WooThemes_Sensei_Utils::update_user_data( $test_data_key, $test_lesson_id, $test_array, $test_user_id  );
+        $deleted = WooThemes_Sensei_Utils::delete_user_data( $test_data_key, $test_lesson_id, $test_user_id );
+        $retrieved_value = WooThemes_Sensei_Utils::get_user_data( $test_data_key , $test_lesson_id, $test_user_id );
 
-        // doest the function successfully delete existing sensie user data ?
+        // doest the function successfully delete existing Sensei user data ?
         $this->assertTrue( $deleted ,'The user data should have been deleted, but was not' );
         $this->assertEmpty( $retrieved_value ,'After deleting the user data should return false' );
 
