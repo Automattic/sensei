@@ -985,4 +985,63 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
      } // end get_user_answers_feedback
 
+     /**
+      * Get the user's answer feedback for a specific question.
+      *
+      * This function gives you a single answer note/feedback string
+      * for the user on the given question.
+      *
+      * @since 1.7.5
+      * @access public
+      *
+      * @param int $lesson_id
+      * @param int $question_id
+      * @param int $user_id
+      *
+      * @return string $feedback or bool if false
+      */
+     public function get_user_question_feedback( $lesson_id, $question_id, $user_id = 0 ){
+
+         $feedback = false;
+
+         // parameter validation
+         if( empty( $lesson_id ) || empty( $question_id )
+             || ! ( intval( $lesson_id  ) > 0 )
+             || ! ( intval( $question_id  ) > 0 )
+             || 'lesson' != get_post_type( $lesson_id )
+             || 'question' != get_post_type( $question_id )) {
+
+             return false;
+         }
+
+         // get all the feedback for the user on the given lesson
+         $all_feedback = $this->get_user_answers_feedback( $lesson_id, $user_id );
+
+         if( !$all_feedback || empty( $all_feedback )
+             || ! is_array( $all_feedback ) || ! isset( $all_feedback[ $question_id ] ) ){
+
+             //fallback to data pre 1.7.4
+
+             // setup the sensei data query
+             $args = array(
+                 'post_id' => $question_id,
+                 'user_id' => $user_id,
+                 'type'    => 'sensei_user_answer'
+             );
+             $question_activity = WooThemes_Sensei_Utils::sensei_check_for_activity( $args , true );
+
+             // set the default to false and return that if no old data is available.
+             $old_feedback_data = false;
+             if( isset( $question_activity->comment_ID ) ){
+                 $old_feedback_data = get_comment_meta(  $question_activity->comment_ID , 'answer_note', true );
+             }
+
+             return $old_feedback_data;
+
+         }
+
+         return $all_feedback[ $question_id ];
+
+     } // end get_user_question_feedback
+
 } // End Class WooThemes_Sensei_Quiz

@@ -938,6 +938,7 @@ class WooThemes_Sensei_Utils {
 	/**
 	 * Returns the answer_notes for a specific question and user, or sensei_user_answer entry
 	 *
+     * @deprecated since 1.7.5 use $woothemes_sensei->quiz->get_user_question_feedback instead
 	 * @param mixed $question
 	 * @param int $user_id
 	 * @return string

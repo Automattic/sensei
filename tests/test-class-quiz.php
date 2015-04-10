@@ -885,50 +885,58 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
         $this->assertEquals( $test_user_answers_feedback, $retrieved_answer_feedback, 'Feedback retrieved does not match the saved data.' );
 
-        /*
-        // get the quiz questions
-        $quiz_question_posts = $woothemes_sensei->lesson->lesson_quiz_questions( $test_lesson_quiz_id  );
-        $this->assertTrue( is_array( $quiz_question_posts )
-            && isset( $quiz_question_posts[ 0 ] ) && isset( $quiz_question_posts[ 0 ]->ID )
-            && 'question' == get_post_type( $quiz_question_posts[ 0 ]->ID ) ,
-            'The quiz questions for quiz_id: ' . $test_lesson_quiz_id . ' does not exist or is not returned as expected.'  );
-
-        // create the sample data to save
-        $user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_lesson_quiz_id  );
-
-        // assign the user to the lesson
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id  );
-
-        // test for when there is no answers saved.
-        $is_false_when_no_answers_saved = $woothemes_sensei->quiz->get_user_answers( $test_lesson_id, $test_user_id);
-        $this->assertFalse(  $is_false_when_no_answers_saved  , 'The function should return false when no answers are saved on the Lesson' );
-
-        // save the test users answers on the tes lesson
-        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers( $user_quiz_answers, array() ,$test_lesson_id,  $test_user_id  ) ;
-        $this->assertTrue(  intval(  $lesson_data_saved ) > 0, 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
-
-        // test the function with the wrong parameters
-        $result_for_invalid_user = $woothemes_sensei->quiz->get_user_answers('', $test_user_id);
-        $this->assertFalse(  $result_for_invalid_user , 'The function should return false for and invalid lesson id' );
-
-        $result_invalid_lesson = $woothemes_sensei->quiz->get_user_answers($test_lesson_id, '');
-        $this->assertFalse( $result_invalid_lesson, 'The function should return false for and invalid user id' );
-
-        // test with the correct parameters
-        $user_saved_lesson_answers = $woothemes_sensei->quiz->get_user_answers($test_lesson_id, $test_user_id);
-        $this->assertTrue( is_array( $user_saved_lesson_answers ), 'The function should return an array when an exiting user and lesson with saved answers is passed in' );
-
-        // check all the answers returned
-        foreach( $user_saved_lesson_answers as $question_id => $answer ) {
-            // test if the returned questions relate to valid question post types
-            $this->assertTrue( 'question' == get_post_type( $question_id )  , 'The answers returned  does not relate to valid question post types');
-            // make sure it is the same as the saved answers
-            $this->assertTrue( $user_quiz_answers[$question_id] == $user_saved_lesson_answers[$question_id]   , 'The answers returned are not the same as the answers saved');
-
-        }
-         */
-
     } //end testGetUserAnswersFeedback
+
+    /**
+     * This test Sensei()->quiz->get_user_question_feedback
+     */
+    public function testGetUserQuestionFeedback(){
+        global $woothemes_sensei;
+        // does this function add_user_data exist?
+        $this->assertTrue( method_exists( $woothemes_sensei->quiz , 'get_user_question_feedback'),
+            'The utils class function `get_user_question_feedback` does not exist ' );
+
+        // does it return false for invalid data
+        $invalid_data_message = 'This get_user_question_feedback function does not check false data correctly';
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_feedback('','','')  ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_feedback(' ',' ',' ') ,$invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_feedback( -2, -3, -1 ) , $invalid_data_message );
+        $this->assertFalse( $woothemes_sensei->quiz->get_user_question_feedback( 3000, 5000, 5000 ) , $invalid_data_message );
+
+        // setup the next assertion
+        $test_user_id = wp_create_user( 'studentQuestionFeedback', 'studentQuestionFeedback', 'studQFeedback@test.com' );
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
+        $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
+        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        $woothemes_sensei->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
+        $test_question_id = array_rand( $test_user_answers_feedback );
+        $retrieved_grade = $woothemes_sensei->quiz->get_user_question_feedback( $test_lesson_id, $test_question_id, $test_user_id );
+
+        //test if the the question grade can be retrieved
+        $this->assertEquals( $test_user_answers_feedback[ $test_question_id ], $retrieved_grade,
+            'The feedback retrieved is not equal to the one that was set for this question ID' );
+
+        //setup the next assertion for backwards compatibility.
+        $transient_key = 'sensei_answers_feedback_'.$test_user_id.'_'.$test_lesson_id;
+        delete_site_transient( $transient_key );
+        WooThemes_Sensei_Utils::delete_user_data( 'quiz_answers_feedback',$test_lesson_id,  $test_user_id );
+        $random_question_id = array_rand( $test_user_answers_feedback );
+        $old_data_args = array( 'post_id' => $random_question_id ,
+            'user_id' => $test_user_id,
+            'type' => 'sensei_user_answer',
+            'data' => 'test answer feedback' );
+        $old_data_activity_id = WooThemes_Sensei_Utils::sensei_log_activity( $old_data_args );
+        update_comment_meta( $old_data_activity_id, 'answer_note', 'Sensei sample feedback. You did well!'  );
+        $retrieved_feedback = $woothemes_sensei->quiz->get_user_question_feedback( $test_lesson_id, $random_question_id, $test_user_id );
+
+        // Does the fall back to 1.7.3 data work?
+        $this->assertEquals( 'Sensei sample feedback. You did well!', $retrieved_feedback, 'The get user feedback does not fall back the old data' );
+
+        /// $user_answer_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval($question), 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
+        //$answer_notes = base64_decode( get_comment_meta( $user_answer_id, 'answer_note', true ) )
+
+    }// end testGetUserQuestionFeedback
 
 
 }// end class Sensei_Class_Quiz_Test
