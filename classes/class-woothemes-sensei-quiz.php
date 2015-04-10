@@ -867,4 +867,62 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
      }// end get_user_question_grade
 
+     /**
+      * Save the user's answers feedback
+      *
+      * For this function you must supply all three parameters. If will return false one is left out.
+      * The data will be saved on the lesson ID supplied.
+      *
+      * @since 1.7.5
+      * @access public
+      *
+      * @param array $answers_feedback{
+      *  $type int $question_id
+      *  $type string $question_feedback
+      * }
+      * @param int $lesson_id
+      * @param int $user_id
+      *
+      * @return false or int $feedback_saved
+      */
+    public function save_user_answers_feedback( $answers_feedback, $lesson_id , $user_id = 0 ){
+
+        // make sure the parameters are valid before continuing
+        if( empty( $lesson_id ) || empty( $user_id )
+            || 'lesson' != get_post_type( $lesson_id )
+            ||!get_userdata( $user_id )
+            || !is_array( $answers_feedback ) ){
+
+            return false;
+
+        }
+
+        global $woothemes_sensei;
+        // check if the lesson is started before saving, if not start the lesson for the user
+        if ( !( 0 < intval( WooThemes_Sensei_Utils::user_started_lesson( $lesson_id, $user_id) ) ) ) {
+            WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+        }
+
+        // encode the feedback
+        $encoded_answers_feedback =  array();
+        foreach( $answers_feedback as $question_id => $feedback ){
+            $encoded_answers_feedback[ $question_id ] = base64_encode( $feedback );
+        }
+
+        // save the user data
+        $feedback_saved = WooThemes_Sensei_Utils::add_user_data( $lesson_id, 'quiz_answers_feedback' , $encoded_answers_feedback, $user_id ) ;
+
+        //Were the the question feedback save correctly?
+        if( intval( $feedback_saved ) > 0){
+
+            // save transient to make retrieval faster in future
+             $transient_key = 'sensei_answers_feedback_'.$user_id.'_'.$lesson_id;
+             set_site_transient( $transient_key, $answers_feedback, 30 * DAY_IN_SECONDS );
+
+        }
+
+        return $feedback_saved;
+
+    } // end save_user_answers_feedback
+
 } // End Class WooThemes_Sensei_Quiz

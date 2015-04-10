@@ -795,4 +795,65 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
     }// end testGetUserQuestionGrade
 
+    /**
+     * This tests Sensei()->quiz->save_user_answers_feedback
+     */
+    public function testSaveUserAnswersFeedback(){
+
+        // setup the data and objects needed for this test
+        global $woothemes_sensei;
+        $test_user_id = wp_create_user( 'studentFeedbackSave', 'studentFeedbackSave', 'studentFeedbackSave@test.com' );
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
+
+        // does the save_user_answers function exist?
+        $this->assertTrue( method_exists( $woothemes_sensei->quiz, 'save_user_answers_feedback'),
+            'The quiz class function `save_user_answers_feedback` does not exist ' );
+
+        // does this save_user_answers return false for bogus data
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers_feedback( array(), array() ,-1000, -200 ) , 'save_user_answers_feedback does not return false for no existent users and lesson ' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers_feedback( '', array(), '' , '' ) , 'save_user_answers_feedback does not return false for empty parameters' );
+
+        // does the function return the correct information when a user doesn't exist?
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers_feedback( '' , array() , '', $test_lesson_id ) , 'save_user_answers_feedback does not return false for empty user' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers_feedback( '' , array() ,  -500 ,  $test_lesson_id ) , 'save_user_answers_feedback does not return false for a non existant user' );
+
+        // Test the answers_array parameter
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers_feedback( 'Answers Text', array(), $test_lesson_id, $test_user_id ) , 'save_user_answers_feedback does not return false if answers is not passed in as an array' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers_feedback( '' , array(), $test_lesson_id , $test_user_id  ) , 'save_user_answers_feedback does not return false for empty answer array' );
+        $this->assertFalse(  $woothemes_sensei->quiz->save_user_answers_feedback( '', array(), '' , '' ) , 'save_user_answers_feedback does not return false incorrectly formatted answers' );
+
+
+        // Test a case that is setup correctly which should return a positive result
+        $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
+        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        $lesson_data_saved = $woothemes_sensei->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
+
+        // did the correct data return a valid comment id on the lesson as a result?
+        $this->assertTrue(  intval(  $lesson_data_saved ) > 0 , 'The comment id returned after saving the quiz feedback does not represent a valid comment ' );
+
+        //setup for the next group of assertions
+        $sensei_activity_logged = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) );
+        $status_comment = WooThemes_Sensei_Utils::user_lesson_status( $test_lesson_id, $test_user_id );
+        $saved_feedback = get_comment_meta( $status_comment->comment_ID, 'quiz_answers_feedback', true );
+
+        // was the data that was just stored stored correctly ? Check the comment meta on the lesson id
+        $this->assertTrue( ( bool ) $sensei_activity_logged , 'The saved answers feedback was not stored correctly on the Lesson');
+        $this->assertFalse( empty($saved_feedback) , 'The saved feedback was not stored correctly on the Quiz');
+        $this->assertTrue( is_array( maybe_unserialize( $saved_feedback) ), 'The saved feedback was not stored correctly on the Lesson');
+
+        // can you retrieve data and is it the same as what was stored?
+        //compare every single answer
+        $retrieved_feedback_array = maybe_unserialize( $saved_feedback );
+
+        foreach( $test_user_answers_feedback as $question_id => $feedback ){
+
+            $saved_single_answer = $retrieved_feedback_array[ $question_id ];
+            $assert_message = 'The saved feedback does not correspond to what was passed into the save_user_answers_feedback function ';
+            $this->assertEquals( $feedback  , base64_decode( $saved_single_answer ),
+                $assert_message );
+        }// end for each
+
+    } // end testSaveUserAnswersFeedback
+
 }// end class Sensei_Class_Quiz_Test
