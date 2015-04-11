@@ -927,7 +927,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
             'type' => 'sensei_user_answer',
             'data' => 'test answer feedback' );
         $old_data_activity_id = WooThemes_Sensei_Utils::sensei_log_activity( $old_data_args );
-        update_comment_meta( $old_data_activity_id, 'answer_note', 'Sensei sample feedback. You did well!'  );
+        update_comment_meta( $old_data_activity_id, 'answer_note', base64_encode( 'Sensei sample feedback. You did well!' ) );
         $retrieved_feedback = $woothemes_sensei->quiz->get_user_question_feedback( $test_lesson_id, $random_question_id, $test_user_id );
 
         // Does the fall back to 1.7.3 data work?
