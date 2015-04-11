@@ -303,7 +303,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $this->reset_user_lesson_data( $lesson_id, get_current_user_id() );
 
 		//this function should only run once
-		remove_action( 'template_redirect', array( $this, 'reset_button_click_response'  ) );
+		remove_action( 'template_redirect', array( $this, 'reset_button_click_listener'  ) );
 
 	} // end reset_button_click_listener
 
@@ -494,12 +494,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         // reset the transients
         $answers_transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
         $grades_transient_key = 'quiz_grades_'.$user_id.'_'.$lesson_id;
+        $answers_feedback_transient_key = 'sensei_answers_feedback_'.$user_id.'_'.$lesson_id;
         delete_site_transient( $answers_transient_key );
         delete_site_transient( $grades_transient_key );
+        delete_site_transient( $answers_feedback_transient_key );
 
-        // reset the quiz answers
+        // reset the quiz answers and feedback notes
         $deleted_answers = WooThemes_Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
         $deleted_grades = WooThemes_Sensei_Utils::delete_user_data( 'quiz_grades', $lesson_id, $user_id );
+        $deleted_user_feedback = WooThemes_Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
 
         // Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
         WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
