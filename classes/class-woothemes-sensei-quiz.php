@@ -1036,7 +1036,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              // set the default to false and return that if no old data is available.
              $old_feedback_data = false;
              if( isset( $question_activity->comment_ID ) ){
-                 $old_feedback_data = get_comment_meta(  $question_activity->comment_ID , 'answer_note', true );
+                 $old_feedback_data = base64_decode( get_comment_meta(  $question_activity->comment_ID , 'answer_note', true ) );
              }
 
              return $old_feedback_data;
