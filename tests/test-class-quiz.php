@@ -933,10 +933,95 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         // Does the fall back to 1.7.3 data work?
         $this->assertEquals( 'Sensei sample feedback. You did well!', $retrieved_feedback, 'The get user feedback does not fall back the old data' );
 
-        /// $user_answer_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval($question), 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
-        //$answer_notes = base64_decode( get_comment_meta( $user_answer_id, 'answer_note', true ) )
-
     }// end testGetUserQuestionFeedback
 
+    /**
+     * This test is for Woothemes_Sensei()->quiz->save_user_answers_feedback. We check the transients only.
+     *
+     * @group transient
+     */
+    public function testSaveUserFeedbackTransients(){
+
+        // setup the data and objects needed for this test
+        global $woothemes_sensei;
+        $test_user_id = wp_create_user('studFBTransients', 'studFBTransients', 'studFBTransients@test.com');
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $test_lesson_id );
+        $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
+        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        $woothemes_sensei->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
+
+        // was it saved correctly?
+        $transient_key = 'sensei_answers_feedback_'.$test_user_id.'_'. $test_lesson_id;
+        $transient_val = get_site_transient( $transient_key );
+        $decoded_transient_val = array();
+        if( is_array( $transient_val ) ) {
+            foreach ($transient_val as $question_id => $encoded_feedback) {
+                $decoded_transient_val[$question_id] = base64_decode($encoded_feedback);
+            }
+        }
+
+        $this->assertFalse( empty( $transient_val ) , 'Transients are not saved correctly for user feedback ' );
+        $this->assertEquals( $test_user_answers_feedback ,$decoded_transient_val ,
+            'The transient should be the same as the prepared answer which was base64 encoded' );
+
+        // if saved again will the transient be updated
+        $old_transient_value = $decoded_transient_val;
+        $new_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id );
+        $woothemes_sensei->quiz->save_user_answers_feedback( $new_feedback , $test_lesson_id  ,  $test_user_id  ) ;
+        $new_users_retrieved_feedback = $woothemes_sensei->quiz->get_user_answers_feedback( $test_lesson_id, $test_user_id );
+
+        $this->assertNotEquals( $old_transient_value, $new_users_retrieved_feedback ,
+            'Transient not updated on new save for the same user lesson combination' );
+
+    } // end testSaveUserFeedbackTransients
+
+    /**
+     * This test Woothemes_Sensei()->quiz->get_user_answers_feedback transients only
+     *
+     * @group transient
+     */
+    function testGetUserFeedbackTransients(){
+
+        // setup the test data
+        global $woothemes_sensei;
+        $test_user_id = wp_create_user('studFBTransientsGet', 'studFBTransientsGet', 'studFBTransientsGet@test.com');
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $transient_key = 'sensei_answers_feedback_'.$test_user_id.'_'. $test_lesson_id;
+        $transient_get_test = array( base64_encode( 'studFBTransientsGet' )  );
+        $transient_get_test_decoded = array( 'studFBTransientsGet' );
+        set_site_transient( $transient_key, $transient_get_test  );
+        $users_retrieved_answers = $woothemes_sensei->quiz->get_user_answers_feedback( $test_lesson_id, $test_user_id );
+
+        // test if the answer is taken from the transient
+        $this->assertEquals( $transient_get_test_decoded , $users_retrieved_answers ,
+            'The transient was not used before proceeding to get the users answers from DB' );
+
+        //setup next assertion
+        $test_quiz_id = $woothemes_sensei->lesson->lesson_quizzes($test_lesson_id);
+        $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
+        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+
+        $woothemes_sensei->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
+        delete_site_transient( $transient_key );
+        $woothemes_sensei->quiz->get_user_answers_feedback( $test_lesson_id, $test_user_id );
+        $transient_data_after_get_call = get_site_transient( $transient_key );
+
+        // test if a transient is created when one does not exist
+        // in this test we first delete the transient after it is been added in the save_user_answers
+        // function above, then we get the data again and test if the function added the transient
+        $this->assertNotFalse( $transient_data_after_get_call,
+            ' The get_user_answers function does not set the transient after retrieving the data ');
+
+        // make sure the one of the keys passed in is in the transient
+        $random_key = array_rand( $test_user_answers_feedback  );
+        $this->assertArrayHasKey( $random_key , $transient_data_after_get_call  ,
+            'The transient does not contain the same elements that we passed in' );
+
+        //make sure the number of elements passes in is the same as what is in the new transient cache
+        $this->assertEquals( count( $test_user_answers_feedback ), count( $transient_data_after_get_call ),
+            'The number of elements in the transient does not match those the user submitted');
+
+    } // testGetUserFeedbackTransients
 
 }// end class Sensei_Class_Quiz_Test

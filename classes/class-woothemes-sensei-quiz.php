@@ -30,6 +30,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - set_user_grades()
  * - get_user_grades()
  * - get_user_question_grade()
+ * - save_user_answers_feedback()
+ * - get_user_answers_feedback()
+ * - get_user_question_feedback()
  */
  class WooThemes_Sensei_Quiz {
 	public $token;
@@ -920,7 +923,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
             // save transient to make retrieval faster in future
              $transient_key = 'sensei_answers_feedback_'.$user_id.'_'.$lesson_id;
-             set_site_transient( $transient_key, $answers_feedback, 30 * DAY_IN_SECONDS );
+             set_site_transient( $transient_key, $encoded_answers_feedback, 30 * DAY_IN_SECONDS );
 
         }
 
@@ -964,7 +967,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          $encoded_feedback = get_site_transient( $transient_key );
 
          // get the data if nothing was stored in the transient
-         if( empty( $encoded_feedback  ) || false != $encoded_feedback ){
+         if( empty( $encoded_feedback  ) || !$encoded_feedback ){
 
              $encoded_feedback = WooThemes_Sensei_Utils::get_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
 
