@@ -480,46 +480,36 @@ class WooThemes_Sensei_Admin {
 	 */
 	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
 
-		$quiz_args = array(
-			'post_type' => 'quiz',
-			'posts_per_page' => 1,
-			'post_parent' => $old_lesson_id,
-			'suppress_filters' 	=> 0
-		);
-		$quiz = array_shift( get_posts( $quiz_args ) );
+        global $woothemes_sensei;
 
-		$question_args = array(
-			'post_type'	=> 'question',
-			'posts_per_page' => -1,
-			'orderby'        => 'meta_value_num title',
-			'order'          => 'ASC',
-			'meta_query'	 => array(
-				array(
-					'key'       => '_quiz_id',
-					'value'     => $quiz->ID,
-				)
-			),
-			'suppress_filters' => 0
-		);
-		$questions = get_posts( $question_args );
+        $old_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $old_lesson_id );
+        $old_quiz_questions = $woothemes_sensei->lesson->lesson_quiz_questions( $old_quiz_id );
 
-		$quiz->post_parent = $new_lesson_id;
-		$new_quiz = $this->duplicate_post( $quiz, '' );
-		add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
-		add_post_meta( $new_lesson_id, '_lesson_quiz', $new_quiz->ID );
+        // duplicate the generic wp post information
+		$new_quiz = $this->duplicate_post( get_post( $old_quiz_id ), '' );
 
-		$question_count = 1;
-		foreach( $questions as $question ) {
+		//update the new lesson data
+        add_post_meta( $new_lesson_id, '_lesson_quiz', $new_quiz->ID );
 
-			// Add to quiz
+		//update the new quiz data
+        add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
+        wp_update_post(
+            array(
+                'ID' => $new_quiz->ID,
+                'post_parent' => $new_lesson_id
+            )
+        );
+
+		foreach( $old_quiz_questions as $question ) {
+
+			// copy the question order over to the new quiz
+			$old_question_order = get_post_meta( $question->ID, '_quiz_question_order'. $old_quiz_id, true );
+            $new_question_order = str_ireplace( $old_quiz_id, $new_quiz->ID , $old_question_order );
+            add_post_meta( $question->ID, '_quiz_question_order' . $new_quiz->ID, $new_question_order );
+
+			// Add question to quiz
 			add_post_meta( $question->ID, '_quiz_id', $new_quiz->ID, false );
 
-			// Set order of question
-			$question_order = $new_quiz->ID . '000' . $question_count;
-			add_post_meta( $question->ID, '_quiz_question_order' . $new_quiz->ID, $question_order );
-
-			// Increment counter for question ordering
-			++$question_count;
 		}
 	}
 
