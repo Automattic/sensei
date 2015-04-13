@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package WordPress
  * @subpackage Sensei
  * @category Administration
- * @since 1.0.0
+ * @since 1.8.0
  *
  * TABLE OF CONTENTS
  *
@@ -28,7 +28,7 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
         private $order_page_slug;
         public $taxonomy;
 
-        public function __construct($file)
+        public function __construct( $file )
         {
             $this->file = $file;
             $this->dir = dirname($this->file);
@@ -106,6 +106,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Runs on plugin activation - refreshes permalinks
+         *
+         * @since 1.8.0
          * @return void
          */
         public function activation()
@@ -116,6 +118,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Register 'module' taxonomy
+         *
+         * @since 1.8.0
          * @return void
          */
         public function register_taxonomy()
@@ -150,6 +154,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Manage taoxnomy meta boxes on lesson edit screen
+         *
+         * @since 1.8.0
          * @return void
          */
         public function lesson_metaboxes()
@@ -168,6 +174,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Build content for custom module meta box
+         *
+         * @since 1.8.0
          * @param  object $post Current post object
          * @return void
          */
@@ -223,6 +231,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Save module to lesson
+         *
+         * @since 1.8.0
          * @param  integer $post_id ID of post
          * @return mixed            Post ID on permissions failure, boolean true on success
          */
@@ -264,7 +274,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
         }
 
         /**
-         * Display course field on new module screeen
+         * Display course field on new module screen
+         *
+         * @since 1.8.0
          * @param object $taxonomy Taxonomy object
          * @return void
          */
@@ -306,7 +318,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
         }
 
         /**
-         * Dispay course field on module edit screen
+         * Display course field on module edit screen
+         *
+         * @since 1.8.0
          * @param  object $module Module term object
          * @return void
          */
@@ -378,6 +392,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Save module course on add/edit
+         *
+         * @since 1.8.0
          * @param  integer $module_id ID of module
          * @return void
          */
@@ -416,6 +432,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Ajax function to search for courses matching term
+         *
+         * @since 1.8.0
          * @return void
          */
         public function search_courses_json()
@@ -464,6 +482,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Remove default lesson display from courses containing modules
+         *
+         * @since 1.8.0
          * @return void
          */
         public function single_course_remove_lessons()
@@ -477,6 +497,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * display modules on single course pages
+         *
+         * @since 1.8.0
          * @return void
          */
         public function single_course_modules()
@@ -803,6 +825,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Set lesson archive template to display on module taxonomy archive page
+         *
+         * @since 1.8.0
          * @param  string $template Default template
          * @return string           Modified template
          */
@@ -830,6 +854,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Modify module taxonomy archive query
+         *
+         * @since 1.8.0
          * @param  object $query The query object passed by reference
          * @return void
          */
@@ -866,6 +892,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Modify archive page title
+         *
+         * @since 1.8.0
          * @param  string $title Default title
          * @return string        Modified title
          */
@@ -879,6 +907,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Display module description on taxonomy archive page
+         *
+         * @since 1.8.0
          * @return void
          */
         public function module_archive_description()
@@ -918,6 +948,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Display module navigation links on module taxonomy archive page
+         *
+         * @since 1.8.0
          * @return void
          */
         public function module_navigation_links()
@@ -966,6 +998,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Trigger save_lesson_module_progress() when a lesson status is updated for a specific user
+         *
+         * @since 1.8.0
          * @param  string $status Status of the lesson for the user
          * @param  integer $user_id ID of user
          * @param  integer $lesson_id ID of lesson
@@ -977,7 +1011,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
         }
 
         /**
-         * Save lesson's module progess for a specific user
+         * Save lesson's module progress for a specific user
+         *
+         * @since 1.8.0
          * @param  integer $user_id ID of user
          * @param  integer $lesson_id ID of lesson
          * @return void
@@ -993,6 +1029,8 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Save progress of module for user
+         *
+         * @since 1.8.0
          * @return void
          */
         public function save_module_progress()
@@ -1010,6 +1048,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Save module progess for user
+         *
+         * @since 1.8.0
+         *
          * @param  integer $module_id ID of module
          * @param  integer $course_id ID of course
          * @param  integer $user_id ID of user
@@ -1025,6 +1066,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Get module progress for a user
+         *
+         * @since 1.8.0
+         *
          * @param  integer $module_id ID of module
          * @param  integer $course_id ID of course
          * @param  integer $user_id ID of user
@@ -1041,6 +1085,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Calculate module progess for user
+         *
+         * @since 1.8.0
+         *
          * @param  integer $user_id ID of user
          * @param  integer $module_id ID of module
          * @param  integer $course_id ID of course
@@ -1089,6 +1136,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Register admin screen for ordering modules
+         *
+         * @since 1.8.0
+         *
          * @return void
          */
         public function register_module_order_screen()
@@ -1102,6 +1152,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Dsplay Module Order screen
+         *
+         * @since 1.8.0
+         *
          * @return void
          */
         public function module_order_screen()
@@ -1199,6 +1252,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Add 'Module order' column to courses list table
+         *
+         * @since 1.8.0
+         *
          * @param  array $columns Existing columns
          * @return array           Modifed columns
          */
@@ -1210,6 +1266,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Load content in 'Module order' column
+         *
+         * @since 1.8.0
+         *
          * @param  string $column Current column name
          * @param  integer $course_id ID of course
          * @return void
@@ -1225,6 +1284,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Save module order for course
+         *
+         * @since 1.8.0
+         *
          * @param  string $order_string Comma-separated string of module IDs
          * @param  integer $course_id ID of course
          * @return boolean                 True on success, false on failure
@@ -1241,6 +1303,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Get module order for course
+         *
+         * @since 1.8.0
+         *
          * @param  integer $course_id ID of course
          * @return mixed              Module order on success, false if no module order has been saved
          */
@@ -1255,6 +1320,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Modify module taxonomy columns
+         *
+         * @since 1.8.0
+         *
          * @param  array $columns Default columns
          * @return array          Modified columns
          */
@@ -1270,6 +1338,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Manage content in custom module taxonomy columns
+         *
+         * @since 1.8.0
+         *
          * @param  string $column_data Default data for column
          * @param  string $column_name Name of current column
          * @param  integer $term_id ID of current term
@@ -1307,6 +1378,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Add 'Module' columns to Analysis Lesson Overview table
+         *
+         * @since 1.8.0
+         *
          * @param  array $columns Default columns
          * @return array          Modified columns
          */
@@ -1333,6 +1407,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Data for 'Module' column Analysis Lesson Overview table
+         *
+         * @since 1.8.0
+         *
          * @param  array $columns Table column data
          * @param  integer $lesson_id Lesson ID
          * @return array              Updated column data
@@ -1358,6 +1435,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Add 'Module' columns to Analysis Course table
+         *
+         * @since 1.8.0
+         *
          * @param  array $columns Default columns
          * @return array          Modified columns
          */
@@ -1371,6 +1451,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Data for 'Module' column in Analysis Course table
+         *
+         * @since 1.8.0
+         *
          * @param  array $columns Table column data
          * @param  integer $lesson_id Lesson ID
          * @param  integer $user_id User ID
@@ -1397,6 +1480,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Get module for lesson
+         *
+         * @since 1.8.0
+         *
          * @param  integer $lesson_id ID of lesson
          * @return object             Module taxonomy term object
          */
@@ -1422,6 +1508,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Get ordered array of all modules in course
+         *
+         * @since 1.8.0
+         *
          * @param  integer $course_id ID of course
          * @return array              Ordered array of module taxonomy term objects
          */
@@ -1468,6 +1557,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Load frontend CSS
+         *
+         * @since 1.8.0
+         *
          * @return void
          */
         public function enqueue_styles()
@@ -1480,6 +1572,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Load admin Javascript
+         *
+         * @since 1.8.0
+         *
          * @return void
          */
         public function admin_enqueue_scripts()
@@ -1497,6 +1592,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Load admin CSS
+         *
+         * @since 1.8.0
+         *
          * @return void
          */
         public function admin_enqueue_styles()
@@ -1512,6 +1610,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Load plugin localisation
+         *
+         * @since 1.8.0
+         *
          * @return void
          */
         public function load_localisation()
@@ -1521,6 +1622,9 @@ if( ! class_exists( 'Sensei_Modules' ) ) {
 
         /**
          * Load plugin textdomain
+         *
+         * @since 1.8.0
+         *
          * @return void
          */
         public function load_plugin_textdomain()
