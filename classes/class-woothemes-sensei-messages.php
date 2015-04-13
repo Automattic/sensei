@@ -205,8 +205,19 @@ class WooThemes_Sensei_Messages {
 
 		if( ! isset( $post->ID ) ) return $html;
 
-		$html .= '<h3 id="private_message">' . __( 'Send Private Message', 'woothemes-sensei' ) . '</h3>';
+        //confirm private message
+        $confirmation = '';
+        if( isset( $_GET[ 'send' ] ) && 'complete' == $_GET[ 'send' ] ) {
 
+            $confirmation_message = __('Private message submitted.', 'woothemes-sensei');
+            $confirmation = '<div class="sensei-message info">' . $confirmation_message . '</div>';
+
+        }
+
+		$html .= '<h3 id="private_message">' . __( 'Send Private Message', 'woothemes-sensei' ) . '</h3>';
+        $html .= '<p>';
+        $html .=  $confirmation;
+        $html .= '</p>';
 		$html .= '<form name="contact-teacher" action="" method="post" class="contact-teacher">';
 			$html .= '<p class="form-row form-row-wide">';
 				$html .= '<textarea name="contact_message" placeholder="' . __( 'Enter your private message.', 'woothemes-sensei' ) . '"></textarea>';
