@@ -1042,7 +1042,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              }
 
              // finally use the default question feedback
-             if( empty( $old_feedback_data ) ){
+             if( empty( $feedback ) ){
                  $feedback = get_post_meta( $question_id, '_answer_feedback', true );
              }
 
