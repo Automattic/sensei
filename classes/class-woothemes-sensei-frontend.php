@@ -1358,11 +1358,43 @@ class WooThemes_Sensei_Frontend {
 		    	$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
 		    	// Check for woocommerce
 		    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < intval( $wc_post_id ) ) ) {
-		    		sensei_wc_add_to_cart($post->ID);
+
+                    sensei_wc_add_to_cart($post->ID);
+
 		    	} else {
-		    		// User needs to register
-		    		wp_register( '<div class="status register">', '</div>' );
+
+                    if( get_option( 'users_can_register') ) {
+
+                        global $woothemes_sensei;
+                        $my_courses_page_id = '';
+
+                        $settings = $woothemes_sensei->settings->get_settings();
+                        if( isset( $settings[ 'my_course_page' ] )
+                            && 0 < intval( $settings[ 'my_course_page' ] ) ){
+
+                            $my_courses_page_id = $settings[ 'my_course_page' ];
+
+                        }
+
+
+                        // show a link to the my_courses page or the WordPress register page if
+                        // not my courses page was set in the settings
+                        if( !empty( $my_courses_page_id ) && $my_courses_page_id ){
+
+                            $my_courses_page_url = get_permalink( $my_courses_page_id  );
+                            $my_courses_page_html_element = '<a href="'.$my_courses_page_url. '">Register<a>';
+                            echo '<div class="status register">' . $my_courses_page_html_element . '</div>' ;
+
+                        } else{
+
+                            wp_register( '<div class="status register">', '</div>' );
+
+                        }
+
+                    } // end if user can register
+
 		    	} // End If Statement
+
 		    } // End If Statement ?>
 
 		</section><?php
