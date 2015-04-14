@@ -1260,7 +1260,28 @@ class WooThemes_Sensei {
             require_once( 'class-sensei-modules.php');
             $woothemes_sensei->modules = new Sensei_Core_Modules( $this->file );
 
+        }else{
+
+            add_action( 'admin_notices', array( $this, 'disable_sensei_modules_extension') );
+
         }
     }
+
+    /**
+     * Tell the user to that the modules extension is no longer needed.
+     *
+     * @since 1.8.0
+     */
+    public function disable_sensei_modules_extension(){ ?>
+        <div id="message" class="error sensei-message sensei-connect">
+            <div class="squeezer">
+                <p>
+                    <strong> <?php _e( 'Please remove the Sensei Modules extension.', 'woothemes-sensei' ); ?></strong>
+                    <?php _e( ' The modules extension is now bundled in the Sensei plugin.', 'woothemes-sensei' ); ?>
+                </p>
+            </div>
+        </div>
+
+    <?php }// end function
 
 } // End Class
