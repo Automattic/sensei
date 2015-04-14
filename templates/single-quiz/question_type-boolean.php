@@ -135,7 +135,11 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 			}
 		}
 		?>
-		<li class="<?php esc_attr_e( $answer_class ); ?>"><input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count . '-true'; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="true" <?php echo checked( $user_answer_entry, 'true', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count . '-true'; ?>"><?php _e( 'True', 'woothemes-sensei' ); ?></label></li>
+		<li class="<?php esc_attr_e( $answer_class ); ?>">
+            <input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-true'; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="true" <?php echo checked( $user_answer_entry, 'true', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;
+            <label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-true'; ?>"><?php _e( 'True', 'woothemes-sensei' ); ?>
+            </label>
+        </li>
 		<?php
 		$answer_class = '';
 		if( isset( $user_correct ) ) {
@@ -151,7 +155,10 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 			}
 		}
 		?>
-		<li class="<?php esc_attr_e( $answer_class ); ?>"><input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count . '-false'; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="false" <?php echo checked( $user_answer_entry, 'false', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;<label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-' . $count . '-false'; ?>"><?php _e( 'False', 'woothemes-sensei' ); ?></label></li>
+		<li class="<?php esc_attr_e( $answer_class ); ?>">
+            <input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-false'; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="false" <?php echo checked( $user_answer_entry, 'false', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;
+            <label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-false'; ?>"><?php _e( 'False', 'woothemes-sensei' ); ?></label>
+        </li>
 	</ul>
 	<?php if( $answer_notes ) { ?>
 		<div class="sensei-message info info-special"><?php echo apply_filters( 'the_content', $answer_notes ); ?></div>
