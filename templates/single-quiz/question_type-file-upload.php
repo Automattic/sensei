@@ -111,7 +111,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 		$answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
 		$answer_message_class = 'user_right';
 	}
-	$answer_notes = WooThemes_Sensei_Utils::sensei_get_user_question_answer_notes( $user_answer_entry );
+    $answer_notes = $woothemes_sensei->quiz->get_user_question_feedback( $lesson_id, $question_id, $current_user->ID );
 	if( $answer_notes ) {
 		$answer_message_class .= ' has_notes';
 	}
