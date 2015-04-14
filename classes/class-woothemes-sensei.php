@@ -125,6 +125,9 @@ class WooThemes_Sensei {
 		//Add the quiz class
 		$this->quiz = $this->post_types->quiz;
 
+        // load the modules class
+        add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 
@@ -1238,5 +1241,26 @@ class WooThemes_Sensei {
 			add_filter( 'sensei_answer_text', 'latex_markup' );
 		}
 	}
+
+    /**
+     * Load the module functionality.
+     *
+     * This function is hooked into plugins_loaded to avoid conflicts with
+     * the retired modules extension.
+     *
+     * @since 1.8.0
+     */
+    public function load_modules_class(){
+        global $sensei_modules, $woothemes_sensei;
+
+        if( !class_exists( 'Sensei_Modules' )
+            &&  'Sensei_Modules' != get_class( $sensei_modules ) ) {
+
+            //Load the modules class
+            require_once( 'class-sensei-modules.php');
+            $woothemes_sensei->modules = new Sensei_Core_Modules( $this->file );
+
+        }
+    }
 
 } // End Class
