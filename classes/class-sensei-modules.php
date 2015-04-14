@@ -1580,7 +1580,7 @@ class Sensei_Core_Modules
 
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
-        wp_register_script($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'js/admin' . $suffix . '.js', array('jquery', 'jquery-ui-sortable'), '1.0.0', true);
+        wp_register_script($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery', 'jquery-ui-sortable'), '1.0.0', true);
         wp_enqueue_script($this->taxonomy . '-sortable');
 
         wp_register_script('sensei-chosen', esc_url($woothemes_sensei->plugin_url) . 'assets/chosen/chosen.jquery.min.js', array('jquery'), '1.3.0');
