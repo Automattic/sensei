@@ -1563,7 +1563,7 @@ class Sensei_Core_Modules
     {
         global $woothemes_sensei;
 
-        wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/frontend.css', '1.0.0');
+        wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', '1.0.0');
         wp_enqueue_style($this->taxonomy . '-frontend');
     }
 
@@ -1598,7 +1598,7 @@ class Sensei_Core_Modules
     {
         global $woothemes_sensei;
 
-        wp_register_style($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'css/admin.css');
+        wp_register_style($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'css/modules-admin.css');
         wp_enqueue_style($this->taxonomy . '-sortable');
 
         wp_register_style($woothemes_sensei->token . '-chosen', esc_url($woothemes_sensei->plugin_url) . 'assets/chosen/chosen.css', '', '1.3.0', 'screen');
