@@ -55,7 +55,7 @@ class Sensei_Core_Modules
         add_action('wp', array($this, 'save_module_progress'), 10);
 
         // Handle module ordering
-        add_action('admin_menu', array($this, 'register_module_order_screen'), 10);
+        add_action('admin_menu', array($this, 'register_modules_admin_menu_items'), 10);
         add_filter('manage_edit-course_columns', array($this, 'course_columns'), 11, 1);
         add_action('manage_posts_custom_column', array($this, 'course_column_content'), 11, 2);
 
@@ -145,7 +145,7 @@ class Sensei_Core_Modules
             'hierarchical' => true,
             'show_admin_column' => true,
             'show_in_nav_menus' => false,
-            'show_ui' => true,
+            'show_ui' => false,
             'rewrite' => array('slug' => $modules_rewrite_slug ),
             'labels' => $labels
         );
@@ -1142,10 +1142,13 @@ class Sensei_Core_Modules
      *
      * @return void
      */
-    public function register_module_order_screen()
+    public function register_modules_admin_menu_items()
     {
+        //add the modules link under the Course main menu
+        add_submenu_page('edit.php?post_type=course', __('Modules', 'woothemes-sensei'), __('Modules', 'woothemes-sensei'), 'edit_lessons', 'edit-tags.php?taxonomy=module','' );
+
         // Regsiter new admin page for module ordering
-        $hook = add_submenu_page('edit.php?post_type=lesson', __('Order Modules', 'woothemes-sensei'), __('Order Modules', 'woothemes-sensei'), 'edit_lessons', $this->order_page_slug, array($this, 'module_order_screen'));
+        $hook = add_submenu_page('edit.php?post_type=course', __('Order Modules', 'woothemes-sensei'), __('Order Modules', 'woothemes-sensei'), 'edit_lessons', $this->order_page_slug, array($this, 'module_order_screen'));
 
         add_action('admin_print_scripts-' . $hook, array($this, 'admin_enqueue_scripts'));
         add_action('admin_print_styles-' . $hook, array($this, 'admin_enqueue_styles'));
