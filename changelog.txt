@@ -1,5 +1,19 @@
 *** Sensei Changelog ***
 
+2015.04.14 - version 1.7.5
+* Fix - Admin learner course completion no longer redirects to the lesson screen.
+* Tweak - Use update meta instead of add meta for the quiz lesson meta
+* Fix - Edit single question answer feedback is now saved the first time
+* Tweak - Update language strings to use the main Sensei language string and update the POT file
+* Tweak - Remove the default comment emails sent when using the sensei messages feature
+* Tweak - Remove the purchase notice if a user is already taking a course
+* Fix - Upload file button error on the single question edit screen.
+* Fix - Maintain quiz question order when duplicating a lesson.
+* Fix - Grading feedback now shows up for automatic and manual graded quizzes.
+* Tweak - Use home_url instead of site_url
+* Fix - Show user confirmation when the private message was sent
+* Tweak - The single course register button links to my courses and not WP register screen.
+
 2015.03.31 - version 1.7.4
  * Fix - Allow users to save their answers uniquely for questions shared across multiple quizzes
  * Fix - Bug that blocked teacher to access the admin area when WooCommerce is active
