@@ -132,13 +132,21 @@ class Sensei_Core_Modules
             'menu_name' => __('Modules', 'woothemes-sensei'),
         );
 
+        /**
+         * Filter to alter the Sensei Modules rewrtie slug
+         *
+         * @since 1.8.0
+         * @param string default 'modules'
+         */
+        $modules_rewrite_slug = apply_filters('sensei_module_slug', 'modules');
+
         $args = array(
             'public' => true,
             'hierarchical' => true,
             'show_admin_column' => true,
             'show_in_nav_menus' => false,
             'show_ui' => true,
-            'rewrite' => array('slug' => apply_filters('sensei_module_slug', 'modules')),
+            'rewrite' => array('slug' => $modules_rewrite_slug ),
             'labels' => $labels
         );
 
