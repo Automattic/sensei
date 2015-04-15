@@ -1191,27 +1191,24 @@ class WooThemes_Sensei_Admin {
 
 		if( $course_id ) {
 
-			if( class_exists( 'Sensei_Modules' ) ) {
-				global $sensei_modules;
+            $modules = Sensei()->modules->get_course_modules( intval( $course_id ) );
 
-				$modules = $sensei_modules->get_course_modules( intval( $course_id ) );
+            foreach( $modules as $module ) {
 
-				foreach( $modules as $module ) {
+                $module_order_string = $_POST[ 'lesson-order-module-' . $module->term_id ];
 
-					$module_order_string = $_POST[ 'lesson-order-module-' . $module->term_id ];
+                if( $module_order_string ) {
+                    $order = explode( ',', $module_order_string );
+                    $i = 1;
+                    foreach( $order as $lesson_id ) {
+                        if( $lesson_id ) {
+                            update_post_meta( $lesson_id, '_order_module_' . $module->term_id, $i );
+                            ++$i;
+                        }
+                    }
+                }
+            }
 
-					if( $module_order_string ) {
-						$order = explode( ',', $module_order_string );
-						$i = 1;
-						foreach( $order as $lesson_id ) {
-							if( $lesson_id ) {
-								update_post_meta( $lesson_id, '_order_module_' . $module->term_id, $i );
-								++$i;
-							}
-						}
-					}
-				}
-			}
 
 			if( $order_string ) {
 				update_post_meta( $course_id, '_lesson_order', $order_string );

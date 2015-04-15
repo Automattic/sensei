@@ -492,9 +492,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 			$all_lessons = array();
 			if( class_exists( 'Sensei_Modules' ) ) {
-                global $sensei_modules;
 
-                $modules = $sensei_modules->get_course_modules( intval( $lesson_course_id ) );
+                $modules = Sensei()->modules->get_course_modules( intval( $lesson_course_id ) );
 
                 foreach( (array) $modules as $module ) {
 
@@ -511,7 +510,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                         ),
                         'tax_query' => array(
                             array(
-                                'taxonomy' => $sensei_modules->taxonomy,
+                                'taxonomy' => Sensei()->modules->taxonomy,
                                 'field' => 'id',
                                 'terms' => intval( $module->term_id )
                             )
