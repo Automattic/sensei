@@ -205,8 +205,19 @@ class WooThemes_Sensei_Messages {
 
 		if( ! isset( $post->ID ) ) return $html;
 
-		$html .= '<h3 id="private_message">' . __( 'Send Private Message', 'woothemes-sensei' ) . '</h3>';
+        //confirm private message
+        $confirmation = '';
+        if( isset( $_GET[ 'send' ] ) && 'complete' == $_GET[ 'send' ] ) {
 
+            $confirmation_message = __('Your private message has been sent.', 'woothemes-sensei');
+            $confirmation = '<div class="sensei-message tick">' . $confirmation_message . '</div>';
+
+        }
+
+		$html .= '<h3 id="private_message">' . __( 'Send Private Message', 'woothemes-sensei' ) . '</h3>';
+        $html .= '<p>';
+        $html .=  $confirmation;
+        $html .= '</p>';
 		$html .= '<form name="contact-teacher" action="" method="post" class="contact-teacher">';
 			$html .= '<p class="form-row form-row-wide">';
 				$html .= '<textarea name="contact_message" placeholder="' . __( 'Enter your private message.', 'woothemes-sensei' ) . '"></textarea>';
@@ -231,17 +242,6 @@ class WooThemes_Sensei_Messages {
 		if( ! wp_verify_nonce( $_POST['sensei_message_teacher_nonce'], 'message_teacher' ) ) return;
 
 		$message_id = $this->save_new_message_post( $_POST['sender_id'], $_POST['receiver_id'], $_POST['contact_message'], $_POST['post_id'] );
-
-		if( $message_id ) {
-
-			$message_url = get_permalink( $message_id );
-
-			$this->message_notice['type'] = 'tick';
-			$this->message_notice['notice'] = sprintf( __( 'Your private message has been sent - you can view the message and its replies %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( $message_url ) . '">', '</a>' );
-		} else {
-			$this->message_notice['type'] = 'alert';
-			$this->message_notice['notice'] = __( 'There was an error sending your message - please try again.', 'woothemes-sensei' );
-		}
 
 	}
 
@@ -336,7 +336,9 @@ class WooThemes_Sensei_Messages {
 		        do_action( 'sensei_new_private_message', $message_id );
 
 		    } else {
+
 		    	$message_id = false;
+
 		    }
 	    }
 

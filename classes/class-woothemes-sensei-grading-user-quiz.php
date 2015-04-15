@@ -102,8 +102,8 @@ class WooThemes_Sensei_Grading_User_Quiz {
 				$type = 'multiple-choice';
 			}
 
-            $legacy_user_answer = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $this->user_id, 'type' => 'sensei_user_answer' ), true );
-			$question_answer_notes = WooThemes_Sensei_Utils::sensei_get_user_question_answer_notes( $legacy_user_answer );
+			$question_answer_notes = $woothemes_sensei->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
+
 
 			$question_grade_total = get_post_meta( $question_id, '_question_grade', true );
 			if( ! $question_grade_total || 0 == intval( $question_grade_total ) ) {
@@ -227,7 +227,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 						</div>
 						<div class="answer-notes">
 							<h5><?php _e( 'Grading Notes', 'woothemes-sensei' ) ?></h5>
-							<textarea class="correct-answer" name="<?php esc_attr_e( 'question_' . $question_id . '_notes' ); ?>" placeholder="<?php _e( 'Add notes here...', 'woothemes-sensei' ) ?>"><?php echo $question_answer_notes; ?></textarea>
+							<textarea class="correct-answer" name="questions_feedback[<?php esc_attr_e( $question_id ); ?>]" placeholder="<?php _e( 'Add notes here...', 'woothemes-sensei' ) ?>"><?php echo $question_answer_notes; ?></textarea>
 						</div>
 					</div>
 				</div>
