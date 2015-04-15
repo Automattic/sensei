@@ -105,7 +105,7 @@ if ( is_user_logged_in() ) {
 
 		$lessons = get_posts( $args );
 
-		if( class_exists( 'Sensei_Modules' ) && 0 < count( $displayed_lessons ) ) {
+		if(  0 < count( $displayed_lessons ) ) {
 			$html .= '<h3>' . __( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
 		}
 

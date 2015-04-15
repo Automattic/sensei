@@ -1144,7 +1144,7 @@ class WooThemes_Sensei_Admin {
 
 				if( 0 < count( $lessons ) ) {
 
-					if( 0 < count( $displayed_lessons ) && class_exists( 'Sensei_Modules' ) ) {
+					if( 0 < count( $displayed_lessons ) ) {
 						$html .= '<h3>' . __( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
 					}
 
