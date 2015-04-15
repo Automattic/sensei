@@ -1278,7 +1278,7 @@ class WooThemes_Sensei {
             <div class="squeezer">
                 <p>
                     <strong> <?php _e( 'Please remove the Sensei Modules extension.', 'woothemes-sensei' ); ?></strong>
-                    <?php _e( ' The modules extension is now bundled in the Sensei plugin.', 'woothemes-sensei' ); ?>
+                    <?php _e( ' The modules functionality is now built into Sensei.', 'woothemes-sensei' ); ?>
                 </p>
             </div>
         </div>
