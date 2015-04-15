@@ -1188,7 +1188,7 @@ class Sensei_Core_Modules
         $courses = get_posts($args);
 
         $html .= '<form action="' . admin_url('edit.php') . '" method="get">' . "\n";
-        $html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
+        $html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
         $html .= '<input type="hidden" name="page" value="' . esc_attr($this->order_page_slug) . '" />' . "\n";
         $html .= '<select id="module-order-course" name="course_id">' . "\n";
         $html .= '<option value="">Select a course</option>' . "\n";
@@ -1218,6 +1218,8 @@ class Sensei_Core_Modules
                 if ($modules) {
 
                     $order = $this->get_course_module_order($course_id);
+
+                    $order_string='';
                     if ($order) {
                         $order_string = implode(',', $order);
                     }
