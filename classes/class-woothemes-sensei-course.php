@@ -346,7 +346,7 @@ class WooThemes_Sensei_Course {
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int $post_id (default: 0)
-	 * @return void
+	 * @return int new meta id | bool meta value saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		// Get the meta key.
@@ -357,18 +357,10 @@ class WooThemes_Sensei_Course {
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
-		// Get the meta value of the custom field key.
-		$meta_value = get_post_meta( $post_id, $meta_key, true );
-		// If a new meta value was added and there was no previous value, add it.
-		if ( $new_meta_value && '' == $meta_value ) {
-			add_post_meta( $post_id, $meta_key, $new_meta_value, true );
-		} elseif ( $new_meta_value && $new_meta_value != $meta_value ) {
-			// If the new meta value does not match the old value, update it.
-			update_post_meta( $post_id, $meta_key, $new_meta_value );
-		} elseif ( '' == $new_meta_value && $meta_value ) {
-			// If there is no new meta value but an old value exists, delete it.
-			delete_post_meta( $post_id, $meta_key, $meta_value );
-		} // End If Statement
+
+        // update field with the new value
+        return update_post_meta( $post_id, $meta_key, $new_meta_value );
+
 	} // End save_post_meta()
 
 	/**

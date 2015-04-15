@@ -91,9 +91,9 @@ class WooThemes_Sensei_Course_Results {
 			$course = get_post( $course_id );
 
 			if ( get_option('permalink_structure') ) {
-				$permalink = trailingslashit( get_site_url() ) . $this->courses_url_base . '/' . $course->post_name . '/results/';
+				$permalink = trailingslashit( get_home_url() ) . $this->courses_url_base . '/' . $course->post_name . '/results/';
 			} else {
-				$permalink = trailingslashit( get_site_url() ) . '?course_results=' . $course->post_name;
+				$permalink = trailingslashit( get_home_url() ) . '?course_results=' . $course->post_name;
 			}
 		}
 

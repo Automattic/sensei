@@ -233,15 +233,17 @@ class WooThemes_Sensei_Question {
 	}
 
 	public function save_question( $post_id = 0 ) {
-		global $woothemes_sensei;
 
-		if( ! isset( $_POST['post_type'] ) ) return;
+		if( ! isset( $_POST['post_type']
+            ) || 'question' != $_POST['post_type'] ) {
+            return;
+        }
 
-		$data = $_POST;
+        global $woothemes_sensei;
 
-		if ( 'question' != $data['post_type'] ) return;
-
-		$data['quiz_id'] = 0;
+        //setup the data for saving
+		$data = $_POST ;
+        $data['quiz_id'] = 0;
 		$data['question_id'] = $post_id;
 
 		if ( ! wp_is_post_revision( $post_id ) ){
