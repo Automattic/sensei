@@ -1261,9 +1261,10 @@ class WooThemes_Sensei {
             $woothemes_sensei->modules = new Sensei_Core_Modules( $this->file );
 
         }else{
-
+            // fallback for people still using the modules extension.
+            global $sensei_modules;
+            $woothemes_sensei->modules = $sensei_modules;
             add_action( 'admin_notices', array( $this, 'disable_sensei_modules_extension') );
-
         }
     }
 
