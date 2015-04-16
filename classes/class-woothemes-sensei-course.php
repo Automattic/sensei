@@ -1435,4 +1435,74 @@ class WooThemes_Sensei_Course {
 
     }// end get_all_courses
 
+    /**
+     * Return or echos a select element with all the courses
+     *
+     * @since 1.8.0
+     *
+     * @param int $selected_course_id
+     * @param bool $echo if the output must be printed
+     * @param array $attributes the attributes for the select element
+     * @return string @select_element
+     */
+    public static function drop_down_courses( $selected_course_id , $attributes = array(), $echo = false ){
+
+        $drop_down_element = '';
+
+        // check basic attributes:
+        if( !isset( $attributes['name'] ) || empty( $attributes['name']  ) ) {
+            $attributes['name'] = 'sensei-course-options';
+        }
+
+        if( !isset( $attributes['id'] ) || empty( $attributes['id']  ) ) {
+            $attributes['id'] = 'sensei-course-options';
+        }
+
+        if( !isset( $attributes['class'] ) || empty( $attributes['class']  ) ) {
+            $attributes['class'] ='chosen_select widefat';
+        }
+
+        // create element attributes
+        $combined_attributes = '';
+        foreach( $attributes as $attribute => $value ){
+
+            $combined_attributes .= $attribute . '="'.$value.'"' . ' ';
+
+        }// end for each
+
+        // create the select element
+        $drop_down_element .= '<select '. $combined_attributes . ' >' . "\n";
+
+        //fetch the courses
+        /**
+         * sensei_drop_down_courses filter
+         *
+         * This filter runs inside Sensei_Course::drop_down_courses. This list of course
+         * will be added to the select element for the course drop down.
+         *
+         * @param array $courses{
+         * @type WP_Post
+         * }
+         * @param array $attributes
+         */
+        $courses = apply_filters('sensei_drop_down_courses',  self::get_all_courses(), $attributes );
+
+        // Select the course for the lesson
+        $drop_down_element .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+        if ( count( $courses ) > 0 ) {
+            foreach ($courses as $course ){
+                $drop_down_element .= '<option value="' . esc_attr( absint( $course->ID ) ) . '"' . selected( $course->ID, $selected_course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
+            } // End For Loop
+        } // End If Statement
+        $drop_down_element .= '</select>' . "\n";
+
+        // output the element if the client wants to
+        if( $echo ){
+            echo $drop_down_element;
+        }
+
+        return $drop_down_element;
+
+    } // end drop_down_courses
+
 } // End Class
