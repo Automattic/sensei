@@ -1410,4 +1410,29 @@ class WooThemes_Sensei_Course {
 		return ob_get_clean();
 	}
 
+    /**
+     * Returns a list of all courses
+     *
+     * @since 1.8.0
+     * @return array $courses{
+     *  @type $course WP_Post
+     * }
+     */
+    public static function get_all_courses(){
+
+        $args = array(
+               'post_type' => 'course',
+                'numberposts' 		=> -1,
+                'orderby'         	=> 'title',
+                'order'           	=> 'ASC',
+                'post_status'      	=> 'any',
+                'suppress_filters' 	=> 0,
+        );
+
+        $wp_query_obj =  new WP_Query( $args );
+
+        return $wp_query_obj->posts;
+
+    }// end get_all_courses
+
 } // End Class
