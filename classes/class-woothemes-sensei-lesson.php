@@ -481,13 +481,13 @@ class WooThemes_Sensei_Lesson {
 	public function lesson_course_meta_box_content () {
 		global $post;
 		// Setup Lesson Meta Data
-		$select_lesson_prerequisite = 0;
+		$selected_lesson_course = 0;
 		if ( 0 < $post->ID ) {
-			$select_lesson_prerequisite = get_post_meta( $post->ID, '_lesson_course', true );
+			$selected_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
 		} // End If Statement
 		// Handle preselected course
 		if ( isset( $_GET[ 'course_id' ] ) && ( 0 < absint( $_GET[ 'course_id' ] ) ) ) {
-			$select_lesson_prerequisite = absint( $_GET[ 'course_id' ] );
+			$selected_lesson_course = absint( $_GET[ 'course_id' ] );
 		} // End If Statement
 		// Get the Lesson Posts
 		$post_args = array(	'post_type' 		=> 'course',
@@ -502,17 +502,16 @@ class WooThemes_Sensei_Lesson {
 		$html = '';
 		// Nonce
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
-			// Select the course for the lesson
-			$html .= '<select id="lesson-course-options" name="lesson_course" class="chosen_select widefat">' . "\n";
-				$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-				if ( count( $posts_array ) > 0 ) {
-				foreach ($posts_array as $post_item){
-					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( get_the_title( $post_item ) ) . '</option>' . "\n";
-				} // End For Loop
-				} // End If Statement
-			$html .= '</select>' . "\n";
-			// Course Actions Panel
-			if ( current_user_can( 'publish_courses' )) {
+
+        // Select the course for the lesson
+        $drop_down_args = array(
+            'name'=>'lesson_course',
+            'id' => 'lesson-course-options'
+        );
+        $html .= WooThemes_Sensei_Course::drop_down_courses( $selected_lesson_course, $drop_down_args , false  );
+
+        // Course Actions Panel
+		if ( current_user_can( 'publish_courses' )) {
 				$html .= '<div id="lesson-course-actions">';
 					$html .= '<p>';
 						// Add a course action link
@@ -603,6 +602,7 @@ class WooThemes_Sensei_Lesson {
 					$html .= '</p>';
 				$html .= '</div>';
 			} // End If Statement
+
 		// Output the HTML
 		echo $html;
 	} // End lesson_course_meta_box_content()
