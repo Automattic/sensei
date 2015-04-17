@@ -1449,19 +1449,6 @@ class WooThemes_Sensei_Course {
 
         $drop_down_element = '';
 
-        // check basic attributes:
-        if( !isset( $attributes['name'] ) || empty( $attributes['name']  ) ) {
-            $attributes['name'] = 'sensei-course-options';
-        }
-
-        if( !isset( $attributes['id'] ) || empty( $attributes['id']  ) ) {
-            $attributes['id'] = 'sensei-course-options';
-        }
-
-        if( !isset( $attributes['class'] ) || empty( $attributes['class']  ) ) {
-            $attributes['class'] ='chosen_select widefat';
-        }
-
         // create element attributes
         $combined_attributes = '';
         foreach( $attributes as $attribute => $value ){
@@ -1469,9 +1456,6 @@ class WooThemes_Sensei_Course {
             $combined_attributes .= $attribute . '="'.$value.'"' . ' ';
 
         }// end for each
-
-        // create the select element
-        $drop_down_element .= '<select '. $combined_attributes . ' >' . "\n";
 
         //fetch the courses
         /**
@@ -1487,14 +1471,15 @@ class WooThemes_Sensei_Course {
          */
         $courses = apply_filters('sensei_drop_down_courses',  self::get_all_courses(), $attributes );
 
-        // Select the course for the lesson
-        $drop_down_element .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+        //generate select drop down options
+        $select_options = array();
         if ( count( $courses ) > 0 ) {
             foreach ($courses as $course ){
-                $drop_down_element .= '<option value="' . esc_attr( absint( $course->ID ) ) . '"' . selected( $course->ID, $selected_course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
-            } // End For Loop
-        } // End If Statement
-        $drop_down_element .= '</select>' . "\n";
+                $select_options[ $course->ID ] = get_the_title( $course->ID );
+            }
+        }
+        // Select the course for the lesson
+        $drop_down_element .= WooThemes_Sensei_Utils::generate_drop_down( $selected_course_id , $select_options ,$attributes );
 
         // output the element if the client wants to
         if( $echo ){
