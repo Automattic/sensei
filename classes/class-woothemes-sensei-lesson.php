@@ -514,7 +514,13 @@ class WooThemes_Sensei_Lesson {
             'name'=>'lesson_course',
             'id' => 'lesson-course-options'
         );
-        $html .= WooThemes_Sensei_Course::drop_down_courses( $selected_lesson_course, $drop_down_args , false  );
+
+        $courses = WooThemes_Sensei_Course::get_all_courses();
+        $courses_options = array();
+        foreach( $courses as $course ){
+            $courses_options[ $course->ID ] = get_the_title( $course ) ;
+        }
+        $html .= WooThemes_Sensei_Utils::generate_drop_down( $selected_lesson_course, $courses_options, $drop_down_args , false  );
 
         // Course Actions Panel
 		if ( current_user_can( 'publish_courses' )) {
