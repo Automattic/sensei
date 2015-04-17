@@ -131,6 +131,12 @@ class WooThemes_Sensei_Lesson {
 			add_action( 'wp_ajax_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 			add_action( 'wp_ajax_nopriv_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 
+            // output bulk edit fields
+            add_action( 'bulk_edit_custom_box', array( $this, 'all_lessons_edit_fields' ), 10, 2 );
+
+            // save bulk edit fields
+            add_action( 'wp_ajax_save_bulk_edit_book', array( $this, 'save_all_lessons_edit_fields' ) );
+
 		} else {
 			// Frontend actions
 		} // End If Statement
@@ -1728,6 +1734,11 @@ class WooThemes_Sensei_Lesson {
 			wp_enqueue_script( 'sensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), '1.5.2' );
 			wp_enqueue_script( 'sensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), '1.5.2' );
 
+            // Load the bulk edit screen script
+            if( 'edit.php' == $hook && 'lesson'==$_GET['post_type'] ) {
+                wp_enqueue_script( 'sensei-lessons-bulk-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-bulk-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version , true);
+            }
+
 			// Localise script
 			$translation_strings = array( 'right_colon' => __( 'Right:', 'woothemes-sensei' ), 'wrong_colon' => __( 'Wrong:', 'woothemes-sensei' ), 'add_file' => __( 'Add file', 'woothemes-sensei' ), 'change_file' => __( 'Change file', 'woothemes-sensei' ), 'confirm_remove' => __( 'Are you sure you want to remove this question?', 'woothemes-sensei' ), 'confirm_remove_multiple' => __( 'Are you sure you want to remove these questions?', 'woothemes-sensei' ), 'too_many_for_cat' => __( 'You have selected more questions than this category contains - please reduce the number of questions that you are adding.', 'woothemes-sensei' ) );
 			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ), 'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ), 'lesson_add_multiple_questions_nonce' => wp_create_nonce( 'lesson_add_multiple_questions_nonce' ), 'lesson_remove_multiple_questions_nonce' => wp_create_nonce( 'lesson_remove_multiple_questions_nonce' ), 'lesson_add_existing_questions_nonce' => wp_create_nonce( 'lesson_add_existing_questions_nonce' ), 'filter_existing_questions_nonce' => wp_create_nonce( 'filter_existing_questions_nonce' ) );
@@ -2855,5 +2866,74 @@ class WooThemes_Sensei_Lesson {
          return $lesson_course_id;
 
      }// en get_course_id
+
+    /**
+     * Add the admin all lessons screen edit options.
+     *
+     * @hooked bulk_edit_custom_box
+     *
+     * @since 1.8.0
+     *
+     * @param string $column_name
+     * @param string $post_type
+     * @return void
+     */
+    public function all_lessons_edit_fields( $column_name, $post_type ) {
+
+        // only show these options ont he lesson post type edit screen
+        if( 'lesson' != $post_type || 'lesson-course' != $column_name ){
+            return;
+        }
+
+        ?>
+        <fieldset class="inline-edit-col-right inline-edit-book">
+            <div class="inline-edit-col column-<?php echo $column_name ?>">
+                <label class="inline-edit-group">
+                    <?php
+
+                        // create a nonce field to be used as a security measure when saving the data
+                        wp_nonce_field( 'bulk-edit-lessons', '_edit_lessons_nonce' );
+
+                        $name_id = 'sensei-edit-lesson-course';
+                        $attributes = array( 'name'=> $name_id, 'id'=>$name_id );
+                        echo '<label for="'. $name_id .'">Lesson Course:</label>';
+                        WooThemes_Sensei_Course::drop_down_courses( '' , $attributes , true  );
+                    ?>
+
+                </label>
+            </div>
+        </fieldset>
+    <?php
+    }// all_lessons_edit_fields
+
+    /**
+     * Respond to the ajax call from the bulk edit save function. This comes
+     * from the admin all lesson screen.
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    function save_all_lessons_edit_fields() {
+
+        // verify all the data before attempting to save
+        if( ! isset( $_POST['security'] ) || ! check_ajax_referer( 'bulk-edit-lessons', 'security' )
+            ||  empty( $_POST[ 'post_ids' ] )  || ! is_array( $_POST[ 'post_ids' ] ) ) {
+            die();
+        }
+
+        // get our variables
+        $new_course = sanitize_text_field(  $_POST['sensei_edit_lesson_course'] );
+
+        // store the values for all selected posts
+        foreach( $_POST[ 'post_ids' ] as $post_id ) {
+
+            // update lesson course
+            update_post_meta( $post_id, '_lesson_course', $new_course );
+
+        }
+
+        die();
+
+    } // end save_all_lessons_edit_fields
 
 } // End Class
