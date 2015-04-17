@@ -1443,7 +1443,7 @@ class WooThemes_Sensei_Course {
      * @param int $selected_course_id
      * @param bool $echo if the output must be printed
      * @param array $attributes the attributes for the select element
-     * @return string @select_element
+     * @return string @$drop_down_element
      */
     public static function drop_down_courses( $selected_course_id , $attributes = array(), $echo = false ){
 
@@ -1499,9 +1499,9 @@ class WooThemes_Sensei_Course {
         // output the element if the client wants to
         if( $echo ){
             echo $drop_down_element;
+        }else{
+            return $drop_down_element;
         }
-
-        return $drop_down_element;
 
     } // end drop_down_courses
 
