@@ -1431,7 +1431,17 @@ class WooThemes_Sensei_Course {
 
         $wp_query_obj =  new WP_Query( $args );
 
-        return $wp_query_obj->posts;
+        /**
+         * sensei_get_all_courses filter
+         *
+         * This filter runs inside Sensei_Course::get_all_courses.
+         *
+         * @param array $courses{
+         *  @type WP_Post
+         * }
+         * @param array $attributes
+         */
+        return apply_filters( 'sensei_get_all_courses' , $wp_query_obj->posts );
 
     }// end get_all_courses
 
