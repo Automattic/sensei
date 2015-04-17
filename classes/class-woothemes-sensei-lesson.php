@@ -2897,13 +2897,43 @@ class WooThemes_Sensei_Lesson {
                 <label class="inline-edit-group">
                     <?php
 
-                        // create a nonce field to be used as a security measure when saving the data
-                        wp_nonce_field( 'bulk-edit-lessons', '_edit_lessons_nonce' );
+                    // create a nonce field to be used as a security measure when saving the data
+                    wp_nonce_field( 'bulk-edit-lessons', '_edit_lessons_nonce' );
 
-                        $name_id = 'sensei-edit-lesson-course';
-                        $attributes = array( 'name'=> $name_id, 'id'=>$name_id );
-                        echo '<label for="'. $name_id .'">Lesson Course:</label>';
-                        WooThemes_Sensei_Course::drop_down_courses( '' , $attributes , true  );
+                    // unchanged option - this i needed in the list because
+                    // the default option in bulk edit should not be empty. If it is
+                    // the user will erase data they didn't want to touch.
+                    $no_change_text = '-- ' . __('No Change', 'woothemes-sensei') . ' --';
+
+                    //
+                    //course selection
+                    //
+                    $name_id = 'sensei-edit-lesson-course';
+                    $course_attributes = array( 'name'=> $name_id, 'id'=>$name_id );
+                    $courses =  WooThemes_Sensei_Course::get_all_courses();
+                    $course_options = array();
+                    if ( count( $courses ) > 0 ) {
+                        foreach ($courses as $course ){
+                            $course_options[ $course->ID ] = get_the_title( $course->ID );
+                        }
+                    }
+                    //pre-append the no change option
+                    $course_options['-1']=  $no_change_text;
+                    echo '<label for="'. $name_id .'">'. __('Lesson Course', 'woothemes-sensei') . '</label>';
+                    echo WooThemes_Sensei_Utils::generate_drop_down( '-1', $course_options, $course_attributes );
+
+                    //
+                    // lesson complexity selection
+                    // TODO single lesson edit complexity dropdown not working
+                    //
+                    $lesson_complexities =  $this->lesson_complexities();
+                    //pre-append the no change option
+                    $lesson_complexities['-1']=  $no_change_text;
+                    $complexity_name_id = 'sensei-edit-lesson-complexity';
+                    $complexity_dropdown_attributes = array( 'name'=> $complexity_name_id, 'id'=>$complexity_name_id );
+                    echo '<label for="'. $complexity_name_id .'">'. __('Lesson Complexity', 'woothemes-sensei') . '</label>';
+                    echo WooThemes_Sensei_Utils::generate_drop_down( '-1', $lesson_complexities, $complexity_dropdown_attributes );
+
                     ?>
 
                 </label>
@@ -2929,12 +2959,22 @@ class WooThemes_Sensei_Lesson {
 
         // get our variables
         $new_course = sanitize_text_field(  $_POST['sensei_edit_lesson_course'] );
+        $new_complexity = sanitize_text_field(  $_POST['sensei_edit_complexity'] );
 
         // store the values for all selected posts
         foreach( $_POST[ 'post_ids' ] as $post_id ) {
 
+            // do not save the items if the value is -1 as this
+            // means it was not changed
+
             // update lesson course
-            update_post_meta( $post_id, '_lesson_course', $new_course );
+            if( -1 != $new_course ){
+                update_post_meta( $post_id, '_lesson_course', $new_course );
+            }
+            // update lesson complexity
+            if( -1 != $new_complexity ){
+                update_post_meta( $post_id, '_lesson_complexity', $new_complexity );
+            }
 
         }
 
