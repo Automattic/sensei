@@ -2082,10 +2082,11 @@ class WooThemes_Sensei_Utils {
      *   @type string $attribute  type such name or id etc.
      *  @type string $value
      * }
+     * @param bool $enable_none_option
      *
      * @return string $drop_down_element
      */
-    public static function generate_drop_down( $selected_value, $options = array() , $attributes = array() ) {
+    public static function generate_drop_down( $selected_value, $options = array() , $attributes = array(), $enable_none_option = true ) {
 
         $drop_down_element = '';
 
@@ -2120,7 +2121,10 @@ class WooThemes_Sensei_Utils {
         // create the select element
         $drop_down_element .= '<select '. $combined_attributes . ' >' . "\n";
 
-        $drop_down_element .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+        // show the none option if the client requested
+        if( $enable_none_option ) {
+            $drop_down_element .= '<option value="">' . __('None', 'woothemes-sensei') . '</option>';
+        }
 
         if ( count( $options ) > 0 ) {
 
