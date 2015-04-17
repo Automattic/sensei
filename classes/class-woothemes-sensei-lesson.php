@@ -2467,17 +2467,17 @@ class WooThemes_Sensei_Lesson {
 	 * lesson_complexities function.
 	 *
 	 * @access public
-	 * @return void
+	 * @return array $lesson_complexities
 	 */
 	public function lesson_complexities() {
 
 		// V2 - make filter for this array
-		$complexity_array = array( 	'easy' => __( 'Easy', 'woothemes-sensei' ),
+        $lesson_complexities = array( 	'easy' => __( 'Easy', 'woothemes-sensei' ),
 									'std' => __( 'Standard', 'woothemes-sensei' ),
 									'hard' => __( 'Hard', 'woothemes-sensei' )
 									);
 
-		return $complexity_array;
+		return $lesson_complexities;
 
 	} // End lesson_complexities
 
