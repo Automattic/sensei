@@ -938,6 +938,7 @@ class WooThemes_Sensei_Utils {
 	/**
 	 * Returns the answer_notes for a specific question and user, or sensei_user_answer entry
 	 *
+     * @deprecated since 1.7.5 use $woothemes_sensei->quiz->get_user_question_feedback instead
 	 * @param mixed $question
 	 * @param int $user_id
 	 * @return string
@@ -1916,16 +1917,16 @@ class WooThemes_Sensei_Utils {
      * Alias to Woothemes_Sensei_Utils::update_user_data
      * @since 1.7.4
      *
-     * @param int $post_id
      * @param string $data_key maximum 39 characters allowed
+     * @param int $post_id
      * @param mixed $value
      * @param int $user_id
      *
      * @return bool $success
      */
-    public static function add_user_data( $post_id, $data_key, $value = '' , $user_id = 0  ){
+    public static function add_user_data( $data_key, $post_id , $value = '' , $user_id = 0  ){
 
-        return self::update_user_data( $post_id, $data_key, $value , $user_id );
+        return self::update_user_data( $data_key, $post_id, $value , $user_id );
 
     }// end add_user_data
 
@@ -1937,14 +1938,14 @@ class WooThemes_Sensei_Utils {
      *
      * @since 1.7.4
      *
-     * @param int $post_id
      * @param string $data_key maximum 39 characters allowed
+     * @param int $post_id
      * @param mixed $value
      * @param int $user_id
      *
      * @return bool $success
      */
-    public static function update_user_data( $post_id, $data_key, $value = '' , $user_id = 0  ){
+    public static function update_user_data( $data_key, $post_id, $value = '' , $user_id = 0  ){
 
         if( ! ( $user_id > 0 ) ){
             $user_id = get_current_user_id();
@@ -1989,13 +1990,13 @@ class WooThemes_Sensei_Utils {
      *
      * @since 1.7.4
      *
-     * @param $post_id
      * @param $data_key
+     * @param $post_id
      * @param int $user_id
      *
      * @return mixed $user_data_value
      */
-    public static function get_user_data( $post_id, $data_key, $user_id = 0  ){
+    public static function get_user_data( $data_key, $post_id, $user_id = 0  ){
 
         $user_data_value = true;
 
@@ -2029,13 +2030,15 @@ class WooThemes_Sensei_Utils {
     }// end get_user_data
 
     /**
-     * @param int $post_id
+     * Delete the Sensei user data for the given key, Sensei post type and user combination.
+     *
      * @param int $data_key
+     * @param int $post_id
      * @param int $user_id
      *
      * @return bool $deleted
      */
-    public static function delete_user_data( $post_id, $data_key, $user_id ){
+    public static function delete_user_data( $data_key, $post_id , $user_id ){
         $deleted = true;
 
         if( ! ( $user_id > 0 ) ){

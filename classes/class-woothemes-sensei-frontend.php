@@ -1044,8 +1044,8 @@ class WooThemes_Sensei_Frontend {
         	</p>
         	<p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
         	<?php if ( 0 < $free_lesson_count ) {
-                $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes_sensei' ), $free_lesson_count ); ?>
-                <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes_sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
+                $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes-sensei' ), $free_lesson_count ); ?>
+                <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
             <?php } ?>
 		</section><?php
 	} // End sensei_course_archive_meta()
@@ -1355,11 +1355,43 @@ class WooThemes_Sensei_Frontend {
 		    	$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
 		    	// Check for woocommerce
 		    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < intval( $wc_post_id ) ) ) {
-		    		sensei_wc_add_to_cart($post->ID);
+
+                    sensei_wc_add_to_cart($post->ID);
+
 		    	} else {
-		    		// User needs to register
-		    		wp_register( '<div class="status register">', '</div>' );
+
+                    if( get_option( 'users_can_register') ) {
+
+                        global $woothemes_sensei;
+                        $my_courses_page_id = '';
+
+                        $settings = $woothemes_sensei->settings->get_settings();
+                        if( isset( $settings[ 'my_course_page' ] )
+                            && 0 < intval( $settings[ 'my_course_page' ] ) ){
+
+                            $my_courses_page_id = $settings[ 'my_course_page' ];
+
+                        }
+
+
+                        // show a link to the my_courses page or the WordPress register page if
+                        // not my courses page was set in the settings
+                        if( !empty( $my_courses_page_id ) && $my_courses_page_id ){
+
+                            $my_courses_page_url = get_permalink( $my_courses_page_id  );
+                            $my_courses_page_html_element = '<a href="'.$my_courses_page_url. '">Register<a>';
+                            echo '<div class="status register">' . $my_courses_page_html_element . '</div>' ;
+
+                        } else{
+
+                            wp_register( '<div class="status register">', '</div>' );
+
+                        }
+
+                    } // end if user can register
+
 		    	} // End If Statement
+
 		    } // End If Statement ?>
 
 		</section><?php
@@ -1380,15 +1412,25 @@ class WooThemes_Sensei_Frontend {
 		} // End If Statement
 	} // End sensei_course_meta_video()
 
-	public function sensei_woocommerce_in_cart_message() {
+    /**
+     * This function shows the WooCommerce cart notice if the user has
+     * added the current course to cart. It does not show if the user is already taking
+     * the course.
+     *
+     * @since 1.0.2
+     * @return void;
+     */
+    public function sensei_woocommerce_in_cart_message() {
 		global $post, $woocommerce;
 
 		$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
+        $user_course_status_id = WooThemes_Sensei_Utils::user_started_course($post->ID , get_current_user_id() );
+		if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
 
-		if ( 0 < intval( $wc_post_id ) ) {
 			if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
 				echo '<div class="sensei-message info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
 			} // End If Statement
+
 		} // End If Statement
 
 	} // End sensei_woocommerce_in_cart_message()
