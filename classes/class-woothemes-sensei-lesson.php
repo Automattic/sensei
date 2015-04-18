@@ -2958,6 +2958,19 @@ class WooThemes_Sensei_Lesson {
                     echo '<label for="'. $pass_percentage_name_id .'">'. __('Pass Percentage', 'woothemes-sensei') . '</label>';
                     echo '<input name="' . $pass_percentage_name_id . '" id="' . $pass_percentage_name_id . '" type="number" />';
 
+                    //
+                    // Enable quiz reset button
+                    //
+                    $quiz_reset_select__options = array(
+                        '-1' => $no_change_text,
+                        '0' => __('No','woothemes'),
+                        '1' => __('Yes','woothemes'),
+                    );
+                    $quiz_reset_name_id = 'sensei-edit-enable-quiz-reset';
+                    $quiz_reset_select_attributes = array( 'name'=> $quiz_reset_name_id, 'id'=>$quiz_reset_name_id );
+                    echo '<label for="'. $quiz_reset_name_id .'">'. __('Enable quiz reset button', 'woothemes-sensei') . '</label>';
+                    echo WooThemes_Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
+
                     ?>
                 </label>
             </div>
@@ -2985,7 +2998,7 @@ class WooThemes_Sensei_Lesson {
         $new_complexity = sanitize_text_field(  $_POST['sensei_edit_complexity'] );
         $new_pass_required = sanitize_text_field(  $_POST['sensei_edit_pass_required'] );
         $new_pass_percentage = sanitize_text_field(  $_POST['sensei_edit_pass_percentage'] );
-
+        $new_enable_quiz_reset = sanitize_text_field(  $_POST['sensei_edit_enable_quiz_reset'] );
         // store the values for all selected posts
         foreach( $_POST[ 'post_ids' ] as $lesson_id ) {
 
@@ -3009,25 +3022,28 @@ class WooThemes_Sensei_Lesson {
 
                 // update pass required
                 if (-1 != $new_pass_required) {
-                    $checked = '';
-                    if( $new_pass_required ){
 
-                        $checked = 'on';
-
-                    }else{
-
-                        $checked = 'off';
-
-                    }
-
+                    $checked = $new_pass_required  ? 'on' : 'off';
                     update_post_meta($quiz_id, '_pass_required', $checked);
-
+                    unset( $checked );
                 }
 
                 // update pass percentage
                 if( !empty( $new_pass_percentage) && is_numeric( $new_pass_percentage ) ){
 
                         update_post_meta($quiz_id, '_quiz_passmark', $new_pass_percentage);
+
+                }
+
+                //
+                // update enable quiz reset
+                //
+                if (-1 != $new_enable_quiz_reset ) {
+
+                    $checked = $new_enable_quiz_reset  ? 'on' : 'off';
+                    update_post_meta($quiz_id, '_enable_quiz_reset', $checked);
+                    unset( $checked );
+
                 }
 
 

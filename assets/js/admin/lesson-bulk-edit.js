@@ -38,6 +38,9 @@
         // Quiz Pass percentage
         var newPassPercentage = $bulk_row.find( '#sensei-edit-quiz-pass-percentage' ).val();
 
+        // Quiz Pass percentage
+        var newEnableQuizReset = $bulk_row.find( '#sensei-edit-enable-quiz-reset' ).val();
+
         // save the data
         $.ajax({
             url: ajaxurl, // this is a variable that WordPress has already defined for us
@@ -53,6 +56,7 @@
                 sensei_edit_complexity: newComplexity,
                 sensei_edit_pass_required: newPassRequired,
                 sensei_edit_pass_percentage: newPassPercentage,
+                sensei_edit_enable_quiz_reset:newEnableQuizReset,
 
                 // post ids to apply the changes to
                 post_ids: postIds
