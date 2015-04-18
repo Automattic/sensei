@@ -1264,7 +1264,7 @@ class WooThemes_Sensei {
             // fallback for people still using the modules extension.
             global $sensei_modules;
             $woothemes_sensei->modules = $sensei_modules;
-            add_action( 'admin_notices', array( $this, 'disable_sensei_modules_extension') );
+            add_action( 'admin_notices', array( $this, 'disable_sensei_modules_extension'), 30 );
         }
     }
 
@@ -1274,13 +1274,15 @@ class WooThemes_Sensei {
      * @since 1.8.0
      */
     public function disable_sensei_modules_extension(){ ?>
-        <div id="message" class="error sensei-message sensei-connect">
-            <div class="squeezer">
+        <div class="notice updated fade">
                 <p>
-                    <strong> <?php _e( 'Please remove the Sensei Modules extension.', 'woothemes-sensei' ); ?></strong>
-                    <?php _e( ' The modules functionality is now built into Sensei.', 'woothemes-sensei' ); ?>
+                    <?php
+                    $plugin_manage_url = admin_url().'plugins.php#sensei-modules';
+                    $plugin_link_element = '<a href="' . $plugin_manage_url . '" >plugins page</a> ';
+                    ?>
+                    <strong> Modules are now included in Sensei,</strong> so you no longer need the Sensei Modules extension.
+                    Please deactivate and delete it from your <?php echo $plugin_link_element; ?>. (This will not affect your existing modules).
                 </p>
-            </div>
         </div>
 
     <?php }// end function
