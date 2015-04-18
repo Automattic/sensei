@@ -28,6 +28,16 @@
         // lesson complexity value
         var newComplexity = $bulk_row.find( '#sensei-edit-lesson-complexity' ).val();
 
+        //
+        //Quiz specific
+        //
+
+        // Quiz Pass required for completion
+        var newPassRequired = $bulk_row.find( '#sensei-edit-lesson-pass-required' ).val();
+
+        // Quiz Pass percentage
+        var newPassPercentage = $bulk_row.find( '#sensei-edit-quiz-pass-percentage' ).val();
+
         // save the data
         $.ajax({
             url: ajaxurl, // this is a variable that WordPress has already defined for us
@@ -37,9 +47,15 @@
             data: {
                 action: 'save_bulk_edit_book', // this is the name of our WP AJAX function that we'll set up next
                 security: nonceVal,
+
+                // sending the field values
                 sensei_edit_lesson_course: newCourse,
                 sensei_edit_complexity: newComplexity,
-                post_ids: postIds// post ids to apply the changes to
+                sensei_edit_pass_required: newPassRequired,
+                sensei_edit_pass_percentage: newPassPercentage,
+
+                // post ids to apply the changes to
+                post_ids: postIds
             }
         });
     });

@@ -2896,8 +2896,8 @@ class WooThemes_Sensei_Lesson {
             <div class="inline-edit-col column-<?php echo $column_name ?>">
                 <label class="inline-edit-group">
                     <?php
-
-                    // create a nonce field to be used as a security measure when saving the data
+                    echo '<h4>' . __('Lesson Information', 'woothemes-sensei') . '</h4>';
+                    // create a nonce field to be  used as a security measure when saving the data
                     wp_nonce_field( 'bulk-edit-lessons', '_edit_lessons_nonce' );
 
                     // unchanged option - this i needed in the list because
@@ -2924,7 +2924,6 @@ class WooThemes_Sensei_Lesson {
 
                     //
                     // lesson complexity selection
-                    // TODO single lesson edit complexity dropdown not working
                     //
                     $lesson_complexities =  $this->lesson_complexities();
                     //pre-append the no change option
@@ -2933,9 +2932,33 @@ class WooThemes_Sensei_Lesson {
                     $complexity_dropdown_attributes = array( 'name'=> $complexity_name_id, 'id'=>$complexity_name_id );
                     echo '<label for="'. $complexity_name_id .'">'. __('Lesson Complexity', 'woothemes-sensei') . '</label>';
                     echo WooThemes_Sensei_Utils::generate_drop_down( '-1', $lesson_complexities, $complexity_dropdown_attributes );
-
                     ?>
 
+                    <h4><?php _e('Quiz Settings', 'woothemes-sensei'); ?> </h4>
+
+                    <?php
+
+                    //
+                    // Lesson require pass to complete
+                    //
+                    $pass_required_options = array(
+                        '-1' => $no_change_text,
+                         '0' => __('No','woothemes'),
+                         '1' => __('Yes','woothemes'),
+                    );
+                    $pass_required_name_id = 'sensei-edit-lesson-pass-required';
+                    $pass_required_select_attributes = array( 'name'=> $pass_required_name_id, 'id'=>$pass_required_name_id );
+                    echo '<label for="'. $pass_required_name_id .'">'. __('Pass required', 'woothemes-sensei') . '</label>';
+                    echo WooThemes_Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
+
+                    //
+                    // Quiz pass percentage
+                    //
+                    $pass_percentage_name_id = 'sensei-edit-quiz-pass-percentage';
+                    echo '<label for="'. $pass_percentage_name_id .'">'. __('Pass Percentage', 'woothemes-sensei') . '</label>';
+                    echo '<input name="' . $pass_percentage_name_id . '" id="' . $pass_percentage_name_id . '" type="number" />';
+
+                    ?>
                 </label>
             </div>
         </fieldset>
@@ -2960,23 +2983,57 @@ class WooThemes_Sensei_Lesson {
         // get our variables
         $new_course = sanitize_text_field(  $_POST['sensei_edit_lesson_course'] );
         $new_complexity = sanitize_text_field(  $_POST['sensei_edit_complexity'] );
+        $new_pass_required = sanitize_text_field(  $_POST['sensei_edit_pass_required'] );
+        $new_pass_percentage = sanitize_text_field(  $_POST['sensei_edit_pass_percentage'] );
 
         // store the values for all selected posts
-        foreach( $_POST[ 'post_ids' ] as $post_id ) {
+        foreach( $_POST[ 'post_ids' ] as $lesson_id ) {
+
+            // get the quiz id needed for the quiz meta
+            $quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
             // do not save the items if the value is -1 as this
             // means it was not changed
 
             // update lesson course
             if( -1 != $new_course ){
-                update_post_meta( $post_id, '_lesson_course', $new_course );
+                update_post_meta( $lesson_id, '_lesson_course', $new_course );
             }
             // update lesson complexity
             if( -1 != $new_complexity ){
-                update_post_meta( $post_id, '_lesson_complexity', $new_complexity );
+                update_post_meta( $lesson_id, '_lesson_complexity', $new_complexity );
             }
 
-        }
+            // Quiz Related settings
+            if( isset( $quiz_id) && 0 < intval( $quiz_id ) ) {
+
+                // update pass required
+                if (-1 != $new_pass_required) {
+                    $checked = '';
+                    if( $new_pass_required ){
+
+                        $checked = 'on';
+
+                    }else{
+
+                        $checked = 'off';
+
+                    }
+
+                    update_post_meta($quiz_id, '_pass_required', $checked);
+
+                }
+
+                // update pass percentage
+                if( !empty( $new_pass_percentage) && is_numeric( $new_pass_percentage ) ){
+
+                        update_post_meta($quiz_id, '_quiz_passmark', $new_pass_percentage);
+                }
+
+
+            } // end if quiz
+
+        }// end for each
 
         die();
 
