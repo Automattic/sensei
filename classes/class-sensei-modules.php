@@ -258,9 +258,8 @@ class Sensei_Core_Modules
         }
 
         // Cast module ID as an integer if selected, otherwise leave as empty string
-        $module_id = $_POST['lesson_module'];
-        if ($module_id != '') {
-            $module_id = intval($module_id);
+        if ( isset( $_POST['lesson_module'] ) && intval( $_POST['lesson_module'] ) > 0 ) {
+            $module_id = intval( $_POST['lesson_module'] );
         }
 
         // Assign lesson to selected module
@@ -1155,7 +1154,7 @@ class Sensei_Core_Modules
     }
 
     /**
-     * Dsplay Module Order screen
+     * Display Module Order screen
      *
      * @since 1.8.0
      *
@@ -1392,7 +1391,8 @@ class Sensei_Core_Modules
      */
     public function analysis_overview_column_title($columns)
     {
-        if ('lessons' == $overview->type) {
+
+        if ( isset( $_GET['view'] ) && 'lesson' == $_GET['view'] ) {
             $new_columns = array();
             if (is_array($columns) && 0 < count($columns)) {
                 foreach ($columns as $column => $title) {
@@ -1423,7 +1423,7 @@ class Sensei_Core_Modules
     public function analysis_overview_column_data($columns, $lesson_id)
     {
 
-        if ('lessons' == $overview->type) {
+        if ( isset( $_GET['view'] ) && 'lesson' == $_GET['view'] ) {
             $lesson_module = '';
             $lesson_module_list = wp_get_post_terms($item->ID, $this->taxonomy);
             if (is_array($lesson_module_list) && count($lesson_module_list) > 0) {
@@ -1449,7 +1449,7 @@ class Sensei_Core_Modules
      */
     public function analysis_course_column_title($columns)
     {
-        if ('lesson' == $overview->view) {
+        if ( isset( $_GET['view'] ) && 'lesson' == $_GET['view'] ) {
             $columns['lesson_module'] = __('Module', 'woothemes-sensei');
         }
         return $columns;
@@ -1468,7 +1468,7 @@ class Sensei_Core_Modules
     public function analysis_course_column_data($columns, $lesson_id, $user_id)
     {
 
-        if ('lesson' == $overview->view) {
+        if ( isset( $_GET['view'] ) && 'lesson' == $_GET['view'] ) {
             $lesson_module = '';
             $lesson_module_list = wp_get_post_terms($item->ID, $this->taxonomy);
             if (is_array($lesson_module_list) && count($lesson_module_list) > 0) {

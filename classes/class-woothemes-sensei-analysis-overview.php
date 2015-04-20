@@ -518,7 +518,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			$lessons_args['posts_per_page'] = '-1';
 		}
 
-		if( $args['search'] ) {
+		if( isset( $args['search'] ) ) {
 			$lessons_args['s'] = $args['search'];
 		}
 
