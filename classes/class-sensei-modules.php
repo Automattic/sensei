@@ -75,12 +75,13 @@ class Sensei_Core_Modules
         add_filter('body_class', array($this, 'module_archive_body_class'));
 
         // add modules to the single course template
-        add_action('sensei_single_main_content', array($this, 'single_course_modules') , 9 );
+        add_action('sensei_course_single_lessons', array($this, 'single_course_modules') , 9 );
 
         //Single Course modules actions. Add to single-course/course-modules.php
         add_action('sensei_single_course_modules_before',array( $this,'course_modules_title' ), 20);
         add_action('sensei_single_course_modules_content', array( $this,'course_module_content' ), 20);
-
+        // change the single course lessons title
+        add_filter('sensei_lessons_text', array( $this, 'single_course_title_change') );
 
         // Set up display on single lesson page
         add_filter('sensei_breadcrumb_output', array($this, 'module_breadcrumb_link'), 10, 2);
@@ -1477,5 +1478,101 @@ class Sensei_Core_Modules
         return $lessons->posts;
 
     } // end get lessons
+
+    /**
+     * Update the single course page title to other
+     * lessons if there are lessons in the course that are not in the course modules
+     *
+     * @since 1.8.0
+     *
+     * @param string $title
+     * @return string $title
+     */
+    public function single_course_title_change( $title ){
+        global $post;
+
+        $non_module_lessons = $this->get_none_module_lessons( $post->ID );
+        if( count( $non_module_lessons ) > 0 ){
+            $title = __( 'Other Lessons' , 'woothemes-sensei' );
+        }
+
+        return $title;
+    }
+
+    /**
+     * Find the lesson in the given course that doesn't belong
+     * to any of the courses modules
+     *
+     *
+     * @param $course_id
+     *
+     * @return array $non_module_lessons
+     */
+    public function get_none_module_lessons( $course_id ){
+
+        $non_module_lessons = array();
+
+        //exit if there is no course id passed in
+        if( empty( $course_id ) || 'course' != get_post_type( $course_id ) ) {
+
+            return $non_module_lessons;
+        }
+
+        //save some time and check if we already have the saved
+        if( get_site_transient( 'sensei_'. $course_id .'_none_module_lessons') ){
+
+            return get_site_transient( 'sensei_'. $course_id .'_none_module_lessons');
+
+        }
+
+        // create terms array which must be excluded from other arrays
+        $course_modules = $this->get_course_modules( $course_id );
+
+        //exit if there are no module on this course
+        if( empty( $course_modules ) || ! is_array( $course_modules ) ){
+
+            return $non_module_lessons;
+        }
+
+        $terms = array();
+        foreach( $course_modules as $module ){
+
+            array_push( $terms ,  $module->term_id );
+
+        }
+
+        $args = array(
+            'post_type' => 'lesson',
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                    'key' => '_lesson_course',
+                    'value' => intval( $course_id ),
+                    'compare' => '='
+                )
+            ),
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'module',
+                    'field' => 'id',
+                    'terms' =>  $terms,
+                    'operator' => 'NOT IN'
+                )
+            ),
+            'orderby' => 'menu_order',
+            'order' => 'ASC',
+            'suppress_filters' => 0
+        );
+
+        $wp_lessons_query = new WP_Query( $args );
+
+        if( isset( $wp_lessons_query->posts) && count( $wp_lessons_query->posts ) > 0  ){
+            $non_module_lessons = $wp_lessons_query->get_posts();
+            set_site_transient( 'sensei_'. $course_id .'_none_module_lessons', $non_module_lessons, 20 );
+        }
+
+        return $non_module_lessons;
+    } // end get_none_module_lessons
 
 } // end modules class
