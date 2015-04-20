@@ -86,6 +86,31 @@ jQuery(document).ready( function($) {
 		}
 	});
 
+    /**
+     * Load chosen on the course
+     */
+    jQuery('select#add_learner_search').ajaxChosen({
+        method: 		'GET',
+        url: 			'<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
+        dataType: 		'json',
+        afterTypeDelay: 100,
+        minTermLength: 	1,
+        data:		{
+            action: 	'sensei_json_search_users',
+            security: 	'<?php echo esc_js( wp_create_nonce( "search-users" ) ); ?>',
+            default: 	''
+        }
+    }, function (data) {
+
+        var users = {};
+
+        jQuery.each(data, function (i, val) {
+            users[i] = val;
+        });
+
+        return users;
+    });
+
 	/***************************************************************************************************
 	 * 	3 - Load Chosen Dropdowns.
 	 ***************************************************************************************************/
