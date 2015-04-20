@@ -49,11 +49,11 @@ jQuery(document).ready( function($) {
 		var post_id = jQuery( this ).attr( 'data-post_id' );
 		var post_type = jQuery( this ).attr( 'data-post_type' );
 
-		var confirm_message = woo_localized_data.remove_generic_confirm;
+		var confirm_message = woo_learners_general_data.remove_generic_confirm;
 
 		switch( post_type ) {
-			case 'lesson': confirm_message = woo_localized_data.remove_from_lesson_confirm; break;
-			case 'course': confirm_message = woo_localized_data.remove_from_course_confirm; break;
+			case 'lesson': confirm_message = woo_learners_general_data.remove_from_lesson_confirm; break;
+			case 'course': confirm_message = woo_learners_general_data.remove_from_course_confirm; break;
 		}
 
 		var confirm_remove = confirm( confirm_message );
@@ -74,7 +74,7 @@ jQuery(document).ready( function($) {
 				ajaxurl,
 				{
 					action : 'remove_user_from_post',
-					remove_user_from_post_nonce : woo_localized_data.remove_user_from_post_nonce,
+					remove_user_from_post_nonce : woo_learners_general_data.remove_user_from_post_nonce,
 					data : dataToPost
 				},
 				function( response ) {
@@ -89,17 +89,20 @@ jQuery(document).ready( function($) {
     /**
      * Load chosen on the course
      */
+
+    ajaxData = 	{
+        action: 	'sensei_json_search_users',
+        security: 	woo_learners_general_data.search_users_nonce,
+        default: 	''
+    };
+
     jQuery('select#add_learner_search').ajaxChosen({
         method: 		'GET',
-        url: 			'<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
+        url: 			ajaxurl,
         dataType: 		'json',
         afterTypeDelay: 100,
         minTermLength: 	1,
-        data:		{
-            action: 	'sensei_json_search_users',
-            security: 	'<?php echo esc_js( wp_create_nonce( "search-users" ) ); ?>',
-            default: 	''
-        }
+        data: ajaxData
     }, function (data) {
 
         var users = {};
