@@ -1392,7 +1392,7 @@ class Sensei_Core_Modules
     public function analysis_overview_column_title($columns)
     {
 
-        if ( isset( $_GET['view'] ) && 'lesson' == $_GET['view'] ) {
+        if ( isset( $_GET['view'] ) && 'lessons' == $_GET['view'] ) {
             $new_columns = array();
             if (is_array($columns) && 0 < count($columns)) {
                 foreach ($columns as $column => $title) {
@@ -1417,15 +1417,15 @@ class Sensei_Core_Modules
      * @since 1.8.0
      *
      * @param  array $columns Table column data
-     * @param  integer $lesson_id Lesson ID
+     * @param  WP_Post $lesson
      * @return array              Updated column data
      */
-    public function analysis_overview_column_data($columns, $lesson_id)
+    public function analysis_overview_column_data($columns, $lesson )
     {
 
-        if ( isset( $_GET['view'] ) && 'lesson' == $_GET['view'] ) {
+        if ( isset( $_GET['view'] ) && 'lessons' == $_GET['view'] ) {
             $lesson_module = '';
-            $lesson_module_list = wp_get_post_terms($item->ID, $this->taxonomy);
+            $lesson_module_list = wp_get_post_terms($lesson->ID, $this->taxonomy);
             if (is_array($lesson_module_list) && count($lesson_module_list) > 0) {
                 foreach ($lesson_module_list as $single_module) {
                     $lesson_module = '<a href="' . esc_url(admin_url('edit-tags.php?action=edit&taxonomy=' . urlencode($this->taxonomy) . '&tag_ID=' . urlencode($single_module->term_id))) . '">' . $single_module->name . '</a>';
@@ -1449,7 +1449,7 @@ class Sensei_Core_Modules
      */
     public function analysis_course_column_title($columns)
     {
-        if ( isset( $_GET['view'] ) && 'lesson' == $_GET['view'] ) {
+        if ( isset( $_GET['view'] ) && 'lessons' == $_GET['view'] ) {
             $columns['lesson_module'] = __('Module', 'woothemes-sensei');
         }
         return $columns;
@@ -1461,16 +1461,15 @@ class Sensei_Core_Modules
      * @since 1.8.0
      *
      * @param  array $columns Table column data
-     * @param  integer $lesson_id Lesson ID
-     * @param  integer $user_id User ID
+     * @param  WP_Post $lesson
      * @return array              Updated columns data
      */
-    public function analysis_course_column_data($columns, $lesson_id, $user_id)
+    public function analysis_course_column_data($columns, $lesson )
     {
 
-        if ( isset( $_GET['view'] ) && 'lesson' == $_GET['view'] ) {
+        if ( isset( $_GET['course_id'] ) ) {
             $lesson_module = '';
-            $lesson_module_list = wp_get_post_terms($item->ID, $this->taxonomy);
+            $lesson_module_list = wp_get_post_terms($lesson->ID, $this->taxonomy);
             if (is_array($lesson_module_list) && count($lesson_module_list) > 0) {
                 foreach ($lesson_module_list as $single_module) {
                     $lesson_module = '<a href="' . esc_url(admin_url('edit-tags.php?action=edit&taxonomy=' . urlencode($this->taxonomy) . '&tag_ID=' . urlencode($single_module->term_id))) . '">' . $single_module->name . '</a>';
