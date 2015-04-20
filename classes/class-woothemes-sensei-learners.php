@@ -98,7 +98,9 @@ class WooThemes_Sensei_Learners {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// Load Learners JS
-		wp_enqueue_script( 'sensei-learners-general', $woothemes_sensei->plugin_url . 'assets/js/learners-general' . $suffix . '.js', array( 'jquery' ), '1.6.0' );
+		wp_enqueue_script( 'sensei-learners-general',
+                            $woothemes_sensei->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
+                            array('jquery','sensei-lesson-chosen','sensei-chosen-ajax' ), $woothemes_sensei->version, true );
 
 		$data = array(
 			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
