@@ -74,10 +74,13 @@ class Sensei_Core_Modules
         add_action('sensei_pagination', array($this, 'module_navigation_links'), 11);
         add_filter('body_class', array($this, 'module_archive_body_class'));
 
-        // Set up display on single course page
-        add_action('sensei_single_main_content', array($this, 'single_course_remove_lessons'));
-        add_action('sensei_no_permissions_main_content', array($this, 'single_course_remove_lessons'));
-        add_action('sensei_course_single_lessons', array($this, 'single_course_modules'));
+        // add modules to the single course template
+        add_action('sensei_single_main_content', array($this, 'single_course_modules') , 9 );
+
+        //Single Course modules actions. Add to single-course/course-modules.php
+        add_action('sensei_single_course_modules_before',array( $this,'course_modules_title' ), 20);
+        add_action('sensei_single_course_modules_content', array( $this,'course_module_content' ), 20);
+
 
         // Set up display on single lesson page
         add_filter('sensei_breadcrumb_output', array($this, 'module_breadcrumb_link'), 10, 2);
@@ -481,303 +484,19 @@ class Sensei_Core_Modules
     }
 
     /**
-     * Remove default lesson display from courses containing modules
-     *
-     * @since 1.8.0
-     * @return void
-     */
-    public function single_course_remove_lessons()
-    {
-        global $post;
-
-        if (has_term('', $this->taxonomy, $post->ID)) {
-            remove_action('sensei_course_single_lessons', 'course_single_lessons', 10);
-        }
-    }
-
-    /**
      * display modules on single course pages
      *
      * @since 1.8.0
      * @return void
      */
-    public function single_course_modules()
-    {
-        global $post, $current_user, $woothemes_sensei;
-
-        $course_id = $post->ID;
-
-        $html = '';
-
-        if (has_term('', $this->taxonomy, $course_id)) {
-
-            do_action('sensei_modules_page_before');
-
-            // Get user data
-            get_currentuserinfo();
-
-            // Check if user is taking this course
-            $course_status_id = WooThemes_Sensei_Utils::user_started_course(intval($course_id), intval($current_user->ID));
-            $is_user_taking_course = !empty($course_status_id) ? true : false;
-
-            // Get all modules
-            $modules = $this->get_course_modules(intval($course_id));
-
-            $displayed_lessons = array();
-
-            $lessons_completed = 0;
-
-            // Start building HTML
-            $html .= '<section class="course-lessons">';
-
-            // Display course progress for users who are taking the course
-            if (is_user_logged_in() && $is_user_taking_course) {
-
-                $course_lessons = $woothemes_sensei->frontend->course->course_lessons(intval($post->ID));
-                $total_lessons = count($course_lessons);
-
-                $html .= '<span class="course-completion-rate">' . sprintf(__('Currently completed %1$s lesson(s) of %2$s in total', 'woothemes-sensei'), '######', $total_lessons) . '</span>';
-                $html .= '<div class="meter+++++"><span style="width: @@@@@%">@@@@@%</span></div>';
-
-            }
-
-            $html .= '<header><h2>' . __('Modules', 'woothemes-sensei') . '</h2></header>';
-
-            // Display each module
-            foreach ($modules as $module) {
-
-                $module_url = esc_url(add_query_arg('course_id', $course_id, get_term_link($module, $this->taxonomy)));
-
-                $html .= '<article class="post module">';
-
-                $html .= '<header><h2><a href="' . esc_url($module_url) . '">' . $module->name . '</a></h2></header>';
-
-                $html .= '<section class="entry">';
-
-                $module_progress = false;
-                if (is_user_logged_in()) {
-                    global $current_user;
-                    wp_get_current_user();
-                    $module_progress = $this->get_user_module_progress($module->term_id, $course_id, $current_user->ID);
-                }
-
-                if ($module_progress && $module_progress > 0) {
-                    $status = __('Completed', 'woothemes-sensei');
-                    $class = 'completed';
-                    if ($module_progress < 100) {
-                        $status = __('In progress', 'woothemes-sensei');
-                        $class = 'in-progress';
-                    }
-                    $html .= '<p class="status module-status ' . esc_attr($class) . '">' . $status . '</p>';
-                }
-
-                $description = $module->description;
-
-                if ('' != $description) {
-                    $html .= '<p class="module-description">' . $description . '</p>';
-                }
-
-                $args = array(
-                    'post_type' => 'lesson',
-                    'post_status' => 'publish',
-                    'posts_per_page' => -1,
-                    'meta_query' => array(
-                        array(
-                            'key' => '_lesson_course',
-                            'value' => intval($course_id),
-                            'compare' => '='
-                        )
-                    ),
-                    'tax_query' => array(
-                        array(
-                            'taxonomy' => $this->taxonomy,
-                            'field' => 'id',
-                            'terms' => intval($module->term_id)
-                        )
-                    ),
-                    'orderby' => 'menu_order',
-                    'order' => 'ASC',
-                    'suppress_filters' => 0
-                );
-
-                if (version_compare($woothemes_sensei->version, '1.6.0', '>=')) {
-                    $args['meta_key'] = '_order_module_' . intval($module->term_id);
-                    $args['orderby'] = 'meta_value_num date';
-                }
-
-                $lessons = get_posts($args);
-
-                if (count($lessons) > 0) {
-
-                    $html .= '<section class="module-lessons">';
-
-                    $html .= '<header><h3>' . __('Lessons', 'woothemes-sensei') . '</h3></header>';
-
-                    $html .= '<ul>';
-
-                    foreach ($lessons as $lesson) {
-                        $status = '';
-                        $lesson_completed = WooThemes_Sensei_Utils::user_completed_lesson($lesson->ID, $current_user->ID);
-                        $title = esc_attr(get_the_title(intval($lesson->ID)));
-
-                        if ($lesson_completed) {
-                            $status = 'completed';
-                        }
-
-                        $html .= '<li class="' . $status . '"><a href="' . esc_url(get_permalink(intval($lesson->ID))) . '" title="' . esc_attr(get_the_title(intval($lesson->ID))) . '">' . apply_filters('sensei_module_lesson_list_title', $title, $lesson->ID) . '</a></li>';
-
-                        // Build array of displayed lesson for exclusion later
-                        $displayed_lessons[] = $lesson->ID;
-                    }
-
-                    $html .= '</ul>';
-
-                    $html .= '</section>';
-
-                }
-
-                $html .= '</section>';
-
-                $html .= '</article>';
-
-            }
-
-            // Display any lessons that have not already been displayed
-            $args = array(
-                'post_type' => 'lesson',
-                'post_status' => 'publish',
-                'posts_per_page' => -1,
-                'meta_query' => array(
-                    array(
-                        'key' => '_lesson_course',
-                        'value' => intval($course_id),
-                        'compare' => '='
-                    )
-                ),
-                'post__not_in' => $displayed_lessons,
-                'orderby' => 'menu_order',
-                'order' => 'ASC',
-                'suppress_filters' => 0
-            );
-
-            if (version_compare($woothemes_sensei->version, '1.6.0', '>=')) {
-                $args['meta_key'] = '_order_' . intval($course_id);
-                $args['orderby'] = 'meta_value_num date';
-            }
-
-            $lessons = get_posts($args);
-
-            if (0 < count($lessons)) {
-
-                $html .= '<section class="course-lessons">';
-
-                $html .= '<header><h2>' . __('Other Lessons', 'woothemes-sensei') . '</h2></header>';
-
-                $lesson_count = 1;
-
-                foreach ($lessons as $lesson) {
-
-                    // Note if current lesson has been completed
-                    $single_lesson_complete = false;
-                    $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status(intval($lesson->ID), intval($current_user->ID));
-                    if (WooThemes_Sensei_Utils::user_completed_lesson($user_lesson_status)) {
-                        $single_lesson_complete = true;
-                    }
-
-                    // Get Lesson data
-                    $complexity_array = $woothemes_sensei->frontend->lesson->lesson_complexities();
-                    $lesson_length = get_post_meta($lesson->ID, '_lesson_length', true);
-                    $lesson_complexity = get_post_meta($lesson->ID, '_lesson_complexity', true);
-                    if ('' != $lesson_complexity) {
-                        $lesson_complexity = $complexity_array[$lesson_complexity];
-                    }
-                    $user_info = get_userdata(absint($lesson->post_author));
-                    if ('' != $lesson->post_excerpt) {
-                        $lesson_excerpt = $lesson->post_excerpt;
-                    } else {
-                        $lesson_excerpt = $lesson->post_content;
-                    }
-                    $title = esc_html(sprintf(__('%s', 'woothemes-sensei'), $lesson->post_title));
-
-                    // Display lesson data
-                    $html .= '<article class="' . esc_attr(join(' ', get_post_class(array('course', 'post'), $lesson->ID))) . '">';
-
-                    $html .= '<header>';
-
-                    $html .= '<h2><a href="' . esc_url(get_permalink($lesson->ID)) . '" title="' . esc_attr(sprintf(__('Start %s', 'woothemes-sensei'), $lesson->post_title)) . '">' . apply_filters('sensei_module_lesson_list_title', $title, $lesson->ID) . '</a></h2>';
-
-                    $html .= '<p class="lesson-meta">';
-
-                    if ('' != $lesson_length) {
-                        $html .= '<span class="lesson-length">' . apply_filters('sensei_length_text', __('Length: ', 'woothemes-sensei')) . $lesson_length . __(' minutes', 'woothemes-sensei') . '</span>';
-                    }
-                    if (isset($woothemes_sensei->settings->settings['lesson_author']) && ($woothemes_sensei->settings->settings['lesson_author'])) {
-                        $html .= '<span class="lesson-author">' . apply_filters('sensei_author_text', __('Author: ', 'woothemes-sensei')) . '<a href="' . get_author_posts_url(absint($lesson->post_author)) . '" title="' . esc_attr($user_info->display_name) . '">' . esc_html($user_info->display_name) . '</a></span>';
-                    }
-                    if ('' != $lesson_complexity) {
-                        $html .= '<span class="lesson-complexity">' . apply_filters('sensei_complexity_text', __('Complexity: ', 'woothemes-sensei')) . $lesson_complexity . '</span>';
-                    }
-                    if ($single_lesson_complete) {
-                        $html .= '<span class="lesson-status complete">' . apply_filters('sensei_complete_text', __('Complete', 'woothemes-sensei')) . '</span>';
-                    } elseif ($user_lesson_status) {
-                        $html .= '<span class="lesson-status in-progress">' . apply_filters('sensei_in_progress_text', __('In Progress', 'woothemes-sensei')) . '</span>';
-                    } // End If Statement
-
-                    $html .= '</p>';
-
-                    $html .= '</header>';
-
-                    $html .= $woothemes_sensei->post_types->lesson->lesson_image($lesson->ID);
-
-                    $html .= '<section class="entry">';
-
-                    $html .= '<p class="lesson-excerpt">';
-
-                    $html .= '<span>' . $lesson_excerpt . '</span>';
-
-                    $html .= '</p>';
-
-                    $html .= '</section>';
-
-                    $html .= '</article>';
-
-                    $lesson_count++;
-                }
-
-                $html .= '</section>';
-            }
-
-            $html .= '</section>';
-
-            // Replace place holders in course progress widget
-            if (is_user_logged_in() && $is_user_taking_course) {
-
-                $lessons_completed = get_comment_meta($course_status_id, 'complete', true);
-
-                // Add dynamic data to the output
-                $html = str_replace('######', $lessons_completed, $html);
-                $progress_percentage = get_comment_meta($course_status_id, 'percent', true);
-
-                $html = str_replace('@@@@@', $progress_percentage, $html);
-                if (50 < $progress_percentage) {
-                    $class = ' green';
-                } elseif (25 <= $progress_percentage && 50 >= $progress_percentage) {
-                    $class = ' orange';
-                } else {
-                    $class = ' red';
-                }
-
-                $html = str_replace('+++++', $class, $html);
-            }
+    public function single_course_modules(){
+
+        // only show modules on the course that has modules
+        if( is_singular( 'course' ) && has_term( '', 'module' )  )  {
+            Sensei()->frontend->sensei_get_template( 'single-course/course-modules.php' );
         }
 
-        // Display output
-        echo $html;
-
-        if (has_term('', $this->taxonomy, $course_id)) {
-            do_action('sensei_modules_page_after');
-        }
-    }
+    } // end single_course_modules
 
     public function sensei_course_preview_titles($title, $lesson_id)
     {
@@ -1612,5 +1331,151 @@ class Sensei_Core_Modules
         wp_register_style($woothemes_sensei->token . '-chosen', esc_url($woothemes_sensei->plugin_url) . 'assets/chosen/chosen.css', '', '1.3.0', 'screen');
         wp_enqueue_style($woothemes_sensei->token . '-chosen');
     }
+
+    /**
+     * Show the title modules on the single course template.
+     *
+     * Function is hooked into sensei_single_course_modules_before.
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public function course_modules_title( ) {
+
+        echo '<header><h2>' . __('Modules', 'woothemes-sensei') . '</h2></header>';
+
+    }
+
+    /**
+     * Display the single course modules content
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public function course_module_content(){
+
+        global $post;
+        $course_id = $post->ID;
+        $modules = $this->get_course_modules( $course_id  );
+
+        // Display each module
+        foreach ($modules as $module) {
+
+            echo '<article class="post module">';
+
+            // module title link
+            $module_url = esc_url(add_query_arg('course_id', $course_id, get_term_link($module, $this->taxonomy)));
+            echo '<header><h2><a href="' . esc_url($module_url) . '">' . $module->name . '</a></h2></header>';
+
+            echo '<section class="entry">';
+
+            $module_progress = false;
+            if (is_user_logged_in()) {
+                global $current_user;
+                wp_get_current_user();
+                $module_progress = $this->get_user_module_progress($module->term_id, $course_id, $current_user->ID);
+            }
+
+            if ($module_progress && $module_progress > 0) {
+                $status = __('Completed', 'woothemes-sensei');
+                $class = 'completed';
+                if ($module_progress < 100) {
+                    $status = __('In progress', 'woothemes-sensei');
+                    $class = 'in-progress';
+                }
+                echo '<p class="status module-status ' . esc_attr($class) . '">' . $status . '</p>';
+            }
+
+            if ('' != $module->description) {
+                echo '<p class="module-description">' . $module->description . '</p>';
+            }
+
+            $lessons = $this->get_lessons( $course_id ,$module->term_id );
+
+            if (count($lessons) > 0) {
+
+                $lessons_list = '';
+                foreach ($lessons as $lesson) {
+                    $status = '';
+                    $lesson_completed = WooThemes_Sensei_Utils::user_completed_lesson($lesson->ID, $current_user->ID);
+                    $title = esc_attr(get_the_title(intval($lesson->ID)));
+
+                    if ($lesson_completed) {
+                        $status = 'completed';
+                    }
+
+                    $lessons_list .= '<li class="' . $status . '"><a href="' . esc_url(get_permalink(intval($lesson->ID))) . '" title="' . esc_attr(get_the_title(intval($lesson->ID))) . '">' . apply_filters('sensei_module_lesson_list_title', $title, $lesson->ID) . '</a></li>';
+
+                    // Build array of displayed lesson for exclusion later
+                    $displayed_lessons[] = $lesson->ID;
+                }
+                ?>
+                <section class="module-lessons">
+                    <header><h3><?php __('Lessons', 'woothemes-sensei') ?></h3></header>
+                        <ul>
+                            <?php echo $lessons_list; ?>
+                        </ul>
+                </section>
+
+            <?php }//end count lessons  ?>
+                </section>
+            </article>
+        <?php
+
+        } // end each module
+
+    } // end course_module_content
+
+    /**
+     * Returns all lessons for the given module ID
+     *
+     * @since 1.8.0
+     *
+     * @param $course_id
+     * @param $term_id
+     * @return array $lessons
+     */
+    public function get_lessons( $course_id , $term_id ){
+        $lessons = array();
+
+        if( empty( $term_id ) || empty( $course_id ) ){
+
+            return $lessons;
+
+        }
+
+        $args = array(
+            'post_type' => 'lesson',
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                    'key' => '_lesson_course',
+                    'value' => intval($course_id),
+                    'compare' => '='
+                )
+            ),
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'module',
+                    'field' => 'id',
+                    'terms' => intval( $term_id )
+                )
+            ),
+            'orderby' => 'menu_order',
+            'order' => 'ASC',
+            'suppress_filters' => 0
+        );
+
+        if (version_compare( Sensei()->version, '1.6.0', '>=')) {
+            $args['meta_key'] = '_order_module_' . intval( $term_id );
+            $args['orderby'] = 'meta_value_num date';
+        }
+
+        $lessons = new WP_Query( $args );
+
+        return $lessons->posts;
+
+    } // end get lessons
 
 } // end modules class

@@ -43,4 +43,3 @@ do_action( 'sensei_course_meta' );
  * @hooked sensei_course_meta_video - 10 (outputs the video for course)
  */
 do_action( 'sensei_course_meta_video' );
-?>
