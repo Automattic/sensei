@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2015.04.20 - version 1.7.6
+* Fix - Missing learner management search missing.
+* Fix - Remove learner from course popup message missing.
+
 2015.04.14 - version 1.7.5
 * Fix - Admin learner course completion no longer redirects to the lesson screen.
 * Tweak - Use update meta instead of add meta for the quiz lesson meta
