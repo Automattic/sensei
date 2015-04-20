@@ -36,6 +36,7 @@ class WooThemes_Sensei_Admin {
 	public function __construct () {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_styles_global' ) );
+
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
