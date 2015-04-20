@@ -36,7 +36,6 @@ class WooThemes_Sensei_Admin {
 	public function __construct () {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_styles_global' ) );
-        add_action( 'admin_enqueue_scripts', array( $this, 'learner_management_scripts' ) );
 
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
@@ -76,23 +75,6 @@ class WooThemes_Sensei_Admin {
 		add_filter( 'woocommerce_prevent_admin_access', array( $this, 'admin_access' ) );
 
 	} // End __construct()
-
-    /**
-     * Load the learner management javascript
-     *
-     * @since 1.8.0
-     * @param $hook
-     */
-    public function learner_management_scripts( $hook ){
-        global $woothemes_sensei;
-
-        if('sensei_page_sensei_learners' != $hook ){
-            return;
-        }
-
-        wp_enqueue_script('sensei-learner-managment', $woothemes_sensei->plugin_url . 'assets/js/learner-management.js',
-                            array('jquery','sensei-lesson-chosen','sensei-chosen-ajax' ), $woothemes_sensei->version, true );
-    }
 
 	/**
 	 * Add items to admin menu
