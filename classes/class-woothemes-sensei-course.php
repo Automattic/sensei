@@ -1216,7 +1216,7 @@ class WooThemes_Sensei_Course {
 
 			    		$active_html .= '<section class="entry-actions">';
 
-			    			$active_html .= '<form method="POST" action="' . remove_query_arg( array( 'active_page', 'completed_page' ) ) . '">';
+                        $active_html .= '<form method="POST" action="' . esc_url( remove_query_arg( array( 'active_page', 'completed_page' ) ) ) . '">';
 
 			    				$active_html .= '<input type="hidden" name="' . esc_attr( 'woothemes_sensei_complete_course_noonce' ) . '" id="' . esc_attr( 'woothemes_sensei_complete_course_noonce' ) . '" value="' . esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ) . '" />';
 

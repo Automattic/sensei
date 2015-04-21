@@ -351,7 +351,7 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<div class="select-box reset-filter">' . "\n";
 
-				echo '<a class="button-secondary" href="' . remove_query_arg( array( 'lesson_id', 'course_id' ) ) . '">' . __( 'Reset filter', 'woothemes-sensei' ) . '</a>' . "\n";
+				echo '<a class="button-secondary" href="' . esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) . '">' . __( 'Reset filter', 'woothemes-sensei' ) . '</a>' . "\n";
 
 			echo '</div>' . "\n";
 

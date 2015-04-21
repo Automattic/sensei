@@ -1850,7 +1850,7 @@ class WooThemes_Sensei_Frontend {
 
 					$success_redirect_url = apply_filters('sesei_login_success_redirect_url', remove_query_arg( 'login', $referrer ) );
 
-					wp_redirect( $success_redirect_url );
+					wp_redirect( esc_url_raw( $success_redirect_url ) );
 		        	exit;
 
 				}	// end is_wp_error($user)
