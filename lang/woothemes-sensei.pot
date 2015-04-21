@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Sensei package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei 1.7.5\n"
+"Project-Id-Version: Sensei 1.7.6\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/woothemes-sensei\n"
-"POT-Creation-Date: 2015-04-20 13:29:15+00:00\n"
+"POT-Creation-Date: 2015-04-21 16:20:10+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -459,7 +459,7 @@ msgstr ""
 
 #: classes/class-woothemes-sensei-analysis.php:412
 #: classes/class-woothemes-sensei-grading.php:272
-#: classes/class-woothemes-sensei-learners.php:215
+#: classes/class-woothemes-sensei-learners.php:216
 #: classes/class-woothemes-sensei-settings-api.php:351
 msgid "Powered by"
 msgstr ""
@@ -502,7 +502,7 @@ msgstr ""
 #: classes/class-woothemes-sensei-course.php:156
 #: classes/class-woothemes-sensei-course.php:236
 #: classes/class-woothemes-sensei-course.php:484
-#: classes/class-woothemes-sensei-learners.php:328
+#: classes/class-woothemes-sensei-learners.php:329
 #: classes/class-woothemes-sensei-lesson.php:198
 #: classes/class-woothemes-sensei-lesson.php:235
 #: classes/class-woothemes-sensei-lesson.php:498
@@ -1118,11 +1118,11 @@ msgstr ""
 msgid "Are you sure you want to remove the user from this course?"
 msgstr ""
 
-#: classes/class-woothemes-sensei-learners.php:431
+#: classes/class-woothemes-sensei-learners.php:432
 msgid "Learner added successfully!"
 msgstr ""
 
-#: classes/class-woothemes-sensei-learners.php:436
+#: classes/class-woothemes-sensei-learners.php:437
 msgid "Error adding learner."
 msgstr ""
 
