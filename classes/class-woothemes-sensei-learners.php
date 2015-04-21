@@ -238,11 +238,11 @@ class WooThemes_Sensei_Learners {
 	 * @return void
 	 */
 	public function learners_default_nav() {
-		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
+		$title = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['course_id'] ) ) { 
 			$course_id = intval( $_GET['course_id'] );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) );
-			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, get_the_title( $course_id ) ); 
+			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		if ( isset( $_GET['lesson_id'] ) ) { 
 			$lesson_id = intval( $_GET['lesson_id'] );
@@ -264,7 +264,7 @@ class WooThemes_Sensei_Learners {
 
 		$redirect_url = apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'course_cat' => $course_cat ), admin_url( 'admin.php' ) ) );
 
-		echo $redirect_url;
+		echo esc_url_raw( $redirect_url );
 		die();
 	}
 
@@ -433,7 +433,7 @@ class WooThemes_Sensei_Learners {
 
 		$redirect_url = apply_filters( 'sensei_learners_add_learner_redirect_url', add_query_arg( $query_args, admin_url( 'admin.php' ) ) );
 
-		wp_safe_redirect( $redirect_url );
+		wp_safe_redirect( esc_url_raw( $redirect_url ) );
 		exit;
 	}
 

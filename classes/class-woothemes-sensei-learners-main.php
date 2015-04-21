@@ -277,14 +277,14 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 				$grading_action = '';
 				if ( get_post_meta( $item->ID, '_quiz_has_questions', true ) ) {
-					$grading_action = ' <a class="button" href="' . add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => $item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) . '">' . __( 'Grading', 'woothemes-sensei' ) . '</a>';
+					$grading_action = ' <a class="button" href="' . esc_url( add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => $item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) ) . '">' . __( 'Grading', 'woothemes-sensei' ) . '</a>';
 				}
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'post.php?action=edit&post=' . $item->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
 						'num_learners' => $lesson_learners,
 						'updated' => $item->post_modified,
-						'actions' => '<a class="button" href="' . add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->ID, 'course_id' => $this->course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
+						'actions' => '<a class="button" href="' . esc_url( add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->ID, 'course_id' => $this->course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
 					), $item, $this->course_id );
 				break;
 
@@ -296,14 +296,14 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 				$grading_action = '';
 				if ( version_compare($wp_version, '4.1', '>=') ) {
-					$grading_action = ' <a class="button" href="' . add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => $item->ID ), admin_url( 'admin.php' ) ) . '">' . __( 'Grading', 'woothemes-sensei' ) . '</a>';
+					$grading_action = ' <a class="button" href="' . esc_url( add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => $item->ID ), admin_url( 'admin.php' ) ) ) . '">' . __( 'Grading', 'woothemes-sensei' ) . '</a>';
 				}
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'post.php?action=edit&post=' . $item->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
 						'num_learners' => $course_learners,
 						'updated' => $item->post_modified,
-						'actions' => '<a class="button" href="' . add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
+						'actions' => '<a class="button" href="' . esc_url( add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
 					), $item );
 
 				break;
@@ -529,8 +529,8 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			$learner_args['view'] = 'learners';
 			$lesson_args['view'] = 'lessons';
 
-			$menu['learners'] = '<a class="' . $learners_class . '" href="' . add_query_arg( $learner_args, admin_url( 'admin.php' ) ) . '">' . __( 'Learners', 'woothemes-sensei' ) . '</a>';
-			$menu['lessons'] = '<a class="' . $lessons_class . '" href="' . add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) . '">' . __( 'Lessons', 'woothemes-sensei' ) . '</a>';
+			$menu['learners'] = '<a class="' . $learners_class . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Learners', 'woothemes-sensei' ) . '</a>';
+			$menu['lessons'] = '<a class="' . $lessons_class . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Lessons', 'woothemes-sensei' ) . '</a>';
 
 		} 
 		// Have Course and Lesson
@@ -544,7 +544,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			$course = get_the_title( $this->course_id );
 
-			$menu['back'] = '<a href="' . add_query_arg( $query_args, admin_url( 'admin.php' ) ) . '">' . sprintf( __( '%1$sBack to %2$s%3$s', 'woothemes-sensei' ), '<em>&larr; ', $course, '</em>' ) . '</a>';
+			$menu['back'] = '<a href="' . esc_url( add_query_arg( $query_args, admin_url( 'admin.php' ) ) ) . '">' . sprintf( __( '%1$sBack to %2$s%3$s', 'woothemes-sensei' ), '<em>&larr; ', $course, '</em>' ) . '</a>';
 		}
 		$menu = apply_filters( 'sensei_learners_sub_menu', $menu );
 		if ( !empty($menu) ) {
