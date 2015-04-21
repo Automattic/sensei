@@ -3,7 +3,7 @@
 Plugin Name: Sensei
 Plugin URI: http://www.woothemes.com/products/sensei/
 Description: A course management plugin that offers the smoothest platform for helping you teach anything.
-Version: 1.7.6
+Version: 1.7.7
 Author: WooThemes
 Author URI: http://www.woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
