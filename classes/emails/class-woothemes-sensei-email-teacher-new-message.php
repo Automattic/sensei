@@ -76,7 +76,7 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 		// Send mail
 		$woothemes_sensei->emails->send( $this->recipient, $this->subject, $woothemes_sensei->emails->get_content( $this->template ) );
 
-		wp_safe_redirect( add_query_arg( array( 'send' => 'complete' ) ) );
+		wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) ) );
 		exit;
 	}
 }

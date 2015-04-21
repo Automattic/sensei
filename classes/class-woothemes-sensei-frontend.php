@@ -1775,7 +1775,7 @@ class WooThemes_Sensei_Frontend {
    		 // if there's a valid referrer, and it's not the default log-in screen
 	    if(!empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin')){
 	        // let's append some information (login=failed) to the URL for the theme to use
-	        wp_redirect( add_query_arg('login', 'failed', $referrer) );
+	        wp_redirect( esc_url_raw( add_query_arg('login', 'failed',  $referrer) ) );
 	    	exit;
     	}
 	}// End sensei_login_fail_redirect_to_front_end_login
@@ -1814,9 +1814,11 @@ class WooThemes_Sensei_Frontend {
 
 		    		// validate the user object
 		    		if( !$user ){
+
 		    			// the email doesnt exist
-		    			wp_redirect( add_query_arg('login', 'failed', $referrer) );
+                        wp_redirect( esc_url_raw( add_query_arg('login', 'failed', $referrer) ) );
 		        		exit;
+
 		    		}
 
 		    		//assigne the username to the creds array for further processing
@@ -1837,10 +1839,8 @@ class WooThemes_Sensei_Frontend {
 				$user = wp_signon( $creds, false );
 
 				if ( is_wp_error($user) ){ // on login failure
-
-					wp_redirect( add_query_arg('login', 'failed', $referrer) );
-		        	exit;
-
+                    wp_redirect( esc_url_raw( add_query_arg('login', 'failed', $referrer) ) );
+                    exit;
 				}else{ // on login success
 
 					/**
@@ -1860,7 +1860,7 @@ class WooThemes_Sensei_Frontend {
 
 		    }else{ // if username or password is empty
 
-		    	wp_redirect( add_query_arg('login', 'emptyfields', $referrer) );
+                wp_redirect( esc_url_raw( add_query_arg('login', 'emptyfields', $referrer) ) );
 		        exit;
 
 		    } // end if username $_REQUEST['log']  and password $_REQUEST['pwd'] is empty

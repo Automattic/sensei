@@ -1213,7 +1213,7 @@ class WooThemes_Sensei_Course {
 
 				if( $current_page > 1 ) {
 					$prev_link = add_query_arg( 'active_page', $current_page - 1 );
-					$active_html .= '<a class="prev page-numbers" href="' . $prev_link . '">' . __( 'Previous' , 'woothemes-sensei' ) . '</a> ';
+					$active_html .= '<a class="prev page-numbers" href="' . esc_url( $prev_link ) . '">' . __( 'Previous' , 'woothemes-sensei' ) . '</a> ';
 				}
 
 				for ( $i = 1; $i <= $total_pages; $i++ ) {
@@ -1222,13 +1222,13 @@ class WooThemes_Sensei_Course {
 					if( $i == $current_page ) {
 						$active_html .= '<span class="page-numbers current">' . $i . '</span> ';
 					} else {
-						$active_html .= '<a class="page-numbers" href="' . $link . '">' . $i . '</a> ';
+						$active_html .= '<a class="page-numbers" href="' . esc_url( $link ). '">' . $i . '</a> ';
 					}
 				}
 
 				if( $current_page < $total_pages ) {
 					$next_link = add_query_arg( 'active_page', $current_page + 1 );
-					$active_html .= '<a class="next page-numbers" href="' . $next_link . '">' . __( 'Next' , 'woothemes-sensei' ) . '</a> ';
+					$active_html .= '<a class="next page-numbers" href="' . esc_url( $next_link ) . '">' . __( 'Next' , 'woothemes-sensei' ) . '</a> ';
 				}
 
 				$active_html .= '</nav>';
@@ -1309,7 +1309,7 @@ class WooThemes_Sensei_Course {
 
 				if( $current_page > 1 ) {
 					$prev_link = add_query_arg( 'completed_page', $current_page - 1 );
-					$complete_html .= '<a class="prev page-numbers" href="' . $prev_link . '">' . __( 'Previous' , 'woothemes-sensei' ) . '</a> ';
+					$complete_html .= '<a class="prev page-numbers" href="' . esc_url( $prev_link ) . '">' . __( 'Previous' , 'woothemes-sensei' ) . '</a> ';
 				}
 
 				for ( $i = 1; $i <= $total_pages; $i++ ) {
@@ -1318,13 +1318,13 @@ class WooThemes_Sensei_Course {
 					if( $i == $current_page ) {
 						$complete_html .= '<span class="page-numbers current">' . $i . '</span> ';
 					} else {
-						$complete_html .= '<a class="page-numbers" href="' . $link . '">' . $i . '</a> ';
+						$complete_html .= '<a class="page-numbers" href="' . esc_url( $link ) . '">' . $i . '</a> ';
 					}
 				}
 
 				if( $current_page < $total_pages ) {
 					$next_link = add_query_arg( 'completed_page', $current_page + 1 );
-					$complete_html .= '<a class="next page-numbers" href="' . $next_link . '">' . __( 'Next' , 'woothemes-sensei' ) . '</a> ';
+					$complete_html .= '<a class="next page-numbers" href="' . esc_url( $next_link ) . '">' . __( 'Next' , 'woothemes-sensei' ) . '</a> ';
 				}
 
 				$complete_html .= '</nav>';
