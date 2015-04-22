@@ -59,6 +59,10 @@ class Sensei_Core_Modules
         add_filter('manage_edit-course_columns', array($this, 'course_columns'), 11, 1);
         add_action('manage_posts_custom_column', array($this, 'course_column_content'), 11, 2);
 
+        // Ensure modules alway show under courses
+        add_action( 'admin_menu', array( $this, 'remove_lessons_menu_model_taxonomy' ) , 10 );
+        add_action( 'admin_menu', array( $this, 'redirect_to_lesson_module_taxonomy_to_course' ) , 20 );
+
         // Add course field to taxonomy
         add_action($this->taxonomy . '_add_form_fields', array($this, 'add_module_fields'), 50, 1);
         add_action($this->taxonomy . '_edit_form_fields', array($this, 'edit_module_fields'), 1, 1);
@@ -1560,5 +1564,48 @@ class Sensei_Core_Modules
         register_taxonomy( 'module' , array('course', 'lesson'), $args);
 
     }// end setup_modules_taxonomy
+
+    /**
+     * When the wants to edit the lesson modules redirect them to the course modules.
+     *
+     * This function is hooked into the admin_menu
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    function redirect_to_lesson_module_taxonomy_to_course( ){
+
+        global $typenow , $taxnow;
+
+        if( 'lesson'== $typenow && 'module'==$taxnow ){
+            wp_safe_redirect( esc_url_raw( 'edit-tags.php?taxonomy=module&post_type=course'  ) );
+        }
+
+    }// end redirect to course taxonomy
+
+    /**
+     * Completely remove the module menu item under lessons.
+     *
+     * This function is hooked into the admin_menu
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public function remove_lessons_menu_model_taxonomy(){
+        global $submenu;
+
+        if( ! isset( $submenu['edit.php?post_type=lesson'] ) || !is_array( $submenu['edit.php?post_type=lesson'] ) ){
+            return; // exit
+        }
+
+        $lesson_main_menu = $submenu['edit.php?post_type=lesson'];
+        foreach( $lesson_main_menu as $index => $sub_item ){
+
+            if( 'edit-tags.php?taxonomy=module&amp;post_type=lesson' == $sub_item[2] ){
+                unset( $submenu['edit.php?post_type=lesson'][ $index ]);
+            }
+        }
+
+    }// end remove lesson module tax
 
 } // end modules class
