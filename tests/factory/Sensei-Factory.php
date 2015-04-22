@@ -502,6 +502,40 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
         return $index;
     }// end get_random_none_file_question_index
 
+
+    /**
+     * This function creates dummy answers for the user based on the quiz questions for the
+     * quiz id that is passed in.
+     *
+     * @since 1.7.2
+     * @access public
+     *
+     * @param int $quiz_id
+     * @returns array $user_quiz_answers
+     */
+    public function generate_user_answers_feedback( $quiz_id ){
+
+        global $woothemes_sensei;
+        $answers_feedback =  array();
+
+        if( empty( $quiz_id ) ||  'quiz' != get_post_type( $quiz_id ) ){
+
+            return $answers_feedback;
+
+        }
+
+        $answers = $this->generate_user_quiz_answers( $quiz_id );
+
+        foreach( $answers as $question_id => $answer ){
+
+            $answers_feedback[ $question_id ] = 'Sample Feedback '. rand();
+
+        }
+
+        return $answers_feedback;
+
+    } // end generate_user_answers_feedback
+
     /**
      * generate random course
      *
