@@ -34,8 +34,8 @@ class Sensei_Core_Modules
         $this->taxonomy = 'module';
         $this->order_page_slug = 'module-order';
 
-        // Register 'module' taxonomy
-        add_action('init', array($this, 'register_taxonomy'), 0);
+        // setup taxonomy
+        add_action( 'init', array( $this, 'setup_modules_taxonomy' ), 10 );
 
         // Manage lesson meta boxes for taxonomy
         add_action('add_meta_boxes', array($this, 'lesson_metaboxes'), 25);
@@ -97,65 +97,7 @@ class Sensei_Core_Modules
         add_filter('manage_' . $this->taxonomy . '_custom_column', array($this, 'taxonomy_column_content'), 1, 3);
         add_filter('sensei_module_lesson_list_title', array($this, 'sensei_course_preview_titles'), 10, 2);
 
-        // Register activation hook to refresh permalinks
-        register_activation_hook($this->file, array($this, 'activation'));
-    }
-
-    /**
-     * Runs on plugin activation - refreshes permalinks
-     *
-     * @since 1.8.0
-     * @return void
-     */
-    public function activation()
-    {
-        $this->register_taxonomy();
-        flush_rewrite_rules();
-    }
-
-    /**
-     * Register 'module' taxonomy
-     *
-     * @since 1.8.0
-     * @return void
-     */
-    public function register_taxonomy()
-    {
-
-        $labels = array(
-            'name' => __('Modules', 'woothemes-sensei'),
-            'singular_name' => __('Module', 'woothemes-sensei'),
-            'search_items' => __('Search Modules', 'woothemes-sensei'),
-            'all_items' => __('All Modules', 'woothemes-sensei'),
-            'parent_item' => __('Parent Module', 'woothemes-sensei'),
-            'parent_item_colon' => __('Parent Module:', 'woothemes-sensei'),
-            'edit_item' => __('Edit Module', 'woothemes-sensei'),
-            'update_item' => __('Update Module', 'woothemes-sensei'),
-            'add_new_item' => __('Add New Module', 'woothemes-sensei'),
-            'new_item_name' => __('New Module Name', 'woothemes-sensei'),
-            'menu_name' => __('Modules', 'woothemes-sensei'),
-        );
-
-        /**
-         * Filter to alter the Sensei Modules rewrtie slug
-         *
-         * @since 1.8.0
-         * @param string default 'modules'
-         */
-        $modules_rewrite_slug = apply_filters('sensei_module_slug', 'modules');
-
-        $args = array(
-            'public' => true,
-            'hierarchical' => true,
-            'show_admin_column' => true,
-            'show_in_nav_menus' => false,
-            'show_ui' => false,
-            'rewrite' => array('slug' => $modules_rewrite_slug ),
-            'labels' => $labels
-        );
-
-        register_taxonomy($this->taxonomy, array('course', 'lesson'), $args);
-    }
+    } // end constructor
 
     /**
      * Manage taoxnomy meta boxes on lesson edit screen
@@ -246,7 +188,8 @@ class Sensei_Core_Modules
         global $post;
 
         // Verify post type and nonce
-        if ((get_post_type() != 'lesson') || !wp_verify_nonce($_POST['woo_lesson_' . $this->taxonomy . '_nonce'], plugin_basename($this->file))) {
+        if ((get_post_type() != 'lesson') || !isset($_POST['woo_lesson_' . $this->taxonomy . '_nonce'] )
+            ||!wp_verify_nonce($_POST['woo_lesson_' . $this->taxonomy . '_nonce'], plugin_basename($this->file))) {
             return $post_id;
         }
 
@@ -1574,5 +1517,48 @@ class Sensei_Core_Modules
 
         return $non_module_lessons;
     } // end get_none_module_lessons
+
+    /**
+     * Register the modules taxonomy
+     *
+     * @since 1.8.0
+     */
+    public function setup_modules_taxonomy(){
+
+        $labels = array(
+            'name' => __('Modules', 'woothemes-sensei'),
+            'singular_name' => __('Module', 'woothemes-sensei'),
+            'search_items' => __('Search Modules', 'woothemes-sensei'),
+            'all_items' => __('All Modules', 'woothemes-sensei'),
+            'parent_item' => __('Parent Module', 'woothemes-sensei'),
+            'parent_item_colon' => __('Parent Module:', 'woothemes-sensei'),
+            'edit_item' => __('Edit Module', 'woothemes-sensei'),
+            'update_item' => __('Update Module', 'woothemes-sensei'),
+            'add_new_item' => __('Add New Module', 'woothemes-sensei'),
+            'new_item_name' => __('New Module Name', 'woothemes-sensei'),
+            'menu_name' => __('Modules', 'woothemes-sensei'),
+        );
+
+        /**
+         * Filter to alter the Sensei Modules rewrite slug
+         *
+         * @since 1.8.0
+         * @param string default 'modules'
+         */
+        $modules_rewrite_slug = apply_filters('sensei_module_slug', 'modules');
+
+        $args = array(
+            'public' => true,
+            'hierarchical' => true,
+            'show_admin_column' => true,
+            'show_in_nav_menus' => false,
+            'show_ui' => true,
+            'rewrite' => array('slug' => $modules_rewrite_slug ),
+            'labels' => $labels
+        );
+
+        register_taxonomy( 'module' , array('course', 'lesson'), $args);
+
+    }// end setup_modules_taxonomy
 
 } // end modules class
