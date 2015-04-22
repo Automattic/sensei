@@ -48,6 +48,7 @@ class Sensei_Core_Modules
 
         // Admin styling
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_styles'));
+        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
         // Handle module completion record
         add_action('sensei_lesson_status_updated', array($this, 'update_lesson_status_module_progress'), 10, 3);
@@ -241,29 +242,6 @@ class Sensei_Core_Modules
                     multiple="multiple"></select>
             <span
                 class="description"><?php _e('Search for and select the courses that this module will belong to.', 'woothemes-sensei'); ?></span>
-            <script type="text/javascript">
-                jQuery('select.ajax_chosen_select_courses').ajaxChosen({
-                    method: 'GET',
-                    url: '<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
-                    dataType: 'json',
-                    afterTypeDelay: 100,
-                    minTermLength: 1,
-                    data: {
-                        action: 'sensei_json_search_courses',
-                        security: '<?php echo esc_js( wp_create_nonce( "search-courses" ) ); ?>',
-                        default: ''
-                    }
-                }, function (data) {
-
-                    var courses = {};
-
-                    jQuery.each(data, function (i, val) {
-                        courses[i] = val;
-                    });
-
-                    return courses;
-                });
-            </script>
         </div>
     <?php
     }
@@ -816,8 +794,6 @@ class Sensei_Core_Modules
         // Regsiter new admin page for module ordering
         $hook = add_submenu_page('edit.php?post_type=course', __('Order Modules', 'woothemes-sensei'), __('Order Modules', 'woothemes-sensei'), 'edit_lessons', $this->order_page_slug, array($this, 'module_order_screen'));
 
-        add_action('admin_print_scripts-' . $hook, array($this, 'admin_enqueue_scripts'));
-        add_action('admin_print_styles-' . $hook, array($this, 'admin_enqueue_styles'));
     }
 
     /**
@@ -1255,11 +1231,15 @@ class Sensei_Core_Modules
 
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
-        wp_register_script($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery', 'jquery-ui-sortable'), '1.0.0', true);
-        wp_enqueue_script($this->taxonomy . '-sortable');
+        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery.min.js', array('jquery'), Sensei()->version , true);
+        wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','sensei-chosen', 'jquery-ui-sortable'), Sensei()->version, true);
 
-        wp_register_script('sensei-chosen', esc_url($woothemes_sensei->plugin_url) . 'assets/chosen/chosen.jquery.min.js', array('jquery'), '1.3.0');
-        wp_enqueue_script('sensei-chosen');
+        //localized module data
+        $localize_modulesAdmin = array(
+            'search_courses_nonce' => wp_create_nonce( "search-courses" )
+        );
+
+        wp_localize_script( $this->taxonomy . '-admin' ,'modulesAdmin', $localize_modulesAdmin  );
     }
 
     /**

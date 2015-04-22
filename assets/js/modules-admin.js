@@ -26,4 +26,26 @@ jQuery( document ).ready( function ( e ) {
 
 		jQuery( 'input[name="module-order"]' ).attr( 'value', orderString );
 	});
+
+    jQuery('select.ajax_chosen_select_courses').ajaxChosen({
+        method: 'GET',
+        url: ajaxurl,
+        dataType: 'json',
+        afterTypeDelay: 100,
+        minTermLength: 1,
+        data: {
+            action: 'sensei_json_search_courses',
+            security: modulesAdmin.search_courses_nonce,
+            default: ''
+        }
+    }, function (data) {
+
+        var courses = {};
+
+        jQuery.each(data, function (i, val) {
+            courses[i] = val;
+        });
+
+        return courses;
+    });
 });
