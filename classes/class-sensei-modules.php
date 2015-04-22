@@ -207,14 +207,14 @@ class Sensei_Core_Modules
         // Cast module ID as an integer if selected, otherwise leave as empty string
         if ( isset( $_POST['lesson_module'] ) && intval( $_POST['lesson_module'] ) > 0 ) {
             $module_id = intval( $_POST['lesson_module'] );
-        }
 
-        // Assign lesson to selected module
-        wp_set_object_terms($post_id, $module_id, $this->taxonomy, false);
+            // Assign lesson to selected module
+            wp_set_object_terms($post_id, $module_id, $this->taxonomy, false);
 
-        // Set default order for lesson inside module
-        if (!get_post_meta($post_id, '_order_module_' . $module_id, true)) {
-            update_post_meta($post_id, '_order_module_' . $module_id, 0);
+            // Set default order for lesson inside module
+            if (!get_post_meta($post_id, '_order_module_' . $module_id, true)) {
+                update_post_meta($post_id, '_order_module_' . $module_id, 0);
+            }
         }
 
         return true;
