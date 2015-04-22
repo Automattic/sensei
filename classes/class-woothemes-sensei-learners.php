@@ -371,7 +371,6 @@ class WooThemes_Sensei_Learners {
 		$post_type = $_POST['add_post_type'];
 		$user_id = absint( $_POST['add_user_id'] );
 		$course_id = absint( $_POST['add_course_id'] );
-		$lesson_id = absint( $_POST['add_lesson_id'] );
 
 		switch( $post_type ) {
 			case 'course':
@@ -383,8 +382,8 @@ class WooThemes_Sensei_Learners {
 
 					$lesson_ids = WooThemes_Sensei_Course::course_lessons( $course_id, 'any', 'ids' );
 
-					foreach( $lesson_ids as $lesson_id ) {
-						WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, true );
+					foreach( $lesson_ids as $id ) {
+						WooThemes_Sensei_Utils::sensei_start_lesson( $id, $user_id, true );
 					}
 
 					// Updates the Course status and it's meta data
@@ -396,7 +395,7 @@ class WooThemes_Sensei_Learners {
 			break;
 
 			case 'lesson':
-
+                $lesson_id = absint( $_POST['add_lesson_id'] );
 				$complete = false;
 				if( isset( $_POST['add_complete_lesson'] ) && 'yes' == $_POST['add_complete_lesson'] ) {
 					$complete = true;
