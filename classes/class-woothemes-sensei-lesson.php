@@ -470,7 +470,7 @@ class WooThemes_Sensei_Lesson {
 		$meta_key = '_' . $post_key;
 
         //ignore fields are not posted
-        if( !isset( $_post[ $post_key ] ) ){
+        if( !isset( $_POST[ $post_key ] ) ){
             return false;
         }
 
