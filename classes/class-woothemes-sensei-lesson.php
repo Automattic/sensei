@@ -81,7 +81,7 @@ class WooThemes_Sensei_Lesson {
 			// Metabox functions
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
-			add_action( 'save_post', array( $this, 'post_updated' ) );
+			add_action( 'save_post', array( $this, 'quiz_update' ) );
 
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 10, 1 );
@@ -314,12 +314,12 @@ class WooThemes_Sensei_Lesson {
 
 
 	/**
-	 * post_updated function.
+     * Update the lesson quiz and all the post meta
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function post_updated( $post_id ) {
+	public function quiz_update( $post_id ) {
 		global $post, $woothemes_sensei;
 		// Verify the nonce before proceeding.
 		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta') ) {
