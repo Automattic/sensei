@@ -2919,8 +2919,6 @@ class WooThemes_Sensei_Lesson {
                     //
                     //course selection
                     //
-                    $name_id = 'sensei-edit-lesson-course';
-                    $course_attributes = array( 'name'=> $name_id, 'id'=>$name_id , 'class'=>' ' );
                     $courses =  WooThemes_Sensei_Course::get_all_courses();
                     $course_options = array();
                     if ( count( $courses ) > 0 ) {
@@ -2930,7 +2928,7 @@ class WooThemes_Sensei_Lesson {
                     }
                     //pre-append the no change option
                     $course_options['-1']=  $no_change_text;
-                    $course_attributes = array( 'name'=> $name_id, 'id'=>$name_id , 'class'=>' ' );
+                    $course_attributes = array( 'name'=> 'lesson_course', 'id'=>'sensei-edit-lesson-course' , 'class'=>' ' );
                     $course_field =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $course_options, $course_attributes );
                     echo $this->generate_all_lessons_edit_field( __('Lesson Course', 'woothemes-sensei'),   $course_field  );
 
@@ -2940,8 +2938,7 @@ class WooThemes_Sensei_Lesson {
                     $lesson_complexities =  $this->lesson_complexities();
                     //pre-append the no change option
                     $lesson_complexities['-1']=  $no_change_text;
-                    $complexity_name_id = 'sensei-edit-lesson-complexity';
-                    $complexity_dropdown_attributes = array( 'name'=> $complexity_name_id, 'id'=>$complexity_name_id , 'class'=>' ');
+                    $complexity_dropdown_attributes = array( 'name'=> 'lesson_complexity', 'id'=>'sensei-edit-lesson-complexity' , 'class'=>' ');
                     $complexity_filed =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $lesson_complexities, $complexity_dropdown_attributes );
                     echo $this->generate_all_lessons_edit_field( __('Lesson Complexity', 'woothemes-sensei'),   $complexity_filed  );
 
@@ -2959,9 +2956,9 @@ class WooThemes_Sensei_Lesson {
                          '0' => __('No','woothemes'),
                          '1' => __('Yes','woothemes'),
                     );
-                    $pass_required_name_id = 'sensei-edit-lesson-pass-required';
-                    $pass_required_select_attributes = array( 'name'=> $pass_required_name_id,
-                                                                'id'=>$pass_required_name_id,
+
+                    $pass_required_select_attributes = array( 'name'=> 'pass_required',
+                                                                'id'=> 'sensei-edit-lesson-pass-required',
                                                                 'class'=>' '   );
                     $require_pass_field =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
                     echo $this->generate_all_lessons_edit_field( __('Pass required', 'woothemes-sensei'),   $require_pass_field  );
@@ -2969,7 +2966,7 @@ class WooThemes_Sensei_Lesson {
                     //
                     // Quiz pass percentage
                     //
-                    $quiz_pass_percentage_field = '<input name="sensei-edit-quiz-pass-percentage" id="sensei-edit-quiz-pass-percentage" type="number" />';
+                    $quiz_pass_percentage_field = '<input name="quiz_passmark" id="sensei-edit-quiz-pass-percentage" type="number" />';
                     echo $this->generate_all_lessons_edit_field( __('Pass Percentage', 'woothemes-sensei'), $quiz_pass_percentage_field  );
 
                     //
@@ -2981,7 +2978,7 @@ class WooThemes_Sensei_Lesson {
                         '1' => __('Yes','woothemes'),
                     );
                     $quiz_reset_name_id = 'sensei-edit-enable-quiz-reset';
-                    $quiz_reset_select_attributes = array( 'name'=> $quiz_reset_name_id, 'id'=>$quiz_reset_name_id, 'class'=>' ' );
+                    $quiz_reset_select_attributes = array( 'name'=> 'enable_quiz_reset', 'id'=>$quiz_reset_name_id, 'class'=>' ' );
                     $quiz_reset_field =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
                     echo $this->generate_all_lessons_edit_field( __('Enable quiz reset button', 'woothemes-sensei'), $quiz_reset_field  );
 
