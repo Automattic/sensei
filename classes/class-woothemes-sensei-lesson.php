@@ -339,7 +339,7 @@ class WooThemes_Sensei_Lesson {
 		}
 
 		// Temporarily disable the filter
-   		remove_action( 'save_post', array( $this, 'post_updated' ) );
+        remove_action( 'save_post', array( $this, 'quiz_update' ) );
 		// Save the Quiz
 		$quiz_id = $this->lesson_quizzes( $post_id, 'any');
 
@@ -422,7 +422,7 @@ class WooThemes_Sensei_Lesson {
 		}
 
 		// Restore the previously disabled filter
-    	add_action( 'save_post', array( $this, 'post_updated' ) );
+        add_action( 'save_post', array( $this, 'quiz_update' ) );
 
 	} // End post_updated()
 
