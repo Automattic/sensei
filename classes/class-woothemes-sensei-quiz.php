@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 */
 	public function __construct ( $file = __FILE__ ) {
 		$this->file = $file;
-		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required' );
+		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required','enable_quiz_reset' );
 		add_action( 'save_post', array( $this, 'update_author' ));
 
 		// listen to the reset button click
