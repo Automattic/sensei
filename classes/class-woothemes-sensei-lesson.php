@@ -391,6 +391,14 @@ class WooThemes_Sensei_Lesson {
 
 		    foreach( $settings as $field ) {
 		    	if( 'random_question_order' != $field['id'] ) {
+
+                    //ignore values not posted to avoid
+                    // overwriting with empty or default values
+                    // when the values are posted from bulk edit or quick edit
+                    if( !isset( $_POST[ $field['id'] ] ) ){
+                        continue;
+                    }
+
 			    	$value = $this->get_submitted_setting_value( $field );
 			    	if( isset( $value ) ) {
 			    		add_post_meta( $quiz_id, '_' . $field['id'], $value );
