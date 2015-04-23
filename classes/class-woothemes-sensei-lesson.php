@@ -530,7 +530,7 @@ class WooThemes_Sensei_Lesson {
         foreach( $courses as $course ){
             $courses_options[ $course->ID ] = get_the_title( $course ) ;
         }
-        $html .= WooThemes_Sensei_Utils::generate_drop_down( $selected_lesson_course, $courses_options, $drop_down_args , false  );
+        $html .= WooThemes_Sensei_Utils::generate_drop_down( $selected_lesson_course, $courses_options, $drop_down_args );
 
         // Course Actions Panel
 		if ( current_user_can( 'publish_courses' )) {
@@ -3121,6 +3121,8 @@ class WooThemes_Sensei_Lesson {
      *
      * This function will localise the default values along with the script that will
      * add these values to the inputs.
+     *
+     * NOTE: this function runs for each row in the edit column
      *
      * @since 1.8.0
      * @return void
