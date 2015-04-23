@@ -2900,6 +2900,12 @@ class WooThemes_Sensei_Lesson {
     /**
      * Add the admin all lessons screen edit options.
      *
+     * The fields in this function work for both quick and bulk edit. The ID attributes is used
+     * by bulk edit javascript in the front end to retrieve the new values set byt the user. Then
+     * name attribute is will be used by the quick edit and submitted via standard POST. This
+     * will use this classes save_post_meta function to save the new field data.
+     *
+     * @hooked quick_edit_custom_box
      * @hooked bulk_edit_custom_box
      *
      * @since 1.8.0
