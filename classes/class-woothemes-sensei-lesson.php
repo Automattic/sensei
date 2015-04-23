@@ -3061,7 +3061,7 @@ class WooThemes_Sensei_Lesson {
                 // update pass required
                 if (-1 != $new_pass_required) {
 
-                    $checked = $new_pass_required  ? 'on' : 'off';
+                    $checked = $new_pass_required  ? 'on' : '';
                     update_post_meta($quiz_id, '_pass_required', $checked);
                     unset( $checked );
                 }
