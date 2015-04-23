@@ -235,7 +235,7 @@ class WooThemes_Sensei_Lesson {
 		$posts_array = get_posts( $post_args );
 		// Build the HTML to Output
 		$html = '';
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
 		if ( count( $posts_array ) > 0 ) {
 			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="chosen_select widefat">' . "\n";
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
@@ -261,7 +261,7 @@ class WooThemes_Sensei_Lesson {
 		// Get existing post meta
 		$lesson_preview = get_post_meta( $post->ID, '_lesson_preview', true );
 		$html = '';
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
 
 		$checked = '';
 		if ( isset( $lesson_preview ) && ( '' != $lesson_preview ) ) {
@@ -285,7 +285,7 @@ class WooThemes_Sensei_Lesson {
 	public function meta_box_save ( $post_id ) {
 		global $post, $messages;
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename(__FILE__) ) ) {
+		if ( ( get_post_type( $post_id ) != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		} // End If Statement
 		// Get the post type object.
@@ -322,7 +322,7 @@ class WooThemes_Sensei_Lesson {
 	public function post_updated( $post_id ) {
 		global $post, $woothemes_sensei;
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename(__FILE__) ) ) {
+		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta') ) {
 			if ( isset($post->ID) ) {
 				return $post->ID;
 			} else {
@@ -498,7 +498,7 @@ class WooThemes_Sensei_Lesson {
 		// Buid the HTML to Output
 		$html = '';
 		// Nonce
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
 
         // Select the course for the lesson
         $drop_down_args = array(
@@ -612,7 +612,7 @@ class WooThemes_Sensei_Lesson {
 
 	public function quiz_panel( $quiz_id = 0 ) {
 
-		$html = '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html = wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
 		$html .= '<div id="add-quiz-main">';
 			if ( 0 == $quiz_id ) {
 				$html .= '<p>';
