@@ -827,7 +827,14 @@ class WooThemes_Sensei_Admin {
 								break;
 
 								case 'checkbox':
-									$checked = checked( $field['checked'], $data, false );
+                                    //backwards compatibility
+                                    if( empty( $data ) || 'on' == $data ){
+                                        $checked_value = 'on';
+                                    }else{
+                                        $checked_value = 1;
+                                        $data = intval( $data );
+                                    }
+									$checked = checked( $checked_value, $data, false );
 									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" ' . $checked . ' ' . $disabled . '/>' . "\n";
 								break;
 
