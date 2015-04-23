@@ -461,6 +461,12 @@ class WooThemes_Sensei_Lesson {
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		// Get the meta key.
 		$meta_key = '_' . $post_key;
+
+        //ignore fields are not posted
+        if( !isset( $_post[ $post_key ] ) ){
+            return false;
+        }
+
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'lesson_video_embed' == $post_key) {
 			$new_meta_value = esc_html( $_POST[$post_key] );
@@ -469,7 +475,9 @@ class WooThemes_Sensei_Lesson {
 		} // End If Statement
 
         // update field with the new value
-        return update_post_meta( $post_id, $meta_key, $new_meta_value );
+        if( -1 != $new_meta_value  ){
+            return update_post_meta( $post_id, $meta_key, $new_meta_value );
+        }
 
 	} // End save_post_meta()
 
