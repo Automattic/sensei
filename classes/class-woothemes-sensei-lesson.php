@@ -2928,12 +2928,13 @@ class WooThemes_Sensei_Lesson {
                     echo '<h3>' . __('Lesson Information', 'woothemes-sensei') . '</h3>';
                     // create a nonce field to be  used as a security measure when saving the data
                     wp_nonce_field( 'bulk-edit-lessons', '_edit_lessons_nonce' );
+                    wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce'  );
 
                     // unchanged option - this i needed in the list because
                     // the default option in bulk edit should not be empty. If it is
                     // the user will erase data they didn't want to touch.
                     $no_change_text = '-- ' . __('No Change', 'woothemes-sensei') . ' --';
-
+                    ;
                     //
                     //course selection
                     //
