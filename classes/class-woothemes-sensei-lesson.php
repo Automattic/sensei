@@ -326,7 +326,7 @@ class WooThemes_Sensei_Lesson {
 	public function quiz_update( $post_id ) {
 		global $post, $woothemes_sensei;
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta') ) {
+		if ( ( 'lesson' != get_post_type( $post_id ) ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta') ) {
 			if ( isset($post->ID) ) {
 				return $post->ID;
 			} else {
@@ -341,7 +341,7 @@ class WooThemes_Sensei_Lesson {
 		// Temporarily disable the filter
    		remove_action( 'save_post', array( $this, 'post_updated' ) );
 		// Save the Quiz
-		$quiz_id = $this->lesson_quizzes( $post->ID, 'any');
+		$quiz_id = $this->lesson_quizzes( $post_id, 'any');
 
 		 // Sanitize and setup the post data
 		$_POST = stripslashes_deep( $_POST );
@@ -358,7 +358,7 @@ class WooThemes_Sensei_Lesson {
   		    						'post_status' => $post_status,
   		    						'post_title' => $post_title,
   		    						'post_type' => 'quiz',
-  		    						'post_parent' => $post->ID,
+                                    'post_parent' => $post_id,
   		    						);
 
 		$settings = $this->get_quiz_settings();
@@ -370,7 +370,7 @@ class WooThemes_Sensei_Lesson {
 		    wp_update_post($post_type_args);
 
 		    // Update the post meta data
-		    update_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
+		    update_post_meta( $quiz_id, '_quiz_lesson', $post_id );
 
 		    foreach( $settings as $field ) {
 		    	if( 'random_question_order' != $field['id'] ) {
@@ -388,7 +388,7 @@ class WooThemes_Sensei_Lesson {
 		    $quiz_id = wp_insert_post($post_type_args);
 
 		    // Add the post meta data WP will add it if it doesn't exist
-            update_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
+            update_post_meta( $quiz_id, '_quiz_lesson', $post_id );
 
 		    foreach( $settings as $field ) {
 		    	if( 'random_question_order' != $field['id'] ) {
@@ -404,21 +404,21 @@ class WooThemes_Sensei_Lesson {
 		} // End If Statement
 
 		// Add default lesson order meta value
-		$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+		$course_id = get_post_meta( $post_id, '_lesson_course', true );
 		if( $course_id ) {
-			if( ! get_post_meta( $post->ID, '_order_' . $course_id, true ) ) {
-				update_post_meta( $post->ID, '_order_' . $course_id, 0 );
+			if( ! get_post_meta( $post_id, '_order_' . $course_id, true ) ) {
+				update_post_meta( $post_id, '_order_' . $course_id, 0 );
 			}
 		}
 		// Add reference back to the Quiz
-		update_post_meta( $post->ID, '_lesson_quiz', $quiz_id );
+		update_post_meta( $post_id, '_lesson_quiz', $quiz_id );
 		// Mark if the Lesson Quiz has questions
 		$quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
 		if( 0 < count( $quiz_questions ) ) {
-			update_post_meta( $post->ID, '_quiz_has_questions', '1' );
+			update_post_meta( $post_id, '_quiz_has_questions', '1' );
 		}
 		else {
-			delete_post_meta( $post->ID, '_quiz_has_questions' );
+			delete_post_meta( $post_id, '_quiz_has_questions' );
 		}
 
 		// Restore the previously disabled filter
