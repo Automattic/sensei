@@ -349,7 +349,6 @@ class WooThemes_Sensei_Lesson {
 			$quiz_id = absint( $_POST[ 'quiz_id' ] );
 		} // End If Statement
 		$post_title = esc_html( $_POST[ 'post_title' ] );
-		$post_author = esc_html( $_POST[ 'post_author' ] );
 		$post_status = esc_html( $_POST[ 'post_status' ] );
 		$post_content = '';
 
