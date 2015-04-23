@@ -133,6 +133,10 @@ class WooThemes_Sensei_Lesson {
 
             // output bulk edit fields
             add_action( 'bulk_edit_custom_box', array( $this, 'all_lessons_edit_fields' ), 10, 2 );
+            add_action( 'quick_edit_custom_box', array( $this, 'all_lessons_edit_fields' ), 10, 2 );
+
+            // load quick edit default values
+            add_action('manage_lesson_posts_custom_column', array( $this, 'set_quick_edit_admin_defaults'), 11, 2);
 
             // save bulk edit fields
             add_action( 'wp_ajax_save_bulk_edit_book', array( $this, 'save_all_lessons_edit_fields' ) );
@@ -3089,5 +3093,42 @@ class WooThemes_Sensei_Lesson {
         die();
 
     } // end save_all_lessons_edit_fields
+
+    /**
+     * Loading the quick edit fields defaults.
+     *
+     * This function will localise the default values along with the script that will
+     * add these values to the inputs.
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public function set_quick_edit_admin_defaults( $column_name, $post_id ){
+
+        if( 'lesson-course' != $column_name ){
+            return;
+        }
+        // load the script
+        $suffix = defined( 'SCRIPT_DEBUG') && SCRIPT_DEBUG ? '.min' : '';
+        wp_enqueue_script( 'sensei-lesson-quick-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-quick-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+
+        // setup the values for all meta fields
+        $data = array();
+        foreach( $this->meta_fields as $field ){
+
+            $data[$field] =  get_post_meta( $post_id, '_'.$field, true );
+
+        }
+        // add quiz meta fields
+        $quiz_id = Sensei()->lesson->lesson_quizzes( $post_id );
+        foreach( Sensei()->quiz->meta_fields as $field ){
+
+            $data[$field] =  get_post_meta( $quiz_id, '_'.$field, true );
+
+        }
+
+        wp_localize_script( 'sensei-lesson-quick-edit', 'sensei_quick_edit_'.$post_id, $data );
+
+    }// end quick edit admin defaults
 
 } // End Class
