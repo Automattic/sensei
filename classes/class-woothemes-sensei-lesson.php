@@ -3078,7 +3078,7 @@ class WooThemes_Sensei_Lesson {
                 //
                 if (-1 != $new_enable_quiz_reset ) {
 
-                    $checked = $new_enable_quiz_reset  ? 'on' : 'off';
+                    $checked = $new_enable_quiz_reset ? 'on' : ''  ;
                     update_post_meta($quiz_id, '_enable_quiz_reset', $checked);
                     unset( $checked );
 

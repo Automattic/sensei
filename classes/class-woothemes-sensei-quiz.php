@@ -391,6 +391,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         } // End If Statement
 
         $reset_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
+        //backwards compatibility
+        if( 'on' == $reset_allowed ) {
+            $reset_allowed = 1;
+        }
 
         // Build frontend data object
         $this->data->user_quiz_grade = $user_quiz_grade;
