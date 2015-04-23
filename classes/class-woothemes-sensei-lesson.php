@@ -287,13 +287,13 @@ class WooThemes_Sensei_Lesson {
 	 * @return void
 	 */
 	public function meta_box_save ( $post_id ) {
-		global $post, $messages;
+
 		// Verify the nonce before proceeding.
 		if ( ( get_post_type( $post_id ) != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		} // End If Statement
 		// Get the post type object.
-		$post_type = get_post_type_object( $post->post_type );
+		$post_type = get_post_type_object( get_post_type( $post_id ) );
 		// Check if the current user has permission to edit the post.
 		if ( !current_user_can( $post_type->cap->edit_post, $post_id ) ) {
 			return $post_id;
