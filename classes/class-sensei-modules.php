@@ -1536,6 +1536,7 @@ class Sensei_Core_Modules
             'hierarchical' => true,
             'show_admin_column' => true,
             'show_in_nav_menus' => false,
+            'show_in_quick_edit' => false,
             'show_ui' => true,
             'rewrite' => array('slug' => $modules_rewrite_slug ),
             'labels' => $labels
