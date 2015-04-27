@@ -10,23 +10,45 @@
         // now we take care of our business
 
         // get the post ID
-        var $post_id = 0;
-        if ( typeof( id ) == 'object' )
-            $post_id = parseInt( this.getId( id ) );
+        var postId = 0;
+        if ( typeof( id ) == 'object' ) {
 
-        if ( $post_id > 0 ) {
+            postId = parseInt(this.getId(id));
+
+        }
+
+        if ( postId > 0 ) {
+
             // define the edit row
-            var $edit_row = $( '#edit-' + $post_id );
-            var $post_row = $( '#post-' + $post_id );
+            var editRow = $( '#edit-' + postId );
+            var postRow = $( '#post-' + postId );
+            var senseiFieldValues = window['sensei_quick_edit_'+postId];
 
-            // get the data
-            var $book_author = $( '.column-book_author', $post_row ).html();
-            var $inprint = !! $('.column-inprint>*', postRow).attr('checked');
+            //load the relod function on the save button click
+            editRow.find('a.save').on( 'click', function(){
+
+                location.reload();
+
+            });
 
             // populate the data
-            $( ':input[name="book_author"]', $edit_row ).val( $book_author );
-            $( ':input[name="inprint"]', $edit_row ).attr('checked', $inprint );
+            //data is localized in sensei_quick_edit object
+            $( ':input[name="lesson_course"] option[value="'+ senseiFieldValues.lesson_course +'"] ', editRow ).attr('selected', true );
+            $( ':input[name="lesson_complexity"] option[value="'+ senseiFieldValues.lesson_complexity +'"] ', editRow ).attr('selected', true );
+            if( 'on' ==senseiFieldValues.pass_required ||  '1' ==senseiFieldValues.pass_required  ){
+                senseiFieldValues.pass_required = 1;
+            }else{
+                senseiFieldValues.pass_required = 0;
+            }
+            $( ':input[name="pass_required"] option[value="'+ senseiFieldValues.pass_required +'"] ', editRow ).attr('selected', true );
+            $( ':input[name="quiz_passmark"]', editRow ).val( senseiFieldValues.quiz_passmark );
 
+            if( 'on' ==senseiFieldValues.enable_quiz_reset ||  '1' ==senseiFieldValues.enable_quiz_reset  ){
+                senseiFieldValues.enable_quiz_reset = 1;
+            }else{
+                senseiFieldValues.enable_quiz_reset = 0;
+            }
+            $( ':input[name="enable_quiz_reset"] option[value="'+ senseiFieldValues.enable_quiz_reset +'"] ', editRow ).attr('selected', true );
 
         }
     };
