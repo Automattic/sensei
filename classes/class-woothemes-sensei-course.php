@@ -826,7 +826,6 @@ class WooThemes_Sensei_Course {
 
 		$post_args = array(	'post_type'         => 'lesson',
 							'numberposts'       => -1,
-							'meta_key'          => '_order_' . $course_id,
 							'orderby'           => 'meta_value_num date',
 							'order'             => 'ASC',
 							'meta_query'        => array(
