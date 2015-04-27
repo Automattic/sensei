@@ -1125,23 +1125,7 @@ class WooThemes_Sensei_Admin {
 					}
 				}
 
-				$args = array(
-					'post_type' => 'lesson',
-					'posts_per_page' => -1,
-					'suppress_filters' => 0,
-					'meta_key' => '_order_' . $course_id,
-					'orderby' => 'meta_value_num date',
-					'order' => 'ASC',
-					'meta_query' => array(
-						array(
-							'key' => '_lesson_course',
-							'value' => intval( $course_id ),
-						),
-					),
-					'post__not_in' => $displayed_lessons,
-				);
-
-				$lessons = get_posts( $args );
+                $lessons = Sensei()->course->course_lessons( $course_id );
 
 				if( 0 < count( $lessons ) ) {
 
