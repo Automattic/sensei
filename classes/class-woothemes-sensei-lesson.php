@@ -289,7 +289,7 @@ class WooThemes_Sensei_Lesson {
 	public function meta_box_save ( $post_id ) {
 
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type( $post_id ) != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
+		if ( ( get_post_type( $post_id ) != $this->token ) || !isset(   $_POST[ 'woo_' . $this->token . '_nonce'] )  || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		} // End If Statement
 		// Get the post type object.
@@ -326,7 +326,7 @@ class WooThemes_Sensei_Lesson {
 	public function quiz_update( $post_id ) {
 		global $post, $woothemes_sensei;
 		// Verify the nonce before proceeding.
-		if ( ( 'lesson' != get_post_type( $post_id ) ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta') ) {
+		if ( ( 'lesson' != get_post_type( $post_id ) )|| !isset(   $_POST[ 'woo_' . $this->token . '_nonce'] )  || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta') ) {
 			if ( isset($post->ID) ) {
 				return $post->ID;
 			} else {
