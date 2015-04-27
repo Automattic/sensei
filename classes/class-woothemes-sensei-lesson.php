@@ -3133,7 +3133,7 @@ class WooThemes_Sensei_Lesson {
             return;
         }
         // load the script
-        $suffix = defined( 'SCRIPT_DEBUG') && SCRIPT_DEBUG ? '.min' : '';
+        $suffix = defined( 'SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
         wp_enqueue_script( 'sensei-lesson-quick-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-quick-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 
         // setup the values for all meta fields
