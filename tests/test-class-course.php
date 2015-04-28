@@ -23,6 +23,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
     /**
      * Testing the quiz class to make sure it is loaded
+     * @since 1.8.0
      */
     public function testClassInstance() {
 
@@ -30,16 +31,21 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
         $this->assertTrue( class_exists('WooThemes_Sensei_Course'), 'Sensei course class does not exist' );
 
         //test if the global sensei quiz class is loaded
-        $this->assertTrue( isset( Sensei()->course ), 'Sensei Question class is not loaded' );
+        $this->assertTrue( isset( Sensei()->course ), 'Sensei Course class is not loaded' );
 
     } // end testClassInstance
 
     /**
      * This tests Sensei_Courses::get_all_course
      */
+    public function testCountCompletedLessons() {
+        // setup the test
+        foreach( $this->factory->lesson_ids as $lesson_id ){
     public function testGetAllCourses() {
 
-        // check if the function is there
+        }
+    }// end testGetQuestionType()
+}        // check if the function is there
         $this->assertTrue( method_exists( 'WooThemes_Sensei_Course', 'get_all_courses' ) , 'The course class get_all_courses function does not exist.' );
 
         //setup the assertion

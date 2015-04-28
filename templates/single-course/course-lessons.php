@@ -17,6 +17,7 @@ $html = '';
 // Get Course Lessons
 $lessons_completed = 0;
 $course_lessons = $woothemes_sensei->post_types->course->course_lessons( $post->ID );
+//$lessons_completed = Sensei()->course->count_completed_lessons( $course_id );
 $total_lessons = count( $course_lessons );
 // Check if the user is taking the course
 

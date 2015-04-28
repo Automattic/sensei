@@ -1188,11 +1188,7 @@ class WooThemes_Sensei_Course {
 
 		    		   	$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $lesson_count ), 0 ) );
 
-		    		   	if ( 50 < $progress_percentage ) { $class = ' green'; } elseif ( 25 <= $progress_percentage && 50 >= $progress_percentage ) { $class = ' orange'; } else { $class = ' red'; }
-
-		    		   	/* if ( 0 == $progress_percentage ) { $progress_percentage = 5; } */
-
-		    		   	$active_html .= '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' . $progress_percentage . '%">' . $progress_percentage . '%</span></div>';
+		    		   	$active_html .= $this->generate_progress_meter( $progress_percentage );
 
 		    		$active_html .= '</section>';
 
@@ -1306,7 +1302,7 @@ class WooThemes_Sensei_Course {
 
 						$complete_html .= '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
 
-						$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
+						$complete_html .= $this->generate_progress_meter( 100 );
 
 						if( $manage ) {
 							$has_quizzes = $woothemes_sensei->post_types->course->course_quizzes( $course_item->ID, true );
@@ -1469,5 +1465,28 @@ class WooThemes_Sensei_Course {
         return apply_filters( 'sensei_get_all_courses' , $wp_query_obj->posts );
 
     }// end get_all_courses
+
+    /**
+     * Generate the course meter component
+     *
+     * @since 1.8.0
+     * @param int $progress_percentage 0 - 100
+     * @return string $progress_bar_html
+     */
+    public function generate_progress_meter( $progress_percentage ){
+
+        if ( 50 < $progress_percentage ) {
+            $class = ' green';
+        } elseif ( 25 <= $progress_percentage && 50 >= $progress_percentage ) {
+            $class = ' orange';
+        } else {
+            $class = ' red';
+        }
+
+        $progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' . $progress_percentage . '%">' . $progress_percentage . '%</span></div>';
+
+        return $progress_bar_html;
+
+    }// end generate_meter
 
 } // End Class
