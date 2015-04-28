@@ -26,15 +26,30 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
      */
     public function testClassInstance() {
 
+        //test if the class exists
+        $this->assertTrue( class_exists('WooThemes_Sensei_Course'), 'Sensei course class does not exist' );
+
         //test if the global sensei quiz class is loaded
-        $this->assertTrue( isset( Sensei()->course ), 'Sensei Course class is not loaded' );
+        $this->assertTrue( isset( Sensei()->course ), 'Sensei Question class is not loaded' );
 
     } // end testClassInstance
 
     /**
-     * This tests Woothemes_Sensei()->quiz->get_question_type
+     * This tests Sensei_Courses::get_all_course
      */
-    //public function testGetQuestionType() {
+    public function testGetAllCourses() {
 
-    //}// end testGetQuestionType()
-}
+        // check if the function is there
+        $this->assertTrue( method_exists( 'WooThemes_Sensei_Course', 'get_all_courses' ) , 'The course class get_all_courses function does not exist.' );
+
+        //setup the assertion
+        $created_courses_count = 4;
+        $this->factory->generate_courses( $created_courses_count );
+        $retrieved_courses = get_posts(array('post_type'=>'course'));
+        //make sure the same course were retrieved as what we just created
+
+        $this->assertEquals( count( $retrieved_courses) , count( WooThemes_Sensei_Course::get_all_courses() )
+            , 'The number of course returned is not equal to what is actually available' );
+    }// end testGetAllCourses()
+
+}// end class

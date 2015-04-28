@@ -827,7 +827,14 @@ class WooThemes_Sensei_Admin {
 								break;
 
 								case 'checkbox':
-									$checked = checked( $field['checked'], $data, false );
+                                    //backwards compatibility
+                                    if( empty( $data ) || 'on' == $data ){
+                                        $checked_value = 'on';
+                                    }else{
+                                        $checked_value = 1;
+                                        $data = intval( $data );
+                                    }
+									$checked = checked( $checked_value, $data, false );
 									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" ' . $checked . ' ' . $disabled . '/>' . "\n";
 								break;
 
@@ -1114,23 +1121,7 @@ class WooThemes_Sensei_Admin {
                 }
 
 
-				$args = array(
-					'post_type' => 'lesson',
-					'posts_per_page' => -1,
-					'suppress_filters' => 0,
-					'meta_key' => '_order_' . $course_id,
-					'orderby' => 'meta_value_num date',
-					'order' => 'ASC',
-					'meta_query' => array(
-						array(
-							'key' => '_lesson_course',
-							'value' => intval( $course_id ),
-						),
-					),
-					'post__not_in' => $displayed_lessons,
-				);
-
-				$lessons = get_posts( $args );
+                $lessons = Sensei()->course->course_lessons( $course_id );
 
 				if( 0 < count( $lessons ) ) {
 

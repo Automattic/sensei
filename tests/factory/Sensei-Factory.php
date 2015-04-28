@@ -536,4 +536,34 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
     } // end generate_user_answers_feedback
 
+    /**
+     * generate random course
+     *
+     * @since 1.8.0
+     * @param int $number how many courses would you like to generate. Default 10.
+     * @return array $course_ids
+     */
+    public function generate_courses( $number = 10  ){
+
+        $course_ids = array();
+
+        // create random $number of test lessons needed in the class tests
+        foreach (range( 0, $number ) as $count ) {
+
+            $new_course_args = array(
+                'post_content' => 'course ' . ( $count + 1 ) . ' test content',
+                'post_name' => 'test-course ' . ( $count + 1 ) ,
+                'post_title' => 'test-course ' . ( $count + 1 ) ,
+                'post_status' => 'publish',
+                'post_type' => 'course'
+            );
+            // add the course id to the array of ids
+            $course_ids[ $count ] = wp_insert_post( $new_course_args );
+
+        } // end for each range 0 to 12
+
+        return $course_ids;
+
+    }// end generate_courses
+
 }// end Sensei Factory class

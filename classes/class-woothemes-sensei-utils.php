@@ -2073,4 +2073,86 @@ class WooThemes_Sensei_Utils {
 
     }// end delete_user_data
 
+
+    /**
+     * The function creates a drop down. Never write up a Sensei select statement again.
+     *
+     * @since 1.8.0
+     *
+     * @param string $selected_value
+     * @param $options{
+     *    @type string $value the value saved in the database
+     *    @type string $option what the user will see in the list of items
+     * }
+     * @param array $attributes{
+     *   @type string $attribute  type such name or id etc.
+     *  @type string $value
+     * }
+     * @param bool $enable_none_option
+     *
+     * @return string $drop_down_element
+     */
+    public static function generate_drop_down( $selected_value, $options = array() , $attributes = array(), $enable_none_option = true ) {
+
+        $drop_down_element = '';
+
+        // setup the basic attributes
+        if( !isset( $attributes['name'] ) || empty( $attributes['name']  ) ) {
+
+            $attributes['name'] = 'sensei-options';
+
+        }
+
+        if( !isset( $attributes['id'] ) || empty( $attributes['id']  ) ) {
+
+            $attributes['id'] = 'sensei-options';
+
+        }
+
+        if( !isset( $attributes['class'] ) || empty( $attributes['class']  ) ) {
+
+            $attributes['class'] ='chosen_select widefat';
+
+        }
+
+        // create element attributes
+        $combined_attributes = '';
+        foreach( $attributes as $attribute => $value ){
+
+            $combined_attributes .= $attribute . '="'.$value.'"' . ' ';
+
+        }// end for each
+
+
+        // create the select element
+        $drop_down_element .= '<select '. $combined_attributes . ' >' . "\n";
+
+        // show the none option if the client requested
+        if( $enable_none_option ) {
+            $drop_down_element .= '<option value="">' . __('None', 'woothemes-sensei') . '</option>';
+        }
+
+        if ( count( $options ) > 0 ) {
+
+            foreach ($options as $value => $option ){
+
+                $element = '';
+                $element.= '<option value="' . esc_attr( $value ) . '"';
+                $element .= selected( $value, $selected_value, false ) . '>';
+                $element .= esc_html(  $option ) . '</option>' . "\n";
+
+                // add the element to the select html
+                $drop_down_element.= $element;
+            } // End For Loop
+
+        } // End If Statement
+
+        $drop_down_element .= '</select>' . "\n";
+
+        return $drop_down_element;
+
+    }// generate_drop_down
+
+
+
 } // End Class

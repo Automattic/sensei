@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 */
 	public function __construct ( $file = __FILE__ ) {
 		$this->file = $file;
-		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type' );
+		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required','enable_quiz_reset' );
 		add_action( 'save_post', array( $this, 'update_author' ));
 
 		// listen to the reset button click
@@ -141,7 +141,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
      * user_save_quiz_answers_listener
      *
      * This function hooks into the quiz page and accepts the answer form save post.
-     *
+     * @since 1.7.3
      * @return bool $saved;
      */
     public function user_save_quiz_answers_listener(){
@@ -391,6 +391,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         } // End If Statement
 
         $reset_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
+        //backwards compatibility
+        if( 'on' == $reset_allowed ) {
+            $reset_allowed = 1;
+        }
 
         // Build frontend data object
         $this->data->user_quiz_grade = $user_quiz_grade;

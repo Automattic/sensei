@@ -826,7 +826,6 @@ class WooThemes_Sensei_Course {
 
 		$post_args = array(	'post_type'         => 'lesson',
 							'numberposts'       => -1,
-							'meta_key'          => '_order_' . $course_id,
 							'orderby'           => 'meta_value_num date',
 							'order'             => 'ASC',
 							'meta_query'        => array(
@@ -839,11 +838,45 @@ class WooThemes_Sensei_Course {
 							'suppress_filters'  => 0,
 							'fields'            => $fields,
 							);
-		$posts_array = get_posts( $post_args );
+		$query_results = new WP_Query( $post_args );
+        $posts_array = $query_results->posts;
 
-		return $posts_array;
+        // re order the lessons. This could not be done via the OR meta query as there may be lessons
+        // with the course order for a different course and this should not be included. It could also not
+        // be done via the AND meta query as it excludes lesson that does not have the _order_$course_id but
+        // that have been added to the course.
+        if( count( $posts_array) > 0  ){
+
+            foreach( $posts_array as $post ){
+                $order = intval( get_post_meta( $post->ID, '_order_'. $course_id, true ) );
+                // for lessons with no order set it to be 10000 so that it show up at the end
+                $post->course_order = $order ? $order : 100000;
+            }
+
+            uasort( $posts_array, array( $this, '_short_course_lessons_callback' )   );
+        }
+
+        return $posts_array;
 
 	} // End course_lessons()
+
+    /**
+     * Used for the uasort in $this->course_lessons()
+     * @since 1.8.0
+     * @access protected
+     *
+     * @param array $lesson_1
+     * @param array $lesson_2
+     * @return int
+     */
+    protected function _short_course_lessons_callback( $lesson_1, $lesson_2 ){
+
+        if ( $lesson_1->course_order == $lesson_2->course_order ) {
+            return 0;
+        }
+
+        return ($lesson_1->course_order < $lesson_2->course_order) ? -1 : 1;
+    }
 
 	/**
 	 * Fetch all quiz ids in a course
@@ -1401,5 +1434,40 @@ class WooThemes_Sensei_Course {
 		<?php
 		return ob_get_clean();
 	}
+
+    /**
+     * Returns a list of all courses
+     *
+     * @since 1.8.0
+     * @return array $courses{
+     *  @type $course WP_Post
+     * }
+     */
+    public static function get_all_courses(){
+
+        $args = array(
+               'post_type' => 'course',
+                'numberposts' 		=> -1,
+                'orderby'         	=> 'title',
+                'order'           	=> 'ASC',
+                'post_status'      	=> 'any',
+                'suppress_filters' 	=> 0,
+        );
+
+        $wp_query_obj =  new WP_Query( $args );
+
+        /**
+         * sensei_get_all_courses filter
+         *
+         * This filter runs inside Sensei_Course::get_all_courses.
+         *
+         * @param array $courses{
+         *  @type WP_Post
+         * }
+         * @param array $attributes
+         */
+        return apply_filters( 'sensei_get_all_courses' , $wp_query_obj->posts );
+
+    }// end get_all_courses
 
 } // End Class
