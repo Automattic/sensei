@@ -63,6 +63,11 @@ class WooThemes_Sensei_Course {
 		// Update course completion upon grading of a quiz
 		add_action( 'sensei_user_quiz_grade', array( $this, 'update_status_after_quiz_submission' ), 10, 2 );
 
+        // show the progress bar ont he single course page
+        add_action( 'sensei_course_single_meta' , array( $this, 'the_progress_statement' ), 15 );
+        add_action( 'sensei_course_single_meta' , array( $this, 'the_progress_meter' ), 16 );
+
+
 	} // End __construct()
 
 	/**
@@ -1203,7 +1208,7 @@ class WooThemes_Sensei_Course {
 
 		    		   	$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $lesson_count ), 0 ) );
 
-		    		   	$active_html .= $this->generate_progress_meter( $progress_percentage );
+                        $active_html .= $this->get_progress_meter( $progress_percentage );
 
 		    		$active_html .= '</section>';
 
@@ -1317,7 +1322,7 @@ class WooThemes_Sensei_Course {
 
 						$complete_html .= '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
 
-						$complete_html .= $this->generate_progress_meter( 100 );
+                        $complete_html .= $this->get_progress_meter( 100 );
 
 						if( $manage ) {
 							$has_quizzes = $woothemes_sensei->post_types->course->course_quizzes( $course_item->ID, true );
@@ -1488,7 +1493,7 @@ class WooThemes_Sensei_Course {
      * @param int $progress_percentage 0 - 100
      * @return string $progress_bar_html
      */
-    public function generate_progress_meter( $progress_percentage ){
+    public function get_progress_meter( $progress_percentage ){
 
         if ( 50 < $progress_percentage ) {
             $class = ' green';
@@ -1502,7 +1507,88 @@ class WooThemes_Sensei_Course {
 
         return $progress_bar_html;
 
-    }// end generate_meter
+    }// end get_progress_meter
+
+    /**
+     * Generate a statement that tells users
+     * how far they are in the course.
+     *
+     * @param int $course_id
+     * @param int $user_id
+     *
+     * @return string $statement_html
+     */
+    public function get_progress_statement( $course_id, $user_id ){
+
+        if( empty( $course_id ) || empty( $user_id ) ){
+            return false;
+        }
+
+        $completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
+        $total_lessons = count( $this->course_lessons( $course_id ) );
+
+        $plural = 's';
+        if( 1 == $completed ){
+            $plural = '';
+        }
+
+        $statement = sprintf(__('Currently completed %s lesson%s of %s in total', 'woothemes-sensei'), $completed, $plural, $total_lessons );
+
+        /**
+         * Filter the course completion statement.
+         * Default Currently completed $var lesson($plural) of $var in total
+         *
+         * @param string $statement
+         */
+        return apply_filters( 'sensei_course_completion_statement', $statement );
+
+    }// end generate_progress_statement
+
+    /**
+     * Output the course progress statement
+     *
+     * @param $course_id
+     * @return void
+     */
+    public function the_progress_statement( $course_id = 0, $user_id = 0 ){
+        if( empty( $course_id ) ){
+            global $post;
+            $course_id = $post->ID;
+        }
+
+        if( empty( $user_id ) ){
+            $user_id = get_current_user_id();
+        }
+
+        echo '<span class="progress statement">' . $this->get_progress_statement( $course_id, $user_id  ) . '</span>';
+    }
+
+    /**
+     * Output the course progress bar
+     *
+     * @param $course_id
+     * @return void
+     */
+    public function the_progress_meter( $course_id = 0, $user_id = 0 ){
+
+        if( empty( $course_id ) ){
+            global $post;
+            $course_id = $post->ID;
+        }
+
+        if( empty( $user_id ) ){
+            $user_id = get_current_user_id();
+        }
+
+        if( 'course' != get_post_type( $course_id )
+            || ! get_userdata( $user_id ) ){
+            return;
+        }
+        $percentage_completed = $this->get_completion_percentage( $course_id, $user_id );
+
+        echo $this->get_progress_meter( $percentage_completed );
+
+    }// end the_progress_meter
 
     /**
      * Checks how many lessons are completed

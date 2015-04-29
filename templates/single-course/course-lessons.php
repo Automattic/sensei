@@ -17,7 +17,6 @@ $html = '';
 // Get Course Lessons
 $lessons_completed = 0;
 $course_lessons = $woothemes_sensei->post_types->course->course_lessons( $post->ID );
-//$lessons_completed = Sensei()->course->count_completed_lessons( $course_id );
 $total_lessons = count( $course_lessons );
 // Check if the user is taking the course
 
@@ -26,112 +25,94 @@ $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( arra
 // Get User Meta
 get_currentuserinfo();
 
-if ( 0 < $total_lessons ) {
+// exit if no lessons exist
+if (  ! ( $total_lessons  > 0 ) ) {
+    return;
+}
+$html .= '<section class="course-lessons">';
+$html .= '<header>';
+$html .= '<h2>' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ) . '</h2>';
+$html .= '</header>';
 
-    $html .= '<section class="course-lessons">';
+$lesson_count = 1;
+$lessons_completed = 0;
+$show_lesson_numbers = false;
 
-    	$html .= '<header>';
+foreach ( $course_lessons as $lesson_item ){
+    $single_lesson_complete = false;
+    $post_classes = array( 'course', 'post' );
+    $user_lesson_status = false;
+    if ( is_user_logged_in() ) {
+        // Check if Lesson is complete
+        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_item->ID, $current_user->ID );
+        $single_lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
+        if ( $single_lesson_complete ) {
+            $lessons_completed++;
+            $post_classes[] = 'lesson-completed';
+        } // End If Statement
+    } // End If Statement
 
-    	  $html .= '<h2>' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ) . '</h2>';
+    // Get Lesson data
+    $complexity_array = $woothemes_sensei->post_types->lesson->lesson_complexities();
+    $lesson_length = get_post_meta( $lesson_item->ID, '_lesson_length', true );
+    $lesson_complexity = get_post_meta( $lesson_item->ID, '_lesson_complexity', true );
+    if ( '' != $lesson_complexity ) { $lesson_complexity = $complexity_array[$lesson_complexity]; }
+    $user_info = get_userdata( absint( $lesson_item->post_author ) );
+    $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $lesson_item->ID );
+    $preview_label = '';
+    if ( $is_preview && !$is_user_taking_course ) {
+        $preview_label = $woothemes_sensei->frontend->sensei_lesson_preview_title_text( $post->ID );
+        $preview_label = '<span class="preview-heading">' . $preview_label . '</span>';
+        $post_classes[] = 'lesson-preview';
+    }
 
-    	  if ( is_user_logged_in() && $is_user_taking_course ) {
+    $html .= '<article class="' . esc_attr( join( ' ', get_post_class( $post_classes, $lesson_item->ID ) ) ) . '">';
 
-    	  		$html .= '<span class="course-completion-rate">' . sprintf( __( 'Currently completed %1$s of %2$s in total', 'woothemes-sensei' ), '######', $total_lessons ) . '</span>';
-    	  		$html .= '<div class="meter+++++"><span style="width: @@@@@%">@@@@@%</span></div>';
+        $html .= '<header>';
 
-    	  } // End If Statement
-    	$html .= '</header>';
+            $html .= '<h2><a href="' . esc_url( get_permalink( $lesson_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '">';
 
-    	$lesson_count = 1;
-    	$lessons_completed = 0;
-        $show_lesson_numbers = false;
-
-    	foreach ( $course_lessons as $lesson_item ){
-			$single_lesson_complete = false;
-			$post_classes = array( 'course', 'post' );
-			$user_lesson_status = false;
-			if ( is_user_logged_in() ) {
-				// Check if Lesson is complete
-				$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_item->ID, $current_user->ID );
-				$single_lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
-				if ( $single_lesson_complete ) {
-					$lessons_completed++;
-					$post_classes[] = 'lesson-completed';
-				} // End If Statement
-			} // End If Statement
-
-    	    // Get Lesson data
-    	    $complexity_array = $woothemes_sensei->post_types->lesson->lesson_complexities();
-    	    $lesson_length = get_post_meta( $lesson_item->ID, '_lesson_length', true );
-    	    $lesson_complexity = get_post_meta( $lesson_item->ID, '_lesson_complexity', true );
-    	    if ( '' != $lesson_complexity ) { $lesson_complexity = $complexity_array[$lesson_complexity]; }
-    	    $user_info = get_userdata( absint( $lesson_item->post_author ) );
-            $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $lesson_item->ID );
-            $preview_label = '';
-            if ( $is_preview && !$is_user_taking_course ) {
-                $preview_label = $woothemes_sensei->frontend->sensei_lesson_preview_title_text( $post->ID );
-                $preview_label = '<span class="preview-heading">' . $preview_label . '</span>';
-                $post_classes[] = 'lesson-preview';
+            if( apply_filters( 'sensei_show_lesson_numbers', $show_lesson_numbers ) ) {
+                $html .= '<span class="lesson-number">' . $lesson_count . '. </span>';
             }
 
-    	    $html .= '<article class="' . esc_attr( join( ' ', get_post_class( $post_classes, $lesson_item->ID ) ) ) . '">';
+            $html .= esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . $preview_label . '</a></h2>';
 
-    			$html .= '<header>';
+            $html .= '<p class="lesson-meta">';
 
-    	    		$html .= '<h2><a href="' . esc_url( get_permalink( $lesson_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '">';
+                if ( '' != $lesson_length ) { $html .= '<span class="lesson-length">' . apply_filters( 'sensei_length_text', __( 'Length: ', 'woothemes-sensei' ) ) . $lesson_length . __( ' minutes', 'woothemes-sensei' ) . '</span>'; }
+                if ( isset( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) && ( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) ) {
+                    $html .= '<span class="lesson-author">' . apply_filters( 'sensei_author_text', __( 'Author: ', 'woothemes-sensei' ) ) . '<a href="' . get_author_posts_url( absint( $lesson_item->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+                } // End If Statement
+                if ( '' != $lesson_complexity ) { $html .= '<span class="lesson-complexity">' . apply_filters( 'sensei_complexity_text', __( 'Complexity: ', 'woothemes-sensei' ) ) . $lesson_complexity .'</span>'; }
 
-                    if( apply_filters( 'sensei_show_lesson_numbers', $show_lesson_numbers ) ) {
-                        $html .= '<span class="lesson-number">' . $lesson_count . '. </span>';
-                    }
+                if ( $single_lesson_complete ) {
+                    $html .= '<span class="lesson-status complete">' . apply_filters( 'sensei_complete_text', __( 'Complete', 'woothemes-sensei' ) ) .'</span>';
+                }
+                elseif ( $user_lesson_status ) {
+                    $html .= '<span class="lesson-status in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) .'</span>';
+                } // End If Statement
 
-                    $html .= esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . $preview_label . '</a></h2>';
+            $html .= '</p>';
 
-    	    		$html .= '<p class="lesson-meta">';
+        $html .= '</header>';
 
-    	   		 		if ( '' != $lesson_length ) { $html .= '<span class="lesson-length">' . apply_filters( 'sensei_length_text', __( 'Length: ', 'woothemes-sensei' ) ) . $lesson_length . __( ' minutes', 'woothemes-sensei' ) . '</span>'; }
-    	   		 		if ( isset( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) && ( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) ) {
-    	   		 			$html .= '<span class="lesson-author">' . apply_filters( 'sensei_author_text', __( 'Author: ', 'woothemes-sensei' ) ) . '<a href="' . get_author_posts_url( absint( $lesson_item->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
-    	   		 		} // End If Statement
-    	   		 		if ( '' != $lesson_complexity ) { $html .= '<span class="lesson-complexity">' . apply_filters( 'sensei_complexity_text', __( 'Complexity: ', 'woothemes-sensei' ) ) . $lesson_complexity .'</span>'; }
+        // Image
+        $html .=  $woothemes_sensei->post_types->lesson->lesson_image( $lesson_item->ID );
 
-						if ( $single_lesson_complete ) {
-							$html .= '<span class="lesson-status complete">' . apply_filters( 'sensei_complete_text', __( 'Complete', 'woothemes-sensei' ) ) .'</span>';
-						}
-						elseif ( $user_lesson_status ) {
-							$html .= '<span class="lesson-status in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) .'</span>';
-						} // End If Statement
+        $html .= '<section class="entry">';
 
-    	   		 	$html .= '</p>';
+            $html .= WooThemes_Sensei_Lesson::lesson_excerpt( $lesson_item );
 
-    			$html .= '</header>';
+        $html .= '</section>';
 
-    			// Image
-    			$html .=  $woothemes_sensei->post_types->lesson->lesson_image( $lesson_item->ID );
+    $html .= '</article>';
 
-    			$html .= '<section class="entry">';
+    $lesson_count++;
 
-                    $html .= WooThemes_Sensei_Lesson::lesson_excerpt( $lesson_item );
+} // End For Loop
 
-    	   		$html .= '</section>';
+$html .= '</section>';
 
-    	    $html .= '</article>';
-
-    	    $lesson_count++;
-
-    	} // End For Loop
-
-    	if ( is_user_logged_in() && $is_user_taking_course ) {
-    		// Add dynamic data to the output
-    		$html = str_replace( '######', $lessons_completed, $html );
-    		$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
-    		/* if ( 0 == $progress_percentage ) { $progress_percentage = 5; } */
-    		$html = str_replace( '@@@@@', $progress_percentage, $html );
-    		if ( 50 < $progress_percentage ) { $class = ' green'; } elseif ( 25 <= $progress_percentage && 50 >= $progress_percentage ) { $class = ' orange'; } else { $class = ' red'; }
-    		$html = str_replace( '+++++', $class, $html );
-    	} // End If Statement
-
-    $html .= '</section>';
-
-} // End If Statement
 // Output the HTML
-echo $html; ?>
+echo $html;
