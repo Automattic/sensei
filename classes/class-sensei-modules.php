@@ -211,7 +211,13 @@ class Sensei_Core_Modules
         }
 
         // Cast module ID as an integer if selected, otherwise leave as empty string
-        if ( isset( $_POST['lesson_module'] ) && intval( $_POST['lesson_module'] ) > 0 ) {
+        if ( isset( $_POST['lesson_module'] ) ) {
+
+            if( empty ( $_POST['lesson_module'] ) ){
+                wp_delete_object_term_relationships($post_id, $this->taxonomy  );
+                return true;
+            }
+
             $module_id = intval( $_POST['lesson_module'] );
 
             // Assign lesson to selected module
@@ -1424,10 +1430,13 @@ class Sensei_Core_Modules
         $non_module_lessons = $this->get_none_module_lessons( $post->ID );
         if( count( $non_module_lessons ) > 0 ){
             $title = __( 'Other Lessons' , 'woothemes-sensei' );
+        }else{
+            $title = '';
         }
 
         return $title;
     }
+
 
     /**
      * Find the lesson in the given course that doesn't belong
