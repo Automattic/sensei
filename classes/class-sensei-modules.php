@@ -1339,10 +1339,12 @@ class Sensei_Core_Modules
                 }
                 ?>
                 <section class="module-lessons">
-                    <header><h3><?php __('Lessons', 'woothemes-sensei') ?></h3></header>
-                        <ul>
-                            <?php echo $lessons_list; ?>
-                        </ul>
+                    <header>
+                        <h3><?php _e('Lessons', 'woothemes-sensei') ?></h3>
+                    </header>
+                    <ul>
+                        <?php echo $lessons_list; ?>
+                    </ul>
                 </section>
 
             <?php }//end count lessons  ?>
