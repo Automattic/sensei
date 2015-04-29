@@ -825,7 +825,7 @@ class WooThemes_Sensei_Course {
 		$posts_array = array();
 
 		$post_args = array(	'post_type'         => 'lesson',
-							'numberposts'       => -1,
+							'posts_per_page'       => 500,
 							'orderby'           => 'meta_value_num date',
 							'order'             => 'ASC',
 							'meta_query'        => array(
