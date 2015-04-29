@@ -39,6 +39,12 @@ $lessons_completed = count( Sensei()->course->get_completed_lesson_ids( $post->I
 $show_lesson_numbers = false;
 
 foreach ( $course_lessons as $lesson_item ){
+
+    //skip lesson that are already in the modules
+    if( false != Sensei()->modules->get_lesson_module( $lesson_item->ID ) ){
+        continue;
+    }
+
     $single_lesson_complete = false;
     $post_classes = array( 'course', 'post' );
     $user_lesson_status = false;
