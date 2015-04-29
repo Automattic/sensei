@@ -817,7 +817,7 @@ class WooThemes_Sensei_Course {
 	 * @access public
 	 * @param int $course_id (default: 0)
 	 * @param string $post_status (default: 'publish')
-	 * @param string $fields (default: 'all')
+	 * @param string $fields (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
 	 * @return array{ type WP_Post }  $posts_array
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
@@ -826,7 +826,7 @@ class WooThemes_Sensei_Course {
 
 		$post_args = array(	'post_type'         => 'lesson',
 							'posts_per_page'       => 500,
-							'orderby'           => 'meta_value_num date',
+							'orderby'           => 'date',
 							'order'             => 'ASC',
 							'meta_query'        => array(
 								array(
@@ -836,7 +836,6 @@ class WooThemes_Sensei_Course {
 							),
 							'post_status'       => $post_status,
 							'suppress_filters'  => 0,
-							'fields'            => $fields,
 							);
 		$query_results = new WP_Query( $post_args );
         $posts_array = $query_results->posts;
@@ -845,15 +844,31 @@ class WooThemes_Sensei_Course {
         // with the course order for a different course and this should not be included. It could also not
         // be done via the AND meta query as it excludes lesson that does not have the _order_$course_id but
         // that have been added to the course.
-        if( count( $posts_array) > 0  ){
+        if( count( $posts_array) > 1  ){
 
             foreach( $posts_array as $post ){
+
                 $order = intval( get_post_meta( $post->ID, '_order_'. $course_id, true ) );
                 // for lessons with no order set it to be 10000 so that it show up at the end
                 $post->course_order = $order ? $order : 100000;
             }
 
             uasort( $posts_array, array( $this, '_short_course_lessons_callback' )   );
+        }
+
+        // return the requested fields.
+        //WordPress allows 'ids', 'id=>parent'
+        // but for our use case 'all' and 'ids' will suffice
+        if( 'all'!=$fields ){
+
+            $ids_array = array();
+            foreach ( $posts_array as $post ){
+
+                $ids_array[] = $post->ID;
+
+            }
+            $posts_array = $ids_array;
+
         }
 
         return $posts_array;
