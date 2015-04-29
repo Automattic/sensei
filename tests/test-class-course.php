@@ -94,4 +94,41 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
     }// testCountCompletedLessons
 
+    /**
+     * This tests Sensei_Courses::get_completion_percentage
+     * @since 1.8.0
+     */
+    public function testGetCompletionPercentage() {
+        //does the function exist?
+        $this->assertTrue( method_exists( 'WooThemes_Sensei_Course', 'get_completion_percentage' ) , 'The course class get_completion_percentage function does not exist.' );
+
+        // setup the test
+        $test_user_id = wp_create_user('testGetCompletionPercentage', 'testGetCompletionPercentage', 'testGetCompletionPercentage@tes.co');
+        $test_lessons = $this->factory->get_lessons();
+        $test_course_id = $this->factory->get_random_course_id();
+        remove_all_actions('sensei_user_course_start');
+        WooThemes_Sensei_Utils::user_start_course( $test_user_id, $test_course_id );
+
+        // add lessons to the course
+        foreach( $test_lessons as $lesson_id ){
+            add_post_meta( $lesson_id, '_lesson_course', intval( $test_course_id ) );
+        }
+
+        // complete 3 lessons and check if the correct percentage returns
+        $i = 0;
+        for(  $i = 0 ; $i < 3; $i++ ){
+            WooThemes_Sensei_Utils::update_lesson_status(  $test_user_id, $test_lessons[$i], 'complete');
+        }
+        $expected_percentage = 3/count( $test_lessons ) * 100;
+        $this->assertEquals( $expected_percentage , Sensei()->course->get_completion_percentage( $test_course_id, $test_user_id ),'Course completed percentage is not accurate' );
+
+        // complete all lessons
+        foreach( $test_lessons as $lesson_id ){
+            WooThemes_Sensei_Utils::update_lesson_status(  $test_user_id, $lesson_id, 'complete');
+        }
+        //all lessons should no be completed
+        $this->assertEquals( 100 , Sensei()->course->get_completion_percentage( $test_course_id, $test_user_id ),'Course completed percentage is not accurate' );
+
+
+    }
 }// end class

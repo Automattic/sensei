@@ -1521,4 +1521,41 @@ class WooThemes_Sensei_Course {
 
     }// end get_completed_lesson_ids
 
+    /**
+     * Calculate the perceantage completed in the course
+     *
+     * @since 1.8.0
+     *
+     * @param int $course_id
+     * @param int $user_id
+     * @return int $percentage
+     */
+    public function get_completion_percentage( $course_id, $user_id = 0 ){
+
+        if( !( intval( $user_id ) ) > 0 ){
+            $user_id = get_current_user_id();
+        }
+
+        $completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
+
+        if( ! (  $completed  > 0 ) ){
+            return 0;
+        }
+
+        $total_lessons = count( $this->course_lessons( $course_id ) );
+        $percentage = $completed / $total_lessons * 100;
+
+        /**
+         *
+         * Filter the percentage returned for a users course.
+         *
+         * @param $percentage
+         * @param $course_id
+         * @param $user_id
+         * @since 1.8.0
+         */
+        return apply_filters( 'sensei_course_completion_percentage', $percentage, $course_id, $user_id );
+
+    }// end get_completed_lesson_ids
+
 } // End Class
