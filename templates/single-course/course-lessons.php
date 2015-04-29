@@ -12,14 +12,13 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 global $post, $woothemes_sensei, $current_user;
-
 $html = '';
-// Get Course Lessons
-$lessons_completed = 0;
-$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $post->ID );
-$total_lessons = count( $course_lessons );
-// Check if the user is taking the course
 
+// Get Course Lessons
+$course_lessons = Sensei()->course->course_lessons( $post->ID );
+$total_lessons = count( $course_lessons );
+
+// Check if the user is taking the course
 $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status' ) );
 
 // Get User Meta
@@ -35,7 +34,8 @@ $html .= '<h2>' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'wootheme
 $html .= '</header>';
 
 $lesson_count = 1;
-$lessons_completed = 0;
+
+$lessons_completed = count( Sensei()->course->get_completed_lesson_ids( $post->ID, $current_user->ID ));
 $show_lesson_numbers = false;
 
 foreach ( $course_lessons as $lesson_item ){
@@ -44,10 +44,8 @@ foreach ( $course_lessons as $lesson_item ){
     $user_lesson_status = false;
     if ( is_user_logged_in() ) {
         // Check if Lesson is complete
-        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_item->ID, $current_user->ID );
-        $single_lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
+        $single_lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_item->ID, $current_user->ID );
         if ( $single_lesson_complete ) {
-            $lessons_completed++;
             $post_classes[] = 'lesson-completed';
         } // End If Statement
     } // End If Statement
