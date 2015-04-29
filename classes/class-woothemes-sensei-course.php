@@ -1489,4 +1489,36 @@ class WooThemes_Sensei_Course {
 
     }// end generate_meter
 
+    /**
+     * Checks how many lessons are completed
+     *
+     * @since 1.8.0
+     *
+     * @param int $course_id
+     * @param int $user_id
+     * @return array $completed_lesson_ids
+     */
+    public function get_completed_lesson_ids( $course_id, $user_id = 0 ){
+
+        if( !( intval( $user_id ) ) > 0 ){
+            $user_id = get_current_user_id();
+        }
+
+        $completed_lesson_ids = array();
+
+        $course_lessons = $this->course_lessons( $course_id );
+
+        foreach( $course_lessons as $lesson ){
+
+            $is_lesson_completed = WooThemes_Sensei_Utils::user_completed_lesson( $lesson->ID, $user_id );
+            if( $is_lesson_completed ){
+                $completed_lesson_ids[] = $lesson->ID;
+            }
+
+        }
+
+        return $completed_lesson_ids;
+
+    }// end get_completed_lesson_ids
+
 } // End Class
