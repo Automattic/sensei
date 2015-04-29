@@ -818,7 +818,7 @@ class WooThemes_Sensei_Course {
 	 * @param int $course_id (default: 0)
 	 * @param string $post_status (default: 'publish')
 	 * @param string $fields (default: 'all')
-	 * @return void
+	 * @return array{ type WP_Post }  $posts_array
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
 
