@@ -60,8 +60,9 @@ class Sensei_Core_Modules
         add_filter('manage_edit-course_columns', array($this, 'course_columns'), 11, 1);
         add_action('manage_posts_custom_column', array($this, 'course_column_content'), 11, 2);
 
-        // Ensure modules alway show under courses
+        // Ensure modules always show under courses
         add_action( 'admin_menu', array( $this, 'remove_lessons_menu_model_taxonomy' ) , 10 );
+        add_action( 'admin_menu', array( $this, 'remove_courses_menu_model_taxonomy' ) , 10 );
         add_action( 'admin_menu', array( $this, 'redirect_to_lesson_module_taxonomy_to_course' ) , 20 );
 
         // Add course field to taxonomy
@@ -1590,5 +1591,30 @@ class Sensei_Core_Modules
         }
 
     }// end remove lesson module tax
+
+    /**
+     * Completely remove the second modules under courses
+     *
+     * This function is hooked into the admin_menu
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public function remove_courses_menu_model_taxonomy(){
+        global $submenu;
+
+        if( ! isset( $submenu['edit.php?post_type=course'] ) || !is_array( $submenu['edit.php?post_type=course'] ) ){
+            return; // exit
+        }
+
+        $course_main_menu = $submenu['edit.php?post_type=course'];
+        foreach( $course_main_menu as $index => $sub_item ){
+
+            if( 'edit-tags.php?taxonomy=module' == $sub_item[2] ){
+                unset( $submenu['edit.php?post_type=course'][ $index ]);
+            }
+        }
+
+    }// end remove courses module tax
 
 } // end modules class
