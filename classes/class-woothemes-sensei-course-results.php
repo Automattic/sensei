@@ -91,9 +91,9 @@ class WooThemes_Sensei_Course_Results {
 			$course = get_post( $course_id );
 
 			if ( get_option('permalink_structure') ) {
-				$permalink = trailingslashit( get_site_url() ) . $this->courses_url_base . '/' . $course->post_name . '/results/';
+				$permalink = trailingslashit( get_home_url() ) . $this->courses_url_base . '/' . $course->post_name . '/results/';
 			} else {
-				$permalink = trailingslashit( get_site_url() ) . '?course_results=' . $course->post_name;
+				$permalink = trailingslashit( get_home_url() ) . '?course_results=' . $course->post_name;
 			}
 		}
 
@@ -126,16 +126,17 @@ class WooThemes_Sensei_Course_Results {
 
 		do_action( 'sensei_course_image', $course->ID );
 
-        ?>
-        <header><h1><?php echo $course->post_title; ?></h1></header>
-        <?php
+		?>
+		<header><h1><?php echo $course->post_title; ?></h1></header>
+		<?php
 
-        $course_status = WooThemes_Sensei_Utils::sensei_user_course_status_message( $course->ID, $current_user->ID );
-        echo '<div class="sensei-message ' . $course_status['box_class'] . '">' . $course_status['message'] . '</div>';
+		$course_status = WooThemes_Sensei_Utils::sensei_user_course_status_message( $course->ID, $current_user->ID );
+		echo '<div class="sensei-message ' . $course_status['box_class'] . '">' . $course_status['message'] . '</div>';
 
-        do_action( 'sensei_course_results_lessons', $course );
+		do_action( 'sensei_course_results_lessons', $course );
 
-        do_action( 'sensei_course_results_bottom', $course->ID );
+		do_action( 'sensei_course_results_bottom', $course->ID );
+
 	}
 
 	/**
@@ -146,10 +147,11 @@ class WooThemes_Sensei_Course_Results {
 	public function course_lessons() {
 		global $course, $woothemes_sensei, $current_user;
 
-		$started_course = sensei_has_user_started_course( $course->ID, $current_user->ID );
+		$started_course = WooThemes_Sensei_Utils::user_started_course( $course->ID, $current_user->ID );
 		if( $started_course ) {
-	 		$woothemes_sensei->frontend->sensei_get_template( 'course-results/course-lessons.php' );
-	 	}
+			$woothemes_sensei->frontend->sensei_get_template( 'course-results/course-lessons.php' );
+		}
+
 	}
 
 	/**
@@ -166,4 +168,3 @@ class WooThemes_Sensei_Course_Results {
 	}
 
 } // End Class
-?>

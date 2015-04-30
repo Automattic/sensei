@@ -107,3 +107,7 @@ div.question_boolean_fields { margin-bottom: 10px; }
 	visibility: visible !important;
 	margin: 3px;
 }
+#add_learner_search {min-width: 300px;}
+@media only screen and (min-width: 768px)  {
+	#add_learner_search {min-width: 500px;}
+}

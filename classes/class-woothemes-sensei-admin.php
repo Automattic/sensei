@@ -38,7 +38,6 @@ class WooThemes_Sensei_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_styles_global' ) );
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
-		add_filter( 'comments_clauses', array( $this, 'comments_admin_filter' ), 10, 1 );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
@@ -71,6 +70,9 @@ class WooThemes_Sensei_Admin {
 		// Reset theme notices when switching themes
 		add_action( 'switch_theme', array( $this, 'reset_theme_check_notices' ) );
 
+		// Allow Teacher access the admin area
+		add_filter( 'woocommerce_prevent_admin_access', array( $this, 'admin_access' ) );
+
 	} // End __construct()
 
 	/**
@@ -94,7 +96,7 @@ class WooThemes_Sensei_Admin {
 			$main_page = add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
 		}
 
-		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
+		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
 		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'woothemes-sensei' ), __( 'Order Lessons', 'woothemes-sensei' ), 'manage_sensei', 'lesson-order', array( $this, 'lesson_order_screen' ) );
 	}
 
@@ -164,27 +166,6 @@ class WooThemes_Sensei_Admin {
 	}
 
 	/**
-	 * comments_admin_filter function.
-	 *
-	 * Filters the backend commenting system to not include the sensei prefixed comments
-	 *
-	 * @access public
-	 * @param mixed $pieces
-	 * @return void
-	 */
-	function comments_admin_filter( $pieces ) {
-
-		// Filter Admin Comments Area to not display Sensei's use of commenting system
-		if( is_admin() && !( isset($_GET['page']) && 'sensei_analysis' == $_GET['page'] ) ) {
-			$pieces['where'] .= " AND comment_type NOT LIKE 'sensei_%' ";
-		} // End If Statement
-
-		return $pieces;
-
-	} // End comments_admin_filter()
-
-
-	/**
 	 * install_pages_output function.
 	 *
 	 * Handles installation of the 2 pages needs for courses and my courses
@@ -217,7 +198,7 @@ class WooThemes_Sensei_Admin {
 			?>
 	    	<div id="message" class="updated sensei-message sensei-connect">
 				<div class="squeezer">
-					<h4><?php _e( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and setup.', 'woothemes-sensei' ); ?></h4>
+					<h4><?php _e( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'woothemes-sensei' ); ?></h4>
 					<p><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">Tweet</a>
 		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
 				</div>
@@ -306,7 +287,7 @@ class WooThemes_Sensei_Admin {
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings', 'lesson-order', 'course-order' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.6.0', 'screen' );
+		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.7.0', 'screen' );
 		wp_enqueue_style( $woothemes_sensei->token . '-global' );
 
 		// Test for Write Panel Pages
@@ -499,48 +480,36 @@ class WooThemes_Sensei_Admin {
 	 */
 	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
 
-		$quiz_args = array(
-			'post_type' => 'quiz',
-			'posts_per_page' => -1,
-			'meta_key' => '_quiz_lesson',
-			'meta_value' => $old_lesson_id,
-			'suppress_filters' 	=> 0
-		);
-		$quizzes = get_posts( $quiz_args );
+        global $woothemes_sensei;
 
-		foreach( $quizzes as $quiz ) {
+        $old_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $old_lesson_id );
+        $old_quiz_questions = $woothemes_sensei->lesson->lesson_quiz_questions( $old_quiz_id );
 
-			$question_args = array(
-				'post_type'	=> 'question',
-				'posts_per_page' => -1,
-				'orderby'        => 'meta_value_num title',
-				'order'          => 'ASC',
-				'meta_query'	 => array(
-					array(
-						'key'       => '_quiz_id',
-						'value'     => $quiz->ID,
-					)
-				),
-				'suppress_filters' => 0
-			);
-			$questions = get_posts( $question_args );
+        // duplicate the generic wp post information
+		$new_quiz = $this->duplicate_post( get_post( $old_quiz_id ), '' );
 
-			$new_quiz = $this->duplicate_post( $quiz, '' );
-			add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
+		//update the new lesson data
+        add_post_meta( $new_lesson_id, '_lesson_quiz', $new_quiz->ID );
 
-			$question_count = 1;
-			foreach( $questions as $question ) {
+		//update the new quiz data
+        add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
+        wp_update_post(
+            array(
+                'ID' => $new_quiz->ID,
+                'post_parent' => $new_lesson_id
+            )
+        );
 
-				// Add to quiz
-				add_post_meta( $question->ID, '_quiz_id', $new_quiz->ID, false );
+		foreach( $old_quiz_questions as $question ) {
 
-				// Set order of question
-				$question_order = $new_quiz->ID . '000' . $question_count;
-				add_post_meta( $question->ID, '_quiz_question_order' . $new_quiz->ID, $question_order );
+			// copy the question order over to the new quiz
+			$old_question_order = get_post_meta( $question->ID, '_quiz_question_order'. $old_quiz_id, true );
+            $new_question_order = str_ireplace( $old_quiz_id, $new_quiz->ID , $old_question_order );
+            add_post_meta( $question->ID, '_quiz_question_order' . $new_quiz->ID, $new_question_order );
 
-				// Increment counter for question ordering
-				++$question_count;
-			}
+			// Add question to quiz
+			add_post_meta( $question->ID, '_quiz_id', $new_quiz->ID, false );
+
 		}
 	}
 
@@ -587,7 +556,7 @@ class WooThemes_Sensei_Admin {
 
 		$new_post['post_title'] .= __( $suffix, 'woothemes-sensei' );
 
-		$new_post['post_date'] = date( 'Y-m-d H:i:s' );
+		$new_post['post_date'] = current_time( 'mysql' );
 		$new_post['post_date_gmt'] = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified'] = $new_post['post_date'];
 		$new_post['post_modified_gmt'] = $new_post['post_date_gmt'];
@@ -599,6 +568,9 @@ class WooThemes_Sensei_Admin {
 			case 'question': $new_post['post_status'] = 'publish'; break;
 		}
 
+		// As per wp_update_post() we need to escape the data from the db.
+		$new_post = wp_slash( $new_post );
+
 		$new_post_id = wp_insert_post( $new_post );
 
 		if( ! is_wp_error( $new_post_id ) ) {
@@ -606,7 +578,8 @@ class WooThemes_Sensei_Admin {
 			$post_meta = get_post_custom( $post->ID );
 			if( $post_meta && count( $post_meta ) > 0 ) {
 
-				$ignore_meta = array( '_quiz_lesson', '_quiz_id' );
+				$ignore_meta = array( '_quiz_lesson', '_quiz_id', '_lesson_quiz' );
+
 				if( $ignore_course ) {
 					$ignore_meta[] = '_lesson_course';
 				}
@@ -854,7 +827,14 @@ class WooThemes_Sensei_Admin {
 								break;
 
 								case 'checkbox':
-									$checked = checked( $field['checked'], $data, false );
+                                    //backwards compatibility
+                                    if( empty( $data ) || 'on' == $data ){
+                                        $checked_value = 'on';
+                                    }else{
+                                        $checked_value = 1;
+                                        $data = intval( $data );
+                                    }
+									$checked = checked( $checked_value, $data, false );
 									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" ' . $checked . ' ' . $disabled . '/>' . "\n";
 								break;
 
@@ -1145,23 +1125,7 @@ class WooThemes_Sensei_Admin {
 					}
 				}
 
-				$args = array(
-					'post_type' => 'lesson',
-					'posts_per_page' => -1,
-					'suppress_filters' => 0,
-					'meta_key' => '_order_' . $course_id,
-					'orderby' => 'meta_value_num date',
-					'order' => 'ASC',
-					'meta_query' => array(
-						array(
-							'key' => '_lesson_course',
-							'value' => intval( $course_id ),
-						),
-					),
-					'post__not_in' => $displayed_lessons,
-				);
-
-				$lessons = get_posts( $args );
+                $lessons = Sensei()->course->course_lessons( $course_id );
 
 				if( 0 < count( $lessons ) ) {
 
@@ -1266,13 +1230,13 @@ class WooThemes_Sensei_Admin {
 		global $nav_menu_selected_id, $woothemes_sensei;
 
 		$menu_items = array(
-						'#senseicourses' => __( 'Courses', 'woothemes-sensei' ),
-						'#senseilessons' => __( 'Lessons', 'woothemes-sensei' ),
-						'#senseimycourses' => __( 'My Courses', 'woothemes-sensei' ),
-						'#senseilearnerprofile' => __( 'My Profile', 'woothemes-sensei' ),
-						'#senseimymessages' => __( 'My Messages', 'woothemes-sensei' ),
-						'#senseiloginlogout' => __( 'Login', 'woothemes-sensei' ) . '|' . __( 'Logout', 'woothemes-sensei' )
-						 );
+			'#senseicourses' => __( 'Courses', 'woothemes-sensei' ),
+			'#senseilessons' => __( 'Lessons', 'woothemes-sensei' ),
+			'#senseimycourses' => __( 'My Courses', 'woothemes-sensei' ),
+			'#senseilearnerprofile' => __( 'My Profile', 'woothemes-sensei' ),
+			'#senseimymessages' => __( 'My Messages', 'woothemes-sensei' ),
+			'#senseiloginlogout' => __( 'Login', 'woothemes-sensei' ) . '|' . __( 'Logout', 'woothemes-sensei' )
+		);
 
 		$menu_items_obj = array();
 		foreach ( $menu_items as $value => $title ) {
@@ -1330,19 +1294,6 @@ class WooThemes_Sensei_Admin {
 
         $screen = get_current_screen();
 
-        if( 'sensei_page_woothemes-sensei-settings' == $screen->id ) {
-
-	        $hide_menu_settings_notice = get_user_meta( $user_id, 'sensei_hide_menu_settings_notice', true );
-
-	        if( ! $hide_menu_settings_notice ) {
-	        	?>
-				<div class="updated fade">
-			        <p><?php printf( __( 'The settings for the Sensei menu items have been removed. Menu items can now be added individually via the %1$sWordPress menu editor%2$s.%3$s%4$sDismiss this notice%5$s', 'woothemes-sensei' ), '<a href="' . admin_url( 'nav-menus.php' ) . '">', '</a>', '<br/>', '<em><a href="' . add_query_arg( 'sensei_hide_notice', 'menu_settings' ) . '">', '</a></em>' ); ?></p>
-			    </div>
-			    <?php
-	        }
-	    }
-
 	    if ( ! current_theme_supports( 'sensei' ) ) {
 	    	$template = get_option( 'template' );
 
@@ -1354,7 +1305,7 @@ class WooThemes_Sensei_Admin {
 				    <div id="message" class="error sensei-message sensei-connect">
 				    	<div class="squeezer">
 			    			<p><?php printf( __( '<strong>Your theme does not declare Sensei support</strong> &#8211; if you encounter layout issues please read our integration guide or choose a %1$sSensei theme%2$s :)', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/product-category/themes/sensei-themes/">', '</a>' ); ?></p>
-							<p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-theming/#section-16', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-primary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
+							<p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-primary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
 			    		</div>
 			    	</div>
 			    	<?php
@@ -1375,6 +1326,19 @@ class WooThemes_Sensei_Admin {
 		delete_user_meta( $user_id, 'sensei_hide_theme_check_notice' );
 	}
 
-} // End Class
+	/**
+	 * Set Sensei users access to the admin area when WooCommerce is installed
+	 * Allow Teachers to access the admin area
+	 *
+	 * @param  bool $prevent_access
+	 * @return bool
+	 */
+	public function admin_access( $prevent_access ) {
+		if ( current_user_can( 'manage_sensei_grades' ) ) {
+			return false;
+		}
 
-?>
+		return $prevent_access;
+	}
+
+} // End Class

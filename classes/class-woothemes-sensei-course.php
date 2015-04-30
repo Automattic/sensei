@@ -56,7 +56,43 @@ class WooThemes_Sensei_Course {
 			$this->my_courses_page = false;
 		} // End If Statement
 
+		// Update course completion upon completion of a lesson
+		add_action( 'sensei_user_lesson_end', array( $this, 'update_status_after_lesson_change' ), 10, 2 );
+		// Update course completion upon reset of a lesson
+		add_action( 'sensei_user_lesson_reset', array( $this, 'update_status_after_lesson_change' ), 10, 2 );
+		// Update course completion upon grading of a quiz
+		add_action( 'sensei_user_quiz_grade', array( $this, 'update_status_after_quiz_submission' ), 10, 2 );
+
 	} // End __construct()
+
+	/**
+	 * Fires when a quiz has been graded to check if the Course status needs changing
+	 * 
+	 * @param type $user_id
+	 * @param type $quiz_id
+	 */
+	public function update_status_after_quiz_submission( $user_id, $quiz_id ) {
+		if ( intval( $user_id ) > 0 && intval( $quiz_id ) > 0 ) {
+			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+			$this->update_status_after_lesson_change( $user_id, $lesson_id );
+		}
+	}
+
+	/**
+	 * Fires when a lesson has changed to check if the Course status needs changing
+	 * 
+	 * @param int $user_id
+	 * @param int $lesson_id
+	 */
+	public function update_status_after_lesson_change( $user_id, $lesson_id ) {
+		if ( intval( $user_id ) > 0 && intval( $lesson_id ) > 0 ) {
+			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			if ( intval( $course_id ) > 0 ) { 
+				// Updates the Course status and it's meta data
+				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
+			}
+		}
+	}
 
 	/**
 	 * meta_box_setup function.
@@ -116,7 +152,7 @@ class WooThemes_Sensei_Course {
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
+			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
 			$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				$prev_parent_id = 0;
 				foreach ( $posts_array as $post_item ) {
@@ -196,7 +232,7 @@ class WooThemes_Sensei_Course {
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="widefat">' . "\n";
+			$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="chosen_select widefat">' . "\n";
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -310,7 +346,7 @@ class WooThemes_Sensei_Course {
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int $post_id (default: 0)
-	 * @return void
+	 * @return int new meta id | bool meta value saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		// Get the meta key.
@@ -321,18 +357,10 @@ class WooThemes_Sensei_Course {
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
-		// Get the meta value of the custom field key.
-		$meta_value = get_post_meta( $post_id, $meta_key, true );
-		// If a new meta value was added and there was no previous value, add it.
-		if ( $new_meta_value && '' == $meta_value ) {
-			add_post_meta( $post_id, $meta_key, $new_meta_value, true );
-		} elseif ( $new_meta_value && $new_meta_value != $meta_value ) {
-			// If the new meta value does not match the old value, update it.
-			update_post_meta( $post_id, $meta_key, $new_meta_value );
-		} elseif ( '' == $new_meta_value && $meta_value ) {
-			// If there is no new meta value but an old value exists, delete it.
-			delete_post_meta( $post_id, $meta_key, $meta_value );
-		} // End If Statement
+
+        // update field with the new value
+        return update_post_meta( $post_id, $meta_key, $new_meta_value );
+
 	} // End save_post_meta()
 
 	/**
@@ -417,7 +445,7 @@ class WooThemes_Sensei_Course {
 	 * @return void
 	 */
 	public function add_column_data ( $column_name, $id ) {
-		global $wpdb, $post, $woothemes_sensei;
+		global $wpdb, $post;
 
 		switch ( $column_name ) {
 			case 'id':
@@ -426,18 +454,14 @@ class WooThemes_Sensei_Course {
 
 			case 'course-prerequisite':
 				$course_prerequisite_id = get_post_meta( $id, '_course_prerequisite', true);
-				if ( 0 < absint( $course_prerequisite_id )
-                    && !isset( $woothemes_sensei->globals['course-prerequisite-column-data-added'][$id] ) ) {
-                    echo '<a href="' . esc_url( get_edit_post_link( absint( $course_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_prerequisite_id ) ) ) ) . '">' . get_the_title( absint( $course_prerequisite_id ) ) . '</a>';
-                    $woothemes_sensei->globals['course-prerequisite-column-data-added'][$id] = true;
-                }
+				if ( 0 < absint( $course_prerequisite_id ) ) { echo '<a href="' . esc_url( get_edit_post_link( absint( $course_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_prerequisite_id ) ) ) ) . '">' . get_the_title( absint( $course_prerequisite_id ) ) . '</a>'; }
+
 			break;
 
 			case 'course-woocommerce-product':
 				if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
 					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true);
-					if ( 0 < absint( $course_woocommerce_product_id )
-                        && !isset( $woothemes_sensei->globals['course-woocommerce-product-column-data-added'][$id] ) ) {
+					if ( 0 < absint( $course_woocommerce_product_id ) ) {
 						if ( 'product_variation' == get_post_type( $course_woocommerce_product_id ) ) {
 							$product_object = get_product( $course_woocommerce_product_id );
 							if( sensei_check_woocommerce_version( '2.1' ) ) {
@@ -450,20 +474,16 @@ class WooThemes_Sensei_Course {
 							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
 						} // End If Statement
 						echo '<a href="' . esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $product_name ) ) . '">' . $product_name . '</a>';
-                        $woothemes_sensei->globals['course-woocommerce-product-column-data-added'][$id] = true;
 					} // End If Statement
 				} // End If Statement
 			break;
 
 			case 'course-category':
-                if( !isset( $woothemes_sensei->globals['course-category-column-data-added'][$id] ) ) {
-                    $output = get_the_term_list($id, 'course-category', '', ', ', '');
-                    if ('' == $output) {
-                        $output = __('None', 'woothemes-sensei');
-                    } // End If Statement
-                    echo $output;
-                    $woothemes_sensei->globals['course-category-column-data-added'][$id] = true;
-                }
+				$output = get_the_term_list( $id, 'course-category', '', ', ', '' );
+				if ( '' == $output ) {
+					$output = __( 'None', 'woothemes-sensei' );
+				} // End If Statement
+				echo $output;
 			break;
 
 			default:
@@ -489,7 +509,19 @@ class WooThemes_Sensei_Course {
 		if( $my_courses_page ) { add_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
 
 		$post_args = $this->get_archive_query_args( $type, $amount, $includes, $excludes );
-		$results_array = get_posts( $post_args );
+
+		// get the posts
+		if( empty( $post_args ) ) {
+
+			return $results_array;
+
+		}else{
+
+			//reset the pagination as this widgets do not need it
+			$post_args['paged'] = 1;
+			$results_array = get_posts( $post_args );
+
+		}
 
 		if( $my_courses_page ) { remove_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
 
@@ -759,21 +791,23 @@ class WooThemes_Sensei_Course {
 	 * @param string $post_status (default: 'publish')
 	 * @return void
 	 */
-	public function course_count( $exclude = array(), $post_status = 'publish' ) {
+	public function course_count( $post_status = 'publish' ) {
 
-		$posts_array = array();
-
-		$post_args = array(	'post_type' 		=> 'course',
-							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order date',
-    						'order'           	=> 'ASC',
-    						'post_status'       => $post_status,
-							'suppress_filters' 	=> 0
+		$post_args = array(	'post_type'         => 'course',
+							'posts_per_page'    => -1,
+//							'orderby'           => 'menu_order date',
+//							'order'             => 'ASC',
+							'post_status'       => $post_status,
+							'suppress_filters'  => 0,
+							'fields'            => 'ids',
 							);
-		$posts_array = get_posts( $post_args );
 
-		return intval( count( $posts_array ) );
+		// Allow WP to generate the complex final query, just shortcut to only do an overall count
+//		add_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
+		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
+//		remove_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 
+		return count( $courses_query->posts );
 	} // End course_count()
 
 
@@ -783,63 +817,105 @@ class WooThemes_Sensei_Course {
 	 * @access public
 	 * @param int $course_id (default: 0)
 	 * @param string $post_status (default: 'publish')
-	 * @return $posts_array array
+	 * @param string $fields (default: 'all')
+	 * @return void
 	 */
-	public function course_lessons( $course_id = 0, $post_status = 'publish' ) {
+	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
 
 		$posts_array = array();
 
-		$post_args = array(	'post_type' 		=> 'lesson',
-							'numberposts' 		=> -1,
-							'meta_key'        	=> '_order_' . $course_id,
-							'orderby'         	=> 'meta_value_num date',
-    						'order'           	=> 'ASC',
-    						'meta_query'		=> array(
-    							array(
-    								'key' => '_lesson_course',
+		$post_args = array(	'post_type'         => 'lesson',
+							'numberposts'       => -1,
+							'orderby'           => 'meta_value_num date',
+							'order'             => 'ASC',
+							'meta_query'        => array(
+								array(
+									'key' => '_lesson_course',
 									'value' => intval( $course_id ),
 								),
 							),
-    						'post_status'       => $post_status,
-							'suppress_filters' 	=> 0
+							'post_status'       => $post_status,
+							'suppress_filters'  => 0,
+							'fields'            => $fields,
 							);
-		$posts_array = get_posts( $post_args );
+		$query_results = new WP_Query( $post_args );
+        $posts_array = $query_results->posts;
 
-		return $posts_array;
+        // re order the lessons. This could not be done via the OR meta query as there may be lessons
+        // with the course order for a different course and this should not be included. It could also not
+        // be done via the AND meta query as it excludes lesson that does not have the _order_$course_id but
+        // that have been added to the course.
+        if( count( $posts_array) > 0  ){
+
+            foreach( $posts_array as $post ){
+                $order = intval( get_post_meta( $post->ID, '_order_'. $course_id, true ) );
+                // for lessons with no order set it to be 10000 so that it show up at the end
+                $post->course_order = $order ? $order : 100000;
+            }
+
+            uasort( $posts_array, array( $this, '_short_course_lessons_callback' )   );
+        }
+
+        return $posts_array;
 
 	} // End course_lessons()
 
+    /**
+     * Used for the uasort in $this->course_lessons()
+     * @since 1.8.0
+     * @access protected
+     *
+     * @param array $lesson_1
+     * @param array $lesson_2
+     * @return int
+     */
+    protected function _short_course_lessons_callback( $lesson_1, $lesson_2 ){
+
+        if ( $lesson_1->course_order == $lesson_2->course_order ) {
+            return 0;
+        }
+
+        return ($lesson_1->course_order < $lesson_2->course_order) ? -1 : 1;
+    }
+
 	/**
-	 * Fetch all quizzes in a course
+	 * Fetch all quiz ids in a course
 	 * @since  1.5.0
 	 * @param  integer $course_id ID of course
+	 * @param  boolean $boolean_check True if a simple yes/no is required
 	 * @return array              Array of quiz post objects
 	 */
-	public function course_quizzes( $course_id = 0 ) {
+	public function course_quizzes( $course_id = 0, $boolean_check = false ) {
 		global $woothemes_sensei;
 
 		$course_quizzes = array();
 
 		if( $course_id ) {
-			$lessons = $woothemes_sensei->frontend->course->course_lessons( $course_id );
+			$lesson_ids = $woothemes_sensei->post_types->course->course_lessons( $course_id, 'any', 'ids' );
 
-			foreach( $lessons as $lesson ) {
-				$quizzes = $woothemes_sensei->frontend->lesson->lesson_quizzes( $lesson->ID );
-				foreach( $quizzes as $quiz ) {
-					$questions = $woothemes_sensei->frontend->lesson->lesson_quiz_questions( $quiz->ID );
-					if( count( $questions ) > 0 ) {
-						$course_quizzes[] = $quiz;
-					}
+			foreach( $lesson_ids as $lesson_id ) {
+				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+				if ( $has_questions && $boolean_check ) {
+					return true;
+				}
+				elseif ( $has_questions ) {
+					$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
+//					$questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
+//					if( count( $questions ) > 0 ) {
+						$course_quizzes[] = $quiz_id;
+//					}
 				}
 			}
 		}
-
+		if ( $boolean_check && empty($course_quizzes) ) {
+			$course_quizzes = false;
+		}
 		return $course_quizzes;
 	}
 
 
 	/**
-	 * course_lessons_completed function.
+	 * course_lessons_completed function. Appears to be completely unused and a duplicate of course_lessons()!
 	 *
 	 * @access public
 	 * @param  int $course_id (default: 0)
@@ -848,25 +924,7 @@ class WooThemes_Sensei_Course {
 	 */
 	public function course_lessons_completed( $course_id = 0, $post_status = 'publish' ) {
 
-		$posts_array = array();
-
-		$post_args = array(	'post_type' 		=> 'lesson',
-							'numberposts' 		=> -1,
-							'meta_key'        	=> '_order_' . $course_id,
-							'orderby'         	=> 'meta_value_num date',
-    						'order'           	=> 'ASC',
-    						'meta_query'		=> array(
-    							array(
-    								'key'		=> '_lesson_course',
-    								'value'		=> $course_id,
-								),
-							),
-    						'post_status'       => $post_status,
-							'suppress_filters' 	=> 0
-							);
-		$posts_array = get_posts( $post_args );
-
-		return $posts_array;
+		return $this->course_lessons( $course_id, $post_status );
 
 	} // End course_lessons_completed()
 
@@ -889,7 +947,8 @@ class WooThemes_Sensei_Course {
 		    					'meta_key'        	=> '_lesson_course',
     							'meta_value'      	=> $course_id,
     	    					'post_status'      	=> 'publish',
-    	    					'suppress_filters' 	=> 0
+    	    					'suppress_filters' 	=> 0,
+								'fields'            => 'ids', // less data to retrieve
 		    				);
 		$lessons_array = get_posts( $lesson_args );
 		$count = count( $lessons_array );
@@ -913,7 +972,8 @@ class WooThemes_Sensei_Course {
 		    					'meta_key'        	=> '_lesson_course',
     							'meta_value'      	=> $course_id,
     	    					'post_status'      	=> 'publish',
-    	    					'suppress_filters' 	=> 0
+    	    					'suppress_filters' 	=> 0,
+								'fields'            => 'ids', // less data to retrieve
 		    				);
 		$lessons_array = get_posts( $lesson_args );
 		$count = count( $lessons_array );
@@ -945,7 +1005,8 @@ class WooThemes_Sensei_Course {
 										'key' => '_lesson_preview',
 										'value' => 'preview'
 									)
-								)
+								),
+								'fields'            => 'ids', // less data to retrieve
 		    				);
 		$lessons_array = get_posts( $lesson_args );
 		$count = count( $lessons_array );
@@ -1034,14 +1095,17 @@ class WooThemes_Sensei_Course {
 				$per_page = absint( $woothemes_sensei->settings->settings[ 'my_course_amount' ] );
 			}
 
-			$course_ids = WooThemes_Sensei_Utils::sensei_activity_ids( array( 'user_id' => $user->ID, 'type' => 'sensei_course_start' ) );
-
+			$course_statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user->ID, 'type' => 'sensei_course_status' ), true );
+			// User may only be on 1 Course
+			if ( !is_array($course_statuses) ) {
+				$course_statuses = array( $course_statuses );
+			}
 			$completed_ids = $active_ids = array();
-			foreach( $course_ids as $course_id ) {
-				if ( WooThemes_Sensei_Utils::user_completed_course( $course_id, $user->ID ) ) {
-					$completed_ids[] = $course_id;
+			foreach( $course_statuses as $course_status ) {
+				if ( WooThemes_Sensei_Utils::user_completed_course( $course_status, $user->ID ) ) {
+					$completed_ids[] = $course_status->comment_post_ID;
 				} else {
-					$active_ids[] = $course_id;
+					$active_ids[] = $course_status->comment_post_ID;
 				}
 			}
 
@@ -1072,9 +1136,8 @@ class WooThemes_Sensei_Course {
 				$completed_page = $_GET['completed_page'];
 			}
 			foreach ( $active_courses as $course_item ) {
-				$course = $course_item;
 
-				$course_lessons = $woothemes_sensei->frontend->course->course_lessons( $course_item->ID );
+				$course_lessons = $woothemes_sensei->post_types->course->course_lessons( $course_item->ID );
 				$lessons_completed = 0;
 				foreach ( $course_lessons as $lesson ) {
 					if ( WooThemes_Sensei_Utils::user_completed_lesson( $lesson->ID, $user->ID ) ) {
@@ -1104,7 +1167,7 @@ class WooThemes_Sensei_Course {
 		    		    	// Author
 		    		    	$user_info = get_userdata( absint( $course_item->post_author ) );
 		    		    	if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) {
-		    		    		$active_html .= '<span class="course-author"><a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . __( 'by ', 'woothemes-sensei' ) . esc_html( $user_info->display_name ) . '</a></span>';
+		    		    		$active_html .= '<span class="course-author">' . __( 'by ', 'woothemes-sensei' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
 		    		    	} // End If Statement
 		    		    	// Lesson count for this author
 		    		    	$lesson_count = $woothemes_sensei->post_types->course->course_lesson_count( absint( $course_item->ID ) );
@@ -1156,7 +1219,7 @@ class WooThemes_Sensei_Course {
 			    					} // End If Statement
 			    				} // End If Statement
 
-			    				if ( !$course_purchased ) {
+			    				if ( ! $course_purchased ) {
 			    					$active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="' . apply_filters( 'sensei_delete_course_text', __( 'Delete Course', 'woothemes-sensei' ) ) . '"/></span>';
 			    				} // End If Statement
 
@@ -1181,7 +1244,7 @@ class WooThemes_Sensei_Course {
 
 				$link = '';
 
-				if( $current_page > 0 ) {
+				if( $current_page > 1 ) {
 					$prev_link = add_query_arg( 'active_page', $current_page - 1 );
 					$active_html .= '<a class="prev page-numbers" href="' . $prev_link . '">' . __( 'Previous' , 'woothemes-sensei' ) . '</a> ';
 				}
@@ -1246,12 +1309,12 @@ class WooThemes_Sensei_Course {
 						$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
 
 						if( $manage ) {
-							$has_quizzes = count( $woothemes_sensei->frontend->course->course_quizzes( $course_item->ID ) ) > 0 ? true : false;
+							$has_quizzes = $woothemes_sensei->post_types->course->course_quizzes( $course_item->ID, true );
 							// Output only if there is content to display
-							if ( has_filter( 'sensei_results_links' ) || false != $has_quizzes ) {
+							if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
 								$complete_html .= '<p class="sensei-results-links">';
 								$results_link = '';
-								if( false != $has_quizzes ) {
+								if( $has_quizzes ) {
 									$results_link = '<a class="button view-results" href="' . $woothemes_sensei->course_results->get_permalink( $course_item->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
 								}
 								$complete_html .= apply_filters( 'sensei_results_links', $results_link );
@@ -1277,7 +1340,7 @@ class WooThemes_Sensei_Course {
 
 				$link = '';
 
-				if( $current_page > 0 ) {
+				if( $current_page > 1 ) {
 					$prev_link = add_query_arg( 'completed_page', $current_page - 1 );
 					$complete_html .= '<a class="prev page-numbers" href="' . $prev_link . '">' . __( 'Previous' , 'woothemes-sensei' ) . '</a> ';
 				}
@@ -1372,5 +1435,39 @@ class WooThemes_Sensei_Course {
 		return ob_get_clean();
 	}
 
+    /**
+     * Returns a list of all courses
+     *
+     * @since 1.8.0
+     * @return array $courses{
+     *  @type $course WP_Post
+     * }
+     */
+    public static function get_all_courses(){
+
+        $args = array(
+               'post_type' => 'course',
+                'numberposts' 		=> -1,
+                'orderby'         	=> 'title',
+                'order'           	=> 'ASC',
+                'post_status'      	=> 'any',
+                'suppress_filters' 	=> 0,
+        );
+
+        $wp_query_obj =  new WP_Query( $args );
+
+        /**
+         * sensei_get_all_courses filter
+         *
+         * This filter runs inside Sensei_Course::get_all_courses.
+         *
+         * @param array $courses{
+         *  @type WP_Post
+         * }
+         * @param array $attributes
+         */
+        return apply_filters( 'sensei_get_all_courses' , $wp_query_obj->posts );
+
+    }// end get_all_courses
+
 } // End Class
-?>

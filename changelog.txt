@@ -1,5 +1,85 @@
 *** Sensei Changelog ***
 
+2015.04.14 - version 1.7.5
+* Fix - Admin learner course completion no longer redirects to the lesson screen.
+* Tweak - Use update meta instead of add meta for the quiz lesson meta
+* Fix - Edit single question answer feedback is now saved the first time
+* Tweak - Update language strings to use the main Sensei language string and update the POT file
+* Tweak - Remove the default comment emails sent when using the sensei messages feature
+* Tweak - Remove the purchase notice if a user is already taking a course
+* Fix - Upload file button error on the single question edit screen.
+* Fix - Maintain quiz question order when duplicating a lesson.
+* Fix - Grading feedback now shows up for automatic and manual graded quizzes.
+* Tweak - Use home_url instead of site_url
+* Fix - Show user confirmation when the private message was sent
+* Tweak - The single course register button links to my courses and not WP register screen.
+
+2015.03.31 - version 1.7.4
+ * Fix - Allow users to save their answers uniquely for questions shared across multiple quizzes
+ * Fix - Bug that blocked teacher to access the admin area when WooCommerce is active
+ * Tweak - Allow contact teach button to be localized
+ * Fix - Sensei start lesson function error if the data argument is not passed in.
+
+2015.03.03 - version 1.7.3
+ * Tweak - Removing Canvas them wrappers (this will now be handled in the theme directly)
+ * Tweak - Decapitalising 'Total Grade' text on Course Results page
+ * Tweak - Moving course logic from frontend class to its proper place in the course class
+ * Tweak - Moving lesson logic from frontend class to its proper place in the lesson class
+ * Tweak - Removing `comments_rss_item_filter` as it is no longer needed - this should improve frontend performace
+ * Tweak - Making sure the `sensei_user_course_end` action is only fired at the correct times
+ * Tweak - Ensuring consistency on course prerequisite checks
+ * Tweak - Ensuring consistency of course completion checks
+ * Tweak - Adding sanity checks to ensure that data received by `sensei_check_for_activity()` is always valid
+ * Tweak - Removing 'by' from course author link
+ * Fix - Removing HTML container element for course video when no video is present
+ * Fix - Making sure gap fill questions work even if you leave out the pre- and/or post-gap text
+ * Fix - Allowing 'Analysis' menu label and page heading to be translated
+ * Fix - Ensures course component widget works correctly when 'limit' is not set
+
+2015.02.17 - version 1.7.2
+ * Update - Adding database table indexes to comments table to improve performance
+ * Update - Adding manual update to allow removal of legacy Sensei activity data
+ * Tweak - Removing localisation from empty strings
+ * Tweak - Adding localistion to Sensei menu items
+ * Fix - Preventing completion of first lesson from marking entire course as complete
+ * Fix - Fixing Course Component widget item loading and display
+ * Fix - Preventing 'Delete Course' button from displaying on purchased courses
+ * Fix - Fixing occassional javascript error when editing lesson quizzes
+ * Fix - Reinstating filter that allowed certificate link on single course page
+ * Fix - Ensuring duplicated lessons use the correct timezone for publication date
+ * Fix - Ensuring only valid unragded quizzes are displayed in the grading dashboard
+ * Fix - Standardising excerpt display on lesson tag archives
+ * Fix - Making sure that lesson preview title text only runs in correct locations
+ * Fix - Restores lesson statuses on lesson archive page
+ * Fix - Updating for WooCommerce 2.3 compatibility
+
+2015.02.04 - version 1.7.1
+ * Tweak - Improving detection for whether critical updates are needed or not
+ * Tweak - Updating code for WooCommerce 2.2+
+ * Fix - Fixing display of 'Delete Course' button on paid courses
+
+2015.02.02 - version 1.7.0
+ * New - Completely new data structure that improves site performace and fixes numerous data-consistency issues
+ * New - Multiple choice questions can now accept multiple correct answers
+ * New - LaTeX support for all questions, answers and answer notes (requires Jetpack's Beautiful Math module)
+ * New - Gap Fill questions can now be auto-graded
+ * New - New 'Question Description' field to give your learners more clarity
+ * New - Loads of new actions and filters to make Sensei more extensible
+
+2014.12.18 - version 1.6.9
+ * Fix - Fixing Chosen drop down menus on course edit screen
+ * Fix - Fixing Analysis export to select entire data set
+ * Fix - Fixing quiz duplication when lessons are published
+ * Fix - Ensure question edit screen shows the quizzes that the question is used in
+ * Fix - Updating theme integration guide link in unsupported theme notice
+ * Tweak - Adding view links after saving courses & lessons
+ * Tweak - Updating 'course' post type so that it shows in the admin bar
+
+2014.12.05 - version 1.6.8
+ * Fix   - The “View Quiz” button now shows up for all lessons that have a quiz attached.
+ * Fix   - When a learner submits a quiz the email will now be sent to the course teacher and not the admin account.
+ * Fix   - The login|logout now accounts for all languages where login/logout each can be multiple words.
+
 2014.11.06 - version 1.6.7
  * Fix   - Lesson complete class assigned to the right lessons.
  * Fix   - Remove pagination from the courses widget component

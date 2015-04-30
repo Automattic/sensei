@@ -26,7 +26,7 @@ class WooThemes_Sensei_Teacher {
      * Keeps a reference to the teacher role object
      *
      * @access protected
-     * @since 1.7.0
+     * @since 1.8.0
      */
     protected $teacher_role;
 
@@ -36,7 +36,7 @@ class WooThemes_Sensei_Teacher {
      * Keeps a reference to the global sensei token
      *
      * @access protected
-     * @since 1.7.0
+     * @since 1.8.0
      */
     public  $token;
 
@@ -45,7 +45,7 @@ class WooThemes_Sensei_Teacher {
      *
      * Constructor Function
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @return void
      */
@@ -77,7 +77,7 @@ class WooThemes_Sensei_Teacher {
      * This function checks if the role exist, if not it creates it.
      * for the teacher role
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @return void
      */
@@ -100,7 +100,7 @@ class WooThemes_Sensei_Teacher {
     /**
      * WooThemes_Sensei_Teacher::add_capabilities
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access protected
      */
     protected function add_capabilities ( ) {
@@ -183,7 +183,7 @@ class WooThemes_Sensei_Teacher {
      *
      * Add the teacher metabox to the course post type edit screen
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @parameter string $post_type
      * @parameter WP_Post $post
@@ -205,7 +205,7 @@ class WooThemes_Sensei_Teacher {
      *
      * Render the teacher meta box markup
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @parameters
      */
@@ -242,7 +242,7 @@ class WooThemes_Sensei_Teacher {
      *
      * Get a list of users who can author courses, lessons and quizes.
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @parameters
      * @return array $users user id array
@@ -276,7 +276,7 @@ class WooThemes_Sensei_Teacher {
      *
      * Hook into admin_init and save the new teacher to all course lessons
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @parameters
      * @return array $users user id array
@@ -317,7 +317,7 @@ class WooThemes_Sensei_Teacher {
      *
      * Update all course lessons and their quiz with a new author
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @parameters
      * @return array $users user id array
@@ -366,7 +366,7 @@ class WooThemes_Sensei_Teacher {
      *
      * Limit teachers to only see their courses, lessons and questions
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @parameters array $wp_query
      * @return WP_Query $wp_query
@@ -400,7 +400,7 @@ class WooThemes_Sensei_Teacher {
      *
      * Alter the query so that users can only see their courses on the analysis page
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @parameters $query
      * @return array $users user id array
@@ -431,7 +431,7 @@ class WooThemes_Sensei_Teacher {
      *
      * Determine if we're in admin and the current logged in use is a teacher
      *
-     * @since 1.7.0
+     * @since 1.8.0
      * @access public
      * @parameters array $wp_query
      * @return bool $is_admin_teacher

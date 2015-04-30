@@ -212,6 +212,10 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 	}
 }
 
+#course_prerequisite_options_chosen, #course_category_options_chosen, #course_woocommerce_product_options_chosen, #add_multiple_question_category_options_chosen {
+	width: 100% !important;
+}
+
 #course-video-embed  {
 	display: block;
 	width: 98%;
@@ -338,13 +342,18 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				}
 			}
 		}
-		.add_answer_option {
-			cursor: pointer;
-			&:before {
-				font-family: dashicons;
-				content: "\f132";
-				vertical-align: middle;
-				margin-right: 5px;
+		.add_answer_options {
+			margin-bottom: 20px;
+			.add_answer_option {
+				&.add_right_answer_option {
+					margin-right: 20px;
+				}
+				&:before {
+					font-family: dashicons;
+					content: "\f132";
+					vertical-align: middle;
+					margin-right: 5px;
+				}
 			}
 		}
 	}
@@ -610,7 +619,15 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				background: #ffffe0;
 			}
 			.graded  {
+				background: #52a8e8;
+				color: #fff;
+			}
+			.passed  {
 				background: $success;
+				color: #fff;
+			}
+			.failed  {
+				background: #ed6c6c;
 				color: #fff;
 			}
 		}
@@ -628,13 +645,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 }
 
 .sensei-grading-main  {
-	.tablenav {
-		&.top {
-			.tablenav-pages {
-				margin: -30px 0 5px 0;
-			}
-		}
-	}
 	.question_box {
 		@include clearfix();
 		&.ungraded {

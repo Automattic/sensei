@@ -48,10 +48,10 @@ class WooThemes_Sensei_Emails {
 
 		// Hooks for sending emails during Sensei events
 		add_action( 'sensei_user_quiz_grade', array( $this, 'learner_graded_quiz' ), 10, 4 );
-		add_action( 'sensei_user_course_end', array( $this, 'learner_completed_course' ), 10, 2 );
-		add_action( 'sensei_user_course_end', array( $this, 'teacher_completed_course' ), 10, 2 );
+		add_action( 'sensei_course_status_updated', array( $this, 'learner_completed_course' ), 10, 4 );
+		add_action( 'sensei_course_status_updated', array( $this, 'teacher_completed_course' ), 10, 4 );
 		add_action( 'sensei_user_course_start', array( $this, 'teacher_started_course' ), 10, 2 );
-		add_action( 'sensei_user_quiz_submitted', array( $this, 'teacher_quiz_submitted' ), 10, 2 );
+		add_action( 'sensei_user_quiz_submitted', array( $this, 'teacher_quiz_submitted' ), 10, 5 );
 		add_action( 'sensei_new_private_message', array( $this, 'teacher_new_message' ), 10, 1 );
 		add_action( 'sensei_private_message_reply', array( $this, 'new_message_reply' ), 10, 2 );
 
@@ -205,7 +205,7 @@ class WooThemes_Sensei_Emails {
 		ob_start();
 
 		do_action( 'sensei_before_email_template', $email_template );
-		include_once( $template );
+		include( $template );
 		do_action( 'sensei_after_email_template', $email_template );
 
 		return ob_get_clean();
@@ -242,8 +242,12 @@ class WooThemes_Sensei_Emails {
 	 * @access public
 	 * @return void
 	 */
-	function learner_completed_course( $user_id = 0, $course_id = 0 ) {
+	function learner_completed_course( $status = 'in-progress', $user_id = 0, $course_id = 0, $comment_id = 0 ) {
 		global $woothemes_sensei;
+
+		if( 'complete' != $status ) {
+			return;
+		}
 
 		$send = false;
 
@@ -267,8 +271,12 @@ class WooThemes_Sensei_Emails {
 	 * @access public
 	 * @return void
 	 */
-	function teacher_completed_course( $learner_id = 0, $course_id = 0 ) {
+	function teacher_completed_course( $status = 'in-progress', $learner_id = 0, $course_id = 0, $comment_id = 0 ) {
 		global $woothemes_sensei;
+
+		if( 'complete' != $status ) {
+			return;
+		}
 
 		$send = false;
 
@@ -317,22 +325,27 @@ class WooThemes_Sensei_Emails {
 	 * @access public
 	 * @return void
 	 */
-	function teacher_quiz_submitted( $learner_id = 0, $quiz_id = 0 ) {
+	function teacher_quiz_submitted( $learner_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0, $quiz_grade_type = 'manual' ) {
+
 		global $woothemes_sensei;
 
 		$send = false;
 
-		if( isset( $woothemes_sensei->settings->settings['email_teachers'] ) ) {
-			if( in_array( 'teacher-quiz-submitted', (array) $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+		// Only trigger if the quiz was marked as manual grading, or auto grading didn't complete
+		if( 'manual' == $quiz_grade_type || is_wp_error( $grade ) ) {
+			if( isset( $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+				if( in_array( 'teacher-quiz-submitted', (array) $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+					$send = true;
+				}
+			} else {
 				$send = true;
 			}
-		} else {
-			$send = true;
-		}
 
-		if( $send ) {
-			$email = $this->emails['teacher-quiz-submitted'];
-			$email->trigger( $learner_id, $quiz_id );
+			if( $send ) {
+				$email = $this->emails['teacher-quiz-submitted'];
+				$email->trigger( $learner_id, $quiz_id );
+			}
+
 		}
 	}
 
@@ -386,4 +399,4 @@ class WooThemes_Sensei_Emails {
 		}
 	}
 
-}
+}//end class

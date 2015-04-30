@@ -18,16 +18,40 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - meta_box_setup()
  * - lesson_info_meta_box_content()
  * - lesson_prerequisite_meta_box_content()
+ * = lesson_preview_meta_box_content()
  * - meta_box_save()
+ * - get_submitted_setting_value()
  * - post_updated()
  * - save_post_meta()
  * - lesson_course_meta_box_content()
+ * - quiz_panel()
+ * - quiz_panel_questions()
+ * - quiz_panel_question()
+ * - quiz_panel_add()
+ * - quiz_panel_get_existing_questions()
+ * - quiz_panel_add_existing_question()
+ * - quiz_panel_filter_existing_questions()
+ * - quiz_panel_question_field()
+ * - quiz_panel_question_feedback()
+ * - question_get_answer_id()
+ * - get_answer_id()
  * - lesson_quiz_meta_box_content()
+ * - lesson_quiz_settings_meta_box_content()
+ * - quiz_settings_panel()
+ * - get_quiz_settings()
  * - enqueue_scripts()
+ * - enqueue_styles()
  * - add_column_headings()
  * - add_column_data()
  * - lesson_add_course()
- * - lesson_update_questions()
+ * - lesson_update_question()
+ * - lesson_add_multiple_questions()
+ * - lesson_remove_multiple_questions()
+ * - get_question_category_limit()
+ * - lesson_add_existing_questions()
+ * - lesson_update_grade_type()
+ * - lesson_update_question_order()
+ * - lesson_update_question_order_random()
  * - lesson_save_course()
  * - lesson_save_question()
  * - lesson_delete_question()
@@ -35,7 +59,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - lesson_count()
  * - lesson_quizzes()
  * - lesson_quiz_questions()
+ * - set_default_question_order()
  * - lesson_image()
+ * - lesson_excerpt()
+ * - get_course_id ()
  */
 class WooThemes_Sensei_Lesson {
 	public $token;
@@ -54,7 +81,7 @@ class WooThemes_Sensei_Lesson {
 			// Metabox functions
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
-			add_action( 'save_post', array( $this, 'post_updated' ) );
+			add_action( 'save_post', array( $this, 'quiz_update' ) );
 
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 10, 1 );
@@ -103,6 +130,17 @@ class WooThemes_Sensei_Lesson {
 			// Filter existing questions
 			add_action( 'wp_ajax_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 			add_action( 'wp_ajax_nopriv_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
+
+            // output bulk edit fields
+            add_action( 'bulk_edit_custom_box', array( $this, 'all_lessons_edit_fields' ), 10, 2 );
+            add_action( 'quick_edit_custom_box', array( $this, 'all_lessons_edit_fields' ), 10, 2 );
+
+            // load quick edit default values
+            add_action('manage_lesson_posts_custom_column', array( $this, 'set_quick_edit_admin_defaults'), 11, 2);
+
+            // save bulk edit fields
+            add_action( 'wp_ajax_save_bulk_edit_book', array( $this, 'save_all_lessons_edit_fields' ) );
+
 		} else {
 			// Frontend actions
 		} // End If Statement
@@ -166,7 +204,7 @@ class WooThemes_Sensei_Lesson {
 		$html .= '<input type="number" id="lesson-length" name="lesson_length" class="small-text" value="' . esc_attr( $lesson_length ) . '" /></p>' . "\n";
 		// Lesson Complexity
 		$html .= '<p><label for="lesson_complexity">' . __( 'Lesson Complexity', 'woothemes-sensei' ) . ': </label>';
-		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="lesson-complexity-select">';
+		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="chosen_select lesson-complexity-select">';
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 			foreach ($complexity_array as $key => $value){
 				$html .= '<option value="' . esc_attr( $key ) . '"' . selected( $key, $lesson_complexity, false ) . '>' . esc_html( $value ) . '</option>' . "\n";
@@ -201,9 +239,9 @@ class WooThemes_Sensei_Lesson {
 		$posts_array = get_posts( $post_args );
 		// Build the HTML to Output
 		$html = '';
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="widefat">' . "\n";
+			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="chosen_select widefat">' . "\n";
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -227,7 +265,7 @@ class WooThemes_Sensei_Lesson {
 		// Get existing post meta
 		$lesson_preview = get_post_meta( $post->ID, '_lesson_preview', true );
 		$html = '';
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
 
 		$checked = '';
 		if ( isset( $lesson_preview ) && ( '' != $lesson_preview ) ) {
@@ -249,13 +287,13 @@ class WooThemes_Sensei_Lesson {
 	 * @return void
 	 */
 	public function meta_box_save ( $post_id ) {
-		global $post, $messages;
+
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename(__FILE__) ) ) {
+		if ( ( get_post_type( $post_id ) != $this->token ) || !isset(   $_POST[ 'woo_' . $this->token . '_nonce'] )  || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		} // End If Statement
 		// Get the post type object.
-		$post_type = get_post_type_object( $post->post_type );
+		$post_type = get_post_type_object( get_post_type( $post_id ) );
 		// Check if the current user has permission to edit the post.
 		if ( !current_user_can( $post_type->cap->edit_post, $post_id ) ) {
 			return $post_id;
@@ -280,42 +318,46 @@ class WooThemes_Sensei_Lesson {
 
 
 	/**
-	 * post_updated function.
+     * Update the lesson quiz and all the post meta
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function post_updated() {
-		global $post;
+	public function quiz_update( $post_id ) {
+		global $post, $woothemes_sensei;
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename(__FILE__) ) ) {
+		if ( ( 'lesson' != get_post_type( $post_id ) )|| !isset(   $_POST[ 'woo_' . $this->token . '_nonce'] )  || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta') ) {
 			if ( isset($post->ID) ) {
 				return $post->ID;
 			} else {
 				return false;
 			} // End If Statement
 		} // End If Statement
+
+		if( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+
 		// Temporarily disable the filter
-   		remove_action('save_post', array($this, __FUNCTION__));
+        remove_action( 'save_post', array( $this, 'quiz_update' ) );
 		// Save the Quiz
-		$quiz_id = 0;
+		$quiz_id = $this->lesson_quizzes( $post_id, 'any');
 
 		 // Sanitize and setup the post data
 		$_POST = stripslashes_deep( $_POST );
 		if ( isset( $_POST[ 'quiz_id' ] ) && ( 0 < absint( $_POST[ 'quiz_id' ] ) ) ) {
 			$quiz_id = absint( $_POST[ 'quiz_id' ] );
 		} // End If Statement
-		$post_title = esc_html( $_POST[ 'post_title' ] ) . ' ' . __( 'Quiz', 'woothemes-sensei' );
-		$post_author = esc_html( $_POST[ 'post_author' ] );
+		$post_title = esc_html( $_POST[ 'post_title' ] );
 		$post_status = esc_html( $_POST[ 'post_status' ] );
-		$post_type = 'quiz';
 		$post_content = '';
 
 		// Setup Query Arguments
 		$post_type_args = array(	'post_content' => $post_content,
   		    						'post_status' => $post_status,
   		    						'post_title' => $post_title,
-  		    						'post_type' => $post_type
+  		    						'post_type' => 'quiz',
+                                    'post_parent' => $post_id,
   		    						);
 
 		$settings = $this->get_quiz_settings();
@@ -327,7 +369,7 @@ class WooThemes_Sensei_Lesson {
 		    wp_update_post($post_type_args);
 
 		    // Update the post meta data
-		    update_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
+		    update_post_meta( $quiz_id, '_quiz_lesson', $post_id );
 
 		    foreach( $settings as $field ) {
 		    	if( 'random_question_order' != $field['id'] ) {
@@ -344,11 +386,19 @@ class WooThemes_Sensei_Lesson {
 			// Create the Quiz
 		    $quiz_id = wp_insert_post($post_type_args);
 
-		    // Add the post meta data
-		    add_post_meta( $quiz_id, '_quiz_lesson', $post->ID );
+		    // Add the post meta data WP will add it if it doesn't exist
+            update_post_meta( $quiz_id, '_quiz_lesson', $post_id );
 
 		    foreach( $settings as $field ) {
 		    	if( 'random_question_order' != $field['id'] ) {
+
+                    //ignore values not posted to avoid
+                    // overwriting with empty or default values
+                    // when the values are posted from bulk edit or quick edit
+                    if( !isset( $_POST[ $field['id'] ] ) ){
+                        continue;
+                    }
+
 			    	$value = $this->get_submitted_setting_value( $field );
 			    	if( isset( $value ) ) {
 			    		add_post_meta( $quiz_id, '_' . $field['id'], $value );
@@ -361,15 +411,26 @@ class WooThemes_Sensei_Lesson {
 		} // End If Statement
 
 		// Add default lesson order meta value
-		$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+		$course_id = get_post_meta( $post_id, '_lesson_course', true );
 		if( $course_id ) {
-			if( ! get_post_meta( $post->ID, '_order_' . $course_id, true ) ) {
-				update_post_meta( $post->ID, '_order_' . $course_id, 0 );
+			if( ! get_post_meta( $post_id, '_order_' . $course_id, true ) ) {
+				update_post_meta( $post_id, '_order_' . $course_id, 0 );
 			}
+		}
+		// Add reference back to the Quiz
+		update_post_meta( $post_id, '_lesson_quiz', $quiz_id );
+		// Mark if the Lesson Quiz has questions
+		$quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
+		if( 0 < count( $quiz_questions ) ) {
+			update_post_meta( $post_id, '_quiz_has_questions', '1' );
+		}
+		else {
+			delete_post_meta( $post_id, '_quiz_has_questions' );
 		}
 
 		// Restore the previously disabled filter
-    	add_action('save_post', array($this, __FUNCTION__));
+        add_action( 'save_post', array( $this, 'quiz_update' ) );
+
 	} // End post_updated()
 
 	public function get_submitted_setting_value( $field = false ) {
@@ -396,36 +457,35 @@ class WooThemes_Sensei_Lesson {
 		return $value;
 	}
 
-
 	/**
 	 * save_post_meta function.
 	 * Saves lesson meta data
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int $post_id (default: 0)
-	 * @return void
+	 * @return int meta id | bool saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		// Get the meta key.
 		$meta_key = '_' . $post_key;
+
+        //ignore fields are not posted
+        if( !isset( $_POST[ $post_key ] ) ){
+            return false;
+        }
+
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'lesson_video_embed' == $post_key) {
 			$new_meta_value = esc_html( $_POST[$post_key] );
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
-		// Get the meta value of the custom field key.
-		$meta_value = get_post_meta( $post_id, $meta_key, true );
-		// If a new meta value was added and there was no previous value, add it.
-		if ( $new_meta_value && '' == $meta_value ) {
-			add_post_meta( $post_id, $meta_key, $new_meta_value, true );
-		} elseif ( $new_meta_value && $new_meta_value != $meta_value ) {
-			// If the new meta value does not match the old value, update it.
-			update_post_meta( $post_id, $meta_key, $new_meta_value );
-		} elseif ( '' == $new_meta_value && $meta_value ) {
-			// If there is no new meta value but an old value exists, delete it.
-			delete_post_meta( $post_id, $meta_key, $meta_value );
-		} // End If Statement
+
+        // update field with the new value
+        if( -1 != $new_meta_value  ){
+            return update_post_meta( $post_id, $meta_key, $new_meta_value );
+        }
+
 	} // End save_post_meta()
 
 	/**
@@ -437,13 +497,13 @@ class WooThemes_Sensei_Lesson {
 	public function lesson_course_meta_box_content () {
 		global $post;
 		// Setup Lesson Meta Data
-		$select_lesson_prerequisite = 0;
+		$selected_lesson_course = 0;
 		if ( 0 < $post->ID ) {
-			$select_lesson_prerequisite = get_post_meta( $post->ID, '_lesson_course', true );
+			$selected_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
 		} // End If Statement
 		// Handle preselected course
 		if ( isset( $_GET[ 'course_id' ] ) && ( 0 < absint( $_GET[ 'course_id' ] ) ) ) {
-			$select_lesson_prerequisite = absint( $_GET[ 'course_id' ] );
+			$selected_lesson_course = absint( $_GET[ 'course_id' ] );
 		} // End If Statement
 		// Get the Lesson Posts
 		$post_args = array(	'post_type' 		=> 'course',
@@ -457,18 +517,23 @@ class WooThemes_Sensei_Lesson {
 		// Buid the HTML to Output
 		$html = '';
 		// Nonce
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
-			// Select the course for the lesson
-			$html .= '<select id="lesson-course-options" name="lesson_course" class="widefat">' . "\n";
-				$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-				if ( count( $posts_array ) > 0 ) {
-				foreach ($posts_array as $post_item){
-					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
-				} // End For Loop
-				} // End If Statement
-			$html .= '</select>' . "\n";
-			// Course Actions Panel
-			if ( current_user_can( 'publish_courses' )) {
+		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
+
+        // Select the course for the lesson
+        $drop_down_args = array(
+            'name'=>'lesson_course',
+            'id' => 'lesson-course-options'
+        );
+
+        $courses = WooThemes_Sensei_Course::get_all_courses();
+        $courses_options = array();
+        foreach( $courses as $course ){
+            $courses_options[ $course->ID ] = get_the_title( $course ) ;
+        }
+        $html .= WooThemes_Sensei_Utils::generate_drop_down( $selected_lesson_course, $courses_options, $drop_down_args );
+
+        // Course Actions Panel
+		if ( current_user_can( 'publish_courses' )) {
 				$html .= '<div id="lesson-course-actions">';
 					$html .= '<p>';
 						// Add a course action link
@@ -476,7 +541,7 @@ class WooThemes_Sensei_Lesson {
 					$html .= '</p>';
 				$html .= '</div>';
 				// Add a course input fields
-				$html .= '<div id="lesson-course-details">';
+				$html .= '<div id="lesson-course-details" class="hidden">';
 					$html .= '<p>';
 						// Course Title input
 						$html .= '<label>' . __( 'Course Title' , 'woothemes-sensei' ) . '</label> ';
@@ -486,7 +551,7 @@ class WooThemes_Sensei_Lesson {
 	  					$html .= '<textarea rows="10" cols="40" id="course-content" name="course_content" value="" size="300" class="widefat"></textarea>';
 	  					// Course Prerequisite
 	  					$html .= '<label>' . __( 'Course Prerequisite' , 'woothemes-sensei' ) . '</label> ';
-	  					$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="widefat">' . "\n";
+	  					$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="chosen_select widefat">' . "\n";
 							$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 							foreach ($posts_array as $post_item){
 								$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -514,7 +579,7 @@ class WooThemes_Sensei_Lesson {
 													);
 							$products_array = get_posts( $product_args );
 							$html .= '<label>' . __( 'WooCommerce Product' , 'woothemes-sensei' ) . '</label> ';
-	  						$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="widefat">' . "\n";
+	  						$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
 								$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 								$prev_parent_id = 0;
 								foreach ($products_array as $products_item){
@@ -559,19 +624,19 @@ class WooThemes_Sensei_Lesson {
 					$html .= '</p>';
 				$html .= '</div>';
 			} // End If Statement
+
 		// Output the HTML
 		echo $html;
 	} // End lesson_course_meta_box_content()
 
 	public function quiz_panel( $quiz_id = 0 ) {
 
-		$html = '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html = wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
 		$html .= '<div id="add-quiz-main">';
 			if ( 0 == $quiz_id ) {
 				$html .= '<p>';
 					// Default message and Add a Quiz button
-					$html .= esc_html( __( 'There is no quiz for this lesson yet. Please add one.', 'woothemes-sensei' ) );
-					$html .= '<button type="button" class="button button-highlighted add_quiz">' . esc_html( __( 'Add', 'woothemes-sensei' ) )  . '</button>';
+					$html .= esc_html( __( 'Once you have saved your lesson you will be able to add questions.', 'woothemes-sensei' ) );
 				$html .= '</p>';
 			}
 
@@ -659,9 +724,11 @@ class WooThemes_Sensei_Lesson {
 
 					$html .= '</table>';
 
-					$question_order_sting = $this->get_question_order( $questions );
+					if( ! isset( $this->question_order ) ) {
+						$this->question_order = '';
+					}
 
-					$html .= '<input type="hidden" id="question-order" name="question-order" value="' . $question_order_sting . '" />';
+					$html .= '<input type="hidden" id="question-order" name="question-order" value="' . $this->question_order . '" />';
 
 				$html .= '</div>';
 
@@ -684,7 +751,6 @@ class WooThemes_Sensei_Lesson {
 		global $quiz_questions;
 
 		$quiz_questions = $questions;
-		$question_order = ''; 
 
 		$html = '';
 
@@ -724,45 +790,15 @@ class WooThemes_Sensei_Lesson {
 				// Row with question and actions
 				$html .= $this->quiz_panel_question( $question_type, $question_counter, $question_id, 'quiz', $multiple_data );
 				$question_counter += $question_increment;
+
+				if( isset( $this->question_order ) && strlen( $this->question_order ) > 0 ) { $this->question_order .= ','; }
+				$this->question_order .= $question_id;
 			} // End For Loop
 		}
 
 		return $html;
 
 	}
-
-	/**
-	* return the string of concatenated question id.
-	*
-	* @access public
-	* @since 1.7.0
-	* @param array $questions
-	* @return string $question_order_csv 
-	*/
-	public function  get_question_order( $questions ){
-
-		$question_order_csv = '';
-
-		foreach ( $questions as $index => $question ) {
-			$question_id = $question->ID;
-
-			// setup for the current question id
-			$question_id_string = '';
-
-			// all items after the firs one should have a comma pre-appended
-			if( $index == 0 ){
-				$question_id_string = $question_id;
-			}else{
-				$question_id_string = ','. $question_id;
-			}
-
-			// append to the existing list of questions
-			$question_order_csv .= $question_id_string;
-
-		} // End For Loop
-
-		return $question_order_csv;
-	}// end get_question_order
 
 	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz', $multiple_data = array() ) {
 		global $row_counter, $woothemes_sensei, $quiz_questions;
@@ -833,9 +869,9 @@ class WooThemes_Sensei_Lesson {
 				if( 'quiz' == $context ) {
 					$html .= '<tr>';
 						if( $question_type != 'category' ) {
-
+							$question = get_post( $question_id );
 							$html .= '<td class="table-count question-number question-count-column"><span class="number">' . $question_counter . '</span></td>';
-							$html .= '<td class="question-title-column">' . esc_html( stripslashes( get_the_title( $question_id ) ) ) . '</td>';
+							$html .= '<td>' . esc_html( $question->post_title ) . '</td>';
 							$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 							$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', __( 'True/False', 'woothemes-sensei' ) ), $question_type ) );
 							$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
@@ -868,6 +904,7 @@ class WooThemes_Sensei_Lesson {
 						$edit_class = 'hidden';
 					}
 
+					$question = get_post( $question_id );
 					$html .= '<tr class="question-quick-edit ' . esc_attr( $edit_class ) . '">';
 						$html .= '<td colspan="5">';
 							$html .= '<span class="hidden question_original_counter">' . $question_counter . '</span>';
@@ -876,8 +913,14 @@ class WooThemes_Sensei_Lesson {
 						    	// Question title
 						    	$html .= '<div>';
 							    	$html .= '<label for="question_' . $question_counter . '">' . __( 'Question:', 'woothemes-sensei' ) . '</label> ';
-							    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( stripslashes( get_the_title( $question_id ) ) ) . '" size="25" class="widefat" />';
+							    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( htmlspecialchars( $question->post_title ) ) . '" size="25" class="widefat" />';
 						    	$html .= '</div>';
+
+						    	// Question description
+						    	$html .= '<div>';
+							    	$html .= '<label for="question_' . $question_counter . '_desc">' . __( 'Question Description (optional):', 'woothemes-sensei' ) . '</label> ';
+						    	$html .= '</div>';
+							    	$html .= '<textarea id="question_' . $question_counter . '_desc" name="question_description" class="widefat" rows="4">' . esc_textarea( $question->post_content ) . '</textarea>';
 
 						    	// Question grade
 						    	$html .= '<div>';
@@ -959,9 +1002,15 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<p><label>' . __( 'Question:'  , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" /></p>';
 
+						// Question description
+						$html .= '<p>';
+							$html .= '<label for="question_desc">' . __( 'Question Description (optional):', 'woothemes-sensei' ) . '</label> ';
+						$html .= '</p>';
+						$html .= '<textarea id="question_desc" name="question_description" class="widefat" rows="4"></textarea>';
+
 	  					// Question type
 						$html .= '<p><label>' . __( 'Question Type:' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<select id="add-question-type-options" name="question_type" class="widefat question-type-select">' . "\n";
+						$html .= '<select id="add-question-type-options" name="question_type" class="chosen_select widefat question-type-select">' . "\n";
 							foreach ( $question_types as $type => $label ) {
 								$html .= '<option value="' . esc_attr( $type ) . '">' . esc_html( $label ) . '</option>' . "\n";
 							} // End For Loop
@@ -971,7 +1020,7 @@ class WooThemes_Sensei_Lesson {
 						if( 'quiz' == $context ) {
 							if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
 								$html .= '<p><label>' . __( 'Question Category:' , 'woothemes-sensei' ) . '</label> ';
-								$html .= '<select id="add-question-category-options" name="question_category" class="widefat question-category-select">' . "\n";
+								$html .= '<select id="add-question-category-options" name="question_category" class="chosen_select widefat question-category-select">' . "\n";
 								$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>' . "\n";
 								foreach( $question_cats as $cat ) {
 									$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';
@@ -1016,7 +1065,7 @@ class WooThemes_Sensei_Lesson {
 
 		    if( 'quiz' == $context ) {
 
-			    $html .= '<div class="tab-content" id="tab-existing-content">';
+			    $html .= '<div class="tab-content hidden" id="tab-existing-content">';
 
 			    	$html .= '<p><em>' . sprintf( __( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
 
@@ -1091,11 +1140,11 @@ class WooThemes_Sensei_Lesson {
 			    $html .= '</div>';
 
 			    if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
-				    $html .= '<div class="tab-content" id="tab-multiple-content">';
+				    $html .= '<div class="tab-content hidden" id="tab-multiple-content">';
 
 				    	$html .= '<p><em>' . sprintf( __( 'Add any number of questions from a specified category. Edit your question categories %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) . '">', '</a>' ) . '</em></p>';
 
-						$html .= '<p><select id="add-multiple-question-category-options" name="multiple_category" class="widefat question-category-select">' . "\n";
+						$html .= '<p><select id="add-multiple-question-category-options" name="multiple_category" class="chosen_select widefat question-category-select">' . "\n";
 						$html .= '<option value="">' . __( 'Select a Question Category', 'woothemes-sensei' ) . '</option>' . "\n";
 						foreach( $question_cats as $cat ) {
 							$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';
@@ -1316,15 +1365,26 @@ class WooThemes_Sensei_Lesson {
 				case 'multiple-choice':
 					$html .= '<div class="question_default_fields multiple-choice-answers ' . str_replace( ' hidden', '', $question_class ) . '">';
 
-						$right_answer_id = $this->get_answer_id( $right_answer );
-
-						// Right Answer
-				    	$right_answer = '<label class="answer" for="question_' . $question_counter . '_right_answer"><span>' . __( 'Right:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . $question_counter . '_right_answer" name="question_right_answer" value="' . esc_attr( stripslashes( $right_answer ) ) . '" size="25" class="question_answer widefat" /></label>';
-				    	if( $question_id ) {
-				    		$answers[ $right_answer_id ] = $right_answer;
-				    	} else {
-				    		$answers[] = $right_answer;
-				    	}
+						$right_answers = (array) $right_answer;
+						// Calculate total right answers available (defaults to 1)
+						$total_right = 0;
+						if( $question_id ) {
+							$total_right = get_post_meta( $question_id, '_right_answer_count', true );
+						}
+						if( 0 == intval( $total_right ) ) {
+							$total_right = 1;
+						}
+						for ( $i = 0; $i < $total_right; $i++ ) {
+							if ( !isset( $right_answers[ $i ] ) ) { $right_answers[ $i ] = ''; }
+							$right_answer_id = $this->get_answer_id( $right_answers[ $i ] );
+							// Right Answer
+							$right_answer = '<label class="answer" for="question_' . $question_counter . '_right_answer_' . $i . '"><span>' . __( 'Right:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . $question_counter . '_right_answer_' . $i . '" name="question_right_answers[]" value="' . esc_attr( $right_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+							if( $question_id ) {
+								$answers[ $right_answer_id ] = $right_answer;
+							} else {
+								$answers[] = $right_answer;
+							}
+						}
 
 				    	// Calculate total wrong answers available (defaults to 4)
 				    	$total_wrong = 0;
@@ -1332,14 +1392,14 @@ class WooThemes_Sensei_Lesson {
 				    		$total_wrong = get_post_meta( $question_id, '_wrong_answer_count', true );
 				    	}
 				    	if( 0 == intval( $total_wrong ) ) {
-				    		$total_wrong = 4;
+				    		$total_wrong = 1;
 				    	}
 
 					    // Setup Wrong Answer HTML
 				    	for ( $i = 0; $i < $total_wrong; $i++ ) {
 				    		if ( !isset( $wrong_answers[ $i ] ) ) { $wrong_answers[ $i ] = ''; }
 				    		$answer_id = $this->get_answer_id( $wrong_answers[ $i ] );
-				    		$wrong_answer = '<label class="answer" for="question_' . $question_counter . '_wrong_answer_' . $i . '"><span>' . __( 'Wrong:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . $question_counter . '_wrong_answer_' . $i . '" name="question_wrong_answers[]" value="' . esc_attr( stripslashes( $wrong_answers[ $i ] ) ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+				    		$wrong_answer = '<label class="answer" for="question_' . $question_counter . '_wrong_answer_' . $i . '"><span>' . __( 'Wrong:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . $question_counter . '_wrong_answer_' . $i . '" name="question_wrong_answers[]" value="' . esc_attr( $wrong_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
 				    		if( $question_id ) {
 					    		$answers[ $answer_id ] = $wrong_answer;
 					    	} else {
@@ -1364,16 +1424,20 @@ class WooThemes_Sensei_Lesson {
 						    }
 				    	}
 
-				    	foreach( $answers_sorted as $id => $answer ) {
+						foreach( $answers_sorted as $id => $answer ) {
 				    		$html .= $answer;
 				    	}
 
 				    	$html .= '<input type="hidden" class="answer_order" name="answer_order" value="' . $answer_order_string . '" />';
+				    	$html .= '<span class="hidden right_answer_count">' . $total_right . '</span>';
 				    	$html .= '<span class="hidden wrong_answer_count">' . $total_wrong . '</span>';
 
-				    	$html .= '<a class="add_answer_option" rel="' . $question_counter . '">' . __( 'Add answer', 'woothemes-sensei' ) . '</a>';
+				    	$html .= '<div class="add_answer_options">';
+					    	$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . $question_counter . '">' . __( 'Add right answer', 'woothemes-sensei' ) . '</a>';
+					    	$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . $question_counter . '">' . __( 'Add wrong answer', 'woothemes-sensei' ) . '</a>';
+				    	$html .= '</div>';
 
-				    	$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id );
+                        $html .= $this->quiz_panel_question_feedback( $question_counter, $question_id , 'multiple-choice' );
 
 			    	$html .= '</div>';
 				break;
@@ -1388,12 +1452,12 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<label for="question_' . $question_id . '_boolean_true"><input id="question_' . $question_id . '_boolean_true" type="radio" name="' . $field_name . '" value="true" '. checked( $right_answer, 'true', false ) . ' /> ' . __( 'True', 'woothemes-sensei' ) . '</label>';
 						$html .= '<label for="question_' . $question_id . '_boolean_false"><input id="question_' . $question_id . '_boolean_false" type="radio" name="' . $field_name . '" value="false" '. checked( $right_answer, 'false', false ) . ' /> ' . __( 'False', 'woothemes-sensei' ) . '</label>';
 
-						$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id );
+                    $html .= $this->quiz_panel_question_feedback( $question_counter, $question_id, 'boolean' );
 
 					$html .= '</div>';
 				break;
 				case 'gap-fill':
-					$gapfill_array = explode( '|', $right_answer );
+					$gapfill_array = explode( '||', $right_answer );
 					if ( isset( $gapfill_array[0] ) ) { $gapfill_pre = $gapfill_array[0]; } else { $gapfill_pre = ''; }
 					if ( isset( $gapfill_array[1] ) ) { $gapfill_gap = $gapfill_array[1]; } else { $gapfill_gap = ''; }
 					if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { $gapfill_post = ''; }
@@ -1461,9 +1525,20 @@ class WooThemes_Sensei_Lesson {
 		return $html;
 	}
 
-	public function quiz_panel_question_feedback( $question_counter = 0, $question_id = 0 ) {
+	public function quiz_panel_question_feedback( $question_counter = 0, $question_id = 0, $question_type = '' ) {
 
-		$field_name = 'answer_feedback';
+        // default field name
+        $field_name = 'answer_feedback';
+        if( 'boolean' == $question_type ){
+
+            $field_name = 'answer_feedback_boolean';
+
+        }elseif( 'multiple-choice' == $question_type ){
+
+            $field_name = 'answer_feedback_multiple_choice';
+
+        }// end if
+
 		if( $question_counter ) {
 			$field_name = 'answer_' . $question_counter . '_feedback';
 		}
@@ -1516,14 +1591,7 @@ class WooThemes_Sensei_Lesson {
 		$quiz_id = 0;
 		$quizzes = array();
 		if ( 0 < $post->ID ) {
-			$quizzes = $this->lesson_quizzes( $post->ID, 'any' );
-		}
-
-		if ( $quizzes ) {
-			foreach ( $quizzes as $quiz ) {
-				$quiz_id = $quiz->ID;
-				break;
-			}
+			$quiz_id = $this->lesson_quizzes( $post->ID, 'any' );
 		}
 
 		echo $this->quiz_panel( $quiz_id );
@@ -1544,20 +1612,13 @@ class WooThemes_Sensei_Lesson {
 		$lesson_id = $post->ID;
 		$quizzes = array();
 		if ( 0 < $lesson_id ) {
-			$quizzes = $this->lesson_quizzes( $lesson_id, 'any' );
-		}
-
-		if ( $quizzes ) {
-			foreach ( $quizzes as $quiz ) {
-				$quiz_id = $quiz->ID;
-				break;
-			}
+			$quiz_id = $this->lesson_quizzes( $lesson_id, 'any' );
 		}
 
 		if( $quiz_id ) {
 			$html .= $this->quiz_settings_panel( $lesson_id, $quiz_id );
 		} else {
-			$html .= '<p><em>' . __( 'There is no quiz for this lesson yet - please add one in the \'Lesson Quiz\' box.', 'woothemes-sensei' ) . '</em></p>';
+			$html .= '<p><em>' . __( 'There is no quiz for this lesson yet - please add one in the \'Quiz Questions\' box.', 'woothemes-sensei' ) . '</em></p>';
 		}
 
 		echo $html;
@@ -1621,7 +1682,7 @@ class WooThemes_Sensei_Lesson {
 			array(
 				'id' 			=> 'quiz_passmark',
 				'label'			=> __( 'Quiz passmark percentage', 'woothemes-sensei' ),
-				'description'	=> __( '', 'woothemes-sensei' ),
+				'description'	=> '',
 				'type'			=> 'number',
 				'default'		=> 0,
 				'placeholder'	=> 0,
@@ -1658,7 +1719,7 @@ class WooThemes_Sensei_Lesson {
 			array(
 				'id' 			=> 'quiz_grade_type',
 				'label'			=> __( 'Grade quiz automatically', 'woothemes-sensei' ),
-				'description'	=> __( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice & True/False questions.', 'woothemes-sensei' ),
+				'description'	=> __( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
 				'default'		=> 'auto',
 				'checked'		=> 'auto',
@@ -1696,14 +1757,26 @@ class WooThemes_Sensei_Lesson {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			// Load the lessons script
-			wp_enqueue_script( 'sensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
-			wp_enqueue_script( 'sensei-lesson-select2', $woothemes_sensei->plugin_url . 'assets/select2/select2' . $suffix . '.js', array( 'jquery' ), '1.5.2' );
+			wp_enqueue_script( 'sensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata' /* . $suffix */ . '.js', array( 'jquery', 'jquery-ui-sortable' ), '1.6.0', true );
+			wp_enqueue_script( 'sensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), '1.5.2', true );
+			wp_enqueue_script( 'sensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), '1.5.2', true );
+
+            // Load the bulk edit screen script
+            if( 'edit.php' == $hook && 'lesson'==$_GET['post_type'] ) {
+                wp_enqueue_script( 'sensei-lessons-bulk-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-bulk-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version , true);
+            }
 
 			// Localise script
-			$translation_strings = array( 'wrong_colon' => __( 'Wrong:', 'woothemes-sensei' ), 'add_file' => __( 'Add file', 'woothemes-sensei' ), 'change_file' => __( 'Change file', 'woothemes-sensei' ), 'confirm_remove' => __( 'Are you sure you want to remove this question?', 'woothemes-sensei' ), 'confirm_remove_multiple' => __( 'Are you sure you want to remove these questions?', 'woothemes-sensei' ), 'too_many_for_cat' => __( 'You have selected more questions than this category contains - please reduce the number of questions that you are adding.', 'woothemes-sensei' ) );
+			$translation_strings = array( 'right_colon' => __( 'Right:', 'woothemes-sensei' ), 'wrong_colon' => __( 'Wrong:', 'woothemes-sensei' ), 'add_file' => __( 'Add file', 'woothemes-sensei' ), 'change_file' => __( 'Change file', 'woothemes-sensei' ), 'confirm_remove' => __( 'Are you sure you want to remove this question?', 'woothemes-sensei' ), 'confirm_remove_multiple' => __( 'Are you sure you want to remove these questions?', 'woothemes-sensei' ), 'too_many_for_cat' => __( 'You have selected more questions than this category contains - please reduce the number of questions that you are adding.', 'woothemes-sensei' ) );
 			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ), 'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ), 'lesson_add_multiple_questions_nonce' => wp_create_nonce( 'lesson_add_multiple_questions_nonce' ), 'lesson_remove_multiple_questions_nonce' => wp_create_nonce( 'lesson_remove_multiple_questions_nonce' ), 'lesson_add_existing_questions_nonce' => wp_create_nonce( 'lesson_add_existing_questions_nonce' ), 'filter_existing_questions_nonce' => wp_create_nonce( 'filter_existing_questions_nonce' ) );
 			$data = array_merge( $translation_strings, $ajax_vars );
 			wp_localize_script( 'sensei-lesson-metadata', 'woo_localized_data', $data );
+
+			// Chosen RTL
+			if ( is_rtl() ) {
+				wp_enqueue_script( 'sensei-chosen-rtl', $woothemes_sensei->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), '1.5.2', true );
+			}
+
 		}
 
 	} // End enqueue_scripts()
@@ -1724,7 +1797,7 @@ class WooThemes_Sensei_Lesson {
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
-			wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.6.0' );
+			wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.7.0' );
 		}
 
 	} // End enqueue_styles()
@@ -1756,25 +1829,22 @@ class WooThemes_Sensei_Lesson {
 	 * @return void
 	 */
 	public function add_column_data ( $column_name, $id ) {
-		global $wpdb, $post, $woothemes_sensei;
+		global $wpdb, $post;
+
 		switch ( $column_name ) {
 			case 'id':
 				echo $id;
 			break;
 			case 'lesson-course':
 				$lesson_course_id = get_post_meta( $id, '_lesson_course', true);
-				if ( 0 < absint( $lesson_course_id )
-                    && !isset( $woothemes_sensei->globals['lesson-course-column-data-added'][$id] ) ) {
+				if ( 0 < absint( $lesson_course_id ) ) {
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_course_id ) ) ) ) . '">' . get_the_title( absint( $lesson_course_id ) ) . '</a>';
-                    $woothemes_sensei->globals['lesson-course-column-data-added'][$id] = true;
 				} // End If Statement
 			break;
 			case 'lesson-prerequisite':
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true);
-				if ( 0 < absint( $lesson_prerequisite_id )
-                    && !isset( $woothemes_sensei->globals['lesson-prerequisite-column-data-added'][$id] ) ) {
+				if ( 0 < absint( $lesson_prerequisite_id ) ) {
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) ) . '">' . get_the_title( absint( $lesson_prerequisite_id ) ) . '</a>';
-                    $woothemes_sensei->globals['lesson-prerequisite-column-data-added'][$id] = true;
 				} // End If Statement
 			break;
 			default:
@@ -1826,9 +1896,15 @@ class WooThemes_Sensei_Lesson {
 			die('');
 		} // End If Statement
 		// Parse POST data
-		$data = $_POST['data'];
+		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that 
+		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed. 
+		// So first restore the original unslashed apostrophes by removing those slashes
+		$data = wp_unslash( $_POST['data'] );
+		// Then parse the string to an array (note that parse_str automatically urldecodes all the variables)
 		$question_data = array();
 		parse_str($data, $question_data);
+		// Finally re-slash all elements to ensure consistancy for lesson_save_question()
+		$question_data = wp_slash( $question_data );
 		// Save the question
 		$return = false;
 		// Question Save and Delete logic
@@ -1909,7 +1985,8 @@ class WooThemes_Sensei_Lesson {
 					add_post_meta( $multiple_id, 'number', $question_number );
 					add_post_meta( $multiple_id, '_quiz_id', $quiz_id, false );
 					add_post_meta( $multiple_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_counter );
-
+					$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+					update_post_meta( $lesson_id, '_quiz_has_questions', '1' );
 					$return = $this->quiz_panel_question( 'category', $question_counter, $multiple_id, 'quiz', array( $cat->name, $question_number ) );
 				}
 			}
@@ -2000,6 +2077,8 @@ class WooThemes_Sensei_Lesson {
 					$quizzes = get_post_meta( $question_id, '_quiz_id', false );
 					if( ! in_array( $quiz_id, $quizzes ) ) {
 			    		add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
+						$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+						update_post_meta( $lesson_id, '_quiz_has_questions', '1' );
 			    	}
 
 			    	add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
@@ -2167,7 +2246,7 @@ class WooThemes_Sensei_Lesson {
 		$question_id = 0;
 		$question_text = '';
 		$question_right_answer = '';
-		$question_wrong_answers = array();
+		$question_wrong_answers = $question_right_answers = array();
 		$question_type = 'multiple-choice';
 		$question_category = '';
 
@@ -2188,37 +2267,40 @@ class WooThemes_Sensei_Lesson {
 		} // End If Statement
 		$post_title = $question_text;
 		// Handle Default Fields (multiple choice)
-		if ( isset( $data[ 'question_right_answer' ] ) && ( '' != $data[ 'question_right_answer' ] ) ) {
+		if ( 'multiple-choice' == $question_type && isset( $data[ 'question_right_answers' ] ) && ( '' != $data[ 'question_right_answers' ] ) ) {
+			$question_right_answers = $data[ 'question_right_answers' ];
+		} // End If Statement
+		elseif ( 'multiple-choice' == $question_type && isset( $data[ 'question_right_answer' ] ) && ( '' != $data[ 'question_right_answer' ] ) ) {
 			$question_right_answer = $data[ 'question_right_answer' ];
 		} // End If Statement
-		if ( isset( $data[ 'question_wrong_answers' ] ) && ( '' != $data[ 'question_wrong_answers' ] ) ) {
+		if ( 'multiple-choice' == $question_type && isset( $data[ 'question_wrong_answers' ] ) && ( '' != $data[ 'question_wrong_answers' ] ) ) {
 			$question_wrong_answers = $data[ 'question_wrong_answers' ];
 		} // End If Statement
 		// Handle Boolean Fields - Edit
-		if ( isset( $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && ( '' != $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && 'boolean' == $question_type ) {
+		if ( 'boolean' == $question_type && isset( $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) && ( '' != $data[ 'question_' . $question_id . '_right_answer_boolean' ] ) ) {
 			$question_right_answer = $data[ 'question_' . $question_id . '_right_answer_boolean' ];
 		} // End If Statement
 		// Handle Boolean Fields - Add
-		if ( isset( $data[ 'question_right_answer_boolean' ] ) && ( '' != $data[ 'question_right_answer_boolean' ] ) && 'boolean' == $question_type ) {
+		if ( 'boolean' == $question_type && isset( $data[ 'question_right_answer_boolean' ] ) && ( '' != $data[ 'question_right_answer_boolean' ] ) ) {
 			$question_right_answer = $data[ 'question_right_answer_boolean' ];
 		} // End If Statement
 		// Handle Gap Fill Fields
-		if ( isset( $data[ 'add_question_right_answer_gapfill_pre' ] ) && ( '' != $data[ 'add_question_right_answer_gapfill_pre' ] ) ) {
-			$question_right_answer = $data[ 'add_question_right_answer_gapfill_pre' ] . '|' . $data[ 'add_question_right_answer_gapfill_gap' ] . '|' . $data[ 'add_question_right_answer_gapfill_post' ];
+		if ( 'gap-fill' == $question_type && isset( $data[ 'add_question_right_answer_gapfill_gap' ] ) && '' != $data[ 'add_question_right_answer_gapfill_gap' ] ) {
+			$question_right_answer = $data[ 'add_question_right_answer_gapfill_pre' ] . '||' . $data[ 'add_question_right_answer_gapfill_gap' ] . '||' . $data[ 'add_question_right_answer_gapfill_post' ];
 		} // End If Statement
 		// Handle Multi Line Fields
-		if ( isset( $data[ 'add_question_right_answer_multiline' ] ) && ( '' != $data[ 'add_question_right_answer_multiline' ] ) ) {
+		if ( 'multi-line' == $question_type && isset( $data[ 'add_question_right_answer_multiline' ] ) && ( '' != $data[ 'add_question_right_answer_multiline' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_multiline' ];
 		} // End If Statement
 		// Handle Single Line Fields
-		if ( isset( $data[ 'add_question_right_answer_singleline' ] ) && ( '' != $data[ 'add_question_right_answer_singleline' ] ) ) {
+		if ( 'single-line' == $question_type && isset( $data[ 'add_question_right_answer_singleline' ] ) && ( '' != $data[ 'add_question_right_answer_singleline' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_singleline' ];
 		} // End If Statement
 		// Handle File Upload Fields
-		if ( isset( $data[ 'add_question_right_answer_fileupload' ] ) && ( '' != $data[ 'add_question_right_answer_fileupload' ] ) ) {
+		if ( 'file-upload' == $question_type && isset( $data[ 'add_question_right_answer_fileupload' ] ) && ( '' != $data[ 'add_question_right_answer_fileupload' ] ) ) {
 			$question_right_answer = $data[ 'add_question_right_answer_fileupload' ];
 		} // End If Statement
-		if ( isset( $data[ 'add_question_wrong_answer_fileupload' ] ) && ( '' != $data[ 'add_question_wrong_answer_fileupload' ] ) ) {
+		if ( 'file-upload' == $question_type && isset( $data[ 'add_question_wrong_answer_fileupload' ] ) && ( '' != $data[ 'add_question_wrong_answer_fileupload' ] ) ) {
 			$question_wrong_answers = array( $data[ 'add_question_wrong_answer_fileupload' ] );
 		} // End If Statement
 
@@ -2229,15 +2311,31 @@ class WooThemes_Sensei_Lesson {
 
 		// Handle Answer Feedback
 		$answer_feedback = '';
-		if ( isset( $data[ 'answer_feedback' ] ) ) {
-			$answer_feedback = $data[ 'answer_feedback' ];
-		} // End If Statement
+		if ( isset( $data[ 'answer_feedback_boolean' ] ) && !empty( $data[ 'answer_feedback_boolean' ] ) ) {
+
+            $answer_feedback = $data[ 'answer_feedback_boolean' ];
+
+		}elseif( isset( $data[ 'answer_feedback_multiple_choice' ] ) && !empty( $data[ 'answer_feedback_multiple_choice' ] ) ){
+
+            $answer_feedback = $data[ 'answer_feedback_multiple_choice' ];
+
+        }elseif( isset( $data[ 'answer_feedback' ] )  ){
+
+            $answer_feedback = $data[ 'answer_feedback' ];
+
+        } // End If Statement
 
 		$post_title = $question_text;
 		$post_author = $data[ 'post_author' ];
 		$post_status = 'publish';
 		$post_type = 'question';
-		$post_content = '';
+		// Handle the extended question text
+		if ( isset( $data[ 'question_description' ] ) && ( '' != $data[ 'question_description' ] ) ) {
+			$post_content = $data[ 'question_description' ];
+		}
+		else {
+			$post_content = '';
+		}
 		// Question Query Arguments
 		$post_type_args = array(	'post_content' => $post_content,
   		    						'post_status' => $post_status,
@@ -2246,6 +2344,22 @@ class WooThemes_Sensei_Lesson {
   		    						);
 
   		// Remove empty values and reindex the array
+  		if ( is_array( $question_right_answers ) && 0 < count($question_right_answers) ) {
+  			$question_right_answers_array = array_values( array_filter( $question_right_answers, 'strlen' ) );
+  			$question_right_answers = array();
+
+  			foreach( $question_right_answers_array as $answer ) {
+  				if( ! in_array( $answer, $question_right_answers ) ) {
+  					$question_right_answers[] = $answer;
+  				}
+  			}
+  			if ( 0 < count($question_right_answers) ) {
+  				$question_right_answer = $question_right_answers;
+  			}
+  		} // End If Statement
+  		$right_answer_count = count( $question_right_answer );
+
+		// Remove empty values and reindex the array
   		if ( is_array( $question_wrong_answers ) ) {
   			$question_wrong_answers_array = array_values( array_filter( $question_wrong_answers, 'strlen' ) );
   			$question_wrong_answers = array();
@@ -2296,6 +2410,7 @@ class WooThemes_Sensei_Lesson {
 
 		    	update_post_meta( $question_id, '_question_grade', $question_grade );
 		    	update_post_meta( $question_id, '_question_right_answer', $question_right_answer );
+		    	update_post_meta( $question_id, '_right_answer_count', $right_answer_count );
 		    	update_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    	update_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
 		    	update_post_meta( $question_id, '_question_media', $question_media );
@@ -2305,8 +2420,10 @@ class WooThemes_Sensei_Lesson {
 		    	if( 'quiz' != $context ) {
 		    		wp_set_post_terms( $question_id, array( $question_type ), 'question-type', false );
 		    	}
-
-		    	update_post_meta( $question_id, '_answer_feedback', $answer_feedback );
+				// Don't store empty value, no point
+				if ( !empty($answer_feedback) ) {
+					update_post_meta( $question_id, '_answer_feedback', $answer_feedback );
+				}
 
 		    } else {
 				$question_id = wp_insert_post( $post_type_args );
@@ -2316,19 +2433,25 @@ class WooThemes_Sensei_Lesson {
 				// Set post meta
 				if( 'quiz' == $context ) {
 					add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
+					$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+					update_post_meta( $lesson_id, '_quiz_has_questions', '1' );
 				}
 
 				if( isset( $question_grade ) ) {
 		    		add_post_meta( $question_id, '_question_grade', $question_grade );
 		    	}
 		    	add_post_meta( $question_id, '_question_right_answer', $question_right_answer );
+		    	add_post_meta( $question_id, '_right_answer_count', $right_answer_count );
 		    	add_post_meta( $question_id, '_question_wrong_answers', $question_wrong_answers );
 		    	add_post_meta( $question_id, '_wrong_answer_count', $wrong_answer_count );
 		    	add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
 		    	add_post_meta( $question_id, '_question_media', $question_media );
 		    	add_post_meta( $question_id, '_answer_order', $answer_order );
 		    	add_post_meta( $question_id, '_random_order', $random_order );
-		    	add_post_meta( $question_id, '_answer_feedback', $answer_feedback );
+				// Don't store empty value, no point
+				if ( !empty($answer_feedback) ) {
+					add_post_meta( $question_id, '_answer_feedback', $answer_feedback );
+				}
 
 		    	// Set the post terms for question-type
 			    wp_set_post_terms( $question_id, array( $question_type ), 'question-type' );
@@ -2381,17 +2504,17 @@ class WooThemes_Sensei_Lesson {
 	 * lesson_complexities function.
 	 *
 	 * @access public
-	 * @return void
+	 * @return array $lesson_complexities
 	 */
 	public function lesson_complexities() {
 
 		// V2 - make filter for this array
-		$complexity_array = array( 	'easy' => __( 'Easy', 'woothemes-sensei' ),
+        $lesson_complexities = array( 	'easy' => __( 'Easy', 'woothemes-sensei' ),
 									'std' => __( 'Standard', 'woothemes-sensei' ),
 									'hard' => __( 'Hard', 'woothemes-sensei' )
 									);
 
-		return $complexity_array;
+		return $lesson_complexities;
 
 	} // End lesson_complexities
 
@@ -2403,25 +2526,37 @@ class WooThemes_Sensei_Lesson {
 	 * @param string $post_status (default: 'publish')
 	 * @return void
 	 */
-	public function lesson_count( $post_status = 'publish' ) {
+	public function lesson_count( $post_status = 'publish', $course_id = false ) {
 
-		$posts_array = array();
-
-		$post_args = array(	'post_type' 		=> 'lesson',
-							'numberposts' 		=> -1,
-							'orderby'         	=> 'menu_order',
-    						'order'           	=> 'ASC',
-    						'meta_key'        	=> '_lesson_course',
-    						'meta_value_num'   	=> 0,
-    						'meta_compare'		=> '>=',
-    						'post_status'       => $post_status,
-							'suppress_filters' 	=> 0
+		$post_args = array(	'post_type'         => 'lesson',
+							'posts_per_page'    => -1,
+//							'orderby'           => 'menu_order date',
+//							'order'             => 'ASC',
+							'post_status'       => $post_status,
+							'suppress_filters'  => 0,
+							'fields'            => 'ids',
 							);
+		if( $course_id ) {
+			$post_args['meta_query'][] = array(
+				'key' => '_lesson_course',
+				'value' => $course_id,
+			);
+		}
+		else {
+			// Simple check for connection to a Course
+			$post_args['meta_query'][] = array(
+				'key' => '_lesson_course',
+				'value' => 0,
+				'compare' => '>=',
+			);
+		}
 
-		$posts_array = get_posts( $post_args );
+		// Allow WP to generate the complex final query, just shortcut to only do an overall count
+//		add_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
+		$lessons_query = new WP_Query( apply_filters( 'sensei_lesson_count', $post_args ) );
+//		remove_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 
-		return intval( count( $posts_array ) );
-
+		return count( $lessons_query->posts );
 	} // End lesson_count()
 
 
@@ -2431,24 +2566,26 @@ class WooThemes_Sensei_Lesson {
 	 * @access public
 	 * @param int $lesson_id (default: 0)
 	 * @param string $post_status (default: 'publish')
-	 * @return void
+	 * @param string $fields (default: 'ids')
+	 * @return int $quiz_id
 	 */
-	public function lesson_quizzes( $lesson_id = 0, $post_status = 'publish' ) {
+	public function lesson_quizzes( $lesson_id = 0, $post_status = 'any', $fields = 'ids' ) {
 
 		$posts_array = array();
 
 		$post_args = array(	'post_type' 		=> 'quiz',
-							'numberposts' 		=> -1,
+							'numberposts' 		=> 1,
 							'orderby'         	=> 'title',
     						'order'           	=> 'DESC',
-    						'meta_key'        	=> '_quiz_lesson',
-    						'meta_value'      	=> $lesson_id,
+    						'post_parent'      	=> $lesson_id,
     						'post_status'		=> $post_status,
+							'suppress_filters' 	=> 0,
+							'fields'            => $fields
 							);
 		$posts_array = get_posts( $post_args );
+        $quiz_id = array_shift($posts_array);
 
-		return $posts_array;
-
+		return $quiz_id;
 	} // End lesson_quizzes()
 
 
@@ -2512,8 +2649,10 @@ class WooThemes_Sensei_Lesson {
 			}
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it
-			$questions_asked_string = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $quiz_id, 'user_id' => $user_id, 'type' => 'sensei_quiz_asked', 'field' => 'comment_content' ) );
-			if( $questions_asked_string ) {
+			$quiz_lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+			$lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
+			$questions_asked_string = !empty($lesson_status->comment_ID) ? get_comment_meta( $lesson_status->comment_ID, 'questions_asked', true ) : false;
+			if( !empty($questions_asked_string) ) {
 
 				$selected_questions = explode( ',', $questions_asked_string );
 
@@ -2733,5 +2872,287 @@ class WooThemes_Sensei_Lesson {
 		return apply_filters( 'sensei_lesson_excerpt', $html );
 	} // End lesson_excerpt()
 
+    /**
+     * Returns the course for a given lesson
+     *
+     * @since 1.7.4
+     * @access public
+     *
+     * @param int $lesson_id
+     * @return int $course_id or bool when nothing is found.
+     */
+     public function get_course_id( $lesson_id ){
+
+         if( ! isset( $lesson_id ) || empty( $lesson_id )
+         ||  'lesson' != get_post_type( $lesson_id ) ){
+             return false;
+         }
+
+         $lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true);
+
+         // make sure the course id is valid
+         if( empty( $lesson_course_id )
+             || is_array( $lesson_course_id )
+             || intval( $lesson_course_id ) < 1
+             || 'course' != get_post_type( $lesson_course_id ) ){
+
+             return false;
+
+         }
+
+         return $lesson_course_id;
+
+     }// en get_course_id
+
+    /**
+     * Add the admin all lessons screen edit options.
+     *
+     * The fields in this function work for both quick and bulk edit. The ID attributes is used
+     * by bulk edit javascript in the front end to retrieve the new values set byt the user. Then
+     * name attribute is will be used by the quick edit and submitted via standard POST. This
+     * will use this classes save_post_meta function to save the new field data.
+     *
+     * @hooked quick_edit_custom_box
+     * @hooked bulk_edit_custom_box
+     *
+     * @since 1.8.0
+     *
+     * @param string $column_name
+     * @param string $post_type
+     * @return void
+     */
+    public function all_lessons_edit_fields( $column_name, $post_type ) {
+
+        // only show these options ont he lesson post type edit screen
+        if( 'lesson' != $post_type || 'lesson-course' != $column_name ){
+            return;
+        }
+
+        ?>
+        <fieldset class="inline-edit-col-right inline-edit-book">
+            <div class="inline-edit-col column-<?php echo $column_name ?>">
+                    <?php
+                    echo '<h3>' . __('Lesson Information', 'woothemes-sensei') . '</h3>';
+                    // create a nonce field to be  used as a security measure when saving the data
+                    wp_nonce_field( 'bulk-edit-lessons', '_edit_lessons_nonce' );
+                    wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce'  );
+
+                    // unchanged option - this i needed in the list because
+                    // the default option in bulk edit should not be empty. If it is
+                    // the user will erase data they didn't want to touch.
+                    $no_change_text = '-- ' . __('No Change', 'woothemes-sensei') . ' --';
+                    ;
+                    //
+                    //course selection
+                    //
+                    $courses =  WooThemes_Sensei_Course::get_all_courses();
+                    $course_options = array();
+                    if ( count( $courses ) > 0 ) {
+                        foreach ($courses as $course ){
+                            $course_options[ $course->ID ] = get_the_title( $course->ID );
+                        }
+                    }
+                    //pre-append the no change option
+                    $course_options['-1']=  $no_change_text;
+                    $course_attributes = array( 'name'=> 'lesson_course', 'id'=>'sensei-edit-lesson-course' , 'class'=>' ' );
+                    $course_field =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $course_options, $course_attributes );
+                    echo $this->generate_all_lessons_edit_field( __('Lesson Course', 'woothemes-sensei'),   $course_field  );
+
+                    //
+                    // lesson complexity selection
+                    //
+                    $lesson_complexities =  $this->lesson_complexities();
+                    //pre-append the no change option
+                    $lesson_complexities['-1']=  $no_change_text;
+                    $complexity_dropdown_attributes = array( 'name'=> 'lesson_complexity', 'id'=>'sensei-edit-lesson-complexity' , 'class'=>' ');
+                    $complexity_filed =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $lesson_complexities, $complexity_dropdown_attributes );
+                    echo $this->generate_all_lessons_edit_field( __('Lesson Complexity', 'woothemes-sensei'),   $complexity_filed  );
+
+                    ?>
+
+                    <h3><?php _e('Quiz Settings', 'woothemes-sensei'); ?> </h3>
+
+                    <?php
+
+                    //
+                    // Lesson require pass to complete
+                    //
+                    $pass_required_options = array(
+                        '-1' => $no_change_text,
+                         '0' => __('No','woothemes'),
+                         '1' => __('Yes','woothemes'),
+                    );
+
+                    $pass_required_select_attributes = array( 'name'=> 'pass_required',
+                                                                'id'=> 'sensei-edit-lesson-pass-required',
+                                                                'class'=>' '   );
+                    $require_pass_field =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
+                    echo $this->generate_all_lessons_edit_field( __('Pass required', 'woothemes-sensei'),   $require_pass_field  );
+
+                    //
+                    // Quiz pass percentage
+                    //
+                    $quiz_pass_percentage_field = '<input name="quiz_passmark" id="sensei-edit-quiz-pass-percentage" type="number" />';
+                    echo $this->generate_all_lessons_edit_field( __('Pass Percentage', 'woothemes-sensei'), $quiz_pass_percentage_field  );
+
+                    //
+                    // Enable quiz reset button
+                    //
+                    $quiz_reset_select__options = array(
+                        '-1' => $no_change_text,
+                        '0' => __('No','woothemes'),
+                        '1' => __('Yes','woothemes'),
+                    );
+                    $quiz_reset_name_id = 'sensei-edit-enable-quiz-reset';
+                    $quiz_reset_select_attributes = array( 'name'=> 'enable_quiz_reset', 'id'=>$quiz_reset_name_id, 'class'=>' ' );
+                    $quiz_reset_field =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
+                    echo $this->generate_all_lessons_edit_field( __('Enable quiz reset button', 'woothemes-sensei'), $quiz_reset_field  );
+
+                    ?>
+            </div>
+        </fieldset>
+    <?php
+    }// all_lessons_edit_fields
+
+    /**
+     * Create the html for the edit field
+     *
+     * Wraps the passed in field and title combination with the correct html.
+     *
+     * @since 1.8.0
+     *
+     * @param string $title that will stand to the left of the field.
+     * @param string $field type markup for the field that must be wrapped.
+     * @return string $field_html
+     */
+    public function generate_all_lessons_edit_field( $title  ,$field ){
+
+        $html = '';
+        $html = '<div class="inline-edit-group" >';
+        $html .=  '<span class="title">'. $title .'</span> ';
+        $html .= '<span class="input-text-wrap">';
+        $html .= $field;
+        $html .= '</span>';
+        $html .= '</label></div><br />';
+
+        return $html ;
+
+    }//end generate_all_lessons_edit_field
+
+    /**
+     * Respond to the ajax call from the bulk edit save function. This comes
+     * from the admin all lesson screen.
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    function save_all_lessons_edit_fields() {
+
+        // verify all the data before attempting to save
+        if( ! isset( $_POST['security'] ) || ! check_ajax_referer( 'bulk-edit-lessons', 'security' )
+            ||  empty( $_POST[ 'post_ids' ] )  || ! is_array( $_POST[ 'post_ids' ] ) ) {
+            die();
+        }
+
+        // get our variables
+        $new_course = sanitize_text_field(  $_POST['sensei_edit_lesson_course'] );
+        $new_complexity = sanitize_text_field(  $_POST['sensei_edit_complexity'] );
+        $new_pass_required = sanitize_text_field(  $_POST['sensei_edit_pass_required'] );
+        $new_pass_percentage = sanitize_text_field(  $_POST['sensei_edit_pass_percentage'] );
+        $new_enable_quiz_reset = sanitize_text_field(  $_POST['sensei_edit_enable_quiz_reset'] );
+        // store the values for all selected posts
+        foreach( $_POST[ 'post_ids' ] as $lesson_id ) {
+
+            // get the quiz id needed for the quiz meta
+            $quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+            // do not save the items if the value is -1 as this
+            // means it was not changed
+
+            // update lesson course
+            if( -1 != $new_course ){
+                update_post_meta( $lesson_id, '_lesson_course', $new_course );
+            }
+            // update lesson complexity
+            if( -1 != $new_complexity ){
+                update_post_meta( $lesson_id, '_lesson_complexity', $new_complexity );
+            }
+
+            // Quiz Related settings
+            if( isset( $quiz_id) && 0 < intval( $quiz_id ) ) {
+
+                // update pass required
+                if (-1 != $new_pass_required) {
+
+                    $checked = $new_pass_required  ? 'on' : '';
+                    update_post_meta($quiz_id, '_pass_required', $checked);
+                    unset( $checked );
+                }
+
+                // update pass percentage
+                if( !empty( $new_pass_percentage) && is_numeric( $new_pass_percentage ) ){
+
+                        update_post_meta($quiz_id, '_quiz_passmark', $new_pass_percentage);
+
+                }
+
+                //
+                // update enable quiz reset
+                //
+                if (-1 != $new_enable_quiz_reset ) {
+
+                    $checked = $new_enable_quiz_reset ? 'on' : ''  ;
+                    update_post_meta($quiz_id, '_enable_quiz_reset', $checked);
+                    unset( $checked );
+
+                }
+
+
+            } // end if quiz
+
+        }// end for each
+
+        die();
+
+    } // end save_all_lessons_edit_fields
+
+    /**
+     * Loading the quick edit fields defaults.
+     *
+     * This function will localise the default values along with the script that will
+     * add these values to the inputs.
+     *
+     * NOTE: this function runs for each row in the edit column
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public function set_quick_edit_admin_defaults( $column_name, $post_id ){
+
+        if( 'lesson-course' != $column_name ){
+            return;
+        }
+        // load the script
+        $suffix = defined( 'SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
+        wp_enqueue_script( 'sensei-lesson-quick-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-quick-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+
+        // setup the values for all meta fields
+        $data = array();
+        foreach( $this->meta_fields as $field ){
+
+            $data[$field] =  get_post_meta( $post_id, '_'.$field, true );
+
+        }
+        // add quiz meta fields
+        $quiz_id = Sensei()->lesson->lesson_quizzes( $post_id );
+        foreach( Sensei()->quiz->meta_fields as $field ){
+
+            $data[$field] =  get_post_meta( $quiz_id, '_'.$field, true );
+
+        }
+
+        wp_localize_script( 'sensei-lesson-quick-edit', 'sensei_quick_edit_'.$post_id, $data );
+
+    }// end quick edit admin defaults
+
 } // End Class
-?>

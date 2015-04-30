@@ -110,7 +110,7 @@ class WooThemes_Sensei_Settings_API {
 	 * @return void
 	 */
 	public function setup_settings () {
-		add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 20 );
+		add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
 		add_action( 'wp_loaded', array( $this, 'general_init' ) );
 	} // End setup_settings()
@@ -869,7 +869,7 @@ class WooThemes_Sensei_Settings_API {
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
 		wp_enqueue_style( 'farbtastic' );
-		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), '1.6.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), '1.7.0' );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()
@@ -894,4 +894,3 @@ class WooThemes_Sensei_Settings_API {
 		}
 	} // End enqueue_field_styles()
 } // End Class
-?>
