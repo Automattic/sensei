@@ -55,21 +55,10 @@ class Sensei_Teacher {
         add_action( 'save_post',  array( $this, 'save_teacher_meta_box' ) );
         add_filter( 'parse_query', array( $this, 'limit_teacher_edit_screen_post_types' ));
         add_filter( 'pre_get_posts', array( $this, 'course_analysis_teacher_access_limit' ) );
+        add_filter( 'wp_count_posts', array( $this, 'list_table_counts' ), 10, 3 );
 
         add_action( 'pre_get_posts', array( $this, 'filter_queries' ) );
     } // end __constructor()
-
-
-    function adding_custom_meta_boxes( $post_type, $post ) {
-        add_meta_box(
-            'my-meta-box',
-            __( 'My Meta Box' ),
-            'render_my_meta_box',
-            'post',
-            'normal',
-            'default'
-        );
-    }
 
     /**
      * Sensei_Teacher::create_teacher_role
@@ -372,20 +361,21 @@ class Sensei_Teacher {
      * @return WP_Query $wp_query
      */
     public function limit_teacher_edit_screen_post_types( $wp_query ) {
-
         global $current_user;
-        $pagenow = get_current_screen();
 
         //exit early
         if( ! $this->is_admin_teacher() ){
-
             return $wp_query;
-
         }
 
+        if ( ! function_exists( 'get_current_screen' ) ) {
+            return $wp_query;
+        }
+
+        $screen = get_current_screen();
+
         // for any of these conditions limit what the teacher will see
-        if( 'edit-lesson' == $pagenow->id || 'edit-course' == $pagenow->id
-            || 'edit-question' == $pagenow->id ){
+        if( 'edit-lesson' == $screen->id || 'edit-course' == $screen->id || 'edit-question' == $screen->id ) {
 
             // set the query author to the current user to only show those those posts
             $wp_query->set( 'author', $current_user->id );
@@ -407,14 +397,19 @@ class Sensei_Teacher {
      */
     public function course_analysis_teacher_access_limit ( $query ) {
 
-        $pagenow = get_current_screen();
+        if( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+            return $query;
+        }
+
+        if ( ! function_exists( 'get_current_screen' ) ) {
+            return $query;
+        }
+
+        $screen = get_current_screen();
         $sensei_post_types = array('course', 'lesson', 'question' );
 
-        //exit early for the following conditions
-        if( ! $this->is_admin_teacher( ) || empty( $pagenow )
-            ||'sensei_page_sensei_analysis' != $pagenow->id
-            || ! in_array(  $query->query['post_type'] , $sensei_post_types )   ){
-
+        // exit early for the following conditions
+        if( ! $this->is_admin_teacher() || empty( $screen ) ||'sensei_page_sensei_analysis' != $screen->id || ! in_array( $query->query['post_type'], $sensei_post_types ) ){
             return $query;
         }
 
@@ -437,8 +432,8 @@ class Sensei_Teacher {
      * @return bool $is_admin_teacher
      */
     public function is_admin_teacher ( ){
-
         global $current_user;
+
         $is_admin_teacher = false;
         $user_roles = $current_user->roles;
 
@@ -452,7 +447,68 @@ class Sensei_Teacher {
 
     } // end is_admin_teacher
 
+    /**
+     * Show correct post counts on list table for Sensei post types
+     * @param  object $counts Default status counts
+     * @param  string $type   Current post type
+     * @param  string $perm   User permission level
+     * @return object         Modified status counts
+     */
+    public function list_table_counts( $counts, $type, $perm ) {
+        global $current_user;
 
+        if( ! in_array( $type, array( 'course', 'lesson', 'question' ) ) ) {
+            return $counts;
+        }
+
+        if( ! $this->is_admin_teacher() ) {
+            return $counts;
+        }
+
+        $args = array(
+            'post_type' => $type,
+            'author' => $current_user->ID,
+            'posts_per_page' => -1
+        );
+
+         // Get all available statuses
+        $stati = get_post_stati();
+
+        // Update count object
+        foreach( $stati as $status ) {
+            $args['post_status'] = $status;
+            $posts = get_posts( $args );
+            $counts->$status = count( $posts );
+        }
+
+        return $counts;
+    }
+
+    public function filter_queries ( $query ) {
+        global $current_user;
+
+        if( ! $this->is_admin_teacher() ) {
+            return;
+        }
+
+        if ( ! function_exists( 'get_current_screen' ) ) {
+            return;
+        }
+
+        $screen = get_current_screen();
+
+        switch( $screen->id ) {
+            case 'sensei_page_sensei_grading':
+            case 'sensei_page_sensei_analysis':
+            case 'sensei_page_sensei_learners':
+            case 'lesson':
+            case 'course':
+            case 'question':
+            case 'lesson_page_module-order':
+                $query->set( 'author', $current_user->ID );
+            break;
+        }
+    }
 
     public function filter_queries ( $query ) {
         global $current_user;

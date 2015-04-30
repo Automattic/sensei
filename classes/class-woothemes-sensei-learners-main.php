@@ -601,7 +601,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
-						<select name="add_user_id" id="add_learner_search">
+						<select name="add_user_id" id="add_learner_search" style="min-width:300px;">
 							<option value=""><?php _e( 'Find learner', 'woothemes-sensei' ); ?></option>
 						</select>&nbsp;&nbsp;
 						<?php if( 'lesson' == $form_post_type ) { ?>
@@ -642,24 +642,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				}
 			}, function (data) {
 
-		jQuery('input#add_learner_search').select2({
-			minimumInputLength: 2,
-			placeholder: '<?php _e( 'Select learner', 'woothemes-sensei' ); ?>',
-			width:'300px',
-			ajax: {
-		        url: '<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
-		        dataType: 'json',
-		        cache: true,
-		        id: function(user){ return user.id; },
-		        data: function (input, page) { // page is the one-based page number tracked by Select2
-		            return {
-		                term: input, //search term
-		                page: page || 1,
-		               	action: 'sensei_json_search_users',
-		               	security: 	'<?php echo esc_js( wp_create_nonce( "search-users" ) ); ?>',
-		               	default: '',
-		            };
-		        },
+				var users = {};
 
 				jQuery.each(data, function (i, val) {
 					users[i] = val;

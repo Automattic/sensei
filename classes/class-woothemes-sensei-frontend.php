@@ -1013,12 +1013,7 @@ class WooThemes_Sensei_Frontend {
         			<p><a class="button" href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php echo esc_attr( apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ) ); ?>"><?php echo apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?></a></p>
         		<?php } ?>
         <?php } // End If Statement
-
-        if( !is_user_logged_in() ){
-        	//all the user to login / rigister or enrol
-            WooThemes_Sensei_Utils::sensei_register_button( '<div class="status register">', '</div>' );
-        	
-        } elseif ( $show_actions && ! $has_user_completed_lesson  ) {
+        if ( $show_actions && ! $has_user_completed_lesson ) {
         	sensei_complete_lesson_button();
         } elseif( $show_actions ) {
         	sensei_reset_lesson_button();
