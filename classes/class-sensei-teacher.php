@@ -510,22 +510,4 @@ class Sensei_Teacher {
         }
     }
 
-    public function filter_queries ( $query ) {
-        global $current_user;
-
-        if( ! $this->is_admin_teacher() ) {
-            return;
-        }
-
-        if( isset( $_GET['page'] ) ) {
-            switch( $_GET['page'] ) {
-                case 'sensei_grading':
-                case 'sensei_analysis':
-                case 'sensei_learners':
-                    $query->set( 'author', $current_user->ID );
-                break;
-            }
-        }
-    }
-
 } // End Class
