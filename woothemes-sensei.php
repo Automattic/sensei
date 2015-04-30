@@ -73,9 +73,8 @@ Tested up to: 4.1.1
      * @since 1.8.0
      */
     function activate_sensei () {
-        global $woothemes_sensei;
 
         // create the teacher role on activation and ensure that it has all the needed capabilities
-        $woothemes_sensei->teacher->activate_role();
+        Sensei()->teacher->activate_role();
 
     }// end activate_sensei

@@ -1754,8 +1754,8 @@ class WooThemes_Sensei_Updates {
      */
     public  function enhance_teacher_role ( ) {
 
-        require_once( 'class-woothemes-sensei-teacher.php' );
-        $teacher = new WooThemes_Sensei_Teacher();
+        require_once('class-sensei-teacher.php');
+        $teacher = new Sensei_Teacher();
         $teacher->create_role();
         return true;
 

@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - create_teacher_role()
  * - add_teacher_capabilities()
  */
-class WooThemes_Sensei_Teacher {
+class Sensei_Teacher {
 
     /**
      * $teacher_role
@@ -41,7 +41,7 @@ class WooThemes_Sensei_Teacher {
     public  $token;
 
     /**
-     * WooThemes_Sensei_Teacher::__constructor
+     * Sensei_Teacher::__constructor
      *
      * Constructor Function
      *
@@ -72,7 +72,7 @@ class WooThemes_Sensei_Teacher {
     }
 
     /**
-     * WooThemes_Sensei_Teacher::create_teacher_role
+     * Sensei_Teacher::create_teacher_role
      *
      * This function checks if the role exist, if not it creates it.
      * for the teacher role
@@ -98,7 +98,7 @@ class WooThemes_Sensei_Teacher {
     }// end create_teacher_role
 
     /**
-     * WooThemes_Sensei_Teacher::add_capabilities
+     * Sensei_Teacher::add_capabilities
      *
      * @since 1.8.0
      * @access protected
@@ -179,7 +179,7 @@ class WooThemes_Sensei_Teacher {
     }// end add_cap
 
     /**
-     * WooThemes_Sensei_Teacher::teacher_meta_box
+     * Sensei_Teacher::teacher_meta_box
      *
      * Add the teacher metabox to the course post type edit screen
      *
@@ -201,7 +201,7 @@ class WooThemes_Sensei_Teacher {
     } // end teacher_meta_box()
 
     /**
-     * WooThemes_Sensei_Teacher::render_teacher_meta_box
+     * Sensei_Teacher::render_teacher_meta_box
      *
      * Render the teacher meta box markup
      *
@@ -238,7 +238,7 @@ class WooThemes_Sensei_Teacher {
     } // end render_teacher_meta_box()
 
     /**
-     * WooThemes_Sensei_Teacher::get_teachers_and_authors
+     * Sensei_Teacher::get_teachers_and_authors
      *
      * Get a list of users who can author courses, lessons and quizes.
      *
@@ -272,7 +272,7 @@ class WooThemes_Sensei_Teacher {
 
 
     /**
-     * WooThemes_Sensei_Teacher::save_teacher_meta_box
+     * Sensei_Teacher::save_teacher_meta_box
      *
      * Hook into admin_init and save the new teacher to all course lessons
      *
@@ -313,7 +313,7 @@ class WooThemes_Sensei_Teacher {
     } // end save_teacher_meta_box
 
     /**
-     * WooThemes_Sensei_Teacher::update_course_lessons_author
+     * Sensei_Teacher::update_course_lessons_author
      *
      * Update all course lessons and their quiz with a new author
      *
@@ -362,7 +362,7 @@ class WooThemes_Sensei_Teacher {
     }// end update_course_lessons_author
 
     /**
-     * WooThemes_Sensei_Teacher::limit_teacher_edit_screen_post_types
+     * Sensei_Teacher::limit_teacher_edit_screen_post_types
      *
      * Limit teachers to only see their courses, lessons and questions
      *
@@ -396,7 +396,7 @@ class WooThemes_Sensei_Teacher {
     } // end limit_teacher_edit_screen_post_types()
 
     /**
-     * WooThemes_Sensei_Teacher::course_analysis_teacher_access_limit
+     * Sensei_Teacher::course_analysis_teacher_access_limit
      *
      * Alter the query so that users can only see their courses on the analysis page
      *
@@ -427,7 +427,7 @@ class WooThemes_Sensei_Teacher {
 
 
     /**
-     * WooThemes_Sensei_Teacher::limit_teacher_edit_screen_post_types
+     * Sensei_Teacher::limit_teacher_edit_screen_post_types
      *
      * Determine if we're in admin and the current logged in use is a teacher
      *
