@@ -1560,7 +1560,7 @@ class WooThemes_Sensei_Course {
             $user_id = get_current_user_id();
         }
 
-        echo '<span class="progress statement">' . $this->get_progress_statement( $course_id, $user_id  ) . '</span>';
+        echo '<span class="progress statement  course-completion-rate">' . $this->get_progress_statement( $course_id, $user_id  ) . '</span>';
     }
 
     /**
