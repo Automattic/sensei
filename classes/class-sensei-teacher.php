@@ -525,7 +525,18 @@ class Sensei_Teacher {
             case 'course':
             case 'question':
             case 'lesson_page_module-order':
-                $query->set( 'author', $current_user->ID );
+
+            /**
+             * sensei_filter_queries_set_author
+             * Filter the author Sensei set for queries
+             *
+             * @since 1.8.0
+             *
+             * @param int $user_id
+             * @param string $screen_id
+             *
+             */
+            $query->set( 'author', apply_filters( 'sensei_filter_queries_set_author', $current_user->ID, $screen->id ) );
             break;
         }
     }
