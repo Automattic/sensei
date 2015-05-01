@@ -434,6 +434,9 @@ class Sensei_Teacher {
     public function is_admin_teacher ( ){
         global $current_user;
 
+        if( ! is_user_logged_in()){
+            return false;
+        }
         $is_admin_teacher = false;
         $user_roles = $current_user->roles;
 
