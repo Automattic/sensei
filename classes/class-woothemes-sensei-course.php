@@ -1502,8 +1502,7 @@ class WooThemes_Sensei_Course {
         } else {
             $class = ' red';
         }
-
-        $progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' . $progress_percentage . '%">' . $progress_percentage . '%</span></div>';
+        $progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' . $progress_percentage . '%">' . round( $progress_percentage ) . '%</span></div>';
 
         return $progress_bar_html;
 
