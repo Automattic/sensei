@@ -378,7 +378,7 @@ class Sensei_Teacher {
         if( 'edit-lesson' == $screen->id || 'edit-course' == $screen->id || 'edit-question' == $screen->id ) {
 
             // set the query author to the current user to only show those those posts
-            $wp_query->set( 'author', $current_user->id );
+            $wp_query->set( 'author', $current_user->ID );
         }
 
         return $wp_query;
