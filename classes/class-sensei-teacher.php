@@ -456,6 +456,9 @@ class Sensei_Teacher {
 
     /**
      * Show correct post counts on list table for Sensei post types
+     *
+     * @since 1.8.0
+     *
      * @param  object $counts Default status counts
      * @param  string $type   Current post type
      * @param  string $perm   User permission level
@@ -491,6 +494,14 @@ class Sensei_Teacher {
         return $counts;
     }
 
+    /**
+     * Filter the post queries to show
+     * only lesson /course and users that belong
+     * to the current logged teacher.
+     *
+     * @since 1.8.0
+     *
+     */
     public function filter_queries ( $query ) {
         global $current_user;
 
