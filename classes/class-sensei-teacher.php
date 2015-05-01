@@ -419,7 +419,7 @@ class Sensei_Teacher {
 
         global $current_user;
         // set the query author to the current user to only show those those posts
-        $query->set( 'author', $current_user->id );
+        $query->set( 'author', $current_user->ID );
         return $query;
 
     }// end course_analysis_teacher_access_limit
