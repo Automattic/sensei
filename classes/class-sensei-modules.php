@@ -1136,6 +1136,11 @@ class Sensei_Core_Modules
     /**
      * Get module for lesson
      *
+     * This function also checks if the module still
+     * exists on the course before returning it. Although
+     * the lesson has a module the same module must exist on the
+     * course for it to be valid.
+     *
      * @since 1.8.0
      *
      * @param  integer $lesson_id ID of lesson
@@ -1144,21 +1149,39 @@ class Sensei_Core_Modules
     public function get_lesson_module($lesson_id = 0)
     {
         $lesson_id = intval($lesson_id);
-        if ($lesson_id > 0) {
-            $modules = wp_get_post_terms($lesson_id, $this->taxonomy);
-            foreach ($modules as $module) {
-                break;
-            }
-            if (isset($module) && is_object($module) && !is_wp_error($module)) {
-                $module->url = get_term_link($module, $this->taxonomy);
-                $course_lesson = intval(get_post_meta(intval($lesson_id), '_lesson_course', true));
-                if (isset($course_lesson) && 0 < $course_lesson) {
-                    $module->url = esc_url(add_query_arg('course_id', intval($course_lesson), $module->url));
-                }
-                return $module;
-            }
+        if ( ! ( intval( $lesson_id > 0) ) ) {
+            return false;
         }
-        return false;
+
+        // get taxonomy terms on this lesson
+        $modules = wp_get_post_terms($lesson_id, $this->taxonomy);
+
+        //check if error returned
+        if( empty( $modules ) || isset( $modules['errors']  ) ){
+            return false;
+        }
+
+        // get the last item in the array there should only be one really. this is added as the previous code
+        // used a for each to get to the last element which was not clear in intent
+        $module = array_slice( $modules, -1, 1, TRUE )[0];
+
+        if ( ! isset($module) || ! is_object($module) || is_wp_error($module)) {
+            return false;
+        }
+
+        $module->url = get_term_link($module, $this->taxonomy);
+        $course_id = intval(get_post_meta(intval($lesson_id), '_lesson_course', true));
+        if (isset($course_id) && 0 < $course_id) {
+
+            // the course should contain the same module taxonomy term for this to be valid
+            if( ! has_term( $module, $this->taxonomy, $course_id)){
+                return false;
+            }
+
+            $module->url = esc_url(add_query_arg('course_id', intval($course_id), $module->url));
+        }
+        return $module;
+
     }
 
     /**
