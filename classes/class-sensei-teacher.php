@@ -374,6 +374,10 @@ class Sensei_Teacher {
 
         $screen = get_current_screen();
 
+        if( empty( $screen ) ){
+            return $wp_query;
+        }
+
         // for any of these conditions limit what the teacher will see
         if( 'edit-lesson' == $screen->id || 'edit-course' == $screen->id || 'edit-question' == $screen->id ) {
 
@@ -499,7 +503,9 @@ class Sensei_Teacher {
         }
 
         $screen = get_current_screen();
-
+        if( empty( $screen ) ) {
+            return $query;
+        }
         switch( $screen->id ) {
             case 'sensei_page_sensei_grading':
             case 'sensei_page_sensei_analysis':
