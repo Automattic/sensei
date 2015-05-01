@@ -1520,7 +1520,8 @@ class WooThemes_Sensei_Course {
      */
     public function get_progress_statement( $course_id, $user_id ){
 
-        if( empty( $course_id ) || empty( $user_id ) ){
+        if( empty( $course_id ) || empty( $user_id )
+        || ! WooThemes_Sensei_Utils::user_started_course( $course_id, $user_id ) ){
             return false;
         }
 
@@ -1580,8 +1581,8 @@ class WooThemes_Sensei_Course {
             $user_id = get_current_user_id();
         }
 
-        if( 'course' != get_post_type( $course_id )
-            || ! get_userdata( $user_id ) ){
+        if( 'course' != get_post_type( $course_id ) || ! get_userdata( $user_id )
+            || ! WooThemes_Sensei_Utils::user_started_course( $course_id ,$user_id ) ){
             return;
         }
         $percentage_completed = $this->get_completion_percentage( $course_id, $user_id );
