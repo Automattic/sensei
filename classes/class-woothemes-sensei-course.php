@@ -839,24 +839,32 @@ class WooThemes_Sensei_Course {
 							'fields'            => $fields,
 							);
 		$query_results = new WP_Query( $post_args );
-        $posts_array = $query_results->posts;
+        $lessons = $query_results->posts;
 
         // re order the lessons. This could not be done via the OR meta query as there may be lessons
         // with the course order for a different course and this should not be included. It could also not
         // be done via the AND meta query as it excludes lesson that does not have the _order_$course_id but
         // that have been added to the course.
-        if( count( $posts_array) > 0  ){
+        if( count( $lessons) > 1  ){
 
-            foreach( $posts_array as $post ){
-                $order = intval( get_post_meta( $post->ID, '_order_'. $course_id, true ) );
+            foreach( $lessons as $lesson ){
+                $order = intval( get_post_meta( $lesson->ID, '_order_'. $course_id, true ) );
                 // for lessons with no order set it to be 10000 so that it show up at the end
-                $post->course_order = $order ? $order : 100000;
+                $lesson->course_order = $order ? $order : 100000;
             }
 
-            uasort( $posts_array, array( $this, '_short_course_lessons_callback' )   );
+            uasort( $lessons, array( $this, '_short_course_lessons_callback' )   );
         }
 
-        return $posts_array;
+        /**
+         * Filter runs inside Sensei_Course::course_lessons function
+         *
+         * Returns all lessons for a given course
+         *
+         * @param array $lessons
+         * @param int $course_id
+         */
+        return apply_filters( 'sensei_course_get_lessons', $lessons, $course_id  );
 
 	} // End course_lessons()
 
