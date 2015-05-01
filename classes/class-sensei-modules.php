@@ -1447,14 +1447,25 @@ class Sensei_Core_Modules
      * @param string $title
      * @return string $title
      */
-    public function single_course_title_change( $title ){
+    public function single_course_title_change( $title )
+    {
         global $post;
 
-        $non_module_lessons = $this->get_none_module_lessons( $post->ID );
-        if( count( $non_module_lessons ) > 0 ){
-            $title = __( 'Other Lessons' , 'woothemes-sensei' );
+        $none_module_lessons = $this->get_none_module_lessons($post->ID);
+        $course_modules = wp_get_post_terms($post->ID, $this->taxonomy);
+
+        if (count($none_module_lessons) > 0) {
+
+            $title = __('Other Lessons', 'woothemes-sensei');
+
+        } elseif( empty( $course_modules ) || isset( $course_modules['errors']  ) ){
+            // the course has no module show the lessons heading
+            $title = __('Lessons', 'woothemes-sensei');
+
         }else{
+
             $title = '';
+
         }
 
         return $title;
