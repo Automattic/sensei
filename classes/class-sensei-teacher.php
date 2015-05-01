@@ -58,6 +58,13 @@ class Sensei_Teacher {
         add_filter( 'wp_count_posts', array( $this, 'list_table_counts' ), 10, 3 );
 
         add_action( 'pre_get_posts', array( $this, 'filter_queries' ) );
+
+        //filter the quiz submissions
+        add_filter( 'sensei_check_for_activity' , array( $this, 'filter_grading_activity_queries') );
+
+        //grading totals count only those belonging to the teacher
+        add_filter('sensei_count_statuses_args', array( $this, 'limit_grading_totals' ) );
+
     } // end __constructor()
 
     /**
@@ -539,6 +546,98 @@ class Sensei_Teacher {
             $query->set( 'author', apply_filters( 'sensei_filter_queries_set_author', $current_user->ID, $screen->id ) );
             break;
         }
+    }
+
+    /**
+     * Limit grading quizzes to only those within courses belonging to the current teacher
+     * . This excludes the admin user.
+     *
+     * @since 1.8.0
+     * @hooked into the_comments
+     * @param array  $comments
+     *
+     * @return array $comments
+     */
+    public function filter_grading_activity_queries( $comments ){
+
+        if( !is_admin() || ! $this->is_admin_teacher() || is_numeric( $comments ) || ! is_array( $comments ) ){
+            return $comments ;
+        }
+
+        //check if we're on the grading screen
+        $screen = get_current_screen();
+
+        if( empty( $screen ) || 'sensei_page_sensei_grading' != $screen->id ){
+            return $comments;
+        }
+
+        // get the course and determine if the current teacher is the owner
+        // if not remove it from the list of comments to be returned
+        foreach( $comments as $key => $comment){
+            $lesson = get_post( $comment->comment_post_ID );
+            $course_id = Sensei()->lesson->get_course_id( $lesson->ID );
+            $course = get_post( $course_id );
+            if( ! isset( $course->post_author ) || intval( $course->post_author) != intval( get_current_user_id() ) ){
+                //remove this as the teacher should see this.
+                unset( $comments[ $key ] );
+            }
+        }
+        return $comments ;
+
+    }// end function filter grading
+
+    /**
+     * Limit the grading screen totals to only show lessons in the course
+     * belonging to the currently logged in teacher. This only applies to
+     * the teacher role.
+     *
+     * @since 1.8.0
+     *
+     * @hooked into sensei_count_statuses_args
+     * @param array $args
+     *
+     * @return array  $args
+     */
+    public function limit_grading_totals( $args ){
+
+        if( !is_admin() || ! $this->is_admin_teacher() || ! is_array( $args ) ){
+            return $args ;
+        }
+
+        //get the teachers courses
+        // the query is already filtered to only the teacher
+        $courses =  Sensei()->course->get_all_courses();
+
+        if( empty(  $courses ) || ! is_array( $courses ) ){
+            return $args;
+        }
+
+        //setup the lessons quizzes  to limit the grading totals to
+        $quiz_scope = array();
+        foreach( $courses as $course ){
+
+            $course_lessons = Sensei()->course->course_lessons( $course->ID );
+
+            if( ! empty( $course_lessons ) && is_array( $course_lessons  ) ){
+
+                foreach(  $course_lessons as $lesson ){
+
+                    $quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+                    if( !empty( $quiz_id ) ) {
+
+                        array_push( $quiz_scope, $quiz_id );
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        $args['post__in'] = $quiz_scope;
+
+        return $args;
     }
 
 } // End Class

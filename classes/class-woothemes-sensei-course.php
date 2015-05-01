@@ -822,7 +822,7 @@ class WooThemes_Sensei_Course {
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
 
-		$posts_array = array();
+		$lessons = array();
 
 		$post_args = array(	'post_type'         => 'lesson',
 							'numberposts'       => -1,
