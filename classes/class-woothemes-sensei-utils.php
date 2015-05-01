@@ -249,8 +249,16 @@ class WooThemes_Sensei_Utils {
 		if ( ( is_array( $args['status'] ) || 'any' == $args['status'] ) && version_compare($wp_version, '4.1', '<') ) {
 			add_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
 		}
-		// Get comments
-		$comments = get_comments( $args );
+
+        //Get the comments
+        /**
+         * This filter runs inside Sensei_Utils::sensei_check_for_activity
+         *
+         * It runs while getting the comments for the given request.
+         *
+         * @param int|array $comments
+         */
+        $comments = apply_filters('sensei_check_for_activity', get_comments( $args ) );
 
 		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
 		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
