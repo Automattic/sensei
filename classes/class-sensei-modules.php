@@ -1161,9 +1161,11 @@ class Sensei_Core_Modules
             return false;
         }
 
-        // get the last item in the array there should only be one really. this is added as the previous code
-        // used a for each to get to the last element which was not clear in intent
-        $module = array_slice( $modules, -1, 1, TRUE )[0];
+       // get the last item in the array there should be only really.
+       // this method works for all php versions.
+       foreach( $modules as $module ){
+           break;
+       }
 
         if ( ! isset($module) || ! is_object($module) || is_wp_error($module)) {
             return false;
