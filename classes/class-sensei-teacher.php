@@ -65,6 +65,9 @@ class Sensei_Teacher {
         //grading totals count only those belonging to the teacher
         add_filter('sensei_count_statuses_args', array( $this, 'limit_grading_totals' ) );
 
+        // show the courses owned by a user on his author archive page
+        add_filter( 'pre_get_posts', array( $this, 'add_courses_to_author_archive' ) );
+
     } // end __constructor()
 
     /**
@@ -193,11 +196,6 @@ class Sensei_Teacher {
             'core'
         );
 
-        add_meta_box( 'sensei-teacher',  __( 'Teacher' , $this->token ),  array( $this , 'teacher_meta_box_content' ),
-            'lesson',
-            'side',
-            'core'
-        );
     } // end teacher_meta_box()
 
     /**
@@ -642,6 +640,25 @@ class Sensei_Teacher {
         $args['post__in'] = $quiz_scope;
 
         return $args;
+    }
+
+    /**
+     * It ensures that the author archive shows course by the current user.
+     *
+     * This function is hooked into the pre_get_posts filter
+     *
+     * @param WP_Query $query
+     * @return WP_Query $query
+     */
+    public function add_courses_to_author_archive( $query ) {
+        if ( is_admin() || ! $query->is_author() ){
+            return $query;
+        }
+
+        $post_types= array( 'post','course' );
+        $query->set( 'post_type', $post_types );
+
+        return $query;
     }
 
 } // End Class
