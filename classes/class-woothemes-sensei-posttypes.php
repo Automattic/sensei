@@ -124,7 +124,7 @@ class WooThemes_Sensei_PostTypes {
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 51,
-		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'author' )
+		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail' )
 		);
 
 		register_post_type( 'course', $args );
@@ -139,7 +139,7 @@ class WooThemes_Sensei_PostTypes {
 	public function setup_lesson_post_type () {
 		global $woothemes_sensei;
 
-		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'author' );
+		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' );
 		$allow_comments = false;
 		if ( isset( $woothemes_sensei->settings->settings[ 'lesson_comments' ] ) ) {
 			$allow_comments = $woothemes_sensei->settings->settings[ 'lesson_comments' ];

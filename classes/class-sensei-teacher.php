@@ -51,7 +51,7 @@ class Sensei_Teacher {
      */
     public function __construct ( ) {
 
-        add_action( 'add_meta_boxes_course', array( $this , 'teacher_meta_box' ) , 10, 2 );
+        add_action( 'add_meta_boxes', array( $this , 'add_teacher_meta_boxes' ) , 10, 2 );
         add_action( 'save_post',  array( $this, 'save_teacher_meta_box' ) );
         add_filter( 'parse_query', array( $this, 'limit_teacher_edit_screen_post_types' ));
         add_filter( 'pre_get_posts', array( $this, 'course_analysis_teacher_access_limit' ) );
@@ -185,19 +185,23 @@ class Sensei_Teacher {
      * @parameter WP_Post $post
      * @return void
      */
-    public function teacher_meta_box ( $post ) {
-        add_meta_box(
-            'sensei-course-teacher',
-            __( 'Teacher' , $this->token ),
-            array( $this , 'course_teacher_meta_box' ),
+    public function add_teacher_meta_boxes ( $post ) {
+
+        add_meta_box( 'sensei-teacher',  __( 'Teacher' , $this->token ),  array( $this , 'teacher_meta_box_content' ),
             'course',
             'side',
-            'default'
+            'core'
+        );
+
+        add_meta_box( 'sensei-teacher',  __( 'Teacher' , $this->token ),  array( $this , 'teacher_meta_box_content' ),
+            'lesson',
+            'side',
+            'core'
         );
     } // end teacher_meta_box()
 
     /**
-     * Sensei_Teacher::render_teacher_meta_box
+     * Sensei_Teacher::teacher_meta_box_content
      *
      * Render the teacher meta box markup
      *
@@ -205,7 +209,7 @@ class Sensei_Teacher {
      * @access public
      * @parameters
      */
-    public function course_teacher_meta_box ( $post ) {
+    public function teacher_meta_box_content ( $post ) {
 
         // get the current author
         $current_author = $post->post_author;
