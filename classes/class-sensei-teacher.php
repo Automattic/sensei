@@ -305,6 +305,9 @@ class Sensei_Teacher {
         );
         wp_update_post( $post_updates );
 
+        // notify the new teacher
+        $this->teacher_course_assigned_notification( $new_author, $post_id );
+
         // loop through all post lessons to update their authors as well
         $this->update_course_lessons_author( $post_id , $new_author  );
 
@@ -659,6 +662,30 @@ class Sensei_Teacher {
         $query->set( 'post_type', $post_types );
 
         return $query;
+    }
+
+    /**
+     * Notify teacher when someone assigns a course to their account.
+     *
+     * $post_id
+     */
+    public function teacher_course_assigned_notification( $teacher_id, $course_id ){
+
+        if( 'course' != get_post_type( $course_id ) || ! get_userdata( $teacher_id ) ){
+            return false;
+        }
+
+        // if new user is the same as the current logged user, they don't need an email
+        if( $teacher_id == get_current_user_id() ){
+            return true;
+        }
+
+        // load the email class
+        include('emails/class-woothemes-sensei-teacher-new-course-assignment.php');
+        $email = new Teacher_New_Course_Assignment();
+        $email->trigger( $teacher_id, $course_id );
+
+        return; // email teacher here
     }
 
 } // End Class

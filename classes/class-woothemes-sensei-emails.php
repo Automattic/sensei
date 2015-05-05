@@ -71,7 +71,6 @@ class WooThemes_Sensei_Emails {
 		$this->emails['teacher-quiz-submitted'] = include( 'emails/class-woothemes-sensei-email-teacher-quiz-submitted.php' );
 		$this->emails['teacher-new-message'] = include( 'emails/class-woothemes-sensei-email-teacher-new-message.php' );
 		$this->emails['new-message-reply'] = include( 'emails/class-woothemes-sensei-email-new-message-reply.php' );
-
 		$this->emails = apply_filters( 'sensei_email_classes', $this->emails );
 	}
 
