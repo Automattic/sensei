@@ -47,7 +47,6 @@ class Sensei_Teacher {
      *
      * @since 1.8.0
      * @access public
-     * @return void
      */
     public function __construct ( ) {
 
@@ -67,6 +66,9 @@ class Sensei_Teacher {
 
         // show the courses owned by a user on his author archive page
         add_filter( 'pre_get_posts', array( $this, 'add_courses_to_author_archive' ) );
+
+        // notify admin when a teacher creates a course
+        add_action( 'wp_insert_post',array( $this, 'notify_admin_teacher_course_creation' ) );
 
     } // end __constructor()
 
@@ -285,6 +287,9 @@ class Sensei_Teacher {
         if(! isset( $_POST[ 'sensei-course-teacher-author' ] ) || ! isset( $_POST['post_ID'] )  ){
             return;
         }
+
+        //don't fire this hook again
+        remove_action('save_post', array( $this, 'save_teacher_meta_box' ) );
 
         // get the current post object
         $post = get_post( $post_id );
@@ -667,7 +672,11 @@ class Sensei_Teacher {
     /**
      * Notify teacher when someone assigns a course to their account.
      *
-     * $post_id
+     * @since 1.8.0
+     *
+     * @param $teacher_id
+     * @param $course_id
+     * @return bool
      */
     public function teacher_course_assigned_notification( $teacher_id, $course_id ){
 
@@ -685,7 +694,96 @@ class Sensei_Teacher {
         $email = new Teacher_New_Course_Assignment();
         $email->trigger( $teacher_id, $course_id );
 
-        return; // email teacher here
-    }
+        return true;
+    } // end  teacher_course_assigned_notification
+
+    /**
+     * Email the admin when a teacher creates a new course
+     *
+     * This function hooks into wp_insert_post
+     *
+     * @since 1.8.0
+     * @param int $course_id
+     * @return bool
+     */
+    public function notify_admin_teacher_course_creation( $course_id ){
+
+        if( 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id )  ){
+            return false;
+        }
+
+        //don't fire this hook again
+        remove_action('wp_insert_post', array( $this, 'notify_admin_teacher_course_creation' ) );
+
+        /**
+         * Filter the option to send admin notification emails when teachers creation
+         * course.
+         *
+         * @since 1.8.0
+         *
+         * @param bool $on default true
+         */
+        if( ! apply_filters('sensei_notify_admin_new_course_creation', true ) ){
+            return false;
+        }
+
+        // setting up the data needed by the email template
+        global $sensei_email_data;
+        $template = 'admin-teacher-new-course-created';
+        $course = get_post( $course_id );
+        $teacher = new WP_User( $course->post_author );
+        $recipient = get_option('admin_email', true);
+
+        // don't send if the course is created by admin
+        if( $recipient == $teacher->user_email ){
+            return;
+        }
+
+        /**
+         * Filter the email Header for the admin-teacher-new-course-created template
+         *
+         * @since 1.8.0
+         * @param string $template
+         */
+        $heading = apply_filters( 'sensei_email_heading', __( 'New course created.', 'woothemes-sensei' ), $template );
+
+        /**
+         * Filter the email subject for the the
+         * admin-teacher-new-course-created template
+         *
+         * @since 1.8.0
+         * @param string $subject default New course assigned to you
+         * @param string $template
+         */
+        $subject = apply_filters('sensei_email_subject',
+                                __( 'New course created by', 'woothemes-sensei' ) . ' ' . $teacher->display_name ,
+                                $template );
+
+        //course edit link
+        $course_edit_link = admin_url('post.php?post=' . $course_id . '&action=edit' );
+
+        // Construct data array
+        $email_data = array(
+            'template'			=> $template,
+            'heading' =>  $heading,
+            'teacher'		=> $teacher,
+            'course_id'			=> $course_id,
+            'course_name'			=> $course->post_title,
+            'course_edit_link' => $course_edit_link,
+        );
+
+        /**
+         * Filter the sensei email data for the admin-teacher-new-course-created template
+         *
+         * @since 1.8.0
+         * @param array $email_data
+         * @param string $template
+         */
+        $sensei_email_data = apply_filters( 'sensei_email_data', $email_data , $template );
+
+        // Send mail
+        Sensei()->emails->send( $recipient, $subject , Sensei()->emails->get_content( $template ) );
+
+    }// end notify admin of course creation
 
 } // End Class
