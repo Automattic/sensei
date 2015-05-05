@@ -34,62 +34,58 @@ if ( is_user_logged_in() ) {
 
 		$displayed_lessons = array();
 
-		if( class_exists( 'Sensei_Modules' ) ) {
-			global $sensei_modules;
+        $modules = Sensei()->modules->get_course_modules( intval( $course->ID ) );
 
-			$modules = $sensei_modules->get_course_modules( intval( $course->ID ) );
+        foreach( $modules as $module ) {
 
-			foreach( $modules as $module ) {
+            $args = array(
+                'post_type' => 'lesson',
+                'post_status' => 'publish',
+                'posts_per_page' => -1,
+                'meta_query' => array(
+                    array(
+                        'key' => '_lesson_course',
+                        'value' => intval( $course->ID ),
+                        'compare' => '='
+                    )
+                ),
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => Sensei()->modules->taxonomy,
+                        'field' => 'id',
+                        'terms' => intval( $module->term_id )
+                    )
+                ),
+                'meta_key' => '_order_module_' . $module->term_id,
+                'orderby' => 'meta_value_num date',
+                'order' => 'ASC',
+                'suppress_filters' => 0
+            );
 
-				$args = array(
-					'post_type' => 'lesson',
-					'post_status' => 'publish',
-					'posts_per_page' => -1,
-					'meta_query' => array(
-						array(
-							'key' => '_lesson_course',
-							'value' => intval( $course->ID ),
-							'compare' => '='
-						)
-					),
-					'tax_query' => array(
-						array(
-							'taxonomy' => $sensei_modules->taxonomy,
-							'field' => 'id',
-							'terms' => intval( $module->term_id )
-						)
-					),
-					'meta_key' => '_order_module_' . $module->term_id,
-					'orderby' => 'meta_value_num date',
-					'order' => 'ASC',
-					'suppress_filters' => 0
-				);
+            $lessons = get_posts( $args );
 
-				$lessons = get_posts( $args );
+            if( count( $lessons ) > 0 ) {
+                $html .= '<h3>' . $module->name . '</h3>' . "\n";
 
-				if( count( $lessons ) > 0 ) {
-					$html .= '<h3>' . $module->name . '</h3>' . "\n";
+                $count = 0;
+                foreach( $lessons as $lesson_item ) {
 
-					$count = 0;
-					foreach( $lessons as $lesson_item ) {
+                    $lesson_grade = 'n/a';
+                    $has_questions = get_post_meta( $lesson_item->ID, '_quiz_has_questions', true );
+                    if ( $has_questions ) {
+                        $lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_item->ID, $current_user->ID );
+                        // Get user quiz grade
+                        $lesson_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
+                        if ( $lesson_grade ) {
+                            $lesson_grade .= '%';
+                        }
+                    }
+                    $html .= '<h2><a href="' . esc_url( get_permalink( $lesson_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '">' . esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '</a> <span class="lesson-grade">' . $lesson_grade . '</span></h2>';
 
-						$lesson_grade = 'n/a';
-						$has_questions = get_post_meta( $lesson_item->ID, '_quiz_has_questions', true );
-						if ( $has_questions ) {
-							$lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_item->ID, $current_user->ID );
-							// Get user quiz grade
-							$lesson_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
-							if ( $lesson_grade ) {
-								$lesson_grade .= '%';
-							}
-						}
-						$html .= '<h2><a href="' . esc_url( get_permalink( $lesson_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '">' . esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '</a> <span class="lesson-grade">' . $lesson_grade . '</span></h2>';
-
-						$displayed_lessons[] = $lesson_item->ID;
-					}
-				}
-			}
-		}
+                    $displayed_lessons[] = $lesson_item->ID;
+                }
+            }
+        }
 
 		$args = array(
 			'post_type' => 'lesson',
@@ -109,7 +105,7 @@ if ( is_user_logged_in() ) {
 
 		$lessons = get_posts( $args );
 
-		if( class_exists( 'Sensei_Modules' ) && 0 < count( $displayed_lessons ) ) {
+		if(  0 < count( $displayed_lessons ) ) {
 			$html .= '<h3>' . __( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
 		}
 

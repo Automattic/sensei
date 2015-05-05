@@ -1570,7 +1570,10 @@ class WooThemes_Sensei_Utils {
 				}
 
 				$user_course_status = WooThemes_Sensei_Utils::user_course_status( $course, $user_id );
-				$user_course_status = $user_course_status->comment_approved;
+				if( isset( $user_course_status->comment_approved ) ){
+                    $user_course_status = $user_course_status->comment_approved;
+                }
+
 			}
 			if( $user_course_status && 'complete' == $user_course_status ) {
 				return true;
