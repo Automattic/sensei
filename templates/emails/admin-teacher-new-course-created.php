@@ -27,7 +27,7 @@ do_action( 'sensei_before_email_content', $template );
 </h2>
 
 <p style="<?php echo esc_attr( $style_small ); ?>">
-    <?php echo __( 'Was just created by ', 'woothemes-sensei' ). $sensei_email_data['teacher']->display_name  ; ?>
+    <?php echo __( 'was just created by ', 'woothemes-sensei' ). $sensei_email_data['teacher']->display_name  ; ?>
 </p>
 
 <hr/>
@@ -35,7 +35,7 @@ do_action( 'sensei_before_email_content', $template );
 <p style="<?php echo esc_attr( $style_small ); ?>">
     <?php
 
-    echo __( 'You can view the course here:  ', 'woothemes-sensei' ) . '<a href="' . esc_url( $sensei_email_data['course_edit_link'] ) . '">'. __( 'Edit Assigned Course', 'woothemes-sensei' ) . '</a>';
+    echo __( 'You can view the new course here:  ', 'woothemes-sensei' ) . '<a href="' . esc_url( $sensei_email_data['course_edit_link'] ) . '">'. $sensei_email_data['course_name']. '</a>';
 
     ?>
 </p>

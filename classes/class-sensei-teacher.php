@@ -772,7 +772,7 @@ class Sensei_Teacher {
          * @param string $template
          */
         $subject = apply_filters('sensei_email_subject',
-                                __( 'New course created by', 'woothemes-sensei' ) . ' ' . $teacher->display_name ,
+                                '['. get_bloginfo( 'name', 'display' ) .'] '. __( 'New course created by', 'woothemes-sensei' ) . ' ' . $teacher->display_name ,
                                 $template );
 
         //course edit link
