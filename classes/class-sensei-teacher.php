@@ -298,6 +298,9 @@ class Sensei_Teacher {
         $current_author = absint( $post->post_author );
         $new_author = absint( $_POST[ 'sensei-course-teacher-author' ] );
 
+        // loop through all post lessons to update their authors as well
+        $this->update_course_lessons_author( $post_id , $new_author );
+
         // do not do any processing if the selected author is the same as the current author
         if( $current_author == $new_author ){
             return;
@@ -312,9 +315,6 @@ class Sensei_Teacher {
 
         // notify the new teacher
         $this->teacher_course_assigned_notification( $new_author, $post_id );
-
-        // loop through all post lessons to update their authors as well
-        $this->update_course_lessons_author( $post_id , $new_author  );
 
     } // end save_teacher_meta_box
 
@@ -344,6 +344,12 @@ class Sensei_Teacher {
 
         // update each lesson and quiz author
         foreach( $lessons as $lesson ){
+
+            // don't update if the author is tha same as the new author
+            if( $new_author == $lesson->post_author ){
+                continue;
+            }
+
             // update lesson author
             wp_update_post( array(
                 'ID'=> $lesson->ID,
@@ -352,11 +358,18 @@ class Sensei_Teacher {
 
             // update quiz author
             //get the lessons quiz
-            $lesson_quizzes = $woothemes_sensei->lesson->lesson_quizzes( $course_id );
-            foreach ( $lesson_quizzes as $quiz_item ) {
-                // update quiz with new author
+            $lesson_quizzes = $woothemes_sensei->lesson->lesson_quizzes( $lesson->ID );
+            if( is_array( $lesson_quizzes ) ){
+                foreach ( $lesson_quizzes as $quiz_id ) {
+                    // update quiz with new author
+                    wp_update_post( array(
+                        'ID'           => $quiz_id,
+                        'post_author' =>  $new_author
+                    ) );
+                }
+            }else{
                 wp_update_post( array(
-                    'ID'           => $quiz_item->ID,
+                    'ID'           => $lesson_quizzes,
                     'post_author' =>  $new_author
                 ) );
             }
