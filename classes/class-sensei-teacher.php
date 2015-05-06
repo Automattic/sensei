@@ -192,6 +192,9 @@ class Sensei_Teacher {
      */
     public function add_teacher_meta_boxes ( $post ) {
 
+        if( !current_user_can('manage_options') ){
+            return;
+        }
         add_meta_box( 'sensei-teacher',  __( 'Teacher' , $this->token ),  array( $this , 'teacher_meta_box_content' ),
             'course',
             'side',
