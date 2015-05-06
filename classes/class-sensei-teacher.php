@@ -70,6 +70,9 @@ class Sensei_Teacher {
         // notify admin when a teacher creates a course
         add_action( 'wp_insert_post',array( $this, 'notify_admin_teacher_course_creation' ) );
 
+        // limit the analysis view to only the users taking courses belong to this teacher
+        add_filter( 'sensei_analysis_get_learners',array( $this, 'limit_analysis_learners' ) );
+
     } // end __constructor()
 
     /**
@@ -801,5 +804,53 @@ class Sensei_Teacher {
         Sensei()->emails->send( $recipient, $subject , Sensei()->emails->get_content( $template ) );
 
     }// end notify admin of course creation
+
+    /**
+     * Limit the analysis view to only the users taking courses belong to this teacher
+     *
+     * Hooked into sensei_analysis_get_learners
+     * @param array $learners
+     * @return array $learners
+     */
+    public function limit_analysis_learners( $learners ){
+
+        // show default for none teachers
+        if( ! Sensei()->teacher->is_admin_teacher() ) {
+                return $learners;
+        }
+
+        $courses = Sensei()->course->get_all_courses();
+
+        if( empty( $courses ) ||  ! is_array( $courses ) ){
+            $this->total_items = 0;
+            return array();
+        }
+
+        $all_learners_taking_teacher_courses = array();
+        foreach( $courses as $course ){
+
+            $learners_taking_this_course = array();
+            $activity_comments =  WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course->ID, 'type' => 'sensei_course_status', 'field' => 'user_id' ), true );
+
+            if( empty( $activity_comments ) ||  ! ( intval( $activity_comments) > 0 ) ){
+                continue; // skip to the next course
+            }
+
+            foreach( $activity_comments as $comment ){
+                $user = get_userdata( $comment->user_id );
+                if( empty( $user ) ){
+                    continue;
+                }
+                $learners_taking_this_course[] =  $user->data;
+            }
+
+            // add learners on this course to the all courses learner list
+            $all_learners_taking_teacher_courses = array_merge( $all_learners_taking_teacher_courses, $learners_taking_this_course );
+
+        }
+
+        return $all_learners_taking_teacher_courses;
+
+        }// end limit_analysis_learners
 
 } // End Class
