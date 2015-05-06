@@ -927,15 +927,12 @@ class WooThemes_Sensei_Updates {
 				update_post_meta( $lesson->ID, '_order_' . $course_id, 0 );
 			}
 
-			if( class_exists( 'Sensei_Modules' ) ) {
-				global $sensei_modules;
+            $module = Sensei()->modules->get_lesson_module( $lesson->ID );
 
-				$module = $sensei_modules->get_lesson_module( $lesson->ID );
+            if( $module ) {
+                update_post_meta( $lesson->ID, '_order_module_' . $module->term_id, 0 );
+            }
 
-				if( $module ) {
-					update_post_meta( $lesson->ID, '_order_module_' . $module->term_id, 0 );
-				}
-			}
 		}
 
 		return true;

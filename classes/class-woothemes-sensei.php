@@ -131,6 +131,9 @@ class WooThemes_Sensei {
 		//Add the quiz class
 		$this->quiz = $this->post_types->quiz;
 
+        // load the modules class
+        add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 
@@ -1244,5 +1247,50 @@ class WooThemes_Sensei {
 			add_filter( 'sensei_answer_text', 'latex_markup' );
 		}
 	}
+
+    /**
+     * Load the module functionality.
+     *
+     * This function is hooked into plugins_loaded to avoid conflicts with
+     * the retired modules extension.
+     *
+     * @since 1.8.0
+     */
+    public function load_modules_class(){
+        global $sensei_modules, $woothemes_sensei;
+
+        if( !class_exists( 'Sensei_Modules' )
+            &&  'Sensei_Modules' != get_class( $sensei_modules ) ) {
+
+            //Load the modules class
+            require_once( 'class-sensei-modules.php');
+            $woothemes_sensei->modules = new Sensei_Core_Modules( $this->file );
+
+        }else{
+            // fallback for people still using the modules extension.
+            global $sensei_modules;
+            $woothemes_sensei->modules = $sensei_modules;
+            add_action( 'admin_notices', array( $this, 'disable_sensei_modules_extension'), 30 );
+        }
+    }
+
+    /**
+     * Tell the user to that the modules extension is no longer needed.
+     *
+     * @since 1.8.0
+     */
+    public function disable_sensei_modules_extension(){ ?>
+        <div class="notice updated fade">
+                <p>
+                    <?php
+                    $plugin_manage_url = admin_url().'plugins.php#sensei-modules';
+                    $plugin_link_element = '<a href="' . $plugin_manage_url . '" >plugins page</a> ';
+                    ?>
+                    <strong> Modules are now included in Sensei,</strong> so you no longer need the Sensei Modules extension.
+                    Please deactivate and delete it from your <?php echo $plugin_link_element; ?>. (This will not affect your existing modules).
+                </p>
+        </div>
+
+    <?php }// end function
 
 } // End Class

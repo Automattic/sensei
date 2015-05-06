@@ -37,11 +37,18 @@ if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! 
 
         	<article <?php post_class( array( 'course', 'post' ) ); ?>>
 
-				<?php do_action( 'sensei_course_image', $post->ID ); ?>
+				<?php
 
-                <?php do_action( 'sensei_course_single_title' ); ?>
+                do_action( 'sensei_course_image', $post->ID );
 
-                <?php do_action( 'sensei_course_single_meta' ); ?>
+                do_action( 'sensei_course_single_title' );
+
+                /**
+                 * @hooked Sensei()->course->the_progress_statement - 15
+                 * @hooked Sensei()->course->the_progress_meter - 16
+                 */
+                do_action( 'sensei_course_single_meta' );
+                ?>
 
                 <section class="entry fix">
                 	<?php if ( ( is_user_logged_in() && $is_user_taking_course ) || $access_permission || 'full' == $woothemes_sensei->settings->settings[ 'course_single_content_display' ] ) { the_content(); } else { echo '<p class="course-excerpt">' . $post->post_excerpt . '</p>'; } ?>

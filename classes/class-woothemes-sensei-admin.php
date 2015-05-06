@@ -1004,10 +1004,9 @@ class WooThemes_Sensei_Admin {
 	 * @return void
 	 */
 	public function lesson_order_screen() {
-		global $woothemes_sensei;
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
 
 		?><div id="lesson-order" class="wrap lesson-order">
 		<h2><?php _e( 'Order Lessons', 'woothemes-sensei' ); ?></h2><?php
@@ -1066,70 +1065,67 @@ class WooThemes_Sensei_Admin {
 
 				$displayed_lessons = array();
 
-				if( class_exists( 'Sensei_Modules' ) ) {
-					global $sensei_modules;
+                $modules = Sensei()->modules->get_course_modules( intval( $course_id ) );
 
-					$modules = $sensei_modules->get_course_modules( intval( $course_id ) );
+                foreach( $modules as $module ) {
 
-					foreach( $modules as $module ) {
+                    $args = array(
+                        'post_type' => 'lesson',
+                        'post_status' => 'publish',
+                        'posts_per_page' => -1,
+                        'meta_query' => array(
+                            array(
+                                'key' => '_lesson_course',
+                                'value' => intval( $course_id ),
+                                'compare' => '='
+                            )
+                        ),
+                        'tax_query' => array(
+                            array(
+                                'taxonomy' => Sensei()->modules->taxonomy,
+                                'field' => 'id',
+                                'terms' => intval( $module->term_id )
+                            )
+                        ),
+                        'meta_key' => '_order_module_' . $module->term_id,
+                        'orderby' => 'meta_value_num date',
+                        'order' => 'ASC',
+                        'suppress_filters' => 0
+                    );
 
-						$args = array(
-		    				'post_type' => 'lesson',
-		    				'post_status' => 'publish',
-		    				'posts_per_page' => -1,
-		    				'meta_query' => array(
-		    					array(
-		    						'key' => '_lesson_course',
-		    						'value' => intval( $course_id ),
-		    						'compare' => '='
-								)
-							),
-							'tax_query' => array(
-								array(
-									'taxonomy' => $sensei_modules->taxonomy,
-									'field' => 'id',
-									'terms' => intval( $module->term_id )
-								)
-							),
-							'meta_key' => '_order_module_' . $module->term_id,
-							'orderby' => 'meta_value_num date',
-							'order' => 'ASC',
-							'suppress_filters' => 0
-						);
+                    $lessons = get_posts( $args );
 
-						$lessons = get_posts( $args );
+                    if( count( $lessons ) > 0 ) {
+                        $html .= '<h3>' . $module->name . '</h3>' . "\n";
+                        $html .= '<ul class="sortable-lesson-list" data-module_id="' . $module->term_id . '">' . "\n";
 
-						if( count( $lessons ) > 0 ) {
-							$html .= '<h3>' . $module->name . '</h3>' . "\n";
-							$html .= '<ul class="sortable-lesson-list" data-module_id="' . $module->term_id . '">' . "\n";
+                        $count = 0;
+                        foreach( $lessons as $lesson ) {
+                            $count++;
+                            $class = 'lesson';
+                            if ( $count == 1 ) { $class .= ' first'; }
+                            if ( $count == count( $lesson ) ) { $class .= ' last'; }
+                            if ( $count % 2 != 0 ) {
+                                $class .= ' alternate';
+                            }
 
-							$count = 0;
-							foreach( $lessons as $lesson ) {
-								$count++;
-								$class = 'lesson';
-								if ( $count == 1 ) { $class .= ' first'; }
-								if ( $count == count( $lesson ) ) { $class .= ' last'; }
-								if ( $count % 2 != 0 ) {
-									$class .= ' alternate';
-								}
+                            $html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
 
-								$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
+                            $displayed_lessons[] = $lesson->ID;
+                        }
 
-								$displayed_lessons[] = $lesson->ID;
-							}
+                        $html .= '</ul>' . "\n";
 
-							$html .= '</ul>' . "\n";
+                        $html .= '<input type="hidden" name="lesson-order-module-' . $module->term_id . '" value="" />' . "\n";
+                    }
+                }
 
-							$html .= '<input type="hidden" name="lesson-order-module-' . $module->term_id . '" value="" />' . "\n";
-						}
-					}
-				}
 
                 $lessons = Sensei()->course->course_lessons( $course_id );
 
 				if( 0 < count( $lessons ) ) {
 
-					if( 0 < count( $displayed_lessons ) && class_exists( 'Sensei_Modules' ) ) {
+					if( 0 < count( $displayed_lessons ) ) {
 						$html .= '<h3>' . __( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
 					}
 
@@ -1176,27 +1172,24 @@ class WooThemes_Sensei_Admin {
 
 		if( $course_id ) {
 
-			if( class_exists( 'Sensei_Modules' ) ) {
-				global $sensei_modules;
+            $modules = Sensei()->modules->get_course_modules( intval( $course_id ) );
 
-				$modules = $sensei_modules->get_course_modules( intval( $course_id ) );
+            foreach( $modules as $module ) {
 
-				foreach( $modules as $module ) {
+                $module_order_string = $_POST[ 'lesson-order-module-' . $module->term_id ];
 
-					$module_order_string = $_POST[ 'lesson-order-module-' . $module->term_id ];
+                if( $module_order_string ) {
+                    $order = explode( ',', $module_order_string );
+                    $i = 1;
+                    foreach( $order as $lesson_id ) {
+                        if( $lesson_id ) {
+                            update_post_meta( $lesson_id, '_order_module_' . $module->term_id, $i );
+                            ++$i;
+                        }
+                    }
+                }
+            }
 
-					if( $module_order_string ) {
-						$order = explode( ',', $module_order_string );
-						$i = 1;
-						foreach( $order as $lesson_id ) {
-							if( $lesson_id ) {
-								update_post_meta( $lesson_id, '_order_module_' . $module->term_id, $i );
-								++$i;
-							}
-						}
-					}
-				}
-			}
 
 			if( $order_string ) {
 				update_post_meta( $course_id, '_lesson_order', $order_string );

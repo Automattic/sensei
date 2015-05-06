@@ -63,6 +63,11 @@ class WooThemes_Sensei_Course {
 		// Update course completion upon grading of a quiz
 		add_action( 'sensei_user_quiz_grade', array( $this, 'update_status_after_quiz_submission' ), 10, 2 );
 
+        // show the progress bar ont he single course page
+        add_action( 'sensei_course_single_meta' , array( $this, 'the_progress_statement' ), 15 );
+        add_action( 'sensei_course_single_meta' , array( $this, 'the_progress_meter' ), 16 );
+
+
 	} // End __construct()
 
 	/**
@@ -817,16 +822,16 @@ class WooThemes_Sensei_Course {
 	 * @access public
 	 * @param int $course_id (default: 0)
 	 * @param string $post_status (default: 'publish')
-	 * @param string $fields (default: 'all')
-	 * @return void
+	 * @param string $fields (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
+	 * @return array{ type WP_Post }  $posts_array
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
 
 		$lessons = array();
 
 		$post_args = array(	'post_type'         => 'lesson',
-							'numberposts'       => -1,
-							'orderby'           => 'meta_value_num date',
+							'posts_per_page'       => 500,
+							'orderby'           => 'date',
 							'order'             => 'ASC',
 							'meta_query'        => array(
 								array(
@@ -836,7 +841,6 @@ class WooThemes_Sensei_Course {
 							),
 							'post_status'       => $post_status,
 							'suppress_filters'  => 0,
-							'fields'            => $fields,
 							);
 		$query_results = new WP_Query( $post_args );
         $lessons = $query_results->posts;
@@ -1196,11 +1200,7 @@ class WooThemes_Sensei_Course {
 
 		    		   	$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $lesson_count ), 0 ) );
 
-		    		   	if ( 50 < $progress_percentage ) { $class = ' green'; } elseif ( 25 <= $progress_percentage && 50 >= $progress_percentage ) { $class = ' orange'; } else { $class = ' red'; }
-
-		    		   	/* if ( 0 == $progress_percentage ) { $progress_percentage = 5; } */
-
-		    		   	$active_html .= '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' . $progress_percentage . '%">' . $progress_percentage . '%</span></div>';
+                        $active_html .= $this->get_progress_meter( $progress_percentage );
 
 		    		$active_html .= '</section>';
 
@@ -1314,7 +1314,7 @@ class WooThemes_Sensei_Course {
 
 						$complete_html .= '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
 
-						$complete_html .= '<div class="meter green"><span style="width: 100%">100%</span></div>';
+                        $complete_html .= $this->get_progress_meter( 100 );
 
 						if( $manage ) {
 							$has_quizzes = $woothemes_sensei->post_types->course->course_quizzes( $course_item->ID, true );
@@ -1477,5 +1477,178 @@ class WooThemes_Sensei_Course {
         return apply_filters( 'sensei_get_all_courses' , $wp_query_obj->posts );
 
     }// end get_all_courses
+
+    /**
+     * Generate the course meter component
+     *
+     * @since 1.8.0
+     * @param int $progress_percentage 0 - 100
+     * @return string $progress_bar_html
+     */
+    public function get_progress_meter( $progress_percentage ){
+
+        if ( 50 < $progress_percentage ) {
+            $class = ' green';
+        } elseif ( 25 <= $progress_percentage && 50 >= $progress_percentage ) {
+            $class = ' orange';
+        } else {
+            $class = ' red';
+        }
+        $progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' . $progress_percentage . '%">' . round( $progress_percentage ) . '%</span></div>';
+
+        return $progress_bar_html;
+
+    }// end get_progress_meter
+
+    /**
+     * Generate a statement that tells users
+     * how far they are in the course.
+     *
+     * @param int $course_id
+     * @param int $user_id
+     *
+     * @return string $statement_html
+     */
+    public function get_progress_statement( $course_id, $user_id ){
+
+        if( empty( $course_id ) || empty( $user_id )
+        || ! WooThemes_Sensei_Utils::user_started_course( $course_id, $user_id ) ){
+            return false;
+        }
+
+        $completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
+        $total_lessons = count( $this->course_lessons( $course_id ) );
+
+        $plural = 's';
+        if( 1 == $completed ){
+            $plural = '';
+        }
+
+        $statement = sprintf(__('Currently completed %s lesson%s of %s in total', 'woothemes-sensei'), $completed, $plural, $total_lessons );
+
+        /**
+         * Filter the course completion statement.
+         * Default Currently completed $var lesson($plural) of $var in total
+         *
+         * @param string $statement
+         */
+        return apply_filters( 'sensei_course_completion_statement', $statement );
+
+    }// end generate_progress_statement
+
+    /**
+     * Output the course progress statement
+     *
+     * @param $course_id
+     * @return void
+     */
+    public function the_progress_statement( $course_id = 0, $user_id = 0 ){
+        if( empty( $course_id ) ){
+            global $post;
+            $course_id = $post->ID;
+        }
+
+        if( empty( $user_id ) ){
+            $user_id = get_current_user_id();
+        }
+
+        echo '<span class="progress statement  course-completion-rate">' . $this->get_progress_statement( $course_id, $user_id  ) . '</span>';
+    }
+
+    /**
+     * Output the course progress bar
+     *
+     * @param $course_id
+     * @return void
+     */
+    public function the_progress_meter( $course_id = 0, $user_id = 0 ){
+
+        if( empty( $course_id ) ){
+            global $post;
+            $course_id = $post->ID;
+        }
+
+        if( empty( $user_id ) ){
+            $user_id = get_current_user_id();
+        }
+
+        if( 'course' != get_post_type( $course_id ) || ! get_userdata( $user_id )
+            || ! WooThemes_Sensei_Utils::user_started_course( $course_id ,$user_id ) ){
+            return;
+        }
+        $percentage_completed = $this->get_completion_percentage( $course_id, $user_id );
+
+        echo $this->get_progress_meter( $percentage_completed );
+
+    }// end the_progress_meter
+
+    /**
+     * Checks how many lessons are completed
+     *
+     * @since 1.8.0
+     *
+     * @param int $course_id
+     * @param int $user_id
+     * @return array $completed_lesson_ids
+     */
+    public function get_completed_lesson_ids( $course_id, $user_id = 0 ){
+
+        if( !( intval( $user_id ) ) > 0 ){
+            $user_id = get_current_user_id();
+        }
+
+        $completed_lesson_ids = array();
+
+        $course_lessons = $this->course_lessons( $course_id );
+
+        foreach( $course_lessons as $lesson ){
+
+            $is_lesson_completed = WooThemes_Sensei_Utils::user_completed_lesson( $lesson->ID, $user_id );
+            if( $is_lesson_completed ){
+                $completed_lesson_ids[] = $lesson->ID;
+            }
+
+        }
+
+        return $completed_lesson_ids;
+
+    }// end get_completed_lesson_ids
+
+    /**
+     * Calculate the perceantage completed in the course
+     *
+     * @since 1.8.0
+     *
+     * @param int $course_id
+     * @param int $user_id
+     * @return int $percentage
+     */
+    public function get_completion_percentage( $course_id, $user_id = 0 ){
+
+        if( !( intval( $user_id ) ) > 0 ){
+            $user_id = get_current_user_id();
+        }
+
+        $completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
+
+        if( ! (  $completed  > 0 ) ){
+            return 0;
+        }
+
+        $total_lessons = count( $this->course_lessons( $course_id ) );
+        $percentage = $completed / $total_lessons * 100;
+
+        /**
+         *
+         * Filter the percentage returned for a users course.
+         *
+         * @param $percentage
+         * @param $course_id
+         * @param $user_id
+         * @since 1.8.0
+         */
+        return apply_filters( 'sensei_course_completion_percentage', $percentage, $course_id, $user_id );
+
+    }// end get_completed_lesson_ids
 
 } // End Class
