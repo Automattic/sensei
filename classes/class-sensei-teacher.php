@@ -73,6 +73,9 @@ class Sensei_Teacher {
         // limit the analysis view to only the users taking courses belong to this teacher
         add_filter( 'sensei_analysis_get_learners',array( $this, 'limit_analysis_learners' ) );
 
+        // give teacher access to question post type
+        add_filter( 'sensei_lesson_quiz_questions', array( $this, 'allow_teacher_access_to_questions' ), 20, 2 );
+
     } // end __constructor()
 
     /**
@@ -852,5 +855,46 @@ class Sensei_Teacher {
         return $all_learners_taking_teacher_courses;
 
         }// end limit_analysis_learners
+
+    /**
+     * Give teacher full admin access to the question post type
+     * in certain cases.
+     *
+     * @since 1.8.0
+     * @param $questions
+     * @return mixed
+     */
+    public function allow_teacher_access_to_questions( $questions, $quiz_id ){
+
+        if( ! $this->is_admin_teacher() ){
+            return $questions;
+        }
+
+        $screen = get_current_screen();
+
+        // don't run this filter within this functions call to Sensei()->lesson->lesson_quiz_questions
+        remove_filter( 'sensei_lesson_quiz_questions', array( $this, 'allow_teacher_access_to_questions' ), 20 );
+
+        if( ! empty( $screen ) && 'lesson'== $screen->post_type ){
+
+            $admin_user = get_user_by('email', get_bloginfo('admin_email'));
+            if( ! empty($admin_user) ){
+
+                $current_teacher_id = get_current_user_id();
+
+                // set current user to admin so teacher can view all questions
+                wp_set_current_user( $admin_user->ID  );
+                $questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id  );
+
+                // set the teacher as the current use again
+                wp_set_current_user( $current_teacher_id );
+            }
+
+        }
+        // attach the filter again for other funtion calls to Sensei()->lesson->lesson_quiz_questions
+        add_filter( 'sensei_lesson_quiz_questions', array( $this, 'allow_teacher_access_to_questions' ), 20,2 );
+
+        return $questions;
+    }
 
 } // End Class

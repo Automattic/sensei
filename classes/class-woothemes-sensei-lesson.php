@@ -2757,8 +2757,13 @@ class WooThemes_Sensei_Lesson {
 			}
 		}
 
-		// Return all relevant questions
-		return $questions;
+        /**
+         * Filter the questions returned by Sensei_Lesson::lessons_quiz_questions
+         *
+         * @hooked Sensei_Teacher::allow_teacher_access_to_questions
+         * @since 1.8.0
+         */
+		return apply_filters( 'sensei_lesson_quiz_questions', $questions,  $quiz_id  );
 
 	} // End lesson_quiz_questions()
 
