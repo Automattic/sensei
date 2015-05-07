@@ -730,7 +730,8 @@ class Sensei_Teacher {
      */
     public function notify_admin_teacher_course_creation( $course_id ){
 
-        if( 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id )  ){
+        if( 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id ) ||
+            ( isset( $_POST['original_post_status'] ) && 'auto-draft' != $_POST['original_post_status'] )    ){
             return false;
         }
 
