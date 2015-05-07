@@ -77,7 +77,7 @@ class Sensei_Teacher {
         add_filter( 'sensei_lesson_quiz_questions', array( $this, 'allow_teacher_access_to_questions' ), 20, 2 );
 
         // allow teacher access to see other users questions in the lesson edit screens questions bank
-        add_filter('sensei_existing_questions_query_results', array( $this, 'give_access_to_all_questions'),80,2 );
+        add_filter('sensei_existing_questions_query_results', array( $this, 'give_access_to_all_questions'),80 );
 
     } // end __constructor()
 
@@ -916,11 +916,11 @@ class Sensei_Teacher {
      * @param $wp_query
      * @return mixed
      */
-    public function give_access_to_all_questions( $questions, $wp_query ){
+    public function give_access_to_all_questions( $wp_query ){
 
         if( ! $this->is_admin_teacher() || !function_exists( 'get_current_screen') || 'question' != $wp_query->get('post_type') ){
 
-            return $questions;
+            return $wp_query;
         }
 
         $screen = get_current_screen();
@@ -936,15 +936,15 @@ class Sensei_Teacher {
                 wp_set_current_user( $admin_user->ID  );
 
                 //run new query as admin
-                $new_question_query = new WP_Query( $wp_query->query );
-                $questions = $new_question_query->posts;
+                $wp_query = new WP_Query( $wp_query->query );
+
                 //set the teache as current use again
                 wp_set_current_user( $current_teacher_id );
 
             }
         }
 
-        return $questions;
+        return $wp_query;
     }// end give_access_to_all_questions
 
 } // End Class
