@@ -64,9 +64,16 @@ class WooThemes_Sensei_Email_New_Message_Reply {
 
 		$comment_link = get_comment_link( $comment );
 
-		// Construct data array
-		$sensei_email_data = apply_filters( 'sensei_email_data', array(
-			'template'			=> $this->template,
+        // setup the post type parameter
+        $content_type = get_post_type( $content_id );
+        if( !$content_type ){
+            $content_type ='';
+        }
+
+        // Construct data array
+        $sensei_email_data = apply_filters( 'sensei_email_data', array(
+            'template'			=> $this->template,
+            $content_type.'_id' => $content_id,
 			'heading'			=> $this->heading,
 			'commenter_name'	=> $this->commenter->display_name,
 			'message'			=> $this->comment->comment_content,

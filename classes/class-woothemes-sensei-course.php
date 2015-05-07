@@ -47,7 +47,7 @@ class WooThemes_Sensei_Course {
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
-			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+            add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-course_columns', array( $this, 'add_column_headings' ), 10, 1 );
@@ -67,6 +67,9 @@ class WooThemes_Sensei_Course {
         add_action( 'sensei_course_single_meta' , array( $this, 'the_progress_statement' ), 15 );
         add_action( 'sensei_course_single_meta' , array( $this, 'the_progress_meter' ), 16 );
 
+        // provide an option to block all emails related to a selected course
+        add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );
+        add_action('save_post', array( $this, 'save_course_notification_meta_box' ) );
 
 	} // End __construct()
 
@@ -121,6 +124,10 @@ class WooThemes_Sensei_Course {
 		add_meta_box( 'course-lessons', __( 'Course Lessons', 'woothemes-sensei' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
+
+        // add Disable email notification box
+        add_meta_box( 'course-notifications', __( 'Course Notifications', 'woothemes-sensei' ), array( $this, 'course_notification_meta_box_content' ), 'course', 'normal', 'default' );
+
 	} // End meta_box_setup()
 
 	/**
@@ -1650,5 +1657,96 @@ class WooThemes_Sensei_Course {
         return apply_filters( 'sensei_course_completion_percentage', $percentage, $course_id, $user_id );
 
     }// end get_completed_lesson_ids
+
+    /**
+     * Block email notifications for the specific courses
+     * that the user disabled the notifications.
+     *
+     * @since 1.8.0
+     * @param $should_send
+     * @return bool
+     */
+    public function block_notification_emails( $should_send ){
+        global $sensei_email_data;
+        $email = $sensei_email_data;
+
+        $course_id = '';
+
+        if( isset( $email['course_id'] ) ){
+
+            $course_id = $email['course_id'];
+
+        }elseif( isset( $email['lesson_id'] ) ){
+
+            $course_id = Sensei()->lesson->get_course_id( $email['lesson_id'] );
+
+        }elseif( isset( $email['quiz_id'] ) ){
+
+            $lesson_id = Sensei()->quiz->get_lesson_id( $email['quiz_id'] );
+            $course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+        }
+
+        if( !empty( $course_id ) && 'course'== get_post_type( $course_id ) ) {
+
+            $course_emails_disabled = get_post_meta($course_id, 'disable_notification', true);
+
+            if ($course_emails_disabled) {
+
+                return false;
+
+            }
+
+        }// end if
+
+        return $should_send;
+    }// end block_notification_emails
+
+    /**
+     * Render the course notification setting meta box
+     *
+     * @since 1.8.0
+     * @param $course
+     */
+    public function course_notification_meta_box_content( $course ){
+
+        $checked = get_post_meta( $course->ID , 'disable_notification', true );
+
+        // generate checked html
+        $checked_html = '';
+        if( $checked ){
+            $checked_html = 'checked="checked"';
+        }
+        wp_nonce_field( 'update-course-notification-setting','_sensei_course_notification' );
+
+        echo '<input id="disable_sensei_course_notification" '.$checked_html .' type="checkbox" name="disable_sensei_course_notification" >';
+        echo '<label for="disable_sensei_course_notification">'.__('Disable notifications on this course ?', 'woothemes-sensei'). '</label>';
+
+    }// end course_notification_meta_box_content
+
+    /**
+     * Store the setting for the course notification setting.
+     *
+     * @hooked int save_post
+     * @since 1.8.0
+     *
+     * @param $course_id
+     */
+    public function save_course_notification_meta_box( $course_id ){
+
+        if( !isset( $_POST['_sensei_course_notification']  )
+            || ! wp_verify_nonce( $_POST['_sensei_course_notification'], 'update-course-notification-setting' ) ){
+            return;
+        }
+
+        if( isset( $_POST['disable_sensei_course_notification'] ) && 'on'== $_POST['disable_sensei_course_notification']  ) {
+            $new_val = true;
+        }else{
+            $new_val = false;
+        }
+
+       update_post_meta( $course_id , 'disable_notification', $new_val );
+
+    }// end save notification meat box
 
 } // End Class
