@@ -1455,7 +1455,7 @@ class WooThemes_Sensei_Course {
 
         $args = array(
                'post_type' => 'course',
-                'numberposts' 		=> -1,
+                'posts_per_page' 		=> 5000,
                 'orderby'         	=> 'title',
                 'order'           	=> 'ASC',
                 'post_status'      	=> 'any',

@@ -96,8 +96,8 @@ class WooThemes_Sensei_Admin {
 			$main_page = add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
 		}
 
-		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
-		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'woothemes-sensei' ), __( 'Order Lessons', 'woothemes-sensei' ), 'manage_sensei', 'lesson-order', array( $this, 'lesson_order_screen' ) );
+		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'edit_courses', 'course-order', array( $this, 'course_order_screen' ) );
+		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'woothemes-sensei' ), __( 'Order Lessons', 'woothemes-sensei' ), 'edit_lessons', 'lesson-order', array( $this, 'lesson_order_screen' ) );
 	}
 
 	/**
@@ -934,15 +934,7 @@ class WooThemes_Sensei_Admin {
 			}
 		}
 
-		$args = array(
-			'post_type' => 'course',
-			'posts_per_page' => -1,
-			'suppress_filters' => 0,
-			'orderby' => 'menu_order date',
-			'order' => 'ASC',
-		);
-
-		$courses = get_posts( $args );
+		$courses = Sensei()->course->get_all_courses();
 		if( 0 < count( $courses ) ) {
 
 			$order_string = $this->get_course_order();

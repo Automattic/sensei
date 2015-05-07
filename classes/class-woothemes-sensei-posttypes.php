@@ -452,6 +452,11 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => true,
+            'capabilities' => array(
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_lessons',
+                'delete_terms' => 'manage_categories',
+                'assign_terms' => 'edit_lessons',),
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
