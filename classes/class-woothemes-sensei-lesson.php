@@ -1228,8 +1228,18 @@ class WooThemes_Sensei_Lesson {
 
 		$qry = new WP_Query( $args );
 
-		$questions['questions'] = $qry->posts;
-		$questions['count'] = $qry->found_posts;
+        /**
+         * Filter existing questions query result
+         *
+         * @since 1.8.0
+         *
+         * @param array $questions
+         * @param WP_Query $wp_query
+         */
+        $all_questions = apply_filters( 'sensei_existing_questions_query_results', $qry->posts, $qry );
+
+		$questions['questions'] = $all_questions;
+		$questions['count'] = count( $all_questions );
 		$questions['page'] = $page;
 
 		return $questions;
