@@ -76,6 +76,9 @@ class Sensei_Teacher {
         // give teacher access to question post type
         add_filter( 'sensei_lesson_quiz_questions', array( $this, 'allow_teacher_access_to_questions' ), 20, 2 );
 
+        // allow teacher access to see other users questions in the lesson edit screens questions bank
+        add_filter('sensei_existing_questions_query_results', array( $this, 'give_access_to_all_questions'),80,2 );
+
     } // end __constructor()
 
     /**
@@ -905,5 +908,43 @@ class Sensei_Teacher {
 
         return $questions;
     }
+
+    /**
+     * Give the teacher role access to questions from the question bank
+     *
+     * @since 1.8.0
+     * @param $wp_query
+     * @return mixed
+     */
+    public function give_access_to_all_questions( $questions, $wp_query ){
+
+        if( ! $this->is_admin_teacher() || !function_exists( 'get_current_screen') || 'question' != $wp_query->get('post_type') ){
+
+            return $questions;
+        }
+
+        $screen = get_current_screen();
+        if( ( isset($screen->id) && 'lesson' == $screen->id )
+            || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ){
+
+            $admin_user = get_user_by('email', get_bloginfo('admin_email'));
+            if( ! empty($admin_user) ){
+
+                $current_teacher_id = get_current_user_id();
+
+                // set current user to admin so teacher can view all questions
+                wp_set_current_user( $admin_user->ID  );
+
+                //run new query as admin
+                $new_question_query = new WP_Query( $wp_query->query );
+                $questions = $new_question_query->posts;
+                //set the teache as current use again
+                wp_set_current_user( $current_teacher_id );
+
+            }
+        }
+
+        return $questions;
+    }// end give_access_to_all_questions
 
 } // End Class
