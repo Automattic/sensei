@@ -45,7 +45,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
         $this->assertTrue( method_exists( 'WooThemes_Sensei_Course', 'get_all_courses' ) , 'The course class get_all_courses function does not exist.' );
 
         //setup the assertion
-        $retrieved_courses = $this->factory->get_courses();
+        $retrieved_courses = get_posts( array('post_type' =>'course', 'posts_per_page'=>10000 ) );
 
         //make sure the same course were retrieved as what we just created
         $this->assertEquals( count( $retrieved_courses) , count( WooThemes_Sensei_Course::get_all_courses() )
