@@ -124,7 +124,7 @@ class WooThemes_Sensei_PostTypes {
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 51,
-		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'author' )
+		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail' )
 		);
 
 		register_post_type( 'course', $args );
@@ -139,7 +139,7 @@ class WooThemes_Sensei_PostTypes {
 	public function setup_lesson_post_type () {
 		global $woothemes_sensei;
 
-		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'author' );
+		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' );
 		$allow_comments = false;
 		if ( isset( $woothemes_sensei->settings->settings[ 'lesson_comments' ] ) ) {
 			$allow_comments = $woothemes_sensei->settings->settings[ 'lesson_comments' ];
@@ -314,6 +314,11 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => true,
+            'capabilities' => array(
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_courses',
+                'delete_terms' => 'manage_categories',
+                'assign_terms' => 'edit_courses',),
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
@@ -419,6 +424,11 @@ class WooThemes_Sensei_PostTypes {
 			'query_var' => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
+            'capabilities' => array(
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_questions',
+                'delete_terms' => 'manage_categories',
+                'assign_terms' => 'edit_questions',),
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
@@ -452,6 +462,11 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => true,
+            'capabilities' => array(
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_lessons',
+                'delete_terms' => 'manage_categories',
+                'assign_terms' => 'edit_lessons',),
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 

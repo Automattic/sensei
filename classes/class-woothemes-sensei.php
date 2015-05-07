@@ -104,14 +104,20 @@ class WooThemes_Sensei {
 		} // End If Statement
 		$this->settings->setup_settings();
 		$this->settings->get_settings();
+
 		// Load Learner Profiles Class
 		$this->load_class( 'learner-profiles' );
 		$this->learner_profiles = new WooThemes_Sensei_Learner_Profiles();
 		$this->learner_profiles->token = $this->token;
+
 		// Load Course Results Class
 		$this->load_class( 'course-results' );
 		$this->course_results = new WooThemes_Sensei_Course_Results();
 		$this->course_results->token = $this->token;
+
+        // Load the teacher role
+        require_once( 'class-sensei-teacher.php' );
+        $this->teacher = new Sensei_Teacher();
 
 		// Add the Course class
 		$this->course = $this->post_types->course;
@@ -124,6 +130,9 @@ class WooThemes_Sensei {
 
 		//Add the quiz class
 		$this->quiz = $this->post_types->quiz;
+
+        // load the modules class
+        add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
@@ -624,7 +633,7 @@ class WooThemes_Sensei {
 	 * @return void
 	 */
 	public function woocommerce_course_update ( $course_id = 0, $order_user = array()  ) {
-		global $current_user,  $woothemes_sensei;
+		global $current_user;
 
 		if ( ! isset( $current_user ) ) return;
 
@@ -1238,5 +1247,50 @@ class WooThemes_Sensei {
 			add_filter( 'sensei_answer_text', 'latex_markup' );
 		}
 	}
+
+    /**
+     * Load the module functionality.
+     *
+     * This function is hooked into plugins_loaded to avoid conflicts with
+     * the retired modules extension.
+     *
+     * @since 1.8.0
+     */
+    public function load_modules_class(){
+        global $sensei_modules, $woothemes_sensei;
+
+        if( !class_exists( 'Sensei_Modules' )
+            &&  'Sensei_Modules' != get_class( $sensei_modules ) ) {
+
+            //Load the modules class
+            require_once( 'class-sensei-modules.php');
+            $woothemes_sensei->modules = new Sensei_Core_Modules( $this->file );
+
+        }else{
+            // fallback for people still using the modules extension.
+            global $sensei_modules;
+            $woothemes_sensei->modules = $sensei_modules;
+            add_action( 'admin_notices', array( $this, 'disable_sensei_modules_extension'), 30 );
+        }
+    }
+
+    /**
+     * Tell the user to that the modules extension is no longer needed.
+     *
+     * @since 1.8.0
+     */
+    public function disable_sensei_modules_extension(){ ?>
+        <div class="notice updated fade">
+                <p>
+                    <?php
+                    $plugin_manage_url = admin_url().'plugins.php#sensei-modules';
+                    $plugin_link_element = '<a href="' . $plugin_manage_url . '" >plugins page</a> ';
+                    ?>
+                    <strong> Modules are now included in Sensei,</strong> so you no longer need the Sensei Modules extension.
+                    Please deactivate and delete it from your <?php echo $plugin_link_element; ?>. (This will not affect your existing modules).
+                </p>
+        </div>
+
+    <?php }// end function
 
 } // End Class

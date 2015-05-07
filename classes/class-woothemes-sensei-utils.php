@@ -249,8 +249,16 @@ class WooThemes_Sensei_Utils {
 		if ( ( is_array( $args['status'] ) || 'any' == $args['status'] ) && version_compare($wp_version, '4.1', '<') ) {
 			add_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
 		}
-		// Get comments
-		$comments = get_comments( $args );
+
+        //Get the comments
+        /**
+         * This filter runs inside Sensei_Utils::sensei_check_for_activity
+         *
+         * It runs while getting the comments for the given request.
+         *
+         * @param int|array $comments
+         */
+        $comments = apply_filters('sensei_check_for_activity', get_comments( $args ) );
 
 		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
 		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
@@ -1570,7 +1578,10 @@ class WooThemes_Sensei_Utils {
 				}
 
 				$user_course_status = WooThemes_Sensei_Utils::user_course_status( $course, $user_id );
-				$user_course_status = $user_course_status->comment_approved;
+				if( isset( $user_course_status->comment_approved ) ){
+                    $user_course_status = $user_course_status->comment_approved;
+                }
+
 			}
 			if( $user_course_status && 'complete' == $user_course_status ) {
 				return true;
@@ -2069,5 +2080,87 @@ class WooThemes_Sensei_Utils {
         return $deleted;
 
     }// end delete_user_data
+
+
+    /**
+     * The function creates a drop down. Never write up a Sensei select statement again.
+     *
+     * @since 1.8.0
+     *
+     * @param string $selected_value
+     * @param $options{
+     *    @type string $value the value saved in the database
+     *    @type string $option what the user will see in the list of items
+     * }
+     * @param array $attributes{
+     *   @type string $attribute  type such name or id etc.
+     *  @type string $value
+     * }
+     * @param bool $enable_none_option
+     *
+     * @return string $drop_down_element
+     */
+    public static function generate_drop_down( $selected_value, $options = array() , $attributes = array(), $enable_none_option = true ) {
+
+        $drop_down_element = '';
+
+        // setup the basic attributes
+        if( !isset( $attributes['name'] ) || empty( $attributes['name']  ) ) {
+
+            $attributes['name'] = 'sensei-options';
+
+        }
+
+        if( !isset( $attributes['id'] ) || empty( $attributes['id']  ) ) {
+
+            $attributes['id'] = 'sensei-options';
+
+        }
+
+        if( !isset( $attributes['class'] ) || empty( $attributes['class']  ) ) {
+
+            $attributes['class'] ='chosen_select widefat';
+
+        }
+
+        // create element attributes
+        $combined_attributes = '';
+        foreach( $attributes as $attribute => $value ){
+
+            $combined_attributes .= $attribute . '="'.$value.'"' . ' ';
+
+        }// end for each
+
+
+        // create the select element
+        $drop_down_element .= '<select '. $combined_attributes . ' >' . "\n";
+
+        // show the none option if the client requested
+        if( $enable_none_option ) {
+            $drop_down_element .= '<option value="">' . __('None', 'woothemes-sensei') . '</option>';
+        }
+
+        if ( count( $options ) > 0 ) {
+
+            foreach ($options as $value => $option ){
+
+                $element = '';
+                $element.= '<option value="' . esc_attr( $value ) . '"';
+                $element .= selected( $value, $selected_value, false ) . '>';
+                $element .= esc_html(  $option ) . '</option>' . "\n";
+
+                // add the element to the select html
+                $drop_down_element.= $element;
+            } // End For Loop
+
+        } // End If Statement
+
+        $drop_down_element .= '</select>' . "\n";
+
+        return $drop_down_element;
+
+    }// generate_drop_down
+
+
 
 } // End Class

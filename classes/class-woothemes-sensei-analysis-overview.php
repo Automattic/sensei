@@ -165,13 +165,6 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			$order = ( 'ASC' == strtoupper($_GET['order']) ) ? 'ASC' : 'DESC';
 		}
 
-		// Handle search
-		$search = false;
-		if ( !empty( $_GET['s'] ) ) {
-			$search = esc_html( $_GET['s'] );
-		} // End If Statement
-		$this->search = $search;
-
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
 
@@ -187,9 +180,11 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			'orderby' => $orderby,
 			'order' => $order,
 		);
-		if ( $this->search ) {
-			$args['search'] = $this->search;
-		} // End If Statement
+
+        // Handle search
+        if ( isset( $_GET['s'] ) && !empty( $_GET['s'] ) ) {
+            $args['search'] = esc_html( $_GET['s'] );
+        }
 
 		switch ( $this->type ) {
 			case 'courses':
@@ -240,20 +235,17 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			$order = ( 'ASC' == strtoupper($_GET['order']) ) ? 'ASC' : 'DESC';
 		}
 
-		// Handle search
-		$search = false;
-		if ( !empty( $_GET['s'] ) ) {
-			$search = esc_html( $_GET['s'] );
-		} // End If Statement
-		$this->search = $search;
-
 		$args = array(
 			'orderby' => $orderby,
 			'order' => $order,
 		);
-		if ( $this->search ) {
-			$args['search'] = $this->search;
-		} // End If Statement
+
+
+        // Handle search
+        if ( isset( $_GET['s'] ) && !empty( $_GET['s'] ) ) {
+            $args['search'] = esc_html( $_GET['s'] );
+        }
+
 
 		// Start the csv with the column headings
 		$column_headers = array();
@@ -488,7 +480,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			$course_args['posts_per_page'] = '-1';
 		}
 
-		if( $args['search'] ) {
+		if( isset( $args['search'] ) ) {
 			$course_args['s'] = $args['search'];
 		}
 
@@ -518,7 +510,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			$lessons_args['posts_per_page'] = '-1';
 		}
 
-		if( $args['search'] ) {
+		if( isset( $args['search'] ) ) {
 			$lessons_args['s'] = $args['search'];
 		}
 
@@ -545,10 +537,15 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' );
 
 		$wp_user_search = new WP_User_Query( apply_filters( 'sensei_analysis_overview_filter_users', $args ) );
-		$learners = $wp_user_search->get_results();
-		$total_learners = $wp_user_search->get_total();
-
-		$this->total_items = $total_learners;
+        /**
+         * Filter the analysis user list
+         *
+         * @hooked Sensei_Teacher::limit_analysis_learners
+         * @since 1.8.0
+         * @param array $learners
+         */
+		$learners = apply_filters( 'sensei_analysis_get_learners' ,$wp_user_search->get_results() );
+		$this->total_items = count( $learners );
 		return $learners;
 	} // End get_learners()
 
