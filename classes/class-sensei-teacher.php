@@ -418,7 +418,15 @@ class Sensei_Teacher {
         }
 
         // for any of these conditions limit what the teacher will see
-        if( 'edit-lesson' == $screen->id || 'edit-course' == $screen->id || 'edit-question' == $screen->id ) {
+        $limit_screens = array(
+            'edit-lesson',
+            'edit-course',
+            'edit-question',
+            'course_page_course-order',
+            'lesson_page_lesson-order',
+        );
+
+        if(  in_array($screen->id  , $limit_screens ) ) {
 
             // set the query author to the current user to only show those those posts
             $wp_query->set( 'author', $current_user->ID );
