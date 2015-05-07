@@ -79,6 +79,10 @@ class Sensei_Teacher {
         // allow teacher access to see other users questions in the lesson edit screens questions bank
         add_filter('sensei_existing_questions_query_results', array( $this, 'give_access_to_all_questions'),80 );
 
+        // Teacher column on the courses list on the admin edit screen
+        add_filter('manage_edit-course_columns' , array( $this, 'course_column_heading'), 10,1 );
+        add_filter('manage_course_posts_custom_column' , array( $this, 'course_column_data'), 10,2 );
+
     } // end __constructor()
 
     /**
@@ -946,5 +950,48 @@ class Sensei_Teacher {
 
         return $wp_query;
     }// end give_access_to_all_questions
+
+    /**
+     * Add new column heading to the course admin edit list
+     *
+     * @since 1.8.0
+     * @param $columns
+     * @return array
+     */
+    public function course_column_heading($columns) {
+
+        if( $this->is_admin_teacher() ){
+            return $columns;
+        }
+        $new_columns = array(
+            'teacher' => __('Teacher', 'woothemes-sensei'),
+        );
+        return array_merge($columns, $new_columns);
+
+    }// end teacher column add
+
+    /**
+     * Print out  teacher column data
+     *
+     * @since 1.8.0
+     * @param $column
+     * @param $course_id
+     */
+    public function course_column_data( $column, $course_id  ){
+
+        if( $this->is_admin_teacher() || 'teacher' != $column  ){
+            return;
+        }
+
+        $course = get_post( $course_id );
+        $teacher = get_userdata( $course->post_author );
+
+        if( !$teacher ){
+            return;
+        }
+
+        echo '<a href="'. get_edit_user_link( $teacher->ID ) .'" >'. $teacher->display_name.'</a>';
+
+    }// end course_column_ data
 
 } // End Class
