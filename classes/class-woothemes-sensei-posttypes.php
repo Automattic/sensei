@@ -424,6 +424,11 @@ class WooThemes_Sensei_PostTypes {
 			'query_var' => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
+            'capabilities' => array(
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_questions',
+                'delete_terms' => 'manage_categories',
+                'assign_terms' => 'edit_questions',),
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
