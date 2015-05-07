@@ -314,6 +314,11 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => true,
+            'capabilities' => array(
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_courses',
+                'delete_terms' => 'manage_categories',
+                'assign_terms' => 'edit_courses',),
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
