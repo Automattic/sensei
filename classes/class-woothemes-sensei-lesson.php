@@ -983,7 +983,7 @@ class WooThemes_Sensei_Lesson {
 	    		$html .= '<h2 class="nav-tab-wrapper add-question-tabs">';
 	    			$html .= '<a id="tab-new" class="nav-tab nav-tab-active">' . __( 'New Question'  , 'woothemes-sensei' ) . '</a>';
 	    			$html .= '<a id="tab-existing" class="nav-tab">' . __( 'Existing Questions'  , 'woothemes-sensei' ) . '</a>';
-	    			if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
+                    if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats )  && ! Sensei()->teacher->is_admin_teacher() ) {
 	    				$html .= '<a id="tab-multiple" class="nav-tab">' . __( 'Category Questions'  , 'woothemes-sensei' ) . '</a>';
 	    			}
 	    		$html .= '</h2>';
