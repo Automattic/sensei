@@ -994,4 +994,51 @@ class Sensei_Teacher {
 
     }// end course_column_ data
 
+    /**
+     * Return only courses belonging to the given teacher.
+     *
+     *
+     * @since 1.8.0
+     *
+     * @param int $teacher_id
+     * @param bool $return_ids_only
+     *
+     * @return array $teachers_courses
+     */
+    public function get_teacher_courses( $teacher_id, $return_ids_only= false){
+
+        $teachers_courses = array();
+
+        if( empty( $teacher_id  ) ){
+            $teacher_id = get_current_user_id();
+        }
+
+        $all_courses = Sensei()->course->get_all_courses();
+
+        if( empty( $all_courses ) ){
+            return $all_courses;
+        }
+
+        foreach( $all_courses as $course ){
+
+            if( $course->post_author != $teacher_id  ){
+                continue;
+            }
+
+            if( $return_ids_only ){
+
+                $teachers_courses[] = $course->ID;
+
+            }else{
+
+                $teachers_courses[] = $course;
+
+            }
+
+        }
+
+        return $teachers_courses;
+
+    }
+
 } // End Class
