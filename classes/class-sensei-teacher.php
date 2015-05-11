@@ -90,6 +90,10 @@ class Sensei_Teacher {
         add_action( 'restrict_manage_posts', array( $this, 'course_teacher_filter_options' ) );
         add_filter( 'request', array( $this, 'teacher_filter_query_modify' ) );
 
+        // Handle media library restrictions
+        add_filter( 'request', array( $this, 'restrict_media_library' ), 10, 1 );
+        add_filter( 'ajax_query_attachments_args', array( $this, 'restrict_media_library_modal' ), 10, 1 );
+
     } // end __constructor()
 
     /**
@@ -1137,4 +1141,56 @@ class Sensei_Teacher {
         $query['author'] = $course_teacher;
         return $query;
     }
+
+    /**
+     * Only show current teacher's media in the media library
+     * @param  array $request Default request arguments
+     * @return array          Modified request arguments
+     */
+    public function restrict_media_library( $request = array() ) {
+
+        if( ! is_admin() ) {
+            return $request;
+        }
+
+        if( ! $this->is_admin_teacher() ) {
+            return $request;
+        }
+
+        $screen = get_current_screen();
+
+        if( in_array( $screen->id, array( 'upload', 'course', 'lesson', 'question' ) ) ) {
+            $teacher = intval( get_current_user_id() );
+
+            if( $teacher ) {
+                $request['author__in'] = array( $teacher );
+            }
+        }
+
+        return $request;
+    } // End restrict_media_library()
+
+    /**
+     * Only show current teacher's media in the media library modal on the course/lesson/quesion edit screen
+     * @param  array $query Default query arguments
+     * @return array        Modified query arguments
+     */
+    public function restrict_media_library_modal( $query = array() ) {
+
+        if( ! is_admin() ) {
+            return $query;
+        }
+
+        if( ! $this->is_admin_teacher() ) {
+            return $request;
+        }
+
+        $teacher = intval( get_current_user_id() );
+
+        if( $teacher ) {
+            $request['author__in'] = array( $teacher );
+        }
+
+        return $request;
+    } // End restrict_media_library_modal()
 } // End Class
