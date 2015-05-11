@@ -1182,15 +1182,15 @@ class Sensei_Teacher {
         }
 
         if( ! $this->is_admin_teacher() ) {
-            return $request;
+            return $query;
         }
 
         $teacher = intval( get_current_user_id() );
 
         if( $teacher ) {
-            $request['author__in'] = array( $teacher );
+            $query['author__in'] = array( $teacher );
         }
 
-        return $request;
+        return $query;
     } // End restrict_media_library_modal()
 } // End Class
