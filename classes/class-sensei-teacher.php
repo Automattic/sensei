@@ -94,8 +94,12 @@ class Sensei_Teacher {
         // update lesson owner to course teacher when saved
         add_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
 
-        // only show
+        // only show taxomonomies belogning to teachers term group
         add_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
+
+        //store a term group when teachers create modules
+        add_action( 'created_term', array( $this, 'add_module_term_group' ), 20 , 3);
+
     } // end __constructor()
 
     /**
@@ -1255,5 +1259,26 @@ class Sensei_Teacher {
         return $teachers_terms;
     }// limit_course_module_metabox_terms
 
+    /**
+     * Add a module term group
+     * when a new taxonomy term is created
+     *
+     * @since 1.8.0
+     *
+     * @param $term_id
+     * @param $tt_id
+     * @param $taxonomy
+     *
+     * @return void
+     */
+    public function add_module_term_group( $term_id, $tt_id, $taxonomy ){
 
+        if( 'module' != $taxonomy ){
+            return;
+        }
+
+        $args = array( 'term_group' => get_current_user_id() );
+        wp_update_term( $term_id, 'module', $args );
+
+    }// end add_module_term_group
 } // End Class
