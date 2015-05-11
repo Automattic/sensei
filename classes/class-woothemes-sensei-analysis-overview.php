@@ -330,7 +330,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				else {
 					$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $item->ID ), admin_url( 'admin.php' ) );
 
-					$course_title = '<strong><a class="row-title" href="' . $url . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
+					$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 					$course_average_percent .= '%';
 				} // End If Statement
 				$column_data = apply_filters( 'sensei_analysis_overview_column_data', array( 'title' => $course_title,
@@ -386,11 +386,11 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 				}
 				else {
 					$url = add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->ID ), admin_url( 'admin.php' ) );
-					$lesson_title = '<strong><a class="row-title" href="' . $url . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
+					$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
 					if ( $course_id ) {
 						$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
-						$course_title = '<a href="' . $url . '">' . $course_title . '</a>';
+						$course_title = '<a href="' . esc_url( $url ) . '">' . $course_title . '</a>';
 					}
 					else {
 						$course_title = __('n/a', 'woothemes-sensei');
@@ -446,7 +446,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
                 }
 				else {
 					$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->ID ), admin_url( 'admin.php' ) );
-					$user_name = '<strong><a class="row-title" href="' . $url . '">' . $woothemes_sensei->learners->get_learner_full_name( $item->ID ) . '</a></strong>';
+					$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $item->display_name . '</a></strong>';
 					$user_average_grade .= '%';
 				} // End If Statement
 				$column_data = apply_filters( 'sensei_analysis_overview_column_data', array( 'title' => $user_name,
@@ -646,9 +646,9 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		$lesson_args['view'] = 'lessons';
 		$courses_args['view'] = 'courses';
 
-		$menu['learners'] = '<a class="' . $learners_class . '" href="' . add_query_arg( $learner_args, admin_url( 'admin.php' ) ) . '">' . __( 'Learners', 'woothemes-sensei' ) . '</a>';
-		$menu['courses'] = '<a class="' . $courses_class . '" href="' . add_query_arg( $courses_args, admin_url( 'admin.php' ) ) . '">' . __( 'Courses', 'woothemes-sensei' ) . '</a>';
-		$menu['lessons'] = '<a class="' . $lessons_class . '" href="' . add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) . '">' . __( 'Lessons', 'woothemes-sensei' ) . '</a>';
+		$menu['learners'] = '<a class="' . $learners_class . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ). '">' . __( 'Learners', 'woothemes-sensei' ) . '</a>';
+		$menu['courses'] = '<a class="' . $courses_class . '" href="' . esc_url ( add_query_arg( $courses_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Courses', 'woothemes-sensei' ) . '</a>';
+		$menu['lessons'] = '<a class="' . $lessons_class . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Lessons', 'woothemes-sensei' ) . '</a>';
 
 		$menu = apply_filters( 'sensei_analysis_overview_sub_menu', $menu );
 		if ( !empty($menu) ) {
@@ -682,7 +682,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 			break;
 		} // End Switch Statement
 		$url = add_query_arg( array( 'page' => $this->page_slug, 'view' => $this->type, 'sensei_report_download' => $report ), admin_url( 'admin.php' ) );
-		echo '<a class="button button-primary" href="' . wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) . '">' . __( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . __( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
 	} // End data_table_footer()
 
 	/**

@@ -98,16 +98,19 @@ class WooThemes_Sensei_Learners {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// Load Learners JS
-		wp_enqueue_script( 'sensei-learners-general', $woothemes_sensei->plugin_url . 'assets/js/learners-general' . $suffix . '.js', array( 'jquery' ), '1.6.0' );
+		wp_enqueue_script( 'sensei-learners-general',
+                            $woothemes_sensei->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
+                            array('jquery','sensei-lesson-chosen','sensei-chosen-ajax' ), $woothemes_sensei->version, true );
 
 		$data = array(
 			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
 			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
 			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
 			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
+            'search_users_nonce' => wp_create_nonce( 'search-users' )
 		);
 
-		wp_localize_script( 'sensei-learners-general', 'woo_localized_data', $data );
+		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
 
 	} // End enqueue_scripts()
 
@@ -235,11 +238,11 @@ class WooThemes_Sensei_Learners {
 	 * @return void
 	 */
 	public function learners_default_nav() {
-		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
+		$title = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['course_id'] ) ) { 
 			$course_id = intval( $_GET['course_id'] );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) );
-			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, get_the_title( $course_id ) ); 
+			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		if ( isset( $_GET['lesson_id'] ) ) { 
 			$lesson_id = intval( $_GET['lesson_id'] );
@@ -261,7 +264,7 @@ class WooThemes_Sensei_Learners {
 
 		$redirect_url = apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'course_cat' => $course_cat ), admin_url( 'admin.php' ) ) );
 
-		echo $redirect_url;
+		echo esc_url_raw( $redirect_url );
 		die();
 	}
 
@@ -430,7 +433,7 @@ class WooThemes_Sensei_Learners {
 
 		$redirect_url = apply_filters( 'sensei_learners_add_learner_redirect_url', add_query_arg( $query_args, admin_url( 'admin.php' ) ) );
 
-		wp_safe_redirect( $redirect_url );
+		wp_safe_redirect( esc_url_raw( $redirect_url ) );
 		exit;
 	}
 
