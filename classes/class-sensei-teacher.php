@@ -94,6 +94,9 @@ class Sensei_Teacher {
         add_filter( 'request', array( $this, 'restrict_media_library' ), 10, 1 );
         add_filter( 'ajax_query_attachments_args', array( $this, 'restrict_media_library_modal' ), 10, 1 );
 
+        // update lesson owner to course teacher when saved
+        add_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
+
     } // end __constructor()
 
     /**
@@ -1193,4 +1196,37 @@ class Sensei_Teacher {
 
         return $query;
     } // End restrict_media_library_modal()
+
+    /**
+     * When saving the lesson, update the teacher if the lesson belongs to a course
+     *
+     * @since 1.8.0
+     *
+     * @param int $lesson_id
+     */
+    public function update_lesson_teacher( $lesson_id ){
+
+        if( 'lesson'!= get_post_type() ){
+            return;
+        }
+
+        // this should only run once per request cycle
+        remove_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
+
+        $course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+        if(  empty( $course_id ) || ! $course_id ){
+            return;
+        }
+
+        $course = get_post( $course_id );
+
+        $lesson_update_args= array(
+            'ID' => $lesson_id ,
+            'post_author' => $course->post_author
+        );
+        wp_update_post( $lesson_update_args );
+
+    } // end update_lesson_teacher
+
 } // End Class
