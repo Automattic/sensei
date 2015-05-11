@@ -468,7 +468,7 @@ class WooThemes_Sensei_Admin {
 				$redirect_url = admin_url( 'edit.php?post_type=' . $post->post_type . '&message=duplicate_failed' );
 			}
 
-			wp_safe_redirect( $redirect_url );
+			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
 		}
 	}
