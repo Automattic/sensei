@@ -83,6 +83,9 @@ class Sensei_Teacher {
         add_filter('manage_edit-course_columns' , array( $this, 'course_column_heading'), 10,1 );
         add_filter('manage_course_posts_custom_column' , array( $this, 'course_column_data'), 10,2 );
 
+        //admin edit messages query limit teacher
+        add_filter( 'pre_get_posts', array( $this, 'limit_edit_messages_query' ) );
+
     } // end __constructor()
 
     /**
@@ -1039,6 +1042,33 @@ class Sensei_Teacher {
 
         return $teachers_courses;
 
+    }
+
+    /**
+     * Limit the message display to only those sent to the current teacher
+     *
+     * @since 1.8.0
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function limit_edit_messages_query( $query ){
+        if( ! $this->is_admin_teacher() || 'sensei_message' != $query->get('post_type') ){
+            return $query;
+        }
+
+        $teacher = wp_get_current_user();
+
+        $query->set( 'meta_key', '_receiver' );
+        $meta_query_args = array(
+            'key'     => '_receiver',
+            'value'   => $teacher->get('user_login') ,
+            'compare' => '='
+        );
+
+        $query->set('meta_query', $meta_query_args  );
+
+        return $query;
     }
 
 } // End Class
