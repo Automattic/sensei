@@ -76,9 +76,6 @@ class Sensei_Teacher {
         // give teacher access to question post type
         add_filter( 'sensei_lesson_quiz_questions', array( $this, 'allow_teacher_access_to_questions' ), 20, 2 );
 
-        // allow teacher access to see other users questions in the lesson edit screens questions bank
-        add_filter('sensei_existing_questions_query_results', array( $this, 'give_access_to_all_questions'),80 );
-
         // Teacher column on the courses list on the admin edit screen
         add_filter('manage_edit-course_columns' , array( $this, 'course_column_heading'), 10,1 );
         add_filter('manage_course_posts_custom_column' , array( $this, 'course_column_data'), 10,2 );
