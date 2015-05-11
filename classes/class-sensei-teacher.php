@@ -86,6 +86,10 @@ class Sensei_Teacher {
         //admin edit messages query limit teacher
         add_filter( 'pre_get_posts', array( $this, 'limit_edit_messages_query' ) );
 
+        //add filter by teacher on courses list
+        add_action( 'restrict_manage_posts', array( $this, 'course_teacher_filter_options' ) );
+        add_filter( 'request', array( $this, 'teacher_filter_query_modify' ) );
+
     } // end __constructor()
 
     /**
@@ -1071,4 +1075,66 @@ class Sensei_Teacher {
         return $query;
     }
 
+
+    /**
+     * Add options to filter courses by teacher
+     *
+     * @since 1.8.0
+     *
+     * @return void
+     */
+    public function course_teacher_filter_options() {
+        global $typenow;
+
+        if( ! is_admin() || 'course' != $typenow || ! current_user_can('manage_sensei') ) {
+            return;
+        }
+
+        $all_users = get_users();
+        $users_who_can_edit_courses = array();
+
+        foreach( $all_users as $user ){
+
+            if($user->has_cap('edit_courses')){
+                $users_who_can_edit_courses[] = $user;
+            }
+
+        }
+        $selected = isset( $_GET['course_teacher'] ) ? $_GET['course_teacher'] : '';
+        $course_options = '';
+        foreach( $users_who_can_edit_courses as $user ) {
+            $course_options .= '<option value="' . esc_attr( $user->ID ) . '" ' . selected( $selected, $user->ID, false ) . '>' .  $user->display_name . '</option>';
+        }
+
+        $output = '<select name="course_teacher" id="dropdown_course_teachers">';
+        $output .= '<option value="">'.__( 'Show all teachers', 'woothemes-sensei' ).'</option>';
+        $output .= $course_options;
+        $output .= '</select>';
+
+        echo $output;
+    }
+
+    /**
+     * Modify the main query on the admin course list screen
+     *
+     * @since 1.8.0
+     *
+     * @param $query
+     * @return $query
+     */
+    public function teacher_filter_query_modify( $query ){
+        global $typenow;
+
+        if( ! is_admin() && 'course' != $typenow  || ! current_user_can('manage_sensei')  ) {
+            return $query;
+        }
+        $course_teacher = isset( $_GET['course_teacher'] ) ? $_GET['course_teacher'] : '';
+
+        if( empty( $course_teacher ) ) {
+            return $query;
+        }
+
+        $query['author'] = $course_teacher;
+        return $query;
+    }
 } // End Class
