@@ -125,7 +125,7 @@ jQuery(document).ready( function($) {
 						disableAuto = false;
 					break;
 					case 'gap-fill':
-						disableAuto = false;
+						disableAuto = true;
 					break;
 					case 'multi-line':
 						disableAuto = true;
@@ -592,7 +592,6 @@ jQuery(document).ready( function($) {
 	 * @since 1.0.0
 	 * @access public
 	 */
-
 	// Hide the add course panel
 	jQuery( '#lesson-course-details' ).addClass( 'hidden' );
 	// Display on click

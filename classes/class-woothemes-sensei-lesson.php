@@ -983,7 +983,7 @@ class WooThemes_Sensei_Lesson {
 	    		$html .= '<h2 class="nav-tab-wrapper add-question-tabs">';
 	    			$html .= '<a id="tab-new" class="nav-tab nav-tab-active">' . __( 'New Question'  , 'woothemes-sensei' ) . '</a>';
 	    			$html .= '<a id="tab-existing" class="nav-tab">' . __( 'Existing Questions'  , 'woothemes-sensei' ) . '</a>';
-	    			if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
+                    if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats )  && ! Sensei()->teacher->is_admin_teacher() ) {
 	    				$html .= '<a id="tab-multiple" class="nav-tab">' . __( 'Category Questions'  , 'woothemes-sensei' ) . '</a>';
 	    			}
 	    		$html .= '</h2>';
@@ -1228,8 +1228,17 @@ class WooThemes_Sensei_Lesson {
 
 		$qry = new WP_Query( $args );
 
+        /**
+         * Filter existing questions query
+         *
+         * @since 1.8.0
+         *
+         * @param WP_Query $wp_query
+         */
+        $qry = apply_filters( 'sensei_existing_questions_query_results', $qry );
+
 		$questions['questions'] = $qry->posts;
-		$questions['count'] = $qry->found_posts;
+		$questions['count'] = intval( $qry->found_posts );
 		$questions['page'] = $page;
 
 		return $questions;
@@ -2757,8 +2766,13 @@ class WooThemes_Sensei_Lesson {
 			}
 		}
 
-		// Return all relevant questions
-		return $questions;
+        /**
+         * Filter the questions returned by Sensei_Lesson::lessons_quiz_questions
+         *
+         * @hooked Sensei_Teacher::allow_teacher_access_to_questions
+         * @since 1.8.0
+         */
+		return apply_filters( 'sensei_lesson_quiz_questions', $questions,  $quiz_id  );
 
 	} // End lesson_quiz_questions()
 

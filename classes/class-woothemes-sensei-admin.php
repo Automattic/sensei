@@ -98,7 +98,7 @@ class WooThemes_Sensei_Admin {
 		}
 
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
-		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'woothemes-sensei' ), __( 'Order Lessons', 'woothemes-sensei' ), 'manage_sensei', 'lesson-order', array( $this, 'lesson_order_screen' ) );
+		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'woothemes-sensei' ), __( 'Order Lessons', 'woothemes-sensei' ), 'edit_lessons', 'lesson-order', array( $this, 'lesson_order_screen' ) );
 	}
 
 	/**
@@ -296,8 +296,8 @@ class WooThemes_Sensei_Admin {
 
 			wp_register_style( $woothemes_sensei->token . '-admin-custom', $woothemes_sensei->plugin_url . 'assets/css/admin-custom.css', '', '1.6.0', 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-admin-custom' );
-			wp_register_style( $woothemes_sensei->token . '-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.css', '', '1.5.2', 'screen' );
-			wp_enqueue_style( $woothemes_sensei->token . '-chosen' );
+			wp_register_style( $woothemes_sensei->token . '-select2', $woothemes_sensei->plugin_url . 'assets/select2/select2.css', '', '1.5.2', 'screen' );
+			wp_enqueue_style( $woothemes_sensei->token . '-select2' );
 
 		}
 
@@ -935,15 +935,7 @@ class WooThemes_Sensei_Admin {
 			}
 		}
 
-		$args = array(
-			'post_type' => 'course',
-			'posts_per_page' => -1,
-			'suppress_filters' => 0,
-			'orderby' => 'menu_order date',
-			'order' => 'ASC',
-		);
-
-		$courses = get_posts( $args );
+		$courses = Sensei()->course->get_all_courses();
 		if( 0 < count( $courses ) ) {
 
 			$order_string = $this->get_course_order();
@@ -1053,7 +1045,7 @@ class WooThemes_Sensei_Admin {
 		$html .= '</form>' . "\n";
 
 		$html .= '<script type="text/javascript">' . "\n";
-		$html .= 'jQuery( \'#lesson-order-course\' ).chosen();' . "\n";
+		$html .= 'jQuery( \'#lesson-order-course\' ).select2({width:"resolve"});' . "\n";
 		$html .= '</script>' . "\n";
 
 		if( isset( $_GET['course_id'] ) ) {

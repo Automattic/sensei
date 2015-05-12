@@ -827,7 +827,7 @@ class WooThemes_Sensei_Course {
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
 
-		$posts_array = array();
+		$lessons = array();
 
 		$post_args = array(	'post_type'         => 'lesson',
 							'posts_per_page'       => 500,
@@ -843,40 +843,32 @@ class WooThemes_Sensei_Course {
 							'suppress_filters'  => 0,
 							);
 		$query_results = new WP_Query( $post_args );
-        $posts_array = $query_results->posts;
+        $lessons = $query_results->posts;
 
         // re order the lessons. This could not be done via the OR meta query as there may be lessons
         // with the course order for a different course and this should not be included. It could also not
         // be done via the AND meta query as it excludes lesson that does not have the _order_$course_id but
         // that have been added to the course.
-        if( count( $posts_array) > 1  ){
+        if( count( $lessons) > 1  ){
 
-            foreach( $posts_array as $post ){
-
-                $order = intval( get_post_meta( $post->ID, '_order_'. $course_id, true ) );
+            foreach( $lessons as $lesson ){
+                $order = intval( get_post_meta( $lesson->ID, '_order_'. $course_id, true ) );
                 // for lessons with no order set it to be 10000 so that it show up at the end
-                $post->course_order = $order ? $order : 100000;
+                $lesson->course_order = $order ? $order : 100000;
             }
 
-            uasort( $posts_array, array( $this, '_short_course_lessons_callback' )   );
+            uasort( $lessons, array( $this, '_short_course_lessons_callback' )   );
         }
 
-        // return the requested fields.
-        //WordPress allows 'ids', 'id=>parent'
-        // but for our use case 'all' and 'ids' will suffice
-        if( 'all'!=$fields ){
-
-            $ids_array = array();
-            foreach ( $posts_array as $post ){
-
-                $ids_array[] = $post->ID;
-
-            }
-            $posts_array = $ids_array;
-
-        }
-
-        return $posts_array;
+        /**
+         * Filter runs inside Sensei_Course::course_lessons function
+         *
+         * Returns all lessons for a given course
+         *
+         * @param array $lessons
+         * @param int $course_id
+         */
+        return apply_filters( 'sensei_course_get_lessons', $lessons, $course_id  );
 
 	} // End course_lessons()
 
@@ -1463,7 +1455,7 @@ class WooThemes_Sensei_Course {
 
         $args = array(
                'post_type' => 'course',
-                'numberposts' 		=> -1,
+                'posts_per_page' 		=> 5000,
                 'orderby'         	=> 'title',
                 'order'           	=> 'ASC',
                 'post_status'      	=> 'any',

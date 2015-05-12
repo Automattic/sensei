@@ -396,6 +396,16 @@ class WooThemes_Sensei_Grading {
 	public function count_statuses( $args = array() ) {
 		global $woothemes_sensei, $wpdb;
 
+        /**
+         * Filter fires inside Sensei_Grading::count_statuses
+         *
+         * Alter the the post_in array to determine which posts the
+         * comment query should be limited to.
+         * @since 1.8.0
+         * @param array $args
+         */
+        $args = apply_filters( 'sensei_count_statuses_args', $args );
+
 		if ( 'course' == $args['type'] ) {
 			$type = 'sensei_course_status';
 		}
@@ -405,7 +415,8 @@ class WooThemes_Sensei_Grading {
 		$cache_key = 'sensei-' . $args['type'] . '-statuses';
 
 		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
-		// Restrict to specific posts
+
+        // Restrict to specific posts
 		if ( isset( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post__in'] ) ) . ')';
 		}

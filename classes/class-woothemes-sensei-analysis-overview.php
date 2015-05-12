@@ -537,10 +537,15 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' );
 
 		$wp_user_search = new WP_User_Query( apply_filters( 'sensei_analysis_overview_filter_users', $args ) );
-		$learners = $wp_user_search->get_results();
-		$total_learners = $wp_user_search->get_total();
-
-		$this->total_items = $total_learners;
+        /**
+         * Filter the analysis user list
+         *
+         * @hooked Sensei_Teacher::limit_analysis_learners
+         * @since 1.8.0
+         * @param array $learners
+         */
+		$learners = apply_filters( 'sensei_analysis_get_learners' ,$wp_user_search->get_results() );
+		$this->total_items = count( $learners );
 		return $learners;
 	} // End get_learners()
 

@@ -104,14 +104,20 @@ class WooThemes_Sensei {
 		} // End If Statement
 		$this->settings->setup_settings();
 		$this->settings->get_settings();
+
 		// Load Learner Profiles Class
 		$this->load_class( 'learner-profiles' );
 		$this->learner_profiles = new WooThemes_Sensei_Learner_Profiles();
 		$this->learner_profiles->token = $this->token;
+
 		// Load Course Results Class
 		$this->load_class( 'course-results' );
 		$this->course_results = new WooThemes_Sensei_Course_Results();
 		$this->course_results->token = $this->token;
+
+        // Load the teacher role
+        require_once( 'class-sensei-teacher.php' );
+        $this->teacher = new Sensei_Teacher();
 
 		// Add the Course class
 		$this->course = $this->post_types->course;
@@ -627,7 +633,7 @@ class WooThemes_Sensei {
 	 * @return void
 	 */
 	public function woocommerce_course_update ( $course_id = 0, $order_user = array()  ) {
-		global $current_user,  $woothemes_sensei;
+		global $current_user;
 
 		if ( ! isset( $current_user ) ) return;
 

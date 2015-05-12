@@ -66,7 +66,7 @@ class WooThemes_Sensei_Messages {
 	public function add_menu_item() {
 		global $woothemes_sensei;
 		if( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) {
-			add_submenu_page( 'sensei', __( 'Messages', 'woothemes-sensei'),  __( 'Messages', 'woothemes-sensei') , 'manage_sensei', 'edit.php?post_type=sensei_message' );
+			add_submenu_page( 'sensei', __( 'Messages', 'woothemes-sensei'),  __( 'Messages', 'woothemes-sensei') , 'edit_courses', 'edit.php?post_type=sensei_message' );
 		}
 	}
 
