@@ -103,7 +103,32 @@ class Sensei_Core_Modules
         add_filter('manage_' . $this->taxonomy . '_custom_column', array($this, 'taxonomy_column_content'), 1, 3);
         add_filter('sensei_module_lesson_list_title', array($this, 'sensei_course_preview_titles'), 10, 2);
 
+        //store a term group when teachers create modules
+        add_action( 'pre_insert_term', array( $this, 'change_module_term_slug' ), 20 , 3);
+        sanitize_term('q','b');
     } // end constructor
+
+    /**
+     * Alter a module term slug when a new taxonomy term is created
+     * This will add the creators user name to the slug for uniqueness.
+     *
+     * @since 1.8.0
+     *
+     * @param $term_id
+     * @param $tt_id
+     * @param $taxonomy
+     *
+     * @return void
+     */
+    public function change_module_term_slug( $term_id, $tt_id, $taxonomy ){
+
+        if( 'module' != $taxonomy ){
+            return;
+        }
+
+        $this->update_module_term_teacher(  $term_id, get_current_user_id() );
+
+    }// end add_module_term_group
 
     /**
      * Manage taoxnomy meta boxes on lesson edit screen

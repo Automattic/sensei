@@ -97,9 +97,6 @@ class Sensei_Teacher {
         // only show taxomonomies belogning to teachers term group
         add_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
 
-        //store a term group when teachers create modules
-        add_action( 'created_term', array( $this, 'add_module_term_group' ), 20 , 3);
-
     } // end __constructor()
 
     /**
@@ -314,7 +311,7 @@ class Sensei_Teacher {
      * @parameters
      * @return array $users user id array
      */
-    public function save_teacher_meta_box ( $post_id ){
+    public function save_teacher_meta_box ( $course_id ){
 
         // check if this is a post from saving the teacher, if not exit early
         if(! isset( $_POST[ 'sensei-course-teacher-author' ] ) || ! isset( $_POST['post_ID'] )  ){
@@ -325,19 +322,22 @@ class Sensei_Teacher {
         remove_action('save_post', array( $this, 'save_teacher_meta_box' ) );
 
         // get the current post object
-        $post = get_post( $post_id );
+        $post = get_post( $course_id );
 
         // get the current teacher/author
         $current_author = absint( $post->post_author );
         $new_author = absint( $_POST[ 'sensei-course-teacher-author' ] );
 
         // loop through all post lessons to update their authors as well
-        $this->update_course_lessons_author( $post_id , $new_author );
+        $this->update_course_lessons_author( $course_id , $new_author );
 
         // do not do any processing if the selected author is the same as the current author
         if( $current_author == $new_author ){
             return;
         }
+
+        // update the module course author
+        $this->update_course_module_terms_teacher( $course_id , $current_author ,$new_author );
 
         // save the course  author
         $post_updates = array(
@@ -347,9 +347,43 @@ class Sensei_Teacher {
         wp_update_post( $post_updates );
 
         // notify the new teacher
-        $this->teacher_course_assigned_notification( $new_author, $post_id );
+        $this->teacher_course_assigned_notification( $new_author, $course_id );
 
     } // end save_teacher_meta_box
+
+    /**
+     * Update all the course terms. Set the group to the new Id.
+     *
+     * This function also checks if terms are shared, with other courses
+     *
+     * @param $course_id
+     * @param $current_teacher_id
+     * @param $new_teacher_id
+     */
+    public function update_course_module_terms_teacher( $course_id, $current_teacher_id ,$new_teacher_id ){
+
+        if( empty( $course_id ) || empty( $new_teacher_id ) ){
+            return;
+        }
+
+        $terms = get_terms('module');
+
+        if( empty( $terms ) ){
+            return;
+        }
+
+        foreach( $terms as $term ){
+
+            if( $current_teacher_id != $term->term_group ){
+                continue; // skip  terms not belonging to this teacher
+            }
+
+            // update term group/teacher
+            $this->update_module_term_teacher(  $term->term_id, $new_teacher_id );
+            //wp_set_object_terms( $course_id , $term->term_id, 'module' );
+        }
+
+    }// end update_course_module_terms_author
 
     /**
      * Sensei_Teacher::update_course_lessons_author
@@ -1259,5 +1293,18 @@ class Sensei_Teacher {
         return $teachers_terms;
     }// limit_course_module_metabox_terms
 
+    /**
+     * Update the term group and set it
+     * to be the teacher ID
+     *
+     * @since 1.8.0
+     * @param $term_id
+     * @param $teacher_id
+     */
+    public function update_module_term_teacher( $term_id, $teacher_id ){
 
+        $args = array( 'term_group' => $teacher_id );
+        wp_update_term( $term_id, 'module', $args );
+
+    }
 } // End Class
