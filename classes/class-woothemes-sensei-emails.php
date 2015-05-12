@@ -175,8 +175,20 @@ class WooThemes_Sensei_Emails {
 		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ) );
 
-		// Send
-		wp_mail( $to, $subject, $message, $headers, $attachments );
+        // Send
+        $send_email = true;
+
+        /**
+         * Filter Sensei's ability to send out emails.
+         *
+         * @since 1.8.0
+         * @param bool $send_email default true
+         */
+        if( apply_filters('sensei_send_emails', $send_email,$to, $subject, $message )  ){
+
+            wp_mail( $to, $subject, $message, $headers, $attachments );
+
+        }
 
 		// Unhook filters
 		remove_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
