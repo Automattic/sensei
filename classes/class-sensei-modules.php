@@ -1583,12 +1583,6 @@ class Sensei_Core_Modules
             'public' => true,
             'hierarchical' => true,
             'show_admin_column' => true,
-            'capabilities' => array(
-                'manage_terms' => 'manage_categories',
-                'edit_terms'   => 'edit_courses',
-                'delete_terms' => 'manage_categories',
-                'assign_terms' => 'edit_courses'
-            ),
             'show_in_nav_menus' => false,
             'show_in_quick_edit' => false,
             'show_ui' => true,
