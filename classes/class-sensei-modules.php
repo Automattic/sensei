@@ -38,7 +38,7 @@ class Sensei_Core_Modules
         add_action( 'init', array( $this, 'setup_modules_taxonomy' ), 10 );
 
         // Manage lesson meta boxes for taxonomy
-        add_action('add_meta_boxes', array($this, 'lesson_metaboxes'), 25);
+        add_action('add_meta_boxes', array($this, 'modules_metaboxes'), 25);
 
         // Save lesson meta box
         add_action('save_post', array($this, 'save_lesson_module'), 10, 1);
@@ -131,12 +131,12 @@ class Sensei_Core_Modules
     }// end add_module_term_group
 
     /**
-     * Manage taoxnomy meta boxes on lesson edit screen
+     * Hook in all meta boxes related tot he modules taxonomy
      *
      * @since 1.8.0
      * @return void
      */
-    public function lesson_metaboxes()
+    public function modules_metaboxes()
     {
         global $post;
 
