@@ -1695,4 +1695,66 @@ class Sensei_Core_Modules
 
     }// end remove courses module tax
 
+    /**
+     * Determine the author of a modules taxonomy term by looking at
+     * the prefixed author id.  Will return the admin user author could not be determined.
+     *
+     * @since 1.8.0
+     *
+     * @param string $term_name
+     * @return array $owners { typ WP_User }. Empty array if none if found.
+     */
+    public static function get_term_authors( $term_name ){
+
+        $terms = get_terms( array( 'module') , array( 'name__like'=>$term_name, 'hide_empty' => false )  );
+
+        $owners = array();
+        if( empty( $terms ) ){
+
+            return $owners;
+
+        }
+
+        // setup the admin user
+        $admin_user = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
+
+        //if there are more handle them appropriately and get the ones we really need that matches the desired name exactly
+        foreach( $terms as $term){
+            if( $term->name == $term_name ){
+
+                // look for the author in the slug
+                $slug_parts = explode( '-', $term->slug );
+
+                if( ! ( count( $slug_parts ) > 1 ) ){
+
+                    $owners[] = $admin_user;
+
+                }else{
+
+                    // get the user data
+                    $possible_user_id = $slug_parts[0];
+                    $author = get_userdata( $possible_user_id );
+
+                    // if the user doesnt exist for the first part of the slug
+                    // then this slug was also created by admin
+                    if( ! $author ){
+
+                        $owners[] = $admin_user;
+
+                    }else{
+
+                        $owners[] = $author;
+
+                    } // end if author
+
+                }// end if slug parts
+
+            }// end if term name
+
+        } // end for each
+
+        return $owners;
+
+    }// end get_term_author
+
 } // end modules class
