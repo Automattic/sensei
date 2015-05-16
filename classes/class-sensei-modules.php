@@ -38,7 +38,7 @@ class Sensei_Core_Modules
         add_action( 'init', array( $this, 'setup_modules_taxonomy' ), 10 );
 
         // Manage lesson meta boxes for taxonomy
-        add_action('add_meta_boxes', array($this, 'modules_metaboxes'), 25);
+        add_action('add_meta_boxes', array($this, 'modules_metaboxes'), 20, 2 );
 
         // Save lesson meta box
         add_action('save_post', array($this, 'save_lesson_module'), 10, 1);
@@ -103,9 +103,15 @@ class Sensei_Core_Modules
         add_filter('manage_' . $this->taxonomy . '_custom_column', array($this, 'taxonomy_column_content'), 1, 3);
         add_filter('sensei_module_lesson_list_title', array($this, 'sensei_course_preview_titles'), 10, 2);
 
-        //store a term group when teachers create modules
-        add_action( 'pre_insert_term', array( $this, 'change_module_term_slug' ), 20 , 3);
-        sanitize_term('q','b');
+        //store new modules created on the course edit screen
+        add_action( 'wp_ajax_sensei_add_new_module_term', array( 'Sensei_Core_Modules','add_new_module_term' ) );
+
+        // for non admin users, only show taxonomies that belong to them
+        add_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
+
+        // remove the default modules  metabox
+        add_action('admin_init',array( 'Sensei_Core_Modules' , 'remove_default_modules_box' ));
+
     } // end constructor
 
     /**
@@ -134,19 +140,26 @@ class Sensei_Core_Modules
      * Hook in all meta boxes related tot he modules taxonomy
      *
      * @since 1.8.0
+     *
+     * @param string $post_type
+     * @param WP_Post $post
+     *
      * @return void
      */
-    public function modules_metaboxes()
+    public function modules_metaboxes( $post_type, $post )
     {
-        global $post;
-
-        if ('lesson' == $post->post_type) {
+        if ('lesson' == $post_type ) {
 
             // Remove default taxonomy meta box from Lesson edit screen
             remove_meta_box($this->taxonomy . 'div', 'lesson', 'side');
 
             // Add custom meta box to limit module selection to one per lesson
             add_meta_box($this->taxonomy . '_select', __('Lesson Module', 'woothemes-sensei'), array($this, 'lesson_module_metabox'), 'lesson', 'side', 'default');
+        }
+
+        if( 'course' == $post_type ){
+            // Course modules selection metabox
+            add_meta_box( $this->taxonomy . '_course_mb', __('Course Modules', 'woothemes-sensei'), array( $this, 'course_module_metabox'), 'course', 'side', 'core');
         }
     }
 
@@ -1743,7 +1756,7 @@ class Sensei_Core_Modules
 
                     }else{
 
-                        $owners[] = $author;
+                        $owners[ ] = $author;
 
                     } // end if author
 
@@ -1756,5 +1769,178 @@ class Sensei_Core_Modules
         return $owners;
 
     }// end get_term_author
+
+    /**
+     * Display the Sensei modules taxonomy terms metabox
+     *
+     * @since 1.8.0
+     *
+     * @hooked into add_meta_box
+     *
+     * @param WP_Post $post Post object.
+     */
+    public function course_module_metabox( $post ) {
+
+        $tax_name = 'module';
+        $taxonomy = get_taxonomy( 'module' );
+
+        ?>
+        <div id="taxonomy-<?php echo $tax_name; ?>" class="categorydiv">
+            <ul id="<?php echo $tax_name; ?>-tabs" class="category-tabs">
+                <li class="tabs"><a href="#<?php echo $tax_name; ?>-all"><?php echo $taxonomy->labels->all_items; ?></a></li>
+                <li class="hide-if-no-js"><a href="#<?php echo $tax_name; ?>-pop"><?php _e( 'Most Used' ); ?></a></li>
+            </ul>
+
+            <div id="<?php echo $tax_name; ?>-pop" class="tabs-panel" style="display: none;">
+                <ul id="<?php echo $tax_name; ?>checklist-pop" class="categorychecklist form-no-clear" >
+                    <?php $popular_ids = wp_popular_terms_checklist( $tax_name ); ?>
+                </ul>
+            </div>
+
+            <div id="<?php echo $tax_name; ?>-all" class="tabs-panel">
+                <?php
+                $name = ( $tax_name == 'category' ) ? 'post_category' : 'tax_input[' . $tax_name . ']';
+                echo "<input type='hidden' name='{$name}[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
+                ?>
+                <ul id="<?php echo $tax_name; ?>checklist" data-wp-lists="list:<?php echo $tax_name; ?>" class="categorychecklist form-no-clear">
+                    <?php wp_terms_checklist( $post->ID, array( 'taxonomy'=>$tax_name , 'popular_cats' => $popular_ids ) ); ?>
+                </ul>
+            </div>
+            <?php if ( current_user_can( $taxonomy->cap->edit_terms ) ) : ?>
+                <div id="<?php echo $tax_name; ?>-adder" class="wp-hidden-children">
+                    <h4>
+                        <a id="sensei-<?php echo $tax_name; ?>-add-toggle" href="#<?php echo $tax_name; ?>-add" class="hide-if-no-js">
+                            <?php
+                            /* translators: %s: add new taxonomy label */
+                            printf( __( '+ %s' ), $taxonomy->labels->add_new_item );
+                            ?>
+                        </a>
+                    </h4>
+                    <p id="sensei-<?php echo $tax_name; ?>-add" class="category-add wp-hidden-child">
+                        <label class="screen-reader-text" for="new<?php echo $tax_name; ?>"><?php echo $taxonomy->labels->add_new_item; ?></label>
+                        <input type="text" name="new<?php echo $tax_name; ?>" id="new<?php echo $tax_name; ?>" class="form-required form-input-tip" value="<?php echo esc_attr( $taxonomy->labels->new_item_name ); ?>" aria-required="true"/>
+                        <a class="button" id="sensei-<?php echo $tax_name; ?>-add-submit" class="button category-add-submit"><?php echo esc_attr( $taxonomy->labels->add_new_item ); ?></a>
+                        <?php wp_nonce_field( '_ajax_nonce-add-' . $tax_name, 'add_module_nonce' ); ?>
+                        <span id="<?php echo $tax_name; ?>-ajax-response"></span>
+                    </p>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php
+
+    } // end course_module_metabox
+
+
+    /**
+     * Submits a new module term prefixed with the
+     * the current author id.
+     *
+     * @since 1.8.0
+     */
+    public static function add_new_module_term( ) {
+
+
+        if( ! isset( $_POST[ 'security' ] ) || ! wp_verify_nonce( $_POST[ 'security' ], '_ajax_nonce-add-module'  ) ){
+            wp_send_json_error( array('error'=> 'wrong security nonce') );
+        }
+
+        // get the term an create the new term storing infomration
+        $term_name = sanitize_text_field( $_POST['newTerm'] );
+        $term_slug =  get_current_user_id() . '-' . str_ireplace(' ', '-', trim( $term_name ) );
+        $course_id = sanitize_text_field( $_POST['course_id'] );
+
+        // save the term
+        $slug = wp_insert_term( $term_name,'module', array('slug'=> $term_slug)  );
+
+        // send error for all errors except term exits
+        if( is_wp_error( $slug ) ){
+
+            // prepare for possible term name and id to be passed down if term exists
+            $term_data = array();
+
+            // if term exists also send back the term name and id
+            if( isset( $slug->errors['term_exists'] ) ){
+
+                $term = get_term_by( 'slug', $term_slug, 'module');
+                $term_data['name'] = $term_name;
+                $term_data['id'] = $term->term_id;
+
+                // set the object terms
+                wp_set_object_terms( $course_id, $term->term_id, 'module', true );
+            }
+
+            wp_send_json_error(array( 'errors'=>$slug->errors , 'term'=> $term_data ) );
+
+        }
+
+        //make sure the new term is checked for this course
+
+        wp_set_object_terms( $course_id, $slug['term_id'], 'module', true );
+
+        // Handle request then generate response using WP_Ajax_Response
+        wp_send_json_success( array( 'termId' => $slug['term_id'], 'termName' => $term_name ) );
+
+    }
+
+    /**
+     * Limit the course module metabox
+     * term list to only those on courses belonging to current teacher.
+     *
+     * @since 1.8.0
+     */
+    public function limit_course_module_metabox_terms( $terms, $taxonomies, $args ){
+
+        //dont limit for admins and other taxonomies
+        if( current_user_can( 'manage_options' ) || !in_array( 'module', $taxonomies )  ){
+            return $terms;
+        }
+
+        // avoid infinite call loop
+        remove_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
+
+        $teacher_id = get_current_user_id();
+        $teachers_terms = array();
+        foreach( $terms as $index => $term ){
+
+            // in certain cases the array is passed in as reference to the parent
+            if( isset( $args['fields'] ) && 'id=>parent' == $args['fields'] ){
+                $term = $index;
+            }
+
+            if( is_numeric( $term ) ){
+                // the term id was given, get the term object
+                $term = get_term( $term, 'module' );
+            }
+
+            $authors = Sensei_Core_Modules::get_term_authors( $term->name );
+            if( !empty( $authors ) ) {
+                foreach ($authors as $author) {
+
+                    if ( $teacher_id != $author->ID ) {
+                        continue; // skip this term
+                    }
+
+                    // add the term to the teachers terms
+                    $teachers_terms[] = $term;
+                }
+            }
+        }
+
+        // avoid infinite call loop
+        add_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
+
+        return $teachers_terms;
+    }// limit_course_module_metabox_terms
+
+    /**
+     * Remove modules metabox that come by default
+     * with the modules taxonomy. We are removing this as
+     * we have created our own custom meta box.
+     */
+    public static function remove_default_modules_box() {
+
+        remove_meta_box('modulediv', 'course', 'side');
+
+    }
 
 } // end modules class

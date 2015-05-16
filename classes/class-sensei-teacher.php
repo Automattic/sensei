@@ -94,9 +94,6 @@ class Sensei_Teacher {
         // update lesson owner to course teacher when saved
         add_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
 
-        // only show taxomonomies belogning to teachers term group
-        add_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
-
     } // end __constructor()
 
     /**
@@ -447,52 +444,7 @@ class Sensei_Teacher {
 
     }// end update_course_lessons_author
 
-    /**
-     * Sensei_Teacher::limit_teacher_edit_screen_post_types
-     *
-     * Limit teachers to only see their courses, lessons and questions
-     *
-     * @since 1.8.0
-     * @access public
-     * @parameters array $wp_query
-     * @return WP_Query $wp_query
-     */
-    public function limit_teacher_edit_screen_post_types( $wp_query ) {
-        global $current_user;
 
-        //exit early
-        if( ! $this->is_admin_teacher() ){
-            return $wp_query;
-        }
-
-        if ( ! function_exists( 'get_current_screen' ) ) {
-            return $wp_query;
-        }
-
-        $screen = get_current_screen();
-
-        if( empty( $screen ) ){
-            return $wp_query;
-        }
-
-        // for any of these conditions limit what the teacher will see
-        $limit_screens = array(
-            'edit-lesson',
-            'edit-course',
-            'edit-question',
-            'course_page_course-order',
-            'lesson_page_lesson-order',
-        );
-
-        if(  in_array($screen->id  , $limit_screens ) ) {
-
-            // set the query author to the current user to only show those those posts
-            $wp_query->set( 'author', $current_user->ID );
-        }
-
-        return $wp_query;
-
-    } // end limit_teacher_edit_screen_post_types()
 
     /**
      * Sensei_Teacher::course_analysis_teacher_access_limit
