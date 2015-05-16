@@ -1709,8 +1709,9 @@ class Sensei_Core_Modules
     }// end remove courses module tax
 
     /**
-     * Determine the author of a modules taxonomy term by looking at
-     * the prefixed author id.  Will return the admin user author could not be determined.
+     * Determine the author of a module term term by looking at
+     * the prefixed author id. This function will query the full term object.
+     * Will return the admin user author could not be determined.
      *
      * @since 1.8.0
      *
@@ -1729,38 +1730,14 @@ class Sensei_Core_Modules
         }
 
         // setup the admin user
-        $admin_user = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
+
 
         //if there are more handle them appropriately and get the ones we really need that matches the desired name exactly
         foreach( $terms as $term){
             if( $term->name == $term_name ){
 
                 // look for the author in the slug
-                $slug_parts = explode( '-', $term->slug );
-
-                if( ! ( count( $slug_parts ) > 1 ) ){
-
-                    $owners[] = $admin_user;
-
-                }else{
-
-                    // get the user data
-                    $possible_user_id = $slug_parts[0];
-                    $author = get_userdata( $possible_user_id );
-
-                    // if the user doesnt exist for the first part of the slug
-                    // then this slug was also created by admin
-                    if( ! $author ){
-
-                        $owners[] = $admin_user;
-
-                    }else{
-
-                        $owners[ ] = $author;
-
-                    } // end if author
-
-                }// end if slug parts
+                $owners[] = Sensei_Core_Modules::get_term_author( $term->slug  );
 
             }// end if term name
 
@@ -1769,6 +1746,48 @@ class Sensei_Core_Modules
         return $owners;
 
     }// end get_term_author
+
+    /**
+     * Looks at a term slug and figures out
+     * which author created the slug. The author was
+     * appended when the user saved the module term in the course edit
+     * screen.
+     *
+     * @since 1.8.0
+     *
+     * @param $slug
+     * @return WP_User $author if no author is found or invalid term is passed the admin user will be returned.
+     */
+    public static function get_term_author( $slug='' ){
+
+        $term_owner = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
+
+        if( empty( $slug ) ){
+
+            return $term_owner;
+
+        }
+
+        // look for the author in the slug
+        $slug_parts = explode( '-', $slug );
+
+        if( count( $slug_parts ) > 1 ){
+
+            // get the user data
+            $possible_user_id = $slug_parts[0];
+            $author = get_userdata( $possible_user_id );
+
+            // if the user doesnt exist for the first part of the slug
+            // then this slug was also created by admin
+            if( is_a( $author, 'WP_User' ) ){
+
+                $term_owner =  $author;
+
+            }
+        }
+
+        return $term_owner;
+    }
 
     /**
      * Display the Sensei modules taxonomy terms metabox
@@ -1890,8 +1909,8 @@ class Sensei_Core_Modules
      */
     public function limit_course_module_metabox_terms( $terms, $taxonomies, $args ){
 
-        //dont limit for admins and other taxonomies
-        if( current_user_can( 'manage_options' ) || !in_array( 'module', $taxonomies )  ){
+        //dont limit for admins and other taxonomies. This should also only apply to admin
+        if( current_user_can( 'manage_options' ) || !in_array( 'module', $taxonomies ) || ! is_admin()  ){
             return $terms;
         }
 
