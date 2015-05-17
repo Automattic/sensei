@@ -75,6 +75,6 @@ Tested up to: 4.1.1
     function activate_sensei () {
 
         // create the teacher role on activation and ensure that it has all the needed capabilities
-        Sensei()->teacher->activate_role();
+        Sensei()->teacher->create_role();
 
     }// end activate_sensei
