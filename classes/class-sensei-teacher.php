@@ -296,12 +296,12 @@ class Sensei_Teacher {
 
     }// end get_teachers_and_authors
 
-
-
     /**
      * Sensei_Teacher::save_teacher_meta_box
      *
-     * Hook into admin_init and save the new teacher to all course lessons
+     * Save the new teacher / author to course and all lessons
+     *
+     * Hooked into admin_init
      *
      * @since 1.8.0
      * @access public

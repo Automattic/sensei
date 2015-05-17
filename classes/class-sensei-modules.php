@@ -1716,7 +1716,7 @@ class Sensei_Core_Modules
      * @since 1.8.0
      *
      * @param string $term_name
-     * @return array $owners { typ WP_User }. Empty array if none if found.
+     * @return array $owners { type WP_User }. Empty array if none if found.
      */
     public static function get_term_authors( $term_name ){
 
@@ -1945,7 +1945,7 @@ class Sensei_Core_Modules
             }
         }
 
-        // avoid infinite call loop
+        // add filter again as removed above
         add_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
 
         return $teachers_terms;
