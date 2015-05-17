@@ -107,7 +107,8 @@ class Sensei_Core_Modules
         add_action( 'wp_ajax_sensei_add_new_module_term', array( 'Sensei_Core_Modules','add_new_module_term' ) );
 
         // for non admin users, only show taxonomies that belong to them
-        add_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
+        add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
+        add_filter('get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
 
         // remove the default modules  metabox
         add_action('admin_init',array( 'Sensei_Core_Modules' , 'remove_default_modules_box' ));
@@ -1905,9 +1906,11 @@ class Sensei_Core_Modules
      * Limit the course module metabox
      * term list to only those on courses belonging to current teacher.
      *
+     * Hooked into 'get_terms'
+     *
      * @since 1.8.0
      */
-    public function limit_course_module_metabox_terms( $terms, $taxonomies, $args ){
+    public function filter_module_terms( $terms, $taxonomies, $args ){
 
         //dont limit for admins and other taxonomies. This should also only apply to admin
         if( current_user_can( 'manage_options' ) || !in_array( 'module', $taxonomies ) || ! is_admin()  ){
@@ -1915,41 +1918,88 @@ class Sensei_Core_Modules
         }
 
         // avoid infinite call loop
-        remove_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
+        remove_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
 
-        $teacher_id = get_current_user_id();
-        $teachers_terms = array();
+        // in certain cases the array is passed in as reference to the parent term_id => parent_id
+        if( isset( $args['fields'] ) && 'id=>parent' == $args['fields'] ){
+            // change only scrub the terms ids form the array keys
+            $terms = array_keys( $terms );
+        }
+
+        $teachers_terms =  $this->filter_terms_by_owner( $terms, get_current_user_id() );
+
+        // add filter again as removed above
+        add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
+
+        return $teachers_terms;
+    }// end filter_module_terms
+
+    /**
+     *
+     *
+     * hooked into get_object_terms
+     *
+     * @since 1.8.0
+     */
+    public function filter_course_selected_terms( $terms, $course_ids_array, $taxonomies ){
+
+        //dont limit for admins and other taxonomies. This should also only apply to admin
+        if( current_user_can( 'manage_options' ) || ! is_admin() || empty( $terms )
+            // only apply this to module only taxonomy queries so 1 taxonomy only:
+            ||  count( $taxonomies ) > 1 || !in_array( 'module', $taxonomies )  ){
+            return $terms;
+        }
+
+        $term_objects = $this->filter_terms_by_owner( $terms, get_current_user_id() );
+
+        // if term objects were passed in send back objects
+        // if term id were passed in send that back
+        if( is_object( $terms[0] ) ){
+            return $term_objects;
+        }
+
+        $terms = array();
+        foreach( $term_objects as $term_object ){
+            $terms[] = $term_object->term_id;
+        }
+
+        return $terms;
+
+
+    }// end filter_course_selected_terms
+
+    /**
+     * Filter the given terms and only return the
+     * terms that belong to the given author.
+     *
+     * @since 1.8.0
+     * @param $terms
+     * @param $user_id
+     * @return array
+     */
+    public function filter_terms_by_owner( $terms, $user_id ){
+
+        $users_terms = array();
+
         foreach( $terms as $index => $term ){
-
-            // in certain cases the array is passed in as reference to the parent
-            if( isset( $args['fields'] ) && 'id=>parent' == $args['fields'] ){
-                $term = $index;
-            }
 
             if( is_numeric( $term ) ){
                 // the term id was given, get the term object
                 $term = get_term( $term, 'module' );
             }
 
-            $authors = Sensei_Core_Modules::get_term_authors( $term->name );
-            if( !empty( $authors ) ) {
-                foreach ($authors as $author) {
+            $author = Sensei_Core_Modules::get_term_author( $term->slug );
 
-                    if ( $teacher_id != $author->ID ) {
-                        continue; // skip this term
-                    }
-
-                    // add the term to the teachers terms
-                    $teachers_terms[] = $term;
-                }
+            if ( $user_id != $author->ID ) {
+                // add the term to the teachers terms
+                $users_terms[] = $term;
             }
+
         }
 
-        // add filter again as removed above
-        add_filter('get_terms', array( $this, 'limit_course_module_metabox_terms' ), 20, 3 );
+        return $users_terms;
 
-        return $teachers_terms;
-    }// limit_course_module_metabox_terms
+    } // end filter terms by owner
 
     /**
      * Remove modules metabox that come by default

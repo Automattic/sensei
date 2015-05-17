@@ -75,6 +75,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
         ));
         $term_authors = Sensei_Core_Modules::get_term_authors( 'Get Started' );
         $this->assertTrue( 2 == count( $term_authors ), 'The function should admin user for normal module term.' );
+
     }
 
 } // end class

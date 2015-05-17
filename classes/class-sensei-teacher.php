@@ -1238,44 +1238,50 @@ class Sensei_Teacher {
     } // end update_lesson_teacher
 
     /**
-     * Limit the course module metabox
-     * term list to only those on courses belonging to current teacher.
+     * Sensei_Teacher::limit_teacher_edit_screen_post_types
+     *
+     * Limit teachers to only see their courses, lessons and questions
      *
      * @since 1.8.0
+     * @access public
+     * @parameters array $wp_query
+     * @return WP_Query $wp_query
      */
-    public function limit_course_module_metabox_terms( $terms, $taxonomies, $args ){
+    public function limit_teacher_edit_screen_post_types( $wp_query ) {
+        global $current_user;
 
-        if( ! $this->is_admin_teacher() || !in_array( 'module', $taxonomies )  ){
-            return $terms;
+        //exit early
+        if( ! $this->is_admin_teacher() ){
+            return $wp_query;
         }
 
-        $teacher_id = get_current_user_id();
-        $teachers_terms = array();
-        foreach( $terms as $term ){
-
-            if( $teacher_id != $term->term_group ){
-                continue; // skip empty terms
-            }
-
-            // add the term to the teachers terms
-            $teachers_terms[] = $term;
+        if ( ! function_exists( 'get_current_screen' ) ) {
+            return $wp_query;
         }
 
-        return $teachers_terms;
-    }// limit_course_module_metabox_terms
+        $screen = get_current_screen();
 
-    /**
-     * Update the term group and set it
-     * to be the teacher ID
-     *
-     * @since 1.8.0
-     * @param $term_id
-     * @param $teacher_id
-     */
-    public function update_module_term_teacher( $term_id, $teacher_id ){
+        if( empty( $screen ) ){
+            return $wp_query;
+        }
 
-        $args = array( 'term_group' => $teacher_id );
-        wp_update_term( $term_id, 'module', $args );
+        // for any of these conditions limit what the teacher will see
+        $limit_screens = array(
+            'edit-lesson',
+            'edit-course',
+            'edit-question',
+            'course_page_course-order',
+            'lesson_page_lesson-order',
+        );
 
-    }
+        if(  in_array($screen->id  , $limit_screens ) ) {
+
+            // set the query author to the current user to only show those those posts
+            $wp_query->set( 'author', $current_user->ID );
+        }
+
+        return $wp_query;
+
+    } // end limit_teacher_edit_screen_post_types()
+
 } // End Class
