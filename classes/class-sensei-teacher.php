@@ -333,9 +333,6 @@ class Sensei_Teacher {
             return;
         }
 
-        // update the module course author
-        $this->update_course_module_terms_teacher( $course_id , $current_author ,$new_author );
-
         // save the course  author
         $post_updates = array(
             'ID' => $post->ID ,
@@ -343,41 +340,63 @@ class Sensei_Teacher {
         );
         wp_update_post( $post_updates );
 
+        // ensure the the modules are update so that then new teacher has access to them
+        Sensei_Teacher::update_course_modules_author( $course_id, $new_author );
+
         // notify the new teacher
         $this->teacher_course_assigned_notification( $new_author, $course_id );
 
     } // end save_teacher_meta_box
 
     /**
-     * Update all the course terms. Set the group to the new Id.
+     * Update all the course terms set on the given course. Moving course term ownership to
+     * the new author. Making sure the course terms are maintained.
      *
      * This function also checks if terms are shared, with other courses
      *
      * @param $course_id
-     * @param $current_teacher_id
      * @param $new_teacher_id
+     * @return void
      */
-    public function update_course_module_terms_teacher( $course_id, $current_teacher_id ,$new_teacher_id ){
+    public static function update_course_modules_author( $course_id ,$new_teacher_id ){
 
         if( empty( $course_id ) || empty( $new_teacher_id ) ){
+            return false;
+        }
+
+        $terms_selected_on_course = wp_get_object_terms( $course_id, 'module' );
+
+        if( empty( $terms_selected_on_course ) ){
             return;
         }
 
-        $terms = get_terms('module');
+        foreach( $terms_selected_on_course as $term ){
+            $term_author = Sensei_Core_Modules::get_term_author( $term->slug );
+            if( $new_teacher_id != $term_author->ID  ){
 
-        if( empty( $terms ) ){
-            return;
-        }
+                //setup the new slug
+                $new_author_term_slug =  $new_teacher_id . '-' . str_ireplace(' ', '-', trim( $term->name ) );
 
-        foreach( $terms as $term ){
+                // create new term and set it
+                $term = wp_insert_term( $term->name,'module', array('slug'=> $new_author_term_slug )  );
 
-            if( $current_teacher_id != $term->term_group ){
-                continue; // skip  terms not belonging to this teacher
+                // if term exists
+                if( is_wp_error( $term ) && isset( $term->errors['term_exists'] ) ){
+
+                    $existing_term = get_term_by( 'slug', $new_author_term_slug, 'module');
+                    $term_id = $existing_term->term_id;
+
+                }else{
+
+                    // for a new term simply get the term from the returned value
+                    $term_id = $term['term_id'];
+
+                } // end if term exist
+
+                // set the terms selected on the course
+                wp_set_object_terms( $course_id, $term_id , 'module', true );
+
             }
-
-            // update term group/teacher
-            $this->update_module_term_teacher(  $term->term_id, $new_teacher_id );
-            //wp_set_object_terms( $course_id , $term->term_id, 'module' );
         }
 
     }// end update_course_module_terms_author
