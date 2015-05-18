@@ -110,8 +110,12 @@ class Sensei_Core_Modules
         add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
         add_filter('get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
 
+        // add the teacher name next to the module term in for admin users
+        add_filter('get_terms', array( $this, 'append_teacher_name_to_module' ), 70, 3 );
+
         // remove the default modules  metabox
         add_action('admin_init',array( 'Sensei_Core_Modules' , 'remove_default_modules_box' ));
+
 
     } // end constructor
 
@@ -2000,6 +2004,50 @@ class Sensei_Core_Modules
         return $users_terms;
 
     } // end filter terms by owner
+
+    /**
+     * Add the teacher name next to modules. Only works in Admin for Admin users.
+     * This will not add name to terms belonging to admin user.
+     *
+     * Hooked into 'get_terms'
+     *
+     * @since 1.8.0
+     */
+    public function append_teacher_name_to_module( $terms, $taxonomies, $args )
+    {
+
+        // only for admin users ont he module taxonomy
+        if (!current_user_can('manage_options') || !in_array('module', $taxonomies) || !is_admin()) {
+            return $terms;
+        }
+
+        // in certain cases the array is passed in as reference to the parent term_id => parent_id
+        if (isset($args['fields']) && 'id=>parent' == $args['fields']) {
+            // change only scrub the terms ids form the array keys
+            $terms = array_keys($terms);
+        }
+
+        // loop through and update all ters adding the author name
+        foreach( $terms as $index => $term ){
+
+            if( is_numeric( $term ) ){
+                // the term id was given, get the term object
+                $term = get_term( $term, 'module' );
+            }
+
+            $author = Sensei_Core_Modules::get_term_author( $term->slug );
+
+            if( ! user_can( $author, 'manage_options' ) ) {
+                $term->name = $term->name . ' (' . $author->display_name . ') ';
+            }
+
+            // add the term to the teachers terms
+            $users_terms[] = $term;
+
+        }
+
+        return $users_terms;
+    }
 
     /**
      * Remove modules metabox that come by default
