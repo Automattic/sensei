@@ -1939,7 +1939,8 @@ class Sensei_Core_Modules
     }// end filter_module_terms
 
     /**
-     *
+     * For the selected items on a course module only return those
+     * for the current user. This does not apply to admin and super admin users.
      *
      * hooked into get_object_terms
      *
