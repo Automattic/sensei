@@ -349,7 +349,7 @@ class Sensei_Teacher {
     } // end save_teacher_meta_box
 
     /**
-     * Update all the course terms set on the given course. Moving course term ownership to
+     * Update all the course terms set(selected) on the given course. Moving course term ownership to
      * the new author. Making sure the course terms are maintained.
      *
      * This function also checks if terms are shared, with other courses
@@ -371,6 +371,7 @@ class Sensei_Teacher {
         }
 
         foreach( $terms_selected_on_course as $term ){
+
             $term_author = Sensei_Core_Modules::get_term_author( $term->slug );
             if( $new_teacher_id != $term_author->ID  ){
 
