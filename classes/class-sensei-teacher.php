@@ -379,10 +379,10 @@ class Sensei_Teacher {
                 $new_author_term_slug =  $new_teacher_id . '-' . str_ireplace(' ', '-', trim( $term->name ) );
 
                 // create new term and set it
-                $term = wp_insert_term( $term->name,'module', array('slug'=> $new_author_term_slug )  );
+                $new_term = wp_insert_term( $term->name,'module', array('slug'=> $new_author_term_slug )  );
 
                 // if term exists
-                if( is_wp_error( $term ) && isset( $term->errors['term_exists'] ) ){
+                if( is_wp_error( $new_term ) && isset( $new_term->errors['term_exists'] ) ){
 
                     $existing_term = get_term_by( 'slug', $new_author_term_slug, 'module');
                     $term_id = $existing_term->term_id;
@@ -390,12 +390,25 @@ class Sensei_Teacher {
                 }else{
 
                     // for a new term simply get the term from the returned value
-                    $term_id = $term['term_id'];
+                    $term_id = $new_term['term_id'];
 
                 } // end if term exist
 
                 // set the terms selected on the course
                 wp_set_object_terms( $course_id, $term_id , 'module', true );
+
+                // update the lessons within the current module term
+                $lessons = Sensei()->course->course_lessons( $course_id );
+                foreach( $lessons as $lesson  ){
+
+                    if( has_term( $term->slug, 'module', $lesson ) ){
+
+                        // add the new term, the false at the end says to replace all terms on this module
+                        // with the new term.
+                        wp_set_object_terms( $lesson->ID, $term_id , 'module', false );
+                    }
+
+                }// end for each
 
             }
         }
