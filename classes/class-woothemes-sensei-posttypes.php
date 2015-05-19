@@ -269,7 +269,7 @@ class WooThemes_Sensei_PostTypes {
 			    'public' => true,
 			    'publicly_queryable' => true,
 			    'show_ui' => true,
-			    'show_in_menu' => 'admin.php?page=sensei',
+			    'show_in_menu' => 'sensei',
 			    'show_in_nav_menus' => true,
 			    'query_var' => true,
 			    'exclude_from_search' => true,
