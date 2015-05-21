@@ -32,13 +32,6 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	public $lesson_id = 0;
 	public $view = 'courses';
 	public $page_slug = 'sensei_learners';
-	/**
-	 * @var int $total_items
-	 *
-	 * Used for storing the total number of items available for the given query
-	 * also used for generating the pagination.
-	 */
-	protected $total_items  =  0;
 
 	/**
 	 * Constructor
