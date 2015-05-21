@@ -462,7 +462,9 @@ class Sensei_Core_Modules
         if (is_singular('lesson')) {
             if (has_term('', $this->taxonomy, $post->ID)) {
                 $module = $this->get_lesson_module($post->ID);
-                $html .= ' ' . $separator . ' <a href="' . esc_url($module->url) . '" title="' . esc_attr(apply_filters('sensei_back_to_module_text', __('Back to the module', 'woothemes-sensei'))) . '">' . $module->name . '</a>';
+                if( $module ) {
+                    $html .= ' ' . $separator . ' <a href="' . esc_url($module->url) . '" title="' . esc_attr(apply_filters('sensei_back_to_module_text', __('Back to the module', 'woothemes-sensei'))) . '">' . $module->name . '</a>';
+                }
             }
         }
         // Module
@@ -1161,7 +1163,7 @@ class Sensei_Core_Modules
             return false;
         }
 
-       // get the last item in the array there should be only really.
+       // get the last item in the array there should be only be 1 really.
        // this method works for all php versions.
        foreach( $modules as $module ){
            break;
