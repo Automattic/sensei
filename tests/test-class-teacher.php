@@ -102,6 +102,14 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 
         }
 
+        // modules should be removed from the course
+        foreach( $updated_module_terms as $term ){
+
+            // skip $term_start and $term_end
+            $this->assertFalse( $term_start['term_id'] == $term->term_id ||  $term_end['term_id'] ==  $term->term_id,
+                'The old modules should no longer be on the course' );
+        }
+
         // reset current user for other tests
         wp_set_current_user( $current_user );
 
