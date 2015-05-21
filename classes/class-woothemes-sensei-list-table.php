@@ -39,6 +39,14 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public $csv_output = false;
 
 	/**
+	 * Used for storing the string of a search for passing between functions
+	 *
+	 * @var string $search
+	 * @access public
+	 */
+	public $search = false;
+
+	/**
 	 * Used for storing the total number of items available for the given query
 	 * also used for generating the pagination.
 	 *
