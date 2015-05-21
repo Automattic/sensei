@@ -32,7 +32,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 	public $type;
-	public $csv_output = false;
 	public $page_slug = 'sensei_analysis';
 
 	/**

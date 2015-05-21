@@ -30,7 +30,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WooThemes_Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	public $lesson_id;
 	public $course_id;
-	public $csv_output = false;
 	public $page_slug = 'sensei_analysis';
 
 	/**
