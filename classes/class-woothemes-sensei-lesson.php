@@ -2779,18 +2779,23 @@ class WooThemes_Sensei_Lesson {
         // this happens only once per user/quiz, unless the user resets the quiz
         if( ! is_admin() ){
             $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
-            $questions_asked =  get_comment_meta( $user_lesson_status->comment_ID , 'questions_asked', true );
+            if( $user_lesson_status ) {
 
-            if( empty( $questions_asked ) ){
-                $questions_asked = array();
-                foreach( $questions as $question ){
-                    $questions_asked[] = $question->ID;
+                $questions_asked = get_comment_meta($user_lesson_status->comment_ID, 'questions_asked', true);
+                if ( empty($questions_asked) && $user_lesson_status) {
+
+                    $questions_asked = array();
+                    foreach ($questions as $question) {
+
+                        $questions_asked[] = $question->ID;
+
+                    }
+
+                    // save the questions asked id
+                    $questions_asked_csv = implode(',', $questions_asked);
+                    update_comment_meta($user_lesson_status->comment_ID, 'questions_asked', $questions_asked_csv);
+
                 }
-
-                // save the questions asked id
-                $questions_asked_csv = implode(',',$questions_asked );
-                update_comment_meta( $user_lesson_status->comment_ID , 'questions_asked', $questions_asked_csv );
-
             }
         }
 
