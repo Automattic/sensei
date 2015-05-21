@@ -503,7 +503,10 @@ class Sensei_Teacher {
         $sensei_post_types = array('course', 'lesson', 'question' );
 
         // exit early for the following conditions
-        if( ! $this->is_admin_teacher() || empty( $screen ) ||'sensei_page_sensei_analysis' != $screen->id || ! in_array( $query->query['post_type'], $sensei_post_types ) ){
+        $limit_screen_ids = array( 'sensei_page_sensei_analysis', 'course_page_module-order' );
+
+        if( ! $this->is_admin_teacher() || empty( $screen ) || ! in_array( $screen->id ,$limit_screen_ids )
+            || ! in_array( $query->query['post_type'], $sensei_post_types ) ){
             return $query;
         }
 

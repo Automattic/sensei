@@ -874,12 +874,7 @@ class Sensei_Core_Modules
             }
         }
 
-        $args = array(
-            'post_type' => 'course',
-            'post_status' => array('publish', 'draft', 'future', 'private'),
-            'posts_per_page' => -1
-        );
-        $courses = get_posts($args);
+        $courses = Sensei()->course->get_all_courses();
 
         $html .= '<form action="' . admin_url('edit.php') . '" method="get">' . "\n";
         $html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
