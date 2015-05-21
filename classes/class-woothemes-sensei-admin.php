@@ -1118,6 +1118,14 @@ class WooThemes_Sensei_Admin {
 
 				if( 0 < count( $lessons ) ) {
 
+                    //get module term ids, will be used to exclude lessons
+                    $module_items_ids = array();
+                    if( ! empty( $modules ) ) {
+                        foreach ($modules as $module) {
+                            $module_items_ids[] = $module->term_id;
+                        }
+                    }
+
 					if( 0 < count( $displayed_lessons ) ) {
 						$html .= '<h3>' . __( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
 					}
@@ -1125,12 +1133,23 @@ class WooThemes_Sensei_Admin {
 					$html .= '<ul class="sortable-lesson-list" data-module_id="0">' . "\n";
 					$count = 0;
 					foreach ( $lessons as $lesson ) {
+
+                        // if lesson belongs to one fo the course modules then exclude it here
+                        // as it is listed above
+                        if( has_term( $module_items_ids, 'module', $lesson->ID )  ){
+
+                            continue;
+
+                        }
+
 						$count++;
 						$class = 'lesson';
 						if ( $count == 1 ) { $class .= ' first'; }
 						if ( $count == count( $lesson ) ) { $class .= ' last'; }
 						if ( $count % 2 != 0 ) {
+
 							$class .= ' alternate';
+
 						}
 						$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
 
