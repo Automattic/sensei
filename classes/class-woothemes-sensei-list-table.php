@@ -31,6 +31,15 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public $token;
 
 	/**
+	 * Used for storing the total number of items available for the given query
+	 * also used for generating the pagination.
+	 *
+	 * @var int $total_items
+	 * @access public
+	 */
+	public $total_items = 0;
+
+	/**
 	 * Constructor
 	 * @since  1.2.0
 	 * @return  void
