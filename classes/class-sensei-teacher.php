@@ -1259,26 +1259,5 @@ class Sensei_Teacher {
         return $teachers_terms;
     }// limit_course_module_metabox_terms
 
-    /**
-     * Add a module term group
-     * when a new taxonomy term is created
-     *
-     * @since 1.8.0
-     *
-     * @param $term_id
-     * @param $tt_id
-     * @param $taxonomy
-     *
-     * @return void
-     */
-    public function add_module_term_group( $term_id, $tt_id, $taxonomy ){
 
-        if( 'module' != $taxonomy ){
-            return;
-        }
-
-        $args = array( 'term_group' => get_current_user_id() );
-        wp_update_term( $term_id, 'module', $args );
-
-    }// end add_module_term_group
 } // End Class
