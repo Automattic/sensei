@@ -2599,20 +2599,32 @@ class WooThemes_Sensei_Lesson {
 
 
 	/**
-	 * Fetches all the questions for a quiz - probably the most complicated function in all of Sensei
+	 * Fetches all the questions for a quiz depending on certain conditions.
+     *
+     * Determine which questions should be shown depending on:
+     * - admin/teacher selected questions to be shown
+     * - questions shown to a user previously (saved as asked questions)
+     * - limit number of questions lesson setting
 	 *
-	 * @access public
+     * @since 1.0
 	 * @param int $quiz_id (default: 0)
 	 * @param string $post_status (default: 'publish')
 	 * @param string $orderby (default: 'meta_value_num title')
 	 * @param string $order (default: 'ASC')
-	 * @return void
+     *
+	 * @return array $questions { $question type WP_Post }
 	 */
 	public function lesson_quiz_questions( $quiz_id = 0, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) {
 
-		$questions = array();
-
 		$quiz_id = (string) $quiz_id;
+        $quiz_lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+
+        // setup the user id
+        if( is_admin() ) {
+            $user_id = isset( $_GET['user'] ) ? $_GET['user'] : '' ;
+        } else {
+            $user_id = get_current_user_id();
+        }
 
 		// Set the default quesiton order if it has not already been set for this quiz
 		$this->set_default_question_order( $quiz_id );
@@ -2626,7 +2638,7 @@ class WooThemes_Sensei_Lesson {
 		}
 
 		// Get all questions and multiple questions
-		$post_args = array(
+		$question_query_args = array(
 			'post_type' 		=> array( 'question', 'multiple_question' ),
 			'numberposts' 		=> -1,
 			'meta_key'        	=> '_quiz_question_order' . $quiz_id,
@@ -2641,24 +2653,21 @@ class WooThemes_Sensei_Lesson {
 			'post_status'		=> $post_status,
 			'suppress_filters' 	=> 0
 		);
-		$questions_array = get_posts( $post_args );
 
-		// Set return array to initially include all items
-		$questions = $questions_array;
+        //query the questions
+		$questions_query = new WP_Query( $question_query_args );
+
+        // Set return array to initially include all items
+        $questions = $questions_query->posts;
+
+        // set the questions array that will be manipulated within this function
+        $questions_array = $questions_query->posts;
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown
 		$selected_questions = false;
 		if( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' == $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
-			if( is_admin() ) {
-				$user_id = $_GET['user'];
-			} else {
-				global $current_user;
-				wp_get_current_user();
-				$user_id = $current_user->ID;
-			}
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it
-			$quiz_lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 			$lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
 			$questions_asked_string = !empty($lesson_status->comment_ID) ? get_comment_meta( $lesson_status->comment_ID, 'questions_asked', true ) : false;
 			if( !empty($questions_asked_string) ) {
@@ -2765,6 +2774,25 @@ class WooThemes_Sensei_Lesson {
 				}
 			}
 		}
+
+        // Save the questions that will be asked for the current user
+        // this happens only once per user/quiz, unless the user resets the quiz
+        if( ! is_admin() ){
+            $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
+            $questions_asked =  get_comment_meta( $user_lesson_status->comment_ID , 'questions_asked', true );
+
+            if( empty( $questions_asked ) ){
+                $questions_asked = array();
+                foreach( $questions as $question ){
+                    $questions_asked[] = $question->ID;
+                }
+
+                // save the questions asked id
+                $questions_asked_csv = implode(',',$questions_asked );
+                update_comment_meta( $user_lesson_status->comment_ID , 'questions_asked', $questions_asked_csv );
+
+            }
+        }
 
         /**
          * Filter the questions returned by Sensei_Lesson::lessons_quiz_questions

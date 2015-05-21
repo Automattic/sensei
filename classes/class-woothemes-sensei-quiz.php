@@ -208,10 +208,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		// were the answers saved correctly?
 		if( intval( $answers_saved ) > 0){
 
-            // questions asked stored because the quiz can show different questions for each learner
-            $questions_asked_string = implode( ',', array_keys( $quiz_answers ) );
-            update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_string );
-
             // save transient to make retrieval faster
             $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
             set_site_transient( $transient_key, $prepared_answers, 30 * DAY_IN_SECONDS );

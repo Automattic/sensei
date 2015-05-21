@@ -1710,9 +1710,9 @@ class WooThemes_Sensei_Utils {
 	 * Returns the requested lesson status
 	 *
 	 * @since 1.7.0
-	 * @param type $lesson_id
-	 * @param type $user_id
-	 * @return object
+	 * @param int $lesson_id
+	 * @param int $user_id
+	 * @return object | bool
 	 */
 	public static function user_lesson_status( $lesson_id = 0, $user_id = 0 ) {
 		global $woothemes_sensei;
