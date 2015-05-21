@@ -518,20 +518,40 @@ class WooThemes_Sensei_Frontend {
 		global $post;
 
 		if( is_singular( 'sensei_message' ) ) {
-			$content_post_id = get_post_meta( $post->ID, '_post', true );
+
+            $content_post_id = get_post_meta( $post->ID, '_post', true );
 			if( $content_post_id ) {
 				$title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), '<a href="' . get_permalink( $content_post_id ) . '">' . get_the_title( $content_post_id ) . '</a>' );
 			} else {
 				$title = get_the_title( $post->ID );
 			}
+
 		} elseif( is_singular('quiz') ){
 
             $title = get_the_title() . ' ' . __( 'Quiz', 'woothemes-sensei' );
 
         }else {
-			$title = get_the_title();
+
+            $title = get_the_title();
+
 		}
-		?><header><h1><?php echo $title; ?></h1></header><?php
+		?>
+        <header>
+            <h1>
+                <?php
+                /**
+                 * Filter Sensei single title
+                 *
+                 * @since 1.8.0
+                 * @param string $title
+                 * @param string $template
+                 * @param string $post_type
+                 */
+                echo apply_filters( 'sensei_single_title', $title, $post->post_type );
+                ?>
+            </h1>
+        </header>
+    <?php
 	} // End sensei_single_title()
 
 	/**
