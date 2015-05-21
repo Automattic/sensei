@@ -1221,7 +1221,13 @@ class WooThemes_Sensei_Frontend {
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 		$show_actions = true;
         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
-        $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+
+        //setup quiz grade
+        $user_quiz_grade = '';
+        if( ! empty( $user_lesson_status  ) ){
+            $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+        }
+
 
 		if( intval( $lesson_prerequisite ) > 0 ) {
 			// If the user hasn't completed the prereq then hide the current actions
