@@ -34,7 +34,6 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 	public $total_lessons;
 	public $user_ids;
 	public $view = 'lesson';
-	public $csv_output = false;
 	public $page_slug = 'sensei_analysis';
 
 	/**

@@ -31,6 +31,14 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	public $token;
 
 	/**
+	 * Used for indicating if the output is for csv or not
+	 *
+	 * @var bool $csv_output
+	 * @access public
+	 */
+	public $csv_output = false;
+
+	/**
 	 * Used for storing the total number of items available for the given query
 	 * also used for generating the pagination.
 	 *
