@@ -148,7 +148,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $woothemes_sensei, $per_page;
+		global $per_page;
 
 		// Handle orderby
 		$orderby = '';
@@ -544,7 +544,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
          * @param array $learners
          */
 		$learners = apply_filters( 'sensei_analysis_get_learners' ,$wp_user_search->get_results() );
-		$this->total_items = count( $learners );
+		$this->total_items = $wp_user_search->get_total();
 		return $learners;
 	} // End get_learners()
 
