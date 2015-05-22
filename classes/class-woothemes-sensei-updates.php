@@ -45,7 +45,7 @@ class WooThemes_Sensei_Updates {
 		$this->updates_run = get_option( $this->token . '-upgrades', array() );
 
 		// The list of upgrades to run
-		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => __( 'Assign role capbilities', 'woothemes-sensei' ), 'desc' => __( 'Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei' ), 'product' => 'Sensei' ) ),
+		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => __( 'Assign role capabilities', 'woothemes-sensei' ), 'desc' => __( 'Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei' ), 'product' => 'Sensei' ) ),
 													'manual' 	=> array()
 												),
 								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type' => array( 'title' => __( 'Set default quiz grade type', 'woothemes-sensei' ), 'desc' => __( 'Sets all quizzes to the default \'auto\' grade type.', 'woothemes-sensei' ) ),

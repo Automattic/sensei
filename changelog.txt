@@ -169,7 +169,7 @@
  * New - New Learner Management dashboard that allows administrators to add/remove learners to/from any course or lesson
  * New - Secure private message functionality that allows learners to contact and interact with course & lesson teachers
  * New - Email notifications for learner and teacher activity
- * New - Adding 'manage_sensei' and 'manage_sensei_grades' capbilities to govern how users interact with dashboard pages
+ * New - Adding 'manage_sensei' and 'manage_sensei_grades' capabilities to govern how users interact with dashboard pages
  * New - New 'Teacher' role that has the 'manage_sensei_grades' capability giving access to Grading, Analysis & Learner Management
  * New - Ability to set preview lessons that are available before starting a course
  * New - Ability to reorder all courses & lessons via drag-and-drop
