@@ -871,21 +871,22 @@ class Sensei_Teacher {
      * Limit the analysis view to only the users taking courses belong to this teacher
      *
      * Hooked into sensei_analysis_get_learners
-     * @param array $learners
-     * @return array $learners
+     * @param array $learners_query_results
+     * @return array $learners_query_results
      */
-    public function limit_analysis_learners( $learners ){
+    public function limit_analysis_learners( $learners_query_results ){
 
         // show default for none teachers
         if( ! Sensei()->teacher->is_admin_teacher() ) {
-                return $learners;
+                return $learners_query_results;
         }
 
+        // for teachers all courses only return those which belong to the teacher
         $courses = Sensei()->course->get_all_courses();
 
         if( empty( $courses ) ||  ! is_array( $courses ) ){
             $this->total_items = 0;
-            return array();
+            return $learners_query_results;
         }
 
         $all_learners_taking_teacher_courses = array();
@@ -894,16 +895,30 @@ class Sensei_Teacher {
             $learners_taking_this_course = array();
             $activity_comments =  WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course->ID, 'type' => 'sensei_course_status', 'field' => 'user_id' ), true );
 
-            if( empty( $activity_comments ) ||  ! ( intval( $activity_comments) > 0 ) ){
-                continue; // skip to the next course
+            if( empty( $activity_comments ) ||  ( is_array( $activity_comments  ) && ! ( count( $activity_comments ) > 0 ) ) ){
+                continue; // skip to the next course as there are no users on this course
             }
 
-            foreach( $activity_comments as $comment ){
-                $user = get_userdata( $comment->user_id );
-                if( empty( $user ) ){
-                    continue;
+            // it could be an array of comments or a single comment
+            if( is_array( $activity_comments ) ){
+
+                foreach( $activity_comments as $comment ){
+
+                    $user = get_userdata( $comment->user_id );
+
+                    if( empty( $user ) ){
+                        // next comment in this array
+                        continue;
+                    }
+
+                    $learners_taking_this_course[] = $user->data;
                 }
-                $learners_taking_this_course[] =  $user->data;
+
+            }else{
+
+                $user = get_userdata( $activity_comments->user_id );
+                $learners_taking_this_course[] = $user->data;
+
             }
 
             // add learners on this course to the all courses learner list
@@ -911,9 +926,26 @@ class Sensei_Teacher {
 
         }
 
-        return $all_learners_taking_teacher_courses;
+        // get the firs 20 elements in case there is no pagination
+        $current_results = array_slice( $all_learners_taking_teacher_courses, 0, 20 );
 
-        }// end limit_analysis_learners
+        // if Pagination is on and the number of course allow get that page
+        if( isset( $_GET['paged'] ) && intval( $_GET['paged'] ) > 1
+            && count( $all_learners_taking_teacher_courses ) > 20 ){
+
+            $page_number = $_GET[ 'paged' ];
+            $paged_starting_offset =  ( $page_number * 20 ) - 20;
+            $current_results = array_slice( $all_learners_taking_teacher_courses, $paged_starting_offset, 20 );
+
+        }
+
+        $learners_query_results->results =  $current_results;
+        $learners_query_results->total_users = count( $all_learners_taking_teacher_courses );
+
+        // return the WP_Use_Query results object
+        return $learners_query_results;
+
+    }// end limit_analysis_learners
 
     /**
      * Give teacher full admin access to the question post type

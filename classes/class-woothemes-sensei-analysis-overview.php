@@ -535,17 +535,26 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		// This stops the full meta data of each user being loaded
 		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' );
 
+        /**
+         * Filter the WP_User_Query arguments
+         *
+         * @param $args
+         */
 		$wp_user_search = new WP_User_Query( apply_filters( 'sensei_analysis_overview_filter_users', $args ) );
+
         /**
          * Filter the analysis user list
          *
          * @hooked Sensei_Teacher::limit_analysis_learners
          * @since 1.8.0
-         * @param array $learners
+         * @param WP_User_Query object $wp_user_search
          */
-		$learners = apply_filters( 'sensei_analysis_get_learners' ,$wp_user_search->get_results() );
+        $wp_user_search = apply_filters( 'sensei_analysis_get_learners' ,$wp_user_search );
+        $learners = $wp_user_search->get_results();
 		$this->total_items = $wp_user_search->get_total();
-		return $learners;
+
+        return $learners;
+
 	} // End get_learners()
 
 	/**
