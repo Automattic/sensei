@@ -859,6 +859,7 @@ class WooThemes_Sensei_Course {
         if( count( $lessons) > 1  ){
 
             foreach( $lessons as $lesson ){
+
                 $order = intval( get_post_meta( $lesson->ID, '_order_'. $course_id, true ) );
                 // for lessons with no order set it to be 10000 so that it show up at the end
                 $lesson->course_order = $order ? $order : 100000;
@@ -875,7 +876,21 @@ class WooThemes_Sensei_Course {
          * @param array $lessons
          * @param int $course_id
          */
-        return apply_filters( 'sensei_course_get_lessons', $lessons, $course_id  );
+        $lessons = apply_filters( 'sensei_course_get_lessons', $lessons, $course_id  );
+
+        //return the requested fields
+        // runs after the sensei_course_get_lessons filter so the filter always give an array of lesson
+        // objects
+        if( 'ids' == $fields ) {
+            $lesson_objects = $lessons;
+            $lessons = array();
+
+            foreach ($lesson_objects as $lesson) {
+                $lessons[] = $lesson->ID;
+            }
+        }
+
+        return $lessons;
 
 	} // End course_lessons()
 
