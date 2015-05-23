@@ -33,7 +33,7 @@ do_action( 'sensei_complete_course' );
 
 				do_action( 'sensei_before_learner_course_content', $learner_user );
 
-				echo WooThemes_Sensei_Course::load_user_courses_content( $learner_user, $manage );
+				echo Sensei()->course->load_user_courses_content( $learner_user, $manage );
 
 				do_action( 'sensei_after_learner_course_content', $learner_user );
 			}

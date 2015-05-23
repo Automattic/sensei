@@ -105,11 +105,6 @@ class WooThemes_Sensei {
 		$this->settings->setup_settings();
 		$this->settings->get_settings();
 
-		// Load Learner Profiles Class
-		$this->load_class( 'learner-profiles' );
-		$this->learner_profiles = new WooThemes_Sensei_Learner_Profiles();
-		$this->learner_profiles->token = $this->token;
-
 		// Load Course Results Class
 		$this->load_class( 'course-results' );
 		$this->course_results = new WooThemes_Sensei_Course_Results();
@@ -134,6 +129,11 @@ class WooThemes_Sensei {
         // load the modules class
         add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
 
+        // Load Learner Management Functionality
+        $this->load_class( 'learners' );
+        $this->learners = new WooThemes_Sensei_Learners( $file );
+        $this->learners->token = $this->token;
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 
@@ -146,12 +146,6 @@ class WooThemes_Sensei {
 			$this->load_class( 'analysis' );
 			$this->analysis = new WooThemes_Sensei_Analysis( $file );
 			$this->analysis->token = $this->token;
-
-			// Load Learner Management Functionality
-			$this->load_class( 'learners' );
-			$this->learners = new WooThemes_Sensei_Learners( $file );
-			$this->learners->token = $this->token;
-
 
 
 		} else {
@@ -181,7 +175,12 @@ class WooThemes_Sensei {
 		$this->emails = new WooThemes_Sensei_Emails( $file );
 		$this->emails->token = $this->token;
 
-		// Image Sizes
+        // Load Learner Profiles Class
+        $this->load_class( 'learner-profiles' );
+        $this->learner_profiles = new WooThemes_Sensei_Learner_Profiles();
+        $this->learner_profiles->token = $this->token;
+
+        // Image Sizes
 		$this->init_image_sizes();
 		// Force WooCommerce Required Settings
 		$this->set_woocommerce_functionality();
