@@ -1398,14 +1398,13 @@ class WooThemes_Sensei_Frontend {
 
                         }
 
-
                         // show a link to the my_courses page or the WordPress register page if
                         // not my courses page was set in the settings
                         if( !empty( $my_courses_page_id ) && $my_courses_page_id ){
 
-                            $my_courses_page_url = get_permalink( $my_courses_page_id  );
-                            $my_courses_page_html_element = '<a href="'.$my_courses_page_url. '">Register<a>';
-                            echo '<div class="status register">' . $my_courses_page_html_element . '</div>' ;
+                            $my_courses_url = get_permalink( $my_courses_page_id  );
+                            $register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';
+                            echo '<div class="status register">' . $register_link . '</div>' ;
 
                         } else{
 
