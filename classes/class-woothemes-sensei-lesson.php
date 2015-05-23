@@ -2976,19 +2976,19 @@ class WooThemes_Sensei_Lesson {
         }
 
         ?>
-        <fieldset class="inline-edit-col-right inline-edit-book">
-            <div class="inline-edit-col column-<?php echo $column_name ?>">
+        <fieldset class="sensei-edit-field-set inline-edit-lesson">
+            <div class="sensei-inline-edit-col column-<?php echo $column_name ?>">
                     <?php
-                    echo '<h3>' . __('Lesson Information', 'woothemes-sensei') . '</h3>';
+                    echo '<h4>' . __('Lesson Information', 'woothemes-sensei') . '</h4>';
                     // create a nonce field to be  used as a security measure when saving the data
                     wp_nonce_field( 'bulk-edit-lessons', '_edit_lessons_nonce' );
                     wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce'  );
 
-                    // unchanged option - this i needed in the list because
+                    // unchanged option - we need this in because
                     // the default option in bulk edit should not be empty. If it is
                     // the user will erase data they didn't want to touch.
                     $no_change_text = '-- ' . __('No Change', 'woothemes-sensei') . ' --';
-                    ;
+
                     //
                     //course selection
                     //
@@ -3017,7 +3017,7 @@ class WooThemes_Sensei_Lesson {
 
                     ?>
 
-                    <h3><?php _e('Quiz Settings', 'woothemes-sensei'); ?> </h3>
+                    <h4><?php _e('Quiz Settings', 'woothemes-sensei'); ?> </h4>
 
                     <?php
 
@@ -3080,7 +3080,7 @@ class WooThemes_Sensei_Lesson {
         $html .= '<span class="input-text-wrap">';
         $html .= $field;
         $html .= '</span>';
-        $html .= '</label></div><br />';
+        $html .= '</label></div>';
 
         return $html ;
 
