@@ -229,6 +229,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 		switch ( $this->view ) {
 			case 'learners' :
+                $user = $item;
 				$post_id = false;
 
 				if( $this->lesson_id ) {
@@ -252,7 +253,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					$status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
 				}
 
-                $title = $woothemes_sensei->learners->get_learner_full_name( $item->user_id );
+                $title = $woothemes_sensei->learners->get_learner_full_name( $user->user_id );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
