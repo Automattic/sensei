@@ -441,7 +441,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
             // compress the answer for saving
 			if( 'multi-line' == $question_type ) {
-                $answer = nl2br( $answer );
+                $answer = esc_html( $answer );
             }elseif( 'file-upload' == $question_type  ){
                 $file_key = 'file_upload_' . $question_id;
                 if( isset( $files[ $file_key ] ) ) {
