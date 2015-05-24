@@ -1785,10 +1785,12 @@ class WooThemes_Sensei_Frontend {
 
 		//if not posted from the sensei login form let
 		// WordPress or any other party handle the failed request
+	    if( ! isset( $_REQUEST['form'] ) || 'sensei-login' != $_REQUEST['form']  ){
 
-	    if( !isset( $_REQUEST['form'] ) &&  'sensei-login' != $_REQUEST['form'] ){
 	    	return ;
+
 	    }
+
 
     	// Get the reffering page, where did the post submission come from?
     	$referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER']);
