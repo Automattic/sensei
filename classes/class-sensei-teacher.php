@@ -71,7 +71,7 @@ class Sensei_Teacher {
         add_action( 'wp_insert_post',array( $this, 'notify_admin_teacher_course_creation' ) );
 
         // limit the analysis view to only the users taking courses belong to this teacher
-        add_filter( 'sensei_analysis_get_learners',array( $this, 'limit_analysis_learners' ) );
+        add_filter( 'sensei_analysis_overview_filter_users',array( $this, 'limit_analysis_learners' ) , 5, 1 );
 
         // give teacher access to question post type
         add_filter( 'sensei_lesson_quiz_questions', array( $this, 'allow_teacher_access_to_questions' ), 20, 2 );
@@ -871,28 +871,32 @@ class Sensei_Teacher {
      * Limit the analysis view to only the users taking courses belong to this teacher
      *
      * Hooked into sensei_analysis_get_learners
-     * @param array $learners_query_results
+     * @param array $args WP_User_Query arguments
      * @return array $learners_query_results
      */
-    public function limit_analysis_learners( $learners_query_results ){
+    public function limit_analysis_learners( $args ){
 
         // show default for none teachers
         if( ! Sensei()->teacher->is_admin_teacher() ) {
-                return $learners_query_results;
+                return $args;
         }
 
         // for teachers all courses only return those which belong to the teacher
-        $courses = Sensei()->course->get_all_courses();
+        // as they don't have access to course belonging to other users
+        $teacher_courses = Sensei()->course->get_all_courses();
 
-        if( empty( $courses ) ||  ! is_array( $courses ) ){
-            $this->total_items = 0;
-            return $learners_query_results;
+        // if the user has no courses they should see no users
+        if( empty( $teacher_courses ) ||  ! is_array( $teacher_courses ) ){
+            // tell the query to return 0 students
+            $args[ 'include'] = array( 0 );
+            return $args;
+
         }
 
-        $all_learners_taking_teacher_courses = array();
-        foreach( $courses as $course ){
+        $learner_ids_for_teacher_courses = array();
+        foreach( $teacher_courses as $course ){
 
-            $learners_taking_this_course = array();
+            $course_learner_ids = array();
             $activity_comments =  WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course->ID, 'type' => 'sensei_course_status', 'field' => 'user_id' ), true );
 
             if( empty( $activity_comments ) ||  ( is_array( $activity_comments  ) && ! ( count( $activity_comments ) > 0 ) ) ){
@@ -911,39 +915,34 @@ class Sensei_Teacher {
                         continue;
                     }
 
-                    $learners_taking_this_course[] = $user->data;
+                    $course_learner_ids[] = $user->ID;
                 }
 
             }else{
 
                 $user = get_userdata( $activity_comments->user_id );
-                $learners_taking_this_course[] = $user->data;
+                $course_learner_ids[] = $user->ID;
 
             }
 
             // add learners on this course to the all courses learner list
-            $all_learners_taking_teacher_courses = array_merge( $all_learners_taking_teacher_courses, $learners_taking_this_course );
+            $learner_ids_for_teacher_courses = array_merge( $learner_ids_for_teacher_courses, $course_learner_ids );
 
         }
 
-        // get the firs 20 elements in case there is no pagination
-        $current_results = array_slice( $all_learners_taking_teacher_courses, 0, 20 );
+        // if there are no students taking the courses by this teacher don't show them any of the other users
+        if( empty( $learner_ids_for_teacher_courses ) ){
 
-        // if Pagination is on and the number of course allow get that page
-        if( isset( $_GET['paged'] ) && intval( $_GET['paged'] ) > 1
-            && count( $all_learners_taking_teacher_courses ) > 20 ){
+            $args[ 'include'] = array( 0 );
 
-            $page_number = $_GET[ 'paged' ];
-            $paged_starting_offset =  ( $page_number * 20 ) - 20;
-            $current_results = array_slice( $all_learners_taking_teacher_courses, $paged_starting_offset, 20 );
+        }else{
+
+            $args[ 'include'] = $learner_ids_for_teacher_courses;
 
         }
 
-        $learners_query_results->results =  $current_results;
-        $learners_query_results->total_users = count( $all_learners_taking_teacher_courses );
-
-        // return the WP_Use_Query results object
-        return $learners_query_results;
+        // return the WP_Use_Query arguments
+        return $args;
 
     }// end limit_analysis_learners
 

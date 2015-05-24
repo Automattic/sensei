@@ -537,19 +537,11 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 
         /**
          * Filter the WP_User_Query arguments
-         *
+         * @since 1.6.0
          * @param $args
          */
-		$wp_user_search = new WP_User_Query( apply_filters( 'sensei_analysis_overview_filter_users', $args ) );
-
-        /**
-         * Filter the analysis user list
-         *
-         * @hooked Sensei_Teacher::limit_analysis_learners
-         * @since 1.8.0
-         * @param WP_User_Query object $wp_user_search
-         */
-        $wp_user_search = apply_filters( 'sensei_analysis_get_learners' ,$wp_user_search );
+        $args = apply_filters( 'sensei_analysis_overview_filter_users', $args );
+		$wp_user_search = new WP_User_Query( $args );
         $learners = $wp_user_search->get_results();
 		$this->total_items = $wp_user_search->get_total();
 
