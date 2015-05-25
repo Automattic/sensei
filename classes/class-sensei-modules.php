@@ -2019,9 +2019,11 @@ class Sensei_Core_Modules
         }
 
         // in certain cases the array is passed in as reference to the parent term_id => parent_id
-        if (isset($args['fields']) && 'id=>parent' == $args['fields']) {
-            // change only scrub the terms ids form the array keys
-            $terms = array_keys($terms);
+        // simply return this as wp doesn't need an array of stdObject Term
+        if (isset( $args['fields'] ) && 'id=>parent' == $args['fields']) {
+
+            return $terms;
+
         }
 
         // loop through and update all ters adding the author name
