@@ -9,6 +9,8 @@ Author URI: http://www.woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 Requires at least: 4.0
 Tested up to: 4.1.1
+Text Domain: woothemes-sensei
+Domain path: /lang/
 */
 /*  Copyright 2013  WooThemes  (email : info@woothemes.com)
 
