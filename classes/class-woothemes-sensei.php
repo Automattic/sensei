@@ -137,6 +137,10 @@ class WooThemes_Sensei {
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 
+            // Load Admin Welcome class
+            require_once( 'admin/class-sensei-welcome.php' );
+            new Sensei_Welcome();
+
 			// Load Admin Class
 			$this->load_class( 'admin' );
 			$this->admin = new WooThemes_Sensei_Admin( $file );
