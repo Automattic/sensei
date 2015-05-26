@@ -113,6 +113,25 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
         // reset current user for other tests
         wp_set_current_user( $current_user );
 
+        //when the lessons are moved back to admin they should be duplciated
+        // first clear all the object term on the test course.
+        $terms = wp_get_object_terms( $test_course_id, 'module' );
+        foreach( $terms as $term ){
+            wp_remove_object_terms( $test_course_id, array( $term->term_id ), 'module' );
+        }
+        $admin_module = wp_insert_term('Admin Test Module', 'module');
+        wp_set_object_terms( $test_course_id, array( $admin_module['term_id'] ), 'module', true );
+        Sensei_Teacher::update_course_modules_author( $test_course_id, $administrator->ID );
+
+        // move to teacher and then back to admin
+        Sensei_Teacher::update_course_modules_author( $test_course_id, $test_teacher_id );
+        Sensei_Teacher::update_course_modules_author( $test_course_id, $administrator->ID );
+
+        // after the update this course should still only have one module as course should not be duplicated for admin
+        $admin_term_after_multiple_updates = wp_get_object_terms( $test_course_id, 'module' );
+        $message = 'A new admin term with slug {adminID}-slug should not have been created. The admin term should not be duplicated when passed back to admin' ;
+        $this->assertFalse( strpos( $admin_term_after_multiple_updates[0]->slug, (string) $administrator->ID ) , $message );
+
     } // end test author change
 
     /**

@@ -1866,7 +1866,17 @@ class Sensei_Core_Modules
 
         // get the term an create the new term storing infomration
         $term_name = sanitize_text_field( $_POST['newTerm'] );
-        $term_slug =  get_current_user_id() . '-' . str_ireplace(' ', '-', trim( $term_name ) );
+
+        if( current_user_can('manage_options' ) ) {
+
+            $term_slug = str_ireplace(' ', '-', trim( $term_name ) );
+
+        } else {
+
+            $term_slug =  get_current_user_id() . '-' . str_ireplace(' ', '-', trim( $term_name ) );
+
+        }
+
         $course_id = sanitize_text_field( $_POST['course_id'] );
 
         // save the term

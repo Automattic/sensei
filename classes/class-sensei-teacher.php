@@ -375,11 +375,31 @@ class Sensei_Teacher {
             $term_author = Sensei_Core_Modules::get_term_author( $term->slug );
             if( $new_teacher_id != $term_author->ID  ){
 
-                //setup the new slug
-                $new_author_term_slug =  $new_teacher_id . '-' . str_ireplace(' ', '-', trim( $term->name ) );
+                $new_term = '';
 
-                // create new term and set it
-                $new_term = wp_insert_term( $term->name,'module', array('slug'=> $new_author_term_slug )  );
+                //if the new teacher is admin first check to see if the term with this name already exists
+                if( user_can( $new_teacher_id, 'manage_options' ) ){
+
+                    $slug_without_teacher_id = str_ireplace(' ', '-', trim( $term->name ) );
+                    $term_args = array( 'slug'=> $slug_without_teacher_id, 'hide_empty' => false, );
+                    $existing_admin_terms = get_terms( 'module', $term_args );
+                    if( !empty( $existing_admin_terms ) ){
+                        // insert it even if it exists
+                        $new_term = get_term( $existing_admin_terms[0]->term_id, 'module', ARRAY_A );
+                    }
+                }
+
+                if( empty ( $new_term ) ){
+
+                   //setup the new slug
+                   $new_author_term_slug =  $new_teacher_id . '-' . str_ireplace(' ', '-', trim( $term->name ) );
+
+                   // create new term and set it
+                   $new_term = wp_insert_term( $term->name,'module', array('slug'=> $new_author_term_slug )  );
+
+                }
+
+
 
                 // if term exists
                 if( is_wp_error( $new_term ) && isset( $new_term->errors['term_exists'] ) ){
