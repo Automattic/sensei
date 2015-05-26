@@ -151,6 +151,11 @@ class WooThemes_Sensei_Admin {
 			$submenu_file = 'edit-tags.php?taxonomy=course-category&amp;post_type=course';
 			$parent_file  = 'edit.php?post_type=course';
 
+        } elseif ( $screen->base == 'edit-tags' && $taxonomy == 'module' ) {
+
+            $submenu_file = 'edit-tags.php?taxonomy=module';
+            $parent_file  = 'edit.php?post_type=course';
+
 		} elseif ( in_array( $screen->id, array( 'sensei_message', 'edit-sensei_message' ) ) ) {
 
             $submenu_file = 'edit.php?post_type=sensei_message';

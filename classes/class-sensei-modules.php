@@ -56,7 +56,7 @@ class Sensei_Core_Modules
         add_action('wp', array($this, 'save_module_progress'), 10);
 
         // Handle module ordering
-        add_action('admin_menu', array($this, 'register_modules_admin_menu_items'), 10);
+        add_action('admin_menu', array($this, 'register_modules_admin_menu_items'), 30 );
         add_filter('manage_edit-course_columns', array($this, 'course_columns'), 11, 1);
         add_action('manage_posts_custom_column', array($this, 'course_column_content'), 11, 2);
 
@@ -1716,7 +1716,7 @@ class Sensei_Core_Modules
         $course_main_menu = $submenu['edit.php?post_type=course'];
         foreach( $course_main_menu as $index => $sub_item ){
 
-            if( 'edit-tags.php?taxonomy=module' == $sub_item[2] ){
+            if( 'edit-tags.php?taxonomy=module&amp;post_type=course' == $sub_item[2] ){
                 unset( $submenu['edit.php?post_type=course'][ $index ]);
             }
         }
