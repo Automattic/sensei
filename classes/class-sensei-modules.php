@@ -2014,7 +2014,7 @@ class Sensei_Core_Modules
     {
 
         // only for admin users ont he module taxonomy
-        if (!current_user_can('manage_options') || !in_array('module', $taxonomies) || !is_admin()) {
+        if ( empty( $terms ) || !current_user_can('manage_options') || !in_array('module', $taxonomies) || !is_admin()) {
             return $terms;
         }
 
