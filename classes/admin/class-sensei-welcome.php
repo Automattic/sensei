@@ -99,12 +99,13 @@ class Sensei_Welcome {
                             <p><?php printf( __( 'Users with the \'Teacher\' role can now create their own courses, lessons and quizzes, or you can assign existing courses to any teacher. %sDocumentation%s', 'woothemes-sensei' ), '<a href="http://docs.woothemes.com/document/sensei-roles-capabilities/#section-3">', '</a>') ; ?></p>
                         </div>
                         <div>
-                            <h4><?php _e( 'Teacher content visibility', 'woothemes-sensei' ); ?></h4>
-                            <p><?php _e( 'When viewing the WordPress Admin, teachers can only see/edit their own course content, and can only see data for learners taking their courses.', 'woothemes-sensei' ); ?></p>
-                        </div>
-                        <div class="last-feature">
                             <h4><?php _e( 'Course Marketplace', 'woothemes-sensei' ); ?></h4>
                             <p><?php printf( __( 'Using our %sProduct Vendors%s extension for WooCommerce, you can enable teachers to create their own course products and earn commission on sales of their courses.', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/products/product-vendors/">', '</a>' ); ?></p>
+                        </div>
+                        <div class="last-feature">
+                            <h4><?php _e( 'Do More with Sensei', 'woothemes-sensei' ); ?></h4>
+                            <p><?php printf( __( 'Browse our %sSensei Extensions%s', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/product-category/sensei-extensions/">', '</a>' ); ?></p>
+                            <p><?php printf( __( 'Browse our %sSensei Compatible Themes%s', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/product-category/themes/sensei-themes">', '</a>' ); ?></p>
                         </div>
                     </div>
                 </div>
@@ -128,6 +129,10 @@ class Sensei_Welcome {
                     <div>
                         <h4><?php _e( 'Easier Lesson editing', 'woothemes-sensei' ); ?></h4>
                         <p><?php _e( 'Many of the lesson and quiz options can now be changed via the Quick Edit and Bulk Edit functions.', 'woothemes-sensei' ); ?></p>
+                    </div>
+                    <div>
+                    	<h4><?php _e( 'Teacher content visibility', 'woothemes-sensei' ); ?></h4>
+                        <p><?php _e( 'When viewing the WordPress Admin, teachers can only see/edit their own course content, and can only see data for learners taking their courses.', 'woothemes-sensei' ); ?></p>
                     </div>
                 </div>
             </div>
@@ -269,7 +274,7 @@ class Sensei_Welcome {
 
 		// Random tweet - must be kept to 102 chars to "fit"
 		$tweets        = array(
-            'I\'ve just installed Sensei. A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully'
+            'I\'ve just installed Sensei - A premium Learning Management plugin for #WordPress.'
 		);
 		shuffle( $tweets );
 		?>
@@ -285,7 +290,7 @@ class Sensei_Welcome {
 					$message = __( 'Thanks for installing!', 'woothemes-sensei' );
 				}
 
-				printf( __( '%s WooCommerce %s is more powerful, stable and secure than ever before. We hope you enjoy using it.', 'woothemes-sensei' ), $message, $major_version );
+				printf( __( '%s Sensei %s takes teaching with WordPress to a whole new level! We hope you enjoy using it.', 'woothemes-sensei' ), $message, $major_version );
 			?>
 		</div>
 
