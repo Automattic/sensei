@@ -48,7 +48,7 @@ class Sensei_Core_Modules
 
         // Admin styling
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_styles'));
-        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'),  20 , 2 );
 
         // Handle module completion record
         add_action('sensei_lesson_status_updated', array($this, 'update_lesson_status_module_progress'), 10, 3);
@@ -1298,9 +1298,23 @@ class Sensei_Core_Modules
      *
      * @return void
      */
-    public function admin_enqueue_scripts()
-    {
-        global $woothemes_sensei;
+    public function admin_enqueue_scripts ( $hook ) {
+
+        /**
+         * Filter the page hooks where modules admin script can be loaded on.
+         *
+         * @param array $white_listed_pages
+         */
+        $script_on_pages_white_list = apply_filters( 'sensei_module_admin_script_page_white_lists' , array(
+            'edit-tags.php',
+            'course_page_module-order',
+            'post-new.php',
+            'post.php'
+        ));
+
+        if( ! in_array( $hook, $script_on_pages_white_list ) ){
+            return;
+        }
 
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
