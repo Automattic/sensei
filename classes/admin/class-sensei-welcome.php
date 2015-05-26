@@ -89,22 +89,23 @@ class Sensei_Welcome {
             <?php  $this->intro(); ?>
 
             <div class="changelog">
-                <h4><?php _e( 'UI Overhaul', 'woocommerce' ); ?></h4>
-                <p><?php _e( 'We\'ve updated the user interface on both the front and backend of WooCommerce 2.3 "Handsome Hippo".', 'woocommerce' ); ?></p>
+                <h4><?php _e( 'Enhanced Teacher role', 'woothemes-sensei' ); ?></h4>
+                <p><?php _e( 'Teachers now have the ability to create and manage their own courses.', 'woothemes-sensei' ); ?></p>
 
                 <div class="changelog about-integrations">
                     <div class="sensei-feature feature-section col three-col">
                         <div>
-                            <h4><?php _e( 'Frontend UI Improvements', 'woocommerce' ); ?></h4>
-                            <p><?php _e( 'On the frontend there are several UX enhancements such as the undo-remove-from cart link and responsive table design as well as a fresh, modern look which meshes more fluidly with the current design trends of default WordPress themes.', 'woocommerce' ); ?></p>
+                            <h4><?php _e( 'Content by Teachers', 'woothemes-sensei' ); ?></h4>
+                            <p><?php printf( __( 'Users with the \'Teacher\' role can now create their own courses, lessons and quizzes, or you can assign existing courses to any teacher. %sDocumentation%s', 'woothemes-sensei' ), '<a href="http://docs.woothemes.com/document/sensei-roles-capabilities/#section-3">', '</a>') ; ?></p>
                         </div>
                         <div>
-                            <h4><?php _e( 'Backend UI Improvements', 'woocommerce' ); ?></h4>
-                            <p><?php _e( 'On the backend, settings have been re-organised and perform better on hand-held devices for an all round improved user experience. ', 'woocommerce' ); ?></p>
+                            <h4><?php _e( 'Course Marketplace', 'woothemes-sensei' ); ?></h4>
+                            <p><?php printf( __( 'Using our %sProduct Vendors%s extension for WooCommerce, you can enable teachers to create their own course products and earn commission on sales of their courses.', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/products/product-vendors/">', '</a>' ); ?></p>
                         </div>
                         <div class="last-feature">
-                            <h4><?php _e( 'Webhooks UI', 'woocommerce' ); ?></h4>
-                            <p><?php printf( __( 'As part of the API, we\'ve introduced a UI for the Webhook system in WooCommerce 2.3. This makes it easier for 3rd party apps to integrate with WooCommerce. Read more in our %sdocs%s.', 'woocommerce' ), '<a href="http://docs.woothemes.com/document/webhooks/">', '</a>' ); ?></p>
+                            <h4><?php _e( 'Do More with Sensei', 'woothemes-sensei' ); ?></h4>
+                            <p><?php printf( __( 'Browse our %sSensei Extensions%s', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/product-category/sensei-extensions/">', '</a>' ); ?></p>
+                            <p><?php printf( __( 'Browse our %sSensei Compatible Themes%s', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/product-category/themes/sensei-themes">', '</a>' ); ?></p>
                         </div>
                     </div>
                 </div>
@@ -112,30 +113,26 @@ class Sensei_Welcome {
             <div class="changelog">
                 <div class="feature-section col three-col">
                     <div>
-                        <h4><?php _e( 'Geo-locating Customer Location', 'woocommerce' ); ?></h4>
-                        <p><?php printf( __( 'We have added a new option to geolocate the "Default Customer Location". Coupled with ability to show taxes in your store based on this location, you can show relevant prices store-wide. Enable this in the %ssettings%s.', 'woocommerce' ), '<a href="#">', '</a>' ); ?></p>
+                        <h4><?php _e( 'Revised admin menu', 'woothemes-sensei' ); ?></h4>
+                        <p><?php _e( 'The Sensei admin menu has been restructured to be more logical, giving Courses its own top-level menu item.', 'woothemes-sensei' ); ?></p>
                     </div>
                     <div>
-                        <h4><?php _e( 'Color Customization', 'woocommerce' ); ?></h4>
-                        <p><?php printf( __( 'If you\'re looking to customise the look and feel of the frontend in 2.3, take a look at the free %sWooCommerce Colors plugin%s. This lets you change the colors with a live preview.', 'woocommerce' ), '<a href="https://wordpress.org/plugins/woocommerce-colors/">', '</a>' ); ?></p>
+                        <h4><?php _e( 'Modules in core', 'woothemes-sensei' ); ?></h4>
+                        <p><?php printf( __( 'Modules functionality is now included in Sensei core so you no longer need the Modules extension. If you were previously using it, you can go to your %sPlugins%s page and delete it.', 'woothemes-sensei' ), '<a href="plugins.php">', '</a>' ); ?></p>
                     </div>
                     <div class="last-feature">
-                        <h4><?php _e( 'Improved Reports', 'woocommerce' ); ?></h4>
-                        <p><?php _e( 'Sales reports can now show net and gross amounts, we\'ve added a print stylesheet, and added extra data on refunds to reports.', 'woocommerce' ); ?></p>
+                        <h4><?php _e( 'Email notifications per course', 'woothemes-sensei' ); ?></h4>
+                        <p><?php _e( 'We\'ve added a new option in the Course edit screen so that you can now disable email notifications on a per-course basis.', 'woothemes-sensei' ); ?></p>
                     </div>
                 </div>
                 <div class="feature-section col three-col">
                     <div>
-                        <h4><?php _e( 'Improved Simplify Gateway', 'woocommerce' ); ?></h4>
-                        <p><?php printf( __( 'The built in Simplify Commerce Gateway (available in the US) now supports %sHosted Payments%s - a PCI Compliant hosted payment platform.', 'woocommerce' ), '<a href="https://www.simplify.com/commerce/docs/tools/hosted-payments">', '</a>' ); ?></p>
+                        <h4><?php _e( 'Easier Lesson editing', 'woothemes-sensei' ); ?></h4>
+                        <p><?php _e( 'Many of the lesson and quiz options can now be changed via the Quick Edit and Bulk Edit functions.', 'woothemes-sensei' ); ?></p>
                     </div>
                     <div>
-                        <h4><?php _e( 'Email Template Improvements', 'woocommerce' ); ?></h4>
-                        <p><?php printf( __( 'To make email customization simpler, we\'ve included a CSS Inliner in this release, some new template files for styling emails, and some additional hooks for developers. Read more on our %sdeveloper blog%s.', 'woocommerce' ), '<a href="http://develop.woothemes.com/woocommerce/2014/10/2-3-emails/">', '</a>' ); ?></p>
-                    </div>
-                    <div class="last-feature">
-                        <h4><?php _e( 'Simplified Coupon System', 'woocommerce' ); ?></h4>
-                        <p><?php printf( __( 'We have simplified the coupon system to ensure discounts are never applied to taxes, and we\'ve improved support for discounting products inclusive of tax. Read more on our %sdevelop blog%s.', 'woocommerce' ), '<a href="http://develop.woothemes.com/woocommerce/2014/12/upcoming-coupon-changes-in-woocommerce-2-3/">', '</a>' ); ?></p>
+                    	<h4><?php _e( 'Teacher content visibility', 'woothemes-sensei' ); ?></h4>
+                        <p><?php _e( 'When viewing the WordPress Admin, teachers can only see/edit their own course content, and can only see data for learners taking their courses.', 'woothemes-sensei' ); ?></p>
                     </div>
                 </div>
             </div>
@@ -186,8 +183,8 @@ class Sensei_Welcome {
                 font-weight: 600;
                 font-size: 14px;
                 text-align: center;
-                color: white;
-                text-shadow: 0.05em 0.05em 1px black;
+                color: rgba(255,255,255,0.8);
+                text-shadow: 0.05em 0.05em 1px rgba(0,0,0,0.1);
                 margin: 5px 0 0 0;
                 -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.2);
                 box-shadow: 0 1px 3px rgba(0,0,0,.2);
@@ -256,6 +253,12 @@ class Sensei_Welcome {
                 background: #42A2CE;
                 border-color: #849DAD;
             }
+
+            p.sensei-actions .twitter-share-button {
+				margin-top: -3px;
+				margin-left: 3px;
+				vertical-align: middle;
+			}
 			/*]]>*/
 		</style>
 		<?php
@@ -271,7 +274,7 @@ class Sensei_Welcome {
 
 		// Random tweet - must be kept to 102 chars to "fit"
 		$tweets        = array(
-            'I\'ve just installed Sensei. A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully'
+            'I\'ve just installed Sensei - A premium Learning Management plugin for #WordPress.'
 		);
 		shuffle( $tweets );
 		?>
@@ -287,7 +290,7 @@ class Sensei_Welcome {
 					$message = __( 'Thanks for installing!', 'woothemes-sensei' );
 				}
 
-				printf( __( '%s WooCommerce %s is more powerful, stable and secure than ever before. We hope you enjoy using it.', 'woothemes-sensei' ), $message, $major_version );
+				printf( __( '%s Sensei %s takes teaching with WordPress to a whole new level! We hope you enjoy using it.', 'woothemes-sensei' ), $message, $major_version );
 			?>
 		</div>
 
