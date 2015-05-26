@@ -417,7 +417,7 @@ class WooThemes_Sensei_Grading {
 		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
 
         // Restrict to specific posts
-		if ( isset( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
+		if ( isset( $args['post__in'] ) && !empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post__in'] ) ) . ')';
 		}
 		elseif ( !empty( $args['post_id'] ) ) {
