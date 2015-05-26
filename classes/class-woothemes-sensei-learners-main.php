@@ -228,37 +228,43 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		global $wp_version, $woothemes_sensei;
 
 		switch ( $this->view ) {
+
 			case 'learners' :
                 $user = $item;
 				$post_id = false;
 
 				if( $this->lesson_id ) {
+
 					$post_id = intval( $this->lesson_id );
 					$object_type = __( 'lesson', 'woothemes-sensei' );
 					$post_type = 'lesson';
-				}
-				elseif( $this->course_id ) {
+                    $activity = WooThemes_Sensei_Utils::user_lesson_status( $post_id, $user->ID );
+
+				} elseif ( $this->course_id ) {
+
 					$post_id = intval( $this->course_id );
 					$object_type = __( 'course', 'woothemes-sensei' );
 					$post_type = 'course';
+                    $activity = WooThemes_Sensei_Utils::user_course_status( $post_id, $user->ID );
+
 				}
 
-				if( 'complete' == $item->comment_approved || 'graded' == $item->comment_approved || 'passed' == $item->comment_approved ) {
+				if( 'complete' == $activity->comment_approved || 'graded' == $activity->comment_approved || 'passed' == $activity->comment_approved ) {
+
 					$status_html = '<span class="graded">' . apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) ) . '</span>';
-				}
-//				elseif( 'failed' == $item->comment_approved ) {
-//					$status_html = '<span class="failed">' . apply_filters( 'sensei_failed_text', __( 'Failed', 'woothemes-sensei' ) ) . '</span>';
-//				}
-				else {
-					$status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
+
+                } else {
+
+                    $status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
+
 				}
 
-                $title = $woothemes_sensei->learners->get_learner_full_name( $user->user_id );
+                $title = $woothemes_sensei->learners->get_learner_full_name( $user->ID );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'user-edit.php?user_id=' . $user->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
-						'date_started' => get_comment_meta( $item->comment_ID, 'start', true),
+						'date_started' => get_comment_meta( $activity->comment_ID, 'start', true),
 						'user_status' => $status_html,
 						'actions' => '<a class="remove-learner button" data-user_id="' . $user->ID . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>',
 					), $item, $post_id, $post_type );
@@ -424,18 +430,34 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
 		$total_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
+        $this->total_items = $total_learners;
+
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $total_learners < $activity_args['offset'] ) {
 			$new_paged = floor( $total_learners / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
-		$learners = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		$learners_activity = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+
 		// Need to always return an array, even with only 1 item
-		if ( !is_array($learners) ) {
-			$learners = array( $learners );
-		}
-		$this->total_items = $total_learners;
+        // an convert the comments/activity in to the learn user objects
+        $learners = array();
+		if ( !is_array( $learners_activity ) ) {
+
+            $learners[] = get_user_by( 'id', $learners_activity->user_id );
+
+		} else {
+
+            foreach( $learners_activity as $learner_activity ){
+
+                $learners[] = get_user_by( 'id', $learner_activity->user_id );
+
+            }
+
+        }
+
 		return $learners;
+
 	} // End get_learners()
 
 	/**
