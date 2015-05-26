@@ -186,8 +186,8 @@ class Sensei_Welcome {
                 font-weight: 600;
                 font-size: 14px;
                 text-align: center;
-                color: white;
-                text-shadow: 0.05em 0.05em 1px black;
+                color: rgba(255,255,255,0.8);
+                text-shadow: 0.05em 0.05em 1px rgba(0,0,0,0.1);
                 margin: 5px 0 0 0;
                 -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.2);
                 box-shadow: 0 1px 3px rgba(0,0,0,.2);
@@ -256,6 +256,12 @@ class Sensei_Welcome {
                 background: #42A2CE;
                 border-color: #849DAD;
             }
+
+            p.sensei-actions .twitter-share-button {
+				margin-top: -3px;
+				margin-left: 3px;
+				vertical-align: middle;
+			}
 			/*]]>*/
 		</style>
 		<?php
