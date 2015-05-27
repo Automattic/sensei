@@ -115,10 +115,10 @@ jQuery(document).ready( function($) {
     });
 
 	/***************************************************************************************************
-	 * 	3 - Load Chosen Dropdowns.
+	 * 	3 - Load Select2 Dropdowns.
 	 ***************************************************************************************************/
 
 	// Learner Management Drop Downs
-	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).chosen(); }
+	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).select2(); }
 
 });

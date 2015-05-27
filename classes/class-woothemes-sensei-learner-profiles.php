@@ -72,16 +72,11 @@ class WooThemes_Sensei_Learner_Profiles {
 	 * @return string        Modified title
 	 */
 	public function page_title( $title, $sep = null ) {
-		global $wp_query;
+		global $wp_query, $woothemes_sensei;
 		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
 			$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );
 
-			$name = '';
-			if( strlen( $learner_user->first_name ) > 0 ) {
-				$name = $learner_user->first_name;
-			} else {
-				$name = $learner_user->display_name;
-			}
+            $name = $woothemes_sensei->learners->get_learner_full_name( $learner_user->ID );
 
 			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) . ' ' . $sep . ' ';
 		}

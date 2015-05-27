@@ -616,7 +616,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		$page_items = array();
 
 		// Quick string hack to make sure we get the pages with the indents.
-		$pages_dropdown = str_replace( "<select class='chosen_select' name='page_id' id='page_id'>", '', $pages_dropdown );
+		$pages_dropdown = str_replace( "<select class='' name='page_id' id='page_id'>", '', $pages_dropdown );
 		$pages_dropdown = str_replace( '</select>', '', $pages_dropdown );
 		$pages_split = explode( '</option>', $pages_dropdown );
 

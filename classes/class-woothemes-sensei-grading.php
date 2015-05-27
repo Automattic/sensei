@@ -58,7 +58,7 @@ class WooThemes_Sensei_Grading {
 
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( $this, 'grading_admin_menu' ), 10);
+			add_action( 'admin_menu', array( $this, 'grading_admin_menu' ), 20);
 			add_action( 'grading_wrapper_container', array( $this, 'wrapper_container'  ) );
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
@@ -312,8 +312,10 @@ class WooThemes_Sensei_Grading {
 			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>'; 
 		}
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
-			$user_data = get_userdata( intval( $_GET['user_id'] ) );
-			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_data->display_name . '</span>'; 
+
+            $user_name = $woothemes_sensei->learners->get_learner_full_name( $_GET['user_id'] );
+			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
+
 		} // End If Statement
 		?>
 			<h2><?php echo apply_filters( 'sensei_grading_nav_title', $title ); ?></h2>
@@ -344,8 +346,10 @@ class WooThemes_Sensei_Grading {
 			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $lesson_id ) );
 		}
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
-			$user_data = get_userdata( intval( $_GET['user'] ) );
-			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_data->display_name . '</span>'; 
+
+            $user_name = $woothemes_sensei->learners->get_learner_full_name( $_GET['user'] );
+			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
+
 		} // End If Statement
 		?>
 			<h2><?php echo apply_filters( 'sensei_grading_nav_title', $title ); ?></h2>
@@ -392,6 +396,16 @@ class WooThemes_Sensei_Grading {
 	public function count_statuses( $args = array() ) {
 		global $woothemes_sensei, $wpdb;
 
+        /**
+         * Filter fires inside Sensei_Grading::count_statuses
+         *
+         * Alter the the post_in array to determine which posts the
+         * comment query should be limited to.
+         * @since 1.8.0
+         * @param array $args
+         */
+        $args = apply_filters( 'sensei_count_statuses_args', $args );
+
 		if ( 'course' == $args['type'] ) {
 			$type = 'sensei_course_status';
 		}
@@ -401,8 +415,9 @@ class WooThemes_Sensei_Grading {
 		$cache_key = 'sensei-' . $args['type'] . '-statuses';
 
 		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
-		// Restrict to specific posts
-		if ( isset( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
+
+        // Restrict to specific posts
+		if ( isset( $args['post__in'] ) && !empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post__in'] ) ) . ')';
 		}
 		elseif ( !empty( $args['post_id'] ) ) {

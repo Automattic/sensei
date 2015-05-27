@@ -23,6 +23,7 @@ do_action( 'sensei_before_main_content' );
 /**
  * sensei_single_main_content hook
  *
+ * @hooked Sensei->Modules->single_course_modules - 9
  * @hooked sensei_single_main_content - 10 (outputs main content)
  */
 do_action( 'sensei_single_main_content' );

@@ -19,7 +19,12 @@ body #toplevel_page_sensei div.wp-menu-image:before {
 
 /* Lessons Icon */
 body #menu-posts-lesson div.wp-menu-image:before {
-  	content: "\f331" !important;
+    content: "\f163" !important;
+}
+
+/* Course Icon */
+body #menu-posts-course div.wp-menu-image:before {
+    content: "\f331" !important;
 }
 
 /* Questions Icon */

@@ -110,7 +110,7 @@ class WooThemes_Sensei_Settings_API {
 	 * @return void
 	 */
 	public function setup_settings () {
-		add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 20 );
+		add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
 		add_action( 'wp_loaded', array( $this, 'general_init' ) );
 	} // End setup_settings()
@@ -505,7 +505,7 @@ class WooThemes_Sensei_Settings_API {
 
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '';
-			$html .= '<select class="chosen_select" id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']">' . "\n";
+			$html .= '<select class="" id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']">' . "\n";
 				foreach ( $args['data']['options'] as $k => $v ) {
 					$html .= '<option value="' . esc_attr( $k ) . '"' . selected( esc_attr( $options[$args['key']] ), $k, false ) . '>' . $v . '</option>' . "\n";
 				}

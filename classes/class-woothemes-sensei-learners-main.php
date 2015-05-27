@@ -32,13 +32,6 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	public $lesson_id = 0;
 	public $view = 'courses';
 	public $page_slug = 'sensei_learners';
-	/**
-	 * @var int $total_items
-	 *
-	 * Used for storing the total number of items available for the given query
-	 * also used for generating the pagination.
-	 */
-	protected $total_items  =  0;
 
 	/**
 	 * Constructor
@@ -227,48 +220,72 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	} // End prepare_items()
 
 	/**
-	 * Generates content for a single row of the table
+	 * Generates content for a single row of the table in the user management
+     * screen.
+     *
 	 * @since  1.7.0
+     *
 	 * @param object $item The current item
+     *
+     * @return void
 	 */
 	protected function get_row_data( $item ) {
-		global $wp_version;
+		global $wp_version, $woothemes_sensei;
 
 		switch ( $this->view ) {
 			case 'learners' :
+
+                // in this case the item passed in is actually the users activity on course of lesson
+                $user_activity = $item;
 				$post_id = false;
 
 				if( $this->lesson_id ) {
+
 					$post_id = intval( $this->lesson_id );
 					$object_type = __( 'lesson', 'woothemes-sensei' );
 					$post_type = 'lesson';
-				}
-				elseif( $this->course_id ) {
+
+				} elseif( $this->course_id ) {
+
 					$post_id = intval( $this->course_id );
 					$object_type = __( 'course', 'woothemes-sensei' );
 					$post_type = 'course';
+
 				}
 
-				if( 'complete' == $item->comment_approved || 'graded' == $item->comment_approved || 'passed' == $item->comment_approved ) {
-					$status_html = '<span class="graded">' . apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) ) . '</span>';
-				}
-//				elseif( 'failed' == $item->comment_approved ) {
-//					$status_html = '<span class="failed">' . apply_filters( 'sensei_failed_text', __( 'Failed', 'woothemes-sensei' ) ) . '</span>';
-//				}
-				else {
-					$status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
+				if( 'complete' == $user_activity->comment_approved || 'graded' == $user_activity->comment_approved || 'passed' == $user_activity->comment_approved ) {
+
+                    $status_html = '<span class="graded">' . apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) ) . '</span>';
+
+				} else {
+
+                    $status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
+
 				}
 
-				$user = get_user_by( 'id', $item->user_id );
-				$title = $user->display_name;
+                $title = $woothemes_sensei->learners->get_learner_full_name( $user_activity->user_id );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
+                /**
+                 * sensei_learners_main_column_data filter
+                 *
+                 * This filter runs on the learner management screen for a specific course.
+                 * It provides the learner row column details.
+                 *
+                 * @param array $columns{
+                 *   type string $title
+                 *   type string $date_started
+                 *   type string $course_status (completed, started etc)
+                 *   type html $action_buttons
+                 * }
+                 */
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
-						'title' => '<strong><a class="row-title" href="' . admin_url( 'user-edit.php?user_id=' . $user->ID ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
-						'date_started' => get_comment_meta( $item->comment_ID, 'start', true),
+						'title' => '<strong><a class="row-title" href="' . admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
+						'date_started' => get_comment_meta( $user_activity->comment_ID, 'start', true),
 						'user_status' => $status_html,
-						'actions' => '<a class="remove-learner button" data-user_id="' . $user->ID . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>',
+						'actions' => '<a class="remove-learner button" data-user_id="' . $user_activity->user_id . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>',
 					), $item, $post_id, $post_type );
+
 				break;
 
 			case 'lessons' :

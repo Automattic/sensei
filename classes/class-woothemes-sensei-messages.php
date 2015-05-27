@@ -30,7 +30,7 @@ class WooThemes_Sensei_Messages {
 		$this->meta_fields = array( 'sender', 'receiver' );
 
 		// Add Messages page to admin menu
-		add_action( 'admin_menu', array( $this, 'add_menu_item' ), 11 );
+		add_action( 'admin_menu', array( $this, 'add_menu_item' ), 40 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
 
@@ -50,9 +50,9 @@ class WooThemes_Sensei_Messages {
 		add_action( 'save_post', array( $this, 'save_message' ) );
 
 		// Add message links to courses & lessons
-		add_action( 'sensei_course_single_lessons', array( $this, 'send_message_link' ), 1 );
+		add_action( 'sensei_course_single_meta', array( $this, 'send_message_link' ), 14 );
 
-		add_action( 'sensei_lesson_quiz_meta', array( $this, 'send_message_link' ), 20, 2 );
+		//add_action( 'sensei_lesson_quiz_meta', array( $this, 'send_message_link' ), 20, 2 );
 
 		// Hide messages and replies from users who do not have access
         add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
@@ -66,7 +66,7 @@ class WooThemes_Sensei_Messages {
 	public function add_menu_item() {
 		global $woothemes_sensei;
 		if( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) {
-			add_submenu_page( 'sensei', __( 'Messages', 'woothemes-sensei'),  __( 'Messages', 'woothemes-sensei') , 'manage_sensei', 'edit.php?post_type=sensei_message' );
+			add_submenu_page( 'sensei', __( 'Messages', 'woothemes-sensei'),  __( 'Messages', 'woothemes-sensei') , 'edit_courses', 'edit.php?post_type=sensei_message' );
 		}
 	}
 

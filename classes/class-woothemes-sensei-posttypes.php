@@ -75,29 +75,10 @@ class WooThemes_Sensei_PostTypes {
 			} // End If Statement
 		} // End If Statement
 
-		// Menu functions
-		if ( is_admin() ) {
-			add_action('admin_menu', array( $this, 'sensei_admin_menu_items' ), 9);
-		} // End If Statement
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
 	} // End __construct()
-
-	/**
-	 * sensei_admin_menu_items function.
-	 * @since  1.1.0
-	 * @access public
-	 * @return void
-	 */
-	public function sensei_admin_menu_items() {
-	    global $menu;
-
-	    if ( current_user_can( 'manage_sensei' ) ) {
-	    	$course_category = add_submenu_page('edit.php?post_type=lesson', __('Course Categories', 'woothemes-sensei'),  __('Course Categories', 'woothemes-sensei') , 'manage_sensei', 'edit-tags.php?taxonomy=course-category&post_type=course' );
-	    } // End If Statement
-
-	} // End sensei_admin_menu_items()
 
 	/**
 	 * load_posttype_objects function.
@@ -134,40 +115,16 @@ class WooThemes_Sensei_PostTypes {
 		    'public' => true,
 		    'publicly_queryable' => true,
 		    'show_ui' => true,
-		    'show_in_menu' => 'edit.php?post_type=lesson',
+		    'show_in_menu' => true,
 		    'show_in_admin_bar' => true,
 		    'query_var' => true,
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'course',
-		    // 'capabilities' => array(
-						// 				// meta caps (don't assign these to roles)
-						// 				'edit_post'              => 'edit_course',
-						// 				'read_post'              => 'read_course',
-						// 				'delete_post'            => 'delete_course',
-
-						// 				// primitive/meta caps
-						// 				'create_posts'           => 'create_courses',
-
-						// 				// primitive caps used outside of map_meta_cap()
-						// 				'edit_posts'             => 'edit_courses',
-						// 				'edit_others_posts'      => 'edit_others_courses',
-						// 				'publish_posts'          => 'publish_courses',
-						// 				'read_private_posts'     => 'read_private_courses',
-
-						// 				// primitive caps used inside of map_meta_cap()
-						// 				'read'                   => 'read',
-						// 				'delete_posts'           => 'delete_courses',
-						// 				'delete_private_posts'   => 'delete_private_courses',
-						// 				'delete_published_posts' => 'delete_published_courses',
-						// 				'delete_others_posts'    => 'delete_others_courses',
-						// 				'edit_private_posts'     => 'edit_private_courses',
-						// 				'edit_published_posts'   => 'edit_published_courses'
-						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
-		    'menu_position' => 20,
-		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'author' )
+		    'menu_position' => 51,
+		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail' )
 		);
 
 		register_post_type( 'course', $args );
@@ -182,7 +139,7 @@ class WooThemes_Sensei_PostTypes {
 	public function setup_lesson_post_type () {
 		global $woothemes_sensei;
 
-		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'author' );
+		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' );
 		$allow_comments = false;
 		if ( isset( $woothemes_sensei->settings->settings[ 'lesson_comments' ] ) ) {
 			$allow_comments = $woothemes_sensei->settings->settings[ 'lesson_comments' ];
@@ -201,33 +158,9 @@ class WooThemes_Sensei_PostTypes {
 		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => true, 'feeds' => true, 'pages' => true ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'lesson',
-		    // 'capabilities' => array(
-						// 				// meta caps (don't assign these to roles)
-						// 				'edit_post'              => 'edit_lesson',
-						// 				'read_post'              => 'read_lesson',
-						// 				'delete_post'            => 'delete_lesson',
-
-						// 				// primitive/meta caps
-						// 				'create_posts'           => 'create_lessons',
-
-						// 				// primitive caps used outside of map_meta_cap()
-						// 				'edit_posts'             => 'edit_lessons',
-						// 				'edit_others_posts'      => 'edit_others_lessons',
-						// 				'publish_posts'          => 'publish_lessons',
-						// 				'read_private_posts'     => 'read_private_lessons',
-
-						// 				// primitive caps used inside of map_meta_cap()
-						// 				'read'                   => 'read',
-						// 				'delete_posts'           => 'delete_lessons',
-						// 				'delete_private_posts'   => 'delete_private_lessons',
-						// 				'delete_published_posts' => 'delete_published_lessons',
-						// 				'delete_others_posts'    => 'delete_others_lessons',
-						// 				'edit_private_posts'     => 'edit_private_lessons',
-						// 				'edit_published_posts'   => 'edit_published_lessons'
-						// 			),
 		    'has_archive' => true,
 		    'hierarchical' => false,
-		    'menu_position' => 51,
+		    'menu_position' => 52,
 		    'supports' => $supports_array
 		);
 
@@ -336,7 +269,7 @@ class WooThemes_Sensei_PostTypes {
 			    'public' => true,
 			    'publicly_queryable' => true,
 			    'show_ui' => true,
-			    'show_in_menu' => 'admin.php?page=sensei',
+			    'show_in_menu' => 'sensei',
 			    'show_in_nav_menus' => true,
 			    'query_var' => true,
 			    'exclude_from_search' => true,
@@ -381,6 +314,11 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => true,
+            'capabilities' => array(
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_courses',
+                'delete_terms' => 'manage_categories',
+                'assign_terms' => 'edit_courses',),
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
@@ -415,6 +353,7 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true, /* TO DO - future releases */
 			'query_var' => true,
 			'show_in_nav_menus' => false,
+            'public' => false,
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
@@ -486,6 +425,11 @@ class WooThemes_Sensei_PostTypes {
 			'query_var' => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
+            'capabilities' => array(
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_questions',
+                'delete_terms' => 'manage_categories',
+                'assign_terms' => 'edit_questions',),
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 
@@ -519,6 +463,11 @@ class WooThemes_Sensei_PostTypes {
 			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => true,
+            'capabilities' => array(
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_lessons',
+                'delete_terms' => 'manage_categories',
+                'assign_terms' => 'edit_lessons',),
 			'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) )
 		);
 

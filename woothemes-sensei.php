@@ -3,12 +3,14 @@
 Plugin Name: Sensei
 Plugin URI: http://www.woothemes.com/products/sensei/
 Description: A course management plugin that offers the smoothest platform for helping you teach anything.
-Version: 1.7.7
+Version: 1.8.0
 Author: WooThemes
 Author URI: http://www.woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 Requires at least: 4.0
 Tested up to: 4.1.1
+Text Domain: woothemes-sensei
+Domain path: /lang/
 */
 /*  Copyright 2013  WooThemes  (email : info@woothemes.com)
 
@@ -36,12 +38,48 @@ Tested up to: 4.1.1
         require_once( 'inc/woothemes-sensei-template.php' );
     }
 
+    /**
+     * Returns the global Sensei Instance.
+     *
+     * @since 1.8.0
+     */
+    function Sensei(){
+
+        return WooThemes_Sensei::instance();
+
+    }
+
+    // set the sensei version number
+    Sensei()->version = '1.8.0';
+
+    //backwards compatibility
     global $woothemes_sensei;
-    $woothemes_sensei = new WooThemes_Sensei( __FILE__ );
-    $woothemes_sensei->version = '1.7.7';
+    $woothemes_sensei = Sensei();
 
     /**
      * Plugin updates
      * @since  1.0.1
      */
     woothemes_queue_update( plugin_basename( __FILE__ ), 'bad2a02a063555b7e2bee59924690763', 152116 );
+
+    /**
+     * Sensei Activation Hook registration
+     * @since 1.8.0
+     */
+    register_activation_hook( __FILE__, 'activate_sensei' );
+
+    /**
+     * Activate_sensei
+     *
+     * All the activation checks needed to ensure Sensei is ready for use
+     * @since 1.8.0
+     */
+    function activate_sensei () {
+
+        // create the teacher role on activation and ensure that it has all the needed capabilities
+        Sensei()->teacher->create_role();
+
+        //Load the Welcome Screen
+        add_action( 'activated_plugin' , array( 'Sensei_Welcome','redirect' ) );
+
+    }// end activate_sensei

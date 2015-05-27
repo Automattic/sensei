@@ -45,7 +45,7 @@ class WooThemes_Sensei_Updates {
 		$this->updates_run = get_option( $this->token . '-upgrades', array() );
 
 		// The list of upgrades to run
-		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => __( 'Assign role capbilities', 'woothemes-sensei' ), 'desc' => __( 'Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei' ), 'product' => 'Sensei' ) ),
+		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => __( 'Assign role capabilities', 'woothemes-sensei' ), 'desc' => __( 'Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei' ), 'product' => 'Sensei' ) ),
 													'manual' 	=> array()
 												),
 								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type' => array( 'title' => __( 'Set default quiz grade type', 'woothemes-sensei' ), 'desc' => __( 'Sets all quizzes to the default \'auto\' grade type.', 'woothemes-sensei' ) ),
@@ -81,13 +81,16 @@ class WooThemes_Sensei_Updates {
 								'1.7.2' => array( 	'auto' 		=> array( 'index_comment_status_field' => array( 'title' => __( 'Add database index to comment statuses', 'woothemes-sensei' ), 'desc' => __( 'This indexes the comment statuses in the database, which will speed up all Sensei activity queries.', 'woothemes-sensei' ) ), ),
 													'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => __( 'Remove legacy Sensei activity types', 'woothemes-sensei' ), 'desc' => __( 'This removes all legacy (pre-1.7) Sensei activity types - only run this update once the update to v1.7 is complete and everything is stable.', 'woothemes-sensei' ) ) )
 												),
+                                '1.8.0' => array(   'auto' => array( 'enhance_teacher_role' => array( 'title' => 'Enhance the \'Teacher\' role', 'desc' => 'Adds the ability for a \'Teacher\' to create courses, lessons , quizes and manage their learners.' ), ),
+                            						'manual' 	=> array()
+                    							),
 							);
 
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
 		$this->version = get_option( $this->token . '-version' );
 
 		// Manual Update Screen
-		add_action('admin_menu', array( $this, 'add_update_admin_screen' ) );
+		add_action('admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
 
 	} // End __construct()
 
@@ -100,7 +103,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	public function add_update_admin_screen() {
 		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page( 'sensei', __( 'Sensei Updates', 'woothemes-sensei' ), __( 'Updates', 'woothemes-sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+			add_submenu_page( 'sensei', __( 'Sensei Updates', 'woothemes-sensei' ), __( 'Data Updates', 'woothemes-sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
 		}
 	} // End add_update_admin_screen()
 
@@ -857,7 +860,9 @@ class WooThemes_Sensei_Updates {
 
 			$question_order = get_post_meta( $question->ID, '_quiz_question_order', true );
 			update_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
+
 		}
+
 		return true;
 	}
 
@@ -922,15 +927,12 @@ class WooThemes_Sensei_Updates {
 				update_post_meta( $lesson->ID, '_order_' . $course_id, 0 );
 			}
 
-			if( class_exists( 'Sensei_Modules' ) ) {
-				global $sensei_modules;
+            $module = Sensei()->modules->get_lesson_module( $lesson->ID );
 
-				$module = $sensei_modules->get_lesson_module( $lesson->ID );
+            if( $module ) {
+                update_post_meta( $lesson->ID, '_order_module_' . $module->term_id, 0 );
+            }
 
-				if( $module ) {
-					update_post_meta( $lesson->ID, '_order_module_' . $module->term_id, 0 );
-				}
-			}
 		}
 
 		return true;
@@ -1738,4 +1740,22 @@ class WooThemes_Sensei_Updates {
 
 
 	}
+
+     /**
+     * WooThemes_Sensei_Updates::enhance_teacher_role
+     *
+     * This runs the update to create the teacher role
+     * @access public
+     * @since 1.8.0
+     * @return void;
+     */
+    public  function enhance_teacher_role ( ) {
+
+        require_once('class-sensei-teacher.php');
+        $teacher = new Sensei_Teacher();
+        $teacher->create_role();
+        return true;
+
+    }// end enhance_teacher_role
+
 } // End Class

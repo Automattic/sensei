@@ -95,7 +95,7 @@ if( ! $random_order || ( $random_order && $random_order == 'yes' ) ) {
 		$answer_order = array_filter( explode( ',', $answer_order_string ) );
 		if( count( $answer_order ) > 0 ) {
 			foreach( $answer_order as $answer_id ) {
-				if( $question_answers[ $answer_id ] ) {
+				if( isset( $question_answers[ $answer_id ] ) ) {
 					$answers_sorted[ $answer_id ] = $question_answers[ $answer_id ];
 					unset( $question_answers[ $answer_id ] );
 				}

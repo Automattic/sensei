@@ -57,9 +57,16 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 		$content_id = get_post_meta( $message_id, '_post', true );
 		$content_title = get_the_title( $content_id );
 
+        // setup the post type parameter
+        $content_type = get_post_type( $content_id );
+        if( !$content_type ){
+            $content_type ='';
+        }
+
 		// Construct data array
 		$sensei_email_data = apply_filters( 'sensei_email_data', array(
 			'template'			=> $this->template,
+            $content_type.'_id' => $content_id,
 			'heading'			=> $this->heading,
 			'teacher_id'		=> $this->teacher->ID,
 			'learner_id'		=> $this->learner->ID,

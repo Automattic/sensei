@@ -197,9 +197,6 @@ class WooThemes_Sensei_Frontend {
 			wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), '1.5.2', true );
 			wp_enqueue_script( $this->token . '-user-dashboard' );
 
-			// Load the general script
-			wp_enqueue_script( 'sensei-general-frontend', $woothemes_sensei->plugin_url . 'assets/js/general-frontend' . $suffix . '.js', array( 'jquery' ), '1.6.0' );
-
 			// Allow additional scripts to be loaded
 			do_action( 'sensei_additional_scripts' );
 
@@ -392,7 +389,6 @@ class WooThemes_Sensei_Frontend {
 	 * @access public
 	 * @param object $item
 	 * @return object $item
-     * todo: refactor the navigation so that the #name doesn't affect how it works. Reason for this is when a user change the menu itme link it will no longer work.
 	 */
 	public function sensei_setup_nav_menu_item( $item ) {
 		global $pagenow, $wp_rewrite, $woothemes_sensei;
@@ -522,20 +518,40 @@ class WooThemes_Sensei_Frontend {
 		global $post;
 
 		if( is_singular( 'sensei_message' ) ) {
-			$content_post_id = get_post_meta( $post->ID, '_post', true );
+
+            $content_post_id = get_post_meta( $post->ID, '_post', true );
 			if( $content_post_id ) {
 				$title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), '<a href="' . get_permalink( $content_post_id ) . '">' . get_the_title( $content_post_id ) . '</a>' );
 			} else {
 				$title = get_the_title( $post->ID );
 			}
+
 		} elseif( is_singular('quiz') ){
 
             $title = get_the_title() . ' ' . __( 'Quiz', 'woothemes-sensei' );
 
         }else {
-			$title = get_the_title();
+
+            $title = get_the_title();
+
 		}
-		?><header><h1><?php echo $title; ?></h1></header><?php
+		?>
+        <header>
+            <h1>
+                <?php
+                /**
+                 * Filter Sensei single title
+                 *
+                 * @since 1.8.0
+                 * @param string $title
+                 * @param string $template
+                 * @param string $post_type
+                 */
+                echo apply_filters( 'sensei_single_title', $title, $post->post_type );
+                ?>
+            </h1>
+        </header>
+    <?php
 	} // End sensei_single_title()
 
 	/**
@@ -1205,7 +1221,13 @@ class WooThemes_Sensei_Frontend {
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 		$show_actions = true;
         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
-        $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+
+        //setup quiz grade
+        $user_quiz_grade = '';
+        if( ! empty( $user_lesson_status  ) ){
+            $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+        }
+
 
 		if( intval( $lesson_prerequisite ) > 0 ) {
 			// If the user hasn't completed the prereq then hide the current actions
@@ -1376,14 +1398,13 @@ class WooThemes_Sensei_Frontend {
 
                         }
 
-
                         // show a link to the my_courses page or the WordPress register page if
                         // not my courses page was set in the settings
                         if( !empty( $my_courses_page_id ) && $my_courses_page_id ){
 
-                            $my_courses_page_url = get_permalink( $my_courses_page_id  );
-                            $my_courses_page_html_element = '<a href="'.$my_courses_page_url. '">Register<a>';
-                            echo '<div class="status register">' . $my_courses_page_html_element . '</div>' ;
+                            $my_courses_url = get_permalink( $my_courses_page_id  );
+                            $register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';
+                            echo '<div class="status register">' . $register_link . '</div>' ;
 
                         } else{
 
@@ -1764,10 +1785,12 @@ class WooThemes_Sensei_Frontend {
 
 		//if not posted from the sensei login form let
 		// WordPress or any other party handle the failed request
+	    if( ! isset( $_REQUEST['form'] ) || 'sensei-login' != $_REQUEST['form']  ){
 
-	    if( !isset( $_REQUEST['form'] ) &&  'sensei-login' != $_REQUEST['form'] ){
 	    	return ;
+
 	    }
+
 
     	// Get the reffering page, where did the post submission come from?
     	$referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER']);
@@ -1996,4 +2019,5 @@ class WooThemes_Sensei_Frontend {
 			$woothemes_sensei->notices->add_notice( $message, 'alert');
 
 	}// end login_message_process
+
 } // End Class
