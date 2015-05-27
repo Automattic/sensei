@@ -1,5 +1,32 @@
 *** Sensei Changelog ***
 
+2015.05.28 - version 1.8.0
+* New - Update the teacher role to give teachers more control. Also added further notifications for course ownership changes.
+* New - Sensei Modules extensions merged into Sensei Core
+* New - Disable notification on a per course basis
+* New - Bulk and Quick Edit support for some of the lessons properties
+* New - Bulk Editing for some of the lessons properties
+* New - Global Sensei instance function `Sensei()`
+* New - Plugin install welcome screen
+* Tweak - Increase min width of find learner drop down and remove inline styles.
+* Tweak - Dummy content updated
+* Tweak - Within some hooked functions, use the values passed in instead of global values.
+* Tweak - Code Documentation updates and a few refactor a few functions.
+* Tweak - Set quiz type taxonomy public setting to false to avoid it showing up in theme bread crumbs
+* Fix - Remove error notices on on the analysis screen
+* Fix - Bug where lessons can’t be removed from module
+* Fix - Minify all scripts to avoid javascript errors
+* Fix - Remove error notices on on the grading screen
+* Fix - Errors on the single course front-end page
+* Fix - Remove error notices on on the grading screen
+* Fix - All questions were not available in he existing questions section
+* Fix - Remove error notice on the single quiz page when trying to access lessons status
+* Fix - Avoid errors fro the learner when the course has not yet been saved
+* Fix - Learner Management and Analysis page pagination
+* Fix - Correctly escape multi-line question answers to ensure they don’t save with and extra new line character after every list item.
+* Fix - fix bug where the selected module was not showing for none admin users
+* Fix - Fix error on the WP login page
+
 2015.04.23 - version 1.7.7
 * Fix - Security loophole introduce in WP. Escaping all urls.
 
