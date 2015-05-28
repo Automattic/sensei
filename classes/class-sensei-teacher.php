@@ -161,7 +161,7 @@ class Sensei_Teacher {
 
             // Courses
             'create_courses' => true,
-            'publish_courses'	 => true,
+            'publish_courses'	 => false,
             'manage_course_categories'	 => true,
             'edit_courses'	 => true,
             'edit_published_courses'  => true,
