@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2015.05.28 - version 1.8.1
+* Tweak - Teacher role have to submit courses for review by default
+* Tweak - Language file updated.
+* Fix - Internal calls to WooCommerce active checking function changed to static
+
 2015.05.28 - version 1.8.0
 * New - Update the teacher role to give teachers more control. Also added further notifications for course ownership changes.
 * New - Sensei Modules extensions merged into Sensei Core
