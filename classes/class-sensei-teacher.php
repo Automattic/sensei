@@ -114,7 +114,7 @@ class Sensei_Teacher {
         // if the the teacher is not a valid WordPress role create it
        if ( ! is_a( $this->teacher_role, 'WP_Role' ) ) {
            // create the role
-           $this->$teacher_role = add_role( 'teacher', __( 'Teacher', 'woothemes-sensei' ) );
+           $this->teacher_role = add_role( 'teacher', __( 'Teacher', 'woothemes-sensei' ) );
        }
 
        // add the capabilities before returning
