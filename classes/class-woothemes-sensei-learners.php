@@ -383,7 +383,7 @@ class WooThemes_Sensei_Learners {
 				// Complete each lesson if course is set to be completed
 				if( isset( $_POST['add_complete_course'] ) && 'yes' == $_POST['add_complete_course'] ) {
 
-					$lesson_ids = WooThemes_Sensei_Course::course_lessons( $course_id, 'any', 'ids' );
+					$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
 					foreach( $lesson_ids as $id ) {
 						WooThemes_Sensei_Utils::sensei_start_lesson( $id, $user_id, true );
