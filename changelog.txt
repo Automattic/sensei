@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2015.06.02 - version 1.8.2
+* Fix - Sensei quiz settings not retrieved correctly
+* Fix - Modules management course selection Javascript error causing courses to be unelectable
+* Fix - Errors notices showing up on the front end for none logged in users
+
 2015.05.28 - version 1.8.1
 * Tweak - Teacher role have to submit courses for review by default
 * Tweak - Language file updated.
