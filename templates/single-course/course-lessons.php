@@ -19,7 +19,7 @@ $course_lessons = Sensei()->course->course_lessons( $post->ID );
 $total_lessons = count( $course_lessons );
 
 // Check if the user is taking the course
-$is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $post->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status' ) );
+$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
 
 // Get User Meta
 get_currentuserinfo();
