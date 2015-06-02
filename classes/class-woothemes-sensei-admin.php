@@ -841,7 +841,15 @@ class WooThemes_Sensei_Admin {
                                     //backwards compatibility
                                     if( empty( $data ) || 'on' == $data ){
                                         $checked_value = 'on';
-                                    }else{
+                                    }elseif( 'yes' == $data  ) {
+
+                                        $checked_value = 'yes';
+
+                                    }elseif( 'auto' == $data  ) {
+
+                                        $checked_value = 'auto';
+
+                                    } else {
                                         $checked_value = 1;
                                         $data = intval( $data );
                                     }
