@@ -1319,7 +1319,7 @@ class Sensei_Core_Modules
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
         wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery.min.js', array('jquery'), Sensei()->version , true);
-        wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','sensei-chosen', 'jquery-ui-sortable'), Sensei()->version, true);
+        wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','sensei-chosen','sensei-chosen-ajax', 'jquery-ui-sortable'), Sensei()->version, true);
 
         //localized module data
         $localize_modulesAdmin = array(
