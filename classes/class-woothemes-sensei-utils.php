@@ -1642,6 +1642,10 @@ class WooThemes_Sensei_Utils {
 					$user_id = get_current_user_id();
 				}
 
+                // the user is not logged in
+                if( ! $user_id > 0 ){
+                    return false;
+                }
 				$_user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson, $user_id );
 
 				if ( $_user_lesson_status ) {

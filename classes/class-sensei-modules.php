@@ -1412,7 +1412,7 @@ class Sensei_Core_Modules
                 $lessons_list = '';
                 foreach ($lessons as $lesson) {
                     $status = '';
-                    $lesson_completed = WooThemes_Sensei_Utils::user_completed_lesson($lesson->ID, $current_user->ID);
+                    $lesson_completed = WooThemes_Sensei_Utils::user_completed_lesson($lesson->ID, get_current_user_id() );
                     $title = esc_attr(get_the_title(intval($lesson->ID)));
 
                     if ($lesson_completed) {
