@@ -1438,6 +1438,10 @@ class WooThemes_Sensei_Utils {
 				$user_id = get_current_user_id();
 			}
 
+            if( ! $user_id > 0 ){
+                return false;
+            }
+
 			$user_course_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status', 'field' => 'comment_ID' ) );
 			if( $user_course_status_id ) {
 				return $user_course_status_id;
