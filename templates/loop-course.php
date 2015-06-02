@@ -53,12 +53,7 @@ if ( ! $paged || $paged < 2 ) {
     			$author_id = $post_item->post_author;
                 $category_output = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
                 $preview_lesson_count = intval( $woothemes_sensei->post_types->course->course_lesson_preview_count( $post_id ) );
-
-                $is_user_taking_course =  false;
-                if( $current_user->ID >  0 ){
-				    $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $post_id, $current_user->ID );
-                }
-
+				$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $post_id, $current_user->ID );
     			?>
     			<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $post_id ) ) ); ?>">
 
