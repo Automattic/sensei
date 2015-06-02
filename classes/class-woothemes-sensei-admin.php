@@ -35,7 +35,11 @@ class WooThemes_Sensei_Admin {
 	 */
 	public function __construct () {
 
+        //register admin styles
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_styles_global' ) );
+
+        //register admin scripts
+        add_action( 'admin_enqueue_scripts', array( $this, 'load_scripts' ) );
 
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
@@ -312,6 +316,26 @@ class WooThemes_Sensei_Admin {
 		}
 
 	} // End admin_styles_global()
+
+
+    /**
+     * Load scripts on all admin page where needed
+     *
+     * @since 1.8.2
+     * @access public
+     */
+    public function load_scripts( $hook ){
+
+        $screen = get_current_screen();
+
+        // load edit module scripts
+        if( 'edit-module' ==  $screen->id ){
+
+            wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery.min.js', array( 'jquery', 'sensei-chosen' ), Sensei()->version, true );
+
+        }
+
+    }
 
 
 	/**
@@ -841,7 +865,15 @@ class WooThemes_Sensei_Admin {
                                     //backwards compatibility
                                     if( empty( $data ) || 'on' == $data ){
                                         $checked_value = 'on';
-                                    }else{
+                                    }elseif( 'yes' == $data  ) {
+
+                                        $checked_value = 'yes';
+
+                                    }elseif( 'auto' == $data  ) {
+
+                                        $checked_value = 'auto';
+
+                                    } else {
                                         $checked_value = 1;
                                         $data = intval( $data );
                                     }
