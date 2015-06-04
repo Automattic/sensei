@@ -1541,12 +1541,7 @@ class WooThemes_Sensei_Course {
         $completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
         $total_lessons = count( $this->course_lessons( $course_id ) );
 
-        $plural = 's';
-        if( 1 == $completed ){
-            $plural = '';
-        }
-
-        $statement = sprintf(__('Currently completed %s lesson%s of %s in total', 'woothemes-sensei'), $completed, $plural, $total_lessons );
+        $statement = sprintf( _n('Currently completed %s lesson of %s in total', 'Currently completed %s lessons of %s in total', $completed, 'woothemes-sensei'), $completed, $total_lessons );
 
         /**
          * Filter the course completion statement.
