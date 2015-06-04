@@ -2640,7 +2640,7 @@ class WooThemes_Sensei_Lesson {
 		// Get all questions and multiple questions
 		$question_query_args = array(
 			'post_type' 		=> array( 'question', 'multiple_question' ),
-			'numberposts' 		=> -1,
+			'posts_per_page' 	=> -1,
 			'meta_key'        	=> '_quiz_question_order' . $quiz_id,
 			'orderby'         	=> $orderby,
 			'order'           	=> $order,
