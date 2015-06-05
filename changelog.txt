@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2015.06.05 - version 1.8.3
+* Fix - Fixed an issue where only 10 questions could be seen in quizzes
+* Tweak - Correctly pluralise the string 'Currently completed x lesson(s) of y in total'
+
 2015.06.02 - version 1.8.2
 * Fix - Sensei quiz settings not retrieved correctly
 * Fix - Modules management course selection Javascript error causing courses to be unselectable
