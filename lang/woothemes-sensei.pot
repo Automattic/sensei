@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Sensei package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei 1.8.2\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/woothemes-sensei\n"
-"POT-Creation-Date: 2015-06-02 09:35:47+00:00\n"
+"Project-Id-Version: Sensei 1.8.3\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/woothemes-sensei\n"
+"POT-Creation-Date: 2015-06-05 07:22:18+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -945,11 +945,13 @@ msgstr ""
 msgid "Start a Course!"
 msgstr ""
 
-#: classes/class-woothemes-sensei-course.php:1549
-msgid "Currently completed %s lesson%s of %s in total"
-msgstr ""
+#: classes/class-woothemes-sensei-course.php:1544
+msgid "Currently completed %s lesson of %s in total"
+msgid_plural "Currently completed %s lessons of %s in total"
+msgstr[0] ""
+msgstr[1] ""
 
-#: classes/class-woothemes-sensei-course.php:1738
+#: classes/class-woothemes-sensei-course.php:1733
 msgid "Disable notifications on this course ?"
 msgstr ""
 
