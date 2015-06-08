@@ -759,14 +759,49 @@ class Sensei_Teacher {
      * @return WP_Query $query
      */
     public function add_courses_to_author_archive( $query ) {
+
         if ( is_admin() || ! $query->is_author() ){
             return $query;
         }
 
-        $post_types= array( 'post','course' );
-        $query->set( 'post_type', $post_types );
+        // this should only apply to users with the teacher role
+        $current_page_user = get_user_by('login', $query->get('author_name') );
+        if( ! $current_page_user || ! in_array('teacher', $current_page_user->roles ) )     {
 
-        return $query;
+            return $query;
+
+        }
+
+        // Change post types depending on what is set already
+        $current_post_types = $query->get( 'post_type' );
+        if( empty( $current_post_types  ) ){
+
+            // if empty it means post by default, so add post so that it also includes that for now
+            $new_post_types = array( 'post', 'course' );
+
+        } elseif( is_array( $current_post_types  ) ) {
+
+            // merge the post types instead of overwriting it
+            $new_post_types = array_merge( $current_post_types, array( 'course' ) );
+
+        }else{
+
+            // in this instance it is probably just one post type in string format
+            $new_post_types =  array( $current_post_types , 'course');
+
+        }
+
+        // change the query before returning it
+        $query->set('post_type', $new_post_types );
+
+        /**
+         * Change the query on the teacher author archive template
+         *
+         * @since 1.8.4
+         * @param WP_Query $query
+         */
+        return apply_filters( 'sensei_teacher_archive_query', $query );
+
     }
 
     /**
