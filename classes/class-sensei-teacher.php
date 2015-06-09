@@ -1227,7 +1227,7 @@ class Sensei_Teacher {
 
             if( is_a( $role, 'WP_Role' ) && $role->has_cap('edit_courses') ){
 
-                $user_query_args = array( 'role' => $role->name );
+                $user_query_args = array( 'role' => $role->name, 'fields' => array( 'ID', 'display_name' ) );
                 $role_users_who_can_edit_courses = get_users( $user_query_args );
 
                 // add user from the current $user_role to all users
