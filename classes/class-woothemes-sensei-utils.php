@@ -425,7 +425,7 @@ class WooThemes_Sensei_Utils {
 			return false;
 
 		$orders = get_posts( array(
-		    'posts_per_page' => 500,
+		    'posts_per_page' => -1,
 		    'meta_key'    => '_customer_user',
 		    'meta_value'  => intval( $user_id ),
 		    'post_type'   => 'shop_order',
@@ -1086,7 +1086,7 @@ class WooThemes_Sensei_Utils {
 		$questions_array = array();
 		if ( 0 < $quiz_id ) {
 			$question_args = array( 'post_type'         => 'question',
-                                    'posts_per_page'       => 500,
+                                    'posts_per_page'       => -1,
                                     'orderby'           => 'ID',
                                     'order'             => 'ASC',
                                     'meta_query'		=> array(

@@ -476,7 +476,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		);
 
 		if ( $this->csv_output ) {
-			$course_args['posts_per_page'] = '500';
+			$course_args['posts_per_page'] = '-1';
 		}
 
 		if( isset( $args['search'] ) ) {
@@ -506,7 +506,7 @@ class WooThemes_Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_Lis
 		);
 
 		if ( $this->csv_output ) {
-			$lessons_args['posts_per_page'] = '500';
+			$lessons_args['posts_per_page'] = '-1';
 		}
 
 		if( isset( $args['search'] ) ) {

@@ -106,7 +106,7 @@ class WooThemes_Sensei_Messages {
 
 			$args = array(
 				'post_type' => $message_posttype,
-				'posts_per_page' => 500,
+				'posts_per_page' => -1,
 				'orderby' => 'name',
 				'order' => 'ASC',
 				'post_status' => 'publish',

@@ -481,7 +481,7 @@ class WooThemes_Sensei_Grading {
 		$html = '';
 
 		$course_args = array(   'post_type'         => 'course',
-								'posts_per_page'       => 500,
+								'posts_per_page'       => -1,
 								'orderby'           => 'title',
 								'order'             => 'ASC',
 								'post_status'       => 'any',
@@ -528,7 +528,7 @@ class WooThemes_Sensei_Grading {
 		if ( 0 < intval( $course_id ) ) {
 
 			$lesson_args = array( 'post_type'       => 'lesson',
-								'posts_per_page'       => 500,
+								'posts_per_page'       => -1,
 								'orderby'           => 'title',
 								'order'             => 'ASC',
 								'meta_key'          => '_lesson_course',

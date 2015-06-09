@@ -557,7 +557,7 @@ class WooThemes_Sensei_Admin {
 	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
 		$lesson_args = array(
 			'post_type' => 'lesson',
-			'posts_per_page' => 500,
+			'posts_per_page' => -1,
 			'meta_key' => '_lesson_course',
 			'meta_value' => $old_course_id,
 			'suppress_filters' 	=> 0
@@ -661,7 +661,7 @@ class WooThemes_Sensei_Admin {
 
 			$args = array(
 				'post_type' => 'course',
-				'posts_per_page' => 500,
+				'posts_per_page' => -1,
 				'suppress_filters' => 0,
 				'orderby' => 'menu_order date',
 				'order' => 'ASC',
@@ -755,7 +755,7 @@ class WooThemes_Sensei_Admin {
 			$args = array(
 				'post_type' => $type,
 				'post_status' => 'any',
-				'posts_per_page' => 500,
+				'posts_per_page' => -1,
 				'meta_key' => $meta_key,
 				'meta_value' => $post_id
 			);
@@ -1062,7 +1062,7 @@ class WooThemes_Sensei_Admin {
 		$args = array(
 			'post_type' => 'course',
 			'post_status' => array('publish', 'draft', 'future', 'private'),
-			'posts_per_page' => 500,
+			'posts_per_page' => -1,
 			'orderby' => 'name',
 			'order' => 'ASC',
 		);
@@ -1107,7 +1107,7 @@ class WooThemes_Sensei_Admin {
                     $args = array(
                         'post_type' => 'lesson',
                         'post_status' => 'publish',
-                        'posts_per_page' => 500,
+                        'posts_per_page' => -1,
                         'meta_query' => array(
                             array(
                                 'key' => '_lesson_course',

@@ -308,7 +308,7 @@ class WooThemes_Sensei {
 				foreach( $woocommerce->cart->cart_contents as $cart_key => $product ) {
 					if( isset( $product['product_id'] ) ) {
 						$args = array(
-							'posts_per_page' => 500,
+							'posts_per_page' => -1,
 							'post_type' => 'course',
 							'meta_query' => array(
 								array(
@@ -1088,7 +1088,7 @@ class WooThemes_Sensei {
 
 					// Get all courses for product
 					$args = array(
-						'posts_per_page' => 500,
+						'posts_per_page' => -1,
 						'post_type' => 'course',
 						'meta_query' => array(
 							array(
