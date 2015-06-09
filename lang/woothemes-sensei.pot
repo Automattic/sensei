@@ -3,8 +3,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Sensei 1.8.3\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/tag/woothemes-sensei\n"
-"POT-Creation-Date: 2015-06-05 07:22:18+00:00\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/woothemes-sensei\n"
+"POT-Creation-Date: 2015-06-09 15:02:00+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -331,20 +331,20 @@ msgid "+ %s"
 msgstr ""
 
 #: classes/class-sensei-teacher.php:117 classes/class-sensei-teacher.php:222
-#: classes/class-sensei-teacher.php:1064
+#: classes/class-sensei-teacher.php:1099
 #: classes/class-woothemes-sensei-updates.php:830
 msgid "Teacher"
 msgstr ""
 
-#: classes/class-sensei-teacher.php:852
+#: classes/class-sensei-teacher.php:887
 msgid "New course created."
 msgstr ""
 
-#: classes/class-sensei-teacher.php:863
+#: classes/class-sensei-teacher.php:898
 msgid "New course created by"
 msgstr ""
 
-#: classes/class-sensei-teacher.php:1200
+#: classes/class-sensei-teacher.php:1248
 msgid "Show all teachers"
 msgstr ""
 

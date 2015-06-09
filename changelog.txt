@@ -1,5 +1,13 @@
 *** Sensei Changelog ***
 
+2015.06.11 - version 1.8.4
+* Fix - Query post type changes for non Sensei queries. Added better checking to ensure this
+        query filter only applies to teachers.
+* Fix - Performance issues on the all courses page with a large user base.
+* Fix - Performance: user ajax search timed out due to large user base. Enforce minimum string search length.
+* Fix - Update all instances of 'numberofposts' with 'posts_per_page'. Also adding and upper
+        limit as '-1' (unlimited) is not good.
+
 2015.06.05 - version 1.8.3
 * Fix - Fixed an issue where only 10 questions could be seen in quizzes
 * Tweak - Correctly pluralise the string 'Currently completed x lesson(s) of y in total'
