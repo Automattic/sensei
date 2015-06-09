@@ -230,7 +230,7 @@ class WooThemes_Sensei_Lesson {
 		$select_lesson_prerequisite = get_post_meta( $post->ID, '_lesson_prerequisite', true );
 		// Get the Lesson Posts
 		$post_args = array(	'post_type' 		=> 'lesson',
-							'numberposts' 		=> -1,
+							'posts_per_page' 		=> 500,
 							'orderby'         	=> 'title',
     						'order'           	=> 'ASC',
     						'exclude' 			=> $post->ID,
@@ -507,7 +507,7 @@ class WooThemes_Sensei_Lesson {
 		} // End If Statement
 		// Get the Lesson Posts
 		$post_args = array(	'post_type' 		=> 'course',
-							'numberposts' 		=> -1,
+							'posts_per_page' 		=> 500,
 							'orderby'         	=> 'title',
     						'order'           	=> 'ASC',
     						'post_status'      	=> 'any',
@@ -563,7 +563,7 @@ class WooThemes_Sensei_Lesson {
 							$select_course_woocommerce_product = get_post_meta( $post_item->ID, '_course_woocommerce_product', true );
 
 							$product_args = array(	'post_type' 		=> array( 'product', 'product_variation' ),
-													'numberposts' 		=> -1,
+													'posts_per_page' 		=> 500,
 													'orderby'         	=> 'title',
 	    											'order'           	=> 'DESC',
 	    											'post_status'		=> array( 'publish', 'private', 'draft' ),
@@ -2538,7 +2538,7 @@ class WooThemes_Sensei_Lesson {
 	public function lesson_count( $post_status = 'publish', $course_id = false ) {
 
 		$post_args = array(	'post_type'         => 'lesson',
-							'posts_per_page'    => -1,
+							'posts_per_page'    => 500,
 //							'orderby'           => 'menu_order date',
 //							'order'             => 'ASC',
 							'post_status'       => $post_status,
@@ -2583,7 +2583,7 @@ class WooThemes_Sensei_Lesson {
 		$posts_array = array();
 
 		$post_args = array(	'post_type' 		=> 'quiz',
-							'numberposts' 		=> 1,
+							'posts_per_page' 		=> 1,
 							'orderby'         	=> 'title',
     						'order'           	=> 'DESC',
     						'post_parent'      	=> $lesson_id,
@@ -2640,7 +2640,7 @@ class WooThemes_Sensei_Lesson {
 		// Get all questions and multiple questions
 		$question_query_args = array(
 			'post_type' 		=> array( 'question', 'multiple_question' ),
-			'posts_per_page' 	=> -1,
+			'posts_per_page' 	=> 500,
 			'meta_key'        	=> '_quiz_question_order' . $quiz_id,
 			'orderby'         	=> $orderby,
 			'order'           	=> $order,
@@ -2712,7 +2712,7 @@ class WooThemes_Sensei_Lesson {
 
 						$qargs = array(
 							'post_type' 		=> 'question',
-							'numberposts' 		=> $question_number,
+							'posts_per_page' 		=> $question_number,
 							'orderby'         	=> $orderby,
 							'tax_query'			=> array(
 								array(
@@ -2823,7 +2823,7 @@ class WooThemes_Sensei_Lesson {
 
 				$args = array(
 					'post_type' 		=> 'question',
-					'numberposts' 		=> -1,
+					'posts_per_page' 		=> 500,
 					'orderby'         	=> 'ID',
 					'order'           	=> 'ASC',
 					'meta_query'		=> array(

@@ -493,7 +493,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	public function set_default_quiz_grade_type() {
 		$args = array(	'post_type' 		=> 'quiz',
-						'numberposts' 		=> -1,
+						'posts_per_page' 		=> 500,
 						'post_status'		=> 'publish',
 						'suppress_filters' 	=> 0
 						);
@@ -515,7 +515,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	public function set_default_question_type() {
 		$args = array(	'post_type' 		=> 'question',
-						'numberposts' 		=> -1,
+						'posts_per_page' 		=> 500,
 						'post_status'		=> 'publish',
 						'suppress_filters' 	=> 0
 						);
@@ -559,7 +559,7 @@ class WooThemes_Sensei_Updates {
 
 
 		$args = array(	'post_type' 		=> 'quiz',
-						'numberposts' 		=> $n,
+						'posts_per_page' 		=> $n,
 						'offset'			=> $offset,
 						'post_status'		=> 'publish',
 						'suppress_filters' 	=> 0
@@ -642,7 +642,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	public function update_question_grade_points() {
 		$args = array(	'post_type' 		=> 'question',
-						'numberposts' 		=> -1,
+						'posts_per_page' 		=> 500,
 						'post_status'		=> 'publish',
 						'suppress_filters' 	=> 0
 						);
@@ -662,7 +662,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	public function convert_essay_paste_questions() {
 		$args = array(	'post_type' 		=> 'question',
-						'numberposts' 		=> -1,
+						'posts_per_page' 		=> 500,
 						'post_status'		=> 'publish',
 						'tax_query'			=> array(
 							array(
@@ -708,7 +708,7 @@ class WooThemes_Sensei_Updates {
 
 		$args = array(	'post_type' 		=> 'quiz',
 						'post_status'		=> 'any',
-						'numberposts' 		=> $n,
+						'posts_per_page' 		=> $n,
 						'offset'			=> $offset,
 						'suppress_filters' 	=> 0
 						);
@@ -736,7 +736,7 @@ class WooThemes_Sensei_Updates {
 
 		$args = array(	'post_type' 		=> 'quiz',
 						'post_status'		=> 'any',
-						'numberposts' 		=> $n,
+						'posts_per_page' 		=> $n,
 						'offset'			=> $offset,
 						'meta_key'			=> '_show_questions',
 						'suppress_filters' 	=> 0
@@ -845,7 +845,7 @@ class WooThemes_Sensei_Updates {
 	public function restructure_question_meta() {
 		$args = array(
 			'post_type' 		=> 'question',
-			'posts_per_page' 	=> -1,
+			'posts_per_page' 	=> 500,
 			'post_status'		=> 'any',
 			'suppress_filters' 	=> 0
 		);
@@ -882,7 +882,7 @@ class WooThemes_Sensei_Updates {
 
 		$args = array(
 			'post_type' 		=> 'quiz',
-			'posts_per_page' 	=> -1,
+			'posts_per_page' 	=> 500,
 			'post_status'		=> 'any',
 			'suppress_filters' 	=> 0
 		);
@@ -910,7 +910,7 @@ class WooThemes_Sensei_Updates {
 	public function reset_lesson_order_meta() {
 		$args = array(
 			'post_type' 		=> 'lesson',
-			'posts_per_page' 	=> -1,
+			'posts_per_page' 	=> 500,
 			'post_status'		=> 'any',
 			'suppress_filters' 	=> 0
 		);
@@ -984,7 +984,7 @@ class WooThemes_Sensei_Updates {
 
 		$args = array(
 			'post_type' => 'quiz',
-			'numberposts' => $n,
+			'posts_per_page' => $n,
 			'offset' => $offset,
 			'post_status' => 'any'
 		);
@@ -1040,7 +1040,7 @@ class WooThemes_Sensei_Updates {
 		$args = array(
 			'post_type' => 'lesson',
 			'post_status' => 'any',
-			'numberposts' => $n,
+			'posts_per_page' => $n,
 			'offset' => $offset,
 			'fields' => 'ids'
 		);
@@ -1119,7 +1119,7 @@ class WooThemes_Sensei_Updates {
 		$args = array(
 			'post_type' => 'lesson',
 			'post_status' => 'any',
-			'numberposts' => -1,
+			'posts_per_page' => 500,
 			'meta_query' => array(
 				array(
 					'key' => '_quiz_has_questions',

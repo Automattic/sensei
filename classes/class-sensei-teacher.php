@@ -595,7 +595,7 @@ class Sensei_Teacher {
         $args = array(
             'post_type' => $type,
             'author' => $current_user->ID,
-            'posts_per_page' => -1
+            'posts_per_page' => 500
         );
 
          // Get all available statuses

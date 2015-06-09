@@ -1497,7 +1497,7 @@ class WooThemes_Sensei_Frontend {
 
 					// Get all courses for product
 					$args = array(
-						'posts_per_page' => -1,
+						'posts_per_page' => 500,
 						'post_type' => 'course',
 						'meta_query' => array(
 							array(
@@ -1558,7 +1558,7 @@ class WooThemes_Sensei_Frontend {
 
 					// Get all courses for product
 					$args = array(
-						'posts_per_page' => -1,
+						'posts_per_page' => 500,
 						'post_type' => 'course',
 						'meta_query' => array(
 							array(
@@ -1612,7 +1612,7 @@ class WooThemes_Sensei_Frontend {
 				$order_args = array(
 					'post_type' => 'shop_order',
 					'post_status' =>  array( 'wc-processing', 'wc-completed' ),
-					'posts_per_page' => -1,
+					'posts_per_page' => 500,
 					'meta_query' => array(
 						array(
 							'key' => '_customer_user',
@@ -1653,7 +1653,7 @@ class WooThemes_Sensei_Frontend {
 					// Get all courses from user's orders
 					$course_args = array(
 						'post_type' => 'course',
-						'posts_per_page' => -1,
+						'posts_per_page' => 500,
 						'meta_query' => array(
 							array(
 								'key' => '_course_woocommerce_product',
@@ -1731,7 +1731,7 @@ class WooThemes_Sensei_Frontend {
 			// Get all user's orders
 			$order_args = array(
 				'post_type' => 'shop_order',
-				'posts_per_page' => -1,
+				'posts_per_page' => 500,
 				'post_status' => array( 'wc-processing', 'wc-completed' ),
 				'meta_query' => array(
 					array(

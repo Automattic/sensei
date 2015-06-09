@@ -557,7 +557,7 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 			$lessons_args['s'] = $this->search;
 		}
 		if ( $this->csv_output ) {
-			$lessons_args['posts_per_page'] = '-1';
+			$lessons_args['posts_per_page'] = '500';
 		}
 
 		// Using WP_Query as get_posts() doesn't support 'found_posts'

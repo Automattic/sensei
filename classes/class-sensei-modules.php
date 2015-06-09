@@ -312,7 +312,7 @@ class Sensei_Core_Modules
         $args = array(
             'post_type' => 'course',
             'post_status' => array('publish', 'draft', 'future', 'private'),
-            'posts_per_page' => -1,
+            'posts_per_page' => 500,
             'tax_query' => array(
                 array(
                     'taxonomy' => $this->taxonomy,
@@ -383,7 +383,7 @@ class Sensei_Core_Modules
         $args = array(
             'post_type' => 'course',
             'post_status' => array('publish', 'draft', 'future', 'private'),
-            'posts_per_page' => -1,
+            'posts_per_page' => 500,
             'tax_query' => array(
                 array(
                     'taxonomy' => $this->taxonomy,
@@ -441,7 +441,7 @@ class Sensei_Core_Modules
         $args = array(
             'post_type' => 'course',
             'post_status' => array('publish', 'draft', 'future', 'private'),
-            'posts_per_page' => -1,
+            'posts_per_page' => 500,
             'orderby' => 'title',
             's' => $term
         );
@@ -796,7 +796,7 @@ class Sensei_Core_Modules
         $args = array(
             'post_type' => 'lesson',
             'post_status' => 'publish',
-            'posts_per_page' => -1,
+            'posts_per_page' => 500,
             'tax_query' => array(
                 array(
                     'taxonomy' => $this->taxonomy,
@@ -1047,7 +1047,7 @@ class Sensei_Core_Modules
 
         $args = array(
             'post_status' => 'publish',
-            'posts_per_page' => -1,
+            'posts_per_page' => 500,
             'tax_query' => array(
                 array(
                     'taxonomy' => $this->taxonomy,
@@ -1464,7 +1464,7 @@ class Sensei_Core_Modules
         $args = array(
             'post_type' => 'lesson',
             'post_status' => 'publish',
-            'posts_per_page' => -1,
+            'posts_per_page' => 500,
             'meta_query' => array(
                 array(
                     'key' => '_lesson_course',
@@ -1574,7 +1574,7 @@ class Sensei_Core_Modules
         $args = array(
             'post_type' => 'lesson',
             'post_status' => 'publish',
-            'posts_per_page' => -1,
+            'posts_per_page' => 500,
             'meta_query' => array(
                 array(
                     'key' => '_lesson_course',
