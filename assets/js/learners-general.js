@@ -101,7 +101,7 @@ jQuery(document).ready( function($) {
         url: 			ajaxurl,
         dataType: 		'json',
         afterTypeDelay: 100,
-        minTermLength: 	1,
+        minTermLength: 	3,
         data: ajaxData
     }, function (data) {
 
