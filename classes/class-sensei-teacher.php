@@ -759,14 +759,49 @@ class Sensei_Teacher {
      * @return WP_Query $query
      */
     public function add_courses_to_author_archive( $query ) {
+
         if ( is_admin() || ! $query->is_author() ){
             return $query;
         }
 
-        $post_types= array( 'post','course' );
-        $query->set( 'post_type', $post_types );
+        // this should only apply to users with the teacher role
+        $current_page_user = get_user_by('login', $query->get('author_name') );
+        if( ! $current_page_user || ! in_array('teacher', $current_page_user->roles ) )     {
 
-        return $query;
+            return $query;
+
+        }
+
+        // Change post types depending on what is set already
+        $current_post_types = $query->get( 'post_type' );
+        if( empty( $current_post_types  ) ){
+
+            // if empty it means post by default, so add post so that it also includes that for now
+            $new_post_types = array( 'post', 'course' );
+
+        } elseif( is_array( $current_post_types  ) ) {
+
+            // merge the post types instead of overwriting it
+            $new_post_types = array_merge( $current_post_types, array( 'course' ) );
+
+        }else{
+
+            // in this instance it is probably just one post type in string format
+            $new_post_types =  array( $current_post_types , 'course');
+
+        }
+
+        // change the query before returning it
+        $query->set('post_type', $new_post_types );
+
+        /**
+         * Change the query on the teacher author archive template
+         *
+         * @since 1.8.4
+         * @param WP_Query $query
+         */
+        return apply_filters( 'sensei_teacher_archive_query', $query );
+
     }
 
     /**
@@ -1180,16 +1215,29 @@ class Sensei_Teacher {
             return;
         }
 
-        $all_users = get_users();
+        // get all roles
+        $roles = get_editable_roles();
+
+        // get roles with the course edit capability
+        // and then get the users with those roles
         $users_who_can_edit_courses = array();
+        foreach( $roles as $role_item ){
 
-        foreach( $all_users as $user ){
+            $role = get_role( strtolower( $role_item['name'] ) );
 
-            if($user->has_cap('edit_courses')){
-                $users_who_can_edit_courses[] = $user;
+            if( is_a( $role, 'WP_Role' ) && $role->has_cap('edit_courses') ){
+
+                $user_query_args = array( 'role' => $role->name, 'fields' => array( 'ID', 'display_name' ) );
+                $role_users_who_can_edit_courses = get_users( $user_query_args );
+
+                // add user from the current $user_role to all users
+                $users_who_can_edit_courses = array_merge( $users_who_can_edit_courses, $role_users_who_can_edit_courses );
+
             }
 
         }
+
+        // Create the select element with the given users who can edit course
         $selected = isset( $_GET['course_teacher'] ) ? $_GET['course_teacher'] : '';
         $course_options = '';
         foreach( $users_who_can_edit_courses as $user ) {

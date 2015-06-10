@@ -163,7 +163,7 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 
 		$posts_array = array();
 		$post_args = array(	'post_type' 		=> 'course',
-							'numberposts' 		=> intval( $instance[ 'limit' ] ),
+							'posts_per_page' 		=> intval( $instance[ 'limit' ] ),
 							'orderby'         	=> 'menu_order date',
     						'order'           	=> 'ASC',
     						'post_status'       => 'publish',

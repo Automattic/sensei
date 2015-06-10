@@ -179,7 +179,7 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 		$posts_array = array();
 
 		$post_args = array(	'post_type' 		=> 'lesson',
-							'numberposts' 		=> intval( $instance[ 'limit' ] ),
+							'posts_per_page' 		=> intval( $instance[ 'limit' ] ),
 							'orderby'         	=> 'menu_order date',
     						'order'           	=> 'DESC',
     						'post_status'       => 'publish',

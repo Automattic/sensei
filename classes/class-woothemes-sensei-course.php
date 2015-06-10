@@ -142,7 +142,7 @@ class WooThemes_Sensei_Course {
 		$select_course_woocommerce_product = get_post_meta( $post->ID, '_course_woocommerce_product', true );
 
 		$post_args = array(	'post_type' 		=> array( 'product', 'product_variation' ),
-							'numberposts' 		=> -1,
+							'posts_per_page' 		=> -1,
 							'orderby'         	=> 'title',
     						'order'           	=> 'DESC',
     						'exclude' 			=> $post->ID,
@@ -231,7 +231,7 @@ class WooThemes_Sensei_Course {
 		$select_course_prerequisite = get_post_meta( $post->ID, '_course_prerequisite', true );
 
 		$post_args = array(	'post_type' 		=> 'course',
-							'numberposts' 		=> -1,
+							'posts_per_page' 		=> -1,
 							'orderby'         	=> 'title',
     						'order'           	=> 'DESC',
     						'exclude' 			=> $post->ID,
@@ -837,7 +837,7 @@ class WooThemes_Sensei_Course {
 		$lessons = array();
 
 		$post_args = array(	'post_type'         => 'lesson',
-							'posts_per_page'       => 500,
+							'posts_per_page'       => -1,
 							'orderby'           => 'date',
 							'order'             => 'ASC',
 							'meta_query'        => array(
@@ -976,7 +976,7 @@ class WooThemes_Sensei_Course {
 		$count = 0;
 
 		$lesson_args = array(	'post_type' 		=> 'lesson',
-								'numberposts' 		=> -1,
+								'posts_per_page' 		=> -1,
 		    					'author'         	=> $author_id,
 		    					'meta_key'        	=> '_lesson_course',
     							'meta_value'      	=> $course_id,
@@ -1002,7 +1002,7 @@ class WooThemes_Sensei_Course {
 		$count = 0;
 
 		$lesson_args = array(	'post_type' 		=> 'lesson',
-								'numberposts' 		=> -1,
+								'posts_per_page' 		=> -1,
 		    					'meta_key'        	=> '_lesson_course',
     							'meta_value'      	=> $course_id,
     	    					'post_status'      	=> 'publish',
@@ -1027,7 +1027,7 @@ class WooThemes_Sensei_Course {
 		$count = 0;
 
 		$lesson_args = array(	'post_type' 		=> 'lesson',
-								'numberposts' 		=> -1,
+								'posts_per_page' 		=> -1,
     	    					'post_status'      	=> 'publish',
     	    					'suppress_filters' 	=> 0,
     	    					'meta_query' => array(
@@ -1061,7 +1061,7 @@ class WooThemes_Sensei_Course {
 		// Check for WooCommerce
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && 0 < $product_id ) {
 			$post_args = array(	'post_type' 		=> 'course',
-								'numberposts' 		=> -1,
+								'posts_per_page' 		=> -1,
 								'meta_key'        	=> '_course_woocommerce_product',
 	    						'meta_value'      	=> $product_id,
 	    						'post_status'       => 'publish',
@@ -1477,7 +1477,7 @@ class WooThemes_Sensei_Course {
 
         $args = array(
                'post_type' => 'course',
-                'posts_per_page' 		=> 5000,
+                'posts_per_page' 		=> -1,
                 'orderby'         	=> 'title',
                 'order'           	=> 'ASC',
                 'post_status'      	=> 'any',

@@ -202,4 +202,41 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 
     }// end testUpdateCourseModulesAuthorChangeLessons
 
+    /**
+     * Test Sensei()->Teacher->add_courses_to_author_archive
+     * Test for the normal case on
+     *
+     * @since 1.8.4
+     */
+    public function testAddCoursesToAuthorArchive(){
+
+        // create WP_Query object with the right conditions
+        $query = new WP_Query;
+        $query->is_author = true;
+        Sensei()->teacher->create_role();
+
+        //test author for which the archive is running
+        $teacher_id = wp_create_user( 'teacher_archive_post_type', 'teacher_archive_post_type', 'teacher_archive_post_type@tt.com' );
+        $teacher = get_userdata( $teacher_id );
+
+        $teacher->add_role('teacher');
+        $query->set('author_name', 'teacher_archive_post_type');
+        wp_set_current_user( $teacher_id );
+
+        //Test the query with no post_type set
+        $changed_query = Sensei()->teacher->add_courses_to_author_archive( $query );
+        $this->assertEquals( array('post','course'), $changed_query->get('post_type'), 'The new WP_Query object post type should have been changed' );
+
+        // test the existing post types passed in
+        $query->set('post_type', array('custom_pt', 'books', 'records') );
+        $changed_query = Sensei()->teacher->add_courses_to_author_archive( $query );
+        $this->assertEquals( array('custom_pt', 'books', 'records', 'course'), $changed_query->get('post_type'), 'The new WP_Query object post type should have been merged with existing post types' );
+
+        // test if the post type is set to a string
+        $query->set('post_type', 'simple_post_type' );
+        $changed_query = Sensei()->teacher->add_courses_to_author_archive( $query );
+        $this->assertEquals( array( 'simple_post_type', 'course' ), $changed_query->get('post_type'), 'The new WP_Query object post type should be an array of two items' );
+
+    }
+
 } // end class
