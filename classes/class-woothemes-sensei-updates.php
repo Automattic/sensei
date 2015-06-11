@@ -340,6 +340,7 @@ class WooThemes_Sensei_Updates {
 				} // End For Loop
 			} // End For Loop
 
+            $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
 			update_option( $this->token . '-upgrades', $this->updates_run );
 			return true;
 
@@ -456,6 +457,7 @@ class WooThemes_Sensei_Updates {
 	 */
 	private function set_update_run( $update ) {
 		array_push( $this->updates_run, $update );
+        $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
 		update_option( $this->token . '-upgrades', $this->updates_run );
 	}
 
