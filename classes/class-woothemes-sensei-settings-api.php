@@ -844,13 +844,13 @@ class WooThemes_Sensei_Settings_API {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script( 'farbtastic' );
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'farbtastic' ), '1.6.0' );
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'farbtastic' ), Sensei()->version );
 
 		if ( $this->has_range ) {
-			wp_enqueue_script( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/js/ranges' . $suffix . '.js' ), array( 'jquery-ui-slider' ), '1.5.2' );
+			wp_enqueue_script( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/js/ranges' . $suffix . '.js' ), array( 'jquery-ui-slider' ), Sensei()->version );
 		}
 
-		wp_register_script( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/js/image-selectors' . $suffix . '.js' ), array( 'jquery' ), '1.5.2' );
+		wp_register_script( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/js/image-selectors' . $suffix . '.js' ), array( 'jquery' ), Sensei()->version );
 
 		if ( $this->has_imageselector ) {
 			wp_enqueue_script( 'woothemes-sensei-settings-imageselectors' );
@@ -869,7 +869,7 @@ class WooThemes_Sensei_Settings_API {
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
 		wp_enqueue_style( 'farbtastic' );
-		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), '1.7.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), Sensei()->version );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()
@@ -884,10 +884,10 @@ class WooThemes_Sensei_Settings_API {
 		global $woothemes_sensei;
 
 		if ( $this->has_range ) {
-			wp_enqueue_style( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/css/ranges.css' ), '', '1.0.0' );
+			wp_enqueue_style( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/css/ranges.css' ), '', Sensei()->version );
 		}
 
-		wp_register_style( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/css/image-selectors.css' ), '', '1.0.0' );
+		wp_register_style( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/css/image-selectors.css' ), '', Sensei()->version );
 
 		if ( $this->has_imageselector ) {
 			wp_enqueue_style( 'woothemes-sensei-settings-imageselectors' );

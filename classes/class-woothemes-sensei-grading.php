@@ -107,7 +107,7 @@ class WooThemes_Sensei_Grading {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// Load Grading JS
-		wp_enqueue_script( 'sensei-grading-general', $woothemes_sensei->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery' ), '1.5.2' );
+		wp_enqueue_script( 'sensei-grading-general', $woothemes_sensei->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
 
 	} // End enqueue_scripts()
 
@@ -123,7 +123,7 @@ class WooThemes_Sensei_Grading {
 		global $woothemes_sensei;
 		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', '1.7.0' );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
 

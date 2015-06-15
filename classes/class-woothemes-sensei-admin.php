@@ -295,23 +295,23 @@ class WooThemes_Sensei_Admin {
 	 * @return void
 	 */
 	public function admin_styles_global ( $hook ) {
-		global $woothemes_sensei, $post_type, $wp_version;
+		global $post_type;
 
 		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings', 'lesson-order', 'course-order' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( $woothemes_sensei->token . '-global', $woothemes_sensei->plugin_url . 'assets/css/global.css', '', '1.7.0', 'screen' );
-		wp_enqueue_style( $woothemes_sensei->token . '-global' );
+		wp_register_style( Sensei()->token . '-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
+		wp_enqueue_style( Sensei()->token . '-global' );
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
-			wp_register_style( $woothemes_sensei->token . '-admin-custom', $woothemes_sensei->plugin_url . 'assets/css/admin-custom.css', '', '1.6.0', 'screen' );
-			wp_enqueue_style( $woothemes_sensei->token . '-admin-custom' );
-			wp_register_style( $woothemes_sensei->token . '-select2', $woothemes_sensei->plugin_url . 'assets/select2/select2.css', '', '1.5.2', 'screen' );
-			wp_enqueue_style( $woothemes_sensei->token . '-select2' );
+			wp_register_style( Sensei()->token . '-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
+			wp_enqueue_style( Sensei()->token . '-admin-custom' );
+			wp_register_style( Sensei()->token . '-select2', Sensei()->plugin_url . 'assets/select2/select2.css', '', Sensei()->version, 'screen' );
+			wp_enqueue_style( Sensei()->token . '-select2' );
 
 		}
 
@@ -392,7 +392,7 @@ class WooThemes_Sensei_Admin {
 		// Installed notices
 	    if ( get_option('sensei_installed')==1 ) {
 
-	    	wp_enqueue_style( 'sensei-activation', plugins_url(  '/assets/css/activation.css', dirname( __FILE__ ) ) );
+	    	wp_enqueue_style( 'sensei-activation', plugins_url(  '/assets/css/activation.css', dirname( __FILE__ ) ), '', Sensei()->version );
 
 	    	if (get_option('skip_install_sensei_pages')!=1 && $woothemes_sensei->get_page_id('course')<1 && !isset($_GET['install_sensei_pages']) && !isset($_GET['skip_install_sensei_pages'])) {
 	    		add_action( 'admin_notices', array( $this, 'admin_install_notice' ) );
@@ -960,7 +960,7 @@ class WooThemes_Sensei_Admin {
 		global $woothemes_sensei;
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?><div id="course-order" class="wrap course-order">
 		<h2><?php _e( 'Order Courses', 'woothemes-sensei' ); ?></h2><?php
@@ -1041,7 +1041,7 @@ class WooThemes_Sensei_Admin {
 	public function lesson_order_screen() {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), '1.6.0' );
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?><div id="lesson-order" class="wrap lesson-order">
 		<h2><?php _e( 'Order Lessons', 'woothemes-sensei' ); ?></h2><?php

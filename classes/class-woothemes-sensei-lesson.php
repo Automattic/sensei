@@ -1766,9 +1766,9 @@ class WooThemes_Sensei_Lesson {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			// Load the lessons script
-			wp_enqueue_script( 'sensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata' /* . $suffix */ . '.js', array( 'jquery', 'jquery-ui-sortable' ), '1.6.0', true );
-			wp_enqueue_script( 'sensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), '1.5.2', true );
-			wp_enqueue_script( 'sensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), '1.5.2', true );
+			wp_enqueue_script( 'sensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata' /* . $suffix */ . '.js', array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version, true );
+			wp_enqueue_script( 'sensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+			wp_enqueue_script( 'sensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), Sensei()->version, true );
 
             // Load the bulk edit screen script
             if( 'edit.php' == $hook && 'lesson'==$_GET['post_type'] ) {
@@ -1783,7 +1783,7 @@ class WooThemes_Sensei_Lesson {
 
 			// Chosen RTL
 			if ( is_rtl() ) {
-				wp_enqueue_script( 'sensei-chosen-rtl', $woothemes_sensei->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), '1.5.2', true );
+				wp_enqueue_script( 'sensei-chosen-rtl', $woothemes_sensei->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 			}
 
 		}
@@ -1806,7 +1806,7 @@ class WooThemes_Sensei_Lesson {
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
-			wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', '1.7.0' );
+			wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', Sensei()->version );
 		}
 
 	} // End enqueue_styles()

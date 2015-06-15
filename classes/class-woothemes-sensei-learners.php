@@ -93,14 +93,13 @@ class WooThemes_Sensei_Learners {
 	 * @return void
 	 */
 	public function enqueue_scripts () {
-		global $woothemes_sensei;
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// Load Learners JS
 		wp_enqueue_script( 'sensei-learners-general',
-                            $woothemes_sensei->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
-                            array('jquery','sensei-lesson-chosen','sensei-chosen-ajax' ), $woothemes_sensei->version, true );
+            Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
+                            array('jquery','sensei-lesson-chosen','sensei-chosen-ajax' ), Sensei()->version, true );
 
 		$data = array(
 			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
@@ -123,8 +122,9 @@ class WooThemes_Sensei_Learners {
 	 * @return void
 	 */
 	public function enqueue_styles () {
-		global $woothemes_sensei;
-		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
+
+		wp_enqueue_style( Sensei()->token . '-admin' );
+
 	} // End enqueue_styles()
 
 	/**
