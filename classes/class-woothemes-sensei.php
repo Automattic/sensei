@@ -11,40 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - run_upgrades()
- * - set_woocommerce_functionality()
- * - virtual_order_payment_complete
- * - register_widgets()
- * - load_localisation()
- * - load_plugin_textdomain()
- * - activation()
- * - install()
- * - activate_sensei()
- * - register_plugin_version()
- * - ensure_post_thumbnails_support()
- * - template_loader()
- * - plugin_path()
- * - get_page_id()
- * - woocommerce_course_update()
- * - check_user_permissions()
- * - access_settings()
- * - sensei_woocommerce_complete_order()
- * - sensei_woocommerce_cancel_order()
- * - sensei_woocommerce_subscription_ended()
- * - sensei_woocommerce_reactive_subscription()
- * - sensei_get_woocommerce_product_object()
- * - load_class()
- * - sensei_activate_subscription()
- * - sensei_woocommerce_email_order_meta_keys()
- * - sensei_count_comments()
- * - init_image_sizes()
- * - get_image_size()
  */
 class WooThemes_Sensei {
+
+    /**
+     * @var file
+     * Reference to the main plugin file
+     */
+    private $file;
 
     /**
      * @var $_instance reference to the the main and only instance of the Sensei class.
@@ -52,57 +26,156 @@ class WooThemes_Sensei {
      */
     protected static $_instance = null;
 
+    /**
+     * Main reference to the plugins current version
+     */
+    public $version;
+
+    /**
+     * Public token, referencing for the text domain.
+     */
+    public $token = 'woothemes-sensei';
+
+    /**
+     * Plugin url and path for use when access resources.
+     */
+    public $plugin_url;
+    public $plugin_path;
+    public $template_url;
+
+    /**
+     * @var WooThemes_Sensei_PostTypes
+     * All Sensei sub classes. Currently used to access functionality contained within
+     * within Sensei sub classes e.g. Sensei()->course->all_courses()
+     */
+    public $post_types;
+
+    /**
+     * @var WooThemes_Sensei_Settings
+     */
+    public $settings;
+
+    /**
+     * @var WooThemes_Sensei_Course_Results
+     */
+    public $course_results;
+
+    /**
+     * @var WooThemes_Sensei_Course
+     */
+	public $course;
+
+    /**
+     * @var WooThemes_Sensei_Lesson
+     */
+	public $lesson;
+
+    /**
+     * @var WooThemes_Sensei_Quiz
+     */
+    public $quiz;
+
+    /**
+     * @var WooThemes_Sensei_Question
+     */
+	public $question;
+
+    /**
+     * @var WooThemes_Sensei_Admin
+     */
 	public $admin;
+
+    /**
+     * @var WooThemes_Sensei_Frontend
+     */
 	public $frontend;
-	public $post_types;
-	public $token = 'woothemes-sensei';
-	public $plugin_url;
-	public $plugin_path;
-	public $slider_count = 1;
-	public $version;
-	public $permissions_message;
-	private $file;
+
+    /**
+     * @var String
+     */
+	public $notice;
+
+    /**
+     * @var WooThemes_Sensei_Grading
+     */
+	public $grading;
+
+    /**
+     * @var WooThemes_Sensei_Emails
+     */
+	public $emails;
+
+    /**
+     * @var WooThemes_Sensei_Learner_Profiles
+     */
+	public $learner_profiles;
+
+    /**
+     * @var Sensei_Teacher
+     */
+	public $teacher;
+
+    /**
+     * @var WooThemes_Sensei_Learners
+     */
+	public $learners;
+
+    /**
+     * @var array
+     * Global instance for access to the permissions message shown
+     * when users do not have the right privileges to access resources.
+     */
+    public $permissions_message;
 
 	/**
 	 * Constructor method.
 	 * @param  string $file The base file of the plugin.
 	 * @since  1.0.0
-	 * @return void
 	 */
 	public function __construct ( $file ) {
-		// REFACTOR
+
 		// Setup object data
 		$this->file = $file;
 		$this->plugin_url = trailingslashit( plugins_url( '', $plugin = $file ) );
 		$this->plugin_path = trailingslashit( dirname( $file ) );
 		$this->template_url	= apply_filters( 'sensei_template_url', 'sensei/' );
 		$this->permissions_message = array( 'title' => __( 'Permission Denied', 'woothemes-sensei' ), 'message' => __( 'Unfortunately you do not have permissions to access this page.', 'woothemes-sensei' ) );
+
 		// Localisation
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
+
 		// Installation
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) $this->install();
+
 		// Run this on activation.
 		register_activation_hook( $this->file, array( $this, 'activation' ) );
+
 		// Load the Utils class.
 		$this->load_class( 'utils' );
+
 		// Setup post types.
 		$this->load_class( 'posttypes' );
 		$this->post_types = new WooThemes_Sensei_PostTypes();
 		$this->post_types->token = 'woothemes-sensei-posttypes';
+
 		// Setup settings screen.
 		$this->load_class( 'settings-api' );
 		$this->load_class( 'settings' );
 		$this->settings = new WooThemes_Sensei_Settings();
 		$this->settings->token = 'woothemes-sensei-settings';
+
 		// Setup Admin Settings data
 		if ( is_admin() ) {
+
 			$this->settings->has_tabs 	= true;
 			$this->settings->name 		= __( 'Sensei Settings', 'woothemes-sensei' );
 			$this->settings->menu_label	= __( 'Settings', 'woothemes-sensei' );
 			$this->settings->page_slug	= 'woothemes-sensei-settings';
+
 		} // End If Statement
-		$this->settings->setup_settings();
+
+        $this->settings->setup_settings();
 		$this->settings->get_settings();
 
 		// Load Course Results Class
@@ -186,10 +259,12 @@ class WooThemes_Sensei {
 
         // Image Sizes
 		$this->init_image_sizes();
+
 		// Force WooCommerce Required Settings
 		$this->set_woocommerce_functionality();
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 		add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
+
 		// WooCommerce Payment Actions
 		add_action( 'woocommerce_payment_complete' , array( $this, 'sensei_woocommerce_complete_order' ) );
 		add_action( 'woocommerce_thankyou' , array( $this, 'sensei_woocommerce_complete_order' ) );
@@ -198,6 +273,7 @@ class WooThemes_Sensei {
 		add_action( 'woocommerce_order_status_cancelled' , array( $this, 'sensei_woocommerce_cancel_order' ) );
 		add_action( 'woocommerce_order_status_refunded' , array( $this, 'sensei_woocommerce_cancel_order' ) );
 		add_action( 'subscriptions_activated_for_order', array( $this, 'sensei_activate_subscription' ) );
+
 		// WooCommerce Subscriptions Actions
 		add_action( 'reactivated_subscription', array( $this, 'sensei_woocommerce_reactivate_subscription' ), 10, 2 );
 		add_action( 'subscription_expired' , array( $this, 'sensei_woocommerce_subscription_ended' ), 10, 2 );
