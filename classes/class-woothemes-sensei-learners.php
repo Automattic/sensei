@@ -99,14 +99,15 @@ class WooThemes_Sensei_Learners {
 		// Load Learners JS
 		wp_enqueue_script( 'sensei-learners-general',
             Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
-                            array('jquery','sensei-lesson-chosen','sensei-chosen-ajax' ), Sensei()->version, true );
+                            array('jquery','select2','sensei-chosen-ajax' ), Sensei()->version, true );
 
 		$data = array(
 			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
 			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
 			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
 			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
-            'search_users_nonce' => wp_create_nonce( 'search-users' )
+            'search_users_nonce' => wp_create_nonce( 'search-users' ),
+            'selectplaceholder'=> __( 'Select Learner', 'woothemes-sensei' )
 		);
 
 		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
