@@ -287,9 +287,8 @@ class Sensei_Core_Modules
         ?>
         <div class="form-field">
             <label for="module_courses"><?php _e('Course(s)', 'woothemes-sensei'); ?></label>
-            <select id="module_courses" name="module_courses[]" class="ajax_chosen_select_courses"
-                    placeholder="<?php esc_attr_e('Search for courses...', 'woothemes-sensei'); ?>"
-                    multiple="multiple"></select>
+            <input type="hidden" id="module_courses" name="module_courses" class="ajax_chosen_select_courses"
+                    placeholder="<?php esc_attr_e('Search for courses', 'woothemes-sensei'); ?>" />
             <span
                 class="description"><?php _e('Search for and select the courses that this module will belong to.', 'woothemes-sensei'); ?></span>
         </div>
@@ -323,11 +322,11 @@ class Sensei_Core_Modules
         );
         $courses = get_posts($args);
 
-        // Add existing courses as selected options
-        $module_courses = '';
+        //build the defaults array
+        $module_courses = array();
         if (isset($courses) && is_array($courses)) {
             foreach ($courses as $course) {
-                $module_courses .= '<option value="' . esc_attr($course->ID) . '" selected="selected">' . $course->post_title . '</option>';
+                $module_courses[] =   array( 'id' =>$course->ID, 'details'=>$course->post_title );
             }
         }
 
@@ -336,34 +335,15 @@ class Sensei_Core_Modules
             <th scope="row" valign="top"><label
                     for="module_courses"><?php _e('Course(s)', 'woothemes-sensei'); ?></label></th>
             <td>
-                <select id="module_courses" name="module_courses[]" class="ajax_chosen_select_courses"
-                        placeholder="<?php esc_attr_e('Search for courses...', 'woothemes-sensei'); ?>"
-                        multiple="multiple"><?php echo $module_courses; ?></select>
+                <input type="hidden"
+                       data-defaults="<?php echo esc_attr( json_encode($module_courses)); ?>"
+                       value="<?php echo esc_attr( json_encode($module_courses) ); ?>"
+                       id="module_courses" name="module_courses"
+                       class="ajax_chosen_select_courses"
+                       placeholder="<?php esc_attr_e('Search for courses...', 'woothemes-sensei'); ?>"
+                    />
                 <span
                     class="description"><?php _e('Search for and select the courses that this module will belong to.', 'woothemes-sensei'); ?></span>
-                <script type="text/javascript">
-                    jQuery('select.ajax_chosen_select_courses').ajaxChosen({
-                        method: 'GET',
-                        url: '<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>',
-                        dataType: 'json',
-                        afterTypeDelay: 100,
-                        minTermLength: 1,
-                        data: {
-                            action: 'sensei_json_search_courses',
-                            security: '<?php echo esc_js( wp_create_nonce( "search-courses" ) ); ?>',
-                            default: ''
-                        }
-                    }, function (data) {
-
-                        var courses = {};
-
-                        jQuery.each(data, function (i, val) {
-                            courses[i] = val;
-                        });
-
-                        return courses;
-                    });
-                </script>
             </td>
         </tr>
     <?php
@@ -402,9 +382,14 @@ class Sensei_Core_Modules
         }
 
         // Add module to selected courses
-        if (isset($_POST['module_courses']) && is_array($_POST['module_courses']) && count($_POST['module_courses']) > 0) {
-            foreach ($_POST['module_courses'] as $k => $course_id) {
+        if ( isset( $_POST['module_courses'] ) && ! empty( $_POST['module_courses'] ) ) {
+
+            $course_ids = explode( ",", $_POST['module_courses'] );
+
+            foreach ( $course_ids as $course_id ) {
+
                 wp_set_object_terms($course_id, $module_id, $this->taxonomy, true);
+
             }
         }
     }
@@ -1319,11 +1304,12 @@ class Sensei_Core_Modules
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
         wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery.min.js', array('jquery'), Sensei()->version , true);
-        wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','sensei-chosen','sensei-chosen-ajax', 'jquery-ui-sortable'), Sensei()->version, true);
+        wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','select2', 'jquery-ui-sortable'), Sensei()->version, true);
 
         //localized module data
         $localize_modulesAdmin = array(
-            'search_courses_nonce' => wp_create_nonce( "search-courses" )
+            'search_courses_nonce' => wp_create_nonce( "search-courses" ),
+            'selectPlaceholder'=> __('Search for courses', 'woothemes-sensei')
         );
 
         wp_localize_script( $this->taxonomy . '-admin' ,'modulesAdmin', $localize_modulesAdmin  );
