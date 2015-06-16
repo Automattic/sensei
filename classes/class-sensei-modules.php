@@ -1295,7 +1295,9 @@ class Sensei_Core_Modules
 
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
+        //replaced with Select2 but kept here for Backwards compatibility
         wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery.min.js', array('jquery'), Sensei()->version , true);
+
         wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','select2', 'jquery-ui-sortable'), Sensei()->version, true);
 
         //localized module data
