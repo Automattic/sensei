@@ -39,7 +39,7 @@ class WooThemes_Sensei_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_styles_global' ) );
 
         //register admin scripts
-        add_action( 'admin_enqueue_scripts', array( $this, 'load_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
@@ -305,6 +305,9 @@ class WooThemes_Sensei_Admin {
 		wp_register_style( Sensei()->token . '-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
 		wp_enqueue_style( Sensei()->token . '-global' );
 
+        // Select 2 styles
+        wp_enqueue_style( 'select2', Sensei()->plugin_url . 'assets/css/select2/select2.css', '', Sensei()->version, 'screen' );
+
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
@@ -319,14 +322,22 @@ class WooThemes_Sensei_Admin {
 
 
     /**
-     * Load scripts on all admin page where needed
+     * Globally register all scripts needed in admin.
+     *
+     * The script users should enqueue the script when needed.
      *
      * @since 1.8.2
      * @access public
      */
-    public function load_scripts( $hook ){
+    public function register_scripts( $hook ){
 
         $screen = get_current_screen();
+
+        // Allow developers to load non-minified versions of scripts
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+        // Select2 script used to enhance all select boxes
+        wp_register_script( 'select2', Sensei()->plugin_url . '/assets/js/select2/select2' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
 
         // load edit module scripts
         if( 'edit-module' ==  $screen->id ){
