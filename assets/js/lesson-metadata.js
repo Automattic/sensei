@@ -582,9 +582,6 @@ jQuery(document).ready( function($) {
 		} // End If Statement
 	});
 
-    //module select box
-    if ( jQuery( 'select#lesson-module-options' ).exists() ) { jQuery( 'select#lesson-module-options' ).select2({width:"resolve"}); }
-
 	/***************************************************************************************************
 	 * 	4 - Course Functions.
 	 ***************************************************************************************************/

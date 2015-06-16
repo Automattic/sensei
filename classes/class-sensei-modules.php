@@ -877,10 +877,6 @@ class Sensei_Core_Modules
         $html .= '<input type="submit" class="button-primary module-order-select-course-submit" value="' . __('Select', 'woothemes-sensei') . '" />' . "\n";
         $html .= '</form>' . "\n";
 
-        $html .= '<script type="text/javascript">' . "\n";
-        $html .= 'jQuery( \'#module-order-course\' ).chosen();' . "\n";
-        $html .= '</script>' . "\n";
-
         if (isset($_GET['course_id'])) {
             $course_id = intval($_GET['course_id']);
             if ($course_id > 0) {
