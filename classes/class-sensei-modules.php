@@ -208,10 +208,6 @@ class Sensei_Core_Modules
                     $html .= '<option value="' . esc_attr(absint($module->term_id)) . '"' . selected($module->term_id, $lesson_module, false) . '>' . esc_html($module->name) . '</option>' . "\n";
                 }
                 $html .= '</select>' . "\n";
-
-                $html .= '<script type="text/javascript">' . "\n";
-                $html .= 'jQuery( \'#lesson-module-options\' ).chosen();' . "\n";
-                $html .= '</script>' . "\n";
             } else {
                 $course_url = admin_url('post.php?post=' . urlencode($lesson_course) . '&action=edit');
                 $html .= '<p>' . sprintf(__('No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'woothemes-sensei'), '<em>', '</em>', '<a href="' . esc_url($course_url) . '">', '</a>') . '</p>';
