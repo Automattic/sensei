@@ -969,7 +969,7 @@ class Sensei_Core_Modules
     {
         if ($column == 'module_order') {
             if (has_term('', $this->taxonomy, $course_id)) {
-                echo '<a class="button-secondary" href="' . admin_url('edit.php?post_type=lesson&page=module-order&course_id=' . urlencode(intval($course_id))) . '">' . __('Order modules', 'woothemes-sensei') . '</a>';
+                echo '<a class="button-secondary" href="' . admin_url('edit.php?post_type=course&page=module-order&course_id=' . urlencode(intval($course_id))) . '">' . __('Order modules', 'woothemes-sensei') . '</a>';
             }
         }
     }
