@@ -44,7 +44,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		$this->woo_widget_title = __( 'Sensei - Course Component', 'woothemes-sensei' );
 
 		$this->woo_widget_componentslist = array(
-												'usercourses' => __( 'New Courses', 'woothemes-sensei' ),
+												'newcourses' => __( 'New Courses', 'woothemes-sensei' ),
 												'featuredcourses' => __( 'Featured Courses', 'woothemes-sensei' ),
 												'activecourses' => __( 'My Active Courses', 'woothemes-sensei' ),
 												'completedcourses' => __( 'My Completed Courses', 'woothemes-sensei' ),
@@ -224,13 +224,21 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 		if ( count( $posts_array ) > 0 ) { ?>
 			<ul>
-			<?php foreach ($posts_array as $post_item){
-		    	$post_id = absint( $post_item->ID );
+			<?php
+            foreach ($posts_array as $post_item){
+
+                $post_id = absint( $post_item->ID );
 		    	$post_title = $post_item->post_title;
 		    	$user_info = get_userdata( absint( $post_item->post_author ) );
 		    	$author_link = get_author_posts_url( absint( $post_item->post_author ) );
-		    	$author_display_name = $user_info->display_name;
-		    	$author_id = $post_item->post_author;
+
+                $author_display_name = '';
+                if( $user_info ){
+
+                    $author_display_name = $user_info->get('display_name');
+
+                }
+
 		    ?>
 		    	<li class="fix">
 		    		<?php do_action( 'sensei_course_image', $post_id ); ?>
