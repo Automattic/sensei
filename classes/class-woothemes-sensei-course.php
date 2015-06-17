@@ -516,7 +516,7 @@ class WooThemes_Sensei_Course {
 	public function course_query( $amount = 0, $type = 'default', $includes = array(), $excludes = array() ) {
 		global $my_courses_page;
 
-		$courses = array();
+		$results_array = array();
 
 		if( $my_courses_page ) { add_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
 
@@ -525,19 +525,19 @@ class WooThemes_Sensei_Course {
 		// get the posts
 		if( empty( $post_args ) ) {
 
-			return $courses;
+			return $results_array;
 
 		}else{
 
 			//reset the pagination as this widgets do not need it
 			$post_args['paged'] = 1;
-			$course_query = new WP_Query( $post_args );
-            $courses = $course_query->get_posts();
+			$results_array = get_posts( $post_args );
+
 		}
 
 		if( $my_courses_page ) { remove_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
 
-		return $courses;
+		return $results_array;
 
 	} // End course_query()
 
@@ -692,17 +692,6 @@ class WooThemes_Sensei_Course {
     								'suppress_filters' 	=> 0
 									);
 				break;
-            case 'newcourses':
-                $post_args = array(	'post_type' 		=> 'course',
-                    'orderby'         	=> 'date',
-                    'order'           	=> 'DESC',
-                    'post_status'      	=> 'publish',
-                    'include'			=> $includes,
-                    'exclude'			=> $excludes,
-                    'suppress_filters' 	=> 0
-                );
-            break;
-
 			default:
 				$post_args = array(	'post_type' 		=> 'course',
 									'orderby'         	=> 'menu_order date',
@@ -1489,8 +1478,8 @@ class WooThemes_Sensei_Course {
         $args = array(
                'post_type' => 'course',
                 'posts_per_page' 		=> -1,
-                'orderby'         	=> 'date',
-                'order'           	=> 'DESC',
+                'orderby'         	=> 'title',
+                'order'           	=> 'ASC',
                 'post_status'      	=> 'any',
                 'suppress_filters' 	=> 0,
         );
