@@ -896,10 +896,6 @@ class Sensei_Core_Modules
         $html .= '<input type="submit" class="button-primary module-order-select-course-submit" value="' . __('Select', 'woothemes-sensei') . '" />' . "\n";
         $html .= '</form>' . "\n";
 
-        $html .= '<script type="text/javascript">' . "\n";
-        $html .= 'jQuery( \'#module-order-course\' ).chosen();' . "\n";
-        $html .= '</script>' . "\n";
-
         if (isset($_GET['course_id'])) {
             $course_id = intval($_GET['course_id']);
             if ($course_id > 0) {
@@ -973,7 +969,7 @@ class Sensei_Core_Modules
     {
         if ($column == 'module_order') {
             if (has_term('', $this->taxonomy, $course_id)) {
-                echo '<a class="button-secondary" href="' . admin_url('edit.php?post_type=lesson&page=module-order&course_id=' . urlencode(intval($course_id))) . '">' . __('Order modules', 'woothemes-sensei') . '</a>';
+                echo '<a class="button-secondary" href="' . admin_url('edit.php?post_type=course&page=module-order&course_id=' . urlencode(intval($course_id))) . '">' . __('Order modules', 'woothemes-sensei') . '</a>';
             }
         }
     }
@@ -1318,7 +1314,8 @@ class Sensei_Core_Modules
 
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
-        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery.min.js', array('jquery'), Sensei()->version , true);
+        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery.' . $suffix . '.js', array('jquery'), Sensei()->version , true);
+        wp_enqueue_script('sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery.' . $suffix . '.js', array('jquery','sensei-chosen'), Sensei()->version , true);
         wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','sensei-chosen','sensei-chosen-ajax', 'jquery-ui-sortable'), Sensei()->version, true);
 
         //localized module data

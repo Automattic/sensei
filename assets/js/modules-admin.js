@@ -14,8 +14,6 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-
-
 jQuery( document ).ready( function ( e ) {
 
 	jQuery( '.sortable-module-list' ).sortable();

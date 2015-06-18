@@ -166,4 +166,16 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
     }// testDeleteUserData
 
+    /**
+     * This tests Woothemes_Sensei_Utils::round
+     */
+    public function testRound(){
+
+        $this->assertTrue( 2 == WooThemes_Sensei_Utils::round( 2.12 , 0 ), '2.12 rounded with 0 precision should be 2' );
+        $this->assertTrue( 3.3 == WooThemes_Sensei_Utils::round( 3.3333 , 1 ), '3.3333 rounded with 1 precision should be 3.3' );
+        $this->assertTrue( doubleval( 2.13 ) == WooThemes_Sensei_Utils::round( 2.1256 , 2 ), '2.1256 rounded with 2 precision should be 2.12' );
+        $this->assertTrue( 3 == WooThemes_Sensei_Utils::round( 2.5 , 0 ) , '2.5 rounded with 0 precision should be 3' );
+
+    }// testDeleteUserData
+
 }// end test class
