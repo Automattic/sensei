@@ -203,7 +203,7 @@ class WooThemes_Sensei {
         add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
 
         // load the shortcodes class
-        require_once( 'class-shortcodes.php' );
+        require_once( 'shortcodes/class-sensei-shortcode-loader.php' );
         Sensei_Shortcodes::init();
 
         // Load Learner Management Functionality
