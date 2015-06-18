@@ -1,228 +1,28 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-	/***************************************************************************************************
-	 * 	1 - Shortcodes.
-	 ***************************************************************************************************/
-
-	add_shortcode( 'allcourses', 'shortcode_all_courses' );
-	add_shortcode( 'newcourses', 'shortcode_new_courses' );
-	add_shortcode( 'featuredcourses', 'shortcode_featured_courses' );
-	add_shortcode( 'freecourses', 'shortcode_free_courses' );
-	add_shortcode( 'paidcourses', 'shortcode_paid_courses' );
-	add_shortcode( 'usercourses', 'shortcode_user_courses' );
-
-	add_action('pre_get_posts', 'sensei_filter_courses_archive' );
 
 
-	/**
-	 * sensei_filter_courses_archive function.
-	 *
-	 * @access public
-	 * @param mixed $wp_query
-	 * @return void
-	 */
-	function sensei_filter_courses_archive( $query ) {
-
-		if ( ! $query->is_main_query() )
-        	return;
-
-		$query_type = '';
-		// Handle course archive page
-		if ( is_post_type_archive( 'course' ) ) {
-
-			if ( isset( $_GET[ 'action' ] ) && ( '' != esc_html( $_GET[ 'action' ] ) ) ) {
-   				$query_type = esc_html( $_GET[ 'action' ] );
-   			} // End If Statement
-
-   			switch ( $query_type ) {
-				case 'newcourses':
-					set_query_var( 'orderby', 'date' );
-					set_query_var( 'order', 'DESC' );
-					break;
-				case 'freecourses':
-					set_query_var( 'orderby', 'date' );
-					set_query_var( 'order', 'DESC' );
-					set_query_var( 'meta_value', '-' ); /* TODO - WC */
-					set_query_var( 'meta_key', '_course_woocommerce_product' );
-					set_query_var( 'meta_compare', '=' );
-					break;
-				case 'paidcourses':
-					set_query_var( 'orderby', 'date' );
-					set_query_var( 'order', 'DESC' );
-					set_query_var( 'meta_value', '0' );
-					set_query_var( 'meta_key', '_course_woocommerce_product' );
-					set_query_var( 'meta_compare', '>' );
-					break;
-				case 'featuredcourses':
-					set_query_var( 'orderby', 'date' );
-					set_query_var( 'order', 'DESC' );
-					set_query_var( 'meta_value', 'featured' );
-					set_query_var( 'meta_key', '_course_featured' );
-					set_query_var( 'meta_compare', '=' );
-					break;
-				default:
-
-					break;
-
-			} // End Switch Statement
-
-		} // End If Statement
-	} // End sensei_filter_courses_archive()
-
-
-	/**
-	 * sensei_course_archive_next_link function.
-	 *
-	 * @access public
-	 * @param string $type (default: 'newcourses')
-	 * @return void
-	 */
-	function sensei_course_archive_next_link( $type = 'newcourses' ) {
-		global $woothemes_sensei;
-		$course_pagination_link = get_post_type_archive_link( 'course' );
-   		$more_link_text = esc_html( $woothemes_sensei->settings->settings[ 'course_archive_more_link_text' ] );
-   		$html = '<div class="navigation"><div class="nav-next"><a href="' . esc_url( add_query_arg( array( 'paged' => '2', 'action' => $type ), $course_pagination_link ) ). '">' . sprintf( __( '%1$s', 'woothemes-sensei' ), $more_link_text ) . ' <span class="meta-nav"></span></a></div><div class="nav-previous"></div></div>';
-
-   		return apply_filters( 'course_archive_next_link', $html );
-	} // End sensei_course_archive_next_link()
-
-
-	/**
-	 * shortcode_all_courses function.
-	 *
-	 * @access public
-	 * @param mixed $atts
-	 * @param mixed $content (default: null)
-	 * @return void
-	 */
-	function shortcode_all_courses( $atts, $content = null ) {
-
-   		global $woothemes_sensei;
-   		ob_start();
-		$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
-		$content = ob_get_clean();
-		return $content;
-
-	} // End shortcode_all_courses()
-
-
-	/**
-	 * shortcode_new_courses function.
-	 *
-	 * @access public
-	 * @param mixed $atts
-	 * @param mixed $content (default: null)
-	 * @return void
-	 */
-	function shortcode_new_courses( $atts, $content = null ) {
-   		global $woothemes_sensei, $shortcode_override;
-   		extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
-
-   		$shortcode_override = 'newcourses';
-
-   		ob_start();
-		$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
-		$content = ob_get_clean();
-		return $content;
-
-	} // End shortcode_new_courses()
-
-
-	/**
-	 * shortcode_featured_courses function.
-	 *
-	 * @access public
-	 * @param mixed $atts
-	 * @param mixed $content (default: null)
-	 * @return void
-	 */
-	function shortcode_featured_courses( $atts, $content = null ) {
-
-   		global $woothemes_sensei, $shortcode_override;
-   		extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
-
-   		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_featured_enable' ] ) && $woothemes_sensei->settings->settings[ 'course_archive_featured_enable' ] ) {
-   			$shortcode_override = 'featuredcourses';
-   			ob_start();
-			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
-			$content = ob_get_clean();
-   		} // End If Statement
-   		return $content;
-	} // End shortcode_featured_courses()
-
-
-	/**
-	 * shortcode_free_courses function.
-	 *
-	 * @access public
-	 * @param mixed $atts
-	 * @param mixed $content (default: null)
-	 * @return void
-	 */
-	function shortcode_free_courses( $atts, $content = null ) {
-   		global $woothemes_sensei, $shortcode_override;
-   		extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
-
-   		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_free_enable' ] ) && $woothemes_sensei->settings->settings[ 'course_archive_free_enable' ] ) {
-   			$shortcode_override = 'freecourses';
-   			ob_start();
-			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
-			$content = ob_get_clean();
-			return $content;
-   		} // End If Statement
-   		return $content;
-	} // End shortcode_free_courses()
-
-
-	/**
-	 * shortcode_paid_courses function.
-	 *
-	 * @access public
-	 * @param mixed $atts
-	 * @param mixed $content (default: null)
-	 * @return void
-	 */
-	function shortcode_paid_courses( $atts, $content = null ) {
-   		global $woothemes_sensei, $shortcode_override;
-   		extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
-
-   		if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_paid_enable' ] ) && $woothemes_sensei->settings->settings[ 'course_archive_paid_enable' ] ) {
-   			$shortcode_override = 'paidcourses';
-   			ob_start();
-			$woothemes_sensei->frontend->sensei_get_template( 'loop-course.php' );
-			$content = ob_get_clean();
-			return $content;
-   		} // End If Statement
-   		return $content;
-	} // End shortcode_paid_courses()
-
-
-	/**
-	 * shortcode_user_courses function.
-	 *
-	 * @access public
-	 * @param mixed $atts
-	 * @param mixed $content (default: null)
-	 * @return void
-	 */
-	function shortcode_user_courses( $atts, $content = null ) {
-   		global $woothemes_sensei, $shortcode_override;
-   		extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
-
-   		$shortcode_override = 'usercourses'; // V2 - use this when creating the author archive page
-
-   		ob_start();
-   		$woothemes_sensei->frontend->sensei_get_template( 'user/my-courses.php' );
-   		$content = ob_get_clean();
-   		return $content;
-
-	} // End shortcode_user_courses()
 
 	/***************************************************************************************************
-	 * 	2 - Output tags.
+	 * 	Output tags.
 	 ***************************************************************************************************/
 
+    /**
+     * sensei_course_archive_next_link function.
+     *
+     * @access public
+     * @param string $type (default: 'newcourses')
+     * @return void
+     */
+    function sensei_course_archive_next_link( $type = 'newcourses' ) {
+        global $woothemes_sensei;
+        $course_pagination_link = get_post_type_archive_link( 'course' );
+        $more_link_text = esc_html( $woothemes_sensei->settings->settings[ 'course_archive_more_link_text' ] );
+        $html = '<div class="navigation"><div class="nav-next"><a href="' . esc_url( add_query_arg( array( 'paged' => '2', 'action' => $type ), $course_pagination_link ) ). '">' . sprintf( __( '%1$s', 'woothemes-sensei' ), $more_link_text ) . ' <span class="meta-nav"></span></a></div><div class="nav-previous"></div></div>';
+
+        return apply_filters( 'course_archive_next_link', $html );
+    } // End sensei_course_archive_next_link()
 
 	 /**
 	  * course_single_meta function.
@@ -295,7 +95,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 } // End lesson_single_meta()
 
 	 /***************************************************************************************************
-	 * 	3 - Helper functions.
+	 * Helper functions.
 	 ***************************************************************************************************/
 
 
