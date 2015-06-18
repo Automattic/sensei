@@ -141,9 +141,9 @@ class WooThemes_Sensei {
 		$this->template_url	= apply_filters( 'sensei_template_url', 'sensei/' );
 		$this->permissions_message = array( 'title' => __( 'Permission Denied', 'woothemes-sensei' ), 'message' => __( 'Unfortunately you do not have permissions to access this page.', 'woothemes-sensei' ) );
 
-		// Localisation
-		$this->load_plugin_textdomain();
-		add_action( 'init', array( $this, 'load_localisation' ), 0 );
+
+        // Initialize the core Sensei functionality
+        $this->init();
 
 		// Installation
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) $this->install();
@@ -201,10 +201,6 @@ class WooThemes_Sensei {
 
         // load the modules class
         add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
-
-        // load the shortcodes class
-        require_once( 'shortcodes/class-sensei-shortcode-loader.php' );
-        Sensei_Shortcodes::init();
 
         // Load Learner Management Functionality
         $this->load_class( 'learners' );
@@ -302,6 +298,22 @@ class WooThemes_Sensei {
 		add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support'), 200 ); // Runs after Jetpack has loaded it's modules
 
     } // End __construct()
+
+    /**
+     * Load the foundations of Sensei.
+     * @since 1.9.0
+     */
+    protected function init(){
+
+        // Localisation
+        $this->load_plugin_textdomain();
+        add_action( 'init', array( $this, 'load_localisation' ), 0 );
+
+        // load the shortcode loader into memory, so as to listen to all for
+        // all shortcodes on the front end
+        new Sensei_Shortcode_Loader();
+
+    }
 
     /**
      * Global Sensei Instance

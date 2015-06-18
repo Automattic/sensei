@@ -30,7 +30,7 @@ Domain path: /lang/
 
 	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-    require_once( 'includes/class-woothemes-sensei.php' );
+    require_once( 'includes/class-sensei-autoloader.php' );
     require_once( 'includes/lib/woo-functions.php' );
     require_once( 'includes/lib/woothemes-sensei-functions.php' );
 
