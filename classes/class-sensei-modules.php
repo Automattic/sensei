@@ -11,10 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @subpackage Sensei
  * @category Administration
  * @since 1.8.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
  */
 class Sensei_Core_Modules
 {
