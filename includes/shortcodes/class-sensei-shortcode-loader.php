@@ -1,31 +1,42 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // security check
 /**
- * Sensei Shortcodes Class
+ * Sensei Shortcode Loader Class
  *
- * This class handles making shortcodes function available. It reaches
- * into Sensei to find the functionality and should never really contain advanced
- * functionality, but rather call it from within Sensei.
+ * This class handles the api for all Sensei shortcodes. It does not
+ * execute on the shortcodes directly but relies on a class that responds
+ * to each shortcode. Whe WordPress calls do_shortcode for a shortcode registered
+ * in this function, the functions load_shortcode will be called and it will
+ * instantiate the correct shortcode handling class as it was registered.
  *
  * @package Sensei
  * @category Shortcodes
  * @since 1.9.0
  */
-class Sensei_Shortcodes{
+class Sensei_Shortcode_Loader{
+
+    /**
+     * @var array {
+     *  type string $shortcode
+     *  type Sensei_Shortcode
+     * } all the shortcodes and which class to instantiate when they are called from
+     * WordPress's do_shortcode() function.
+     *
+     */
+    protected $shortcode_classes;
 
     /**
      * Run all the functions that needs to be hooked into WordPress
      *
      * @since 1.9.0
      */
-
-    public static function init(){
+    public function __construct(){
 
         // load all the hooks
-        Sensei_Shortcodes::add_hooks();
+        $this->add_hooks();
 
         // setup all the shortcodes
-        Sensei_Shortcodes::load_shortcodes();
+        $this->initialize_shortcodes();
     }
 
     /**
@@ -34,9 +45,9 @@ class Sensei_Shortcodes{
      * This function adds shortcodes to WP that links to other functionality.
      * @since 1.9.0
      */
-    public static function add_hooks(){
+    public function add_hooks(){
 
-        add_action('pre_get_posts',  array( 'Sensei_Shortcodes','filter_courses_archive' ) );
+        add_action('pre_get_posts',  array( $this, 'filter_courses_archive' ) );
 
     }
 
@@ -46,14 +57,87 @@ class Sensei_Shortcodes{
      * This function adds shortcodes to WP that links to other functionality.
      * @since 1.9.0
      */
-    public static function load_shortcodes(){
+    public function initialize_shortcodes(){
 
-        add_shortcode( 'allcourses',      array( 'Sensei_Shortcodes', 'all_courses' ) );
-        add_shortcode( 'newcourses',      array( 'Sensei_Shortcodes','new_courses' ) );
-        add_shortcode( 'featuredcourses', array( 'Sensei_Shortcodes','featured_courses') );
-        add_shortcode( 'freecourses',     array( 'Sensei_Shortcodes','free_courses') );
-        add_shortcode( 'paidcourses',     array( 'Sensei_Shortcodes','paid_courses') );
-        add_shortcode( 'usercourses',     array( 'Sensei_Shortcodes','user_courses' ) );
+        // shortcodes should only respond to front end calls
+        if( is_admin() || defined( 'DOING_AJAX' ) ){
+            return;
+        }
+
+        add_shortcode( 'allcourses',      array( __CLASS__, 'all_courses' ) );
+        add_shortcode( 'newcourses',      array( __CLASS__,'new_courses' ) );
+        add_shortcode( 'featuredcourses', array( __CLASS__,'featured_courses') );
+        add_shortcode( 'freecourses',     array( __CLASS__,'free_courses') );
+        add_shortcode( 'paidcourses',     array( __CLASS__,'paid_courses') );
+        add_shortcode( 'usercourses',     array( __CLASS__,'user_courses' ) );
+
+
+        /**
+         * Add the interface to
+         */
+
+        /**
+         * Array of shortcode classes that should be instantiated when WordPress loads
+         * a Sensei specific shortcode.
+         * This list is references:
+         * $shortcode => $class_name
+         *
+         * $shortcode is the actual shortcode the user will add to the editor
+         * $class_name is the name of the class that will be instantiated to handle
+         * the rendering of the shortcode.
+         */
+        $this->shortcode_classes = array(
+            'sensei_recent_courses'=>'Sensei_Shortcode_Recent_Courses'
+        );
+
+        //[ per_page="" columns="" orderby="" order="" teacher=""] Display recently published courses.
+
+
+        /**
+         * Tell WP to run this classes load_shortcode function for all the
+         * shortcodes registered here in.
+         */
+        foreach( $this->shortcode_classes as $shortcode => $class ){
+
+            add_shortcode( $shortcode, array( $this,'render_shortcode' ) );
+
+        }
+
+    }
+
+    /**
+     * Respond to WordPress do_shortcode calls
+     * for shortcodes registered in the initialize_shortcodes function.
+     *
+     * @since 1.8.0
+     *
+     * @param $attributes
+     * @param $content
+     * @param $code the shortcode that is being requested
+     *
+     * @return string
+     */
+    public function render_shortcode( $attributes='', $content='', $code ){
+
+        // only respond if the shortcode is still set at the point of calling
+        // to avoid errors
+        if( ! isset( $this->shortcode_classes[ $code ] ) ){
+            return '';
+        }
+
+        // create an instances of the current requested shortcode
+        $shortcode_handling_class = $this->shortcode_classes[ $code ];
+        $shortcode = new $shortcode_handling_class( $attributes, $content, $code );
+
+        // we expect the sensei class instantiated to implement the Sensei_Shortcode interface
+        if( ! in_array( 'Sensei_Shortcode_Interface', class_implements( $shortcode) ) ){
+
+            $message = "The rendering class for your shortcode: $code, must implement the Sensei_Shortcode interface";
+            _doing_it_wrong('Sensei_Shortcode_Loader::render_shortcode',$message, '1.9.0' );
+
+        }
+
+        return $shortcode->render();
 
     }
 
@@ -243,3 +327,4 @@ class Sensei_Shortcodes{
     } // End user_courses()
 
 } // end class Sensei_Shortcodes
+new Sensei_Shortcode_Loader();
