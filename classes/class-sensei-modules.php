@@ -1295,9 +1295,9 @@ class Sensei_Core_Modules
 
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
-        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery.min.js', array('jquery'), Sensei()->version , true);
-        wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','select2', 'jquery-ui-sortable'), Sensei()->version, true);
-
+        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array('jquery'), Sensei()->version , true);
+        wp_enqueue_script('sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array('jquery','sensei-chosen'), Sensei()->version , true);
+        
         //localized module data
         $localize_modulesAdmin = array(
             'search_courses_nonce' => wp_create_nonce( "search-courses" ),
