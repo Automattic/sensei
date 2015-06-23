@@ -511,8 +511,8 @@ class WooThemes_Sensei_PostTypes {
 		    'all_items' => sprintf( __( 'All %s', 'woothemes-sensei' ), $plural ),
 		    'view_item' => sprintf( __( 'View %s', 'woothemes-sensei' ), $singular ),
 		    'search_items' => sprintf( __( 'Search %s', 'woothemes-sensei' ), $plural ),
-		    'not_found' =>  sprintf( __( 'No %s found', 'woothemes-sensei' ), strtolower( $plural ) ),
-		    'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'woothemes-sensei' ), strtolower( $plural ) ),
+		    'not_found' =>  sprintf( __( 'No %s found', 'woothemes-sensei' ), mb_strtolower( $plural, 'UTF-8') ),
+		    'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'woothemes-sensei' ), mb_strtolower( $plural, 'UTF-8') ),
 		    'parent_item_colon' => '',
 		    'menu_name' => sprintf( __( '%s', 'woothemes-sensei' ), $menu )
 		  );
