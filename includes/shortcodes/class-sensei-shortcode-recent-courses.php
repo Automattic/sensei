@@ -72,12 +72,11 @@ class Sensei_Shortcode_Recent_Courses implements Sensei_Shortcode_Interface {
         // keep a reference to old query
         $current_global_query = $wp_query;
 
-
         // assign the query setup in $this-> setup_course_query
         $wp_query = $this->query;
 
         ob_start();
-        include('templates/shortcode-loop-course-template.php');
+        include('templates/loop.php');
         $shortcode_output =  ob_get_clean();
 
         //restore old query
