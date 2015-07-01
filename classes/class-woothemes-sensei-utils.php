@@ -185,7 +185,7 @@ class WooThemes_Sensei_Utils {
 			wp_cache_flush();
 		}
 
-		do_action( 'sensei_log_activity_after', $args, $data );
+		do_action( 'sensei_log_activity_after', $args, $data, $comment_id );
 
 		if ( 0 < $comment_id ) {
 			// Return the ID so that it can be used for meta data storage
