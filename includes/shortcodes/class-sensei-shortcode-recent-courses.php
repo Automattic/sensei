@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Classes
  * @author 	WooThemes
  */
-class Sensei_Shortcode_Recent_Courses implements Sensei_Shortcode_Interface {
+class Shortcode_Recent_Courses implements Sensei_Shortcode_Interface {
 
     /**
      * @var WP_Query to help setup the query needed by the render method.

@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside W
  *
  * Loading all class files within the Sensei/includes directory
  *
+ * The autoloader depends on the class and file name matching.
+ *
  * @package Sensei
  * @category Autoloader
  * @since 1.9.0

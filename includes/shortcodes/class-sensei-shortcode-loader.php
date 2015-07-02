@@ -87,11 +87,8 @@ class Sensei_Shortcode_Loader{
          * the rendering of the shortcode.
          */
         $this->shortcode_classes = array(
-            'sensei_recent_courses'=>'Sensei_Shortcode_Recent_Courses'
+            'sensei_recent_courses'=>'Shortcode_Recent_Courses'
         );
-
-        //[ per_page="" columns="" orderby="" order="" teacher=""] Display recently published courses.
-
 
         /**
          * Tell WP to run this classes load_shortcode function for all the
@@ -99,6 +96,9 @@ class Sensei_Shortcode_Loader{
          */
         foreach( $this->shortcode_classes as $shortcode => $class ){
 
+            // all Sensei shortcodes are rendered by this loader class
+            // it acts as an interface between wp and the shortcodes registered
+            // above
             add_shortcode( $shortcode, array( $this,'render_shortcode' ) );
 
         }
