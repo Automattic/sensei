@@ -16,7 +16,12 @@ class Sensei_Autoloader {
     /**
      * @var path to the includes directory within Sensei.
      */
-    private $include_path = 'includes' ;
+    private $include_path = 'includes';
+
+    /**
+     * @var class file map. List of classes mapped to their files
+     */
+    private $class_file_map = array();
 
     /**
      * Constructor
@@ -32,9 +37,32 @@ class Sensei_Autoloader {
         // setup a relative path for the current autoload instance
         $this->include_path = trailingslashit( untrailingslashit( dirname( __FILE__ ) ) );
 
+        //setup the class file map
+        $this->initialize_class_file_map();
+
         // add Sensei custom auto loader
         spl_autoload_register( array( $this, 'autoload' )  );
 
+    }
+
+    /**
+     * Generate a list of Sensei class and map them the their respective
+     * files within the includes directory
+     *
+     * @since 1.9.0
+     */
+    public function initialize_class_file_map(){
+
+        $this->class_file_map = array(
+
+            'WooThemes_Sensei' => 'class-woothemes-sensei.php',
+
+            /* Shortcode specific */
+            'Sensei_Shortcode_Loader'=> 'shortcodes/class-sensei-shortcode-loader.php',
+            'Sensei_Shortcode_Interface' => 'shortcodes/interface-sensei-shortcode.php',
+            'Sensei_Shortcode_Recent_Courses' => 'shortcodes/class-sensei-shortcode-recent-courses.php'
+
+        );
     }
 
     /**
@@ -42,42 +70,17 @@ class Sensei_Autoloader {
      */
     public function autoload( $class ){
 
-        $file_name = $this->get_file_name( $class );
+        // exit if we didn't provide mapping for this class
+        if( ! isset( $this->class_file_map[ $class ]  ) ){
 
-        if( 'WooThemes_Sensei'== $class ){
-
-            require_once( $this->include_path . $file_name );
-
-        }
-
-        if( strpos( $file_name, 'sensei-shortcode' ) ){
-
-            //exclude the interface
-            if( 'Sensei_Shortcode_Interface' == $class ){
-
-                require_once( $this->include_path . 'shortcodes/interface-sensei-shortcode.php');
-
-            }else{
-
-                require_once( $this->include_path . 'shortcodes/' . $file_name );
-
-            }
+            return;
 
         }
 
+        $file_location = $this->include_path . $this->class_file_map[ $class ];
+        require_once( $file_location);
 
     }// end autoload
 
-    /**
-     * Convert class name into the respective file name
-     *
-     * @since 1.9.0
-     * @param $class
-     * @return string $filename
-     */
-    public function get_file_name( $class ){
-
-        return "class-" . str_ireplace( '_', '-',  strtolower( $class )  ). ".php";
-    }
 }
 new Sensei_Autoloader();
