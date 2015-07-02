@@ -57,20 +57,21 @@ class Sensei_Shortcode_Loader{
     /**
      * Array of shortcode classes that should be instantiated when WordPress loads
      * a Sensei specific shortcode.
-     * This list containts:
+     * This list contains:
      * $shortcode => $class_name
      *
      * $shortcode is the actual shortcode the user will add to the editor
      * $class_name is the name of the class that will be instantiated to handle
      * the rendering of the shortcode.
      *
-     * When adding a new shortcode here be sure to load your shortcodes class
+     * NOTE: When adding a new shortcode here be sure to load your shortcodes class
      * in class-sensei-autoloader class_file_map function
      */
     public function setup_shortcode_class_map(){
 
         $this->shortcode_classes = array(
-            'sensei_recent_courses'=>'Sensei_Shortcode_Recent_Courses'
+            'sensei_recent_courses'    =>'Sensei_Shortcode_Recent_Courses',
+            'sensei_featured_courses'  => 'Sensei_Shortcode_Featured_Courses',
         );
 
         // legacy shortcode handling:

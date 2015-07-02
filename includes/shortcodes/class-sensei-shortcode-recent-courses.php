@@ -99,6 +99,7 @@ class Sensei_Shortcode_Recent_Courses implements Sensei_Shortcode_Interface {
 
         $query_args = array(
             'post_type' => 'course',
+            'post_status'=> 'publish',
             'orderby'=>'date',
             'order'=>'DESC',
             'posts_per_page'=> $this->number,

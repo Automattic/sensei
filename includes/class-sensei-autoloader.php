@@ -58,9 +58,10 @@ class Sensei_Autoloader {
             'WooThemes_Sensei' => 'class-woothemes-sensei.php',
 
             /* Shortcode specific */
-            'Sensei_Shortcode_Loader'=> 'shortcodes/class-sensei-shortcode-loader.php',
-            'Sensei_Shortcode_Interface' => 'shortcodes/interface-sensei-shortcode.php',
-            'Sensei_Shortcode_Recent_Courses' => 'shortcodes/class-sensei-shortcode-recent-courses.php'
+            'Sensei_Shortcode_Loader'           => 'shortcodes/class-sensei-shortcode-loader.php',
+            'Sensei_Shortcode_Interface'        => 'shortcodes/interface-sensei-shortcode.php',
+            'Sensei_Shortcode_Recent_Courses'   => 'shortcodes/class-sensei-shortcode-recent-courses.php',
+            'Sensei_Shortcode_Featured_Courses' => 'shortcodes/class-sensei-shortcode-featured-courses.php',
 
         );
     }
