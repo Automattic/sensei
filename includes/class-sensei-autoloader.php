@@ -62,6 +62,7 @@ class Sensei_Autoloader {
             'Sensei_Shortcode_Interface'        => 'shortcodes/interface-sensei-shortcode.php',
             'Sensei_Shortcode_Recent_Courses'   => 'shortcodes/class-sensei-shortcode-recent-courses.php',
             'Sensei_Shortcode_Featured_Courses' => 'shortcodes/class-sensei-shortcode-featured-courses.php',
+            'Sensei_Shortcode_User_Courses'     => 'shortcodes/class-sensei-shortcode-user-courses.php',
 
         );
     }
