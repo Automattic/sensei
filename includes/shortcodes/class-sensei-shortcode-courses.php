@@ -2,7 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  *
- * Renders the [sensei_course_category] shortcode
+ * Renders the [sensei_courses] shortcode
  *
  * This class is loaded int WP by the shortcode loader class.
  *
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Classes
  * @author 	WooThemes
  */
-class Sensei_Shortcode_Course_Category implements Sensei_Shortcode_Interface {
+class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 
     /**
      * @var WP_Query to help setup the query needed by the render method.
@@ -43,6 +43,16 @@ class Sensei_Shortcode_Course_Category implements Sensei_Shortcode_Interface {
     protected $category;
 
     /**
+     * @var string teacher id to limit the courses to
+     */
+    protected $teacher;
+
+    /**
+     * @var string csv of course ids to limit the search to
+     */
+    protected $ids;
+
+    /**
      * Setup the shortcode object
      *
      * @since 1.9.0
@@ -54,11 +64,15 @@ class Sensei_Shortcode_Course_Category implements Sensei_Shortcode_Interface {
 
         // set up all argument need for constructing the course query
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
-        $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
-        $this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'ASC';
+        $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'date';
+        $this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'DESC';
+        $this->teacher = isset( $attributes['teacher'] ) ? $attributes['teacher'] : '';
 
         $category = isset( $attributes['category'] ) ? $attributes['category'] : '';
         $this->category = is_numeric( $category ) ? intval( $category ) : $category;
+
+        $ids =  isset( $attributes['ids'] ) ? $attributes['ids'] : '';
+        $this->ids = empty( $ids ) ? '' : explode( ',', $ids );
 
         // setup the course query that will be used when rendering
         $this->setup_course_query();
@@ -72,25 +86,52 @@ class Sensei_Shortcode_Course_Category implements Sensei_Shortcode_Interface {
      */
     protected function setup_course_query(){
 
-        $term_id = term_exists( $this->category );
-        if( ! $term_id ){
-            return '';
-        }
-
+        // query defaults
         $query_args = array(
             'post_type'        => 'course',
             'post_status'      => 'publish',
             'orderby'          => $this->orderby,
             'order'            => $this->order,
             'posts_per_page'   => $this->number,
-            'tax_query' => array(
-                array(
+
+        );
+
+        // setup the teacher query if any teacher was specified
+        if(! empty( $this->teacher )){
+
+            $teacher_query_by = is_numeric( $this->teacher )? 'author':'author_name';
+            $query_args[ $teacher_query_by ] = $this->teacher;
+
+        }
+
+
+        // add the course category taxonomy query
+        if( ! empty( $this->category ) ) {
+
+            $tax_query = array();
+            $term_id = intval( term_exists($this->category) );
+
+            if (! empty( $term_id) ) {
+
+                $tax_query = array(
                     'taxonomy' => 'course-category',
                     'field' => 'id',
-                    'terms'    => $term_id,
-                ),
-            ),
-        );
+                    'terms' => $term_id,
+                );
+
+            }
+
+            $query_args['tax_query'] = array($tax_query);
+
+        }
+
+        // limit the query if the user supplied ids
+        if( ! empty( $this->ids ) && is_array( $this->ids ) ) {
+
+            $query_args['post__in'] = $this->ids;
+
+        }
+
 
         $this->query = new WP_Query( $query_args );
 
@@ -105,9 +146,6 @@ class Sensei_Shortcode_Course_Category implements Sensei_Shortcode_Interface {
 
         global $wp_query;
 
-        if( !term_exists( $this->category ) ){
-            return '';
-        }
         // keep a reference to old query
         $current_global_query = $wp_query;
 

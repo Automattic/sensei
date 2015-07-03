@@ -70,10 +70,9 @@ class Sensei_Shortcode_Loader{
     public function setup_shortcode_class_map(){
 
         $this->shortcode_classes = array(
-            'sensei_recent_courses'    =>'Sensei_Shortcode_Recent_Courses',
             'sensei_featured_courses'  => 'Sensei_Shortcode_Featured_Courses',
             'sensei_user_courses'      => 'Sensei_Shortcode_User_Courses',
-            'sensei_course_category'   => 'Sensei_Shortcode_Course_Category',
+            'sensei_courses'           => 'Sensei_Shortcode_Courses',
         );
 
         // legacy shortcode handling:
