@@ -69,9 +69,20 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 
         // set up all argument need for constructing the course query
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
-        $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'date';
-        $this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'DESC';
         $this->teacher = isset( $attributes['teacher'] ) ? $attributes['teacher'] : '';
+
+        $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'date';
+        // set the default for menu_order to be ASC
+        if( 'menu_order' == $attributes['orderby'] && !isset( $attributes['order']  ) ){
+
+            $this->order =  'ASC';
+
+        }else{
+
+            // for everything else use the value passed or the default DESC
+            $this->order = isset( $attributes['order']  ) ? $attributes['order'] : 'DESC';
+
+        }
 
         $category = isset( $attributes['category'] ) ? $attributes['category'] : '';
         $this->category = is_numeric( $category ) ? intval( $category ) : $category;
@@ -146,7 +157,6 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
             $query_args['post__not_in'] = $this->exclude;
 
         }
-
 
         $this->query = new WP_Query( $query_args );
 
