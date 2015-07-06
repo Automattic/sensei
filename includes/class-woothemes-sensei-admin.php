@@ -989,14 +989,29 @@ class WooThemes_Sensei_Admin {
 		}
 
 		$courses = Sensei()->course->get_all_courses();
+
 		if( 0 < count( $courses ) ) {
 
-			$order_string = $this->get_course_order();
+            // order the courses as set by the users
+            $all_course_ids = array();
+            foreach( $courses as $course ){
+
+                $all_course_ids[] = (string)$course->ID;
+
+            }
+            $order_string = $this->get_course_order();
+
+            if( !empty( $order_string ) ){
+                $ordered_course_ids = explode(',' , $order_string );
+                $all_course_ids = array_unique( array_merge( $ordered_course_ids , $all_course_ids ) );
+            }
+
 
 			$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
 			$html .= '<ul class="sortable-course-list">' . "\n";
 			$count = 0;
-			foreach ( $courses as $course ) {
+			foreach ( $all_course_ids as $course_id ) {
+                $course = get_post( $course_id );
 				$count++;
 				$class = 'course';
 				if ( $count == 1 ) { $class .= ' first'; }
