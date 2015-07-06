@@ -53,6 +53,11 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
     protected $ids;
 
     /**
+     * @var exclude courses by id
+     */
+    protected $exclude;
+
+    /**
      * Setup the shortcode object
      *
      * @since 1.9.0
@@ -73,6 +78,9 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 
         $ids =  isset( $attributes['ids'] ) ? $attributes['ids'] : '';
         $this->ids = empty( $ids ) ? '' : explode( ',', $ids );
+
+        $exclude =  isset( $attributes['exclude'] ) ? $attributes['exclude'] : '';
+        $this->exclude = empty( $exclude ) ? '' : explode( ',', $exclude );
 
         // setup the course query that will be used when rendering
         $this->setup_course_query();
@@ -129,6 +137,13 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
         if( ! empty( $this->ids ) && is_array( $this->ids ) ) {
 
             $query_args['post__in'] = $this->ids;
+
+        }
+
+        // exclude the course by id fromt he query
+        if( ! empty( $this->exclude ) && is_array( $this->exclude ) ) {
+
+            $query_args['post__not_in'] = $this->exclude;
 
         }
 
