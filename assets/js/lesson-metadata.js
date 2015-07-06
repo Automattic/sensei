@@ -125,7 +125,7 @@ jQuery(document).ready( function($) {
 						disableAuto = false;
 					break;
 					case 'gap-fill':
-						disableAuto = true;
+						disableAuto = false;
 					break;
 					case 'multi-line':
 						disableAuto = true;

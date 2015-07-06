@@ -470,8 +470,20 @@ class WooThemes_Sensei_Lesson {
 		$meta_key = '_' . $post_key;
 
         //ignore fields are not posted
+
         if( !isset( $_POST[ $post_key ] ) ){
-            return false;
+
+            // except for lesson preview checkbox field
+            if( 'lesson_preview' == $post_key ){
+
+                $_POST[ $post_key ] = '';
+
+            } else {
+
+                return false;
+
+            }
+
         }
 
 		// Get the posted data and sanitize it for use as an HTML class.

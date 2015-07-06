@@ -1,5 +1,13 @@
 *** Sensei Changelog ***
 
+2015.06.18 - version 1.8.5
+* Fix - Save the lesson preview checkbox unchecked state as well. The bug was that unchecked boxes does not get passed via $_POST in certain cases.
+* Tweak - Allow the quiz results rounding to be filtered. So you can now have decimal points shown to the user instead of the rounded up amount.
+* Fix - Module order screen now working. The fix is to remove chosen from the select box. This will be replaced by select2.
+* Fix - Update the modules order link on all courses admin page. The link went to the wrong place.
+* Fix - Add contact teacher button to lessons and quizzes.
+* Fix - Allow gap-fill questions to be auto graded again.
+
 2015.06.11 - version 1.8.4
 * Fix - Query post type changes for non Sensei queries. Added better checking to ensure this
         query filter only applies to teachers.
