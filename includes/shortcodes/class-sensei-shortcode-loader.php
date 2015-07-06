@@ -75,6 +75,7 @@ class Sensei_Shortcode_Loader{
             'sensei_courses'           => 'Sensei_Shortcode_Courses',
             'sensei_teachers'          => 'Sensei_Shortcode_Teachers',
             'sensei_user_messages'     => 'Sensei_Shortcode_User_Messages',
+            'sensei_course_page'       => 'Sensei_Shortcode_Course_Page',
         );
 
         // legacy shortcode handling:
