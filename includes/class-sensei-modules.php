@@ -946,7 +946,7 @@ class Sensei_Core_Modules
     {
         if ($column == 'module_order') {
             if (has_term('', $this->taxonomy, $course_id)) {
-                echo '<a class="button-secondary" href="' . admin_url('edit.php?post_type=lesson&page=module-order&course_id=' . urlencode(intval($course_id))) . '">' . __('Order modules', 'woothemes-sensei') . '</a>';
+                echo '<a class="button-secondary" href="' . admin_url('edit.php?post_type=course&page=module-order&course_id=' . urlencode(intval($course_id))) . '">' . __('Order modules', 'woothemes-sensei') . '</a>';
             }
         }
     }
@@ -1291,11 +1291,9 @@ class Sensei_Core_Modules
 
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
-        //replaced with Select2 but kept here for Backwards compatibility
-        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery.min.js', array('jquery'), Sensei()->version , true);
-
-        wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','select2', 'jquery-ui-sortable'), Sensei()->version, true);
-
+        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array('jquery'), Sensei()->version , true);
+        wp_enqueue_script('sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array('jquery','sensei-chosen'), Sensei()->version , true);
+        
         //localized module data
         $localize_modulesAdmin = array(
             'search_courses_nonce' => wp_create_nonce( "search-courses" ),

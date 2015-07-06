@@ -52,7 +52,11 @@ class WooThemes_Sensei_Messages {
 		// Add message links to courses & lessons
 		add_action( 'sensei_course_single_meta', array( $this, 'send_message_link' ), 14 );
 
-		//add_action( 'sensei_lesson_quiz_meta', array( $this, 'send_message_link' ), 20, 2 );
+        // add message link to lesson
+        add_action( 'sensei_lesson_single_title', array( $this, 'send_message_link' ), 11, 2 );
+
+        // add message link to lesson
+        add_action( 'sensei_quiz_questions', array( $this, 'send_message_link' ), 3, 2 );
 
 		// Hide messages and replies from users who do not have access
         add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
@@ -161,8 +165,12 @@ class WooThemes_Sensei_Messages {
 	public function send_message_link( $post_id = 0, $user_id = 0 ) {
 		global $woothemes_sensei, $post;
 
-		if ( ! ( is_singular( 'course' ) || is_singular( 'lesson' ) ) ) {
+        // only show the link for the allowed post types:
+        $allowed_post_types = array('lesson', 'course', 'quiz');
+		if ( ! in_array( get_post_type() , $allowed_post_types ) ) {
+
 			return;
+
 		}
 
 		$html = '';
@@ -178,9 +186,11 @@ class WooThemes_Sensei_Messages {
 
 				if( 'lesson' == $post->post_type ) {
 					$contact_button_text = __( 'Contact Lesson Teacher', 'woothemes-sensei' );
-				} else {
+				} elseif( 'course' == $post->post_type ) {
 					$contact_button_text = __( 'Contact Course Teacher', 'woothemes-sensei' );
-				}
+				}else{
+                    $contact_button_text = __( 'Contact Teacher', 'woothemes-sensei' );
+                }
 
 				$html .= '<p><a class="button send-message-button" href="' . esc_url($href) . '#private_message">' . $contact_button_text . '</a></p>';
 			}

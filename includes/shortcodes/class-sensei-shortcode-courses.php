@@ -73,7 +73,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 
         $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'date';
         // set the default for menu_order to be ASC
-        if( 'menu_order' == $attributes['orderby'] && !isset( $attributes['order']  ) ){
+        if( 'menu_order' == $this->orderby && !isset( $attributes['order']  ) ){
 
             $this->order =  'ASC';
 

@@ -1140,7 +1140,7 @@ class WooThemes_Sensei_Utils {
 			}
 		}
 
-		return round( $course_passmark );
+		return Woothemes_Sensei_Utils::round( $course_passmark );
 	}
 
 	/**
@@ -1185,7 +1185,7 @@ class WooThemes_Sensei_Utils {
 
 		}
 
-		return round( $total_grade );
+		return WooThemes_Sensei_Utils::round( $total_grade );
 	}
 
 	/**
@@ -1243,7 +1243,7 @@ class WooThemes_Sensei_Utils {
 				} else {
 					$status = 'failed';
 					$box_class = 'alert';
-					$message = sprintf( __( 'You require %1$d%% to pass this course. Your grade is %2$d%%.', 'woothemes-sensei' ), $passmark, $user_grade );
+					$message = sprintf( __( 'You require %1$d%% to pass this course. Your grade is %2$s%%.', 'woothemes-sensei' ), $passmark, $user_grade );
 				}
 			}
 
@@ -1334,14 +1334,14 @@ class WooThemes_Sensei_Utils {
 				// Lesson status will be "passed" (passmark reached)
 				elseif ( ! empty( $quiz_grade ) && abs( $quiz_grade ) >= 0 ) {
 					if( $is_lesson ) {
-						$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
+						$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %s%%', 'woothemes-sensei' ), WooThemes_Sensei_Utils::round( $quiz_grade ) );
 					} else {
-						$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %d%%', 'woothemes-sensei' ), round( $quiz_grade ) );
+						$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %s%%', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_grade ) );
 					}
 				}
 
 			}
-			// Lesson/Quiz not complete
+            // Lesson/Quiz not complete
 			else {
 				// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete)
 				if ( isset( $user_lesson_status->comment_approved ) && 'ungraded' == $user_lesson_status->comment_approved ) {
@@ -1350,7 +1350,7 @@ class WooThemes_Sensei_Utils {
 					if( $is_lesson ) {
 						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
 					} else {
-						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$d%% to pass.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ) );
 					}
 				}
 				// Lesson status must be "failed"
@@ -1358,9 +1358,9 @@ class WooThemes_Sensei_Utils {
 					$status = 'failed';
 					$box_class = 'alert';
 					if( $is_lesson ) {
-						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ),  WooThemes_Sensei_Utils::round( $quiz_grade ) );
 					} else {
-						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$d%%', 'woothemes-sensei' ), round( $quiz_passmark ), round( $quiz_grade ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ),  WooThemes_Sensei_Utils::round( $quiz_grade ) );
 					}
 				}
 				// Lesson/Quiz requires a pass
@@ -1368,9 +1368,9 @@ class WooThemes_Sensei_Utils {
 					$status = 'not_started';
 					$box_class = 'info';
 					if( $is_lesson ) {
-						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ) );
 					} else {
-						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ), round( $quiz_passmark ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ) );
 					}
 				}
 			}
@@ -2169,6 +2169,37 @@ class WooThemes_Sensei_Utils {
 
     }// generate_drop_down
 
+    /**
+     * Wrapper for the default php round() function.
+     * This allows us to give more control to a user on how they can round Sensei
+     * decimals passed through this function.
+     *
+     * @since 1.8.5
+     *
+     * @param double $val
+     * @param int $precision
+     * @param $mode
+     * @param string $context
+     *
+     * @return double $val
+     */
+    public static function round( $val, $precision = 0, $mode = PHP_ROUND_HALF_UP, $context = ''  ){
 
+        /**å
+         * Change the precision for the Sensei_Utils::round function.
+         * the precision given will be passed into the php round function
+         * @since 1.8.5
+         */
+        $precision = apply_filters( 'sensei_round_precision', $precision , $val, $context, $mode );
+
+        /**
+         * Change the mode for the Sensei_Utils::round function.
+         * the mode given will be passed into the php round function
+         * @since 1.8.5
+         */
+        $mode = apply_filters( 'sensei_round_mode', $mode , $val, $context, $precision   );
+
+        return round( $val, $precision, $mode );
+    }
 
 } // End Class

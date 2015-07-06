@@ -79,7 +79,7 @@ class WooThemes_Sensei_Updates {
 																		  'update_comment_course_lesson_comment_counts' => array( 'title' => __( 'Update comment counts', 'woothemes-sensei' ), 'desc' => __( 'Update comment counts on Courses and Lessons due to status changes.', 'woothemes-sensei' ) ), ),
 												),
 								'1.7.2' => array( 	'auto' 		=> array( 'index_comment_status_field' => array( 'title' => __( 'Add database index to comment statuses', 'woothemes-sensei' ), 'desc' => __( 'This indexes the comment statuses in the database, which will speed up all Sensei activity queries.', 'woothemes-sensei' ) ), ),
-													'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => __( 'Remove legacy Sensei activity types', 'woothemes-sensei' ), 'desc' => __( 'This removes all legacy (pre-1.7) Sensei activity types - only run this update once the update to v1.7 is complete and everything is stable.', 'woothemes-sensei' ) ) )
+													/*'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => __( 'Remove legacy Sensei activity types', 'woothemes-sensei' ), 'desc' => __( 'This removes all legacy (pre-1.7) Sensei activity types - only run this update once the update to v1.7 is complete and everything is stable.', 'woothemes-sensei' ) ) )*/
 												),
                                 '1.8.0' => array(   'auto' => array( 'enhance_teacher_role' => array( 'title' => 'Enhance the \'Teacher\' role', 'desc' => 'Adds the ability for a \'Teacher\' to create courses, lessons , quizes and manage their learners.' ), ),
                             						'manual' 	=> array()
