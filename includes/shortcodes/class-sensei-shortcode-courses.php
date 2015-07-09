@@ -70,8 +70,8 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
         // set up all argument need for constructing the course query
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
         $this->teacher = isset( $attributes['teacher'] ) ? $attributes['teacher'] : '';
-
         $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'date';
+
         // set the default for menu_order to be ASC
         if( 'menu_order' == $this->orderby && !isset( $attributes['order']  ) ){
 
@@ -116,12 +116,39 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
         );
 
         // setup the teacher query if any teacher was specified
-        if(! empty( $this->teacher )){
+        if( !empty( $this->teacher )){
 
-            $teacher_query_by = is_numeric( $this->teacher )? 'author':'author_name';
+            // when users passed in a csv
+            if( strpos( $this->teacher, ',' ) ){
+
+                $teachers = explode( ',', $this->teacher );
+
+                // for all user names given convert them to user ID's
+                foreach( $teachers as $index => $teacher  ){
+
+                    //replace the teacher value with the teachers ID
+                    if( ! is_numeric( $teacher ) ){
+
+                        $user = get_user_by('login', $teacher);
+                        $teachers[$index] = $user->ID;
+
+                    }
+
+                } // end for each
+
+                $teacher_query_by = 'author__in';
+                $this->teacher = $teachers;
+
+            }else{
+                // when users passed in a single teacher value
+                $teacher_query_by = is_numeric( $this->teacher )? 'author':'author_name';
+
+            }
+
+            // attach teacher query by and teacher query value to the course query
             $query_args[ $teacher_query_by ] = $this->teacher;
 
-        }
+        }// end if empty teacher
 
 
         // add the course category taxonomy query
