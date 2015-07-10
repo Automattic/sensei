@@ -119,7 +119,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_admin_bar' => true,
 		    'query_var' => true,
             /**
-             * sensei_rewrite_course_with_front
+             * "with_front" property of rewrite behavior for courses.
              *
              * Allows for the "with_front" property of the rewrite rules for the course post type to be modified.
              *
@@ -165,7 +165,7 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_menu' => true,
 		    'query_var' => true,
             /**
-             * sensei_rewrite_lesson_with_front
+             * "with_front" property of rewrite behavior for lessons.
              *
              * Allows for the "with_front" property of the rewrite rules for the lesson post type to be modified.
              *
@@ -204,7 +204,7 @@ class WooThemes_Sensei_PostTypes {
 		    'query_var' => true,
 		    'exclude_from_search' => true,
             /**
-             * sensei_rewrite_quiz_with_front
+             * "with_front" property of rewrite behavior for quizzes.
              *
              * Allows for the "with_front" property of the rewrite rules for the quiz post type to be modified.
              *
@@ -242,7 +242,7 @@ class WooThemes_Sensei_PostTypes {
 		    'query_var' => true,
 		    'exclude_from_search' => true,
             /**
-             * sensei_rewrite_question_with_front
+             * "with_front" property of rewrite behavior for questions.
              *
              * Allows for the "with_front" property of the rewrite rules for the question post type to be modified.
              *
@@ -279,7 +279,7 @@ class WooThemes_Sensei_PostTypes {
 		    'query_var' => false,
 		    'exclude_from_search' => true,
             /**
-             * sensei_rewrite_multiple_question_with_front
+             * "with_front" property of rewrite behavior for multiple questions.
              *
              * Allows for the "with_front" property of the rewrite rules for the multiple question post type to be modified.
              *
@@ -319,7 +319,7 @@ class WooThemes_Sensei_PostTypes {
 			    'query_var' => true,
 			    'exclude_from_search' => true,
                 /**
-                 * sensei_rewrite_message_with_front
+                 * "with_front" property of rewrite behavior for messages.
                  *
                  * Allows for the "with_front" property of the rewrite rules for the message post type to be modified.
                  *
