@@ -38,9 +38,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
     protected  $order;
 
     /**
-     * @var type can be completed or active or all
+     * @var status can be completed or active or all
      */
-    protected $type;
+    protected $status;
 
     /**
      * Setup the shortcode object
@@ -60,7 +60,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
         $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
         $this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'ASC';
-        $this->type = isset( $attributes['type'] ) ? $attributes['type'] : 'all';
+        $this->status = isset( $attributes['status'] ) ? $attributes['status'] : 'all';
 
         // setup the course query that will be used when rendering
         $this->setup_course_query();
@@ -89,15 +89,16 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
             }
         }
 
-        if( 'completed' == $this->type ){
+        if( 'completed' == $this->status ){
 
             $included_courses =  $completed_ids;
 
-        }elseif( 'active'==$this->type ){
+        }elseif( 'active'==$this->status ){
 
             $included_courses =  $active_ids;
 
         }else{
+
 
             $included_courses = array_merge( $active_ids, $completed_ids );
 
