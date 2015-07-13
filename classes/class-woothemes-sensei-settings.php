@@ -402,7 +402,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		$fields['learner_profile_enable'] = array(
 							'name' => __( 'Public learner profiles', 'woothemes-sensei' ),
-							'description' => sprintf( __( 'Enable public learner profiles that will be accassible to everyone. Profile URL format: %s', 'woothemes-sensei' ), $profile_url_example ),
+							'description' => sprintf( __( 'Enable public learner profiles that will be accessible to everyone. Profile URL format: %s', 'woothemes-sensei' ), $profile_url_example ),
 							'type' => 'checkbox',
 							'default' => true,
 							'section' => 'learner-profile-settings'
