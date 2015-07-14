@@ -55,7 +55,18 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
         $this->teacher = isset( $attributes['teacher'] ) ? $attributes['teacher'] : '';
         $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'date';
-        $this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'DESC';
+
+        // set the default for menu_order to be ASC
+        if( 'menu_order' == $this->orderby && !isset( $attributes['order']  ) ){
+
+            $this->order =  'ASC';
+
+        }else{
+
+            // for everything else use the value passed or the default DESC
+            $this->order = isset( $attributes['order']  ) ? $attributes['order'] : 'DESC';
+
+        }
 
         // setup the course query that will be used when rendering
         $this->setup_course_query();

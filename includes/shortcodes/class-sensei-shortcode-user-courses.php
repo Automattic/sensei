@@ -59,8 +59,19 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         // set up all argument need for constructing the course query
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
         $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
-        $this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'ASC';
         $this->status = isset( $attributes['status'] ) ? $attributes['status'] : 'all';
+
+        // set the default for menu_order to be ASC
+        if( 'menu_order' == $this->orderby && !isset( $attributes['order']  ) ){
+
+            $this->order =  'ASC';
+
+        }else{
+
+            // for everything else use the value passed or the default DESC
+            $this->order = isset( $attributes['order']  ) ? $attributes['order'] : 'ASC';
+
+        }
 
         // setup the course query that will be used when rendering
         $this->setup_course_query();
