@@ -70,13 +70,14 @@ class Sensei_Shortcode_Loader{
     public function setup_shortcode_class_map(){
 
         $this->shortcode_classes = array(
-            'sensei_featured_courses'  => 'Sensei_Shortcode_Featured_Courses',
-            'sensei_user_courses'      => 'Sensei_Shortcode_User_Courses',
-            'sensei_courses'           => 'Sensei_Shortcode_Courses',
-            'sensei_teachers'          => 'Sensei_Shortcode_Teachers',
-            'sensei_user_messages'     => 'Sensei_Shortcode_User_Messages',
-            'sensei_course_page'       => 'Sensei_Shortcode_Course_Page',
-            'sensei_course_categories' => 'Sensei_Shortcode_Course_Categories',
+            'sensei_featured_courses'    => 'Sensei_Shortcode_Featured_Courses',
+            'sensei_user_courses'        => 'Sensei_Shortcode_User_Courses',
+            'sensei_courses'             => 'Sensei_Shortcode_Courses',
+            'sensei_teachers'            => 'Sensei_Shortcode_Teachers',
+            'sensei_user_messages'       => 'Sensei_Shortcode_User_Messages',
+            'sensei_course_page'         => 'Sensei_Shortcode_Course_Page',
+            'sensei_course_categories'   => 'Sensei_Shortcode_Course_Categories',
+            'sensei_unpurchased_courses' => 'Sensei_Shortcode_Unpurchased_Courses',
         );
 
         // legacy shortcode handling:
