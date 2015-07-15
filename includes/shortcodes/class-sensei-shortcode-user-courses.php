@@ -148,9 +148,17 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         // assign the query setup in $this-> setup_course_query
         $wp_query = $this->query;
 
+        // attach progress meter below course
+        add_action( 'sensei_course_content_inside_after', array( __CLASS__, 'attach_course_progress' ) );
+        add_action( 'sensei_course_content_inside_after', array( __CLASS__, 'attach_course_buttons' ) );
+
         ob_start();
         include('templates/loop.php');
         $shortcode_output =  ob_get_clean();
+
+        //remove progress meter as we only want it to show in this shortcode
+        remove_action( 'sensei_course_content_inside_after', array( __CLASS__, 'attach_course_progress' ) );
+        remove_action( 'sensei_course_content_inside_after', array( __CLASS__, 'attach_course_buttons' ) );
 
         //restore old query
         $wp_query = $current_global_query;
@@ -158,5 +166,32 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         return $shortcode_output;
 
     }// end render
+
+
+    /**
+     * Hooks into sensei_course_content_inside_after
+     *
+     * @param $course
+     */
+    public static function attach_course_progress( $course ){
+
+        $percentage = Sensei()->course->get_completion_percentage( $course->ID, get_current_user_id() );
+        echo Sensei()->course->get_progress_meter( $percentage );
+
+    }// attach_course_progress
+
+
+    /**
+     * Hooked into sensei_course_content_inside_after
+     *
+     * Prints out the course action buttons
+     *
+     * @param $course
+     */
+    public static function attach_course_buttons( $course ){
+
+        Sensei()->course->the_course_action_buttons( $course );
+
+    }// attach_course_buttons
 
 }
