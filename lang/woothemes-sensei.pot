@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Sensei package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei 1.8.4\n"
+"Project-Id-Version: Sensei 1.8.5\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/woothemes-sensei\n"
-"POT-Creation-Date: 2015-06-17 15:09:48+00:00\n"
+"POT-Creation-Date: 2015-07-15 14:20:38+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1189,7 +1189,7 @@ msgid "<strong>ERROR</strong>: The password field may not be empty, please enter
 msgstr ""
 
 #: classes/class-woothemes-sensei-frontend.php:1974
-msgid "<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href=\"mailto:%s\">webmaster</a> !"
+msgid "<strong>ERROR</strong>: Couldn't register you&hellip; please contact the <a href=\"mailto:%s\">webmaster</a> !"
 msgstr ""
 
 #: classes/class-woothemes-sensei-frontend.php:2012
@@ -2725,7 +2725,7 @@ msgid "Public learner profiles"
 msgstr ""
 
 #: classes/class-woothemes-sensei-settings.php:405
-msgid "Enable public learner profiles that will be accassible to everyone. Profile URL format: %s"
+msgid "Enable public learner profiles that will be accessible to everyone. Profile URL format: %s"
 msgstr ""
 
 #: classes/class-woothemes-sensei-settings.php:412
@@ -2978,7 +2978,7 @@ msgid "Restructure question meta data"
 msgstr ""
 
 #: classes/class-woothemes-sensei-updates.php:66
-msgid "Restructures the quesiton meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+."
+msgid "Restructures the question meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+."
 msgstr ""
 
 #: classes/class-woothemes-sensei-updates.php:67
@@ -3075,14 +3075,6 @@ msgstr ""
 
 #: classes/class-woothemes-sensei-updates.php:81
 msgid "This indexes the comment statuses in the database, which will speed up all Sensei activity queries."
-msgstr ""
-
-#: classes/class-woothemes-sensei-updates.php:82
-msgid "Remove legacy Sensei activity types"
-msgstr ""
-
-#: classes/class-woothemes-sensei-updates.php:82
-msgid "This removes all legacy (pre-1.7) Sensei activity types - only run this update once the update to v1.7 is complete and everything is stable."
 msgstr ""
 
 #: classes/class-woothemes-sensei-updates.php:106
