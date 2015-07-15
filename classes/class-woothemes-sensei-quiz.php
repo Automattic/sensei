@@ -210,7 +210,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
             // save transient to make retrieval faster
             $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
-            set_site_transient( $transient_key, $prepared_answers, 30 * DAY_IN_SECONDS );
+            set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
 
             // update the message showed to user
             $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
@@ -246,7 +246,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         // save some time and get the transient cached data
         $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
-        $transient_cached_answers = get_site_transient( $transient_key );
+        $transient_cached_answers = get_transient( $transient_key );
 
         // return the transient or get the values get the values from the comment meta
         if( !empty( $transient_cached_answers  ) && false != $transient_cached_answers ){
@@ -264,7 +264,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		}
 
         //set the transient with the new valid data for faster retrieval in future
-        set_site_transient( $transient_key,  $encoded_user_answers);
+        set_transient( $transient_key,  $encoded_user_answers, 10 * DAY_IN_SECONDS);
 
 		// decode an unserialize all answers
 		foreach( $encoded_user_answers as $question_id => $encoded_answer ) {
@@ -498,9 +498,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $answers_transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
         $grades_transient_key = 'quiz_grades_'.$user_id.'_'.$lesson_id;
         $answers_feedback_transient_key = 'sensei_answers_feedback_'.$user_id.'_'.$lesson_id;
-        delete_site_transient( $answers_transient_key );
-        delete_site_transient( $grades_transient_key );
-        delete_site_transient( $answers_feedback_transient_key );
+        delete_transient( $answers_transient_key );
+        delete_transient( $grades_transient_key );
+        delete_transient( $answers_feedback_transient_key );
 
         // reset the quiz answers and feedback notes
         $deleted_answers = WooThemes_Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
@@ -764,7 +764,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              $success = true;
              // save transient
              $transient_key = 'quiz_grades_'. $user_id . '_' . $lesson_id;
-             set_site_transient( $transient_key, $quiz_grades, 30 * DAY_IN_SECONDS );
+             set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
          }
 
          return $success;
@@ -799,7 +799,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          // save some time and get the transient cached data
          $transient_key = 'quiz_grades_'. $user_id . '_' . $lesson_id;
-         $user_grades = get_site_transient( $transient_key );
+         $user_grades = get_transient( $transient_key );
 
          // get the data if nothing was stored in the transient
          if( empty( $user_grades  ) || false != $user_grades ){
@@ -807,8 +807,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              $user_grades = WooThemes_Sensei_Utils::get_user_data( 'quiz_grades', $lesson_id, $user_id );
 
              //set the transient with the new valid data for faster retrieval in future
-             set_site_transient( $transient_key,  $user_grades);
-
+             set_transient( $transient_key,  $user_grades, 10 * DAY_IN_SECONDS );
 
          } // end if transient check
 
@@ -923,7 +922,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
             // save transient to make retrieval faster in future
              $transient_key = 'sensei_answers_feedback_'.$user_id.'_'.$lesson_id;
-             set_site_transient( $transient_key, $encoded_answers_feedback, 30 * DAY_IN_SECONDS );
+             set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
 
         }
 
@@ -964,7 +963,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          // first check the transient to save a few split seconds
          $transient_key = 'sensei_answers_feedback_'.$user_id.'_'.$lesson_id;
-         $encoded_feedback = get_site_transient( $transient_key );
+         $encoded_feedback = get_transient( $transient_key );
 
          // get the data if nothing was stored in the transient
          if( empty( $encoded_feedback  ) || !$encoded_feedback ){
@@ -972,7 +971,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              $encoded_feedback = WooThemes_Sensei_Utils::get_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
 
              //set the transient with the new valid data for faster retrieval in future
-             set_site_transient( $transient_key,  $encoded_feedback);
+             set_transient( $transient_key,  $encoded_feedback, 10 * DAY_IN_SECONDS);
 
          } // end if transient check
 

@@ -1546,9 +1546,9 @@ class Sensei_Core_Modules
         }
 
         //save some time and check if we already have the saved
-        if( get_site_transient( 'sensei_'. $course_id .'_none_module_lessons') ){
+        if( get_transient( 'sensei_'. $course_id .'_none_module_lessons') ){
 
-            return get_site_transient( 'sensei_'. $course_id .'_none_module_lessons');
+            return get_transient( 'sensei_'. $course_id .'_none_module_lessons');
 
         }
 
@@ -1596,7 +1596,7 @@ class Sensei_Core_Modules
 
         if( isset( $wp_lessons_query->posts) && count( $wp_lessons_query->posts ) > 0  ){
             $non_module_lessons = $wp_lessons_query->get_posts();
-            set_site_transient( 'sensei_'. $course_id .'_none_module_lessons', $non_module_lessons, 20 );
+            set_transient( 'sensei_'. $course_id .'_none_module_lessons', $non_module_lessons, 10 * DAY_IN_SECONDS );
         }
 
         return $non_module_lessons;
