@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * This class is loaded int WP by the shortcode loader class.
  *
+ * For the teacher include and excludes you can specify user-names or ids
+ *
  * @class Sensei_Shortcode_Teachers
  * @since 1.9.0
  * @package Sensei
@@ -40,8 +42,12 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
      */
     public function __construct( $attributes, $content, $shortcode ){
 
-        $this->include = isset( $attributes['include'] ) ? explode( ',', $attributes['include'] ) : '';
-        $this->exclude = isset( $attributes['exclude'] ) ? explode( ',', $attributes['exclude'] ) : '';
+        $include = isset( $attributes['include'] ) ? explode( ',', $attributes['include'] ) : '';
+        $exclude = isset( $attributes['exclude'] ) ? explode( ',', $attributes['exclude'] ) : '';
+
+        // convert teacher usernames given to the id
+        $this->include = $this->convert_usernames_to_ids( $include );
+        $this->exclude = $this->convert_usernames_to_ids( $exclude );
 
         $this->setup_teacher_query();
 
@@ -80,6 +86,7 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 
                 $merged_users = array_merge( $all_users, $included_users );
                 $all_users = $this->users_unique( $merged_users );
+                $all_users = $this->users_sort( $all_users );
 
             }
 
@@ -101,11 +108,7 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 
         foreach ( $all_users as $user ) {
 
-            $user_display_name = $user->first_name . ' ' . $user->last_name;
-            if( empty( $user_display_name ) ){
-                $user_display_name = $user->display_name;
-            }
-
+            $user_display_name = $this->get_user_public_name( $user );
 
             /**
              * Sensei teachers shortcode list item filter
@@ -184,5 +187,91 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
         return $users;
 
     }// end exclude_users
+
+    /**
+     * Convert mixed array of user id and user names to only be an array of user_ids
+     *
+     * @param array $users
+     * @return array $users_ids
+     */
+    public function convert_usernames_to_ids( $users ){
+
+        // backup
+        $users_ids = array();
+        foreach( $users as $user_id_or_username ){
+
+            if( ! is_numeric( $user_id_or_username ) ){
+
+                $user_name = $user_id_or_username;
+                $user = get_user_by( 'login', $user_name  );
+
+                if( is_a( $user, 'WP_User' ) ){
+                  $users_ids[] = $user->ID;
+                }
+
+            }else{
+
+                $user_id = $user_id_or_username;
+                $users_ids[] = $user_id;
+
+            }
+
+        }
+
+        return $users_ids;
+    }
+
+    /**
+     * Returns the first name and last name or the display name of a user.
+     *
+     * @since 1.9.0
+     *
+     * @param $user
+     * @return string $user_public_name
+     */
+    public function get_user_public_name( $user ){
+
+        $user_public_name = $user->first_name . ' ' . $user->last_name;
+        if( empty( $user_public_name ) ){
+
+            $user_public_name = $user->display_name;
+
+        }
+
+        return $user_public_name;
+    }
+
+    /**
+     *
+     * Sort user objects by user display
+     *
+     * @since 1.9.0
+     *
+     * @param $users
+     * @return  array $sorted_users
+     */
+    public function users_sort( $users ){
+
+        $sorted_users = $users;
+
+        uasort( $sorted_users, array( $this, 'custom_user_sort' ) );
+
+        return $sorted_users;
+    }
+
+    /**
+     * Used in the uasort function to sort users by title
+     *
+     * @since 1.9.0
+     *
+     * @param $user_1
+     * @param $user_2
+     * @return int
+     */
+    public function custom_user_sort($user_1, $user_2){
+
+        return strcasecmp( $this->get_user_public_name( $user_1 ), $this->get_user_public_name( $user_2 )  );
+
+    }// end custom_user_sort
 
 }// end class
