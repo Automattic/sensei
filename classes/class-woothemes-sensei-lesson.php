@@ -2638,7 +2638,7 @@ class WooThemes_Sensei_Lesson {
             $user_id = get_current_user_id();
         }
 
-		// Set the default quesiton order if it has not already been set for this quiz
+		// Set the default question order if it has not already been set for this quiz
 		$this->set_default_question_order( $quiz_id );
 
 		// If viewing quiz on the frontend then show questions in random order if set
