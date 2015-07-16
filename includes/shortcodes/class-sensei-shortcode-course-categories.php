@@ -40,8 +40,6 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
         // make sure we handle string true/false values correctly with respective defaults
         $hide_empty = isset( $attributes['hide_empty'] ) ? $attributes['hide_empty'] : 'false';
         $this->hide_empty = 'true' == $hide_empty ? true: false;
-        $hierarchical = isset( $attributes['hierarchical'] ) ? $attributes['hierarchical'] : 'true';
-        $this->hierarchical = 'true' == $hierarchical ? true: false;
 
         $this->setup_course_categories();
 
@@ -61,7 +59,6 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
             'include'       => $this->include,
             'number'        => $this->number,
             'parent'        => $this->parent,
-            'hierarchical'  => $this->hierarchical,
             'hide_empty'    => $this->hide_empty,
             'fields'        => 'all',
         );
