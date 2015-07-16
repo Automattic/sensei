@@ -5,7 +5,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Renders the [sensei_course_categories] shortcode. Show the list or course categories as links to their archive
  * pages. The list can be change with the given parameters.
  *
- * This class is loaded int WP by the shortcode loader class.
+ * Parameters:
+ * orderby  string. Possible values: id, count, name, slug - Default name.
+ * order string  ASC or DESC
+ * number int the amount of items displayed
+ * parent int parent id
+ * include CSV of course categories. This can be ids, slugs, or names(case Sensitive ) Default empty.
+ * exclude string, CSV of course categories. This can be ids, slugs, or names(case Sensitive ) Default empty.
+ * hide_empty boolean, Default false.
+ *
+ * This class is loaded in WP by the shortcode loader class.
  *
  * @class Sensei_Shortcode_Course_Categories
  * @since 1.9.0
@@ -34,8 +43,12 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
         $this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'ASC';
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '100';
         $this->parent = isset( $attributes['parent'] ) ? $attributes['parent'] : '';
-        $this->include = isset( $attributes['include'] ) ? $attributes['include'] : '';
-        $this->exclude = isset( $attributes['exclude'] ) ? $attributes['exclude'] : '';
+
+        $include = isset( $attributes['include'] ) ? explode( ',' , $attributes['include'] ) : '';
+        $this->include = $this->generate_term_ids( $include );
+
+        $exclude = isset( $attributes['exclude'] ) ? explode( ',' , $attributes['exclude'] ) : '';
+        $this->exclude = $this->generate_term_ids( $exclude );
 
         // make sure we handle string true/false values correctly with respective defaults
         $hide_empty = isset( $attributes['hide_empty'] ) ? $attributes['hide_empty'] : 'false';
@@ -95,6 +108,47 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
         return $terms_html;
 
     }// end render
+
+    /**
+     * Convert an array of mixed ids, slugs or names to only the id's of those terms
+     *
+     * @since 1.9.0
+     *
+     * @param array $category_ids
+     * @return array
+     */
+    public function generate_term_ids( $categories = array() ){
+
+        $cat_ids = array();
+        foreach( $categories as $cat ){
+
+            if( ! is_numeric( $cat )  ){
+
+                // try the slug
+                $term = get_term_by( 'slug', $cat, 'course-category');
+
+                // if the slug didn't work try the name
+                if( !$term ){
+
+                    $term = get_term_by( 'name', $cat, 'course-category');
+
+                }
+
+                if( $term ){
+                    $cat_ids[] = $term->term_id;
+                }
+
+            }else{
+
+                $cat_ids[] = $cat;
+
+            }
+
+        }
+
+        return $cat_ids;
+
+    }// end generate_term_ids
 
 }// end class
 
