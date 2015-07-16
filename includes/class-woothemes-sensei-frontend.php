@@ -1971,7 +1971,7 @@ class WooThemes_Sensei_Frontend {
 		// register user
 		$user_id = wp_create_user( $new_user_name, $new_user_password, $new_user_email );
 		if ( ! $user_id || is_wp_error( $user_id ) ) {
-			$woothemes_sensei->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert');
+			$woothemes_sensei->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn\'t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert');
 		}
 
 		// notify the user
