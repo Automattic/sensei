@@ -19,7 +19,6 @@ class Sensei_Class_Learners_Test extends WP_UnitTestCase {
     public function setUp() {
         // load the factory class
         global $woothemes_sensei;
-        require_once( dirname( dirname(__FILE__) ) . '/classes/class-woothemes-sensei-learners.php');
         $woothemes_sensei->learners = new WooThemes_Sensei_Learners( '' );
         $this->factory = new Sensei_Factory();
     }// end function setup()

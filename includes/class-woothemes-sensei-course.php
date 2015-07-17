@@ -71,6 +71,19 @@ class WooThemes_Sensei_Course {
         add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );
         add_action('save_post', array( $this, 'save_course_notification_meta_box' ) );
 
+        // preview lessons on the course content
+        add_action( 'sensei_course_content_inside_after',array( $this, 'the_course_free_lesson_preview' ) );
+
+        // the course meta
+        add_action('sensei_course_content_inside_before', array( $this, 'the_course_meta' ) );
+
+        // backwards compatible template hooks
+        add_action('sensei_course_content_before', array( $this, 'content_before_backwards_compatibility_hooks' ));
+        add_action('sensei_loop_course_before', array( $this,'loop_before_backwards_compatibility_hooks' ) );
+
+        // add the user status on the course to the markup as a class
+        add_filter('post_class', array( __CLASS__ , 'add_course_user_status_class' ), 20, 3 );
+
 	} // End __construct()
 
 	/**
@@ -1226,7 +1239,7 @@ class WooThemes_Sensei_Course {
 
 		    		$active_html .= '</section>';
 
-		    		if( $manage ) {
+		    		if( is_user_logged_in() ) {
 
 			    		$active_html .= '<section class="entry-actions">';
 
@@ -1758,5 +1771,220 @@ class WooThemes_Sensei_Course {
        update_post_meta( $course_id , 'disable_notification', $new_val );
 
     }// end save notification meat box
+
+    /**
+     * Backwards compatibility hooks added to ensure that
+     * plugins and other parts of sensei still works.
+     *
+     * This function hooks into `sensei_course_content_before`
+     *
+     * @since 1.9
+     *
+     * @param WP_Post $post
+     */
+    public function content_before_backwards_compatibility_hooks( $post ){
+
+        if( has_action( 'sensei_course_image' ) ){
+
+            _doing_it_wrong('sensei_course_image','This action has been retired: . Please use sensei_course_content_before instead.', '1.9' );
+            do_action('sensei_course_image', $post->ID );
+
+        }
+
+        if( has_action( 'sensei_course_archive_course_title' ) ){
+
+            _doing_it_wrong('sensei_course_archive_course_title','This action has been retired: . Please use sensei_course_content_before instead.', '1.9' );
+            do_action('sensei_course_archive_course_title', $post );
+
+        }
+
+    }
+
+    /**
+     * Backwards compatibility hooks that should be hooked into sensei_loop_course_before
+     *
+     * hooked into 'sensei_loop_course_before'
+     *
+     * @since 1.9
+     *
+     * @param WP_Post $post
+     */
+    public  function loop_before_backwards_compatibility_hooks( $post ){
+
+        if(has_action( 'sensei_course_archive_header' ) ){
+
+            _doing_it_wrong('sensei_course_archive_header','This action has been retired: . Please use sensei_course_content_before instead.', '1.9' );
+            do_action( 'sensei_course_archive_header', $post->post_type  );
+
+        }
+
+    }
+
+    /**
+     * Output a link to view course. The button text is different depending on the amount of preview lesson available.
+     *
+     * hooked into 'sensei_course_content_inside_after'
+     *
+     * @since 1.9.0
+     *
+     * @param WP_Post $course
+     */
+    public function the_course_free_lesson_preview( $course ){
+        // Meta data
+        $preview_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $course->ID ) );
+        $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $course->ID, get_current_user_id() );
+
+        if ( 0 < $preview_lesson_count && !$is_user_taking_course ) {
+            ?>
+            <p class="sensei-free-lessons">
+                <a href="<?php echo get_permalink(); ?>">
+                    <?php _e( 'Preview this course', 'woothemes-sensei' ) ?>
+                </a>
+                - <?php echo sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ) ; ?>
+            </p>
+
+        <?php
+        }
+    }
+
+    /**
+     * Add course mata to the course meta hook
+     *
+     * @since 1.9.0
+     * @param WP_Post $course
+     */
+    public function the_course_meta( $course ){
+        echo '<p class="sensei-course-meta">';
+
+        $category_output = get_the_term_list( $course->ID, 'course-category', '', ', ', '' );
+        $author_display_name = get_the_author_meta( 'display_name', $course->post_author  );
+
+        if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) {?>
+
+            <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?>
+
+                <a href="<?php esc_attr_e( get_author_posts_url( $course->post_author ) ); ?>" title="<?php esc_attr_e( $author_display_name ); ?>"><?php esc_attr_e( $author_display_name   ); ?></a>
+
+            </span>
+
+        <?php } // End If Statement ?>
+
+        <span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $course->ID ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
+
+       <?php if ( '' != $category_output ) { ?>
+
+            <span class="course-category"><?php echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ); ?></span>
+
+        <?php } // End If Statement
+
+        // number of completed lessons
+        if( is_user_logged_in() ){
+            $completed = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
+            $lesson_count = count( $this->course_lessons( $course->ID ) );
+            echo '<span class="course-lesson-progress">' . sprintf( __( '%1$d of %2$d lessons completed', 'woothemes-sensei' ) , $completed, $lesson_count  ) . '</span>';
+        }
+
+        sensei_simple_course_price( $course->ID );
+
+        echo '</p>';
+    } // end the course meta
+
+    /**
+     * Filter the classes attached to a post types for courses
+     * and add a status class for when the user is logged in.
+     *
+     * @param $classes
+     * @param $class
+     * @param $post_id
+     *
+     * @return array $classes
+     */
+    public static function add_course_user_status_class( $classes, $class, $course_id ){
+
+        if( 'course' == get_post_type( $course_id )  &&  is_user_logged_in() ){
+
+            if( WooThemes_Sensei_Utils::user_completed_course( $course_id, get_current_user_id() ) ){
+
+                $classes[] = 'user-status-completed';
+
+            }else{
+
+                $classes[] = 'user-status-active';
+
+            }
+
+        }
+
+        return $classes;
+
+    }// end add_course_user_status_class
+
+    /**
+     * Prints out the course action buttons links
+     *
+     * - complete course
+     * - delete course
+     *
+     * @param WP_Post $course
+     */
+    public static function the_course_action_buttons( $course ){
+
+        if( is_user_logged_in() ) { ?>
+
+            <section class="entry-actions">
+                <form method="POST" action="<?php  echo esc_url( remove_query_arg( array( 'active_page', 'completed_page' ) ) ); ?>">
+
+                    <input type="hidden"
+                           name="<?php esc_attr_e( 'woothemes_sensei_complete_course_noonce' ) ?>"
+                           id="<?php  esc_attr_e( 'woothemes_sensei_complete_course_noonce' ); ?>"
+                           value="<?php esc_attr_e( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
+                        />
+
+                    <input type="hidden" name="course_complete_id" id="course-complete-id" value="<?php esc_attr_e( intval( $course->ID ) ); ?>" />
+
+                    <?php if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) ) && Sensei()->settings->settings['course_completion'] == 'complete' ) { ?>
+
+                        <span><input name="course_complete" type="submit" class="course-complete" value="<? echo apply_filters( 'sensei_mark_as_complete_text', __( 'Mark as Complete', 'woothemes-sensei' ) ); ?>/></span>
+
+                   <?php  } // End If Statement
+
+                    $course_purchased = false;
+                    if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+                        // Get the product ID
+                        $wc_post_id = get_post_meta( intval( $course->ID ), '_course_woocommerce_product', true );
+                        if ( 0 < $wc_post_id ) {
+
+                            $user = wp_get_current_user();
+                            $course_purchased = WooThemes_Sensei_Utils::sensei_customer_bought_product( $user->user_email, $user->ID, $wc_post_id );
+
+                        } // End If Statement
+                    } // End If Statement
+
+                    if ( ! $course_purchased && ! WooThemes_Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() ) ) {?>
+
+                        <span><input name="course_complete" type="submit" class="course-delete" value="<?php echo apply_filters( 'sensei_delete_course_text', __( 'Delete Course', 'woothemes-sensei' ) ); ?>"/></span>
+
+                    <?php } // End If Statement
+
+                    $has_quizzes = Sensei()->course->course_quizzes( $course->ID, true );
+                    $results_link = '';
+                    if( $has_quizzes ){
+                        $results_link = '<a class="button view-results" href="' . Sensei()->course_results->get_permalink( $course->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+                    }
+
+                    // Output only if there is content to display
+                    if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) { ?>
+
+                        <p class="sensei-results-links">
+                            <?php echo apply_filters( 'sensei_results_links', $results_link ); ?>
+                        </p>
+
+                    <?php } // end if has filter  ?>
+                </form>
+            </section>
+
+        <?php  }// end if is user logged in
+
+    }// end the_course_action_buttons
 
 } // End Class
