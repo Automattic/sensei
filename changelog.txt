@@ -1,5 +1,13 @@
 *** Sensei Changelog ***
 
+2015.07.15 - version 1.8.6
+* Fix - Failure to load the JS in admin page because there was an extra dot in the file name.
+* Fix - a few Typos in comments and strings
+* Fix - Remove special character and replace with \' instead
+* Fix - change site_transients to normal transients and decrease the time from 30 days to 10
+* Fix - Create a fallback for round with 3 parameters. Added a check to use to use only 2 parameter for php version below 5.3
+* Tweak - Output course order via php instead of relying on JS to re-order on the front-end.
+
 2015.06.18 - version 1.8.5
 * Fix - Save the lesson preview checkbox unchecked state as well. The bug was that unchecked boxes does not get passed via $_POST in certain cases.
 * Tweak - Allow the quiz results rounding to be filtered. So you can now have decimal points shown to the user instead of the rounded up amount.

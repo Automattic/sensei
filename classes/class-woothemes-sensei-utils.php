@@ -2195,11 +2195,23 @@ class WooThemes_Sensei_Utils {
         /**
          * Change the mode for the Sensei_Utils::round function.
          * the mode given will be passed into the php round function
+         *
+         * This applies only to PHP version 5.3.0 and greater
+         *
          * @since 1.8.5
          */
         $mode = apply_filters( 'sensei_round_mode', $mode , $val, $context, $precision   );
 
-        return round( $val, $precision, $mode );
+        if ( version_compare(PHP_VERSION, '5.3.0') >= 0 ) {
+
+            return round( $val, $precision, $mode );
+
+        }else{
+
+            return round( $val, $precision );
+
+        }
+
     }
 
 } // End Class

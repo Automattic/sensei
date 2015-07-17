@@ -1314,8 +1314,8 @@ class Sensei_Core_Modules
 
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
-        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery.' . $suffix . '.js', array('jquery'), Sensei()->version , true);
-        wp_enqueue_script('sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery.' . $suffix . '.js', array('jquery','sensei-chosen'), Sensei()->version , true);
+        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array('jquery'), Sensei()->version , true);
+        wp_enqueue_script('sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array('jquery','sensei-chosen'), Sensei()->version , true);
         wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','sensei-chosen','sensei-chosen-ajax', 'jquery-ui-sortable'), Sensei()->version, true);
 
         //localized module data
@@ -1546,9 +1546,9 @@ class Sensei_Core_Modules
         }
 
         //save some time and check if we already have the saved
-        if( get_site_transient( 'sensei_'. $course_id .'_none_module_lessons') ){
+        if( get_transient( 'sensei_'. $course_id .'_none_module_lessons') ){
 
-            return get_site_transient( 'sensei_'. $course_id .'_none_module_lessons');
+            return get_transient( 'sensei_'. $course_id .'_none_module_lessons');
 
         }
 
@@ -1596,7 +1596,7 @@ class Sensei_Core_Modules
 
         if( isset( $wp_lessons_query->posts) && count( $wp_lessons_query->posts ) > 0  ){
             $non_module_lessons = $wp_lessons_query->get_posts();
-            set_site_transient( 'sensei_'. $course_id .'_none_module_lessons', $non_module_lessons, 20 );
+            set_transient( 'sensei_'. $course_id .'_none_module_lessons', $non_module_lessons, 10 * DAY_IN_SECONDS );
         }
 
         return $non_module_lessons;
