@@ -38,11 +38,6 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
     protected  $order;
 
     /**
-     * @var status can be completed or active or all
-     */
-    protected $status;
-
-    /**
      * Setup the shortcode object
      *
      * @since 1.9.0
@@ -59,7 +54,6 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
         // set up all argument need for constructing the course query
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
         $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
-        $this->status = isset( $attributes['status'] ) ? $attributes['status'] : 'all';
 
         // set the default for menu_order to be ASC
         if( 'menu_order' == $this->orderby && !isset( $attributes['order']  ) ){
