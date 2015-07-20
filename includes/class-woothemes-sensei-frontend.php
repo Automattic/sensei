@@ -236,35 +236,23 @@ class WooThemes_Sensei_Frontend {
 	/**
 	 * sensei_get_template_part function.
 	 *
+     * @deprecated sine 1.9.0
 	 * @access public
 	 * @param mixed $slug
 	 * @param string $name (default: '')
 	 * @return void
 	 */
 	function sensei_get_template_part( $slug, $name = '' ) {
-		global $woothemes_sensei;
-		$template = '';
 
-		// Look in yourtheme/slug-name.php and yourtheme/sensei/slug-name.php
-		if ( $name )
-			$template = locate_template( array ( "{$slug}-{$name}.php", "{$woothemes_sensei->template_url}{$slug}-{$name}.php" ) );
+        _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::get_part' );
+        return Sensei_Templates::get_part( $slug, $name );
 
-		// Get default slug-name.php
-		if ( ! $template && $name && file_exists( $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php" ) )
-			$template = $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php";
-
-		// If template file doesn't exist, look in yourtheme/slug.php and yourtheme/sensei/slug.php
-		if ( !$template )
-			$template = locate_template( array ( "{$slug}.php", "{$woothemes_sensei->template_url}{$slug}.php" ) );
-
-		if ( $template )
-			load_template( $template, false );
 	} // End sensei_get_template_part()
-
 
 	/**
 	 * sensei_get_template function.
 	 *
+     * @deprecated since 1.9.0
 	 * @access public
 	 * @param mixed $template_name
 	 * @param array $args (default: array())
@@ -273,18 +261,10 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
-		global $woothemes_sensei;
 
-		if ( $args && is_array($args) )
-			extract( $args );
+        _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::get_template' );
+        return Sensei_Templates::get_template($template_name, $args, $template_path, $default_path  );
 
-		$located = $this->sensei_locate_template( $template_name, $template_path, $default_path );
-
-		do_action( 'sensei_before_template_part', $template_name, $template_path, $located );
-
-		include( $located );
-
-		do_action( 'sensei_after_template_part', $template_name, $template_path, $located );
 	} // End sensei_get_template()
 
 
@@ -298,25 +278,11 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_locate_template( $template_name, $template_path = '', $default_path = '' ) {
-		global $woothemes_sensei;
 
-		if ( ! $template_path ) $template_path = $woothemes_sensei->template_url;
-		if ( ! $default_path ) $default_path = $woothemes_sensei->plugin_path() . '/templates/';
+        _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::locate_template' );
+        return Sensei_Templates::locate_template( $template_name, $template_path, $default_path );
 
-		// Look within passed path within the theme - this is priority
-		$template = locate_template(
-			array(
-				$template_path . $template_name,
-				$template_name
-			)
-		);
 
-		// Get default template
-		if ( ! $template )
-			$template = $default_path . $template_name;
-
-		// Return what we found
-		return apply_filters( 'sensei_locate_template', $template, $template_name, $template_path );
 	} // End sensei_locate_template()
 
 
