@@ -1039,15 +1039,15 @@ class WooThemes_Sensei_Frontend {
 		while ( have_posts() ) {
 			the_post();
 			if ( is_singular( 'course' ) ) {
-				$this->sensei_get_template_part( 'content', 'single-course' );
+				Sensei_Templates::get_part( 'content', 'single-course' );
 			} elseif( is_singular( 'lesson' ) ) {
-				$this->sensei_get_template_part( 'content', 'single-lesson' );
+				Sensei_Templates::get_part( 'content', 'single-lesson' );
 				do_action( 'sensei_breadcrumb', get_the_ID() );
 				do_action( 'sensei_comments' );
 			} elseif( is_singular( 'quiz' ) ) {
-				$this->sensei_get_template_part( 'content', 'single-quiz' );
+				Sensei_Templates::get_part( 'content', 'single-quiz' );
 			} elseif( is_singular( 'sensei_message' ) ) {
-				$this->sensei_get_template_part( 'content', 'single-message' );
+				Sensei_Templates::get_part( 'content', 'single-message' );
 				do_action( 'sensei_comments' );
 			} // End If Statement
 		} // End While Loop
