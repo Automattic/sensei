@@ -109,7 +109,7 @@ class WooThemes_Sensei_Course_Results {
 		global $wp_query, $woothemes_sensei, $current_user;
 
 		if( isset( $wp_query->query_vars['course_results'] ) ) {
-			$woothemes_sensei->frontend->sensei_get_template( 'course-results/course-info.php' );
+            Sensei_Templates::get_template( 'course-results/course-info.php' );
 		}
 
 	}
@@ -149,7 +149,7 @@ class WooThemes_Sensei_Course_Results {
 
 		$started_course = WooThemes_Sensei_Utils::user_started_course( $course->ID, $current_user->ID );
 		if( $started_course ) {
-			$woothemes_sensei->frontend->sensei_get_template( 'course-results/course-lessons.php' );
+            Sensei_Templates::get_template( 'course-results/course-lessons.php' );
 		}
 
 	}

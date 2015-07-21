@@ -293,7 +293,7 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_output_content_wrapper() {
-		$this->sensei_get_template( 'wrappers/wrapper-start.php' );
+		Sensei_Templates::get_template( 'wrappers/wrapper-start.php' );
 	} // End sensei_output_content_wrapper()
 
 
@@ -304,7 +304,7 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_output_content_wrapper_end() {
-		$this->sensei_get_template( 'wrappers/wrapper-end.php' );
+		Sensei_Templates::get_template( 'wrappers/wrapper-end.php' );
 	} // End sensei_output_content_wrapper_end()
 
 
@@ -322,13 +322,13 @@ class WooThemes_Sensei_Frontend {
 		if ( ( is_post_type_archive( 'course' ) || ( is_page( $course_page_id ) ) ) && ( isset( $paged ) && 0 == $paged ) ) {
 			// Do NOT show the pagination
 		} elseif( is_singular('course') ) {
-			$this->sensei_get_template( 'wrappers/pagination-posts.php' );
+			Sensei_Templates::get_template( 'wrappers/pagination-posts.php' );
 		} elseif( is_singular('lesson') ) {
-			$this->sensei_get_template( 'wrappers/pagination-lesson.php' );
+			Sensei_Templates::get_template( 'wrappers/pagination-lesson.php' );
 		} elseif( is_singular('quiz') ) {
-			$this->sensei_get_template( 'wrappers/pagination-quiz.php' );
+			Sensei_Templates::get_template( 'wrappers/pagination-quiz.php' );
 		} else {
-			$this->sensei_get_template( 'wrappers/pagination.php' );
+			Sensei_Templates::get_template( 'wrappers/pagination.php' );
 		} // End If Statement
 	} // End sensei_output_content_pagination()
 
@@ -1065,7 +1065,9 @@ class WooThemes_Sensei_Frontend {
 				echo do_shortcode( '[freecourses]' );
 				echo do_shortcode( '[paidcourses]' );
 			} else {
-				$this->sensei_get_template( 'loop-course.php' );
+
+                Sensei_Templates::get_template( 'loop-course.php' );
+
 			} // End If Statement
 		} else {
 			?><p><?php _e( 'No courses found that match your selection.', 'woothemes-sensei' ); ?></p><?php
@@ -1074,7 +1076,7 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_lesson_archive_main_content() {
 		if ( have_posts() ) {
-			$this->sensei_get_template( 'loop-lesson.php' );
+            Sensei_Templates::get_template( 'loop-lesson.php' );
 		} else {
 			?><p><?php _e( 'No lessons found that match your selection.', 'woothemes-sensei' ); ?></p><?php
 		} // End If Statement
@@ -1082,7 +1084,7 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_message_archive_main_content() {
 		if ( have_posts() ) {
-			$this->sensei_get_template( 'loop-message.php' );
+            Sensei_Templates::get_template( 'loop-message.php' );
 		} else {
 			?><p><?php _e( 'You do not have any messages.', 'woothemes-sensei' ); ?></p><?php
 		} // End If Statement
@@ -1091,7 +1093,7 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_no_permissions_main_content() {
 		while ( have_posts() ) {
 			the_post();
-			$this->sensei_get_template_part( 'content', 'no-permissions' );
+            Sensei_Templates::get_template( 'content', 'no-permissions' );
 		} // End While Loop
 	} // End sensei_no_permissions_main_content()
 
@@ -1123,7 +1125,7 @@ class WooThemes_Sensei_Frontend {
 				<div class="col-1">
 					<?php
 					// output the actual form markup
-						$this->sensei_get_template( 'user/login-form.php');
+                    Sensei_Templates::get_template( 'user/login-form.php');
 					?>
 				</div>
 

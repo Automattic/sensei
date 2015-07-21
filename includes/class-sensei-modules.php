@@ -446,7 +446,7 @@ class Sensei_Core_Modules
 
         // only show modules on the course that has modules
         if( is_singular( 'course' ) && has_term( '', 'module' )  )  {
-            Sensei()->frontend->sensei_get_template( 'single-course/course-modules.php' );
+            Sensei_Templates::get_template( 'single-course/course-modules.php' );
         }
 
     } // end single_course_modules
