@@ -231,8 +231,13 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
      */
     public function get_user_public_name( $user ){
 
-        $user_public_name = $user->first_name . ' ' . $user->last_name;
-        if( empty( $user_public_name ) ){
+        if (!empty($user->first_name) or !empty($user->last_name)) {
+
+            $user_public_name = $user->first_name . ' ' . $user->last_name;
+
+        }
+
+        else {
 
             $user_public_name = $user->display_name;
 
