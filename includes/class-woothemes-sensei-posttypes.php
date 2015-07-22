@@ -125,7 +125,7 @@ class WooThemes_Sensei_PostTypes {
             ),
 		    'map_meta_cap'        => true,
 		    'capability_type'     => 'course',
-            'has_archive'         => ( $course_page_id = Sensei()->settings->get( 'course_page' ) ) && get_post( $course_page_id ) ? get_page_uri( $course_page_id ) : 'courses',
+            'has_archive'         => ( ( $course_page_id = Sensei()->settings->get( 'course_page' ) ) && get_post( $course_page_id ) ) ? get_page_uri( $course_page_id ) : 'courses',
 		    'hierarchical'        => false,
 		    'menu_position'       => 51,
 		    'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail' )
