@@ -282,7 +282,6 @@ class WooThemes_Sensei_Frontend {
         _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::locate_template' );
         return Sensei_Templates::locate_template( $template_name, $template_path, $default_path );
 
-
 	} // End sensei_locate_template()
 
 

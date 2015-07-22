@@ -136,7 +136,14 @@ class WooThemes_Sensei_PostTypes {
 		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail' )
 		);
 
-		register_post_type( 'course', $args );
+        /**
+         * Filter the arguments passed in when registering the Sensei Course post type.
+         *
+         * @since 1.9.0
+         * @param array $args
+         */
+		register_post_type( 'course', apply_filters( 'sensei_register_post_type_course', $args ) );
+
 	} // End setup_course_post_type()
 
 	/**
@@ -182,7 +189,14 @@ class WooThemes_Sensei_PostTypes {
 		    'supports' => $supports_array
 		);
 
-		register_post_type( 'lesson', $args );
+        /**
+         * Filter the arguments passed in when registering the Sensei Lesson post type.
+         *
+         * @since 1.9.0
+         * @param array $args
+         */
+		register_post_type( 'lesson', apply_filters( 'sensei_register_post_type_lesson', $args ) );
+
 	} // End setup_lesson_post_type()
 
 	/**
@@ -221,7 +235,14 @@ class WooThemes_Sensei_PostTypes {
 		    'supports' => array( 'title' )
 		);
 
-		register_post_type( 'quiz', $args );
+        /**
+         * Filter the arguments passed in when registering the Sensei Quiz post type.
+         *
+         * @since 1.9.0
+         * @param array $args
+         */
+		register_post_type( 'quiz', apply_filters( 'sensei_register_post_type_quiz', $args ) );
+
 	} // End setup_quiz_post_type()
 
 
@@ -259,7 +280,14 @@ class WooThemes_Sensei_PostTypes {
 		    'supports' => array( 'title' )
 		);
 
-		register_post_type( 'question', $args );
+        /**
+         * Filter the arguments passed in when registering the Sensei Question post type.
+         *
+         * @since 1.9.0
+         * @param array $args
+         */
+		register_post_type( 'question', apply_filters('sensei_register_post_type_question', $args ) );
+
 	} // End setup_question_post_type()
 
 	/**
@@ -336,7 +364,13 @@ class WooThemes_Sensei_PostTypes {
 			    'supports' => array( 'title', 'editor', 'comments' ),
 			);
 
-			register_post_type( 'sensei_message', $args );
+            /**
+             * Filter the arguments passed in when registering the Sensei sensei_message post type.
+             *
+             * @since 1.9.0
+             * @param array $args
+             */
+			register_post_type( 'sensei_message', apply_filters('sensei_register_post_type_sensei_message',  $args ) );
 		}
 	} // End setup_sensei_message_post_type()
 

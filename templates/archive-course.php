@@ -5,8 +5,9 @@
  * Override this template by copying it to yourtheme/sensei/archive-course.php
  *
  * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.0.0
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
