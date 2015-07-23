@@ -120,27 +120,31 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
     public function generate_term_ids( $categories = array() ){
 
         $cat_ids = array();
-        foreach( $categories as $cat ){
 
-            if( ! is_numeric( $cat )  ){
+        if ( is_array($categories) ) {
+            foreach ($categories as $cat) {
 
-                // try the slug
-                $term = get_term_by( 'slug', $cat, 'course-category');
+                if (!is_numeric($cat)) {
 
-                // if the slug didn't work try the name
-                if( !$term ){
+                    // try the slug
+                    $term = get_term_by('slug', $cat, 'course-category');
 
-                    $term = get_term_by( 'name', $cat, 'course-category');
+                    // if the slug didn't work try the name
+                    if (!$term) {
+
+                        $term = get_term_by('name', $cat, 'course-category');
+
+                    }
+
+                    if ($term) {
+                        $cat_ids[] = $term->term_id;
+                    }
+
+                } else {
+
+                    $cat_ids[] = $cat;
 
                 }
-
-                if( $term ){
-                    $cat_ids[] = $term->term_id;
-                }
-
-            }else{
-
-                $cat_ids[] = $cat;
 
             }
 
