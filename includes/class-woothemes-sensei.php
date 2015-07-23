@@ -240,9 +240,6 @@ class WooThemes_Sensei {
             //template loader hook
             add_filter( 'template_include', array ( 'Sensei_Templates', 'template_loader' ), 10, 1 );
 
-            //deprecate the archive content hook
-            add_action( 'sensei_archive_before_course_loop', array ( 'Sensei_Templates', 'deprecated_archive_hook' ), 10, 1 );
-
         }
 
         // Load Grading Functionality
