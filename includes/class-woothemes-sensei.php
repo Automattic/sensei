@@ -237,9 +237,6 @@ class WooThemes_Sensei {
             $this->load_class( 'notices' );
             $this->notices = new WooThemes_Sensei_Notices();
 
-            //template loader hook
-            add_filter( 'template_include', array ( 'Sensei_Templates', 'template_loader' ), 10, 1 );
-
         }
 
         // Load Grading Functionality

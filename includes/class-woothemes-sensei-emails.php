@@ -211,7 +211,7 @@ class WooThemes_Sensei_Emails {
 		if( ! $template ) return;
 
 		$email_template = $template . '.php';
-		$template = $woothemes_sensei->template_loader( '' );
+		$template = Sensei_Templates::template_loader( '' );
 
 		ob_start();
 
