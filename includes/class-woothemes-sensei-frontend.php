@@ -82,7 +82,7 @@ class WooThemes_Sensei_Frontend {
 
 		add_action( 'sensei_course_archive_meta', array( $this, 'sensei_course_archive_meta' ) );
 		add_action( 'sensei_single_main_content', array( $this, 'sensei_single_main_content' ), 10 );
-		add_action( 'sensei_course_archive_main_content', array( $this, 'sensei_course_archive_main_content' ), 10 );
+
 		add_action( 'sensei_lesson_archive_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_message_archive_main_content', array( $this, 'sensei_message_archive_main_content' ), 10 );
 		add_action( 'sensei_course_category_main_content', array( $this, 'sensei_course_category_main_content' ), 10 );
@@ -1051,27 +1051,6 @@ class WooThemes_Sensei_Frontend {
 			} // End If Statement
 		} // End While Loop
 	} // End sensei_single_main_content()
-
-	public function sensei_course_archive_main_content() {
-		global $woothemes_sensei, $wp_query;
-		if ( have_posts() && ( is_post_type_archive( 'course' ) || is_page( $woothemes_sensei->get_page_id( 'courses' ) ) ) ) {
-			// Handle pagiation
-			$paged = $wp_query->get( 'paged' );
-			if ( ! $paged || $paged < 2 ) {
-				// This is not a paginated page (or it's simply the first page of a paginated page/post)
-				echo do_shortcode( '[newcourses]' );
-				echo do_shortcode( '[featuredcourses]' );
-				echo do_shortcode( '[freecourses]' );
-				echo do_shortcode( '[paidcourses]' );
-			} else {
-
-                Sensei_Templates::get_template( 'loop-course.php' );
-
-			} // End If Statement
-		} else {
-			?><p><?php _e( 'No courses found that match your selection.', 'woothemes-sensei' ); ?></p><?php
-		} // End If Statement
-	} // End sensei_course_archive_main_content()
 
 	public function sensei_lesson_archive_main_content() {
 		if ( have_posts() ) {
