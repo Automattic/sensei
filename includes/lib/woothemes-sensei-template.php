@@ -234,7 +234,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 * sensei_course_archive_filter function.
 	 *
 	 * @access public
-	 * @param array $query (default: array())
+	 * @param array $query ( default: array ( ) )
 	 * @return void
 	 */
 	function sensei_course_archive_filter( $query ) {
