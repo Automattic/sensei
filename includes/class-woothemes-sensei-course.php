@@ -1770,7 +1770,7 @@ class WooThemes_Sensei_Course {
 
        update_post_meta( $course_id , 'disable_notification', $new_val );
 
-    }// end save notification meat box
+    }// end save notification meta box
 
     /**
      * Backwards compatibility hooks added to ensure that
