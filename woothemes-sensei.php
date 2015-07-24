@@ -34,10 +34,6 @@ Domain path: /lang/
     require_once( 'includes/lib/woo-functions.php' );
     require_once( 'includes/lib/woothemes-sensei-functions.php' );
 
-    if ( ! is_admin() ) {
-        require_once( 'includes/lib/woothemes-sensei-template.php' );
-    }
-
     /**
      * Returns the global Sensei Instance.
      *
