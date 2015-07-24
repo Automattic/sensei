@@ -869,7 +869,7 @@ class WooThemes_Sensei {
 					} // End If Statement
 					$_product = $this->sensei_get_woocommerce_product_object( $item_id, $product_type );
 					// Get courses that use the WC product
-					$courses = $this->post_types->course->get_product_courses( $_product->id );
+					$courses = $this->post_types->course->get_product_courses( $item_id );
 					// Loop and update those courses
 					foreach ( $courses as $course_item ) {
 						$update_course = $this->woocommerce_course_update( $course_item->ID, $order_user );
