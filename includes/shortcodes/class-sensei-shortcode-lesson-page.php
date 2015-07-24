@@ -88,12 +88,12 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
         ob_start();
         Sensei()->frontend->sensei_get_template('content-single-lesson.php');
-        $lessons_html = ob_get_clean();
+        $shortcode_output = ob_get_clean();
 
         // set back the global query
         wp_reset_query();
 
-        return $lessons_html;
+        return $shortcode_output;
 
     }// end render
 
