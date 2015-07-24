@@ -494,6 +494,7 @@ class WooThemes_Sensei_Course {
 							} else {
 								$formatted_variation = woocommerce_get_formatted_variation( $product_object->variation_data, true );
 							}
+							$course_woocommerce_product_id = $product_object->parent->post->ID;
 							$product_name = $product_object->parent->post->post_title . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( $formatted_variation );
 						} else {
 							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
