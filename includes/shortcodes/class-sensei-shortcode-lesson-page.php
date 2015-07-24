@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
     /**
-     * @var array $messages{
+     * @var array $lesson_page_query {
      *     @type WP_Post
      * }
-     * messages for the current user
+     * The lessons query
      */
     protected $lesson_page_query;
 
@@ -38,7 +38,7 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
     }
 
     /**
-     * create the messages query .
+     * create the lessons query .
      *
      * @return mixed
      */
@@ -72,7 +72,7 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
         }
 
-        //set the wp_query to the current messages query
+        //set the wp_query to the current lessons query
         global $wp_query;
         $wp_query = $this->lesson_page_query;
 
@@ -88,12 +88,12 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
         ob_start();
         Sensei()->frontend->sensei_get_template('content-single-lesson.php');
-        $messages_html = ob_get_clean();
+        $lessons_html = ob_get_clean();
 
         // set back the global query
         wp_reset_query();
 
-        return $messages_html;
+        return $lessons_html;
 
     }// end render
 

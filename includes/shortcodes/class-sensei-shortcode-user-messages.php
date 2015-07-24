@@ -87,12 +87,12 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
 
         ob_start();
         Sensei()->frontend->sensei_get_template_part('loop', 'message');
-        $messages_html = ob_get_clean();
+        $shortcode_output = ob_get_clean();
 
         // set back the global query
         wp_reset_query();
 
-        return $messages_html;
+        return $shortcode_output;
 
     }// end render
 
