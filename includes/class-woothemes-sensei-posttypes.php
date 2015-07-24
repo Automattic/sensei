@@ -108,35 +108,37 @@ class WooThemes_Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_course_post_type () {
-		global $woothemes_sensei;
 
 		$args = array(
-		    'labels' => $this->create_post_type_labels( 'course', $this->labels['course']['singular'], $this->labels['course']['plural'], $this->labels['course']['menu'] ),
-		    'public' => true,
-		    'publicly_queryable' => true,
-		    'show_ui' => true,
-		    'show_in_menu' => true,
-		    'show_in_admin_bar' => true,
-		    'query_var' => true,
-		    /**
-		     * "with_front" property of rewrite behavior for courses.
-		     *
-		     * Allows for the "with_front" property of the rewrite rules for the course post type to be modified.
-		     *
-		     * @since 1.9.0
-		     *
-		     * @param bool $sensei_rewrite_course_with_front
-		     */
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'woothemes-sensei' ) ) ) , 'with_front' => apply_filters( 'sensei_rewrite_course_with_front', true ), 'feeds' => true, 'pages' => true ),
-		    'map_meta_cap' => true,
-		    'capability_type' => 'course',
-		    'has_archive' => true,
-		    'hierarchical' => false,
-		    'menu_position' => 51,
-		    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail' )
+		    'labels'              => $this->create_post_type_labels( 'course', $this->labels['course']['singular'], $this->labels['course']['plural'], $this->labels['course']['menu'] ),
+		    'public'              => true,
+		    'publicly_queryable'  => true,
+		    'show_ui'             => true,
+		    'show_in_menu'        => true,
+		    'show_in_admin_bar'   => true,
+		    'query_var'           => true,
+		    'rewrite'             => array(
+                'slug' => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'woothemes-sensei' ) ) ) ,
+                'with_front' => true,
+                'feeds' => true,
+                'pages' => true
+            ),
+		    'map_meta_cap'        => true,
+		    'capability_type'     => 'course',
+            'has_archive'         => ( ( $course_page_id = Sensei()->settings->get( 'course_page' ) ) && get_post( $course_page_id ) ) ? get_page_uri( $course_page_id ) : 'courses',
+		    'hierarchical'        => false,
+		    'menu_position'       => 51,
+		    'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail' )
 		);
 
-		register_post_type( 'course', $args );
+        /**
+         * Filter the arguments passed in when registering the Sensei Course post type.
+         *
+         * @since 1.9.0
+         * @param array $args
+         */
+		register_post_type( 'course', apply_filters( 'sensei_register_post_type_course', $args ) );
+
 	} // End setup_course_post_type()
 
 	/**
@@ -164,16 +166,12 @@ class WooThemes_Sensei_PostTypes {
 		    'show_ui' => true,
 		    'show_in_menu' => true,
 		    'query_var' => true,
-		    /**
-		     * "with_front" property of rewrite behavior for lessons.
-		     *
-		     * Allows for the "with_front" property of the rewrite rules for the lesson post type to be modified.
-		     *
-		     * @since 1.9.0
-		     *
-		     * @param bool $sensei_rewrite_lesson_with_front
-		     */
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => apply_filters( 'sensei_rewrite_lesson_with_front', true ), 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array(
+                'slug' => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'woothemes-sensei' ) ) ) ,
+                'with_front' =>  true,
+                'feeds' => true,
+                'pages' => true
+            ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'lesson',
 		    'has_archive' => true,
@@ -182,7 +180,14 @@ class WooThemes_Sensei_PostTypes {
 		    'supports' => $supports_array
 		);
 
-		register_post_type( 'lesson', $args );
+        /**
+         * Filter the arguments passed in when registering the Sensei Lesson post type.
+         *
+         * @since 1.9.0
+         * @param array $args
+         */
+		register_post_type( 'lesson', apply_filters( 'sensei_register_post_type_lesson', $args ) );
+
 	} // End setup_lesson_post_type()
 
 	/**
@@ -195,7 +200,12 @@ class WooThemes_Sensei_PostTypes {
 		global $woothemes_sensei;
 
 		$args = array(
-		    'labels' => $this->create_post_type_labels( 'quiz', $this->labels['quiz']['singular'], $this->labels['quiz']['plural'], $this->labels['quiz']['menu'] ),
+		    'labels' => $this->create_post_type_labels(
+                'quiz',
+                $this->labels['quiz']['singular'],
+                $this->labels['quiz']['plural'],
+                $this->labels['quiz']['menu']
+            ),
 		    'public' => true,
 		    'publicly_queryable' => true,
 		    'show_ui' => true,
@@ -203,16 +213,12 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_nav_menus' => false,
 		    'query_var' => true,
 		    'exclude_from_search' => true,
-		    /**
-		     * "with_front" property of rewrite behavior for quizzes.
-		     *
-		     * Allows for the "with_front" property of the rewrite rules for the quiz post type to be modified.
-		     *
-		     * @since 1.9.0
-		     *
-		     * @param bool $sensei_rewrite_quiz_with_front
-		     */
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => apply_filters( 'sensei_rewrite_quiz_with_front', true ), 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array(
+                'slug' => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'woothemes-sensei' ) ) ) ,
+                'with_front' =>  true,
+                'feeds' => true,
+                'pages' => true
+            ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'quiz',
 		    'has_archive' => false,
@@ -221,7 +227,14 @@ class WooThemes_Sensei_PostTypes {
 		    'supports' => array( 'title' )
 		);
 
-		register_post_type( 'quiz', $args );
+        /**
+         * Filter the arguments passed in when registering the Sensei Quiz post type.
+         *
+         * @since 1.9.0
+         * @param array $args
+         */
+		register_post_type( 'quiz', apply_filters( 'sensei_register_post_type_quiz', $args ) );
+
 	} // End setup_quiz_post_type()
 
 
@@ -241,16 +254,12 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_nav_menus' => false,
 		    'query_var' => true,
 		    'exclude_from_search' => true,
-		    /**
-		     * "with_front" property of rewrite behavior for questions.
-		     *
-		     * Allows for the "with_front" property of the rewrite rules for the question post type to be modified.
-		     *
-		     * @since 1.9.0
-		     *
-		     * @param bool $sensei_rewrite_question_with_front
-		     */
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => apply_filters( 'sensei_rewrite_question_with_front', true ), 'feeds' => true, 'pages' => true ),
+		    'rewrite' => array(
+                'slug' => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'woothemes-sensei' ) ) ) ,
+                'with_front' =>  true,
+                'feeds' => true,
+                'pages' => true
+            ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'question',
 		    'has_archive' => true,
@@ -259,7 +268,14 @@ class WooThemes_Sensei_PostTypes {
 		    'supports' => array( 'title' )
 		);
 
-		register_post_type( 'question', $args );
+        /**
+         * Filter the arguments passed in when registering the Sensei Question post type.
+         *
+         * @since 1.9.0
+         * @param array $args
+         */
+		register_post_type( 'question', apply_filters('sensei_register_post_type_question', $args ) );
+
 	} // End setup_question_post_type()
 
 	/**
@@ -278,16 +294,12 @@ class WooThemes_Sensei_PostTypes {
 		    'show_in_nav_menus' => false,
 		    'query_var' => false,
 		    'exclude_from_search' => true,
-		    /**
-		     * "with_front" property of rewrite behavior for multiple questions.
-		     *
-		     * Allows for the "with_front" property of the rewrite rules for the multiple question post type to be modified.
-		     *
-		     * @since 1.9.0
-		     *
-		     * @param bool $sensei_rewrite_multiple_question_with_front
-		     */
-		    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => apply_filters( 'sensei_rewrite_multiple_question_with_front', false ), 'feeds' => false, 'pages' => false ),
+		    'rewrite' => array(
+                'slug' => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'woothemes-sensei' ) ) ) ,
+                'with_front' =>  false,
+                'feeds' => false,
+                'pages' => false
+            ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'question',
 		    'has_archive' => false,
@@ -318,16 +330,12 @@ class WooThemes_Sensei_PostTypes {
 			    'show_in_nav_menus' => true,
 			    'query_var' => true,
 			    'exclude_from_search' => true,
-				/**
-				 * "with_front" property of rewrite behavior for messages.
-				 *
-				 * Allows for the "with_front" property of the rewrite rules for the message post type to be modified.
-				 *
-				 * @since 1.9.0
-				 *
-				 * @param bool $sensei_rewrite_message_with_front
-				 */
-			    'rewrite' => array( 'slug' => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'woothemes-sensei' ) ) ) , 'with_front' => apply_filters( 'sensei_rewrite_message_with_front', false ), 'feeds' => false, 'pages' => true ),
+			    'rewrite' => array(
+                    'slug' => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'woothemes-sensei' ) ) ) ,
+                    'with_front' =>  false,
+                    'feeds' => false,
+                    'pages' => true
+                ),
 			    'map_meta_cap' => true,
 			    'capability_type' => 'question',
 			    'has_archive' => true,
@@ -336,7 +344,13 @@ class WooThemes_Sensei_PostTypes {
 			    'supports' => array( 'title', 'editor', 'comments' ),
 			);
 
-			register_post_type( 'sensei_message', $args );
+            /**
+             * Filter the arguments passed in when registering the Sensei sensei_message post type.
+             *
+             * @since 1.9.0
+             * @param array $args
+             */
+			register_post_type( 'sensei_message', apply_filters('sensei_register_post_type_sensei_message',  $args ) );
 		}
 	} // End setup_sensei_message_post_type()
 

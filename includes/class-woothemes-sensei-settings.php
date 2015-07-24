@@ -34,6 +34,24 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 	    add_action( 'admin_head', array( $this, 'add_contextual_help' ) );
 	} // End __construct()
 
+    /**
+     * Get settings value
+     *
+     * @since 1.9.0
+     * @param string $setting_name
+     * @return mixed
+     */
+    public function get( $setting_name ){
+
+        if( isset( $this->settings[ $setting_name ] ) ){
+
+            return $this->settings[ $setting_name ];
+
+        }
+
+        return false;
+    }
+
 	/**
 	 * Register the settings screen within the WordPress admin.
 	 * @access public

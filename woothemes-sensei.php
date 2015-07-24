@@ -57,6 +57,13 @@ Domain path: /lang/
     $woothemes_sensei = Sensei();
 
     /**
+     * Load all Template hooks
+    */
+    if(! is_admin() ){
+        require_once( 'includes/hooks/sensei-template-hooks.php' );
+    }
+
+    /**
      * Plugin updates
      * @since  1.0.1
      */

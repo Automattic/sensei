@@ -82,7 +82,7 @@ class WooThemes_Sensei_Frontend {
 
 		add_action( 'sensei_course_archive_meta', array( $this, 'sensei_course_archive_meta' ) );
 		add_action( 'sensei_single_main_content', array( $this, 'sensei_single_main_content' ), 10 );
-		add_action( 'sensei_course_archive_main_content', array( $this, 'sensei_course_archive_main_content' ), 10 );
+
 		add_action( 'sensei_lesson_archive_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_message_archive_main_content', array( $this, 'sensei_message_archive_main_content' ), 10 );
 		add_action( 'sensei_course_category_main_content', array( $this, 'sensei_course_category_main_content' ), 10 );
@@ -236,35 +236,23 @@ class WooThemes_Sensei_Frontend {
 	/**
 	 * sensei_get_template_part function.
 	 *
+     * @deprecated sine 1.9.0
 	 * @access public
 	 * @param mixed $slug
 	 * @param string $name (default: '')
 	 * @return void
 	 */
 	function sensei_get_template_part( $slug, $name = '' ) {
-		global $woothemes_sensei;
-		$template = '';
 
-		// Look in yourtheme/slug-name.php and yourtheme/sensei/slug-name.php
-		if ( $name )
-			$template = locate_template( array ( "{$slug}-{$name}.php", "{$woothemes_sensei->template_url}{$slug}-{$name}.php" ) );
+        _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::get_part' );
+        return Sensei_Templates::get_part( $slug, $name );
 
-		// Get default slug-name.php
-		if ( ! $template && $name && file_exists( $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php" ) )
-			$template = $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php";
-
-		// If template file doesn't exist, look in yourtheme/slug.php and yourtheme/sensei/slug.php
-		if ( !$template )
-			$template = locate_template( array ( "{$slug}.php", "{$woothemes_sensei->template_url}{$slug}.php" ) );
-
-		if ( $template )
-			load_template( $template, false );
 	} // End sensei_get_template_part()
-
 
 	/**
 	 * sensei_get_template function.
 	 *
+     * @deprecated since 1.9.0
 	 * @access public
 	 * @param mixed $template_name
 	 * @param array $args (default: array())
@@ -273,18 +261,10 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
-		global $woothemes_sensei;
 
-		if ( $args && is_array($args) )
-			extract( $args );
+        _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::get_template' );
+        return Sensei_Templates::get_template($template_name, $args, $template_path, $default_path  );
 
-		$located = $this->sensei_locate_template( $template_name, $template_path, $default_path );
-
-		do_action( 'sensei_before_template_part', $template_name, $template_path, $located );
-
-		include( $located );
-
-		do_action( 'sensei_after_template_part', $template_name, $template_path, $located );
 	} // End sensei_get_template()
 
 
@@ -298,25 +278,10 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_locate_template( $template_name, $template_path = '', $default_path = '' ) {
-		global $woothemes_sensei;
 
-		if ( ! $template_path ) $template_path = $woothemes_sensei->template_url;
-		if ( ! $default_path ) $default_path = $woothemes_sensei->plugin_path() . '/templates/';
+        _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::locate_template' );
+        return Sensei_Templates::locate_template( $template_name, $template_path, $default_path );
 
-		// Look within passed path within the theme - this is priority
-		$template = locate_template(
-			array(
-				$template_path . $template_name,
-				$template_name
-			)
-		);
-
-		// Get default template
-		if ( ! $template )
-			$template = $default_path . $template_name;
-
-		// Return what we found
-		return apply_filters( 'sensei_locate_template', $template, $template_name, $template_path );
 	} // End sensei_locate_template()
 
 
@@ -327,7 +292,7 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_output_content_wrapper() {
-		$this->sensei_get_template( 'wrappers/wrapper-start.php' );
+		Sensei_Templates::get_template( 'wrappers/wrapper-start.php' );
 	} // End sensei_output_content_wrapper()
 
 
@@ -338,7 +303,7 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_output_content_wrapper_end() {
-		$this->sensei_get_template( 'wrappers/wrapper-end.php' );
+		Sensei_Templates::get_template( 'wrappers/wrapper-end.php' );
 	} // End sensei_output_content_wrapper_end()
 
 
@@ -356,13 +321,13 @@ class WooThemes_Sensei_Frontend {
 		if ( ( is_post_type_archive( 'course' ) || ( is_page( $course_page_id ) ) ) && ( isset( $paged ) && 0 == $paged ) ) {
 			// Do NOT show the pagination
 		} elseif( is_singular('course') ) {
-			$this->sensei_get_template( 'wrappers/pagination-posts.php' );
+			Sensei_Templates::get_template( 'wrappers/pagination-posts.php' );
 		} elseif( is_singular('lesson') ) {
-			$this->sensei_get_template( 'wrappers/pagination-lesson.php' );
+			Sensei_Templates::get_template( 'wrappers/pagination-lesson.php' );
 		} elseif( is_singular('quiz') ) {
-			$this->sensei_get_template( 'wrappers/pagination-quiz.php' );
+			Sensei_Templates::get_template( 'wrappers/pagination-quiz.php' );
 		} else {
-			$this->sensei_get_template( 'wrappers/pagination.php' );
+			Sensei_Templates::get_template( 'wrappers/pagination.php' );
 		} // End If Statement
 	} // End sensei_output_content_pagination()
 
@@ -1073,42 +1038,23 @@ class WooThemes_Sensei_Frontend {
 		while ( have_posts() ) {
 			the_post();
 			if ( is_singular( 'course' ) ) {
-				$this->sensei_get_template_part( 'content', 'single-course' );
+				Sensei_Templates::get_part( 'content', 'single-course' );
 			} elseif( is_singular( 'lesson' ) ) {
-				$this->sensei_get_template_part( 'content', 'single-lesson' );
+				Sensei_Templates::get_part( 'content', 'single-lesson' );
 				do_action( 'sensei_breadcrumb', get_the_ID() );
 				do_action( 'sensei_comments' );
 			} elseif( is_singular( 'quiz' ) ) {
-				$this->sensei_get_template_part( 'content', 'single-quiz' );
+				Sensei_Templates::get_part( 'content', 'single-quiz' );
 			} elseif( is_singular( 'sensei_message' ) ) {
-				$this->sensei_get_template_part( 'content', 'single-message' );
+				Sensei_Templates::get_part( 'content', 'single-message' );
 				do_action( 'sensei_comments' );
 			} // End If Statement
 		} // End While Loop
 	} // End sensei_single_main_content()
 
-	public function sensei_course_archive_main_content() {
-		global $woothemes_sensei, $wp_query;
-		if ( have_posts() && ( is_post_type_archive( 'course' ) || is_page( $woothemes_sensei->get_page_id( 'courses' ) ) ) ) {
-			// Handle pagiation
-			$paged = $wp_query->get( 'paged' );
-			if ( ! $paged || $paged < 2 ) {
-				// This is not a paginated page (or it's simply the first page of a paginated page/post)
-				echo do_shortcode( '[newcourses]' );
-				echo do_shortcode( '[featuredcourses]' );
-				echo do_shortcode( '[freecourses]' );
-				echo do_shortcode( '[paidcourses]' );
-			} else {
-				$this->sensei_get_template( 'loop-course.php' );
-			} // End If Statement
-		} else {
-			?><p><?php _e( 'No courses found that match your selection.', 'woothemes-sensei' ); ?></p><?php
-		} // End If Statement
-	} // End sensei_course_archive_main_content()
-
 	public function sensei_lesson_archive_main_content() {
 		if ( have_posts() ) {
-			$this->sensei_get_template( 'loop-lesson.php' );
+            Sensei_Templates::get_template( 'loop-lesson.php' );
 		} else {
 			?><p><?php _e( 'No lessons found that match your selection.', 'woothemes-sensei' ); ?></p><?php
 		} // End If Statement
@@ -1116,7 +1062,7 @@ class WooThemes_Sensei_Frontend {
 
 	public function sensei_message_archive_main_content() {
 		if ( have_posts() ) {
-			$this->sensei_get_template( 'loop-message.php' );
+            Sensei_Templates::get_template( 'loop-message.php' );
 		} else {
 			?><p><?php _e( 'You do not have any messages.', 'woothemes-sensei' ); ?></p><?php
 		} // End If Statement
@@ -1125,7 +1071,7 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_no_permissions_main_content() {
 		while ( have_posts() ) {
 			the_post();
-			$this->sensei_get_template_part( 'content', 'no-permissions' );
+            Sensei_Templates::get_template( 'content', 'no-permissions' );
 		} // End While Loop
 	} // End sensei_no_permissions_main_content()
 
@@ -1157,7 +1103,7 @@ class WooThemes_Sensei_Frontend {
 				<div class="col-1">
 					<?php
 					// output the actual form markup
-						$this->sensei_get_template( 'user/login-form.php');
+                    Sensei_Templates::get_template( 'user/login-form.php');
 					?>
 				</div>
 
