@@ -70,6 +70,11 @@ class Sensei_Autoloader {
             'Sensei_Shortcode_Course_Categories' => 'shortcodes/class-sensei-shortcode-course-categories.php',
             'Sensei_Shortcode_Unpurchased_Courses' => 'shortcodes/class-sensei-shortcode-unpurchased-courses.php',
 
+            /**
+             * WooCommerce
+             */
+            'Sensei_WC' => 'woocommerce/class-sensei-wc.php',
+
         );
     }
 
