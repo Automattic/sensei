@@ -1533,69 +1533,76 @@ class WooThemes_Sensei_Frontend {
 	 * @param  integer $order_id ID of order
 	 * @return void
 	 */
-	public function course_link_from_order( $order_id ) {
+	function course_link_from_order( $order ) {
 		global $woocommerce, $woothemes_sensei;
 
-		$order = new WC_Order( $order_id );
-
-		// exit early if not wc-completed or wc-processing
-		if( 'wc-completed' != $order->post_status
-			&& 'wc-processing' != $order->post_status  ) {
-			return;
+		// Generate order from order id
+		if(is_int($order)){
+			$order = new WC_Order( $order );
 		}
-
-		$order_items = $order->get_items();
-
-		$messages = array();
-
-		foreach ( $order_items as $item ) {
-
-            if ( $item['product_id'] > 0 ) {
-
-				$user_id = get_post_meta( $order_id, '_customer_user', true );
-
-				if( $user_id ) {
-
-					// Get all courses for product
-					$args = array(
-						'posts_per_page' => -1,
-						'post_type' => 'course',
-						'meta_query' => array(
-							array(
-								'key' => '_course_woocommerce_product',
-								'value' => $item['product_id']
-							)
-						),
-						'orderby' => 'menu_order date',
-						'order' => 'ASC',
-					);
-					$courses = get_posts( $args );
-
-					if( $courses && count( $courses ) > 0 ) {
-
-						echo ' <p><div id= "message" class="updated fade woocommerce-info" >';
-						foreach( $courses as $course ) {
-
-							$title = $course->post_title;
-							$permalink = get_permalink( $course->ID );
-
-							echo '<strong>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</strong> <br/>';
-
-							$update_course = $woothemes_sensei->woocommerce_course_update( $course->ID  );
-
-						} // end for each
-
-						// close the message div
-						echo ' </div></p>';
-
-					}// end if $courses check
+		// If its already object continue, allows for wider implementation.
+		elseif(is_object($order)){
+	
+			// exit early if not wc-completed or wc-processing
+			if( 'wc-completed' != $order->post_status && 'wc-processing' != $order->post_status  ) return;
+	
+			//If object have items go through them all to find course
+			if ( 0 < sizeof( $order->get_items() ) ) {
+	
+				foreach ( $order->get_items() as $item ) {
+	
+					if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
+						// If item has variation_id then its a variation of the product
+						$item_id = $item['variation_id'];
+					} else {
+						//If not its real product set its id to item_id
+						$item_id = $item['product_id'];
+					} // End If Statement
+	
+					// Extracting user_id
+					$user_id = get_post_meta( $order->id, '_customer_user', true );
+	
+					if( $user_id ) {
+						// Get all courses for product
+						$args = array(
+							'posts_per_page' => -1,
+							'post_type' => 'course',
+							'meta_query' => array(
+								array(
+									'key' => '_course_woocommerce_product',
+									'value' => $item_id
+								)
+							),
+							'orderby' => 'menu_order date',
+							'order' => 'ASC',
+						);
+						$courses = get_posts( $args );
+	
+						if( $courses && count( $courses ) > 0 ) {
+	
+							echo ' <p><div id= "message" class="updated fade woocommerce-info" >';
+							foreach( $courses as $course ) {
+	
+								$title = $course->post_title;
+								$permalink = get_permalink( $course->ID );
+	
+								echo '<strong>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</strong> <br/>';
+	
+								$update_course = $woothemes_sensei->woocommerce_course_update( $course->ID  );
+	
+							} // end for each
+	
+							// close the message div
+							echo ' </div></p>';
+	
+						}// end if $courses check
+					}
 				}
 			}
+			// show the links to the course
 		}
-		// show the links to the course
-
-	} // end course_link_order_form
-
+	} // end course_link_order_formrakhmanov-themes-plugin
+		
 	/**
 	 * Activate all purchased courses for user
 	 * @since  1.4.8
