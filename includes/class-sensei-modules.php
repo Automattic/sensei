@@ -1318,8 +1318,6 @@ class Sensei_Core_Modules
         wp_register_style($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'css/modules-admin.css','',Sensei()->version );
         wp_enqueue_style($this->taxonomy . '-sortable');
 
-        wp_register_style($woothemes_sensei->token . '-chosen', esc_url($woothemes_sensei->plugin_url) . 'assets/chosen/chosen.css', '', Sensei()->version, 'screen');
-        wp_enqueue_style($woothemes_sensei->token . '-chosen');
     }
 
     /**
