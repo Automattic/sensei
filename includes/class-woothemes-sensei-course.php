@@ -177,55 +177,87 @@ class WooThemes_Sensei_Course {
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
+
 			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
 			$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				$prev_parent_id = 0;
 				foreach ( $posts_array as $post_item ) {
 
 					if ( 'product_variation' == $post_item->post_type ) {
+
 						$product_object = get_product( $post_item->ID );
 						$parent_id = wp_get_post_parent_id( $post_item->ID );
-						if( sensei_check_woocommerce_version( '2.1' ) ) {
+
+                        if( sensei_check_woocommerce_version( '2.1' ) ) {
 							$formatted_variation = wc_get_formatted_variation( $product_object->variation_data, true );
+
 						} else {
+                            // fall back to pre wc 2.1
 							$formatted_variation = woocommerce_get_formatted_variation( $product_object->variation_data, true );
+
 						}
-						$product_name = ucwords( $formatted_variation );
+
+                        $product_name = ucwords( $formatted_variation );
+                        if( empty( $product_name ) ){
+
+                            $product_name = __( 'Variation #', 'woothemes-sensei' ) . $product_object->variation_id;
+
+                        }
+
 					} else {
+
 						$parent_id = false;
 						$prev_parent_id = 0;
 						$product_name = $post_item->post_title;
+
 					}
 
 					// Show variations in groups
 					if( $parent_id && $parent_id != $prev_parent_id ) {
+
 						if( 0 != $prev_parent_id ) {
+
 							$html .= '</optgroup>';
+
 						}
 						$html .= '<optgroup label="' . get_the_title( $parent_id ) . '">';
 						$prev_parent_id = $parent_id;
+
 					} elseif( ! $parent_id && 0 == $prev_parent_id ) {
+
 						$html .= '</optgroup>';
+
 					}
 
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_woocommerce_product, false ) . '>' . esc_html( $product_name ) . '</option>' . "\n";
+
 				} // End For Loop
+
 			$html .= '</select>' . "\n";
 			if ( current_user_can( 'publish_product' )) {
+
 				$html .= '<p>' . "\n";
 					$html .= '<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Add a Product', 'woothemes-sensei' ) . '</a>' . "\n";
 				$html .= '</p>'."\n";
+
 			} // End If Statement
+
 		} else {
+
 			if ( current_user_can( 'publish_product' )) {
+
 				$html .= '<p>' . "\n";
 					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . '&nbsp;<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Please add some first', 'woothemes-sensei' ) . '</a>' . "\n";
 				$html .= '</p>'."\n";
+
 			} else {
-				$html .= '<p>' . "\n";
+
+                $html .= '<p>' . "\n";
 					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . "\n";
 				$html .= '</p>'."\n";
+
 			} // End If Statement
+
 		} // End If Statement
 
 		echo $html;
