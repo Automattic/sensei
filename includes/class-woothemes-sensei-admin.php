@@ -313,8 +313,6 @@ class WooThemes_Sensei_Admin {
 
 			wp_register_style( Sensei()->token . '-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
 			wp_enqueue_style( Sensei()->token . '-admin-custom' );
-			wp_register_style( Sensei()->token . '-select2', Sensei()->plugin_url . 'assets/select2/select2.css', '', Sensei()->version, 'screen' );
-			wp_enqueue_style( Sensei()->token . '-select2' );
 
 		}
 
