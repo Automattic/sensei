@@ -1170,9 +1170,19 @@ class WooThemes_Sensei {
 
         $messages = array();
 
-        foreach ( $order_items as $item ) {
+        //If object have items go through them all to find course
+        if ( 0 < sizeof( $order_items ) ) {
 
-            if ( $item['product_id'] > 0 ) {
+            foreach ( $order_items as $item ) {
+                $product_type = '';
+                if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
+                    // If item has variation_id then its from variation
+                    $item_id = $item['variation_id'];
+                    $product_type = 'variation';
+                } else {
+                    // If not its real product set its id to item_id
+                    $item_id = $item['product_id'];
+                } // End If Statement
 
                 $user_id = get_post_meta( $order_id, '_customer_user', true );
 
@@ -1185,7 +1195,7 @@ class WooThemes_Sensei {
                         'meta_query' => array(
                             array(
                                 'key' => '_course_woocommerce_product',
-                                'value' => $item['product_id']
+                                'value' => $item_id
                             )
                         ),
                         'orderby' => 'menu_order date',
@@ -1197,12 +1207,11 @@ class WooThemes_Sensei {
 
                         foreach( $courses as $course ) {
 
+                            echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
+
                             $title = $course->post_title;
                             $permalink = get_permalink( $course->ID );
-
-                            echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
                             echo '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
-
                         }
                     }
                 }
