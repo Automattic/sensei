@@ -51,7 +51,18 @@ if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! 
                 ?>
 
                 <section class="entry fix">
-                	<?php if ( ( is_user_logged_in() && $is_user_taking_course ) || $access_permission || 'full' == $woothemes_sensei->settings->settings[ 'course_single_content_display' ] ) { the_content(); } else { echo '<p class="course-excerpt">' . $post->post_excerpt . '</p>'; } ?>
+									<?php
+									if(WooThemes_Sensei_Utils::sensei_is_woocommerce_activated()) {
+										$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
+										$product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
+
+										$is_product = isset ( $product ) && is_object ( $product );
+									} else {
+										$is_product = false;
+									}
+									?>
+
+                	<?php if ( ( is_user_logged_in() && $is_user_taking_course ) || ($access_permission && !$is_product) || 'full' == $woothemes_sensei->settings->settings[ 'course_single_content_display' ] ) { the_content(); } else { echo '<p class="course-excerpt">' . $post->post_excerpt . '</p>'; } ?>
                 </section>
 
                 <?php do_action( 'sensei_course_single_lessons' ); ?>
