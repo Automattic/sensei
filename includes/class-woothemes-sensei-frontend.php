@@ -1488,8 +1488,15 @@ class WooThemes_Sensei_Frontend {
 		$order = new WC_Order( $order_id );
 
 		foreach ( $order->get_items() as $item ) {
+			if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
+				// If item has variation_id then its a variation of the product
+				$item_id = $item['variation_id'];
+			} else {
+				// Than its real product set it's id to item_id
+				$item_id = $item['product_id'];
+			} 
 
-            if ( $item['product_id'] > 0 ) {
+            if ( $item_id > 0 ) {
 
 				$user_id = get_post_meta( $order_id, '_customer_user', true );
 
@@ -1502,7 +1509,7 @@ class WooThemes_Sensei_Frontend {
 						'meta_query' => array(
 							array(
 								'key' => '_course_woocommerce_product',
-								'value' => $item['product_id']
+								'value' => $item_id
 							)
 						),
 						'orderby' => 'menu_order date',
@@ -1643,18 +1650,17 @@ class WooThemes_Sensei_Frontend {
 
 					$items = $order->get_items();
 					foreach( $items as $item ) {
-	                    if (isset($item['variation_id']) && $item['variation_id'] > 0) {
-	                        $item_id = $item['variation_id'];
-							$product_type = 'variation';
-	                    } else {
-	                        $item_id = $item['product_id'];
-	                    }
+                                            if (isset($item['variation_id']) && $item['variation_id'] > 0) {
+                                                $item_id = $item['variation_id'];
+                                                $product_type = 'variation';
+                                            } else {
+                                                $item_id = $item['product_id'];
+                                            }
 
-						$product_ids[] = $item_id;
-					}
+                                            $product_ids[] = $item_id;
+                                            }
 
 					$order_ids[] = $post_id;
-
 				}
 
 				if( count( $product_ids ) > 0 ) {
@@ -1759,7 +1765,7 @@ class WooThemes_Sensei_Frontend {
 
 				$items = $order->get_items();
 				foreach( $items as $item ) {
-					if( $item['product_id'] == $course_product_id ) {
+					if( $item['product_id']  == $course_product_id || $item['variation_id'] == $course_product_id ) {
 						WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
 						return;
 					}
