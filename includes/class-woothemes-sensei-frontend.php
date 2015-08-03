@@ -1573,7 +1573,7 @@ class WooThemes_Sensei_Frontend {
 
 					if( $courses && count( $courses ) > 0 ) {
 
-						echo ' <p><div id= "message" class="updated fade woocommerce-info" >';
+						echo ' <div id= "message" class="updated fade woocommerce-info" >';
 						foreach( $courses as $course ) {
 
 							$title = $course->post_title;
@@ -1586,7 +1586,7 @@ class WooThemes_Sensei_Frontend {
 						} // end for each
 
 						// close the message div
-						echo ' </div></p>';
+						echo ' </div>';
 
 					}// end if $courses check
 				}
