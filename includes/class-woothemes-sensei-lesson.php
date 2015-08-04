@@ -1938,7 +1938,7 @@ class WooThemes_Sensei_Lesson {
 				$current_user = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
 				$question_id = $this->lesson_save_question( $question_data );
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 				$question_counter = 0;
 				$question_type = '';
 				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
