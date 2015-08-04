@@ -776,7 +776,7 @@ class WooThemes_Sensei_Lesson {
 				$question_id = $question->ID;
 
 				$question_type = '';
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 					$question_type = $question_types[0];
 				} // End If Statement
