@@ -131,7 +131,7 @@ class WooThemes_Sensei_Question {
 
 			if( isset( $post->ID ) ) {
 				$question_type = '';
-				$question_types = wp_get_post_terms( $post->ID, 'question-type', array( 'fields' => 'names' ) );
+				$question_types = wp_get_post_terms( $post->ID, 'question-type', array( 'fields' => 'slugs' ) );
 				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 					$question_type = $question_types[0];
 				} // End If Statement
@@ -167,7 +167,7 @@ class WooThemes_Sensei_Question {
 			$question_id = $post->ID;
 
 			$question_type = '';
-			$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+			$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 			if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 				$question_type = $question_types[0];
 			}
