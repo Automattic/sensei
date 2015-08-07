@@ -1267,7 +1267,7 @@ class WooThemes_Sensei_Lesson {
 		if( $row % 2 ) { $existing_class = 'alternate'; }
 
 		$all_question_types = $woothemes_sensei->post_types->question->question_types();
-		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 		$question_type = '';
 		if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 			$question_type = $question_types[0];
