@@ -2104,7 +2104,7 @@ class WooThemes_Sensei_Lesson {
 
 			    	add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
 
-					$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+					$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 					$question_type = '';
 					if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 						$question_type = $question_types[0];
