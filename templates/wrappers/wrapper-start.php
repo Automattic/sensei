@@ -33,5 +33,3 @@ switch( $template ) {
 		echo '<div id="content" class="page col-full"><div id="main" class="col-left">';
 		break;
 }
-
-?>
