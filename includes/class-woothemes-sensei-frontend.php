@@ -122,7 +122,7 @@ class WooThemes_Sensei_Frontend {
 		// Only show course & lesson excerpts in search results
 		add_filter( 'the_content', array( $this, 'sensei_search_results_excerpt' ) );
 
-        //Override WooCommerce filter and show admin bar to Teachers.
+        //Use WooCommerce filter to show admin bar to Teachers.
         add_action( 'init', array( $this, 'sensei_show_admin_bar') );
 
         // Remove course from active courses if an order is cancelled or refunded
@@ -2027,7 +2027,7 @@ class WooThemes_Sensei_Frontend {
 
 
     /**
-     * sensei_show_admin_bar(). override WooCommerce filter
+     * sensei_show_admin_bar(). Use WooCommerce filter
      * to show admin bar to Teachers as well.
      *
      * @return void redirect
