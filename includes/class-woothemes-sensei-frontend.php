@@ -147,8 +147,6 @@ class WooThemes_Sensei_Frontend {
 		add_filter( 'sensei_lessons_archive_text', array( $this, 'lesson_tag_archive_header' ) );
 		add_action( 'sensei_lesson_archive_header', array( $this, 'lesson_tag_archive_description' ), 11 );
 
-
-
 		// Hide Sensei activity comments from lesson and course pages
 		add_filter( 'wp_list_comments_args', array( $this, 'hide_sensei_activity' ) );
 	} // End __construct()
