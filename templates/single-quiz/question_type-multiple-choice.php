@@ -128,7 +128,13 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	$user_correct = false;
 	$answer_message = __( 'Incorrect', 'woothemes-sensei' );
 	$answer_message_class = 'user_wrong';
-	if( $user_question_grade > 0 ) {
+	// For zero grade mark as 'correct' but add no classes
+	if ( 0 == $question_grade ) {
+		$user_correct = true;
+		$answer_message = '';
+		$answer_message_class = '';
+	}
+	else if( $user_question_grade > 0 ) {
 		$user_correct = true;
 		$answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
 		$answer_message_class = 'user_right';
@@ -171,7 +177,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 		$count++;
 
 		$answer_class = '';
-		if( isset( $user_correct ) ) {
+		if( isset( $user_correct ) && 0 < $question_grade ) {
 			if ( is_array($question_right_answer) && in_array($answer, $question_right_answer) ) {
 				$answer_class .= ' right_answer';
 			}
