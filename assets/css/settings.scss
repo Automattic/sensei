@@ -674,6 +674,14 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 				}
 			}
 		}
+		&.zero-graded {
+			.grading-mark.icon_wrong,
+			.grading-mark.icon_right  {
+				&:after  {
+					@include opacity(0.2);
+				}
+			}
+		}
 		&.essay-paste  {
 		}
 	}
