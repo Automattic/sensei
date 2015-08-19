@@ -373,7 +373,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
   /**
    * sensei_get_excerpt Returns the excerpt for the $post
-   * since 1.9.0
+   *
+   * Unhooks wp_trim_excerpt() so to disable excerpt auto-gen.
+   *
+   * @since  1.9.0
    * @param  int|WP_Post $post_id
    * @return string $excerpt
    */
@@ -386,15 +389,21 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       global $post;
     }
 
+    $trim_excerpt_enabled = has_filter( 'get_the_excerpt', 'wp_trim_excerpt' );
+
     // Temporarily disable wp_trim_excerpt so that the excerpt
     // will not be auto-generated if empty
-    remove_filter( 'get_the_excerpt', 'wp_trim_excerpt' );
+    if ( $trim_excerpt_enabled ) {
+      remove_filter( 'get_the_excerpt', 'wp_trim_excerpt' );
+    }
 
     // Apply filters to the excerpt
     $excerpt = apply_filters( 'get_the_excerpt', $post->post_excerpt );
 
     // Re-enable wp_trim_excerpt
-    add_filter( 'get_the_excerpt', 'wp_trim_excerpt' );
+    if ( $trim_excerpt_enabled ) {
+      add_filter( 'get_the_excerpt', 'wp_trim_excerpt' );
+    }
 
     return $excerpt;
   }
