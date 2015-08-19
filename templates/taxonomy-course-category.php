@@ -48,4 +48,4 @@ do_action('sensei_after_main_content');
  */
 do_action('sensei_sidebar');
 
-get_footer(); ?>
+get_footer();

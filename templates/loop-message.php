@@ -63,4 +63,5 @@ global $woothemes_sensei;
 
         		<?php } // End While Loop ?>
         </section>
-    <?php } ?>
+    <?php
+}

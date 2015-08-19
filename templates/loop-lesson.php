@@ -94,4 +94,4 @@ $lesson_count = 1;
 
         	</section>
         </section>
-    <?php } ?>
+    <?php }

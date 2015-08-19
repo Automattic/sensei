@@ -149,4 +149,3 @@ if ( ! $paged || $paged < 2 ) {
 	<?php } // End If Statement
 
 } // End If Statement
-?>
