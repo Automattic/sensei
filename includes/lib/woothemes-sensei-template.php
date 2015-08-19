@@ -377,13 +377,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
    * Unhooks wp_trim_excerpt() so to disable excerpt auto-gen.
    *
    * @since  1.9.0
-   * @param  int|WP_Post $post_id
+   * @param  int|WP_Post $post_id Optional. Defaults to current post
    * @return string $excerpt
    */
   function sensei_get_excerpt( $post_id ) {
 
     if ( is_int( $post_id ) ) {
       $post = get_post( $post_id );
+    }
+    else if ( is_object( $post_id ) ) {
+      $post = $post_id;
     }
     else if ( ! $post_id ) {
       global $post;
