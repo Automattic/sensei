@@ -936,7 +936,7 @@ class WooThemes_Sensei_Lesson {
 						    	// Question grade
 						    	$html .= '<div>';
 							    	$html .= '<label for="question_' . $question_counter . '_grade">' . __( 'Question grade:', 'woothemes-sensei' ) . '</label> ';
-							    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="1" value="' . $question_grade . '" />';
+							    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="0" value="' . $question_grade . '" />';
 						    	$html .= '</div>';
 
 						    	// Random order
@@ -1042,7 +1042,7 @@ class WooThemes_Sensei_Lesson {
 
 	  					// Question grade
 						$html .= '<p><label>' . __( 'Question Grade:'  , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="1" value="1" /></p>' . "\n";
+						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="0" value="1" /></p>' . "\n";
 
 						// Random order
 						$html .= '<p class="add_question_random_order">';
