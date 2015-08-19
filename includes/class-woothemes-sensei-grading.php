@@ -779,10 +779,14 @@ class WooThemes_Sensei_Grading {
         $all_question_grades = array();
         foreach( $submitted as $question_id => $answer ) {
 
-            // check if the question is autogradable
+            // check if the question is autogradable, either by type, or because the grade is 0
             $question_type = $woothemes_sensei->question->get_question_type( $question_id );
-            if ( in_array( $question_type, $autogradable_question_types ) ) {
-
+			$achievable_grade = $woothemes_sensei->question->get_question_grade( $question_id );
+			// Question has a zero grade, so skip grading
+			if ( 0 == $achievable_grade ) {
+				$all_question_grades[ $question_id ] = $achievable_grade;
+			}
+            elseif ( in_array( $question_type, $autogradable_question_types ) ) {
                 // Get user question grade
                 $question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
                 $all_question_grades[ $question_id ] = $question_grade;
@@ -801,8 +805,13 @@ class WooThemes_Sensei_Grading {
         if ( $quiz_autogradable ) {
 
             $quiz_total = WooThemes_Sensei_Utils::sensei_get_quiz_total( $quiz_id );
-
+			// Check for zero total from grades
+			if ( 0 < $quiz_total ) {
             $grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
+			}
+			else {
+				$grade = 0;
+			}
             WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
 
         } else {
