@@ -66,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	                		}
 	                		the_content();
 	                	} else {
-	                		echo '<p>' . $post->post_excerpt . '</p>';
+	                		echo '<p>' . sensei_get_excerpt( $post ) . '</p>';
 	                	}
 	            		?>
 					</section>
