@@ -366,4 +366,33 @@ class WooThemes_Sensei_Question {
 
     }// end get_question_type
 
+	/**
+	 * Given a question ID, return the grade that can be achieved.
+	 * 
+	 * @since 1.9
+	 *
+	 * @param int $question_id
+	 *
+	 * @return int $question_grade | bool
+	 */
+	public function get_question_grade( $question_id ) {
+
+		if ( empty( $question_id ) || ! intval( $question_id ) > 0
+			|| 'question' != get_post_type( $question_id ) ) {
+			return false;
+		}
+
+		$question_grade_raw = get_post_meta( $question_id, '_question_grade', true );
+		// If not set then default to 1...
+		if ( false === $question_grade_raw || $question_grade_raw == '' ) {
+			$question_grade = 1;
+		}
+		// ...but allow a grade of 0 for non-marked questions
+		else {
+			$question_grade = intval( $question_grade_raw );
+		}
+		return $question_grade;
+
+	} // end get_question_grade
+
 } // End Class
