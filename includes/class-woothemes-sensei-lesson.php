@@ -830,8 +830,7 @@ class WooThemes_Sensei_Lesson {
 
 			if( $question_type != 'category' ) {
 
-				$question_grade = intval( get_post_meta( $question_id, '_question_grade', true ) );
-				if( 0 == $question_grade ) { $question_grade = 1; }
+				$question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
 
 				$question_media = get_post_meta( $question_id, '_question_media', true );
 				$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = '';

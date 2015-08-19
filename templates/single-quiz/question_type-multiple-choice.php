@@ -113,10 +113,7 @@ if( ! $random_order || ( $random_order && $random_order == 'yes' ) ) {
 	}
 }
 
-$question_grade = get_post_meta( $question_id, '_question_grade', true );
-if( ! $question_grade || $question_grade == '' ) {
-	$question_grade = 1;
-}
+$question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
 
 // retrieve users stored data.
 $user_answer_entry = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $current_user->ID );

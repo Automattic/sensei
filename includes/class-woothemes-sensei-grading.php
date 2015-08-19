@@ -889,10 +889,7 @@ class WooThemes_Sensei_Grading {
                 }
                 // If all correct then grade
                 if ( $all_correct ) {
-                    $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
-                    if( ! $question_grade || $question_grade == '' ) {
-                        $question_grade = 1;
-                    }
+                    $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
                 }
             }
 
@@ -906,17 +903,11 @@ class WooThemes_Sensei_Grading {
             $gapfill_array = explode( '||', $right_answer );
             // Check that the 'gap' is "exactly" equal to the given answer
             if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
-                $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
-                if ( empty($question_grade) ) {
-                    $question_grade = 1;
-                }
+                $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
             }
             else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
                 if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
-                    $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
-                    if ( empty($question_grade) ) {
-                        $question_grade = 1;
-                    }
+                    $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
                 }
             }
 

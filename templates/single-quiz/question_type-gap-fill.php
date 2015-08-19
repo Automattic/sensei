@@ -23,10 +23,7 @@ $reset_quiz_allowed = $woothemes_sensei->quiz->data->reset_quiz_allowed;
 // Question Meta
 $question_id = $question_item->ID;
 $question_right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-$question_grade = get_post_meta( $question_id, '_question_grade', true );
-if( ! $question_grade || $question_grade == '' ) {
-	$question_grade = 1;
-}
+$question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
 
 // retrieve users stored data.
 $user_answer_entry = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $current_user->ID );

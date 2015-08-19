@@ -105,10 +105,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$question_answer_notes = $woothemes_sensei->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
 
 
-			$question_grade_total = get_post_meta( $question_id, '_question_grade', true );
-			if( ! $question_grade_total || 0 == intval( $question_grade_total ) ) {
-				$question_grade_total = 1;
-			}
+			$question_grade_total = $woothemes_sensei->question->get_question_grade( $question_id );
 			$quiz_grade_total += $question_grade_total;
 
 			$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
