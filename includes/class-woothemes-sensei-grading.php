@@ -628,7 +628,12 @@ class WooThemes_Sensei_Grading {
         if( $_POST['all_questions_graded'] == 'yes' ) {
 
             // set the users total quiz grade
+			if ( 0 < intval( $quiz_grade_total ) ) {
             $grade = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
+			}
+			else {
+				$grade = 0;
+			}
             WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
 
             // Duplicating what Frontend->sensei_complete_quiz() does

@@ -179,7 +179,15 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$graded_class = '';
 			$user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
 			$graded_class = 'ungraded';
-			if( intval( $user_question_grade ) > 0 ) {
+			if ( 0 == $question_grade_total && 0 == intval( $user_question_grade ) ) {
+				// Question skips grading
+				$grade_type = 'zero-graded';
+				$graded_class = '';
+				++$correct_answers;
+				++$graded_count;
+				$user_question_grade = 0;
+			}
+			elseif( intval( $user_question_grade ) > 0 ) {
 				$graded_class = 'user_right';
 				++$correct_answers;
 				$user_quiz_grade_total += $user_question_grade;
