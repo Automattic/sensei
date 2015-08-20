@@ -16,6 +16,17 @@ function getParameterByName(name) {
 
 jQuery( document ).ready( function ( e ) {
 
+    /**
+    * Add select to the modules select boxes
+    */
+    // module order screen
+    jQuery( '#module-order-course' ).select2({width:"resolve"});
+    // lesson edit screen modules selection
+    jQuery( 'select#lesson-module-options' ).select2({width:"resolve"});
+
+    /**
+     * Sortable functionality
+     */
 	jQuery( '.sortable-module-list' ).sortable();
 	jQuery( '.sortable-tab-list' ).disableSelection();
 
@@ -43,27 +54,65 @@ jQuery( document ).ready( function ( e ) {
 		jQuery( 'input[name="module-order"]' ).attr( 'value', orderString );
 	});
 
-    jQuery('select.ajax_chosen_select_courses').ajaxChosen({
-        method: 'GET',
-        url: ajaxurl,
-        dataType: 'json',
-        afterTypeDelay: 100,
-        minTermLength: 1,
-        data: {
-            action: 'sensei_json_search_courses',
-            security: modulesAdmin.search_courses_nonce,
-            default: ''
+
+    /**
+     * Searching for courses on the modules admin edit screen
+     */
+    jQuery('input.ajax_chosen_select_courses').select2({
+        minimumInputLength: 2,
+        placeholder: modulesAdmin.selectplaceholder,
+        width:'300px',
+        multiple: true,
+        ajax: {
+            // in wp-admin ajaxurl is supplied by WordPress and is available globaly
+            url: ajaxurl,
+            dataType: 'json',
+            cache: true,
+            id: function(user){ return bond._id; },
+            data: function (input, page) { // page is the one-based page number tracked by Select2
+                return {
+                    term: input, //search term
+                    page: page || 1,
+                    action: 'sensei_json_search_courses',
+                    security: 	modulesAdmin.search_courses_nonce,
+                    default: ''
+                };
+            },
+            results: function (courses, page) {
+                var validCourses = [];
+                jQuery.each( courses, function (i, val) {
+                    if( ! jQuery.isEmptyObject( val )  ){
+                        validcourse = { id: i , details: val  };
+                        validCourses.push( validcourse );
+                    }
+                });
+                // wrap the users inside results for select 2 usage
+                return {  results: validCourses };
+            }
+        },
+        initSelection: function(element, callback) {
+
+
+            // get the initial values
+            var defaultValues= element.data('defaults');
+
+            //clear the elements values
+            element.val('');
+
+            if( defaultValues.length > 0 ){
+                callback( defaultValues );
+            }
+
+        },
+        formatResult: function( user ){
+            return  user.details ;
+        },
+        formatSelection: function( user ){
+            return user.details;
         }
-    }, function (data) {
+    }); // end select2
 
-        var courses = {};
 
-        jQuery.each(data, function (i, val) {
-            courses[i] = val;
-        });
-
-        return courses;
-    });
 
     jQuery( '#sensei-module-add-toggle').on( 'click', function( e ){
 

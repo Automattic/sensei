@@ -19,7 +19,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
     public function setUp() {
         // load the factory class
         global $woothemes_sensei;
-        require_once( dirname( dirname(__FILE__) ) . '/classes/class-woothemes-sensei-grading.php');
         $woothemes_sensei->grading = new WooThemes_Sensei_Grading( '' );
         $this->factory = new Sensei_Factory();
     }// end function setup()
