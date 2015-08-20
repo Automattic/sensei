@@ -857,7 +857,7 @@ class Sensei_Core_Modules
         $html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
         $html .= '<input type="hidden" name="page" value="' . esc_attr($this->order_page_slug) . '" />' . "\n";
         $html .= '<select id="module-order-course" name="course_id">' . "\n";
-        $html .= '<option value="">Select a course</option>' . "\n";
+        $html .= '<option value="">' . __('Select a course', 'woothemes-sensei') . '</option>' . "\n";
 
         foreach ($courses as $course) {
             if (has_term('', $this->taxonomy, $course->ID)) {
