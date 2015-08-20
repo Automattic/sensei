@@ -212,16 +212,6 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 								'section' => 'course-settings'
 								);
 
-    	$fields['course_archive_amount'] = array(
-								'name' => __( 'Course Archive Pagination', 'woothemes-sensei' ),
-								'description' => __( 'The number of courses to output for the archive pages.', 'woothemes-sensei' ),
-								'type' => 'range',
-								'default' => '0',
-								'section' => 'course-settings',
-								'required' => 0,
-								'options' => $posts_per_page_array
-								);
-
 		$fields['my_course_amount'] = array(
 								'name' => __( 'My Courses Pagination', 'woothemes-sensei' ),
 								'description' => __( 'The number of courses to output for the my courses page.', 'woothemes-sensei' ),
