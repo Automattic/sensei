@@ -68,7 +68,7 @@ class Sensei_Teacher {
         add_filter( 'pre_get_posts', array( $this, 'add_courses_to_author_archive' ) );
 
         // notify admin when a teacher creates a course
-        add_action( 'wp_insert_post',array( $this, 'notify_admin_teacher_course_creation' ) );
+        add_action( 'transition_post_status',array( $this, 'notify_admin_teacher_course_creation' ), 10, 3 );
 
         // limit the analysis view to only the users taking courses belong to this teacher
         add_filter( 'sensei_analysis_overview_filter_users',array( $this, 'limit_analysis_learners' ) , 5, 1 );
@@ -841,18 +841,17 @@ class Sensei_Teacher {
      * @param int $course_id
      * @return bool
      */
-    public function notify_admin_teacher_course_creation( $course_id ){
+    public function notify_admin_teacher_course_creation( $new_status, $old_status, $post ){
+
+        $course_id = $post->ID;
 
         if( 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id )
-            || 'trash' == get_post_status( $course_id )
-            || ( isset( $_POST['original_post_status'] ) && 'auto-draft' != $_POST['original_post_status'] )    ){
+            || 'trash' == get_post_status( $course_id ) || 'draft' == $old_status && 'draft' == $new_status
+            || 'draft' == $old_status && 'pending' == $new_status) {
 
             return false;
 
         }
-
-        //don't fire this hook again
-        remove_action('wp_insert_post', array( $this, 'notify_admin_teacher_course_creation' ) );
 
         /**
          * Filter the option to send admin notification emails when teachers creation
