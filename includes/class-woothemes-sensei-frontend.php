@@ -314,13 +314,8 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_output_content_pagination() {
-		global $wp_query, $woothemes_sensei;
-		// Handle Pagination on course archive pages
-		$paged = $wp_query->get( 'paged' );
-		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
-		if ( ( is_post_type_archive( 'course' ) || ( is_page( $course_page_id ) ) ) && ( isset( $paged ) && 0 == $paged ) ) {
-			// Do NOT show the pagination
-		} elseif( is_singular('course') ) {
+
+        if( is_singular('course') ) {
 			Sensei_Templates::get_template( 'wrappers/pagination-posts.php' );
 		} elseif( is_singular('lesson') ) {
 			Sensei_Templates::get_template( 'wrappers/pagination-lesson.php' );
@@ -329,6 +324,7 @@ class WooThemes_Sensei_Frontend {
 		} else {
 			Sensei_Templates::get_template( 'wrappers/pagination.php' );
 		} // End If Statement
+
 	} // End sensei_output_content_pagination()
 
 	/**
