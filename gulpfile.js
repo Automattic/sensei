@@ -11,6 +11,7 @@
 
 var gulp = require('gulp');
 var rename = require('gulp-rename');
+var sass = require('gulp-sass');
 var uglify = require('gulp-uglify');
 var minifyCSS = require('gulp-minify-css');
 var chmod = require('gulp-chmod');
@@ -19,7 +20,9 @@ var del = require('del');
 var paths = {
     scripts: ['assets/js/*.js' ],
     adminScripts: ['assets/js/admin/*.js'],
-    css: ['assets/css/*.css']
+    css: ['assets/css/*.css'],
+    sass: ['assets/css/*.scss']
+
 };
 
 gulp.task('clean', function(cb) {
@@ -27,7 +30,7 @@ gulp.task('clean', function(cb) {
 
 });
 
-gulp.task('default', [ 'CSS','JS','adminJS' ] );
+gulp.task('default', [ 'sass', 'CSS','JS','adminJS' ] );
 
 gulp.task('CSS',['clean'], function(){
     return gulp.src( paths.css )
@@ -52,4 +55,11 @@ gulp.task('adminJS',['clean'], function(){
         .pipe(rename({ extname: '.min.js' }))
         .pipe(chmod(644))
         .pipe( gulp.dest( 'assets/js/admin' ));
+});
+
+gulp.task('sass', function () {
+    return gulp.src( paths.sass )
+        .pipe(sass().on('error', sass.logError))
+        .pipe(chmod(644))
+        .pipe(gulp.dest('assets/css'));
 });
