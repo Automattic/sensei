@@ -1,20 +1,34 @@
 <?php
 /**
- * Pagination
+ * Pagination - Show numbered pagination for sensei archives
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.0.0
+ * @package  Sensei
+ * @category Templates
+ * @version     1.9.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 global $wp_query;
-?>
-<?php if ( $wp_query->max_num_pages > 1 ) : ?>
 
-<div class="navigation">
-	<div class="nav-next"><?php next_posts_link( __( 'Next <span class="meta-nav"></span>', 'woothemes-sensei' ) ); ?></div>
-	<div class="nav-previous"><?php previous_posts_link( __( '<span class="meta-nav"></span> Previous', 'woothemes-sensei' ) ); ?></div>
-</div>
-<?php endif; ?>
+if ( $wp_query->max_num_pages <= 1 ) {
+    return;
+}
+
+?>
+<nav class="sensei-pagination">
+    <?php
+    echo paginate_links( apply_filters( 'sensei_pagination_args', array(
+        'base'         => esc_url_raw( str_replace( 999999999, '%#%', get_pagenum_link( 999999999, false ) ) ),
+        'format'       => '',
+        'add_args'     => '',
+        'current'      => max( 1, get_query_var( 'paged' ) ),
+        'total'        => $wp_query->max_num_pages,
+        'prev_text'    => '&larr;',
+        'next_text'    => '&rarr;',
+        'type'         => 'list',
+        'end_size'     => 3,
+        'mid_size'     => 3
+    ) ) );
+    ?>
+</nav>
