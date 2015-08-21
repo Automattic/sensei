@@ -84,6 +84,9 @@ class WooThemes_Sensei_Course {
         // add the user status on the course to the markup as a class
         add_filter('post_class', array( __CLASS__ , 'add_course_user_status_class' ), 20, 3 );
 
+        //filter the course query in Sensei specific instances
+        add_filter( 'pre_get_posts', array( __CLASS__, 'course_query_filter' ) );
+
 	} // End __construct()
 
 	/**
@@ -1987,4 +1990,46 @@ class WooThemes_Sensei_Course {
 
     }// end the_course_action_buttons
 
+    /**
+     *
+     * This function alter the main query on the course archive page.
+     * This also gives Sensei specific filters that allows variables to be altered specifically on the course archive.
+     *
+     * This function targets only the course archives and the my courses page. Shortcodes can set their own
+     * query parameters via the arguments.
+     *
+     * This function is hooked into pre_get_posts filter
+     *
+     * @since 1.9.0
+     *
+     * @param WP_Query $query
+     * @return WP_Query $query
+     */
+    public static function course_query_filter( $query ){
+
+        // exit early for no course queries
+        if( 'course' != $query->get( 'post_type' ) ){
+            return $query;
+        }
+
+        global $post; // used to get the current page id for my courses
+
+        // for the course archive page
+        if( is_main_query() && is_post_type_archive('course') )
+        {
+
+            $query->set( 'posts_per_page', apply_filters( 'sensei_archive_courses_per_page', get_option( 'posts_per_page' ) ) );
+
+        }
+        // for the my courses page
+        elseif( is_page() && Sensei()->settings->get( 'my_course_page' ) == $post->ID  )
+        {
+
+            $query->set( 'posts_per_page', apply_filters( 'sensei_my_courses_per_page', get_option( 'posts_per_page' ) ) );
+
+        }
+
+        return $query;
+
+    }// end course_query_filter
 } // End Class
