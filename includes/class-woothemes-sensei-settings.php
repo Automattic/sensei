@@ -26,12 +26,15 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 	/**
 	 * Constructor.
 	 * @access public
-	 * @since  1.0.0
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function __construct () {
 	    parent::__construct(); // Required in extended classes.
 	    add_action( 'admin_head', array( $this, 'add_contextual_help' ) );
+
+        add_action('init', array( __CLASS__, 'flush_rewrite_rules' ) );
+
 	} // End __construct()
 
     /**
@@ -645,4 +648,21 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		return $pages_array;
 	} // End pages_array()
+
+    /**
+     * Flush the rewrite rules after the settings have been updated.
+     * This is to ensure that the
+     *
+     * @since 1.9.0
+     */
+    public static function flush_rewrite_rules(){
+
+        if ( isset( $_POST[ 'option_page' ] ) && 'woothemes-sensei-settings' == $_POST[ 'option_page' ]
+            && isset( $_POST[ 'action' ] ) && 'update' == $_POST[ 'action' ] ) {
+
+            flush_rewrite_rules(true);
+
+        }
+
+    }//end  flush_cache
 } // End Class
