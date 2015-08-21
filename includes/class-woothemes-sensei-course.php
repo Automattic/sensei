@@ -2032,4 +2032,67 @@ class WooThemes_Sensei_Course {
         return $query;
 
     }// end course_query_filter
+
+    /**
+     * Determine the class of the course loop
+     *
+     * This will output .first or .last and .course-item-number-x
+     *
+     * @return array $extra_classes
+     * @since 1.9.0
+     */
+    public static function get_course_loop_class ()
+    {
+
+        global $sensei_course_loop;
+
+
+        if( !isset( $sensei_course_loop ) ){
+            $sensei_course_loop = array();
+        }
+
+        if (!isset($sensei_course_loop['counter'])) {
+            $sensei_course_loop['counter'] = 0;
+        }
+
+        if (!isset($sensei_course_loop['columns'])) {
+            $sensei_course_loop['columns'] = self::get_course_loop_number_of_columns();
+        }
+
+        // increment the counter
+        $sensei_course_loop['counter']++;
+
+        if( 0 == ( $sensei_course_loop['counter'] - 1 ) % $sensei_course_loop['columns'] || 1 == $sensei_course_loop['columns']  ){
+            $extra_classes[] = 'first';
+        }
+
+        if( 0 == $sensei_course_loop['counter'] % $sensei_course_loop['columns']  ){
+            $extra_classes[] = 'last';
+        }
+
+        // add the item number to the classes as well.
+        $extra_classes[] = 'course-item-number-'. $sensei_course_loop['counter'];
+
+        return $extra_classes;
+
+    }// end get_course_loop_class
+
+    /**
+     * Get the number of columns set for Sensei courses
+     *
+     * @since 1.9.0
+     * @return mixed|void
+     */
+    public static function get_course_loop_number_of_columns(){
+
+        /**
+         * Filter the number of columns on the course archive page.
+         *
+         * @since 1.9.0
+         * @param int $number_of_columns default 3
+         */
+        return apply_filters('sensei_course_columns', 3);
+
+    }
+
 } // End Class

@@ -10,7 +10,12 @@
  */
 ?>
 
-<li class="<?php esc_attr_e( join( ' ', get_post_class( array( 'course', 'post' ) ) ) ); ?>">
+<?php
+ // columns calculations
+$extra_classes = WooThemes_Sensei_Course::get_course_loop_class();
+?>
+
+<li class="<?php post_class( $extra_classes, get_the_ID() ) ?>">
 
     <section class="course-content">
         <?php
