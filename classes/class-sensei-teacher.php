@@ -846,8 +846,7 @@ class Sensei_Teacher {
         $course_id = $post->ID;
 
         if( 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id )
-            || 'trash' == get_post_status( $course_id ) || 'draft' == $old_status && 'draft' == $new_status
-            || 'draft' == $old_status && 'pending' == $new_status) {
+            || 'trash' == get_post_status( $course_id ) || 'draft' == get_post_status( $course_id ) ) {
 
             return false;
 
