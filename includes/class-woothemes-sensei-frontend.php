@@ -122,7 +122,10 @@ class WooThemes_Sensei_Frontend {
 		// Only show course & lesson excerpts in search results
 		add_filter( 'the_content', array( $this, 'sensei_search_results_excerpt' ) );
 
-		// Remove course from active courses if an order is cancelled or refunded
+        //Use WooCommerce filter to show admin bar to Teachers.
+        add_action( 'init', array( $this, 'sensei_show_admin_bar') );
+
+        // Remove course from active courses if an order is cancelled or refunded
 		add_action( 'woocommerce_order_status_processing_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
 		add_action( 'woocommerce_order_status_completed_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
 		add_action( 'woocommerce_order_status_on-hold_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
@@ -2019,5 +2022,24 @@ class WooThemes_Sensei_Frontend {
 			$woothemes_sensei->notices->add_notice( $message, 'alert');
 
 	}// end login_message_process
+
+
+    /**
+     * sensei_show_admin_bar(). Use WooCommerce filter
+     * to show admin bar to Teachers as well.
+     *
+     * @return void redirect
+     *
+     */
+
+    public function sensei_show_admin_bar () {
+
+        if (current_user_can('edit_courses')) {
+
+            add_filter( 'woocommerce_disable_admin_bar', '__return_false', 10, 1);
+
+        }
+
+    }
 
 } // End Class
