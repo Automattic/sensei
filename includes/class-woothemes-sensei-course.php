@@ -88,7 +88,7 @@ class WooThemes_Sensei_Course {
 
 	/**
 	 * Fires when a quiz has been graded to check if the Course status needs changing
-	 * 
+	 *
 	 * @param type $user_id
 	 * @param type $quiz_id
 	 */
@@ -101,14 +101,14 @@ class WooThemes_Sensei_Course {
 
 	/**
 	 * Fires when a lesson has changed to check if the Course status needs changing
-	 * 
+	 *
 	 * @param int $user_id
 	 * @param int $lesson_id
 	 */
 	public function update_status_after_lesson_change( $user_id, $lesson_id ) {
 		if ( intval( $user_id ) > 0 && intval( $lesson_id ) > 0 ) {
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			if ( intval( $course_id ) > 0 ) { 
+			if ( intval( $course_id ) > 0 ) {
 				// Updates the Course status and it's meta data
 				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
 			}
@@ -1264,7 +1264,7 @@ class WooThemes_Sensei_Course {
 
 		    		    $active_html .= '</p>';
 
-		    		    $active_html .= '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
+		    		    $active_html .= '<p class="course-excerpt">' . sensei_get_excerpt( $course_item ) . '</p>';
 
 		    		   	$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $lesson_count ), 0 ) );
 
@@ -1380,7 +1380,7 @@ class WooThemes_Sensei_Course {
 
 						$complete_html .= '</p>';
 
-						$complete_html .= '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
+						$complete_html .= '<p class="course-excerpt">' . sensei_get_excerpt( $course_item ) . '</p>';
 
                         $complete_html .= $this->get_progress_meter( 100 );
 

@@ -1918,8 +1918,8 @@ class WooThemes_Sensei_Lesson {
 			die('');
 		} // End If Statement
 		// Parse POST data
-		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that 
-		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed. 
+		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that
+		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed.
 		// So first restore the original unslashed apostrophes by removing those slashes
 		$data = wp_unslash( $_POST['data'] );
 		// Then parse the string to an array (note that parse_str automatically urldecodes all the variables)
@@ -2925,9 +2925,7 @@ class WooThemes_Sensei_Lesson {
 	public static function lesson_excerpt( $lesson = null ) {
 		$html = '';
 		if ( is_a( $lesson, 'WP_Post' ) && 'lesson' == $lesson->post_type ) {
-			if ( '' != $lesson->post_excerpt ) {
-				$html .= wpautop( $lesson->post_excerpt );
-			}
+			$html = wpautop( sensei_get_excerpt( $lesson ) );
 		}
 		return apply_filters( 'sensei_lesson_excerpt', $html );
 	} // End lesson_excerpt()
