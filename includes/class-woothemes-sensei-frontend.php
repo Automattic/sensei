@@ -1573,13 +1573,13 @@ class WooThemes_Sensei_Frontend {
 
 					if( $courses && count( $courses ) > 0 ) {
 
-						echo ' <ul class="updated fade woocommerce-info" >';
+						echo ' <ul id= "message" class="updated fade woocommerce-info" >';
 						foreach( $courses as $course ) {
 
 							$title = $course->post_title;
 							$permalink = get_permalink( $course->ID );
 
-							echo '<li>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</li> <br/>';
+							echo '<li>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</li>';
 
 							$update_course = $woothemes_sensei->woocommerce_course_update( $course->ID  );
 
