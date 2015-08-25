@@ -777,7 +777,7 @@ class WooThemes_Sensei_Lesson {
 				$question_id = $question->ID;
 
 				$question_type = '';
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 					$question_type = $question_types[0];
 				} // End If Statement
@@ -1268,7 +1268,7 @@ class WooThemes_Sensei_Lesson {
 		if( $row % 2 ) { $existing_class = 'alternate'; }
 
 		$all_question_types = $woothemes_sensei->post_types->question->question_types();
-		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 		$question_type = '';
 		if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 			$question_type = $question_types[0];
@@ -1939,7 +1939,7 @@ class WooThemes_Sensei_Lesson {
 				$current_user = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
 				$question_id = $this->lesson_save_question( $question_data );
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 				$question_counter = 0;
 				$question_type = '';
 				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
@@ -2105,7 +2105,7 @@ class WooThemes_Sensei_Lesson {
 
 			    	add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
 
-					$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+					$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 					$question_type = '';
 					if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 						$question_type = $question_types[0];
