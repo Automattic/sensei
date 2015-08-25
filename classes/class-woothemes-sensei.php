@@ -275,7 +275,6 @@ class WooThemes_Sensei {
 		if ( current_user_can( 'manage_options' ) || current_user_can( 'manage_sensei' ) ) {
 			$this->load_class( 'updates' );
 			$this->updates = new WooThemes_Sensei_Updates( $this );
-			$this->updates->update();
 		} // End If Statement
 	} // End run_updates()
 
@@ -1076,7 +1075,7 @@ class WooThemes_Sensei {
 		$order_items = $order->get_items();
 		$order_id = $order->id;
 
-		$messages = array();
+        echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
 
 		foreach ( $order_items as $item ) {
 
@@ -1108,7 +1107,6 @@ class WooThemes_Sensei {
 							$title = $course->post_title;
 							$permalink = get_permalink( $course->ID );
 
-							echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
 							echo '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
 
 						}
