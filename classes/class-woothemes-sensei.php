@@ -275,7 +275,6 @@ class WooThemes_Sensei {
 		if ( current_user_can( 'manage_options' ) || current_user_can( 'manage_sensei' ) ) {
 			$this->load_class( 'updates' );
 			$this->updates = new WooThemes_Sensei_Updates( $this );
-			$this->updates->update();
 		} // End If Statement
 	} // End run_updates()
 
