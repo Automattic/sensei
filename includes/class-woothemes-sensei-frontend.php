@@ -122,7 +122,10 @@ class WooThemes_Sensei_Frontend {
 		// Only show course & lesson excerpts in search results
 		add_filter( 'the_content', array( $this, 'sensei_search_results_excerpt' ) );
 
-		// Remove course from active courses if an order is cancelled or refunded
+        //Use WooCommerce filter to show admin bar to Teachers.
+        add_action( 'init', array( $this, 'sensei_show_admin_bar') );
+
+        // Remove course from active courses if an order is cancelled or refunded
 		add_action( 'woocommerce_order_status_processing_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
 		add_action( 'woocommerce_order_status_completed_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
 		add_action( 'woocommerce_order_status_on-hold_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
@@ -1061,7 +1064,7 @@ class WooThemes_Sensei_Frontend {
 		   	<?php } // End If Statement ?>
 		   	<?php sensei_simple_course_price( $post_id ); ?>
         	</p>
-        	<p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
+        	<p class="course-excerpt"><?php echo sensei_get_excerpt( $post ); ?></p>
         	<?php if ( 0 < $free_lesson_count ) {
                 $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes-sensei' ), $free_lesson_count ); ?>
                 <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
@@ -1270,7 +1273,7 @@ class WooThemes_Sensei_Frontend {
                 <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_view_course_text', __( 'View course', 'woothemes-sensei' ) ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
                 <?php } ?>
             </p>
-            <p class="lesson-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
+            <p class="lesson-excerpt"><?php echo sensei_get_excerpt( $post ); ?></p>
 		</section><?php
 		} // End If Statement
 	} // sensei_lesson_meta()
@@ -1473,7 +1476,7 @@ class WooThemes_Sensei_Frontend {
 		global $post;
 
 		if( is_search() && in_array( $post->post_type, array( 'course', 'lesson' ) ) ) {
-			$content = '<p class="course-excerpt">' . $post->post_excerpt . '</p>';
+			$content = '<p class="course-excerpt">' . sensei_get_excerpt( $post ) . '</p>';
 		}
 
 		return $content;
@@ -2019,5 +2022,24 @@ class WooThemes_Sensei_Frontend {
 			$woothemes_sensei->notices->add_notice( $message, 'alert');
 
 	}// end login_message_process
+
+
+    /**
+     * sensei_show_admin_bar(). Use WooCommerce filter
+     * to show admin bar to Teachers as well.
+     *
+     * @return void redirect
+     *
+     */
+
+    public function sensei_show_admin_bar () {
+
+        if (current_user_can('edit_courses')) {
+
+            add_filter( 'woocommerce_disable_admin_bar', '__return_false', 10, 1);
+
+        }
+
+    }
 
 } // End Class

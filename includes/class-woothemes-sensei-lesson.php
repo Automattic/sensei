@@ -213,6 +213,7 @@ class WooThemes_Sensei_Lesson {
 
 		$html .= '<p><label for="lesson_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
 		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . $lesson_video_embed . '</textarea></p>' . "\n";
+		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
 
@@ -776,7 +777,7 @@ class WooThemes_Sensei_Lesson {
 				$question_id = $question->ID;
 
 				$question_type = '';
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 					$question_type = $question_types[0];
 				} // End If Statement
@@ -1267,7 +1268,7 @@ class WooThemes_Sensei_Lesson {
 		if( $row % 2 ) { $existing_class = 'alternate'; }
 
 		$all_question_types = $woothemes_sensei->post_types->question->question_types();
-		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 		$question_type = '';
 		if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 			$question_type = $question_types[0];
@@ -1917,8 +1918,8 @@ class WooThemes_Sensei_Lesson {
 			die('');
 		} // End If Statement
 		// Parse POST data
-		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that 
-		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed. 
+		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that
+		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed.
 		// So first restore the original unslashed apostrophes by removing those slashes
 		$data = wp_unslash( $_POST['data'] );
 		// Then parse the string to an array (note that parse_str automatically urldecodes all the variables)
@@ -1938,7 +1939,7 @@ class WooThemes_Sensei_Lesson {
 				$current_user = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
 				$question_id = $this->lesson_save_question( $question_data );
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 				$question_counter = 0;
 				$question_type = '';
 				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
@@ -2104,7 +2105,7 @@ class WooThemes_Sensei_Lesson {
 
 			    	add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
 
-					$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
+					$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
 					$question_type = '';
 					if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
 						$question_type = $question_types[0];
@@ -2924,9 +2925,7 @@ class WooThemes_Sensei_Lesson {
 	public static function lesson_excerpt( $lesson = null ) {
 		$html = '';
 		if ( is_a( $lesson, 'WP_Post' ) && 'lesson' == $lesson->post_type ) {
-			if ( '' != $lesson->post_excerpt ) {
-				$html .= wpautop( $lesson->post_excerpt );
-			}
+			$html = wpautop( sensei_get_excerpt( $lesson ) );
 		}
 		return apply_filters( 'sensei_lesson_excerpt', $html );
 	} // End lesson_excerpt()
