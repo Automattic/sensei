@@ -94,6 +94,9 @@ class Sensei_Teacher {
         // update lesson owner to course teacher when saved
         add_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
 
+        //Remove Teachers from comment moderation emails
+        add_filter('comment_moderation_recipients', array ($this, 'no_comments_to_teachers'), 10, 2);
+
     } // end __constructor()
 
     /**
@@ -1406,5 +1409,34 @@ class Sensei_Teacher {
         return $wp_query;
 
     } // end limit_teacher_edit_screen_post_types()
+
+    /**
+     * Sensei_Teacher::no_comments_to_teachers
+     *
+     * Make sure teachers do not get comment moderation emails for their lessons,
+     * because the Teacher role does not have the 'manage_comments' capability.
+     *
+     * @since 1.9.0
+     * @access public
+     * @param array $emails
+     * @param int $comment_id
+     * @return array $emails
+     */
+
+    public function no_comments_to_teachers($emails, $comment_id) {
+        $comment = get_comment($comment_id);
+        $post = get_post($comment->comment_post_ID);
+        $user = get_userdata($post->post_author);
+
+    // Check if user can 'edit_comments' and remove from $emails array if they can't.
+
+        if ( !user_can($user->ID, 'edit_comments', $comment_id) && !empty($user->user_email) ) {
+
+            unset( $emails [array_search ($user->user_email, $emails)] );
+
+        }
+
+        return $emails;
+    }
 
 } // End Class
