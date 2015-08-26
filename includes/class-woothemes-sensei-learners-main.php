@@ -266,6 +266,21 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
                 $title = $woothemes_sensei->learners->get_learner_full_name( $user_activity->user_id );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
+                // get the learners order for this course if the course was purchased
+
+                $course_order_id_attribute = '';
+                if( is_woocommerce_active() ){
+
+                    $course_product_order_id = Sensei_WC::get_learner_course_active_order_id( $user_activity->user_id, $post_id  );
+
+                    if( $course_product_order_id ){
+
+                        $course_order_id_attribute = ' data-order_id="' . $course_product_order_id . '" ';
+
+                    }
+
+                }
+
                 /**
                  * sensei_learners_main_column_data filter
                  *
@@ -283,7 +298,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
 						'date_started' => get_comment_meta( $user_activity->comment_ID, 'start', true),
 						'user_status' => $status_html,
-						'actions' => '<a class="remove-learner button" data-user_id="' . $user_activity->user_id . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>',
+						'actions' => '<a class="remove-learner button" data-user_id="' . $user_activity->user_id . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '" '. $course_order_id_attribute . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>',
 					), $item, $post_id, $post_type );
 
 				break;
@@ -308,7 +323,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			case 'courses' :
 			default:
-				$course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_course_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
+                $course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_course_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
