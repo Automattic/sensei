@@ -94,6 +94,10 @@ class Sensei_Teacher {
         // update lesson owner to course teacher when saved
         add_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
 
+        add_action( 'admin_menu', array( $this, 'restrict_posts_menu_page'), 10);
+        add_filter('pre_get_comments',  array ($this, 'restrict_comment_moderation'), 10, 1);
+
+
     } // end __constructor()
 
     /**
@@ -189,6 +193,9 @@ class Sensei_Teacher {
             'edit_published_sensei_messages'  => true,
             'edit_private_sensei_messages' => true,
             'read_private_sensei_messages' => true,
+
+            'edit_comment' => true,
+            'edit_posts' => true,
 
             // Group post type Todo: find out from Hugh
 
@@ -1404,5 +1411,68 @@ class Sensei_Teacher {
         return $wp_query;
 
     } // end limit_teacher_edit_screen_post_types()
+
+
+    /**
+     * Sensei_Teacher::restrict_posts_menu_page()
+     *
+     * Remove the Posts menu page for teachers and restrict access to it.
+     * We have to do this because we give teachers the 'edit_posts' cap
+     * so they can 'moderate_comments' as well.
+     *
+     * @since 1.8.7
+     * @access public
+     * @parameters void
+     * @return void
+     */
+
+    public function restrict_posts_menu_page() {
+
+        global $pagenow, $typenow;
+
+        if (current_user_can('teacher')) {
+
+            remove_menu_page('edit.php');
+
+            if ($pagenow == "edit.php" || $pagenow == "post-new.php") {
+
+                if ($typenow == '' || $typenow == 'post' || $typenow == 'page') {
+
+                    wp_redirect(admin_url());
+
+                    exit;
+
+                }
+
+            }
+
+        }
+
+    } // end restrict_posts_menu_page()
+
+    /**
+     * Sensei_Teacher::restrict_comment_moderation()
+     *
+     * Restrict commendation moderation for teachers
+     * so they can only edit comments made to posts they own.
+     *
+     * @since 1.8.7
+     * @access public
+     * @parameters obj $clauses
+     * @return obj $clauses
+     */
+
+    public function restrict_comment_moderation($clauses) {
+
+        global $current_user;
+
+        if( current_user_can('teacher') ) {
+
+            $clauses->query_vars['post_author'] = $current_user->ID;
+        }
+
+        return $clauses;
+
+    }   // end restrict_comment_moderation()
 
 } // End Class
