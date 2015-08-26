@@ -1440,9 +1440,7 @@ class Sensei_Teacher {
 
                 if ($typenow == '' || $typenow == 'post' || $typenow == 'page') {
 
-                    wp_redirect(admin_url());
-
-                    exit;
+                    wp_die('You do not have sufficient permissions to access this page.');
 
                 }
 
