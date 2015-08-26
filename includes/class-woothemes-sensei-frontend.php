@@ -1491,8 +1491,15 @@ class WooThemes_Sensei_Frontend {
 		$order = new WC_Order( $order_id );
 
 		foreach ( $order->get_items() as $item ) {
+			if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
+				// If item has variation_id then its a variation of the product
+				$item_id = $item['variation_id'];
+			} else {
+				// Than its real product set it's id to item_id
+				$item_id = $item['product_id'];
+			} 
 
-            if ( $item['product_id'] > 0 ) {
+            if ( $item_id > 0 ) {
 
 				$user_id = get_post_meta( $order_id, '_customer_user', true );
 
@@ -1505,7 +1512,7 @@ class WooThemes_Sensei_Frontend {
 						'meta_query' => array(
 							array(
 								'key' => '_course_woocommerce_product',
-								'value' => $item['product_id']
+								'value' => $item_id
 							)
 						),
 						'orderby' => 'menu_order date',
@@ -1547,56 +1554,59 @@ class WooThemes_Sensei_Frontend {
 			return;
 		}
 
-		$order_items = $order->get_items();
-
 		$messages = array();
 
-		foreach ( $order_items as $item ) {
+		foreach ( $order->get_items() as $item ) {
 
-            if ( $item['product_id'] > 0 ) {
+			if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
 
-				$user_id = get_post_meta( $order_id, '_customer_user', true );
+				// If item has variation_id then its a variation of the product
+				$item_id = $item['variation_id'];
 
-				if( $user_id ) {
+			} else {
 
-					// Get all courses for product
-					$args = array(
-						'posts_per_page' => -1,
-						'post_type' => 'course',
-						'meta_query' => array(
-							array(
-								'key' => '_course_woocommerce_product',
-								'value' => $item['product_id']
-							)
-						),
-						'orderby' => 'menu_order date',
-						'order' => 'ASC',
-					);
-					$courses = get_posts( $args );
+				//If not its real product set its id to item_id
+				$item_id = $item['product_id'];
 
-					if( $courses && count( $courses ) > 0 ) {
+			} // End If Statement
 
-						echo ' <p><div id= "message" class="updated fade woocommerce-info" >';
-						foreach( $courses as $course ) {
+			$user_id = get_post_meta( $order->id, '_customer_user', true );
 
-							$title = $course->post_title;
-							$permalink = get_permalink( $course->ID );
+			if( $user_id ) {
 
-							echo '<strong>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</strong> <br/>';
+				// Get all courses for product
+				$args = array(
+					'posts_per_page' => -1,
+					'post_type' => 'course',
+					'meta_query' => array(
+						array(
+							'key' => '_course_woocommerce_product',
+							'value' => $item_id
+						)
+					),
+					'orderby' => 'menu_order date',
+					'order' => 'ASC',
+				);
+				$courses = get_posts( $args );
 
-							$update_course = $woothemes_sensei->woocommerce_course_update( $course->ID  );
+				if( $courses && count( $courses ) > 0 ) {
 
-						} // end for each
+					echo ' <p><div id= "message" class="updated fade woocommerce-info" >';
+					foreach( $courses as $course ) {
 
-						// close the message div
-						echo ' </div></p>';
+						$title = $course->post_title;
+						$permalink = get_permalink( $course->ID );
 
-					}// end if $courses check
-				}
+						echo '<strong>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</strong> <br/>';
+
+					} // end for each
+
+					// close the message div
+					echo ' </div></p>';
+
+				}// end if $courses check
 			}
 		}
-		// show the links to the course
-
 	} // end course_link_order_form
 
 	/**
@@ -1643,12 +1653,17 @@ class WooThemes_Sensei_Frontend {
 
 					$items = $order->get_items();
 					foreach( $items as $item ) {
-						$product_id = $item['product_id'];
-						$product_ids[] = $product_id;
-					}
+                                            if (isset($item['variation_id']) && $item['variation_id'] > 0) {
+                                                $item_id = $item['variation_id'];
+                                                $product_type = 'variation';
+                                            } else {
+                                                $item_id = $item['product_id'];
+                                            }
+
+                                            $product_ids[] = $item_id;
+                                            }
 
 					$order_ids[] = $post_id;
-
 				}
 
 				if( count( $product_ids ) > 0 ) {
@@ -1753,7 +1768,7 @@ class WooThemes_Sensei_Frontend {
 
 				$items = $order->get_items();
 				foreach( $items as $item ) {
-					if( $item['product_id'] == $course_product_id ) {
+					if( $item['product_id']  == $course_product_id || $item['variation_id'] == $course_product_id ) {
 						WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
 						return;
 					}
