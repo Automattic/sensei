@@ -1464,9 +1464,9 @@ class Sensei_Teacher {
 
     public function restrict_comment_moderation($clauses) {
 
-        global $current_user;
+        global $current_user, $pagenow;
 
-        if( current_user_can('teacher') ) {
+        if( current_user_can('teacher') && $pagenow == "edit-comments.php") {
 
             $clauses->query_vars['post_author'] = $current_user->ID;
         }
