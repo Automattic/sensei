@@ -1430,7 +1430,9 @@ class Sensei_Teacher {
 
         global $pagenow, $typenow;
 
-        if (current_user_can('teacher')) {
+        $user = wp_get_current_user();
+
+        if ( in_array( 'teacher', (array) $user->roles ) ) {
 
             remove_menu_page('edit.php');
 
@@ -1464,11 +1466,13 @@ class Sensei_Teacher {
 
     public function restrict_comment_moderation($clauses) {
 
-        global $current_user, $pagenow;
+        global $pagenow;
 
-        if( current_user_can('teacher') && $pagenow == "edit-comments.php") {
+        $user = wp_get_current_user();
 
-            $clauses->query_vars['post_author'] = $current_user->ID;
+        if( in_array( 'teacher', (array) $user->roles ) && $pagenow == "edit-comments.php") {
+
+            $clauses->query_vars['post_author'] = $user->ID;
         }
 
         return $clauses;
