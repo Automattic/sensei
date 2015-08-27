@@ -867,18 +867,18 @@ class WooThemes_Sensei_Grading {
         /**
          * Applying a grade before the auto grading takes place.
          *
-         * This filter is applied just before the question is auto graded. It fires in the context of ta single question
-         * in the sensei_grade_question_auto function. It fire irrespective of the question type. If you return a grade
-         * more than 0 the auto grade functionality with be ignored and your supplied grade will be user for this question.
+         * This filter is applied just before the question is auto graded. It fires in the context of a single question
+         * in the sensei_grade_question_auto function. It fires irrespective of the question type. If you return a value
+         * other than false the auto grade functionality will be ignored and your supplied grade will be user for this question.
          *
-         * @param int $question_grade default zero
+         * @param int $question_grade default false
          * @param int $question_id
          * @param string $question_type one of the Sensei question type.
          * @param string $answer user supplied question answer
          */
-        $question_grade = apply_filters( 'sensei_pre_grade_question_auto',0 , $question_id, $question_type, $answer );
+        $question_grade = apply_filters( 'sensei_pre_grade_question_auto', false, $question_id, $question_type, $answer );
 
-        if ( $question_grade > 0  ) {
+        if ( false !== $question_grade ) {
 
             return $question_grade;
 
