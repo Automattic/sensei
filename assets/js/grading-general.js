@@ -36,7 +36,12 @@ jQuery(document).ready( function($) {
 
 	 	var total_questions = parseInt( jQuery( '#total_questions' ).val() );
 	 	var quiz_grade_total = parseInt( jQuery( '#quiz_grade_total' ).val() );
-	 	var percent = parseFloat( total_grade * 100 / quiz_grade_total ).toFixed(2);
+		if ( 0 < quiz_grade_total ) {
+			var percent = parseFloat( total_grade * 100 / quiz_grade_total ).toFixed(2);
+		}
+		else {
+			var percent = 0;
+		}
 	 	percent = percent.replace( '.00', '' );
 
 	 	jQuery( '#total_grade' ).val( total_grade );
@@ -60,7 +65,7 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery.fn.autoGrade = function() {
 		jQuery( '.question_box' ).each( function() {
-			if( ! jQuery( this ).hasClass( 'user_right' ) && ! jQuery( this ).hasClass( 'user_wrong' ) ) {
+			if( ! jQuery( this ).hasClass( 'user_right' ) && ! jQuery( this ).hasClass( 'user_wrong' ) && ! jQuery( this ).hasClass( 'zero-graded' ) ) {
 				jQuery( this ).addClass( 'ungraded' );
 		 		if( jQuery( this ).hasClass( 'gap-fill' ) ) {
 		 			var user_answer = jQuery( this ).find( '.user-answer .highlight' ).html();
@@ -87,7 +92,11 @@ jQuery(document).ready( function($) {
 						jQuery( this ).removeClass( 'user_wrong' ).removeClass( 'user_right' );
 		 			}
 		 		}
-		 	}
+			} else if ( jQuery( this ).hasClass( 'zero-graded' ) ) {
+				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+				jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+				jQuery( this ).find( '.input.question-grade' ).val( 0 );
+			}
 	 	});
 
 	 	jQuery.fn.calculateTotalGrade();

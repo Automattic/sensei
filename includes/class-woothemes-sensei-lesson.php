@@ -831,8 +831,7 @@ class WooThemes_Sensei_Lesson {
 
 			if( $question_type != 'category' ) {
 
-				$question_grade = intval( get_post_meta( $question_id, '_question_grade', true ) );
-				if( 0 == $question_grade ) { $question_grade = 1; }
+				$question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
 
 				$question_media = get_post_meta( $question_id, '_question_media', true );
 				$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = '';
@@ -938,7 +937,7 @@ class WooThemes_Sensei_Lesson {
 						    	// Question grade
 						    	$html .= '<div>';
 							    	$html .= '<label for="question_' . $question_counter . '_grade">' . __( 'Question grade:', 'woothemes-sensei' ) . '</label> ';
-							    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="1" value="' . $question_grade . '" />';
+							    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="0" value="' . $question_grade . '" />';
 						    	$html .= '</div>';
 
 						    	// Random order
@@ -1044,7 +1043,7 @@ class WooThemes_Sensei_Lesson {
 
 	  					// Question grade
 						$html .= '<p><label>' . __( 'Question Grade:'  , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="1" value="1" /></p>' . "\n";
+						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="0" value="1" /></p>' . "\n";
 
 						// Random order
 						$html .= '<p class="add_question_random_order">';
@@ -1663,12 +1662,6 @@ class WooThemes_Sensei_Lesson {
 
 	public function get_quiz_settings( $quiz_id = 0 ) {
 
-		$disable_grade_type = false;
-		$quiz_grade_type_disabled = get_post_meta( $quiz_id, '_quiz_grade_type_disabled', true );
-		if( 'disabled' == $quiz_grade_type_disabled ) {
-			$disable_grade_type = true;
-		}
-
 		$disable_passmark = '';
 		$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
 		if( ! $pass_required ) {
@@ -1731,21 +1724,12 @@ class WooThemes_Sensei_Lesson {
 				'checked'		=> 'yes',
 			),
 			array(
-				'id' 			=> 'quiz_grade_type_disabled',
-				'label'			=> '',
-				'description'	=> '',
-				'default'		=> '',
-				'type'			=> 'hidden',
-				'default'		=> '',
-			),
-			array(
 				'id' 			=> 'quiz_grade_type',
 				'label'			=> __( 'Grade quiz automatically', 'woothemes-sensei' ),
-				'description'	=> __( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions.', 'woothemes-sensei' ),
+				'description'	=> __( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions. Questions that have a grade of zero are skipped during autograding.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
 				'default'		=> 'auto',
 				'checked'		=> 'auto',
-				'disabled'		=> $disable_grade_type,
 			),
 			array(
 				'id' 			=> 'enable_quiz_reset',
@@ -2136,7 +2120,6 @@ class WooThemes_Sensei_Lesson {
 		$quiz_data = array();
 		parse_str($data, $quiz_data);
 		update_post_meta( $quiz_data['quiz_id'], '_quiz_grade_type', $quiz_data['quiz_grade_type'] );
-		update_post_meta( $quiz_data['quiz_id'], '_quiz_grade_type_disabled', $quiz_data['quiz_grade_type_disabled'] );
 		die();
 	}
 

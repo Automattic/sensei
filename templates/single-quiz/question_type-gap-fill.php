@@ -23,10 +23,7 @@ $reset_quiz_allowed = $woothemes_sensei->quiz->data->reset_quiz_allowed;
 // Question Meta
 $question_id = $question_item->ID;
 $question_right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-$question_grade = get_post_meta( $question_id, '_question_grade', true );
-if( ! $question_grade || $question_grade == '' ) {
-	$question_grade = 1;
-}
+$question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
 
 // retrieve users stored data.
 $user_answer_entry = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $current_user->ID );
@@ -84,7 +81,13 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	$user_correct = false;
 	$answer_message = __( 'Incorrect', 'woothemes-sensei' );
 	$answer_message_class = 'user_wrong';
-	if( $user_question_grade > 0 ) {
+	// For zero grade mark as 'correct' but add no classes
+	if ( 0 == $question_grade ) {
+		$user_correct = true;
+		$answer_message = '';
+		$answer_message_class = '';
+	}
+	else if( $user_question_grade > 0 ) {
 		$user_correct = true;
 		$answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
 		$answer_message_class = 'user_right';

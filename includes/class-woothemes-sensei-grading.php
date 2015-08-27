@@ -628,7 +628,12 @@ class WooThemes_Sensei_Grading {
         if( $_POST['all_questions_graded'] == 'yes' ) {
 
             // set the users total quiz grade
+			if ( 0 < intval( $quiz_grade_total ) ) {
             $grade = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
+			}
+			else {
+				$grade = 0;
+			}
             WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
 
             // Duplicating what Frontend->sensei_complete_quiz() does
@@ -779,10 +784,14 @@ class WooThemes_Sensei_Grading {
         $all_question_grades = array();
         foreach( $submitted as $question_id => $answer ) {
 
-            // check if the question is autogradable
+            // check if the question is autogradable, either by type, or because the grade is 0
             $question_type = $woothemes_sensei->question->get_question_type( $question_id );
-            if ( in_array( $question_type, $autogradable_question_types ) ) {
-
+			$achievable_grade = $woothemes_sensei->question->get_question_grade( $question_id );
+			// Question has a zero grade, so skip grading
+			if ( 0 == $achievable_grade ) {
+				$all_question_grades[ $question_id ] = $achievable_grade;
+			}
+            elseif ( in_array( $question_type, $autogradable_question_types ) ) {
                 // Get user question grade
                 $question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
                 $all_question_grades[ $question_id ] = $question_grade;
@@ -801,8 +810,13 @@ class WooThemes_Sensei_Grading {
         if ( $quiz_autogradable ) {
 
             $quiz_total = WooThemes_Sensei_Utils::sensei_get_quiz_total( $quiz_id );
-
+			// Check for zero total from grades
+			if ( 0 < $quiz_total ) {
             $grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
+			}
+			else {
+				$grade = 0;
+			}
             WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
 
         } else {
@@ -889,10 +903,7 @@ class WooThemes_Sensei_Grading {
                 }
                 // If all correct then grade
                 if ( $all_correct ) {
-                    $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
-                    if( ! $question_grade || $question_grade == '' ) {
-                        $question_grade = 1;
-                    }
+                    $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
                 }
             }
 
@@ -906,17 +917,11 @@ class WooThemes_Sensei_Grading {
             $gapfill_array = explode( '||', $right_answer );
             // Check that the 'gap' is "exactly" equal to the given answer
             if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
-                $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
-                if ( empty($question_grade) ) {
-                    $question_grade = 1;
-                }
+                $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
             }
             else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
                 if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
-                    $question_grade = ( int ) get_post_meta( $question_id, '_question_grade', true );
-                    if ( empty($question_grade) ) {
-                        $question_grade = 1;
-                    }
+                    $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
                 }
             }
 

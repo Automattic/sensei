@@ -898,6 +898,7 @@ class WooThemes_Sensei_Utils {
 	}
 
 	public static function sensei_get_quiz_total( $quiz_id = 0 ) {
+		global $woothemes_sensei;
 
 		$quiz_total = 0;
 
@@ -905,10 +906,7 @@ class WooThemes_Sensei_Utils {
 			$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 			$question_grade = 0;
 			foreach( $questions as $question ) {
-				$question_grade = get_post_meta( $question->ID, '_question_grade', true );
-				if( ! $question_grade || $question_grade == '' ) {
-					$question_grade = 1;
-				}
+				$question_grade = $woothemes_sensei->question->get_question_grade( $question->ID );
 				$quiz_total += $question_grade;
 			}
 		}
