@@ -195,7 +195,6 @@ class Sensei_Teacher {
             'read_private_sensei_messages' => true,
 
             'edit_comment' => true,
-            'edit_posts' => true,
 
             // Group post type Todo: find out from Hugh
 
@@ -1432,7 +1431,7 @@ class Sensei_Teacher {
 
         $user = wp_get_current_user();
 
-        if ( in_array( 'teacher', (array) $user->roles ) ) {
+        if ( in_array( 'teacher', (array) $user->roles ) && !current_user_can('delete_posts')) {
 
             remove_menu_page('edit.php');
 
