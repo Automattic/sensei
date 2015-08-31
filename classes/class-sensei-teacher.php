@@ -1431,7 +1431,7 @@ class Sensei_Teacher {
 
         $user = wp_get_current_user();
 
-        if ( in_array( 'teacher', (array) $user->roles ) && !current_user_can('delete_posts')) {
+        if ( in_array( 'teacher', (array) $user->roles ) && !current_user_can('delete_posts') && apply_filters('sensei_restrict_posts_page', true )) {
 
             remove_menu_page('edit.php');
 
