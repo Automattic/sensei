@@ -17,7 +17,7 @@ To make things easier we've created these guidelines:
 - If you have the chops please include Unit Tests along with your Pull Request.
 
 ##Unit Tests
-Unit tests can be run locally. Please see our [ test instructions ](https://github.com/woothemes/sensei/tree/master/tests) to run the unit tests.
+Unit tests can be run locally. Please see our [ test instructions ](https://github.com/woothemes/sensei/tree/master/tests#readme) to run the unit tests.
 
 ##Development Blog
 Please follow further development updates at [develop.woothemes.com/sensei]( http://develop.woothemes.com/sensei )
