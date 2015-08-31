@@ -94,6 +94,10 @@ class Sensei_Teacher {
         // update lesson owner to course teacher when saved
         add_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
 
+        // If a Teacher logs in, redirect to /wp-admin/
+        add_filter( 'wp_login', array( $this, 'teacher_login_redirect') , 10, 2 );
+
+
     } // end __constructor()
 
     /**
@@ -1404,5 +1408,34 @@ class Sensei_Teacher {
         return $wp_query;
 
     } // end limit_teacher_edit_screen_post_types()
+
+
+    /**
+     * Sensei_Teacher::teacher_login_redirect
+     *
+     * Redirect teachers to /wp-admin/ after login
+     *
+     * @since 1.8.7
+     * @access public
+     * @param string $user_login
+     * @param object $user
+     * @return void
+     */
+
+    public function teacher_login_redirect( $user_login, $user  ) {
+
+        if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+
+            if (user_can($user, 'edit_courses')) {
+
+                wp_redirect( admin_url(), 303 );
+
+                exit;
+
+            }
+        }
+
+    } // end teacher_login_redirect()
+
 
 } // End Class
