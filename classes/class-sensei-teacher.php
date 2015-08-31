@@ -1424,17 +1424,25 @@ class Sensei_Teacher {
 
     public function teacher_login_redirect( $user_login, $user  ) {
 
+        var_dump($_POST['redirect']);
+
         if ( isset( $user->roles ) && is_array( $user->roles ) ) {
 
             if (user_can($user, 'edit_courses')) {
 
-                wp_redirect( admin_url(), 303 );
+                if (isset($_POST['redirect_to'])) {
 
-                exit;
+                    wp_redirect($_POST['redirect_to'], 303); exit;
 
+                } else {
+
+                    wp_redirect(admin_url(), 303);
+
+                    exit;
+
+                }
             }
         }
-
     } // end teacher_login_redirect()
 
 
