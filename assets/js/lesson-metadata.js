@@ -1438,10 +1438,4 @@ jQuery(document).ready( function($) {
 		} // End If Statement
 	});
 
-	/***************************************************************************************************
-	 * 6 - Single Quiz Edit Screen.
-	 ***************************************************************************************************/
-
-	if( jQuery( '.post-type-question #post-body-content').exists() ) { jQuery( '.post-type-question #post-body-content').remove(); }
-
 });
