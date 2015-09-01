@@ -251,7 +251,7 @@ class WooThemes_Sensei_Frontend {
 
 		// Get default slug-name.php
 		if ( ! $template && $name && file_exists( $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php" ) )
-			$template = $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php";
+			$template = $woothemes_sensei->plugin_path() . "templates/{$slug}-{$name}.php";
 
 		// If template file doesn't exist, look in yourtheme/slug.php and yourtheme/sensei/slug.php
 		if ( !$template )
@@ -301,7 +301,7 @@ class WooThemes_Sensei_Frontend {
 		global $woothemes_sensei;
 
 		if ( ! $template_path ) $template_path = $woothemes_sensei->template_url;
-		if ( ! $default_path ) $default_path = $woothemes_sensei->plugin_path() . '/templates/';
+		if ( ! $default_path ) $default_path = $woothemes_sensei->plugin_path() . 'templates/';
 
 		// Look within passed path within the theme - this is priority
 		$template = locate_template(

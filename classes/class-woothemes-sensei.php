@@ -594,7 +594,7 @@ class WooThemes_Sensei {
 
 		if ( $file ) {
 			$template = locate_template( $find );
-			if ( ! $template ) $template = $this->plugin_path() . '/templates/' . $file;
+			if ( ! $template ) $template = $this->plugin_path() . 'templates/' . $file;
 		} // End If Statement
 
 		return $template;
@@ -605,11 +605,22 @@ class WooThemes_Sensei {
 	 * Determine the relative path to the plugin's directory.
 	 * @access public
 	 * @since  1.0.0
-	 * @return void
+	 * @return string $sensei_plugin_path
 	 */
 	public function plugin_path () {
-		if ( $this->plugin_path ) return $this->plugin_path;
-		return $this->plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
+
+		if ( $this->plugin_path ) {
+
+            $sensei_plugin_path =  $this->plugin_path;
+
+        }else{
+
+            $sensei_plugin_path = plugin_dir_path( __FILE__ );
+
+        }
+
+		return $sensei_plugin_path;
+
 	} // End plugin_path()
 
 

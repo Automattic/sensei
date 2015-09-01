@@ -543,7 +543,7 @@ class Sensei_Core_Modules
         // Load the template file
         if ($file) {
             $template = locate_template($find);
-            if (!$template) $template = $woothemes_sensei->plugin_path() . '/templates/' . $file;
+            if (!$template) $template = $woothemes_sensei->plugin_path() . 'templates/' . $file;
         } // End If Statement
 
         return $template;
