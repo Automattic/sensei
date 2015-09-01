@@ -1455,7 +1455,7 @@ class Sensei_Teacher {
      * Sensei_Teacher::restrict_comment_moderation()
      *
      * Restrict commendation moderation for teachers
-     * so they can only edit comments made to posts they own.
+     * so they can only moderate comments made to posts they own.
      *
      * @since 1.8.7
      * @access public
