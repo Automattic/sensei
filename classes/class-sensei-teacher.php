@@ -98,6 +98,10 @@ class Sensei_Teacher {
         add_filter( 'wp_login', array( $this, 'teacher_login_redirect') , 10, 2 );
 
 
+        add_action( 'admin_menu', array( $this, 'restrict_posts_menu_page'), 10);
+        add_filter('pre_get_comments',  array ($this, 'restrict_comment_moderation'), 10, 1);
+
+
     } // end __constructor()
 
     /**
@@ -193,6 +197,8 @@ class Sensei_Teacher {
             'edit_published_sensei_messages'  => true,
             'edit_private_sensei_messages' => true,
             'read_private_sensei_messages' => true,
+
+            'edit_comment' => true,
 
             // Group post type Todo: find out from Hugh
 
@@ -1443,5 +1449,80 @@ class Sensei_Teacher {
 
     } // end teacher_login_redirect()
 
+
+
+    /**
+     * Sensei_Teacher::restrict_posts_menu_page()
+     *
+     * Remove the Posts menu page for teachers and restrict access to it.
+     * We have to do this because we give teachers the 'edit_posts' cap
+     * so they can 'moderate_comments' as well.
+     *
+     * @since 1.8.7
+     * @access public
+     * @parameters void
+     * @return void
+     */
+
+    public function restrict_posts_menu_page() {
+
+        global $pagenow, $typenow;
+
+        $user = wp_get_current_user();
+
+        /**
+         * Filter the option to hide the Posts menu page.
+         *
+         * @since 1.8.7
+         *
+         * @param bool $restrict default true
+         */
+
+        $restrict = apply_filters('sensei_restrict_posts_menu_page', true );
+
+        if ( in_array( 'teacher', (array) $user->roles ) && !current_user_can('delete_posts') && $restrict) {
+
+            remove_menu_page('edit.php');
+
+            if ($pagenow == "edit.php" || $pagenow == "post-new.php") {
+
+                if ($typenow == '' || $typenow == 'post' || $typenow == 'page') {
+
+                    wp_die('You do not have sufficient permissions to access this page.');
+
+                }
+
+            }
+
+        }
+
+    } // end restrict_posts_menu_page()
+
+    /**
+     * Sensei_Teacher::restrict_comment_moderation()
+     *
+     * Restrict commendation moderation for teachers
+     * so they can only moderate comments made to posts they own.
+     *
+     * @since 1.8.7
+     * @access public
+     * @parameters obj $clauses
+     * @return obj $clauses
+     */
+
+    public function restrict_comment_moderation($clauses) {
+
+        global $pagenow;
+
+        $user = wp_get_current_user();
+
+        if( in_array( 'teacher', (array) $user->roles ) && $pagenow == "edit-comments.php") {
+
+            $clauses->query_vars['post_author'] = $user->ID;
+        }
+
+        return $clauses;
+
+    }   // end restrict_comment_moderation()
 
 } // End Class
