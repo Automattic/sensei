@@ -1750,10 +1750,32 @@ class WooThemes_Sensei_Frontend {
 
 				$items = $order->get_items();
 				foreach( $items as $item ) {
-					if( $item['product_id'] == $course_product_id ) {
-						WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
-						return;
-					}
+                    $product = wc_get_product( $item['product_id'] );
+
+                    // handle product bundles
+                    if( $product->is_type('bundle') ){
+
+                        $bundled_product = new WC_Product_Bundle( $product->id );
+                        $bundled_items = $bundled_product->get_bundled_items();
+
+                        foreach( $bundled_items as $item ){
+
+                            if( $item->product_id == $course_product_id ) {
+                                WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+                                return;
+                            }
+
+                        }
+
+                    } else {
+
+                    // handle regular products
+                        if( $item['product_id'] == $course_product_id ) {
+                            WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+                            return;
+                        }
+
+                    }
 				}
 			}
 
