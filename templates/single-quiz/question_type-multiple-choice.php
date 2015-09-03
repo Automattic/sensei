@@ -85,32 +85,47 @@ foreach( $question_wrong_answers as $answer ) {
 
 $answers_sorted = array();
 $random_order = get_post_meta( $question_id, '_random_order', true );
-if( ! $random_order || ( $random_order && $random_order == 'yes' ) ) {
-	$answers_sorted = $question_answers;
+if(  $random_order && $random_order == 'yes' ) {
+
+    $answers_sorted = $question_answers;
 	shuffle( $answers_sorted );
+
 } else {
+
 	$answer_order = array();
 	$answer_order_string = get_post_meta( $question_id, '_answer_order', true );
 	if( $answer_order_string ) {
-		$answer_order = array_filter( explode( ',', $answer_order_string ) );
+
+        $answer_order = array_filter( explode( ',', $answer_order_string ) );
 		if( count( $answer_order ) > 0 ) {
-			foreach( $answer_order as $answer_id ) {
+
+            foreach( $answer_order as $answer_id ) {
+
 				if( isset( $question_answers[ $answer_id ] ) ) {
+
 					$answers_sorted[ $answer_id ] = $question_answers[ $answer_id ];
 					unset( $question_answers[ $answer_id ] );
+
 				}
+
 			}
 
 			if( count( $question_answers ) > 0 ) {
 				foreach( $question_answers as $id => $answer ) {
-					$answers_sorted[ $id ] = $answer;
+
+                    $answers_sorted[ $id ] = $answer;
+
 				}
 			}
-		}
-	} else {
-		$answers_sorted = $question_answers;
-		shuffle( $answers_sorted );
-	}
+
+		}else{
+
+            $answers_sorted = $question_answers;
+
+        }
+
+	} // end if $answer_order_string
+
 }
 
 $question_grade = get_post_meta( $question_id, '_question_grade', true );
