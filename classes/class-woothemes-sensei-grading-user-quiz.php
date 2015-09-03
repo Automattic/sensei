@@ -214,6 +214,13 @@ class WooThemes_Sensei_Grading_User_Quiz {
 						<?php echo apply_filters( 'the_content', $question->post_content );?>
 						<p class="user-answer"><?php
 							foreach ( $user_answer_content as $_user_answer ) {
+
+                                if( 'multi-line' == Sensei()->question->get_question_type( $question->ID ) ){
+
+                                    $_user_answer = wpautop( $_user_answer );
+
+                                }
+
 								echo apply_filters( 'sensei_answer_text', $_user_answer ) . "<br>";
 							}
 						?></p>
@@ -221,7 +228,9 @@ class WooThemes_Sensei_Grading_User_Quiz {
 							<h5><?php _e( 'Correct answer', 'woothemes-sensei' ) ?></h5>
 							<span class="correct-answer"><?php
 								foreach ( $right_answer as $_right_answer ) {
+
 									echo apply_filters( 'sensei_answer_text', $_right_answer ) . "<br>";
+
 								}
 							?></span>
 						</div>
