@@ -419,6 +419,13 @@ class WooThemes_Sensei_Frontend {
 
 				case '#senseimymessages':
 					$item->url = $my_messages_url;
+                    // if no archive link exist for sensei_message
+                    // set it back to the place holder
+                    if( ! $item->url ){
+
+                        $item->url = '#senseimymessages';
+
+                    }
 					break;
 
 				case '#senseilearnerprofile':
@@ -483,16 +490,23 @@ class WooThemes_Sensei_Frontend {
 
 		foreach( $sorted_menu_items as $k=>$item ) {
 
-			// Remove the My Messages link for logged out users or if Private Messages are disabled.
-			if( get_post_type_archive_link( 'sensei_message' ) == $item->url ) {
+			// Remove the My Messages link for logged out users or if Private Messages are disabled
+			if( ! get_post_type_archive_link( 'sensei_message' )
+                && '#senseimymessages' == $item->url ) {
+
 				if ( !is_user_logged_in() || ( isset( $woothemes_sensei->settings->settings['messages_disable'] ) && $woothemes_sensei->settings->settings['messages_disable'] ) ) {
+
 					unset( $sorted_menu_items[$k] );
+
 				}
 			}
 			// Remove the My Profile link for logged out users.
 			if( $woothemes_sensei->learner_profiles->get_permalink() == $item->url ) {
+
 				if ( !is_user_logged_in() || ! ( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) ) {
+
 					unset( $sorted_menu_items[$k] );
+
 				}
 			}
 		}
