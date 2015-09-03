@@ -453,7 +453,7 @@ class WooThemes_Sensei_Messages {
 
 		if( is_single() && is_singular( $this->post_type ) && in_the_loop() ) {
 			if( ! is_user_logged_in() || ! $this->view_message( $post->ID ) ) {
-				$content = __( 'Please log in to to view your messages.', 'woothemes-sensei' );
+				$content = __( 'Please log in to view your messages.', 'woothemes-sensei' );
 			}
 		}
 
