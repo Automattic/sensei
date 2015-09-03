@@ -820,6 +820,21 @@ class WooThemes_Sensei {
 
 		} // End Switch Statement
 
+        /**
+         * filter the permissions message shown on sensei post types.
+         *
+         * @since 1.8.7
+         *
+         * @param array $permissions_message{
+         *
+         *   @type string $title
+         *   @type string $message
+         *
+         * }
+         * @param string $post_id
+         */
+        $this->permissions_message = apply_filters( 'sensei_permissions_message', $this->permissions_message, $post->ID );
+
 		if( sensei_all_access() || WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
 			$user_allowed = true;
 		}
