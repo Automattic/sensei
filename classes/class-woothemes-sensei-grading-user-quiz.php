@@ -92,18 +92,9 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$type = false;
 			$type_name = '';
 
-			$types = wp_get_post_terms( $question_id, 'question-type' );
-			foreach( $types as $t ) {
-				$type = $t->name;
-				break;
-			}
-
-			if( ! $type ) {
-				$type = 'multiple-choice';
-			}
+			$type = Sensei()->question->get_question_type( $question_id );
 
 			$question_answer_notes = $woothemes_sensei->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
-
 
 			$question_grade_total = get_post_meta( $question_id, '_question_grade', true );
 			if( ! $question_grade_total || 0 == intval( $question_grade_total ) ) {

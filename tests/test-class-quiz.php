@@ -599,15 +599,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $question_id = $random_question_id;
         $answer = $users_saved_answers[ $question_id ];
         $old_data_user_id = wp_create_user( 'olddata', 'olddata', 'olddata@test.com' );
-        $question_types = wp_get_post_terms( $question_id , 'question-type' );
-
-        foreach( $question_types as $type ) {
-            $question_type = $type->slug;
-        }
-
-        if( ! $question_type ) {
-            $question_type = 'multiple-choice';
-        }
+        $question_type = Sensei()->question->get_question_type( $question_id );
 
         // Sanitise answer
         if( 0 == get_magic_quotes_gpc() ) {
