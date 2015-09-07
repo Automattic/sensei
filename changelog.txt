@@ -2,6 +2,7 @@
 
 2015.09.07 - version 1.8.7
 * Fixed: Course created email sent twice
+* Fixed: WP_Widget constructors updated as within WordPress Core
 * Fixed: Menu items with blank URL disappeared when the private messages functionality were disabled in settings.
 * Fixed: Answers disappear after adding a question
 * Fixed: Multiple Choice random order was applied by default even if the user didn't select this.
