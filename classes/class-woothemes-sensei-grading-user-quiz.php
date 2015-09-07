@@ -217,7 +217,7 @@ class WooThemes_Sensei_Grading_User_Quiz {
 
                                 if( 'multi-line' == Sensei()->question->get_question_type( $question->ID ) ){
 
-                                    $_user_answer = wpautop( $_user_answer );
+                                    $_user_answer = htmlspecialchars_decode( nl2br( esc_html($_user_answer) ) );
 
                                 }
 
