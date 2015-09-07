@@ -254,7 +254,7 @@ class WooThemes_Sensei_Frontend {
 
 		// Get default slug-name.php
 		if ( ! $template && $name && file_exists( $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php" ) )
-			$template = $woothemes_sensei->plugin_path() . "/templates/{$slug}-{$name}.php";
+			$template = $woothemes_sensei->plugin_path() . "templates/{$slug}-{$name}.php";
 
 		// If template file doesn't exist, look in yourtheme/slug.php and yourtheme/sensei/slug.php
 		if ( !$template )
@@ -304,7 +304,7 @@ class WooThemes_Sensei_Frontend {
 		global $woothemes_sensei;
 
 		if ( ! $template_path ) $template_path = $woothemes_sensei->template_url;
-		if ( ! $default_path ) $default_path = $woothemes_sensei->plugin_path() . '/templates/';
+		if ( ! $default_path ) $default_path = $woothemes_sensei->plugin_path() . 'templates/';
 
 		// Look within passed path within the theme - this is priority
 		$template = locate_template(
@@ -422,6 +422,13 @@ class WooThemes_Sensei_Frontend {
 
 				case '#senseimymessages':
 					$item->url = $my_messages_url;
+                    // if no archive link exist for sensei_message
+                    // set it back to the place holder
+                    if( ! $item->url ){
+
+                        $item->url = '#senseimymessages';
+
+                    }
 					break;
 
 				case '#senseilearnerprofile':
@@ -486,16 +493,23 @@ class WooThemes_Sensei_Frontend {
 
 		foreach( $sorted_menu_items as $k=>$item ) {
 
-			// Remove the My Messages link for logged out users or if Private Messages are disabled.
-			if( get_post_type_archive_link( 'sensei_message' ) == $item->url ) {
+			// Remove the My Messages link for logged out users or if Private Messages are disabled
+			if( ! get_post_type_archive_link( 'sensei_message' )
+                && '#senseimymessages' == $item->url ) {
+
 				if ( !is_user_logged_in() || ( isset( $woothemes_sensei->settings->settings['messages_disable'] ) && $woothemes_sensei->settings->settings['messages_disable'] ) ) {
+
 					unset( $sorted_menu_items[$k] );
+
 				}
 			}
 			// Remove the My Profile link for logged out users.
 			if( $woothemes_sensei->learner_profiles->get_permalink() == $item->url ) {
+
 				if ( !is_user_logged_in() || ! ( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) ) {
+
 					unset( $sorted_menu_items[$k] );
+
 				}
 			}
 		}
@@ -1767,10 +1781,32 @@ class WooThemes_Sensei_Frontend {
 
 				$items = $order->get_items();
 				foreach( $items as $item ) {
-					if( $item['product_id']  == $course_product_id || $item['variation_id'] == $course_product_id ) {
-						WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
-						return;
-					}
+                    $product = wc_get_product( $item['product_id'] );
+
+                    // handle product bundles
+                    if( $product->is_type('bundle') ){
+
+                        $bundled_product = new WC_Product_Bundle( $product->id );
+                        $bundled_items = $bundled_product->get_bundled_items();
+
+                        foreach( $bundled_items as $item ){
+
+                            if( $item->product_id == $course_product_id ) {
+                                WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+                                return;
+                            }
+
+                        }
+
+                    } else {
+
+                    // handle regular products
+                        if( $item['product_id'] == $course_product_id ) {
+                            WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+                            return;
+                        }
+
+                    }
 				}
 			}
 

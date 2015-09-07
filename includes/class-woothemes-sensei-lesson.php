@@ -75,6 +75,9 @@ class WooThemes_Sensei_Lesson {
 	public function __construct () {
 		// Setup meta fields for this post type
 		$this->meta_fields = array( 'lesson_prerequisite', 'lesson_course', 'lesson_preview', 'lesson_length', 'lesson_complexity', 'lesson_video_embed' );
+
+        $this->question_order = '';
+
 		// Admin actions
 		if ( is_admin() ) {
 
@@ -776,11 +779,7 @@ class WooThemes_Sensei_Lesson {
 
 				$question_id = $question->ID;
 
-				$question_type = '';
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
-				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-					$question_type = $question_types[0];
-				} // End If Statement
+				$question_type = Sensei()->question->get_question_type( $question_id );
 
 				$multiple_data = array();
 				$question_increment = 1;
@@ -1257,26 +1256,21 @@ class WooThemes_Sensei_Lesson {
 	}
 
 	public function quiz_panel_add_existing_question( $question_id = 0, $row = 1 ) {
-		global $woothemes_sensei;
 
 		$html = '';
 
-		if( ! $question_id ) return;
+		if( ! $question_id ) {
+
+            return;
+
+        }
 
 		$existing_class = '';
-		if( $row % 2 ) { $existing_class = 'alternate'; }
+		if( $row % 2 ) {
+            $existing_class = 'alternate';
+        }
 
-		$all_question_types = $woothemes_sensei->post_types->question->question_types();
-		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
-		$question_type = '';
-		if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-			$question_type = $question_types[0];
-			$question_type = $all_question_types[ $question_type ];
-		}
-
-		if( ! $question_type ) {
-			$question_type = $all_question_types['multiple-choice'];
-		}
+		$question_type = Sensei()->question->get_question_type( $question_id );
 
 		$question_cat_list = strip_tags( get_the_term_list( $question_id, 'question-category', '', ', ', '' ) );
 
@@ -1288,6 +1282,7 @@ class WooThemes_Sensei_Lesson {
 				  </tr>';
 
 		return $html;
+
 	}
 
 	public function quiz_panel_filter_existing_questions() {
@@ -1923,16 +1918,7 @@ class WooThemes_Sensei_Lesson {
 				$current_user = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
 				$question_id = $this->lesson_save_question( $question_data );
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
-				$question_counter = 0;
-				$question_type = '';
-				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-					$question_type = $question_types[0];
-				} // End If Statement
-
-				if( ! $question_type ) {
-					$question_type = 'multiple-choice';
-				}
+				$question_type = Sensei()->question->get_question_type( $question_id );
 
 				$question_count = intval( $question_data['question_count'] );
 				++$question_count;
@@ -2088,14 +2074,7 @@ class WooThemes_Sensei_Lesson {
 			    	}
 
 			    	add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
-
-					$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
-					$question_type = '';
-					if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-						$question_type = $question_types[0];
-					} else {
-						$question_type = 'multiple-choice';
-					}
+					$question_type = Sensei()->question->get_question_type( $question_id );
 
 					$return .= $this->quiz_panel_question( $question_type, $question_count, $question_id );
 				}

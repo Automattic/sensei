@@ -19,6 +19,7 @@ $quiz_passmark = $woothemes_sensei->quiz->data->quiz_passmark;
 $user_quiz_grade = $woothemes_sensei->quiz->data->user_quiz_grade;
 $lesson_complete = $woothemes_sensei->quiz->data->user_lesson_complete;
 $reset_quiz_allowed = $woothemes_sensei->quiz->data->reset_quiz_allowed;
+$quiz_grade_type = $woothemes_sensei->quiz->data->quiz_grade_type;
 
 // Question Meta
 $question_id = $question_item->ID;
@@ -71,15 +72,21 @@ $question_text = get_the_title( $question_item );
 $question_description = apply_filters( 'the_content', $question_item->post_content );
 
 $gapfill_array = explode( '||', $question_right_answer );
-if ( isset( $gapfill_array[0] ) ) { $gapfill_pre = $gapfill_array[0]; } else { $gapfill_pre = ''; }
-if ( isset( $gapfill_array[1] ) ) { $gapfill_gap = $gapfill_array[1]; } else { $gapfill_gap = ''; }
-if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { $gapfill_post = ''; }
+$gapfill_pre  = isset( $gapfill_array[0] ) ? $gapfill_array[0] : '';
+$gapfill_gap  = isset( $gapfill_array[1] ) ? $gapfill_array[1] : '';
+$gapfill_post = isset( $gapfill_array[2] ) ? $gapfill_array[2] : '';
 
 $answer_message = false;
 $answer_notes = false;
-if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $reset_quiz_allowed && $user_quiz_grade != '' ) ) {
+
+if( ( $lesson_complete && $user_quiz_grade != '' )
+    || ( $lesson_complete && ! $reset_quiz_allowed && 'auto' == $quiz_grade_type )
+    || ( 'auto' == $quiz_grade_type && ! $reset_quiz_allowed && $user_quiz_grade != '' ) ) {
+
 	$user_correct = false;
 	$answer_message = __( 'Incorrect', 'woothemes-sensei' );
+    $answer_message .= __( ', the correct answer is: ', 'woothemes-sensei' );
+    $answer_message .= $gapfill_gap;
 	$answer_message_class = 'user_wrong';
 	// For zero grade mark as 'correct' but add no classes
 	if ( 0 == $question_grade ) {
@@ -91,11 +98,15 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 		$user_correct = true;
 		$answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
 		$answer_message_class = 'user_right';
+
 	}
 
     $answer_notes = $woothemes_sensei->quiz->get_user_question_feedback( $lesson_id, $question_id, $current_user->ID );
+
 	if( $answer_notes ) {
+
 		$answer_message_class .= ' has_notes';
+
 	}
 }
 

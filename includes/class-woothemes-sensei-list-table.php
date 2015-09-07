@@ -176,7 +176,8 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 			$sortable[$id] = $data;
 		}
 
-		$this->_column_headers = array( $columns, $hidden, $sortable );
+        $primary = $this->get_primary_column_name();
+        $this->_column_headers = array( $columns, $hidden, $sortable, $primary );
 
 		return $this->_column_headers;
 	}

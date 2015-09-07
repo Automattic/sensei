@@ -1,5 +1,25 @@
 *** Sensei Changelog ***
 
+2015.09.07 - version 1.8.7
+* Fixed: Course created email sent twice
+* Fixed: Error notices on the lesson edit screen
+* Fixed: WP_Widget constructors updated as within WordPress Core
+* Fixed: Menu items with blank URL disappeared when the private messages functionality were disabled in settings.
+* Fixed: Answers disappear after adding a question
+* Fixed: Multiple Choice random order was applied by default even if the user didn't select this.
+* Fixed: TextArea question answers not displaying correctly in grading.
+* Fixed: Question type contains author name
+* Fixed: "Other Lessons" title always shows, even with no lessons under it.
+* Fixed: auto-grading not working for gap fill
+* Fixed: Double forward slash when loading templates
+* Fixed: Invalid prompt message when trying to leave the Add Question page
+* Fixed: Installing the sensei pages, the dropdowns for both pages are still empty on the first load.
+* Fixed: allow for course products to be part WooCommerce product bundles
+* Fixed: removed WordPress 4.3 table list notices
+* Tweak: Give the teacher the right access to Lesson comments
+* Tweak: Users with teacher role will now be sent to admin after login.
+* Tweak: Show admin bar to users who can 'edit_courses'
+
 2015.07.15 - version 1.8.6
 * Fix - Failure to load the JS in admin page because there was an extra dot in the file name.
 * Fix - a few Typos in comments and strings

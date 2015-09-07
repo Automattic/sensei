@@ -105,7 +105,7 @@ if ( is_user_logged_in() ) {
 
 		$lessons = get_posts( $args );
 
-		if(  0 < count( $displayed_lessons ) ) {
+		if(  0 < count( $lessons ) ) {
 			$html .= '<h3>' . __( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
 		}
 
