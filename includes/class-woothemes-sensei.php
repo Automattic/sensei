@@ -686,8 +686,11 @@ class WooThemes_Sensei {
         } // Load the template file
 
         if ( $file ) {
+            
             $template = locate_template( $find );
-            if ( ! $template ) $template = $this->plugin_path() . '/templates/' . $file;
+
+            if ( ! $template ) $template = $this->plugin_path() . 'templates/' . $file;
+
         } // End If Statement
 
         return $template;
@@ -698,11 +701,22 @@ class WooThemes_Sensei {
      * Determine the relative path to the plugin's directory.
      * @access public
      * @since  1.0.0
-     * @return void
+     * @return string $sensei_plugin_path
      */
     public function plugin_path () {
-        if ( $this->plugin_path ) return $this->plugin_path;
-        return $this->plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
+
+        if ( $this->plugin_path ) {
+
+            $sensei_plugin_path =  $this->plugin_path;
+
+        }else{
+
+            $sensei_plugin_path = plugin_dir_path( __FILE__ );
+
+        }
+
+        return $sensei_plugin_path;
+
     } // End plugin_path()
 
 
@@ -901,6 +915,22 @@ class WooThemes_Sensei {
                 break;
 
         } // End Switch Statement
+
+        /**
+         * filter the permissions message shown on sensei post types.
+         *
+         * @since 1.8.7
+         *
+         * @param array $permissions_message{
+         *
+         *   @type string $title
+         *   @type string $message
+         *
+         * }
+         * @param string $post_id
+         */
+        $this->permissions_message = apply_filters( 'sensei_permissions_message', $this->permissions_message, $post->ID );
+
 
         if( sensei_all_access() || WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
             $user_allowed = true;
