@@ -130,11 +130,8 @@ class WooThemes_Sensei_Question {
 			$metabox_title = __( 'Question', 'woothemes-sensei' );
 
 			if( isset( $post->ID ) ) {
-				$question_type = '';
-				$question_types = wp_get_post_terms( $post->ID, 'question-type', array( 'fields' => 'slugs' ) );
-				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-					$question_type = $question_types[0];
-				} // End If Statement
+
+                $question_type = Sensei()->question->get_question_type( $post->ID );
 
 				if( $question_type ) {
 					$type = $this->question_types[ $question_type ];
@@ -166,15 +163,7 @@ class WooThemes_Sensei_Question {
 		} else {
 			$question_id = $post->ID;
 
-			$question_type = '';
-			$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'slugs' ) );
-			if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-				$question_type = $question_types[0];
-			}
-
-			if( ! $question_type ) {
-				$question_type = 'multiple-choice';
-			}
+			$question_type =  Sensei()->question->get_question_type( $post->ID );
 
 			$html .= '<div id="add-question-metadata"><table class="widefat">';
 				$html .= $woothemes_sensei->post_types->lesson->quiz_panel_question( $question_type, 0, $question_id, 'question' );
