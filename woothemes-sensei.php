@@ -79,6 +79,11 @@ Domain path: /lang/
         // create the teacher role on activation and ensure that it has all the needed capabilities
         Sensei()->teacher->create_role();
 
+        //Setup all the role capabilities needed
+        Sensei()->updates->add_sensei_caps();
+        Sensei()->updates->add_editor_caps();
+        Sensei()->updates->assign_role_caps();
+
         //Load the Welcome Screen
         add_action( 'activated_plugin' , array( 'Sensei_Welcome','redirect' ) );
 
