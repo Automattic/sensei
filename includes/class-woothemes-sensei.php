@@ -287,11 +287,6 @@ class WooThemes_Sensei {
         // Filter comment counts
         add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
 
-        // Run Upgrades once the WP functions have loaded
-        if ( is_admin() ) {
-            add_action( 'wp_loaded', array( $this, 'run_updates' ), 10 );
-        } // End If Statement
-
         add_action( 'body_class', array( $this, 'body_class' ) );
 
         // Check for and activate JetPack LaTeX support
