@@ -284,11 +284,6 @@ class WooThemes_Sensei {
         // Filter comment counts
         add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
 
-        // Run Upgrades once the WP functions have loaded
-        if ( is_admin() ) {
-            add_action( 'wp_loaded', array( $this, 'run_updates' ), 10 );
-        } // End If Statement
-
         add_action( 'body_class', array( $this, 'body_class' ) );
 
         // Check for and activate JetPack LaTeX support
@@ -568,14 +563,152 @@ class WooThemes_Sensei {
 
 
     /**
+     * template_loader function.
+     *
+     * @access public
+     * @param mixed $template
+     * @return void
+     */
+    public function template_loader ( $template = '' ) {
+        // REFACTOR
+        global $post, $wp_query, $email_template;
+
+        $find = array( 'woothemes-sensei.php' );
+        $file = '';
+
+        if ( isset( $email_template ) && $email_template ) {
+
+            $file 	= 'emails/' . $email_template;
+            $find[] = $file;
+            $find[] = $this->template_url . $file;
+
+        } elseif ( is_single() && get_post_type() == 'course' ) {
+
+            if ( $this->check_user_permissions( 'course-single' ) ) {
+                $file 	= 'single-course.php';
+                $find[] = $file;
+                $find[] = $this->template_url . $file;
+            } else {
+                // No Permissions Page
+                $file 	= 'no-permissions.php';
+                $find[] = $file;
+                $find[] = $this->template_url . $file;
+            } // End If Statement
+
+        } elseif ( is_single() && get_post_type() == 'lesson' ) {
+
+            if ( $this->check_user_permissions( 'lesson-single' ) ) {
+                $file 	= 'single-lesson.php';
+                $find[] = $file;
+                $find[] = $this->template_url . $file;
+            } else {
+                // No Permissions Page
+                $file 	= 'no-permissions.php';
+                $find[] = $file;
+                $find[] = $this->template_url . $file;
+            } // End If Statement
+
+        } elseif ( is_single() && get_post_type() == 'quiz' ) {
+
+            if ( $this->check_user_permissions( 'quiz-single' ) ) {
+                $file 	= 'single-quiz.php';
+                $find[] = $file;
+                $find[] = $this->template_url . $file;
+            } else {
+                // No Permissions Page
+                $file 	= 'no-permissions.php';
+                $find[] = $file;
+                $find[] = $this->template_url . $file;
+            } // End If Statement
+
+        } elseif ( is_single() && get_post_type() == 'sensei_message' ) {
+
+            $file 	= 'single-message.php';
+            $find[] = $file;
+            $find[] = $this->template_url . $file;
+
+        } elseif ( is_post_type_archive( 'course' ) || is_page( $this->get_page_id( 'courses' ) ) ) {
+
+            $file 	= 'archive-course.php';
+            $find[] = $file;
+            $find[] = $this->template_url . $file;
+
+        } elseif ( is_post_type_archive( 'sensei_message' ) ) {
+
+            $file 	= 'archive-message.php';
+            $find[] = $file;
+            $find[] = $this->template_url . $file;
+
+        } elseif( is_tax( 'course-category' ) ) {
+
+            $file 	= 'taxonomy-course-category.php';
+            $find[] = $file;
+            $find[] = $this->template_url . $file;
+
+        } elseif( is_tax( 'lesson-tag' ) ) {
+
+            $file 	= 'taxonomy-lesson-tag.php';
+            $find[] = $file;
+            $find[] = $this->template_url . $file;
+
+        } elseif ( is_post_type_archive( 'lesson' ) ) {
+
+            $file 	= 'archive-lesson.php';
+            $find[] = $file;
+            $find[] = $this->template_url . $file;
+
+        } elseif ( isset( $wp_query->query_vars['learner_profile'] ) ) {
+
+            // Override for sites with static home page
+            $wp_query->is_home = false;
+
+            $file 	= 'learner-profile.php';
+            $find[] = $file;
+            $find[] = $this->template_url . $file;
+
+        } elseif ( isset( $wp_query->query_vars['course_results'] ) ) {
+
+            // Override for sites with static home page
+            $wp_query->is_home = false;
+
+            $file 	= 'course-results.php';
+            $find[] = $file;
+            $find[] = $this->template_url . $file;
+
+        } // Load the template file
+
+        if ( $file ) {
+            
+            $template = locate_template( $find );
+
+            if ( ! $template ) $template = $this->plugin_path() . 'templates/' . $file;
+
+        } // End If Statement
+
+        return $template;
+    } // End template_loader()
+
+
+    /**
      * Determine the relative path to the plugin's directory.
      * @access public
      * @since  1.0.0
-     * @return void
+     * @return string $sensei_plugin_path
      */
     public function plugin_path () {
-        if ( $this->plugin_path ) return $this->plugin_path;
-        return $this->plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
+
+        if ( $this->plugin_path ) {
+
+            $sensei_plugin_path =  $this->plugin_path;
+
+        }else{
+
+            $sensei_plugin_path = plugin_dir_path( __FILE__ );
+
+        }
+
+        return $sensei_plugin_path;
+
     } // End plugin_path()
 
 
@@ -774,6 +907,22 @@ class WooThemes_Sensei {
                 break;
 
         } // End Switch Statement
+
+        /**
+         * filter the permissions message shown on sensei post types.
+         *
+         * @since 1.8.7
+         *
+         * @param array $permissions_message{
+         *
+         *   @type string $title
+         *   @type string $message
+         *
+         * }
+         * @param string $post_id
+         */
+        $this->permissions_message = apply_filters( 'sensei_permissions_message', $this->permissions_message, $post->ID );
+
 
         if( sensei_all_access() || WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
             $user_allowed = true;
@@ -1041,11 +1190,22 @@ class WooThemes_Sensei {
         $order_items = $order->get_items();
         $order_id = $order->id;
 
-        $messages = array();
+        //If object have items go through them all to find course
+        if ( 0 < sizeof( $order_items ) ) {
+
+        echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
 
         foreach ( $order_items as $item ) {
 
-            if ( $item['product_id'] > 0 ) {
+                $product_type = '';
+                if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
+                    // If item has variation_id then its from variation
+                    $item_id = $item['variation_id'];
+                    $product_type = 'variation';
+                } else {
+                    // If not its real product set its id to item_id
+                    $item_id = $item['product_id'];
+                } // End If Statement
 
                 $user_id = get_post_meta( $order_id, '_customer_user', true );
 
@@ -1058,7 +1218,7 @@ class WooThemes_Sensei {
                         'meta_query' => array(
                             array(
                                 'key' => '_course_woocommerce_product',
-                                'value' => $item['product_id']
+                                'value' => $item_id
                             )
                         ),
                         'orderby' => 'menu_order date',
@@ -1073,9 +1233,7 @@ class WooThemes_Sensei {
                             $title = $course->post_title;
                             $permalink = get_permalink( $course->ID );
 
-                            echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
                             echo '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
-
                         }
                     }
                 }

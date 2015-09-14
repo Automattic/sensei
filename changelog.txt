@@ -1,5 +1,33 @@
 *** Sensei Changelog ***
 
+2015.09.07 - version 1.8.7
+* Fixed: Course created email sent twice
+* Fixed: Error notices on the lesson edit screen
+* Fixed: WP_Widget constructors updated as within WordPress Core
+* Fixed: Menu items with blank URL disappeared when the private messages functionality were disabled in settings.
+* Fixed: Answers disappear after adding a question
+* Fixed: Multiple Choice random order was applied by default even if the user didn't select this.
+* Fixed: TextArea question answers not displaying correctly in grading.
+* Fixed: Question type contains author name
+* Fixed: "Other Lessons" title always shows, even with no lessons under it.
+* Fixed: auto-grading not working for gap fill
+* Fixed: Double forward slash when loading templates
+* Fixed: Invalid prompt message when trying to leave the Add Question page
+* Fixed: Installing the sensei pages, the dropdowns for both pages are still empty on the first load.
+* Fixed: allow for course products to be part WooCommerce product bundles
+* Fixed: removed WordPress 4.3 table list notices
+* Tweak: Give the teacher the right access to Lesson comments
+* Tweak: Users with teacher role will now be sent to admin after login.
+* Tweak: Show admin bar to users who can 'edit_courses'
+
+2015.07.15 - version 1.8.6
+* Fix - Failure to load the JS in admin page because there was an extra dot in the file name.
+* Fix - a few Typos in comments and strings
+* Fix - Remove special character and replace with \' instead
+* Fix - change site_transients to normal transients and decrease the time from 30 days to 10
+* Fix - Create a fallback for round with 3 parameters. Added a check to use to use only 2 parameter for php version below 5.3
+* Tweak - Output course order via php instead of relying on JS to re-order on the front-end.
+
 2015.06.18 - version 1.8.5
 * Fix - Save the lesson preview checkbox unchecked state as well. The bug was that unchecked boxes does not get passed via $_POST in certain cases.
 * Tweak - Allow the quiz results rounding to be filtered. So you can now have decimal points shown to the user instead of the rounded up amount.

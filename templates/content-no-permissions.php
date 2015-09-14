@@ -29,7 +29,7 @@ global $woothemes_sensei, $post;
 
             		    <section class="entry fix">
             		    	<div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
-            		    	<?php if ( 'full' == $woothemes_sensei->settings->settings[ 'course_single_content_display' ] ) { the_content(); } else { echo '<p class="course-excerpt">' . $post->post_excerpt . '</p>'; } ?>
+            		    	<?php if ( 'full' == $woothemes_sensei->settings->settings[ 'course_single_content_display' ] ) { the_content(); } else { echo '<p class="course-excerpt">' . sensei_get_excerpt( $post ) . '</p>'; } ?>
             		    </section>
 
 						<?php course_single_meta(); ?>

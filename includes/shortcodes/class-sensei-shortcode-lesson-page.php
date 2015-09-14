@@ -2,25 +2,25 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  *
- * Renders the [sensei_course_page] shortcode. Display a single course based on the ID parameter given
+ * Renders the [sensei_lesson_page] shortcode. Display a single lesson based on the ID parameter given.
  *
  * This class is loaded int WP by the shortcode loader class.
  *
- * @class Sensei_Shortcode_Course_Page
+ * @class Sensei_Shortcode_Lesson_Page
  * @since 1.9.0
  * @package Sensei
  * @category Shortcodes
  * @author 	WooThemes
  */
-class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
+class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
     /**
-     * @var array $course_page_query{
+     * @var array $lesson_page_query {
      *     @type WP_Post
      * }
-     * The courses query
+     * The lessons query
      */
-    protected $course_page_query;
+    protected $lesson_page_query;
 
     /**
      * Setup the shortcode object
@@ -33,29 +33,29 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
     public function __construct( $attributes, $content, $shortcode ){
 
         $this->id = isset( $attributes['id'] ) ? $attributes['id'] : '';
-        $this->setup_course_query();
+        $this->setup_lesson_query();
 
     }
 
     /**
-     * create the courses query .
+     * create the lessons query .
      *
      * @return mixed
      */
-    public function setup_course_query(){
+    public function setup_lesson_query(){
 
         if( empty( $this->id ) ){
             return;
         }
 
         $args = array(
-            'post_type' => 'course',
+            'post_type' => 'lesson',
             'posts_per_page' => 1,
             'post_status' => 'publish',
             'post__in' => array( $this->id ),
         );
 
-        $this->course_page_query  = new WP_Query( $args );
+        $this->lesson_page_query  = new WP_Query( $args );
 
     }
 
@@ -68,13 +68,13 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 
         if( empty(  $this->id  ) ){
 
-            return __( 'Please supply a course ID for this shortcode.', 'woothemes-sensei' );
+            return __( 'Please supply a lesson ID for this shortcode.', 'woothemes-sensei' );
 
         }
 
-        //set the wp_query to the current courses query
+        //set the wp_query to the current lessons query
         global $wp_query;
-        $wp_query = $this->course_page_query;
+        $wp_query = $this->lesson_page_query;
 
         if( have_posts() ){
 
@@ -87,7 +87,7 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
         }
 
         ob_start();
-        Sensei()->frontend->sensei_get_template('content-single-course.php');
+        Sensei()->frontend->sensei_get_template('content-single-lesson.php');
         $shortcode_output = ob_get_clean();
 
         // set back the global query

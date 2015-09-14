@@ -224,7 +224,7 @@ class WooThemes_Sensei_PostTypes {
 		    'has_archive' => false,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
-		    'supports' => array( 'title' )
+		    'supports' => array( '' )
 		);
 
         /**

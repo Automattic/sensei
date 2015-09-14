@@ -91,7 +91,7 @@ class WooThemes_Sensei_Course {
 
 	/**
 	 * Fires when a quiz has been graded to check if the Course status needs changing
-	 * 
+	 *
 	 * @param type $user_id
 	 * @param type $quiz_id
 	 */
@@ -104,14 +104,14 @@ class WooThemes_Sensei_Course {
 
 	/**
 	 * Fires when a lesson has changed to check if the Course status needs changing
-	 * 
+	 *
 	 * @param int $user_id
 	 * @param int $lesson_id
 	 */
 	public function update_status_after_lesson_change( $user_id, $lesson_id ) {
 		if ( intval( $user_id ) > 0 && intval( $lesson_id ) > 0 ) {
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			if ( intval( $course_id ) > 0 ) { 
+			if ( intval( $course_id ) > 0 ) {
 				// Updates the Course status and it's meta data
 				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
 			}
@@ -180,55 +180,87 @@ class WooThemes_Sensei_Course {
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
+
 			$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
 			$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
 				$prev_parent_id = 0;
 				foreach ( $posts_array as $post_item ) {
 
 					if ( 'product_variation' == $post_item->post_type ) {
+
 						$product_object = get_product( $post_item->ID );
 						$parent_id = wp_get_post_parent_id( $post_item->ID );
-						if( sensei_check_woocommerce_version( '2.1' ) ) {
+
+                        if( sensei_check_woocommerce_version( '2.1' ) ) {
 							$formatted_variation = wc_get_formatted_variation( $product_object->variation_data, true );
+
 						} else {
+                            // fall back to pre wc 2.1
 							$formatted_variation = woocommerce_get_formatted_variation( $product_object->variation_data, true );
+
 						}
-						$product_name = ucwords( $formatted_variation );
+
+                        $product_name = ucwords( $formatted_variation );
+                        if( empty( $product_name ) ){
+
+                            $product_name = __( 'Variation #', 'woothemes-sensei' ) . $product_object->variation_id;
+
+                        }
+
 					} else {
+
 						$parent_id = false;
 						$prev_parent_id = 0;
 						$product_name = $post_item->post_title;
+
 					}
 
 					// Show variations in groups
 					if( $parent_id && $parent_id != $prev_parent_id ) {
+
 						if( 0 != $prev_parent_id ) {
+
 							$html .= '</optgroup>';
+
 						}
 						$html .= '<optgroup label="' . get_the_title( $parent_id ) . '">';
 						$prev_parent_id = $parent_id;
+
 					} elseif( ! $parent_id && 0 == $prev_parent_id ) {
+
 						$html .= '</optgroup>';
+
 					}
 
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_woocommerce_product, false ) . '>' . esc_html( $product_name ) . '</option>' . "\n";
+
 				} // End For Loop
+
 			$html .= '</select>' . "\n";
 			if ( current_user_can( 'publish_product' )) {
+
 				$html .= '<p>' . "\n";
 					$html .= '<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Add a Product', 'woothemes-sensei' ) . '</a>' . "\n";
 				$html .= '</p>'."\n";
+
 			} // End If Statement
+
 		} else {
+
 			if ( current_user_can( 'publish_product' )) {
+
 				$html .= '<p>' . "\n";
 					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . '&nbsp;<a href="' . admin_url( 'post-new.php?post_type=product' ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . __( 'Please add some first', 'woothemes-sensei' ) . '</a>' . "\n";
 				$html .= '</p>'."\n";
+
 			} else {
-				$html .= '<p>' . "\n";
+
+                $html .= '<p>' . "\n";
 					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . "\n";
 				$html .= '</p>'."\n";
+
 			} // End If Statement
+
 		} // End If Statement
 
 		echo $html;
@@ -315,7 +347,7 @@ class WooThemes_Sensei_Course {
 
 		$html .= '<label class="screen-reader-text" for="course_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . '</label>';
 		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . $course_video_embed . '</textarea>';
-		$html .= '<p>' .  __( 'Paste the embed code for your YouTube or Vimeo videos in the box above.', 'woothemes-sensei' ) . '</p>';
+		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
 
@@ -497,6 +529,7 @@ class WooThemes_Sensei_Course {
 							} else {
 								$formatted_variation = woocommerce_get_formatted_variation( $product_object->variation_data, true );
 							}
+							$course_woocommerce_product_id = $product_object->parent->post->ID;
 							$product_name = $product_object->parent->post->post_title . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( $formatted_variation );
 						} else {
 							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
@@ -1234,7 +1267,7 @@ class WooThemes_Sensei_Course {
 
 		    		    $active_html .= '</p>';
 
-		    		    $active_html .= '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
+		    		    $active_html .= '<p class="course-excerpt">' . sensei_get_excerpt( $course_item ) . '</p>';
 
 		    		   	$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $lesson_count ), 0 ) );
 
@@ -1350,7 +1383,7 @@ class WooThemes_Sensei_Course {
 
 						$complete_html .= '</p>';
 
-						$complete_html .= '<p class="course-excerpt">' . apply_filters( 'get_the_excerpt', $course_item->post_excerpt ) . '</p>';
+						$complete_html .= '<p class="course-excerpt">' . sensei_get_excerpt( $course_item ) . '</p>';
 
                         $complete_html .= $this->get_progress_meter( 100 );
 
@@ -1773,7 +1806,7 @@ class WooThemes_Sensei_Course {
 
        update_post_meta( $course_id , 'disable_notification', $new_val );
 
-    }// end save notification meat box
+    }// end save notification meta box
 
     /**
      * Backwards compatibility hooks added to ensure that

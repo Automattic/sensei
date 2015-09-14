@@ -105,6 +105,7 @@ class WooThemes_Sensei_Learners {
 			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
 			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
 			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
+            'remove_from_purchased_course_confirm' => __( 'Are you sure you want to remove the user from this course? This order associate with this will also be set to canceled.', 'woothemes-sensei' ),
 			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
             'search_users_nonce' => wp_create_nonce( 'search-users' ),
             'selectplaceholder'=> __( 'Select Learner', 'woothemes-sensei' )
@@ -293,6 +294,7 @@ class WooThemes_Sensei_Learners {
 			$user_id = intval( $action_data['user_id'] );
 			$post_id = intval( $action_data['post_id'] );
 			$post_type = sanitize_text_field( $action_data['post_type'] );
+            $order_id = sanitize_text_field( $action_data['order_id'] );
 
 			$user = get_userdata( $user_id );
 
@@ -300,6 +302,17 @@ class WooThemes_Sensei_Learners {
 
 				case 'course':
 					$removed = WooThemes_Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
+
+                    if( ! empty( $order_id ) && is_woocommerce_active()  ){
+
+                        $order = new WC_Order($order_id);
+
+                        if (!empty($order)) {
+                            $order->update_status( 'cancelled' );
+                        }
+
+                    }
+
 				break;
 
 				case 'lesson':

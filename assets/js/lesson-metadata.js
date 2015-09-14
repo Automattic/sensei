@@ -144,18 +144,6 @@ jQuery(document).ready( function($) {
 
 		}
 
-		// Disable/enable field based on question types
-		if( disableAuto ) {
-			jQuery( 'input#quiz_grade_type' ).prop( 'checked', false );
-			jQuery( 'input#quiz_grade_type' ).attr( 'disabled', 'disabled' );
-			jQuery( 'input#quiz_grade_type' ).closest('p.form-field').addClass( 'disabled' );
-			jQuery( 'input#quiz_grade_type_disabled' ).val( 'disabled' );
-		} else {
-			jQuery( 'input#quiz_grade_type' ).removeAttr( 'disabled' );
-			jQuery( 'input#quiz_grade_type' ).closest('p.form-field').removeClass( 'disabled' );
-			jQuery( 'input#quiz_grade_type_disabled' ).val( 'enabled' );
-		}
-
 		// Save quiz grade type
 		jQuery.fn.saveQuizGradeType();
  	}
@@ -199,10 +187,8 @@ jQuery(document).ready( function($) {
  	jQuery.fn.saveQuizGradeType = function() {
 
  		var quiz_grade_type = jQuery( 'input#quiz_grade_type' ).is( ':checked' ) ? 'auto' : 'manual';
- 		var quiz_grade_type_disabled = jQuery( 'input#quiz_grade_type_disabled' ).val();
 
  		var dataToPost = 'quiz_grade_type' + '=' + quiz_grade_type;
- 		dataToPost += '&quiz_grade_type_disabled' + '=' + quiz_grade_type_disabled;
  		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
  		jQuery.post(
@@ -1437,11 +1423,5 @@ jQuery(document).ready( function($) {
 			jQuery( this).select2({width:"resolve"});;
 		} // End If Statement
 	});
-
-	/***************************************************************************************************
-	 * 6 - Single Quiz Edit Screen.
-	 ***************************************************************************************************/
-
-	if( jQuery( '.post-type-question #post-body-content').exists() ) { jQuery( '.post-type-question #post-body-content').remove(); }
 
 });

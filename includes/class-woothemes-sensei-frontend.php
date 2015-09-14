@@ -122,7 +122,10 @@ class WooThemes_Sensei_Frontend {
 		// Only show course & lesson excerpts in search results
 		add_filter( 'the_content', array( $this, 'sensei_search_results_excerpt' ) );
 
-		// Remove course from active courses if an order is cancelled or refunded
+        //Use WooCommerce filter to show admin bar to Teachers.
+        add_action( 'init', array( $this, 'sensei_show_admin_bar') );
+
+        // Remove course from active courses if an order is cancelled or refunded
 		add_action( 'woocommerce_order_status_processing_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
 		add_action( 'woocommerce_order_status_completed_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
 		add_action( 'woocommerce_order_status_on-hold_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
@@ -380,6 +383,13 @@ class WooThemes_Sensei_Frontend {
 
 				case '#senseimymessages':
 					$item->url = $my_messages_url;
+                    // if no archive link exist for sensei_message
+                    // set it back to the place holder
+                    if( ! $item->url ){
+
+                        $item->url = '#senseimymessages';
+
+                    }
 					break;
 
 				case '#senseilearnerprofile':
@@ -444,16 +454,23 @@ class WooThemes_Sensei_Frontend {
 
 		foreach( $sorted_menu_items as $k=>$item ) {
 
-			// Remove the My Messages link for logged out users or if Private Messages are disabled.
-			if( get_post_type_archive_link( 'sensei_message' ) == $item->url ) {
+			// Remove the My Messages link for logged out users or if Private Messages are disabled
+			if( ! get_post_type_archive_link( 'sensei_message' )
+                && '#senseimymessages' == $item->url ) {
+
 				if ( !is_user_logged_in() || ( isset( $woothemes_sensei->settings->settings['messages_disable'] ) && $woothemes_sensei->settings->settings['messages_disable'] ) ) {
+
 					unset( $sorted_menu_items[$k] );
+
 				}
 			}
 			// Remove the My Profile link for logged out users.
 			if( $woothemes_sensei->learner_profiles->get_permalink() == $item->url ) {
+
 				if ( !is_user_logged_in() || ! ( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) ) {
+
 					unset( $sorted_menu_items[$k] );
+
 				}
 			}
 		}
@@ -1022,7 +1039,7 @@ class WooThemes_Sensei_Frontend {
 		   	<?php } // End If Statement ?>
 		   	<?php sensei_simple_course_price( $post_id ); ?>
         	</p>
-        	<p class="course-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
+        	<p class="course-excerpt"><?php echo sensei_get_excerpt( $post ); ?></p>
         	<?php if ( 0 < $free_lesson_count ) {
                 $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes-sensei' ), $free_lesson_count ); ?>
                 <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
@@ -1212,7 +1229,7 @@ class WooThemes_Sensei_Frontend {
                 <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_view_course_text', __( 'View course', 'woothemes-sensei' ) ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
                 <?php } ?>
             </p>
-            <p class="lesson-excerpt"><?php echo apply_filters( 'get_the_excerpt', $post->post_excerpt ); ?></p>
+            <p class="lesson-excerpt"><?php echo sensei_get_excerpt( $post ); ?></p>
 		</section><?php
 		} // End If Statement
 	} // sensei_lesson_meta()
@@ -1415,7 +1432,7 @@ class WooThemes_Sensei_Frontend {
 		global $post;
 
 		if( is_search() && in_array( $post->post_type, array( 'course', 'lesson' ) ) ) {
-			$content = '<p class="course-excerpt">' . $post->post_excerpt . '</p>';
+			$content = '<p class="course-excerpt">' . sensei_get_excerpt( $post ) . '</p>';
 		}
 
 		return $content;
@@ -1430,8 +1447,15 @@ class WooThemes_Sensei_Frontend {
 		$order = new WC_Order( $order_id );
 
 		foreach ( $order->get_items() as $item ) {
+			if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
+				// If item has variation_id then its a variation of the product
+				$item_id = $item['variation_id'];
+			} else {
+				// Than its real product set it's id to item_id
+				$item_id = $item['product_id'];
+			} 
 
-            if ( $item['product_id'] > 0 ) {
+            if ( $item_id > 0 ) {
 
 				$user_id = get_post_meta( $order_id, '_customer_user', true );
 
@@ -1444,7 +1468,7 @@ class WooThemes_Sensei_Frontend {
 						'meta_query' => array(
 							array(
 								'key' => '_course_woocommerce_product',
-								'value' => $item['product_id']
+								'value' => $item_id
 							)
 						),
 						'orderby' => 'menu_order date',
@@ -1486,56 +1510,58 @@ class WooThemes_Sensei_Frontend {
 			return;
 		}
 
-		$order_items = $order->get_items();
-
 		$messages = array();
 
-		foreach ( $order_items as $item ) {
+		foreach ( $order->get_items() as $item ) {
 
-            if ( $item['product_id'] > 0 ) {
+			if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
 
-				$user_id = get_post_meta( $order_id, '_customer_user', true );
+				// If item has variation_id then its a variation of the product
+				$item_id = $item['variation_id'];
 
-				if( $user_id ) {
+			} else {
 
-					// Get all courses for product
-					$args = array(
-						'posts_per_page' => -1,
-						'post_type' => 'course',
-						'meta_query' => array(
-							array(
-								'key' => '_course_woocommerce_product',
-								'value' => $item['product_id']
-							)
-						),
-						'orderby' => 'menu_order date',
-						'order' => 'ASC',
-					);
-					$courses = get_posts( $args );
+				//If not its real product set its id to item_id
+				$item_id = $item['product_id'];
 
-					if( $courses && count( $courses ) > 0 ) {
+			} // End If Statement
 
-						echo ' <p><div id= "message" class="updated fade woocommerce-info" >';
-						foreach( $courses as $course ) {
+			$user_id = get_post_meta( $order->id, '_customer_user', true );
 
-							$title = $course->post_title;
-							$permalink = get_permalink( $course->ID );
+			if( $user_id ) {
 
-							echo '<strong>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</strong> <br/>';
+				// Get all courses for product
+				$args = array(
+					'posts_per_page' => -1,
+					'post_type' => 'course',
+					'meta_query' => array(
+						array(
+							'key' => '_course_woocommerce_product',
+							'value' => $item_id
+						)
+					),
+					'orderby' => 'menu_order date',
+					'order' => 'ASC',
+				);
+				$courses = get_posts( $args );
 
-							$update_course = $woothemes_sensei->woocommerce_course_update( $course->ID  );
+				if( $courses && count( $courses ) > 0 ) {
+                    echo ' <ul id= "message" class="updated fade woocommerce-info" >';
+					foreach( $courses as $course ) {
 
-						} // end for each
+						$title = $course->post_title;
+						$permalink = get_permalink( $course->ID );
 
-						// close the message div
-						echo ' </div></p>';
+                        echo '<li>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</li>';
 
-					}// end if $courses check
-				}
+					} // end for each
+
+					// close the message div
+                    echo ' </ul>';
+
+				}// end if $courses check
 			}
 		}
-		// show the links to the course
-
 	} // end course_link_order_form
 
 	/**
@@ -1582,12 +1608,17 @@ class WooThemes_Sensei_Frontend {
 
 					$items = $order->get_items();
 					foreach( $items as $item ) {
-						$product_id = $item['product_id'];
-						$product_ids[] = $product_id;
-					}
+                                            if (isset($item['variation_id']) && $item['variation_id'] > 0) {
+                                                $item_id = $item['variation_id'];
+                                                $product_type = 'variation';
+                                            } else {
+                                                $item_id = $item['product_id'];
+                                            }
+
+                                            $product_ids[] = $item_id;
+                                            }
 
 					$order_ids[] = $post_id;
-
 				}
 
 				if( count( $product_ids ) > 0 ) {
@@ -1692,10 +1723,32 @@ class WooThemes_Sensei_Frontend {
 
 				$items = $order->get_items();
 				foreach( $items as $item ) {
-					if( $item['product_id'] == $course_product_id ) {
-						WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
-						return;
-					}
+                    $product = wc_get_product( $item['product_id'] );
+
+                    // handle product bundles
+                    if( $product->is_type('bundle') ){
+
+                        $bundled_product = new WC_Product_Bundle( $product->id );
+                        $bundled_items = $bundled_product->get_bundled_items();
+
+                        foreach( $bundled_items as $item ){
+
+                            if( $item->product_id == $course_product_id ) {
+                                WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+                                return;
+                            }
+
+                        }
+
+                    } else {
+
+                    // handle regular products
+                        if( $item['product_id'] == $course_product_id ) {
+                            WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+                            return;
+                        }
+
+                    }
 				}
 			}
 
@@ -1961,5 +2014,24 @@ class WooThemes_Sensei_Frontend {
 			$woothemes_sensei->notices->add_notice( $message, 'alert');
 
 	}// end login_message_process
+
+
+    /**
+     * sensei_show_admin_bar(). Use WooCommerce filter
+     * to show admin bar to Teachers as well.
+     *
+     * @return void redirect
+     *
+     */
+
+    public function sensei_show_admin_bar () {
+
+        if (current_user_can('edit_courses')) {
+
+            add_filter( 'woocommerce_disable_admin_bar', '__return_false', 10, 1);
+
+        }
+
+    }
 
 } // End Class

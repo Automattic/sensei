@@ -15,7 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  // Content Access Permissions
  $access_permission = false;
  if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! $woothemes_sensei->settings->settings['access_permission'] ) || sensei_all_access() ) {
- 	$access_permission = true;
+ 	if(WooThemes_Sensei_Utils::sensei_is_woocommerce_activated()) {
+    $course_id = get_post_meta( $post->ID, '_lesson_course', true );
+    $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
+    $product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
+
+    $access_permission = ! ( isset ( $product ) && is_object ( $product ) );
+  }
  } // End If Statement
 ?>
         	<article <?php post_class( array( 'lesson', 'post' ) ); ?>>
@@ -66,7 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	                		}
 	                		the_content();
 	                	} else {
-	                		echo '<p>' . $post->post_excerpt . '</p>';
+	                		echo '<p>' . sensei_get_excerpt( $post ) . '</p>';
 	                	}
 	            		?>
 					</section>

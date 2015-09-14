@@ -48,6 +48,7 @@ class WooThemes_Sensei_Admin {
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'page_redirect' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
+        add_action( 'admin_init', array( __CLASS__, 'install_pages' ));
 
 		// Duplicate lesson & courses
 		add_filter( 'post_row_actions', array( $this, 'duplicate_action_link' ), 10, 2 );
@@ -189,43 +190,20 @@ class WooThemes_Sensei_Admin {
 	 * @return void
 	 */
 	function install_pages_output() {
-		global $woothemes_sensei;
 
-		// Install/page installer
-	    $install_complete = false;
+        if( isset($_GET['sensei_install_complete']) && 'true' == $_GET['sensei_install_complete']) {
 
-	    // Add pages button
-	    if (isset($_GET['install_sensei_pages']) && $_GET['install_sensei_pages']) {
+            ?>
+            <div id="message" class="updated sensei-message sensei-connect">
+                <div class="squeezer">
+                    <h4><?php _e( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'woothemes-sensei' ); ?></h4>
+                    <p><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
+                </div>
+            </div>
+            <?php
 
-			$this->create_pages();
-	    	update_option('skip_install_sensei_pages', 1);
-	    	$install_complete = true;
-
-		// Skip button
-	    } elseif (isset($_GET['skip_install_sensei_pages']) && $_GET['skip_install_sensei_pages']) {
-
-	    	update_option('skip_install_sensei_pages', 1);
-	    	$install_complete = true;
-
-	    }
-
-		if ($install_complete) {
-			?>
-	    	<div id="message" class="updated sensei-message sensei-connect">
-				<div class="squeezer">
-					<h4><?php _e( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'woothemes-sensei' ); ?></h4>
-					<p><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">Tweet</a>
-		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
-				</div>
-			</div>
-			<?php
-
-			// Flush rules after install
-			flush_rewrite_rules( false );
-
-			// Set installed option
-			update_option('sensei_installed', 0);
-		}
+        }
 
 	} // End install_pages_output()
 
@@ -313,8 +291,6 @@ class WooThemes_Sensei_Admin {
 
 			wp_register_style( Sensei()->token . '-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
 			wp_enqueue_style( Sensei()->token . '-admin-custom' );
-			wp_register_style( Sensei()->token . '-select2', Sensei()->plugin_url . 'assets/select2/select2.css', '', Sensei()->version, 'screen' );
-			wp_enqueue_style( Sensei()->token . '-select2' );
 
 		}
 
@@ -672,6 +648,7 @@ class WooThemes_Sensei_Admin {
 
 			$args = array(
 				'post_type' => 'course',
+				'post_status' => array('publish', 'pending', 'draft', 'future', 'private'),
 				'posts_per_page' => -1,
 				'suppress_filters' => 0,
 				'orderby' => 'menu_order date',
@@ -1413,5 +1390,59 @@ class WooThemes_Sensei_Admin {
 
 		return $prevent_access;
 	}
+
+    /**
+     * Hooked onto admin_init. Listens for install_sensei_pages and skip_install_sensei_pages query args
+     * on the sensei settings page.
+     *
+     * The function
+     *
+     * @since 1.8.7
+     */
+    public  static function install_pages(){
+
+        // only fire on the settings page
+        if( ! isset( $_GET['page'] )
+            || 'woothemes-sensei-settings' != $_GET['page']
+            || 1 == get_option('skip_install_sensei_pages') ){
+
+            return;
+
+        }
+
+        // Install/page installer
+        $install_complete = false;
+
+        // Add pages button
+        if (isset($_GET['install_sensei_pages']) && $_GET['install_sensei_pages']) {
+
+            Sensei()->admin->create_pages();
+            update_option('skip_install_sensei_pages', 1);
+            $install_complete = true;
+            $settings_url = remove_query_arg('install_sensei_pages');
+
+            // Skip button
+        } elseif (isset($_GET['skip_install_sensei_pages']) && $_GET['skip_install_sensei_pages']) {
+
+            update_option('skip_install_sensei_pages', 1);
+            $install_complete = true;
+            $settings_url = remove_query_arg('skip_install_sensei_pages');
+
+        }
+
+        if ($install_complete) {
+
+            // Flush rules after install
+            flush_rewrite_rules( false );
+
+            // Set installed option
+            update_option('sensei_installed', 0);
+
+            $complete_url = add_query_arg( 'sensei_install_complete', 'true', $settings_url  );
+            wp_redirect( admin_url( $complete_url ) );
+
+        }
+
+    }// end install_pages
 
 } // End Class

@@ -371,6 +371,46 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		return $return_values;
 	} // End sensei_get_prev_next_lessons()
 
+  /**
+   * sensei_get_excerpt Returns the excerpt for the $post
+   *
+   * Unhooks wp_trim_excerpt() so to disable excerpt auto-gen.
+   *
+   * @since  1.9.0
+   * @param  int|WP_Post $post_id Optional. Defaults to current post
+   * @return string $excerpt
+   */
+  function sensei_get_excerpt( $post_id ) {
+
+    if ( is_int( $post_id ) ) {
+      $post = get_post( $post_id );
+    }
+    else if ( is_object( $post_id ) ) {
+      $post = $post_id;
+    }
+    else if ( ! $post_id ) {
+      global $post;
+    }
+
+    $trim_excerpt_enabled = has_filter( 'get_the_excerpt', 'wp_trim_excerpt' );
+
+    // Temporarily disable wp_trim_excerpt so that the excerpt
+    // will not be auto-generated if empty
+    if ( $trim_excerpt_enabled ) {
+      remove_filter( 'get_the_excerpt', 'wp_trim_excerpt' );
+    }
+
+    // Apply filters to the excerpt
+    $excerpt = apply_filters( 'get_the_excerpt', $post->post_excerpt );
+
+    // Re-enable wp_trim_excerpt
+    if ( $trim_excerpt_enabled ) {
+      add_filter( 'get_the_excerpt', 'wp_trim_excerpt' );
+    }
+
+    return $excerpt;
+  }
+
 	function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
 		_deprecated_function( __FUNCTION__, '1.7', "WooThemes_Sensei_Utils::user_started_course()" );
 		return WooThemes_Sensei_Utils::user_started_course( $post_id, $user_id );

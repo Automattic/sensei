@@ -520,7 +520,7 @@ class Sensei_Core_Modules
         // Load the template file
         if ($file) {
             $template = locate_template($find);
-            if (!$template) $template = $woothemes_sensei->plugin_path() . '/templates/' . $file;
+            if (!$template) $template = $woothemes_sensei->plugin_path() . 'templates/' . $file;
         } // End If Statement
 
         return $template;
@@ -857,7 +857,7 @@ class Sensei_Core_Modules
         $html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
         $html .= '<input type="hidden" name="page" value="' . esc_attr($this->order_page_slug) . '" />' . "\n";
         $html .= '<select id="module-order-course" name="course_id">' . "\n";
-        $html .= '<option value="">Select a course</option>' . "\n";
+        $html .= '<option value="">' . __('Select a course', 'woothemes-sensei') . '</option>' . "\n";
 
         foreach ($courses as $course) {
             if (has_term('', $this->taxonomy, $course->ID)) {
@@ -1318,8 +1318,6 @@ class Sensei_Core_Modules
         wp_register_style($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'css/modules-admin.css','',Sensei()->version );
         wp_enqueue_style($this->taxonomy . '-sortable');
 
-        wp_register_style($woothemes_sensei->token . '-chosen', esc_url($woothemes_sensei->plugin_url) . 'assets/chosen/chosen.css', '', Sensei()->version, 'screen');
-        wp_enqueue_style($woothemes_sensei->token . '-chosen');
     }
 
     /**
@@ -1524,9 +1522,9 @@ class Sensei_Core_Modules
         }
 
         //save some time and check if we already have the saved
-        if( get_site_transient( 'sensei_'. $course_id .'_none_module_lessons') ){
+        if( get_transient( 'sensei_'. $course_id .'_none_module_lessons') ){
 
-            return get_site_transient( 'sensei_'. $course_id .'_none_module_lessons');
+            return get_transient( 'sensei_'. $course_id .'_none_module_lessons');
 
         }
 
@@ -1574,7 +1572,7 @@ class Sensei_Core_Modules
 
         if( isset( $wp_lessons_query->posts) && count( $wp_lessons_query->posts ) > 0  ){
             $non_module_lessons = $wp_lessons_query->get_posts();
-            set_site_transient( 'sensei_'. $course_id .'_none_module_lessons', $non_module_lessons, 20 );
+            set_transient( 'sensei_'. $course_id .'_none_module_lessons', $non_module_lessons, 10 * DAY_IN_SECONDS );
         }
 
         return $non_module_lessons;

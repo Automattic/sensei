@@ -75,6 +75,9 @@ class WooThemes_Sensei_Lesson {
 	public function __construct () {
 		// Setup meta fields for this post type
 		$this->meta_fields = array( 'lesson_prerequisite', 'lesson_course', 'lesson_preview', 'lesson_length', 'lesson_complexity', 'lesson_video_embed' );
+
+        $this->question_order = '';
+
 		// Admin actions
 		if ( is_admin() ) {
 
@@ -213,6 +216,7 @@ class WooThemes_Sensei_Lesson {
 
 		$html .= '<p><label for="lesson_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
 		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . $lesson_video_embed . '</textarea></p>' . "\n";
+		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
 
@@ -775,11 +779,7 @@ class WooThemes_Sensei_Lesson {
 
 				$question_id = $question->ID;
 
-				$question_type = '';
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
-				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-					$question_type = $question_types[0];
-				} // End If Statement
+				$question_type = Sensei()->question->get_question_type( $question_id );
 
 				$multiple_data = array();
 				$question_increment = 1;
@@ -830,8 +830,7 @@ class WooThemes_Sensei_Lesson {
 
 			if( $question_type != 'category' ) {
 
-				$question_grade = intval( get_post_meta( $question_id, '_question_grade', true ) );
-				if( 0 == $question_grade ) { $question_grade = 1; }
+				$question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
 
 				$question_media = get_post_meta( $question_id, '_question_media', true );
 				$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = '';
@@ -937,7 +936,7 @@ class WooThemes_Sensei_Lesson {
 						    	// Question grade
 						    	$html .= '<div>';
 							    	$html .= '<label for="question_' . $question_counter . '_grade">' . __( 'Question grade:', 'woothemes-sensei' ) . '</label> ';
-							    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="1" value="' . $question_grade . '" />';
+							    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="0" value="' . $question_grade . '" />';
 						    	$html .= '</div>';
 
 						    	// Random order
@@ -1043,7 +1042,7 @@ class WooThemes_Sensei_Lesson {
 
 	  					// Question grade
 						$html .= '<p><label>' . __( 'Question Grade:'  , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="1" value="1" /></p>' . "\n";
+						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="0" value="1" /></p>' . "\n";
 
 						// Random order
 						$html .= '<p class="add_question_random_order">';
@@ -1257,26 +1256,21 @@ class WooThemes_Sensei_Lesson {
 	}
 
 	public function quiz_panel_add_existing_question( $question_id = 0, $row = 1 ) {
-		global $woothemes_sensei;
 
 		$html = '';
 
-		if( ! $question_id ) return;
+		if( ! $question_id ) {
+
+            return;
+
+        }
 
 		$existing_class = '';
-		if( $row % 2 ) { $existing_class = 'alternate'; }
+		if( $row % 2 ) {
+            $existing_class = 'alternate';
+        }
 
-		$all_question_types = $woothemes_sensei->post_types->question->question_types();
-		$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
-		$question_type = '';
-		if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-			$question_type = $question_types[0];
-			$question_type = $all_question_types[ $question_type ];
-		}
-
-		if( ! $question_type ) {
-			$question_type = $all_question_types['multiple-choice'];
-		}
+		$question_type = Sensei()->question->get_question_type( $question_id );
 
 		$question_cat_list = strip_tags( get_the_term_list( $question_id, 'question-category', '', ', ', '' ) );
 
@@ -1288,6 +1282,7 @@ class WooThemes_Sensei_Lesson {
 				  </tr>';
 
 		return $html;
+
 	}
 
 	public function quiz_panel_filter_existing_questions() {
@@ -1662,12 +1657,6 @@ class WooThemes_Sensei_Lesson {
 
 	public function get_quiz_settings( $quiz_id = 0 ) {
 
-		$disable_grade_type = false;
-		$quiz_grade_type_disabled = get_post_meta( $quiz_id, '_quiz_grade_type_disabled', true );
-		if( 'disabled' == $quiz_grade_type_disabled ) {
-			$disable_grade_type = true;
-		}
-
 		$disable_passmark = '';
 		$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
 		if( ! $pass_required ) {
@@ -1730,21 +1719,12 @@ class WooThemes_Sensei_Lesson {
 				'checked'		=> 'yes',
 			),
 			array(
-				'id' 			=> 'quiz_grade_type_disabled',
-				'label'			=> '',
-				'description'	=> '',
-				'default'		=> '',
-				'type'			=> 'hidden',
-				'default'		=> '',
-			),
-			array(
 				'id' 			=> 'quiz_grade_type',
 				'label'			=> __( 'Grade quiz automatically', 'woothemes-sensei' ),
-				'description'	=> __( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions.', 'woothemes-sensei' ),
+				'description'	=> __( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions. Questions that have a grade of zero are skipped during autograding.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
 				'default'		=> 'auto',
 				'checked'		=> 'auto',
-				'disabled'		=> $disable_grade_type,
 			),
 			array(
 				'id' 			=> 'enable_quiz_reset',
@@ -1917,8 +1897,8 @@ class WooThemes_Sensei_Lesson {
 			die('');
 		} // End If Statement
 		// Parse POST data
-		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that 
-		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed. 
+		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that
+		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed.
 		// So first restore the original unslashed apostrophes by removing those slashes
 		$data = wp_unslash( $_POST['data'] );
 		// Then parse the string to an array (note that parse_str automatically urldecodes all the variables)
@@ -1938,16 +1918,7 @@ class WooThemes_Sensei_Lesson {
 				$current_user = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
 				$question_id = $this->lesson_save_question( $question_data );
-				$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
-				$question_counter = 0;
-				$question_type = '';
-				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-					$question_type = $question_types[0];
-				} // End If Statement
-
-				if( ! $question_type ) {
-					$question_type = 'multiple-choice';
-				}
+				$question_type = Sensei()->question->get_question_type( $question_id );
 
 				$question_count = intval( $question_data['question_count'] );
 				++$question_count;
@@ -2103,14 +2074,7 @@ class WooThemes_Sensei_Lesson {
 			    	}
 
 			    	add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
-
-					$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
-					$question_type = '';
-					if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-						$question_type = $question_types[0];
-					} else {
-						$question_type = 'multiple-choice';
-					}
+					$question_type = Sensei()->question->get_question_type( $question_id );
 
 					$return .= $this->quiz_panel_question( $question_type, $question_count, $question_id );
 				}
@@ -2135,7 +2099,6 @@ class WooThemes_Sensei_Lesson {
 		$quiz_data = array();
 		parse_str($data, $quiz_data);
 		update_post_meta( $quiz_data['quiz_id'], '_quiz_grade_type', $quiz_data['quiz_grade_type'] );
-		update_post_meta( $quiz_data['quiz_id'], '_quiz_grade_type_disabled', $quiz_data['quiz_grade_type_disabled'] );
 		die();
 	}
 
@@ -2924,9 +2887,7 @@ class WooThemes_Sensei_Lesson {
 	public static function lesson_excerpt( $lesson = null ) {
 		$html = '';
 		if ( is_a( $lesson, 'WP_Post' ) && 'lesson' == $lesson->post_type ) {
-			if ( '' != $lesson->post_excerpt ) {
-				$html .= wpautop( $lesson->post_excerpt );
-			}
+			$html = wpautop( sensei_get_excerpt( $lesson ) );
 		}
 		return apply_filters( 'sensei_lesson_excerpt', $html );
 	} // End lesson_excerpt()

@@ -92,23 +92,12 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$type = false;
 			$type_name = '';
 
-			$types = wp_get_post_terms( $question_id, 'question-type' );
-			foreach( $types as $t ) {
-				$type = $t->name;
-				break;
-			}
-
-			if( ! $type ) {
-				$type = 'multiple-choice';
-			}
+			$type = Sensei()->question->get_question_type( $question_id );
 
 			$question_answer_notes = $woothemes_sensei->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
 
 
-			$question_grade_total = get_post_meta( $question_id, '_question_grade', true );
-			if( ! $question_grade_total || 0 == intval( $question_grade_total ) ) {
-				$question_grade_total = 1;
-			}
+			$question_grade_total = $woothemes_sensei->question->get_question_grade( $question_id );
 			$quiz_grade_total += $question_grade_total;
 
 			$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
@@ -182,7 +171,15 @@ class WooThemes_Sensei_Grading_User_Quiz {
 			$graded_class = '';
 			$user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
 			$graded_class = 'ungraded';
-			if( intval( $user_question_grade ) > 0 ) {
+			if ( 0 == $question_grade_total && 0 == intval( $user_question_grade ) ) {
+				// Question skips grading
+				$grade_type = 'zero-graded';
+				$graded_class = '';
+				++$correct_answers;
+				++$graded_count;
+				$user_question_grade = 0;
+			}
+			elseif( intval( $user_question_grade ) > 0 ) {
 				$graded_class = 'user_right';
 				++$correct_answers;
 				$user_quiz_grade_total += $user_question_grade;
@@ -202,10 +199,10 @@ class WooThemes_Sensei_Grading_User_Quiz {
 					<div class="sensei-grading-actions">
 						<div class="actions">
 							<input type="hidden" class="question_id" value="<?php esc_attr_e( $question_id ); ?>" />
-							<input type="hidden" class="question_total_grade" name="question_total_grade" value="<?php echo $question_grade_total; ?>" />
+							<input type="hidden" class="question_total_grade" name="question_total_grade" value="<?php echo esc_attr( $question_grade_total ); ?>" />
 							<span class="grading-mark icon_right"><input type="radio" class="<?php esc_attr_e( 'question_' . $question_id . '_right_option' ); ?>" name="<?php esc_attr_e( 'question_' . $question_id ); ?>" value="right" <?php checked( $graded_class, 'user_right', true ); ?> /></span>
 							<span class="grading-mark icon_wrong"><input type="radio" class="<?php esc_attr_e( 'question_' . $question_id . '_wrong_option' ); ?>" name="<?php esc_attr_e( 'question_' . $question_id ); ?>" value="wrong" <?php checked( $graded_class, 'user_wrong', true ); ?> /></span>
-							<input type="number" class="question-grade" name="<?php esc_attr_e( 'question_' . $question_id . '_grade' ); ?>" id="<?php esc_attr_e( 'question_' . $question_id . '_grade' ); ?>" value="<?php esc_attr_e( $user_question_grade ); ?>" min="0" max="<?php esc_attr_e( $question_grade_total ); ?>" />
+							<input type="number" class="question-grade" name="<?php esc_attr_e( 'question_' . $question_id . '_grade' ); ?>" id="<?php esc_attr_e( 'question_' . $question_id . '_grade' ); ?>" value="<?php echo esc_attr( $user_question_grade ); ?>" min="0" max="<?php echo esc_attr( $question_grade_total ); ?>" />
 							<span class="question-grade-total"><?php echo $question_grade_total; ?></span>
 						</div>
 					</div>
@@ -214,6 +211,13 @@ class WooThemes_Sensei_Grading_User_Quiz {
 						<?php echo apply_filters( 'the_content', $question->post_content );?>
 						<p class="user-answer"><?php
 							foreach ( $user_answer_content as $_user_answer ) {
+
+                                if( 'multi-line' == Sensei()->question->get_question_type( $question->ID ) ){
+
+                                    $_user_answer = htmlspecialchars_decode( nl2br( esc_html($_user_answer) ) );
+
+                                }
+
 								echo apply_filters( 'sensei_answer_text', $_user_answer ) . "<br>";
 							}
 						?></p>
@@ -221,7 +225,9 @@ class WooThemes_Sensei_Grading_User_Quiz {
 							<h5><?php _e( 'Correct answer', 'woothemes-sensei' ) ?></h5>
 							<span class="correct-answer"><?php
 								foreach ( $right_answer as $_right_answer ) {
+
 									echo apply_filters( 'sensei_answer_text', $_right_answer ) . "<br>";
+
 								}
 							?></span>
 						</div>

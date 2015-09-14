@@ -85,38 +85,50 @@ foreach( $question_wrong_answers as $answer ) {
 
 $answers_sorted = array();
 $random_order = get_post_meta( $question_id, '_random_order', true );
-if( ! $random_order || ( $random_order && $random_order == 'yes' ) ) {
-	$answers_sorted = $question_answers;
+if(  $random_order && $random_order == 'yes' ) {
+
+    $answers_sorted = $question_answers;
 	shuffle( $answers_sorted );
+
 } else {
+
 	$answer_order = array();
 	$answer_order_string = get_post_meta( $question_id, '_answer_order', true );
 	if( $answer_order_string ) {
-		$answer_order = array_filter( explode( ',', $answer_order_string ) );
+
+        $answer_order = array_filter( explode( ',', $answer_order_string ) );
 		if( count( $answer_order ) > 0 ) {
-			foreach( $answer_order as $answer_id ) {
+
+            foreach( $answer_order as $answer_id ) {
+
 				if( isset( $question_answers[ $answer_id ] ) ) {
+
 					$answers_sorted[ $answer_id ] = $question_answers[ $answer_id ];
 					unset( $question_answers[ $answer_id ] );
+
 				}
+
 			}
 
 			if( count( $question_answers ) > 0 ) {
 				foreach( $question_answers as $id => $answer ) {
-					$answers_sorted[ $id ] = $answer;
+
+                    $answers_sorted[ $id ] = $answer;
+
 				}
 			}
-		}
-	} else {
-		$answers_sorted = $question_answers;
-		shuffle( $answers_sorted );
-	}
+
+		}else{
+
+            $answers_sorted = $question_answers;
+
+        }
+
+	} // end if $answer_order_string
+
 }
 
-$question_grade = get_post_meta( $question_id, '_question_grade', true );
-if( ! $question_grade || $question_grade == '' ) {
-	$question_grade = 1;
-}
+$question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
 
 // retrieve users stored data.
 $user_answer_entry = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $current_user->ID );
@@ -131,7 +143,13 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	$user_correct = false;
 	$answer_message = __( 'Incorrect', 'woothemes-sensei' );
 	$answer_message_class = 'user_wrong';
-	if( $user_question_grade > 0 ) {
+	// For zero grade mark as 'correct' but add no classes
+	if ( 0 == $question_grade ) {
+		$user_correct = true;
+		$answer_message = '';
+		$answer_message_class = '';
+	}
+	else if( $user_question_grade > 0 ) {
 		$user_correct = true;
 		$answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
 		$answer_message_class = 'user_right';
@@ -174,7 +192,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 		$count++;
 
 		$answer_class = '';
-		if( isset( $user_correct ) ) {
+		if( isset( $user_correct ) && 0 < $question_grade ) {
 			if ( is_array($question_right_answer) && in_array($answer, $question_right_answer) ) {
 				$answer_class .= ' right_answer';
 			}

@@ -226,13 +226,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
         foreach( $quiz_question_posts as $question ){
 
             // get the current question type
-            $question_types_array = wp_get_post_terms( $question->ID, 'question-type', array( 'fields' => 'slugs' ) );
-
-            if ( isset( $question_types_array[0] ) && '' != $question_types_array[0] ) {
-                $type = $question_types_array[0];
-            }else{
-                $type = 'multiple-choice';
-            }
+            $type = Sensei()->question->get_question_type( $question->ID );
 
             // setup the demo data and store it in the respective array
             if ('multiple-choice' == $type ) {
@@ -494,10 +488,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
         foreach( $test_user_quiz_answers as $question_id => $answer ){
 
             //Setup the question types
-            $question_types = wp_get_post_terms( $question_id, 'question-type' );
-            foreach( $question_types as $type ) {
-                $question_type = $type->slug;
-            }
+            $question_type = Sensei()->question->get_question_type( $question_id );
 
             if( 'file-upload' == $question_type){
                 //setup the sample image file location within the test folders

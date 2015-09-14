@@ -434,7 +434,7 @@ class WooThemes_Sensei_Utils {
 
 		foreach ( $orders as $order_id ) {
 			$order = new WC_Order( $order_id->ID );
-			if ( $order->post_status == 'wc-completed' ) {
+			if ( $order->post_status == 'wc-completed' || $order->post_status == 'wc-processing' ) {
 				if ( 0 < sizeof( $order->get_items() ) ) {
 					foreach( $order->get_items() as $item ) {
 
@@ -517,14 +517,7 @@ class WooThemes_Sensei_Utils {
 			foreach( $submitted as $question_id => $answer ) {
 
 				// Get question type
-				$question_types = wp_get_post_terms( $question_id, 'question-type' );
-				foreach( $question_types as $type ) {
-					$question_type = $type->slug;
-				}
-
-				if( ! $question_type ) {
-					$question_type = 'multiple-choice';
-				}
+				$question_type = Sensei()->question->get_question_type( $question_id );
 
 				// Sanitise answer
 				if( 0 == get_magic_quotes_gpc() ) {
@@ -898,6 +891,7 @@ class WooThemes_Sensei_Utils {
 	}
 
 	public static function sensei_get_quiz_total( $quiz_id = 0 ) {
+		global $woothemes_sensei;
 
 		$quiz_total = 0;
 
@@ -905,10 +899,7 @@ class WooThemes_Sensei_Utils {
 			$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 			$question_grade = 0;
 			foreach( $questions as $question ) {
-				$question_grade = get_post_meta( $question->ID, '_question_grade', true );
-				if( ! $question_grade || $question_grade == '' ) {
-					$question_grade = 1;
-				}
+				$question_grade = $woothemes_sensei->question->get_question_grade( $question->ID );
 				$quiz_total += $question_grade;
 			}
 		}
@@ -2195,11 +2186,23 @@ class WooThemes_Sensei_Utils {
         /**
          * Change the mode for the Sensei_Utils::round function.
          * the mode given will be passed into the php round function
+         *
+         * This applies only to PHP version 5.3.0 and greater
+         *
          * @since 1.8.5
          */
         $mode = apply_filters( 'sensei_round_mode', $mode , $val, $context, $precision   );
 
-        return round( $val, $precision, $mode );
+        if ( version_compare(PHP_VERSION, '5.3.0') >= 0 ) {
+
+            return round( $val, $precision, $mode );
+
+        }else{
+
+            return round( $val, $precision );
+
+        }
+
     }
 
 } // End Class

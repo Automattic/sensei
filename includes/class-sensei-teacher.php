@@ -68,7 +68,7 @@ class Sensei_Teacher {
         add_filter( 'pre_get_posts', array( $this, 'add_courses_to_author_archive' ) );
 
         // notify admin when a teacher creates a course
-        add_action( 'wp_insert_post',array( $this, 'notify_admin_teacher_course_creation' ) );
+        add_action( 'transition_post_status',array( $this, 'notify_admin_teacher_course_creation' ), 10, 3 );
 
         // limit the analysis view to only the users taking courses belong to this teacher
         add_filter( 'sensei_analysis_overview_filter_users',array( $this, 'limit_analysis_learners' ) , 5, 1 );
@@ -93,6 +93,14 @@ class Sensei_Teacher {
 
         // update lesson owner to course teacher when saved
         add_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
+
+        // If a Teacher logs in, redirect to /wp-admin/
+        add_filter( 'wp_login', array( $this, 'teacher_login_redirect') , 10, 2 );
+
+
+        add_action( 'admin_menu', array( $this, 'restrict_posts_menu_page'), 10);
+        add_filter('pre_get_comments',  array ($this, 'restrict_comment_moderation'), 10, 1);
+
 
     } // end __constructor()
 
@@ -189,6 +197,8 @@ class Sensei_Teacher {
             'edit_published_sensei_messages'  => true,
             'edit_private_sensei_messages' => true,
             'read_private_sensei_messages' => true,
+
+            'edit_comment' => true,
 
             // Group post type Todo: find out from Hugh
 
@@ -841,18 +851,16 @@ class Sensei_Teacher {
      * @param int $course_id
      * @return bool
      */
-    public function notify_admin_teacher_course_creation( $course_id ){
+    public function notify_admin_teacher_course_creation( $new_status, $old_status, $post ){
+
+        $course_id = $post->ID;
 
         if( 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id )
-            || 'trash' == get_post_status( $course_id )
-            || ( isset( $_POST['original_post_status'] ) && 'auto-draft' != $_POST['original_post_status'] )    ){
+            || 'trash' == get_post_status( $course_id ) || 'draft' == get_post_status( $course_id ) ) {
 
             return false;
 
         }
-
-        //don't fire this hook again
-        remove_action('wp_insert_post', array( $this, 'notify_admin_teacher_course_creation' ) );
 
         /**
          * Filter the option to send admin notification emails when teachers creation
@@ -1406,5 +1414,115 @@ class Sensei_Teacher {
         return $wp_query;
 
     } // end limit_teacher_edit_screen_post_types()
+
+
+    /**
+     * Sensei_Teacher::teacher_login_redirect
+     *
+     * Redirect teachers to /wp-admin/ after login
+     *
+     * @since 1.8.7
+     * @access public
+     * @param string $user_login
+     * @param object $user
+     * @return void
+     */
+
+    public function teacher_login_redirect( $user_login, $user  ) {
+
+        if (user_can($user, 'edit_courses')) {
+
+            if (isset($_POST['redirect_to'])) {
+
+                wp_redirect($_POST['redirect_to'], 303);
+
+                exit;
+
+            } else {
+
+                wp_redirect(admin_url(), 303);
+
+                exit;
+
+            }
+        }
+
+    } // end teacher_login_redirect()
+
+
+
+    /**
+     * Sensei_Teacher::restrict_posts_menu_page()
+     *
+     * Remove the Posts menu page for teachers and restrict access to it.
+     * We have to do this because we give teachers the 'edit_posts' cap
+     * so they can 'moderate_comments' as well.
+     *
+     * @since 1.8.7
+     * @access public
+     * @parameters void
+     * @return void
+     */
+
+    public function restrict_posts_menu_page() {
+
+        global $pagenow, $typenow;
+
+        $user = wp_get_current_user();
+
+        /**
+         * Filter the option to hide the Posts menu page.
+         *
+         * @since 1.8.7
+         *
+         * @param bool $restrict default true
+         */
+
+        $restrict = apply_filters('sensei_restrict_posts_menu_page', true );
+
+        if ( in_array( 'teacher', (array) $user->roles ) && !current_user_can('delete_posts') && $restrict) {
+
+            remove_menu_page('edit.php');
+
+            if ($pagenow == "edit.php" || $pagenow == "post-new.php") {
+
+                if ($typenow == '' || $typenow == 'post' || $typenow == 'page') {
+
+                    wp_die('You do not have sufficient permissions to access this page.');
+
+                }
+
+            }
+
+        }
+
+    } // end restrict_posts_menu_page()
+
+    /**
+     * Sensei_Teacher::restrict_comment_moderation()
+     *
+     * Restrict commendation moderation for teachers
+     * so they can only moderate comments made to posts they own.
+     *
+     * @since 1.8.7
+     * @access public
+     * @parameters obj $clauses
+     * @return obj $clauses
+     */
+
+    public function restrict_comment_moderation($clauses) {
+
+        global $pagenow;
+
+        $user = wp_get_current_user();
+
+        if( in_array( 'teacher', (array) $user->roles ) && $pagenow == "edit-comments.php") {
+
+            $clauses->query_vars['post_author'] = $user->ID;
+        }
+
+        return $clauses;
+
+    }   // end restrict_comment_moderation()
 
 } // End Class

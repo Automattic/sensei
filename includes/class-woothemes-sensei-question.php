@@ -130,11 +130,8 @@ class WooThemes_Sensei_Question {
 			$metabox_title = __( 'Question', 'woothemes-sensei' );
 
 			if( isset( $post->ID ) ) {
-				$question_type = '';
-				$question_types = wp_get_post_terms( $post->ID, 'question-type', array( 'fields' => 'names' ) );
-				if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-					$question_type = $question_types[0];
-				} // End If Statement
+
+                $question_type = Sensei()->question->get_question_type( $post->ID );
 
 				if( $question_type ) {
 					$type = $this->question_types[ $question_type ];
@@ -166,15 +163,7 @@ class WooThemes_Sensei_Question {
 		} else {
 			$question_id = $post->ID;
 
-			$question_type = '';
-			$question_types = wp_get_post_terms( $question_id, 'question-type', array( 'fields' => 'names' ) );
-			if ( isset( $question_types[0] ) && '' != $question_types[0] ) {
-				$question_type = $question_types[0];
-			}
-
-			if( ! $question_type ) {
-				$question_type = 'multiple-choice';
-			}
+			$question_type =  Sensei()->question->get_question_type( $post->ID );
 
 			$html .= '<div id="add-question-metadata"><table class="widefat">';
 				$html .= $woothemes_sensei->post_types->lesson->quiz_panel_question( $question_type, 0, $question_id, 'question' );
@@ -365,5 +354,34 @@ class WooThemes_Sensei_Question {
         return $question_type;
 
     }// end get_question_type
+
+	/**
+	 * Given a question ID, return the grade that can be achieved.
+	 * 
+	 * @since 1.9
+	 *
+	 * @param int $question_id
+	 *
+	 * @return int $question_grade | bool
+	 */
+	public function get_question_grade( $question_id ) {
+
+		if ( empty( $question_id ) || ! intval( $question_id ) > 0
+			|| 'question' != get_post_type( $question_id ) ) {
+			return false;
+		}
+
+		$question_grade_raw = get_post_meta( $question_id, '_question_grade', true );
+		// If not set then default to 1...
+		if ( false === $question_grade_raw || $question_grade_raw == '' ) {
+			$question_grade = 1;
+		}
+		// ...but allow a grade of 0 for non-marked questions
+		else {
+			$question_grade = intval( $question_grade_raw );
+		}
+		return $question_grade;
+
+	} // end get_question_grade
 
 } // End Class

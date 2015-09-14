@@ -198,24 +198,28 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 
         // backup
         $users_ids = array();
-        foreach( $users as $user_id_or_username ){
 
-            if( ! is_numeric( $user_id_or_username ) ){
+        if ( is_array($users) ) {
 
-                $user_name = $user_id_or_username;
-                $user = get_user_by( 'login', $user_name  );
+            foreach ($users as $user_id_or_username) {
 
-                if( is_a( $user, 'WP_User' ) ){
-                  $users_ids[] = $user->ID;
+                if (!is_numeric($user_id_or_username)) {
+
+                    $user_name = $user_id_or_username;
+                    $user = get_user_by('login', $user_name);
+
+                    if (is_a($user, 'WP_User')) {
+                        $users_ids[] = $user->ID;
+                    }
+
+                } else {
+
+                    $user_id = $user_id_or_username;
+                    $users_ids[] = $user_id;
+
                 }
 
-            }else{
-
-                $user_id = $user_id_or_username;
-                $users_ids[] = $user_id;
-
             }
-
         }
 
         return $users_ids;
@@ -231,8 +235,13 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
      */
     public function get_user_public_name( $user ){
 
-        $user_public_name = $user->first_name . ' ' . $user->last_name;
-        if( empty( $user_public_name ) ){
+        if (!empty($user->first_name) && !empty($user->last_name)) {
+
+            $user_public_name = $user->first_name . ' ' . $user->last_name;
+
+        }
+
+        else {
 
             $user_public_name = $user->display_name;
 
