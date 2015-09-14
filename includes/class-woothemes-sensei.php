@@ -159,6 +159,9 @@ class WooThemes_Sensei {
         $this->post_types = new WooThemes_Sensei_PostTypes();
         $this->post_types->token = 'woothemes-sensei-posttypes';
 
+        // Lad the updates class
+        $this->updates = new WooThemes_Sensei_Updates( $this );
+
         // Setup settings screen.
         $this->load_class( 'settings-api' );
         $this->load_class( 'settings' );
@@ -360,9 +363,9 @@ class WooThemes_Sensei {
     public function run_updates() {
         // Run updates if administrator
         if ( current_user_can( 'manage_options' ) || current_user_can( 'manage_sensei' ) ) {
-            $this->load_class( 'updates' );
-            $this->updates = new WooThemes_Sensei_Updates( $this );
+
             $this->updates->update();
+
         } // End If Statement
     } // End run_updates()
 
