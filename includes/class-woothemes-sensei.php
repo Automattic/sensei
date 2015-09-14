@@ -1196,7 +1196,19 @@ class WooThemes_Sensei {
         //If object have items go through them all to find course
         if ( 0 < sizeof( $order_items ) ) {
 
-        echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
+            /**
+             * sensei_order_header_text
+             * Filter the header text that Sensei outputs just above the list of purchased courses.
+             *
+             * @since 1.9.0
+             *
+             * @param string $sensei_order_header_text
+             *
+             */
+
+            $sensei_order_header_text = apply_filters('sensei_order_header_text', 'Course details');
+
+            echo '<h2>' . __( $sensei_order_header_text, 'woothemes-sensei' ) . '</h2>';
 
         foreach ( $order_items as $item ) {
 
@@ -1236,7 +1248,19 @@ class WooThemes_Sensei {
                             $title = $course->post_title;
                             $permalink = get_permalink( $course->ID );
 
-                            echo '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
+                            /**
+                             * sensei_order_item_text
+                             * Filter the text that Sensei outputs for every purchased course.
+                             *
+                             * @since 1.9.0
+                             *
+                             * @param string $sensei_order_header_text
+                             *
+                             */
+
+                            $sensei_order_item_text = apply_filters('sensei_order_item_text', 'View course: %1$s');
+
+                            echo '<p><strong>' . sprintf( __($sensei_order_item_text, 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
                         }
                     }
                 }
