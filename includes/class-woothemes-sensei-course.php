@@ -2104,7 +2104,7 @@ class WooThemes_Sensei_Course {
         }
 
         // add the item number to the classes as well.
-        $extra_classes[] = 'course-item-number-'. $sensei_course_loop['counter'];
+        $extra_classes[] = 'loop-item-number-'. $sensei_course_loop['counter'];
 
         return $extra_classes;
 
