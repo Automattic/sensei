@@ -262,8 +262,7 @@ class Sensei_Templates {
          */
         if( has_action('sensei_course_archive_main_content') ){
 
-            _doing_it_wrong('sensei_course_archive_main_content', 'Sensei: This hook has been retired. Please use sensei_before_archive_course_loop','1.9.0' );
-           do_action( 'sensei_course_archive_main_content' );
+            _doing_it_wrong('sensei_course_archive_main_content', 'Sensei: This hook has been retired. Please use sensei_loop_course_before','1.9.0' );
 
         }
 
