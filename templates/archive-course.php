@@ -46,6 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             /**
              * action before course archive loop
              *
+             * @deprecated since 1.9.0 use sensei_loop_course_before instead
              * @hooked Sensei_Templates::deprecated_archive_hook 80
              */
             do_action( 'sensei_archive_before_course_loop' );
@@ -59,6 +60,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             /**
              * action after course archive  loop
              *
+             * @deprecated since 1.9.0 use sensei_loop_course_after instead.
              */
             do_action( 'sensei_archive_after_course_loop' );
 
