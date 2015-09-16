@@ -2205,4 +2205,25 @@ class WooThemes_Sensei_Utils {
 
     }
 
+    /**
+     * Returns the current url with all the query vars
+     *
+     * @since 1.9.0
+     * @return string $url
+     */
+    public static function get_current_url(){
+
+        global $wp;
+        $current_url = trailingslashit( home_url( $wp->request ) );
+        if ( isset( $_GET ) ) {
+
+            foreach ($_GET as $param => $val ) {
+
+                $current_url = add_query_arg( $param, $val , $current_url );
+
+            }
+        }
+
+        return $current_url;
+    }
 } // End Class

@@ -186,19 +186,25 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	public function enqueue_scripts () {
-		global $woothemes_sensei;
 
 		$disable_js = false;
-		if ( isset( $woothemes_sensei->settings->settings[ 'js_disable' ] ) ) {
-			$disable_js = $woothemes_sensei->settings->settings[ 'js_disable' ];
+		if ( isset( Sensei()->settings->settings[ 'js_disable' ] ) ) {
+			$disable_js = Sensei()->settings->settings[ 'js_disable' ];
 		} // End If Statement
 		if ( ! $disable_js ) {
 
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			// My Courses tabs script
-			wp_register_script( $this->token . '-user-dashboard', esc_url( $woothemes_sensei->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
+			wp_register_script( $this->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
 			wp_enqueue_script( $this->token . '-user-dashboard' );
+
+
+            // Course Archive javascript
+            if( is_post_type_archive( 'course' ) ){
+                wp_enqueue_script( $this->token . '-course-archive', esc_url( Sensei()->plugin_url . 'assets/js/frontend/course-archive' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
+            }
+
 
 			// Allow additional scripts to be loaded
 			do_action( 'sensei_additional_scripts' );
