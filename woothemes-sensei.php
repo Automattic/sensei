@@ -57,6 +57,13 @@ Domain path: /lang/
     $woothemes_sensei = Sensei();
 
     /**
+    * Hook in WooCommerce functionality
+    */
+    if( Sensei_WC::is_woocommerce_active() ){
+        add_action('init', array( 'Sensei_WC', 'load_woocommerce_integration_hooks' ) );
+    }
+
+    /**
      * Load all Template hooks
     */
     if(! is_admin() ){

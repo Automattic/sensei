@@ -12,7 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside W
  */
 
 Class Sensei_WC{
+    /**
+     * Load the files needed for the woocommerce integration.
+     *
+     * @since 1.9.0
+     */
+    public static function load_woocommerce_integration_hooks(){
 
+        require_once( 'sensei-wc-hooks.php' );
+
+    }
     /**
      * check if WooCommerce plugin is loaded
      *
