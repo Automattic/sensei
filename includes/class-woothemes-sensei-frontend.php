@@ -319,13 +319,13 @@ class WooThemes_Sensei_Frontend {
 	function sensei_output_content_pagination() {
 
         if( is_singular('course') ) {
-			Sensei_Templates::get_template( 'wrappers/pagination-posts.php' );
+			Sensei_Templates::get_template( 'globals/pagination-posts.php' );
 		} elseif( is_singular('lesson') ) {
-			Sensei_Templates::get_template( 'wrappers/pagination-lesson.php' );
+			Sensei_Templates::get_template( 'globals/pagination-lesson.php' );
 		} elseif( is_singular('quiz') ) {
-			Sensei_Templates::get_template( 'wrappers/pagination-quiz.php' );
+			Sensei_Templates::get_template( 'globals/pagination-quiz.php' );
 		} else {
-			Sensei_Templates::get_template( 'wrappers/pagination.php' );
+			Sensei_Templates::get_template( 'globals/pagination.php' );
 		} // End If Statement
 
 	} // End sensei_output_content_pagination()
