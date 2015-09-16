@@ -303,7 +303,7 @@ class WooThemes_Sensei_Learners {
 				case 'course':
 					$removed = WooThemes_Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
 
-                    if( ! empty( $order_id ) && is_woocommerce_active()  ){
+                    if( ! empty( $order_id ) && Sensei_WC::is_woocommerce_active()  ){
 
                         $order = new WC_Order($order_id);
 

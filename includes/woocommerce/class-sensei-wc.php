@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside WP
+
 /**
  * Sensei WooCommerce class
  *
@@ -11,6 +12,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside W
  */
 
 Class Sensei_WC{
+
+    /**
+     * check if WooCommerce plugin is loaded
+     *
+     * @since 1.9.0
+     * @return bool
+     */
+    public static function is_woocommerce_active(){
+
+        $active_plugins = (array) get_option( 'active_plugins', array() );
+
+        if ( is_multisite() ){
+
+            $active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
+
+        }
+
+        return in_array( 'woocommerce/woocommerce.php', $active_plugins ) || array_key_exists( 'woocommerce/woocommerce.php', $active_plugins );
+
+    } // end is_woocommerce_active
 
     /**
      * Find the order active number (completed or processing ) for a given user on a course. It will return the latest order.

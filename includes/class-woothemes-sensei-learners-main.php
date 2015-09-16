@@ -269,7 +269,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
                 // get the learners order for this course if the course was purchased
 
                 $course_order_id_attribute = '';
-                if( is_woocommerce_active() ){
+                if( Sensei_WC::is_woocommerce_active() ){
 
                     $course_product_order_id = Sensei_WC::get_learner_course_active_order_id( $user_activity->user_id, $post_id  );
 
