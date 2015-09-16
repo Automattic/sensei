@@ -87,6 +87,20 @@ class WooThemes_Sensei_Course {
         //filter the course query in Sensei specific instances
         add_filter( 'pre_get_posts', array( __CLASS__, 'course_query_filter' ) );
 
+        //attache the sorting to the course archive
+        add_action ( 'sensei_loop_course_before' , array( __CLASS__, 'course_archive_sorting' ) );
+
+        //attach the filter links to the course archive
+        add_action ( 'sensei_loop_course_before' , array( __CLASS__, 'course_archive_filters' ) );
+
+        //filter the course query when featured filter is applied
+        add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_featured_filter'));
+
+        // handle the order by title post submission
+        add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_order_by_title'));
+
+
+
 	} // End __construct()
 
 	/**
@@ -2127,5 +2141,164 @@ class WooThemes_Sensei_Course {
         return apply_filters('sensei_course_columns', 3);
 
     }
+
+    /**
+     * Output the course archive filter markup
+     *
+     * hooked into sensei_loop_course_before
+     *
+     * @since 1.9.0
+     * @param
+     */
+    public static function course_archive_sorting( $query ){
+
+        if( ! is_archive(  'course ') ){
+            return;
+        }
+
+        /**
+         * Filter the sensei archive course order by values
+         *
+         * @since 1.9.0
+         * @param array $options {
+         *  @type string $option_value
+         *  @type string $option_string
+         * }
+         */
+        $course_order_by_options = apply_filters( 'sensei_archive_course_order_by_options', array(
+            "newness"     => __( "Sort by newest first", "woothemes-sensei"),
+            "title"       => __( "Sort by title A-Z", "woothemes-sensei" ),
+        ));
+
+        // setup the currently selected item
+        $selected = 'newness';
+        if( isset( $_GET['orderby'] ) ){
+
+            $selected =  $_GET[ 'orderby' ];
+
+        }
+
+        ?>
+
+        <span>
+            <form name="sensei-course-order" action="<?php echo WooThemes_Sensei_Utils::get_current_url(); ?>" method="POST">
+                <select name="course-orderby" class="orderby">
+                    <?php
+                    foreach( $course_order_by_options as $value => $text ){
+
+                        echo '<option value="'. $value . ' "' . selected( $selected, $value, false ) . '>'. $text. '</option>';
+
+                    }
+                    ?>
+                </select>
+            </form>
+        </span>
+
+    <?php
+    }// end course archive filters
+
+    /**
+     * Output the course archive filter markup
+     *
+     * hooked into sensei_loop_course_before
+     *
+     * @since 1.9.0
+     * @param
+     */
+    public static function course_archive_filters( $query ){
+
+        /**
+         * filter the course archive filter buttons
+         *
+         * @since 1.9.0
+         * @param array $filters{
+         *   @type array ( $id, $url , $title )
+         * }
+         *
+         */
+        $filters = apply_filters( 'sensei_archive_course_filter_by_options', array(
+            array( 'id' => 'all', 'url' => self::get_course_url(), 'title'=> __( 'All', 'woothemes-sensei' ) ),
+            array( 'id' => 'featured', 'url' => add_query_arg( array( 'course_filter'=>'featured'), self::get_course_url()  ), 'title'=> __( 'Featured', 'woothemes-sensei' ) ),
+        ));
+
+
+        ?>
+        <span class="sensei-course-filters" >
+            <?php
+
+            //determine the current active url
+            $current_url = WooThemes_Sensei_Utils::get_current_url();
+
+            foreach( $filters as $filter ) {
+
+                $active_class =  $current_url == $filter['url'] ? ' class="active" ' : '';
+
+                echo '<a '. $active_class .' id="'. $filter['id'] .'" href="'. esc_url( $filter['url'] ).'" >'. $filter['title']  .'</a>';
+
+            }
+            ?>
+
+        </span>
+
+        <?php
+
+    }
+
+    /**
+     * if the featured link is click on the course archive page
+     * filter the courses returned to only show those featured
+     *
+     * Hooked into pre_get_posts
+     *
+     * @since 1.9.0
+     * @param WP_Query $query
+     * @return WP_Query $query
+     */
+    public static function course_archive_featured_filter( $query ){
+
+        if( isset ( $_GET[ 'course_filter' ] ) && 'featured'== $_GET['course_filter'] && $query->is_main_query()  ){
+            //setup meta query for featured courses
+            $query->set( 'meta_value', 'featured'  );
+            $query->set( 'meta_key', '_course_featured'  );
+            $query->set( 'meta_compare', '='  );
+        }
+
+        return $query;
+    }
+
+    /**
+     * if the course order drop down is changed
+     *
+     * Hooked into pre_get_posts
+     *
+     * @since 1.9.0
+     * @param WP_Query $query
+     * @return WP_Query $query
+     */
+    public static function course_archive_order_by_title( $query ){
+
+        if( isset ( $_POST[ 'course-orderby' ] ) && 'title '== $_POST['course-orderby']
+            && 'course'== $query->get('post_type') && $query->is_main_query()  ){
+            // setup the order by title for this query
+            $query->set( 'orderby', 'title'  );
+            $query->set( 'order', 'ASC'  );
+        }
+
+        return $query;
+    }
+
+
+    /**
+     * Get the link to the courses page. This will be the course post type archive
+     * page link or the page the user set in their settings
+     *
+     * @since 1.9.0
+     * @return string $course_page_url
+     */
+    public static function get_course_url(){
+
+        return get_post_type_archive_link('course');
+
+    }// get_course_url
 
 } // End Class

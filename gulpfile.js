@@ -20,6 +20,7 @@ var del = require('del');
 var paths = {
     scripts: ['assets/js/*.js' ],
     adminScripts: ['assets/js/admin/*.js'],
+    frontendScripts: ['assets/js/frontend/*.js'],
     css: ['assets/css/*.css'],
     sass: ['assets/css/*.scss']
 
@@ -30,7 +31,7 @@ gulp.task('clean', function(cb) {
 
 });
 
-gulp.task('default', [ 'sass', 'CSS','JS','adminJS' ] );
+gulp.task('default', [ 'sass', 'CSS','JS','frontendJS','adminJS' ] );
 
 gulp.task('CSS',['clean'], function(){
     return gulp.src( paths.css )
@@ -46,6 +47,15 @@ gulp.task('JS',['clean'], function(){
         .pipe(rename({ extname: '.min.js' }))
         .pipe(chmod(644))
         .pipe( gulp.dest( 'assets/js' ));
+});
+
+gulp.task('frontendJS',['clean'], function(){
+    return gulp.src( paths.frontendScripts )
+        // This will minify and rename to *.min.js
+        .pipe(uglify())
+        .pipe(rename({ extname: '.min.js' }))
+        .pipe(chmod(644))
+        .pipe( gulp.dest( 'assets/js/frontend' ));
 });
 
 gulp.task('adminJS',['clean'], function(){
