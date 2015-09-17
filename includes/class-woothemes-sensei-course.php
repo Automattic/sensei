@@ -2062,7 +2062,7 @@ class WooThemes_Sensei_Course {
         global $post; // used to get the current page id for my courses
 
         // for the course archive page
-        if( is_main_query() && is_post_type_archive('course') )
+        if( $query->is_main_query() && is_post_type_archive('course') )
         {
 
             $query->set( 'posts_per_page', apply_filters( 'sensei_archive_courses_per_page', get_option( 'posts_per_page' ) ) );
