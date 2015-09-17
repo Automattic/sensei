@@ -110,6 +110,7 @@ Class Sensei_WC{
 
     /**
      * Output WooCommerce specific course filters
+     * Removing the paged argument
      *
      * @since 1.9.0
      * @param $filter_links
@@ -117,7 +118,7 @@ Class Sensei_WC{
      */
     public static function add_course_archive_wc_filter_links( $filter_links ){
 
-        $course_url = WooThemes_Sensei_Utils::get_current_url();
+        $course_url = remove_query_arg('paged', WooThemes_Sensei_Utils::get_current_url() );
 
         $filter_links[] = array(    'id'=>'paid' ,
                                     'url'=> add_query_arg('course_filter', 'paid', $course_url),
