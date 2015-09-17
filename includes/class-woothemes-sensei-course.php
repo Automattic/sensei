@@ -2217,8 +2217,8 @@ class WooThemes_Sensei_Course {
          *
          */
         $filters = apply_filters( 'sensei_archive_course_filter_by_options', array(
-            array( 'id' => 'all', 'url' => self::get_course_url(), 'title'=> __( 'All', 'woothemes-sensei' ) ),
-            array( 'id' => 'featured', 'url' => add_query_arg( array( 'course_filter'=>'featured'), self::get_course_url()  ), 'title'=> __( 'Featured', 'woothemes-sensei' ) ),
+            array( 'id' => 'all', 'url' => self::get_courses_page_url(), 'title'=> __( 'All', 'woothemes-sensei' ) ),
+            array( 'id' => 'featured', 'url' => add_query_arg( array( 'course_filter'=>'featured'), self::get_courses_page_url()  ), 'title'=> __( 'Featured', 'woothemes-sensei' ) ),
         ));
 
 
@@ -2295,7 +2295,7 @@ class WooThemes_Sensei_Course {
      * @since 1.9.0
      * @return string $course_page_url
      */
-    public static function get_course_url(){
+    public static function get_courses_page_url(){
 
         return get_post_type_archive_link('course');
 
