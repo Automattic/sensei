@@ -108,4 +108,141 @@ Class Sensei_WC{
 
     } // end get_learner_course_active_order_ids
 
+    /**
+     * Output WooCommerce specific course filters
+     *
+     * @since 1.9.0
+     * @param $filter_links
+     * @return mixed
+     */
+    public static function add_course_archive_wc_filter_links( $filter_links ){
+
+        $course_url = WooThemes_Sensei_Utils::get_current_url();
+
+        $filter_links[] = array(    'id'=>'paid' ,
+                                    'url'=> add_query_arg('course_filter', 'paid', $course_url),
+                                    'title'=>__( 'Paid', 'woothemes-sensei' )
+        );
+
+        $filter_links[] = array(    'id'=>'free',
+                                    'url'=>add_query_arg('course_filter', 'free', $course_url),
+                                    'title'=>__( 'Free', 'woothemes-sensei' )
+        );
+
+        return $filter_links;
+
+    }// end add_course_archive_wc_filter_links
+
+    /**
+     * Apply the free filter the the course query
+     * getting all course with no products or products with zero price
+     *
+     * hooked into pre_get_posts
+     *
+     * @since 1.9.0
+     * @param WP_Query $query
+     * @return WP_Query $query
+     */
+    public static function course_archive_wc_filter_free( $query ){
+
+        if( isset( $_GET['course_filter'] ) && 'free' == $_GET['course_filter']
+            && 'course' == $query->get( 'post_type') && $query->is_main_query()  ){
+
+            // get all the free WooCommerce products
+            // will be used later to check for course with the id as meta
+            $woocommerce_free_product_ids = get_posts( array(
+                'post_type' => 'product',
+                'posts_per_page' => '1000',
+                'fields' => 'ids',
+                'meta_query'=> array(
+                    'relation' => 'OR',
+                    array(
+                        'key'=> '_regular_price',
+                        'value' => 0,
+                    ),
+                    array(
+                        'key'=> '_sale_price',
+                        'value' => 0,
+                    ),
+                ),
+            ));
+
+            // setup the course meta query
+            $meta_query = array(
+                'relation' => 'OR',
+                array(
+                    'key'     => '_course_woocommerce_product',
+                    'compare' => 'NOT EXISTS',
+                ),
+                array(
+                    'key'     => '_course_woocommerce_product',
+                    'value' => $woocommerce_free_product_ids,
+                    'compare' => 'IN',
+                ),
+            );
+
+            // manipulate the query to return free courses
+            $query->set('meta_query', $meta_query );
+
+        }// end if course_filter
+
+        return $query;
+
+    }// course_archive_wc_filter_free
+
+    /**
+     * Apply the paid filter to the course query on the courses page
+     * will include all course with a product attached with a price
+     * more than 0
+     *
+     * hooked into pre_get_posts
+     *
+     * @since 1.9.0
+     * @param WP_Query $query
+     * @return WP_Query $query
+     */
+    public static function course_archive_wc_filter_paid( $query ){
+
+        if( isset( $_GET['course_filter'] ) && 'paid' == $_GET['course_filter']
+            && 'course' == $query->get( 'post_type') && $query->is_main_query() ){
+
+            // get all the paid WooCommerce products
+            // will be used later to check for course with the id as meta
+            $woocommerce_paid_product_ids = get_posts( array(
+                'post_type' => 'product',
+                'posts_per_page' => '1000',
+                'fields' => 'ids',
+                'meta_query'=> array(
+                    'relation' => 'AND',
+                    array(
+                        'key'=> '_regular_price',
+                        'compare' => '>',
+                        'value' => 0,
+                    ),
+                    array(
+                        'key'=> '_sale_price',
+                        'compare' => '>',
+                        'value' => 0,
+                    ),
+                ),
+            ));
+
+            // setup the course meta query
+            $meta_query = array(
+                array(
+                    'key'     => '_course_woocommerce_product',
+                    'value' => $woocommerce_paid_product_ids,
+                    'compare' => 'IN',
+                ),
+            );
+
+            // manipulate the query to return free courses
+            $query->set('meta_query', $meta_query );
+
+        }
+
+        return $query;
+
+    }
+
 }// end Sensei_WC
