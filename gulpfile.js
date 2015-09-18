@@ -22,23 +22,16 @@ var paths = {
     adminScripts: ['assets/js/admin/*.js'],
     frontendScripts: ['assets/js/frontend/*.js'],
     css: ['assets/css/*.css'],
-    sass: ['assets/css/*.scss']
-
+    sass: ['assets/css/*.scss'],
+    frontendSass: ['assets/css/frontend/*.scss'],
 };
 
 gulp.task('clean', function(cb) {
-    del( ['assets/js/*.min.js','assets/js/admin/*.min.js', 'assets/css/*.min.css'], cb );
+    del( ['assets/js/*.min.js','assets/js/admin/*.min.js','assets/js/frontend/*.min.js', 'assets/css/*.min.css'], cb );
 
 });
 
-gulp.task('default', [ 'sass', 'CSS','JS','frontendJS','adminJS' ] );
-
-gulp.task('CSS',['clean'], function(){
-    return gulp.src( paths.css )
-        .pipe(minifyCSS({keepBreaks:false}))
-        .pipe(rename({ extname: '.min.css' }))
-        .pipe( gulp.dest('assets/css') );
-});
+gulp.task('default', [ 'sass','frontendSass', 'CSS','JS','frontendJS','adminJS' ] );
 
 gulp.task('JS',['clean'], function(){
     return gulp.src( paths.scripts )
@@ -71,5 +64,14 @@ gulp.task('sass', function () {
     return gulp.src( paths.sass )
         .pipe(sass().on('error', sass.logError))
         .pipe(chmod(644))
+        .pipe(minifyCSS({keepBreaks:false}))
         .pipe(gulp.dest('assets/css'));
+});
+
+gulp.task('frontendSass', function () {
+    return gulp.src( paths.frontendSass )
+        .pipe(sass().on('error', sass.logError))
+        .pipe(chmod(644))
+        .pipe(minifyCSS({keepBreaks:false}))
+        .pipe(gulp.dest('assets/css/frontend'));
 });
