@@ -8,11 +8,15 @@ Author URI: http://woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 */
 /*-----------------------------------------------------------------------------------*/
-/* Frontend Stylesheet */
+/* Sensei frontend  Stylesheet Sensei.css                                            */
 /*-----------------------------------------------------------------------------------*/
+
+
+
 /**
  * Variables
  */
+
 /**
  * Functions
  */
@@ -3894,3 +3898,8 @@ section.entry span {
 .sensei-pagination .page-numbers li {
   display: inline-block;
 }
+
+/**
+ * Imports
+ */
+@import 'grid';

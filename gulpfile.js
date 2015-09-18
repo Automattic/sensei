@@ -23,7 +23,6 @@ var paths = {
     frontendScripts: ['assets/js/frontend/*.js'],
     css: ['assets/css/*.css'],
     sass: ['assets/css/*.scss'],
-    frontendSass: ['assets/css/frontend/*.scss'],
 };
 
 gulp.task('clean', function(cb) {
@@ -69,7 +68,7 @@ gulp.task('sass', function () {
 });
 
 gulp.task('frontendSass', function () {
-    return gulp.src( paths.frontendSass )
+    return gulp.src( 'assets/css/frontend/sensei.scss' )
         .pipe(sass().on('error', sass.logError))
         .pipe(chmod(644))
         .pipe(minifyCSS({keepBreaks:false}))
