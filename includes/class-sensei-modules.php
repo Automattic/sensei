@@ -1271,37 +1271,37 @@ class Sensei_Core_Modules
      *
      * @return void
      */
-    public function admin_enqueue_scripts ( $hook ) {
+    public function admin_enqueue_scripts( $hook ) {
 
         /**
          * Filter the page hooks where modules admin script can be loaded on.
          *
          * @param array $white_listed_pages
          */
-        $script_on_pages_white_list = apply_filters( 'sensei_module_admin_script_page_white_lists' , array(
+        $script_on_pages_white_list = apply_filters( 'sensei_module_admin_script_page_white_lists', array(
             'edit-tags.php',
             'course_page_module-order',
             'post-new.php',
             'post.php'
-        ));
+        ) );
 
-        if( ! in_array( $hook, $script_on_pages_white_list ) ){
+        if ( ! in_array( $hook, $script_on_pages_white_list ) ) {
             return;
         }
 
-        $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-        wp_enqueue_script('sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array('jquery'), Sensei()->version , true);
-        wp_enqueue_script('sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array('jquery','sensei-chosen'), Sensei()->version , true);
-        wp_enqueue_script($this->taxonomy . '-admin', esc_url($this->assets_url) . 'js/modules-admin' . $suffix . '.js', array('jquery','sensei-chosen','sensei-chosen-ajax', 'jquery-ui-sortable'), Sensei()->version, true);
+        wp_enqueue_script( 'sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version , true);
+        wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-chosen' ), Sensei()->version , true );
+        wp_enqueue_script( $this->taxonomy . '-admin', esc_url( $this->assets_url ) . 'js/modules-admin' . $suffix . '.js', array( 'jquery', 'sensei-chosen', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'select2' ), Sensei()->version, true );
 
-        //localized module data
+        // localized module data
         $localize_modulesAdmin = array(
-            'search_courses_nonce' => wp_create_nonce( "search-courses" ),
-            'selectPlaceholder'=> __('Search for courses', 'woothemes-sensei')
+            'search_courses_nonce' => wp_create_nonce( 'search-courses' ),
+            'selectPlaceholder'    => __( 'Search for courses', 'woothemes-sensei' )
         );
 
-        wp_localize_script( $this->taxonomy . '-admin' ,'modulesAdmin', $localize_modulesAdmin  );
+        wp_localize_script( $this->taxonomy . '-admin' ,'modulesAdmin', $localize_modulesAdmin );
     }
 
     /**
@@ -1311,8 +1311,7 @@ class Sensei_Core_Modules
      *
      * @return void
      */
-    public function admin_enqueue_styles()
-    {
+    public function admin_enqueue_styles() {
         global $woothemes_sensei;
 
         wp_register_style($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'css/modules-admin.css','',Sensei()->version );
