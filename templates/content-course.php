@@ -15,7 +15,7 @@
 $extra_classes = WooThemes_Sensei_Course::get_course_loop_class();
 ?>
 
-<li class="<?php post_class( $extra_classes, get_the_ID() ) ?>">
+<li <?php post_class( $extra_classes, get_the_ID() ); ?> >
 
     <section class="course-content">
         <?php
