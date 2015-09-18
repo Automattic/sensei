@@ -231,7 +231,7 @@ class WooThemes_Sensei_Frontend {
 
 		if ( ! $disable_styles ) {
 
-			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend.css', '', Sensei()->version, 'screen' );
+			wp_register_style( $woothemes_sensei->token . '-frontend', $woothemes_sensei->plugin_url . 'assets/css/frontend/sensei.css', '', Sensei()->version, 'screen' );
 			wp_enqueue_style( $woothemes_sensei->token . '-frontend' );
 
 			// Allow additional stylesheets to be loaded
