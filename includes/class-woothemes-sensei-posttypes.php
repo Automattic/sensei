@@ -125,7 +125,7 @@ class WooThemes_Sensei_PostTypes {
             ),
 		    'map_meta_cap'        => true,
 		    'capability_type'     => 'course',
-            'has_archive'         => ( ( $course_page_id = Sensei()->settings->get( 'course_page' ) ) && get_post( $course_page_id ) ) ? get_page_uri( $course_page_id ) : 'courses',
+            'has_archive'         => $this->course_post_type_determine_archive(),
 		    'hierarchical'        => false,
 		    'menu_position'       => 51,
 		    'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail' )
@@ -140,6 +140,55 @@ class WooThemes_Sensei_PostTypes {
 		register_post_type( 'course', apply_filters( 'sensei_register_post_type_course', $args ) );
 
 	} // End setup_course_post_type()
+
+    /**
+     * Figure out of the course post type has an archive and what it should be.
+     *
+     * This function should return 'courses' or the page_uri for the course page setting.
+     *
+     * For backward compatibility  sake ( pre 1.9 )If the course page set in settings
+     * still has any of the old shortcodes: [newcourses][featuredcourses][freecourses][paidcourses] the
+     * page slug will not be returned. For any other pages without it the page URI will be returned.
+     *
+     *
+     * @sine 1.9.0
+     *
+     *
+     * @return false|string
+     */
+    public function course_post_type_determine_archive(){
+
+        $settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
+
+        // for a valid post that doesn't have any of the old short codes set the archive the same
+        // as the page URI
+        if( is_a( $settings_course_page, 'WP_Post') && ! $this->has_old_shortcodes( $settings_course_page->post_content ) ){
+
+             return get_page_uri( $settings_course_page->ID );
+
+        }else{
+
+            return 'courses';
+
+        }
+
+    }// end course_post_type_determine_archive
+
+    /**
+     * Check if given content has any of these old shortcodes:
+     * [newcourses][featuredcourses][freecourses][paidcourses]
+     *
+     * @since 1.9.0
+     */
+    public function has_old_shortcodes( $content ){
+
+        return  ( has_shortcode( $content, 'newcourses')
+        || has_shortcode( $content, 'featuredcourses')
+        || has_shortcode( $content, 'freecourses')
+        || has_shortcode( $content, 'paidcourses') );
+
+    }// end has old shortcodes
+
 
 	/**
 	 * Setup the "lesson" post type, it's admin menu item and the appropriate labels and permissions.
