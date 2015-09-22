@@ -333,7 +333,9 @@ class WooThemes_Sensei_Emails {
 	}
 
     /**
-     * Send email to teacher on lesson beginning
+     * teacher_completed_lesson()
+     *
+     * Send email to teacher on student completing lesson
      *
      * @access public
      * @return void
