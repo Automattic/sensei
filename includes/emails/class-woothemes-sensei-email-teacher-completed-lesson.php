@@ -61,7 +61,7 @@ class WooThemes_Sensei_Email_Teacher_Completed_Lesson {
 			'lesson_id'			=> $lesson_id,
 		), $this->template );
 
-		// Set recipient (learner)
+		// Set recipient (teacher)
 		$this->recipient = stripslashes( $this->teacher->user_email );
 
 		// Send mail
