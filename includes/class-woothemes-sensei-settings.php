@@ -424,9 +424,10 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		);
 
 		$teacher_email_options = array(
-			'teacher-completed-course' => __( 'A learner completes their course', 'woothemes-sensei' ),
-			'teacher-started-course' => __( 'A learner starts their course', 'woothemes-sensei' ),
-			'teacher-quiz-submitted' => __( 'A learner submits a quiz for grading', 'woothemes-sensei' ),
+            'teacher-started-course' => __( 'A learner starts their course', 'woothemes-sensei' ),
+            'teacher-completed-course' => __( 'A learner completes their course', 'woothemes-sensei' ),
+            'teacher-completed-lesson' => __( 'A learner completes a lesson', 'woothemes-sensei' ),
+            'teacher-quiz-submitted' => __( 'A learner submits a quiz for grading', 'woothemes-sensei' ),
 			'teacher-new-message' => __( 'A learner sends a private message to a teacher', 'woothemes-sensei' ),
 		);
 
