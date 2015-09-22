@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2015.09.09 - version 1.8.8
+* Fixed: Administrator does not have access to the Sensei settings on new installs
+* Fixed: Drop downs not working correctly on certain admin screens.
+
 2015.09.07 - version 1.8.7
 * Fixed: Course created email sent twice
 * Fixed: Error notices on the lesson edit screen

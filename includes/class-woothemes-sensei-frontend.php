@@ -1355,6 +1355,16 @@ class WooThemes_Sensei_Frontend {
                         global $woothemes_sensei;
                         $my_courses_page_id = '';
 
+                        /**
+                         * Filter to force Sensei to output the default WordPress user
+                         * registration link.
+                         *
+                         * @since 1.9.0
+                         * @param bool $wp_register_link default false
+                         */
+
+                        $wp_register_link = apply_filters('sensei_use_wp_register_link', false);
+
                         $settings = $woothemes_sensei->settings->get_settings();
                         if( isset( $settings[ 'my_course_page' ] )
                             && 0 < intval( $settings[ 'my_course_page' ] ) ){
@@ -1363,9 +1373,9 @@ class WooThemes_Sensei_Frontend {
 
                         }
 
-                        // show a link to the my_courses page or the WordPress register page if
-                        // not my courses page was set in the settings
-                        if( !empty( $my_courses_page_id ) && $my_courses_page_id ){
+                        // If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
+                        // is false, link to My Courses. If not, link to default WordPress registration page.
+                        if( !empty( $my_courses_page_id ) && $my_courses_page_id && !$wp_register_link){
 
                             $my_courses_url = get_permalink( $my_courses_page_id  );
                             $register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';

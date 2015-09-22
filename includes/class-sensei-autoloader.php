@@ -56,6 +56,7 @@ class Sensei_Autoloader {
         $this->class_file_map = array(
 
             'WooThemes_Sensei' => 'class-woothemes-sensei.php',
+            'WooThemes_Sensei_Updates' => 'class-woothemes-sensei-updates.php',
 
             'Sensei_Templates'=> 'class-sensei-templates.php',
 
