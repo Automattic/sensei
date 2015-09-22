@@ -369,6 +369,27 @@ class WooThemes_Sensei_Admin {
 
 
 	/**
+	 * Language pack install notice.
+	 *
+	 * @since 1.9.0
+	 */
+	public function language_pack_install_notice() {
+		?>
+		<div id="message" class="updated sensei-message sensei-connect">
+			<div class="squeezer">
+				<h4><?php _e( '<strong>Sensei in your language</strong> &#8211; There is a translation available for your language.', 'woothemes-sensei' ); ?></h4>
+
+				<p class="submit">
+					<a href="<?php echo esc_url( WooThemes_Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php _e( 'Install', 'woothemes-sensei' ); ?></a>
+					<a href="<?php echo esc_url( WooThemes_Sensei_Language_Pack_Manager::get_dismiss_uri() ) ?>" class="docs button-primary"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a>
+				</p>
+			</div>
+		</div>
+		<?php
+	}
+
+
+	/**
 	 * admin_notices_styles function.
 	 *
 	 * @access public
@@ -377,7 +398,7 @@ class WooThemes_Sensei_Admin {
 	function admin_notices_styles() {
 		global $woothemes_sensei;
 		// Installed notices
-	    if ( get_option('sensei_installed')==1 ) {
+	    if ( 1 == get_option( 'sensei_installed' ) ) {
 
 	    	wp_enqueue_style( 'sensei-activation', plugins_url(  '/assets/css/activation.css', dirname( __FILE__ ) ), '', Sensei()->version );
 
@@ -388,6 +409,11 @@ class WooThemes_Sensei_Admin {
 	    	} // End If Statement
 
 	    } // End If Statement
+
+	    if ( WooThemes_Sensei_Language_Pack_Manager::has_language_pack_available() ) {
+	    	add_action( 'admin_notices', array( $this, 'language_pack_install_notice' ) );
+	    }
+
 	} // End admin_notices_styles()
 
 	/**

@@ -168,6 +168,9 @@ class WooThemes_Sensei {
         $this->settings = new WooThemes_Sensei_Settings();
         $this->settings->token = 'woothemes-sensei-settings';
 
+        // Language pack manager
+        $this->load_class( 'language-pack-manager' );
+
         // Setup Admin Settings data
         if ( is_admin() ) {
 
@@ -684,7 +687,7 @@ class WooThemes_Sensei {
         } // Load the template file
 
         if ( $file ) {
-            
+
             $template = locate_template( $find );
 
             if ( ! $template ) $template = $this->plugin_path() . 'templates/' . $file;
