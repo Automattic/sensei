@@ -30,14 +30,14 @@ gulp.task( 'clean', function( cb ) {
 
 gulp.task( 'default', [ 'CSS','JS','adminJS' ] );
 
-gulp.task( 'CSS',['clean'], function() {
+gulp.task( 'CSS', ['clean'], function() {
 	return gulp.src( paths.css )
 		.pipe( minifyCSS({ keepBreaks: false }) )
 		.pipe( rename({ extname: '.min.css' }) )
 		.pipe( gulp.dest( 'assets/css' ) );
 });
 
-gulp.task( 'JS',['clean'], function() {
+gulp.task( 'JS', ['clean'], function() {
 	return gulp.src( paths.scripts )
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
@@ -46,7 +46,7 @@ gulp.task( 'JS',['clean'], function() {
 		.pipe( gulp.dest( 'assets/js' ));
 });
 
-gulp.task( 'adminJS',['clean'], function() {
+gulp.task( 'adminJS', ['clean'], function() {
 	return gulp.src( paths.adminScripts )
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
