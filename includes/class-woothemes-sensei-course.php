@@ -88,10 +88,10 @@ class WooThemes_Sensei_Course {
         add_filter( 'pre_get_posts', array( __CLASS__, 'course_query_filter' ) );
 
         //attache the sorting to the course archive
-        add_action ( 'sensei_loop_course_before' , array( __CLASS__, 'course_archive_sorting' ) );
+        add_action ( 'sensei_archive_before_course_loop' , array( __CLASS__, 'course_archive_sorting' ) );
 
         //attach the filter links to the course archive
-        add_action ( 'sensei_loop_course_before' , array( __CLASS__, 'course_archive_filters' ) );
+        add_action ( 'sensei_archive_before_course_loop' , array( __CLASS__, 'course_archive_filters' ) );
 
         //filter the course query when featured filter is applied
         add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_featured_filter'));
