@@ -2252,7 +2252,7 @@ class WooThemes_Sensei_Course {
 
 
         ?>
-        <ul class="sensei-course-filters fix" >
+        <ul class="sensei-course-filters clearfix" >
             <?php
 
             //determine the current active url
