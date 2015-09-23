@@ -268,5 +268,38 @@ class Sensei_Templates {
 
     }// end deprecated_archive_hook
 
+    /**
+     * A generic function for echoing the post title
+     *
+     * @since 1.9.0
+     * @param  WP_Post $post
+     */
+    public static function the_title( $post ){
+
+        /**
+         * Filter the template html tag for the title
+         *
+         * @since 1.9.0
+         *
+         * @param $title_html_tag default is 'h3'
+         */
+        $title_html_tag = apply_filters('sensei_the_title_html_tag','h3');
+
+        /**
+         * Filter the title classes
+         *
+         * @since 1.9.0
+         * @param string $title_classes defaults to $post_type-title
+         */
+        $title_classes = apply_filters('sensei_the_title_classes', $post->post_type . '-title' );
+
+        $html= '';
+        $html .= '<a href="' . get_permalink( $post->ID ) . '" >';
+        $html .= '<'. $title_html_tag .' class="'. $title_classes .'" >';
+        $html .= $post->post_title . '</'. $title_html_tag. '>';
+        $html .= '</a>';
+        echo $html;
+
+    }// end the title
 
 } // end class
