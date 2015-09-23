@@ -750,6 +750,28 @@ section.entry span {
 
 /* Course Archives */
 
+.sensei-ordering {
+  text-align: right; 
+  float: right;
+}
+
+.sensei-course-filters {
+  margin-bottom: 2em;
+  a {
+    float: left; 
+    border: 2px solid #ddd; 
+    margin-right: 5px; 
+    padding: 0.5em 1em;
+    &:hover {
+      background: #eee; 
+      text-decoration: none;
+    }
+    &.active {
+      border-color: #aaa;
+    }
+  }
+}
+
 .course-container {
   margin: 0 0 4.236em;
   .archive-header {
