@@ -30,35 +30,7 @@ $extra_classes = WooThemes_Sensei_Course::get_course_loop_class();
         do_action( 'sensei_course_content_before', get_post() );
         ?>
 
-        <?php
-        /**
-         * sensei_content_before
-         *
-         * action that runs before the sensei content within the content.php. It will run for all post types.
-         *
-         * @since 1.9
-         * @param WP_Post $post
-         *
-         */
-        do_action('sensei_content_before', get_post() );
-        ?>
-
         <section class="entry">
-
-            <?php
-
-            /**
-             * sensei_content_inside_before
-             *
-             * Fires just before the post content in the content.php file. This fires
-             * for all post types
-             *
-             * @since 1.9
-             *
-             * @param WP_Post $post
-             */
-            do_action('sensei_content_inside_before', get_post());
-            ?>
 
             <?php
             /**
@@ -92,20 +64,6 @@ $extra_classes = WooThemes_Sensei_Course::get_course_loop_class();
              * @param WP_Post $post
              */
             do_action('sensei_course_content_inside_after', get_post());
-            ?>
-
-            <?php
-            /**
-             * sensei_content_inside_before
-             *
-             * Fires just after the post content in the content.php file. This fires
-             * for all post types
-             *
-             * @since 1.9
-             *
-             * @param WP_Post $post
-             */
-            do_action('sensei_content_inside_after', get_post());
             ?>
 
         </section> <!-- section .entry -->
