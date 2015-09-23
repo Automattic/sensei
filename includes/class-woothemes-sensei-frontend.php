@@ -62,12 +62,11 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_lesson_single_title', array( $this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_quiz_single_title', array( $this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_message_single_title', array( $this, 'sensei_single_title' ), 10 );
-		add_action( 'sensei_course_image', array( $this, 'sensei_course_image' ), 10, 4 );
 		add_action( 'sensei_lesson_image', array( $this, 'sensei_lesson_image' ), 10, 5 );
 
 		add_action( 'sensei_lesson_archive_header', array( $this, 'sensei_lesson_archive_header' ), 10, 3 );
 		add_action( 'sensei_message_archive_header', array( $this, 'sensei_message_archive_header' ), 10, 3 );
-		add_action( 'sensei_course_archive_course_title', array( $this, 'sensei_course_archive_course_title' ), 10, 1 );
+
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 		// 1.2.1
 		add_action( 'sensei_lesson_course_signup', array( $this, 'sensei_lesson_course_signup_link' ), 10, 1 );
@@ -539,11 +538,15 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_single_title()
 
 	/**
-	 * sensei_course_image output for course image
+	 * sensei_course_image output for course image Please use Sensei()->course->course_image instead.
+     *
+     * @deprecated since 1.9.0
 	 * @since  1.2.0
 	 * @return void
 	 */
 	function sensei_course_image( $course_id, $width = '100', $height = '100', $return = false ) {
+
+        trigger_error( 'Sensei Deprecated function: sensei_course_image since 1.9.0 . Please use Sensei()->course->course_image instead.');
 		global $woothemes_sensei;
     	if ( $return ) {
 			return $woothemes_sensei->post_types->course->course_image( $course_id, $width, $height );

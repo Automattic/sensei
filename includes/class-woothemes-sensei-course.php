@@ -784,40 +784,53 @@ class WooThemes_Sensei_Course {
 	 * course_image function.
 	 *
 	 * Outputs the courses image, or first image from a lesson within a course
+     *
+     * Will echo the image unless return true is specified.
 	 *
 	 * @access public
-	 * @param int $course_id (default: 0)
+	 * @param int | WP_Post $course_id (default: 0)
 	 * @param string $width (default: '100')
 	 * @param string $height (default: '100')
-	 * @return void
+     * @param bool $return default false
+     *
+	 * @return string | void
 	 */
-	public function course_image( $course_id = 0, $width = '100', $height = '100' ) {
+	public function course_image( $course_id = 0, $width = '100', $height = '100', $return = false ) {
 
-		global $woothemes_sensei;
+        if( is_a( $course_id, 'WP_Post' ) ){
+            $course_id = $course_id->ID;
+        }
 
 		$html = '';
 
 		// Get Width and Height settings
 		if ( ( $width == '100' ) && ( $height == '100' ) ) {
+
 			if ( is_singular( 'course' ) ) {
-				if ( !$woothemes_sensei->settings->settings[ 'course_single_image_enable' ] ) {
+
+				if ( !Sensei()->settings->settings[ 'course_single_image_enable' ] ) {
 					return '';
 				} // End If Statement
 				$image_thumb_size = 'course_single_image';
-				$dimensions = $woothemes_sensei->get_image_size( $image_thumb_size );
+				$dimensions = Sensei()->get_image_size( $image_thumb_size );
 				$width = $dimensions['width'];
 				$height = $dimensions['height'];
 				$crop = $dimensions['crop'];
+
 			} else {
-				if ( !$woothemes_sensei->settings->settings[ 'course_archive_image_enable' ] ) {
+
+				if ( !Sensei()->settings->settings[ 'course_archive_image_enable' ] ) {
 					return '';
 				} // End If Statement
+
 				$image_thumb_size = 'course_archive_image';
-				$dimensions = $woothemes_sensei->get_image_size( $image_thumb_size );
+				$dimensions = Sensei()->get_image_size( $image_thumb_size );
 				$width = $dimensions['width'];
 				$height = $dimensions['height'];
 				$crop = $dimensions['crop'];
+
 			} // End If Statement
+
 		} // End If Statement
 
 		$img_url = '';
@@ -841,19 +854,33 @@ class WooThemes_Sensei_Course {
 			} // End For Loop
 
  			if ( '' == $img_url ) {
+
  				// Display Image Placeholder if none
-				if ( $woothemes_sensei->settings->settings[ 'placeholder_images_enable' ] ) {
-					$img_url = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+				if ( Sensei()->settings->get( 'placeholder_images_enable' ) ) {
+
+                    $img_url = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+
 				} // End If Statement
+
  			} // End If Statement
 
 		} // End If Statement
 
 		if ( '' != $img_url ) {
+
 			$html .= '<a href="' . get_permalink( $course_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $course_id ) ) . '">' . $img_url . '</a>';
+
 		} // End If Statement
 
-		return $html;
+        if( $return ){
+
+            return html;
+
+        }else{
+
+            echo $html;
+
+        }
 
 	} // End course_image()
 
@@ -896,6 +923,10 @@ class WooThemes_Sensei_Course {
 	 * @return array{ type WP_Post }  $posts_array
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
+
+        if( is_a( $course_id, 'WP_Post' ) ){
+            $course_id = $course_id->ID;
+        }
 
 		$lessons = array();
 

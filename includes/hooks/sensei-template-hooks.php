@@ -11,16 +11,24 @@
  */
 
 /**
- * deprecate the archive content hook
- * @since 1.9.0
+ *
+ * Course Archive hooks
+ *
  */
+// deprecate the archive content hook @since 1.9.0
 add_action( 'sensei_archive_before_course_loop', array ( 'Sensei_Templates', 'deprecated_archive_hook' ), 10, 1 );
 
-/**
- * Course archive title hook
- * @since 1.9.0
- */
+// Course archive title hook @since 1.9.0
 add_action('sensei_archive_title', array( 'WooThemes_Sensei_Course', 'archive_header' ), 10, 0 );
+
+/**
+ *
+ * Course Content Hooks
+ *
+ */
+// add the course image above the content
+add_action('sensei_course_content_before', array( Sensei()->course, 'course_image' ) ,10, 1 );
+
 /**
  * This hook allow us to change the template WordPress loads for a given page/post_type
  *
