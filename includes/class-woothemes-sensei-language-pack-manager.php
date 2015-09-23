@@ -39,11 +39,7 @@ class WooThemes_Sensei_Language_Pack_Manager {
 	 *
 	 * @return string
 	 */
-	public static function get_package_uri( $locale = null ) {
-		if ( is_null( $locale ) ) {
-			$locale = get_locale();
-		}
-
+	public static function get_package_uri( $locale ) {
 		return self::$repo . Sensei()->version . '/packages/' . $locale . '.zip';
 	}
 
@@ -89,6 +85,8 @@ class WooThemes_Sensei_Language_Pack_Manager {
 	/**
 	 * Check if has available language pack install
 	 *
+	 * @param  string $locale
+	 *
 	 * @return bool
 	 */
 	public static function has_language_pack_available( $locale = null ) {
@@ -113,7 +111,7 @@ class WooThemes_Sensei_Language_Pack_Manager {
 				return true;
 			} else {
 				// Updated the woothemes_sensei_language_pack_version to avoid searching translations for this release again
-				update_option( 'woothemes_sensei_language_pack_version', array( Sensei()->version, $locale ) );
+				self::update_language_pack_version( $locale );
 			}
 		}
 
@@ -137,10 +135,12 @@ class WooThemes_Sensei_Language_Pack_Manager {
 
 	/**
 	 * Update language pack version.
+	 *
+	 * @param string $locale
 	 */
-	public static function update_language_pack_version() {
+	public static function update_language_pack_version( $locale ) {
 		// Update the language pack version
-		update_option( 'woothemes_sensei_language_pack_version', array( Sensei()->version, get_locale() ) );
+		update_option( 'woothemes_sensei_language_pack_version', array( Sensei()->version, $locale ) );
 
 		// Remove the translation upgrade notice
 		update_option( 'sensei_needs_language_pack_install', 'no' );
@@ -224,7 +224,7 @@ class WooThemes_Sensei_Language_Pack_Manager {
 			$wp_filesystem->delete( $file );
 
 			// Update version and remove notice
-			self::update_language_pack_version();
+			self::update_language_pack_version( $locale );
 
 			// Redirect and show a success message
 			wp_redirect( add_query_arg( array( 'translation_updated' => 1 ), $tools_url ) );
@@ -245,7 +245,7 @@ class WooThemes_Sensei_Language_Pack_Manager {
 		}
 
 		// Update version and remove notice
-		self::update_language_pack_version();
+		self::update_language_pack_version( get_locale() );
 	}
 
 	/**
