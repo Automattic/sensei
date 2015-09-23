@@ -2301,4 +2301,68 @@ class WooThemes_Sensei_Course {
 
     }// get_course_url
 
+    /**
+     * Output the headers on the course archive page
+     *
+     * Hooked into the sensei_archive_title
+     *
+     * @since 1.9.0
+     * @param string $query_type
+     * @param string $before_html
+     * @param string $after_html
+     * @return void
+     */
+    public static function archive_header( $query_type ='' , $before_html='', $after_html =''  ){
+
+        if( ! is_post_type_archive('course') ){
+            return;
+        }
+
+        $html = '';
+
+        if( empty( $before_html ) ){
+
+            $before_html = '<header class="archive-header"><h1>';
+
+        }
+
+        if( empty( $after_html ) ){
+
+            $after_html = '</h1></header>';
+
+        }
+
+        if ( is_tax( 'course-category' ) ) {
+            global $wp_query;
+            $taxonomy_obj = $wp_query->get_queried_object();
+            $term_id = intval( $taxonomy_obj->term_id );
+            $taxonomy_short_name = $taxonomy_obj->taxonomy;
+            $taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
+            $title = sprintf( __( '%1$s Archives: %2$s', 'woothemes-sensei' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
+            echo apply_filters( 'course_category_archive_title', $before_html . $title . $after_html );
+            return;
+        } // End If Statement
+
+        switch ( $query_type ) {
+            case 'newcourses':
+                $html .= $before_html . apply_filters( 'sensei_new_courses_text', __( 'New Courses', 'woothemes-sensei' ) ) . $after_html;
+                break;
+            case 'featuredcourses':
+                $html .= $before_html . apply_filters( 'sensei_featured_courses_text', __( 'Featured Courses', 'woothemes-sensei' ) ) . $after_html;
+                break;
+            case 'freecourses':
+                $html .= $before_html . apply_filters( 'sensei_free_courses_text', __( 'Free Courses', 'woothemes-sensei' ) ) . $after_html;
+                break;
+            case 'paidcourses':
+                $html .= $before_html . apply_filters( 'sensei_paid_courses_text', __( 'Paid Courses', 'woothemes-sensei' ) ) . $after_html;
+                break;
+            default:
+                $html .= $before_html . apply_filters( 'sensei_courses_text', __( 'Courses', 'woothemes-sensei' ) ) . $after_html;
+                break;
+        } // End Switch Statement
+
+        echo apply_filters( 'course_archive_title', $html );
+
+    }//course_archive_header
+
 } // End Class

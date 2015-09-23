@@ -17,6 +17,11 @@
 add_action( 'sensei_archive_before_course_loop', array ( 'Sensei_Templates', 'deprecated_archive_hook' ), 10, 1 );
 
 /**
+ * Course archive title hook
+ * @since 1.9.0
+ */
+add_action('sensei_archive_title', array( 'WooThemes_Sensei_Course', 'archive_header' ), 10, 0 );
+/**
  * This hook allow us to change the template WordPress loads for a given page/post_type
  *
  * @since 1.0.0

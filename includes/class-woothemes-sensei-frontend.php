@@ -64,7 +64,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_message_single_title', array( $this, 'sensei_single_title' ), 10 );
 		add_action( 'sensei_course_image', array( $this, 'sensei_course_image' ), 10, 4 );
 		add_action( 'sensei_lesson_image', array( $this, 'sensei_lesson_image' ), 10, 5 );
-		add_action( 'sensei_course_archive_header', array( $this, 'sensei_course_archive_header' ), 10, 3 );
+
 		add_action( 'sensei_lesson_archive_header', array( $this, 'sensei_lesson_archive_header' ), 10, 3 );
 		add_action( 'sensei_message_archive_header', array( $this, 'sensei_message_archive_header' ), 10, 3 );
 		add_action( 'sensei_course_archive_course_title', array( $this, 'sensei_course_archive_course_title' ), 10, 1 );
@@ -590,43 +590,15 @@ class WooThemes_Sensei_Frontend {
 	 *
 	 * @access public
 	 * @since  1.2.0
+     * @deprecated since 1.9.0 use WooThemes_Sensei_Course::archive_header
 	 * @param string $query_type (default: '')
 	 * @return void
 	 */
 	function sensei_course_archive_header( $query_type = '', $before_html = '<header class="archive-header"><h1>', $after_html = '</h1></header>' ) {
 
-		$html = '';
+        trigger_error('This function sensei_course_archive_header has been depricated. Please use: WooThemes_Sensei_Course::course_archive_header ');
+        WooThemes_Sensei_Course::archive_header( '', '<header class="archive-header"><h1>', '</h1></header>' );
 
-		if ( is_tax( 'course-category' ) ) {
-			global $wp_query;
-			$taxonomy_obj = $wp_query->get_queried_object();
-			$term_id = intval( $taxonomy_obj->term_id );
-			$taxonomy_short_name = $taxonomy_obj->taxonomy;
-			$taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
-			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes-sensei' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
-			echo apply_filters( 'course_category_archive_title', $before_html . $title . $after_html );
-			return;
-		} // End If Statement
-
-		switch ( $query_type ) {
-			case 'newcourses':
-				$html .= $before_html . apply_filters( 'sensei_new_courses_text', __( 'New Courses', 'woothemes-sensei' ) ) . $after_html;
-				break;
-			case 'featuredcourses':
-				$html .= $before_html . apply_filters( 'sensei_featured_courses_text', __( 'Featured Courses', 'woothemes-sensei' ) ) . $after_html;
-				break;
-			case 'freecourses':
-				$html .= $before_html . apply_filters( 'sensei_free_courses_text', __( 'Free Courses', 'woothemes-sensei' ) ) . $after_html;
-				break;
-			case 'paidcourses':
-				$html .= $before_html . apply_filters( 'sensei_paid_courses_text', __( 'Paid Courses', 'woothemes-sensei' ) ) . $after_html;
-				break;
-			default:
-				$html .= $before_html . apply_filters( 'sensei_courses_text', __( 'Courses', 'woothemes-sensei' ) ) . $after_html;
-				break;
-		} // End Switch Statement
-
-		echo apply_filters( 'course_archive_title', $html );
 	} // sensei_course_archive_header()
 
 	/**
