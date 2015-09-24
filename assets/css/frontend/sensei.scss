@@ -766,8 +766,7 @@ section.entry span {
 /* Course Archives */
 
 .sensei-ordering {
-  text-align: right; 
-  float: right;
+  margin: 0 0 1em 0;
 }
 
 .sensei-course-filters {
@@ -3938,6 +3937,14 @@ section.entry span {
     header h1 {
       margin-right: 150px;
     }
+  }
+
+  /* Course Archives */
+
+  .sensei-ordering {
+    text-align: right; 
+    float: right;
+    margin: 0;
   }
 }
 
