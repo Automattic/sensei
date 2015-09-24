@@ -119,6 +119,7 @@ a {
     margin: 0 0 1.618em;
     padding: 0 0 1em;
     border-bottom: 1px solid #e2e2e2;
+    list-style: none;
   }
   .course:after, .course-container:after {
     content: "\0020";
@@ -771,6 +772,7 @@ section.entry span {
 
 .sensei-course-filters {
   margin: 0 0 2em 0;
+  padding: 0;
   li {
     float: left;
     list-style: none;
