@@ -779,12 +779,16 @@ section.entry span {
       border: 2px solid #ddd; 
       margin-right: 5px; 
       padding: 0.5em 1em;
+      background: #eee;
       &:hover {
-        background: #eee; 
+        background: #fff; 
         text-decoration: none;
+        border-color: #ccc;
       }
       &.active {
-        border-color: #aaa;
+        border-color: #ddd;
+        background: #fff;
+        cursor: default;
       }
     }
   }
