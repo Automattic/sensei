@@ -207,9 +207,10 @@ Class Sensei_WC{
         if( isset( $_GET['course_filter'] ) && 'paid' == $_GET['course_filter']
             && 'course' == $query->get( 'post_type') && $query->is_main_query() ){
 
-            // get all the paid WooCommerce products
+            // get all the paid WooCommerce products that has regular
+            // and sale price greater than 0
             // will be used later to check for course with the id as meta
-            $woocommerce_paid_product_ids = get_posts( array(
+            $paid_product_ids_with_sale = get_posts( array(
                 'post_type' => 'product',
                 'posts_per_page' => '1000',
                 'fields' => 'ids',
@@ -227,6 +228,32 @@ Class Sensei_WC{
                     ),
                 ),
             ));
+
+            // get all the paid WooCommerce products that has regular price
+            // greater than 0 without a sale price
+            // will be used later to check for course with the id as meta
+            $paid_product_ids_without_sale = get_posts( array(
+                'post_type' => 'product',
+                'posts_per_page' => '1000',
+                'fields' => 'ids',
+                'meta_query'=> array(
+                    'relation' => 'AND',
+                    array(
+                        'key'=> '_regular_price',
+                        'compare' => '>',
+                        'value' => 0,
+                    ),
+                    array(
+                        'key'=> '_sale_price',
+                        'compare' => '=',
+                        'value' => '',
+                    ),
+                ),
+            ));
+
+            // combine products ID's with regular and sale price grater than zero and those without
+            // sale but regular price greater than zero
+            $woocommerce_paid_product_ids = array_merge( $paid_product_ids_with_sale, $paid_product_ids_without_sale );
 
             // setup the course meta query
             $meta_query = array(
