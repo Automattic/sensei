@@ -67,7 +67,9 @@ Domain path: /lang/
      * Load all Template hooks
     */
     if(! is_admin() ){
-        require_once( 'includes/hooks/sensei-template-hooks.php' );
+
+        require_once( 'includes/hooks/template-hooks.php' );
+
     }
 
     /**
