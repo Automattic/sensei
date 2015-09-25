@@ -50,7 +50,7 @@ class WooThemes_Sensei_Messages {
 		add_action( 'save_post', array( $this, 'save_message' ) );
 
 		// Add message links to courses & lessons
-		add_action( 'sensei_course_single_meta', array( $this, 'send_message_link' ), 14 );
+		add_action( 'sensei_single_course_inside_before', array( $this, 'send_message_link' ), 14 );
 
         // add message link to lesson
         add_action( 'sensei_lesson_single_title', array( $this, 'send_message_link' ), 11, 2 );
