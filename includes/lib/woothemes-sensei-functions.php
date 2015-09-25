@@ -158,3 +158,33 @@ if ( ! function_exists( 'is_woocommerce_active' ) ) {
         return Sensei_WC::is_woocommerce_active();
     }
 }
+
+/**
+ * Provides an interface to allow us to deprecate hooks while still allowing them
+ * to work, but giving the developer an error message.
+ *
+ * @since 1.9.0
+ *
+ * @param $hook_tag
+ * @param $version
+ * @param $alternative
+ * @param array $args
+ */
+function sensei_do_deprecated_action( $hook_tag, $version, $alternative="" , $args = array()  ){
+
+    if( has_action( $hook_tag ) ){
+
+        $error_message = sprintf( __( "SENSEI: The hook '%s', has been deprecated since '%s'." , 'woothemes-sensei'), $hook_tag ,$version );
+
+        if( !empty( $alternative ) ){
+
+            $error_message .= sprintf( __("Please use '%s' instead.", 'woothemes-sensei'), $alternative ) ;
+
+        }
+
+        trigger_error( $error_message );
+        do_action( $hook_tag , $args );
+
+    }
+
+}// end sensei_do_deprecated_action
