@@ -37,17 +37,16 @@ if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! 
 
         	<article <?php post_class( array( 'course', 'post' ) ); ?>>
 
-				<?php
-
-                do_action( 'sensei_course_image', $post->ID );
-
-                do_action( 'sensei_course_single_title' );
-
-                /**
-                 * @hooked Sensei()->course->the_progress_statement - 15
-                 * @hooked Sensei()->course->the_progress_meter - 16
-                 */
-                do_action( 'sensei_course_single_meta' );
+                <?php
+                    /**
+                     * Hook inside the single course post above the content
+                     *
+                     * @since 1.9.0
+                     *
+                     * @hooked
+                     *
+                     */
+                    do_action( 'sensei_single_course_inside_before' );
                 ?>
 
                 <section class="entry fix">

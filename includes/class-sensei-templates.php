@@ -302,4 +302,20 @@ class Sensei_Templates {
 
     }// end the title
 
+    /**
+     * This function adds the hooks inside and above the single course content for
+     * backwards compatibility sake.
+     *
+     * @since 1.9.0
+     * @deprecated 1.9.0
+     */
+    public static function deprecated_single_course_inside_before_hooks(){
+
+        global $post;
+        sensei_do_deprecated_action('sensei_course_image','1.9.0', 'sensei_single_course_inside_before', array( $post->ID ) );
+        sensei_do_deprecated_action('sensei_course_single_title','1.9.0', 'sensei_single_course_inside_before' );
+        sensei_do_deprecated_action('sensei_course_single_meta','1.9.0', 'sensei_single_course_inside_before' );
+
+    }// end deprecated_single_course_inside_before_hooks
+
 } // end class
