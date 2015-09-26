@@ -22,7 +22,7 @@ class WooThemes_Sensei_Language_Pack_Manager {
 	 *
 	 * @var string
 	 */
-	protected static $repo = 'https://github.com/woothemes/sensei-language-packs/raw/v';
+	protected static $repo = 'https://github.com/woothemes/sensei-language-packs/raw/';
 
 	/**
 	 * Initialize the language pack manager
