@@ -23,6 +23,20 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /**
  * Mixins
  */
+
+ /**
+ * Base
+ */
+ .clearfix {
+    &:before, &:after {
+        content: "";
+        display: table;
+    }
+    &:after {
+        clear: both;
+    }
+}
+
 /**
  * Animations
  */
@@ -105,6 +119,7 @@ a {
     margin: 0 0 1.618em;
     padding: 0 0 1em;
     border-bottom: 1px solid #e2e2e2;
+    list-style: none;
   }
   .course:after, .course-container:after {
     content: "\0020";
@@ -749,6 +764,36 @@ section.entry span {
 }
 
 /* Course Archives */
+
+.sensei-ordering {
+  margin: 0 0 1em 0;
+}
+
+.sensei-course-filters {
+  margin: 0 0 2em 0;
+  padding: 0;
+  li {
+    float: left;
+    list-style: none;
+    a {
+      display: block;
+      border: 2px solid #ddd; 
+      margin-right: 5px; 
+      padding: 0.5em 1em;
+      background: #eee;
+      &:hover {
+        background: #fff; 
+        text-decoration: none;
+        border-color: #ccc;
+      }
+      &.active {
+        border-color: #ddd;
+        background: #fff;
+        cursor: default;
+      }
+    }
+  }
+}
 
 .course-container {
   margin: 0 0 4.236em;
@@ -3892,6 +3937,14 @@ section.entry span {
     header h1 {
       margin-right: 150px;
     }
+  }
+
+  /* Course Archives */
+
+  .sensei-ordering {
+    text-align: right; 
+    float: right;
+    margin: 0;
   }
 }
 
