@@ -2211,19 +2211,17 @@ class WooThemes_Sensei_Course {
 
         ?>
 
-        <span>
-            <form name="sensei-course-order" action="<?php echo WooThemes_Sensei_Utils::get_current_url(); ?>" method="POST">
-                <select name="course-orderby" class="orderby">
-                    <?php
-                    foreach( $course_order_by_options as $value => $text ){
+        <form class="sensei-ordering" name="sensei-course-order" action="<?php echo WooThemes_Sensei_Utils::get_current_url(); ?>" method="POST">
+            <select name="course-orderby" class="orderby">
+                <?php
+                foreach( $course_order_by_options as $value => $text ){
 
-                        echo '<option value="'. $value . ' "' . selected( $selected, $value, false ) . '>'. $text. '</option>';
+                    echo '<option value="'. $value . ' "' . selected( $selected, $value, false ) . '>'. $text. '</option>';
 
-                    }
-                    ?>
-                </select>
-            </form>
-        </span>
+                }
+                ?>
+            </select>
+        </form>
 
     <?php
     }// end course archive filters
@@ -2254,7 +2252,7 @@ class WooThemes_Sensei_Course {
 
 
         ?>
-        <span class="sensei-course-filters" >
+        <ul class="sensei-course-filters clearfix" >
             <?php
 
             //determine the current active url
@@ -2264,12 +2262,12 @@ class WooThemes_Sensei_Course {
 
                 $active_class =  $current_url == $filter['url'] ? ' class="active" ' : '';
 
-                echo '<a '. $active_class .' id="'. $filter['id'] .'" href="'. esc_url( $filter['url'] ).'" >'. $filter['title']  .'</a>';
+                echo '<li><a '. $active_class .' id="'. $filter['id'] .'" href="'. esc_url( $filter['url'] ).'" >'. $filter['title']  .'</a></li>';
 
             }
             ?>
 
-        </span>
+        </ul>
 
         <?php
 
