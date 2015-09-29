@@ -273,4 +273,22 @@ Class Sensei_WC{
 
     }
 
+    /**
+     * Load the WooCommerce single product actions above
+     * single courses if woocommerce is active allowing purchase
+     * information and actions to be hooked from WooCommerce.
+     */
+    public static function do_single_course_wc_single_product_action(){
+
+        /**
+         * this hooks is documented within the WooCommerce plugin.
+         */
+        if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+
+            do_action( 'woocommerce_before_single_product' );
+
+        } // End If Statement
+
+    }// end do_single_course_wc_single_product_action
+
 }// end Sensei_WC

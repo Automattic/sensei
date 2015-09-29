@@ -24,16 +24,6 @@ if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! 
 	$access_permission = true;
 } // End If Statement
 ?>
-	<?php
-	/**
-	 * woocommerce_before_single_product hook
-	 *
-	 * @hooked woocommerce_show_messages - 10
-	 */
-	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
-		do_action( 'woocommerce_before_single_product' );
-	} // End If Statement
-	?>
 
         	<article <?php post_class( array( 'course', 'post' ) ); ?>>
 
