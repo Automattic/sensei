@@ -1411,17 +1411,24 @@ class WooThemes_Sensei_Lesson {
 				    		$total_wrong = 1;
 				    	}
 
-					    // Setup Wrong Answer HTML
-				    	for ( $i = 0; $i < $total_wrong; $i++ ) {
-				    		if ( !isset( $wrong_answers[ $i ] ) ) { $wrong_answers[ $i ] = ''; }
-				    		$answer_id = $this->get_answer_id( $wrong_answers[ $i ] );
-				    		$wrong_answer = '<label class="answer" for="question_' . $question_counter . '_wrong_answer_' . $i . '"><span>' . __( 'Wrong:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . $question_counter . '_wrong_answer_' . $i . '" name="question_wrong_answers[]" value="' . esc_attr( $wrong_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
-				    		if( $question_id ) {
-					    		$answers[ $answer_id ] = $wrong_answer;
-					    	} else {
-					    		$answers[] = $wrong_answer;
-					    	}
-				    	}
+                        // Setup Wrong Answer HTML
+                        foreach ( $wrong_answers as $i => $answer ){
+
+                            $answer_id = $this->get_answer_id( $answer );
+                            $wrong_answer = '<label class="answer" for="question_' . $question_counter . '_wrong_answer_' . $i . '"><span>' . __( 'Wrong:' , 'woothemes-sensei' ) ;
+                            $wrong_answer .= '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . $question_counter . '_wrong_answer_' . $i ;
+                            $wrong_answer .= '" name="question_wrong_answers[]" value="' . esc_attr( $answer ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+                            if( $question_id ) {
+
+                                $answers[ $answer_id ] = $wrong_answer;
+
+                            } else {
+
+                                $answers[] = $wrong_answer;
+
+                            }
+
+                        } // end for each
 
 				    	$answers_sorted = $answers;
 				    	if( $question_id && count( $answer_order ) > 0 ) {
