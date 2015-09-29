@@ -124,9 +124,11 @@ if(  $random_order && $random_order == 'yes' ) {
 
         }
 
-	} // end if $answer_order_string
+    }else{
+        $answers_sorted = $question_answers;
+    } // end if $answer_order_string
 
-}
+} // end if random order
 
 $question_grade = get_post_meta( $question_id, '_question_grade', true );
 if( ! $question_grade || $question_grade == '' ) {
