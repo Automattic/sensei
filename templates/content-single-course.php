@@ -10,7 +10,7 @@
  */
 ?>
 
-<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
+<?php if ( ! defined( 'ABSPATH' ) ) exit;// exit if accessed outside WordPress ?>
 
 <article <?php post_class( array( 'course', 'post' ) ); ?>>
 
@@ -35,7 +35,16 @@
     </section>
 
     <?php
-        do_action( 'sensei_course_single_lessons' );
-    ?>
 
+        /**
+         * Hook inside the single course post above the content
+         *
+         * @since 1.9.0
+         *
+         * @hooked
+         *
+         */
+        do_action( 'sensei_single_course_content_inside_after' );
+
+    ?>
 </article><!-- .post .single-course -->

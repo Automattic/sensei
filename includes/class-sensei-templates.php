@@ -311,13 +311,23 @@ class Sensei_Templates {
      */
     public static function deprecated_single_course_inside_before_hooks(){
 
-        global $post;
-        sensei_do_deprecated_action('sensei_course_image','1.9.0', 'sensei_single_course_content_inside_before', array( $post->ID ) );
+        sensei_do_deprecated_action('sensei_course_image','1.9.0', 'sensei_single_course_content_inside_before', array( get_the_ID()) );
         sensei_do_deprecated_action('sensei_course_single_title','1.9.0', 'sensei_single_course_content_inside_before' );
         sensei_do_deprecated_action('sensei_course_single_meta','1.9.0', 'sensei_single_course_content_inside_before' );
 
     }// end deprecated_single_course_inside_before_hooks
 
+    /**
+     * This function adds the hooks to sensei_course_single_lessons for
+     * backwards compatibility sake.  and provides developers with an alternative.
+     *
+     * @since 1.9.0
+     * @deprecated 1.9.0
+     */
+    public static function deprecate_sensei_course_single_lessons_hook(){
 
+        sensei_do_deprecated_action('sensei_course_single_lessons','1.9.0', 'sensei_single_course_content_inside_after');
 
-} // end class
+    }// deprecate_sensei_course_single_lessons_hook
+
+}//end class
