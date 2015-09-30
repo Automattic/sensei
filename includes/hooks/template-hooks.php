@@ -46,15 +46,15 @@ add_action('sensei_course_content_before', array( 'Sensei_Templates', 'the_title
 // @1.9.0
 // add deprecated action hooks for backwards compatibility sake
 // hooks on single course page: sensei_course_image , sensei_course_single_title, sensei_course_single_meta
-add_action('sensei_single_course_inside_before', array( 'Sensei_Templates', 'deprecated_single_course_inside_before_hooks' ), 80);
+add_action('sensei_single_course_content_inside_before', array( 'Sensei_Templates', 'deprecated_single_course_inside_before_hooks' ), 80);
 
 // @1.9.0
 // hook the single course title on the single course page
-add_action( 'sensei_single_course_inside_before', array( Sensei()->frontend, 'sensei_single_title' ), 10 );
+add_action( 'sensei_single_course_content_inside_before', array( Sensei()->frontend, 'sensei_single_title' ), 10 );
 
 // @1.9.0
 //Add legacy hooks deprecated in 1.9.0
-add_action( 'sensei_single_course_inside_before', 'course_single_meta', 10 );
+add_action( 'sensei_single_course_content_inside_before', 'course_single_meta', 10 );
 
 // @1.9.0
 // Filter the content and replace it with the excerpt if the user doesn't have full access

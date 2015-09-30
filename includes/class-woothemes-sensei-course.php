@@ -64,8 +64,8 @@ class WooThemes_Sensei_Course {
 		add_action( 'sensei_user_quiz_grade', array( $this, 'update_status_after_quiz_submission' ), 10, 2 );
 
         // show the progress bar ont he single course page
-        add_action( 'sensei_single_course_inside_before' , array( $this, 'the_progress_statement' ), 15 );
-        add_action( 'sensei_single_course_inside_before' , array( $this, 'the_progress_meter' ), 16 );
+        add_action( 'sensei_single_course_content_inside_before' , array( $this, 'the_progress_statement' ), 15 );
+        add_action( 'sensei_single_course_content_inside_before' , array( $this, 'the_progress_meter' ), 16 );
 
         // provide an option to block all emails related to a selected course
         add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );

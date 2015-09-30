@@ -24,7 +24,7 @@
          * @hooked
          *
          */
-        do_action( 'sensei_single_course_inside_before' );
+        do_action( 'sensei_single_course_content_inside_before' );
 
     ?>
 

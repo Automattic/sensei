@@ -90,10 +90,10 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_login_form', array( $this, 'sensei_login_form' ), 10 );
 		add_action( 'sensei_quiz_action_buttons', array( $this, 'sensei_quiz_action_buttons' ), 10 );
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
-		add_action( 'sensei_single_course_inside_before', array( $this, 'sensei_course_meta' ), 10 );
-		add_action( 'sensei_single_course_inside_before', array( $this, 'sensei_course_meta_video' ), 10 );
-		add_action( 'sensei_single_course_inside_before', array( $this, 'sensei_woocommerce_in_cart_message' ), 10 );
-		add_action( 'sensei_single_course_inside_before', array( $this, 'sensei_course_start' ), 10 );
+		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_meta' ), 10 );
+		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_meta_video' ), 10 );
+		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_woocommerce_in_cart_message' ), 10 );
+		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_start' ), 10 );
 
 		// add_filter( 'get_comments_number', array( $this, 'sensei_lesson_comment_count' ), 1 );
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 );
@@ -138,7 +138,7 @@ class WooThemes_Sensei_Frontend {
 
 		// Make sure correct courses are marked as active for users
 		add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
-		add_action( 'sensei_single_course_inside_before', array( $this, 'activate_purchased_single_course' ), 10 );
+		add_action( 'sensei_single_course_content_inside_before', array( $this, 'activate_purchased_single_course' ), 10 );
 
 		// Lesson tags
 		add_action( 'sensei_lesson_meta_extra', array( $this, 'lesson_tags_display' ), 10, 1 );
