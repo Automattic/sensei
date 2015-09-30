@@ -61,5 +61,9 @@ add_action( 'sensei_single_course_content_inside_before', 'course_single_meta', 
 add_filter( 'the_content', array('WooThemes_Sensei_Course', 'single_course_content' ) );
 
 // @1.9.0
-// Deprecate
+// Deprecate lessons specific single course hooks
 add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Templates','deprecate_sensei_course_single_lessons_hook' ) );
+
+// @1.9.0
+// Deprecate single course content hooks and in favor of simply calling the_content.
+add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_course_single_main_content_hook') );

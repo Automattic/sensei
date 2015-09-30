@@ -26,22 +26,42 @@
 
 ?>
 
-<?php
+<article <?php post_class( array( 'course', 'post' ) ); ?>>
 
-    Sensei_Templates::get_part( 'content', 'single-course' );
-
-?>
-
-<?php
+    <?php
 
     /**
-     * sensei_single_main_content hook
+     * Hook inside the single course post above the content
      *
-     * @hooked Sensei->Modules->single_course_modules - 9
-     * @hooked sensei_single_main_content - 10 (outputs main content)
+     * @since 1.9.0
+     *
+     * @hooked
+     *
      */
-    //do_action( 'sensei_single_main_content' );
-?>
+    do_action( 'sensei_single_course_content_inside_before' );
+
+    ?>
+
+    <section class="entry fix">
+
+        <? the_content(); ?>
+
+    </section>
+
+    <?php
+
+    /**
+     * Hook inside the single course post above the content
+     *
+     * @since 1.9.0
+     *
+     * @hooked
+     *
+     */
+    do_action( 'sensei_single_course_content_inside_after' );
+
+    ?>
+</article><!-- .post .single-course -->
 
 <?php
 

@@ -330,4 +330,15 @@ class Sensei_Templates {
 
     }// deprecate_sensei_course_single_lessons_hook
 
+    public static function deprecated_single_course_single_main_content_hook(){
+
+        if( is_singular('course') ){
+
+            sensei_do_deprecated_action('sensei_single_main_content','1.9.0', 'sensei_single_course_content_inside_before or sensei_single_course_content_inside_after');
+
+        }
+
+
+    }// end deprecated_single_course_single_main_content_hook
+
 }//end class
