@@ -1264,7 +1264,7 @@ class WooThemes_Sensei_Course {
 
 		    		    $active_html .= '</p>';
 
-		    		    $active_html .= '<p class="course-excerpt">' . sensei_get_excerpt( $course_item ) . '</p>';
+		    		    $active_html .= '<p class="course-excerpt">' . $course_item->post_excerpt . '</p>';
 
 		    		   	$progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $lesson_count ), 0 ) );
 
@@ -1380,7 +1380,7 @@ class WooThemes_Sensei_Course {
 
 						$complete_html .= '</p>';
 
-						$complete_html .= '<p class="course-excerpt">' . sensei_get_excerpt( $course_item ) . '</p>';
+						$complete_html .= '<p class="course-excerpt">' . $course_item->post_excerpt . '</p>';
 
                         $complete_html .= $this->get_progress_meter( 100 );
 
