@@ -55,3 +55,7 @@ add_action( 'sensei_single_course_inside_before', array( Sensei()->frontend, 'se
 // @1.9.0
 //Add legacy hooks deprecated in 1.9.0
 add_action( 'sensei_single_course_inside_before', 'course_single_meta', 10 );
+
+// @1.9.0
+// Filter the content and replace it with the excerpt if the user doesn't have full access
+add_filter( 'the_content', 'WooThemes_Sensei_Course', 'single_course_content' );

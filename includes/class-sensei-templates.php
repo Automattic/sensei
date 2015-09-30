@@ -318,4 +318,6 @@ class Sensei_Templates {
 
     }// end deprecated_single_course_inside_before_hooks
 
+
+
 } // end class

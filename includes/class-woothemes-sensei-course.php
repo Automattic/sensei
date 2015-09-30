@@ -2394,4 +2394,61 @@ class WooThemes_Sensei_Course {
 
     }//course_archive_header
 
+
+    /**
+     * Filter the single course content
+     * taking into account if the user has access.
+     *
+     * @1.9.0
+     *
+     * @param string $content
+     * @return string $content or $excerpt
+     */
+    public static function single_course_content( $content ){
+
+        if( ! is_singular('course') ){
+
+            return $content;
+
+        }
+
+        // Content Access Permissions
+        $access_permission = false;
+
+        if ( ! Sensei()->settings->get('access_permission')  || sensei_all_access() ) {
+
+            $access_permission = true;
+
+        } // End If Statement
+
+        // Check if the user is taking the course
+        $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( get_the_ID(), get_current_user_id() );
+
+        if(WooThemes_Sensei_Utils::sensei_is_woocommerce_activated()) {
+
+            $wc_post_id = get_post_meta( get_the_ID(), '_course_woocommerce_product', true );
+            $product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
+
+            $has_product_attached = isset ( $product ) && is_object ( $product );
+
+        } else {
+
+            $has_product_attached = false;
+
+        }
+
+        if ( ( is_user_logged_in() && $is_user_taking_course )
+            || ( $access_permission && !$has_product_attached)
+            || 'full' == Sensei()->settings->get( 'course_single_content_display' ) ) {
+
+            return $content;
+
+        } else {
+
+            return '<p class="course-excerpt">' . get_post(  get_the_ID() )->post_excerpt . '</p>';
+
+        }
+
+    }// end single_course_content
+
 } // End Class
