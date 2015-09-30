@@ -1031,9 +1031,7 @@ class WooThemes_Sensei_Frontend {
 	public function sensei_single_main_content() {
 		while ( have_posts() ) {
 			the_post();
-			if ( is_singular( 'course' ) ) {
-				Sensei_Templates::get_part( 'content', 'single-course' );
-			} elseif( is_singular( 'lesson' ) ) {
+			if( is_singular( 'lesson' ) ) {
 				Sensei_Templates::get_part( 'content', 'single-lesson' );
 				do_action( 'sensei_breadcrumb', get_the_ID() );
 				do_action( 'sensei_comments' );
