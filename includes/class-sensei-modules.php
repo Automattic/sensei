@@ -77,11 +77,11 @@ class Sensei_Core_Modules
         add_filter('body_class', array($this, 'module_archive_body_class'));
 
         // add modules to the single course template
-        add_action('sensei_course_single_lessons', array($this, 'single_course_modules') , 9 );
+        add_action('sensei_single_course_content_inside_after', array($this, 'course_module_content') , 9 );
 
         //Single Course modules actions. Add to single-course/course-modules.php
         add_action('sensei_single_course_modules_before',array( $this,'course_modules_title' ), 20);
-        add_action('sensei_single_course_modules_content', array( $this,'course_module_content' ), 20);
+
         // change the single course lessons title
         add_filter('sensei_lessons_text', array( $this, 'single_course_title_change') );
 
@@ -444,9 +444,10 @@ class Sensei_Core_Modules
      */
     public function single_course_modules(){
 
+        _deprecated_function('Sensei_Modules->single_course_modules','Sensei 1.9.0', 'Sensei()->modules->course_module_content');
         // only show modules on the course that has modules
         if( is_singular( 'course' ) && has_term( '', 'module' )  )  {
-            Sensei_Templates::get_template( 'single-course/course-modules.php' );
+            $this->course_module_content();
         }
 
     } // end single_course_modules
@@ -1341,8 +1342,21 @@ class Sensei_Core_Modules
      */
     public function course_module_content(){
 
-        global $post;
-        $course_id = $post->ID;
+        /**
+         * Hook runs inside single-course/course-modules.php
+         *
+         * It runs before the modules are shown. This hook fires on the single course page,but only if the course has modules.
+         *
+         * @since 1.8.0
+         *
+         * @hooked Sensei()->modules->course_modules_title - 20
+         */
+        do_action('sensei_single_course_modules_before');
+
+        // run the deprecated hook for backwards compatibility sake
+        sensei_do_deprecated_action('sensei_single_course_modules_content','1.9.0','sensei_single_course_modules_before or sensei_single_course_modules_after' );
+
+        $course_id = get_the_ID();
         $modules = $this->get_course_modules( $course_id  );
 
         // Display each module
@@ -1409,9 +1423,20 @@ class Sensei_Core_Modules
             <?php }//end count lessons  ?>
                 </section>
             </article>
+
         <?php
 
         } // end each module
+
+        /**
+         * Hook runs inside single-course/course-modules.php
+         *
+         * It runs after the modules are shown. This hook fires on the single course page,but only if the course has modules.
+         *
+         * @since 1.8.0
+         */
+        do_action('sensei_single_course_modules_after');
+
 
     } // end course_module_content
 

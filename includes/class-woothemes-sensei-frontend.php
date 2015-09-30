@@ -55,7 +55,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_pagination', array( $this, 'sensei_output_content_pagination' ), 10 );
 		add_action( 'sensei_comments', array( $this, 'sensei_output_comments' ), 10 );
 
-		add_action( 'sensei_course_single_lessons', 'course_single_lessons', 10 );
+		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
 		add_action( 'sensei_lesson_single_meta', 'lesson_single_meta', 10 );
 		add_action( 'sensei_quiz_questions', 'quiz_questions', 10 );
 

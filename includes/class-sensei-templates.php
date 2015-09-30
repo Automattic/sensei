@@ -330,15 +330,42 @@ class Sensei_Templates {
 
     }// deprecate_sensei_course_single_lessons_hook
 
-    public static function deprecated_single_course_single_main_content_hook(){
-
-        if( is_singular('course') ){
+    /**
+     * Deprecated all deprecated_single_main_content_hook hooked actions.
+     *
+     * The content must be dealt with inside the respective templates.
+     *
+     * @since 1.9.0
+     * @deprecated 1.9.0
+     */
+    public static function deprecated_single_main_content_hook(){
 
             sensei_do_deprecated_action('sensei_single_main_content','1.9.0', 'sensei_single_course_content_inside_before or sensei_single_course_content_inside_after');
 
-        }
-
 
     }// end deprecated_single_course_single_main_content_hook
+
+    /**
+     * Deprecate the  old sensei modules
+     * @since 1.9.0
+     * @deprecated since 1.9.0
+     */
+    public static function deprecate_module_before_hook(){
+
+        sensei_do_deprecated_action('sensei_modules_page_before', '1.9.0','sensei_single_course_modules_after' );
+
+    }
+
+    /**
+     * Deprecate the  old sensei modules after hooks
+     * @since 1.9.0
+     * @deprecated since 1.9.0
+     */
+    public static function deprecate_module_after_hook(){
+
+        sensei_do_deprecated_action('sensei_modules_page_after', '1.9.0','sensei_single_course_modules_after' );
+
+    }
+
 
 }//end class
