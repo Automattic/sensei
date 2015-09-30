@@ -135,7 +135,9 @@ class WooThemes_Sensei_Course {
 		add_meta_box( 'course-video', __( 'Course Video', 'woothemes-sensei' ), array( $this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box for Course Lessons
 		add_meta_box( 'course-lessons', __( 'Course Lessons', 'woothemes-sensei' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
-		// Remove "Custom Settings" meta box.
+        // Add Meta Box to link to Manage Learners
+        add_meta_box( 'course-manage', __( 'Course Management', 'woothemes-sensei' ), array( $this, 'course_manage_meta_box_content' ), $this->token, 'side', 'default' );
+        // Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 
         // add Disable email notification box
@@ -469,6 +471,29 @@ class WooThemes_Sensei_Course {
 		echo $html;
 
 	} // End course_lessons_meta_box_content()
+
+    /**
+     * course_manage_meta_box_content function.
+     *
+     * @since 1.9.0
+     * @access public
+     * @return void
+     */
+
+    public function course_manage_meta_box_content () {
+        global $post;
+
+        $manage_url = admin_url('admin.php?page=sensei_learners&view=learners&course_id=') . $post->ID;
+
+        $grading_url = admin_url('admin.php?page=sensei_grading&course_id=') . $post->ID;
+
+        echo "<ul><li><a href='$manage_url'>".__("Manage Learners", 'woothemes-sensei')."</a></li>";
+
+        echo "<li><a href='$grading_url'>".__("Manage Grading", 'woothemes-sensei')."</a></li></ul>";
+
+
+
+    } // End course_manage_meta_box_content()
 
 	/**
 	 * Add column headings to the "lesson" post list screen.
