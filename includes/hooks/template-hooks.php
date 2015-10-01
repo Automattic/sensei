@@ -66,10 +66,13 @@ add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Template
 
 // @1.9.0
 // Deprecate single course content hooks and in favor of simply calling the_content.
-add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_course_single_main_content_hook') );
+add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_main_content_hook') );
 
 // @1.9.0
 // Deprecate hooks into the single course modules
 add_action('sensei_single_course_modules_before', array('Sensei_Templates','deprecate_module_before_hook' ) );
 add_action('sensei_single_course_modules_after', array('Sensei_Templates','deprecate_module_after_hook' ) );
 
+// @since 1.9.0
+// add the single course lessons title
+add_action( 'sensei_single_course_content_inside_after' , array( 'WooThemes_Sensei_Course','the_course_lessons_title'), 9 );

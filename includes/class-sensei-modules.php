@@ -39,6 +39,9 @@ class Sensei_Core_Modules
         // Save lesson meta box
         add_action('save_post', array($this, 'save_lesson_module'), 10, 1);
 
+        //Reset the none modules lessons transient
+        add_action('save_post', array( 'Sensei_Core_Modules', 'reset_none_modules_transient' ) );
+
         // Frontend styling
         add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
 
@@ -77,13 +80,10 @@ class Sensei_Core_Modules
         add_filter('body_class', array($this, 'module_archive_body_class'));
 
         // add modules to the single course template
-        add_action('sensei_single_course_content_inside_after', array($this, 'course_module_content') , 9 );
+        add_action('sensei_single_course_content_inside_after', array($this, 'course_module_content') , 8 );
 
         //Single Course modules actions. Add to single-course/course-modules.php
         add_action('sensei_single_course_modules_before',array( $this,'course_modules_title' ), 20);
-
-        // change the single course lessons title
-        add_filter('sensei_lessons_text', array( $this, 'single_course_title_change') );
 
         // Set up display on single lesson page
         add_filter('sensei_breadcrumb_output', array($this, 'module_breadcrumb_link'), 10, 2);
@@ -1493,40 +1493,6 @@ class Sensei_Core_Modules
     } // end get lessons
 
     /**
-     * Update the single course page title to other
-     * lessons if there are lessons in the course that are not in the course modules
-     *
-     * @since 1.8.0
-     *
-     * @param string $title
-     * @return string $title
-     */
-    public function single_course_title_change( $title )
-    {
-        global $post;
-
-        $none_module_lessons = $this->get_none_module_lessons($post->ID);
-        $course_modules = wp_get_post_terms($post->ID, $this->taxonomy);
-
-        if (count($none_module_lessons) > 0) {
-
-            $title = __('Other Lessons', 'woothemes-sensei');
-
-        } elseif( empty( $course_modules ) || isset( $course_modules['errors']  ) ){
-            // the course has no module show the lessons heading
-            $title = __('Lessons', 'woothemes-sensei');
-
-        }else{
-
-            $title = '';
-
-        }
-
-        return $title;
-    }
-
-
-    /**
      * Find the lesson in the given course that doesn't belong
      * to any of the courses modules
      *
@@ -2078,6 +2044,22 @@ class Sensei_Core_Modules
 
         remove_meta_box('modulediv', 'course', 'side');
 
+    }
+
+    /**
+     * When a course is save make sure to reset the transient set
+     * for it when determining the none module lessons.
+     *
+     * @sine 1.9.0
+     * @param $post_id
+     */
+    public static function reset_none_modules_transient ( $post_id ){
+
+        if( 'course' != get_post_type( $post_id ) ){
+            return;
+        }
+
+        delete_transient( 'sensei_'. $post_id .'_none_module_lessons' );
     }
 
 } // end modules class

@@ -2451,4 +2451,44 @@ class WooThemes_Sensei_Course {
 
     }// end single_course_content
 
+    /**
+     * Output the the single course lessons title with markup.
+     *
+     * @since 1.9.0
+     */
+    public static function the_course_lessons_title(){
+
+        $none_module_lessons = Sensei()->modules->get_none_module_lessons( get_the_ID() );
+
+        if (count($none_module_lessons) > 0) {
+
+            $title = __('Other Lessons', 'woothemes-sensei');
+
+        } else {
+
+            // the course has no module show the lessons heading
+            $title = __('Lessons', 'woothemes-sensei');
+
+        }
+
+        ob_start(); // start capturing the following output.
+        ?>
+
+            <header>
+                <h2> <?php echo $title; ?> </h2>
+            </header>
+
+        <?php
+
+        /**
+         * Filter the title and markup that appears above the lessons on a single course
+         * page.
+         *
+         * @since 1.9.0
+         * @param string $lessons_title_html
+         */
+        echo apply_filters('the_course_lessons_title', ob_get_clean() ); // output and filter the captured output and stop capturing.
+
+    }// end the_course_lessons_title
+
 } // End Class

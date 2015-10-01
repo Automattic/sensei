@@ -26,17 +26,16 @@ get_currentuserinfo();
 
 // exit if no lessons exist
 if (  ! ( $total_lessons  > 0 ) ) {
+
+    _e('Sorry, this course has no lessons yet.','woothemes-sensei');
     return;
+
 }
-$html .= '<section class="course-lessons">';
-$html .= '<header>';
-$html .= '<h2>' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ) . '</h2>';
-$html .= '</header>';
-
 $lesson_count = 1;
-
 $lessons_completed = count( Sensei()->course->get_completed_lesson_ids( $post->ID, $current_user->ID ));
 $show_lesson_numbers = false;
+
+$html = '<section class="course-lessons">';
 
 foreach ( $course_lessons as $lesson_item ){
 
