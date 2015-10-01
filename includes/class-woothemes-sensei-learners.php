@@ -108,7 +108,6 @@ class WooThemes_Sensei_Learners {
             'reset_user_course_confirm' => __( 'Are you sure you want to reset this user\'s progress?', 'woothemes-sensei' ),
             'remove_from_purchased_course_confirm' => __( 'Are you sure you want to remove the user from this course? This order associate with this will also be set to canceled.', 'woothemes-sensei' ),
 			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
-            'reset_user_course_nonce' => wp_create_nonce( 'reset_user_course_nonce' ),
             'search_users_nonce' => wp_create_nonce( 'search-users' ),
             'selectplaceholder'=> __( 'Select Learner', 'woothemes-sensei' )
 		);
