@@ -111,6 +111,9 @@ class WooThemes_Sensei_Frontend {
 		// Fix pagination for course archive pages when filtering by course type
 		add_filter( 'pre_get_posts', array( $this, 'sensei_course_archive_pagination' ) );
 
+        // Sort the main query on custom taxonomy pages to pass posts in 'menu_order'
+        add_action('pre_get_posts', array ( $this, 'sensei_course_category_order_main_content' ) );
+
 		// Scripts and Styles
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 		add_action( 'wp_head', array( $this, 'enqueue_scripts' ) );
@@ -149,7 +152,8 @@ class WooThemes_Sensei_Frontend {
 
 		// Hide Sensei activity comments from lesson and course pages
 		add_filter( 'wp_list_comments_args', array( $this, 'hide_sensei_activity' ) );
-	} // End __construct()
+
+    } // End __construct()
 
 	/**
 	 * Initialise the code.
@@ -1147,6 +1151,33 @@ class WooThemes_Sensei_Frontend {
 			$this->sensei_get_template_part( 'content', 'no-permissions' );
 		} // End While Loop
 	} // End sensei_no_permissions_main_content()
+
+
+    /**
+     * sensei_course_category_order_main_content function
+     *
+     * Sort the main query on custom taxonomy pages to pass posts in
+     * 'menu_order', because Sensei allows users to set the order of
+     * Courses under Course > Course Order.
+     *
+     * @since 1.9.0
+     * @access public
+     * @param object $query
+     * @return object $query
+     */
+
+    public function sensei_course_category_order_main_content($query) {
+
+        if ( is_tax() ) {
+
+            $query->set( 'orderby', 'menu_order' );
+            $query->set( 'order', 'ASC' );
+
+            return $query;
+
+        }
+
+    } // End sensei_course_category_order_main_content()
 
 	public function sensei_course_category_main_content() {
 		global $post;
