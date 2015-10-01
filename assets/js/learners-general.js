@@ -58,14 +58,14 @@ jQuery(document).ready( function($) {
             case 'lesson': confirm_message = woo_learners_general_data.remove_from_lesson_confirm; break;
             case 'course':
 
-                if ( course_reset == 0 ) {
+                if ( course_reset == 1 ) {
 
-                    confirm_message = woo_learners_general_data.remove_from_course_confirm;
+                    confirm_message = woo_learners_general_data.reset_user_course_confirm;
                     break;
 
                 } else {
 
-                    confirm_message = woo_learners_general_data.reset_user_course_confirm;
+                    confirm_message = woo_learners_general_data.remove_from_course_confirm;
                     break;
                 }
 
