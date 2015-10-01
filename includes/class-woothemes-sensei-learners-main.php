@@ -333,7 +333,7 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				}
 
 				$column_data = apply_filters( 'sensei_learners_main_column_data', array(
-						'title' => '<strong><a class="row-title" href="' . esc_url( add_query_arg( array( 'page' => 'sensei_learners', 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php?') ) )  . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
+						'title' => '<strong><a class="row-title" href="' . esc_url( add_query_arg( array( 'page' => 'sensei_learners', 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php') ) )  . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
 						'num_learners' => $course_learners,
 						'updated' => $item->post_modified,
 						'actions' => '<a class="button" href="' . esc_url( add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) ) . '">' . __( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
