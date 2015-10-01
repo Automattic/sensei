@@ -482,10 +482,11 @@ class WooThemes_Sensei_Course {
 
     public function course_manage_meta_box_content () {
         global $post;
+        
+        $manage_url = esc_url( add_query_arg( array( 'page' => 'sensei_learners', 'course_id' => $post->ID, 'view' => 'learners' ), admin_url( 'admin.php') ) );
 
-        $manage_url = admin_url('admin.php?page=sensei_learners&view=learners&course_id=') . $post->ID;
+        $grading_url = esc_url( add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => $post->ID, 'view' => 'learners' ), admin_url( 'admin.php') ) );
 
-        $grading_url = admin_url('admin.php?page=sensei_grading&course_id=') . $post->ID;
 
         echo "<ul><li><a href='$manage_url'>".__("Manage Learners", 'woothemes-sensei')."</a></li>";
 
