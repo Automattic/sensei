@@ -89,6 +89,7 @@ class WooThemes_Sensei_Course {
         add_action ( 'show_user_profile', array ($this, 'user_profile_show_courses') );
         add_action ( 'edit_user_profile', array ($this, 'user_profile_show_courses') );
 
+        // handle adding and removing Courses for the user being edited
         add_action('user_register', array ($this, 'user_profile_save_courses') );
         add_action('edit_user_profile_update', array ($this, 'user_profile_save_courses') );
         add_action('personal_options_update', array ($this, 'user_profile_save_courses') );
