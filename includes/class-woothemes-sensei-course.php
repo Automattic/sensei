@@ -2107,7 +2107,7 @@ class WooThemes_Sensei_Course {
 
         }
 
-        $selected_course_ids = $_POST['courses'];
+        $ticked_course_ids = $_POST['courses'];
 
         $post_args = array(
             'posts_per_page'   => -1,
@@ -2125,14 +2125,22 @@ class WooThemes_Sensei_Course {
 
         }
 
-        // Get the courses that were not ticked by the user
-        $unticked_course_ids = array_diff($all_course_ids, $selected_course_ids);
+        // if no courses were ticked, setup
+        // to remove user from all courses
+        if ( empty($ticked_course_ids) ) {
 
-        var_dump($unticked_course_ids);
+            $unticked_course_ids = $all_course_ids;
 
-        if ( !empty($selected_course_ids) ) {
+        } else {
 
-            foreach ($selected_course_ids as $course_id) {
+            // else, get the courses that were not ticked
+            $unticked_course_ids = array_diff($all_course_ids, $ticked_course_ids);
+        }
+
+        // add the user to courses that were ticked
+        if ( !empty($ticked_course_ids) ) {
+
+            foreach ($ticked_course_ids as $course_id) {
 
                 $course_id = sanitize_text_field($course_id);
 
@@ -2146,6 +2154,7 @@ class WooThemes_Sensei_Course {
             }
         }
 
+        // remove the user from courses that were not ticked
         if ( !empty($unticked_course_ids) ) {
 
             foreach ($unticked_course_ids as $course_id) {
