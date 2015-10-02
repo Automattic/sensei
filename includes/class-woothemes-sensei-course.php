@@ -2054,7 +2054,7 @@ class WooThemes_Sensei_Course {
         ?>
 
         <h3>Sensei</h3>
-        <span><strong>NOTE: unticking Courses here will remove this user from those courses and reset their progress</strong>.</span>
+        <span><strong>NOTE: unticking courses here will remove this user from those courses and reset their progress</strong>.</span>
 
 
         <table class="form-table">
