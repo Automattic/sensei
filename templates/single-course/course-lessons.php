@@ -6,116 +6,110 @@
  *
  * @author 		WooThemes
  * @package 	Sensei/Templates
- * @version     1.0.0
+ * @version     1.9.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 
-global $post, $woothemes_sensei, $current_user;
-$html = '';
+<?php global $post, $lesson_count; ?>
 
-// Get Course Lessons
-$course_lessons = Sensei()->course->course_lessons( $post->ID );
-$total_lessons = count( $course_lessons );
+<section class="course-lessons">
 
-// Check if the user is taking the course
-$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
+    <?php
 
-// Get User Meta
-get_currentuserinfo();
+        /**
+         * Actions just before the sensei single course lessons loop begins
+         *
+         * @hooked WooThemes_Sensei_Course::load_single_course_lessons_query
+         * @since 1.9.0
+         */
+        do_action( 'sensei_single_course_lessons_before' );
 
-// exit if no lessons exist
-if (  ! ( $total_lessons  > 0 ) ) {
+    ?>
 
-    _e('Sorry, this course has no lessons yet.','woothemes-sensei');
-    return;
+    <?php
 
-}
-$lesson_count = 1;
-$lessons_completed = count( Sensei()->course->get_completed_lesson_ids( $post->ID, $current_user->ID ));
-$show_lesson_numbers = false;
+    //lessons loaded into loop in the sensei_single_course_lessons_before hook
+    if( have_posts() ):
 
-$html = '<section class="course-lessons">';
+        $lesson_count = 1;
 
-foreach ( $course_lessons as $lesson_item ){
+        // start course lessons loop
+        while ( have_posts() ): the_post();  ?>
 
-    //skip lesson that are already in the modules
-    if( false != Sensei()->modules->get_lesson_module( $lesson_item->ID ) ){
-        continue;
-    }
+            <article <?php post_class(); ?> >
 
-    $single_lesson_complete = false;
-    $post_classes = array( 'course', 'post' );
-    $user_lesson_status = false;
-    if ( is_user_logged_in() ) {
-        // Check if Lesson is complete
-        $single_lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_item->ID, $current_user->ID );
-        if ( $single_lesson_complete ) {
-            $post_classes[] = 'lesson-completed';
-        } // End If Statement
-    } // End If Statement
+                <?php
 
-    // Get Lesson data
-    $complexity_array = $woothemes_sensei->post_types->lesson->lesson_complexities();
-    $lesson_length = get_post_meta( $lesson_item->ID, '_lesson_length', true );
-    $lesson_complexity = get_post_meta( $lesson_item->ID, '_lesson_complexity', true );
-    if ( '' != $lesson_complexity ) { $lesson_complexity = $complexity_array[$lesson_complexity]; }
-    $user_info = get_userdata( absint( $lesson_item->post_author ) );
-    $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $lesson_item->ID );
-    $preview_label = '';
-    if ( $is_preview && !$is_user_taking_course ) {
-        $preview_label = $woothemes_sensei->frontend->sensei_lesson_preview_title_text( $post->ID );
-        $preview_label = '<span class="preview-heading">' . $preview_label . '</span>';
-        $post_classes[] = 'lesson-preview';
-    }
+                    /**
+                     * The hook is inside the course lesson on the single course. It fires
+                     * for each lesson. It is just before the lesson excerpt.
+                     *
+                     * @since 1.9.0
+                     *
+                     * @param $lessons_id
+                     *
+                     * @hooked WooThemes_Sensei_Lesson::the_lesson_meta -  5
+                     * @hooked WooThemes_Sensei_Lesson::the_lesson_thumbnail - 8
+                     *
+                     */
+                    do_action( 'sensei_single_course_inside_before_lesson', get_the_ID() );
 
-    $html .= '<article class="' . esc_attr( join( ' ', get_post_class( $post_classes, $lesson_item->ID ) ) ) . '">';
+                ?>
 
-        $html .= '<header>';
+                <section class="entry">
 
-            $html .= '<h2><a href="' . esc_url( get_permalink( $lesson_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . '">';
+                    <?php
+                    /**
+                     * Output all course lessons. If none found for this course
+                     * a notice will be displayed. What is displayed
+                     * is manipulated via a
+                     */
+                    the_excerpt();
+                    ?>
 
-            if( apply_filters( 'sensei_show_lesson_numbers', $show_lesson_numbers ) ) {
-                $html .= '<span class="lesson-number">' . $lesson_count . '. </span>';
-            }
+                </section>
 
-            $html .= esc_html( sprintf( __( '%s', 'woothemes-sensei' ), $lesson_item->post_title ) ) . $preview_label . '</a></h2>';
+                <?php
 
-            $html .= '<p class="lesson-meta">';
+                    /**
+                     * The hook is inside the course lesson on the single course. It is just before the lesson closing markup.
+                     * It fires for each lesson.
+                     *
+                     * @since 1.9.0
+                     */
+                    do_action( 'sensei_single_course_inside_after_lesson', get_the_ID() );
 
-                if ( '' != $lesson_length ) { $html .= '<span class="lesson-length">' . apply_filters( 'sensei_length_text', __( 'Length: ', 'woothemes-sensei' ) ) . $lesson_length . __( ' minutes', 'woothemes-sensei' ) . '</span>'; }
-                if ( isset( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) && ( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) ) {
-                    $html .= '<span class="lesson-author">' . apply_filters( 'sensei_author_text', __( 'Author: ', 'woothemes-sensei' ) ) . '<a href="' . get_author_posts_url( absint( $lesson_item->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
-                } // End If Statement
-                if ( '' != $lesson_complexity ) { $html .= '<span class="lesson-complexity">' . apply_filters( 'sensei_complexity_text', __( 'Complexity: ', 'woothemes-sensei' ) ) . $lesson_complexity .'</span>'; }
+                ?>
 
-                if ( $single_lesson_complete ) {
-                    $html .= '<span class="lesson-status complete">' . apply_filters( 'sensei_complete_text', __( 'Complete', 'woothemes-sensei' ) ) .'</span>';
-                }
-                elseif ( $user_lesson_status ) {
-                    $html .= '<span class="lesson-status in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) .'</span>';
-                } // End If Statement
+            </article>
 
-            $html .= '</p>';
+        <?php
 
-        $html .= '</header>';
+        $lesson_count++;
+        // end course lessons loop
+        endwhile;
 
-        // Image
-        $html .=  $woothemes_sensei->post_types->lesson->lesson_image( $lesson_item->ID );
+        ?>
 
-        $html .= '<section class="entry">';
+    <?php else: ?>
 
-            $html .= WooThemes_Sensei_Lesson::lesson_excerpt( $lesson_item );
+        <?php _e('Sorry, this course has no lessons yet.','woothemes-sensei'); ?>
 
-        $html .= '</section>';
+    <?php endif; ?>
 
-    $html .= '</article>';
+    <?php
 
-    $lesson_count++;
+        /**
+         * Actions just before the sensei single course lessons loop begins
+         *
+         * @hooked WooThemes_Sensei_Course::reset_single_course_query
+         *
+         * @since 1.9.0
+         */
+        do_action( 'sensei_single_course_lessons_after' );
 
-} // End For Loop
+    ?>
 
-$html .= '</section>';
-
-// Output the HTML
-echo $html;
+</section>

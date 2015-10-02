@@ -2457,21 +2457,20 @@ class WooThemes_Sensei_Course {
      * @since 1.9.0
      */
     public static function the_course_lessons_title(){
+        global $post;
+        $none_module_lessons = Sensei()->modules->get_none_module_lessons( $post->ID  );
+        $course_lessons = Sensei()->course->course_lessons( $post->ID );
 
-        $none_module_lessons = Sensei()->modules->get_none_module_lessons( get_the_ID() );
+        // title should be Other Lessons if there are lessons belonging to models.
+        $title = __('Other Lessons', 'woothemes-sensei');
+        if( count( $course_lessons ) == count( $none_module_lessons )  ){
 
-        if (count($none_module_lessons) > 0) {
-
-            $title = __('Other Lessons', 'woothemes-sensei');
-
-        } else {
-
-            // the course has no module show the lessons heading
             $title = __('Lessons', 'woothemes-sensei');
 
         }
 
         ob_start(); // start capturing the following output.
+
         ?>
 
             <header>
@@ -2490,5 +2489,66 @@ class WooThemes_Sensei_Course {
         echo apply_filters('the_course_lessons_title', ob_get_clean() ); // output and filter the captured output and stop capturing.
 
     }// end the_course_lessons_title
+
+    /**
+     * This function loads the global wp_query object with with lessons
+     * of the current course. It is designed to be used on the single-course template
+     * and expects the global post to be a singular course.
+     *
+     * This function excludes lessons belonging to modules as they are
+     * queried separately.
+     *
+     * @since 1.9.0
+     * @global $wp_query
+     */
+    public static function load_single_course_lessons_query(){
+
+        if( ! is_singular('course') ){
+            return;
+        }
+
+        global $post, $wp_query;
+
+        $course_id = $post->ID;
+
+        $course_lesson_query_args = array(
+            'post_type'         => 'lesson',
+            'posts_per_page'    => 500,
+            'orderby'           => 'date',
+            'order'             => 'ASC',
+            'meta_query'        => array(
+                array(
+                    'key' => '_lesson_course',
+                    'value' => intval( $course_id ),
+                ),
+            ),
+            'post_status'       => 'public',
+            'suppress_filters'  => 0,
+        );
+
+        // Exclude lessons belonging to modules as they are queried along with the modules.
+        $modules = Sensei()->modules->get_course_modules( $course_id );
+        if( !is_wp_error( $modules ) && ! empty( $modules ) && is_array( $modules ) ){
+
+            $terms_ids = array();
+            foreach( $modules as $term ){
+
+                $terms_ids[] = $term->term_id;
+
+            }
+
+            $course_lesson_query_args[ 'tax_query'] = array(
+                array(
+                    'taxonomy' => 'module',
+                    'field'    => 'id',
+                    'terms'    => $terms_ids,
+                    'operator' => 'NOT IN',
+                ),
+            );
+        }
+
+        $wp_query = new WP_Query( $course_lesson_query_args );
+
+    }// load_single_course_lessons
 
 } // End Class

@@ -76,3 +76,24 @@ add_action('sensei_single_course_modules_after', array('Sensei_Templates','depre
 // @since 1.9.0
 // add the single course lessons title
 add_action( 'sensei_single_course_content_inside_after' , array( 'WooThemes_Sensei_Course','the_course_lessons_title'), 9 );
+
+// @since 1.9.0
+// hooks in the course lessons query and remove it at the end
+add_action( 'sensei_single_course_lessons_before', array('WooThemes_Sensei_Course','load_single_course_lessons_query' ) );
+add_action( 'sensei_single_course_lessons_after', array( 'WooThemes_Sensei_Utils','restore_wp_query' ));
+
+// @since 1.9.0
+// add post classes to the lessons on the single course page
+add_filter( 'post_class', array( 'WooThemes_Sensei_Lesson', 'single_course_lessons_classes' ) );
+
+// @since 1.9.0
+// lesson meta information on the single course page
+add_action( 'sensei_single_course_inside_before_lesson', array('WooThemes_Sensei_Lesson','the_lesson_meta') , 5);
+
+//@since 1.9.0
+// lesson image
+add_action( 'sensei_single_course_inside_before_lesson', array('WooThemes_Sensei_Lesson','the_lesson_thumbnail') , 8);
+
+//@since 1.9.0
+// lesson custom excerpts
+add_action( 'get_the_excerpt', array( 'WooThemes_Sensei_Lesson', 'alter_the_lesson_excerpt' ) );

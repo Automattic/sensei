@@ -2226,4 +2226,16 @@ class WooThemes_Sensei_Utils {
 
         return $current_url;
     }
+
+    /**
+     * Restore the global WP_Query
+     *
+     * @since 1.9.0
+     */
+    public static function restore_wp_query() {
+
+        wp_reset_query();
+
+    }
+
 } // End Class

@@ -3182,4 +3182,198 @@ class WooThemes_Sensei_Lesson {
 
     }// end quick edit admin defaults
 
+    /**
+     * Filter the classes for lessons on the single course page.
+     *
+     * Adds the nesecary classes depending on the user data
+     *
+     * @since 1.9.0
+     * @param array $classes
+     * @return array $classes
+     */
+    public static function single_course_lessons_classes( $classes ){
+
+        if(  is_singular('course') ){
+
+            global $post;
+            $course_id = $post->ID;
+
+            $lesson_classes = array( 'course', 'post' );
+            $user_lesson_status = false;
+            if ( is_user_logged_in() ) {
+
+                // Check if Lesson is complete
+                $single_lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
+                if ( $single_lesson_complete ) {
+
+                    $lesson_classes[] = 'lesson-completed';
+
+                } // End If Statement
+
+            } // End If Statement
+
+            $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+            if (  WooThemes_Sensei_Utils::is_preview_lesson( get_the_ID() ) && !$is_user_taking_course ) {
+
+                $lesson_classes[] = 'lesson-preview';
+
+            }
+
+            $classes = array_merge( $classes, $lesson_classes  );
+
+        }
+
+        return $classes;
+
+    }// end single_course_lessons_classes
+
+    /**
+     * Output the lesson meta for the given lesson
+     *
+     * @since 1.9.0
+     * @param $lesson_id
+     */
+    public static function the_lesson_meta( $lesson_id ){
+
+        global $lesson_count;
+
+        $course_id = Sensei()->lesson->get_course_id( $lesson_id );
+        $single_lesson_complete = false;
+        $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+
+        // Get Lesson data
+        $complexity_array = Sensei()->lesson->lesson_complexities();
+
+        $lesson_complexity = get_post_meta( $lesson_id, '_lesson_complexity', true );
+        if ( '' != $lesson_complexity ) {
+
+            $lesson_complexity = $complexity_array[$lesson_complexity];
+
+        }
+        $user_info = get_userdata( absint( get_post()->post_author ) );
+        $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $lesson_id);
+        $preview_label = '';
+        if ( $is_preview && !$is_user_taking_course ) {
+
+            $preview_label = Sensei()->frontend->sensei_lesson_preview_title_text( $lesson_id);
+            $preview_label = '<span class="preview-heading">' . $preview_label . '</span>';
+
+        }
+
+
+        $count_markup= '';
+        /**
+         * Filter for if you want the $lesson_count to show next to the lesson.
+         *
+         * @since 1.0
+         * @param bool default false.
+         */
+        if( apply_filters( 'sensei_show_lesson_numbers', false ) ) {
+
+            $count_markup =  '<span class="lesson-number">' . $lesson_count. '</span>';
+
+        }
+
+        $heading_link_title = sprintf( __( 'Start %s', 'woothemes-sensei' ), get_the_title( $lesson_id ) );
+
+        ?>
+        <header>
+            <h2>
+                <a href="<?php echo esc_url_raw( get_permalink( $lesson_id ) ) ?>"
+                   title="<?php esc_attr_e( $heading_link_title ) ?>" >
+                    <?php echo $count_markup. get_the_title( $lesson_id ) . $preview_label; ?>
+                </a>
+            </h2>
+
+            <p class="lesson-meta">
+
+                <?php
+
+                $meta_html = '';
+                $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( get_the_ID(), get_current_user_id() );
+
+                $lesson_length = get_post_meta( $lesson_id, '_lesson_length', true );
+                if ( '' != $lesson_length ) {
+
+                    $meta_html .= '<span class="lesson-length">' . apply_filters( 'sensei_length_text', __( 'Length: ', 'woothemes-sensei' ) ) . $lesson_length . __( ' minutes', 'woothemes-sensei' ) . '</span>';
+
+                }
+
+                if ( Sensei()->settings->get( 'lesson_author' ) ) {
+
+                    $meta_html .= '<span class="lesson-author">' . apply_filters( 'sensei_author_text', __( 'Author: ', 'woothemes-sensei' ) ) . '<a href="' . get_author_posts_url( absint( get_post()->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+
+                } // End If Statement
+                if ( '' != $lesson_complexity ) {
+
+                    $meta_html .= '<span class="lesson-complexity">' . apply_filters( 'sensei_complexity_text', __( 'Complexity: ', 'woothemes-sensei' ) ) . $lesson_complexity .'</span>';
+
+                }
+
+                if ( $single_lesson_complete ) {
+
+                    $meta_html .= '<span class="lesson-status complete">' . apply_filters( 'sensei_complete_text', __( 'Complete', 'woothemes-sensei' ) ) .'</span>';
+
+                } elseif ( $user_lesson_status ) {
+
+                    $meta_html .= '<span class="lesson-status in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) .'</span>';
+
+                } // End If Statement
+
+                echo $meta_html;
+
+                ?>
+
+            </p> <!-- lesson meta -->
+
+        </header>
+
+    <?php
+
+    } // end the_lesson_meta
+
+    /**
+     * Output the lessons thumbnail
+     *
+     * 1.9.0
+     *
+     * @param $lesson_id
+     */
+    public static function the_lesson_thumbnail( $lesson_id ){
+
+        if( empty( $lesson_id ) ){
+
+            $lesson_id = get_the_ID();
+
+        }
+
+        if( 'lesson' != get_post_type( $lesson_id ) ){
+            return;
+        }
+
+        echo Sensei()->lesson->lesson_image( $lesson_id );
+    }
+
+
+    /**
+     * Alter the sensei lesson excerpt.
+     *
+     * @since 1.9.0
+     * @param string $excerpt
+     * @return string $excerpt
+     */
+    public static function alter_the_lesson_excerpt( $excerpt ) {
+
+        if ('lesson' == get_post_type(get_the_ID())){
+
+            // remove this hooks to avoid an infinite loop.
+            remove_action( 'get_the_excerpt', array( __CLASS__,'alter_the_lesson_excerpt') );
+
+            return WooThemes_Sensei_Lesson::lesson_excerpt( get_post( get_the_ID() ) );
+        }
+
+        return $excerpt;
+
+    }// end the_lesson_excerpt
+
 } // End Class

@@ -40,7 +40,7 @@ class Sensei_Core_Modules
         add_action('save_post', array($this, 'save_lesson_module'), 10, 1);
 
         //Reset the none modules lessons transient
-        add_action('save_post', array( 'Sensei_Core_Modules', 'reset_none_modules_transient' ) );
+        add_action( 'save_post', array( 'Sensei_Core_Modules', 'reset_none_modules_transient' ) );
 
         // Frontend styling
         add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
@@ -1242,11 +1242,15 @@ class Sensei_Core_Modules
                 }
 
             } else {
+
                 $ordered_modules = $modules;
+
             }
 
             return $ordered_modules;
+
         }
+
         return false;
     }
 
@@ -1335,12 +1339,36 @@ class Sensei_Core_Modules
     }
 
     /**
-     * Display the single course modules content
+     * Display the single course modules content this will only show
+     * if the course has modules.
      *
      * @since 1.8.0
      * @return void
      */
     public function course_module_content(){
+
+        $course_id = get_the_ID();
+        $modules = $this->get_course_modules( $course_id  );
+
+        // exit if this course doesn't have modules
+        if( !$modules || empty( $modules )  ){
+            return;
+        }
+
+        //also exit if these modules has no lessons attached
+        $lessons_in_all_modules = array();
+        foreach( $modules as $term ){
+
+            $lessons_in_this_module = $this->get_lessons( $course_id , $term->term_id);
+            $lessons_in_all_modules = array_merge(  $lessons_in_all_modules, $lessons_in_this_module  );
+
+
+        }
+        if( empty( $lessons_in_all_modules ) ){
+
+            return;
+
+        }
 
         /**
          * Hook runs inside single-course/course-modules.php
@@ -1355,9 +1383,6 @@ class Sensei_Core_Modules
 
         // run the deprecated hook for backwards compatibility sake
         sensei_do_deprecated_action('sensei_single_course_modules_content','1.9.0','sensei_single_course_modules_before or sensei_single_course_modules_after' );
-
-        $course_id = get_the_ID();
-        $modules = $this->get_course_modules( $course_id  );
 
         // Display each module
         foreach ($modules as $module) {
@@ -1420,11 +1445,9 @@ class Sensei_Core_Modules
                     </ul>
                 </section>
 
-            <?php }//end count lessons  ?>
-                </section>
-            </article>
+            <?php }//end count lessons
 
-        <?php
+            echo '</article>';
 
         } // end each module
 
@@ -2013,7 +2036,7 @@ class Sensei_Core_Modules
 
         }
 
-        // loop through and update all ters adding the author name
+        // loop through and update all terms adding the author name
         foreach( $terms as $index => $term ){
 
             if( is_numeric( $term ) ){
@@ -2055,11 +2078,26 @@ class Sensei_Core_Modules
      */
     public static function reset_none_modules_transient ( $post_id ){
 
-        if( 'course' != get_post_type( $post_id ) ){
-            return;
-        }
+        // this should only apply to course and lesson post types
+        if( in_array( get_post_type( $post_id ), array( 'course', 'lesson' ) ) ){
 
-        delete_transient( 'sensei_'. $post_id .'_none_module_lessons' );
-    }
+            $course_id = '';
+
+            if( 'lesson' == get_post_type( $post_id ) ){
+
+                $course_id = Sensei()->lesson->get_course_id( $post_id );
+
+            }
+
+
+            if( !empty( $course_id ) ){
+
+                delete_transient( 'sensei_'. $course_id .'_none_module_lessons' );
+
+            }
+
+        } // end if is a course or a lesson
+
+    } // end reset_none_modules_transient
 
 } // end modules class

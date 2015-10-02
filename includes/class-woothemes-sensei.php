@@ -739,7 +739,7 @@ class WooThemes_Sensei {
     public function woocommerce_course_update ( $course_id = 0, $order_user = array()  ) {
         global $current_user;
 
-        if ( ! isset( $current_user ) ) return;
+        if ( ! isset( $current_user ) || !$current_user->ID > 0 ) return;
 
         $data_update = false;
 
@@ -814,7 +814,9 @@ class WooThemes_Sensei {
                 $update_course = $this->woocommerce_course_update( $post->ID );
                 // Count completed lessons
                 if ( 0 < absint( $course_prerequisite_id ) ) {
+
                     $prerequisite_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
+
                 }
                 else {
                     $prerequisite_complete = true;
