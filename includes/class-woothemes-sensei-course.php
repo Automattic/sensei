@@ -84,10 +84,22 @@ class WooThemes_Sensei_Course {
         // add the user status on the course to the markup as a class
         add_filter('post_class', array( __CLASS__ , 'add_course_user_status_class' ), 20, 3 );
 
-	} // End __construct()
+        // add Course checkboxes to Add New User screen and Edit User screen
+        add_action ( 'user_new_form', array ($this, 'user_profile_show_courses') );
+        add_action ( 'show_user_profile', array ($this, 'user_profile_show_courses') );
+        add_action ( 'edit_user_profile', array ($this, 'user_profile_show_courses') );
 
-	/**
-	 * Fires when a quiz has been graded to check if the Course status needs changing
+        add_action('user_register', array ($this, 'user_profile_save_courses') );
+        add_action('edit_user_profile_update', array ($this, 'user_profile_save_courses') );
+        add_action('personal_options_update', array ($this, 'user_profile_save_courses') );
+
+
+
+
+    } // End __construct()
+
+    /**
+     * Fires when a quiz has been graded to check if the Course status needs changing
 	 *
 	 * @param type $user_id
 	 * @param type $quiz_id
@@ -2019,5 +2031,140 @@ class WooThemes_Sensei_Course {
         <?php  }// end if is user logged in
 
     }// end the_course_action_buttons
+
+    /**
+     * function user_profile_show_courses
+     *
+     * add Course checkboxes to Add New User and
+     * Edit User screens.
+     *
+     * @since 1.9.0
+     * @param object $user
+     * @return void
+     */
+
+    public function user_profile_show_courses ( $user ) {
+
+        if (!current_user_can('manage_options')) {
+
+            return;
+
+        }
+
+        ?>
+
+        <h3>Sensei</h3>
+        <span><strong>NOTE: unticking Courses here will remove this user from those courses and reset their progress</strong>.</span>
+
+
+        <table class="form-table">
+
+            <tr>
+                <th><label for="company">Courses</label></th>
+                <td>
+
+        <?php
+
+        $post_args = array(
+            'posts_per_page'   => -1,
+            'orderby'          => 'menu_order',
+            'order'            => 'ASC',
+            'post_type'        => 'course');
+
+        $courses = get_posts($post_args);
+
+        foreach ($courses as $course) {
+
+            $course_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course->ID, 'user_id' => $user->ID, 'type' => 'sensei_course_status', 'field' => 'comment_ID' ) );
+
+            //var_dump($course_status_id);
+
+            ($course_status_id == false) ? $checked = '' : $checked = 'checked';
+
+            echo '<input type="checkbox" name="courses[]" value="'. $course->ID. '"'. $checked .' >'. $course->post_title . '<br />';
+        }
+
+        echo "</td></tr></table>";
+
+    } // end user_profile_show_courses
+
+    /**
+     * function user_profile_save_courses
+     *
+     * Saves selections from Course checkboxes
+     * on Add New User and Edit User screens.
+     *
+     * @since 1.9.0
+     * @param int $user_id
+     * @return void
+     */
+
+    public function user_profile_save_courses($user_id) {
+
+        if (!current_user_can('manage_options')) {
+
+            return;
+
+        }
+
+        $selected_course_ids = $_POST['courses'];
+
+        $post_args = array(
+            'posts_per_page'   => -1,
+            'orderby'          => 'menu_order',
+            'order'            => 'ASC',
+            'post_type'        => 'course');
+
+        $all_courses = get_posts($post_args);
+
+        $all_course_ids = array();
+
+        foreach ($all_courses as $course) {
+
+            $all_course_ids[] = $course->ID;
+
+        }
+
+        // Get the courses that were not ticked by the user
+        $unticked_course_ids = array_diff($all_course_ids, $selected_course_ids);
+
+        var_dump($unticked_course_ids);
+
+        if ( !empty($selected_course_ids) ) {
+
+            foreach ($selected_course_ids as $course_id) {
+
+                $course_id = sanitize_text_field($course_id);
+
+                $course_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status', 'field' => 'comment_ID' ) );
+
+                if ($course_status_id == false) {
+
+                    WooThemes_Sensei_Utils::user_start_course($user_id, $course_id);
+
+                }
+            }
+        }
+
+        if ( !empty($unticked_course_ids) ) {
+
+            foreach ($unticked_course_ids as $course_id) {
+
+                $course_id = sanitize_text_field($course_id);
+
+                $course_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value(array('post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status', 'field' => 'comment_ID'));
+
+                if ($course_status_id != false) {
+
+                    WooThemes_Sensei_Utils::sensei_remove_user_from_course($course_id, $user_id);
+
+                }
+
+            }
+
+        }
+
+    } // end user_profile_save_courses
+
 
 } // End Class
