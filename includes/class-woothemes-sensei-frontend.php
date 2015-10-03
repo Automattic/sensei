@@ -1168,7 +1168,7 @@ class WooThemes_Sensei_Frontend {
 
     public function sensei_course_category_order_main_content($query) {
 
-        if ( is_tax() ) {
+        if ( is_tax('course-category') ) {
 
             $query->set( 'orderby', 'menu_order' );
             $query->set( 'order', 'ASC' );
