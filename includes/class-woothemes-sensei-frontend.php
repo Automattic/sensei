@@ -270,7 +270,7 @@ class WooThemes_Sensei_Frontend {
 	 */
 	function sensei_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
 
-        _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::get_template' );
+        _deprecated_function( 'sensei_get_template', '1.9.0', 'Sensei_Templates::get_template' );
         return Sensei_Templates::get_template($template_name, $args, $template_path, $default_path  );
 
 	} // End sensei_get_template()
@@ -287,7 +287,7 @@ class WooThemes_Sensei_Frontend {
 	 */
 	function sensei_locate_template( $template_name, $template_path = '', $default_path = '' ) {
 
-        _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::locate_template' );
+        _deprecated_function( 'sensei_locate_template', '1.9.0', 'Sensei_Templates::locate_template' );
         return Sensei_Templates::locate_template( $template_name, $template_path, $default_path );
 
 	} // End sensei_locate_template()
