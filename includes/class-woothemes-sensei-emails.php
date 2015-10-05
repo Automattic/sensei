@@ -346,8 +346,8 @@ class WooThemes_Sensei_Emails {
 
         $send = false;
 
-        if( isset( $woothemes_sensei->settings->settings['email_teachers'] ) ) {
-            if( in_array( 'teacher-completed-lesson', (array) $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+        if( isset( Sensei()->settings->settings[ 'email_teachers' ] ) ) {
+            if( in_array( 'teacher-completed-lesson', (array) Sensei()->settings->settings[ 'email_teachers' ]) ) {
                 $send = true;
             }
         } else {
