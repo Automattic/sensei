@@ -1072,29 +1072,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          global $post;
 
-         $question_query_args = array(
-             'post_type' 		=> array( 'question', 'multiple_question' ),
-             'posts_per_page' 	=> -1,
-             'meta_key'        	=> '_quiz_question_order' . $post->ID,
-             'meta_query'		=> array(
-                 array(
-                     'key'       => '_quiz_id',
-                     'value'     => $post->ID,
-                 )
-             ),
-             'suppress_filters' 	=> 0
-         );
-
-         //query the questions
-         $questions_query = new WP_Query( $question_query_args );
-
-         $questions = $questions_query->posts;
-
          $lesson_id = $this->get_lesson_id($post->ID);
+
+         $has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
 
          $lesson = get_post($lesson_id);
 
-         if ( is_singular('quiz') && count ($questions ) <= 0 && $_SERVER['REQUEST_URI'] != "/lesson/$lesson->post_name" ) {
+         if ( is_singular('quiz') && ! $has_questions && $_SERVER['REQUEST_URI'] != "/lesson/$lesson->post_name" ) {
 
              wp_redirect(get_permalink($lesson->ID), 301);
              exit;
