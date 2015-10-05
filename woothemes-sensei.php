@@ -32,10 +32,10 @@ Domain path: /lang/
 
     require_once( 'includes/class-sensei-autoloader.php' );
     require_once( 'includes/lib/woo-functions.php' );
-    require_once( 'includes/lib/woothemes-sensei-functions.php' );
+    require_once( 'includes/sensei-functions.php' );
 
     if ( ! is_admin() ) {
-        require_once( 'includes/lib/woothemes-sensei-template.php' );
+        require_once( 'includes/template-functions.php' );
     }
 
     /**

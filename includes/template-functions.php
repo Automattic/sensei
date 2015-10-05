@@ -502,3 +502,5 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	function sensei_has_user_completed_prerequisite_lesson( $post_id = 0, $user_id = 0 ) {
 		return sensei_has_user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_prerequisite_lesson()
+
+
