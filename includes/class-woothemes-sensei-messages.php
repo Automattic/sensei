@@ -59,6 +59,7 @@ class WooThemes_Sensei_Messages {
         add_action( 'sensei_quiz_questions', array( $this, 'send_message_link' ), 3, 2 );
 
 		// Hide messages and replies from users who do not have access
+        add_action( 'template_redirect', array( $this, 'message_login' ), 10, 1 );
         add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
         add_filter( 'the_title', array( $this, 'message_title' ), 10, 2 );
         add_filter( 'the_content', array( $this, 'message_content' ), 10, 1 );
@@ -392,6 +393,30 @@ class WooThemes_Sensei_Messages {
 		remove_meta_box('commentstatusdiv', $this->post_type, 'normal');
 	}
 
+    /**
+     * Function message_login()
+     *
+     * Only show /messages/* to logged in users, and
+     * redirect logged out users to wp-login.php
+     *
+     * @since 1.9.0
+     * @param  none
+     * @return void
+     */
+
+    public function message_login () {
+
+        if ( is_single() && is_singular( $this->post_type )
+            || is_post_type_archive( $this->post_type ) ) {
+
+            if (!is_user_logged_in() && $_SERVER['REQUEST_URI'] != '/wp-login.php') {
+
+                wp_redirect(home_url('/wp-login.php'), 303);
+                exit;
+            }
+
+        }
+    }
 	/**
      * Only show allowed messages in messages archive
      * @param  array $query Original query
