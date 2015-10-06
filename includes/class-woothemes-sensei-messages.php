@@ -406,10 +406,26 @@ class WooThemes_Sensei_Messages {
 
     public function message_login () {
 
+        $settings = Sensei()->settings->get_settings();
+        if( isset( $settings[ 'my_course_page' ] )
+            && 0 < intval( $settings[ 'my_course_page' ] ) ){
+
+            $my_courses_page_id = $settings[ 'my_course_page' ];
+
+            $my_courses_url = get_permalink($my_courses_page_id);
+
+        }
+
         if ( is_single() && is_singular( $this->post_type )
             || is_post_type_archive( $this->post_type ) ) {
 
-            if (!is_user_logged_in() && $_SERVER['REQUEST_URI'] != '/wp-login.php') {
+            if (!is_user_logged_in() && isset($my_courses_url) ) {
+
+                wp_redirect($my_courses_url, 303);
+                exit;
+            }
+
+            else {
 
                 wp_redirect(home_url('/wp-login.php'), 303);
                 exit;
