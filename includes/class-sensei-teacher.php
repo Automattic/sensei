@@ -198,7 +198,6 @@ class Sensei_Teacher {
             'edit_private_sensei_messages' => true,
             'read_private_sensei_messages' => true,
 
-            'edit_comment' => true,
             'edit_posts' => true,
 
             // Group post type Todo: find out from Hugh
