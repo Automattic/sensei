@@ -44,7 +44,7 @@
 
     <section class="entry fix">
 
-        <? the_content(); ?>
+        <?php the_content(); ?>
 
     </section>
 
