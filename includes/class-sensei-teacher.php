@@ -198,6 +198,11 @@ class Sensei_Teacher {
             'edit_private_sensei_messages' => true,
             'read_private_sensei_messages' => true,
 
+            // Comments -
+            // Necessary cap so Teachers can moderate comments
+            // on their own lessons. We restrict access to other
+            // post types in $this->restrict_posts_menu_page()
+
             'edit_posts' => true,
 
             // Group post type Todo: find out from Hugh
