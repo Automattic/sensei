@@ -188,3 +188,18 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative="" , $ar
     }
 
 }// end sensei_do_deprecated_action
+
+/**
+ * Check the given post or post type id is a of the
+ * the course post type.
+ *
+ * @since 1.9.0
+ *
+ * @param $post_id
+ * @return bool
+ */
+function sensei_is_a_course( $post ){
+
+	return "course" == get_post_type( $post );
+
+}

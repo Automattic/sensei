@@ -49,8 +49,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	  */
 	 function course_single_lessons() {
 
-	 	global $woothemes_sensei;
-	 	$woothemes_sensei->frontend->sensei_get_template( 'single-course/course-lessons.php' );
+		Sensei_Templates::get_template( 'single-course/lessons.php' );
 
 	 } // End course_single_lessons()
 
@@ -503,4 +502,203 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		return sensei_has_user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_prerequisite_lesson()
 
+/*******************************
+ *
+ * Module specific template tags
+ *
+ ******************************/
 
+/**
+ * This function checks if the current course has modules.
+ *
+ * This must only be used within the loop.
+ *
+ * I checks the current global post (course) if it has modules.
+ *
+ * @since 1.9.0
+ *
+ * @param string $course_post_id options
+ * @return bool
+ *
+ */
+function sensei_have_modules( $course_post_id = '' ){
+
+	global $post, $wp_query, $sensei_modules_loop;
+
+	// set the current course to be the global post again
+	wp_reset_query();
+	$post = $wp_query->post;
+
+	if( empty( $course_post_id ) ){
+
+		$course_id = $post->ID;
+
+	}
+
+	// doesn't apply to none course post types
+	if( ! sensei_is_a_course( $course_id )  ){
+		return false;
+	}
+
+	// check the current item compared to the total number of modules
+	if( $sensei_modules_loop[ 'current' ] + 1 > $sensei_modules_loop[ 'total' ]  ){
+
+		return false;
+
+	}else{
+
+		return true;
+
+	}
+
+} //sensei_have_modules
+
+
+/**
+ * Setup the next module int the module loop
+ *
+ * @since 1.9.0
+ */
+function sensei_setup_module(){
+
+	global  $sensei_modules_loop, $wp_query;
+
+	// increment the index
+	$sensei_modules_loop[ 'current' ]++;
+	$index = $sensei_modules_loop[ 'current' ];
+	if( isset( $sensei_modules_loop['modules'][ $index ] ) ) {
+
+		$sensei_modules_loop['current_module'] = $sensei_modules_loop['modules'][$index];
+		// setup the query for the module lessons
+		$course_id = $sensei_modules_loop['course_id'];
+		$module_term_id = $sensei_modules_loop['current_module']->term_id;
+		$modules_query = Sensei()->modules->get_lessons_query( $course_id , $module_term_id );
+
+		// setup the global wp-query only if the lessons
+		if( $modules_query->have_posts() ){
+
+			$wp_query = $modules_query;
+
+		}else{
+
+			wp_reset_query();
+
+		}
+
+	} else {
+
+		wp_reset_query();
+
+	}
+
+}// end sensei_the_module
+
+/**
+ * Check if the current module in the modules loop has any lessons.
+ * This relies on the global $wp_query. Which will be setup for each module
+ * by sensei_the_module(). This function must only be used withing the module lessons loop.
+ *
+ * @return bool
+ */
+function sensei_module_has_lessons(){
+	global $wp_query;
+
+	if( 'lesson' == $wp_query->get('post_type') ){
+
+		return have_posts();
+
+	}else{
+
+		return false;
+
+	}
+
+}
+
+/**
+ * This function return the Module title to be used as an html element attribute value.
+ *
+ * Should only be used within the Sensei modules loop.
+ *
+ * @since 1.9.0
+ *
+ * @uses sensei_the_module_title
+ * @return string
+ */
+function sensei_the_module_title_attribute(){
+
+	esc_attr_e( sensei_get_the_module_title() );
+
+}
+
+/**
+ * Returns a permalink to the module currently loaded within the Single Course module loop.
+ *
+ * This function should only be used with the Sensei modules loop.
+ *
+ * @return string
+ */
+function sensei_the_module_permalink(){
+
+	global $sensei_modules_loop;
+	$course_id = $sensei_modules_loop['course_id'];
+	$module_url = add_query_arg('course_id', $course_id, get_term_link( $sensei_modules_loop['current_module'], 'module' ) );
+	$module_term_id = $sensei_modules_loop['current_module']->term_id;
+
+	/**
+	 * Filter the module permalink url. This fires within the sensei_the_module_permalink function.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param string $module_url
+	 * @param int $module_term_id
+	 * @param string $course_id
+	 */
+	 echo esc_url_raw( apply_filters( 'sensei_the_module_permalink', $module_url, $module_term_id  ,$course_id ) );
+
+}// end sensei_the_module_permalink
+
+/**
+ * Returns the current module name. This must be used
+ * within the Sensei module loop.
+ *
+ * @since 1.9.0
+ *
+ * @return string
+ */
+function sensei_get_the_module_title(){
+
+	global $sensei_modules_loop;
+
+	$module_title = $sensei_modules_loop['current_module']->name;
+	$module_term_id = $sensei_modules_loop['current_module']->term_id;
+	$course_id = $sensei_modules_loop['course_id'];
+
+	/**
+	 * Filter the module title.
+	 *
+	 * This fires within the sensei_the_module_title function.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param $module_title
+	 * @param $module_term_id
+	 * @param $course_id
+	 */
+	return apply_filters( 'sensei_the_module_title',  $module_title , $module_term_id, $course_id );
+
+}
+
+/**
+ * Ouputs the current module name. This must be used
+ * within the Sensei module loop.
+ *
+ * @since 1.9.0
+ * @uses sensei_get_the_module_title
+ * @return string
+ */
+function sensei_the_module_title(){
+
+	echo sensei_get_the_module_title();
+
+}

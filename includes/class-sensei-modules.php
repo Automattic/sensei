@@ -80,7 +80,7 @@ class Sensei_Core_Modules
         add_filter('body_class', array($this, 'module_archive_body_class'));
 
         // add modules to the single course template
-        add_action('sensei_single_course_content_inside_after', array($this, 'course_module_content') , 8 );
+        add_action( 'sensei_single_course_content_inside_after', array($this, 'load_course_module_content_template') , 8 );
 
         //Single Course modules actions. Add to single-course/course-modules.php
         add_action('sensei_single_course_modules_before',array( $this,'course_modules_title' ), 20);
@@ -444,10 +444,12 @@ class Sensei_Core_Modules
      */
     public function single_course_modules(){
 
-        _deprecated_function('Sensei_Modules->single_course_modules','Sensei 1.9.0', 'Sensei()->modules->course_module_content');
+        _deprecated_function('Sensei_Modules->single_course_modules','Sensei 1.9.0', 'Sensei()->modules->load_course_module_content_template');
         // only show modules on the course that has modules
         if( is_singular( 'course' ) && has_term( '', 'module' )  )  {
-            $this->course_module_content();
+
+            $this->load_course_module_content_template();
+
         }
 
     } // end single_course_modules
@@ -1345,121 +1347,9 @@ class Sensei_Core_Modules
      * @since 1.8.0
      * @return void
      */
-    public function course_module_content(){
+    public function load_course_module_content_template(){
 
-        $course_id = get_the_ID();
-        $modules = $this->get_course_modules( $course_id  );
-
-        // exit if this course doesn't have modules
-        if( !$modules || empty( $modules )  ){
-            return;
-        }
-
-        //also exit if these modules has no lessons attached
-        $lessons_in_all_modules = array();
-        foreach( $modules as $term ){
-
-            $lessons_in_this_module = $this->get_lessons( $course_id , $term->term_id);
-            $lessons_in_all_modules = array_merge(  $lessons_in_all_modules, $lessons_in_this_module  );
-
-
-        }
-        if( empty( $lessons_in_all_modules ) ){
-
-            return;
-
-        }
-
-        /**
-         * Hook runs inside single-course/course-modules.php
-         *
-         * It runs before the modules are shown. This hook fires on the single course page,but only if the course has modules.
-         *
-         * @since 1.8.0
-         *
-         * @hooked Sensei()->modules->course_modules_title - 20
-         */
-        do_action('sensei_single_course_modules_before');
-
-        // run the deprecated hook for backwards compatibility sake
-        sensei_do_deprecated_action('sensei_single_course_modules_content','1.9.0','sensei_single_course_modules_before or sensei_single_course_modules_after' );
-
-        // Display each module
-        foreach ($modules as $module) {
-
-            echo '<article class="post module">';
-
-            // module title link
-            $module_url = esc_url(add_query_arg('course_id', $course_id, get_term_link($module, $this->taxonomy)));
-            echo '<header><h2><a href="' . esc_url($module_url) . '">' . $module->name . '</a></h2></header>';
-
-            echo '<section class="entry">';
-
-            $module_progress = false;
-            if (is_user_logged_in()) {
-                global $current_user;
-                wp_get_current_user();
-                $module_progress = $this->get_user_module_progress($module->term_id, $course_id, $current_user->ID);
-            }
-
-            if ($module_progress && $module_progress > 0) {
-                $status = __('Completed', 'woothemes-sensei');
-                $class = 'completed';
-                if ($module_progress < 100) {
-                    $status = __('In progress', 'woothemes-sensei');
-                    $class = 'in-progress';
-                }
-                echo '<p class="status module-status ' . esc_attr($class) . '">' . $status . '</p>';
-            }
-
-            if ('' != $module->description) {
-                echo '<p class="module-description">' . $module->description . '</p>';
-            }
-
-            $lessons = $this->get_lessons( $course_id ,$module->term_id );
-
-            if (count($lessons) > 0) {
-
-                $lessons_list = '';
-                foreach ($lessons as $lesson) {
-                    $status = '';
-                    $lesson_completed = WooThemes_Sensei_Utils::user_completed_lesson($lesson->ID, get_current_user_id() );
-                    $title = esc_attr(get_the_title(intval($lesson->ID)));
-
-                    if ($lesson_completed) {
-                        $status = 'completed';
-                    }
-
-                    $lessons_list .= '<li class="' . $status . '"><a href="' . esc_url(get_permalink(intval($lesson->ID))) . '" title="' . esc_attr(get_the_title(intval($lesson->ID))) . '">' . apply_filters('sensei_module_lesson_list_title', $title, $lesson->ID) . '</a></li>';
-
-                    // Build array of displayed lesson for exclusion later
-                    $displayed_lessons[] = $lesson->ID;
-                }
-                ?>
-                <section class="module-lessons">
-                    <header>
-                        <h3><?php _e('Lessons', 'woothemes-sensei') ?></h3>
-                    </header>
-                    <ul>
-                        <?php echo $lessons_list; ?>
-                    </ul>
-                </section>
-
-            <?php }//end count lessons
-
-            echo '</article>';
-
-        } // end each module
-
-        /**
-         * Hook runs inside single-course/course-modules.php
-         *
-         * It runs after the modules are shown. This hook fires on the single course page,but only if the course has modules.
-         *
-         * @since 1.8.0
-         */
-        do_action('sensei_single_course_modules_after');
-
+        Sensei_Templates::get_template( 'single-course/modules.php' );
 
     } // end course_module_content
 
@@ -1473,7 +1363,19 @@ class Sensei_Core_Modules
      * @return array $lessons
      */
     public function get_lessons( $course_id , $term_id ){
-        $lessons = array();
+
+        $lesson_query = $this->get_lessons_query( $course_id, $term_id );
+
+        if( isset( $lesson_query->posts ) ){
+
+            return $lesson_query->posts;
+
+        }else{
+
+            return array();
+
+        }
+
 
         if( empty( $term_id ) || empty( $course_id ) ){
 
@@ -1512,6 +1414,57 @@ class Sensei_Core_Modules
         $lessons = new WP_Query( $args );
 
         return $lessons->posts;
+
+    } // end get lessons
+
+    /**
+     * Returns all lessons for the given module ID
+     *
+     * @since 1.8.0
+     *
+     * @param $course_id
+     * @param $term_id
+     * @return WP_Query $lessons_query
+     */
+    public function get_lessons_query( $course_id , $term_id ){
+
+        if( empty( $term_id ) || empty( $course_id ) ){
+
+            return array();
+
+        }
+
+        $args = array(
+            'post_type' => 'lesson',
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                    'key' => '_lesson_course',
+                    'value' => intval($course_id),
+                    'compare' => '='
+                )
+            ),
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'module',
+                    'field' => 'id',
+                    'terms' => intval( $term_id )
+                )
+            ),
+            'orderby' => 'menu_order',
+            'order' => 'ASC',
+            'suppress_filters' => 0
+        );
+
+        if (version_compare( Sensei()->version, '1.6.0', '>=')) {
+            $args['meta_key'] = '_order_module_' . intval( $term_id );
+            $args['orderby'] = 'meta_value_num date';
+        }
+
+        $lessons_query = new WP_Query( $args );
+
+        return $lessons_query;
 
     } // end get lessons
 
@@ -2099,5 +2052,80 @@ class Sensei_Core_Modules
         } // end if is a course or a lesson
 
     } // end reset_none_modules_transient
+
+    /**
+     * This function calls the deprecated hook 'sensei_single_course_modules_content' to fire
+     *
+     * @since 1.9.0
+     * @deprecated since 1.9.0
+     *
+     */
+    public static function deprecate_sensei_single_course_modules_content(){
+
+        sensei_do_deprecated_action( 'sensei_single_course_modules_content','1.9.0','sensei_single_course_modules_before or sensei_single_course_modules_after' );
+
+    }
+
+    /**
+     * Setup the single course module loop.
+     *
+     * Setup the global $sensei_modules_loop
+     *
+     * @since 1.9.0
+     */
+    public static function setup_single_course_module_loop(){
+
+        global $sensei_modules_loop, $post;
+        $course_id = $post->ID;
+
+        $modules = Sensei()->modules->get_course_modules( $course_id );
+
+        //initial setup
+        $sensei_modules_loop['total'] = 0;
+        $sensei_modules_loop['modules'] = array();
+        $sensei_modules_loop['current'] = -1;
+
+        // exit if this course doesn't have modules
+        if( !$modules || empty( $modules )  ){
+            return;
+        }
+
+
+        $lessons_in_all_modules = array();
+        foreach( $modules as $term ){
+
+            $lessons_in_this_module = Sensei()->modules->get_lessons( $course_id , $term->term_id);
+            $lessons_in_all_modules = array_merge(  $lessons_in_all_modules, $lessons_in_this_module  );
+
+        }
+
+
+        //setup all of the modules loop variables
+        $sensei_modules_loop['total'] = count( $modules );
+        $sensei_modules_loop['modules'] = $modules;
+        $sensei_modules_loop['current'] = -1;
+        $sensei_modules_loop['course_id'] = $course_id;
+
+    }// end setup_single_course_module_loop
+
+    /**
+     * Tear down the course module loop.
+     *
+     * @since 1.9.0
+     *
+     */
+    public static function teardown_single_course_module_loop(){
+
+        global $sensei_modules_loop, $wp_query, $post;
+
+        //reset all of the modules loop variables
+        $sensei_modules_loop['total'] = 0;
+        $sensei_modules_loop['modules'] = array();
+        $sensei_modules_loop['current'] = -1;
+
+        // set the current course to be the global post again
+        wp_reset_query();
+        $post = $wp_query->post;
+    }// end teardown_single_course_module_loop
 
 } // end modules class

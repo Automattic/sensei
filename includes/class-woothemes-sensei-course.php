@@ -2086,7 +2086,7 @@ class WooThemes_Sensei_Course {
     public static function course_query_filter( $query ){
 
         // exit early for no course queries
-        if( 'course' != $query->get( 'post_type' ) ){
+        if( ! is_admin( ) && 'course' != $query->get( 'post_type' ) ){
             return $query;
         }
 

@@ -12,15 +12,17 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 ?>
-        	<article <?php post_class(); ?>>
+<article <?php post_class(); ?>>
 
-                <?php do_action( 'sensei_quiz_single_title' ); ?>
+    <?php do_action( 'sensei_quiz_single_title' ); ?>
 
-                <section class="entry">
+    <section class="entry">
+
                 	<?php the_content(); ?>
                 	<?php do_action( 'sensei_quiz_questions' ); ?>
-				</section>
+                	
+	</section>
 
-            </article><!-- .post -->
+</article><!-- .post -->
 
-            <?php do_action('sensei_pagination'); ?>
+<?php do_action('sensei_pagination'); ?>
