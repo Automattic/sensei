@@ -32,7 +32,6 @@ $access_permission = false;
 
       $access_permission = true;
 
- // If 'Users must be logged in to view Course and Lesson content' is not turned off, ask the user to login.
  }
 
 ?>
