@@ -13,15 +13,28 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
  global $woothemes_sensei, $post, $current_user, $view_lesson, $user_taking_course;
  // Content Access Permissions
- $access_permission = false;
- if ( ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! $woothemes_sensei->settings->settings['access_permission'] ) || sensei_all_access() ) {
- 	if(WooThemes_Sensei_Utils::sensei_is_woocommerce_activated()) {
-    $course_id = get_post_meta( $post->ID, '_lesson_course', true );
-    $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
-    $product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
 
-    $access_permission = ! ( isset ( $product ) && is_object ( $product ) );
-  }
+ // If WC is active, check if the course is attached to a product.
+    if(WooThemes_Sensei_Utils::sensei_is_woocommerce_activated()) {
+        $wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
+        $product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
+
+        $is_product = isset ( $product ) && is_object ( $product );
+    } else {
+        $is_product = false;
+    }
+
+ // If Settings > General > 'Users must be logged in to view Course and Lesson content' is turned off,
+ // give logged out users full access.
+  if ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! $woothemes_sensei->settings->settings['access_permission']  || sensei_all_access() ) {
+
+      $access_permission = true;
+
+ // If 'Users must be logged in to view Course and Lesson content' is not turned off, ask the user to login.
+ } else {
+
+     $access_permission = false;
+
  } // End If Statement
 ?>
         	<article <?php post_class( array( 'lesson', 'post' ) ); ?>>
@@ -66,7 +79,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 					<?php } ?>
 
 	                	<?php
-	                	if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) || $is_preview ) {
+	                	if ( ! $is_product && $access_permission || ( is_user_logged_in() && $user_taking_course ) || $is_preview ) {
 	                		if( apply_filters( 'sensei_video_position', 'top', $post->ID ) == 'top' ) {
 	                			do_action( 'sensei_lesson_video', $post->ID );
 	                		}
@@ -77,7 +90,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	            		?>
 					</section>
 
-					<?php if ( $access_permission || ( is_user_logged_in() && $user_taking_course ) || $is_preview ) {
+					<?php if ( ! $is_product && $access_permission || ( is_user_logged_in() && $user_taking_course ) || $is_preview ) {
 						do_action( 'sensei_lesson_single_meta' );
 					} else {
 						do_action( 'sensei_lesson_course_signup', $lesson_course_id );
