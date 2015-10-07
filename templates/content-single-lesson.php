@@ -24,6 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         $is_product = false;
     }
 
+$access_permission = false;
+
  // If Settings > General > 'Users must be logged in to view Course and Lesson content' is turned off,
  // give logged out users full access.
   if ( isset( $woothemes_sensei->settings->settings['access_permission'] ) && ! $woothemes_sensei->settings->settings['access_permission']  || sensei_all_access() ) {
@@ -31,11 +33,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
       $access_permission = true;
 
  // If 'Users must be logged in to view Course and Lesson content' is not turned off, ask the user to login.
- } else {
+ }
 
-     $access_permission = false;
-
- } // End If Statement
 ?>
         	<article <?php post_class( array( 'lesson', 'post' ) ); ?>>
 
