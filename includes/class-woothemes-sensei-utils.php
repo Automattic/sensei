@@ -1319,7 +1319,7 @@ class WooThemes_Sensei_Utils {
 					$message = sprintf( __( 'Congratulations! You have passed this lesson.', 'woothemes-sensei' ) );
 				}
 				// Lesson status will be "graded" (no passmark required so might have failed all the questions)
-				elseif ( empty( $quiz_grade ) ) {
+				elseif ( empty( $quiz_grade ) || ! $pass_required ) {
 					$message = sprintf( __( 'Congratulations! You have completed this lesson.', 'woothemes-sensei' ) );
 				}
 				// Lesson status will be "passed" (passmark reached)
