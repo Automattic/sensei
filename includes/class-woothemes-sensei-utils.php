@@ -779,7 +779,7 @@ class WooThemes_Sensei_Utils {
 				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
 				if ( $has_questions ) {
 					$status = 'passed'; // Force a pass
-					$metadata['grade'] = 100;
+					$metadata['grade'] = 0;
 				}
 				else {
 					$status = 'complete';
@@ -1281,7 +1281,7 @@ class WooThemes_Sensei_Utils {
 			$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
 
 			// Quiz grade
-			$quiz_grade = false;
+			$quiz_grade = 0;
 			if ( $user_lesson_status ) {
 				$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
 			}
@@ -1319,7 +1319,7 @@ class WooThemes_Sensei_Utils {
 					$message = sprintf( __( 'Congratulations! You have passed this lesson.', 'woothemes-sensei' ) );
 				}
 				// Lesson status will be "graded" (no passmark required so might have failed all the questions)
-				elseif ( empty( $quiz_grade ) || ! $pass_required ) {
+				elseif ( empty( $quiz_grade ) || $quiz_grade == 0 ) {
 					$message = sprintf( __( 'Congratulations! You have completed this lesson.', 'woothemes-sensei' ) );
 				}
 				// Lesson status will be "passed" (passmark reached)
