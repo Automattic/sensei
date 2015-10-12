@@ -4,7 +4,7 @@
  * 1) Make sure you have node and npm installed locally
  *
  * 2) Install all the modules:
- * $ npm install --save-dev gulp orchestrator del gulp-rename gulp-uglify gulp-minify-css
+ * $ npm install --save-dev gulp orchestrator del gulp-rename gulp-uglify gulp-minify-css gulp-chmod
  *
  * 3) Run gulp to mifiy javascript and css using the 'gulp' command.
  */
