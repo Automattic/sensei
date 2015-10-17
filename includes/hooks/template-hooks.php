@@ -109,3 +109,52 @@ add_action( 'sensei_single_course_modules_before', array( 'Sensei_Core_Modules',
 // @since 1.9.0
 // hook in the module loop destructor functionality
 add_action( 'sensei_single_course_modules_after', array( 'Sensei_Core_Modules', 'teardown_single_course_module_loop' ) );
+
+/***************************
+ *
+ * Single Quiz Hooks
+ *
+ ***************************/
+
+//@since 1.9.0
+// deprecate hooks no longer needed
+add_action( 'sensei_single_quiz_content_inside_before', array('WooThemes_Sensei_Quiz', 'deprecate_quiz_sensei_single_main_content_hook' ) );
+add_action( 'sensei_single_quiz_content_inside_before', array('WooThemes_Sensei_Quiz', 'deprecate_quiz_sensei_quiz_single_title_hook' ) );
+
+//@since 1.9.0
+// Single qui title
+add_filter( 'the_title', array( 'WooThemes_Sensei_Quiz' , 'single_quiz_title' ) );
+
+// since 1.9.0
+// initialize the quiz questions loop
+add_action( 'sensei_single_quiz_content_inside_before', array( 'WooThemes_Sensei_Quiz', 'start_quiz_questions_loop') );
+
+// since 1.9.0
+// hook in the quiz user message
+add_action( 'sensei_single_quiz_content_inside_before', array( 'WooThemes_Sensei_Quiz', 'the_user_status_message' ), 10 );
+
+//@since 1.9.0
+// hook in the question title, description and quesiton media
+add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question','the_question_title' ), 10 );
+add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question','the_question_description' ), 20 );
+add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question','the_question_media' ), 30 );
+add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question','the_question_hidden_fields' ), 40 );
+
+//@since 1.9.0
+// hook in incorrect / correct message above questions if the quiz has been graded
+add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question', 'the_answer_result_indication' ), 50 );
+
+//@since 1.9.0
+// add answer grading feedback at the bottom of the question
+add_action( 'sensei_quiz_question_inside_after', array( 'WooThemes_Sensei_Question', 'answer_feedback_notes' ) );
+
+//@since 1.9.0
+// add extra question data for different quesiton types when get_question_template_data_is_called.
+add_filter( 'sensei_get_question_template_data', array( 'WooThemes_Sensei_Question','multiple_choice_load_question_data'), 10, 3);
+add_filter( 'sensei_get_question_template_data', array( 'WooThemes_Sensei_Question','gap_fill_load_question_data'), 10, 3);
+add_filter( 'sensei_get_question_template_data', array( 'WooThemes_Sensei_Question','file_upload_load_question_data'), 10, 3);
+
+//@since 1.9.0
+// deprecate the quiz button action
+add_action( 'sensei_single_quiz_questions_after', array( 'WooThemes_Sensei_Quiz', 'action_buttons' ), 10, 0 );
+

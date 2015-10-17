@@ -1053,4 +1053,172 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
      } // end get_user_question_feedback
 
-} // End Class WooThemes_Sensei_Quiz
+     /**
+      * Deprecate the sensei_single_main_content on the single-quiz template.
+      *
+      * @deprecated since 1.9.0
+      */
+     public static function deprecate_quiz_sensei_single_main_content_hook(){
+
+         sensei_do_deprecated_action('sensei_single_main_content', '1.9.0', 'sensei_single_quiz_content_inside_before or sensei_single_quiz_content_inside_after');
+
+     }
+    /*
+     * Deprecate the sensei_quiz_single_title on the single-quiz template.
+     *
+     * @deprecated since 1.9.0
+     */
+     public static function deprecate_quiz_sensei_quiz_single_title_hook(){
+
+         sensei_do_deprecated_action('sensei_quiz_single_title', '1.9.0', 'sensei_single_quiz_content_inside_before ');
+
+     }
+
+     /**
+      * Filter the single title and add the Quiz to it.
+      *
+      * @param string $title
+      * @return string $quiz_title
+      */
+     public static function single_quiz_title( $title ){
+         if( 'quiz' == get_post_type( ) ){
+             $title .= ' ' . __( 'Quiz', 'woothemes-sensei' );
+         }
+
+         return $title;
+     }
+
+     /**
+      * Initialize the quiz question loop on the single quiz template
+      *
+      * The function will create a global quiz loop varialbe.
+      *
+      * @since 1.9.0
+      *
+      */
+     public static function start_quiz_questions_loop(){
+
+         global $sensei_question_loop;
+
+         //intialize the questions loop object
+         $sensei_question_loop['current'] = -1;
+         $sensei_question_loop['total']   =  0;
+         $sensei_question_loop['questions'] = array();
+
+
+         $questions = Sensei()->lesson->lesson_quiz_questions( get_the_ID() );
+
+         if( count( $questions  ) > 0  ){
+
+             $sensei_question_loop['total']   =  count( $questions );
+             $sensei_question_loop['questions'] = $questions;
+             $sensei_question_loop['quiz_id'] = get_the_ID();
+
+         }
+
+     }// static function
+
+     /**
+      * Initialize the quiz question loop on the single quiz template
+      *
+      * The function will create a global quiz loop varialbe.
+      *
+      * @since 1.9.0
+      *
+      */
+     public static function stop_quiz_questions_loop(){
+
+         $sensei_question_loop['total']   =  0;
+         $sensei_question_loop['questions'] = array();
+         $sensei_question_loop['quiz_id'] = '';
+
+     }
+
+     /**
+      * Output the sensei quiz status message.
+      *
+      * @param $quiz_id
+      */
+    public static function  the_user_status_message( $quiz_id ){
+
+        $lesson_id =  Sensei()->quiz->get_lesson_id( $quiz_id );
+        $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $lesson_id , get_current_user_id() );
+        echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+
+    }
+
+     /**
+      * This functions runs the old sensei_quiz_action_buttons action
+      * for backwards compatiblity sake.
+      *
+      * @since 1.9.0
+      * @deprecated
+      */
+     public static function deprecate_sensei_quiz_action_buttons_hook(){
+
+         sensei_do_deprecated_action( 'sensei_quiz_action_buttons', '1.9.0', 'sensei_single_quiz_questions_after');
+
+     }
+
+     /**
+      * The quiz action buttons needed to ouput quiz
+      * action such as reset complete and save.
+      *
+      * @since 1.3.0
+      */
+     public static function action_buttons() {
+
+         global $post, $current_user;
+
+         $lesson_id = (int) get_post_meta( $post->ID, '_quiz_lesson', true );
+         $lesson_course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
+         $lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+         $show_actions = true;
+         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
+
+         //setup quiz grade
+         $user_quiz_grade = '';
+         if( ! empty( $user_lesson_status  ) ){
+             $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+         }
+
+
+         if( intval( $lesson_prerequisite ) > 0 ) {
+
+             // If the user hasn't completed the prereq then hide the current actions
+             $show_actions = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $current_user->ID );
+
+         }
+         if ( $show_actions && is_user_logged_in() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
+
+             // Get Reset Settings
+             $reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true ); ?>
+
+             <!-- Action Nonce's -->
+             <input type="hidden" name="woothemes_sensei_complete_quiz_nonce" id="woothemes_sensei_complete_quiz_nonce"
+                    value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
+             <input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce"
+                    value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+             <input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce"
+                    value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
+             <!--#end Action Nonce's -->
+
+             <?php if ( '' == $user_quiz_grade) { ?>
+
+                 <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ); ?>"/></span>
+
+                 <span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php echo apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ); ?>"/></span>
+
+             <?php } // End If Statement ?>
+
+             <?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
+
+                 <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php echo apply_filters( 'sensei_reset_quiz_text', __( 'Reset Quiz', 'woothemes-sensei' ) ); ?>"/></span>
+
+             <?php } ?>
+
+         <?php }
+
+     } // End sensei_quiz_action_buttons()
+
+ } // End Class WooThemes_Sensei_Quiz

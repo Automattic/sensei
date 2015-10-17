@@ -88,7 +88,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_lesson_tag_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
 		add_action( 'sensei_login_form', array( $this, 'sensei_login_form' ), 10 );
-		add_action( 'sensei_quiz_action_buttons', array( $this, 'sensei_quiz_action_buttons' ), 10 );
+
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_meta' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_meta_video' ), 10 );
@@ -97,8 +97,7 @@ class WooThemes_Sensei_Frontend {
 
 		// add_filter( 'get_comments_number', array( $this, 'sensei_lesson_comment_count' ), 1 );
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 );
-		// 1.3.0
-		add_action( 'sensei_quiz_question_type', 'quiz_question_type', 10 , 1);
+
 		//1.6.2
 		add_filter( 'wp_login_failed', array( $this, 'sensei_login_fail_redirect' ), 10 );
 		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 );
@@ -509,11 +508,7 @@ class WooThemes_Sensei_Frontend {
 				$title = get_the_title( $post->ID );
 			}
 
-		} elseif( is_singular('quiz') ){
-
-            $title = get_the_title() . ' ' . __( 'Quiz', 'woothemes-sensei' );
-
-        }else {
+		} else {
 
             $title = get_the_title();
 
@@ -1035,8 +1030,6 @@ class WooThemes_Sensei_Frontend {
 				Sensei_Templates::get_part( 'content', 'single-lesson' );
 				do_action( 'sensei_breadcrumb', get_the_ID() );
 				do_action( 'sensei_comments' );
-			} elseif( is_singular( 'quiz' ) ) {
-				Sensei_Templates::get_part( 'content', 'single-quiz' );
 			} elseif( is_singular( 'sensei_message' ) ) {
 				Sensei_Templates::get_part( 'content', 'single-message' );
 				do_action( 'sensei_comments' );
@@ -1151,49 +1144,6 @@ class WooThemes_Sensei_Frontend {
 
 		<?php
 	} // End sensei_login_form()
-
-	public function sensei_quiz_action_buttons() {
-		global $post, $current_user, $woothemes_sensei;
-		$lesson_id = (int) get_post_meta( $post->ID, '_quiz_lesson', true );
-		$lesson_course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
-		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
-		$show_actions = true;
-        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
-
-        //setup quiz grade
-        $user_quiz_grade = '';
-        if( ! empty( $user_lesson_status  ) ){
-            $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
-        }
-
-
-		if( intval( $lesson_prerequisite ) > 0 ) {
-			// If the user hasn't completed the prereq then hide the current actions
-			$show_actions = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $current_user->ID );
-		}
-		if ( $show_actions && is_user_logged_in() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
-
-			// Get Reset Settings
-			$reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true ); ?>
-
-            <!-- Action Nonce's -->
-            <input type="hidden" name="woothemes_sensei_complete_quiz_nonce" id="woothemes_sensei_complete_quiz_nonce"
-                   value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
-			<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce"
-                   value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
-            <input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce"
-                   value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
-            <!--#end Action Nonce's -->
-
-            <?php if ( '' == $user_quiz_grade) { ?>
-		 	<span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_quiz_text', __( 'Complete Quiz', 'woothemes-sensei' ) ); ?>"/></span>
-		 	<span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php echo apply_filters( 'sensei_save_quiz_text', __( 'Save Quiz', 'woothemes-sensei' ) ); ?>"/></span>
-		     <?php } // End If Statement ?>
-	          <?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
-		 	   <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php echo apply_filters( 'sensei_reset_quiz_text', __( 'Reset Quiz', 'woothemes-sensei' ) ); ?>"/></span>
-		     <?php } ?>
-        <?php }
-	} // End sensei_quiz_action_buttons()
 
 	public function sensei_lesson_meta( $post_id = 0 ) {
 		global $post, $woothemes_sensei;

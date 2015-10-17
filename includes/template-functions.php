@@ -74,6 +74,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	  * @access public
 	  * @param bool $return (default: false)
 	  * @return void
+      * @deprecated since 1.9.0
 	  */
 	 function quiz_questions( $return = false ) {
 
@@ -88,6 +89,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	  * @access public
 	  * @since  1.3.0
 	  * @return void
+      * @deprecated
 	  */
 	 function quiz_question_type( $question_type = 'multiple-choice' ) {
 
@@ -702,3 +704,121 @@ function sensei_the_module_title(){
 	echo sensei_get_the_module_title();
 
 }
+
+/************************
+ *
+ * Single Quiz Functions
+ *
+ ***********************/
+
+/**
+ * This function can only be run inside the the quiz question lessons loop.
+ *
+ * It will check if the current lessons loop has questions
+ *
+ * @since 1.9.0
+ *
+ * @return bool
+ */
+function sensei_quiz_has_questions(){
+
+    global $sensei_question_loop;
+
+    if( !isset( $sensei_question_loop['total'] ) ){
+        return false;
+    }
+
+    if( $sensei_question_loop['current'] + 1 < $sensei_question_loop['total']  ){
+
+        return true;
+
+    }else{
+
+        return false;
+
+    }
+
+}// end sensei_quiz_has_questions
+
+/**
+ * This funciton must only be run inside the quiz question loop.
+ *
+ * It will setup the next question in the loop into the current spot within the loop for further
+ * execution.
+ *
+ * @since 1.9.0
+
+ */
+function sensei_setup_the_question(){
+
+    global $sensei_question_loop;
+
+    $sensei_question_loop['current']++;
+    $index = $sensei_question_loop['current'];
+    $sensei_question_loop['current_question'] =  $sensei_question_loop['questions'][ $index ] ;
+
+
+}// end sensei_setup_the_question
+
+/**
+ * This function must only be run inside the quiz question loop.
+ *
+ * This function gets the type and loads the template that will handle it.
+ *
+ */
+function sensei_the_question_content(){
+
+    global $sensei_question_loop;
+
+    $question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
+
+    // load the template that displays the question information.
+    WooThemes_Sensei_Question::load_question_template( $question_type );
+
+}// end sensei_the_question_content
+
+/**
+ * Outputs the question class. This must only be run withing the single quiz question loop.
+ *
+ * @since 1.9.0
+ */
+function sensei_the_question_class(){
+
+    global $sensei_question_loop;
+
+    $question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
+
+    /**
+     * filter the sensei question class within
+     * the quiz question loop.
+     *
+     * @since 1.9.0
+     */
+     $classes = apply_filters( 'sensei_question_classes', array( $question_type ) );
+
+    $html_classes = '';
+    foreach( $classes as $class ){
+
+        $html_classes .= $class . ' ';
+
+    }// end foreach
+
+    esc_attr_e( trim( $html_classes ) );
+
+}
+
+/**
+ * Output the ID of the current question within the quiz question loop.
+ *
+ * @since 1.9.0
+ */
+function sensei_get_the_question_id( ){
+
+    global $sensei_question_loop;
+    if( isset( $sensei_question_loop['current_question']->ID ) ){
+
+        return $sensei_question_loop['current_question']->ID;
+
+    }
+
+}// end sensei_the_question_id
