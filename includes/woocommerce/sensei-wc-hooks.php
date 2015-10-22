@@ -21,3 +21,10 @@ add_filter('pre_get_posts', array( 'Sensei_WC', 'course_archive_wc_filter_paid')
  * @since 1.9.0
  */
 add_action('sensei_before_main_content', array('Sensei_WC', 'do_single_course_wc_single_product_action') ,50) ;
+
+/***********************
+ *
+ * Single Lesson Hooks
+ *
+ ***********************/
+add_filter( 'sensei_can_user_view_lesson', array( 'Sensei_WC','alter_can_user_view_lesson' ), 20, 3 );

@@ -12,17 +12,20 @@
 
 /***************************
  *
+ *
  * TEMPLATE SYSTEM HOOKS
  *
+ *
  ***************************/
-
 //This hook allow us to change the template WordPress loads for a given page/post_type @since 1.9.0
 add_filter( 'template_include', array ( 'Sensei_Templates', 'template_loader' ), 10, 1 );
 
 
 /***************************
  *
+ *
  * COURSE ARCHIVE HOOKS
+ *
  *
  ***************************/
 // deprecate the archive content hook @since 1.9.0
@@ -39,10 +42,11 @@ add_action('sensei_course_content_before', array( 'Sensei_Templates', 'the_title
 
 /***************************
  *
+ *
  * SINGLE COURSE HOOKS
  *
+ *
  ***************************/
-
 // @1.9.0
 // add deprecated action hooks for backwards compatibility sake
 // hooks on single course page: sensei_course_image , sensei_course_single_title, sensei_course_single_meta
@@ -112,10 +116,11 @@ add_action( 'sensei_single_course_modules_after', array( 'Sensei_Core_Modules', 
 
 /***************************
  *
+ *
  * Single Quiz Hooks
  *
+ *
  ***************************/
-
 //@since 1.9.0
 // deprecate hooks no longer needed
 add_action( 'sensei_single_quiz_content_inside_before', array('WooThemes_Sensei_Quiz', 'deprecate_quiz_sensei_single_main_content_hook' ) );
@@ -158,3 +163,53 @@ add_filter( 'sensei_get_question_template_data', array( 'WooThemes_Sensei_Questi
 // deprecate the quiz button action
 add_action( 'sensei_single_quiz_questions_after', array( 'WooThemes_Sensei_Quiz', 'action_buttons' ), 10, 0 );
 
+/***************************
+ *
+ *
+ * Single Lesson Hooks
+ *
+ *
+ ***************************/
+//@since 1.9.0
+// deprecate the main content hook on the single lesson page
+add_action( 'sensei_single_lesson_content_inside_before', 'sensei_deprecate_lesson_single_main_content_hook', 20);
+
+//@since 1.9.0
+// hook in the lesson image on the single lesson
+add_action( 'sensei_single_lesson_content_inside_before', array( Sensei()->lesson, 'lesson_image' ), 10 );
+
+//@since 1.9.0
+// hook in the lesson image on the single lesson deprecated hook function
+add_action( 'sensei_single_lesson_content_inside_before', 'sensei_deprecate_lesson_image_hook', 10 );
+
+//@since 1.9.0
+// hook in the lesson single title deprecated function
+add_action( 'sensei_single_lesson_content_inside_before', 'deprecate_sensei_lesson_single_title', 15 );
+
+// @since 1.9.0
+// hook in the sensei lesson user notices
+add_action( 'sensei_single_lesson_content_inside_before', array( 'WooThemes_Sensei_Lesson', 'user_not_taking_course_message' ), 15 );
+
+// @since 1.9.0
+// add the single lesson meta
+add_action( 'sensei_single_lesson_content_inside_after', 'sensei_the_single_lesson_meta', 10 );
+
+// @since 1.9.0
+// deprecate the sensei_lesson_single_meta hook
+add_action( 'sensei_single_lesson_content_inside_after', 'deprecate_sensei_lesson_single_meta_hook', 15 );
+
+// @since 1.9.0
+// deprecate the sensei_lesson_course_signup hook
+add_action( 'sensei_single_lesson_content_inside_after', 'deprecate_sensei_lesson_course_signup_hook', 20 );
+
+// @since 1.9.0
+// hook in the lesson prerequisite completion message
+add_action( 'sensei_single_lesson_content_inside_after', array( 'WooThemes_Sensei_Lesson', 'prerequisite_complete_message' ), 20 );
+
+// @since 1.9.0
+// hook the single lesson course_signup_link
+add_action( 'sensei_single_lesson_content_inside_after', array( 'WooThemes_Sensei_Lesson', 'course_signup_link' ), 30 );
+
+// @since 1.9.0
+// hook the deprecate breadcrumbs and comments hooks
+add_action( 'sensei_after_main_content', 'sensei_deprecate_single_lesson_breadcrumbs_and_comments_hooks', 5 );

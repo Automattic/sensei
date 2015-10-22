@@ -291,4 +291,48 @@ Class Sensei_WC{
 
     }// end do_single_course_wc_single_product_action
 
+    /**
+     * Hooking into the single lesson page to alter the
+     * user acess permissions based on if they have purchased the
+     * course the lesson belongs to.
+     *
+     * This function will only return false or the passed in user_access value.
+     * It doesn't return true in order to avoid altering other options.
+     *
+     * @since 1.9.0
+     *
+     * @param $can_user_view_lesson
+     * @param $lesson_id
+     * @param $user_id
+     * @return bool
+     */
+    public static function alter_can_user_view_lesson ( $can_user_view_lesson, $lesson_id, $user_id  ){
+
+        // check if the course has a valid product attached to it
+        // which the user should have purchased if they want to access
+        // the current lesson
+        $course_id = get_post_meta( $lesson_id , '_lesson_course', true);
+        $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
+        $product = Sensei()->sensei_get_woocommerce_product_object($wc_post_id);
+        if( isset ($product) && is_object($product) ){
+
+            // valid product found
+            $order_id = self::get_learner_course_active_order_id( $user_id, $course_id );
+
+            // product has a successful order so this user may access the content
+            // this function may only return false or the default
+            // returning true may override other negatives which we don't want
+            if( ! $order_id ){
+
+                return false;
+
+            }
+
+        }
+
+        // return the passed in value
+        return $can_user_view_lesson;
+
+    }
+
 }// end Sensei_WC

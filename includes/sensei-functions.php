@@ -31,14 +31,27 @@ function is_sensei() {
 	return apply_filters( 'is_sensei', $is_sensei, $post );
 }
 
+/**
+ * Determine if the current user is and admin that
+ * can acess all of Sensei without restrictions
+ *
+ * @since 1.4.0
+ * @return boolean
+ */
 function sensei_all_access() {
-	$access = false;
 
-	if( current_user_can( 'manage_sensei' ) || current_user_can( 'manage_sensei_grades' ) ) {
-		$access = true;
-	}
+    $access = current_user_can( 'manage_sensei' ) || current_user_can( 'manage_sensei_grades' );
 
+    /**
+     * Filter sensei_all_access function result
+     * which determinse if the current user
+     * can access all of Sensei without restrictions
+     *
+     * @since 1.4.0
+     * @param bool $access
+     */
 	return apply_filters( 'sensei_all_access', $access );
+
 } // End sensei_all_access()
 
 if ( ! function_exists( 'sensei_light_or_dark' ) ) {

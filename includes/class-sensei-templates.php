@@ -74,12 +74,15 @@ class Sensei_Templates {
 
         $located = self::locate_template( $template_name, $template_path, $default_path );
 
-        do_action( 'sensei_before_template_part', $template_name, $template_path, $located );
+        if( ! empty( $located ) ){
 
-        include( $located );
+            do_action( 'sensei_before_template_part', $template_name, $template_path, $located );
 
-        do_action( 'sensei_after_template_part', $template_name, $template_path, $located );
+            include( $located );
 
+            do_action( 'sensei_after_template_part', $template_name, $template_path, $located );
+
+        }
 
     } // end get template
 
@@ -112,6 +115,10 @@ class Sensei_Templates {
 
             $template = $default_path . $template_name;
 
+        }
+        // return nothing for file that do not exist
+        if( !file_exists( $template ) ){
+            $template = '';
         }
 
         // Return what we found

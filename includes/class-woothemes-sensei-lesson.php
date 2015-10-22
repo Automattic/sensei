@@ -2842,43 +2842,60 @@ class WooThemes_Sensei_Lesson {
 	 */
 	public function lesson_image( $lesson_id = 0, $width = '100', $height = '100', $widget = false ) {
 
-		global $woothemes_sensei;
-
 		$html = '';
 
 		// Get Width and Height settings
 		if ( ( $width == '100' ) && ( $height == '100' ) ) {
+
 			if ( is_singular( 'lesson' ) ) {
-				if ( ! $widget && ! $woothemes_sensei->settings->settings[ 'lesson_single_image_enable' ] ) {
+
+				if ( ! $widget && ! Sensei()->settings->settings[ 'lesson_single_image_enable' ] ) {
+
 					return '';
+
 				} // End If Statement
+
 				$image_thumb_size = 'lesson_single_image';
-				$dimensions = $woothemes_sensei->get_image_size( $image_thumb_size );
+				$dimensions = Sensei()->get_image_size( $image_thumb_size );
 				$width = $dimensions['width'];
 				$height = $dimensions['height'];
 				$crop = $dimensions['crop'];
+
 			} else {
-				if ( ! $widget && ! $woothemes_sensei->settings->settings[ 'course_lesson_image_enable' ] ) {
+
+				if ( ! $widget && ! Sensei()->settings->settings[ 'course_lesson_image_enable' ] ) {
+
 					return '';
 				} // End If Statement
+
 				$image_thumb_size = 'lesson_archive_image';
-				$dimensions = $woothemes_sensei->get_image_size( $image_thumb_size );
+				$dimensions = Sensei()->get_image_size( $image_thumb_size );
 				$width = $dimensions['width'];
 				$height = $dimensions['height'];
 				$crop = $dimensions['crop'];
+
 			} // End If Statement
+
 		} // End If Statement
 
 		$img_url = '';
+
 		if ( has_post_thumbnail( $lesson_id ) ) {
+
    			// Get Featured Image
    			$img_url = get_the_post_thumbnail( $lesson_id, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
+
  		} else {
+
  			// Display Image Placeholder if none
-			if ( $woothemes_sensei->settings->settings[ 'placeholder_images_enable' ] ) {
-				$img_url = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+			if ( Sensei()->settings->settings[ 'placeholder_images_enable' ] ) {
+
+                $img_url = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+
 			} // End If Statement
+
 		} // End If Statement
+
 		$html .= '<a href="' . get_permalink( $lesson_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . $img_url . '</a>';
 
 		return $html;
@@ -3375,5 +3392,164 @@ class WooThemes_Sensei_Lesson {
         return $excerpt;
 
     }// end the_lesson_excerpt
+
+    /**
+     * Returns the lesson prerequisite for the given lesson id.
+     *
+     * @since 1.9.0
+     *
+     * @param $current_lesson_id
+     * @return mixed | bool $prerequisite_lesson_id or false
+     */
+    public static function get_lesson_prerequisite( $current_lesson_id  ){
+
+        $prerequisite_lesson_id = get_post_meta( $current_lesson_id , '_lesson_prerequisite', true );
+
+        // set ti to false if not a valid prerequisite lesson id
+        if(  empty( $prerequisite_lesson_id )
+            || 'lesson' != get_post_type( $prerequisite_lesson_id )
+            || $prerequisite_lesson_id == $current_lesson_id  ) {
+
+            $prerequisite_lesson_id = false;
+
+        }
+
+        return apply_filters( 'sensei_lesson_prerequisite', $prerequisite_lesson_id, $current_lesson_id );
+
+    }
+
+    /**
+     * This function requires that you pass in the lesson you would like to check for
+     * a pre-requisite and not the pre-requisite. It will check if the
+     * lesson has a pre-requiste and then check if it is completed.
+     *
+     * @since 1.9.0
+     *
+     * @param $lesson_id
+     * @param $user_id
+     * @return bool
+     */
+    public  static function is_prerequisite_complete( $lesson_id, $user_id  ){
+
+        if( empty( $lesson_id ) || empty( $user_id )
+        || 'lesson' != get_post_type( $lesson_id )
+        ||  ! is_a( get_user_by( 'id', $user_id ), 'WP_User' )){
+
+            return false;
+
+        }
+
+        $pre_requisite_lesson = self::get_lesson_prerequisite( $lesson_id );
+
+
+        if( 'lesson' == get_post_type( $pre_requisite_lesson ) ){
+
+            return true;
+
+        }else{
+
+            return false;
+
+        }
+
+
+    }// end is_prerequisite_complete
+
+    /**
+     * Show the user not taking course message if it is the case
+     *
+     * @since 1.9.0
+     */
+    public  static function user_not_taking_course_message(){
+
+        $lesson_id = get_the_ID();
+
+        if( 'lesson' != get_post_type( $lesson_id ) ){
+            return;
+        }
+
+        $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $lesson_id );
+        $pre_requisite_complete = self::is_prerequisite_complete( $lesson_id , get_current_user_id() );
+        $lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+        $user_taking_course = WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
+
+        if ( $pre_requisite_complete && $is_preview && !$user_taking_course ) {
+            ?>
+
+            <div class="sensei-message alert">
+                <?php echo Sensei()->permissions_message['message']; ?>
+            </div>
+
+            <?php
+
+        }// end if
+
+    } // end user_not_taking_course_message
+
+    /**
+     * Outputs the lessons course signup lingk
+     *
+     * @since 1.9.0
+     * @param $lesson_id
+     */
+    public static function course_signup_link( $lesson_id ){
+
+        $course_id =  Sensei()->lesson->get_course_id( $lesson_id );
+
+        if ( 0 < intval( $course_id ) ) {
+            ?><section class="lesson-meta"><?php
+            $course_link = '<a href="' . esc_url( get_permalink( $course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+            $wc_post_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
+            if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+                global $current_user;
+                if( is_user_logged_in() ) {
+                    wp_get_current_user();
+                    $course_purchased = WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id );
+                    if( $course_purchased ) {
+                        $prereq_course_id = get_post_meta( $course_id, '_course_prerequisite',true );
+                        ?>
+                        <div class="sensei-message info"><?php echo apply_filters( 'sensei_complete_prerequisite_course_text', sprintf( __( 'Please complete %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $prereq_course_id ) ) . '" title="' . esc_attr( get_the_title( $prereq_course_id ) ) . '">' . apply_filters( 'sensei_previous_course_text', __( 'the previous course', 'woothemes-sensei' ) ) . '</a>' ) ); ?></div>
+                    <?php } else { ?>
+                        <div class="sensei-message info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
+                    <?php }
+                } else { ?>
+                    <div class="sensei-message info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
+                <?php } ?>
+            <?php } else { ?>
+
+                <div class="sensei-message info">
+                    <?php
+                    /**
+                     * Filter the Sensei please sign up message
+                     * @since 1.4.0
+                     *
+                     * @param string  $signup_text
+                     */
+                    echo apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) );
+                    ?>
+                </div>
+
+            <?php } // End If Statement ?>
+            </section><?php
+        } // End If Statement
+    }
+
+    /**
+     * Show a message telling the user to complete the previous message if they haven't done so yet
+     *
+     * @since 1.9.0
+     */
+    public  static function prerequisite_complete_message(){
+
+        $lesson_prerequisite =  WooThemes_Sensei_Lesson::get_lesson_prerequisite( get_the_ID() );
+        $lesson_has_pre_requisite = $lesson_prerequisite > 0;
+        if ( ! WooThemes_Sensei_Lesson::is_prerequisite_complete(  get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
+
+            $prerequisite_lesson_link  = '<a href="' . esc_url( get_permalink( $lesson_prerequisite ) ) . '" title="' . esc_attr(  sprintf( __( 'You must first complete: %1$s', 'woothemes-sensei' ), get_the_title( $lesson_prerequisite ) ) ) . '">' . get_the_title( $lesson_prerequisite ). '</a>';
+            echo sprintf( __( 'You must first complete %1$s before viewing this Lesson', 'woothemes-sensei' ), $prerequisite_lesson_link );
+
+        }
+
+    }
 
 } // End Class

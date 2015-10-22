@@ -62,8 +62,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	  */
 	 function lesson_single_meta() {
 
-	 	global $woothemes_sensei;
-	 	$woothemes_sensei->frontend->sensei_get_template( 'single-lesson/lesson-meta.php' );
+         _deprecated_function('lesson_single_meta','1.9;0', 'WooThemes_Sensei_Lesson::the_lesson_meta' );
+         sensei_the_single_lesson_meta();
 
 	 } // End lesson_single_meta()
 
@@ -500,9 +500,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		return WooThemes_Sensei_Utils::user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_lesson()
 
-	function sensei_has_user_completed_prerequisite_lesson( $post_id = 0, $user_id = 0 ) {
-		return sensei_has_user_completed_lesson( $post_id, $user_id );
-	} // End sensei_has_user_completed_prerequisite_lesson()
+/**
+ * Determine if a user has completed the pre-requisite lesson.
+ *
+ * @uses
+ *
+ * @param int $current_lesson_id
+ * @param int $user_id
+ * @return bool
+*/
+function sensei_has_user_completed_prerequisite_lesson( $current_lesson_id, $user_id ) {
+
+    return WooThemes_Sensei_Lesson::is_pre_requisite_complete( $current_lesson_id, $user_id );
+
+} // End sensei_has_user_completed_prerequisite_lesson()
 
 /*******************************
  *
@@ -822,3 +833,223 @@ function sensei_get_the_question_id( ){
     }
 
 }// end sensei_the_question_id
+
+/************************
+ *
+ * Single Lesson Functions
+ *
+ ***********************/
+
+/**
+ * hook in the deperecated single main content to the lesson
+ * @deprecated since 1.9.0
+ */
+function sensei_deprecate_lesson_single_main_content_hook(){
+
+    sensei_do_deprecated_action( 'sensei_single_main_content', '1.9.0', 'sensei_single_lesson_content_inside_before' );
+
+}// end sensei_deprecate_lesson_single_main_content_hook
+
+/**
+ * hook in the deperecated single main content to the lesson
+ * @deprecated since 1.9.0
+ */
+function sensei_deprecate_lesson_image_hook(){
+
+    sensei_do_deprecated_action( 'sensei_lesson_image', '1.9.0', 'sensei_single_lesson_content_inside_before', get_the_ID() );
+
+}// end sensei_deprecate_lesson_single_main_content_hook
+
+/**
+ * Deprecate the sensei lesson single title hook
+ * @deprecated since 1.9.0
+ */
+function deprecate_sensei_lesson_single_title(){
+
+    sensei_do_deprecated_action( 'sensei_lesson_single_title', '1.9.0', 'sensei_single_lesson_content_inside_before', get_the_ID() );
+
+}// end deprecate_sensei_lesson_single_title
+
+/**
+ * Template function to determine if the current user can
+ * access the current lesson content being viewed.
+ *
+ * This function checks in the folowing order
+ * - if the current user has all access based on their permissions
+ * - If the access permission setting is enabled for this site, if not the user has accces
+ * - if the lesson has a pre-requisite and if the user has completed that
+ * - If it is a preview the user has access as well
+ *
+ * @since 1.9.0
+ *
+ * @param string $lesson_id
+ * @return bool
+ */
+function sensei_can_user_view_lesson( $lesson_id = '', $user_id = ''  ){
+
+    if( empty( $lesson_id ) ){
+
+        $lesson_id = get_the_ID();
+
+    }
+
+    if( empty( $user_id ) ){
+
+        $user_id = get_current_user_id();
+
+    }
+
+    // Check for prerequisite lesson completions
+    $pre_requisite_complete = WooThemes_Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
+    $lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+    $user_taking_course = WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
+
+    $is_preview = false;
+    if( WooThemes_Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
+
+        $is_preview = true;
+        $pre_requisite_complete = true;
+
+    };
+
+
+    $user_can_access_lesson =  false;
+    if( Sensei()->settings->get('access_permission') ) {
+
+        if( is_user_logged_in() && $user_taking_course ){
+
+            $user_can_access_lesson =  true;
+
+        }
+
+    }else{
+
+        $user_can_access_lesson =  true;
+
+    }
+
+    $can_user_view_lesson = sensei_all_access() || ( $user_can_access_lesson && $pre_requisite_complete ) || $is_preview;
+
+    /**
+     * Filter the can user view lesson function
+     *
+     * @since 1.9.0
+     *
+     * @hooked Sensei_WC::alter_can_user_view_lesson
+     *
+     * @param bool $can_user_view_lesson
+     * @param string $lesson_id
+     * @param string $user_id
+     */
+    return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
+
+} // end sensei_can_current_user_view_lesson
+
+/**
+ * Running the deprecated hook: sensei_lesson_single_meta
+ *
+ * @since 1.9.0
+ * @deprecated since 1.9.0
+ */
+function deprecate_sensei_lesson_single_meta_hook(){
+
+    if ( sensei_can_user_view_lesson()  ) {
+
+        sensei_do_deprecated_action( 'sensei_lesson_single_meta', '1.9.0', 'sensei_single_lesson_content_inside_after' );
+
+
+    }
+
+}// end deprecate_sensei_lesson_single_meta_hook
+
+/**
+ * Ouput the single lesson meta
+ *
+ * The function should only be called on the single lesson
+ *
+ */
+function sensei_the_single_lesson_meta(){
+
+    // if the lesson meta is included within theme load that instead of the function content
+    if( ! empty( Sensei_Templates::locate_template( 'single-lesson/lesson-meta.php' ) ) ){
+
+        Sensei_Templates::get_template( 'single-lesson/lesson-meta.php' );
+
+    }else{
+
+        // Get the meta info
+        $lesson_course_id = absint( get_post_meta( get_the_ID(), '_lesson_course', true ) );
+        $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( get_the_ID() );
+
+        // Get User Meta
+        get_currentuserinfo();
+
+        // Complete Lesson Logic
+        do_action( 'sensei_complete_lesson' );
+        // Check that the course has been started
+        if ( Sensei()->access_settings()
+            || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id())
+            || $is_preview ) {
+            ?>
+            <section class="lesson-meta" id="lesson_complete">
+                <?php
+                if( apply_filters( 'sensei_video_position', 'top', get_the_ID() ) == 'bottom' ) {
+
+                    do_action( 'sensei_lesson_video', get_the_ID() );
+
+                }
+                ?>
+                <?php do_action( 'sensei_frontend_messages' ); ?>
+
+                <?php if ( ! $is_preview
+                    || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id()) ) {
+
+                    do_action( 'sensei_lesson_quiz_meta', get_the_ID(), get_current_user_id()  );
+
+                } ?>
+            </section>
+
+            <?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
+
+        <?php }
+
+        do_action( 'sensei_lesson_meta_extra', get_the_ID() );
+
+    } // end if else empty locate_template
+
+} // end the_single_lesson_meta
+
+/**
+ * Deprecate the hook sensei_lesson_course_signup.
+ *
+ * The hook content will be linked directly on the recommended
+ * sensei_single_lesson_content_inside_after
+ *
+ * @deprecated since 1.9.0
+ */
+function deprecate_sensei_lesson_course_signup_hook(){
+
+    $lesson_course_id = get_post_meta( get_the_ID(), '_lesson_course', true );
+    $user_taking_course = WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
+
+    if(  !$user_taking_course ) {
+
+        sensei_do_deprecated_action( 'sensei_lesson_course_signup','1.9.0', 'sensei_single_lesson_content_inside_after', $lesson_course_id );
+
+    }
+}// end deprecate_sensei_lesson_course_signup_hook
+
+/**
+ * Run the deprecated hooks on the single lesson page
+ * @deprecated since 1.9.0
+ */
+function sensei_deprecate_single_lesson_breadcrumbs_and_comments_hooks() {
+
+    if( is_singular( 'lesson' ) ){
+
+        sensei_do_deprecated_action( 'sensei_breadcrumb','1.9.0','sensei_after_main_content',  get_the_ID() );
+        sensei_do_deprecated_action( 'sensei_comments','1.9.0','sensei_after_main_content',  get_the_ID() );
+
+    }
+
+}// end sensei_deprecate_single_lesson_breadcrumbs_and_comments_hooks

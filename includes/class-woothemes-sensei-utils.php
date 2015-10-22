@@ -107,14 +107,16 @@ class WooThemes_Sensei_Utils {
 
 	/**
 	 * Check if WooCommerce is active.
+     *
 	 * @access public
 	 * @since  1.0.2
 	 * @static
-	 * @return void
+	 * @return boolean
 	 */
 	public static function sensei_is_woocommerce_activated () {
-		global $woothemes_sensei;
-		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() && isset( $woothemes_sensei->settings->settings['woocommerce_enabled'] ) && $woothemes_sensei->settings->settings['woocommerce_enabled'] ) { return true; } else { return false; }
+
+		return  WooThemes_Sensei_Utils::sensei_is_woocommerce_present() && isset( Sensei()->settings->settings['woocommerce_enabled'] ) && Sensei()->settings->settings['woocommerce_enabled'];
+
 	} // End sensei_is_woocommerce_activated()
 
 	/**
