@@ -575,7 +575,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 				'description' => __( 'Use this action to install or re-install translation for your language if available.', 'woothemes-sensei' ),
 				'type'        => 'button',
 				'section'     => 'language-settings',
-				'target'      => WooThemes_Sensei_Language_Pack_Manager::get_install_uri(),
+				'target'      => Sensei_Language_Pack_Manager::get_install_uri(),
 				'label'       => __( 'Install', 'woothemes-sensei' )
 			);
 		}
@@ -663,6 +663,6 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 	 * @since 1.9.0
 	 */
 	public function language_pack_notices() {
-		WooThemes_Sensei_Language_Pack_Manager::messages();
+		Sensei_Language_Pack_Manager::messages();
 	}
 } // End Class

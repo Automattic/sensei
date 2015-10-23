@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author     WooThemes
  * @since      1.9.0
  */
-class WooThemes_Sensei_Language_Pack_Manager {
+class Sensei_Language_Pack_Manager {
 
 	/**
 	 * Languages repository
@@ -277,4 +277,4 @@ class WooThemes_Sensei_Language_Pack_Manager {
 	}
 }
 
-new WooThemes_Sensei_Language_Pack_Manager();
+new Sensei_Language_Pack_Manager();

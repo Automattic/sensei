@@ -169,7 +169,7 @@ class WooThemes_Sensei {
         $this->settings->token = 'woothemes-sensei-settings';
 
         // Language pack manager
-        $this->load_class( 'language-pack-manager' );
+        require_once( 'class-sensei-language-pack-manager.php' );
 
         // Setup Admin Settings data
         if ( is_admin() ) {

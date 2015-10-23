@@ -380,8 +380,8 @@ class WooThemes_Sensei_Admin {
 				<h4><?php _e( '<strong>Sensei in your language</strong> &#8211; There is a translation available for your language.', 'woothemes-sensei' ); ?></h4>
 
 				<p class="submit">
-					<a href="<?php echo esc_url( WooThemes_Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php _e( 'Install', 'woothemes-sensei' ); ?></a>
-					<a href="<?php echo esc_url( WooThemes_Sensei_Language_Pack_Manager::get_dismiss_uri() ) ?>" class="docs button-primary"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a>
+					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php _e( 'Install', 'woothemes-sensei' ); ?></a>
+					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_dismiss_uri() ) ?>" class="docs button-primary"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a>
 				</p>
 			</div>
 		</div>
@@ -410,7 +410,7 @@ class WooThemes_Sensei_Admin {
 
 	    } // End If Statement
 
-	    if ( WooThemes_Sensei_Language_Pack_Manager::has_language_pack_available() ) {
+	    if ( Sensei_Language_Pack_Manager::has_language_pack_available() ) {
 	    	add_action( 'admin_notices', array( $this, 'language_pack_install_notice' ) );
 	    }
 
