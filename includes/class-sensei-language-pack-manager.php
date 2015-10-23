@@ -208,7 +208,7 @@ class Sensei_Language_Pack_Manager {
 
 			// Save the zip file
 			if ( ! $wp_filesystem->put_contents( $file, $response['body'], FS_CHMOD_FILE ) ) {
-				wp_redirect( add_query_arg( array( 'translation_updated' => 4 ), $tools_url ) );
+				wp_redirect( add_query_arg( array( 'translation_updated' => 4 ), $settings_url ) );
 				exit;
 			}
 
@@ -216,7 +216,7 @@ class Sensei_Language_Pack_Manager {
 			$dir   = trailingslashit( WP_LANG_DIR ) . 'plugins/';
 			$unzip = unzip_file( $file, $dir );
 			if ( true !== $unzip ) {
-				wp_redirect( add_query_arg( array( 'translation_updated' => 4 ), $tools_url ) );
+				wp_redirect( add_query_arg( array( 'translation_updated' => 4 ), $settings_url ) );
 				exit;
 			}
 
@@ -227,11 +227,11 @@ class Sensei_Language_Pack_Manager {
 			self::update_language_pack_version( $locale );
 
 			// Redirect and show a success message
-			wp_redirect( add_query_arg( array( 'translation_updated' => 1 ), $tools_url ) );
+			wp_redirect( add_query_arg( array( 'translation_updated' => 1 ), $settings_url ) );
 			exit;
 		} else {
 			// Don't have a valid package for the current language!
-			wp_redirect( add_query_arg( array( 'translation_updated' => 5 ), $tools_url ) );
+			wp_redirect( add_query_arg( array( 'translation_updated' => 5 ), $settings_url ) );
 			exit;
 		}
 	}
