@@ -800,7 +800,7 @@ class WooThemes_Sensei {
         // REFACTOR
         global $current_user, $post;
 
-        if ( ! isset( $current_user ) ) return;
+        if ( empty( $current_user->caps ) ) return;
 
         // Get User Meta
         get_currentuserinfo();

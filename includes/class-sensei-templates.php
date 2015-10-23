@@ -162,14 +162,18 @@ class Sensei_Templates {
         } elseif ( is_single() && get_post_type() == 'lesson' ) {
 
             if ( Sensei()->check_user_permissions( 'lesson-single' ) ) {
+
                 $file 	= 'single-lesson.php';
                 $find[] = $file;
                 $find[] = Sensei()->template_url . $file;
+
             } else {
+
                 // No Permissions Page
                 $file 	= 'no-permissions.php';
                 $find[] = $file;
                 $find[] = Sensei()->template_url . $file;
+
             } // End If Statement
 
         } elseif ( is_single() && get_post_type() == 'quiz' ) {
@@ -244,8 +248,10 @@ class Sensei_Templates {
         } // Load the template file
 
         if ( $file ) {
+
             $template = locate_template( $find );
             if ( ! $template ) $template = Sensei()->plugin_path() . '/templates/' . $file;
+
         } // End If Statement
 
         return $template;
