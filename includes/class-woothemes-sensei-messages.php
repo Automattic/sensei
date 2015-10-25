@@ -513,4 +513,70 @@ class WooThemes_Sensei_Messages {
 		return $open;
 	}
 
+    /**
+     * Print outthe message was sent by $sender_username on the
+     *
+     * @since 1.9.0
+     */
+    public static function the_message_sent_by_title(){
+
+        $sender_username = get_post_meta( get_the_ID() , '_sender', true );
+        if( $sender_username ) {
+
+            $sender = get_user_by( 'login', $sender_username ); ?>
+
+            <p class="message-meta">
+                <small>
+                    <em>
+                        <?php printf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() ); ?>
+                    </em>
+                </small>
+            </p>
+
+        <?php }
+
+    }
+
+    /**
+     * sensei_single_title output for single page title
+     * @since  1.1.0
+     * @return void
+     * @deprecate
+     */
+    public static function the_title() {
+
+        global $post;
+
+        $content_post_id = get_post_meta( $post->ID, '_post', true );
+        if( $content_post_id ) {
+            $title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), '<a href="' . get_permalink( $content_post_id ) . '">' . get_the_title( $content_post_id ) . '</a>' );
+        } else {
+            $title = get_the_title( $post->ID );
+        }
+
+        ?>
+        <header>
+
+            <h1>
+
+                <?php
+                /**
+                 * Filter Sensei single title
+                 *
+                 * @since 1.8.0
+                 * @param string $title
+                 * @param string $template
+                 * @param string $post_type @todo move this filter and apply it accros all single titles then add specifc filters for each
+                 */
+                echo apply_filters( 'sensei_single_title', $title, $post->post_type );
+                ?>
+
+            </h1>
+
+        </header>
+
+        <?php
+
+    } // End sensei_single_title()
+
 } // End Class

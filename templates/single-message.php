@@ -20,12 +20,46 @@ get_header();
  */
 do_action( 'sensei_before_main_content' );
 
+?>
+
+<article <?php post_class(); ?> >
+
+    <?php
+    /**
+     * Action inside the single message template before the content
+     *
+     * @since 1.9.0
+     *
+     * @hooked WooThemes_Sensei_Messages::the_title                 - 20
+     * @hooked WooThemes_Sensei_Messages::the_message_sent_by_title - 40
+     */
+    do_action( 'sensei_single_message_content_inside_before');
+    ?>
+
+    <section class="entry">
+
+        <?php the_content(); ?>
+
+    </section>
+
+    <?php
+
+    /**
+     * action inside the single message template after the content
+     * @since 1.9.0
+     *
+     * @hooked
+     */
+    do_action( 'sensei_single_message_content_inside_after');
+
+    ?>
+</article><!-- .post -->
+
+<?php
 /**
- * sensei_single_main_content hook
- *
- * @hooked sensei_single_main_content - 10 (outputs main content)
- */
-do_action( 'sensei_single_main_content' );
+* Sensei comments hook on the single message page
+*/
+do_action( 'sensei_comments' );
 
 /**
  * sensei_after_main_content hook

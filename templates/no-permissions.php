@@ -19,7 +19,6 @@ get_header();
  * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
  */
 do_action('sensei_before_main_content');
-
 ?>
 
 <article <?php array( get_post_type(), 'post' ) ?>>

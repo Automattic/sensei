@@ -69,11 +69,22 @@ add_filter( 'the_content', array('WooThemes_Sensei_Course', 'single_course_conte
 add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Templates','deprecate_sensei_course_single_lessons_hook' ) );
 
 // @1.9.0
-// Deprecate single course content hooks and in favor of simply calling the_content.
+// Deprecate single main content hooks
 add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_main_content_hook') );
+add_action( 'sensei_single_message_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_main_content_hook') );
 
-// @1.9.0
-// Deprecate hooks into the single course modules
+/**
+ * Deprecate all the post type single titile hooks in favor of before content and after content hooks
+ *
+ * @deprecate 1.9.0
+ * @1.9.0
+ */
+add_action('sensei_single_message_content_inside_before', array( 'Sensei_Templates', 'deprecate_all_post_type_single_title_hooks' ) );
+
+/**
+ * Deprecate hooks into the single course modules
+ * @deprecated since 1.9.0
+ */
 add_action('sensei_single_course_modules_before', array('Sensei_Templates','deprecate_module_before_hook' ) );
 add_action('sensei_single_course_modules_after', array('Sensei_Templates','deprecate_module_after_hook' ) );
 
@@ -213,3 +224,12 @@ add_action( 'sensei_single_lesson_content_inside_after', array( 'WooThemes_Sense
 // @since 1.9.0
 // hook the deprecate breadcrumbs and comments hooks
 add_action( 'sensei_after_main_content', 'sensei_deprecate_single_lesson_breadcrumbs_and_comments_hooks', 5 );
+
+/***
+ * Single message hooks
+ */
+
+add_action( 'sensei_single_message_content_inside_before', array( 'WooThemes_Sensei_Messages', 'the_title' ), 20 );
+
+add_action( 'sensei_single_message_content_inside_before', array( 'WooThemes_Sensei_Messages', 'the_message_sent_by_title' ), 40 );
+

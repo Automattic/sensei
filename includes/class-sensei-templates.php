@@ -353,8 +353,14 @@ class Sensei_Templates {
      */
     public static function deprecated_single_main_content_hook(){
 
-            sensei_do_deprecated_action('sensei_single_main_content','1.9.0', 'sensei_single_course_content_inside_before or sensei_single_course_content_inside_after');
+            if( is_singular( 'course' ) ) {
 
+                sensei_do_deprecated_action('sensei_single_main_content', '1.9.0', 'sensei_single_course_content_inside_before or sensei_single_course_content_inside_after');
+
+            } elseif( is_singular( 'message' ) ){
+
+                sensei_do_deprecated_action('sensei_single_main_content', '1.9.0', 'sensei_single_message_content_inside_before or sensei_single_message_content_inside_after');
+            }
 
     }// end deprecated_single_course_single_main_content_hook
 
@@ -377,6 +383,22 @@ class Sensei_Templates {
     public static function deprecate_module_after_hook(){
 
         sensei_do_deprecated_action('sensei_modules_page_after', '1.9.0','sensei_single_course_modules_after' );
+
+    }
+
+    /**
+     * Deprecate the single message hooks for post types.
+     *
+     * @since 1.9.0
+     * @deprecated since 1.9.0
+     */
+    public static function deprecate_all_post_type_single_title_hooks(){
+
+        if( is_singular( 'sensei_message' ) ){
+
+            sensei_do_deprecated_action( 'sensei_message_single_title', '1.9.0', 'sensei_single_message_content_inside_before' );
+
+        }
 
     }
 
