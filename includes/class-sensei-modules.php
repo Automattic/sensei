@@ -1376,45 +1376,6 @@ class Sensei_Core_Modules
 
         }
 
-
-        if( empty( $term_id ) || empty( $course_id ) ){
-
-            return $lessons;
-
-        }
-
-        $args = array(
-            'post_type' => 'lesson',
-            'post_status' => 'publish',
-            'posts_per_page' => -1,
-            'meta_query' => array(
-                array(
-                    'key' => '_lesson_course',
-                    'value' => intval($course_id),
-                    'compare' => '='
-                )
-            ),
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'module',
-                    'field' => 'id',
-                    'terms' => intval( $term_id )
-                )
-            ),
-            'orderby' => 'menu_order',
-            'order' => 'ASC',
-            'suppress_filters' => 0
-        );
-
-        if (version_compare( Sensei()->version, '1.6.0', '>=')) {
-            $args['meta_key'] = '_order_module_' . intval( $term_id );
-            $args['orderby'] = 'meta_value_num date';
-        }
-
-        $lessons = new WP_Query( $args );
-
-        return $lessons->posts;
-
     } // end get lessons
 
     /**
