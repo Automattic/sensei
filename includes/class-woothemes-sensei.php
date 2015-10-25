@@ -571,126 +571,14 @@ class WooThemes_Sensei {
      * @access public
      * @param mixed $template
      * @return void
+     * @deprecated
      */
     public function template_loader ( $template = '' ) {
-        // REFACTOR
-        global $post, $wp_query, $email_template;
 
-        $find = array( 'woothemes-sensei.php' );
-        $file = '';
+        _deprecated_function( 'Sensei()->template_loader', '1.9.0', 'Use Sensei_Templates::template_loader( $template ) instead' );
+        return Sensei_Templates::template_loader( $template );
 
-        if ( isset( $email_template ) && $email_template ) {
-
-            $file 	= 'emails/' . $email_template;
-            $find[] = $file;
-            $find[] = $this->template_url . $file;
-
-        } elseif ( is_single() && get_post_type() == 'course' ) {
-
-            if ( $this->check_user_permissions( 'course-single' ) ) {
-                $file 	= 'single-course.php';
-                $find[] = $file;
-                $find[] = $this->template_url . $file;
-            } else {
-                // No Permissions Page
-                $file 	= 'no-permissions.php';
-                $find[] = $file;
-                $find[] = $this->template_url . $file;
-            } // End If Statement
-
-        } elseif ( is_single() && get_post_type() == 'lesson' ) {
-
-            if ( $this->check_user_permissions( 'lesson-single' ) ) {
-                $file 	= 'single-lesson.php';
-                $find[] = $file;
-                $find[] = $this->template_url . $file;
-            } else {
-                // No Permissions Page
-                $file 	= 'no-permissions.php';
-                $find[] = $file;
-                $find[] = $this->template_url . $file;
-            } // End If Statement
-
-        } elseif ( is_single() && get_post_type() == 'quiz' ) {
-
-            if ( $this->check_user_permissions( 'quiz-single' ) ) {
-                $file 	= 'single-quiz.php';
-                $find[] = $file;
-                $find[] = $this->template_url . $file;
-            } else {
-                // No Permissions Page
-                $file 	= 'no-permissions.php';
-                $find[] = $file;
-                $find[] = $this->template_url . $file;
-            } // End If Statement
-
-        } elseif ( is_single() && get_post_type() == 'sensei_message' ) {
-
-            $file 	= 'single-message.php';
-            $find[] = $file;
-            $find[] = $this->template_url . $file;
-
-        } elseif ( is_post_type_archive( 'course' ) || is_page( $this->get_page_id( 'courses' ) ) ) {
-
-            $file 	= 'archive-course.php';
-            $find[] = $file;
-            $find[] = $this->template_url . $file;
-
-        } elseif ( is_post_type_archive( 'sensei_message' ) ) {
-
-            $file 	= 'archive-message.php';
-            $find[] = $file;
-            $find[] = $this->template_url . $file;
-
-        } elseif( is_tax( 'course-category' ) ) {
-
-            $file 	= 'taxonomy-course-category.php';
-            $find[] = $file;
-            $find[] = $this->template_url . $file;
-
-        } elseif( is_tax( 'lesson-tag' ) ) {
-
-            $file 	= 'taxonomy-lesson-tag.php';
-            $find[] = $file;
-            $find[] = $this->template_url . $file;
-
-        } elseif ( is_post_type_archive( 'lesson' ) ) {
-
-            $file 	= 'archive-lesson.php';
-            $find[] = $file;
-            $find[] = $this->template_url . $file;
-
-        } elseif ( isset( $wp_query->query_vars['learner_profile'] ) ) {
-
-            // Override for sites with static home page
-            $wp_query->is_home = false;
-
-            $file 	= 'learner-profile.php';
-            $find[] = $file;
-            $find[] = $this->template_url . $file;
-
-        } elseif ( isset( $wp_query->query_vars['course_results'] ) ) {
-
-            // Override for sites with static home page
-            $wp_query->is_home = false;
-
-            $file 	= 'course-results.php';
-            $find[] = $file;
-            $find[] = $this->template_url . $file;
-
-        } // Load the template file
-
-        if ( $file ) {
-            
-            $template = locate_template( $find );
-
-            if ( ! $template ) $template = $this->plugin_path() . 'templates/' . $file;
-
-        } // End If Statement
-
-        return $template;
     } // End template_loader()
-
 
     /**
      * Determine the relative path to the plugin's directory.

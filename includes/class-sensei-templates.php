@@ -127,11 +127,13 @@ class Sensei_Templates {
     } // end locate
 
     /**
-     * template_loader function.
+     * Determine which Sensei template to load based on the
+     * current page context.
      *
-     * @access public
-     * @param mixed $template
-     * @return void
+     * @since 1.0
+     *
+     * @param string $template
+     * @return string $template
      */
     public static function template_loader ( $template = '' ) {
 
