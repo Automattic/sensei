@@ -2838,7 +2838,7 @@ class WooThemes_Sensei_Lesson {
 	 * @param int $lesson_id (default: 0)
 	 * @param string $width (default: '100')
 	 * @param string $height (default: '100')
-	 * @return void
+	 * @return string
 	 */
 	public function lesson_image( $lesson_id = 0, $width = '100', $height = '100', $widget = false ) {
 
@@ -2903,7 +2903,7 @@ class WooThemes_Sensei_Lesson {
 	} // End lesson_image()
 
 	/**
-	 * Handles the output of the lesson excerpt.
+	 * Returns the the lesson excerpt.
 	 *
 	 * @access public
 	 * @return string
@@ -2914,6 +2914,7 @@ class WooThemes_Sensei_Lesson {
 			$html = wpautop( sensei_get_excerpt( $lesson ) );
 		}
 		return apply_filters( 'sensei_lesson_excerpt', $html );
+
 	} // End lesson_excerpt()
 
     /**
@@ -3551,5 +3552,67 @@ class WooThemes_Sensei_Lesson {
         }
 
     }
+
+    /**
+     * Get the number of columns set for Sensei lesson loop
+     *
+     * @since 1.9.0
+     * @return mixed|void
+     */
+    public static function get_loop_number_of_columns(){
+
+        /**
+         * Filter the number of columns on the lesson loop template
+         * which can be used in a number of other templates.
+         *
+         * @since 1.9.0
+         * @param int $number_of_columns default 3
+         */
+        return apply_filters('sensei_lesson_number_of_columns', 3);
+
+    }
+
+    /**
+     * Deprecate the sensei_lesson_archive_header hook but keep it
+     * active for backwards compatibility.
+     *
+     * @deprecated since 1.9.0
+     */
+    public static function deprecate_sensei_lesson_archive_header_hook(){
+
+        sensei_do_deprecated_action('sensei_lesson_archive_header', '1.9.0', 'sensei_loop_lesson_inside_before');
+
+    }
+
+    /**
+     * Outputs the the lesson archive header.
+     *
+     * @since  1.9.0
+     * @return void
+     */
+    public function the_archive_header( ) {
+
+        $before_html = '<header class="archive-header"><h1>';
+        $after_html = '</h1></header>';
+        $html = $before_html . apply_filters( 'sensei_lessons_archive_text', __( 'Lessons Archive', 'woothemes-sensei' ) ) . $after_html;
+
+        echo apply_filters( 'sensei_lesson_archive_title', $html );
+
+    } // sensei_course_archive_header()
+
+    /**
+     * Returns the the lesson excerpt.
+     *
+     * @since 1.9.0
+     * @access public
+     * @param $lesson
+     * @return string
+     */
+    public static function the_lesson_excerpt( $lesson = null ) {
+
+        echo self::lesson_excerpt( $lesson );
+
+    } // End lesson_excerpt()
+
 
 } // End Class

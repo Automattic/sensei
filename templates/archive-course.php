@@ -2,7 +2,7 @@
 /**
  * The Template for displaying course archives, including the course page template.
  *
- * Override this template by copying it to yourtheme/sensei/archive-course.php
+ * Override this template by copying it to your_theme/sensei/archive-course.php
  *
  * @author 		WooThemes
  * @package 	Sensei

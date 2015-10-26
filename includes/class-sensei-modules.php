@@ -75,7 +75,7 @@ class Sensei_Core_Modules
         add_filter('template_include', array($this, 'module_archive_template'), 10);
         add_action('pre_get_posts', array($this, 'module_archive_filter'), 10, 1);
         add_filter('sensei_lessons_archive_text', array($this, 'module_archive_title'));
-        add_action('sensei_lesson_archive_header', array($this, 'module_archive_description'), 11);
+        add_action('sensei_content_lesson_inside_before', array($this, 'module_archive_description'), 11);
         add_action('sensei_pagination', array($this, 'module_navigation_links'), 11);
         add_filter('body_class', array($this, 'module_archive_body_class'));
 
@@ -509,21 +509,28 @@ class Sensei_Core_Modules
      */
     public function module_archive_template($template)
     {
-        global $woothemes_sensei, $post, $wp_query;
 
         $find = array('woothemes-sensei.php');
         $file = '';
 
-        if (is_tax($this->taxonomy)) {
-            $file = 'archive-lesson.php';
+        if ( is_tax($this->taxonomy) ) {
+
+            $file = 'taxonomy-module.php';
             $find[] = $file;
-            $find[] = $woothemes_sensei->template_url . $file;
+            $find[] = Sensei()->template_url . $file;
+
         }
 
         // Load the template file
         if ($file) {
+
             $template = locate_template($find);
-            if (!$template) $template = $woothemes_sensei->plugin_path() . 'templates/' . $file;
+            if (!$template) {
+
+                $template = Sensei()->plugin_path() . 'templates/' . $file;
+
+            }
+
         } // End If Statement
 
         return $template;
