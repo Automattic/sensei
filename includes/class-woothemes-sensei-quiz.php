@@ -62,7 +62,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         // fire the load global data function
         add_action( 'sensei_complete_quiz', array( $this, 'load_global_quiz_data' ), 80 );
 
-	} // End __construct()
+        add_action( 'template_redirect', array ( $this, 'quiz_has_no_questions') );
+
+
+    } // End __construct()
 
 	/**
 	* Update the quiz author when the lesson post type is save
@@ -1052,5 +1055,36 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          return $all_feedback[ $question_id ];
 
      } // end get_user_question_feedback
+
+     /**
+      * Check if a quiz has no questions, and redirect back to lesson.
+      *
+      * Though a quiz is created for each lesson, it should not be visible
+      * unless it has questions.
+      *
+      * @since 1.9.0
+      * @access public
+      * @param none
+      * @return void
+      */
+
+     public function quiz_has_no_questions() {
+
+         global $post;
+
+         $lesson_id = $this->get_lesson_id($post->ID);
+
+         $has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+
+         $lesson = get_post($lesson_id);
+
+         if ( is_singular('quiz') && ! $has_questions && $_SERVER['REQUEST_URI'] != "/lesson/$lesson->post_name" ) {
+
+             wp_redirect(get_permalink($lesson->ID), 301);
+             exit;
+
+         }
+
+     } // end quiz_has_no_questions
 
 } // End Class WooThemes_Sensei_Quiz
