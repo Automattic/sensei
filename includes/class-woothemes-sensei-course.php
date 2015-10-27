@@ -2246,7 +2246,7 @@ class WooThemes_Sensei_Course {
      * @since 1.9.0
      * @return mixed|void
      */
-    public static function get_course_loop_number_of_columns(){
+    public static function get_loop_number_of_columns(){
 
         /**
          * Filter the number of columns on the course archive page.
@@ -2254,7 +2254,7 @@ class WooThemes_Sensei_Course {
          * @since 1.9.0
          * @param int $number_of_columns default 3
          */
-        return apply_filters('sensei_course_columns', 3);
+        return apply_filters('sensei_course_loop_number_of_columns', 3);
 
     }
 

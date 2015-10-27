@@ -9,7 +9,6 @@
  * @version     1.9.0
  */
 if ( ! defined( 'ABSPATH' ) ){ exit; }
-
 global $wp_query;
 ?>
 
@@ -25,7 +24,7 @@ global $wp_query;
  */
 do_action( 'sensei_loop_course_before', $wp_query );
 ?>
-<ul class="course-container columns-<?php echo  WooThemes_Sensei_Course::get_course_loop_number_of_columns(); ?>" >
+<ul class="course-container columns-<?php echo  WooThemes_Sensei_Course::get_loop_number_of_columns(); ?>" >
 
     <?php
     /**
