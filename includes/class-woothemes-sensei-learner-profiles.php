@@ -38,9 +38,6 @@ class WooThemes_Sensei_Learner_Profiles {
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
-		// Load content for learner profiles
-		add_action( 'sensei_learner_profile_content', array( $this, 'content' ), 10 );
-
 		// Load user info on learner profiles
 		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_user_info' ), 10, 1 );
 
@@ -124,12 +121,8 @@ class WooThemes_Sensei_Learner_Profiles {
 
 			if( isset( $wp_query->query_vars['learner_profile'] ) ) {
 
-				// Get user object for learner
-				$learner_user = get_user_by( 'slug', $wp_query->query_vars['learner_profile'] );
+                Sensei_Templates::get_template( 'learner-profile/learner-info.php' );
 
-				if( ! is_wp_error( $learner_user ) ) {
-					$woothemes_sensei->frontend->sensei_get_template( 'learner-profile/learner-info.php' );
-				}
 			}
 		}
 	}
@@ -183,5 +176,39 @@ class WooThemes_Sensei_Learner_Profiles {
 		}
 		return $classes;
 	}
+
+    /**
+     * Deprecate the deprecate_sensei_learner_profile_content hook
+     *
+     * @since 1.9.0
+     */
+    public static function deprecate_sensei_learner_profile_content_hook(){
+
+        sensei_do_deprecated_action( 'sensei_learner_profile_content', '1.9.0', 'sensei_learner_profile_content_before' );
+
+    }
+
+    /**
+     * Fire the complete course action on to the learner profile template
+     *
+     * @since 1.9.0
+     */
+    public static function  complete_course_action_hook(){
+
+        do_action( 'sensei_complete_course' );
+
+    }// end sensei_complete_course_action
+
+    /**
+     * Fire the frontend message hook
+     *
+     * @since 1.9.0
+     */
+    public static function  frontend_messages_hook(){
+
+        do_action( 'sensei_frontend_messages' );
+
+    }// end sensei_complete_course_action
+
 
 } // End Class

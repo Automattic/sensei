@@ -252,3 +252,22 @@ add_action( 'sensei_loop_lesson_inside_before', array( Sensei()->lesson, 'the_ar
 // @since 1.9.0
 //Outp the lesson header on the content-lesson.php which runs inside the lessons loop
 add_action( 'sensei_content_lesson_inside_before', array( 'WooThemes_Sensei_Lesson', 'the_lesson_meta' ), 20 );
+
+/********
+ *
+ *
+ * Learner Profile hooks
+ *
+ *
+ ********/
+// @since 1.9.0
+// deprecate the learner profile content hook as the markup code is added in the template directly.
+add_action('sensei_learner_profile_content_before', array( 'WooThemes_Sensei_Learner_Profiles', 'deprecate_sensei_learner_profile_content_hook' ) );
+
+// @since 1.9.0
+// do the sensei complete course action on the learner profiles page.
+add_action('sensei_learner_profile_content_before', array( 'WooThemes_Sensei_Learner_Profiles', 'complete_course_action_hook' ) );
+
+// @since 1.9.0
+// fire the frontend messages hook before the profile content
+add_action('sensei_learner_profile_inside_content_before', array( 'WooThemes_Sensei_Learner_Profiles', 'frontend_messages_hook' ) );
