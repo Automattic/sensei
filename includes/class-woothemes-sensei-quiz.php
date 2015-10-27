@@ -1081,8 +1081,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       * @return string $quiz_title
       */
      public static function single_quiz_title( $title ){
+
          if( 'quiz' == get_post_type( ) ){
-             $title .= ' ' . __( 'Quiz', 'woothemes-sensei' );
+
+             $title_with_no_quizzes = $title;
+
+             // if the title has quiz, remove it: legacy titles have the word quiz stored.
+             if( 1 < substr_count( strtoupper( $title_with_no_quizzes ), 'QUIZ' ) ){
+
+                 // remove all possible appearances of quiz
+                 $title_with_no_quizzes = str_replace( 'quiz', '', $title  );
+                 $title_with_no_quizzes = str_replace( 'Quiz', '', $title_with_no_quizzes  );
+                 $title_with_no_quizzes = str_replace( 'QUIZ', '', $title_with_no_quizzes  );
+
+             }
+
+             $title = $title_with_no_quizzes .  ' ' . __( 'Quiz', 'woothemes-sensei' );
          }
 
          /**
