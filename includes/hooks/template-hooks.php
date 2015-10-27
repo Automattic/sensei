@@ -202,6 +202,10 @@ add_action( 'sensei_single_lesson_content_inside_before', 'deprecate_sensei_less
 add_action( 'sensei_single_lesson_content_inside_before', array( 'WooThemes_Sensei_Lesson', 'user_not_taking_course_message' ), 15 );
 
 // @since 1.9.0
+// attach the lesson title
+add_action( 'sensei_single_lesson_content_inside_before', array( 'WooThemes_Sensei_Lesson', 'the_title' ), 15 );
+
+// @since 1.9.0
 // add the single lesson meta
 add_action( 'sensei_single_lesson_content_inside_after', 'sensei_the_single_lesson_meta', 10 );
 

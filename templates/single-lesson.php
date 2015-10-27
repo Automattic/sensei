@@ -24,6 +24,8 @@ get_header();
     do_action( 'sensei_before_main_content' );
 ?>
 
+<?php the_post(); ?>
+
 <article <?php post_class( array( 'lesson', 'post' ) ); ?>>
 
     <?php
