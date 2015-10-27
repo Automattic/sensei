@@ -32,7 +32,7 @@ add_filter( 'template_include', array ( 'Sensei_Templates', 'template_loader' ),
 add_action( 'sensei_archive_before_course_loop', array ( 'Sensei_Templates', 'deprecated_archive_hook' ), 10, 1 );
 
 // Course archive title hook @since 1.9.0
-add_action('sensei_archive_title', array( 'WooThemes_Sensei_Course', 'archive_header' ), 10, 0 );
+add_action('sensei_archive_before_course_loop', array( 'WooThemes_Sensei_Course', 'archive_header' ), 10, 0 );
 
 // add the course image above the content
 add_action('sensei_course_content_before', array( Sensei()->course, 'course_image' ) ,10, 1 );

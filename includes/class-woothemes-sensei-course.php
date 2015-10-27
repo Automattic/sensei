@@ -2432,6 +2432,9 @@ class WooThemes_Sensei_Course {
             return;
         }
 
+        // deprecated since 1.9.0
+        sensei_do_deprecated_action('sensei_archive_title','1.9.0','sensei_archive_before_course_loop');
+
         $html = '';
 
         if( empty( $before_html ) ){

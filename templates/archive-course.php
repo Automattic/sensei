@@ -33,17 +33,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     <?php
 
         /**
-         * Sensei archive title hook
-         *
-         * @hooked Sensei_Templates::course_archive_title - 20
-         */
-        do_action('sensei_archive_title');
-
-    ?>
-
-    <?php
-
-        /**
          * action before course archive loop
          *
          * @deprecated since 1.9.0 use sensei_loop_course_before instead
