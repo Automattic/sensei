@@ -225,9 +225,13 @@ add_action( 'sensei_single_lesson_content_inside_after', array( 'WooThemes_Sense
 // hook the deprecate breadcrumbs and comments hooks
 add_action( 'sensei_after_main_content', 'sensei_deprecate_single_lesson_breadcrumbs_and_comments_hooks', 5 );
 
-/***
+/**********************
+ *
+ *
  * Single message hooks
- */
+ *
+ *
+ ************************/
 
 add_action( 'sensei_single_message_content_inside_before', array( 'WooThemes_Sensei_Messages', 'the_title' ), 20 );
 
