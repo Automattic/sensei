@@ -420,19 +420,25 @@ class WooThemes_Sensei_Question {
      */
     public static function get_the_question_title( $question_id ){
 
-        $title  = '<span class="question question-title">';
-
         /**
          * Filter the sensei question title
          *
          * @since 1.3.0
          * @param $question_title
          */
-        $title .= apply_filters( 'sensei_question_title', get_the_title( $question_id ) );
-        $title .= '<span class="grade"><?php sensi_the_question_grade()?></span>';
-        $title .='</span>';
+        $title = apply_filters( 'sensei_question_title', get_the_title( $question_id ) );
 
-        return $title;
+        /**
+         * hook document in class-woothemes-sensei-message.php the_title()
+         */
+        $title = apply_filters( 'sensei_single_title', $title, 'question');
+
+        $title_html  = '<span class="question question-title">';
+        $title_html .= $title;
+        $title_html .= '<span class="grade"><?php sensi_the_question_grade()?></span>';
+        $title_html .='</span>';
+
+        return $title_html;
     }
 
     /**

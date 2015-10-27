@@ -2554,6 +2554,11 @@ class WooThemes_Sensei_Course {
 
         }
 
+        /**
+         * hook document in class-woothemes-sensei-message.php
+         */
+        $title = apply_filters( 'sensei_single_title', $title, $post->post_type );
+
         ob_start(); // start capturing the following output.
 
         ?>

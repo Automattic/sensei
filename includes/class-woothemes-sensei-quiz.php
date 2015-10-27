@@ -1085,7 +1085,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              $title .= ' ' . __( 'Quiz', 'woothemes-sensei' );
          }
 
-         return $title;
+         /**
+          * hook document in class-woothemes-sensei-message.php
+          */
+         return apply_filters( 'sensei_single_title', $title, get_post_type( ) );
+
      }
 
      /**

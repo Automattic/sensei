@@ -566,7 +566,7 @@ class WooThemes_Sensei_Messages {
                  * @since 1.8.0
                  * @param string $title
                  * @param string $template
-                 * @param string $post_type @todo move this filter and apply it accros all single titles then add specifc filters for each
+                 * @param string $post_type
                  */
                 echo apply_filters( 'sensei_single_title', $title, $post->post_type );
                 ?>

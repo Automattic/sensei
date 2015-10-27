@@ -3614,5 +3614,35 @@ class WooThemes_Sensei_Lesson {
 
     } // End lesson_excerpt()
 
+    /**
+     * Output the title for the single lesson page
+     *
+     * @global $post
+     * @since 1.9.0
+     */
+    public static function the_title(){
+
+        global $post;
+
+        ?>
+        <header>
+
+            <h1>
+
+                <?php
+                /**
+                 * Filter documented in class-sensei-messages.php the_title
+                 */
+                echo apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type );
+                ?>
+
+            </h1>
+
+        </header>
+
+        <?php
+
+    }//the_title
+
 
 } // End Class
