@@ -2,7 +2,9 @@
 /**
  * Content-course.php template file
  *
- * responsible for content on archive like pages. Only shows the course excerpt
+ * responsible for content on archive like pages. Only shows the course excerpt.
+ *
+ * For single course content please see single-course.php
  *
  * @package Sensei
  * @category Templates
@@ -10,12 +12,7 @@
  */
 ?>
 
-<?php
- // columns calculations
-$extra_classes = WooThemes_Sensei_Course::get_course_loop_class();
-?>
-
-<li <?php post_class( $extra_classes, get_the_ID() ); ?> >
+<li <?php post_class( WooThemes_Sensei_Course::get_course_loop_class(), get_the_ID() ); ?> >
 
     <section class="course-content">
         <?php

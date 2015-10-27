@@ -54,7 +54,7 @@ add_action('sensei_single_course_content_inside_before', array( 'Sensei_Template
 
 // @1.9.0
 // hook the single course title on the single course page
-add_action( 'sensei_single_course_content_inside_before', array( Sensei()->frontend, 'sensei_single_title' ), 10 );
+add_action( 'sensei_single_course_content_inside_before','the_title', 10 );
 
 // @1.9.0
 //Add legacy hooks deprecated in 1.9.0
