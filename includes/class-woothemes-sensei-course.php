@@ -574,7 +574,7 @@ class WooThemes_Sensei_Course {
 	 * @param int $amount (default: 0)
 	 * @param string $type (default: 'default')
 	 * @param array $includes (default: array())
-	 * @return void
+	 * @return array
 	 */
 	public function course_query( $amount = 0, $type = 'default', $includes = array(), $excludes = array() ) {
 		global $my_courses_page;

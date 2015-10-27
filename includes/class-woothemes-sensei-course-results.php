@@ -30,7 +30,6 @@ class WooThemes_Sensei_Course_Results {
 	 * @since  1.4.0
 	 */
 	public function __construct () {
-		global $woothemes_sensei;
 
 		// Setup learner profile URL base
 		$this->courses_url_base = apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url slug', 'woothemes-sensei' ) );
@@ -39,16 +38,12 @@ class WooThemes_Sensei_Course_Results {
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
-		// Load content for learner profiles
-		add_action( 'sensei_course_results_content', array( $this, 'content' ), 10 );
-
 		// Load course results
-		add_action( 'sensei_course_results_info', array( $this, 'course_info' ), 10 );
-
-		add_action( 'sensei_course_results_lessons', array( $this, 'course_lessons' ), 10 );
+		add_action( 'sensei_course_results_content_inside_before', array( $this, 'deprecate_course_result_info_hook' ), 10 );
 
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'body_class' ), 10, 1 );
+
 	} // End __construct()
 
 	/**
@@ -120,37 +115,28 @@ class WooThemes_Sensei_Course_Results {
 	 * @return void
 	 */
 	public function course_info() {
-		global $course, $current_user;
 
-		do_action( 'sensei_course_results_top', $course->ID );
+		global $course;
 
-		do_action( 'sensei_course_image', $course->ID );
-
-		?>
-		<header><h1><?php echo $course->post_title; ?></h1></header>
-		<?php
-
-		$course_status = WooThemes_Sensei_Utils::sensei_user_course_status_message( $course->ID, $current_user->ID );
+		$course_status = WooThemes_Sensei_Utils::sensei_user_course_status_message( $course->ID, get_current_user_id());
 		echo '<div class="sensei-message ' . $course_status['box_class'] . '">' . $course_status['message'] . '</div>';
 
-		do_action( 'sensei_course_results_lessons', $course );
+		sensei_do_deprecated_action( 'sensei_course_results_lessons','1.9.','sensei_course_results_content_inside_after', $course );
 
-		do_action( 'sensei_course_results_bottom', $course->ID );
+        sensei_do_deprecated_action( 'sensei_course_results_bottom','1.9.','sensei_course_results_content_inside_after', $course->ID );
 
 	}
 
 	/**
 	 * Load template for displaying course lessons
+     *
 	 * @since  1.4.0
 	 * @return void
 	 */
 	public function course_lessons() {
-		global $course, $woothemes_sensei, $current_user;
 
-		$started_course = WooThemes_Sensei_Utils::user_started_course( $course->ID, $current_user->ID );
-		if( $started_course ) {
-            Sensei_Templates::get_template( 'course-results/course-lessons.php' );
-		}
+		global $course;
+        _deprecated_function( 'Sensei_modules course_lessons ', '1.9.0' );
 
 	}
 
@@ -166,5 +152,62 @@ class WooThemes_Sensei_Course_Results {
 		}
 		return $classes;
 	}
+
+    /**
+     * Deprecate the sensei_course_results_content hook
+     *
+     * @deprecated since 1.9.0
+     */
+    public static function deprecate_sensei_course_results_content_hook(){
+
+        sensei_do_deprecated_action('sensei_course_results_content', '1.9.0','sensei_course_results_content_before');
+
+    }
+
+    /**
+     * Fire the sensei frontend message hook
+     *
+     * @since 1.9.0
+     */
+    public static function fire_sensei_message_hook(){
+
+        do_action( 'sensei_frontend_messages' );
+
+    }
+
+    /**
+     * Deprecate the course_results info hook
+     *
+     * @since 1.9.0
+     */
+    public static function deprecate_course_result_info_hook(){
+
+        sensei_do_deprecated_action( 'sensei_course_results_info', '1.9.0', 'sensei_course_results_content_inside_before' );
+
+    }
+
+    /**
+     * Deprecate the sensei_course_results_top hook
+     *
+     * @deprecate since 1.9.0
+     */
+    public static function deprecate_course_results_top_hook(){
+
+        global $course;
+        sensei_do_deprecated_action( 'sensei_course_results_top', '1.9.0' ,'sensei_course_results_content_inside_before',$course->ID );
+
+    }
+
+    /**
+     * Fire the course image hook
+     *
+     * @since 1.8.0
+     */
+    public static function fire_course_image_hook(){
+
+        global $course;
+        do_action( 'sensei_course_image', $course->ID );
+
+    }
 
 } // End Class

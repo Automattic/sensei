@@ -128,6 +128,11 @@ class WooThemes_Sensei {
     public $permissions_message;
 
     /**
+     * @var Sensei_Core_Modules Sensei Modules functionality
+     */
+    public $modules;
+
+    /**
      * Constructor method.
      * @param  string $file The base file of the plugin.
      * @since  1.0.0

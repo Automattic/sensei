@@ -112,7 +112,6 @@ class Sensei_Core_Modules
         // remove the default modules  metabox
         add_action('admin_init',array( 'Sensei_Core_Modules' , 'remove_default_modules_box' ));
 
-
     } // end constructor
 
     /**
