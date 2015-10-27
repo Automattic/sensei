@@ -200,8 +200,6 @@ class Sensei_Teacher {
 
             'edit_comment' => true,
 
-            // Group post type Todo: find out from Hugh
-
         ));
 
         foreach ( $caps as $cap => $grant ) {

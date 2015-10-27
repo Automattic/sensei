@@ -223,12 +223,6 @@ class Sensei_Templates {
             $find[] = $file;
             $find[] = Sensei()->template_url . $file;
 
-        } elseif ( is_post_type_archive( 'lesson' ) ) {
-
-            $file 	= 'archive-lesson.php';
-            $find[] = $file;
-            $find[] = Sensei()->template_url . $file;
-
         } elseif ( isset( $wp_query->query_vars['learner_profile'] ) ) {
 
             // Override for sites with static home page
