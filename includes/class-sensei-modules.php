@@ -1342,7 +1342,11 @@ class Sensei_Core_Modules
      */
     public function course_modules_title( ) {
 
-        echo '<header><h2>' . __('Modules', 'woothemes-sensei') . '</h2></header>';
+       if( sensei_module_has_lessons() ){
+
+            echo '<header><h2>' . __('Modules', 'woothemes-sensei') . '</h2></header>';
+
+        }
 
     }
 

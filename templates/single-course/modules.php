@@ -18,11 +18,11 @@
     /**
      * Hook runs inside single-course/course-modules.php
      *
-     * It runs before the modules are shown. This hook fires on the single course page,but only if the course has modules.
+     * It runs before the modules are shown. This hook fires on the single course page. It will show
+     * irrespective of irrespective the course has any modules or not.
      *
      * @since 1.8.0
      *
-     * @hooked Sensei()->modules->course_modules_title - 20
      */
     do_action('sensei_single_course_modules_before');
 
@@ -34,6 +34,25 @@
         <?php if( sensei_module_has_lessons() ): ?>
 
             <article class="module">
+
+                <?php
+
+                /**
+                 * Hook runs inside single-course/course-modules.php
+                 *
+                 * It runs inside the if statement after the article tag opens just before the modules are shown. This hook will NOT fire if there
+                 * are no modules to show.
+                 *
+                 * @since 1.9.0
+                 *
+                 * @hooked Sensei()->modules->course_modules_title - 20
+                 */
+                do_action('sensei_single_course_modules_inside_before');
+
+                ?>
+
+
+
                 <header>
 
                     <h2>
@@ -79,6 +98,21 @@
                     </section><!-- .module-lessons -->
 
                 </section>
+
+                <?php
+
+                /**
+                 * Hook runs inside single-course/course-modules.php
+                 *
+                 * It runs inside the if statement before the closing article tag directly after the modules were shown.
+                 * This hook will not trigger if there are no modules to show.
+                 *
+                 * @since 1.9.0
+                 *
+                 */
+                do_action('sensei_single_course_modules_inside_after');
+
+                ?>
 
             </article>
 

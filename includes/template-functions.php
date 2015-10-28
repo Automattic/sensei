@@ -611,10 +611,14 @@ function sensei_setup_module(){
  * This relies on the global $wp_query. Which will be setup for each module
  * by sensei_the_module(). This function must only be used withing the module lessons loop.
  *
+ * If the loop has not been initiated this function will check if the first
+ * module has lessons.
+ *
  * @return bool
  */
 function sensei_module_has_lessons(){
-	global $wp_query;
+
+	global $wp_query, $sensei_modules_loop;
 
 	if( 'lesson' == $wp_query->get('post_type') ){
 
@@ -622,6 +626,27 @@ function sensei_module_has_lessons(){
 
 	}else{
 
+        // if the loop has not been initiated check the first module has lessons
+        if( -1 == $sensei_modules_loop[ 'current' ]  ){
+
+            $index = 0;
+
+            if( isset( $sensei_modules_loop['modules'][ $index ] ) ) {
+                // setup the query for the module lessons
+                $course_id = $sensei_modules_loop['course_id'];
+
+                $module_term_id = $sensei_modules_loop['modules'][ $index ] ->term_id;
+                $modules_query = Sensei()->modules->get_lessons_query( $course_id , $module_term_id );
+
+                // setup the global wp-query only if the lessons
+                if( $modules_query->have_posts() ){
+
+                    return true;
+
+                }
+            }
+        }
+        // default to false if the first module doesn't have posts
 		return false;
 
 	}
