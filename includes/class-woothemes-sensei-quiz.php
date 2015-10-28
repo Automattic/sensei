@@ -1087,16 +1087,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
      } // end quiz_has_no_questions
 
-} // End Class WooThemes_Sensei_Quiz     /**
-      * Deprecate the sensei_single_main_content on the single-quiz template.
-      *
-      * @deprecated since 1.9.0
-      */
-     public static function deprecate_quiz_sensei_single_main_content_hook(){
+/**
+  * Deprecate the sensei_single_main_content on the single-quiz template.
+  *
+  * @deprecated since 1.9.0
+  */
+ public static function deprecate_quiz_sensei_single_main_content_hook(){
 
-         sensei_do_deprecated_action('sensei_single_main_content', '1.9.0', 'sensei_single_quiz_content_inside_before or sensei_single_quiz_content_inside_after');
+     sensei_do_deprecated_action('sensei_single_main_content', '1.9.0', 'sensei_single_quiz_content_inside_before or sensei_single_quiz_content_inside_after');
 
-     }
+ }
     /*
      * Deprecate the sensei_quiz_single_title on the single-quiz template.
      *
