@@ -144,6 +144,9 @@ class WooThemes_Sensei_Lesson {
             // save bulk edit fields
             add_action( 'wp_ajax_save_bulk_edit_book', array( $this, 'save_all_lessons_edit_fields' ) );
 
+            // flush rewrite rules when saving a lesson
+            add_action('save_post', array( __CLASS__, 'flush_rewrite_rules' ) );
+
 		} else {
 			// Frontend actions
 		} // End If Statement
@@ -3643,6 +3646,31 @@ class WooThemes_Sensei_Lesson {
         <?php
 
     }//the_title
+
+    /**
+     * Flush the rewrite rules for a lesson post type
+     *
+     * @since 1.9.0
+     *
+     * @param $post_id
+     */
+    public static function flush_rewrite_rules( $post_id ){
+
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE){
+
+            return;
+
+        }
+
+
+        if( 'lesson' == get_post_type( $post_id )  ){
+
+            flush_rewrite_rules( true );
+            remove_action('save_post', array(__CLASS__, 'flush_rewrite_rules'));
+
+        }
+
+    }
 
 
 } // End Class
