@@ -200,8 +200,6 @@ class Sensei_Templates {
         } elseif ( is_post_type_archive( 'course' ) || is_page( Sensei()->get_page_id( 'courses' ) ) ) {
 
             $file 	= 'archive-course.php';
-
-
             $find[] = $file;
             $find[] = Sensei()->template_url . $file;
 
@@ -219,7 +217,7 @@ class Sensei_Templates {
 
         } elseif( is_tax( 'lesson-tag' ) ) {
 
-            $file 	= 'taxonomy-lesson-tag.php';
+            $file 	= 'archive-lesson.php';
             $find[] = $file;
             $find[] = Sensei()->template_url . $file;
 
