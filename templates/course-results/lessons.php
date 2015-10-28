@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying all course lessons on the course results page.
  *
@@ -10,7 +11,6 @@
  * @version     1.9.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
 global $course;
 ?>
 

@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for outputting Lesson Archive items
  *
@@ -9,8 +10,6 @@
  * @category    Templates
  * @version     1.9.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) exit;
 
 global $lesson_count, $wp_query;
 $lesson_count= 0;

@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Pagination - Show numbered pagination for sensei archives
  *
@@ -8,7 +9,6 @@
  * @version     1.9.0
  */
 // Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 global $wp_query;
 

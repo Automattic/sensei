@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Content wrappers
  *
@@ -7,8 +8,6 @@
  * @category    Templates
  * @version     1.9.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) exit;
 
 $template = get_option('template');
 

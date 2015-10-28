@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Pagination - Lesson
  *
@@ -7,8 +8,6 @@
  * @category    Templates
  * @version     1.9.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) exit;
 
 global $post;
 $nav_id_array = sensei_get_prev_next_lessons( $post->ID );

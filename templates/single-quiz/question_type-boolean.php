@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying True/False ( Boolean ) Question type.
  *
@@ -7,7 +8,6 @@
  * @category    Templates
  * @version     1.9.0
  */
-if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 
 <?php

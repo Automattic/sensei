@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for outputting Lists of any Sensei content type.
  *
@@ -9,7 +10,6 @@
  * @category    Templates
  * @version     1.9.0
  */
-if ( ! defined( 'ABSPATH' ) ){ exit; }
 global $wp_query;
 ?>
 

@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying all single course meta information.
  *
@@ -9,8 +10,6 @@
  * @category    Templates
  * @version     1.9.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 
 <?php global $post, $lesson_count; ?>

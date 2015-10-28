@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying the my course page data.
  *
@@ -9,8 +10,6 @@
  * @category    Templates
  * @version     1.9.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) exit;
 
 global $woothemes_sensei, $post, $current_user, $wp_query;
 

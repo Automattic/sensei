@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying Multiple Choice Questions.
  *
@@ -7,8 +8,6 @@
  * @category    Templates
  * @version     1.9.0
  */
-if ( ! defined( 'ABSPATH' ) ) exit;
-
 ?>
 
 <?php
