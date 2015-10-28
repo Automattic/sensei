@@ -125,14 +125,11 @@ class Sensei_Core_Modules
      * @param $taxonomy
      *
      * @return void
+     * @deprecated since 1.9.0
      */
     public function change_module_term_slug( $term_id, $tt_id, $taxonomy ){
 
-        if( 'module' != $taxonomy ){
-            return;
-        }
-
-        $this->update_module_term_teacher(  $term_id, get_current_user_id() );
+        _deprecated_function('change_module_term_slug', '1.9.0' );
 
     }// end add_module_term_group
 
