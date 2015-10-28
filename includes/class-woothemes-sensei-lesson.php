@@ -946,6 +946,8 @@ class WooThemes_Sensei_Lesson {
 						    		$html .= '</div>';
 						    	}
 
+								$html .= apply_filters( 'sensei_edit_question_before_question_media', '', $question_id );
+
 						    	// Question media
 						    	$html .= '<div>';
 							    	$html .= '<label for="question_' . $question_counter . '_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
@@ -1048,6 +1050,8 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<p class="add_question_random_order">';
 			    			$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
 			    		$html .= '</p>';
+
+						$html .= apply_filters( 'sensei_add_question_before_question_media', '' );
 
 			    		// Question media
 						$html .= '<p>';
