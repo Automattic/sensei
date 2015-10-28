@@ -69,7 +69,7 @@ class WooThemes_Sensei_Course {
 
         // provide an option to block all emails related to a selected course
         add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );
-        add_action('save_post', array( $this, 'save_course_notification_meta_box' ) );
+        add_action( 'save_post', array( $this, 'save_course_notification_meta_box' ) );
 
         // preview lessons on the course content
         add_action( 'sensei_course_content_inside_after',array( $this, 'the_course_free_lesson_preview' ) );
@@ -99,7 +99,8 @@ class WooThemes_Sensei_Course {
         // handle the order by title post submission
         add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_order_by_title'));
 
-
+        // flush rewrite rules when saving a course
+        add_action('save_post', array( __CLASS__, 'flush_rewrite_rules' ) );
 
 	} // End __construct()
 
@@ -2643,5 +2644,29 @@ class WooThemes_Sensei_Course {
         $wp_query = new WP_Query( $course_lesson_query_args );
 
     }// load_single_course_lessons
+
+    /**
+     * Flush the rewrite rules for a course post type
+     *
+     * @since 1.9.0
+     *
+     * @param $post_id
+     */
+    public static function flush_rewrite_rules( $post_id ){
+
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE){
+
+            return;
+
+        }
+
+
+        if( 'course' == get_post_type( $post_id )  ){
+
+            flush_rewrite_rules( true );
+
+        }
+
+    }
 
 } // End Class
