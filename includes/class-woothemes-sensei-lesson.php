@@ -2450,6 +2450,9 @@ class WooThemes_Sensei_Lesson {
   		if ( 0 < $question_id ) {
   			$return = $question_id;
   		} // End If Statement
+
+		do_action( 'sensei_after_save_question', $question_id, $data );
+
   		return $return;
   	} // End lesson_question_save()
 
