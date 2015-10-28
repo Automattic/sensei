@@ -4,7 +4,7 @@
  *
  * Override this template by copying it to yourtheme/sensei/single-course.php
  *
- * @author 		WooThemes
+ * @author 		Automattic
  * @package 	Sensei
  * @category    Templates
  * @version     1.9.0

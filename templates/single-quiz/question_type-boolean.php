@@ -2,8 +2,9 @@
 /**
  * The Template for displaying True/False ( Boolean ) Question type.
  *
- * @author      WooThemes
- * @package     Sensei/Templates
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
  * @version     1.9.0
  */
 if ( ! defined( 'ABSPATH' ) ) exit;

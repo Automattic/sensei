@@ -2,9 +2,10 @@
 /**
  * Content wrappers
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.0.0
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

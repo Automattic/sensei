@@ -4,8 +4,9 @@
  *
  * This template expects the global wp_query to setup and ready for the loop
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
  * @version     1.9.0
  */
 if ( ! defined( 'ABSPATH' ) ){ exit; }

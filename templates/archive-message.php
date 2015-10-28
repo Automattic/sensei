@@ -4,9 +4,10 @@
  *
  * Override this template by copying it to yourtheme/sensei/archive-message.php
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.6.0
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
 ?>
 

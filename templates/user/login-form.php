@@ -6,9 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * Override this template by copying it to yourtheme/sensei/user/login-form.php
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.6.2
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
 
 if ( is_user_logged_in() ) {

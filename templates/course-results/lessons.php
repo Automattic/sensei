@@ -4,8 +4,9 @@
  *
  * Override this template by copying it to yourtheme/sensei/course-results/course-lessons.php
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
  * @version     1.9.0
  */
 

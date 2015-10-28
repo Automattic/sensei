@@ -4,8 +4,9 @@
  *
  * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-gap-fill.php
  *
- * @author      WooThemes
- * @package     Sensei/Templates
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
  * @version     1.9.0
  */
 if ( ! defined( 'ABSPATH' ) ) exit;

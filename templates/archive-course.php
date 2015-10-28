@@ -4,7 +4,7 @@
  *
  * Override this template by copying it to your_theme/sensei/archive-course.php
  *
- * @author 		WooThemes
+ * @author 		Automattic
  * @package 	Sensei
  * @category    Templates
  * @version     1.9.0

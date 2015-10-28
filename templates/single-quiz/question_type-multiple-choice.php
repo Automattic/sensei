@@ -2,8 +2,9 @@
 /**
  * The Template for displaying Multiple Choice Questions.
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
  * @version     1.9.0
  */
 if ( ! defined( 'ABSPATH' ) ) exit;

@@ -2,8 +2,9 @@
 /**
  * Pagination - Show numbered pagination for sensei archives
  *
- * @package  Sensei
- * @category Templates
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
  * @version     1.9.0
  */
 // Exit if accessed directly

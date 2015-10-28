@@ -6,9 +6,10 @@
  *
  * For single lesson content please see single-lesson.php
  *
- * @package Sensei
- * @category Templates
- * @since 1.9.0
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
 ?>
 

@@ -7,8 +7,9 @@
  *
  * All lessons shown here will not be included in the list of other lessons.
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
  * @version     1.9.0
  */
 ?>
