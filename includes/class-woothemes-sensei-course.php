@@ -2219,7 +2219,7 @@ class WooThemes_Sensei_Course {
         }
 
         if (!isset($sensei_course_loop['columns'])) {
-            $sensei_course_loop['columns'] = self::get_course_loop_number_of_columns();
+            $sensei_course_loop['columns'] = self::get_loop_number_of_columns();
         }
 
         // increment the counter
