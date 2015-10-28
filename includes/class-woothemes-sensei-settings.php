@@ -48,6 +48,7 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 			add_action( 'admin_notices', array( $this, 'settings_errors' ) );
+			add_action( 'admin_notices', array( $this, 'language_pack_notices' ) );
 			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 		}
@@ -63,36 +64,43 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 		$sections = array();
 
 		$sections['default-settings'] = array(
-					'name' 			=> __( 'General', 'woothemes-sensei' ),
-					'description'	=> __( 'Settings that apply to the entire plugin.', 'woothemes-sensei' )
-				);
+			'name' 			=> __( 'General', 'woothemes-sensei' ),
+			'description'	=> __( 'Settings that apply to the entire plugin.', 'woothemes-sensei' )
+		);
 
 		$sections['course-settings'] = array(
-					'name' 			=> __( 'Courses', 'woothemes-sensei' ),
-					'description'	=> __( 'Settings that apply to all Courses.', 'woothemes-sensei' )
-				);
+			'name' 			=> __( 'Courses', 'woothemes-sensei' ),
+			'description'	=> __( 'Settings that apply to all Courses.', 'woothemes-sensei' )
+		);
 
 		$sections['lesson-settings'] = array(
-					'name' 			=> __( 'Lessons', 'woothemes-sensei' ),
-					'description'	=> __( 'Settings that apply to all Lessons.', 'woothemes-sensei' )
-				);
+			'name' 			=> __( 'Lessons', 'woothemes-sensei' ),
+			'description'	=> __( 'Settings that apply to all Lessons.', 'woothemes-sensei' )
+		);
 
 		$sections['email-notification-settings'] = array(
-					'name' 			=> __( 'Email Notifications', 'woothemes-sensei' ),
-					'description'	=> __( 'Settings for email notifications sent from your site.', 'woothemes-sensei' )
-				);
+			'name' 			=> __( 'Email Notifications', 'woothemes-sensei' ),
+			'description'	=> __( 'Settings for email notifications sent from your site.', 'woothemes-sensei' )
+		);
 
 		$sections['learner-profile-settings'] = array(
-					'name' 			=> __( 'Learner Profiles', 'woothemes-sensei' ),
-					'description'	=> __( 'Settings for public Learner Profiles.', 'woothemes-sensei' )
-				);
+			'name' 			=> __( 'Learner Profiles', 'woothemes-sensei' ),
+			'description'	=> __( 'Settings for public Learner Profiles.', 'woothemes-sensei' )
+		);
 
 		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() ) {
 			$sections['woocommerce-settings'] = array(
-						'name' 			=> __( 'WooCommerce', 'woothemes-sensei' ),
-						'description'	=> __( 'Optional settings for WooCommerce functions.', 'woothemes-sensei' )
-					);
+				'name' 			=> __( 'WooCommerce', 'woothemes-sensei' ),
+				'description'	=> __( 'Optional settings for WooCommerce functions.', 'woothemes-sensei' )
+			);
 		} // End If Statement
+
+		if ( 'en_US' !== get_locale() ) {
+			$sections['language-settings'] = array(
+				'name' 			=> __( 'Language', 'woothemes-sensei' ),
+				'description'	=> __( 'Language options.', 'woothemes-sensei' )
+			);
+		}
 
 		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
 	} // End init_sections()
@@ -561,6 +569,17 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		} // End If Statement
 
+		if ( 'en_US' !== get_locale() ) {
+			$fields['install_language_pack'] = array(
+				'name'        => __( 'Install Language Pack', 'woothemes-sensei' ),
+				'description' => __( 'Use this action to install or re-install translation for your language if available.', 'woothemes-sensei' ),
+				'type'        => 'button',
+				'section'     => 'language-settings',
+				'target'      => Sensei_Language_Pack_Manager::get_install_uri(),
+				'label'       => __( 'Install', 'woothemes-sensei' )
+			);
+		}
+
 		$this->fields = apply_filters( 'sensei_settings_fields', $fields );
 
 	} // End init_fields()
@@ -637,4 +656,13 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
 		return $pages_array;
 	} // End pages_array()
+
+	/**
+	 * Language packs notices.
+	 *
+	 * @since 1.9.0
+	 */
+	public function language_pack_notices() {
+		Sensei_Language_Pack_Manager::messages();
+	}
 } // End Class
