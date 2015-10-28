@@ -87,7 +87,7 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
         }
 
         ob_start();
-        Sensei()->frontend->sensei_get_template('content-single-course.php');
+        Sensei_Templates::get_template('content-single-course.php');
         $shortcode_output = ob_get_clean();
 
         // set back the global query

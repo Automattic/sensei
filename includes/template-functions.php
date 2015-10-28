@@ -58,8 +58,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	  */
 	 function quiz_questions( $return = false ) {
 
-	 	global $woothemes_sensei;
-	 	$woothemes_sensei->frontend->sensei_get_template( 'single-quiz/quiz-questions.php' );
+	 	Sensei_Templates::get_template( 'single-quiz/quiz-questions.php' );
 
 	 } // End quiz_questions()
 
@@ -73,8 +72,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	  */
 	 function quiz_question_type( $question_type = 'multiple-choice' ) {
 
-	 	global $woothemes_sensei;
-	 	$woothemes_sensei->frontend->sensei_get_template( 'single-quiz/question_type-' . $question_type . '.php' );
+         Sensei_Templates::get_template( 'single-quiz/question_type-' . $question_type . '.php' );
 
 	 } // End lesson_single_meta()
 
