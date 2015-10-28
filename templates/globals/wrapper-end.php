@@ -42,6 +42,12 @@ switch( $template ) {
 	<?php
 		break;
 
+    case 'twentysixteen' :
+        echo '</main> <!-- main-site -->'
+            . '</div> <!-- content-area -->';
+            get_sidebar();
+        break;
+
 	// Default
 	default :
 	?>

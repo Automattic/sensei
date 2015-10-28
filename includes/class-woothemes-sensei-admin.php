@@ -1373,6 +1373,7 @@ class WooThemes_Sensei_Admin {
         $white_list = array(    'twentyfourteen',
                                 'twentyeleven',
                                 'twentytwelve',
+                                'twentysixteen',
                                                 );
 
         if ( in_array( $template, $white_list ) ) {
