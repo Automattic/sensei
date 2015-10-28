@@ -1,6 +1,16 @@
 <?php
+/**
+ * Pagination - Posts
+ *
+ * @author 		WooThemes
+ * @package 	Sensei/Templates
+ * @version     1.1.0
+ */
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-// this file should not be use, please use the
-_deprecated_file( 'wrappers/pagination-posts.php','Sensei 1.9.0', 'globals/pagination-posts.php' );
-Sensei_Templates::get_template( 'globals/pagination-posts.php' );
+?>
+<nav id="post-entries" class="post-entries fix">
+    <div class="nav-prev fl"><?php previous_post_link( '%link', '<span class="meta-nav"></span> %title' ); ?></div>
+    <div class="nav-next fr"><?php next_post_link( '%link', '%title <span class="meta-nav"></span>' ); ?></div>
+</nav><!-- #post-entries -->
