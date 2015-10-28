@@ -103,7 +103,7 @@
                         <?php    // @todo deprecate
                         // Question Type
                         global $sensei_question_loop;
-                        $question_type = $woothemes_sensei->question->get_question_type( $sensei_question_loop['current_question']->ID );
+                        $question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
                         do_action( 'sensei_quiz_question_type', $question_type );
                         ?>
 
@@ -133,7 +133,7 @@
 
 
         <?php
-            $quiz_lesson = $woothemes_sensei->quiz->data->quiz_lesson;
+            $quiz_lesson = Sensei()->quiz->data->quiz_lesson;
             do_action( 'sensei_quiz_back_link', $quiz_lesson  );
         ?>
 

@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @category    Templates
  * @version     1.9.0
  */
-
-global $woothemes_sensei;
 ?>
 
     <?php if ( have_posts() ) { ?>

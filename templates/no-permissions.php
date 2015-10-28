@@ -17,7 +17,7 @@
 
     <header>
 
-        <h1><?php echo $woothemes_sensei->permissions_message['title']; ?></h1>
+        <h1><?php echo Sensei()->permissions_message['title']; ?></h1>
 
     </header>
 
@@ -57,7 +57,7 @@
 
             } ?>
 
-            <div class="sensei-message alert"><?php echo $woothemes_sensei->permissions_message['message']; ?></div>
+            <div class="sensei-message alert"><?php echo Sensei()->permissions_message['message']; ?></div>
 
         </section>
 

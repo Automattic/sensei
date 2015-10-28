@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @version     1.9.0
  */
 
-global $woothemes_sensei, $post, $current_user, $wp_query;
+global $post, $current_user, $wp_query;
 
 // Get User Meta
 get_currentuserinfo();
@@ -28,7 +28,7 @@ if ( is_user_logged_in() ) {
 
 		do_action( 'sensei_before_user_course_content', $current_user );
 
-		echo $woothemes_sensei->course->load_user_courses_content( $current_user, true );
+		echo Sensei()->course->load_user_courses_content( $current_user, true );
 
 		do_action( 'sensei_after_user_course_content', $current_user );
 
