@@ -287,7 +287,7 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_output_content_wrapper() {
-		Sensei_Templates::get_template( 'wrappers/wrapper-start.php' );
+		Sensei_Templates::get_template( 'globals/wrapper-start.php' );
 	} // End sensei_output_content_wrapper()
 
 
@@ -298,7 +298,7 @@ class WooThemes_Sensei_Frontend {
 	 * @return void
 	 */
 	function sensei_output_content_wrapper_end() {
-		Sensei_Templates::get_template( 'wrappers/wrapper-end.php' );
+		Sensei_Templates::get_template( 'globals/wrapper-end.php' );
 	} // End sensei_output_content_wrapper_end()
 
 
