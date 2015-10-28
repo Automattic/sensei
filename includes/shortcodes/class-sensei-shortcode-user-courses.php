@@ -153,7 +153,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         add_action( 'sensei_course_content_inside_after', array( __CLASS__, 'attach_course_buttons' ) );
 
         ob_start();
-        include('templates/loop.php');
+        Sensei_Templates::get_template('loop-course.php');
         $shortcode_output =  ob_get_clean();
 
         //remove progress meter as we only want it to show in this shortcode
