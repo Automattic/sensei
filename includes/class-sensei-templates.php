@@ -197,7 +197,9 @@ class Sensei_Templates {
             $find[] = $file;
             $find[] = Sensei()->template_url . $file;
 
-        } elseif ( is_post_type_archive( 'course' ) || is_page( Sensei()->get_page_id( 'courses' ) ) ) {
+        } elseif ( is_post_type_archive( 'course' )
+                    || is_page( Sensei()->get_page_id( 'courses' ) )
+                    || is_tax( 'course-category' )) {
 
             $file 	= 'archive-course.php';
             $find[] = $file;
@@ -206,12 +208,6 @@ class Sensei_Templates {
         } elseif ( is_post_type_archive( 'sensei_message' ) ) {
 
             $file 	= 'archive-message.php';
-            $find[] = $file;
-            $find[] = Sensei()->template_url . $file;
-
-        } elseif( is_tax( 'course-category' ) ) {
-
-            $file 	= 'taxonomy-course-category.php';
             $find[] = $file;
             $find[] = Sensei()->template_url . $file;
 
