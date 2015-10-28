@@ -1370,9 +1370,10 @@ class WooThemes_Sensei_Admin {
         // white list templates that are already support by default and do not show notice for them
         $template = get_option( 'template' );
 
-        $white_list = array(    'twentyfourteen',
-                                'twentyeleven',
+        $white_list = array(    'twentyeleven',
                                 'twentytwelve',
+                                'twentyfourteen',
+                                'twentyfifteen',
                                 'twentysixteen',
                                                 );
 

@@ -28,6 +28,25 @@ switch( $template ) {
 		echo '<div id="main-content" class="main-content"><div id="primary" class="content-area"><div id="content" class="site-content" role="main"><div class="entry-content">';
 		break;
 
+    // IF Twenty Fifteen
+    case 'twentyfifteen':
+        echo '<div id="primary" class="content-area">'
+            .'<main id="main" class="site-main" role="main">';
+            ?>
+            <style>
+                @media screen and (min-width: 59.6875em){
+                    article.post {
+                        padding-top: 8.3333% !important;
+                        margin: 0 8.3333% !important;
+                        box-shadow: 0 0 1px rgba(0, 0, 0, 0.15) !important;
+                        background-color: #fff !important;
+                        padding: 1em 2em 2em !important;
+                    }
+                }
+            </style>
+            <?php
+        break;
+
     // IF Twenty Sixteen
     case 'twentysixteen' :
         echo '<div id="primary" class="content-area">'
