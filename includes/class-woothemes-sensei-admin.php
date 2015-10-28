@@ -71,7 +71,7 @@ class WooThemes_Sensei_Admin {
 		add_action( 'deleted_user', array( $this, 'delete_user_activity' ), 10, 1 );
 
 		// Add notices to WP dashboard
-		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
+		add_action( 'admin_notices', array( $this, 'theme_compatibility_notices' ) );
 
 		// Reset theme notices when switching themes
 		add_action( 'switch_theme', array( $this, 'reset_theme_check_notices' ) );
@@ -1353,53 +1353,66 @@ class WooThemes_Sensei_Admin {
 	}
 
 	/**
-	 * Adding admin notices
+	 * Adding admin notice if the current
+     * installed theme is not compatible
+     *
 	 * @return void
 	 */
-	public function admin_notices() {
-		global $current_user;
-		wp_get_current_user();
-        $user_id = $current_user->ID;
+	public function theme_compatibility_notices() {
 
         if( isset( $_GET['sensei_hide_notice'] ) ) {
         	switch( esc_attr( $_GET['sensei_hide_notice'] ) ) {
-				case 'menu_settings': add_user_meta( $user_id, 'sensei_hide_menu_settings_notice', true ); break;
-				case 'theme_check': add_user_meta( $user_id, 'sensei_hide_theme_check_notice', true ); break;
+				case 'menu_settings': add_user_meta( get_current_user_id(), 'sensei_hide_menu_settings_notice', true ); break;
+				case 'theme_check': add_user_meta( get_current_user_id(), 'sensei_hide_theme_check_notice', true ); break;
 			}
         }
 
-        $screen = get_current_screen();
+        // white list templates that are already support by default and do not show notice for them
+        $template = get_option( 'template' );
 
+        $white_list = array(    'twentyfourteen',
+                                'twentyeleven',
+                                'twentytwelve',
+                                                );
+
+        if ( in_array( $template, $white_list ) ) {
+
+            return;
+
+        }
+
+        // don't show the notice if the user chose to hide it
+        $hide_theme_check_notice = get_user_meta( get_current_user_id(), 'sensei_hide_theme_check_notice', true );
+        if(  $hide_theme_check_notice ) {
+
+            return;
+
+        }
+
+        // show the notice for themes not supporting sensei
 	    if ( ! current_theme_supports( 'sensei' ) ) {
-	    	$template = get_option( 'template' );
+            ?>
 
-	    	if ( ! in_array( $template, array( 'twentyfourteen', 'twentyeleven', 'twentytwelve' ) ) ) {
-		    	$hide_theme_check_notice = get_user_meta( $user_id, 'sensei_hide_theme_check_notice', true );
+            <div id="message" class="error sensei-message sensei-connect">
+                <div class="squeezer">
+                    <p>
+                        <strong>
 
-		    	if( ! $hide_theme_check_notice ) {
-				    ?>
-				    <div id="message" class="error sensei-message sensei-connect">
-				    	<div class="squeezer">
-			    			<p>
-                                <strong>
+                            <?php _e('Your theme does not declare Sensei support', 'woothemes-sensei' ); ?>
 
-                                    <?php _e('Your theme does not declare Sensei support', 'woothemes-sensei' ); ?>
+                        </strong> &#8211;
 
-                                </strong> &#8211;
+                        <?php _e( 'if you encounter layout issues please read our integration guide or choose a ', 'woothemes-sensei' ); ?>
 
-                                <?php _e( 'if you encounter layout issues please read our integration guide or choose a ', 'woothemes-sensei' ); ?>
+                        <a href="http://www.woothemes.com/product-category/themes/sensei-themes/"> <?php  _e( 'Sensei theme', 'woothemes-sensei' ) ?> </a>
 
-                                <a href="http://www.woothemes.com/product-category/themes/sensei-themes/"> <?php  _e( 'Sensei theme', 'woothemes-sensei' ) ?> </a>
+                        :)
 
-                                :)
-
-                            </p>
-                            <p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-primary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
-			    		</div>
-			    	</div>
-			    	<?php
-			    }
-			}
+                    </p>
+                    <p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-primary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
+                </div>
+            </div>
+            <?php
 		}
 	}
 
