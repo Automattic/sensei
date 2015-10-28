@@ -1,8 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
-
-
+if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 
 	/***************************************************************************************************
 	 * 	Output tags.
@@ -162,7 +159,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		$prerequisite_complete = sensei_check_prerequisite_course( $course_id );
 
 		if ( $prerequisite_complete ) {
-			
+
 			global $post, $current_user, $woocommerce, $woothemes_sensei;
 
 			$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
@@ -180,7 +177,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			    </div>
 
 			<?php } else {
-			    
+
 			    // based on simple.php in WC templates/single-product/add-to-cart/
 			    if ( 0 < $wc_post_id ) {
 
@@ -215,7 +212,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			                            <?php } ?>
 
 			                        <?php } ?>
-			                        
+
 			                        <button type="submit" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></button>
 			                    </form>
 
@@ -1078,3 +1075,65 @@ function sensei_deprecate_single_lesson_breadcrumbs_and_comments_hooks() {
     }
 
 }// end sensei_deprecate_single_lesson_breadcrumbs_and_comments_hooks
+
+/**
+ * This function runs the most common header hooks and ensures
+ * templates are setup correctly.
+ *
+ * This function also runs the get_header for the general WP header setup.
+ *
+ * @uses get_header
+ *
+ * since 1.9.0
+ */
+function get_sensei_header(){
+
+    if ( ! defined( 'ABSPATH' ) ) exit;
+
+    get_header();
+
+    /**
+     * sensei_before_main_content hook
+     *
+     * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
+     */
+    do_action( 'sensei_before_main_content' );
+
+}// end get_sensei_header
+
+/**
+ * This function runs the most common footer hooks and ensures
+ * templates are setup correctly.
+ *
+ * This function also runs the get_header for the general WP header setup.
+ *
+ * @uses get_footer
+ *
+ * since 1.9.0
+ */
+function get_sensei_footer(){
+
+    /**
+     * sensei_pagination hook
+     *
+     * @hooked sensei_pagination - 10 (outputs pagination)
+     */
+    do_action( 'sensei_pagination' );
+
+    /**
+     * sensei_after_main_content hook
+     *
+     * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)
+     */
+    do_action( 'sensei_after_main_content' );
+
+    /**
+     * sensei_sidebar hook
+     *
+     * @hooked sensei_get_sidebar - 10
+     */
+    do_action( 'sensei_sidebar' );
+
+    get_footer();
+
+}// end get_sensei_header

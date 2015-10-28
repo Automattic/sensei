@@ -11,20 +11,7 @@
  */
 ?>
 
-<?php if ( ! defined( 'ABSPATH' ) ) { exit; } // This template is only accessible via WordPress  ?>
-
-<?php get_header(); ?>
-
-<?php
-
-    /**
-     * sensei_before_main_content hook
-     *
-     * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
-     */
-    do_action( 'sensei_before_main_content' );
-
-?>
+<?php  get_sensei_header();  ?>
 
 <article <?php post_class( array( 'course', 'post' ) ); ?>>
 
@@ -63,37 +50,4 @@
     ?>
 </article><!-- .post .single-course -->
 
-<?php
-
-    /**
-     *
-     * Add sensei pagination to the single course page
-     *
-     */
-    do_action('sensei_pagination');
-
-?>
-
-<?php
-
-    /**
-     * sensei_after_main_content hook
-     *
-     * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)
-     */
-    do_action( 'sensei_after_main_content' );
-
-?>
-
-<?php
-
-    /**
-     * sensei_sidebar hook
-     *
-     * @hooked sensei_get_sidebar - 10
-     */
-    do_action( 'sensei_sidebar' );
-
-?>
-
-<?php get_footer(); ?>
+<?php get_sensei_footer(); ?>
