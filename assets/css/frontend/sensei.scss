@@ -24,322 +24,132 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
  * Mixins
  */
 
- /**
- * Base
- */
- .clearfix {
-    &:before, &:after {
-        content: "";
-        display: table;
-    }
-    &:after {
-        clear: both;
-    }
-}
-
-/**
- * Animations
- */
-@-webkit-keyframes spin-360 {
-  from {
-    -webkit-transform: rotate(0);
-    /* Saf3.1+, Chrome */
-    -moz-transform: rotate(0);
-    /* FF3.5+ */
-    -ms-transform: rotate(0);
-    /* IE9 */
-    -o-transform: rotate(0);
-    /* Opera 10.5 */
-    transform: rotate(0);
-    zoom: 1;
-  }
-
-  50% {
-    -webkit-transform: rotate(180deg);
-    /* Saf3.1+, Chrome */
-    -moz-transform: rotate(180deg);
-    /* FF3.5+ */
-    -ms-transform: rotate(180deg);
-    /* IE9 */
-    -o-transform: rotate(180deg);
-    /* Opera 10.5 */
-    transform: rotate(180deg);
-    zoom: 1;
-  }
-
-  to {
-    -webkit-transform: rotate(0);
-    /* Saf3.1+, Chrome */
-    -moz-transform: rotate(0);
-    /* FF3.5+ */
-    -ms-transform: rotate(0);
-    /* IE9 */
-    -o-transform: rotate(0);
-    /* Opera 10.5 */
-    transform: rotate(0);
-    zoom: 1;
-  }
-}
-
+@import "../mixins";
 
 /* Font Awesome Icons */
 @font-face {
   font-family: 'FontAwesomeSensei';
-  src: url("../../fonts/fontawesome-webfont.eot");
-  src: url("../../fonts/fontawesome-webfont.eot?#iefix") format("embedded-opentype"), url("../../fonts/fontawesome-webfont.woff") format("woff"), url("../../fonts/fontawesome-webfont.ttf") format("truetype");
+  src: url('../../fonts/fontawesome-webfont.eot');
+  src: url('../../fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+  url('../../fonts/fontawesome-webfont.woff') format('woff'),
+  url('../../fonts/fontawesome-webfont.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
-
-a {
-  &.view-results, &.view-results-link, &.sensei-certificate-link {
-    display: inline-block;
-    padding: 0.236em 0.857em;
-    background: #e6e6e6;
-    float: right;
-    margin-left: .236em;
-    padding: 0.382em 1em;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    color: #fff;
-    font-weight: bold;
-    text-decoration: none;
-  }
+a.view-results,
+a.view-results-link,
+a.sensei-certificate-link {
+  display: inline-block;
+  padding: .236em .857em;
+  background: $border_main;
+  float: right;
+  margin-left: .236em;
+  padding: .382em 1em;
+  @include border_radius(5px);
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 /* Courses */
-
-#main {
-  .course, .course-container {
-    position: relative;
-    margin: 0 0 1.618em;
-    padding: 0 0 1em;
-    border-bottom: 1px solid #e2e2e2;
-    list-style: none;
-  }
-  .course:after, .course-container:after {
-    content: "\0020";
-    display: block;
-    height: 0;
-    overflow: hidden;
-    clear: both;
-  }
-  .course header h2, .course-container header h2 {
+#main .course, #main .course-container {
+  @include clearfix();
+  position: relative;
+  margin: 0 0 1.618em;
+  padding: 0 0 1em;
+  border-bottom: 1px solid #e2e2e2;
+  header h2  {
     margin: 0;
   }
-  .course .course-meta, .course-container .course-meta {
+  .course-meta  {
     margin-bottom: 20px;
     clear: both;
+    .single_add_to_cart_button  {
+      font-size: 1em;
+      position: relative;
+      top: .2em;
+      margin-bottom: 0.618em;
+    }
   }
-  .course .course-meta .single_add_to_cart_button, .course-container .course-meta .single_add_to_cart_button {
-    font-size: 1em;
-    position: relative;
-    top: .2em;
-    margin-bottom: 0.618em;
-  }
-  .course .sensei-course-meta, .course-container .sensei-course-meta {
+  .sensei-course-meta  {
     font-style: italic;
     font-size: .9em;
-    color: #888888;
+    color: lighten($color_body, 20%);
+    a  {
+      color: #555;
+    }
+    .course-price  {
+      font-style: normal;
+      font-weight: bold;
+      color: darken($color_body, 20%);
+      @include border_radius(300px);
+    }
   }
-  .course .sensei-course-meta a, .course-container .sensei-course-meta a {
-    color: #555;
+  .entry-actions  {
+    span  {
+      margin: 0 1em 0 0;
+    }
   }
-  .course .sensei-course-meta .course-price, .course-container .sensei-course-meta .course-price {
-    font-style: normal;
-    font-weight: bold;
-    color: #222222;
-    -webkit-border-radius: 300px;
-    border-radius: 300px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-  }
-  .course .entry-actions span, .course-container .entry-actions span {
-    margin: 0 1em 0 0;
-  }
-  .course {
-    .course-lessons > header, .module-lessons > header {
+  .course-lessons, .module-lessons  {
+    > header  {
       margin: 2.244em 0 1.618em;
       padding: 2.244em 0 0;
-      border-top: 2px solid #e6e6e6;
+      border-top: 2px solid $border_main;
+      .course-completion-rate  {
+        font-style: italic;
+      }
+      .meter  {
+        margin: 1em 0 3em;
+      }
     }
-  }
-  .course-container {
-    .course-lessons > header, .module-lessons > header {
-      margin: 2.244em 0 1.618em;
-      padding: 2.244em 0 0;
-      border-top: 2px solid #e6e6e6;
-    }
-  }
-  .course {
-    .course-lessons > header .course-completion-rate, .module-lessons > header .course-completion-rate {
-      font-style: italic;
-    }
-  }
-  .course-container {
-    .course-lessons > header .course-completion-rate, .module-lessons > header .course-completion-rate {
-      font-style: italic;
-    }
-  }
-  .course {
-    .course-lessons > header .meter, .module-lessons > header .meter {
-      margin: 1em 0 3em;
-    }
-  }
-  .course-container {
-    .course-lessons > header .meter, .module-lessons > header .meter {
-      margin: 1em 0 3em;
-    }
-  }
-  .course {
-    .course-lessons .lesson header h2, .module-lessons .lesson header h2 {
-      margin: 0;
-    }
-  }
-  .course-container {
-    .course-lessons .lesson header h2, .module-lessons .lesson header h2 {
-      margin: 0;
-    }
-  }
-  .course {
-    .course-lessons .lesson p.lesson-meta, .module-lessons .lesson p.lesson-meta {
-      font-style: italic;
-      font-size: .9em;
-      color: #888888;
-    }
-  }
-  .course-container {
-    .course-lessons .lesson p.lesson-meta, .module-lessons .lesson p.lesson-meta {
-      font-style: italic;
-      font-size: .9em;
-      color: #888888;
-    }
-  }
-  .course {
-    .course-lessons .lesson p.lesson-meta a, .module-lessons .lesson p.lesson-meta a {
-      color: #555;
-    }
-  }
-  .course-container {
-    .course-lessons .lesson p.lesson-meta a, .module-lessons .lesson p.lesson-meta a {
-      color: #555;
-    }
-  }
-  .course {
-    .course-lessons .lesson p.lesson-meta span, .module-lessons .lesson p.lesson-meta span {
-      padding-left: 15px;
-    }
-  }
-  .course-container {
-    .course-lessons .lesson p.lesson-meta span, .module-lessons .lesson p.lesson-meta span {
-      padding-left: 15px;
-    }
-  }
-  .course {
-    .course-lessons .lesson p.lesson-meta span:first-child, .module-lessons .lesson p.lesson-meta span:first-child {
-      padding-left: 0px;
-    }
-  }
-  .course-container {
-    .course-lessons .lesson p.lesson-meta span:first-child, .module-lessons .lesson p.lesson-meta span:first-child {
-      padding-left: 0px;
-    }
-  }
-  .course {
-    .course-lessons .lesson p.lesson-meta .lesson-status, .module-lessons .lesson p.lesson-meta .lesson-status {
-      font-style: normal;
-    }
-  }
-  .course-container {
-    .course-lessons .lesson p.lesson-meta .lesson-status, .module-lessons .lesson p.lesson-meta .lesson-status {
-      font-style: normal;
-    }
-  }
-  .course {
-    .course-lessons .lesson p.lesson-meta .lesson-status.complete, .module-lessons .lesson p.lesson-meta .lesson-status.complete {
-      color: #63a95f;
-    }
-  }
-  .course-container {
-    .course-lessons .lesson p.lesson-meta .lesson-status.complete, .module-lessons .lesson p.lesson-meta .lesson-status.complete {
-      color: #63a95f;
-    }
-  }
-  .course {
-    .course-lessons .lesson p.lesson-meta .lesson-status.complete:before, .module-lessons .lesson p.lesson-meta .lesson-status.complete:before {
-      font-family: 'FontAwesomeSensei';
-      display: inline-block;
-      font-size: 100%;
-      margin-right: .618em;
-      font-weight: normal;
-      line-height: 1em;
-      width: 1em;
-      content: '\f00c';
-    }
-  }
-  .course-container {
-    .course-lessons .lesson p.lesson-meta .lesson-status.complete:before, .module-lessons .lesson p.lesson-meta .lesson-status.complete:before {
-      font-family: 'FontAwesomeSensei';
-      display: inline-block;
-      font-size: 100%;
-      margin-right: .618em;
-      font-weight: normal;
-      line-height: 1em;
-      width: 1em;
-      content: '\f00c';
-    }
-  }
-  .course {
-    .course-lessons .lesson p.lesson-meta .lesson-status.in-progress, .module-lessons .lesson p.lesson-meta .lesson-status.in-progress {
-      color: #555;
-    }
-  }
-  .course-container {
-    .course-lessons .lesson p.lesson-meta .lesson-status.in-progress, .module-lessons .lesson p.lesson-meta .lesson-status.in-progress {
-      color: #555;
-    }
-  }
-  .course {
-    .course-lessons .lesson p.lesson-meta .lesson-status.in-progress:before, .module-lessons .lesson p.lesson-meta .lesson-status.in-progress:before {
-      font-family: 'FontAwesomeSensei';
-      display: inline-block;
-      font-size: 100%;
-      margin-right: .618em;
-      font-weight: normal;
-      line-height: 1em;
-      width: 1em;
-      content: '\f110';
-    }
-  }
-  .course-container {
-    .course-lessons .lesson p.lesson-meta .lesson-status.in-progress:before, .module-lessons .lesson p.lesson-meta .lesson-status.in-progress:before {
-      font-family: 'FontAwesomeSensei';
-      display: inline-block;
-      font-size: 100%;
-      margin-right: .618em;
-      font-weight: normal;
-      line-height: 1em;
-      width: 1em;
-      content: '\f110';
+    .lesson  {
+      header  {
+        h2  {
+          margin: 0;
+        }
+      }
+      p.lesson-meta  {
+        font-style: italic;
+        font-size: .9em;
+        color: lighten($color_body, 20%);
+        a  {
+          color: #555;
+        }
+        span {
+          padding-left: 15px;
+          &:first-child {
+            padding-left: 0px;
+          }
+        }
+        .lesson-status  {
+          font-style: normal;
+          &.complete  {
+            color: $success;
+            &:before  {
+              @include iconbefore();
+              content: '\f00c';
+            }
+          }
+          &.in-progress  {
+            color: $color_body;
+            &:before  {
+              @include iconbefore();
+              content: '\f110';
+            }
+          }
+        }
+      }
     }
   }
 }
 
+// Single Course
 .single-course {
   .course-meta {
     margin-bottom: 1.618em;
-    &:after {
-      content: "\0020";
-      display: block;
-      height: 0;
-      overflow: hidden;
-      clear: both;
-    }
+    @include clearfix;
+
     .status {
       float: left;
       margin-right: .236em;
@@ -350,96 +160,81 @@ a {
   }
 }
 
-#main .course-container .module-lessons > header {
-  margin: 0 0 1.618em;
-  padding: 0;
-  border-top: 0;
+#main .course-container .module-lessons {
+  > header {
+    margin: 0 0 1.618em;
+    padding: 0;
+    border-top: 0;
+  }
 }
-
 /* Status Indicators */
 
-.course .status, .course-lessons .status, .course-container .status {
-  padding: 0.382em 1em;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
-  color: #fff;
-  font-weight: bold;
-  background: #c6c6c6;
-  display: inline-block;
+.course, .course-lessons, .course-container {
+  .status  {
+    padding: .382em 1em;
+    @include border_radius(5px);
+    color: #fff;
+    font-weight: bold;
+    background: darken($bg_dark, 5%);
+    display: inline-block;
+    &:before  {
+      @include iconbefore();
+    }
+    &.completed  {
+      background: $success;
+      &:before  {
+        content: "\f00c";
+      }
+    }
+    &.in-progress  {
+      &:before  {
+        content: "\f110";
+      }
+    }
+    &.register  {
+      background: $error;
+      a  {
+        color: #fff;
+      }
+    }
+  }
 }
 
-.course .status:before, .course-lessons .status:before, .course-container .status:before {
-  font-family: 'FontAwesomeSensei';
-  display: inline-block;
-  font-size: 100%;
-  margin-right: .618em;
-  font-weight: normal;
-  line-height: 1em;
-  width: 1em;
+.lesson  {
+  .lesson-meta  {
+    margin: 0 0 1.618em;
+  }
 }
 
-.course .status.completed, .course-lessons .status.completed, .course-container .status.completed {
-  background: #63a95f;
-}
-
-.course .status.completed:before, .course-lessons .status.completed:before, .course-container .status.completed:before {
-  content: "\f00c";
-}
-
-.course .status.in-progress:before, .course-lessons .status.in-progress:before, .course-container .status.in-progress:before {
-  content: "\f110";
-}
-
-.course .status.register, .course-lessons .status.register, .course-container .status.register {
-  background: #ed6c6c;
-}
-
-.course .status.register a, .course-lessons .status.register a, .course-container .status.register a {
-  color: #fff;
-}
-
-.lesson .lesson-meta {
-  margin: 0 0 1.618em;
-}
-
-.sensei-breadcrumb {
-  background: #fafafa;
+.sensei-breadcrumb  {
+  background: $bg_light;
   margin: 2em 0;
   padding: 0.5em 1em;
   font-style: italic;
-  color: #888888;
+  color: lighten($color_body, 20%);
   clear: both;
-  &:before {
-    font-family: 'FontAwesomeSensei';
-    display: inline-block;
-    font-size: 100%;
-    margin-right: .618em;
-    font-weight: normal;
-    line-height: 1em;
-    width: 1em;
+  &:before  {
+    @include iconbefore();
     content: '\f112';
   }
 }
 
-.lesson-tags {
+.lesson-tags  {
   margin: 2em 0;
   font-style: italic;
-  color: #888888;
+  color: lighten($color_body, 20%);
   font-size: .9em;
 }
 
-.quiz {
-  form {
-    ol#sensei-quiz-list {
+.quiz  {
+  form  {
+    ol#sensei-quiz-list  {
       margin: 0 0 1.618em 0;
-      li {
+      li  {
         position: relative;
         margin: 0 0 1.618em;
         font-size: 1.1em;
-        > span {
+        > span  {
           display: block;
           margin: 0 0 1em;
           font-weight: bold;
@@ -464,15 +259,11 @@ a {
           font-style: italic;
           font-size: 75%;
         }
-        ul {
+        ul  {
           position: relative;
           z-index: 1;
           margin: .53em 0;
           li {
-            margin: 0 0 0.382em;
-            font-weight: normal;
-            font-size: 0.9em;
-            list-style: none;
             &.right_answer {
               color: green;
             }
@@ -483,10 +274,14 @@ a {
             &.user_wrong {
               color: red;
             }
-            input {
-              margin: 0 0.382em 0 0;
+            margin: 0 0 .382em;
+            font-weight: normal;
+            font-size: 0.9em;
+            list-style: none;
+            input  {
+              margin: 0 .382em 0 0;
             }
-            label {
+            label  {
               vertical-align: middle;
             }
           }
@@ -519,70 +314,65 @@ a {
             width: 100%;
             background: #FFF;
             border: 1px solid;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            -moz-background-clip: padding;
-            -webkit-background-clip: padding-box;
-            background-clip: padding-box;
+            @include border_radius();
             padding: 10px;
             font-size: 85%;
             text-align: left;
           }
         }
-        &.essay-paste .answer_message, &.gap-fill .answer_message, &.multi-line .answer_message, &.single-line .answer_message {
-          position: relative;
-          width: 100%;
-          margin: 10px 0;
-          text-align: right;
-        }
-        &.essay-paste .answer_message .notes, &.gap-fill .answer_message .notes, &.multi-line .answer_message .notes, &.single-line .answer_message .notes {
-          width: 50%;
+        &.essay-paste, &.gap-fill, &.multi-line, &.single-line {
+          .answer_message {
+            position: relative;
+            width: 100%;
+            margin: 10px 0;
+            text-align: right;
+            .notes {
+              width: 50%;
+            }
+          }
         }
       }
     }
-    input.quiz-submit {
+    input.quiz-submit  {
       margin-right: 10px;
     }
   }
-  input.quiz-submit.complete {
-    background: #63a95f;
+}
+
+.quiz, .lesson  {
+  input.quiz-submit  {
+    &.complete  {
+      background: $success;
+    }
+    &.reset  {
+      background: $error;
+    }
   }
 }
 
-.lesson input.quiz-submit.complete {
-  background: #63a95f;
-}
-
-.quiz input.quiz-submit.reset {
-  background: #ed6c6c;
-}
-
-.lesson input.quiz-submit {
-  &.reset {
-    background: #ed6c6c;
-  }
-  margin-top: 1em;
-}
-
-.single-lesson .lesson_button_form {
-  display: inline;
-}
-
-div.course-container div.course {
-  display: block;
-  padding: 5px;
-}
-
-section.entry span {
-  &.course-lesson-count, &.course-category, &.course-lesson-progress, &.course-price {
-    padding-left: 10px;
+.lesson  {
+  input.quiz-submit  {
+    margin-top: 1em;
   }
 }
+
+.single-lesson {
+  .lesson_button_form {
+    display: inline;
+  }
+}
+
+div.course-container div.course { display: block; padding: 5px; }
+section.entry span.course-lesson-count { padding-left: 10px; }
+section.entry span.course-category { padding-left: 10px; }
+section.entry span.course-lesson-progress { padding-left: 10px; }
+section.entry span.course-price { padding-left: 10px; }
 
 .sensei form {
   .form-row {
     padding: 3px;
     margin: 0 0 6px;
+
     [placeholder]:focus::-webkit-input-placeholder {
       -webkit-transition: opacity 0.5s 0.5s ease;
       -moz-transition: opacity 0.5s 0.5s ease;
@@ -591,12 +381,12 @@ section.entry span {
     }
     label {
       line-height: 2em;
-      &.hidden {
-        visibility: hidden;
-      }
-      &.inline {
-        display: inline;
-      }
+    }
+    label.hidden {
+      visibility:hidden;
+    }
+    label.inline {
+      display: inline;
     }
     select {
       cursor: pointer;
@@ -604,7 +394,7 @@ section.entry span {
     }
     .required {
       color: red;
-      font-weight: bold;
+      font-weight:bold;
       border: 0;
     }
     .input-checkbox {
@@ -613,42 +403,33 @@ section.entry span {
       text-align: center;
       vertical-align: middle;
     }
-    input.input-text {
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
+    input.input-text, textarea {
+      @include borderbox();
       width: 100%;
       margin: 0;
       outline: 0;
       line-height: 1em;
     }
     textarea {
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      width: 100%;
-      margin: 0;
-      outline: 0;
-      line-height: 1em;
       height: 4em;
       line-height: 1.5em;
-      display: block;
-      -moz-box-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
+      display:block;
+      -moz-box-shadow:none;
+      -webkit-box-shadow:none;
+      box-shadow:none;
     }
     &.validate-required {
       .chosen-single, .chosen-drop, input.input-text, select {
         border-color: #fb7f88;
       }
     }
-    ::-webkit-input-placeholder, :-moz-placeholder, :-ms-input-placeholder {
+    ::-webkit-input-placeholder {
+      line-height: normal;
+    }
+    :-moz-placeholder {
+      line-height: normal;
+    }
+    :-ms-input-placeholder {
       line-height: normal;
     }
   }
@@ -658,8 +439,7 @@ section.entry span {
 }
 
 /* My Courses */
-
-#my-courses {
+#my-courses  {
   .register-link {
     clear: both;
   }
@@ -667,17 +447,15 @@ section.entry span {
     label {
       display: block;
     }
-    input {
-      &[type="text"], &[type="password"] {
-        width: 90%;
-      }
+    input[type="text"], input[type="password"] {
+      width: 90%;
     }
   }
   &.ui-tabs {
     position: relative;
     zoom: 1;
     .ui-tabs-nav {
-      margin: 0 0 10px !important;
+      margin: 0 0 10px!important;
       float: left;
       width: 100%;
       padding: .2em 0 0;
@@ -686,7 +464,7 @@ section.entry span {
         float: left;
         position: relative;
         top: 1px;
-        margin: 0 0.2em 1px 0;
+        margin: 0 .2em 1px 0;
         border-bottom: 0 !important;
         padding: 0;
         white-space: nowrap;
@@ -696,7 +474,7 @@ section.entry span {
           font-weight: bold;
           color: #777;
           text-decoration: none;
-          outline: none !important;
+          outline: none!important;
           line-height: 1;
           cursor: pointer;
         }
@@ -707,23 +485,42 @@ section.entry span {
             cursor: text;
           }
         }
-        &.ui-state-hover a {
-          color: #555;
+        &.ui-state-hover {
+          a {
+            color: #555;
+          }
         }
-        &.ui-state-active a {
-          color: #333;
-          background: #e2e2e2;
-          border-radius: 100px;
-          -moz-border-radius: 100px;
-          -webkit-border-radius: 100px;
+        &.ui-state-active {
+          a {
+            color: #333;
+            background: #e2e2e2;
+            border-radius: 100px;
+            -moz-border-radius: 100px;
+            -webkit-border-radius: 100px;
+          }
         }
-        &.ui-state-disabled a, &.ui-state-processing a {
-          cursor: text;
+        &.ui-state-disabled {
+          a {
+            cursor: text;
+          }
+        }
+        &.ui-state-processing {
+          a {
+            cursor: text;
+          }
         }
       }
     }
-    &.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a {
-      cursor: pointer;
+    &.ui-tabs-collapsible {
+      .ui-tabs-nav {
+        li {
+          &.ui-tabs-selected {
+            a {
+              cursor: pointer;
+            }
+          }
+        }
+      }
     }
     .ui-tabs-panel {
       clear: both;
@@ -739,7 +536,6 @@ section.entry span {
 }
 
 /* Learner Profiles */
-
 #learner-info {
   h2 {
     margin: 20px 0;
@@ -750,10 +546,7 @@ section.entry span {
   }
   .learner-content {
     float: left;
-    width: calc(100% - 10%);
-    width: -webkit-calc(100% - 10%);
-    width: -moz-calc(100% - 10%);
-    width: -o-calc(100% - 10%);
+    @include calc_width(#{"100% - 140px"});
     h2 {
       margin-top: 0;
     }
@@ -764,57 +557,26 @@ section.entry span {
 }
 
 /* Course Archives */
-
-.sensei-ordering {
-  margin: 0 0 1em 0;
-}
-
-.sensei-course-filters {
-  margin: 0 0 2em 0;
-  padding: 0;
-  li {
-    float: left;
-    list-style: none;
-    a {
-      display: block;
-      border: 2px solid #ddd; 
-      margin-right: 5px; 
-      padding: 0.5em 1em;
-      background: #eee;
-      &:hover {
-        background: #fff; 
-        text-decoration: none;
-        border-color: #ccc;
-      }
-      &.active {
-        border-color: #ddd;
-        background: #fff;
-        cursor: default;
-      }
-    }
-  }
-}
-
-.course-container {
+.course-container  {
   margin: 0 0 4.236em;
-  .archive-header {
+  .archive-header  {
     border: none;
     padding: 0;
-    h1 {
+    h1  {
       margin: 0;
-      padding: 0 0 0.53em;
+      padding: 0 0 .53em;
       border: none;
       font-size: 1.387em;
       color: #333;
-      border-bottom: 2px solid #e6e6e6;
+      border-bottom: 2px solid $border_main;
       width: 100%;
     }
   }
-  .navigation {
+  .navigation  {
     float: right;
     margin: -10px 0 0;
     text-align: right;
-    a {
+    a  {
       font-weight: bold;
       text-transform: uppercase;
       font-size: 11px;
@@ -823,29 +585,27 @@ section.entry span {
 }
 
 /* Course Results */
-
-.course-results-lessons h2 {
-  margin: 20px 0;
-  &.total-grade {
-    text-decoration: underline;
-    .lesson-grade {
+.course-results-lessons {
+  h2 {
+    margin: 20px 0;
+    &.total-grade {
       text-decoration: underline;
+      .lesson-grade {
+        text-decoration: underline;
+      }
     }
-  }
-  .lesson-grade {
-    float: right;
+    .lesson-grade {
+      float: right;
+    }
   }
 }
 
 /* Course Progress Bars */
-
 .meter {
-  height: 25px;
-  /* Can be anything */
+  height: 25px;  /* Can be anything */
   position: relative;
-  margin: 20px 0;
-  /* Just for demo spacing */
-  background: #ededed;
+  margin: 20px 0; /* Just for demo spacing */
+  background: darken($bg_light, 5%);
   -moz-border-radius: 25px;
   -webkit-border-radius: 25px;
   border-radius: 25px;
@@ -854,7 +614,7 @@ section.entry span {
     display: block;
     padding: 1px 10px 0 0;
     height: 100%;
-    background-color: #63a95f;
+    background-color: $success;
     position: relative;
     overflow: hidden;
     text-align: right;
@@ -864,49 +624,42 @@ section.entry span {
     -moz-border-radius: 20px;
     -webkit-border-radius: 20px;
     border-radius: 20px;
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
-    box-sizing: border-box;
-    /* Opera/IE 8+ */
+    @include borderbox();
   }
   &.orange > span {
-    background: #d3d3d3;
+    background: $bg_dark;
   }
   &.red > span {
-    background: #ed6c6c;
+    background: $error;
   }
 }
 
 .alignleft {
   float: left;
-  margin: 0 1.618em 1em 0;
+  margin:0 1.618em 1em 0;
 }
-
 .alignright {
   float: right;
-  margin: 0 0 1em 1.618em;
+  margin:0 0 1em 1.618em;
 }
-
 .aligncenter {
   display: block;
   text-align: center;
-  margin: 0 auto 1.618em;
+  margin:0 auto 1.618em;
 }
 
-.nav-next, .nav-prev {
-  width: auto !important;
+.nav-next, .nav-prev  {
+  width: auto!important;
 }
 
-.nav-next {
+.nav-next  {
   float: right;
   .meta-nav:before {
     content: "\2192";
   }
 }
 
-.nav-prev {
+.nav-prev  {
   float: left;
   .meta-nav:before {
     content: "\2190";
@@ -916,1420 +669,93 @@ section.entry span {
 /*-------------------------------------------------------------------------------------------*/
 /* 1. Info Boxes */
 /*-------------------------------------------------------------------------------------------*/
-
-.sensei {
+.sensei, .course-container, .course, .lesson, .quiz, .learner-info  {
   p.sensei-message, div.sensei-message {
     clear: both;
     margin: 1.387em 0 1.618em 0;
     padding: 1em 1.618em;
-    border: none !important;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-  }
-}
-
-.course-container {
-  p.sensei-message, div.sensei-message {
-    clear: both;
-    margin: 1.387em 0 1.618em 0;
-    padding: 1em 1.618em;
-    border: none !important;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-  }
-}
-
-.course {
-  p.sensei-message, div.sensei-message {
-    clear: both;
-    margin: 1.387em 0 1.618em 0;
-    padding: 1em 1.618em;
-    border: none !important;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-  }
-}
-
-.lesson {
-  p.sensei-message, div.sensei-message {
-    clear: both;
-    margin: 1.387em 0 1.618em 0;
-    padding: 1em 1.618em;
-    border: none !important;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-  }
-}
-
-.quiz {
-  p.sensei-message, div.sensei-message {
-    clear: both;
-    margin: 1.387em 0 1.618em 0;
-    padding: 1em 1.618em;
-    border: none !important;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-  }
-}
-
-.learner-info {
-  p.sensei-message, div.sensei-message {
-    clear: both;
-    margin: 1.387em 0 1.618em 0;
-    padding: 1em 1.618em;
-    border: none !important;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-  }
-}
-
-.sensei {
-  p.sensei-message:before, div.sensei-message:before {
-    font-family: 'FontAwesomeSensei';
-    display: inline-block;
-    font-size: 100%;
-    margin-right: .618em;
-    font-weight: normal;
-    line-height: 1em;
-    width: 1em;
-    font-size: 1.387em;
-    position: relative;
-    top: .1em;
-  }
-}
-
-.course-container {
-  p.sensei-message:before, div.sensei-message:before {
-    font-family: 'FontAwesomeSensei';
-    display: inline-block;
-    font-size: 100%;
-    margin-right: .618em;
-    font-weight: normal;
-    line-height: 1em;
-    width: 1em;
-    font-size: 1.387em;
-    position: relative;
-    top: .1em;
-  }
-}
-
-.course {
-  p.sensei-message:before, div.sensei-message:before {
-    font-family: 'FontAwesomeSensei';
-    display: inline-block;
-    font-size: 100%;
-    margin-right: .618em;
-    font-weight: normal;
-    line-height: 1em;
-    width: 1em;
-    font-size: 1.387em;
-    position: relative;
-    top: .1em;
-  }
-}
-
-.lesson {
-  p.sensei-message:before, div.sensei-message:before {
-    font-family: 'FontAwesomeSensei';
-    display: inline-block;
-    font-size: 100%;
-    margin-right: .618em;
-    font-weight: normal;
-    line-height: 1em;
-    width: 1em;
-    font-size: 1.387em;
-    position: relative;
-    top: .1em;
-  }
-}
-
-.quiz {
-  p.sensei-message:before, div.sensei-message:before {
-    font-family: 'FontAwesomeSensei';
-    display: inline-block;
-    font-size: 100%;
-    margin-right: .618em;
-    font-weight: normal;
-    line-height: 1em;
-    width: 1em;
-    font-size: 1.387em;
-    position: relative;
-    top: .1em;
-  }
-}
-
-.learner-info {
-  p.sensei-message:before, div.sensei-message:before {
-    font-family: 'FontAwesomeSensei';
-    display: inline-block;
-    font-size: 100%;
-    margin-right: .618em;
-    font-weight: normal;
-    line-height: 1em;
-    width: 1em;
-    font-size: 1.387em;
-    position: relative;
-    top: .1em;
-  }
-}
-
-.sensei {
-  p.sensei-message.medium, div.sensei-message.medium {
-    padding: 18px 20px 18px 50px;
-    font-size: 1.1em;
-  }
-}
-
-.course-container {
-  p.sensei-message.medium, div.sensei-message.medium {
-    padding: 18px 20px 18px 50px;
-    font-size: 1.1em;
-  }
-}
-
-.course {
-  p.sensei-message.medium, div.sensei-message.medium {
-    padding: 18px 20px 18px 50px;
-    font-size: 1.1em;
-  }
-}
-
-.lesson {
-  p.sensei-message.medium, div.sensei-message.medium {
-    padding: 18px 20px 18px 50px;
-    font-size: 1.1em;
-  }
-}
-
-.quiz {
-  p.sensei-message.medium, div.sensei-message.medium {
-    padding: 18px 20px 18px 50px;
-    font-size: 1.1em;
-  }
-}
-
-.learner-info {
-  p.sensei-message.medium, div.sensei-message.medium {
-    padding: 18px 20px 18px 50px;
-    font-size: 1.1em;
-  }
-}
-
-.sensei {
-  p.sensei-message.large, div.sensei-message.large {
-    padding: 25px 27px 25px 50px;
-    font-size: 1.2em;
-  }
-}
-
-.course-container {
-  p.sensei-message.large, div.sensei-message.large {
-    padding: 25px 27px 25px 50px;
-    font-size: 1.2em;
-  }
-}
-
-.course {
-  p.sensei-message.large, div.sensei-message.large {
-    padding: 25px 27px 25px 50px;
-    font-size: 1.2em;
-  }
-}
-
-.lesson {
-  p.sensei-message.large, div.sensei-message.large {
-    padding: 25px 27px 25px 50px;
-    font-size: 1.2em;
-  }
-}
-
-.quiz {
-  p.sensei-message.large, div.sensei-message.large {
-    padding: 25px 27px 25px 50px;
-    font-size: 1.2em;
-  }
-}
-
-.learner-info {
-  p.sensei-message.large, div.sensei-message.large {
-    padding: 25px 27px 25px 50px;
-    font-size: 1.2em;
-  }
-}
-
-.sensei {
-  p.sensei-message.rounded, div.sensei-message.rounded {
-    -webkit-border-radius: 15px;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
-  }
-}
-
-.course-container {
-  p.sensei-message.rounded, div.sensei-message.rounded {
-    -webkit-border-radius: 15px;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
-  }
-}
-
-.course {
-  p.sensei-message.rounded, div.sensei-message.rounded {
-    -webkit-border-radius: 15px;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
-  }
-}
-
-.lesson {
-  p.sensei-message.rounded, div.sensei-message.rounded {
-    -webkit-border-radius: 15px;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
-  }
-}
-
-.quiz {
-  p.sensei-message.rounded, div.sensei-message.rounded {
-    -webkit-border-radius: 15px;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
-  }
-}
-
-.learner-info {
-  p.sensei-message.rounded, div.sensei-message.rounded {
-    -webkit-border-radius: 15px;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
-  }
-}
-
-.sensei {
-  p.sensei-message a, div.sensei-message a {
-    text-decoration: underline;
-  }
-}
-
-.course-container {
-  p.sensei-message a, div.sensei-message a {
-    text-decoration: underline;
-  }
-}
-
-.course {
-  p.sensei-message a, div.sensei-message a {
-    text-decoration: underline;
-  }
-}
-
-.lesson {
-  p.sensei-message a, div.sensei-message a {
-    text-decoration: underline;
-  }
-}
-
-.quiz {
-  p.sensei-message a, div.sensei-message a {
-    text-decoration: underline;
-  }
-}
-
-.learner-info {
-  p.sensei-message a, div.sensei-message a {
-    text-decoration: underline;
-  }
-}
-
-.sensei {
-  p.sensei-message a:hover, div.sensei-message a:hover {
-    text-decoration: none;
-  }
-}
-
-.course-container {
-  p.sensei-message a:hover, div.sensei-message a:hover {
-    text-decoration: none;
-  }
-}
-
-.course {
-  p.sensei-message a:hover, div.sensei-message a:hover {
-    text-decoration: none;
-  }
-}
-
-.lesson {
-  p.sensei-message a:hover, div.sensei-message a:hover {
-    text-decoration: none;
-  }
-}
-
-.quiz {
-  p.sensei-message a:hover, div.sensei-message a:hover {
-    text-decoration: none;
-  }
-}
-
-.learner-info {
-  p.sensei-message a:hover, div.sensei-message a:hover {
-    text-decoration: none;
-  }
-}
-
-.sensei {
-  p.sensei-message.alert, div.sensei-message.alert {
-    background: #ffd9c8;
-  }
-}
-
-.course-container {
-  p.sensei-message.alert, div.sensei-message.alert {
-    background: #ffd9c8;
-  }
-}
-
-.course {
-  p.sensei-message.alert, div.sensei-message.alert {
-    background: #ffd9c8;
-  }
-}
-
-.lesson {
-  p.sensei-message.alert, div.sensei-message.alert {
-    background: #ffd9c8;
-  }
-}
-
-.quiz {
-  p.sensei-message.alert, div.sensei-message.alert {
-    background: #ffd9c8;
-  }
-}
-
-.learner-info {
-  p.sensei-message.alert, div.sensei-message.alert {
-    background: #ffd9c8;
-  }
-}
-
-.sensei {
-  p.sensei-message.alert:before, div.sensei-message.alert:before {
-    content: '\f071';
-    color: #ed6c6c;
-  }
-}
-
-.course-container {
-  p.sensei-message.alert:before, div.sensei-message.alert:before {
-    content: '\f071';
-    color: #ed6c6c;
-  }
-}
-
-.course {
-  p.sensei-message.alert:before, div.sensei-message.alert:before {
-    content: '\f071';
-    color: #ed6c6c;
-  }
-}
-
-.lesson {
-  p.sensei-message.alert:before, div.sensei-message.alert:before {
-    content: '\f071';
-    color: #ed6c6c;
-  }
-}
-
-.quiz {
-  p.sensei-message.alert:before, div.sensei-message.alert:before {
-    content: '\f071';
-    color: #ed6c6c;
-  }
-}
-
-.learner-info {
-  p.sensei-message.alert:before, div.sensei-message.alert:before {
-    content: '\f071';
-    color: #ed6c6c;
-  }
-}
-
-.sensei {
-  p.sensei-message.alert a, div.sensei-message.alert a {
-    color: #e73f3f;
-  }
-}
-
-.course-container {
-  p.sensei-message.alert a, div.sensei-message.alert a {
-    color: #e73f3f;
-  }
-}
-
-.course {
-  p.sensei-message.alert a, div.sensei-message.alert a {
-    color: #e73f3f;
-  }
-}
-
-.lesson {
-  p.sensei-message.alert a, div.sensei-message.alert a {
-    color: #e73f3f;
-  }
-}
-
-.quiz {
-  p.sensei-message.alert a, div.sensei-message.alert a {
-    color: #e73f3f;
-  }
-}
-
-.learner-info {
-  p.sensei-message.alert a, div.sensei-message.alert a {
-    color: #e73f3f;
-  }
-}
-
-.sensei {
-  p.sensei-message.alert a:hover, div.sensei-message.alert a:hover {
-    color: #e52828;
-  }
-}
-
-.course-container {
-  p.sensei-message.alert a:hover, div.sensei-message.alert a:hover {
-    color: #e52828;
-  }
-}
-
-.course {
-  p.sensei-message.alert a:hover, div.sensei-message.alert a:hover {
-    color: #e52828;
-  }
-}
-
-.lesson {
-  p.sensei-message.alert a:hover, div.sensei-message.alert a:hover {
-    color: #e52828;
-  }
-}
-
-.quiz {
-  p.sensei-message.alert a:hover, div.sensei-message.alert a:hover {
-    color: #e52828;
-  }
-}
-
-.learner-info {
-  p.sensei-message.alert a:hover, div.sensei-message.alert a:hover {
-    color: #e52828;
-  }
-}
-
-.sensei {
-  p.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
+    border:none!important;
+    @include border_radius(5px);
+    &:before  {
+      @include iconbefore();
+      font-size: 1.387em;
+      position: relative;
+      top: .1em;
     }
-  }
-  div.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-}
-
-.course-container {
-  p.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-  div.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-}
-
-.course {
-  p.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-  div.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-}
-
-.lesson {
-  p.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-  div.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-}
-
-.quiz {
-  p.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-  div.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-}
-
-.learner-info {
-  p.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-  div.sensei-message {
-    &.download, &.tick {
-      background: #edfcd5;
-    }
-  }
-}
-
-.sensei {
-  p.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-  div.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-}
-
-.course-container {
-  p.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-  div.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-}
-
-.course {
-  p.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-  div.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-}
-
-.lesson {
-  p.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-  div.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-}
-
-.quiz {
-  p.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-  div.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-}
-
-.learner-info {
-  p.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-  div.sensei-message {
-    &.download:before, &.tick:before {
-      content: '\f019';
-      color: #63a95f;
-    }
-  }
-}
-
-.sensei {
-  p.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-  div.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-}
-
-.course-container {
-  p.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-  div.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-}
-
-.course {
-  p.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-  div.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-}
-
-.lesson {
-  p.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-  div.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-}
-
-.quiz {
-  p.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-  div.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-}
-
-.learner-info {
-  p.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-  div.sensei-message {
-    &.download a, &.tick a {
-      color: #4e8b4a;
-    }
-  }
-}
-
-.sensei {
-  p.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-  div.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-}
-
-.course-container {
-  p.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-  div.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-}
-
-.course {
-  p.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-  div.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-}
-
-.lesson {
-  p.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-  div.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-}
-
-.quiz {
-  p.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-  div.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-}
-
-.learner-info {
-  p.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-  div.sensei-message {
-    &.download a:hover, &.tick a:hover {
-      color: #457a42;
-    }
-  }
-}
-
-.sensei {
-  p.sensei-message.tick:before, div.sensei-message.tick:before {
-    content: '\f00c';
-  }
-}
-
-.course-container {
-  p.sensei-message.tick:before, div.sensei-message.tick:before {
-    content: '\f00c';
-  }
-}
-
-.course {
-  p.sensei-message.tick:before, div.sensei-message.tick:before {
-    content: '\f00c';
-  }
-}
-
-.lesson {
-  p.sensei-message.tick:before, div.sensei-message.tick:before {
-    content: '\f00c';
-  }
-}
-
-.quiz {
-  p.sensei-message.tick:before, div.sensei-message.tick:before {
-    content: '\f00c';
-  }
-}
-
-.learner-info {
-  p.sensei-message.tick:before, div.sensei-message.tick:before {
-    content: '\f00c';
-  }
-}
-
-.sensei {
-  p.sensei-message.info, div.sensei-message.info {
-    background: #eee;
-  }
-}
-
-.course-container {
-  p.sensei-message.info, div.sensei-message.info {
-    background: #eee;
-  }
-}
-
-.course {
-  p.sensei-message.info, div.sensei-message.info {
-    background: #eee;
-  }
-}
-
-.lesson {
-  p.sensei-message.info, div.sensei-message.info {
-    background: #eee;
-  }
-}
-
-.quiz {
-  p.sensei-message.info, div.sensei-message.info {
-    background: #eee;
-  }
-}
-
-.learner-info {
-  p.sensei-message.info, div.sensei-message.info {
-    background: #eee;
-  }
-}
-
-.sensei {
-  p.sensei-message.info:before, div.sensei-message.info:before {
-    content: '\f05a';
-  }
-}
-
-.course-container {
-  p.sensei-message.info:before, div.sensei-message.info:before {
-    content: '\f05a';
-  }
-}
-
-.course {
-  p.sensei-message.info:before, div.sensei-message.info:before {
-    content: '\f05a';
-  }
-}
-
-.lesson {
-  p.sensei-message.info:before, div.sensei-message.info:before {
-    content: '\f05a';
-  }
-}
-
-.quiz {
-  p.sensei-message.info:before, div.sensei-message.info:before {
-    content: '\f05a';
-  }
-}
-
-.learner-info {
-  p.sensei-message.info:before, div.sensei-message.info:before {
-    content: '\f05a';
-  }
-}
-
-.sensei {
-  p.sensei-message.info a, div.sensei-message.info a {
-    color: #3b3b3b;
-  }
-}
-
-.course-container {
-  p.sensei-message.info a, div.sensei-message.info a {
-    color: #3b3b3b;
-  }
-}
-
-.course {
-  p.sensei-message.info a, div.sensei-message.info a {
-    color: #3b3b3b;
-  }
-}
-
-.lesson {
-  p.sensei-message.info a, div.sensei-message.info a {
-    color: #3b3b3b;
-  }
-}
-
-.quiz {
-  p.sensei-message.info a, div.sensei-message.info a {
-    color: #3b3b3b;
-  }
-}
-
-.learner-info {
-  p.sensei-message.info a, div.sensei-message.info a {
-    color: #3b3b3b;
-  }
-}
-
-.sensei {
-  p.sensei-message.info a:hover, div.sensei-message.info a:hover {
-    color: #2f2f2f;
-  }
-}
-
-.course-container {
-  p.sensei-message.info a:hover, div.sensei-message.info a:hover {
-    color: #2f2f2f;
-  }
-}
-
-.course {
-  p.sensei-message.info a:hover, div.sensei-message.info a:hover {
-    color: #2f2f2f;
-  }
-}
-
-.lesson {
-  p.sensei-message.info a:hover, div.sensei-message.info a:hover {
-    color: #2f2f2f;
-  }
-}
-
-.quiz {
-  p.sensei-message.info a:hover, div.sensei-message.info a:hover {
-    color: #2f2f2f;
-  }
-}
-
-.learner-info {
-  p.sensei-message.info a:hover, div.sensei-message.info a:hover {
-    color: #2f2f2f;
-  }
-}
-
-.sensei {
-  p.sensei-message.info.info-special, div.sensei-message.info.info-special {
-    background: #dbf1ff;
-  }
-}
-
-.course-container {
-  p.sensei-message.info.info-special, div.sensei-message.info.info-special {
-    background: #dbf1ff;
-  }
-}
-
-.course {
-  p.sensei-message.info.info-special, div.sensei-message.info.info-special {
-    background: #dbf1ff;
-  }
-}
-
-.lesson {
-  p.sensei-message.info.info-special, div.sensei-message.info.info-special {
-    background: #dbf1ff;
-  }
-}
-
-.quiz {
-  p.sensei-message.info.info-special, div.sensei-message.info.info-special {
-    background: #dbf1ff;
-  }
-}
-
-.learner-info {
-  p.sensei-message.info.info-special, div.sensei-message.info.info-special {
-    background: #dbf1ff;
-  }
-}
-
-.sensei {
-  p.sensei-message.note, div.sensei-message.note {
-    background: #fef6d2;
-  }
-}
-
-.course-container {
-  p.sensei-message.note, div.sensei-message.note {
-    background: #fef6d2;
-  }
-}
-
-.course {
-  p.sensei-message.note, div.sensei-message.note {
-    background: #fef6d2;
-  }
-}
-
-.lesson {
-  p.sensei-message.note, div.sensei-message.note {
-    background: #fef6d2;
-  }
-}
-
-.quiz {
-  p.sensei-message.note, div.sensei-message.note {
-    background: #fef6d2;
-  }
-}
-
-.learner-info {
-  p.sensei-message.note, div.sensei-message.note {
-    background: #fef6d2;
-  }
-}
-
-.sensei {
-  p.sensei-message.note:before, div.sensei-message.note:before {
-    content: '\f0f6';
-  }
-}
-
-.course-container {
-  p.sensei-message.note:before, div.sensei-message.note:before {
-    content: '\f0f6';
-  }
-}
-
-.course {
-  p.sensei-message.note:before, div.sensei-message.note:before {
-    content: '\f0f6';
-  }
-}
-
-.lesson {
-  p.sensei-message.note:before, div.sensei-message.note:before {
-    content: '\f0f6';
-  }
-}
-
-.quiz {
-  p.sensei-message.note:before, div.sensei-message.note:before {
-    content: '\f0f6';
-  }
-}
-
-.learner-info {
-  p.sensei-message.note:before, div.sensei-message.note:before {
-    content: '\f0f6';
-  }
-}
-
-.sensei {
-  p.sensei-message.normal, div.sensei-message.normal {
-    background: #eee;
-    padding: 9px 15px;
-  }
-}
-
-.course-container {
-  p.sensei-message.normal, div.sensei-message.normal {
-    background: #eee;
-    padding: 9px 15px;
-  }
-}
-
-.course {
-  p.sensei-message.normal, div.sensei-message.normal {
-    background: #eee;
-    padding: 9px 15px;
-  }
-}
-
-.lesson {
-  p.sensei-message.normal, div.sensei-message.normal {
-    background: #eee;
-    padding: 9px 15px;
-  }
-}
-
-.quiz {
-  p.sensei-message.normal, div.sensei-message.normal {
-    background: #eee;
-    padding: 9px 15px;
-  }
-}
-
-.learner-info {
-  p.sensei-message.normal, div.sensei-message.normal {
-    background: #eee;
-    padding: 9px 15px;
-  }
-}
-
-.sensei {
-  p.sensei-message .view-quiz, div.sensei-message .view-quiz {
-    float: right;
-  }
-}
-
-.course-container {
-  p.sensei-message .view-quiz, div.sensei-message .view-quiz {
-    float: right;
-  }
-}
-
-.course {
-  p.sensei-message .view-quiz, div.sensei-message .view-quiz {
-    float: right;
-  }
-}
-
-.lesson {
-  p.sensei-message .view-quiz, div.sensei-message .view-quiz {
-    float: right;
-  }
-}
-
-.quiz {
-  p.sensei-message .view-quiz, div.sensei-message .view-quiz {
-    float: right;
-  }
-}
-
-.learner-info {
-  p.sensei-message .view-quiz, div.sensei-message .view-quiz {
-    float: right;
-  }
-}
-
-.course-container {
-  a {
-    &.button {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-      &:visited {
-        display: inline-block;
-        padding: 5px 20px 4px;
-        border: none;
-        color: #fff;
-        text-align: center;
-        text-shadow: none;
+    a  {
+      text-decoration: underline;
+      &:hover  {
         text-decoration: none;
-        text-transform: uppercase;
-        font-weight: bold;
-        font-size: 11px;
-        font-family: inherit;
-        /* Make inputs use the correct typeface instead of the browser default */
-        cursor: pointer;
-        /* Inputs need pointers! */
-        overflow: visible;
-        /* IE fix */
-        width: auto;
-        /* IE fix */
-        line-height: 1.618em;
-        -webkit-box-sizing: border-box;
-        /* Safari/Chrome, other WebKit */
-        -moz-box-sizing: border-box;
-        /* Firefox, other Gecko */
-        box-sizing: border-box;
-        /* Opera/IE 8+ */
-        white-space: nowrap;
-        -webkit-appearance: none;
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        -moz-background-clip: padding;
-        -webkit-background-clip: padding-box;
-        background-clip: padding-box;
-        background: #52a8e8;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
       }
     }
-    &.comment-reply-link {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
+    &.alert {
+      background:#ffd9c8;
+      &:before  {
+        content: '\f071';
+        color: $error;
+      }
+      a  {
+        color: darken($error, 10%);
+        &:hover  {
+          color: darken($error, 15%);
+        }
+      }
+    }
+    &.download, &.tick {
+      background: #edfcd5;
+      &:before  {
+        content: '\f019';
+        color: $success;
+      }
+      a  {
+        color: darken($success, 10%);;
+        &:hover  {
+          color: darken($success, 15%);
+        }
+      }
+    }
+    &.tick {
+      &:before  {
+        content: '\f00c';
+      }
+    }
+    &.info {
+      background:#eee;
+      &:before  {
+        content: '\f05a';
+      }
+      a  {
+        color: darken($color_body, 10%);;
+        &:hover  {
+          color: darken($color_body, 15%);
+        }
+      }
+      &.info-special {
+        background:#dbf1ff;
+      }
+    }
+    &.note {
+      background:#fef6d2;
+      &:before  {
+        content: '\f0f6';
+      }
+    }
+    &.normal {
+      background:#eee; padding:9px 15px;
+    }
+    .view-quiz  {
+      float: right;
     }
   }
-  #commentform #submit, .submit {
-    display: inline-block;
-    padding: 5px 20px 4px;
-    border: none;
-    color: #fff;
-    text-align: center;
-    text-shadow: none;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 11px;
-    font-family: inherit;
-    /* Make inputs use the correct typeface instead of the browser default */
-    cursor: pointer;
-    /* Inputs need pointers! */
-    overflow: visible;
-    /* IE fix */
-    width: auto;
-    /* IE fix */
-    line-height: 1.618em;
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
-    box-sizing: border-box;
-    /* Opera/IE 8+ */
-    white-space: nowrap;
-    -webkit-appearance: none;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    background: #52a8e8;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-  }
-  input {
-    &[type=submit], &.button {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-    }
-  }
+}
+
+.course-container, .course, .lesson, .quiz  {
+  a.button, a.button:visited,
+  a.comment-reply-link,
+  #commentform #submit,
+  .submit,
+  input[type=submit],
+  input.button,
   button.button {
     display: inline-block;
     padding: 5px 20px 4px;
@@ -2341,1615 +767,81 @@ section.entry span {
     text-transform: uppercase;
     font-weight: bold;
     font-size: 11px;
-    font-family: inherit;
-    /* Make inputs use the correct typeface instead of the browser default */
-    cursor: pointer;
-    /* Inputs need pointers! */
-    overflow: visible;
-    /* IE fix */
-    width: auto;
-    /* IE fix */
+    font-family: inherit; /* Make inputs use the correct typeface instead of the browser default */
+    cursor: pointer; /* Inputs need pointers! */
+    overflow: visible; /* IE fix */
+    width:auto; /* IE fix */
     line-height: 1.618em;
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
-    box-sizing: border-box;
-    /* Opera/IE 8+ */
+    @include borderbox();
     white-space: nowrap;
     -webkit-appearance: none;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    background: #52a8e8;
+
+    @include border_radius(5px);
+    background: $color_links;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-  }
-}
 
-.course {
-  a {
-    &.button {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-      &:visited {
-        display: inline-block;
-        padding: 5px 20px 4px;
-        border: none;
-        color: #fff;
-        text-align: center;
-        text-shadow: none;
-        text-decoration: none;
-        text-transform: uppercase;
-        font-weight: bold;
-        font-size: 11px;
-        font-family: inherit;
-        /* Make inputs use the correct typeface instead of the browser default */
-        cursor: pointer;
-        /* Inputs need pointers! */
-        overflow: visible;
-        /* IE fix */
-        width: auto;
-        /* IE fix */
-        line-height: 1.618em;
-        -webkit-box-sizing: border-box;
-        /* Safari/Chrome, other WebKit */
-        -moz-box-sizing: border-box;
-        /* Firefox, other Gecko */
-        box-sizing: border-box;
-        /* Opera/IE 8+ */
-        white-space: nowrap;
-        -webkit-appearance: none;
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        -moz-background-clip: padding;
-        -webkit-background-clip: padding-box;
-        background-clip: padding-box;
-        background: #52a8e8;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
+    &:hover { text-decoration: none; background: darken($color_links, 5%); }
+    &:active {
+      border-color: $color_links - #555;
+      -webkit-box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
+      0 1px 0 hsla(0, 100%, 100%, 1);
+      -moz-box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
+      0 1px 0 hsla(0, 100%, 100%, 1);
+      box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
+      0 1px 0 hsla(0, 100%, 100%, 1);
+    }
+
+    &.large {
+      font-size:1.387em;
+    }
+    &.small {
+      font-size:.857em;
+    }
+
+    &.course-complete  {
+      background: $success;
+      &:hover  {
+        background: darken($success, 5%);
       }
     }
-    &.comment-reply-link {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-    }
-  }
-  #commentform #submit, .submit {
-    display: inline-block;
-    padding: 5px 20px 4px;
-    border: none;
-    color: #fff;
-    text-align: center;
-    text-shadow: none;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 11px;
-    font-family: inherit;
-    /* Make inputs use the correct typeface instead of the browser default */
-    cursor: pointer;
-    /* Inputs need pointers! */
-    overflow: visible;
-    /* IE fix */
-    width: auto;
-    /* IE fix */
-    line-height: 1.618em;
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
-    box-sizing: border-box;
-    /* Opera/IE 8+ */
-    white-space: nowrap;
-    -webkit-appearance: none;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    background: #52a8e8;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-  }
-  input {
-    &[type=submit], &.button {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-    }
-  }
-  button.button {
-    display: inline-block;
-    padding: 5px 20px 4px;
-    border: none;
-    color: #fff;
-    text-align: center;
-    text-shadow: none;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 11px;
-    font-family: inherit;
-    /* Make inputs use the correct typeface instead of the browser default */
-    cursor: pointer;
-    /* Inputs need pointers! */
-    overflow: visible;
-    /* IE fix */
-    width: auto;
-    /* IE fix */
-    line-height: 1.618em;
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
-    box-sizing: border-box;
-    /* Opera/IE 8+ */
-    white-space: nowrap;
-    -webkit-appearance: none;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    background: #52a8e8;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-  }
-}
 
-.lesson {
-  a {
-    &.button {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-      &:visited {
-        display: inline-block;
-        padding: 5px 20px 4px;
-        border: none;
-        color: #fff;
-        text-align: center;
-        text-shadow: none;
-        text-decoration: none;
-        text-transform: uppercase;
-        font-weight: bold;
-        font-size: 11px;
-        font-family: inherit;
-        /* Make inputs use the correct typeface instead of the browser default */
-        cursor: pointer;
-        /* Inputs need pointers! */
-        overflow: visible;
-        /* IE fix */
-        width: auto;
-        /* IE fix */
-        line-height: 1.618em;
-        -webkit-box-sizing: border-box;
-        /* Safari/Chrome, other WebKit */
-        -moz-box-sizing: border-box;
-        /* Firefox, other Gecko */
-        box-sizing: border-box;
-        /* Opera/IE 8+ */
-        white-space: nowrap;
-        -webkit-appearance: none;
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        -moz-background-clip: padding;
-        -webkit-background-clip: padding-box;
-        background-clip: padding-box;
-        background: #52a8e8;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
+    &.course-delete  {
+      background: $error;
+      &:hover  {
+        background: darken($error, 5%);
       }
     }
-    &.comment-reply-link {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-    }
-  }
-  #commentform #submit, .submit {
-    display: inline-block;
-    padding: 5px 20px 4px;
-    border: none;
-    color: #fff;
-    text-align: center;
-    text-shadow: none;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 11px;
-    font-family: inherit;
-    /* Make inputs use the correct typeface instead of the browser default */
-    cursor: pointer;
-    /* Inputs need pointers! */
-    overflow: visible;
-    /* IE fix */
-    width: auto;
-    /* IE fix */
-    line-height: 1.618em;
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
-    box-sizing: border-box;
-    /* Opera/IE 8+ */
-    white-space: nowrap;
-    -webkit-appearance: none;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    background: #52a8e8;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-  }
-  input {
-    &[type=submit], &.button {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-    }
-  }
-  button.button {
-    display: inline-block;
-    padding: 5px 20px 4px;
-    border: none;
-    color: #fff;
-    text-align: center;
-    text-shadow: none;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 11px;
-    font-family: inherit;
-    /* Make inputs use the correct typeface instead of the browser default */
-    cursor: pointer;
-    /* Inputs need pointers! */
-    overflow: visible;
-    /* IE fix */
-    width: auto;
-    /* IE fix */
-    line-height: 1.618em;
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
-    box-sizing: border-box;
-    /* Opera/IE 8+ */
-    white-space: nowrap;
-    -webkit-appearance: none;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    background: #52a8e8;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
+
   }
 }
 
-.quiz {
-  a {
-    &.button {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-      &:visited {
-        display: inline-block;
-        padding: 5px 20px 4px;
-        border: none;
-        color: #fff;
-        text-align: center;
-        text-shadow: none;
-        text-decoration: none;
-        text-transform: uppercase;
-        font-weight: bold;
-        font-size: 11px;
-        font-family: inherit;
-        /* Make inputs use the correct typeface instead of the browser default */
-        cursor: pointer;
-        /* Inputs need pointers! */
-        overflow: visible;
-        /* IE fix */
-        width: auto;
-        /* IE fix */
-        line-height: 1.618em;
-        -webkit-box-sizing: border-box;
-        /* Safari/Chrome, other WebKit */
-        -moz-box-sizing: border-box;
-        /* Firefox, other Gecko */
-        box-sizing: border-box;
-        /* Opera/IE 8+ */
-        white-space: nowrap;
-        -webkit-appearance: none;
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        -moz-background-clip: padding;
-        -webkit-background-clip: padding-box;
-        background-clip: padding-box;
-        background: #52a8e8;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
-      }
-    }
-    &.comment-reply-link {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-    }
-  }
-  #commentform #submit, .submit {
-    display: inline-block;
-    padding: 5px 20px 4px;
-    border: none;
-    color: #fff;
-    text-align: center;
-    text-shadow: none;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 11px;
-    font-family: inherit;
-    /* Make inputs use the correct typeface instead of the browser default */
-    cursor: pointer;
-    /* Inputs need pointers! */
-    overflow: visible;
-    /* IE fix */
-    width: auto;
-    /* IE fix */
-    line-height: 1.618em;
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
-    box-sizing: border-box;
-    /* Opera/IE 8+ */
-    white-space: nowrap;
-    -webkit-appearance: none;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    background: #52a8e8;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-  }
-  input {
-    &[type=submit], &.button {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      border: none;
-      color: #fff;
-      text-align: center;
-      text-shadow: none;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 11px;
-      font-family: inherit;
-      /* Make inputs use the correct typeface instead of the browser default */
-      cursor: pointer;
-      /* Inputs need pointers! */
-      overflow: visible;
-      /* IE fix */
-      width: auto;
-      /* IE fix */
-      line-height: 1.618em;
-      -webkit-box-sizing: border-box;
-      /* Safari/Chrome, other WebKit */
-      -moz-box-sizing: border-box;
-      /* Firefox, other Gecko */
-      box-sizing: border-box;
-      /* Opera/IE 8+ */
-      white-space: nowrap;
-      -webkit-appearance: none;
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box;
-      background: #52a8e8;
-      -webkit-box-shadow: none;
-      -moz-box-shadow: none;
-      box-shadow: none;
-    }
-  }
-  button.button {
-    display: inline-block;
-    padding: 5px 20px 4px;
-    border: none;
-    color: #fff;
-    text-align: center;
-    text-shadow: none;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 11px;
-    font-family: inherit;
-    /* Make inputs use the correct typeface instead of the browser default */
-    cursor: pointer;
-    /* Inputs need pointers! */
-    overflow: visible;
-    /* IE fix */
-    width: auto;
-    /* IE fix */
-    line-height: 1.618em;
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
-    box-sizing: border-box;
-    /* Opera/IE 8+ */
-    white-space: nowrap;
-    -webkit-appearance: none;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    background: #52a8e8;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-  }
-}
-
-.course-container {
-  a {
-    &.button {
-      &:hover, &:visited:hover {
-        text-decoration: none;
-        background: #3b9de5;
-      }
-    }
-    &.comment-reply-link:hover {
-      text-decoration: none;
-      background: #3b9de5;
-    }
-  }
-  #commentform #submit:hover, .submit:hover {
-    text-decoration: none;
-    background: #3b9de5;
-  }
-  input {
-    &[type=submit]:hover, &.button:hover {
-      text-decoration: none;
-      background: #3b9de5;
-    }
-  }
-  button.button:hover {
-    text-decoration: none;
-    background: #3b9de5;
-  }
-}
-
-.course {
-  a {
-    &.button {
-      &:hover, &:visited:hover {
-        text-decoration: none;
-        background: #3b9de5;
-      }
-    }
-    &.comment-reply-link:hover {
-      text-decoration: none;
-      background: #3b9de5;
-    }
-  }
-  #commentform #submit:hover, .submit:hover {
-    text-decoration: none;
-    background: #3b9de5;
-  }
-  input {
-    &[type=submit]:hover, &.button:hover {
-      text-decoration: none;
-      background: #3b9de5;
-    }
-  }
-  button.button:hover {
-    text-decoration: none;
-    background: #3b9de5;
-  }
-}
-
-.lesson {
-  a {
-    &.button {
-      &:hover, &:visited:hover {
-        text-decoration: none;
-        background: #3b9de5;
-      }
-    }
-    &.comment-reply-link:hover {
-      text-decoration: none;
-      background: #3b9de5;
-    }
-  }
-  #commentform #submit:hover, .submit:hover {
-    text-decoration: none;
-    background: #3b9de5;
-  }
-  input {
-    &[type=submit]:hover, &.button:hover {
-      text-decoration: none;
-      background: #3b9de5;
-    }
-  }
-  button.button:hover {
-    text-decoration: none;
-    background: #3b9de5;
-  }
-}
-
-.quiz {
-  a {
-    &.button {
-      &:hover, &:visited:hover {
-        text-decoration: none;
-        background: #3b9de5;
-      }
-    }
-    &.comment-reply-link:hover {
-      text-decoration: none;
-      background: #3b9de5;
-    }
-  }
-  #commentform #submit:hover, .submit:hover {
-    text-decoration: none;
-    background: #3b9de5;
-  }
-  input {
-    &[type=submit]:hover, &.button:hover {
-      text-decoration: none;
-      background: #3b9de5;
-    }
-  }
-  button.button:hover {
-    text-decoration: none;
-    background: #3b9de5;
-  }
-}
-
-.course-container {
-  a {
-    &.button {
-      &:active, &:visited:active {
-        border-color: #005393;
-        -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-        -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-        box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      }
-    }
-    &.comment-reply-link:active {
-      border-color: #005393;
-      -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    }
-  }
-  #commentform #submit:active, .submit:active {
-    border-color: #005393;
-    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-  }
-  input {
-    &[type=submit]:active, &.button:active {
-      border-color: #005393;
-      -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    }
-  }
-  button.button:active {
-    border-color: #005393;
-    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-  }
-}
-
-.course {
-  a {
-    &.button {
-      &:active, &:visited:active {
-        border-color: #005393;
-        -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-        -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-        box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      }
-    }
-    &.comment-reply-link:active {
-      border-color: #005393;
-      -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    }
-  }
-  #commentform #submit:active, .submit:active {
-    border-color: #005393;
-    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-  }
-  input {
-    &[type=submit]:active, &.button:active {
-      border-color: #005393;
-      -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    }
-  }
-  button.button:active {
-    border-color: #005393;
-    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-  }
-}
-
-.lesson {
-  a {
-    &.button {
-      &:active, &:visited:active {
-        border-color: #005393;
-        -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-        -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-        box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      }
-    }
-    &.comment-reply-link:active {
-      border-color: #005393;
-      -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    }
-  }
-  #commentform #submit:active, .submit:active {
-    border-color: #005393;
-    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-  }
-  input {
-    &[type=submit]:active, &.button:active {
-      border-color: #005393;
-      -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    }
-  }
-  button.button:active {
-    border-color: #005393;
-    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-  }
-}
-
-.quiz {
-  a {
-    &.button {
-      &:active, &:visited:active {
-        border-color: #005393;
-        -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-        -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-        box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      }
-    }
-    &.comment-reply-link:active {
-      border-color: #005393;
-      -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    }
-  }
-  #commentform #submit:active, .submit:active {
-    border-color: #005393;
-    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-  }
-  input {
-    &[type=submit]:active, &.button:active {
-      border-color: #005393;
-      -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-      box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    }
-  }
-  button.button:active {
-    border-color: #005393;
-    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-    box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
-  }
-}
-
-.course-container {
-  a {
-    &.button {
-      &.large, &:visited.large {
-        font-size: 1.387em;
-      }
-    }
-    &.comment-reply-link.large {
-      font-size: 1.387em;
-    }
-  }
-  #commentform #submit.large, .submit.large {
-    font-size: 1.387em;
-  }
-  input {
-    &[type=submit].large, &.button.large {
-      font-size: 1.387em;
-    }
-  }
-  button.button.large {
-    font-size: 1.387em;
-  }
-}
-
-.course {
-  a {
-    &.button {
-      &.large, &:visited.large {
-        font-size: 1.387em;
-      }
-    }
-    &.comment-reply-link.large {
-      font-size: 1.387em;
-    }
-  }
-  #commentform #submit.large, .submit.large {
-    font-size: 1.387em;
-  }
-  input {
-    &[type=submit].large, &.button.large {
-      font-size: 1.387em;
-    }
-  }
-  button.button.large {
-    font-size: 1.387em;
-  }
-}
-
-.lesson {
-  a {
-    &.button {
-      &.large, &:visited.large {
-        font-size: 1.387em;
-      }
-    }
-    &.comment-reply-link.large {
-      font-size: 1.387em;
-    }
-  }
-  #commentform #submit.large, .submit.large {
-    font-size: 1.387em;
-  }
-  input {
-    &[type=submit].large, &.button.large {
-      font-size: 1.387em;
-    }
-  }
-  button.button.large {
-    font-size: 1.387em;
-  }
-}
-
-.quiz {
-  a {
-    &.button {
-      &.large, &:visited.large {
-        font-size: 1.387em;
-      }
-    }
-    &.comment-reply-link.large {
-      font-size: 1.387em;
-    }
-  }
-  #commentform #submit.large, .submit.large {
-    font-size: 1.387em;
-  }
-  input {
-    &[type=submit].large, &.button.large {
-      font-size: 1.387em;
-    }
-  }
-  button.button.large {
-    font-size: 1.387em;
-  }
-}
-
-.course-container {
-  a {
-    &.button {
-      &.small, &:visited.small {
-        font-size: .857em;
-      }
-    }
-    &.comment-reply-link.small {
-      font-size: .857em;
-    }
-  }
-  #commentform #submit.small, .submit.small {
-    font-size: .857em;
-  }
-  input {
-    &[type=submit].small, &.button.small {
-      font-size: .857em;
-    }
-  }
-  button.button.small {
-    font-size: .857em;
-  }
-}
-
-.course {
-  a {
-    &.button {
-      &.small, &:visited.small {
-        font-size: .857em;
-      }
-    }
-    &.comment-reply-link.small {
-      font-size: .857em;
-    }
-  }
-  #commentform #submit.small, .submit.small {
-    font-size: .857em;
-  }
-  input {
-    &[type=submit].small, &.button.small {
-      font-size: .857em;
-    }
-  }
-  button.button.small {
-    font-size: .857em;
-  }
-}
-
-.lesson {
-  a {
-    &.button {
-      &.small, &:visited.small {
-        font-size: .857em;
-      }
-    }
-    &.comment-reply-link.small {
-      font-size: .857em;
-    }
-  }
-  #commentform #submit.small, .submit.small {
-    font-size: .857em;
-  }
-  input {
-    &[type=submit].small, &.button.small {
-      font-size: .857em;
-    }
-  }
-  button.button.small {
-    font-size: .857em;
-  }
-}
-
-.quiz {
-  a {
-    &.button {
-      &.small, &:visited.small {
-        font-size: .857em;
-      }
-    }
-    &.comment-reply-link.small {
-      font-size: .857em;
-    }
-  }
-  #commentform #submit.small, .submit.small {
-    font-size: .857em;
-  }
-  input {
-    &[type=submit].small, &.button.small {
-      font-size: .857em;
-    }
-  }
-  button.button.small {
-    font-size: .857em;
-  }
-}
-
-.course-container {
-  a {
-    &.button {
-      &.course-complete, &:visited.course-complete {
-        background: #63a95f;
-      }
-    }
-    &.comment-reply-link.course-complete {
-      background: #63a95f;
-    }
-  }
-  #commentform #submit.course-complete, .submit.course-complete {
-    background: #63a95f;
-  }
-  input {
-    &[type=submit].course-complete, &.button.course-complete {
-      background: #63a95f;
-    }
-  }
-  button.button.course-complete {
-    background: #63a95f;
-  }
-}
-
-.course {
-  a {
-    &.button {
-      &.course-complete, &:visited.course-complete {
-        background: #63a95f;
-      }
-    }
-    &.comment-reply-link.course-complete {
-      background: #63a95f;
-    }
-  }
-  #commentform #submit.course-complete, .submit.course-complete {
-    background: #63a95f;
-  }
-  input {
-    &[type=submit].course-complete, &.button.course-complete {
-      background: #63a95f;
-    }
-  }
-  button.button.course-complete {
-    background: #63a95f;
-  }
-}
-
-.lesson {
-  a {
-    &.button {
-      &.course-complete, &:visited.course-complete {
-        background: #63a95f;
-      }
-    }
-    &.comment-reply-link.course-complete {
-      background: #63a95f;
-    }
-  }
-  #commentform #submit.course-complete, .submit.course-complete {
-    background: #63a95f;
-  }
-  input {
-    &[type=submit].course-complete, &.button.course-complete {
-      background: #63a95f;
-    }
-  }
-  button.button.course-complete {
-    background: #63a95f;
-  }
-}
-
-.quiz {
-  a {
-    &.button {
-      &.course-complete, &:visited.course-complete {
-        background: #63a95f;
-      }
-    }
-    &.comment-reply-link.course-complete {
-      background: #63a95f;
-    }
-  }
-  #commentform #submit.course-complete, .submit.course-complete {
-    background: #63a95f;
-  }
-  input {
-    &[type=submit].course-complete, &.button.course-complete {
-      background: #63a95f;
-    }
-  }
-  button.button.course-complete {
-    background: #63a95f;
-  }
-}
-
-.course-container {
-  a {
-    &.button {
-      &.course-complete:hover, &:visited.course-complete:hover {
-        background: #579b53;
-      }
-    }
-    &.comment-reply-link.course-complete:hover {
-      background: #579b53;
-    }
-  }
-  #commentform #submit.course-complete:hover, .submit.course-complete:hover {
-    background: #579b53;
-  }
-  input {
-    &[type=submit].course-complete:hover, &.button.course-complete:hover {
-      background: #579b53;
-    }
-  }
-  button.button.course-complete:hover {
-    background: #579b53;
-  }
-}
-
-.course {
-  a {
-    &.button {
-      &.course-complete:hover, &:visited.course-complete:hover {
-        background: #579b53;
-      }
-    }
-    &.comment-reply-link.course-complete:hover {
-      background: #579b53;
-    }
-  }
-  #commentform #submit.course-complete:hover, .submit.course-complete:hover {
-    background: #579b53;
-  }
-  input {
-    &[type=submit].course-complete:hover, &.button.course-complete:hover {
-      background: #579b53;
-    }
-  }
-  button.button.course-complete:hover {
-    background: #579b53;
-  }
-}
-
-.lesson {
-  a {
-    &.button {
-      &.course-complete:hover, &:visited.course-complete:hover {
-        background: #579b53;
-      }
-    }
-    &.comment-reply-link.course-complete:hover {
-      background: #579b53;
-    }
-  }
-  #commentform #submit.course-complete:hover, .submit.course-complete:hover {
-    background: #579b53;
-  }
-  input {
-    &[type=submit].course-complete:hover, &.button.course-complete:hover {
-      background: #579b53;
-    }
-  }
-  button.button.course-complete:hover {
-    background: #579b53;
-  }
-}
-
-.quiz {
-  a {
-    &.button {
-      &.course-complete:hover, &:visited.course-complete:hover {
-        background: #579b53;
-      }
-    }
-    &.comment-reply-link.course-complete:hover {
-      background: #579b53;
-    }
-  }
-  #commentform #submit.course-complete:hover, .submit.course-complete:hover {
-    background: #579b53;
-  }
-  input {
-    &[type=submit].course-complete:hover, &.button.course-complete:hover {
-      background: #579b53;
-    }
-  }
-  button.button.course-complete:hover {
-    background: #579b53;
-  }
-}
-
-.course-container {
-  a {
-    &.button {
-      &.course-delete, &:visited.course-delete {
-        background: #ed6c6c;
-      }
-    }
-    &.comment-reply-link.course-delete {
-      background: #ed6c6c;
-    }
-  }
-  #commentform #submit.course-delete, .submit.course-delete {
-    background: #ed6c6c;
-  }
-  input {
-    &[type=submit].course-delete, &.button.course-delete {
-      background: #ed6c6c;
-    }
-  }
-  button.button.course-delete {
-    background: #ed6c6c;
-  }
-}
-
-.course {
-  a {
-    &.button {
-      &.course-delete, &:visited.course-delete {
-        background: #ed6c6c;
-      }
-    }
-    &.comment-reply-link.course-delete {
-      background: #ed6c6c;
-    }
-  }
-  #commentform #submit.course-delete, .submit.course-delete {
-    background: #ed6c6c;
-  }
-  input {
-    &[type=submit].course-delete, &.button.course-delete {
-      background: #ed6c6c;
-    }
-  }
-  button.button.course-delete {
-    background: #ed6c6c;
-  }
-}
-
-.lesson {
-  a {
-    &.button {
-      &.course-delete, &:visited.course-delete {
-        background: #ed6c6c;
-      }
-    }
-    &.comment-reply-link.course-delete {
-      background: #ed6c6c;
-    }
-  }
-  #commentform #submit.course-delete, .submit.course-delete {
-    background: #ed6c6c;
-  }
-  input {
-    &[type=submit].course-delete, &.button.course-delete {
-      background: #ed6c6c;
-    }
-  }
-  button.button.course-delete {
-    background: #ed6c6c;
-  }
-}
-
-.quiz {
-  a {
-    &.button {
-      &.course-delete, &:visited.course-delete {
-        background: #ed6c6c;
-      }
-    }
-    &.comment-reply-link.course-delete {
-      background: #ed6c6c;
-    }
-  }
-  #commentform #submit.course-delete, .submit.course-delete {
-    background: #ed6c6c;
-  }
-  input {
-    &[type=submit].course-delete, &.button.course-delete {
-      background: #ed6c6c;
-    }
-  }
-  button.button.course-delete {
-    background: #ed6c6c;
-  }
-}
-
-.course-container {
-  a {
-    &.button {
-      &.course-delete:hover, &:visited.course-delete:hover {
-        background: #ea5555;
-      }
-    }
-    &.comment-reply-link.course-delete:hover {
-      background: #ea5555;
-    }
-  }
-  #commentform #submit.course-delete:hover, .submit.course-delete:hover {
-    background: #ea5555;
-  }
-  input {
-    &[type=submit].course-delete:hover, &.button.course-delete:hover {
-      background: #ea5555;
-    }
-  }
-  button.button.course-delete:hover {
-    background: #ea5555;
-  }
-}
-
-.course {
-  a {
-    &.button {
-      &.course-delete:hover, &:visited.course-delete:hover {
-        background: #ea5555;
-      }
-    }
-    &.comment-reply-link.course-delete:hover {
-      background: #ea5555;
-    }
-  }
-  #commentform #submit.course-delete:hover, .submit.course-delete:hover {
-    background: #ea5555;
-  }
-  input {
-    &[type=submit].course-delete:hover, &.button.course-delete:hover {
-      background: #ea5555;
-    }
-  }
-  button.button.course-delete:hover {
-    background: #ea5555;
-  }
-}
-
-.lesson {
-  a {
-    &.button {
-      &.course-delete:hover, &:visited.course-delete:hover {
-        background: #ea5555;
-      }
-    }
-    &.comment-reply-link.course-delete:hover {
-      background: #ea5555;
-    }
-  }
-  #commentform #submit.course-delete:hover, .submit.course-delete:hover {
-    background: #ea5555;
-  }
-  input {
-    &[type=submit].course-delete:hover, &.button.course-delete:hover {
-      background: #ea5555;
-    }
-  }
-  button.button.course-delete:hover {
-    background: #ea5555;
-  }
-}
-
-.quiz {
-  a {
-    &.button {
-      &.course-delete:hover, &:visited.course-delete:hover {
-        background: #ea5555;
-      }
-    }
-    &.comment-reply-link.course-delete:hover {
-      background: #ea5555;
-    }
-  }
-  #commentform #submit.course-delete:hover, .submit.course-delete:hover {
-    background: #ea5555;
-  }
-  input {
-    &[type=submit].course-delete:hover, &.button.course-delete:hover {
-      background: #ea5555;
-    }
-  }
-  button.button.course-delete:hover {
-    background: #ea5555;
-  }
-}
-
-#submit {
+#submit  {
   -webkit-appearance: none;
 }
 
 /* RESPOND */
-@media only screen and (min-width: 768px) {
-  #main .course .course-meta .course-start {
-    margin-top: .53em;
+@media only screen and (min-width: 768px)  {
+  #main .course  {
+    .course-meta  {
+      .course-start  {
+        margin-top: .53em;
+      }
+    }
   }
-  .single.logged-in #main .type-course {
+  .single.logged-in #main .type-course  {
     border: none;
-    header h1 {
+    header h1  {
       margin-right: 150px;
     }
   }
-
-  /* Course Archives */
-
-  .sensei-ordering {
-    text-align: right; 
-    float: right;
-    margin: 0;
-  }
 }
 
-.sensei-pagination .page-numbers li {
-  display: inline-block;
+.sensei-pagination{
+  .page-numbers li{
+    display: inline-block;
+  }
 }
 
 /**
