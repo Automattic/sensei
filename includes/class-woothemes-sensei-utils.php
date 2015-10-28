@@ -603,7 +603,7 @@ class WooThemes_Sensei_Utils {
                 'guid' => $file_return['url']
             );
 
-            $attachment_id = wp_insert_attachment( $attachment, $file_return['url'] );
+            $attachment_id = wp_insert_attachment( $attachment, $filename );
 
             require_once(ABSPATH . 'wp-admin/includes/image.php');
             $attachment_data = wp_generate_attachment_metadata( $attachment_id, $filename );
