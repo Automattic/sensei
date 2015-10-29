@@ -131,7 +131,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_lesson_meta_extra', array( $this, 'lesson_tags_display' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'lesson_tag_archive_filter' ), 10, 1 );
 		add_filter( 'sensei_lessons_archive_text', array( $this, 'lesson_tag_archive_header' ) );
-		add_action( 'sensei_lesson_archive_header', array( $this, 'lesson_tag_archive_description' ), 11 );
+		add_action( 'sensei_loop_lesson_inside_before', array( $this, 'lesson_tag_archive_description' ), 11 );
 
 		// Hide Sensei activity comments from lesson and course pages
 		add_filter( 'wp_list_comments_args', array( $this, 'hide_sensei_activity' ) );
