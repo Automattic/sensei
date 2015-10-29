@@ -1716,12 +1716,12 @@ class WooThemes_Sensei_Utils {
 	 * @return object | bool
 	 */
 	public static function user_lesson_status( $lesson_id = 0, $user_id = 0 ) {
-		global $woothemes_sensei;
 
-		if( $lesson_id ) {
-			if( ! $user_id ) {
-				$user_id = get_current_user_id();
-			}
+        if( ! $user_id ) {
+            $user_id = get_current_user_id();
+        }
+
+		if( $lesson_id > 0 && $user_id > 0 ) {
 
 			$user_lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ), true );
 			return $user_lesson_status;
