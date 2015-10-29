@@ -84,6 +84,9 @@ class WooThemes_Sensei_Course {
         // add the user status on the course to the markup as a class
         add_filter('post_class', array( __CLASS__ , 'add_course_user_status_class' ), 20, 3 );
 
+        // Sort the main query on custom taxonomy pages to pass posts in 'menu_order'
+        add_action('pre_get_posts', array ( $this, 'sensei_course_category_order_main_content' ) );
+
 	} // End __construct()
 
 	/**
@@ -2019,5 +2022,26 @@ class WooThemes_Sensei_Course {
         <?php  }// end if is user logged in
 
     }// end the_course_action_buttons
+
+    /**
+     * sensei_course_category_order_main_content function
+     *
+     * Sort the main query on custom taxonomy pages to pass posts in
+     * 'menu_order', because Sensei allows users to set the order of
+     * Courses under Course > Course Order.
+     *
+     * @since 1.9.0
+     * @access public
+     * @param object $query
+     * @return object $query
+     */
+
+    public function sensei_course_category_order_main_content($query) {
+        if ( is_tax() ) {
+            $query->set( 'orderby', 'menu_order' );
+            $query->set( 'order', 'ASC' );
+            return $query;
+        }
+    } // End sensei_course_category_order_main_content()
 
 } // End Class
