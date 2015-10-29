@@ -424,7 +424,7 @@ class WooThemes_Sensei_Messages {
         if ( is_single() && is_singular( $this->post_type )
             || is_post_type_archive( $this->post_type ) ) {
 
-            if (!is_user_logged_in() && isset($my_courses_url) ) {
+            if ( isset($my_courses_url) ) {
 
                 wp_redirect($my_courses_url, 303);
                 exit;
