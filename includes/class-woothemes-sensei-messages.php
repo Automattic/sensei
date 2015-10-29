@@ -406,6 +406,11 @@ class WooThemes_Sensei_Messages {
 
     public function message_login () {
 
+        if ( is_user_logged_in() ) {
+
+            return;
+        }
+
         $settings = Sensei()->settings->get_settings();
         if( isset( $settings[ 'my_course_page' ] )
             && 0 < intval( $settings[ 'my_course_page' ] ) ){
