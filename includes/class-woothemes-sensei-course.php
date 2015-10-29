@@ -2695,4 +2695,26 @@ class WooThemes_Sensei_Course {
 
     }
 
+    /**
+     * Optionally return the full content on the single course pages
+     * depending on the users course_single_content_display setting
+     *
+     * @since 1.9.0
+     * @param $excerpt
+     * @return string
+     */
+    public static function full_content_excerpt_override( $excerpt ){
+
+        if (   is_singular('course')  &&
+                'full' == Sensei()->settings->get( 'course_single_content_display' ) ){
+
+            return get_the_content();
+
+        } else {
+
+            return $excerpt;
+
+        }
+
+    }
 } // End Class

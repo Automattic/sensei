@@ -13,58 +13,70 @@
 
 <?php  get_sensei_header();  ?>
 
-<article <?php array( get_post_type(), 'post' ) ?>>
+<?php
+/**
+ * This action fires inside the no-permissions.php file. It
+ * is place above before all the content.
+ *
+ * @since 1.9.0
+ */
+do_action('sensei_no_permissions_before_content');
+?>
+
+<article <?php post_class( 'no-permission' ) ?> >
 
     <header>
 
-        <h1><?php echo Sensei()->permissions_message['title']; ?></h1>
+        <h1><?php the_no_permissions_title(); ?></h1>
 
     </header>
 
-    <?php  if ( is_singular( 'course' ) ) { ?>
+    <?php
+    /**
+     * This action fires inside the no-permissions.php file. It
+     * is place just before the content.
+     *
+     * @since 1.9.0
+     */
+    do_action('sensei_no_permissions_inside_before_content');
+    ?>
 
-            <section class="entry fix">
+    <section class="entry fix">
 
-                <div class="sensei-message alert"
+        <div class="sensei-message alert">
 
-                    <?php echo Sensei()->permissions_message['message']; ?>
+            <?php the_no_permissions_message(); ?>
 
-                </div>
+        </div>
 
-                <?php if ( 'full' == Sensei()->settings->settings[ 'course_single_content_display' ] ) {
+        <p class="excerpt">
 
-                    the_content();
+            <?php sensei_the_excerpt(); ?>
 
-                } else {
+        </p>
 
-                    echo '<p class="course-excerpt">' . sensei_get_excerpt( $post ) . '</p>';
+    </section>
 
-                }
-                ?>
-            </section>
+    <?php
+    /**
+     * This action fires inside the no-permissions.php file. It
+     * is place just after the content.
+     *
+     * @since 1.9.0
+     */
+    do_action('sensei_no_permissions_inside_after_content');
+    ?>
 
-            <?php course_single_meta(); ?>
-            <?php do_action( 'sensei_course_single_lessons' ); ?>
+</article><!-- .no-permissions -->
 
-    <?php } else { ?>
-
-
-        <section class="entry fix">
-
-            <?php if ( is_singular( 'lesson' ) ) {
-
-                echo Woothemes_Sensei_Lesson::lesson_excerpt( $post );
-
-            } ?>
-
-            <div class="sensei-message alert"><?php echo Sensei()->permissions_message['message']; ?></div>
-
-        </section>
-
-    <?php } // End If Statement ?>
-
-
-
-</article><!-- .post -->
+<?php
+/**
+ * This action fires inside the no-permissions.php file. It
+ * is placed outside after the content.
+ *
+ * @since 1.9.0
+ */
+do_action('sensei_no_permissions_after_content');
+?>
 
 <?php get_sensei_footer(); ?>

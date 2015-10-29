@@ -437,7 +437,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
    * @param  int|WP_Post $post_id Optional. Defaults to current post
    * @return string $excerpt
    */
-  function sensei_get_excerpt( $post_id ) {
+  function sensei_get_excerpt( $post_id = '' ) {
 
     if ( is_int( $post_id ) ) {
       $post = get_post( $post_id );
@@ -445,7 +445,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
     else if ( is_object( $post_id ) ) {
       $post = $post_id;
     }
-    else if ( ! $post_id ) {
+    else if ( empty( $post_id ) ) {
       global $post;
     }
 
@@ -1036,3 +1036,52 @@ function get_sensei_footer(){
     get_footer();
 
 }// end get_sensei_header
+
+/**
+ * Output the permissions message
+ * title.
+ *
+ * @since 1.9.0
+ */
+function the_no_permissions_title(){
+
+    /**
+     * Filter the no permissions title just before it is echo'd on the
+     * no-permissions.php file.
+     *
+     * @since 1.9.0
+     * @param $no_permissions_title
+     */
+    echo apply_filters( 'sensei_the_no_permissions_title', Sensei()->permissions_message['title'] );
+
+}
+
+/**
+ * Output the permissions message.
+ *
+ * @since 1.9.0
+ */
+function the_no_permissions_message(){
+
+    /**
+     * Filter the no permissions message just before it is echo'd on the
+     * no-permissions.php file.
+     *
+     * @since 1.9.0
+     * @param $no_permissions_message
+     */
+    echo apply_filters( 'sensei_the_no_permissions_message', Sensei()->permissions_message['message'] );
+
+}
+
+/**
+ * Output the sensei excerpt
+ *
+ * @since 1.9.0
+ */
+function sensei_the_excerpt(){
+
+    global $post;
+    echo sensei_get_excerpt( $post );
+
+}

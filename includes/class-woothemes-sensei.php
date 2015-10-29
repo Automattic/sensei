@@ -696,7 +696,13 @@ class WooThemes_Sensei {
         // REFACTOR
         global $current_user, $post;
 
-        if ( empty( $current_user->caps ) ) return;
+        // if use is not logged in
+        if ( empty( $current_user->caps ) ){
+            $this->permissions_message['title'] = __('Restricted Access', 'woothemes-sensei' );
+            $this->permissions_message['message'] = sprintf( __('You must be logged in to view this %s'), get_post_type() );
+            return;
+        }
+
 
         // Get User Meta
         get_currentuserinfo();
