@@ -1381,7 +1381,7 @@ class WooThemes_Sensei_Admin {
 				    <div id="message" class="error sensei-message sensei-connect">
 				    	<div class="squeezer">
 			    			<p><?php printf( __( '<strong>Your theme does not declare Sensei support</strong> &#8211; if you encounter layout issues please read our integration guide or choose a %1$sSensei theme%2$s :)', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/product-category/themes/sensei-themes/">', '</a>' ); ?></p>
-                            <p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-secondary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
+                            <p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-primary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
 			    		</div>
 			    	</div>
 			    	<?php
