@@ -12,7 +12,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /*-----------------------------------------------------------------------------------*/
 
 
-
 /**
  * Variables
  */
@@ -135,7 +134,7 @@ a.sensei-certificate-link {
             color: $color_body;
             &:before  {
               @include iconbefore();
-              content: '\f110';
+              content: '\f0ca';
             }
           }
         }
