@@ -282,42 +282,117 @@ class WooThemes_Sensei_Frontend {
 
 	/**
 	 * sensei_output_content_wrapper function.
-	 *
+	 * @todo trigger errors for version 2.0 for all old files
+     *
 	 * @access public
 	 * @return void
 	 */
 	function sensei_output_content_wrapper() {
+
+	    // backwards compatibility check for old location under the wrappers directory of the active theme
+        $backwards_compatible_wrapper_location =   array(
+            Sensei()->template_url . 'wrappers/wrapper-start.php',
+            'wrappers/wrapper-start.php'
+        );
+
+        if( !empty( locate_template( $backwards_compatible_wrapper_location ) ) ){
+
+            Sensei_Templates::get_template( 'wrappers/wrapper-start.php' );
+            return;
+
+        }
+
 		Sensei_Templates::get_template( 'globals/wrapper-start.php' );
+
 	} // End sensei_output_content_wrapper()
 
 
 	/**
 	 * sensei_output_content_wrapper_end function.
 	 *
+     * @todo trigger errors for version 2.0 for all old files
+     *
 	 * @access public
 	 * @return void
 	 */
 	function sensei_output_content_wrapper_end() {
+
+	    // backwards compatibility check for old location under the wrappers directory of the active theme
+        $backwards_compatible_wrapper_location =   array(
+            Sensei()->template_url . 'wrappers/wrapper-end.php',
+            'wrappers/wrapper-end.php'
+        );
+
+        if( !empty( locate_template( $backwards_compatible_wrapper_location ) ) ){
+
+            Sensei_Templates::get_template( 'wrappers/wrapper-end.php' );
+            return;
+
+        }
+
+
 		Sensei_Templates::get_template( 'globals/wrapper-end.php' );
+
 	} // End sensei_output_content_wrapper_end()
 
 
 	/**
 	 * sensei_output_content_pagination function.
 	 *
+     * @todo trigger errors for version 2.0 for all old files
 	 * @access public
 	 * @return void
 	 */
 	function sensei_output_content_pagination() {
 
         if( is_singular('course') ) {
+
+            // backwards compatibility check for old location under the wrappers directory of the active theme
+            if( !empty( locate_template( array( Sensei()->template_url . 'wrappers/pagination-posts.php' ) ) ) ){
+
+                Sensei_Templates::get_template( 'wrappers/pagination-posts.php' );
+                return;
+
+            }
+
 			Sensei_Templates::get_template( 'globals/pagination-posts.php' );
+
 		} elseif( is_singular('lesson') ) {
+
+		    // backwards compatibility check for old location under the wrappers directory of the active theme
+            if( !empty( locate_template( array( Sensei()->template_url . 'wrappers/pagination-lesson.php' ) ) ) ){
+
+                Sensei_Templates::get_template( 'wrappers/pagination-lesson.php' );
+                return;
+
+            }
+
 			Sensei_Templates::get_template( 'globals/pagination-lesson.php' );
+
 		} elseif( is_singular('quiz') ) {
+
+		    // backwards compatibility check for old location under the wrappers directory of the active theme
+            if( !empty( locate_template( array( Sensei()->template_url . 'wrappers/pagination-quiz.php' ) ) ) ){
+
+                Sensei_Templates::get_template( 'wrappers/pagination-quiz.php' );
+                return;
+
+            }
+
 			Sensei_Templates::get_template( 'globals/pagination-quiz.php' );
+
 		} else {
+
+            // backwards compatibility check for old location under the wrappers directory of the active theme
+            if( !empty( locate_template( array( Sensei()->template_url . 'wrappers/pagination.php' ) ) ) ){
+
+                Sensei_Templates::get_template( 'wrappers/pagination.php' );
+                return;
+
+            }
+
 			Sensei_Templates::get_template( 'globals/pagination.php' );
+
 		} // End If Statement
 
 	} // End sensei_output_content_pagination()
