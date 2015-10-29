@@ -53,6 +53,12 @@ switch( $template ) {
 	        .'<main id="main" class="site-main" role="main">';
         break;
 
+    // IF Storefront
+    case 'storefront' :
+        echo '<div id="primary" class="content-area">'
+            .'<main id="main" class="site-main" role="main">';
+        break;
+
 	// Default
 	default :
 		echo '<div id="content" class="page col-full"><div id="main" class="col-left">';

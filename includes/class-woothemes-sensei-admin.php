@@ -1375,6 +1375,7 @@ class WooThemes_Sensei_Admin {
                                 'twentyfourteen',
                                 'twentyfifteen',
                                 'twentysixteen',
+                                'storefront',
                                                 );
 
         if ( in_array( $template, $white_list ) ) {

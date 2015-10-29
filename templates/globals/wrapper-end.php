@@ -42,13 +42,21 @@ switch( $template ) {
 	<?php
 		break;
 
+    // IF Twenty Fifteen
     case 'twentyfifteen' :
         echo '</main> <!-- main-site -->'
             . '</div> <!-- content-area -->';
             get_sidebar();
         break;
 
+    // IF Twenty Sixteen
     case 'twentysixteen' :
+        echo '</main> <!-- main-site -->'
+            . '</div> <!-- content-area -->';
+            get_sidebar();
+        break;
+    // IF Storefront
+    case 'storefront' :
         echo '</main> <!-- main-site -->'
             . '</div> <!-- content-area -->';
             get_sidebar();
@@ -63,5 +71,3 @@ switch( $template ) {
 	<?php
 		break;
 }
-
-?>
