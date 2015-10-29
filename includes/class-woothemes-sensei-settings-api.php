@@ -112,7 +112,7 @@ class WooThemes_Sensei_Settings_API {
 	public function setup_settings () {
 		add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
-		add_action( 'wp_loaded', array( $this, 'general_init' ) );
+		add_action( 'init', array( $this, 'general_init' ) );
 	} // End setup_settings()
 
 	/**
@@ -645,6 +645,26 @@ class WooThemes_Sensei_Settings_API {
 
 		echo $html;
 	} // End form_field_info()
+
+
+	/**
+	 * Generate button field.
+	 * @access public
+	 * @since  1.9.0
+	 * @param  array $args
+	 */
+	public function form_field_button( $args ) {
+		$options = $this->get_settings();
+
+		if ( isset( $args['data']['target'] ) && isset( $args['data']['label'] ) ) {
+			printf( '<a href="%s" class="button button-secondary">%s</a> ', esc_url( $args['data']['target'] ), esc_html( $args['data']['label'] ) );
+
+			if ( isset( $args['data']['description'] ) ) {
+				echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
+			}
+		}
+	} // End form_field_button()
+
 
 	/**
 	 * Validate registered settings fields.
