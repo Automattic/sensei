@@ -112,7 +112,7 @@ class WooThemes_Sensei_Settings_API {
 	public function setup_settings () {
 		add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
-		add_action( 'wp_loaded', array( $this, 'general_init' ) );
+		add_action( 'init', array( $this, 'general_init' ) );
 	} // End setup_settings()
 
 	/**
