@@ -887,21 +887,20 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = ''  ){
 
 
     $user_can_access_lesson =  false;
-    if( Sensei()->settings->get('access_permission') ) {
 
-        if( is_user_logged_in() && $user_taking_course ){
-
-            $user_can_access_lesson =  true;
-
-        }
-
-    }else{
+    if( is_user_logged_in() && $user_taking_course ){
 
         $user_can_access_lesson =  true;
 
     }
 
-    $can_user_view_lesson = sensei_all_access() || ( $user_can_access_lesson && $pre_requisite_complete ) || $is_preview;
+    if ( ! Sensei()->settings->get('access_permission')  || sensei_all_access() ) {
+
+        $access_permission = true;
+
+    }
+
+    $can_user_view_lesson = $access_permission || ( $user_can_access_lesson && $pre_requisite_complete ) || $is_preview;
 
     /**
      * Filter the can user view lesson function
