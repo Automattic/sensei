@@ -75,6 +75,11 @@ class Sensei_Autoloader {
              * WooCommerce
              */
             'Sensei_WC' => 'woocommerce/class-sensei-wc.php',
+						
+						/**
+						 * WPML
+						 */
+						'Sensei_WPML' => 'wpml/class-sensei-wpml.php'
 
         );
     }

@@ -297,6 +297,9 @@ class WooThemes_Sensei {
 
         // Check for and activate JetPack LaTeX support
         add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support'), 200 ); // Runs after Jetpack has loaded it's modules
+				
+				// Integration class for WPML
+				$this->Sensei_WPML = new Sensei_WPML();
 
     } // End __construct()
 
