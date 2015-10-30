@@ -894,6 +894,9 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = ''  ){
 
     }
 
+
+    $access_permission = false;
+
     if ( ! Sensei()->settings->get('access_permission')  || sensei_all_access() ) {
 
         $access_permission = true;
