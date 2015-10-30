@@ -49,9 +49,7 @@ jQuery(document).ready( function($) {
         var post_id = jQuery( this ).attr( 'data-post_id' );
         var post_type = jQuery( this ).attr( 'data-post_type' );
         var course_reset = jQuery( this).attr( 'data-course_reset');
-
-        console.log(course_reset);
-
+        
         var confirm_message = woo_learners_general_data.remove_generic_confirm;
 
         switch( post_type ) {
