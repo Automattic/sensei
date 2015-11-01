@@ -461,7 +461,6 @@ class Sensei_Templates {
 
     }// end deprecate_sensei_lesson_single_meta_hook
 
-
     /**
      * Deprecate the sensei lesson single title hook
      * @deprecated since 1.9.0

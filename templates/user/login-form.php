@@ -20,9 +20,15 @@ if ( is_user_logged_in() ) {
 global $wp;
 $current_page_url =  home_url( $wp->request );
 $redirect = $current_page_url;
+?>
 
-// get the referer url for redirecting after authentication
-
+<?php
+/**
+ *  Executes before the Sensei Login form markup begins.
+ *
+ * @since 1.9.0
+ */
+do_action( 'sensei_login_form_before' );
 ?>
 
 <h2><?php _e( 'Login', 'woothemes-sensei' ); ?></h2>
@@ -85,3 +91,12 @@ $redirect = $current_page_url;
 
 	<div class="clear"></div>
 </form>
+
+<?php
+/**
+ *  Executes after the Login form markup closes.
+ *
+ *  @since 1.9.0
+ */
+do_action( 'sensei_login_form_after' );
+?>
