@@ -35,12 +35,28 @@ switch( $template ) {
             ?>
             <style>
                 @media screen and (min-width: 59.6875em){
-                    article.post {
-                        padding-top: 8.3333% !important;
-                        margin: 0 8.3333% !important;
-                        box-shadow: 0 0 1px rgba(0, 0, 0, 0.15) !important;
-                        background-color: #fff !important;
-                        padding: 1em 2em 2em !important;
+                    #main article.lesson,
+                    #main article.course,
+                    #main #post-entries,
+                    .sensei-breadcrumb {
+                        padding-top: 8.3333%;
+                        margin: 0 8.3333%;
+                        box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
+                        background-color: #fff;
+                        padding: 1em 2em 2em;
+                    }
+
+                    #main .course-lessons .lesson {
+                        margin: 0;
+                    }
+
+                    #main #post-entries {
+                        padding: 1em 2em;
+                        overflow: hidden;
+                    }
+
+                    #main article.lesson ol {
+                        list-style-position: inside;
                     }
                 }
             </style>
