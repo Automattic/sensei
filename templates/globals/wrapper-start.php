@@ -75,6 +75,14 @@ switch( $template ) {
             .'<main id="main" class="site-main" role="main">';
         break;
 
+    // IF Divi
+    case 'divi' :
+        echo '<div id="main-content">'
+            .'<div class="container">'
+            .'<div id="content-area" class="clearfix">'
+            .'<div id="left-area">';
+        break;
+
 	// Default
 	default :
 		echo '<div id="content" class="page col-full"><div id="main" class="col-left">';

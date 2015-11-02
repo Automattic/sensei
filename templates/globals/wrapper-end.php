@@ -62,6 +62,15 @@ switch( $template ) {
             get_sidebar();
         break;
 
+    // IF Divi
+    case 'divi' :
+        echo '</div> <!-- #left-area -->'
+            get_sidebar();
+        echo '</div> <!-- #content-area -->'
+			.'</div> <!-- div.container -->'
+        	.'</div><!-- #main-content -->';
+        break;
+
 	// Default
 	default :
 	?>
