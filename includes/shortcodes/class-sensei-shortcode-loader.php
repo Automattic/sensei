@@ -417,10 +417,15 @@ class Sensei_Shortcode_Loader{
                         ?>
                         <article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $post_id ) ) ); ?>">
 
+                            <div class="course-content">
 
                             <?php Sensei()->course->course_image($post_id); ?>
 
-                            <?php echo $post_item->post_title; ?>
+                            <header>
+
+                            <h2><a href="<?php echo get_permalink($post_id) ?>" title="<?php echo $post_item->post_title; ?>"><?php echo $post_item->post_title; ?></a></h2>
+
+                            </header>
 
                             <section class="entry">
                                 <p class="sensei-course-meta">
@@ -440,17 +445,26 @@ class Sensei_Shortcode_Loader{
                                     <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $preview_lessons; ?></p>
 
                                 <?php } ?>
-                            </section>
+                            </section></div>
+
+
+                            <footer></footer>
                         </article>
+
                     <?php
 
                     } // End For Loop
+
+
 
                     if ( '' != $shortcode_override && ( $amount <= count( $posts_array ) ) ) {
                         echo sensei_course_archive_next_link( $query_type );
                     } // End If Statement ?>
 
                 </section>
+
+
+
 
             <?php } // End If Statement
         } else {
