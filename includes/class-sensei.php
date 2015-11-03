@@ -677,7 +677,7 @@ class Sensei {
         global $current_user, $post;
 
         // if use is not logged in
-        if ( empty( $current_user->caps ) ){
+        if ( empty( $current_user->caps ) && Sensei()->settings->get('access_permission') ){
             $this->permissions_message['title'] = __('Restricted Access', 'woothemes-sensei' );
             $this->permissions_message['message'] = sprintf( __('You must be logged in to view this %s'), get_post_type() );
             return;
