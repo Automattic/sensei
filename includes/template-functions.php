@@ -1110,6 +1110,6 @@ function sensei_the_excerpt(){
  */
 function sensei_the_my_courses_content(){
 
-    echo Sensei()->course->load_user_courses_content( get_current_user() );
+    echo Sensei()->course->load_user_courses_content( wp_get_current_user() );
 
 } // sensei_the_my_courses_content
