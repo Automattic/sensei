@@ -460,4 +460,4 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
  * for backward compatibility
  * @since 1.9.0
  */
-class WooThems_Sensei_Grading_Main extends Sensei_Grading_Main{}
+class WooThemes_Sensei_Grading_Main extends Sensei_Grading_Main{}

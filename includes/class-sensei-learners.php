@@ -174,9 +174,8 @@ class Sensei_Learners {
 	 * @return void
 	 */
 	public function learners_page() {
-		global $woothemes_sensei;
+
 		// Load Learners data
-		$this->load_data_table_files();
 		$course_id = 0;
 		$lesson_id = 0;
 		if( isset( $_GET['course_id'] ) ) {
