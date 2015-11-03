@@ -35,14 +35,14 @@ do_action( 'sensei_login_form_before' );
 
 <form method="post" name="sensi-login-form" id="loginform" class="login sensei">
 
-<?php
-/**
- *  Executes inside the sensei login form before all the default fields.
- *
- * @since 1.6.2
- */
- 	do_action( 'sensei_login_form_inside_before' );
-?>
+    <?php
+    /**
+     *  Executes inside the sensei login form before all the default fields.
+     *
+     * @since 1.6.2
+     */
+        do_action( 'sensei_login_form_inside_before' );
+    ?>
 
 	<p class="sensei-login-username form-row form-row-wide">
 				<label for="sensei_user_login"><?php _e('Username or Email','woothemes-sensei')?> </label>
@@ -54,16 +54,16 @@ do_action( 'sensei_login_form_before' );
 				<input type="password" name="pwd" id="sensei_user_pass" class="input txt text" value="" size="20">
 	</p>
 
-<?php
-/**
- *  Executes inside the sensei login form after the password field.
- *
- *  You can use the action to add extra form login fields.
- *
- * @since 1.6.2
- */
- 	do_action( 'sensei_login_form_inside_after_password_field' );
-?>
+    <?php
+    /**
+     *  Executes inside the sensei login form after the password field.
+     *
+     *  You can use the action to add extra form login fields.
+     *
+     * @since 1.6.2
+     */
+        do_action( 'sensei_login_form_inside_after_password_field' );
+    ?>
 
 	<p class='sensei-login-submit'>
 		<input type="submit" class="button" name="login" value="<?php _e( 'Login', 'woothemes-sensei' ); ?>" />
@@ -75,21 +75,21 @@ do_action( 'sensei_login_form_before' );
 		</label>
 	</p>
 
-<?php
-/**
- *  Executes inside the sensei login form after all the default fields.
- *
- * @since 1.6.2
- */
- 	do_action( 'sensei_login_form_inside_after' );
-?>
+    <?php
+    /**
+     *  Executes inside the sensei login form after all the default fields.
+     *
+     * @since 1.6.2
+     */
+        do_action( 'sensei_login_form_inside_after' );
+    ?>
 
-	<?php  //all hiddne field below : ?>
 	<?php wp_nonce_field( 'sensei-login' ); ?>
 	<input type="hidden" name="redirect" value="<?php echo esc_url( $redirect ) ?>" />
 	<input type="hidden" name="form" value="sensei-login" />
 
 	<div class="clear"></div>
+
 </form>
 
 <?php
