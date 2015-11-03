@@ -350,7 +350,7 @@ class Sensei_Shortcode_Loader{
 
         }else{
 
-            Sensei_Templates::get_template( 'user/login-form.php' );
+            Sensei()->frontend->sensei_login_form();
 
         }
 

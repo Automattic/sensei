@@ -76,7 +76,7 @@ class WooThemes_Sensei_Frontend {
 		add_action( 'sensei_course_category_main_content', array( $this, 'sensei_course_category_main_content' ), 10 );
 		add_action( 'sensei_lesson_tag_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
-		add_action( 'sensei_login_form', array( $this, 'sensei_login_form' ), 10 );
+
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_meta' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_meta_video' ), 10 );
@@ -1115,10 +1115,9 @@ class WooThemes_Sensei_Frontend {
 	} // End sensei_course_category_main_content()
 
 	public function sensei_login_form() {
-		global $woothemes_sensei;
-
-		?><div id="my-courses">
-			<?php $woothemes_sensei->notices->print_notices(); ?>
+		?>
+		<div id="my-courses">
+			<?php Sensei()->notices->print_notices(); ?>
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">

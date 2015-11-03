@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 do_action( 'sensei_my_courses_before' );
 ?>
 
-<section id="main-course" class="my-courses course-container">
+<section id="main-course" class="course-container">
 
     <?php
     /**
