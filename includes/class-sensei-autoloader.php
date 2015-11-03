@@ -83,6 +83,13 @@ class Sensei_Autoloader {
      */
     public function autoload( $class ){
 
+        // only handle classes with the word `sensei` in it
+        if( ! is_numeric( strpos ( strtolower( $class ), 'sensei') ) ){
+
+            return;
+
+        }
+
         // exit if we didn't provide mapping for this class
         if( isset( $this->class_file_map[ $class ] ) ){
 
