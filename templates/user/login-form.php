@@ -13,13 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 
 if ( is_user_logged_in() ) {
-	return;
+           return;
 }
 
-// get the current page url
-global $wp;
-$current_page_url =  home_url( $wp->request );
-$redirect = $current_page_url;
 ?>
 
 <?php
@@ -45,13 +41,19 @@ do_action( 'sensei_login_form_before' );
     ?>
 
 	<p class="sensei-login-username form-row form-row-wide">
+
 				<label for="sensei_user_login"><?php _e('Username or Email','woothemes-sensei')?> </label>
+
 				<input type="text" name="log" id="sensei_user_login" class="input" value="" size="20">
+
 	</p>
 
 	<p class="sensei-login-password form-row form-row-wide">
+
 				<label for="sensei_user_pass"> <?php _e('Password','woothemes-sensei')?>  </label>
+
 				<input type="password" name="pwd" id="sensei_user_pass" class="input txt text" value="" size="20">
+
 	</p>
 
     <?php
@@ -66,13 +68,21 @@ do_action( 'sensei_login_form_before' );
     ?>
 
 	<p class='sensei-login-submit'>
+
 		<input type="submit" class="button" name="login" value="<?php _e( 'Login', 'woothemes-sensei' ); ?>" />
+
 		<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>"><?php _e( 'Lost your password?', 'woothemes-sensei' ); ?></a>
+
 	</p>
+
 	<p class='remember_me' >
+
 		<label for="rememberme" class="inline">
+
 			<input name="rememberme" type="checkbox" id="rememberme" value="forever" /> <?php _e( 'Remember me', 'woothemes-sensei' ); ?>
+
 		</label>
+
 	</p>
 
     <?php
@@ -85,7 +95,9 @@ do_action( 'sensei_login_form_before' );
     ?>
 
 	<?php wp_nonce_field( 'sensei-login' ); ?>
-	<input type="hidden" name="redirect" value="<?php echo esc_url( $redirect ) ?>" />
+
+	<input type="hidden" name="redirect" value="<?php echo esc_url_raw( sensei_get_current_page_url() ) ?>" />
+
 	<input type="hidden" name="form" value="sensei-login" />
 
 	<div class="clear"></div>

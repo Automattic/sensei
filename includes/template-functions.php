@@ -1085,3 +1085,19 @@ function sensei_the_excerpt(){
     echo sensei_get_excerpt( $post );
 
 }
+
+/**
+ * Get current url on the frontend
+ *
+ * @since 1.9.0
+ *
+ * @global WP $wp
+ * @return string $current_page_url
+ */
+ function sensei_get_current_page_url(){
+
+     global $wp;
+     $current_page_url =  home_url( $wp->request );
+     return $current_page_url;
+
+ }
