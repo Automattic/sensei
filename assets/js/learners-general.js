@@ -48,12 +48,23 @@ jQuery(document).ready( function($) {
         var user_id = jQuery( this ).attr( 'data-user_id' );
         var post_id = jQuery( this ).attr( 'data-post_id' );
         var post_type = jQuery( this ).attr( 'data-post_type' );
-
+        var course_reset = jQuery( this).attr( 'data-course_reset');
         var confirm_message = woo_learners_general_data.remove_generic_confirm;
 
         switch( post_type ) {
             case 'lesson': confirm_message = woo_learners_general_data.remove_from_lesson_confirm; break;
-            case 'course': confirm_message = woo_learners_general_data.remove_from_course_confirm; break;
+            case 'course':
+
+                if ( course_reset == 1 ) {
+
+                    confirm_message = woo_learners_general_data.reset_user_course_confirm;
+                    break;
+
+                } else {
+
+                    confirm_message = woo_learners_general_data.remove_from_course_confirm;
+                    break;
+                }
         }
 
         //this will only be set for users who have purchased a course
@@ -81,6 +92,8 @@ jQuery(document).ready( function($) {
             dataToPost += '&post_id=' + post_id;
             dataToPost += '&post_type=' + post_type;
             dataToPost += '&order_id=' + orderId;
+            dataToPost += '&course_reset=' + course_reset;
+
 
             jQuery.post(
                 ajaxurl,
@@ -90,9 +103,15 @@ jQuery(document).ready( function($) {
                     data : dataToPost
                 },
                 function( response ) {
-                    if( response ) {
+                    if( response && course_reset == 0) {
                         table_row.remove();
-                    }
+                    } else {
+                        table_row.css( "background-color", "#ffffe0").fadeTo( 'fast', 1 );
+                        table_row.delay( 800);
+                        table_row.queue(function (next) {
+                            $(this).css('background-color', 'initial');
+                            next();
+                        });                    }
                 }
             );
         }
