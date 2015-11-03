@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - get_bulk_actions()
  * - bulk_actions()
  */
-class WooThemes_Sensei_List_Table extends WP_List_Table {
+class Sensei_List_Table extends WP_List_Table {
 	public $token;
 
 	/**
@@ -256,3 +256,10 @@ class WooThemes_Sensei_List_Table extends WP_List_Table {
 	} // End bulk_actions()
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_List_Table
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_List_Table extends Sensei_List_Table {}

@@ -29,9 +29,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - setup_post_type_messages()
  * - create_post_type_messages()
  * - enter_title_here()
- * - load_class()
  */
-class WooThemes_Sensei_PostTypes {
+class Sensei_PostTypes {
 	public $token;
 	public $slider_labels;
 	public $role_caps;
@@ -92,7 +91,6 @@ class WooThemes_Sensei_PostTypes {
 		foreach ( $posttypes as $posttype_token => $posttype_name ) {
 
 			// Load the files
-			$this->load_class( $posttype_token );
 			$class_name = 'WooThemes_Sensei_' . $posttype_name;
 			$this->$posttype_token = new $class_name();
 			$this->$posttype_token->token = $posttype_token;
@@ -787,15 +785,11 @@ class WooThemes_Sensei_PostTypes {
 		}
 	}
 
-	/**
-	 * load_class loads in class files
-	 * @since  1.2.0
-	 * @return void
-	 */
-	public function load_class( $class_name = '' ) {
-		if ( '' != $class_name ) {
-			require_once( 'class-woothemes-sensei-' . $class_name . '.php' );
-		} // End If Statement
-	} // End load_class()
-
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_PostTypes
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_PostTypes extends Sensei_PostTypes{}

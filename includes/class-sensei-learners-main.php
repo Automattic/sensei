@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - data_table_footer()
  * - search_button()
  */
-class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
+class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	public $course_id = 0;
 	public $lesson_id = 0;
 	public $view = 'courses';
@@ -686,3 +686,10 @@ class WooThemes_Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	}
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Learners_Main
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Learners_Main extends Sensei_Learners_Main {}

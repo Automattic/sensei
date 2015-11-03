@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - data_table_footer()
  * - search_button()
  */
-class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
+class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 	public $user_id;
 	public $course_id;
 	public $total_lessons;
@@ -677,3 +677,10 @@ class WooThemes_Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_
 	}
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Analysis_Course_List_Table
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Analysis_Course_List_Table extends Sensei_Analysis_Course_List_Table {}

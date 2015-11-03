@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - get_user_answers_feedback()
  * - get_user_question_feedback()
  */
- class WooThemes_Sensei_Quiz {
+ class Sensei_Quiz {
 	public $token;
 	public $meta_fields;
 	public $file;
@@ -1274,3 +1274,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
      } // End sensei_quiz_action_buttons()
 
  } // End Class WooThemes_Sensei_Quiz
+
+/**
+ * Class WooThemes_Sensei_Quiz
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Quiz extends Sensei_Quiz{}

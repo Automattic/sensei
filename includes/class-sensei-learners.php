@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - add_new_learners()
  * - add_learner_notices()
  */
-class WooThemes_Sensei_Learners {
+class Sensei_Learners {
 	public $token;
 	public $name;
 	public $file;
@@ -517,3 +517,10 @@ class WooThemes_Sensei_Learners {
     } // end get_learner_full_name
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Learners
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Learners extends Sensei_Learners{}

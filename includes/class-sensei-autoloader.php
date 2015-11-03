@@ -55,10 +55,7 @@ class Sensei_Autoloader {
 
         $this->class_file_map = array(
 
-            'WooThemes_Sensei' => 'class-woothemes-sensei.php',
-            'WooThemes_Sensei_Updates' => 'class-woothemes-sensei-updates.php',
-
-            'Sensei_Templates'=> 'class-sensei-templates.php',
+            'Sensei_Welcome'=> 'admin/class-sensei-welcome.php' ,
 
             /* Shortcode specific */
             'Sensei_Shortcode_Loader'           => 'shortcodes/class-sensei-shortcode-loader.php',
@@ -87,14 +84,32 @@ class Sensei_Autoloader {
     public function autoload( $class ){
 
         // exit if we didn't provide mapping for this class
-        if( ! isset( $this->class_file_map[ $class ]  ) ){
+        if( isset( $this->class_file_map[ $class ] ) ){
 
+            $file_location = $this->include_path . $this->class_file_map[ $class ];
+            require_once( $file_location);
             return;
 
         }
 
-        $file_location = $this->include_path . $this->class_file_map[ $class ];
-        require_once( $file_location);
+        // check for file in the main includes directory
+        $class_file_path = $this->include_path . 'class-'.str_replace( '_','-', strtolower( $class ) ) . '.php';
+        if( file_exists( $class_file_path ) ){
+
+            require_once( $class_file_path );
+            return;
+        }
+
+        // lastly check legacy types
+        $stripped_woothemes_from_class = str_replace( 'woothemes_','', strtolower( $class ) ); // remove woothemes
+        $legacy_class_file_path = $this->include_path . 'class-'.str_replace( '_','-', strtolower( $stripped_woothemes_from_class ) ) . '.php';
+        if( file_exists( $legacy_class_file_path ) ){
+
+            require_once( $legacy_class_file_path );
+            return;
+        }
+
+        return;
 
     }// end autoload
 

@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - course_info()
  * - course_lessons()
  */
-class WooThemes_Sensei_Course_Results {
+class Sensei_Course_Results {
 	private $course_results_url_base;
 	public $token;
 
@@ -211,3 +211,10 @@ class WooThemes_Sensei_Course_Results {
     }
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Course_Results
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Course_Results extends Sensei_Course_Results{}

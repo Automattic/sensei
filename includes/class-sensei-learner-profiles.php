@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - learner_profile_courses_heading()
  * - learner_profile_user_info()
  */
-class WooThemes_Sensei_Learner_Profiles {
+class Sensei_Learner_Profiles {
 	private $profile_url_base;
 	public $token;
 
@@ -190,3 +190,10 @@ class WooThemes_Sensei_Learner_Profiles {
 
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Learner_Profiles
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Learner_Profiles extends Sensei_Learner_Profiles {}

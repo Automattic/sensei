@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - sensei_handle_login_request()
  * - sensei_process_registration()
  */
-class WooThemes_Sensei_Frontend {
+class Sensei_Frontend {
 	public $token;
 	public $messages;
 	public $data;
@@ -2009,3 +2009,10 @@ class WooThemes_Sensei_Frontend {
     }
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Frontend
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Frontend extends Sensei_Frontend{}

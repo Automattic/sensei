@@ -39,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - grade_quiz_auto()
  * - grade_question_auto()
  */
-class WooThemes_Sensei_Grading {
+class Sensei_Grading {
 	public $token;
 	public $name;
 	public $file;
@@ -946,3 +946,10 @@ class WooThemes_Sensei_Grading {
     } // end grade_question_auto
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Grading
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Grading extends Sensei_Grading{}

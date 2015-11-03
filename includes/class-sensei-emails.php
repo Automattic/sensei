@@ -10,7 +10,7 @@
  * @category	Class
  * @author 		WooThemes
  */
-class WooThemes_Sensei_Emails {
+class Sensei_Emails {
 
 	/**
 	 * @var array Array of email notification classes.
@@ -411,3 +411,10 @@ class WooThemes_Sensei_Emails {
 	}
 
 }//end class
+
+/**
+ * Class WooThemes_Sensei_Emails
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Emails extends Sensei_Emails{}

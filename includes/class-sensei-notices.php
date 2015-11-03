@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - clear_notices()
  */
 
-class Woothemes_Sensei_Notices{
+class Sensei_Notices{
 
 	/**
 	*  @var $notices
@@ -86,3 +86,10 @@ class Woothemes_Sensei_Notices{
 	} // end clear_notices()
 
 } // end Woothemes_Sensei_Notices
+
+/**
+ * Class Woothemes_Sensei_Notices
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class Woothemes_Sensei_Notices extends Sensei_Notices{}

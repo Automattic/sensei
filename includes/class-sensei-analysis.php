@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - report_write_download()
  * - user_search_columns_filter()
  */
-class WooThemes_Sensei_Analysis {
+class Sensei_Analysis {
 	public $token;
 	public $name;
 	public $file;
@@ -691,3 +691,10 @@ class WooThemes_Sensei_Analysis {
 	}
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Analysis
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Analysis extends Sensei_Analysis {}

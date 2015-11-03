@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - set_default_question_type()
  * - update_question_answer_data()
  */
-class WooThemes_Sensei_Updates {
+class Sensei_Updates {
 	public $token = 'woothemes-sensei';
 	public $version;
 	public $updates_run;
@@ -1761,3 +1761,10 @@ class WooThemes_Sensei_Updates {
     }// end enhance_teacher_role
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Updates
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Updates extends Sensei_Updates {}
