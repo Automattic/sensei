@@ -1342,9 +1342,15 @@ class WooThemes_Sensei_Course {
 		    		    	if ( isset( Sensei()->settings->settings[ 'course_author' ] )
                                 && ( Sensei()->settings->settings[ 'course_author' ] ) ) {
 
-		    		    		$active_html .= '<span class="course-author">' . __( 'by ', 'woothemes-sensei' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+		    		    		$active_html .= '<span class="course-author">'
+                                                . __( 'by ', 'woothemes-sensei' )
+                                                . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) )
+                                                . '" title="' . esc_attr( $user_info->display_name ) . '">'
+                                                . esc_html( $user_info->display_name )
+                                                . '</a></span>';
 
 		    		    	} // End If Statement
+
 		    		    	// Lesson count for this author
 		    		    	$lesson_count = Sensei()->course->course_lesson_count( absint( $course_item->ID ) );
 		    		    	// Handle Division by Zero
@@ -1353,7 +1359,7 @@ class WooThemes_Sensei_Course {
 								$lesson_count = 1;
 
 							} // End If Statement
-		    		    	$active_html .= '<span class="course-lesson-count">' . $lesson_count . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ) . '</span>';
+		    		    	$active_html .= '<span class="course-lesson-count">' . $lesson_count . '&nbsp;' .  __( 'Lessons', 'woothemes-sensei' ) . '</span>';
 		    		    	// Course Categories
 		    		    	if ( '' != $category_output ) {
 
@@ -1385,8 +1391,7 @@ class WooThemes_Sensei_Course {
 			    				if ( 0 < absint( count( $course_lessons ) ) && Sensei()->settings->settings['course_completion'] == 'complete' ) {
 
 			    					$active_html .= '<span><input name="course_complete" type="submit" class="course-complete" value="'
-                                        . apply_filters( 'sensei_mark_as_complete_text', __( 'Mark as Complete', 'woothemes-sensei' ) ) . '"/>
-                                        </span>';
+                                        .  __( 'Mark as Complete', 'woothemes-sensei' ) . '"/> </span>';
 
 			    				} // End If Statement
 
@@ -1405,7 +1410,7 @@ class WooThemes_Sensei_Course {
 
 			    				if ( ! $course_purchased ) {
 
-			    					$active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="' . apply_filters( 'sensei_delete_course_text', __( 'Delete Course', 'woothemes-sensei' ) ) . '"/></span>';
+			    					$active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="' .  __( 'Delete Course', 'woothemes-sensei' ) . '"/></span>';
 
 			    				} // End If Statement
 
@@ -1484,7 +1489,7 @@ class WooThemes_Sensei_Course {
 		    		    	// Lesson count for this author
 		    		    	$complete_html .= '<span class="course-lesson-count">'
                                 . Sensei()->course->course_lesson_count( absint( $course_item->ID ) )
-                                . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) )
+                                . '&nbsp;' .  __( 'Lessons', 'woothemes-sensei' )
                                 . '</span>';
 
 		    		    	// Course Categories
@@ -1512,7 +1517,7 @@ class WooThemes_Sensei_Course {
 
 									$results_link = '<a class="button view-results" href="'
                                         . Sensei()->course_results->get_permalink( $course_item->ID )
-                                        . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) )
+                                        . '">' . __( 'View results', 'woothemes-sensei' )
                                         . '</a>';
 								}
 								$complete_html .= apply_filters( 'sensei_results_links', $results_link );
@@ -1565,11 +1570,11 @@ class WooThemes_Sensei_Course {
 		} // End If Statement
 
 		if( $manage ) {
-			$no_active_message = apply_filters( 'sensei_no_active_courses_user_text', __( 'You have no active courses.', 'woothemes-sensei' ) );
-			$no_complete_message = apply_filters( 'sensei_no_complete_courses_user_text', __( 'You have not completed any courses yet.', 'woothemes-sensei' ) );
+			$no_active_message = __( 'You have no active courses.', 'woothemes-sensei' );
+			$no_complete_message = __( 'You have not completed any courses yet.', 'woothemes-sensei' );
 		} else {
-			$no_active_message = apply_filters( 'sensei_no_active_courses_learner_text', __( 'This learner has no active courses.', 'woothemes-sensei' ) );
-			$no_complete_message = apply_filters( 'sensei_no_complete_courses_learner_text', __( 'This learner has not completed any courses yet.', 'woothemes-sensei' ) );
+			$no_active_message =  __( 'This learner has no active courses.', 'woothemes-sensei' );
+			$no_complete_message =  __( 'This learner has not completed any courses yet.', 'woothemes-sensei' );
 		}
 
 		ob_start();
@@ -1593,8 +1598,8 @@ class WooThemes_Sensei_Course {
 		<div id="my-courses">
 
 		    <ul>
-		    	<li><a href="#active-courses"><?php echo apply_filters( 'sensei_active_courses_text', __( 'Active Courses', 'woothemes-sensei' ) ); ?></a></li>
-		    	<li><a href="#completed-courses"><?php echo apply_filters( 'sensei_completed_courses_text', __( 'Completed Courses', 'woothemes-sensei' ) ); ?></a></li>
+		    	<li><a href="#active-courses"><?php  _e( 'Active Courses', 'woothemes-sensei' ); ?></a></li>
+		    	<li><a href="#completed-courses"><?php  _e( 'Completed Courses', 'woothemes-sensei' ); ?></a></li>
 		    </ul>
 
 		    <?php do_action( 'sensei_before_active_user_courses' ); ?>
@@ -1669,7 +1674,7 @@ class WooThemes_Sensei_Course {
 
         do_action( 'sensei_after_learner_course_content', $user );
 
-	}
+	} // end load_user_courses_content
 
     /**
      * Returns a list of all courses
