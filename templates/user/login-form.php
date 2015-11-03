@@ -11,11 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category    Templates
  * @version     1.9.0
  */
-
-if ( is_user_logged_in() ) {
-           return;
-}
-
 ?>
 
 <?php

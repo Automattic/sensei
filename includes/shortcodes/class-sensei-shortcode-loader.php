@@ -343,7 +343,17 @@ class Sensei_Shortcode_Loader{
         $shortcode_override = 'usercourses';
 
         ob_start();
-        Sensei_Templates::get_template( 'user/my-courses.php' );
+
+        if( is_user_logged_in() ){
+
+            Sensei_Templates::get_template( 'user/my-courses.php' );
+
+        }else{
+
+            Sensei_Templates::get_template( 'user/login-form.php' );
+
+        }
+
         $content = ob_get_clean();
         return $content;
 

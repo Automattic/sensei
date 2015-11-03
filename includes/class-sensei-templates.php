@@ -491,6 +491,33 @@ class Sensei_Templates {
 
     }// end sensei_deprecate_lesson_single_main_content_hook
 
+    /**
+     * hook in the deprecated sensei_login_form hook for backwards
+     * compatibility
+     *
+     * @since 1.9.0
+     * @deprecated since 1.9.0
+     */
+    public static function deprecate_sensei_login_form_hook(){
+
+        sensei_do_deprecated_action( 'sensei_login_form', '1.9.0', 'sensei_login_form_before' );
+
+    } // end deprecate_sensei_login_form_hook
+
+    /**
+     * Fire the sensei_complete_course action.
+     *
+     * This is just a backwards compatible function to add the action
+     * to a template. This should not be used as the function from this
+     * hook will be added directly to my-courses page via one of the hooks there.
+     *
+     * @since 1.9.0
+     */
+    public static function  fire_sensei_complete_course_hook(){
+
+        do_action( 'sensei_complete_course' );
+
+    } //fire_sensei_complete_course_hook
 
 
 }//end class

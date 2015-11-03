@@ -312,3 +312,28 @@ add_action( 'sensei_course_results_content_inside_before', array( 'WooThemes_Sen
 // @since 1.9.0
 // Fire the course image hook within the course results page
 add_action( 'sensei_course_results_content_inside_before', array( 'WooThemes_Sensei_Course_Results', 'fire_course_image_hook') );
+
+
+/**********************************
+ *
+ *
+ * My Courses template hooks
+ *
+ *
+ ********************************/
+// @since 1.9.0
+// fire the sensei complete course action on the my courses template
+add_action( 'sensei_my_courses_before', array( 'Sensei_Templates', 'fire_sensei_complete_course_hook' ) );
+
+
+/**********************************
+ *
+ *
+ * Login form template hooks
+ *
+ *
+ ********************************/
+// @since 1.9.0
+// deprecate the sensei_login_form hok which was use to load the login form.
+// This now loads independent of the my-courses template which helps keep templates free from logic
+add_action( 'sensei_login_form_before', array( 'Sensei_Templates', 'deprecate_sensei_login_form_hook' ) );
