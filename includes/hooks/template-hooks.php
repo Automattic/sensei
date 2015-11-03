@@ -278,11 +278,11 @@ add_action('sensei_learner_profile_content_before', array( 'WooThemes_Sensei_Lea
 
 // @since 1.9.0
 // do the sensei complete course action on the learner profiles page.
-add_action('sensei_learner_profile_content_before', array( 'WooThemes_Sensei_Learner_Profiles', 'complete_course_action_hook' ) );
+add_action('sensei_learner_profile_content_before', array( 'Sensei_Templates', 'fire_sensei_complete_course_hook' ) );
 
 // @since 1.9.0
 // fire the frontend messages hook before the profile content
-add_action('sensei_learner_profile_inside_content_before', array( 'WooThemes_Sensei_Learner_Profiles', 'frontend_messages_hook' ) );
+add_action('sensei_learner_profile_inside_content_before', array( 'Sensei_Templates', 'fire_frontend_messages_hook' ) );
 
 
 /**********************************
@@ -325,6 +325,17 @@ add_action( 'sensei_course_results_content_inside_before', array( 'WooThemes_Sen
 // fire the sensei complete course action on the my courses template
 add_action( 'sensei_my_courses_before', array( 'Sensei_Templates', 'fire_sensei_complete_course_hook' ) );
 
+// @since 1.9.0
+// fire the sensei frontend messages hook before the my-courses content
+add_action('sensei_my_courses_content_inside_before', array( 'Sensei_Templates', 'fire_frontend_messages_hook' ) );
+
+// @since 1.9.0
+// deprecate the sensei_before_user_course_content hook
+add_action('sensei_my_courses_content_inside_before', array( 'Sensei_Templates', 'deprecate_sensei_before_user_course_content_hook' ) );
+
+// @since 1.9.0
+// deprecate the sensei_after_user_course_content hook
+add_action('sensei_my_courses_content_inside_after', array( 'Sensei_Templates', 'deprecate_sensei_after_user_course_content_hook' ) );
 
 /**********************************
  *

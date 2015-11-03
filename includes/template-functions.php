@@ -1101,3 +1101,15 @@ function sensei_the_excerpt(){
      return $current_page_url;
 
  }
+
+/**
+ * Outputs the content for the my courses page
+ *
+ *
+ * @since 1.9.0
+ */
+function sensei_the_my_courses_content(){
+
+    echo Sensei()->course->load_user_courses_content( get_current_user() );
+
+} // sensei_the_my_courses_content

@@ -23,17 +23,28 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 do_action( 'sensei_my_courses_before' );
 ?>
 
-<section id="main-course" class="course-container">
+<section id="main-course" class="my-courses course-container">
+
     <?php
+    /**
+     * Executes inside just before the Sensei my courses content. This hook
+     * only fires whe a user is logged in.
+     *
+     * @since 1.9.0
+     */
+    do_action( 'sensei_my_courses_content_inside_before' );
+    ?>
 
-    do_action( 'sensei_frontend_messages' );
+    <?php sensei_the_my_courses_content(); ?>
 
-    do_action( 'sensei_before_user_course_content', get_current_user() );
-
-    echo Sensei()->course->load_user_courses_content( get_current_user() , true );
-
-    do_action( 'sensei_after_user_course_content', get_current_user()  );
-
+    <?php
+    /**
+     * Executes inside just after the Sensei my courses content. This hook
+     * only fires whe a user is logged in.
+     *
+     * @since 1.9.0
+     */
+    do_action( 'sensei_my_courses_content_inside_after' );
     ?>
 
 </section>

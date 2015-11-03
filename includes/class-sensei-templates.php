@@ -519,5 +519,42 @@ class Sensei_Templates {
 
     } //fire_sensei_complete_course_hook
 
+    /**
+     * Fire the frontend message hook
+     *
+     * @since 1.9.0
+     */
+    public static function  fire_frontend_messages_hook(){
+
+        do_action( 'sensei_frontend_messages' );
+
+    }// end sensei_complete_course_action
+
+    /**
+     * deprecate the sensei_before_user_course_content hook in favor
+     * of sensei_my_courses_content_inside_before.
+     *
+     * @deprected since 1.9.0
+     */
+    public static function  deprecate_sensei_before_user_course_content_hook(){
+
+        sensei_do_deprecated_action( 'sensei_before_user_course_content','1.9.0', 'sensei_my_courses_content_inside_before' , get_current_user() );
+
+    }// deprecate_sensei_before_user_course_content_hook
+
+    /**
+     * deprecate the sensei_before_user_course_content hook in favor
+     * of sensei_my_courses_content_inside_after hook.
+     *
+     * @deprected since 1.9.0
+     */
+    public static function  deprecate_sensei_after_user_course_content_hook(){
+
+        sensei_do_deprecated_action( 'sensei_after_user_course_content','1.9.0', 'sensei_my_courses_content_inside_after' , get_current_user() );
+
+    }// deprecate_sensei_after_user_course_content_hook
+
+
+
 
 }//end class

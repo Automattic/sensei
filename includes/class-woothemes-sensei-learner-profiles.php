@@ -188,27 +188,5 @@ class WooThemes_Sensei_Learner_Profiles {
 
     }
 
-    /**
-     * Fire the complete course action on to the learner profile template
-     *
-     * @since 1.9.0
-     */
-    public static function  complete_course_action_hook(){
-
-        do_action( 'sensei_complete_course' );
-
-    }// end sensei_complete_course_action
-
-    /**
-     * Fire the frontend message hook
-     *
-     * @since 1.9.0
-     */
-    public static function  frontend_messages_hook(){
-
-        do_action( 'sensei_frontend_messages' );
-
-    }// end sensei_complete_course_action
-
 
 } // End Class
