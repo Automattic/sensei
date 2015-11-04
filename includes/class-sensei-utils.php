@@ -781,7 +781,7 @@ class Sensei_Utils {
 				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
 				if ( $has_questions ) {
 					$status = 'passed'; // Force a pass
-					$metadata['grade'] = 100;
+					$metadata['grade'] = 0;
 				}
 				else {
 					$status = 'complete';
@@ -1283,7 +1283,7 @@ class Sensei_Utils {
 			$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
 
 			// Quiz grade
-			$quiz_grade = false;
+			$quiz_grade = 0;
 			if ( $user_lesson_status ) {
 				$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
 			}

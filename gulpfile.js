@@ -25,7 +25,7 @@ var paths = {
 };
 
 gulp.task( 'clean', function( cb ) {
-	del( ['assets/js/*.min.js','assets/js/admin/*.min.js', 'assets/css/*.min.css'], cb );
+	return del( ['assets/js/*.min.js','assets/js/admin/*.min.js', 'assets/css/*.min.css'], cb );
 });
 
 gulp.task( 'default', [ 'CSS','JS','adminJS' ] );
