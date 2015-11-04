@@ -929,7 +929,8 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = ''  ){
 function sensei_the_single_lesson_meta(){
 
     // if the lesson meta is included within theme load that instead of the function content
-    if( ! empty( Sensei_Templates::locate_template( 'single-lesson/lesson-meta.php' ) ) ){
+    $template = Sensei_Templates::locate_template( 'single-lesson/lesson-meta.php' );
+    if( ! empty( $template ) ){
 
         Sensei_Templates::get_template( 'single-lesson/lesson-meta.php' );
 
