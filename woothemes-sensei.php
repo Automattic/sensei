@@ -45,7 +45,7 @@ Domain path: /lang/
      */
     function Sensei(){
 
-        return WooThemes_Sensei::instance();
+        return Sensei::instance();
 
     }
 

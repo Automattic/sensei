@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - add_contextual_help()
  * - pages_array()
  */
-class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
+class Sensei_Settings extends Sensei_Settings_API {
 
 	/**
 	 * Constructor.
@@ -694,3 +694,10 @@ class WooThemes_Sensei_Settings extends WooThemes_Sensei_Settings_API {
 
     }//end  flush_cache
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Settings
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Settings extends Sensei_Settings{}

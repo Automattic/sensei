@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - course_lessons_completed()
  * - course_author_lesson_count()
  */
-class WooThemes_Sensei_Course {
+class Sensei_Course {
 	public $token;
 	public $meta_fields;
 
@@ -2723,3 +2723,10 @@ class WooThemes_Sensei_Course {
 
     }
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Course
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Course extends Sensei_Course{}

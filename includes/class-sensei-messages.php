@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * - __construct()
  */
-class WooThemes_Sensei_Messages {
+class Sensei_Messages {
 	public $token;
 	public $post_type;
 	public $meta_fields;
@@ -580,3 +580,10 @@ class WooThemes_Sensei_Messages {
     } // End sensei_single_title()
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Messages
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Messages extends Sensei_Messages{}

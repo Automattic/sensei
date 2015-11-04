@@ -65,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - enqueue_scripts()
  * - enqueue_styles()
  */
-class WooThemes_Sensei_Settings_API {
+class Sensei_Settings_API {
 	public $token;
 	public $page_slug;
 	public $name;
@@ -248,7 +248,7 @@ class WooThemes_Sensei_Settings_API {
 	 * @access protected
 	 * @since  1.0.0
 	 * @param  array $data
-	 * @return array or string
+	 * @return callable,  array or string
 	 */
 	protected function determine_method ( $data, $type = 'form' ) {
 		$method = '';
@@ -914,3 +914,10 @@ class WooThemes_Sensei_Settings_API {
 		}
 	} // End enqueue_field_styles()
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Settings_API
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Settings_API extends Sensei_Settings_API{}

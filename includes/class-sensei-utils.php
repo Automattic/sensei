@@ -73,7 +73,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - get_user_data()
  * - delete_user_data()
  */
-class WooThemes_Sensei_Utils {
+class Sensei_Utils {
 	/**
 	 * Get the placeholder thumbnail image.
 	 * @access  public
@@ -2241,3 +2241,10 @@ class WooThemes_Sensei_Utils {
     }
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Utils
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Utils extends Sensei_Utils{}

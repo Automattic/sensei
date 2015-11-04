@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - add_new_learners()
  * - add_learner_notices()
  */
-class WooThemes_Sensei_Learners {
+class Sensei_Learners {
 	public $token;
 	public $name;
 	public $file;
@@ -174,9 +174,8 @@ class WooThemes_Sensei_Learners {
 	 * @return void
 	 */
 	public function learners_page() {
-		global $woothemes_sensei;
+
 		// Load Learners data
-		$this->load_data_table_files();
 		$course_id = 0;
 		$lesson_id = 0;
 		if( isset( $_GET['course_id'] ) ) {
@@ -517,3 +516,10 @@ class WooThemes_Sensei_Learners {
     } // end get_learner_full_name
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Learners
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Learners extends Sensei_Learners{}

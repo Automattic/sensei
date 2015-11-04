@@ -39,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - grade_quiz_auto()
  * - grade_question_auto()
  */
-class WooThemes_Sensei_Grading {
+class Sensei_Grading {
 	public $token;
 	public $name;
 	public $file;
@@ -189,10 +189,8 @@ class WooThemes_Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_default_view() {
-		global $woothemes_sensei;
-		// Load Grading data
-		$this->load_data_table_files();
 
+		// Load Grading data
 		if( !empty( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 		}
@@ -206,6 +204,7 @@ class WooThemes_Sensei_Grading {
 			$view = esc_html( $_GET['view'] );
 		}
 		$sensei_grading_overview = $this->load_data_object( 'Main', compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
+
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
@@ -230,9 +229,8 @@ class WooThemes_Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_user_quiz_view() {
-		global $woothemes_sensei;
+
 		// Load Grading data
-		$this->load_data_table_files();
 		$user_id = 0;
 		$quiz_id = 0;
 		if( isset( $_GET['user'] ) ) {
@@ -946,3 +944,10 @@ class WooThemes_Sensei_Grading {
     } // end grade_question_auto
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Grading
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Grading extends Sensei_Grading{}

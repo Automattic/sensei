@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - data_table_header()
  * - data_table_footer()
  */
-class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
+class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	public $user_id;
 	public $course_id;
 	public $lesson_id;
@@ -454,3 +454,10 @@ class WooThemes_Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	} // End data_table_footer()
 
 } // End Class
+
+/**
+ * Class WooThems_Sensei_Grading_Main
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Grading_Main extends Sensei_Grading_Main{}

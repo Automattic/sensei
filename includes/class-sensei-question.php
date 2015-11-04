@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * -filter_actions()
  * -get_question_type()
  */
-class WooThemes_Sensei_Question {
+class Sensei_Question {
 	public $token;
 	public $meta_fields;
 
@@ -1008,3 +1008,9 @@ class WooThemes_Sensei_Question {
 
 } // End Class
 
+/**
+ * Class WooThemes_Sensei_Question
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Question extends Sensei_Question{}

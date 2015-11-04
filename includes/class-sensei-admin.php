@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - admin_notice_styles()
  *
  */
-class WooThemes_Sensei_Admin {
+class Sensei_Admin {
 
 	public $token;
 
@@ -1503,3 +1503,10 @@ class WooThemes_Sensei_Admin {
     }// end install_pages
 
 } // End Class
+
+/**
+ * Legacy Class WooThemes_Sensei_Admin
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Admin extends Sensei_Admin{ }

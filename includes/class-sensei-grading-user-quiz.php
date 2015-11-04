@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - build_data_array()
  * - display()
  */
-class WooThemes_Sensei_Grading_User_Quiz {
+class Sensei_Grading_User_Quiz {
 	public $user_id;
 	public $lesson_id;
 	public $quiz_id;
@@ -271,3 +271,10 @@ class WooThemes_Sensei_Grading_User_Quiz {
 	} // End display()
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Grading_User_Quiz
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Grading_User_Quiz extends Sensei_Grading_User_Quiz{}

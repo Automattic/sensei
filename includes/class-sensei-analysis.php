@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - report_write_download()
  * - user_search_columns_filter()
  */
-class WooThemes_Sensei_Analysis {
+class Sensei_Analysis {
 	public $token;
 	public $name;
 	public $file;
@@ -214,7 +214,6 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_default_view( $type ) {
 		global $woothemes_sensei;
 		// Load Analysis data
-		$this->load_data_table_files();
 		$sensei_analysis_overview = $this->load_data_object( 'Overview', $type );
 		// Wrappers
 		do_action( 'analysis_before_container' );
@@ -251,7 +250,6 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_user_profile_view( $user_id ) {
 		global $woothemes_sensei;
 		// Load Analysis data
-		$this->load_data_table_files();
 		$sensei_analysis_user_profile = $this->load_data_object( 'User_Profile', $user_id );
 		// Wrappers
 		do_action( 'analysis_before_container' );
@@ -279,7 +277,6 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_course_view( $course_id ) {
 		global $woothemes_sensei;
 		// Load Analysis data
-		$this->load_data_table_files();
 		$sensei_analysis_course = $this->load_data_object( 'Course', $course_id );
 		// Wrappers
 		do_action( 'analysis_before_container' );
@@ -307,7 +304,6 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_user_course_view( $course_id, $user_id ) {
 		global $woothemes_sensei;
 		// Load Analysis data
-		$this->load_data_table_files();
 		$sensei_analysis_user_course = $this->load_data_object( 'Course', $course_id, $user_id );
 		// Wrappers
 		do_action( 'analysis_before_container' );
@@ -335,7 +331,6 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_course_users_view( $course_id ) {
 		global $woothemes_sensei;
 		// Load Analysis data
-		$this->load_data_table_files();
 		$sensei_analysis_course_users = $this->load_data_object( 'Course', $course_id );
 		// Wrappers
 		do_action( 'analysis_before_container' );
@@ -363,7 +358,6 @@ class WooThemes_Sensei_Analysis {
 	public function analysis_lesson_users_view( $lesson_id ) {
 		global $woothemes_sensei;
 		// Load Analysis data
-		$this->load_data_table_files();
 		$sensei_analysis_lesson_users = $this->load_data_object( 'Lesson', $lesson_id );
 		// Wrappers
 		do_action( 'analysis_before_container' );
@@ -652,7 +646,6 @@ class WooThemes_Sensei_Analysis {
 	 * @return object                 class instance object
 	 */
 	public function load_report_object( $name = '', $data = 0, $optional_data = null ) {
-		$this->load_data_table_files();
 		$object_name = 'WooThemes_Sensei_Analysis_' . $name . '_List_Table';
 		if ( is_null($optional_data) ) {
 			$sensei_analysis_report_object = new $object_name( $data );
@@ -691,3 +684,10 @@ class WooThemes_Sensei_Analysis {
 	}
 
 } // End Class
+
+/**
+ * Class WooThemes_Sensei_Analysis
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class WooThemes_Sensei_Analysis extends Sensei_Analysis {}
