@@ -946,6 +946,8 @@ class WooThemes_Sensei_Lesson {
 						    		$html .= '</div>';
 						    	}
 
+								$html .= apply_filters( 'sensei_edit_question_before_question_media', '', $question_id );
+
 						    	// Question media
 						    	$html .= '<div>';
 							    	$html .= '<label for="question_' . $question_counter . '_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
@@ -1048,6 +1050,8 @@ class WooThemes_Sensei_Lesson {
 						$html .= '<p class="add_question_random_order">';
 			    			$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
 			    		$html .= '</p>';
+
+						$html .= apply_filters( 'sensei_add_question_before_question_media', '' );
 
 			    		// Question media
 						$html .= '<p>';
@@ -1395,6 +1399,7 @@ class WooThemes_Sensei_Lesson {
 							$right_answer_id = $this->get_answer_id( $right_answers[ $i ] );
 							// Right Answer
 							$right_answer = '<label class="answer" for="question_' . $question_counter . '_right_answer_' . $i . '"><span>' . __( 'Right:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . $question_counter . '_right_answer_' . $i . '" name="question_right_answers[]" value="' . esc_attr( $right_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+							$right_answer = apply_filters( 'sensei_question_right_answer_input', $right_answer, $question_id );
 							if( $question_id ) {
 								$answers[ $right_answer_id ] = $right_answer;
 							} else {
@@ -1416,6 +1421,7 @@ class WooThemes_Sensei_Lesson {
 				    		if ( !isset( $wrong_answers[ $i ] ) ) { $wrong_answers[ $i ] = ''; }
 				    		$answer_id = $this->get_answer_id( $wrong_answers[ $i ] );
 				    		$wrong_answer = '<label class="answer" for="question_' . $question_counter . '_wrong_answer_' . $i . '"><span>' . __( 'Wrong:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . $question_counter . '_wrong_answer_' . $i . '" name="question_wrong_answers[]" value="' . esc_attr( $wrong_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+							$wrong_answer = apply_filters( 'sensei_question_wrong_answer_input', $wrong_answer, $question_id );
 				    		if( $question_id ) {
 					    		$answers[ $answer_id ] = $wrong_answer;
 					    	} else {
@@ -2450,6 +2456,9 @@ class WooThemes_Sensei_Lesson {
   		if ( 0 < $question_id ) {
   			$return = $question_id;
   		} // End If Statement
+
+		do_action( 'sensei_after_save_question', $question_id, $data );
+
   		return $return;
   	} // End lesson_question_save()
 

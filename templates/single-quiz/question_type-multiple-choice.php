@@ -161,8 +161,12 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	}
 }
 
+$question_type = $woothemes_sensei->question->get_question_type( $question_id );
+$question_classes = apply_filters( 'sensei_frontend_question_classes', array( $question_type ), $question_id );
+$question_class = implode( ' ', $question_classes );
+
 ?>
-<li class="multiple-choice">
+<li class="<?php echo esc_attr( $question_class ); ?>">
 	<span class="question"><?php echo apply_filters( 'sensei_question_title', esc_html( $question_text ) ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
 	<?php echo $question_description; ?>
 	<?php if( $question_media_link ) { ?>
@@ -185,7 +189,7 @@ if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $r
 	<?php } ?>
 	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
 	<ul class="answers">
-	<?php 
+	<?php
 	$count = 0;
 	foreach( $answers_sorted as $id => $answer ) {
 		$checked = '';
