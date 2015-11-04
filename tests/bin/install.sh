@@ -17,7 +17,7 @@ WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
 if [[ $WP_VERSION =~ [0-9]+\.[0-9]+(\.[0-9]+)? ]]; then
 	WP_TESTS_TAG="tags/$WP_VERSION"
 else
-	download http://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json
+	wget  -O /tmp/wp-latest.json "http://api.wordpress.org/core/version-check/1.7/"
 	grep '[0-9]+\.[0-9]+(\.[0-9]+)?' /tmp/wp-latest.json
 	LATEST_VERSION=$(grep -o '"version":"[^"]*' /tmp/wp-latest.json | sed 's/"version":"//')
 	if [[ -z "$LATEST_VERSION" ]]; then
