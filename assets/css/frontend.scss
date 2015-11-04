@@ -34,7 +34,6 @@ a.sensei-certificate-link {
 	float: right;
 	margin-left: .236em;
 	padding: .382em 1em;
-	@include border_radius(5px);
 	color: #fff;
 	font-weight: bold;
 	text-decoration: none;
@@ -71,7 +70,6 @@ a.sensei-certificate-link {
 			font-style: normal;
 			font-weight: bold;
 			color: darken($color_body, 20%);
-			@include border_radius(300px);
 		}
 	}
 	.entry-actions  {
@@ -160,7 +158,6 @@ a.sensei-certificate-link {
 .course, .course-lessons, .course-container {
 	.status  {
 		padding: .382em 1em;
-		@include border_radius(5px);
 		color: #fff;
 		font-weight: bold;
 		background: darken($bg_dark, 5%);
@@ -302,7 +299,6 @@ a.sensei-certificate-link {
 						width: 100%;
 						background: #FFF;
 						border: 1px solid;
-						@include border_radius();
 						padding: 10px;
 						font-size: 85%;
 						text-align: left;
@@ -662,8 +658,9 @@ section.entry span.course-price { padding-left: 10px; }
 		clear: both;
 		margin: 1.387em 0 1.618em 0;
 		padding: 1em 1.618em;
-		border:none!important;
-		@include border_radius(5px);
+		border: none;
+		border-left: 5px solid;	
+		background: rgba(0,0,0,0.05);
 		&:before  {
 			@include iconbefore();
 			font-size: 1.387em;
@@ -672,34 +669,20 @@ section.entry span.course-price { padding-left: 10px; }
 		}
 		a  {
 			text-decoration: underline;
-			&:hover  {
-				text-decoration: none;
-			}
 		}
 		&.alert {
-			background:#ffd9c8;
+			border-color: #ed6c6c;
 			&:before  {
 				content: '\f071';
 				color: $error;
 			}
-			a  {
-				color: darken($error, 10%);
-				&:hover  {
-					color: darken($error, 15%);
-				}
 			}
 		}
 		&.download, &.tick {
-			background: #edfcd5;
+			border-color: #35B748
 			&:before  {
 				content: '\f019';
 				color: $success;
-			}
-			a  {
-				color: darken($success, 10%);;
-				&:hover  {
-					color: darken($success, 15%);
-				}
 			}
 		}
 		&.tick {
@@ -708,28 +691,22 @@ section.entry span.course-price { padding-left: 10px; }
 			}
 		}
 		&.info {
-			background:#eee;
+			border-color: #52a8e8;
 			&:before  {
 				content: '\f05a';
 			}
-			a  {
-				color: darken($color_body, 10%);;
-				&:hover  {
-					color: darken($color_body, 15%);
-				}
-			}
-			&.info-special {
-				background:#dbf1ff;
+		&.info-special {
+				border-color: #52a8e8;
 			}
 		}
 		&.note {
-			background:#fef6d2;
+			border-color: #fef6d2;
 			&:before  {
 				content: '\f0f6';
 			}
 		}
 		&.normal {
-			background:#eee; padding:9px 15px;
+			border-color: #eee;
 		}
 		.view-quiz  {
 			float: right;
@@ -763,8 +740,6 @@ section.entry span.course-price { padding-left: 10px; }
 		@include borderbox();
 		white-space: nowrap;
 		-webkit-appearance: none;
-
-		@include border_radius(5px);
 		background: $color_links;
 		-webkit-box-shadow: none;
 		   -moz-box-shadow: none;

@@ -197,8 +197,6 @@ class WooThemes_Sensei_Admin {
             <div id="message" class="updated sensei-message sensei-connect">
                 <div class="squeezer">
                     <h4><?php _e( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'woothemes-sensei' ); ?></h4>
-                    <p><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">Tweet</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
                 </div>
             </div>
             <?php
