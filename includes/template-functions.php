@@ -986,7 +986,7 @@ function sensei_the_single_lesson_meta(){
  *
  * @uses get_header
  *
- * since 1.9.0
+ * @since 1.9.0
  */
 function get_sensei_header(){
 
@@ -1011,7 +1011,7 @@ function get_sensei_header(){
  *
  * @uses get_footer
  *
- * since 1.9.0
+ * @since 1.9.0
  */
 function get_sensei_footer(){
 
