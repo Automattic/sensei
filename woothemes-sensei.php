@@ -45,7 +45,7 @@ Domain path: /lang/
      */
     function Sensei(){
 
-        return Sensei::instance();
+        return Sensei_Main::instance();
 
     }
 

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author WooThemes
  * @since 1.0.0
  */
-class Sensei {
+class Sensei_Main {
 
     /**
      * @var file
@@ -1307,3 +1307,10 @@ class Sensei {
     <?php }// end function
 
 } // End Class
+
+/**
+ * Class Woothemes_Sensei
+ * for backward compatibility
+ * @since 1.9.0
+ */
+class Woothemes_Sensei extends Sensei_Main{ }

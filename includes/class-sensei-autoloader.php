@@ -55,9 +55,19 @@ class Sensei_Autoloader {
 
         $this->class_file_map = array(
 
+            /**
+             * Main Sensei class
+             */
+            'Sensei_Main' => 'class-sensei.php',
+
+            /**
+             * Admin
+             */
             'Sensei_Welcome'=> 'admin/class-sensei-welcome.php' ,
 
-            /* Shortcode specific */
+            /**
+             * Shortcodes
+             */
             'Sensei_Shortcode_Loader'           => 'shortcodes/class-sensei-shortcode-loader.php',
             'Sensei_Shortcode_Interface'        => 'shortcodes/interface-sensei-shortcode.php',
             'Sensei_Shortcode_Featured_Courses' => 'shortcodes/class-sensei-shortcode-featured-courses.php',
