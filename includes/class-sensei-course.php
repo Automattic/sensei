@@ -901,7 +901,7 @@ class Sensei_Course {
 
         if( $return ){
 
-            return html;
+            return $html;
 
         }else{
 
