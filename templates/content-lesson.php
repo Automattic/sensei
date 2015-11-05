@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <p class="lesson-excerpt">
 
-                <?php Woothemes_Sensei_Lesson::the_lesson_excerpt( get_post() );  ?>
+                <?php sensei_the_lesson_excerpt(); ?>
 
             </p>
 

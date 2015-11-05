@@ -3611,23 +3611,6 @@ class Sensei_Lesson {
     } // sensei_course_archive_header()
 
     /**
-     * Returns the the lesson excerpt.
-     *
-     * This function will not wrap the the excerpt with <p> tags.
-     * For the p tags call Sensei_Lesson::lesson_excerpt( $lesson)
-     *
-     * @since 1.9.0
-     * @access public
-     * @param $lesson
-     * @return string
-     */
-    public static function the_lesson_excerpt( $lesson = null ) {
-
-        echo self::lesson_excerpt( $lesson, false );
-
-    }// End lesson_excerpt()
-
-    /**
      * Output the title for the single lesson page
      *
      * @global $post

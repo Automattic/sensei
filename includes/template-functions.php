@@ -1145,3 +1145,32 @@ function sensei_load_template_part( $slug, $name ){
     Sensei_Templates::get_part( $slug, $name );
 
 }
+
+/**
+ * Returns the the lesson excerpt.
+ *
+ * This function will not wrap the the excerpt with <p> tags.
+ * For the p tags call Sensei_Lesson::lesson_excerpt( $lesson)
+ *
+ * This function will only work for the lesson post type. All other post types will
+ * be ignored.
+ *
+ * @since 1.9.0
+ * @access public
+ * @param string $lesson_id
+ */
+function sensei_the_lesson_excerpt( $lesson_id = '' ) {
+
+    if( empty( $lesson_id )){
+
+        $lesson_id = get_the_ID();
+
+    }
+
+    if( 'lesson' != get_post_type( $lesson_id ) ){
+        return;
+    }
+
+    echo Sensei_Lesson::lesson_excerpt( get_post( $lesson_id ), false );
+
+}// End lesson_excerpt()
