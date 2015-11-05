@@ -2909,13 +2909,19 @@ class Sensei_Lesson {
 	/**
 	 * Returns the the lesson excerpt.
 	 *
-	 * @access public
+	 * @param WP_Post $lesson
+     * @param bool $add_p_tags should the excerpt be wrapped by calling wpautop()
 	 * @return string
 	 */
-	public static function lesson_excerpt( $lesson = null ) {
+	public static function lesson_excerpt( $lesson = null, $add_p_tags = true ) {
 		$html = '';
 		if ( is_a( $lesson, 'WP_Post' ) && 'lesson' == $lesson->post_type ) {
-			$html = wpautop( sensei_get_excerpt( $lesson ) );
+
+            $excerpt =  sensei_get_excerpt( $lesson );
+
+            // if $add_p_tags true wrap with <p> else return the excerpt as is
+            $html =  $add_p_tags ? wpautop( $excerpt ) : $excerpt;
+
 		}
 		return apply_filters( 'sensei_lesson_excerpt', $html );
 
@@ -3607,6 +3613,9 @@ class Sensei_Lesson {
     /**
      * Returns the the lesson excerpt.
      *
+     * This function will not wrap the the excerpt with <p> tags.
+     * For the p tags call Sensei_Lesson::lesson_excerpt( $lesson)
+     *
      * @since 1.9.0
      * @access public
      * @param $lesson
@@ -3614,9 +3623,9 @@ class Sensei_Lesson {
      */
     public static function the_lesson_excerpt( $lesson = null ) {
 
-        echo self::lesson_excerpt( $lesson );
+        echo self::lesson_excerpt( $lesson, false );
 
-    } // End lesson_excerpt()
+    }// End lesson_excerpt()
 
     /**
      * Output the title for the single lesson page
