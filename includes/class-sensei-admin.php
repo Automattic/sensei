@@ -87,7 +87,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	public function admin_menu() {
-		global $woothemes_sensei, $menu;
+		global $menu;
 		$menu_cap = '';
 		if( current_user_can( 'manage_sensei' ) ) {
 			$menu_cap = 'manage_sensei';
@@ -99,7 +99,7 @@ class Sensei_Admin {
 
 		if( $menu_cap ) {
 			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
-			$main_page = add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei' , array( $woothemes_sensei->analysis, 'analysis_page' ) , '', '50' );
+			$main_page = add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei' , array( Sensei()->analysis, 'analysis_page' ) , '', '50' );
 		}
 
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
@@ -396,13 +396,13 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	function admin_notices_styles() {
-		global $woothemes_sensei;
+
 		// Installed notices
 	    if ( 1 == get_option( 'sensei_installed' ) ) {
 
 	    	wp_enqueue_style( 'sensei-activation', plugins_url(  '/assets/css/activation.css', dirname( __FILE__ ) ), '', Sensei()->version );
 
-	    	if (get_option('skip_install_sensei_pages')!=1 && $woothemes_sensei->get_page_id('course')<1 && !isset($_GET['install_sensei_pages']) && !isset($_GET['skip_install_sensei_pages'])) {
+	    	if (get_option('skip_install_sensei_pages')!=1 && Sensei()->get_page_id('course')<1 && !isset($_GET['install_sensei_pages']) && !isset($_GET['skip_install_sensei_pages'])) {
 	    		add_action( 'admin_notices', array( $this, 'admin_install_notice' ) );
 	    	} elseif ( !isset($_GET['page']) || $_GET['page']!='woothemes-sensei-settings' ) {
 	    		add_action( 'admin_notices', array( $this, 'admin_installed_notice' ) );
@@ -528,10 +528,8 @@ class Sensei_Admin {
 	 */
 	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
 
-        global $woothemes_sensei;
-
-        $old_quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $old_lesson_id );
-        $old_quiz_questions = $woothemes_sensei->lesson->lesson_quiz_questions( $old_quiz_id );
+        $old_quiz_id = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
+        $old_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $old_quiz_id );
 
         // duplicate the generic wp post information
 		$new_quiz = $this->duplicate_post( get_post( $old_quiz_id ), '' );
@@ -724,7 +722,6 @@ class Sensei_Admin {
 	 * @return array        Updated items
 	 */
 	public function glance_items( $items = array() ) {
-		global $woothemes_sensei;
 
 		$types = array( 'course', 'lesson', 'question' );
 
@@ -971,10 +968,9 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	public function course_order_screen() {
-		global $woothemes_sensei;
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?><div id="course-order" class="wrap course-order">
 		<h2><?php _e( 'Order Courses', 'woothemes-sensei' ); ?></h2><?php
@@ -1303,7 +1299,7 @@ class Sensei_Admin {
 	}
 
 	function wp_nav_menu_item_sensei_links_meta_box( $object ) {
-		global $nav_menu_selected_id, $woothemes_sensei;
+		global $nav_menu_selected_id;
 
 		$menu_items = array(
 			'#senseicourses' => __( 'Courses', 'woothemes-sensei' ),

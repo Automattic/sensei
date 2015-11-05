@@ -135,13 +135,13 @@ class Sensei_Learners {
 	 * @return void
 	 */
 	public function load_data_table_files() {
-		global $woothemes_sensei;
+
 		// Load Learners Classes
 		$classes_to_load = array(	'list-table',
 									'learners-main',
 									);
 		foreach ( $classes_to_load as $class_file ) {
-			$woothemes_sensei->load_class( $class_file );
+			Sensei()->load_class( $class_file );
 		} // End For Loop
 	} // End load_data_table_files()
 
@@ -209,12 +209,12 @@ class Sensei_Learners {
 	 * @return void
 	 */
 	public function learners_headers( $args = array( 'nav' => 'default' ) ) {
-		global $woothemes_sensei;
+
 
 		$function = 'learners_' . $args['nav'] . '_nav';
 		$this->$function();
 		?>
-			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 		<?php
 		do_action( 'sensei_learners_after_headers' );
 	} // End learners_headers()
@@ -270,7 +270,7 @@ class Sensei_Learners {
 	}
 
 	public function remove_user_from_post() {
-		global $woothemes_sensei;
+
 
 		$return = '';
 
@@ -330,7 +330,7 @@ class Sensei_Learners {
 	}
 
 	public function json_search_users() {
-        global $woothemes_sensei;
+
 
 		check_ajax_referer( 'search-users', 'security' );
 
@@ -355,7 +355,7 @@ class Sensei_Learners {
 
 		if ( $users ) {
 			foreach ( $users as $user ) {
-                $full_name = $woothemes_sensei->learners->get_learner_full_name( $user->ID );
+                $full_name = Sensei()->learners->get_learner_full_name( $user->ID );
 
                 if( trim($user->display_name ) == trim( $full_name ) ){
 

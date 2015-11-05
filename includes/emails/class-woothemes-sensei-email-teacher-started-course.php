@@ -42,7 +42,7 @@ class WooThemes_Sensei_Email_Teacher_Started_Course {
 	 * @return void
 	 */
 	function trigger( $learner_id = 0, $course_id = 0 ) {
-		global $woothemes_sensei, $sensei_email_data;
+		global  $sensei_email_data;
 
 		// Get learner user object
 		$this->learner = new WP_User( $learner_id );
@@ -65,7 +65,7 @@ class WooThemes_Sensei_Email_Teacher_Started_Course {
 		$this->recipient = stripslashes( $this->teacher->user_email );
 
 		// Send mail
-		$woothemes_sensei->emails->send( $this->recipient, $this->subject, $woothemes_sensei->emails->get_content( $this->template ) );
+		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 	}
 }
 

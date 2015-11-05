@@ -91,7 +91,7 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $woothemes_sensei, $per_page;
+		global $per_page;
 
 		// Handle orderby (needs work)
 		$orderby = '';
@@ -208,7 +208,6 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-		global $woothemes_sensei;
 
 		$course_title =  get_the_title( $item->comment_post_ID );
 		$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
@@ -220,7 +219,7 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 			$status_class = 'graded';
 
 			// Use class-woothemes-sensei-utils::sensei_course_user_grade() once converted to use new statuses
-//			$grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $item->comment_post_ID, $this->user_id ) . '%';
+            // $grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $item->comment_post_ID, $this->user_id ) . '%';
 			$course_end_date = $item->comment_date;
 		}
 		else {

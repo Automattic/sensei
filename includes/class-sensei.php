@@ -1066,7 +1066,7 @@ class Sensei_Main {
      * @return  void
      */
     public function sensei_woocommerce_email_course_details( $order ) {
-        global $woocommerce, $woothemes_sensei;
+        global $woocommerce;
 
         // exit early if not wc-completed or wc-processing
         if( 'wc-completed' != $order->post_status
@@ -1270,19 +1270,19 @@ class Sensei_Main {
      * @since 1.8.0
      */
     public function load_modules_class(){
-        global $sensei_modules, $woothemes_sensei;
+        global $sensei_modules;
 
         if( !class_exists( 'Sensei_Modules' )
             &&  'Sensei_Modules' != get_class( $sensei_modules ) ) {
 
             //Load the modules class
             require_once( 'class-sensei-modules.php');
-            $woothemes_sensei->modules = new Sensei_Core_Modules( $this->file );
+            Sensei()->modules = new Sensei_Core_Modules( $this->file );
 
         }else{
             // fallback for people still using the modules extension.
             global $sensei_modules;
-            $woothemes_sensei->modules = $sensei_modules;
+            Sensei()->modules = $sensei_modules;
             add_action( 'admin_notices', array( $this, 'disable_sensei_modules_extension'), 30 );
         }
     }

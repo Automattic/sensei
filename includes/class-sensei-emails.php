@@ -93,11 +93,11 @@ class Sensei_Emails {
 	 * @return string
 	 */
 	function get_from_name() {
-		global $woothemes_sensei;
+
 
 		if ( ! $this->_from_name ) {
-			if( isset( $woothemes_sensei->settings->settings['email_from_name'] ) && '' != $woothemes_sensei->settings->settings['email_from_name'] ) {
-				$this->_from_name = $woothemes_sensei->settings->settings['email_from_name'];
+			if( isset( Sensei()->settings->settings['email_from_name'] ) && '' != Sensei()->settings->settings['email_from_name'] ) {
+				$this->_from_name = Sensei()->settings->settings['email_from_name'];
 			} else {
 				$this->_from_name = get_bloginfo( 'name' );
 			}
@@ -113,11 +113,11 @@ class Sensei_Emails {
 	 * @return string
 	 */
 	function get_from_address() {
-		global $woothemes_sensei;
+
 
 		if ( ! $this->_from_address ) {
-			if( isset( $woothemes_sensei->settings->settings['email_from_address'] ) && '' != $woothemes_sensei->settings->settings['email_from_address'] ) {
-				$this->_from_address = $woothemes_sensei->settings->settings['email_from_address'];
+			if( isset( Sensei()->settings->settings['email_from_address'] ) && '' != Sensei()->settings->settings['email_from_address'] ) {
+				$this->_from_address = Sensei()->settings->settings['email_from_address'];
 			} else {
 				$this->_from_address = get_bloginfo( 'admin_email' );
 			}
@@ -208,7 +208,7 @@ class Sensei_Emails {
 	}
 
 	function load_template( $template = '' ) {
-		global $woothemes_sensei, $email_template;
+		global  $email_template;
 
 		if( ! $template ) return;
 
@@ -231,12 +231,12 @@ class Sensei_Emails {
 	 * @return void
 	 */
 	function learner_graded_quiz( $user_id, $quiz_id, $grade, $passmark ) {
-		global $woothemes_sensei;
+
 
 		$send = false;
 
-		if( isset( $woothemes_sensei->settings->settings['email_learners'] ) ) {
-			if( in_array( 'learner-graded-quiz', (array) $woothemes_sensei->settings->settings['email_learners'] ) ) {
+		if( isset( Sensei()->settings->settings['email_learners'] ) ) {
+			if( in_array( 'learner-graded-quiz', (array) Sensei()->settings->settings['email_learners'] ) ) {
 				$send = true;
 			}
 		} else {
@@ -256,7 +256,7 @@ class Sensei_Emails {
 	 * @return void
 	 */
 	function learner_completed_course( $status = 'in-progress', $user_id = 0, $course_id = 0, $comment_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		if( 'complete' != $status ) {
 			return;
@@ -264,8 +264,8 @@ class Sensei_Emails {
 
 		$send = false;
 
-		if( isset( $woothemes_sensei->settings->settings['email_learners'] ) ) {
-			if( in_array( 'learner-completed-course', (array) $woothemes_sensei->settings->settings['email_learners'] ) ) {
+		if( isset( Sensei()->settings->settings['email_learners'] ) ) {
+			if( in_array( 'learner-completed-course', (array) Sensei()->settings->settings['email_learners'] ) ) {
 				$send = true;
 			}
 		} else {
@@ -285,7 +285,7 @@ class Sensei_Emails {
 	 * @return void
 	 */
 	function teacher_completed_course( $status = 'in-progress', $learner_id = 0, $course_id = 0, $comment_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		if( 'complete' != $status ) {
 			return;
@@ -293,8 +293,8 @@ class Sensei_Emails {
 
 		$send = false;
 
-		if( isset( $woothemes_sensei->settings->settings['email_teachers'] ) ) {
-			if( in_array( 'teacher-completed-course', (array) $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+		if( isset( Sensei()->settings->settings['email_teachers'] ) ) {
+			if( in_array( 'teacher-completed-course', (array) Sensei()->settings->settings['email_teachers'] ) ) {
 				$send = true;
 			}
 		} else {
@@ -314,12 +314,12 @@ class Sensei_Emails {
 	 * @return void
 	 */
 	function teacher_started_course( $learner_id = 0, $course_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		$send = false;
 
-		if( isset( $woothemes_sensei->settings->settings['email_teachers'] ) ) {
-			if( in_array( 'teacher-started-course', (array) $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+		if( isset( Sensei()->settings->settings['email_teachers'] ) ) {
+			if( in_array( 'teacher-started-course', (array) Sensei()->settings->settings['email_teachers'] ) ) {
 				$send = true;
 			}
 		} else {
@@ -342,7 +342,7 @@ class Sensei_Emails {
      * @since 1.9.0
      */
     function teacher_completed_lesson( $learner_id = 0, $lesson_id = 0 ) {
-        global $woothemes_sensei;
+
 
         $send = false;
 
@@ -368,14 +368,14 @@ class Sensei_Emails {
 	 */
 	function teacher_quiz_submitted( $learner_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0, $quiz_grade_type = 'manual' ) {
 
-		global $woothemes_sensei;
+
 
 		$send = false;
 
 		// Only trigger if the quiz was marked as manual grading, or auto grading didn't complete
 		if( 'manual' == $quiz_grade_type || is_wp_error( $grade ) ) {
-			if( isset( $woothemes_sensei->settings->settings['email_teachers'] ) ) {
-				if( in_array( 'teacher-quiz-submitted', (array) $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+			if( isset( Sensei()->settings->settings['email_teachers'] ) ) {
+				if( in_array( 'teacher-quiz-submitted', (array) Sensei()->settings->settings['email_teachers'] ) ) {
 					$send = true;
 				}
 			} else {
@@ -397,12 +397,12 @@ class Sensei_Emails {
 	 * @return void
 	 */
 	function teacher_new_message( $message_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		$send = false;
 
-		if( isset( $woothemes_sensei->settings->settings['email_teachers'] ) ) {
-			if( in_array( 'teacher-new-message', (array) $woothemes_sensei->settings->settings['email_teachers'] ) ) {
+		if( isset( Sensei()->settings->settings['email_teachers'] ) ) {
+			if( in_array( 'teacher-new-message', (array) Sensei()->settings->settings['email_teachers'] ) ) {
 				$send = true;
 			}
 		} else {
@@ -422,12 +422,12 @@ class Sensei_Emails {
 	 * @return void
 	 */
 	function new_message_reply( $comment, $message ) {
-		global $woothemes_sensei;
+
 
 		$send = false;
 
-		if( isset( $woothemes_sensei->settings->settings['email_global'] ) ) {
-			if( in_array( 'new-message-reply', (array) $woothemes_sensei->settings->settings['email_global'] ) ) {
+		if( isset( Sensei()->settings->settings['email_global'] ) ) {
+			if( in_array( 'new-message-reply', (array) Sensei()->settings->settings['email_global'] ) ) {
 				$send = true;
 			}
 		} else {

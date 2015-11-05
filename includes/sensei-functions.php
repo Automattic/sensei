@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 
 function is_sensei() {
-	global $post, $woothemes_sensei;
+	global $post;
 
 	$is_sensei = false;
 
@@ -20,8 +20,8 @@ function is_sensei() {
 
 	if( is_object( $post ) && ! is_wp_error( $post ) ) {
 
-		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
-		$my_courses_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
+		$course_page_id = intval( Sensei()->settings->settings[ 'course_page' ] );
+		$my_courses_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
 
 		if( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) ) ) {
 			$is_sensei = true;

@@ -81,8 +81,8 @@ class Sensei_Utils {
 	 * @return  string The URL to the placeholder thumbnail image.
 	 */
 	public static function get_placeholder_image () {
-		global $woothemes_sensei;
-		return esc_url( apply_filters( 'sensei_placeholder_thumbnail', $woothemes_sensei->plugin_url . 'assets/images/placeholder.png' ) );
+
+		return esc_url( apply_filters( 'sensei_placeholder_thumbnail', Sensei()->plugin_url . 'assets/images/placeholder.png' ) );
 	} // End get_placeholder_image()
 
 	/**
@@ -208,7 +208,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_check_for_activity ( $args = array(), $return_comments = false ) {
 
-		global $woothemes_sensei, $wp_version;
+		global  $wp_version;
 		if ( !$return_comments ) {
 			$args['count'] = true;
 		}
@@ -286,7 +286,7 @@ class Sensei_Utils {
 	 * @return void
 	 */
 	public static function sensei_activity_ids ( $args = array() ) {
-		global $woothemes_sensei;
+
 
 		$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
 		// Need to always use an array, even with only 1 item
@@ -388,7 +388,7 @@ class Sensei_Utils {
 	 * @return void
 	 */
 	public static function sensei_get_activity_value ( $args = array() ) {
-		global $woothemes_sensei;
+
 
 		$activity_value = false;
 		if ( !empty($args['field']) ) {
@@ -752,7 +752,7 @@ class Sensei_Utils {
 	 * @return mixed boolean or comment_ID
 	 */
 	public static function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false ) {
-		global $woothemes_sensei;
+
 
 		if( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
@@ -813,7 +813,7 @@ class Sensei_Utils {
 	 * @return boolean
 	 */
 	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0, $from_course = false ) {
-		global $woothemes_sensei;
+
 
 		if( ! $lesson_id ) return false;
 
@@ -822,7 +822,7 @@ class Sensei_Utils {
 		}
 
 		// Process quiz
-		$lesson_quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
+		$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
 		WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
@@ -851,7 +851,7 @@ class Sensei_Utils {
 	 * @return boolean
 	 */
 	public static function sensei_remove_user_from_course( $course_id = 0, $user_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		if( ! $course_id ) return false;
 
@@ -859,7 +859,7 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		$lesson_ids = $woothemes_sensei->post_types->course->course_lessons( $course_id, 'any', 'ids' );
+		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
 		foreach( $lesson_ids as $lesson_id ) {
 			WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id, true );
@@ -880,12 +880,12 @@ class Sensei_Utils {
 	}
 
 	public static function sensei_get_quiz_questions( $quiz_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		$questions = array();
 
 		if( intval( $quiz_id ) > 0 ) {
-			$questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
+			$questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
 			$questions = WooThemes_Sensei_Utils::array_sort_reorder( $questions );
 		}
 
@@ -893,7 +893,7 @@ class Sensei_Utils {
 	}
 
 	public static function sensei_get_quiz_total( $quiz_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		$quiz_total = 0;
 
@@ -901,7 +901,7 @@ class Sensei_Utils {
 			$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 			$question_grade = 0;
 			foreach( $questions as $question ) {
-				$question_grade = $woothemes_sensei->question->get_question_grade( $question->ID );
+				$question_grade = Sensei()->question->get_question_grade( $question->ID );
 				$quiz_total += $question_grade;
 			}
 		}
@@ -939,7 +939,7 @@ class Sensei_Utils {
 	/**
 	 * Returns the answer_notes for a specific question and user, or sensei_user_answer entry
 	 *
-     * @deprecated since 1.7.5 use $woothemes_sensei->quiz->get_user_question_feedback instead
+     * @deprecated since 1.7.5 use Sensei()->quiz->get_user_question_feedback instead
 	 * @param mixed $question
 	 * @param int $user_id
 	 * @return string
@@ -1102,18 +1102,18 @@ class Sensei_Utils {
 	 * @return integer            Pass mark for course
 	 */
 	public static function sensei_course_pass_grade( $course_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		$course_passmark = 0;
 
 		if( $course_id > 0 ) {
-			$lessons = $woothemes_sensei->post_types->course->course_lessons( $course_id );
+			$lessons = Sensei()->course->course_lessons( $course_id );
 			$lesson_count = 0;
 			$total_passmark = 0;
 			foreach( $lessons as $lesson ) {
 
 				// Get Quiz ID
-				$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson->ID );
+				$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 
 				// Check for a pass being required
 				$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
@@ -1143,7 +1143,7 @@ class Sensei_Utils {
 	 * @return integer            User's total grade
 	 */
 	public static function sensei_course_user_grade( $course_id = 0, $user_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		if( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
@@ -1152,7 +1152,7 @@ class Sensei_Utils {
 		$total_grade = 0;
 
 		if( $course_id > 0 && $user_id > 0 ) {
-			$lessons = $woothemes_sensei->post_types->course->course_lessons( $course_id );
+			$lessons = Sensei()->course->course_lessons( $course_id );
 			$lesson_count = 0;
 			$total_grade = 0;
 			foreach( $lessons as $lesson ) {
@@ -1254,7 +1254,7 @@ class Sensei_Utils {
 	 * @return array              Status code and message
 	 */
 	public static function sensei_user_quiz_status_message( $lesson_id = 0, $user_id = 0, $is_lesson = false ) {
-		global $woothemes_sensei, $current_user;
+		global  $current_user;
 		if( intval( $user_id ) == 0 ) {
 			$user_id = $current_user->ID;
 		}
@@ -1280,7 +1280,7 @@ class Sensei_Utils {
 			$lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
 
 			// Quiz ID
-			$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
+			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 			// Quiz grade
 			$quiz_grade = 0;
@@ -1452,7 +1452,7 @@ class Sensei_Utils {
 	 * @return int
 	 */
 	public static function user_complete_course( $course_id = 0, $user_id = 0 ) {
-		global $woothemes_sensei, $wp_version;
+		global  $wp_version;
 
 		if( $course_id ) {
 			if( ! $user_id ) {
@@ -1461,7 +1461,7 @@ class Sensei_Utils {
 
 			$course_status = 'in-progress';
 			$course_metadata = array();
-			$course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
+			$course_completion = Sensei()->settings->settings[ 'course_completion' ];
 			$lessons_completed = $total_lessons = 0;
 			$lesson_status_args = array(
 					'user_id' => $user_id,
@@ -1470,7 +1470,7 @@ class Sensei_Utils {
 				);
 
 			// Grab all of this Courses' lessons, looping through each...
-			$lesson_ids = $woothemes_sensei->post_types->course->course_lessons( $course_id, 'any', 'ids' );
+			$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 			$total_lessons = count( $lesson_ids );
 				// ...if course completion not set to 'passed', and all lessons are complete or graded,
 				// ......then all lessons are 'passed'
@@ -1613,13 +1613,13 @@ class Sensei_Utils {
 	/**
 	 * Check if a user has completed a lesson or not
 	 *
-	 * @global type $woothemes_sensei
+     * @uses  Sensei()
 	 * @param mixed $lesson lesson_id or sensei_lesson_status entry
 	 * @param int $user_id
 	 * @return boolean
 	 */
 	public static function user_completed_lesson( $lesson = 0, $user_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		if( $lesson ) {
 			$lesson_id = 0;
@@ -1652,7 +1652,7 @@ class Sensei_Utils {
 			if ( 'in-progress' != $user_lesson_status ) {
 				// Check for Passed or Completed Setting
 				// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
-//				$course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
+//				$course_completion = Sensei()->settings->settings[ 'course_completion' ];
 //				if ( 'passed' == $course_completion ) {
 					switch( $user_lesson_status ) {
 						case 'complete':
@@ -1665,7 +1665,7 @@ class Sensei_Utils {
 							// This may be 'completed' depending on...
 							if ( $lesson_id ) {
 								// Get Quiz ID, this won't be needed once all Quiz meta fields are stored on the Lesson
-								$lesson_quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
+								$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 								if ( $lesson_quiz_id ) {
 									// ...the quiz pass setting
 									$pass_required = get_post_meta( $lesson_quiz_id, '_pass_required', true );
@@ -1693,7 +1693,7 @@ class Sensei_Utils {
 	 * @return object
 	 */
 	public static function user_course_status( $course_id = 0, $user_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		if( $course_id ) {
 			if( ! $user_id ) {

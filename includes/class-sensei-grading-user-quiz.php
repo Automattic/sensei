@@ -57,7 +57,7 @@ class Sensei_Grading_User_Quiz {
 		// Get data for the user
 		$questions = $this->build_data_array();
 
-        global $woothemes_sensei;
+
 		$count = 0;
 		$graded_count = 0;
 		$user_quiz_grade_total = 0;
@@ -94,14 +94,14 @@ class Sensei_Grading_User_Quiz {
 
 			$type = Sensei()->question->get_question_type( $question_id );
 
-			$question_answer_notes = $woothemes_sensei->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
+			$question_answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
 
 
-			$question_grade_total = $woothemes_sensei->question->get_question_grade( $question_id );
+			$question_grade_total = Sensei()->question->get_question_grade( $question_id );
 			$quiz_grade_total += $question_grade_total;
 
 			$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-			$user_answer_content = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
+			$user_answer_content = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
 			$type_name = __( 'Multiple Choice', 'woothemes-sensei' );
 			$grade_type = 'manual-grade';
 
@@ -169,7 +169,7 @@ class Sensei_Grading_User_Quiz {
 			$question_title = sprintf( __( 'Question %d: ', 'woothemes-sensei' ), $count ) . $type_name;
 
 			$graded_class = '';
-			$user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
+			$user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
 			$graded_class = 'ungraded';
 			if ( 0 == $question_grade_total && 0 == intval( $user_question_grade ) ) {
 				// Question skips grading

@@ -43,7 +43,7 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 	 * @return void
 	 */
 	function trigger( $message_id = 0 ) {
-		global $woothemes_sensei, $sensei_email_data;
+		global  $sensei_email_data;
 
 		$this->message = get_post( $message_id );
 
@@ -81,7 +81,7 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 		$this->recipient = stripslashes( $this->teacher->user_email );
 
 		// Send mail
-		$woothemes_sensei->emails->send( $this->recipient, $this->subject, $woothemes_sensei->emails->get_content( $this->template ) );
+		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 
 		wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) ) );
 		exit;

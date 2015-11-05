@@ -69,8 +69,8 @@ class Sensei_Messages {
 	} // End __construct()
 
 	public function add_menu_item() {
-		global $woothemes_sensei;
-		if( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) {
+
+		if( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 			add_submenu_page( 'sensei', __( 'Messages', 'woothemes-sensei'),  __( 'Messages', 'woothemes-sensei') , 'edit_courses', 'edit.php?post_type=sensei_message' );
 		}
 	}
@@ -84,7 +84,7 @@ class Sensei_Messages {
 	}
 
 	public function meta_box_content() {
-		global $woothemes_sensei, $post;
+		global  $post;
 
 		$settings = array(
 			array(
@@ -134,7 +134,7 @@ class Sensei_Messages {
 			);
 		}
 
-		$html = $woothemes_sensei->admin->render_settings( $settings, $post->ID, 'message-info' );
+		$html = Sensei()->admin->render_settings( $settings, $post->ID, 'message-info' );
 
 		echo $html;
 	}
@@ -164,7 +164,7 @@ class Sensei_Messages {
 	}
 
 	public function send_message_link( $post_id = 0, $user_id = 0 ) {
-		global $woothemes_sensei, $post;
+		global  $post;
 
         // only show the link for the allowed post types:
         $allowed_post_types = array('lesson', 'course', 'quiz');
@@ -176,7 +176,7 @@ class Sensei_Messages {
 
 		$html = '';
 
-		if( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) {
+		if( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			if( ! is_user_logged_in() ) return;
 

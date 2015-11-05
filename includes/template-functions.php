@@ -13,9 +13,9 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
      * @return void
      */
     function sensei_course_archive_next_link( $type = 'newcourses' ) {
-        global $woothemes_sensei;
+
         $course_pagination_link = get_post_type_archive_link( 'course' );
-        $more_link_text = esc_html( $woothemes_sensei->settings->settings[ 'course_archive_more_link_text' ] );
+        $more_link_text = esc_html( Sensei()->settings->settings[ 'course_archive_more_link_text' ] );
         $html = '<div class="navigation"><div class="nav-next"><a href="' . esc_url( add_query_arg( array( 'paged' => '2', 'action' => $type ), $course_pagination_link ) ). '">' . sprintf( __( '%1$s', 'woothemes-sensei' ), $more_link_text ) . ' <span class="meta-nav"></span></a></div><div class="nav-previous"></div></div>';
 
         return apply_filters( 'course_archive_next_link', $html );
@@ -141,7 +141,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 
 		if ( $prerequisite_complete ) {
 
-			global $post, $current_user, $woocommerce, $woothemes_sensei;
+			global $post, $current_user, $woocommerce;
 
 			$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
 
@@ -163,7 +163,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 			    if ( 0 < $wc_post_id ) {
 
 			        // Get the product
-			        $product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
+			        $product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
 			        if ( ! isset ( $product ) || ! is_object( $product ) ) return;
 			        if ( $product->is_purchasable() ) {
 			            // Check Product Availability
@@ -209,7 +209,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 
 			if ( !is_user_logged_in() ) {
 
-			    $my_courses_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
+			    $my_courses_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
 			    $login_link =  '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>'; ?>
 			    <p class="add-to-cart-login">
 			        <?php echo sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link ); ?>
@@ -259,13 +259,13 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 * @return void
 	 */
 	function sensei_simple_course_price( $post_id ) {
-		global $woothemes_sensei;
+
 		//WooCommerce Pricing
     	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
     	    $wc_post_id = get_post_meta( $post_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
     	    	// Get the product
-    	    	$product = $woothemes_sensei->sensei_get_woocommerce_product_object( $wc_post_id );
+    	    	$product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
 
     	    	if ( isset( $product ) && !empty( $product )  &&  $product->is_purchasable() && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
     	    		<span class="course-price"><?php echo $product->get_price_html(); ?></span>
@@ -295,18 +295,18 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 * @return void
 	 */
 	function sensei_course_archive_filter( $query ) {
-		global $woothemes_sensei;
+
 
 		if ( ! $query->is_main_query() )
         	return;
 
 		// Apply Filter only if on frontend and when course archive is running
-		$course_page_id = intval( $woothemes_sensei->settings->settings[ 'course_page' ] );
+		$course_page_id = intval( Sensei()->settings->settings[ 'course_page' ] );
 
 		if ( ! is_admin() && 0 < $course_page_id && 0 < intval( $query->get( 'page_id' ) ) && $query->get( 'page_id' ) == $course_page_id ) {
 			// Check for pagination settings
-   			if ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) {
-    			$amount = absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] );
+   			if ( isset( Sensei()->settings->settings[ 'course_archive_amount' ] ) && ( 0 < absint( Sensei()->settings->settings[ 'course_archive_amount' ] ) ) ) {
+    			$amount = absint( Sensei()->settings->settings[ 'course_archive_amount' ] );
     		} else {
     			$amount = $query->get( 'posts_per_page' );
     		} // End If Statement
@@ -340,7 +340,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 * @return array $return_values
 	 */
 	function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
-		global $woothemes_sensei;
+
 		$return_values = array();
 		$return_values['prev_lesson'] = 0;
 		$return_values['next_lesson'] = 0;

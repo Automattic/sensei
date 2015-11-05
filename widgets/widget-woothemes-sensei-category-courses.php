@@ -159,7 +159,7 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 	 * @return void
 	 */
 	protected function load_component ( $instance ) {
-		global $woothemes_sensei;
+
 
 		$posts_array = array();
 		$post_args = array(	'post_type' 		=> 'course',
@@ -194,11 +194,11 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 		    		<?php do_action( 'sensei_course_image', $post_id ); ?>
 		    		<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a>
 		    		<br />
-		    		<?php if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) { ?>
+		    		<?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
     					<span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_html( $author_display_name ); ?></a></span>
     					<br />
     				<?php } // End If Statement ?>
-    				<span class="course-lesson-count"><?php echo $woothemes_sensei->post_types->course->course_lesson_count( $post_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
+    				<span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
     				<br />
     				<?php sensei_simple_course_price( $post_id ); ?>
 		    	</li>

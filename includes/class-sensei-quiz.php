@@ -74,7 +74,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	* @return void
 	*/
 	public function update_author( $post_id ){
-		global $woothemes_sensei;
+
 
 		// If this isn't a 'lesson' post, don't update it.
         // if this is a revision don't save it
@@ -89,7 +89,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	    $new_lesson_author_id =  $saved_post->post_author;
 
 	    //get the lessons quiz
-		$lesson_quizzes = $woothemes_sensei->post_types->lesson->lesson_quizzes( $post_id );
+		$lesson_quizzes = Sensei()->lesson->lesson_quizzes( $post_id );
 	    foreach ( (array) $lesson_quizzes as $quiz_item ) {
 
 	    	if( ! $quiz_item ) {
@@ -198,7 +198,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 		}
 
-        global $woothemes_sensei;
+
         // start the lesson before saving the data in case the user has not started the lesson
         $activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
@@ -216,7 +216,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
 
             // update the message showed to user
-            $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
+            Sensei()->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
         }
 
 		return $answers_saved;
@@ -351,14 +351,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
      */
     public function load_global_quiz_data(){
 
-        global $woothemes_sensei, $post, $current_user;
+        global  $post, $current_user;
         $this->data = new stdClass();
 
         // Default grade
         $grade = 0;
 
         // Get Quiz Questions
-        $lesson_quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $post->ID );
+        $lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $post->ID );
 
         $quiz_lesson_id = absint( get_post_meta( $post->ID, '_quiz_lesson', true ) );
 
@@ -372,8 +372,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $quiz_passmark = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
 
         // Get latest quiz answers and grades
-        $lesson_id = $woothemes_sensei->quiz->get_lesson_id( $post->ID );
-        $user_quizzes = $woothemes_sensei->quiz->get_user_answers( $lesson_id, get_current_user_id() );
+        $lesson_id = Sensei()->quiz->get_lesson_id( $post->ID );
+        $user_quizzes = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
         $user_quiz_grade = 0;
         if( isset( $user_lesson_status->comment_ID ) ) {
@@ -423,7 +423,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 */
 	public static function prepare_form_submitted_answers( $unprepared_answers,  $files ){
 
-        global $woothemes_sensei;
+
 		$prepared_answers = array();
 
 		// validate incoming answers
@@ -435,7 +435,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		foreach( $unprepared_answers as $question_id => $answer ) {
 
 			//get the current questions question type
-            $question_type = $woothemes_sensei->question->get_question_type( $question_id );
+            $question_type = Sensei()->question->get_question_type( $question_id );
 
 			// Sanitise answer
 			if( 0 == get_magic_quotes_gpc() ) {
@@ -484,7 +484,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             return false;
         }
 
-        global $woothemes_sensei;
+
 
         //get the users lesson status to make
         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
@@ -494,8 +494,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         }
 
         //get the lesson quiz and course
-        $quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $lesson_id );
-        $course_id = $woothemes_sensei->lesson->get_course_id( $lesson_id );
+        $quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+        $course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
         // reset the transients
         $answers_transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
@@ -520,7 +520,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         // Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
         do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
-        $woothemes_sensei->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
+        Sensei()->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
 
         return ( $deleted_answers && $deleted_grades ) ;
 
@@ -561,13 +561,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          }
 
-         global $post, $woothemes_sensei;
+         global $post;
 
          // Default grade
          $grade = 0;
 
          // Get Quiz ID
-         $quiz_id = $woothemes_sensei->lesson->lesson_quizzes( $lesson_id );
+         $quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
          // Get quiz grade type
          $quiz_grade_type = get_post_meta( $quiz_id, '_quiz_grade_type', true );
@@ -905,7 +905,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         }
 
-        global $woothemes_sensei;
+
         // check if the lesson is started before saving, if not start the lesson for the user
         if ( !( 0 < intval( WooThemes_Sensei_Utils::user_started_lesson( $lesson_id, $user_id) ) ) ) {
             WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );

@@ -230,7 +230,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
      * @return void
 	 */
 	protected function get_row_data( $item ) {
-		global $wp_version, $woothemes_sensei;
+		global $wp_version;
 
 		switch ( $this->view ) {
 			case 'learners' :
@@ -263,7 +263,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 				}
 
-                $title = $woothemes_sensei->learners->get_learner_full_name( $user_activity->user_id );
+                $title = Sensei()->learners->get_learner_full_name( $user_activity->user_id );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
                 // get the learners order for this course if the course was purchased

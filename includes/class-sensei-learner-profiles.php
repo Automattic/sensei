@@ -29,7 +29,7 @@ class Sensei_Learner_Profiles {
 	 * @since  1.4.0
 	 */
 	public function __construct () {
-		global $woothemes_sensei;
+
 
 		// Setup learner profile URL base
 		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'woothemes-sensei') );
@@ -54,9 +54,9 @@ class Sensei_Learner_Profiles {
 	 * @return void
 	 */
 	public function setup_permastruct() {
-		global $woothemes_sensei;
 
-		if( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) {
+
+		if( isset( Sensei()->settings->settings[ 'learner_profile_enable' ] ) && Sensei()->settings->settings[ 'learner_profile_enable' ] ) {
 			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
 			add_rewrite_tag( '%learner_profile%', '([^&]+)' );
 		}
@@ -69,11 +69,11 @@ class Sensei_Learner_Profiles {
 	 * @return string        Modified title
 	 */
 	public function page_title( $title, $sep = null ) {
-		global $wp_query, $woothemes_sensei;
+		global $wp_query;
 		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
 			$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );
 
-            $name = $woothemes_sensei->learners->get_learner_full_name( $learner_user->ID );
+            $name = Sensei()->learners->get_learner_full_name( $learner_user->ID );
 
 			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) . ' ' . $sep . ' ';
 		}
@@ -115,9 +115,9 @@ class Sensei_Learner_Profiles {
 	 * @return void
 	 */
 	public function content() {
-		global $wp_query, $woothemes_sensei, $learner_user, $current_user;
+		global $wp_query,  $learner_user, $current_user;
 
-		if( isset( $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) && $woothemes_sensei->settings->settings[ 'learner_profile_enable' ] ) {
+		if( isset( Sensei()->settings->settings[ 'learner_profile_enable' ] ) && Sensei()->settings->settings[ 'learner_profile_enable' ] ) {
 
 			if( isset( $wp_query->query_vars['learner_profile'] ) ) {
 

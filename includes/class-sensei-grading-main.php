@@ -108,7 +108,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $woothemes_sensei, $per_page, $wp_version;
+		global  $per_page, $wp_version;
 
 		// Handle orderby
 		$orderby = '';
@@ -171,7 +171,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			// Currently not possible to restrict to a single Course, as that requires WP_Comment to support multiple
 			// post_ids (i.e. every lesson within the Course), WP 4.1 ( https://core.trac.wordpress.org/changeset/29808 )
 			if ( version_compare($wp_version, '4.1', '>=') ) {
-				$activity_args['post__in'] = $woothemes_sensei->post_types->course->course_lessons( $this->course_id, 'any', 'ids' );
+				$activity_args['post__in'] = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
 			}
 		}
 		// Sub select to group of learners
@@ -236,7 +236,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-		global $wp_version, $woothemes_sensei;
+		global $wp_version;
 
 		$grade = '';
 		if( 'complete' == $item->comment_approved ) {
@@ -264,7 +264,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			$grade = __( 'N/A', 'woothemes-sensei' );
 		}
 
-        $title = $woothemes_sensei->learners->get_learner_full_name( $item->user_id );
+        $title = Sensei()->learners->get_learner_full_name( $item->user_id );
 
 		// QuizID to be deprecated
 		$quiz_id = get_post_meta( $item->comment_post_ID, '_lesson_quiz', true );
@@ -322,7 +322,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
-		global $woothemes_sensei, $wp_version;
+		global  $wp_version;
 
 		echo '<div class="grading-selects">';
 		do_action( 'sensei_grading_before_dropdown_filters' );
@@ -331,7 +331,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<select id="grading-course-options" name="grading_course" class="chosen_select widefat">' . "\n";
 
-				echo $woothemes_sensei->grading->courses_drop_down_html( $this->course_id );
+				echo Sensei()->grading->courses_drop_down_html( $this->course_id );
 
 			echo '</select>' . "\n";
 
@@ -341,7 +341,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<select id="grading-lesson-options" data-placeholder="&larr; ' . __( 'Select a course', 'woothemes-sensei' ) . '" name="grading_lesson" class="chosen_select widefat">' . "\n";
 
-				echo $woothemes_sensei->grading->lessons_drop_down_html( $this->course_id, $this->lesson_id );
+				echo Sensei()->grading->lessons_drop_down_html( $this->course_id, $this->lesson_id );
 
 			echo '</select>' . "\n";
 
@@ -373,7 +373,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			// post_ids (i.e. every lesson within the Course), WP 4.1 ( https://core.trac.wordpress.org/changeset/29808 )
 			$query_args['course_id'] = $this->course_id;
 			if ( version_compare($wp_version, '4.1', '>=') ) {
-				$count_args['post__in'] = $woothemes_sensei->post_types->course->course_lessons( $this->course_id, 'any', 'ids' );
+				$count_args['post__in'] = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
 			}
 		}
 		if( $this->lesson_id ) {
@@ -411,7 +411,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 				break;
 		endswitch;
 
-		$counts = $woothemes_sensei->grading->count_statuses( apply_filters( 'sensei_grading_count_statues', $count_args ) );
+		$counts = Sensei()->grading->count_statuses( apply_filters( 'sensei_grading_count_statues', $count_args ) );
 
 		$inprogress_lessons_count = $counts['in-progress'];
 		$ungraded_lessons_count = $counts['ungraded'];

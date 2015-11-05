@@ -41,7 +41,7 @@ class Sensei_PostTypes {
 	 * @return  void
 	 */
 	public function __construct () {
-		global $woothemes_sensei;
+
 
 		// Setup Post Types
 		$this->labels = array();
@@ -102,7 +102,7 @@ class Sensei_PostTypes {
 	/**
 	 * Setup the "course" post type, it's admin menu item and the appropriate labels and permissions.
 	 * @since  1.0.0
-	 * @uses  global $woothemes_sensei
+     * @uses  Sensei()
 	 * @return void
 	 */
 	public function setup_course_post_type () {
@@ -191,16 +191,16 @@ class Sensei_PostTypes {
 	/**
 	 * Setup the "lesson" post type, it's admin menu item and the appropriate labels and permissions.
 	 * @since  1.0.0
-	 * @uses  global $woothemes_sensei
+	 * @uses  Sensei()
 	 * @return void
 	 */
 	public function setup_lesson_post_type () {
-		global $woothemes_sensei;
+
 
 		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' );
 		$allow_comments = false;
-		if ( isset( $woothemes_sensei->settings->settings[ 'lesson_comments' ] ) ) {
-			$allow_comments = $woothemes_sensei->settings->settings[ 'lesson_comments' ];
+		if ( isset( Sensei()->settings->settings[ 'lesson_comments' ] ) ) {
+			$allow_comments = Sensei()->settings->settings[ 'lesson_comments' ];
 		} // End If Statement
 		if ( $allow_comments ) {
 			array_push( $supports_array, 'comments' );
@@ -240,11 +240,11 @@ class Sensei_PostTypes {
 	/**
 	 * Setup the "quiz" post type, it's admin menu item and the appropriate labels and permissions.
 	 * @since  1.0.0
-	 * @uses  global $woothemes_sensei
+     * @uses  Sensei()
 	 * @return void
 	 */
 	public function setup_quiz_post_type () {
-		global $woothemes_sensei;
+
 
 		$args = array(
 		    'labels' => $this->create_post_type_labels(
@@ -364,9 +364,9 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_sensei_message_post_type () {
-		global $woothemes_sensei;
 
-		if( ! isset( $woothemes_sensei->settings->settings['messages_disable'] ) || ! $woothemes_sensei->settings->settings['messages_disable'] ) {
+
+		if( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			$args = array(
 			    'labels' => $this->create_post_type_labels( 'sensei_message', $this->labels['sensei_message']['singular'], $this->labels['sensei_message']['plural'], $this->labels['sensei_message']['menu'] ),

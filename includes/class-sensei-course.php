@@ -643,12 +643,12 @@ class Sensei_Course {
 	 */
 	public function get_archive_query_args( $type = '', $amount = 0 , $includes = array(), $excludes = array() ) {
 
-		global $wp_query, $woothemes_sensei;
+		global $wp_query;
 
 		$post_args = array();
 
-		if ( 0 == $amount && ( isset( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) && 'usercourses' != $type && ( 0 < absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] ) ) ) ) {
-			$amount = absint( $woothemes_sensei->settings->settings[ 'course_archive_amount' ] );
+		if ( 0 == $amount && ( isset( Sensei()->settings->settings[ 'course_archive_amount' ] ) && 'usercourses' != $type && ( 0 < absint( Sensei()->settings->settings[ 'course_archive_amount' ] ) ) ) ) {
+			$amount = absint( Sensei()->settings->settings[ 'course_archive_amount' ] );
 		} else {
 			if ( 0 == $amount) {
 				$amount = $wp_query->get( 'posts_per_page' );
@@ -918,7 +918,7 @@ class Sensei_Course {
 	 * @access public
 	 * @param array $exclude (default: array())
 	 * @param string $post_status (default: 'publish')
-	 * @return void
+	 * @return int
 	 */
 	public function course_count( $post_status = 'publish' ) {
 
@@ -1041,12 +1041,12 @@ class Sensei_Course {
 	 * @return array              Array of quiz post objects
 	 */
 	public function course_quizzes( $course_id = 0, $boolean_check = false ) {
-		global $woothemes_sensei;
+
 
 		$course_quizzes = array();
 
 		if( $course_id ) {
-			$lesson_ids = $woothemes_sensei->post_types->course->course_lessons( $course_id, 'any', 'ids' );
+			$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
 			foreach( $lesson_ids as $lesson_id ) {
 				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
@@ -1054,8 +1054,8 @@ class Sensei_Course {
 					return true;
 				}
 				elseif ( $has_questions ) {
-					$quiz_id = $woothemes_sensei->post_types->lesson->lesson_quizzes( $lesson_id );
-//					$questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
+					$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+//					$questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
 //					if( count( $questions ) > 0 ) {
 						$course_quizzes[] = $quiz_id;
 //					}
@@ -1211,10 +1211,10 @@ class Sensei_Course {
 	 * @return void
 	 */
 	public function filter_my_courses( $query ) {
-		global $woothemes_sensei, $my_courses_section;
+		global  $my_courses_section;
 
-		if ( isset( $woothemes_sensei->settings->settings[ 'my_course_amount' ] ) && ( 0 < absint( $woothemes_sensei->settings->settings[ 'my_course_amount' ] ) ) ) {
-			$amount = absint( $woothemes_sensei->settings->settings[ 'my_course_amount' ] );
+		if ( isset( Sensei()->settings->settings[ 'my_course_amount' ] ) && ( 0 < absint( Sensei()->settings->settings[ 'my_course_amount' ] ) ) ) {
+			$amount = absint( Sensei()->settings->settings[ 'my_course_amount' ] );
 			$query->set( 'posts_per_page', $amount );
 		}
 
