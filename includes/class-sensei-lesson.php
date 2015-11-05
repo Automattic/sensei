@@ -3389,7 +3389,7 @@ class Sensei_Lesson {
         if ('lesson' == get_post_type(get_the_ID())){
 
             // remove this hooks to avoid an infinite loop.
-            remove_action( 'get_the_excerpt', array( __CLASS__,'alter_the_lesson_excerpt') );
+            remove_filter( 'get_the_excerpt', array( 'WooThemes_Sensei_Lesson','alter_the_lesson_excerpt') );
 
             return WooThemes_Sensei_Lesson::lesson_excerpt( get_post( get_the_ID() ) );
         }

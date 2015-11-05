@@ -111,7 +111,7 @@ add_action( 'sensei_single_course_inside_before_lesson', array('WooThemes_Sensei
 
 //@since 1.9.0
 // lesson custom excerpts
-add_action( 'get_the_excerpt', array( 'WooThemes_Sensei_Lesson', 'alter_the_lesson_excerpt' ) );
+add_filter( 'get_the_excerpt', array( 'WooThemes_Sensei_Lesson', 'alter_the_lesson_excerpt' ) );
 
 // @since 1.9.0
 // run a deprecated hook for backwards compatibility sake
