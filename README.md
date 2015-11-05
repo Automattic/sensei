@@ -1,4 +1,4 @@
-# Sensei by WooThemes
+# [Sensei](https://www.woothemes.com/products/sensei/) [![Build Status](https://travis-ci.org/woothemes/sensei.svg?branch=master)](http://travis-ci.org/woothemes/sensei)
 
 **A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.**
 
