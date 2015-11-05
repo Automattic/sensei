@@ -47,7 +47,7 @@ do_action( 'sensei_loop_course_before', $wp_query );
      */
     while ( have_posts() ) { the_post();
 
-        Sensei_Templates::get_part('content','course');
+        sensei_load_template_part('content','course');
 
     }
     ?>

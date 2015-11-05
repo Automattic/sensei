@@ -27,7 +27,7 @@
 
     <?php if ( have_posts() ): ?>
 
-        <?php Sensei_Templates::get_template( 'loop-lesson.php' ); ?>
+        <?php sensei_load_template( 'loop-lesson.php' ); ?>
 
     <?php else: ?>
 

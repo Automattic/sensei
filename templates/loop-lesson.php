@@ -49,8 +49,7 @@ do_action( 'sensei_loop_lesson_before', $wp_query );
     while ( have_posts() ) { the_post();
 
         $lesson_count++;
-
-        Sensei_Templates::get_part('content','lesson');
+        sensei_load_template_part( 'content', 'lesson' );
 
     }
     ?>

@@ -1116,3 +1116,32 @@ function sensei_the_my_courses_content(){
     echo Sensei()->course->load_user_courses_content( wp_get_current_user() );
 
 } // sensei_the_my_courses_content
+
+/**
+ * This is a wrapper function for Sensei_Templates::get_template
+ * It helps simplify templates for designers by removing the class::function call.
+ *
+ * @param string $template_name the name of the template.
+ *              If it is in a sub directory please suply the directory name as well e.g. globals/wrapper-end.php
+ *
+ * @since 1.9.0
+ */
+function sensei_load_template( $template_name ){
+
+    Sensei_Templates::get_template( $template_name );
+
+}
+
+/**
+ * This is a wrapper function for Sensei_Templates::get_part
+ * It helps simplify templates for designers by removing the class::function call.
+ *
+ * @param string $slug the first part to the template file name
+ * @param string $name the name of the template.
+ * @since 1.9.0
+ */
+function sensei_load_template_part( $slug, $name ){
+
+    Sensei_Templates::get_part( $slug, $name );
+
+}
