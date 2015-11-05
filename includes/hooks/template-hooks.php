@@ -20,7 +20,6 @@
 //This hook allow us to change the template WordPress loads for a given page/post_type @since 1.9.0
 add_filter( 'template_include', array ( 'Sensei_Templates', 'template_loader' ), 10, 1 );
 
-
 /***************************
  *
  *

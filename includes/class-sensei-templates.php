@@ -155,10 +155,10 @@ class Sensei_Templates {
                 $find[] = $file;
                 $find[] = Sensei()->template_url . $file;
             } else {
+
                 // No Permissions Page
-                $file 	= 'no-permissions.php';
-                $find[] = $file;
-                $find[] = Sensei()->template_url . $file;
+                return self::get_no_permission_template();
+
             } // End If Statement
 
         } elseif ( is_single() && get_post_type() == 'lesson' ) {
@@ -172,23 +172,23 @@ class Sensei_Templates {
             } else {
 
                 // No Permissions Page
-                $file 	= 'no-permissions.php';
-                $find[] = $file;
-                $find[] = Sensei()->template_url . $file;
+                return self::get_no_permission_template();
 
             } // End If Statement
 
         } elseif ( is_single() && get_post_type() == 'quiz' ) {
 
             if ( Sensei()->check_user_permissions( 'quiz-single' ) ) {
+
                 $file 	= 'single-quiz.php';
                 $find[] = $file;
                 $find[] = Sensei()->template_url . $file;
+
             } else {
+
                 // No Permissions Page
-                $file 	= 'no-permissions.php';
-                $find[] = $file;
-                $find[] = Sensei()->template_url . $file;
+                return self::get_no_permission_template();
+
             } // End If Statement
 
         } elseif ( is_single() && get_post_type() == 'sensei_message' ) {
@@ -247,6 +247,48 @@ class Sensei_Templates {
         return $template;
 
     } // End template_loader()
+
+    /**
+     * This function loads the no-permissions template for users with no access
+     * if a Sensei template was loaded.
+     *
+     * This function doesn't determine the permissions. Permissions must be determined
+     * before loading this function as it only gets the template.
+     *
+     * This function also checks the user theme for overrides to ensure the right template
+     * file is returned.
+     *
+     * @since 1.9.0
+     */
+    public static function get_no_permission_template( ){
+
+        // backward compatible template inclusion, if the user has
+        // overwritten the old version, which no longer exist within sensei
+        $backwards_compatible_template_locations = array(   Sensei()->template_url . 'content-no-permissions.php',
+                                                            'content-no-permissions.php');
+        $found_backwards_compatible_template = locate_template( $backwards_compatible_template_locations );
+        if( $found_backwards_compatible_template ){
+
+            get_sensei_header();
+
+            include( $found_backwards_compatible_template );
+
+            get_sensei_header();
+
+            exit;
+
+        }
+
+        $file 	= 'no-permissions.php';
+        $find[] = $file;
+        $find[] = Sensei()->template_url . $file;
+
+        $template = locate_template( $find );
+        if ( ! $template ) $template = Sensei()->plugin_path() . '/templates/' . $file;
+
+        return $template;
+
+    }
 
     /**
      * Hooks the deprecated archive content hook into the hook again just in
