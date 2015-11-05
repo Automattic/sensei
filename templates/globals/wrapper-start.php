@@ -75,21 +75,6 @@ switch( $template ) {
             .'<main id="main" class="site-main" role="main">';
         break;
 
-    // IF Divi
-    case 'divi' :
-        echo '<div id="main-content">'
-            .'<div class="container">'
-            .'<div id="content-area" class="clearfix">'
-            .'<div id="left-area">';
-        break;
-
-    // IF Enfold
-    case 'enfold' :
-        echo '<div class="container_wrap container_wrap_first main_color sidebar_right">'
-            .'<div class="container">'
-            .'<main class="template-page content  av-content-small alpha units" role="main" itemprop="mainContentOfPage">';
-        break;
-
 	// Default
 	default :
 		echo '<div id="content" class="page col-full"><div id="main" class="col-left">';

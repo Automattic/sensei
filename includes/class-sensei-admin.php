@@ -1376,8 +1376,6 @@ class Sensei_Admin {
                                 'twentyfifteen',
                                 'twentysixteen',
                                 'storefront',
-                                'divi',
-                                'enfold'
                                                 );
 
         if ( in_array( $template, $white_list ) ) {
