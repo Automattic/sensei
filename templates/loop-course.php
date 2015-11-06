@@ -10,40 +10,34 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @category    Templates
  * @version     1.9.0
  */
-global $wp_query;
 ?>
 
 <?php
 /**
- * sensei_loop_course_before
+ * This runs before the the course loop items in the loop.php template. It runs
+ * only only for the course post type. This loop will not run if the current wp_query
+ * has no posts.
  *
- * This runs before the post type items in the loop.php template. It runs
- * only for the specified post type
- *
- * @since 1.9
- * @param WP_Query
+ * @since 1.9.0
  */
-do_action( 'sensei_loop_course_before', $wp_query );
+do_action( 'sensei_loop_course_before' );
 ?>
-<ul class="course-container columns-<?php echo  WooThemes_Sensei_Course::get_loop_number_of_columns(); ?>" >
+
+<ul class="course-container columns-<?php sensei_courses_per_row(); ?>" >
 
     <?php
     /**
-     * sensei_loop_course_inside_before
+     * This runs before the post type items in the loop.php template. It
+     * runs within the courses loop <ul> tag.
      *
-     * This runs before the post type items in the loop.php template. It runs
-     * only for the specified post type
-     *
-     * @since 1.9
-     * @param WP_Query
+     * @since 1.9.0
      */
-    do_action( 'sensei_loop_course_inside_before', $wp_query );
+    do_action( 'sensei_loop_course_inside_before' );
     ?>
-
 
     <?php
     /*
-     * Loop through all posts
+     * Loop through all courses
      */
     while ( have_posts() ) { the_post();
 
@@ -54,28 +48,22 @@ do_action( 'sensei_loop_course_before', $wp_query );
 
     <?php
     /**
-     * sensei_loop_course_inside_after
-     *
      * This runs after the post type items in the loop.php template. It runs
      * only for the specified post type
      *
-     * @since 1.9
-     * @param WP_Query
+     * @since 1.9.0
      */
-    do_action( 'sensei_loop_course_inside_after', $wp_query );
+    do_action( 'sensei_loop_course_inside_after' );
     ?>
 
 </ul>
 
 <?php
 /**
- * sensei_loop_course_after
- *
  * This runs after the post type items in the loop.php template. It runs
  * only for the specified post type
  *
- * @since 1.9
- * @param WP_Query
+ * @since 1.9.0
  */
-do_action( 'sensei_loop_course_after', $wp_query );
+do_action( 'sensei_loop_course_after' );
 ?>

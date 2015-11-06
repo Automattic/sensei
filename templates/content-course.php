@@ -14,17 +14,21 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 ?>
 
-<li <?php post_class( WooThemes_Sensei_Course::get_course_loop_class(), get_the_ID() ); ?> >
+<li <?php post_class(  WooThemes_Sensei_Course::get_course_loop_content_class() ); ?> >
 
     <section class="course-content">
+
         <?php
         /**
-         * sensei_{post_type}_content_before
-         * action that runs before the sensei {post_type} content. It runs inside the sensei
-         * content.php template. This applies to the specific post type that you've targeted.
+         * This action runs before the sensei course content. It runs inside the sensei
+         * content-course.php template. This applies to the specific post type that you've targeted.
          *
          * @since 1.9
+         *
          * @param $post
+         *
+         * @hooked Sensei()->course->course_image - 10
+         * @hooked Sensei_Templates::the_title - 15
          */
         do_action( 'sensei_course_content_before', get_post() );
         ?>
@@ -33,14 +37,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <?php
             /**
-             * sensei_{$post_type}content_inside_before
-             *
-             * Fires just before the post content in the content.php file. This for the
-             * specific {$post_type}.
+             * Fires just before the post content in the content-course.php file.
              *
              * @since 1.9
              *
              * @param WP_Post $post
+             *
+             * @hooked  Sensei()->course->the_course_meta - 20
              */
             do_action('sensei_course_content_inside_before', get_post());
             ?>
@@ -53,14 +56,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <?php
             /**
-             * sensei_{$post_type}content_inside_before
-             *
-             * Fires just after the post content in the content.php file. This for the
-             * specific {$post_type}.
+             * Fires just after the post content in the content-course.php file.
              *
              * @since 1.9
              *
              * @param WP_Post $post
+             *
+             * @hooked  Sensei()->course->the_course_free_lesson_preview - 20
              */
             do_action('sensei_course_content_inside_after', get_post());
             ?>

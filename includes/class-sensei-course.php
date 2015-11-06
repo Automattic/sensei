@@ -88,10 +88,10 @@ class Sensei_Course {
         add_filter( 'pre_get_posts', array( __CLASS__, 'course_query_filter' ) );
 
         //attache the sorting to the course archive
-        add_action ( 'sensei_archive_before_course_loop' , array( __CLASS__, 'course_archive_sorting' ) );
+        add_action ( 'sensei_archive_before_course_loop' , array( 'Sensei_Course', 'course_archive_sorting' ) );
 
         //attach the filter links to the course archive
-        add_action ( 'sensei_archive_before_course_loop' , array( __CLASS__, 'course_archive_filters' ) );
+        add_action ( 'sensei_archive_before_course_loop' , array( 'Sensei_Course', 'course_archive_filters' ) );
 
         //filter the course query when featured filter is applied
         add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_featured_filter'));
@@ -2005,16 +2005,12 @@ class Sensei_Course {
      *
      * @since 1.9
      *
-     * @param WP_Post $post
+     * @global WP_Post $post
      */
-    public  function loop_before_backwards_compatibility_hooks( $post ){
+    public  function loop_before_backwards_compatibility_hooks( ){
 
-        if(has_action( 'sensei_course_archive_header' ) ){
-
-            _doing_it_wrong('sensei_course_archive_header','This action has been retired: . Please use sensei_course_content_before instead.', '1.9' );
-            do_action( 'sensei_course_archive_header', $post->post_type  );
-
-        }
+        global $post;
+        sensei_do_deprecated_action( 'sensei_course_archive_header','1.9.0','sensei_course_content_before', $post->post_type  );
 
     }
 
@@ -2236,7 +2232,7 @@ class Sensei_Course {
      * @return array $extra_classes
      * @since 1.9.0
      */
-    public static function get_course_loop_class ()
+    public static function get_course_loop_content_class ()
     {
 
         global $sensei_course_loop;

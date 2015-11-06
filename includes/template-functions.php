@@ -1201,3 +1201,16 @@ function sensei_the_course_results_lessons(){
 
     Sensei_Templates::get_template( 'course-results/lessons.php' );
 }
+
+/**
+ * Echo the number of columns (also number of items per row) on the
+ * the course archive.
+ *
+ * @uses WooThemes_Sensei_Course::get_loop_number_of_columns
+ * @since 1.9.0
+ */
+function sensei_courses_per_row(){
+
+    echo WooThemes_Sensei_Course::get_loop_number_of_columns();
+
+}

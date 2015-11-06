@@ -37,7 +37,7 @@ add_action('sensei_archive_before_course_loop', array( 'WooThemes_Sensei_Course'
 add_action('sensei_course_content_before', array( Sensei()->course, 'course_image' ) ,10, 1 );
 
 // add course content title to the courses on the archive page
-add_action('sensei_course_content_before', array( 'Sensei_Templates', 'the_title' ) ,11, 1 );
+add_action('sensei_course_content_before', array( 'Sensei_Templates', 'the_title' ) ,15, 1 );
 
 /***************************
  *
