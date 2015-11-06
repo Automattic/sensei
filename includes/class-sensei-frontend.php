@@ -57,8 +57,6 @@ class Sensei_Frontend {
 
 		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
 
-		add_action( 'sensei_quiz_questions', 'quiz_questions', 10 );
-
 		add_action( 'sensei_message_archive_header', array( $this, 'sensei_message_archive_header' ), 10, 3 );
 
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
