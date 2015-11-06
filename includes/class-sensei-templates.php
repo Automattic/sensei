@@ -153,7 +153,7 @@ class Sensei_Templates {
             if ( Sensei()->check_user_permissions( 'course-single' ) ) {
 
                 // possible backward compatible template include if theme overrides content-single-course.php
-                self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-single-course.php' );
+                self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-course.php', true );
 
                 $file 	= 'single-course.php';
                 $find[] = $file;
@@ -171,7 +171,7 @@ class Sensei_Templates {
             if ( Sensei()->check_user_permissions( 'lesson-single' ) ) {
 
                 // possible backward compatible template include if theme overrides content-single-lesson.php
-                self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-single-lesson.php' );
+                self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-lesson.php', true );
 
                 $file 	= 'single-lesson.php';
                 $find[] = $file;
@@ -189,7 +189,7 @@ class Sensei_Templates {
             if ( Sensei()->check_user_permissions( 'quiz-single' ) ) {
 
                 // possible backward compatible template include if theme overrides content-single-quiz.php
-                self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-single-quiz.php' );
+                self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-quiz.php' , true);
 
                 $file 	= 'single-quiz.php';
                 $find[] = $file;
@@ -205,7 +205,7 @@ class Sensei_Templates {
         } elseif ( is_single() && get_post_type() == 'sensei_message' ) {
 
             // possible backward compatible template include if theme overrides content-single-message.php
-            self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-single-message.php' );
+            self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-message.php', true );
 
             $file 	= 'single-message.php';
             $find[] = $file;
@@ -277,7 +277,7 @@ class Sensei_Templates {
     public static function get_no_permission_template( ){
 
         // possible backward compatible template loading
-        self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-no-permissions.php' );
+        self::locate_and_load_template_overrides( Sensei()->template_url . 'content-no-permissions.php', true );
 
         $file 	= 'no-permissions.php';
         $find[] = $file;
@@ -291,31 +291,34 @@ class Sensei_Templates {
     }
 
     /**
-     * This function is specifically created load
-     * the singular content templates which have been remove in 1.9.0
+     * This function is specifically created for loading template files from the theme.
      *
-     * This function checks if the user has overwritten the singular content templates like
-     * 'content-single-course.php' in their theme. If they have it in their theme it will load the header and the footer
+     * This function checks if the user has overwritten the templates like in their theme. If they have it in their theme it will load the header and the footer
      * around the singular content file from their theme and exit.
      *
-     * If none is found this function will do nothing.
-     *
-     * This function will be deprecated in three major versions. It will also start showing
-     * tirgger error messaging before it is officially remove.
+     * If none is found this function will do nothing. If a template is found this funciton
+     * will exit execution of the script an not continue.
      *
      * @since 1.9.0
      * @param string $template
+     * @param bool $load_header_footer should the file be wrapped in between header and footer? Default: true
      */
-    public static function backwards_compatible_singular_content_theme_overrides( $template = '' ){
+    public static function locate_and_load_template_overrides( $template = '', $load_header_footer = false ){
 
         $found_template = locate_template( array( $template ) );
         if( $found_template ){
 
-            get_sensei_header();
+            if( $load_header_footer ){
 
-            include( $found_template );
+                get_sensei_header();
+                include( $found_template );
+                get_sensei_footer();
 
-            get_sensei_footer();
+            }else{
+
+                include( $found_template );
+
+            }
 
             exit;
 
