@@ -219,6 +219,10 @@ class Sensei_Templates {
                     || is_page( Sensei()->get_page_id( 'courses' ) )
                     || is_tax( 'course-category' )) {
 
+            // possible backward compatible template include if theme overrides 'taxonomy-course-category'
+            // this template was removed in 1.9.0 and replaced by archive-course.php
+            self::locate_and_load_template_overrides( Sensei()->template_url . 'taxonomy-course-category.php');
+
             $file 	= 'archive-course.php';
             $find[] = $file;
             $find[] = Sensei()->template_url . $file;
