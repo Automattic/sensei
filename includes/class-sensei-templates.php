@@ -346,20 +346,9 @@ class Sensei_Templates {
      *
      * @deprecated since 1.9.0
      */
-    public static function deprecated_archive_hook(){
+    public static function deprecated_archive_course_content_hook(){
 
-        /**
-         * sensei_course_archive_main_content hook
-         *
-         * @deprecated since 1.9.0
-         *
-         * @hooked sensei_course_archive_main_content - 10 (outputs main course archive content loop)
-         */
-        if( has_action('sensei_course_archive_main_content') ){
-
-            _doing_it_wrong('sensei_course_archive_main_content', 'Sensei: This hook has been retired. Please use sensei_loop_course_before','1.9.0' );
-
-        }
+        sensei_do_deprecated_action( 'sensei_course_archive_main_content','1.9.0', 'sensei_loop_course_before' );
 
     }// end deprecated_archive_hook
 
