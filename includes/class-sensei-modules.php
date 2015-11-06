@@ -1356,6 +1356,15 @@ class Sensei_Core_Modules
      */
     public function load_course_module_content_template(){
 
+        // load backwards compatible template name if it exists in the users theme
+        $located_template= locate_template( Sensei()->template_url . 'single-course/course-modules.php' );
+        if( $located_template ){
+
+            Sensei_Templates::get_template( 'single-course/course-modules.php' );
+            return;
+
+        }
+
         Sensei_Templates::get_template( 'single-course/modules.php' );
 
     } // end course_module_content

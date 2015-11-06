@@ -59,7 +59,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
                 $started_course = WooThemes_Sensei_Utils::user_started_course( $course->ID, get_current_user_id() );
                 if( $started_course ) {
 
-                    Sensei_Templates::get_template( 'course-results/lessons.php' );
+                    sensei_the_course_results_lessons();
 
                 }
                 ?>

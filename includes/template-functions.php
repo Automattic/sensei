@@ -29,6 +29,15 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	  */
 	 function course_single_lessons() {
 
+         // load backwards compatible template name if it exists in the users theme
+         $located_template= locate_template( Sensei()->template_url . 'single-course/course-lessons.php' );
+         if( $located_template ){
+
+             Sensei_Templates::get_template( 'single-course/course-lessons.php' );
+             return;
+
+        }
+
 		Sensei_Templates::get_template( 'single-course/lessons.php' );
 
 	 } // End course_single_lessons()
@@ -1174,3 +1183,21 @@ function sensei_the_lesson_excerpt( $lesson_id = '' ) {
     echo Sensei_Lesson::lesson_excerpt( get_post( $lesson_id ), false );
 
 }// End lesson_excerpt()
+
+/**
+ * The the course result lessons template
+ *
+ * @since 1.9.0
+ */
+function sensei_the_course_results_lessons(){
+    // load backwards compatible template name if it exists in the users theme
+    $located_template= locate_template( Sensei()->template_url . 'course-results/course-lessons.php' );
+    if( $located_template ){
+
+        Sensei_Templates::get_template( 'course-results/course-lessons.php' );
+        return;
+
+    }
+
+    Sensei_Templates::get_template( 'course-results/lessons.php' );
+}
