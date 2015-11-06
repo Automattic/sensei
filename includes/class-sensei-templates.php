@@ -227,6 +227,9 @@ class Sensei_Templates {
 
         } elseif( is_tax( 'lesson-tag' ) ) {
 
+            // possible backward compatible template include if theme overrides 'taxonomy-lesson-tag.php'
+            self::locate_and_load_template_overrides( Sensei()->template_url . 'taxonomy-lesson-tag.php' );
+
             $file 	= 'archive-lesson.php';
             $find[] = $file;
             $find[] = Sensei()->template_url . $file;
