@@ -153,6 +153,7 @@ class Sensei_Templates {
             if ( Sensei()->check_user_permissions( 'course-single' ) ) {
 
                 // possible backward compatible template include if theme overrides content-single-course.php
+                // this template was removed in 1.9.0 and code all moved into the main single-course.php file
                 self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-course.php', true );
 
                 $file 	= 'single-course.php';
@@ -171,6 +172,7 @@ class Sensei_Templates {
             if ( Sensei()->check_user_permissions( 'lesson-single' ) ) {
 
                 // possible backward compatible template include if theme overrides content-single-lesson.php
+                // this template was removed in 1.9.0 and code all moved into the main single-lesson.php file
                 self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-lesson.php', true );
 
                 $file 	= 'single-lesson.php';
@@ -189,6 +191,7 @@ class Sensei_Templates {
             if ( Sensei()->check_user_permissions( 'quiz-single' ) ) {
 
                 // possible backward compatible template include if theme overrides content-single-quiz.php
+                // this template was removed in 1.9.0 and code all moved into the main single-quiz.php file
                 self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-quiz.php' , true);
 
                 $file 	= 'single-quiz.php';
@@ -205,6 +208,7 @@ class Sensei_Templates {
         } elseif ( is_single() && get_post_type() == 'sensei_message' ) {
 
             // possible backward compatible template include if theme overrides content-single-message.php
+            // this template was removed in 1.9.0 and code all moved into the main single-message.php file
             self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-message.php', true );
 
             $file 	= 'single-message.php';
@@ -228,6 +232,7 @@ class Sensei_Templates {
         } elseif( is_tax( 'lesson-tag' ) ) {
 
             // possible backward compatible template include if theme overrides 'taxonomy-lesson-tag.php'
+            // this template was removed in 1.9.0 and replaced by archive-lesson.php
             self::locate_and_load_template_overrides( Sensei()->template_url . 'taxonomy-lesson-tag.php' );
 
             $file 	= 'archive-lesson.php';
@@ -280,6 +285,7 @@ class Sensei_Templates {
     public static function get_no_permission_template( ){
 
         // possible backward compatible template loading
+        // this template was removed in 1.9.0 and code all moved into the no-permissions.php file
         self::locate_and_load_template_overrides( Sensei()->template_url . 'content-no-permissions.php', true );
 
         $file 	= 'no-permissions.php';
