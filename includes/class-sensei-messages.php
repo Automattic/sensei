@@ -56,7 +56,7 @@ class Sensei_Messages {
         add_action( 'sensei_single_lesson_content_inside_before', array( $this, 'send_message_link' ), 11, 2 );
 
         // add message link to lesson
-        add_action( 'sensei_quiz_questions', array( $this, 'send_message_link' ), 3, 2 );
+        add_action( 'sensei_single_quiz_questions_before', array( $this, 'send_message_link' ), 10, 2 );
 
 		// Hide messages and replies from users who do not have access
         add_action( 'template_redirect', array( $this, 'message_login' ), 10, 1 );
