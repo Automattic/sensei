@@ -185,7 +185,34 @@ class WooThemes_Sensei_Question {
 			return;
 		}
 
+		// This retrieves those quizzes the question is directly connected to.
 		$quizzes = get_post_meta( $post->ID, '_quiz_id', false );
+
+		// Collate all 'multiple_question' quizzes the question is part of.
+		$categories_of_question = wp_get_post_terms( $post->ID, 'question-category', array( 'fields' => 'ids' ) );
+		if ( ! empty( $categories_of_question ) ) {
+			foreach ( $categories_of_question as $term_id ) {
+				$qargs = array(
+					'fields'           => 'ids',
+					'post_type'        => 'multiple_question',
+					'posts_per_page'   => -1,
+					'meta_query'       => array(
+						array(
+							'key'      => 'category',
+							'value'    => $term_id,
+						),
+					),
+					'post_status'      => 'any',
+					'suppress_filters' => 0,
+				);
+				$cat_question_ids = get_posts( $qargs );
+				foreach( $cat_question_ids as $cat_question_id ) {
+					$cat_quizzes = get_post_meta( $cat_question_id, '_quiz_id', false );
+					$quizzes = array_merge( $quizzes, $cat_quizzes );
+				}
+			}
+			$quizzes = array_unique( array_filter( $quizzes ) );
+		}
 
 		if( 0 == count( $quizzes ) ) {
 			echo $no_lessons;
