@@ -151,9 +151,14 @@ class Sensei_Templates {
         } elseif ( is_single() && get_post_type() == 'course' ) {
 
             if ( Sensei()->check_user_permissions( 'course-single' ) ) {
+
+                // possible backward compatible template include if theme overrides content-single-course.php
+                self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-single-course.php' );
+
                 $file 	= 'single-course.php';
                 $find[] = $file;
                 $find[] = Sensei()->template_url . $file;
+
             } else {
 
                 // No Permissions Page
@@ -164,6 +169,9 @@ class Sensei_Templates {
         } elseif ( is_single() && get_post_type() == 'lesson' ) {
 
             if ( Sensei()->check_user_permissions( 'lesson-single' ) ) {
+
+                // possible backward compatible template include if theme overrides content-single-lesson.php
+                self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-single-lesson.php' );
 
                 $file 	= 'single-lesson.php';
                 $find[] = $file;
@@ -180,6 +188,9 @@ class Sensei_Templates {
 
             if ( Sensei()->check_user_permissions( 'quiz-single' ) ) {
 
+                // possible backward compatible template include if theme overrides content-single-quiz.php
+                self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-single-quiz.php' );
+
                 $file 	= 'single-quiz.php';
                 $find[] = $file;
                 $find[] = Sensei()->template_url . $file;
@@ -192,6 +203,9 @@ class Sensei_Templates {
             } // End If Statement
 
         } elseif ( is_single() && get_post_type() == 'sensei_message' ) {
+
+            // possible backward compatible template include if theme overrides content-single-message.php
+            self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-single-message.php' );
 
             $file 	= 'single-message.php';
             $find[] = $file;
@@ -262,22 +276,8 @@ class Sensei_Templates {
      */
     public static function get_no_permission_template( ){
 
-        // backward compatible template inclusion, if the user has
-        // overwritten the old version, which no longer exist within sensei
-        $backwards_compatible_template_locations = array(   Sensei()->template_url . 'content-no-permissions.php',
-                                                            'content-no-permissions.php');
-        $found_backwards_compatible_template = locate_template( $backwards_compatible_template_locations );
-        if( $found_backwards_compatible_template ){
-
-            get_sensei_header();
-
-            include( $found_backwards_compatible_template );
-
-            get_sensei_header();
-
-            exit;
-
-        }
+        // possible backward compatible template loading
+        self::backwards_compatible_singular_content_theme_overrides( Sensei()->template_url . 'content-no-permissions.php' );
 
         $file 	= 'no-permissions.php';
         $find[] = $file;
@@ -289,6 +289,40 @@ class Sensei_Templates {
         return $template;
 
     }
+
+    /**
+     * This function is specifically created load
+     * the singular content templates which have been remove in 1.9.0
+     *
+     * This function checks if the user has overwritten the singular content templates like
+     * 'content-single-course.php' in their theme. If they have it in their theme it will load the header and the footer
+     * around the singular content file from their theme and exit.
+     *
+     * If none is found this function will do nothing.
+     *
+     * This function will be deprecated in three major versions. It will also start showing
+     * tirgger error messaging before it is officially remove.
+     *
+     * @since 1.9.0
+     * @param string $template
+     */
+    public static function backwards_compatible_singular_content_theme_overrides( $template = '' ){
+
+        $found_template = locate_template( array( $template ) );
+        if( $found_template ){
+
+            get_sensei_header();
+
+            include( $found_template );
+
+            get_sensei_footer();
+
+            exit;
+
+        }
+
+    }
+
 
     /**
      * Hooks the deprecated archive content hook into the hook again just in
