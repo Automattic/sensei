@@ -84,7 +84,9 @@ class Sensei_Analysis {
 		global $menu, $woocommerce;
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			$analysis_page = add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_sensei_grades', 'sensei_analysis', array( $this, 'analysis_page' ) );
+
+            add_submenu_page( 'sensei', __('Analysis', 'woothemes-sensei'),  __('Analysis', 'woothemes-sensei') , 'manage_sensei_grades', 'sensei_analysis', array( $this, 'analysis_page' ) );
+
 		}
 
 	} // End analysis_admin_menu()

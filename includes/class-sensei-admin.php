@@ -99,7 +99,7 @@ class Sensei_Admin {
 
 		if( $menu_cap ) {
 			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
-			$main_page = add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei' , array( Sensei()->analysis, 'analysis_page' ) , '', '50' );
+            add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei' , array( Sensei()->analysis, 'analysis_page' ) , '', '50' );
 		}
 
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'woothemes-sensei' ), __( 'Order Courses', 'woothemes-sensei' ), 'manage_sensei', 'course-order', array( $this, 'course_order_screen' ) );
@@ -1465,6 +1465,7 @@ class Sensei_Admin {
         $install_complete = false;
 
         // Add pages button
+        $settings_url = '';
         if (isset($_GET['install_sensei_pages']) && $_GET['install_sensei_pages']) {
 
             Sensei()->admin->create_pages();

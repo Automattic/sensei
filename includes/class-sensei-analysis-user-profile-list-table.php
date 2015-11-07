@@ -212,21 +212,21 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 		$course_title =  get_the_title( $item->comment_post_ID );
 		$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
 		$course_start_date = get_comment_meta( $item->comment_ID, 'start', true );
-		$course_end_date = $status_class = $grade = '';
+		$course_end_date = '';
 
 		if( 'complete' == $item->comment_approved ) {
-			$status = apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) );
+
+            $status = apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) );
 			$status_class = 'graded';
 
-			// Use class-woothemes-sensei-utils::sensei_course_user_grade() once converted to use new statuses
-            // $grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $item->comment_post_ID, $this->user_id ) . '%';
 			$course_end_date = $item->comment_date;
-		}
-		else {
+
+		} else {
+
 			$status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
 			$status_class = 'in-progress';
+
 		}
-		$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
 
 		// Output users data
 		if ( !$this->csv_output ) {
@@ -243,7 +243,6 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 										'completed' => $course_end_date,
 										'status' => $status,
 										'percent' => $course_percent,
-//										'grade' => $grade,
 									), $item );
 
 		return $column_data;
@@ -273,10 +272,13 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $this->total_items < $activity_args['offset'] ) {
-			$new_paged = floor( $total_statuses / $activity_args['number'] );
+
+			$new_paged = floor( $this->total_items / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
+
 		}
 		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+
 		// Need to always return an array, even with only 1 item
 		if ( !is_array($statuses) ) {
 			$statuses = array( $statuses );

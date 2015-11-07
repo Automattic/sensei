@@ -19,7 +19,7 @@ class Sensei_Autoloader {
     private $include_path = 'includes';
 
     /**
-     * @var class file map. List of classes mapped to their files
+     * @var array $class_file_map. List of classes mapped to their files
      */
     private $class_file_map = array();
 

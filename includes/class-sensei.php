@@ -133,6 +133,11 @@ class Sensei_Main {
     public $modules;
 
     /**
+     * @var Sensei_Analysis
+     */
+    public $analysis;
+
+    /**
      * Constructor method.
      * @param  string $file The base file of the plugin.
      * @since  1.0.0

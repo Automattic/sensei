@@ -58,7 +58,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_columns() {
-		$columns = array();
+
 		switch( $this->type ) {
 			case 'courses':
 				$columns = array(
@@ -103,7 +103,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_sortable_columns() {
-		$columns = array();
+
 		switch( $this->type ) {
 			case 'courses':
 				$columns = array(
@@ -281,10 +281,10 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 	 * Generates the overall array for a single item in the display
 	 * @since  1.7.0
 	 * @param object $item The current item
+     * @return array $column_data;
 	 */
 	protected function get_row_data( $item ) {
 
-		$column_data = array();
 		switch( $this->type ) {
 			case 'courses' :
 				// Get Learners (i.e. those who have started)
@@ -486,6 +486,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
 		$this->total_items = $courses_query->found_posts;
 		return $courses_query->posts;
+
 	} // End get_courses()
 
 	/**

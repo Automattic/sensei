@@ -71,7 +71,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_columns() {
-		$columns = array();
+
 		switch( $this->view ) {
 			case 'user' :
 				$columns = array(
@@ -79,7 +79,6 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 					'started' => __( 'Date Started', 'woothemes-sensei' ),
 					'completed' => __( 'Date Completed', 'woothemes-sensei' ),
 					'user_status' => __( 'Status', 'woothemes-sensei' ),
-//					'grade' => __( 'Grade', 'woothemes-sensei' ),
 					'percent' => __( 'Percent Complete', 'woothemes-sensei' ),
 				);
 				break;
@@ -87,6 +86,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 			case 'lesson' :
 			default:
 				if ( $this->user_id ) {
+
 					$columns = array(
 						'title' => __( 'Lesson', 'woothemes-sensei' ),
 						'started' => __( 'Date Started', 'woothemes-sensei' ),
@@ -94,14 +94,16 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 						'user_status' => __( 'Status', 'woothemes-sensei' ),
 						'grade' => __( 'Grade', 'woothemes-sensei' ),
 					);
-				}
-				else {
+
+				} else {
+
 					$columns = array(
 						'title' => __( 'Lesson', 'woothemes-sensei' ),
 						'num_learners' => __( 'Learners', 'woothemes-sensei' ),
 						'completions' => __( 'Completed', 'woothemes-sensei' ),
 						'average_grade' => __( 'Average Grade', 'woothemes-sensei' ),
 					);
+
 				}
 				break;
 		}
@@ -118,7 +120,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_sortable_columns() {
-		$columns = array();
+
 		switch( $this->view ) {
 			case 'user' :
 				$columns = array(
@@ -134,6 +136,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 			case 'lesson' :
 			default:
 				if ( $this->user_id ) {
+
 					$columns = array(
 						'title' => array( 'title', false ),
 						'started' => array( 'started', false ),
@@ -141,14 +144,16 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 						'user_status' => array( 'user_status', false ),
 						'grade' => array( 'grade', false ),
 					);
-				}
-				else {
+
+				} else {
+
 					$columns = array(
 						'title' => array( 'title', false ),
 						'num_learners' => array( 'num_learners', false ),
 						'completions' => array( 'completions', false ),
 						'average_grade' => array( 'average_grade', false )
 					);
+
 				}
 				break;
 		}
@@ -306,18 +311,18 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 			case 'user' :
 				$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
 				$user_end_date = $item->comment_date;
-				$status_class = $grade = '';
 
 				if( 'complete' == $item->comment_approved ) {
+
 					$status =  __( 'Completed', 'woothemes-sensei' );
 					$status_class = 'graded';
 
-		//			$grade = apply_filters( 'sensei_no_grade_text', __( 'No Grade', 'woothemes-sensei' ) );
-				}
-				else {
+				} else {
+
 					$status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
 					$status_class = 'in-progress';
 					$user_end_date = '';
+
 				}
 				$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
 
@@ -343,7 +348,6 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 												'completed' => $user_end_date,
 												'user_status' => $status,
 												'percent' => $course_percent,
-//												'grade' => $grade,
 											), $item, $this );
 				break;
 
@@ -520,7 +524,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $this->total_items < $activity_args['offset'] ) {
-			$new_paged = floor( $total_statuses / $activity_args['number'] );
+			$new_paged = floor( $this->total_items / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
