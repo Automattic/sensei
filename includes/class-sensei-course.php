@@ -34,8 +34,21 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - course_author_lesson_count()
  */
 class Sensei_Course {
+    /**
+     * @var $token
+     */
 	public $token;
+
+    /**
+     * @var array $meta_fields
+     */
 	public $meta_fields;
+
+    /**
+     * @var string|bool $my_courses_page reference to the sites
+     * my courses page, false if none was set
+     */
+    public  $my_courses_page;
 
 	/**
 	 * Constructor.
@@ -447,11 +460,8 @@ class Sensei_Course {
 	 * @return void
 	 */
 	public function course_lessons_meta_box_content () {
-		global $post;
 
-		// Setup Lesson Meta Data
-		$select_lesson_prerequisite = 0;
-		if ( 0 < $post->ID ) { $select_course_prerequisite = get_post_meta( $post->ID, '_lesson_course', true ); }
+		global $post;
 
 		// Setup Lesson Query
 		$posts_array = array();
@@ -462,8 +472,9 @@ class Sensei_Course {
 		} // End If Statement
 
 		$html = '';
-
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="'
+                 . esc_attr( 'woo_' . $this->token . '_noonce' )
+                 . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
 
@@ -482,7 +493,11 @@ class Sensei_Course {
 			$course_id = '';
 			if ( 0 < $post->ID ) { $course_id = '&course_id=' . $post->ID; }
 			$html .= '<p>' . esc_html( __( 'No lessons exist yet for this course.', 'woothemes-sensei' ) ) . "\n";
-				$html .= '<a href="' . admin_url( 'post-new.php?post_type=lesson' . $course_id ) . '" title="' . esc_attr( __( 'Add a Lesson', 'woothemes-sensei' ) ) . '">' . __( 'Please add some.', 'woothemes-sensei' ) . '</a>' . "\n";
+
+				$html .= '<a href="' . admin_url( 'post-new.php?post_type=lesson' . $course_id )
+                         . '" title="' . esc_attr( __( 'Add a Lesson', 'woothemes-sensei' ) ) . '">'
+                         . __( 'Please add some.', 'woothemes-sensei' ) . '</a>' . "\n";
+
 			$html .= '</p>'."\n";
 		} // End If Statement
 
@@ -644,8 +659,6 @@ class Sensei_Course {
 	public function get_archive_query_args( $type = '', $amount = 0 , $includes = array(), $excludes = array() ) {
 
 		global $wp_query;
-
-		$post_args = array();
 
 		if ( 0 == $amount && ( isset( Sensei()->settings->settings[ 'course_archive_amount' ] ) && 'usercourses' != $type && ( 0 < absint( Sensei()->settings->settings[ 'course_archive_amount' ] ) ) ) ) {
 			$amount = absint( Sensei()->settings->settings[ 'course_archive_amount' ] );
@@ -842,7 +855,6 @@ class Sensei_Course {
 				$dimensions = Sensei()->get_image_size( $image_thumb_size );
 				$width = $dimensions['width'];
 				$height = $dimensions['height'];
-				$crop = $dimensions['crop'];
 
 			} else {
 
@@ -854,7 +866,6 @@ class Sensei_Course {
 				$dimensions = Sensei()->get_image_size( $image_thumb_size );
 				$width = $dimensions['width'];
 				$height = $dimensions['height'];
-				$crop = $dimensions['crop'];
 
 			} // End If Statement
 
@@ -954,8 +965,6 @@ class Sensei_Course {
         if( is_a( $course_id, 'WP_Post' ) ){
             $course_id = $course_id->ID;
         }
-
-		$lessons = array();
 
 		$post_args = array(	'post_type'         => 'lesson',
 							'posts_per_page'       => -1,
@@ -1094,9 +1103,7 @@ class Sensei_Course {
 	 */
 	public function course_author_lesson_count( $author_id = 0, $course_id = 0 ) {
 
-		$count = 0;
-
-		$lesson_args = array(	'post_type' 		=> 'lesson',
+        $lesson_args = array(	'post_type' 		=> 'lesson',
 								'posts_per_page' 		=> -1,
 		    					'author'         	=> $author_id,
 		    					'meta_key'        	=> '_lesson_course',
@@ -1120,8 +1127,6 @@ class Sensei_Course {
 	 */
 	public function course_lesson_count( $course_id = 0 ) {
 
-		$count = 0;
-
 		$lesson_args = array(	'post_type' 		=> 'lesson',
 								'posts_per_page' 		=> -1,
 		    					'meta_key'        	=> '_lesson_course',
@@ -1131,8 +1136,10 @@ class Sensei_Course {
 								'fields'            => 'ids', // less data to retrieve
 		    				);
 		$lessons_array = get_posts( $lesson_args );
-		$count = count( $lessons_array );
-		return $count;
+
+        $count = count( $lessons_array );
+
+        return $count;
 
 	} // End course_lesson_count()
 
@@ -1144,8 +1151,6 @@ class Sensei_Course {
 	 * @return int
 	 */
 	public function course_lesson_preview_count( $course_id = 0 ) {
-
-		$count = 0;
 
 		$lesson_args = array(	'post_type' 		=> 'lesson',
 								'posts_per_page' 		=> -1,
@@ -1164,8 +1169,10 @@ class Sensei_Course {
 								'fields'            => 'ids', // less data to retrieve
 		    				);
 		$lessons_array = get_posts( $lesson_args );
+
 		$count = count( $lessons_array );
-		return $count;
+
+        return $count;
 
 	} // End course_lesson_count()
 
@@ -1297,17 +1304,7 @@ class Sensei_Course {
 				$completed_courses = Sensei()->course->course_query( $per_page, 'usercourses', $completed_ids );
 				$completed_count = count( $completed_ids );
 			} // End If Statement
-			$lesson_count = 1;
 
-			$active_page = 1;
-			if( isset( $_GET['active_page'] ) && 0 < intval( $_GET['active_page'] ) ) {
-				$active_page = $_GET['active_page'];
-			}
-
-			$completed_page = 1;
-			if( isset( $_GET['completed_page'] ) && 0 < intval( $_GET['completed_page'] ) ) {
-				$completed_page = $_GET['completed_page'];
-			}
 			foreach ( $active_courses as $course_item ) {
 
 				$course_lessons =  Sensei()->course->course_lessons( $course_item->ID );
@@ -1408,11 +1405,12 @@ class Sensei_Course {
 
 			    				} // End If Statement
 
-			    				if ( ! $course_purchased ) {
+                                if ( false == $course_purchased ) {
 
-			    					$active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="' .  __( 'Delete Course', 'woothemes-sensei' ) . '"/></span>';
+                                    $active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="'
+                                                    .  __( 'Delete Course', 'woothemes-sensei' ) . '"/></span>';
 
-			    				} // End If Statement
+                                } // End If Statement
 
 			    			$active_html .= '</form>';
 
@@ -1432,8 +1430,6 @@ class Sensei_Course {
 
 				$active_html .= '<nav class="pagination woo-pagination">';
 				$total_pages = ceil( $active_count / $per_page );
-
-				$link = '';
 
 				if( $current_page > 1 ) {
 					$prev_link = add_query_arg( 'active_page', $current_page - 1 );
@@ -1542,7 +1538,6 @@ class Sensei_Course {
 				$complete_html .= '<nav class="pagination woo-pagination">';
 				$total_pages = ceil( $completed_count / $per_page );
 
-				$link = '';
 
 				if( $current_page > 1 ) {
 					$prev_link = add_query_arg( 'completed_page', $current_page - 1 );
@@ -1610,7 +1605,7 @@ class Sensei_Course {
 
 		    		$course_page_url = get_permalink( $course_page_id );
 
-            } elseif ( 0 == $course_page_id ) {
+            } else {
 
 		    		$course_page_url = get_post_type_archive_link( 'course' );
 
@@ -1746,7 +1741,7 @@ class Sensei_Course {
 
         if( empty( $course_id ) || empty( $user_id )
         || ! WooThemes_Sensei_Utils::user_started_course( $course_id, $user_id ) ){
-            return false;
+            return '';
         }
 
         $completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
@@ -2253,6 +2248,7 @@ class Sensei_Course {
         // increment the counter
         $sensei_course_loop['counter']++;
 
+        $extra_classes = array();
         if( 0 == ( $sensei_course_loop['counter'] - 1 ) % $sensei_course_loop['columns'] || 1 == $sensei_course_loop['columns']  ){
             $extra_classes[] = 'first';
         }
@@ -2478,14 +2474,16 @@ class Sensei_Course {
         }
 
         if ( is_tax( 'course-category' ) ) {
+
             global $wp_query;
+
             $taxonomy_obj = $wp_query->get_queried_object();
-            $term_id = intval( $taxonomy_obj->term_id );
             $taxonomy_short_name = $taxonomy_obj->taxonomy;
             $taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
             $title = sprintf( __( '%1$s Archives: %2$s', 'woothemes-sensei' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
             echo apply_filters( 'course_category_archive_title', $before_html . $title . $after_html );
             return;
+
         } // End If Statement
 
         switch ( $query_type ) {
