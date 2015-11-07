@@ -3263,7 +3263,8 @@ class Sensei_Lesson {
      */
     public static function the_lesson_meta( $lesson_id ){
 
-        global $lesson_count;
+        global $wp_query;
+        $loop_lesson_number = $wp_query->current_post + 1;
 
         $course_id = Sensei()->lesson->get_course_id( $lesson_id );
         $single_lesson_complete = false;
@@ -3298,7 +3299,7 @@ class Sensei_Lesson {
          */
         if( apply_filters( 'sensei_show_lesson_numbers', false ) ) {
 
-            $count_markup =  '<span class="lesson-number">' . $lesson_count. '</span>';
+            $count_markup =  '<span class="lesson-number">' . $loop_lesson_number. '</span>';
 
         }
 

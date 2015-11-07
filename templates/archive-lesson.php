@@ -16,9 +16,10 @@
     <?php
 
         /**
-         * action before lesson archive loop
+         * Action before lesson archive loop. This action runs within the archive-lesson.php.
          *
-         * @deprecated since 1.9.0 use sensei_loop_lesson_before instead
+         * It will be excecuted even if there are no posts on the archive page.
+         *
          * @hooked Sensei_Templates::deprecated_archive_hook 80
          */
         do_action( 'sensei_archive_before_lesson_loop' );
@@ -38,12 +39,12 @@
     <?php
 
         /**
-         * action after lesson archive  loop
+         * Action after lesson archive  loop on the archive-lesson.php template file
+         * It will be executed even if there are no posts on the archive page.
          *
-         * @deprecated since 1.9.0 use sensei_loop_lesson_after instead.
+         * @since 1.9.0
          */
         do_action( 'sensei_archive_after_lesson_loop' );
-
     ?>
 
 <?php get_sensei_footer(); ?>

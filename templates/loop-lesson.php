@@ -10,9 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @category    Templates
  * @version     1.9.0
  */
-
-global $lesson_count, $wp_query;
-$lesson_count= 0;
 ?>
 
 <?php
@@ -22,12 +19,11 @@ $lesson_count= 0;
  * This runs before the post type items in the loop-lesson.php template.
  *
  * @since 1.9
- * @param WP_Query
  */
-do_action( 'sensei_loop_lesson_before', $wp_query );
+do_action( 'sensei_loop_lesson_before' );
 ?>
 
-<section class="lesson-container columns-<?php echo  WooThemes_Sensei_Lesson::get_loop_number_of_columns(); ?>" >
+<section class="lesson-container columns-<?php sensei_lessons_per_row(); ?>" >
 
     <?php
     /**
@@ -36,9 +32,8 @@ do_action( 'sensei_loop_lesson_before', $wp_query );
      * This runs before the lesson items in the loop-lesson.php template.
      *
      * @since 1.9
-     * @param WP_Query
      */
-    do_action( 'sensei_loop_lesson_inside_before', $wp_query );
+    do_action( 'sensei_loop_lesson_inside_before' );
     ?>
 
 
@@ -48,7 +43,6 @@ do_action( 'sensei_loop_lesson_before', $wp_query );
      */
     while ( have_posts() ) { the_post();
 
-        $lesson_count++;
         sensei_load_template_part( 'content', 'lesson' );
 
     }
@@ -61,9 +55,8 @@ do_action( 'sensei_loop_lesson_before', $wp_query );
      * This runs inside the <ul> after the lesson items in the loop-lesson.php template.
      *
      * @since 1.9
-     * @param WP_Query
      */
-    do_action( 'sensei_loop_lesson_inside_after', $wp_query );
+    do_action( 'sensei_loop_lesson_inside_after' );
     ?>
 
 </section>
@@ -75,6 +68,5 @@ do_action( 'sensei_loop_lesson_before', $wp_query );
  * This runs after the lesson items <ul> in the loop-lesson.php template.
  *
  * @since 1.9
- * @param WP_Query
  */
-do_action( 'sensei_loop_lesson_after', $wp_query );
+do_action( 'sensei_loop_lesson_after' );

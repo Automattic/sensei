@@ -12,8 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 ?>
 
-<?php global $post, $lesson_count; ?>
-
 <section class="course-lessons">
 
     <?php
@@ -32,8 +30,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
     //lessons loaded into loop in the sensei_single_course_lessons_before hook
     if( have_posts() ):
-
-        $lesson_count = 1;
 
         // start course lessons loop
         while ( have_posts() ): the_post();  ?>
@@ -86,11 +82,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             </article>
 
         <?php
-
-        $lesson_count++;
         // end course lessons loop
         endwhile;
-
         ?>
 
     <?php else: ?>
