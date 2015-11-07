@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 <?php
 /**
- * sensei_loop_lesson_before
- *
  * This runs before the post type items in the loop-lesson.php template.
  *
  * @since 1.9
@@ -27,20 +25,19 @@ do_action( 'sensei_loop_lesson_before' );
 
     <?php
     /**
-     * sensei_loop_lesson_inside_before
-     *
      * This runs before the lesson items in the loop-lesson.php template.
      *
-     * @since 1.9
+     * @since 1.9.0
+     *
+     * @hooked Sensei()->lesson->lesson_tag_archive_description - 11
+     * @hooked Sensei()->lesson->the_archive_header - 20
      */
     do_action( 'sensei_loop_lesson_inside_before' );
     ?>
 
 
     <?php
-    /*
-     * Loop through all lessons
-     */
+    //Loop through all lessons
     while ( have_posts() ) { the_post();
 
         sensei_load_template_part( 'content', 'lesson' );
@@ -50,11 +47,9 @@ do_action( 'sensei_loop_lesson_before' );
 
     <?php
     /**
-     * sensei_loop_lesson_inside_after
-     *
      * This runs inside the <ul> after the lesson items in the loop-lesson.php template.
      *
-     * @since 1.9
+     * @since 1.9.0
      */
     do_action( 'sensei_loop_lesson_inside_after' );
     ?>
@@ -63,10 +58,8 @@ do_action( 'sensei_loop_lesson_before' );
 
 <?php
 /**
- * sensei_loop_lesson_after
- *
  * This runs after the lesson items <ul> in the loop-lesson.php template.
  *
- * @since 1.9
+ * @since 1.9.0
  */
 do_action( 'sensei_loop_lesson_after' );

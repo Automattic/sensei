@@ -261,8 +261,8 @@ add_action( 'sensei_loop_lesson_inside_before', array( 'WooThemes_Sensei_Lesson'
 add_action( 'sensei_loop_lesson_inside_before', array( Sensei()->lesson, 'the_archive_header' ), 20 );
 
 // @since 1.9.0
-//Outp the lesson header on the content-lesson.php which runs inside the lessons loop
-add_action( 'sensei_content_lesson_inside_before', array( 'WooThemes_Sensei_Lesson', 'the_lesson_meta' ), 20 );
+//Output the lesson header on the content-lesson.php which runs inside the lessons loop
+add_action( 'sensei_content_lesson_inside_before', array( 'Sensei_Lesson', 'the_lesson_meta' ), 20 );
 
 /**************************
  *
@@ -294,11 +294,11 @@ add_action('sensei_learner_profile_inside_content_before', array( 'Sensei_Templa
 
 // @since 1.9.0
 // fire the deprecated hook function within the course-result.php file
-add_action( 'sensei_course_results_content_before', array('WooThemes_Sensei_Course_Results','deprecate_sensei_course_results_content_hook') );
+add_action( 'sensei_course_results_content_before', array('Sensei_Course_Results','deprecate_sensei_course_results_content_hook') );
 
 // @since 1.9.0
 // fire the sensei message hooke inside the course-result.php file
-add_action( 'sensei_course_results_content_inside_before', array('WooThemes_Sensei_Course_Results','fire_sensei_message_hook') );
+add_action( 'sensei_course_results_content_inside_before', array('Sensei_Course_Results','fire_sensei_message_hook') );
 
 // @since 1.9.0
 // load the course information on the course results page
@@ -306,11 +306,11 @@ add_action( 'sensei_course_results_content_inside_after', array( Sensei()->cours
 
 // @since 1.9.0
 // deprecate the course results top hook in favour of a new hook
-add_action( 'sensei_course_results_content_inside_before', array( 'WooThemes_Sensei_Course_Results', 'deprecate_course_results_top_hook') );
+add_action( 'sensei_course_results_content_inside_before', array( 'Sensei_Course_Results', 'deprecate_course_results_top_hook') );
 
 // @since 1.9.0
 // Fire the course image hook within the course results page
-add_action( 'sensei_course_results_content_inside_before', array( 'WooThemes_Sensei_Course_Results', 'fire_course_image_hook') );
+add_action( 'sensei_course_results_content_inside_before', array( 'Sensei_Course_Results', 'fire_course_image_hook') );
 
 
 /**********************************

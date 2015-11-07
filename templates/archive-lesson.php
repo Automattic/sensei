@@ -19,9 +19,7 @@
         /**
          * Action before lesson archive loop. This action runs within the archive-lesson.php.
          *
-         * It will be excecuted even if there are no posts on the archive page.
-         *
-         * @hooked Sensei_Templates::deprecated_archive_hook 80
+         * It will be executed even if there are no posts on the archive page.
          */
         do_action( 'sensei_archive_before_lesson_loop' );
 

@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
          * action that runs before the sensei {post_type} content. It runs inside the sensei
          * content.php template. This applies to the specific post type that you've targeted.
          *
-         * @since 1.9
+         * @since 1.9.0
          * @param string $post_id
          */
         do_action( 'sensei_content_lesson_before', get_the_ID() );
@@ -34,11 +34,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <?php
             /**
-             * sensei_content_lesson_inside_before
-             *
              * Fires just before the post content in the content-lesson.php file.
              *
-             * @since 1.9
+             * @since 1.9.0
+             *
+             * @hooked Sensei()->modules->module_archive_description -  11
+             * @hooked Sensei_Lesson::the_lesson_meta                -  20
              *
              * @param string $post_id
              */
@@ -53,11 +54,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <?php
             /**
-             * sensei_{$post_type}content_inside_before
-             *
              * Fires just after the post content in the lesson-content.php file.
              *
-             * @since 1.9
+             * @since 1.9.0
              *
              * @param string $post_id
              */
@@ -68,11 +67,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <?php
         /**
-         * sensei_content_lesson_after
-         * action that runs after the sensei lesson content. It runs inside the sensei
+         * This action runs after the sensei lesson content. It runs inside the sensei
          * lesson-content.php template.
          *
-         * @since 1.9
+         * @since 1.9.0
          * @param string $post_id
          */
         do_action( 'sensei_content_lesson_after', get_the_ID() );

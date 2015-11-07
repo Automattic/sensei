@@ -19,6 +19,8 @@
  * It fires even if the current archive has no no messages.
  *
  * @since 1.9.0
+ *
+ * @hooked Sensei_Messages::the_archive_header -20
  */
 do_action( 'sensei_archive_before_message_loop' );
 ?>

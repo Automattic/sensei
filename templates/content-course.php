@@ -27,8 +27,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
          *
          * @param $post
          *
-         * @hooked Sensei()->course->course_image - 10
-         * @hooked Sensei_Templates::the_title - 15
+         * @hooked Sensei()->course->course_image   - 10
+         * @hooked Sensei_Templates::the_title      - 15
          */
         do_action( 'sensei_course_content_before', get_post() );
         ?>

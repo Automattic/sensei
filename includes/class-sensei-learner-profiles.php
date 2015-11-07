@@ -149,19 +149,63 @@ class Sensei_Learner_Profiles {
 	 * @param  object $user Queried user object
 	 * @return void
 	 */
-	public function learner_profile_user_info( $user ) {
+	public static function user_info( $user ) {
+
+        /**
+         * This hooke fires inside the Sensei_Learner_Profiles::user_info function.
+         * just before the htmls is generated.
+         * @since 1.0.0
+         */
+        do_action( 'sensei_learner_profile_info', $user );
+
+        /**
+         * This filter runs inside the Sensei_Learner_Profiles::user_info function.
+         * Here you can change the user avatar.
+         *
+         * @since 1.0.0
+         *
+         * @param false|string `<img>` $user_avatar
+         */
 		$learner_avatar = apply_filters( 'sensei_learner_profile_info_avatar', get_avatar( $user->ID, 120 ), $user->ID );
+
+        /**
+         * This filter runs inside the Sensei_Learner_Profiles::user_info function.
+         * Here you can change the learner profile user display name.
+         * @since 1.0.0
+         *
+         * @param string $user_display_name
+         * @param string $user_id
+         */
 		$learner_name = apply_filters( 'sensei_learner_profile_info_name', $user->display_name, $user->ID );
+
+        /**
+         * This filter runs inside the Sensei_Learner_Profiles::user_info function.
+         * With this filter can change the users description on the learner user info
+         * output.
+         *
+         * @since 1.0.0
+         *
+         * @param string $user_description
+         * @param string $user_id
+         */
 		$learner_bio = apply_filters( 'sensei_learner_profile_info_bio', $user->description, $user->ID );
 		?>
+
 		<div id="learner-info">
+
 			<div class="learner-avatar"><?php echo $learner_avatar; ?></div>
+
 			<div class="learner-content">
+
 				<h2><?php echo $learner_name; ?></h2>
+
 				<div class="description"><?php echo wpautop( $learner_bio ); ?></div>
+
 			</div>
+
 		</div>
-		<?php
+
+        <?php
 	}
 
 	/**

@@ -19,7 +19,7 @@
  *
  * @since 1.9.0
  *
- * @hooked WooThemes_Sensei_Course_Results::deprecate_sensei_course_results_content_hook() - 20
+ * @hooked Sensei_Course_Results::deprecate_sensei_course_results_content_hook() - 20
  */
 do_action( 'sensei_course_results_content_before' );
 ?>
@@ -39,7 +39,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
          *
          * @since 1.9.0
          *
-         * @hooked WooThemes_Sensei_Course_Results::fire_sensei_message_hook() - 20
+         * @hooked Sensei_Course_Results::fire_sensei_message_hook() - 20
          */
         do_action( 'sensei_course_results_content_inside_before' );
         ?>
@@ -73,6 +73,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
          *
          * @since 1.9.0
          *
+         * @hooked Sensei()->course_results->course_info - 20
          */
         do_action( 'sensei_course_results_content_inside_after' );
         ?>
