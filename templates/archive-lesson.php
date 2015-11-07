@@ -1,6 +1,7 @@
 <?php
 /**
  * The Template for displaying lesson archives, including the lesson page template.
+ * This template also handels the lesson modules taxonomy and the lessons_tag taxonomy.
  *
  * Override this template by copying it to your_theme/sensei/archive-lesson.php
  *
