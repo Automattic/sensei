@@ -321,7 +321,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function register_settings_screen () {
-		global $woothemes_sensei;
+
 
 		if ( current_user_can( 'manage_sensei' ) ) {
 			$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
@@ -343,12 +343,12 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function settings_screen () {
-		global $woothemes_sensei;
+
 ?>
 <div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
 	<?php screen_icon( 'woothemes-sensei' ); ?>
 	<h2><?php echo esc_html( $this->name ); ?><?php if ( '' != $this->settings_version ) { echo ' <span class="version">' . $this->settings_version . '</span>'; } ?></h2>
-	<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+	<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 	<?php do_action( 'settings_before_form' ); ?>
 	<form action="options.php" method="post">
 		<?php $this->settings_tabs(); ?>
@@ -859,18 +859,18 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function enqueue_scripts () {
-		global $woothemes_sensei;
+
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script( 'farbtastic' );
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( $woothemes_sensei->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'farbtastic' ), Sensei()->version );
+		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'farbtastic' ), Sensei()->version );
 
 		if ( $this->has_range ) {
-			wp_enqueue_script( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/js/ranges' . $suffix . '.js' ), array( 'jquery-ui-slider' ), Sensei()->version );
+			wp_enqueue_script( 'woothemes-sensei-settings-ranges', esc_url( Sensei()->plugin_url . 'assets/js/ranges' . $suffix . '.js' ), array( 'jquery-ui-slider' ), Sensei()->version );
 		}
 
-		wp_register_script( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/js/image-selectors' . $suffix . '.js' ), array( 'jquery' ), Sensei()->version );
+		wp_register_script( 'woothemes-sensei-settings-imageselectors', esc_url( Sensei()->plugin_url . 'assets/js/image-selectors' . $suffix . '.js' ), array( 'jquery' ), Sensei()->version );
 
 		if ( $this->has_imageselector ) {
 			wp_enqueue_script( 'woothemes-sensei-settings-imageselectors' );
@@ -885,11 +885,11 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function enqueue_styles () {
-		global $woothemes_sensei;
-		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
+
+		wp_enqueue_style( Sensei()->token . '-admin' );
 
 		wp_enqueue_style( 'farbtastic' );
-		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), Sensei()->version );
+		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( Sensei()->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), Sensei()->version );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()
@@ -901,13 +901,13 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function enqueue_field_styles () {
-		global $woothemes_sensei;
+
 
 		if ( $this->has_range ) {
-			wp_enqueue_style( 'woothemes-sensei-settings-ranges', esc_url( $woothemes_sensei->plugin_url . 'assets/css/ranges.css' ), '', Sensei()->version );
+			wp_enqueue_style( 'woothemes-sensei-settings-ranges', esc_url( Sensei()->plugin_url . 'assets/css/ranges.css' ), '', Sensei()->version );
 		}
 
-		wp_register_style( 'woothemes-sensei-settings-imageselectors', esc_url( $woothemes_sensei->plugin_url . 'assets/css/image-selectors.css' ), '', Sensei()->version );
+		wp_register_style( 'woothemes-sensei-settings-imageselectors', esc_url( Sensei()->plugin_url . 'assets/css/image-selectors.css' ), '', Sensei()->version );
 
 		if ( $this->has_imageselector ) {
 			wp_enqueue_style( 'woothemes-sensei-settings-imageselectors' );

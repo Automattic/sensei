@@ -773,9 +773,9 @@ class Sensei_Updates {
 	}
 
 	public function remove_deleted_user_activity( $n = 50, $offset = 0 ) {
-		global $woothemes_sensei;
 
-//		remove_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+
+//		remove_filter( 'comments_clauses', array( Sensei()->admin, 'comments_admin_filter' ) );
 
 		$all_activity = get_comments( array( 'status' => 'approve' ) );
 		$activity_count = array();
@@ -818,7 +818,7 @@ class Sensei_Updates {
 			$current_page = intval( $offset / $n );
 		} // End If Statement
 
-//		add_filter( 'comments_clauses', array( $woothemes_sensei->admin, 'comments_admin_filter' ) );
+//		add_filter( 'comments_clauses', array( Sensei()->admin, 'comments_admin_filter' ) );
 
 		if ( $current_page >= $total_pages ) {
 			return true;
@@ -1445,7 +1445,7 @@ class Sensei_Updates {
 	 * @return boolean
 	 */
 	function status_changes_repair_course_statuses( $n = 50, $offset = 0 ) {
-		global $woothemes_sensei,$wpdb;
+		global $wpdb;
 
 		$count_object = wp_count_posts( 'lesson' );
 		$count_published = $count_object->publish;
@@ -1482,7 +1482,7 @@ class Sensei_Updates {
 			}
 		}
 
-		$course_completion = $woothemes_sensei->settings->settings[ 'course_completion' ];
+		$course_completion = Sensei()->settings->settings[ 'course_completion' ];
 
 		$per_page = 40;
 		$comment_id_offset = $count = 0;

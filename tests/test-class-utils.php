@@ -31,7 +31,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
      */
     public function testClassInstance() {
         //setup the test
-        global $woothemes_sensei;
+
 
         //test if the global sensei quiz class is loaded
         $this->assertTrue( class_exists( 'WooThemes_Sensei_Utils' ), 'Sensei Utils class constant is not loaded' );

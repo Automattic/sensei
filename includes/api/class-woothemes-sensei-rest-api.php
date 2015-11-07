@@ -70,8 +70,8 @@ class WooThemes_Sensei_Rest_API extends WP_JSON_CustomPostType {
 	 */
     public function send_plugin_data ( ) {
 
-	    global $woothemes_sensei;
-        $sensei_data = array( 'plugin'=>'Sensei', 'version' => $woothemes_sensei->version );
+
+        $sensei_data = array( 'plugin'=>'Sensei', 'version' => Sensei()->version );
 
         // call the wordpress function that returns the data with a success header
 	    wp_send_json_success( $sensei_data );

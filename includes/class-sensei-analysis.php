@@ -98,7 +98,6 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function enqueue_scripts () {
-		global $woothemes_sensei;
 		// None for now
 
 	} // End enqueue_scripts()
@@ -112,10 +111,10 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function enqueue_styles () {
-		global $woothemes_sensei;
-		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
+		wp_enqueue_style( Sensei()->token . '-admin' );
+
+		wp_enqueue_style( 'woothemes-sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
 
@@ -125,7 +124,7 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function load_data_table_files() {
-		global $woothemes_sensei;
+
 		// Load Analysis Classes
 		$classes_to_load = array(	'list-table',
 									'analysis-overview',
@@ -134,7 +133,7 @@ class Sensei_Analysis {
 									'analysis-lesson'
 									);
 		foreach ( $classes_to_load as $class_file ) {
-			$woothemes_sensei->load_class( $class_file );
+            Sensei()->load_class( $class_file );
 		} // End For Loop
 	} // End load_data_table_files()
 
@@ -164,7 +163,6 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_page() {
-		global $woothemes_sensei;
 
 		$course_id = 0;
 		$lesson_id = 0;
@@ -212,7 +210,7 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_default_view( $type ) {
-		global $woothemes_sensei;
+
 		// Load Analysis data
 		$sensei_analysis_overview = $this->load_data_object( 'Overview', $type );
 		// Wrappers
@@ -248,7 +246,7 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_user_profile_view( $user_id ) {
-		global $woothemes_sensei;
+
 		// Load Analysis data
 		$sensei_analysis_user_profile = $this->load_data_object( 'User_Profile', $user_id );
 		// Wrappers
@@ -275,7 +273,7 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_course_view( $course_id ) {
-		global $woothemes_sensei;
+
 		// Load Analysis data
 		$sensei_analysis_course = $this->load_data_object( 'Course', $course_id );
 		// Wrappers
@@ -302,7 +300,7 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_user_course_view( $course_id, $user_id ) {
-		global $woothemes_sensei;
+
 		// Load Analysis data
 		$sensei_analysis_user_course = $this->load_data_object( 'Course', $course_id, $user_id );
 		// Wrappers
@@ -329,7 +327,7 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_course_users_view( $course_id ) {
-		global $woothemes_sensei;
+
 		// Load Analysis data
 		$sensei_analysis_course_users = $this->load_data_object( 'Course', $course_id );
 		// Wrappers
@@ -356,7 +354,7 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_lesson_users_view( $lesson_id ) {
-		global $woothemes_sensei;
+
 		// Load Analysis data
 		$sensei_analysis_lesson_users = $this->load_data_object( 'Lesson', $lesson_id );
 		// Wrappers
@@ -399,11 +397,22 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_headers( $args = array( 'nav' => 'default' ) ) {
-		global $woothemes_sensei;
+
 		$function = 'analysis_' . $args['nav'] . '_nav';
 		$this->$function();
 		?>
-			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<p class="powered-by-woo">
+
+                <?php _e( 'Powered by', 'woothemes-sensei' ); ?>
+
+                <a href="http://www.woothemes.com/" title="WooThemes">
+
+                    <img src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" />
+
+                </a>
+
+            </p>
+
 		<?php
 		do_action( 'sensei_analysis_after_headers' );
 	} // End analysis_headers()
@@ -428,7 +437,6 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_default_nav() {
-		global $woothemes_sensei;
 
 		$title = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ) ), esc_html( $this->name ) );
 		$view = isset($_GET['view']) ? esc_html( $_GET['view'] ) : '';
@@ -457,14 +465,13 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_user_profile_nav() {
-		global $woothemes_sensei;
 
 		$title = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
 
 			$user_id = intval( $_GET['user_id'] );
 			$url = esc_url( add_query_arg( array( 'page' => $this->page_slug, 'user' => $user_id ), admin_url( 'admin.php' ) ) );
-            $user_name = $woothemes_sensei->learners->get_learner_full_name( $user_id );
+            $user_name = Sensei()->learners->get_learner_full_name( $user_id );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, $user_name );
 
 		} // End If Statement
@@ -479,14 +486,13 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_user_course_nav() {
-		global $woothemes_sensei;
 
 		$title = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
 			$user_id = intval( $_GET['user_id'] );
 			$user_data = get_userdata( $user_id );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $user_id ), admin_url( 'admin.php' ) );
-            $user_name = $woothemes_sensei->learners->get_learner_full_name( $user_id );
+            $user_name = Sensei()->learners->get_learner_full_name( $user_id );
             $title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, $user_name );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), $user_data->display_name );
 		} // End If Statement
@@ -506,7 +512,6 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_course_nav() {
-		global $woothemes_sensei;
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['course_id'] ) ) { 
@@ -525,7 +530,6 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_course_users_nav() {
-		global $woothemes_sensei;
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['course_id'] ) ) { 
@@ -544,7 +548,6 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_lesson_users_nav() {
-		global $woothemes_sensei;
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['lesson_id'] ) ) { 

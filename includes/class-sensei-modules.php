@@ -452,7 +452,7 @@ class Sensei_Core_Modules
 
     public function sensei_course_preview_titles($title, $lesson_id)
     {
-        global $post, $current_user, $woothemes_sensei;
+        global $post, $current_user;
 
         $course_id = $post->ID;
         $title_text = '';
@@ -461,7 +461,7 @@ class Sensei_Core_Modules
             $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity(array('post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status'));
             if (!$is_user_taking_course) {
                 if (method_exists('WooThemes_Sensei_Frontend', 'sensei_lesson_preview_title_text')) {
-                    $title_text = $woothemes_sensei->frontend->sensei_lesson_preview_title_text($course_id);
+                    $title_text = Sensei()->frontend->sensei_lesson_preview_title_text($course_id);
                     // Remove brackets for display here
                     $title_text = str_replace('(', '', $title_text);
                     $title_text = str_replace(')', '', $title_text);
@@ -534,13 +534,13 @@ class Sensei_Core_Modules
     public function module_archive_filter($query)
     {
         if (is_tax($this->taxonomy) && $query->is_main_query()) {
-            global $woothemes_sensei;
+
 
             // Limit to lessons only
             $query->set('post_type', 'lesson');
 
             // Set order of lessons
-            if (version_compare($woothemes_sensei->version, '1.6.0', '>=')) {
+            if (version_compare(Sensei()->version, '1.6.0', '>=')) {
                 $module_id = $query->queried_object_id;
                 $query->set('meta_key', '_order_module_' . $module_id);
                 $query->set('orderby', 'meta_value_num date');
@@ -1260,7 +1260,7 @@ class Sensei_Core_Modules
      */
     public function enqueue_styles()
     {
-        global $woothemes_sensei;
+
 
         wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', Sensei()->version );
         wp_enqueue_style($this->taxonomy . '-frontend');
@@ -1314,7 +1314,7 @@ class Sensei_Core_Modules
      * @return void
      */
     public function admin_enqueue_styles() {
-        global $woothemes_sensei;
+
 
         wp_register_style($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'css/modules-admin.css','',Sensei()->version );
         wp_enqueue_style($this->taxonomy . '-sortable');

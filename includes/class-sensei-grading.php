@@ -102,12 +102,12 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function enqueue_scripts () {
-		global $woothemes_sensei;
+
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// Load Grading JS
-		wp_enqueue_script( 'sensei-grading-general', $woothemes_sensei->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
+		wp_enqueue_script( 'sensei-grading-general', Sensei()->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
 
 	} // End enqueue_scripts()
 
@@ -120,10 +120,10 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function enqueue_styles () {
-		global $woothemes_sensei;
-		wp_enqueue_style( $woothemes_sensei->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', $woothemes_sensei->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
+		wp_enqueue_style( Sensei()->token . '-admin' );
+
+		wp_enqueue_style( 'woothemes-sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
 
@@ -133,14 +133,14 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function load_data_table_files() {
-		global $woothemes_sensei;
+
 		// Load Grading Classes
 		$classes_to_load = array(	'list-table',
 									'grading-main',
 									'grading-user-quiz'
 									);
 		foreach ( $classes_to_load as $class_file ) {
-			$woothemes_sensei->load_class( $class_file );
+			Sensei()->load_class( $class_file );
 		} // End For Loop
 	} // End load_data_table_files()
 
@@ -174,7 +174,7 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_page() {
-		global $woothemes_sensei;
+
 		if ( isset( $_GET['quiz_id'] ) && 0 < intval( $_GET['quiz_id'] ) && isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 			$this->grading_user_quiz_view();
 		}
@@ -262,12 +262,12 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_headers( $args = array( 'nav' => 'default' ) ) {
-		global $woothemes_sensei;
+
 
 		$function = 'grading_' . $args['nav'] . '_nav';
 		$this->$function();
 		?>
-			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo $woothemes_sensei->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
+			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 		<?php
 		do_action( 'sensei_grading_after_headers' );
 	} // End grading_headers()
@@ -292,7 +292,7 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_default_nav() {
-		global $woothemes_sensei, $wp_version;
+		global  $wp_version;
 
 		$title = sprintf( '<a href="%s">%s</a>', esc_url(add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['course_id'] ) ) { 
@@ -311,7 +311,7 @@ class Sensei_Grading {
 		}
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
 
-            $user_name = $woothemes_sensei->learners->get_learner_full_name( $_GET['user_id'] );
+            $user_name = Sensei()->learners->get_learner_full_name( $_GET['user_id'] );
 			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
 
 		} // End If Statement
@@ -326,7 +326,7 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_user_quiz_nav() {
-		global $woothemes_sensei, $wp_version;
+		global  $wp_version;
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['quiz_id'] ) ) { 
@@ -345,7 +345,7 @@ class Sensei_Grading {
 		}
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 
-            $user_name = $woothemes_sensei->learners->get_learner_full_name( $_GET['user'] );
+            $user_name = Sensei()->learners->get_learner_full_name( $_GET['user'] );
 			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
 
 		} // End If Statement
@@ -392,7 +392,7 @@ class Sensei_Grading {
 	 * @return object
 	 */
 	public function count_statuses( $args = array() ) {
-		global $woothemes_sensei, $wpdb;
+		global  $wpdb;
 
         /**
          * Filter fires inside Sensei_Grading::count_statuses
@@ -573,9 +573,9 @@ class Sensei_Grading {
         $quiz_id = $_GET['quiz_id'];
         $user_id = $_GET['user'];
 
-        global $woothemes_sensei;
+
         $questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
-        $quiz_lesson_id =  $woothemes_sensei->quiz->get_lesson_id( $quiz_id );
+        $quiz_lesson_id =  Sensei()->quiz->get_lesson_id( $quiz_id );
         $quiz_grade = 0;
         $count = 0;
         $quiz_grade_total = $_POST['quiz_grade_total'];
@@ -616,10 +616,10 @@ class Sensei_Grading {
         } // end for each $questions
 
         //store all question grades on the lesson status
-        $woothemes_sensei->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id , $user_id );
+        Sensei()->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id , $user_id );
 
         //store the feedback from grading
-        $woothemes_sensei->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id , $user_id );
+        Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id , $user_id );
 
         // $_POST['all_questions_graded'] is set when all questions have been graded
         // in the class sensei grading user quiz -> display()
@@ -760,9 +760,9 @@ class Sensei_Grading {
             return false; // exit early
         }
 
-        global $woothemes_sensei;
+
         $user_id = get_current_user_id();
-        $lesson_id =  $woothemes_sensei->quiz->get_lesson_id(  $quiz_id ) ;
+        $lesson_id =  Sensei()->quiz->get_lesson_id(  $quiz_id ) ;
         $quiz_autogradable = true;
 
         /**
@@ -783,8 +783,8 @@ class Sensei_Grading {
         foreach( $submitted as $question_id => $answer ) {
 
             // check if the question is autogradable, either by type, or because the grade is 0
-            $question_type = $woothemes_sensei->question->get_question_type( $question_id );
-			$achievable_grade = $woothemes_sensei->question->get_question_grade( $question_id );
+            $question_type = Sensei()->question->get_question_type( $question_id );
+			$achievable_grade = Sensei()->question->get_question_grade( $question_id );
 			// Question has a zero grade, so skip grading
 			if ( 0 == $achievable_grade ) {
 				$all_question_grades[ $question_id ] = $achievable_grade;
@@ -825,7 +825,7 @@ class Sensei_Grading {
 
         // store the auto gradable grades. If the quiz is not auto gradable the grades can be use as the default
         // when doing manual grading.
-        $woothemes_sensei->quiz-> set_user_grades( $all_question_grades, $lesson_id, $user_id );
+        Sensei()->quiz-> set_user_grades( $all_question_grades, $lesson_id, $user_id );
 
         return $grade;
 
@@ -859,8 +859,8 @@ class Sensei_Grading {
 
         }
 
-        global $woothemes_sensei;
-        $woothemes_sensei->question->get_question_type( $question_id );
+
+        Sensei()->question->get_question_type( $question_id );
 
         /**
          * Applying a grade before the auto grading takes place.
@@ -901,7 +901,7 @@ class Sensei_Grading {
                 }
                 // If all correct then grade
                 if ( $all_correct ) {
-                    $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
+                    $question_grade = Sensei()->question->get_question_grade( $question_id );
                 }
             }
 
@@ -915,11 +915,11 @@ class Sensei_Grading {
             $gapfill_array = explode( '||', $right_answer );
             // Check that the 'gap' is "exactly" equal to the given answer
             if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
-                $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
+                $question_grade = Sensei()->question->get_question_grade( $question_id );
             }
             else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
                 if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
-                    $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
+                    $question_grade = Sensei()->question->get_question_grade( $question_id );
                 }
             }
 

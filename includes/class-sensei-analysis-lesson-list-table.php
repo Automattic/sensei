@@ -91,7 +91,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $woothemes_sensei, $per_page;
+		global $per_page;
 
 		// Handle orderby (needs work)
 		$orderby = '';
@@ -209,7 +209,6 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-		global $woothemes_sensei;
 
 		$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
 		$user_end_date = $item->comment_date;
@@ -250,7 +249,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		}
 
 		// Output users data
-        $user_name = $woothemes_sensei->learners->get_learner_full_name( $item->user_id );
+        $user_name = Sensei()->learners->get_learner_full_name( $item->user_id );
 
         if ( !$this->csv_output ) {
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) );

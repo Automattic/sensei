@@ -331,7 +331,7 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function quiz_update( $post_id ) {
-		global $post, $woothemes_sensei;
+		global $post;
 		// Verify the nonce before proceeding.
 		if ( ( 'lesson' != get_post_type( $post_id ) )|| !isset(   $_POST[ 'woo_' . $this->token . '_nonce'] )  || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta') ) {
 			if ( isset($post->ID) ) {
@@ -427,7 +427,7 @@ class Sensei_Lesson {
 		// Add reference back to the Quiz
 		update_post_meta( $post_id, '_lesson_quiz', $quiz_id );
 		// Mark if the Lesson Quiz has questions
-		$quiz_questions = $woothemes_sensei->post_types->lesson->lesson_quiz_questions( $quiz_id );
+		$quiz_questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
 		if( 0 < count( $quiz_questions ) ) {
 			update_post_meta( $post_id, '_quiz_has_questions', '1' );
 		}
@@ -816,7 +816,7 @@ class Sensei_Lesson {
 	}
 
 	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz', $multiple_data = array() ) {
-		global $row_counter, $woothemes_sensei, $quiz_questions;
+		global $row_counter,  $quiz_questions;
 
 		$html = '';
 
@@ -833,7 +833,7 @@ class Sensei_Lesson {
 
 			if( $question_type != 'category' ) {
 
-				$question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
+				$question_grade = Sensei()->question->get_question_grade( $question_id );
 
 				$question_media = get_post_meta( $question_id, '_question_media', true );
 				$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = '';
@@ -985,11 +985,11 @@ class Sensei_Lesson {
 	}
 
 	public function quiz_panel_add( $context = 'quiz' ) {
-		global $woothemes_sensei;
+
 
 		$html = '<div id="add-new-question">';
 
-			$question_types = $woothemes_sensei->post_types->question->question_types();
+			$question_types = Sensei()->question->question_types();
 
 			$question_cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
 
@@ -1651,7 +1651,7 @@ class Sensei_Lesson {
 	}
 
 	public function quiz_settings_panel( $lesson_id = 0, $quiz_id = 0 ) {
-		global $woothemes_sensei;
+
 
 		$html = '';
 
@@ -1659,7 +1659,7 @@ class Sensei_Lesson {
 
 		$settings = $this->get_quiz_settings( $quiz_id );
 
-		$html = $woothemes_sensei->admin->render_settings( $settings, $quiz_id, 'quiz-settings' );
+		$html = Sensei()->admin->render_settings( $settings, $quiz_id, 'quiz-settings' );
 
 		return $html;
 
@@ -1756,7 +1756,7 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function enqueue_scripts( $hook ) {
-		global $woothemes_sensei, $post_type;
+		global  $post_type;
 
 		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
@@ -1769,9 +1769,9 @@ class Sensei_Lesson {
 
 			// Load the lessons script
             wp_enqueue_media();
-			wp_enqueue_script( 'sensei-lesson-metadata', $woothemes_sensei->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'select2' ,'jquery-ui-sortable' ), Sensei()->version, true );
-			wp_enqueue_script( 'sensei-lesson-chosen', $woothemes_sensei->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-			wp_enqueue_script( 'sensei-chosen-ajax', $woothemes_sensei->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), Sensei()->version, true );
+			wp_enqueue_script( 'sensei-lesson-metadata', Sensei()->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'select2' ,'jquery-ui-sortable' ), Sensei()->version, true );
+			wp_enqueue_script( 'sensei-lesson-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+			wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), Sensei()->version, true );
 
             // Load the bulk edit screen script
             if( 'edit.php' == $hook && 'lesson'==$_GET['post_type'] ) {
@@ -1786,7 +1786,7 @@ class Sensei_Lesson {
 
 			// Chosen RTL
 			if ( is_rtl() ) {
-				wp_enqueue_script( 'sensei-chosen-rtl', $woothemes_sensei->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+				wp_enqueue_script( 'sensei-chosen-rtl', Sensei()->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 			}
 
 		}
@@ -1801,7 +1801,7 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function enqueue_styles ( $hook ) {
-		global $woothemes_sensei, $post_type;
+		global  $post_type;
 
 		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question', 'sensei_message' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
@@ -1809,7 +1809,7 @@ class Sensei_Lesson {
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
-			wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( $woothemes_sensei->plugin_url . 'assets/css/settings.css' ), '', Sensei()->version );
+			wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( Sensei()->plugin_url . 'assets/css/settings.css' ), '', Sensei()->version );
 		}
 
 	} // End enqueue_styles()
@@ -2519,7 +2519,7 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 * @param string $post_status (default: 'publish')
-	 * @return void
+	 * @return int
 	 */
 	public function lesson_count( $post_status = 'publish', $course_id = false ) {
 

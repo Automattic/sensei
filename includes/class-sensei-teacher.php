@@ -463,14 +463,14 @@ class Sensei_Teacher {
      * @return array $users user id array
      */
     public function update_course_lessons_author ( $course_id, $new_author  ){
-        global $woothemes_sensei;
+
 
         if( empty( $course_id ) || empty( $new_author ) ){
             return false;
         }
 
         //get a list of course lessons
-        $lessons = $woothemes_sensei->course->course_lessons( $course_id );
+        $lessons = Sensei()->course->course_lessons( $course_id );
 
         if( empty( $lessons )  ||  ! is_array( $lessons )  ){
             return false;
@@ -492,7 +492,7 @@ class Sensei_Teacher {
 
             // update quiz author
             //get the lessons quiz
-            $lesson_quizzes = $woothemes_sensei->lesson->lesson_quizzes( $lesson->ID );
+            $lesson_quizzes = Sensei()->lesson->lesson_quizzes( $lesson->ID );
             if( is_array( $lesson_quizzes ) ){
                 foreach ( $lesson_quizzes as $quiz_id ) {
                     // update quiz with new author

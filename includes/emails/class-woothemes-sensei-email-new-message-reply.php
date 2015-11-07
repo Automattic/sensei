@@ -45,7 +45,7 @@ class WooThemes_Sensei_Email_New_Message_Reply {
 	 * @return void
 	 */
 	function trigger( $comment, $message ) {
-		global $woothemes_sensei, $sensei_email_data;
+		global  $sensei_email_data;
 
 		$this->comment = $comment;
 		$this->message = $message;
@@ -90,7 +90,7 @@ class WooThemes_Sensei_Email_New_Message_Reply {
 		}
 
 		// Send mail
-		$woothemes_sensei->emails->send( $this->recipient, $this->subject, $woothemes_sensei->emails->get_content( $this->template ) );
+		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 	}
 }
 

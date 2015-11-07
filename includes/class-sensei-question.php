@@ -147,17 +147,17 @@ class Sensei_Question {
 	}
 
 	public function question_edit_panel() {
-		global $woothemes_sensei, $post, $pagenow;
+		global  $post, $pagenow;
 
-		add_action( 'admin_enqueue_scripts', array( $woothemes_sensei->post_types->lesson, 'enqueue_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( $woothemes_sensei->post_types->lesson, 'enqueue_styles' ) );
+		add_action( 'admin_enqueue_scripts', array( Sensei()->lesson, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( Sensei()->lesson, 'enqueue_styles' ) );
 
 		$html = '<div id="lesson-quiz" class="single-question"><div id="add-question-main">';
 
 		if( 'post-new.php' == $pagenow ) {
 
 			$html .= '<div id="add-question-actions">';
-				$html .= $woothemes_sensei->post_types->lesson->quiz_panel_add( 'question' );
+				$html .= Sensei()->lesson->quiz_panel_add( 'question' );
 			$html .= '</div>';
 
 		} else {
@@ -166,7 +166,7 @@ class Sensei_Question {
 			$question_type =  Sensei()->question->get_question_type( $post->ID );
 
 			$html .= '<div id="add-question-metadata"><table class="widefat">';
-				$html .= $woothemes_sensei->post_types->lesson->quiz_panel_question( $question_type, 0, $question_id, 'question' );
+				$html .= Sensei()->lesson->quiz_panel_question( $question_type, 0, $question_id, 'question' );
 			$html .= '</table></div>';
 		}
 
@@ -228,7 +228,7 @@ class Sensei_Question {
             return;
         }
 
-        global $woothemes_sensei;
+
 
         //setup the data for saving
 		$data = $_POST ;
@@ -241,7 +241,7 @@ class Sensei_Question {
 			remove_action( 'save_post', array( $this, 'save_question' ) );
 
 			// Update question data
-			$question_id = $woothemes_sensei->post_types->lesson->lesson_save_question( $data, 'question' );
+			$question_id = Sensei()->lesson->lesson_save_question( $data, 'question' );
 
 			// Re-hook same function
 			add_action( 'save_post', array( $this, 'save_question' ) );
@@ -617,19 +617,19 @@ class Sensei_Question {
      */
     public static function the_answer_result_indication( $question_id ){
 
-        global $post, $woothemes_sensei, $current_user, $sensei_question_loop;
+        global $post,  $current_user, $sensei_question_loop;
 
         // Setup variable needed to determine if the message should show and what it should show
-        $lesson_id = $woothemes_sensei->quiz->get_lesson_id( $sensei_question_loop['quiz_id']);
+        $lesson_id = Sensei()->quiz->get_lesson_id( $sensei_question_loop['quiz_id']);
         $question_item = $sensei_question_loop['current_question'];
-        $user_quiz_grade = $woothemes_sensei->quiz->data->user_quiz_grade;
-        $lesson_complete = $woothemes_sensei->quiz->data->user_lesson_complete;
-        $reset_quiz_allowed = $woothemes_sensei->quiz->data->reset_quiz_allowed;
-        $quiz_grade_type = $woothemes_sensei->quiz->data->quiz_grade_type;
-        $question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
+        $user_quiz_grade = Sensei()->quiz->data->user_quiz_grade;
+        $lesson_complete = Sensei()->quiz->data->user_lesson_complete;
+        $reset_quiz_allowed = Sensei()->quiz->data->reset_quiz_allowed;
+        $quiz_grade_type = Sensei()->quiz->data->quiz_grade_type;
+        $question_grade = Sensei()->question->get_question_grade( $question_id );
 
         // retrieve users stored data.
-        $user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $current_user->ID );
+        $user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, $current_user->ID );
 
 
         // Question ID
@@ -654,7 +654,7 @@ class Sensei_Question {
                 $answer_message_class = 'user_right';
             }
 
-            $answer_notes = $woothemes_sensei->quiz->get_user_question_feedback( $lesson_id, $question_id, $current_user->ID );
+            $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, $current_user->ID );
             if( $answer_notes ) {
                 $answer_message_class .= ' has_notes';
             }

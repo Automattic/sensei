@@ -18,8 +18,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
      */
     public function setUp() {
         // load the factory class
-        global $woothemes_sensei;
-        $woothemes_sensei->grading = new WooThemes_Sensei_Grading( '' );
+
+        Sensei()->grading = new WooThemes_Sensei_Grading( '' );
         $this->factory = new Sensei_Factory();
     }// end function setup()
 
@@ -28,10 +28,10 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
      */
     public function testClassInstance() {
         //setup the test
-        global $woothemes_sensei;
+
 
         //test if the global sensei quiz class is loaded
-        $this->assertTrue(isset($woothemes_sensei->grading), 'Sensei Grading class is not loaded');
+        $this->assertTrue(isset(Sensei()->grading), 'Sensei Grading class is not loaded');
 
     } // end testClassInstance
 }// end Class

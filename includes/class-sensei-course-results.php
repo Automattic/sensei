@@ -101,7 +101,7 @@ class Sensei_Course_Results {
 	 * @return void
 	 */
 	public function content() {
-		global $wp_query, $woothemes_sensei, $current_user;
+		global $wp_query,  $current_user;
 
 		if( isset( $wp_query->query_vars['course_results'] ) ) {
             Sensei_Templates::get_template( 'course-results/course-info.php' );

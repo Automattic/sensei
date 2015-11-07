@@ -203,7 +203,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
      */
     public function generate_user_quiz_answers( $quiz_id ){
 
-        global $woothemes_sensei;
+
         $user_quiz_answers =  array();
 
         if( empty( $quiz_id ) ||  'quiz' != get_post_type( $quiz_id ) ){
@@ -213,7 +213,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
         }
 
         // get all the quiz questions that is added to the passed in quiz
-        $quiz_question_posts = $woothemes_sensei->lesson->lesson_quiz_questions( $quiz_id );
+        $quiz_question_posts = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
 
         if( empty( $quiz_question_posts ) || count( $quiz_question_posts ) == 0
             || ! isset(  $quiz_question_posts[0]->ID ) ){
@@ -306,7 +306,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
      */
     protected function attach_lessons_questions( $number = 10 , $lesson_id ){
 
-        global $woothemes_sensei;
+
 
         if( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
             || ! get_post( $lesson_id ) ||  'lesson'!= get_post_type( $lesson_id )  ){
@@ -346,7 +346,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
                 $question[ 'quiz_id' ] = $quiz_id;
                 $question[ 'post_author'] = get_post( $quiz_id )->post_author;
-                $woothemes_sensei->lesson->lesson_save_question( $question );
+                Sensei()->lesson->lesson_save_question( $question );
 
             } // end for each range 0 to 12
 
@@ -379,13 +379,13 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
      */
     protected function generate_questions( $number = 10 ){
 
-        global $woothemes_sensei;
+
         $chosen_questions =  array(); // will be used to store generated question
         $sample_questions = array(); // will be used to store 1 sample from each question type
 
         // get all allowed question data
         //'multiple-choice' 'boolean' 'gap-fill' 'single-line' 'multi-line' 'file-upload'
-        $question_types = $woothemes_sensei->question->question_types();
+        $question_types = Sensei()->question->question_types();
 
         // get the question type slug as this is used to determine the slug and not the string type
         $question_type_slugs = array_keys($question_types);
@@ -535,12 +535,12 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
         }
 
-        global $woothemes_sensei;
+
         // create a new array without questions of type file
         $answers_without_files = array();
         foreach( $user_answers as $question_id => $answer  ){
 
-          $type  = $woothemes_sensei->question->get_question_type( $question_id );
+          $type  = Sensei()->question->get_question_type( $question_id );
 
           if( 'file-upload' !=  $type  ){
               $answers_without_files[ $question_id ] = $answer;
@@ -569,12 +569,12 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
         }
 
-        global $woothemes_sensei;
+
         // create a new array without questions of type file
         $file_type_answers = array();
         foreach( $user_answers as $question_id => $answer  ){
 
-            $type  = $woothemes_sensei->question->get_question_type( $question_id );
+            $type  = Sensei()->question->get_question_type( $question_id );
 
             if( 'file-upload' ==  $type  ){
                 $file_type_answers[ $question_id ] = $answer;
@@ -598,7 +598,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
      */
     public function generate_user_answers_feedback( $quiz_id ){
 
-        global $woothemes_sensei;
+
         $answers_feedback =  array();
 
         if( empty( $quiz_id ) ||  'quiz' != get_post_type( $quiz_id ) ){

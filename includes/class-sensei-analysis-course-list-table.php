@@ -62,6 +62,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
+
 	} // End __construct()
 
 	/**
@@ -164,7 +165,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $woothemes_sensei, $per_page;
+		global $per_page;
 
 		// Handle orderby (needs work)
 		$orderby = '';
@@ -300,7 +301,6 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-		global $woothemes_sensei;
 
 		switch( $this->view ) {
 			case 'user' :
@@ -309,7 +309,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 				$status_class = $grade = '';
 
 				if( 'complete' == $item->comment_approved ) {
-					$status = apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) );
+					$status =  __( 'Completed', 'woothemes-sensei' );
 					$status_class = 'graded';
 
 		//			$grade = apply_filters( 'sensei_no_grade_text', __( 'No Grade', 'woothemes-sensei' ) );
@@ -322,7 +322,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 				$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
 
 				// Output users data
-				$user_name = $woothemes_sensei->learners->get_learner_full_name( $item->user_id );
+				$user_name = Sensei()->learners->get_learner_full_name( $item->user_id );
 
 				if ( !$this->csv_output ) {
 
@@ -640,11 +640,11 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_footer() {
-        global $woothemes_sensei;
+
 		$course = get_post( $this->course_id );
 		$report = sanitize_title( $course->post_title ) . '-' . $this->view . 's-overview';
 		if ( $this->user_id ) {
-            $user_name = $woothemes_sensei->learners->get_learner_full_name( $this->user_id );
+            $user_name = Sensei()->learners->get_learner_full_name( $this->user_id );
 			$report = sanitize_title( $user_name  ) . '-' . $report;
 		}
 

@@ -283,7 +283,6 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-		global $woothemes_sensei;
 
 		$column_data = array();
 		switch( $this->type ) {
@@ -305,7 +304,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 				$course_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
 				// Course Lessons
-				$course_lessons = $woothemes_sensei->post_types->lesson->lesson_count( array('publish', 'private'), $item->ID );
+				$course_lessons = Sensei()->lesson->lesson_count( array('publish', 'private'), $item->ID );
 
 				// Get Percent Complete
 				$grade_args = array( 
@@ -441,7 +440,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 
 				// Output the users data
 				if ( $this->csv_output ) {
-                    $user_name = $woothemes_sensei->learners->get_learner_full_name( $item->ID );
+                    $user_name = Sensei()->learners->get_learner_full_name( $item->ID );
                 }
 				else {
 					$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->ID ), admin_url( 'admin.php' ) );
@@ -552,16 +551,15 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 	/**
 	 * Sets the stats boxes to render
 	 * @since  1.2.0
-	 * @return $stats_to_render array of stats boxes and values
+	 * @return array $stats_to_render of stats boxes and values
 	 */
 	public function stats_boxes () {
-		global $woothemes_sensei;
 
 		// Get the data required
 		$user_count = count_users();
 		$user_count = apply_filters( 'sensei_analysis_total_users', $user_count['total_users'], $user_count );
-		$total_courses = $woothemes_sensei->post_types->course->course_count( array('publish', 'private') );
-		$total_lessons = $woothemes_sensei->post_types->lesson->lesson_count( array('publish', 'private') );
+		$total_courses = Sensei()->course->course_count( array('publish', 'private') );
+		$total_lessons = Sensei()->lesson->lesson_count( array('publish', 'private') );
 
 		$grade_args = array( 
 				'type' => 'sensei_lesson_status',

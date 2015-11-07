@@ -41,7 +41,7 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 	 * @return void
 	 */
 	function trigger( $user_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0 ) {
-		global $woothemes_sensei, $sensei_email_data;
+		global  $sensei_email_data;
 
 		// Get learner user object
 		$this->user = new WP_User( $user_id );
@@ -80,7 +80,7 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 		$this->recipient = stripslashes( $this->user->user_email );
 
 		// Send mail
-		$woothemes_sensei->emails->send( $this->recipient, $this->subject, $woothemes_sensei->emails->get_content( $this->template ) );
+		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 	}
 }
 
