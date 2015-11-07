@@ -45,5 +45,4 @@
          */
         do_action( 'sensei_archive_after_lesson_loop' );
     ?>
-
 <?php get_sensei_footer(); ?>

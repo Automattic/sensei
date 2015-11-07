@@ -470,7 +470,7 @@ class Sensei_Lesson {
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int $post_id (default: 0)
-	 * @return int meta id | bool saved status
+	 * @return int|bool meta id or saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		// Get the meta key.
@@ -2934,7 +2934,7 @@ class Sensei_Lesson {
      * @access public
      *
      * @param int $lesson_id
-     * @return int $course_id or bool when nothing is found.
+     * @return int|bool $course_id or bool when nothing is found.
      */
      public function get_course_id( $lesson_id ){
 
@@ -3227,7 +3227,6 @@ class Sensei_Lesson {
             $course_id = $post->ID;
 
             $lesson_classes = array( 'course', 'post' );
-            $user_lesson_status = false;
             if ( is_user_logged_in() ) {
 
                 // Check if Lesson is complete
