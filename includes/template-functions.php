@@ -29,6 +29,15 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	  */
 	 function course_single_lessons() {
 
+         // load backwards compatible template name if it exists in the users theme
+         $located_template= locate_template( Sensei()->template_url . 'single-course/course-lessons.php' );
+         if( $located_template ){
+
+             Sensei_Templates::get_template( 'single-course/course-lessons.php' );
+             return;
+
+        }
+
 		Sensei_Templates::get_template( 'single-course/lessons.php' );
 
 	 } // End course_single_lessons()
@@ -986,7 +995,7 @@ function sensei_the_single_lesson_meta(){
  *
  * @uses get_header
  *
- * since 1.9.0
+ * @since 1.9.0
  */
 function get_sensei_header(){
 
@@ -1011,7 +1020,7 @@ function get_sensei_header(){
  *
  * @uses get_footer
  *
- * since 1.9.0
+ * @since 1.9.0
  */
 function get_sensei_footer(){
 
@@ -1116,3 +1125,92 @@ function sensei_the_my_courses_content(){
     echo Sensei()->course->load_user_courses_content( wp_get_current_user() );
 
 } // sensei_the_my_courses_content
+
+/**
+ * This is a wrapper function for Sensei_Templates::get_template
+ * It helps simplify templates for designers by removing the class::function call.
+ *
+ * @param string $template_name the name of the template.
+ *              If it is in a sub directory please suply the directory name as well e.g. globals/wrapper-end.php
+ *
+ * @since 1.9.0
+ */
+function sensei_load_template( $template_name ){
+
+    Sensei_Templates::get_template( $template_name );
+
+}
+
+/**
+ * This is a wrapper function for Sensei_Templates::get_part
+ * It helps simplify templates for designers by removing the class::function call.
+ *
+ * @param string $slug the first part to the template file name
+ * @param string $name the name of the template.
+ * @since 1.9.0
+ */
+function sensei_load_template_part( $slug, $name ){
+
+    Sensei_Templates::get_part( $slug, $name );
+
+}
+
+/**
+ * Returns the the lesson excerpt.
+ *
+ * This function will not wrap the the excerpt with <p> tags.
+ * For the p tags call Sensei_Lesson::lesson_excerpt( $lesson)
+ *
+ * This function will only work for the lesson post type. All other post types will
+ * be ignored.
+ *
+ * @since 1.9.0
+ * @access public
+ * @param string $lesson_id
+ */
+function sensei_the_lesson_excerpt( $lesson_id = '' ) {
+
+    if( empty( $lesson_id )){
+
+        $lesson_id = get_the_ID();
+
+    }
+
+    if( 'lesson' != get_post_type( $lesson_id ) ){
+        return;
+    }
+
+    echo Sensei_Lesson::lesson_excerpt( get_post( $lesson_id ), false );
+
+}// End lesson_excerpt()
+
+/**
+ * The the course result lessons template
+ *
+ * @since 1.9.0
+ */
+function sensei_the_course_results_lessons(){
+    // load backwards compatible template name if it exists in the users theme
+    $located_template= locate_template( Sensei()->template_url . 'course-results/course-lessons.php' );
+    if( $located_template ){
+
+        Sensei_Templates::get_template( 'course-results/course-lessons.php' );
+        return;
+
+    }
+
+    Sensei_Templates::get_template( 'course-results/lessons.php' );
+}
+
+/**
+ * Echo the number of columns (also number of items per row) on the
+ * the course archive.
+ *
+ * @uses Sensei_Course::get_loop_number_of_columns
+ * @since 1.9.0
+ */
+function sensei_courses_per_row(){
+
+    echo Sensei_Course::get_loop_number_of_columns();
+
+}

@@ -15,11 +15,38 @@
 
 <?php
 /**
- * sensei_message_archive_main_content hook
+ * This action before course messages archive loop. This hook fires within the archive-message.php file.
+ * It fires even if the current archive has no no messages.
  *
- * @hooked sensei_message_archive_main_content - 10 (outputs main message archive content loop)
+ * @since 1.9.0
+ *
+ * @hooked Sensei_Messages::the_archive_header -20
  */
-do_action( 'sensei_message_archive_main_content' );
+do_action( 'sensei_archive_before_message_loop' );
+?>
+
+<section id="main-sensei_message" class="sensei_message-container">
+
+    <?php if ( have_posts() ): ?>
+
+        <?php sensei_load_template('loop-message.php'); ?>
+
+    <?php else: ?>
+
+        <p> <?php _e('You do not have any messages.','woothemes-sensei'); ?> </p>
+
+    <?php  endif; // End If Statement ?>
+
+</section>
+
+<?php
+/**
+ * This action before course messages archive loop. This hook fires within the archive-message.php file.
+ * It fires even if the current archive has no no messages.
+ *
+ * @since 1.9.0
+ */
+do_action( 'sensei_archive_after_message_loop' );
 ?>
 
 <?php get_sensei_footer(); ?>

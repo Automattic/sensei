@@ -19,8 +19,8 @@
  *
  * @since 1.9.0
  *
- * @hooked WooThemes_Sensei_Learner_Profiles::deprecate_sensei_learner_profile_content_hook - 10
- * @hooked WooThemes_Sensei_Learner_Profiles::sensei_complete_course_action - 20
+ * @hooked Sensei_Learner_Profiles::deprecate_sensei_learner_profile_content_hook   - 10
+ * @hooked Sensei_Templates::fire_sensei_complete_course_hook                      - 20
  */
 do_action( 'sensei_learner_profile_content_before' );
 ?>
@@ -35,7 +35,7 @@ do_action( 'sensei_learner_profile_content_before' );
          *
          * @since 1.9.0
          *
-         * @hooked WooThemes_Sensei_Learner_Profiles::sensei_complete_course_action_hook-10
+         * @hooked  Sensei_Templates::fire_frontend_messages_hook
          */
         do_action( 'sensei_learner_profile_inside_content_before' );
         ?>
@@ -46,8 +46,14 @@ do_action( 'sensei_learner_profile_content_before' );
 
             <?php
 
-            do_action( 'sensei_learner_profile_info', $learner_user );
+            // show the user information
+            Sensei_Learner_Profiles::user_info( $learner_user );
 
+            ?>
+
+            <?php
+
+            // show the user courses
             Sensei()->course->load_user_courses_content( $learner_user );
 
             ?>

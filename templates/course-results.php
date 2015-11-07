@@ -19,7 +19,7 @@
  *
  * @since 1.9.0
  *
- * @hooked WooThemes_Sensei_Course_Results::deprecate_sensei_course_results_content_hook() - 20
+ * @hooked Sensei_Course_Results::deprecate_sensei_course_results_content_hook() - 20
  */
 do_action( 'sensei_course_results_content_before' );
 ?>
@@ -39,7 +39,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
          *
          * @since 1.9.0
          *
-         * @hooked WooThemes_Sensei_Course_Results::fire_sensei_message_hook() - 20
+         * @hooked Sensei_Course_Results::fire_sensei_message_hook() - 20
          */
         do_action( 'sensei_course_results_content_inside_before' );
         ?>
@@ -59,7 +59,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
                 $started_course = WooThemes_Sensei_Utils::user_started_course( $course->ID, get_current_user_id() );
                 if( $started_course ) {
 
-                    Sensei_Templates::get_template( 'course-results/lessons.php' );
+                    sensei_the_course_results_lessons();
 
                 }
                 ?>
@@ -73,6 +73,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
          *
          * @since 1.9.0
          *
+         * @hooked Sensei()->course_results->course_info - 20
          */
         do_action( 'sensei_course_results_content_inside_after' );
         ?>

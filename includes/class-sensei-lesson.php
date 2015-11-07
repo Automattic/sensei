@@ -470,7 +470,7 @@ class Sensei_Lesson {
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int $post_id (default: 0)
-	 * @return int meta id | bool saved status
+	 * @return int|bool meta id or saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		// Get the meta key.
@@ -2909,13 +2909,19 @@ class Sensei_Lesson {
 	/**
 	 * Returns the the lesson excerpt.
 	 *
-	 * @access public
+	 * @param WP_Post $lesson
+     * @param bool $add_p_tags should the excerpt be wrapped by calling wpautop()
 	 * @return string
 	 */
-	public static function lesson_excerpt( $lesson = null ) {
+	public static function lesson_excerpt( $lesson = null, $add_p_tags = true ) {
 		$html = '';
 		if ( is_a( $lesson, 'WP_Post' ) && 'lesson' == $lesson->post_type ) {
-			$html = wpautop( sensei_get_excerpt( $lesson ) );
+
+            $excerpt =  sensei_get_excerpt( $lesson );
+
+            // if $add_p_tags true wrap with <p> else return the excerpt as is
+            $html =  $add_p_tags ? wpautop( $excerpt ) : $excerpt;
+
 		}
 		return apply_filters( 'sensei_lesson_excerpt', $html );
 
@@ -2928,7 +2934,7 @@ class Sensei_Lesson {
      * @access public
      *
      * @param int $lesson_id
-     * @return int $course_id or bool when nothing is found.
+     * @return int|bool $course_id or bool when nothing is found.
      */
      public function get_course_id( $lesson_id ){
 
@@ -3221,7 +3227,6 @@ class Sensei_Lesson {
             $course_id = $post->ID;
 
             $lesson_classes = array( 'course', 'post' );
-            $user_lesson_status = false;
             if ( is_user_logged_in() ) {
 
                 // Check if Lesson is complete
@@ -3257,7 +3262,8 @@ class Sensei_Lesson {
      */
     public static function the_lesson_meta( $lesson_id ){
 
-        global $lesson_count;
+        global $wp_query;
+        $loop_lesson_number = $wp_query->current_post + 1;
 
         $course_id = Sensei()->lesson->get_course_id( $lesson_id );
         $single_lesson_complete = false;
@@ -3292,7 +3298,7 @@ class Sensei_Lesson {
          */
         if( apply_filters( 'sensei_show_lesson_numbers', false ) ) {
 
-            $count_markup =  '<span class="lesson-number">' . $lesson_count. '</span>';
+            $count_markup =  '<span class="lesson-number">' . $loop_lesson_number. '</span>';
 
         }
 
@@ -3389,7 +3395,7 @@ class Sensei_Lesson {
         if ('lesson' == get_post_type(get_the_ID())){
 
             // remove this hooks to avoid an infinite loop.
-            remove_action( 'get_the_excerpt', array( __CLASS__,'alter_the_lesson_excerpt') );
+            remove_filter( 'get_the_excerpt', array( 'WooThemes_Sensei_Lesson','alter_the_lesson_excerpt') );
 
             return WooThemes_Sensei_Lesson::lesson_excerpt( get_post( get_the_ID() ) );
         }
@@ -3558,25 +3564,6 @@ class Sensei_Lesson {
     }
 
     /**
-     * Get the number of columns set for Sensei lesson loop
-     *
-     * @since 1.9.0
-     * @return mixed|void
-     */
-    public static function get_loop_number_of_columns(){
-
-        /**
-         * Filter the number of columns on the lesson loop template
-         * which can be used in a number of other templates.
-         *
-         * @since 1.9.0
-         * @param int $number_of_columns default 3
-         */
-        return apply_filters('sensei_lesson_number_of_columns', 3);
-
-    }
-
-    /**
      * Deprecate the sensei_lesson_archive_header hook but keep it
      * active for backwards compatibility.
      *
@@ -3603,20 +3590,6 @@ class Sensei_Lesson {
         echo apply_filters( 'sensei_lesson_archive_title', $html );
 
     } // sensei_course_archive_header()
-
-    /**
-     * Returns the the lesson excerpt.
-     *
-     * @since 1.9.0
-     * @access public
-     * @param $lesson
-     * @return string
-     */
-    public static function the_lesson_excerpt( $lesson = null ) {
-
-        echo self::lesson_excerpt( $lesson );
-
-    } // End lesson_excerpt()
 
     /**
      * Output the title for the single lesson page

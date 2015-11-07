@@ -503,31 +503,23 @@ class Sensei_Core_Modules
      * @param  string $template Default template
      * @return string           Modified template
      */
-    public function module_archive_template($template)
-    {
+    public function module_archive_template($template) {
 
-        $find = array('woothemes-sensei.php');
-        $file = '';
+        if ( ! is_tax($this->taxonomy) ) {
+            return $template;
+        }
 
-        if ( is_tax($this->taxonomy) ) {
+        $file = 'archive-lesson.php';
+        $find = array( $file, Sensei()->template_url . $file );
 
-            $file = 'taxonomy-module.php';
-            $find[] = $file;
-            $find[] = Sensei()->template_url . $file;
+        // locate the template file
+        $template = locate_template($find);
+        if (!$template) {
+
+            $template = Sensei()->plugin_path() . 'templates/' . $file;
 
         }
 
-        // Load the template file
-        if ($file) {
-
-            $template = locate_template($find);
-            if (!$template) {
-
-                $template = Sensei()->plugin_path() . 'templates/' . $file;
-
-            }
-
-        } // End If Statement
 
         return $template;
     }
@@ -1355,6 +1347,15 @@ class Sensei_Core_Modules
      * @return void
      */
     public function load_course_module_content_template(){
+
+        // load backwards compatible template name if it exists in the users theme
+        $located_template= locate_template( Sensei()->template_url . 'single-course/course-modules.php' );
+        if( $located_template ){
+
+            Sensei_Templates::get_template( 'single-course/course-modules.php' );
+            return;
+
+        }
 
         Sensei_Templates::get_template( 'single-course/modules.php' );
 

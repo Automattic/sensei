@@ -32,7 +32,7 @@
 
     <header>
 
-        <h2 class="title"> <? the_title(); ?> </h2>
+        <h2 class="title"> <?php the_title(); ?> </h2>
 
     </header>
 
