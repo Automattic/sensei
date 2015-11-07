@@ -31,7 +31,7 @@ add_filter( 'template_include', array ( 'Sensei_Templates', 'template_loader' ),
 add_action( 'sensei_archive_before_course_loop', array ( 'Sensei_Templates', 'deprecated_archive_course_content_hook' ), 10, 1 );
 
 // Course archive title hook @since 1.9.0
-add_action('sensei_archive_before_course_loop', array( 'WooThemes_Sensei_Course', 'archive_header' ), 10, 0 );
+add_action('sensei_archive_before_course_loop', array( 'Sensei_Course', 'archive_header' ), 10, 0 );
 
 // add the course image above the content
 add_action('sensei_course_content_before', array( Sensei()->course, 'course_image' ) ,10, 1 );
@@ -61,7 +61,7 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Templat
 
 // @1.9.0
 // Filter the content and replace it with the excerpt if the user doesn't have full access
-add_filter( 'the_content', array('WooThemes_Sensei_Course', 'single_course_content' ) );
+add_filter( 'the_content', array('Sensei_Course', 'single_course_content' ) );
 
 // @1.9.0
 // Deprecate lessons specific single course hooks
@@ -89,28 +89,28 @@ add_action('sensei_single_course_modules_after', array('Sensei_Templates','depre
 
 // @since 1.9.0
 // add the single course lessons title
-add_action( 'sensei_single_course_content_inside_after' , array( 'WooThemes_Sensei_Course','the_course_lessons_title'), 9 );
+add_action( 'sensei_single_course_content_inside_after' , array( 'Sensei_Course','the_course_lessons_title'), 9 );
 
 // @since 1.9.0
 // hooks in the course lessons query and remove it at the end
-add_action( 'sensei_single_course_lessons_before', array('WooThemes_Sensei_Course','load_single_course_lessons_query' ) );
-add_action( 'sensei_single_course_lessons_after', array( 'WooThemes_Sensei_Utils','restore_wp_query' ));
+add_action( 'sensei_single_course_lessons_before', array('Sensei_Course','load_single_course_lessons_query' ) );
+add_action( 'sensei_single_course_lessons_after', array( 'Sensei_Utils','restore_wp_query' ));
 
 // @since 1.9.0
 // add post classes to the lessons on the single course page
-add_filter( 'post_class', array( 'WooThemes_Sensei_Lesson', 'single_course_lessons_classes' ) );
+add_filter( 'post_class', array( 'Sensei_Lesson', 'single_course_lessons_classes' ) );
 
 // @since 1.9.0
 // lesson meta information on the single course page
-add_action( 'sensei_single_course_inside_before_lesson', array('WooThemes_Sensei_Lesson','the_lesson_meta') , 5);
+add_action( 'sensei_single_course_inside_before_lesson', array('Sensei_Lesson','the_lesson_meta') , 5);
 
 //@since 1.9.0
 // lesson image
-add_action( 'sensei_single_course_inside_before_lesson', array('WooThemes_Sensei_Lesson','the_lesson_thumbnail') , 8);
+add_action( 'sensei_single_course_inside_before_lesson', array('Sensei_Lesson','the_lesson_thumbnail') , 8);
 
 //@since 1.9.0
 // lesson custom excerpts
-add_filter( 'get_the_excerpt', array( 'WooThemes_Sensei_Lesson', 'alter_the_lesson_excerpt' ) );
+add_filter( 'get_the_excerpt', array( 'Sensei_Lesson', 'alter_the_lesson_excerpt' ) );
 
 // @since 1.9.0
 // run a deprecated hook for backwards compatibility sake
@@ -126,7 +126,7 @@ add_action( 'sensei_single_course_modules_after', array( 'Sensei_Core_Modules', 
 
 // @since 1.9.0
 // hook in the possible full content override to show instead of excerpt
-add_filter('get_the_excerpt', array( 'WooThemes_Sensei_Course', 'full_content_excerpt_override' ) );
+add_filter('get_the_excerpt', array( 'Sensei_Course', 'full_content_excerpt_override' ) );
 
 /***************************
  *
@@ -137,45 +137,45 @@ add_filter('get_the_excerpt', array( 'WooThemes_Sensei_Course', 'full_content_ex
  ***************************/
 //@since 1.9.0
 // deprecate hooks no longer needed
-add_action( 'sensei_single_quiz_content_inside_before', array('WooThemes_Sensei_Quiz', 'deprecate_quiz_sensei_single_main_content_hook' ) );
-add_action( 'sensei_single_quiz_content_inside_before', array('WooThemes_Sensei_Quiz', 'deprecate_quiz_sensei_quiz_single_title_hook' ) );
+add_action( 'sensei_single_quiz_content_inside_before', array('Sensei_Quiz', 'deprecate_quiz_sensei_single_main_content_hook' ) );
+add_action( 'sensei_single_quiz_content_inside_before', array('Sensei_Quiz', 'deprecate_quiz_sensei_quiz_single_title_hook' ) );
 
 //@since 1.9.0
 // Single qui title
-add_filter( 'the_title', array( 'WooThemes_Sensei_Quiz' , 'single_quiz_title' ) );
+add_filter( 'the_title', array( 'Sensei_Quiz' , 'single_quiz_title' ) );
 
 // since 1.9.0
 // initialize the quiz questions loop
-add_action( 'sensei_single_quiz_content_inside_before', array( 'WooThemes_Sensei_Quiz', 'start_quiz_questions_loop') );
+add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'start_quiz_questions_loop') );
 
 // since 1.9.0
 // hook in the quiz user message
-add_action( 'sensei_single_quiz_content_inside_before', array( 'WooThemes_Sensei_Quiz', 'the_user_status_message' ), 10 );
+add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 10 );
 
 //@since 1.9.0
 // hook in the question title, description and quesiton media
-add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question','the_question_title' ), 10 );
-add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question','the_question_description' ), 20 );
-add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question','the_question_media' ), 30 );
-add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question','the_question_hidden_fields' ), 40 );
+add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question','the_question_title' ), 10 );
+add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question','the_question_description' ), 20 );
+add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question','the_question_media' ), 30 );
+add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question','the_question_hidden_fields' ), 40 );
 
 //@since 1.9.0
 // hook in incorrect / correct message above questions if the quiz has been graded
-add_action( 'sensei_quiz_question_inside_before', array( 'WooThemes_Sensei_Question', 'the_answer_result_indication' ), 50 );
+add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_answer_result_indication' ), 50 );
 
 //@since 1.9.0
 // add answer grading feedback at the bottom of the question
-add_action( 'sensei_quiz_question_inside_after', array( 'WooThemes_Sensei_Question', 'answer_feedback_notes' ) );
+add_action( 'sensei_quiz_question_inside_after', array( 'Sensei_Question', 'answer_feedback_notes' ) );
 
 //@since 1.9.0
 // add extra question data for different quesiton types when get_question_template_data_is_called.
-add_filter( 'sensei_get_question_template_data', array( 'WooThemes_Sensei_Question','multiple_choice_load_question_data'), 10, 3);
-add_filter( 'sensei_get_question_template_data', array( 'WooThemes_Sensei_Question','gap_fill_load_question_data'), 10, 3);
-add_filter( 'sensei_get_question_template_data', array( 'WooThemes_Sensei_Question','file_upload_load_question_data'), 10, 3);
+add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question','multiple_choice_load_question_data'), 10, 3);
+add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question','gap_fill_load_question_data'), 10, 3);
+add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question','file_upload_load_question_data'), 10, 3);
 
 //@since 1.9.0
 // deprecate the quiz button action
-add_action( 'sensei_single_quiz_questions_after', array( 'WooThemes_Sensei_Quiz', 'action_buttons' ), 10, 0 );
+add_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Question', 'action_buttons' ), 10, 0 );
 
 /***************************
  *
@@ -202,11 +202,11 @@ add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Templat
 
 // @since 1.9.0
 // hook in the sensei lesson user notices
-add_action( 'sensei_single_lesson_content_inside_before', array( 'WooThemes_Sensei_Lesson', 'user_not_taking_course_message' ), 15 );
+add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'user_not_taking_course_message' ), 15 );
 
 // @since 1.9.0
 // attach the lesson title
-add_action( 'sensei_single_lesson_content_inside_before', array( 'WooThemes_Sensei_Lesson', 'the_title' ), 15 );
+add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'the_title' ), 15 );
 
 // @since 1.9.0
 // add the single lesson meta
@@ -222,11 +222,11 @@ add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Template
 
 // @since 1.9.0
 // hook in the lesson prerequisite completion message
-add_action( 'sensei_single_lesson_content_inside_after', array( 'WooThemes_Sensei_Lesson', 'prerequisite_complete_message' ), 20 );
+add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Lesson', 'prerequisite_complete_message' ), 20 );
 
 // @since 1.9.0
 // hook the single lesson course_signup_link
-add_action( 'sensei_single_lesson_content_inside_after', array( 'WooThemes_Sensei_Lesson', 'course_signup_link' ), 30 );
+add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Lesson', 'course_signup_link' ), 30 );
 
 // @since 1.9.0
 // hook the deprecate breadcrumbs and comments hooks
@@ -240,9 +240,9 @@ add_action( 'sensei_after_main_content', array( 'Sensei_Templates', 'deprecate_s
  *
  ************************/
 
-add_action( 'sensei_single_message_content_inside_before', array( 'WooThemes_Sensei_Messages', 'the_title' ), 20 );
+add_action( 'sensei_single_message_content_inside_before', array( 'Sensei_Messages', 'the_title' ), 20 );
 
-add_action( 'sensei_single_message_content_inside_before', array( 'WooThemes_Sensei_Messages', 'the_message_sent_by_title' ), 40 );
+add_action( 'sensei_single_message_content_inside_before', array( 'Sensei_Messages', 'the_message_sent_by_title' ), 40 );
 
 /*************************
  *
@@ -254,7 +254,7 @@ add_action( 'sensei_single_message_content_inside_before', array( 'WooThemes_Sen
 
 // deprecate the sensei_lesson_archive_header hook
 // @deprecated since 1.9.0
-add_action( 'sensei_loop_lesson_inside_before', array( 'WooThemes_Sensei_Lesson', 'deprecate_sensei_lesson_archive_header_hook' ), 20 );
+add_action( 'sensei_loop_lesson_inside_before', array( 'Sensei_Lesson', 'deprecate_sensei_lesson_archive_header_hook' ), 20 );
 
 // @1.9.0
 //The archive title header on the lesson archive loop
@@ -273,7 +273,7 @@ add_action( 'sensei_content_lesson_inside_before', array( 'Sensei_Lesson', 'the_
  **************************/
 // @since 1.9.0
 // deprecate the learner profile content hook as the markup code is added in the template directly.
-add_action('sensei_learner_profile_content_before', array( 'WooThemes_Sensei_Learner_Profiles', 'deprecate_sensei_learner_profile_content_hook' ) );
+add_action('sensei_learner_profile_content_before', array( 'Sensei_Learner_Profiles', 'deprecate_sensei_learner_profile_content_hook' ) );
 
 // @since 1.9.0
 // do the sensei complete course action on the learner profiles page.
