@@ -1214,16 +1214,3 @@ function sensei_courses_per_row(){
     echo Sensei_Course::get_loop_number_of_columns();
 
 }
-
-/**
- * Echo the number of columns (also number of items per row) on the
- * the lesson archive.
- *
- * @uses Sensei_Lesson::get_loop_number_of_columns
- * @since 1.9.0
- */
-function sensei_lessons_per_row(){
-
-    echo Sensei_Lesson::get_loop_number_of_columns();
-
-}

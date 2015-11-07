@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 do_action( 'sensei_loop_lesson_before' );
 ?>
 
-<section class="lesson-container columns-<?php sensei_lessons_per_row(); ?>" >
+<section class="lesson-container" >
 
     <?php
     /**

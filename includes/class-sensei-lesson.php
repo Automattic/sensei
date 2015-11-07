@@ -3565,25 +3565,6 @@ class Sensei_Lesson {
     }
 
     /**
-     * Get the number of columns set for Sensei lesson loop
-     *
-     * @since 1.9.0
-     * @return mixed|void
-     */
-    public static function get_loop_number_of_columns(){
-
-        /**
-         * Filter the number of columns on the lesson loop template
-         * which can be used in a number of other templates.
-         *
-         * @since 1.9.0
-         * @param int $number_of_columns default 3
-         */
-        return apply_filters('sensei_lesson_number_of_columns', 3);
-
-    }
-
-    /**
      * Deprecate the sensei_lesson_archive_header hook but keep it
      * active for backwards compatibility.
      *
