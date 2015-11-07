@@ -9,20 +9,20 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-global $woothemes_sensei, $sensei_email_data;
+global $sensei_email_data;
 extract( $sensei_email_data );
 
 // Load colours
 $base = '#557da1';
-if( isset( $woothemes_sensei->settings->settings['email_base_color'] ) && '' != $woothemes_sensei->settings->settings['email_base_color'] ) {
-    $base = $woothemes_sensei->settings->settings['email_base_color'];
+if( isset( Sensei()->settings->settings['email_base_color'] ) && '' != Sensei()->settings->settings['email_base_color'] ) {
+    $base = Sensei()->settings->settings['email_base_color'];
 }
 
 $base_lighter_40 = sensei_hex_lighter( $base, 40 );
 
 $footer_text = sprintf( __( '%1$s - Powered by Sensei', 'woothemes-sensei' ), get_bloginfo( 'name' ) );
-if( isset( $woothemes_sensei->settings->settings['email_footer_text'] ) ) {
-    $footer_text = $woothemes_sensei->settings->settings['email_footer_text'];
+if( isset( Sensei()->settings->settings['email_footer_text'] ) ) {
+    $footer_text = Sensei()->settings->settings['email_footer_text'];
 }
 
 // For gmail compatibility, including CSS styles in head/body are stripped out therefore styles need to be inline. These variables contain rules which are added to the template inline.

@@ -3,7 +3,7 @@
 Plugin Name: Sensei
 Plugin URI: http://www.woothemes.com/products/sensei/
 Description: A course management plugin that offers the smoothest platform for helping you teach anything.
-Version: 1.8.8
+Version: 1.9-alpha
 Author: WooThemes
 Author URI: http://www.woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -32,10 +32,10 @@ Domain path: /lang/
 
     require_once( 'includes/class-sensei-autoloader.php' );
     require_once( 'includes/lib/woo-functions.php' );
-    require_once( 'includes/lib/woothemes-sensei-functions.php' );
+    require_once( 'includes/sensei-functions.php' );
 
     if ( ! is_admin() ) {
-        require_once( 'includes/lib/woothemes-sensei-template.php' );
+        require_once( 'includes/template-functions.php' );
     }
 
     /**
@@ -45,16 +45,32 @@ Domain path: /lang/
      */
     function Sensei(){
 
-        return WooThemes_Sensei::instance();
+        return Sensei_Main::instance();
 
     }
 
     // set the sensei version number
-    Sensei()->version = '1.8.8';
+    Sensei()->version = '1.9-alpha';
 
     //backwards compatibility
     global $woothemes_sensei;
     $woothemes_sensei = Sensei();
+
+    /**
+    * Hook in WooCommerce functionality
+    */
+    if( Sensei_WC::is_woocommerce_active() ){
+        add_action('init', array( 'Sensei_WC', 'load_woocommerce_integration_hooks' ) );
+    }
+
+    /**
+     * Load all Template hooks
+    */
+    if(! is_admin() ){
+
+        require_once( 'includes/hooks/template-hooks.php' );
+
+    }
 
     /**
      * Plugin updates

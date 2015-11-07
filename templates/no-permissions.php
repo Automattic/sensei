@@ -4,41 +4,79 @@
  *
  * Override this template by copying it to yourtheme/sensei/no-permissions.php
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.0.0
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
+?>
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+<?php  get_sensei_header();  ?>
 
-get_header();
-
+<?php
 /**
- * sensei_before_main_content hook
+ * This action fires inside the no-permissions.php file. It
+ * is place above before all the content.
  *
- * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
+ * @since 1.9.0
  */
-do_action('sensei_before_main_content');
+do_action('sensei_no_permissions_before_content');
+?>
 
+<article <?php post_class( 'no-permission' ) ?> >
+
+    <header>
+
+        <h1><?php the_no_permissions_title(); ?></h1>
+
+    </header>
+
+    <?php
+    /**
+     * This action fires inside the no-permissions.php file. It
+     * is place just before the content.
+     *
+     * @since 1.9.0
+     */
+    do_action('sensei_no_permissions_inside_before_content');
+    ?>
+
+    <section class="entry fix">
+
+        <div class="sensei-message alert">
+
+            <?php the_no_permissions_message(); ?>
+
+        </div>
+
+        <p class="excerpt">
+
+            <?php sensei_the_excerpt(); ?>
+
+        </p>
+
+    </section>
+
+    <?php
+    /**
+     * This action fires inside the no-permissions.php file. It
+     * is place just after the content.
+     *
+     * @since 1.9.0
+     */
+    do_action('sensei_no_permissions_inside_after_content');
+    ?>
+
+</article><!-- .no-permissions -->
+
+<?php
 /**
- * sensei_no_permissions_main_content hook
+ * This action fires inside the no-permissions.php file. It
+ * is placed outside after the content.
  *
- * @hooked sensei_no_permissions_main_content - 10 (outputs main content)
+ * @since 1.9.0
  */
-do_action( 'sensei_no_permissions_main_content' );
+do_action('sensei_no_permissions_after_content');
+?>
 
-/**
- * sensei_after_main_content hook
- *
- * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)
- */
-do_action('sensei_after_main_content');
-
-/**
- * sensei_sidebar hook
- *
- * @hooked sensei_get_sidebar - 10
- */
-do_action('sensei_sidebar');
-
-get_footer(); ?>
+<?php get_sensei_footer(); ?>

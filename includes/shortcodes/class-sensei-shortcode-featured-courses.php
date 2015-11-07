@@ -114,7 +114,7 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
         $wp_query = $this->query;
 
         ob_start();
-        include('templates/loop.php');
+        Sensei_Templates::get_template('loop-course.php');
         $shortcode_output =  ob_get_clean();
 
         //restore old query

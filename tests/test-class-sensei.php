@@ -25,7 +25,7 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
         $this->assertTrue( function_exists( 'Sensei' ), "The global Sensei() function does not exist.");
 
         // make sure it return an instance of class WooThemes_Sensei
-        $this->assertTrue( 'WooThemes_Sensei' ==  get_class( Sensei() ),
+        $this->assertTrue( 'Sensei_Main' ==  get_class( Sensei() ),
             'The Sensei() function does not return an instance of class WooThemes_Sensei' );
 
     }
