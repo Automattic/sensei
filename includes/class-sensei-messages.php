@@ -625,6 +625,84 @@ class Sensei_Messages {
 
     } // End sensei_single_title()
 
+    /**
+     * Generates the my messages
+     * archive header.
+     *
+     * @since 1.9.0
+     *
+     * @return string
+     */
+    public static function the_archive_header( ){
+
+        $html = '';
+        $html .= '<header class="archive-header"><h1>';
+        $html .= __( 'My Messages', 'woothemes-sensei' );
+        $html .= '</h1></header>';
+
+        /**
+         * Filter the sensei messages archive title.
+         * @since 1.0.0
+         */
+        echo apply_filters( 'sensei_message_archive_title', $html );
+
+    } // get_archive_header()
+
+    /**
+     * Output the title for a message given the post_id.
+     *
+     * @since 1.9.0
+     * @param $post_id
+     */
+    public static function the_message_title( $message_post_id ){
+
+        $content_post_id = get_post_meta( $message_post_id, '_post', true );
+
+        if( $content_post_id ) {
+
+            $title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), get_the_title( $content_post_id ) );
+
+        } else {
+
+            $title = get_the_title( $message_post_id );
+
+        }
+
+        ?>
+        <h2>
+            <a href="<?php esc_url( get_permalink( $message_post_id ) );?>">
+                <?php echo  $title; ?>
+            </a>
+
+        </h2>
+
+        <?php
+    } //end the_message_header
+
+    /**
+     * Output the message sender given the post id.
+     *
+     * @param $message_post_id
+     */
+    public  static function the_message_sender( $message_post_id ){
+
+        $sender_username = get_post_meta( $message_post_id, '_sender', true );
+        $sender = get_user_by( 'login', $sender_username );
+
+        if( $sender_username && $sender instanceof WP_User ) {
+            $sender_display_name = sprintf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() );
+            ?>
+            <p class="message-meta">
+                <small>
+                    <em> <?php echo $sender_display_name; ?> </em>
+                </small>
+            </p>
+
+            <?php
+        } // end if
+
+    } // end the_message_archive_sender
+
 } // End Class
 
 /**

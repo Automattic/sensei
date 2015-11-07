@@ -347,3 +347,23 @@ add_action('sensei_my_courses_content_inside_after', array( 'Sensei_Templates', 
 // deprecate the sensei_login_form hok which was use to load the login form.
 // This now loads independent of the my-courses template which helps keep templates free from logic
 add_action( 'sensei_login_form_before', array( 'Sensei_Templates', 'deprecate_sensei_login_form_hook' ) );
+
+/**********************************
+ *
+ *
+ * Archive Message Hooks
+ *
+ *
+ ********************************/
+// @since 1.9.0
+// Deprecate the archive messages hooks no longer supported
+add_action( 'sensei_archive_before_message_loop', array( 'Sensei_Templates', 'deprecated_archive_message_hooks' ) );
+
+// @since 1.9.0
+// Deprecate the archive messages hooks no longer supported
+add_action( 'sensei_archive_before_message_loop', array( 'Sensei_Messages', 'the_archive_header' ) );
+
+// @since 1.9.0
+// output the message title and the message sensei
+add_action( 'sensei_content_message_before', array( 'Sensei_Messages', 'the_message_title' ), 10, 1 );
+add_action( 'sensei_content_message_before', array( 'Sensei_Messages', 'the_message_sender' ), 20 , 1 );
