@@ -2177,7 +2177,6 @@ class Sensei_Course {
     }// end the_course_action_buttons
 
     /**
-     *
      * This function alter the main query on the course archive page.
      * This also gives Sensei specific filters that allows variables to be altered specifically on the course archive.
      *
@@ -2193,8 +2192,8 @@ class Sensei_Course {
      */
     public static function course_query_filter( $query ){
 
-        // exit early for no course queries
-        if( ! is_admin( ) && 'course' != $query->get( 'post_type' ) ){
+        // exit early for no course queries and admin queries
+        if( is_admin( ) || 'course' != $query->get( 'post_type' ) ){
             return $query;
         }
 
