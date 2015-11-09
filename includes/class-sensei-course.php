@@ -668,11 +668,21 @@ class Sensei_Course {
 			} // End If Statement
 		} // End If Statement
 
+        $stored_order = get_option( 'sensei_course_order', '' );
+        $order = 'ASC';
+        $orderby = 'menu_order';
+        if( empty( $stored_order ) ){
+
+            $order = 'DESC';
+            $orderby = 'date';
+
+        }
+
 		switch ($type) {
 			case 'usercourses':
 				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'menu_order date',
-    								'order'           	=> 'ASC',
+									'orderby'         	=> $orderby,
+    								'order'           	=> $order,
     								'post_status'      	=> 'publish',
     								'include'			=> $includes,
     								'exclude'			=> $excludes,
@@ -702,8 +712,8 @@ class Sensei_Course {
  					array_push( $free_wc_posts , $post_item->ID );
  				} // End For Loop
  				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'menu_order date',
-    								'order'           	=> 'ASC',
+                                    'orderby'         	=> $orderby,
+                                    'order'           	=> $order,
     								'post_status'      	=> 'publish',
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
@@ -753,8 +763,8 @@ class Sensei_Course {
  					array_push( $paid_wc_posts , $post_item->ID );
  				} // End For Loop
 				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'menu_order date',
-    								'order'           	=> 'ASC',
+                                    'orderby'         	=> $orderby,
+                                    'order'           	=> $order,
     								'post_status'      	=> 'publish',
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
@@ -785,8 +795,8 @@ class Sensei_Course {
 				break;
 			case 'featuredcourses':
 				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'menu_order date',
-    								'order'           	=> 'ASC',
+                                    'orderby'         	=> $orderby,
+                                    'order'           	=> $order,
     								'post_status'      	=> 'publish',
     								'meta_value' 		=> 'featured',
     								'meta_key' 			=> '_course_featured',
@@ -797,8 +807,8 @@ class Sensei_Course {
 				break;
 			default:
 				$post_args = array(	'post_type' 		=> 'course',
-									'orderby'         	=> 'menu_order date',
-    								'order'           	=> 'ASC',
+                                    'orderby'         	=> $orderby,
+                                    'order'           	=> $order,
     								'post_status'      	=> 'publish',
     								'include'			=> $includes,
     								'exclude'			=> $excludes,
@@ -1214,7 +1224,7 @@ class Sensei_Course {
 
 	/**
 	 * Fix posts_per_page for My Courses page
-	 * @param  object $query WP_Query object
+	 * @param  WP_Query $query
 	 * @return void
 	 */
 	public function filter_my_courses( $query ) {
