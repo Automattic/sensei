@@ -637,7 +637,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
 
-        return WooThemes_Sensei_Grading::grade_quiz_auto( $quiz_id, $submitted, $total_questions, $quiz_grade_type );
+        return Sensei_Grading::grade_quiz_auto( $quiz_id, $submitted, $total_questions, $quiz_grade_type );
 
 	} // End sensei_grade_quiz_auto()
 
@@ -747,9 +747,17 @@ class Sensei_Utils {
     }// end user_start_lesson()
 
 	/**
-	 * Marked lesson as started for user
+	 * Mark a lesson as started for user
+     *
+     * Will also start the lesson course for the user if the user hans't started taking it already.
+     *
+     * @since 1.6.0
+     *
 	 * @param  integer $lesson_id ID of lesson
-	 * @return mixed boolean or comment_ID
+	 * @param int| string $user_id default 0
+     * @param bool $complete default false
+     *
+     * @return mixed boolean or comment_ID
 	 */
 	public static function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false ) {
 
@@ -1070,7 +1078,7 @@ class Sensei_Utils {
 	} // End sort_array_by_key()
 
 	/**
-	 * lesson_quiz_questions gets array of lesson quiz questions
+	 * This function returns an array of lesson quiz questions
 	 * @since  1.3.2
 	 * @param  integer $quiz_id
 	 * @return array of quiz questions
@@ -1769,12 +1777,13 @@ class Sensei_Utils {
 	/**
 	 * Sets the status for the lesson
 	 *
-	 * @access public
 	 * @since  1.7.0
-	 * @param type $user_id
-	 * @param type $lesson_id
-	 * @param type $status
-	 * @param type $metadata
+     *
+	 * @param int|string $user_id
+	 * @param int|string $lesson_id
+	 * @param string $status
+	 * @param array $metadata
+     *
 	 * @return mixed false or comment_ID
 	 */
 	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array() ) {

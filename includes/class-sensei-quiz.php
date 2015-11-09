@@ -578,31 +578,29 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          // Get the minimum percentage need to pass this quiz
          $quiz_pass_percentage = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
 
-         // Handle Quiz Completion submit for grading
-         if( isset( $_POST['questions_asked'] ) && is_array( $_POST['questions_asked'] ) ) {
-
-             $questions_asked = array_filter(array_map('absint', $_POST['questions_asked']));
-
-         }else{
+         // Handle Quiz Questions asked
+         // This is to ensure we save the questions that we've asked this user and that this can't be change unless
+         // the quiz is reset by admin or user( user: only if the setting is enabled ).
+         // get the questions asked when when the quiz questions were generated for the user : Sensei_Lesson::lesson_quiz_questions
+         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+         $questions_asked = get_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', true );
+         if( empty( $questions_asked ) ){
 
              $questions_asked = array_keys( $quiz_answers );
+             $questions_asked_string = implode( ',', $questions_asked );
+
+             // Save questions that were asked in this quiz
+             if( isset( $user_lesson_status->comment_ID ) ) {
+                 update_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', $questions_asked_string );
+             }
 
          }
-
-         $questions_asked_string = implode( ',', $questions_asked );
 
          // Save Quiz Answers for grading, the save function also calls the sensei_start_lesson
          self::save_user_answers( $quiz_answers , $files , $lesson_id , $user_id );
 
-         // Save questions that were asked in this quiz
-         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-         if( isset( $user_lesson_status->comment_ID ) ) {
-             update_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', $questions_asked_string );
-         }
-
          // Grade quiz
-         $grade = WooThemes_Sensei_Utils::sensei_grade_quiz_auto( $quiz_id, $quiz_answers, 0 , $quiz_grade_type );
-
+         $grade = Sensei_Grading::grade_quiz_auto( $quiz_id, $quiz_answers, 0 , $quiz_grade_type );
 
          // Get Lesson Grading Setting
          $lesson_metadata = array();

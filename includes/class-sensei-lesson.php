@@ -2603,7 +2603,7 @@ class Sensei_Lesson {
 	public function lesson_quiz_questions( $quiz_id = 0, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) {
 
 		$quiz_id = (string) $quiz_id;
-        $quiz_lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+        $quiz_lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
         // setup the user id
         if( is_admin() ) {
@@ -2611,6 +2611,9 @@ class Sensei_Lesson {
         } else {
             $user_id = get_current_user_id();
         }
+
+        // get the users current status on the lesson
+        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
 
 		// Set the default question order if it has not already been set for this quiz
 		$this->set_default_question_order( $quiz_id );
@@ -2654,8 +2657,7 @@ class Sensei_Lesson {
 		if( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' == $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it
-			$lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
-			$questions_asked_string = !empty($lesson_status->comment_ID) ? get_comment_meta( $lesson_status->comment_ID, 'questions_asked', true ) : false;
+			$questions_asked_string = !empty( $user_lesson_status->comment_ID) ? get_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', true ) : false;
 			if( !empty($questions_asked_string) ) {
 
 				$selected_questions = explode( ',', $questions_asked_string );
@@ -2764,7 +2766,7 @@ class Sensei_Lesson {
         // Save the questions that will be asked for the current user
         // this happens only once per user/quiz, unless the user resets the quiz
         if( ! is_admin() ){
-            $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
+
             if( $user_lesson_status ) {
 
                 $questions_asked = get_comment_meta($user_lesson_status->comment_ID, 'questions_asked', true);

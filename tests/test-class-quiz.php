@@ -1016,4 +1016,62 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
     } // testGetUserFeedbackTransients
 
+    /**
+     * This test Woothemes_Sensei()->quiz->save_user_answers to see if the function
+     * can overwrite the questions asked. This function should not be able to overwrite questions
+     * asked none was recorded in the first place.
+     *
+     * @group questions
+     */
+    function testSaveUserAnswersQuestionsAskedNotOverwriteable(){
+
+        global $current_user;
+        $test_user_id = wp_create_user('studQuestionsaskedOverwrite', 'studQuestionsaskedOverwrite', 'studQuestionsaskedOverwrite@test.com');
+        $current_user =  get_user_by( 'id', $test_user_id );
+        $test_lesson_id = $this->factory->get_random_lesson_id();
+        $user_lesson_status_comment_id = WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+
+        // setup the quiz questions asked
+        $test_quiz_id = Sensei()->lesson->lesson_quizzes($test_lesson_id);
+
+        // set the show questions to be less than the actual question the quiz has
+        $show_questions = update_post_meta( $test_quiz_id, '_show_questions',  10 );
+
+        //
+        // setup and accident example where the users is asked less questions by mistake
+        //
+
+        // function that gets questions also load the quiz questions asked if none was set
+        $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id  );
+        $files = $this->factory->generate_test_files( $test_user_quiz_answers );
+
+        // questions asked as it was saved initial
+        $questions_asked_count = count( $test_user_quiz_answers );
+
+        // remove some 2 questions to illustrate mistake
+        array_pop( $test_user_quiz_answers);
+        array_pop( $test_user_quiz_answers);
+
+
+        // Submit answers and remove the hooks within the submit function to avoid side effects
+        remove_all_actions( 'sensei_user_quiz_submitted' );
+        remove_all_actions( 'sensei_user_lesson_end' );
+        $result_for_valid_data =  WooThemes_Sensei_Quiz::submit_answers_for_grading( $test_user_quiz_answers, $files,
+            $test_lesson_id , $test_user_id );
+
+
+        // get questions after submitting
+        $questions_asked_string = get_comment_meta( $user_lesson_status_comment_id , 'questions_asked', true);
+        $questions_asked_count_after_submitting = count( explode( ',', $questions_asked_string ) );
+
+
+        //check if questions asked have not been overwritten
+        $this->assertEquals( $questions_asked_count, $questions_asked_count_after_submitting,
+            'Questions asked user data does not match what was set when the lesson quiz questions was generated.' );
+
+
+    }// end testSaveUserAnswersQuestionsAskedNotOverwriteable
+
+
+
 }// end class Sensei_Class_Quiz_Test
