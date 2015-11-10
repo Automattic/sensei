@@ -73,21 +73,25 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
-		extract( $args, EXTR_SKIP );
 
 		remove_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 
-		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) && !is_user_logged_in() ) {
+		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) )
+            && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] )
+            && !is_user_logged_in() ) {
+
 			// No Output
+            return;
+
 		} else {
 			/* Our variables from the widget settings. */
 			$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
 
 			/* Before widget (defined by themes). */
-			echo $before_widget;
+			echo $args['before_widget'];
 
 			/* Display the widget title if one was input (before and after defined by themes). */
-			if ( $title ) { echo $before_title . $title . $after_title; }
+			if ( $title ) { echo $args['before_title'] . $title . $args['after_title']; }
 
 			/* Widget content. */
 			// Add actions for plugins/themes to hook onto.
@@ -101,7 +105,8 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 			do_action( $this->woo_widget_cssclass . '_bottom' );
 
 			/* After widget (defined by themes). */
-			echo $after_widget;
+			echo $args['after_widget'];
+
 		} // End If Statement
 
 		add_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
@@ -210,16 +215,33 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes
 		if ( !empty($instance['limit']) && intval( $instance['limit'] ) >= 1 && intval( $instance['limit'] ) < count($course_ids) ) {
+
 			$course_ids = array_slice( $course_ids, 0, intval( $instance['limit'] ) ); // This does mean the order by is effectively ignored
+
 		}
-		if ( ! empty( $course_ids ) ) {
-			$posts_array = Sensei()->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ), $course_ids );
+
+        if ( ! empty( $course_ids ) ) {
+
+            $posts_array = Sensei()->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ), $course_ids );
+
 		} else {
-			if ( 'activecourses' == esc_attr( $instance['component'] ) || 'completedcourses' == esc_attr( $instance['component'] ) ) {
+
+            if ( 'activecourses' == esc_attr( $instance['component'] ) || 'completedcourses' == esc_attr( $instance['component'] ) ) {
 				$posts_array = array();
-			} else {
-				$posts_array = Sensei()->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ) );
+
+            } else {
+
+                $course_args = array(
+                    'post_type' => 'course',
+                    'orderby'         	=> 'date',
+                    'order'           	=> 'DESC',
+                    'post_status'      	=> 'publish',
+                    'posts_per_page' => $instance['limit'],
+                );
+
+				$posts_array = get_posts( $course_args );
 			}
+
 		} // End If Statement
 
 		if ( count( $posts_array ) > 0 ) { ?>
