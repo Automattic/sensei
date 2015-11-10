@@ -52,7 +52,6 @@ class Sensei_Frontend {
 		// Template output actions
 		add_action( 'sensei_before_main_content', array( $this, 'sensei_output_content_wrapper' ), 10 );
 		add_action( 'sensei_after_main_content', array( $this, 'sensei_output_content_wrapper_end' ), 10 );
-		add_action( 'sensei_pagination', array( $this, 'sensei_output_content_pagination' ), 10 );
 		add_action( 'sensei_after_main_content', array( $this, 'sensei_output_comments' ), 10 );
 
 		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
@@ -337,11 +336,10 @@ class Sensei_Frontend {
 	/**
 	 * sensei_output_content_pagination function.
 	 *
-     * @todo trigger errors for version 2.0 for all old files
 	 * @access public
 	 * @return void
 	 */
-	function sensei_output_content_pagination() {
+	public static function load_content_pagination() {
 
         if( is_singular('course') ) {
 
