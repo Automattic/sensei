@@ -304,6 +304,24 @@ class Sensei_Main {
     }
 
     /**
+     * This function is linked into the activation
+     * hook to reset flush the urls to ensure Sensei post types show up.
+     *
+     * @since 1.9.0
+     *
+     * @param $plugin
+     */
+    public static function activation_flush_rules( $plugin ){
+
+        if( strpos( $plugin, '/woothemes-sensei.php' ) > 0  ){
+
+            flush_rewrite_rules(true);
+
+        }
+
+    }
+
+    /**
      * Global Sensei Instance
      *
      * Ensure that only one instance of the main Sensei class can be loaded.

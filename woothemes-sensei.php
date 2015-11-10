@@ -100,8 +100,10 @@ Domain path: /lang/
         Sensei()->updates->add_editor_caps();
         Sensei()->updates->assign_role_caps();
 
+        //Flush rules
+        add_action( 'activated_plugin' , array( 'Sensei_Main','activation_flush_rules' ), 10 );
 
         //Load the Welcome Screen
-        add_action( 'activated_plugin' , array( 'Sensei_Welcome','redirect' ) );
+        add_action( 'activated_plugin' , array( 'Sensei_Welcome','redirect' ), 20 );
 
     }// end activate_sensei
