@@ -261,7 +261,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['course_archive_image_hard_crop'] = array(
 								'name' => __( 'Image Hard Crop - Archive', 'woothemes-sensei' ),
-								'description' => sprintf( __( 'After changing this setting you may need to <a href="%s">regenerate your thumbnails</a>.', 'woothemes-sensei' ), 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ),
+								'description' => __( 'After changing this setting ', 'woothemes-sensei')
+                                                . __('you may need to ', 'woothemes-sensei')
+                                                . '<a href="http://wordpress.org/extend/plugins/regenerate-thumbnails/">'
+                                                .__('regenerate your thumbnails.', 'woothemes-sensei')
+                                                . '</a>',
 								'type' => 'checkbox',
 								'default' => false,
 								'section' => 'course-settings'
