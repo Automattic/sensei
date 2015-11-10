@@ -15,26 +15,36 @@ var uglify    = require( 'gulp-uglify' );
 var minifyCSS = require( 'gulp-minify-css' );
 var chmod     = require( 'gulp-chmod' );
 var del       = require( 'del' );
+var sass      = require( 'gulp-sass' );
 var wpPot     = require( 'gulp-wp-pot' );
 var sort      = require( 'gulp-sort' );
 
 var paths = {
 	scripts: ['assets/js/*.js' ],
 	adminScripts: ['assets/js/admin/*.js'],
-	css: ['assets/css/*.css']
+	css: ['assets/css/*.css'],
+    frontedCss: ['assets/css/frontend/*.scss']
 };
 
 gulp.task( 'clean', function( cb ) {
 	return del( ['assets/js/*.min.js','assets/js/admin/*.min.js', 'assets/css/*.min.css'], cb );
 });
 
-gulp.task( 'default', [ 'CSS','JS','adminJS' ] );
+gulp.task( 'default', [ 'CSS','FrontendCSS','JS','adminJS' ] );
 
 gulp.task( 'CSS', ['clean'], function() {
 	return gulp.src( paths.css )
 		.pipe( minifyCSS({ keepBreaks: false }) )
 		.pipe( rename({ extname: '.min.css' }) )
 		.pipe( gulp.dest( 'assets/css' ) );
+});
+
+gulp.task( 'FrontendCSS', function() {
+    return gulp.src( paths.frontedCss )
+        .pipe( sass().on('error', sass.logError))
+        //.pipe( minifyCSS({ keepBreaks: false }) )
+        //.pipe( rename({ extname: '.css' }) )
+        .pipe( gulp.dest( './assets/css/frontend' ) );
 });
 
 gulp.task( 'JS', ['clean'], function() {

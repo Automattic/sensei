@@ -1341,6 +1341,18 @@ class Sensei_Utils {
 					}
 				}
 
+                // add next lesson button
+                $nav_id_array = sensei_get_prev_next_lessons( $lesson_id );
+                $next_lesson_id = absint( $nav_id_array['next_lesson'] );
+
+                // Output HTML
+                if ( ( 0 < $next_lesson_id ) ) {
+                    $message .= '<a class="button next-lesson" href="' . esc_url( get_permalink( $next_lesson_id ) )
+                                . '" rel="next"><span class="meta-nav"></span>'. __( 'Next Lesson' ,'woothemes-sensei')
+                                .'</a>';
+
+                }
+
 			}
             // Lesson/Quiz not complete
 			else {

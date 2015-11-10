@@ -18,7 +18,8 @@
     "gulp-sort": "^1.1.1",
     "gulp-uglify": "^1.4.1",
     "gulp-wp-pot": "^1.0.4",
-    "orchestrator": "^0.3.7"
+    "orchestrator": "^0.3.7",
+    "gulp-sass" : "^2.0.4"
   },
   "engines": {
     "node": ">=0.8.0",

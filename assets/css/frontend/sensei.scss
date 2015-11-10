@@ -745,6 +745,15 @@ section.entry span.course-price { padding-left: 10px; }
     .view-quiz  {
       float: right;
     }
+
+    .button.next-lesson {
+      background: darkgray;
+      text-decoration: none;
+      padding: .327em 1em;
+      float:right;
+      position: relative;
+      margin-top: -4px;
+    }
   }
 }
 
