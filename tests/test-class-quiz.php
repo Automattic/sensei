@@ -553,6 +553,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
             'The function should return false for the wrong parameters' );
 
         // Doest this function return true for valid data?
+        Sensei_Utils::user_start_lesson($test_user_id,$test_lesson_id);
         $result_for_valid_data =  WooThemes_Sensei_Quiz::submit_answers_for_grading( $test_user_quiz_answers, $files,
                                                                                 $test_lesson_id , $test_user_id );
         $this->assertTrue( $result_for_valid_data ,

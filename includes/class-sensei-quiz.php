@@ -561,8 +561,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          }
 
-         global $post;
-
          // Default grade
          $grade = 0;
 
@@ -583,6 +581,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          // the quiz is reset by admin or user( user: only if the setting is enabled ).
          // get the questions asked when when the quiz questions were generated for the user : Sensei_Lesson::lesson_quiz_questions
          $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+         if(! isset( $user_lesson_status->comment_ID )){
+             trigger_error( 'Answers may not be submitted for grading if the user is not taking the lesson.' );
+         }
          $questions_asked = get_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', true );
          if( empty( $questions_asked ) ){
 
@@ -590,9 +591,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              $questions_asked_string = implode( ',', $questions_asked );
 
              // Save questions that were asked in this quiz
-             if( isset( $user_lesson_status->comment_ID ) ) {
-                 update_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', $questions_asked_string );
-             }
+             update_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', $questions_asked_string );
 
          }
 
