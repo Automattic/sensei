@@ -3502,32 +3502,68 @@ class Sensei_Lesson {
     /**
      * Outputs the lessons course signup lingk
      *
+     * This hook runs inside the single lesson page.
+     *
      * @since 1.9.0
-     * @param $lesson_id
      */
-    public static function course_signup_link( $lesson_id ){
+    public static function course_signup_link( ){
 
-        $course_id =  Sensei()->lesson->get_course_id( $lesson_id );
+        $course_id =  Sensei()->lesson->get_course_id( get_the_ID() );
 
-        if ( 0 < intval( $course_id ) ) {
-            ?><section class="lesson-meta"><?php
-            $course_link = '<a href="' . esc_url( get_permalink( $course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+        if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) ) {
+
+            return;
+
+        }
+        ?>
+
+        <section class="course-singup">
+
+            <?php
             $wc_post_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
-            if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+
+            if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
+
                 global $current_user;
                 if( is_user_logged_in() ) {
                     wp_get_current_user();
+
                     $course_purchased = WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id );
+
                     if( $course_purchased ) {
+
                         $prereq_course_id = get_post_meta( $course_id, '_course_prerequisite',true );
+                        $course_link = '<a href="' . esc_url( get_permalink( $prereq_course_id ) ) . '" title="' . esc_attr( get_the_title( $prereq_course_id ) ) . '">' . __( 'the previous course', 'woothemes-sensei' )  . '</a>';
                         ?>
-                        <div class="sensei-message info"><?php echo apply_filters( 'sensei_complete_prerequisite_course_text', sprintf( __( 'Please complete %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $prereq_course_id ) ) . '" title="' . esc_attr( get_the_title( $prereq_course_id ) ) . '">' . apply_filters( 'sensei_previous_course_text', __( 'the previous course', 'woothemes-sensei' ) ) . '</a>' ) ); ?></div>
+                            <div class="sensei-message info">
+
+                                <?php  echo sprintf( __( 'Please complete %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link ); ?>
+
+                            </div>
+
                     <?php } else { ?>
-                        <div class="sensei-message info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
-                    <?php }
-                } else { ?>
+
+                        <div class="sensei-message info">
+
+                            <?php
+                            $course_link = '<a href="' . esc_url( get_permalink( $course_id ) )
+                                            . '"title="' . __( 'Sign Up', 'woothemes-sensei' )
+                                            . '">' . __( 'course', 'woothemes-sensei' )
+                                            . '</a>';
+
+                            echo  sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
+
+                            ?>
+
+                        </div>
+                    <?php } ?>
+
+                <?php } else { ?>
+
                     <div class="sensei-message info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
+
                 <?php } ?>
+
             <?php } else { ?>
 
                 <div class="sensei-message info">
@@ -3543,9 +3579,11 @@ class Sensei_Lesson {
                 </div>
 
             <?php } // End If Statement ?>
-            </section><?php
-        } // End If Statement
-    }
+
+        </section>
+
+        <?php
+    }// end course_signup_link
 
     /**
      * Show a message telling the user to complete the previous message if they haven't done so yet

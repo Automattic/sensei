@@ -919,48 +919,47 @@ function sensei_the_single_lesson_meta(){
     if( ! empty( $template ) ){
 
         Sensei_Templates::get_template( 'single-lesson/lesson-meta.php' );
+        return;
 
-    }else{
+    }
 
-        // Get the meta info
-        $lesson_course_id = absint( get_post_meta( get_the_ID(), '_lesson_course', true ) );
-        $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( get_the_ID() );
+    // Get the meta info
+    $lesson_course_id = absint( get_post_meta( get_the_ID(), '_lesson_course', true ) );
+    $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( get_the_ID() );
 
-        // Get User Meta
-        get_currentuserinfo();
+    // Get User Meta
+    get_currentuserinfo();
 
-        // Complete Lesson Logic
-        do_action( 'sensei_complete_lesson' );
-        // Check that the course has been started
-        if ( Sensei()->access_settings()
-            || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id())
-            || $is_preview ) {
+    // Complete Lesson Logic
+    do_action( 'sensei_complete_lesson' );
+    // Check that the course has been started
+    if ( Sensei()->access_settings()
+        || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id())
+        || $is_preview ) {
+        ?>
+        <section class="lesson-meta">
+            <?php
+            if( apply_filters( 'sensei_video_position', 'top', get_the_ID() ) == 'bottom' ) {
+
+                do_action( 'sensei_lesson_video', get_the_ID() );
+
+            }
             ?>
-            <section class="lesson-meta" id="lesson_complete">
-                <?php
-                if( apply_filters( 'sensei_video_position', 'top', get_the_ID() ) == 'bottom' ) {
+            <?php do_action( 'sensei_frontend_messages' ); ?>
 
-                    do_action( 'sensei_lesson_video', get_the_ID() );
+            <?php if ( ! $is_preview
+                || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id()) ) {
 
-                }
-                ?>
-                <?php do_action( 'sensei_frontend_messages' ); ?>
+                do_action( 'sensei_lesson_quiz_meta', get_the_ID(), get_current_user_id()  );
 
-                <?php if ( ! $is_preview
-                    || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id()) ) {
+            } ?>
+        </section>
 
-                    do_action( 'sensei_lesson_quiz_meta', get_the_ID(), get_current_user_id()  );
+        <?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
 
-                } ?>
-            </section>
+    <?php }
 
-            <?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
-
-        <?php }
-
-        do_action( 'sensei_lesson_meta_extra', get_the_ID() );
-
-    } // end if else empty locate_template
+    do_action( 'sensei_lesson_meta_extra', get_the_ID() );
 
 } // end the_single_lesson_meta
 
