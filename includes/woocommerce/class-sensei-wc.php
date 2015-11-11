@@ -341,7 +341,6 @@ Class Sensei_WC{
      * @since  1.4.5
      * @access public
      *
-     * @param  integer $order_id ID of order
      * @return void
      */
     public static function course_link_from_order( ) {
