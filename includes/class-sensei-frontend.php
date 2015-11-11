@@ -114,10 +114,6 @@ class Sensei_Frontend {
 		add_action( 'woocommerce_order_status_completed_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
 		add_action( 'woocommerce_order_status_on-hold_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
 
-		// Add course link to order page
-		add_action( 'woocommerce_thankyou', array( $this, 'course_link_from_order' ), 10, 1 );
-		add_action( 'woocommerce_order_details_after_order_table', array( $this, 'course_link_from_order' ), 10, 1 );
-
 		// Make sure correct courses are marked as active for users
 		add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'activate_purchased_single_course' ), 10 );
@@ -1457,79 +1453,6 @@ class Sensei_Frontend {
 		} // End For Loop
 	} // End remove_active_course()
 
-	/**
-	 * Add course link to order thank you and details pages.
-	 *
-	 * @since  1.4.5
-	 * @access public
-	 *
-	 * @param  integer $order_id ID of order
-	 * @return void
-	 */
-	public function course_link_from_order( $order_id ) {
-		global $woocommerce;
-
-		$order = new WC_Order( $order_id );
-
-		// exit early if not wc-completed or wc-processing
-		if( 'wc-completed' != $order->post_status
-			&& 'wc-processing' != $order->post_status  ) {
-			return;
-		}
-
-		$messages = array();
-
-		foreach ( $order->get_items() as $item ) {
-
-			if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
-
-				// If item has variation_id then its a variation of the product
-				$item_id = $item['variation_id'];
-
-			} else {
-
-				//If not its real product set its id to item_id
-				$item_id = $item['product_id'];
-
-			} // End If Statement
-
-			$user_id = get_post_meta( $order->id, '_customer_user', true );
-
-			if( $user_id ) {
-
-				// Get all courses for product
-				$args = array(
-					'posts_per_page' => -1,
-					'post_type' => 'course',
-					'meta_query' => array(
-						array(
-							'key' => '_course_woocommerce_product',
-							'value' => $item_id
-						)
-					),
-					'orderby' => 'menu_order date',
-					'order' => 'ASC',
-				);
-				$courses = get_posts( $args );
-
-				if( $courses && count( $courses ) > 0 ) {
-                    echo ' <ul id= "message" class="updated fade woocommerce-info" >';
-					foreach( $courses as $course ) {
-
-						$title = $course->post_title;
-						$permalink = get_permalink( $course->ID );
-
-                        echo '<li>'. sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ' ). '</li>';
-
-					} // end for each
-
-					// close the message div
-                    echo ' </ul>';
-
-				}// end if $courses check
-			}
-		}
-	} // end course_link_order_form
 
 	/**
 	 * Activate all purchased courses for user

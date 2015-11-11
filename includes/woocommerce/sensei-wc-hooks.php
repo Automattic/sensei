@@ -28,3 +28,11 @@ add_action('sensei_before_main_content', array('Sensei_WC', 'do_single_course_wc
  *
  ***********************/
 add_filter( 'sensei_can_user_view_lesson', array( 'Sensei_WC','alter_can_user_view_lesson' ), 20, 3 );
+
+/***********************
+ *
+ * Order and checkout hooks
+ *
+ ***********************/
+// add a notice on the checkout page to tell users about the course they've purchase
+add_action( 'template_redirect', array( 'Sensei_WC','course_link_from_order' ) );

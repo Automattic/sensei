@@ -335,4 +335,101 @@ Class Sensei_WC{
 
     }
 
+    /**
+     * Add course link to order thank you and details pages.
+     *
+     * @since  1.4.5
+     * @access public
+     *
+     * @param  integer $order_id ID of order
+     * @return void
+     */
+    public static function course_link_from_order( ) {
+
+        if( ! is_order_received_page() ){
+            return;
+        }
+
+        $order_id = get_query_var( 'order-received' );
+		$order = new WC_Order( $order_id );
+
+		// exit early if not wc-completed or wc-processing
+		if( 'wc-completed' != $order->post_status
+            && 'wc-processing' != $order->post_status  ) {
+            return;
+        }
+
+        $course_links = array(); // store the for links for courses purchased
+		foreach ( $order->get_items() as $item ) {
+
+            if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
+
+                // If item has variation_id then its a variation of the product
+                $item_id = $item['variation_id'];
+
+            } else {
+
+                //If not its real product set its id to item_id
+                $item_id = $item['product_id'];
+
+            } // End If Statement
+
+            $user_id = get_post_meta( $order->id, '_customer_user', true );
+
+            if( $user_id ) {
+
+                // Get all courses for product
+                $args = array(
+                    'posts_per_page' => 1000,
+                    'post_type' => 'course',
+                    'meta_query' => array(
+                        array(
+                            'key' => '_course_woocommerce_product',
+                            'value' => $item_id
+                        )
+                    ),
+                    'orderby' => 'menu_order date',
+                    'order' => 'ASC',
+                );
+                $courses = get_posts( $args );
+
+                if( $courses && count( $courses ) > 0 ) {
+
+                    foreach( $courses as $course ) {
+
+                        $title = $course->post_title;
+                        $permalink = get_permalink( $course->ID );
+                        $course_links[] .= '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ';
+
+                    } // end for each
+
+                    // close the message div
+
+                }// end if $courses check
+            }
+        }// end loop through orders
+
+        // add the courses to the WooCommerce notice
+        if( ! empty( $course_links) ){
+
+            $courses_html = _nx(
+                'You have purchased the following course:',
+                'You have purchased the following courses:',
+                count( $course_links ),
+                'Purchase thank you note on Checkout page. The course link(s) will be show', 'woothemes-sensei'
+            );
+
+            foreach( $course_links as $link ){
+
+                $courses_html .= '<li>' . $link . '</li>';
+
+            }
+
+            $courses_html .= ' </ul>';
+
+            wc_add_notice( $courses_html, 'success' );
+        }
+
+	} // end course_link_order_form
+
 }// end Sensei_WC
