@@ -1031,7 +1031,7 @@ class Sensei_Frontend {
 		   	<?php } // End If Statement ?>
 		   	<?php sensei_simple_course_price( $post_id ); ?>
         	</p>
-        	<p class="course-excerpt"><?php echo sensei_get_excerpt( $post ); ?></p>
+        	<p class="course-excerpt"><?php the_excerpt(); ?></p>
         	<?php if ( 0 < $free_lesson_count ) {
                 $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes-sensei' ), $free_lesson_count ); ?>
                 <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
@@ -1182,7 +1182,7 @@ class Sensei_Frontend {
                 <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_view_course_text', __( 'View course', 'woothemes-sensei' ) ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
                 <?php } ?>
             </p>
-            <p class="lesson-excerpt"><?php echo sensei_get_excerpt( $post ); ?></p>
+            <p class="lesson-excerpt"><?php the_excerpt( ); ?></p>
 		</section><?php
 		} // End If Statement
 	} // sensei_lesson_meta()
@@ -1395,7 +1395,7 @@ class Sensei_Frontend {
 		global $post;
 
 		if( is_search() && in_array( $post->post_type, array( 'course', 'lesson' ) ) ) {
-			$content = '<p class="course-excerpt">' . sensei_get_excerpt( $post ) . '</p>';
+			$content = '<p class="course-excerpt">' . the_excerpt( ) . '</p>';
 		}
 
 		return $content;

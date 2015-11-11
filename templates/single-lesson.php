@@ -48,9 +48,11 @@
             the_content();
 
         } else {
+            ?>
 
-            echo '<p>' . sensei_get_excerpt( get_the_ID() ) . '</p>';
+                <p> <?php the_excerpt(); ?> </p>
 
+            <?php
         }
 
         ?>

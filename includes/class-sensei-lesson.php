@@ -2919,7 +2919,7 @@ class Sensei_Lesson {
 		$html = '';
 		if ( is_a( $lesson, 'WP_Post' ) && 'lesson' == $lesson->post_type ) {
 
-            $excerpt =  sensei_get_excerpt( $lesson );
+            $excerpt =  $lesson->post_excerpt;
 
             // if $add_p_tags true wrap with <p> else return the excerpt as is
             $html =  $add_p_tags ? wpautop( $excerpt ) : $excerpt;
