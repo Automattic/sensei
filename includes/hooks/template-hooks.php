@@ -145,7 +145,7 @@ add_action( 'sensei_single_quiz_content_inside_before', array('Sensei_Quiz', 'de
 
 //@since 1.9.0
 // Single qui title
-add_filter( 'the_title', array( 'Sensei_Quiz' , 'single_quiz_title' ) );
+add_filter( 'the_title', array( 'Sensei_Quiz' , 'single_quiz_title' ), 20 , 2 );
 
 // since 1.9.0
 // initialize the quiz questions loop
