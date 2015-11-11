@@ -950,7 +950,7 @@ function sensei_the_single_lesson_meta(){
             <?php if ( ! $is_preview
                 || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id()) ) {
 
-                do_action( 'sensei_lesson_quiz_meta', get_the_ID(), get_current_user_id()  );
+                sensei_do_deprecated_action( 'sensei_lesson_quiz_meta','1.9.0', 'sensei_single_lesson_content_inside_before' ,array( get_the_ID(), get_current_user_id() )  );
 
             } ?>
         </section>

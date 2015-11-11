@@ -3690,6 +3690,90 @@ class Sensei_Lesson {
 
     }
 
+    /**
+     * Output the quiz specific buttons and messaging on the single lesson page
+     *
+     *
+     * @since 1.0.0 moved here from frontend class
+     *
+     * @param int $lesson_id
+     * @param int $user_id
+     */
+    public static function footer_quiz_call_to_action( $lesson_id = 0, $user_id = 0 ) {
+
+
+        $lesson_id                 =  empty( $lesson_id ) ?  get_the_ID() : $lesson_id;
+        $user_id                   = empty( $lesson_id ) ?  get_current_user_id() : $user_id;
+        $lesson_prerequisite       = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+        $lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
+        $quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+        $has_user_completed_lesson = WooThemes_Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
+        $show_actions              = is_user_logged_in() ? true : false;
+
+        if( intval( $lesson_prerequisite ) > 0 ) {
+
+            // If the user hasn't completed the prereq then hide the current actions
+            $show_actions = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
+
+        }
+        ?>
+
+        <header>
+
+            <?php
+            if ( $quiz_id && is_user_logged_in() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $user_id ) ) {
+
+            $no_quiz_count = 0;
+            $has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+
+            // Display lesson quiz status message
+            if ( $has_user_completed_lesson || $has_quiz_questions ) {
+                $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, $user_id, true );
+                echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+                if( $has_quiz_questions ) {
+                    echo $status['extra'];
+                } // End If Statement
+            } // End If Statement
+
+            } elseif( $show_actions && $quiz_id && Sensei()->access_settings() ) {
+
+                $has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+                if( $has_quiz_questions ) {
+                    ?>
+
+                    <p>
+
+                        <a class="button"
+                           href="<?php esc_url_raw( get_permalink( $quiz_id ) ); ?>"
+                           title="<?php _e( 'View the Lesson Quiz', 'woothemes-sensei'  ); ?>">
+
+                            <?php  _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?>
+
+                        </a>
+
+                    </p>
+
+                    <?php
+                }
+
+            } // End If Statement
+
+            if ( $show_actions && ! $has_user_completed_lesson ) {
+
+                sensei_complete_lesson_button();
+
+            } elseif( $show_actions ) {
+
+                sensei_reset_lesson_button();
+
+            } // End If Statement
+            ?>
+
+        </header>
+
+        <?php
+    } // End sensei_lesson_quiz_meta()
+
 
 } // End Class
 
