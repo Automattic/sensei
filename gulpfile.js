@@ -34,16 +34,13 @@ gulp.task( 'default', [ 'CSS','FrontendCSS','JS','adminJS' ] );
 
 gulp.task( 'CSS', ['clean'], function() {
 	return gulp.src( paths.css )
-		.pipe( minifyCSS({ keepBreaks: false }) )
-		.pipe( rename({ extname: '.min.css' }) )
+        .pipe( sass().on('error', sass.logError))
 		.pipe( gulp.dest( 'assets/css' ) );
 });
 
 gulp.task( 'FrontendCSS', function() {
     return gulp.src( paths.frontedCss )
         .pipe( sass().on('error', sass.logError))
-        //.pipe( minifyCSS({ keepBreaks: false }) )
-        //.pipe( rename({ extname: '.css' }) )
         .pipe( gulp.dest( './assets/css/frontend' ) );
 });
 
