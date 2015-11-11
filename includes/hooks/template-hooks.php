@@ -178,7 +178,7 @@ add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question','file_
 
 //@since 1.9.0
 // deprecate the quiz button action
-add_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Question', 'action_buttons' ), 10, 0 );
+add_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'action_buttons' ), 10, 0 );
 
 /***************************
  *

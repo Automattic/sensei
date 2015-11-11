@@ -913,14 +913,42 @@ class Sensei_Grading {
                 $answer = wp_unslash( $answer );
             }
             $gapfill_array = explode( '||', $right_answer );
-            // Check that the 'gap' is "exactly" equal to the given answer
-            if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
-                $question_grade = Sensei()->question->get_question_grade( $question_id );
-            }
-            else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
-                if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
+
+
+            /**
+             * case sensitive grading filter
+             *
+             * alter the value simply use this code in your plugin or the themes functions.php
+             * add_filter( 'sensei_gap_fil_cae_sensitive_grading','__return_true' );
+             *
+             * @param bool $do_case_sensitive_comparison default false.
+             *
+             * @since 1.9.0
+             */
+            $do_case_sensitive_comparison = apply_filters('sensei_gap_fil_cae_sensitive_grading', false );
+            if( $do_case_sensitive_comparison ){
+
+                // Case Sensitive Check that the 'gap' is "exactly" equal to the given answer
+                if ( trim(($gapfill_array[1])) == trim($answer) ) {
                     $question_grade = Sensei()->question->get_question_grade( $question_id );
                 }
+
+            }else{
+
+                // Case Sensitive Check that the 'gap' is "exactly" equal to the given answer
+                if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
+
+                    $question_grade = Sensei()->question->get_question_grade( $question_id );
+
+                } else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
+
+                    if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
+
+                        $question_grade = Sensei()->question->get_question_grade( $question_id );
+
+                    }
+                }
+
             }
 
         } else{

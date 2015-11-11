@@ -859,7 +859,7 @@ class Sensei_Question {
 
             }  else {
 
-                array_push( $question_wrong_answers, $question_right_answer );
+                array_push( $question_data[ 'question_wrong_answers' ], $question_data[ 'question_right_answer' ] );
 
             }
 
@@ -867,7 +867,7 @@ class Sensei_Question {
             $question_answers_options = array();
             $count = 0;
 
-            foreach( $question_wrong_answers as $answer ) {
+            foreach( $question_data[ 'question_wrong_answers' ] as $answer ) {
 
                 $count++;
                 $question_option = array();
