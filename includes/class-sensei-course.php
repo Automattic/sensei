@@ -2285,9 +2285,9 @@ class Sensei_Course {
          * Filter the number of columns on the course archive page.
          *
          * @since 1.9.0
-         * @param int $number_of_columns default 3
+         * @param int $number_of_columns default 1
          */
-        return apply_filters('sensei_course_loop_number_of_columns', 3);
+        return apply_filters('sensei_course_loop_number_of_columns', 1);
 
     }
 
