@@ -3566,17 +3566,21 @@ class Sensei_Lesson {
 
             <?php } else { ?>
 
+            <?php if(! Sensei_Utils::user_started_course( $course_id, $current_user->ID ) ) : ?>
+
                 <div class="sensei-message info">
                     <?php
-                    /**
-                     * Filter the Sensei please sign up message
-                     * @since 1.4.0
-                     *
-                     * @param string  $signup_text
-                     */
-                    echo apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) );
+                    $course_link =  '<a href="'
+                                        . esc_url( get_permalink( $course_id ) )
+                                        . '" title="' . __( 'Sign Up', 'woothemes-sensei' )
+                                        . '">' . __( 'course', 'woothemes-sensei' )
+                                    . '</a>';
+
+                    echo sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
                     ?>
                 </div>
+
+            <?php endif; ?>
 
             <?php } // End If Statement ?>
 
