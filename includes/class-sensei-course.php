@@ -619,7 +619,7 @@ class Sensei_Course {
 	 * @return array
 	 */
 	public function course_query( $amount = 0, $type = 'default', $includes = array(), $excludes = array() ) {
-		global $my_courses_page;
+		global $my_courses_page ;
 
 		$results_array = array();
 
@@ -691,27 +691,25 @@ class Sensei_Course {
 									);
 				break;
 			case 'freecourses':
+
 				// Sub Query to get all WooCommerce Products that have Zero price
-				$args = array(
-							   'post_type' => 'product',
-							   'post_status' => 'publish',
-							   'posts_per_page' => -1,
-							   'meta_query' => array(
-		   							array(
-								        'key' => '_price',
-								        'value' => '0',
-								        'compare' => '=',
-								        'type' => 'NUMERIC'
-								       )
-								),
-								'orderby' => 'menu_order date',
-								'order' => 'ASC',
-				);
- 				$posts = get_posts($args);
- 				$free_wc_posts = array();
- 				foreach ( $posts as $post_item ) {
- 					array_push( $free_wc_posts , $post_item->ID );
- 				} // End For Loop
+                $woocommerce_free_product_ids = get_posts( array(
+                    'post_type' => 'product',
+                    'posts_per_page' => '1000',
+                    'fields' => 'ids',
+                    'meta_query'=> array(
+                        'relation' => 'OR',
+                        array(
+                            'key'=> '_regular_price',
+                            'value' => 0,
+                        ),
+                        array(
+                            'key'=> '_sale_price',
+                            'value' => 0,
+                        ),
+                    ),
+                ));
+
  				$post_args = array(	'post_type' 		=> 'course',
                                     'orderby'         	=> $orderby,
                                     'order'           	=> $order,
@@ -719,29 +717,20 @@ class Sensei_Course {
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
 									);
- 				if ( 0 < count( $free_wc_posts ) ) {
- 					$post_args['meta_query'] = array(
-							   							'relation' => 'OR',
-													    array(
-													        'key' => '_course_woocommerce_product',
-													        'value' => '-',
-													        'compare' => '='
-													       ),
-													    array(
-													        'key' => '_course_woocommerce_product',
-													        'value' => $free_wc_posts,
-													        'compare' => 'IN'
-													       )
-													);
- 				} else {
- 					$post_args['meta_query'] = array(
-							   							array(
-													        'key' => '_course_woocommerce_product',
-													        'value' => '-',
-													        'compare' => '='
-													       )
-													);
- 				}
+
+                $post_args['meta_query'] = array(
+                    'relation' => 'OR',
+                    array(
+                        'key'     => '_course_woocommerce_product',
+                        'compare' => 'NOT EXISTS',
+                    ),
+                    array(
+                        'key'     => '_course_woocommerce_product',
+                        'value' => $woocommerce_free_product_ids,
+                        'compare' => 'IN',
+                    ),
+                );
+
 				break;
 			case 'paidcourses':
 				// Sub Query to get all WooCommerce Products that have price greater than zero
@@ -795,7 +784,7 @@ class Sensei_Course {
  				}
 				break;
 			case 'featuredcourses':
-				$post_args = array(	'post_type' 		=> 'course',
+                $post_args = array(	'post_type' 		=> 'course',
                                     'orderby'         	=> $orderby,
                                     'order'           	=> $order,
     								'post_status'      	=> 'publish',
