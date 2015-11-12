@@ -3517,7 +3517,7 @@ class Sensei_Lesson {
         }
         ?>
 
-        <section class="course-singup">
+        <section class="course-signup lesson-meta">
 
             <?php
             $wc_post_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
