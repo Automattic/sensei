@@ -654,7 +654,7 @@ class Sensei_Course {
 	 * @param string $type (default: '')
 	 * @param int $amount (default: 0)
 	 * @param array $includes (default: array())
-	 * @return void
+	 * @return array
 	 */
 	public function get_archive_query_args( $type = '', $amount = 0 , $includes = array(), $excludes = array() ) {
 
@@ -679,6 +679,7 @@ class Sensei_Course {
         }
 
 		switch ($type) {
+
 			case 'usercourses':
 				$post_args = array(	'post_type' 		=> 'course',
 									'orderby'         	=> $orderby,
@@ -810,7 +811,6 @@ class Sensei_Course {
                                     'orderby'         	=> $orderby,
                                     'order'           	=> $order,
     								'post_status'      	=> 'publish',
-    								'include'			=> $includes,
     								'exclude'			=> $excludes,
     								'suppress_filters' 	=> 0
 									);
@@ -818,13 +818,15 @@ class Sensei_Course {
 
 		}
 
-		if ( ! is_post_type_archive( 'course' ) ) {
-			$post_args['posts_per_page'] = $amount;
-			$post_args['paged'] = $wp_query->get( 'paged' );
-		} else {
-			$post_args['posts_per_page'] = $amount;
-			$post_args['paged'] = $wp_query->get( 'paged' );
-		} // End If Statement
+        $post_args['posts_per_page'] = $amount;
+        $paged = $wp_query->get( 'paged' );
+        $post_args['paged'] = empty( $paged) ? 1 : $paged;
+
+        if( 'newcourses' == $type ){
+
+            $post_args[ 'orderby' ] = 'date';
+            $post_args[ 'order' ] = 'DESC';
+        }
 
 		return $post_args;
 	}

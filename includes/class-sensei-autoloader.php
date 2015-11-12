@@ -68,17 +68,19 @@ class Sensei_Autoloader {
             /**
              * Shortcodes
              */
-            'Sensei_Shortcode_Loader'           => 'shortcodes/class-sensei-shortcode-loader.php',
-            'Sensei_Shortcode_Interface'        => 'shortcodes/interface-sensei-shortcode.php',
-            'Sensei_Shortcode_Featured_Courses' => 'shortcodes/class-sensei-shortcode-featured-courses.php',
-            'Sensei_Shortcode_User_Courses'     => 'shortcodes/class-sensei-shortcode-user-courses.php',
-            'Sensei_Shortcode_Courses'          => 'shortcodes/class-sensei-shortcode-courses.php',
-            'Sensei_Shortcode_Teachers'         => 'shortcodes/class-sensei-shortcode-teachers.php',
-            'Sensei_Shortcode_User_Messages'    => 'shortcodes/class-sensei-shortcode-user-messages.php',
-            'Sensei_Shortcode_Course_Page'      => 'shortcodes/class-sensei-shortcode-course-page.php',
-            'Sensei_Shortcode_Lesson_Page'      => 'shortcodes/class-sensei-shortcode-lesson-page.php',
-            'Sensei_Shortcode_Course_Categories' => 'shortcodes/class-sensei-shortcode-course-categories.php',
+            'Sensei_Shortcode_Loader'              => 'shortcodes/class-sensei-shortcode-loader.php',
+            'Sensei_Shortcode_Interface'           => 'shortcodes/interface-sensei-shortcode.php',
+            'Sensei_Shortcode_Featured_Courses'    => 'shortcodes/class-sensei-shortcode-featured-courses.php',
+            'Sensei_Shortcode_User_Courses'        => 'shortcodes/class-sensei-shortcode-user-courses.php',
+            'Sensei_Shortcode_Courses'             => 'shortcodes/class-sensei-shortcode-courses.php',
+            'Sensei_Shortcode_Teachers'            => 'shortcodes/class-sensei-shortcode-teachers.php',
+            'Sensei_Shortcode_User_Messages'       => 'shortcodes/class-sensei-shortcode-user-messages.php',
+            'Sensei_Shortcode_Course_Page'         => 'shortcodes/class-sensei-shortcode-course-page.php',
+            'Sensei_Shortcode_Lesson_Page'         => 'shortcodes/class-sensei-shortcode-lesson-page.php',
+            'Sensei_Shortcode_Course_Categories'   => 'shortcodes/class-sensei-shortcode-course-categories.php',
             'Sensei_Shortcode_Unpurchased_Courses' => 'shortcodes/class-sensei-shortcode-unpurchased-courses.php',
+            'Sensei_Legacy_Shortcodes'             => 'shortcodes/class-sensei-legacy-shortcodes.php',
+
 
             /**
              * WooCommerce
