@@ -907,49 +907,7 @@ class Sensei_Grading {
 
         } elseif( 'gap-fill' == $question_type ){
 
-            $right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-
-            if( 0 == get_magic_quotes_gpc() ) {
-                $answer = wp_unslash( $answer );
-            }
-            $gapfill_array = explode( '||', $right_answer );
-
-
-            /**
-             * case sensitive grading filter
-             *
-             * alter the value simply use this code in your plugin or the themes functions.php
-             * add_filter( 'sensei_gap_fil_cae_sensitive_grading','__return_true' );
-             *
-             * @param bool $do_case_sensitive_comparison default false.
-             *
-             * @since 1.9.0
-             */
-            $do_case_sensitive_comparison = apply_filters('sensei_gap_fil_cae_sensitive_grading', false );
-            if( $do_case_sensitive_comparison ){
-
-                // Case Sensitive Check that the 'gap' is "exactly" equal to the given answer
-                if ( trim(($gapfill_array[1])) == trim($answer) ) {
-                    $question_grade = Sensei()->question->get_question_grade( $question_id );
-                }
-
-            }else{
-
-                // Case Sensitive Check that the 'gap' is "exactly" equal to the given answer
-                if ( trim(strtolower($gapfill_array[1])) == trim(strtolower($answer)) ) {
-
-                    $question_grade = Sensei()->question->get_question_grade( $question_id );
-
-                } else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
-
-                    if (preg_match('/' . $gapfill_array[1] . '/i', $answer)) {
-
-                        $question_grade = Sensei()->question->get_question_grade( $question_id );
-
-                    }
-                }
-
-            }
+            $question_grade = self::grade_gap_fill_question( $question_id ,$answer );
 
         } else{
 
@@ -970,6 +928,90 @@ class Sensei_Grading {
 
         return $question_grade;
     } // end grade_question_auto
+
+    /**
+     * Grading logic specifically for the gap fill questions
+     *
+     * @since 1.9.0
+     * @param $question_id
+     * @param $user_answer
+     *
+     * @return bool | int false or the grade given to the user answer
+     */
+    public static function grade_gap_fill_question( $question_id, $user_answer ){
+
+        $right_answer = get_post_meta( $question_id, '_question_right_answer', true );
+        $gapfill_array = explode( '||', $right_answer );
+
+        if( 0 == get_magic_quotes_gpc() ) { // deprecated from PHP 5.4 but we still support PHP 5.2
+            $user_answer = wp_unslash( $user_answer );
+        }
+
+        /**
+         * case sensitive grading filter
+         *
+         * alter the value simply use this code in your plugin or the themes functions.php
+         * add_filter( 'sensei_gap_fill_case_sensitive_grading','__return_true' );
+         *
+         * @param bool $do_case_sensitive_comparison default false.
+         *
+         * @since 1.9.0
+         */
+        $do_case_sensitive_comparison = apply_filters('sensei_gap_fill_case_sensitive_grading', false );
+
+        if( $do_case_sensitive_comparison ){
+
+            // Case Sensitive Check that the 'gap' is "exactly" equal to the given answer
+            if ( trim(($gapfill_array[1])) == trim( $user_answer ) ) {
+
+                return Sensei()->question->get_question_grade( $question_id );
+
+            } else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
+
+                if (preg_match('/' . $gapfill_array[1] . '/i', $user_answer)) {
+
+                    return Sensei()->question->get_question_grade($question_id);
+
+                }else{
+
+                    return false;
+
+                }
+
+            }else{
+
+                return false;
+
+            }
+
+        }else{
+
+            // Case Sensitive Check that the 'gap' is "exactly" equal to the given answer
+            if ( trim(strtolower($gapfill_array[1])) == trim(strtolower( $user_answer )) ) {
+
+               return Sensei()->question->get_question_grade( $question_id );
+
+            } else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
+
+                if (preg_match('/' . $gapfill_array[1] . '/i', $user_answer)) {
+
+                    return  Sensei()->question->get_question_grade( $question_id );
+
+                }else{
+
+                    return false;
+
+                }
+
+            }else{
+
+                return false;
+
+            }
+
+        }
+
+    }
 
 } // End Class
 
