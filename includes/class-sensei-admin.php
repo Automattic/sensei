@@ -381,7 +381,7 @@ class Sensei_Admin {
 
 				<p class="submit">
 					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php _e( 'Install', 'woothemes-sensei' ); ?></a>
-					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_dismiss_uri() ) ?>" class="docs button-primary"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a>
+					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_dismiss_uri() ) ?>" class="docs button"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a>
 				</p>
 			</div>
 		</div>
@@ -1408,7 +1408,7 @@ class Sensei_Admin {
                         :)
 
                     </p>
-                    <p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-primary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
+                    <p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
                 </div>
             </div>
             <?php
