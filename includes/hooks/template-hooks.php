@@ -56,7 +56,7 @@ add_action('sensei_single_course_content_inside_before', array( 'Sensei_Template
 
 // @1.9.0
 // hook the single course title on the single course page
-add_action( 'sensei_single_course_content_inside_before','the_title', 10 );
+add_action( 'sensei_single_course_content_inside_before',array( 'Sensei_Course', 'the_title'), 10 );
 
 // @1.9.0
 //Add legacy hooks deprecated in 1.9.0
@@ -130,6 +130,11 @@ add_action( 'sensei_single_course_modules_after', array( 'Sensei_Core_Modules', 
 // @since 1.9.0
 // hook in the possible full content override to show instead of excerpt
 add_filter('get_the_excerpt', array( 'Sensei_Course', 'full_content_excerpt_override' ) );
+
+//@since 1.9.0
+//Course meta
+add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 30 );
+add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course' , 'the_course_video' ), 40 );
 
 /***************************
  *

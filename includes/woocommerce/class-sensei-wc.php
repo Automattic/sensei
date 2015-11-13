@@ -431,4 +431,90 @@ Class Sensei_WC{
 
 	} // end course_link_order_form
 
+    /**
+     * Show the message that a user should complete
+     * their purchase if the course is in the cart
+     *
+     * This should be used within the course loop or single course page
+     *
+     * @since 1.9.0
+     */
+    public function course_in_cart_message(){
+
+        global $post;
+
+        if( self::is_course_in_cart( $post->ID ) ){ ?>
+
+            <div class="sensei-message info">'
+                <?php
+
+                $cart_link =  '<a class="cart-complete" href="' . WC()->cart->get_checkout_url()
+                              . '" title="' . __('complete purchase', 'woothemes-sensei') . '">'
+                              . __('complete the purchase', 'woothemes-sensei') . '</a>';
+
+                sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei'), $cart_link );
+
+                ?>
+            </div>
+        <?php }
+
+    } // End sensei_woocommerce_in_cart_message()
+
+    /**
+     * Checks the cart to see if a course is in the cart.
+     *
+     * @param $course_id
+     * @return bool
+     */
+    public static function is_course_in_cart( $course_id ){
+
+        $wc_post_id = absint( get_post_meta( $course_id, '_course_woocommerce_product', true ) );
+        $user_course_status_id = WooThemes_Sensei_Utils::user_started_course( $course_id , get_current_user_id() );
+
+        if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
+
+            if ( self::is_product_in_cart( $wc_post_id ) ) {
+
+                return true;
+
+            }
+
+        }
+
+        return false;
+
+    }// is_course_in_cart
+
+    /**
+     * Check the cart to see if the product is in the cart
+     *
+     * @param $product_id
+     * @return bool
+     */
+    public static function is_product_in_cart( $product_id ){
+
+        if ( 0 < $product_id ) {
+
+            $product = wc_get_product( $product_id );
+
+            $parent_id = '';
+            if( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) {
+                $wc_product_id = $product->parent->id;
+            }
+            foreach( WC()->cart->get_cart() as $cart_item_key => $values ) {
+
+                $cart_product = $values['data'];
+                if( $product_id == $cart_product->id ) {
+
+                    return true;
+
+                }
+
+            }
+        } // End If Statement
+
+        return false;
+
+    } // end is_product_in_car
+
 }// end Sensei_WC

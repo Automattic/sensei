@@ -73,9 +73,6 @@ class Sensei_Frontend {
 		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
 
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_meta' ), 10 );
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_meta_video' ), 10 );
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_woocommerce_in_cart_message' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_start' ), 10 );
 
 		// add_filter( 'get_comments_number', array( $this, 'sensei_lesson_comment_count' ), 1 );
@@ -1192,9 +1189,11 @@ class Sensei_Frontend {
 		// Check if the user is taking the course
 		$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
 		// Handle user starting the course
-		if ( isset( $_POST['course_start'] ) && wp_verify_nonce( $_POST[ 'woothemes_sensei_start_course_noonce' ], 'woothemes_sensei_start_course_noonce' ) && !$is_user_taking_course ) {
+		if ( isset( $_POST['course_start'] )
+		    && wp_verify_nonce( $_POST[ 'woothemes_sensei_start_course_noonce' ], 'woothemes_sensei_start_course_noonce' )
+		    && !$is_user_taking_course ) {
+
 			// Start the course
-			// action 'sensei_user_course_start' is done within user_start_course()
 			$activity_logged = WooThemes_Sensei_Utils::user_start_course( $current_user->ID, $post->ID );
 			$this->data = new stdClass();
 			$this->data->is_user_taking_course = false;
@@ -1203,122 +1202,28 @@ class Sensei_Frontend {
 
 				// Refresh page to avoid re-posting
 				?>
+
 			    <script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
+
 			    <?php
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_course_start()
 
+    /**
+     * @deprecated since 1.9.0
+     */
 	public function sensei_course_meta() {
-		global  $post, $current_user;
-		?><section class="course-meta">
-			<?php
-
-			$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
-			if ( is_user_logged_in() && ! $is_user_taking_course ) {
-
-		    	// Get the product ID
-		    	$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
-
-		    	// Check for woocommerce
-		    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < intval( $wc_post_id ) ) ) {
-		    		sensei_wc_add_to_cart($post->ID);
-		    	} else {
-		    		sensei_start_course_form($post->ID);
-		    	} // End If Statement
-
-		    } elseif ( is_user_logged_in() ) {
-		    	// Check if course is completed
-				$user_course_status = WooThemes_Sensei_Utils::user_course_status( $post->ID, $current_user->ID );
-				$completed_course = WooThemes_Sensei_Utils::user_completed_course( $user_course_status );
-				// Success message
-		   		if ( $completed_course ) { ?>
-		   			<div class="status completed"><?php echo apply_filters( 'sensei_complete_text', __( 'Completed', 'woothemes-sensei' ) ); ?></div>
-		   			<?php
-					$has_quizzes = Sensei()->course->course_quizzes( $post->ID, true );
-					if( has_filter( 'sensei_results_links' ) || $has_quizzes ) { ?>
-		   				<p class="sensei-results-links">
-		   				<?php
-						$results_link = '';
-						if( $has_quizzes ) {
-							$results_link = '<a class="view-results" href="' . Sensei()->course_results->get_permalink( $post->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
-						}
-		   				$results_link = apply_filters( 'sensei_results_links', $results_link );
-		   				echo $results_link;
-		   				?></p>
-		   			<?php } ?>
-		   		<?php } else { ?>
-		    		<div class="status in-progress"><?php echo apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ); ?></div>
-		    	<?php } ?>
-		    <?php } else {
-		    	// Get the product ID
-		    	$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
-		    	// Check for woocommerce
-		    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < intval( $wc_post_id ) ) ) {
-
-                    sensei_wc_add_to_cart($post->ID);
-
-		    	} else {
-
-                    if( get_option( 'users_can_register') ) {
-
-
-                        $my_courses_page_id = '';
-
-                        /**
-                         * Filter to force Sensei to output the default WordPress user
-                         * registration link.
-                         *
-                         * @since 1.9.0
-                         * @param bool $wp_register_link default false
-                         */
-
-                        $wp_register_link = apply_filters('sensei_use_wp_register_link', false);
-
-                        $settings = Sensei()->settings->get_settings();
-                        if( isset( $settings[ 'my_course_page' ] )
-                            && 0 < intval( $settings[ 'my_course_page' ] ) ){
-
-                            $my_courses_page_id = $settings[ 'my_course_page' ];
-
-                        }
-
-                        // If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
-                        // is false, link to My Courses. If not, link to default WordPress registration page.
-                        if( !empty( $my_courses_page_id ) && $my_courses_page_id && !$wp_register_link){
-
-                            $my_courses_url = get_permalink( $my_courses_page_id  );
-                            $register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';
-                            echo '<div class="status register">' . $register_link . '</div>' ;
-
-                        } else{
-
-                            wp_register( '<div class="status register">', '</div>' );
-
-                        }
-
-                    } // end if user can register
-
-		    	} // End If Statement
-
-		    } // End If Statement ?>
-
-		</section><?php
-
+        _deprecated_function( 'Sensei_Frontend::sensei_course_meta', '1.9.0' , 'Sensei_Course::the_course_meta()' );
+        Sensei()->course->the_course_meta( get_post() );
 	} // End sensei_course_meta()
 
-
+    /**
+     * @deprecated since 1.9.0
+     */
 	public function sensei_course_meta_video() {
-		global $post;
-		// Get the meta info
-		$course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
-		if ( 'http' == substr( $course_video_embed, 0, 4) ) {
-		    // V2 - make width and height a setting for video embed
-		    $course_video_embed = wp_oembed_get( esc_url( $course_video_embed )/*, array( 'width' => 100 , 'height' => 100)*/ );
-		} // End If Statement
-		if ( '' != $course_video_embed ) {
-		?><div class="course-video"><?php echo html_entity_decode($course_video_embed); ?></div><?php
-		} // End If Statement
+        _deprecated_function( 'Sensei_Frontend::sensei_course_meta_video', '1.9.0' , 'Sensei_Course::the_course_video()' );
+        Sensei_Course::the_course_video();
 	} // End sensei_course_meta_video()
 
     /**
