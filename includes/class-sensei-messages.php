@@ -53,7 +53,7 @@ class Sensei_Messages {
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'send_message_link' ), 35 );
 
         // add message link to lesson
-        add_action( 'sensei_single_lesson_content_inside_before', array( $this, 'send_message_link' ), 11, 2 );
+        add_action( 'sensei_single_lesson_content_inside_before', array( $this, 'send_message_link' ), 30, 2 );
 
         // add message link to lesson
         add_action( 'sensei_single_quiz_questions_before', array( $this, 'send_message_link' ), 10, 2 );

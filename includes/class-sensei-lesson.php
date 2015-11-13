@@ -3412,9 +3412,9 @@ class Sensei_Lesson {
      * @since 1.9.0
      *
      * @param $current_lesson_id
-     * @return mixed | bool $prerequisite_lesson_id or false
+     * @return mixed | bool | int $prerequisite_lesson_id or false
      */
-    public static function get_lesson_prerequisite( $current_lesson_id  ){
+    public static function get_lesson_prerequisite_id( $current_lesson_id  ){
 
         $prerequisite_lesson_id = get_post_meta( $current_lesson_id , '_lesson_prerequisite', true );
 
@@ -3452,19 +3452,17 @@ class Sensei_Lesson {
 
         }
 
-        $pre_requisite_lesson = self::get_lesson_prerequisite( $lesson_id );
+        $pre_requisite_id = (string) self::get_lesson_prerequisite_id( $lesson_id );
 
-
-        if( 'lesson' == get_post_type( $pre_requisite_lesson ) ){
+        // not a valid pre-requisite so pre-requisite is completed
+        if( 'lesson' != get_post_type( $pre_requisite_id )
+            || ! is_numeric( $pre_requisite_id ) ){
 
             return true;
 
-        }else{
-
-            return false;
-
         }
 
+        return  Sensei_Utils::user_completed_lesson( $pre_requisite_id, $user_id );
 
     }// end is_prerequisite_complete
 
@@ -3510,7 +3508,7 @@ class Sensei_Lesson {
 
         $course_id =  Sensei()->lesson->get_course_id( get_the_ID() );
 
-        if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) ) {
+        if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) || sensei_all_access() ) {
 
             return;
 
@@ -3566,7 +3564,7 @@ class Sensei_Lesson {
 
             <?php } else { ?>
 
-            <?php if(! Sensei_Utils::user_started_course( $course_id, $current_user->ID ) ) : ?>
+            <?php if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ) : ?>
 
                 <div class="sensei-message info">
                     <?php
@@ -3596,7 +3594,7 @@ class Sensei_Lesson {
      */
     public  static function prerequisite_complete_message(){
 
-        $lesson_prerequisite =  WooThemes_Sensei_Lesson::get_lesson_prerequisite( get_the_ID() );
+        $lesson_prerequisite =  WooThemes_Sensei_Lesson::get_lesson_prerequisite_id( get_the_ID() );
         $lesson_has_pre_requisite = $lesson_prerequisite > 0;
         if ( ! WooThemes_Sensei_Lesson::is_prerequisite_complete(  get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
 
@@ -3774,6 +3772,31 @@ class Sensei_Lesson {
         <?php
     } // End sensei_lesson_quiz_meta()
 
+    /**
+     * Show the lesson comments. This should be used in the loop.
+     *
+     * @since 1.9.0
+     */
+    public static function output_comments(){
+
+        if( ! is_user_logged_in() ){
+            return;
+        }
+
+        $pre_requisite_complete = Sensei()->lesson->is_prerequisite_complete( get_the_ID(), get_current_user_id() );
+        $course_id = Sensei()->lesson->get_course_id( get_the_ID() );
+        $allow_comments = Sensei()->settings->settings[ 'lesson_comments' ];
+        $user_taking_course = Sensei_Utils::user_started_course($course_id );
+
+        $lesson_allow_comments = $allow_comments && $pre_requisite_complete  && $user_taking_course;
+
+        if (  $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
+
+            comments_template();
+
+        } // End If Statement
+
+    } //output_comments
 
 } // End Class
 

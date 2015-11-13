@@ -52,7 +52,6 @@ class Sensei_Frontend {
 		// Template output actions
 		add_action( 'sensei_before_main_content', array( $this, 'sensei_output_content_wrapper' ), 10 );
 		add_action( 'sensei_after_main_content', array( $this, 'sensei_output_content_wrapper_end' ), 10 );
-		add_action( 'sensei_after_main_content', array( $this, 'sensei_output_comments' ), 10 );
 
 		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
 
@@ -84,7 +83,7 @@ class Sensei_Frontend {
 		//1.6.3
 		add_action( 'init', array( $this, 'sensei_process_registration' ), 2 );
 		//1.7.0
-		add_action( 'sensei_after_main_content', array( $this, 'sensei_breadcrumb' ), 10, 1 );
+		add_action( 'sensei_pagination', array( $this, 'sensei_breadcrumb' ), 80, 1 );
 
 		// Fix pagination for course archive pages when filtering by course type
 		add_filter( 'pre_get_posts', array( $this, 'sensei_course_archive_pagination' ) );
@@ -392,17 +391,13 @@ class Sensei_Frontend {
 
 	/**
 	 * outputs comments for the specified pages
-	 * @access  public
+	 * @deprecated
 	 * @return void
 	 */
 	function sensei_output_comments() {
-		global  $pre_requisite_complete, $user_taking_course;
-		$allow_comments = Sensei()->settings->settings[ 'lesson_comments' ];
-		if ( is_user_logged_in() && $allow_comments && ( isset( $pre_requisite_complete ) && $pre_requisite_complete ) && ( isset( $user_taking_course ) && $user_taking_course ) ) {
-			comments_template();
-		} elseif( is_singular( 'sensei_message' ) ) {
-			comments_template();
-		} // End If Statement
+
+		Sensei_Lesson::output_comments();
+
 	} // End sensei_output_comments()
 
 	/**
@@ -696,6 +691,12 @@ class Sensei_Frontend {
 
 		// Only output on lesson, quiz and taxonomy (module) pages
 		if( ! ( is_tax( 'module' ) || is_singular( 'lesson' ) || is_singular( 'quiz' ) ) ) return;
+
+		if( empty( $id )  ){
+
+            $id = get_the_ID();
+
+        }
 
 		$sensei_breadcrumb_prefix = __( 'Back to: ', 'woothemes-sensei' );
 		$separator = apply_filters( 'sensei_breadcrumb_separator', '&gt;' );

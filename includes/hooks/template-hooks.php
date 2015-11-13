@@ -21,7 +21,8 @@
 add_filter( 'template_include', array ( 'Sensei_Templates', 'template_loader' ), 10, 1 );
 
 //This hook adds the sensei pagination to the pagination hook
-add_action( 'sensei_pagination', array( 'Sensei_Frontend', 'load_content_pagination' ), 10 );
+add_action( 'sensei_pagination', array( 'Sensei_Frontend', 'load_content_pagination' ), 30 );
+
 
 /***************************
  *
@@ -243,6 +244,10 @@ add_action( 'sensei_after_main_content', array( 'Sensei_Templates', 'deprecate_s
 // @since 1.9.0
 // Add the quiz specific buttons and notices to the lesson
 add_action( 'sensei_single_lesson_content_inside_after', array('Sensei_Lesson', 'footer_quiz_call_to_action' ));
+
+// @since 1.9.0
+// hook in the comments on the single lessons page
+add_action( 'sensei_pagination', array( 'Sensei_Lesson', 'output_comments' ), 90 );
 
 /**********************
  *

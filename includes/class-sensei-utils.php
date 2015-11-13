@@ -799,9 +799,24 @@ class Sensei_Utils {
 			// Check if user is already taking the lesson
 			$activity_logged = WooThemes_Sensei_Utils::user_started_lesson( $lesson_id, $user_id );
 			if( ! $activity_logged ) {
+
 				$metadata['start'] = current_time('mysql');
 				$activity_logged = WooThemes_Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $status, $metadata );
-			}
+
+            } else {
+
+                // if users is already taking the lesson  and the status changes update the status
+                $current_user_activity = get_comment($activity_logged);
+                if( $status != $current_user_activity->comment_approved  ){
+
+                    $comment = array();
+                    $comment['comment_ID'] = $activity_logged;
+                    $comment['comment_approved'] = $status;
+                    wp_update_comment( $comment );
+
+                }
+
+            }
 
 			if ( $complete ) {
 				// Run this *after* the lesson status has been created/updated
@@ -1640,14 +1655,13 @@ class Sensei_Utils {
 	 */
 	public static function user_completed_lesson( $lesson = 0, $user_id = 0 ) {
 
-
 		if( $lesson ) {
 			$lesson_id = 0;
 			if ( is_object( $lesson ) ) {
 				$user_lesson_status = $lesson->comment_approved;
 				$lesson_id = $lesson->comment_post_ID;
 			}
-			elseif ( is_string( $lesson ) ) {
+			elseif ( ! is_numeric( $lesson ) ) {
 				$user_lesson_status = $lesson;
 			}
 			else {

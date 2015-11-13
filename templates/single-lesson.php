@@ -66,6 +66,7 @@
          *
          * @since 1.9.0
          *
+         * @hooked Sensei()->frontend->sensei_breadcrumb   - 30
          */
         do_action( 'sensei_single_lesson_content_inside_after' );
 
