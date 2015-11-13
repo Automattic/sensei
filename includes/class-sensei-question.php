@@ -608,30 +608,46 @@ class Sensei_Question {
      */
     public static function answer_feedback_notes( $question_id ){
 
-        global $post;
-        $lesson_id = Sensei()->quiz->get_lesson_id( $post->ID );
-        $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
-        if( $answer_notes ) { ?>
+        //IDS
+        $quiz_id = get_the_ID();
+        $lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
-            <div class="sensei-message info info-special">
+        // Data to check before showing feedback
+        $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
+        $not_empty_user_quiz_grade = !empty( Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() ) );
+        $reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
+        $lesson_completed = Sensei_Utils::user_completed_lesson( $lesson_id );
+        $quiz_grade_type = get_post_meta( $quiz_id , '_quiz_grade_type', true );
 
-                <?php
+        if( ( $lesson_completed  && $not_empty_user_quiz_grade  )
+            ||  ( $lesson_completed && ! $reset_quiz_allowed && 'auto' == $quiz_grade_type )
+            || ( 'auto' == $quiz_grade_type && ! $reset_quiz_allowed && $not_empty_user_quiz_grade ) ) {
 
-                    /**
-                     * Filter the answer feedback
-                     * Since 1.9.0
-                     *
-                     * @param string $answer_notes
-                     * @param string $question_id
-                     * @param string $lesson_id
-                     */
-                    echo apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
+            $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
 
-                ?>
+            if( $answer_notes ) { ?>
 
-            </div>
+                <div class="sensei-message info info-special answer-feedback">
 
-        <?php }
+                    <?php
+
+                        /**
+                         * Filter the answer feedback
+                         * Since 1.9.0
+                         *
+                         * @param string $answer_notes
+                         * @param string $question_id
+                         * @param string $lesson_id
+                         */
+                        echo apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
+
+                    ?>
+
+                </div>
+
+            <?php }
+
+        }// end if we can show answer feedback
 
     }// end answer_feedback_notes
 
@@ -646,18 +662,22 @@ class Sensei_Question {
 
         global $post,  $current_user, $sensei_question_loop;
 
-        // Setup variable needed to determine if the message should show and what it should show
-        $lesson_id = Sensei()->quiz->get_lesson_id( $sensei_question_loop['quiz_id']);
+        // Post Data
+        $quiz_id = $sensei_question_loop['quiz_id'];
+        $lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
         $question_item = $sensei_question_loop['current_question'];
-        $user_quiz_grade = Sensei()->quiz->data->user_quiz_grade;
-        $lesson_complete = Sensei()->quiz->data->user_lesson_complete;
-        $reset_quiz_allowed = Sensei()->quiz->data->reset_quiz_allowed;
-        $quiz_grade_type = Sensei()->quiz->data->quiz_grade_type;
+
+        // Setup variable needed to determine if the message should show and what it should show
+        $user_quiz_grade = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
+        $lesson_complete = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+        $reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
+        $quiz_grade_type = get_post_meta( $quiz_id, '_quiz_grade_type', true );
+
+        // retrieve the question total grade
         $question_grade = Sensei()->question->get_question_grade( $question_id );
 
-        // retrieve users stored data.
-        $user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, $current_user->ID );
-
+        // retrieve grade the user achieved
+        $user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 
         // Question ID
         $question_id = $question_item->ID;

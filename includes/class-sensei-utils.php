@@ -805,9 +805,10 @@ class Sensei_Utils {
 
             } else {
 
-                // if users is already taking the lesson  and the status changes update the status
+                // if users is already taking the lesson  and the status changes to complete update it
                 $current_user_activity = get_comment($activity_logged);
-                if( $status != $current_user_activity->comment_approved  ){
+                if( $status=='complete' &&
+                    $status != $current_user_activity->comment_approved  ){
 
                     $comment = array();
                     $comment['comment_ID'] = $activity_logged;
@@ -1284,7 +1285,7 @@ class Sensei_Utils {
 
 		$status = 'not_started';
 		$box_class = 'info';
-		$message = __( 'You have not taken this lesson\'s quiz yet', 'woothemes-sensei' );
+		$message = __( "You have not taken this lesson's quiz yet", 'woothemes-sensei' );
 		$extra = '';
 
 		if( $lesson_id > 0 && $user_id > 0 ) {

@@ -22,7 +22,8 @@
          *
          * @since 1.9.0
          *
-         * @hooked
+         * @hooked Sensei_Quiz::the_title               - 20
+         * @hooked Sensei_Quiz::the_user_status_message - 40
          * @param $quiz_id
          *
          */
@@ -30,15 +31,7 @@
 
     ?>
 
-    <header>
-
-        <h2 class="title"> <?php the_title(); ?> </h2>
-
-    </header>
-
     <section class="entry quiz-questions">
-
-        <?php the_content(); // @todo why would quiz content be needed? The quiz post type is only a list ofQ's check it out?>
 
         <?php  // Handle Quiz Completion @todo deprecate
         do_action( 'sensei_complete_quiz' ); ?>

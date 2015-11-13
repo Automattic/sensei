@@ -395,15 +395,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             $reset_allowed = 1;
         }
 
-        // Build frontend data object
-        $this->data->user_quiz_grade = $user_quiz_grade;
+        // Build frontend data object for backwards compatibility
+        // using this is no longer recommended
+        $this->data->user_quiz_grade = $user_quiz_grade;// Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
         $this->data->quiz_passmark = $quiz_passmark;
         $this->data->quiz_lesson = $quiz_lesson_id;
-        $this->data->quiz_grade_type = $quiz_grade_type;
+        $this->data->quiz_grade_type = $quiz_grade_type; // get_post_meta( $quiz_id, '_quiz_grade_type', true );
         $this->data->user_lesson_end = $user_lesson_end;
-        $this->data->user_lesson_complete = $user_lesson_complete;
+        $this->data->user_lesson_complete = $user_lesson_complete; //Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
         $this->data->lesson_quiz_questions = $lesson_quiz_questions;
-        $this->data->reset_quiz_allowed = $reset_allowed;
+        $this->data->reset_quiz_allowed = $reset_allowed; // Sensei_Quiz::is_reset_allowed( $lesson_id );
 
     } // end load_global_quiz_data
 
@@ -1185,6 +1186,31 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
      }
 
      /**
+      * Output the title for the single quiz page
+      *
+      * @since 1.9.0
+      */
+     public static function the_title(){
+         ?>
+         <header>
+
+             <h1>
+
+                 <?php
+                 /**
+                  * Filter documented in class-sensei-messages.php the_title
+                  */
+                 echo apply_filters( 'sensei_single_title', get_the_title( get_post() ), get_post_type( get_the_ID() ) );
+                 ?>
+
+             </h1>
+
+         </header>
+
+         <?php
+     }//the_title
+
+     /**
       * Output the sensei quiz status message.
       *
       * @param $quiz_id
@@ -1271,7 +1297,57 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
      } // End sensei_quiz_action_buttons()
 
+     /**
+      * Fetch the quiz grade
+      *
+      * @since 1.9.0
+      *
+      * @param int $lesson_id
+      * @param int $user_id
+      *
+      * @return double $user_quiz_grade
+      */
+     public static function get_user_quiz_grade( $lesson_id, $user_id ){
+
+         // get the quiz grade
+         $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+         $user_quiz_grade = 0;
+         if( isset( $user_lesson_status->comment_ID ) ) {
+             $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+         }
+
+         return (double) $user_quiz_grade;
+
+     }
+
+     /**
+      * Check the quiz reset property for a given lesson's quiz.
+      *
+      * The data is stored on the quiz but going forward the quiz post
+      * type will be retired, hence the lesson_id is a require parameter.
+      *
+      * @since 1.9.0
+      *
+      * @param int $lesson_id
+      * @return bool
+      */
+     public static function is_reset_allowed( $lesson_id ){
+
+         $quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+         $reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
+         //backwards compatibility
+         if( 'on' == $reset_allowed ) {
+             $reset_allowed = 1;
+         }
+
+         return (bool) $reset_allowed;
+
+     }
+
  } // End Class WooThemes_Sensei_Quiz
+
+
 
 /**
  * Class WooThemes_Sensei_Quiz
