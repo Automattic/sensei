@@ -113,6 +113,16 @@ class Sensei_Legacy_Shortcodes {
 
         $shortcode_override = $shortcode_specific_override;
 
+        // do not show this short code if there is a shortcode int he url and
+        // this specific shortcode is not the one requested in the ur.
+        $specific_shortcode_requested = isset( $_GET['action'] ) ?  sanitize_text_field(  $_GET['action']  ) : '';
+        if( ! empty( $specific_shortcode_requested) &&
+            $specific_shortcode_requested != $shortcode_override ){
+
+            return '';
+
+        }
+
         // loop and get all courses html
         ob_start();
         self::initialise_legacy_course_loop();
@@ -247,11 +257,45 @@ class Sensei_Legacy_Shortcodes {
 
             } // End For Loop
 
+            // More and Prev links
             $posts_array_query = new WP_Query(Sensei()->course->course_query( $shortcode_override, $amount, $course_includes, $course_excludes ) );
             $posts_array       = $posts_array_query->get_posts();
             $max_pages = $course_query->found_posts / $amount;
             if ( '' != $shortcode_override && ( $max_pages > $course_query->get( 'paged' ) ) ) {
-                echo sensei_course_archive_next_link( $shortcode_override );
+
+                switch( $shortcode_override ){
+                    case 'paidcourses':
+                        $filter = 'paid';
+                        break;
+                    case 'featuredcourses':
+                        $filter = 'featured';
+                        break;
+                    case 'freecourses':
+                        $filter = 'free';
+                        break;
+                    default:
+                        $filter = '';
+                        break;
+                }
+
+                $quer_args = array();
+                $quer_args[ 'paged' ] = '2';
+                if( !empty( $filter ) ){
+                    $quer_args[ 'course_filter' ] = $filter;
+                }
+
+                $course_pagination_link = get_post_type_archive_link( 'course' );
+                $more_link_text = esc_html( Sensei()->settings->settings[ 'course_archive_more_link_text' ] );
+                $more_link_url =  esc_url( add_query_arg( $quer_args, $course_pagination_link ) );
+
+                // next/more
+                $html  = '<div class="navigation"><div class="nav-next">';
+                $html .= '<a href="' . $more_link_url . '">';
+                $html .= $more_link_text;
+                $html .= '<span class="meta-nav"></span></a></div>';
+
+                echo apply_filters( 'course_archive_next_link', $html );
+
             } // End If Statement
 
         } // End If Statement

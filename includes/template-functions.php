@@ -14,11 +14,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
      */
     function sensei_course_archive_next_link( $type = 'newcourses' ) {
 
-        $course_pagination_link = get_post_type_archive_link( 'course' );
-        $more_link_text = esc_html( Sensei()->settings->settings[ 'course_archive_more_link_text' ] );
-        $html = '<div class="navigation"><div class="nav-next"><a href="' . esc_url( add_query_arg( array( 'paged' => '2', 'action' => $type ), $course_pagination_link ) ). '">' . sprintf( __( '%1$s', 'woothemes-sensei' ), $more_link_text ) . ' <span class="meta-nav"></span></a></div><div class="nav-previous"></div></div>';
-
-        return apply_filters( 'course_archive_next_link', $html );
+        _deprecated_function('sensei_course_archive_next_link', '1.9.0','This is no longer used or required in Sensei.');
     } // End sensei_course_archive_next_link()
 
 	 /**
