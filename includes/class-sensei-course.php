@@ -1321,8 +1321,8 @@ class Sensei_Course {
 
 		    	$active_html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_item->ID ) ) ) . '">';
 
-		    	    // Image
-		    		$active_html .= Sensei()->course->course_image( absint( $course_item->ID ) );
+                // Image
+                $active_html .= Sensei()->course->course_image( absint( $course_item->ID ), '100','100', true );
 
 		    		// Title
 		    		$active_html .= '<header>';
@@ -1584,7 +1584,6 @@ class Sensei_Course {
 			<p class="my-messages-link-container">
                 <a class="my-messages-link" href="<?php echo get_post_type_archive_link( 'sensei_message' ); ?>"
                    title="<?php _e( 'View & reply to private messages sent to your course & lesson teachers.', 'woothemes-sensei' ); ?>">
-
                     <?php _e( 'My Messages', 'woothemes-sensei' ); ?>
                 </a>
             </p>

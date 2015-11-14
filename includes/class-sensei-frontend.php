@@ -506,7 +506,6 @@ class Sensei_Frontend {
 	 */
 	public function sensei_wp_nav_menu_objects( $sorted_menu_items ) {
 
-
 		foreach( $sorted_menu_items as $k=>$item ) {
 
 			// Remove the My Messages link for logged out users or if Private Messages are disabled

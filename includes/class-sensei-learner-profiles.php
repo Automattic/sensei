@@ -38,11 +38,8 @@ class Sensei_Learner_Profiles {
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
-		// Load user info on learner profiles
-		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_user_info' ), 10, 1 );
-
 		// Set heading for courses section of learner profiles
-		add_action( 'sensei_before_learner_course_content', array( $this, 'learner_profile_courses_heading' ), 10, 1 );
+		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_courses_heading' ), 30, 1 );
 
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
