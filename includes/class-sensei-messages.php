@@ -703,6 +703,24 @@ class Sensei_Messages {
 
     } // end the_message_archive_sender
 
+    /**
+     * Link to the users my messages page
+     *
+     * @since 1.9.0
+     */
+    public static function the_my_messages_link(){
+        if( ! Sensei()->settings->get('messages_disable')  ) {
+            ?>
+            <p class="my-messages-link-container">
+                <a class="my-messages-link" href="<?php echo get_post_type_archive_link( 'sensei_message' ); ?>"
+                   title="<?php _e( 'View & reply to private messages sent to your course & lesson teachers.', 'woothemes-sensei' ); ?>">
+                    <?php _e( 'My Messages', 'woothemes-sensei' ); ?>
+                </a>
+            </p>
+            <?php
+        }
+    }
+
 } // End Class
 
 /**

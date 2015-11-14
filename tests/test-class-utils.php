@@ -178,4 +178,20 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
     }// testDeleteUserData
 
+    /**
+     * Test the array zip utility function
+     * @since 1.9.0
+     */
+    public function testArrayZipMerge(){
+
+        $this->assertTrue( method_exists( 'Sensei_Utils','array_zip_merge' ), 'Sensei_Utils::array_zip_merge does not exist.' );
+
+        // test if the function works
+        $array_1 = array( 1, 2, 3 );
+        $array_2 = array( 5, 6, 7, 8 ,9 );
+        $array_zipped = Sensei_Utils::array_zip_merge( $array_1, $array_2);
+        $expected = array( 1, 5, 2, 6, 3, 7, 8, 9 );
+        $this->assertEquals( $expected ,$array_zipped  );
+    }
+
 }// end test class

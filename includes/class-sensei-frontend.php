@@ -418,7 +418,7 @@ class Sensei_Frontend {
 			$course_page_id = intval( Sensei()->settings->settings[ 'course_page' ] );
 			$my_account_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
 
-			$course_page_url = ( 0 < $course_page_id ? get_permalink( $course_page_id ) : get_post_type_archive_link( 'course' ) );
+			$course_page_url = Sensei_Course::get_courses_page_url();
 			$lesson_archive_url = get_post_type_archive_link( 'lesson' );
 			$my_courses_url = get_permalink( $my_account_page_id );
 			$my_messages_url = get_post_type_archive_link( 'sensei_message' );

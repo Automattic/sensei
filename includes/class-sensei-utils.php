@@ -1599,10 +1599,10 @@ class Sensei_Utils {
 	public static function user_completed_course( $course = 0, $user_id = 0 ) {
 
 		if( $course ) {
-			if ( is_object( $course ) ) {
+			if ( is_object( $course ) && is_a( $course,'WP_Comment') ) {
 				$user_course_status = $course->comment_approved;
 			}
-			elseif ( is_string( $course ) ) {
+			elseif ( !is_numeric( $course ) && ! is_a( $course,'WP_Post') ) {
 				$user_course_status = $course;
 			}
 			else {
@@ -1610,7 +1610,11 @@ class Sensei_Utils {
 					$user_id = get_current_user_id();
 				}
 
-				$user_course_status = WooThemes_Sensei_Utils::user_course_status( $course, $user_id );
+                if( is_a( $course, 'WP_Post' ) ){
+                    $course =   $course->ID;
+                }
+
+				$user_course_status = WooThemes_Sensei_Utils::user_course_status( $course , $user_id );
 				if( isset( $user_course_status->comment_approved ) ){
                     $user_course_status = $user_course_status->comment_approved;
                 }
@@ -2274,6 +2278,45 @@ class Sensei_Utils {
 
         wp_reset_query();
 
+    }
+
+    /**
+     * Merge two arrays in a zip like fashion.
+     * If one array is longer than the other the elements will be apended
+     * to the end of the resulting array.
+     *
+     * @since 1.9.0
+     *
+     * @param array $array_a
+     * @param array $array_b
+     * @return array $merged_array
+     */
+    public static function array_zip_merge( $array_a, $array_b ){
+
+        if( ! isset( $array_a[0]  ) || ! isset( $array_b[0] )  ){
+            trigger_error('array_zip_merge requires both arrays to be indexed arrays ');
+        }
+
+        $merged_array = array();
+        $total_elements = count( $array_a )  + count( $array_b );
+
+        // Zip arrays
+        for ( $i = 0; $i < $total_elements; $i++) {
+
+            // if has an element at current index push a on top
+            if( isset( $array_a[ $i ] ) ){
+                $merged_array[] = $array_a[ $i ]  ;
+            }
+
+            // next if $array_b has an element at current index push a on top of the element
+            // from a if there was one, if not the element before that.
+            if( isset( $array_b[ $i ] ) ){
+                $merged_array[] = $array_b[ $i ]  ;
+            }
+
+        }
+
+        return $merged_array;
     }
 
 } // End Class
