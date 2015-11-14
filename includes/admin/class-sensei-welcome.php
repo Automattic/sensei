@@ -100,8 +100,8 @@ class Sensei_Welcome {
 				<div class="media-container">
 										<img src="http://placehold.it/1010x568/f3f3f3">
 									</div>
-				<h3>Updated Template System</h3>
-				<p>A revised and optimized template system, including a new default Course Archive page, complete with filters for quickly displaying free, paid and featured courses.</p>
+				<h3>Sensei in Your Language</h3>
+				<p>Language packs can now be downloaded directly from the dashboard, enabling one-click translation updates.</p>
 			</div>
 					</div>
 
@@ -124,8 +124,8 @@ class Sensei_Welcome {
 				<div class="media-container">
 										<img src="http://placehold.it/311x250/f3f3f3">
 									</div>
-				<h3>Customize Your Permalinks</h3>
-				<p>Your lesson URLs can now contain the name of the course, rather than just /lesson/</p>
+				<h3>Updated Template System</h3>
+				<p>A revised and optimized template system, including a new default Course Archive page, complete with filters for quickly displaying free, paid and featured courses.</p>
 			</div>
 					</div>
 
