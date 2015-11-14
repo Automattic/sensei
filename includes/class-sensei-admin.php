@@ -332,8 +332,27 @@ class Sensei_Admin {
 	function admin_install_notice() {
 	    ?>
 	    <div id="message" class="updated sensei-message sensei-connect">
-	    	<p><?php _e( '<strong>Welcome to Sensei</strong> &#8211; You\'re almost ready to create some courses!', 'woothemes-sensei' ); ?></p>
-            <p class="submit"><a href="<?php echo esc_url( add_query_arg('install_sensei_pages', 'true', admin_url('admin.php?page=woothemes-sensei-settings') ) ); ?>" class="button-primary"><?php _e( 'Install Sensei Pages', 'woothemes-sensei' ); ?></a> <a class="skip button" href="<?php echo esc_url( add_query_arg( 'skip_install_sensei_pages', 'true', admin_url('admin.php?page=woothemes-sensei-settings' ) ) ); ?>"><?php _e('Skip setup', 'woothemes-sensei'); ?></a></p>
+
+            <p>
+                <?php _e( '<strong>Welcome to Sensei</strong> &#8211; You\'re almost ready to create some courses!', 'woothemes-sensei' ); ?>
+            </p>
+
+            <p class="submit">
+
+                <a href="<?php echo esc_url( add_query_arg('install_sensei_pages', 'true', admin_url('admin.php?page=woothemes-sensei-settings') ) ); ?>"
+                   class="button-primary">
+
+                    <?php _e( 'Install Sensei Pages', 'woothemes-sensei' ); ?>
+
+                </a>
+
+                <a class="skip button" href="<?php echo esc_url( add_query_arg( 'skip_install_sensei_pages', 'true', admin_url('admin.php?page=woothemes-sensei-settings' ) ) ); ?>">
+
+                    <?php _e('Skip setup', 'woothemes-sensei'); ?>
+
+                </a>
+
+            </p>
 	    </div>
 	    <?php
 	} // End admin_install_notice()
@@ -1479,7 +1498,7 @@ class Sensei_Admin {
             update_option('sensei_installed', 0);
 
             $complete_url = add_query_arg( 'sensei_install_complete', 'true', $settings_url  );
-            wp_redirect( admin_url( $complete_url ) );
+            wp_redirect( $complete_url );
 
         }
 
