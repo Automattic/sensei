@@ -112,6 +112,9 @@ class Sensei_Course {
         // handle the order by title post submission
         add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_order_by_title'));
 
+        // ensure the course category page respects the manual order set for courses
+        add_filter( 'pre_get_posts',  array( __CLASS__, 'alter_course_category_order'));
+
         // flush rewrite rules when saving a course
         add_action('save_post', array( __CLASS__, 'flush_rewrite_rules' ) );
 
@@ -2293,7 +2296,8 @@ class Sensei_Course {
      */
     public static function course_archive_sorting( $query ){
 
-        if( ! is_archive(  'course ') ){
+        // don't show on category pages and other pages
+        if( ! is_archive(  'course ') || is_tax('course-category') ){
             return;
         }
 
@@ -2345,6 +2349,11 @@ class Sensei_Course {
      * @param
      */
     public static function course_archive_filters( $query ){
+
+        // don't show on category pages
+        if( is_tax('course-category') ){
+            return;
+        }
 
         /**
          * filter the course archive filter buttons
@@ -2882,7 +2891,64 @@ class Sensei_Course {
 
     }//the_title
 
-} // End Class
+    /**
+     * Show the title on the course category pages
+     *
+     * @since 1.9.0
+     */
+    public static function course_category_title(){
+
+        if( ! is_tax( 'course-category' ) ){
+            return;
+        }
+
+        $category_slug = get_query_var('course-category');
+        $term  = get_term_by('slug',$category_slug,'course-category');
+
+        if( ! empty($term) ){
+
+            $title = $term->name;
+
+        }else{
+
+            $title = 'Course Category';
+
+        }
+
+        $html = '<h2 class="sensei-category-title">';
+        $html .= __('Category') . ' ' . $title;
+        $html .= '</h2>';
+
+        echo apply_filters( 'course_category_title', $html , $term->term_id );
+
+    }// course_category_title
+
+    /**
+     * Alter the course query to respect the order set for courses and apply
+     * this on the course-category pages.
+     *
+     * @since 1.9.0
+     *
+     * @param WP_Query $query
+     * @return WP_Query
+     */
+    public static function alter_course_category_order( $query ){
+
+        if( ! is_tax( 'course-category' ) || ! $query->is_main_query() ){
+            return $query;
+        }
+
+        $order = get_option( 'sensei_course_order', '' );
+        if( !empty( $order )  ){
+            $query->set('orderby', 'menu_order' );
+            $query->set('order', 'ASC' );
+        }
+
+        return $query;
+
+    }
+
+}// End Class
 
 /**
  * Class WooThemes_Sensei_Course

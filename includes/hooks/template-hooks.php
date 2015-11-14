@@ -385,3 +385,12 @@ add_action( 'sensei_archive_before_message_loop', array( 'Sensei_Messages', 'the
 // output the message title and the message sensei
 add_action( 'sensei_content_message_before', array( 'Sensei_Messages', 'the_message_title' ), 10, 1 );
 add_action( 'sensei_content_message_before', array( 'Sensei_Messages', 'the_message_sender' ), 20 , 1 );
+
+/**********************************
+ *
+ *
+ *   Course Category Archive Hooks
+ *
+ *
+ **********************************/
+add_action( 'sensei_loop_course_before', array( 'Sensei_Course', 'course_category_title' ), 70 , 1 );
