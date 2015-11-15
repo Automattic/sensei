@@ -1068,6 +1068,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
      public function quiz_has_no_questions() {
 
+
+         if( ! is_singular( 'quiz' ) )  {
+             return;
+         }
+
          global $post;
 
          $lesson_id = $this->get_lesson_id($post->ID);

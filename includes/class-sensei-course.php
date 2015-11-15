@@ -2735,7 +2735,7 @@ class Sensei_Course {
      *
      * @since 1.9.0
      */
-    public function the_course_enrolment_actions(){
+    public static function the_course_enrolment_actions(){
         ?>
         <section class="course-meta course-enrolment">
         <?php

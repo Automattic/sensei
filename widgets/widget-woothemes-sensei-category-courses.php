@@ -51,6 +51,7 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 
 		/* Create the widget. */
 		parent::__construct( $this->woo_widget_idbase, $this->woo_widget_title, $widget_ops, $control_ops );
+
 	} // End __construct()
 
 	/**

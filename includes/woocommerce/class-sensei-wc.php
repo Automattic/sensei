@@ -439,7 +439,7 @@ Class Sensei_WC{
      *
      * @since 1.9.0
      */
-    public function course_in_cart_message(){
+    public static function course_in_cart_message(){
 
         global $post;
 
