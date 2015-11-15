@@ -566,15 +566,13 @@ class Sensei_Teacher {
      * @return bool $is_admin_teacher
      */
     public function is_admin_teacher ( ){
-        global $current_user;
 
         if( ! is_user_logged_in()){
             return false;
         }
         $is_admin_teacher = false;
-        $user_roles = $current_user->roles;
 
-        if( is_admin() &&  in_array(  'teacher',  $user_roles )   ){
+        if( is_admin() && Sensei_Teacher::is_a_teacher( get_current_user_id() )  ){
 
             $is_admin_teacher = true;
 
@@ -1517,15 +1515,67 @@ class Sensei_Teacher {
 
         global $pagenow;
 
-        $user = wp_get_current_user();
+        if( self::is_a_teacher( get_current_user_id() ) && $pagenow == "edit-comments.php") {
 
-        if( in_array( 'teacher', (array) $user->roles ) && $pagenow == "edit-comments.php") {
+            $clauses->query_vars['post_author'] = get_current_user_id();
 
-            $clauses->query_vars['post_author'] = $user->ID;
         }
 
         return $clauses;
 
     }   // end restrict_comment_moderation()
+
+    /**
+     * Determine if a user is a teacher by ID
+     *
+     * @param int $user_id
+     *
+     * @return bool
+     */
+    public static function is_a_teacher( $user_id ){
+
+        $user = get_user_by('id', $user_id);
+
+        if( isset( $user->roles ) && in_array(  'teacher',  $user->roles )   ){
+
+            return true;
+
+        }else{
+
+            return false;
+
+        }
+
+    }// end is_a_teacher
+
+    /**
+     * The archive title on the teacher archive filter
+     *
+     * @since 1.9.0
+     */
+    public static function archive_title(){
+
+        $author = get_user_by( 'id', get_query_var( 'author' ) );
+        $author_name = $author->display_name;
+        ?>
+            <h2 class="teacher-archive-title">
+
+                <?php echo sprintf( __( 'All courses by %s', 'woothemes-sensei') , $author_name ); ?>
+
+            </h2>
+        <?php
+
+    }// archive title
+
+    /**
+     * Removing course meta on the teacher archive page
+     *
+     * @since 1.9.0
+     */
+    public static function remove_course_meta_on_teacher_archive(){
+
+        remove_action('sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+
+    }
 
 } // End Class

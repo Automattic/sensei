@@ -394,3 +394,19 @@ add_action( 'sensei_content_message_before', array( 'Sensei_Messages', 'the_mess
  *
  **********************************/
 add_action( 'sensei_loop_course_before', array( 'Sensei_Course', 'course_category_title' ), 70 , 1 );
+
+/**********************************
+ *
+ *
+ * Teacher Archive
+ *
+ *
+ **********************************/
+//@since 1.9.0
+//add a title to the teacher archive page when viewn siteurl/author/{teacher-username}
+add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher', 'archive_title' ) );
+
+//@since 1.9.0
+// remove course meta from the teacher page until it can be refactored to allow only removing the
+// teacher name and not all lessons
+add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher', 'remove_course_meta_on_teacher_archive' ) );

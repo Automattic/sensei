@@ -257,7 +257,15 @@ class Sensei_Templates {
             // Override for sites with static home page
             $wp_query->is_home = false;
 
-            $file 	= 'course-results.php';
+            $file = 'course-results.php';
+            $find[] = $file;
+            $find[] = Sensei()->template_url . $file;
+
+        }elseif( is_author()
+                 && Sensei_Teacher::is_a_teacher( get_query_var('author') )
+                 && ! user_can( get_query_var('author'), 'manage_options' ) ){
+
+            $file = 'teacher-archive.php';
             $find[] = $file;
             $find[] = Sensei()->template_url . $file;
 
