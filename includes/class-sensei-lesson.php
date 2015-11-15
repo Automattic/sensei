@@ -3742,7 +3742,7 @@ class Sensei_Lesson {
                     <p>
 
                         <a class="button"
-                           href="<?php esc_url_raw( get_permalink( $quiz_id ) ); ?>"
+                           href="<?php echo esc_url_raw( get_permalink( $quiz_id ) ); ?>"
                            title="<?php _e( 'View the Lesson Quiz', 'woothemes-sensei'  ); ?>">
 
                             <?php  _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?>

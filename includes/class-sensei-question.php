@@ -894,7 +894,7 @@ class Sensei_Question {
 
                 if( ( $question_data[ 'lesson_completed' ] && $question_data[ 'user_quiz_grade' ] != '' )
                     || ( $question_data[ 'lesson_completed' ] && ! $question_data[ 'reset_quiz_allowed' ] && $question_data[ 'user_quiz_grade' ] != '' )
-                    || ( 'auto' == $question_data[ 'quiz_grade_type' ] && ! $question_data[ 'reset_quiz_allowed' ]  && $question_data[ 'user_quiz_grade' ] != '' ) ) {
+                    || ( 'auto' == $question_data[ 'quiz_grade_type' ] && ! $question_data[ 'reset_quiz_allowed' ]  && ! empty( $question_data[ 'user_quiz_grade' ] ) ) ) {
 
                     $user_correct = false;
 
