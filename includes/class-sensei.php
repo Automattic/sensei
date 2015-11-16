@@ -285,6 +285,9 @@ class Sensei_Main {
         // Check for and activate JetPack LaTeX support
         add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support'), 200 ); // Runs after Jetpack has loaded it's modules
 
+        // check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
+        add_action( 'init', array( $this, 'flush_rewrite_rules'), 101 );
+
     } // End __construct()
 
     /**
@@ -1328,6 +1331,47 @@ class Sensei_Main {
         </div>
 
     <?php }// end function
+
+    /**
+     * Sensei wide rewrite flush call.
+     *
+     * To use this simply update the option 'sensei_flush_rewrite_rules' to 1
+     *
+     * After the option is one the Rules will be flushed.
+     *
+     * @since 1.9.0
+     */
+    public function flush_rewrite_rules(){
+
+        // ensures that the rewrite rules is flushed on the second
+        // attempt. This ensure that the settings for any other process
+        // have been completed and save to the database before we refresh the
+        // rewrite rules.
+        $option =  get_option('sensei_flush_rewrite_rules');
+        if( '1' == $option ) {
+
+            update_option('sensei_flush_rewrite_rules', '2');
+
+        }elseif( '2' == $option ) {
+
+            flush_rewrite_rules();
+            update_option('sensei_flush_rewrite_rules', '0');
+
+        }
+
+    } // end flush_rewrite_rules
+
+    /**
+     * Calling this function will tell Sensei to flush rewrite
+     * rules on the next load.
+     *
+     * @since 1.9.0
+     */
+    public function initiate_rewrite_rules_flush(){
+
+        update_option('sensei_flush_rewrite_rules', '1');
+
+    }
 
 } // End Class
 

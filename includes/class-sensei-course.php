@@ -116,7 +116,7 @@ class Sensei_Course {
         add_filter( 'pre_get_posts',  array( __CLASS__, 'alter_course_category_order'));
 
         // flush rewrite rules when saving a course
-        add_action('save_post', array( __CLASS__, 'flush_rewrite_rules' ) );
+        add_action('save_post', array( 'Sensei_Course', 'flush_rewrite_rules' ) );
 
 	} // End __construct()
 
@@ -2701,7 +2701,7 @@ class Sensei_Course {
 
         if( 'course' == get_post_type( $post_id )  ){
 
-            flush_rewrite_rules( true );
+            Sensei()->initiate_rewrite_rules_flush();
 
         }
 

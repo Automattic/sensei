@@ -553,7 +553,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 								'required' => 1
 								);
 
-		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() ) {
+		if ( Sensei_WC::is_woocommerce_active() ) {
 			// WooCommerce Settings
     		$fields['woocommerce_enabled'] = array(
 									'name' => __( 'Enable WooCommerce Courses', 'woothemes-sensei' ),
@@ -689,7 +689,7 @@ class Sensei_Settings extends Sensei_Settings_API {
         if ( isset( $_POST[ 'option_page' ] ) && 'woothemes-sensei-settings' == $_POST[ 'option_page' ]
             && isset( $_POST[ 'action' ] ) && 'update' == $_POST[ 'action' ] ) {
 
-            flush_rewrite_rules(true);
+            Sensei()->initiate_rewrite_rules_flush();
 
         }
 

@@ -1492,7 +1492,7 @@ class Sensei_Admin {
         if ($install_complete) {
 
             // Flush rules after install
-            flush_rewrite_rules( false );
+            flush_rewrite_rules( true );
 
             // Set installed option
             update_option('sensei_installed', 0);

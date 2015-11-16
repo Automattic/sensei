@@ -123,7 +123,7 @@ class Sensei_PostTypes {
             ),
 		    'map_meta_cap'        => true,
 		    'capability_type'     => 'course',
-            'has_archive'         => $this->course_post_type_determine_archive(),
+            'has_archive'         => $this->get_course_post_type_archive_slug(),
 		    'hierarchical'        => false,
 		    'menu_position'       => 51,
 		    'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail' )
@@ -154,7 +154,7 @@ class Sensei_PostTypes {
      *
      * @return false|string
      */
-    public function course_post_type_determine_archive(){
+    public function get_course_post_type_archive_slug(){
 
         $settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
 
@@ -438,6 +438,7 @@ class Sensei_PostTypes {
 		);
 
 		register_taxonomy( 'course-category', array( 'course' ), $args );
+
 	} // End setup_course_category_taxonomy()
 
 	/**

@@ -3681,8 +3681,7 @@ class Sensei_Lesson {
 
         if( 'lesson' == get_post_type( $post_id )  ){
 
-            flush_rewrite_rules( true );
-            remove_action('save_post', array(__CLASS__, 'flush_rewrite_rules'));
+            Sensei()->initiate_rewrite_rules_flush();
 
         }
 
