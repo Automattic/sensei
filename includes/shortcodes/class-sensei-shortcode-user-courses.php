@@ -143,6 +143,15 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
         }
 
+        // temporary work around to hide pagination on the courses page
+        // this is in place until we can load the course for each tab via ajax
+        // if the shortcode is not active or in active and the active and completed
+        // tabs show up.
+        $number_of_posts = 20;
+        if( 'active' != $this->status && !'active' != $this->status  ){
+            $number_of_posts = 1000;
+        }
+
         // course query parameters
         $query_args = array(
             'post_type'        => 'course',
@@ -150,7 +159,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
             'orderby'          => $this->orderby,
             'order'            => $this->order,
             'paged' => empty( get_query_var('paged') )? 1 : get_query_var('paged'),
-            'posts_per_page'   => 20,
+            'posts_per_page'   => $number_of_posts,
             'post__in'         => $included_courses,
         );
 
