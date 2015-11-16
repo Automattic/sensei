@@ -68,34 +68,60 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 
         if( empty(  $this->id  ) ){
 
-            return __( 'Please supply a course ID for this shortcode.', 'woothemes-sensei' );
+            return sprintf( __( 'Please supply a course ID for the shortcode: %s', 'woothemes-sensei' ),'[sensei_course_page id=""]') ;
 
         }
 
         //set the wp_query to the current courses query
-        global $wp_query;
+        global $wp_query, $post;
+
+        // backups
+        $global_post_ref = $post;
+        $global_wp_query_ref = $wp_query;
+
+        $post = get_post( $this->id );
+        $wp_query->post = get_post( $this->id ); //  set this in case some the course hooks resets the query
         $wp_query = $this->course_page_query;
 
-        if( have_posts() ){
-
-            the_post();
-
-        }else{
-
-            return __('No posts found.', 'woothemes-sensei');
-
-        }
-
         ob_start();
-        Sensei_Templates::get_template('content-single-course.php');
+        self::the_single_course_content();
         $shortcode_output = ob_get_clean();
 
-        // set back the global query
+        // set back the global query and post
+        // restore global backups
+        $wp_query       = $global_wp_query_ref;
+        $post           = $global_post_ref;
+        $wp_query->post = $global_post_ref;
         wp_reset_query();
 
         return $shortcode_output;
 
     }// end render
 
-}// end class
+    /**
+     * Print out the single course content markup
+     *
+     * @since 1.9.0
+     */
+    public static function the_single_course_content(){
+        ?>
 
+        <article <?php post_class( array( 'course', 'post' ) ); ?> >
+
+
+            <?php  do_action( 'sensei_single_course_content_inside_before' );  ?>
+
+            <section class="entry fix">
+
+                <?php //the_content(); ?>
+
+            </section>
+
+            <?php  do_action( 'sensei_single_course_content_inside_after' );  ?>
+
+        </article>
+
+        <?php
+    }// end the_single_course_content
+
+}// end class

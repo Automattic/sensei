@@ -2635,13 +2635,13 @@ class Sensei_Course {
      */
     public static function load_single_course_lessons_query(){
 
-        if( ! is_singular('course') ){
-            return;
-        }
-
         global $post, $wp_query;
 
         $course_id = $post->ID;
+
+        if( 'course' != get_post_type( $course_id ) ){
+            return;
+        }
 
         $course_lesson_query_args = array(
             'post_type'         => 'lesson',

@@ -97,7 +97,9 @@ add_action( 'sensei_single_course_content_inside_after' , array( 'Sensei_Course'
 
 // @since 1.9.0
 // hooks in the course lessons query and remove it at the end
+// also loading the course lessons template in the middle
 add_action( 'sensei_single_course_lessons_before', array('Sensei_Course','load_single_course_lessons_query' ) );
+add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
 add_action( 'sensei_single_course_lessons_after', array( 'Sensei_Utils','restore_wp_query' ));
 
 // @since 1.9.0

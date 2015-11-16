@@ -53,8 +53,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                 ?>
 
-
-
                 <header>
 
                     <h2>
@@ -81,7 +79,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                         <ul class="lessons-list" >
 
-                            <?php while( sensei_module_has_lessons() ): the_post() ?>
+                            <?php while( sensei_module_has_lessons() ): the_post(); ?>
 
                                 <li class="' . $status . '">
 

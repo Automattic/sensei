@@ -52,9 +52,6 @@ class Sensei_Frontend {
 		// Template output actions
 		add_action( 'sensei_before_main_content', array( $this, 'sensei_output_content_wrapper' ), 10 );
 		add_action( 'sensei_after_main_content', array( $this, 'sensei_output_content_wrapper_end' ), 10 );
-
-		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
-
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 
 		// 1.2.1
