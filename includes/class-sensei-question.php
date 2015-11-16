@@ -652,7 +652,7 @@ class Sensei_Question {
     }// end answer_feedback_notes
 
     /**
-     * This function has to be run inside the quiz question loop on the singel quiz page.
+     * This function has to be run inside the quiz question loop on the single quiz page.
      *
      *
      * @since 1.9.0
@@ -682,25 +682,41 @@ class Sensei_Question {
         // Question ID
         $question_id = $question_item->ID;
 
-        if( ( $lesson_complete && $user_quiz_grade != '' )
-            || ( $lesson_complete && ! $reset_quiz_allowed && $user_quiz_grade != '' )
-            || ( 'auto' == $quiz_grade_type && ! $reset_quiz_allowed && $user_quiz_grade != '' ) ) {
+        // conditions to check
+        $completed_with_valid_grade = $lesson_complete && $user_quiz_grade != '' ;
+        $completed_with_valid_grade_and_reset_not_allowed = $lesson_complete &&  $user_quiz_grade != '' && ! $reset_quiz_allowed ;
+        $grade_type_auto_a_valid_grade_and_reset_not_allowed =  'auto' == $quiz_grade_type && ! $reset_quiz_allowed && $user_quiz_grade != '' ;
+
+        if (  $completed_with_valid_grade
+            || $completed_with_valid_grade_and_reset_not_allowed
+            || $grade_type_auto_a_valid_grade_and_reset_not_allowed  ) {
 
             $user_correct = false;
             $answer_message = __( 'Incorrect', 'woothemes-sensei' );
             $answer_message_class = 'user_wrong';
             // For zero grade mark as 'correct' but add no classes
             if ( 0 == $question_grade ) {
+
                 $user_correct = true;
                 $answer_message = '';
                 $answer_message_class = '';
-            }
-            else if( $user_question_grade > 0 ) {
+
+            } else if( $user_question_grade > 0 ) {
+
                 $user_correct = true;
                 $answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
                 $answer_message_class = 'user_right';
+
             }
 
+            // attach the correct answer if the question is auto gradable and user got it wrong
+            if( !$reset_quiz_allowed && !$user_correct ){
+
+                $answer_message .=  ' - '. __('Right Answer:','woothemes-sensei') . ' ' . self::get_correct_answer( $question_item->ID );
+
+            }
+
+            // answer feedback
             $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, $current_user->ID );
             if( $answer_notes ) {
                 $answer_message_class .= ' has_notes';
@@ -715,7 +731,7 @@ class Sensei_Question {
 
             <?php
 
-        } // end if
+        } // end if user can see all the goodies
 
     }// end the_answer_result_indication
 
@@ -875,11 +891,12 @@ class Sensei_Question {
             // Merge right and wrong answers
             if ( is_array( $question_data[ 'question_right_answer' ] ) ) {
 
-                $question_wrong_answers = array_merge( $question_data[ 'question_wrong_answers' ], $question_data[ 'question_right_answer' ] );
+                $merged_options = array_merge( $question_data[ 'question_wrong_answers' ], $question_data[ 'question_right_answer' ] );
 
             }  else {
 
                 array_push( $question_data[ 'question_wrong_answers' ], $question_data[ 'question_right_answer' ] );
+                $merged_options = $question_data[ 'question_wrong_answers' ];
 
             }
 
@@ -887,7 +904,7 @@ class Sensei_Question {
             $question_answers_options = array();
             $count = 0;
 
-            foreach( $question_data[ 'question_wrong_answers' ] as $answer ) {
+            foreach( $merged_options as $answer ) {
 
                 $count++;
                 $question_option = array();
@@ -1052,6 +1069,49 @@ class Sensei_Question {
         return $question_data;
 
     }//  end gap_fill_load_question_data
+
+
+    /**
+     * Get the correct answer for a question
+     *
+     * @param $question_id
+     * @return string $correct_answer or empty
+     */
+    public static function get_correct_answer( $question_id ){
+
+        $right_answer = get_post_meta( $question_id, '_question_right_answer', true );
+        $type = Sensei()->question->get_question_type( $question_id );
+        $type_name = __( 'Multiple Choice', 'woothemes-sensei' );
+        $grade_type = 'manual-grade';
+
+        if ('boolean'== $type ) {
+
+            $right_answer = ucfirst($right_answer);
+
+        }elseif( 'multiple-choice' == $type ) {
+
+            $right_answer = (array) $right_answer;
+            $right_answer = implode( ', ', $right_answer );
+
+        }elseif( 'gap-fill' == $type ) {
+
+            $right_answer_array = explode( '||', $right_answer );
+            if ( isset( $right_answer_array[0] ) ) { $gapfill_pre = $right_answer_array[0]; } else { $gapfill_pre = ''; }
+            if ( isset( $right_answer_array[1] ) ) { $gapfill_gap = $right_answer_array[1]; } else { $gapfill_gap = ''; }
+            if ( isset( $right_answer_array[2] ) ) { $gapfill_post = $right_answer_array[2]; } else { $gapfill_post = ''; }
+
+            $right_answer = $gapfill_pre . ' <span class="highlight">' . $gapfill_gap . '</span> ' . $gapfill_post;
+
+        }else{
+
+            // for non auto gradable question types no answer should be returned.
+            $right_answer = '';
+
+        }
+
+        return $right_answer;
+
+    } // get_correct_answer
 
 } // End Class
 

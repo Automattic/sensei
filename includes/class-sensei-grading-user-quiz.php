@@ -81,7 +81,7 @@ class Sensei_Grading_User_Quiz {
 			</div>
 			<div class="clear"></div><br/><?php
 
-		$lesson_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->lesson_id, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_status', 'field' => 'comment_ID' ) );
+		$lesson_status_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $this->lesson_id, 'user_id' => $this->user_id, 'type' => 'sensei_lesson_status', 'field' => 'comment_ID' ) );
 		$user_quiz_grade = get_comment_meta( $lesson_status_id, 'grade', true );
 		$correct_answers = 0;
 
