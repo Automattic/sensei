@@ -147,7 +147,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         // this is in place until we can load the course for each tab via ajax
         // if the shortcode is not active or in active and the active and completed
         // tabs show up.
-        $number_of_posts = 20;
+        $number_of_posts = $this->number;
         if( 'active' != $this->status && !'active' != $this->status  ){
             $number_of_posts = 1000;
         }
