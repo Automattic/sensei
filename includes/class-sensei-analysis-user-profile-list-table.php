@@ -216,14 +216,14 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 
 		if( 'complete' == $item->comment_approved ) {
 
-            $status = apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) );
+            $status =  __( 'Completed', 'woothemes-sensei' );
 			$status_class = 'graded';
 
 			$course_end_date = $item->comment_date;
 
 		} else {
 
-			$status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
+			$status =  __( 'In Progress', 'woothemes-sensei' );
 			$status_class = 'in-progress';
 
 		}
@@ -294,7 +294,7 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 	 * @return void
 	 */
 	public function no_items() {
-		echo apply_filters( 'sensei_analysis_user_profile_no_items_text', __( 'No courses found.', 'woothemes-sensei' ) );
+		echo  __( 'No courses found.', 'woothemes-sensei' );
 	} // End no_items()
 
 	/**

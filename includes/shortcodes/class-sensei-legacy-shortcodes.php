@@ -342,7 +342,7 @@ class Sensei_Legacy_Shortcodes {
                         <?php } // End If Statement ?>
 
                         <span class="course-lesson-count">
-                                    <?php echo Sensei()->course->course_lesson_count( $course_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?>
+                                    <?php echo Sensei()->course->course_lesson_count( $course_id ) . '&nbsp;' .  __( 'Lessons', 'woothemes-sensei' ); ?>
                                 </span>
 
                         <?php if ( '' != $category_output ) { ?>

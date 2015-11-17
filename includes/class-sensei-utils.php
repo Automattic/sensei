@@ -1410,7 +1410,7 @@ class Sensei_Utils {
 		$message = apply_filters( 'sensei_user_quiz_status_' . $status, $message );
 
 		if( $is_lesson && ! in_array( $status, array( 'login_required', 'not_started_course' ) ) ) {
-			$extra = '<p><a class="button" href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the lesson quiz', 'woothemes-sensei' ) ) ) . '">' . apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the lesson quiz', 'woothemes-sensei' ) ) . '</a></p>';
+			$extra = '<p><a class="button" href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' .  __( 'View the lesson quiz', 'woothemes-sensei' ) . '">' .  __( 'View the lesson quiz', 'woothemes-sensei' )  . '</a></p>';
 		}
 
 		// Filter of all messages

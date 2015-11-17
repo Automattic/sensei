@@ -319,7 +319,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 
 				} else {
 
-					$status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
+					$status =  __( 'In Progress', 'woothemes-sensei' );
 					$status_class = 'in-progress';
 					$user_end_date = '';
 
@@ -371,36 +371,36 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 						$user_end_date = $lesson_status->comment_date;
 
 						if( 'complete' == $lesson_status->comment_approved ) {
-							$status = apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) );
+							$status = __( 'Completed', 'woothemes-sensei' );
 							$status_class = 'graded';
 
-							$grade = apply_filters( 'sensei_no_grade_text', __( 'No Grade', 'woothemes-sensei' ) );
+							$grade = __( 'No Grade', 'woothemes-sensei' );
 						}
 						elseif( 'graded' == $lesson_status->comment_approved ) {
-							$status = apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) );
+							$status =  __( 'Graded', 'woothemes-sensei' );
 							$status_class = 'graded';
 
 							$grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true);
 						}
 						elseif( 'passed' == $lesson_status->comment_approved ) {
-							$status = apply_filters( 'sensei_passed_text', __( 'Passed', 'woothemes-sensei' ) );
+							$status =  __( 'Passed', 'woothemes-sensei' );
 							$status_class = 'graded';
 
 							$grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true);
 						}
 						elseif( 'failed' == $lesson_status->comment_approved ) {
-							$status = apply_filters( 'sensei_failed_text', __( 'Failed', 'woothemes-sensei' ) );
+							$status =  __( 'Failed', 'woothemes-sensei' );
 							$status_class = 'failed';
 
 							$grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true);
 						}
 						elseif( 'ungraded' == $lesson_status->comment_approved ) {
-							$status = apply_filters( 'sensei_ungraded_text', __( 'Ungraded', 'woothemes-sensei' ) );
+							$status =  __( 'Ungraded', 'woothemes-sensei' );
 							$status_class = 'ungraded';
 
 						}
 						elseif( 'in-progress' == $lesson_status->comment_approved ) {
-							$status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
+							$status =  __( 'In Progress', 'woothemes-sensei' );
 							$user_end_date = '';
 						}
 					} // END lesson_status

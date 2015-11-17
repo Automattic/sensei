@@ -1992,7 +1992,7 @@ class Sensei_Course {
 
         <?php } // End If Statement ?>
 
-        <span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $course->ID ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
+        <span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $course->ID ) . '&nbsp;' .  __( 'Lessons', 'woothemes-sensei' ); ?></span>
 
        <?php if ( '' != $category_output ) { ?>
 
@@ -2067,7 +2067,7 @@ class Sensei_Course {
 
                     <?php if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) ) && Sensei()->settings->settings['course_completion'] == 'complete' ) { ?>
 
-                        <span><input name="course_complete" type="submit" class="course-complete" value="<?php echo apply_filters( 'sensei_mark_as_complete_text', __( 'Mark as Complete', 'woothemes-sensei' ) ); ?>/></span>
+                        <span><input name="course_complete" type="submit" class="course-complete" value="<?php  _e( 'Mark as Complete', 'woothemes-sensei' ); ?>/></span>
 
                    <?php  } // End If Statement
 
@@ -2085,14 +2085,14 @@ class Sensei_Course {
 
                     if ( ! $course_purchased && ! WooThemes_Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() ) ) {?>
 
-                        <span><input name="course_complete" type="submit" class="course-delete" value="<?php echo apply_filters( 'sensei_delete_course_text', __( 'Delete Course', 'woothemes-sensei' ) ); ?>"/></span>
+                        <span><input name="course_complete" type="submit" class="course-delete" value="<?php echo __( 'Delete Course', 'woothemes-sensei' ); ?>"/></span>
 
                     <?php } // End If Statement
 
                     $has_quizzes = Sensei()->course->course_quizzes( $course->ID, true );
                     $results_link = '';
                     if( $has_quizzes ){
-                        $results_link = '<a class="button view-results" href="' . Sensei()->course_results->get_permalink( $course->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+                        $results_link = '<a class="button view-results" href="' . Sensei()->course_results->get_permalink( $course->ID ) . '">' . __( 'View results', 'woothemes-sensei' ) . '</a>';
                     }
 
                     // Output only if there is content to display
@@ -2698,7 +2698,7 @@ class Sensei_Course {
             $completed_course = WooThemes_Sensei_Utils::user_completed_course( $user_course_status );
             // Success message
             if ( $completed_course ) { ?>
-                <div class="status completed"><?php echo apply_filters( 'sensei_complete_text', __( 'Completed', 'woothemes-sensei' ) ); ?></div>
+                <div class="status completed"><?php  _e( 'Completed', 'woothemes-sensei' ); ?></div>
                 <?php
                 $has_quizzes = Sensei()->course->course_quizzes( $post->ID, true );
                 if( has_filter( 'sensei_results_links' ) || $has_quizzes ) { ?>
@@ -2706,14 +2706,14 @@ class Sensei_Course {
                         <?php
                         $results_link = '';
                         if( $has_quizzes ) {
-                            $results_link = '<a class="view-results" href="' . Sensei()->course_results->get_permalink( $post->ID ) . '">' . apply_filters( 'sensei_view_results_text', __( 'View results', 'woothemes-sensei' ) ) . '</a>';
+                            $results_link = '<a class="view-results" href="' . Sensei()->course_results->get_permalink( $post->ID ) . '">' .  __( 'View results', 'woothemes-sensei' ) . '</a>';
                         }
                         $results_link = apply_filters( 'sensei_results_links', $results_link );
                         echo $results_link;
                         ?></p>
                 <?php } ?>
             <?php } else { ?>
-                <div class="status in-progress"><?php echo apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ); ?></div>
+                <div class="status in-progress"><?php echo __( 'In Progress', 'woothemes-sensei' ); ?></div>
             <?php }
 
         } else {

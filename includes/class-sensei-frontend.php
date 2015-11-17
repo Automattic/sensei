@@ -701,7 +701,7 @@ class Sensei_Frontend {
 			if( ! $course_id ) {
 				return;
 			}
-			$html .= '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_back_to_course_text', __( 'Back to the course', 'woothemes-sensei' ) ) ) . '">' . get_the_title( $course_id ) . '</a>';
+			$html .= '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Back to the course', 'woothemes-sensei' ) . '">' . get_the_title( $course_id ) . '</a>';
     	} // End If Statement
     	// Quiz
 		if ( is_singular( 'quiz' ) && 0 < intval( $id ) ) {
@@ -709,7 +709,7 @@ class Sensei_Frontend {
 			if( ! $lesson_id ) {
 				return;
 			}
-			 $html .= '<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_back_to_lesson_text', __( 'Back to the lesson', 'woothemes-sensei' ) ) ) . '">' . get_the_title( $lesson_id ) . '</a>';
+			 $html .= '<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" title="' .  __( 'Back to the lesson', 'woothemes-sensei' ) . '">' . get_the_title( $lesson_id ) . '</a>';
     	} // End If Statement
 
     	// Allow other plugins to filter html
@@ -795,7 +795,7 @@ class Sensei_Frontend {
 
 					WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $post->ID, $current_user->ID );
 
-					$this->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_lesson_reset_text', __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
+					$this->messages = '<div class="sensei-message note">' .  __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) . '</div>';
 					break;
 
 				default:
@@ -816,7 +816,7 @@ class Sensei_Frontend {
 			$sanitized_course_id = absint( esc_html( $_POST['course_complete_id'] ) );
 			// Handle submit data
 			switch ($sanitized_submit) {
-				case apply_filters( 'sensei_mark_as_complete_text', __( 'Mark as Complete', 'woothemes-sensei' ) ):
+				case __( 'Mark as Complete', 'woothemes-sensei' ):
 
 					// Add user to course
 					$course_metadata = array(
@@ -850,7 +850,7 @@ class Sensei_Frontend {
 
 					break;
 
-				case apply_filters( 'sensei_delete_course_text', __( 'Delete Course', 'woothemes-sensei' ) ):
+				case __( 'Delete Course', 'woothemes-sensei' ):
 
 					WooThemes_Sensei_Utils::sensei_remove_user_from_course( $sanitized_course_id, $current_user->ID );
 
@@ -928,7 +928,7 @@ class Sensei_Frontend {
 			<form class="lesson_button_form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>#lesson_complete">
 	            <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
 	            <input type="hidden" name="quiz_action" value="lesson-complete" />
-	            <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php echo apply_filters( 'sensei_complete_lesson_text', __( 'Complete Lesson', 'woothemes-sensei' ) ); ?>"/></form></span>
+	            <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php _e( 'Complete Lesson', 'woothemes-sensei' ); ?>"/></form></span>
 	        </form>
 			<?php
 		} // End If Statement
@@ -951,7 +951,7 @@ class Sensei_Frontend {
 		<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
             <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
             <input type="hidden" name="quiz_action" value="lesson-reset" />
-            <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php echo apply_filters( 'sensei_reset_lesson_text', __( 'Reset Lesson', 'woothemes-sensei' ) ); ?>"/></form></span>
+            <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php _e( 'Reset Lesson', 'woothemes-sensei' ); ?>"/></form></span>
         </form>
 		<?php
 		} // End If Statement
@@ -979,7 +979,7 @@ class Sensei_Frontend {
            	<?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
 		   	<span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
 		   	<?php } // End If Statement ?>
-		   	<span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
+		   	<span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' . __( 'Lessons', 'woothemes-sensei' ); ?></span>
 		   	<?php if ( '' != $category_output ) { ?>
 		   	<span class="course-category"><?php echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ); ?></span>
 		   	<?php } // End If Statement ?>
@@ -1133,7 +1133,7 @@ class Sensei_Frontend {
 			    <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
 			    <?php } ?>
                 <?php if ( 0 < intval( $lesson_course_id ) ) { ?>
-                <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_view_course_text', __( 'View course', 'woothemes-sensei' ) ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
+                <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . __( 'View course', 'woothemes-sensei' ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
                 <?php } ?>
             </p>
             <p class="lesson-excerpt"><?php the_excerpt( ); ?></p>

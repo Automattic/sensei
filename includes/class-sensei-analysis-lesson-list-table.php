@@ -215,36 +215,36 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		$status_class = $grade = '';
 
 		if( 'complete' == $item->comment_approved ) {
-			$status = apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) );
+			$status =  __( 'Completed', 'woothemes-sensei' );
 			$status_class = 'graded';
 
-			$grade = apply_filters( 'sensei_no_grade_text', __( 'No Grade', 'woothemes-sensei' ) );
+			$grade =  __( 'No Grade', 'woothemes-sensei' );
 		}
 		elseif( 'graded' == $item->comment_approved ) {
-			$status = apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) );
+			$status = __( 'Graded', 'woothemes-sensei' ) ;
 			$status_class = 'graded';
 
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true);
 		}
 		elseif( 'passed' == $item->comment_approved ) {
-			$status = apply_filters( 'sensei_passed_text', __( 'Passed', 'woothemes-sensei' ) );
+			$status =  __( 'Passed', 'woothemes-sensei' );
 			$status_class = 'graded';
 
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true);
 		}
 		elseif( 'failed' == $item->comment_approved ) {
-			$status = apply_filters( 'sensei_failed_text', __( 'Failed', 'woothemes-sensei' ) );
+			$status = __( 'Failed', 'woothemes-sensei' );
 			$status_class = 'failed';
 
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true);
 		}
 		elseif( 'ungraded' == $item->comment_approved ) {
-			$status = apply_filters( 'sensei_ungraded_text', __( 'Ungraded', 'woothemes-sensei' ) );
+			$status =  __( 'Ungraded', 'woothemes-sensei' );
 			$status_class = 'ungraded';
 
 		}
 		else {
-			$status = apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) );
+			$status =  __( 'In Progress', 'woothemes-sensei' );
 			$user_end_date = '';
 		}
 
@@ -327,7 +327,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		echo apply_filters( 'sensei_analysis_lessons_no_items_text', __( 'No learners found.', 'woothemes-sensei' ) );
+		 _e( 'No learners found.', 'woothemes-sensei' );
 	} // End no_items()
 
 	/**

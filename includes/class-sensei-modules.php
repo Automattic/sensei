@@ -482,7 +482,7 @@ class Sensei_Core_Modules
             if (has_term('', $this->taxonomy, $post->ID)) {
                 $module = $this->get_lesson_module($post->ID);
                 if( $module ) {
-                    $html .= ' ' . $separator . ' <a href="' . esc_url($module->url) . '" title="' . esc_attr(apply_filters('sensei_back_to_module_text', __('Back to the module', 'woothemes-sensei'))) . '">' . $module->name . '</a>';
+                    $html .= ' ' . $separator . ' <a href="' . esc_url($module->url) . '" title="' .  __('Back to the module', 'woothemes-sensei') . '">' . $module->name . '</a>';
                 }
             }
         }
@@ -490,7 +490,7 @@ class Sensei_Core_Modules
         if (is_tax($this->taxonomy)) {
             if (isset($_GET['course_id']) && 0 < intval($_GET['course_id'])) {
                 $course_id = intval($_GET['course_id']);
-                $html .= '<a href="' . esc_url(get_permalink($course_id)) . '" title="' . esc_attr(apply_filters('sensei_back_to_course_text', __('Back to the course', 'woothemes-sensei'))) . '">' . get_the_title($course_id) . '</a>';
+                $html .= '<a href="' . esc_url(get_permalink($course_id)) . '" title="' .  __('Back to the course', 'woothemes-sensei') . '">' . get_the_title($course_id) . '</a>';
             }
         }
         return $html;

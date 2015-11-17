@@ -255,11 +255,11 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 				if( 'complete' == $user_activity->comment_approved || 'graded' == $user_activity->comment_approved || 'passed' == $user_activity->comment_approved ) {
 
-                    $status_html = '<span class="graded">' . apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) ) . '</span>';
+                    $status_html = '<span class="graded">' .__( 'Completed', 'woothemes-sensei' ) . '</span>';
 
 				} else {
 
-                    $status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
+                    $status_html = '<span class="in-progress">' . __( 'In Progress', 'woothemes-sensei' ) . '</span>';
 
 				}
 

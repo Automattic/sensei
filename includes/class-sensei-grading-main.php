@@ -240,27 +240,27 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 		$grade = '';
 		if( 'complete' == $item->comment_approved ) {
-			$status_html = '<span class="graded">' . apply_filters( 'sensei_completed_text', __( 'Completed', 'woothemes-sensei' ) ) . '</span>';
-			$grade = apply_filters( 'sensei_no_grade_text', __( 'No Grade', 'woothemes-sensei' ) );
+			$status_html = '<span class="graded">' . __( 'Completed', 'woothemes-sensei' ) . '</span>';
+			$grade =  __( 'No Grade', 'woothemes-sensei' );
 		}
 		elseif( 'graded' == $item->comment_approved ) {
-			$status_html = '<span class="graded">' . apply_filters( 'sensei_graded_text', __( 'Graded', 'woothemes-sensei' ) ) . '</span>';
+			$status_html = '<span class="graded">' .  __( 'Graded', 'woothemes-sensei' )  . '</span>';
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true) . '%';
 		}
 		elseif( 'passed' == $item->comment_approved ) {
-			$status_html = '<span class="passed">' . apply_filters( 'sensei_passed_text', __( 'Passed', 'woothemes-sensei' ) ) . '</span>';
+			$status_html = '<span class="passed">' .  __( 'Passed', 'woothemes-sensei' )  . '</span>';
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true) . '%';
 		}
 		elseif( 'failed' == $item->comment_approved ) {
-			$status_html = '<span class="failed">' . apply_filters( 'sensei_failed_text', __( 'Failed', 'woothemes-sensei' ) ) . '</span>';
+			$status_html = '<span class="failed">' .  __( 'Failed', 'woothemes-sensei' )  . '</span>';
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true) . '%';
 		}
 		elseif( 'ungraded' == $item->comment_approved ) {
-			$status_html = '<span class="ungraded">' . apply_filters( 'sensei_ungraded_text', __( 'Ungraded', 'woothemes-sensei' ) ) . '</span>';
+			$status_html = '<span class="ungraded">' .  __( 'Ungraded', 'woothemes-sensei' )  . '</span>';
 			$grade = __( 'N/A', 'woothemes-sensei' );
 		}
 		else {
-			$status_html = '<span class="in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) . '</span>';
+			$status_html = '<span class="in-progress">' . __( 'In Progress', 'woothemes-sensei' ) . '</span>';
 			$grade = __( 'N/A', 'woothemes-sensei' );
 		}
 
@@ -313,7 +313,9 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		echo apply_filters( 'sensei_grading_no_items_text', __( 'No submissions found.', 'woothemes-sensei' ) );
+
+        _e( 'No submissions found.', 'woothemes-sensei' );
+
 	} // End no_items()
 
 	/**

@@ -757,14 +757,14 @@ class Sensei_Main {
                         if ( $is_preview ) {
                             $this->permissions_message['message'] = sprintf( __('This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
                         } else {
-                            $this->permissions_message['message'] = apply_filters( 'sensei_please_purchase_course_text', sprintf( __('Please purchase the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link ) );
+                            $this->permissions_message['message'] =  sprintf( __('Please purchase the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
                         }
                     } else {
                         if ( $is_preview ) {
                             $this->permissions_message['message'] = sprintf( __('This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
                         } else {
                             /** This filter is documented in class-woothemes-sensei-frontend.php */
-                            $this->permissions_message['message'] =  apply_filters( 'sensei_please_sign_up_text', sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link ) );
+                            $this->permissions_message['message'] =  sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
                         }
                     } // End If Statement
                 } // End If Statement

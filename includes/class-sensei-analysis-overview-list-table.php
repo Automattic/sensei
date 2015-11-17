@@ -612,7 +612,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		} else {
 			$type = $this->view;
 		}
-		echo apply_filters( 'sensei_analysis_overview_no_items_text', sprintf( __( '%1$sNo %2$s found%3$s', 'woothemes-sensei' ), '<em>', $type, '</em>' ), $type );
+		echo  sprintf( __( '%1$sNo %2$s found%3$s', 'woothemes-sensei' ), '<em>', $type, '</em>' );
 	} // End no_items()
 
 	/**

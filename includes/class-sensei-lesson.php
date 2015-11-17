@@ -3325,28 +3325,28 @@ class Sensei_Lesson {
                 $lesson_length = get_post_meta( $lesson_id, '_lesson_length', true );
                 if ( '' != $lesson_length ) {
 
-                    $meta_html .= '<span class="lesson-length">' . apply_filters( 'sensei_length_text', __( 'Length: ', 'woothemes-sensei' ) ) . $lesson_length . __( ' minutes', 'woothemes-sensei' ) . '</span>';
+                    $meta_html .= '<span class="lesson-length">' .  __( 'Length: ', 'woothemes-sensei' ) . $lesson_length . __( ' minutes', 'woothemes-sensei' ) . '</span>';
 
                 }
 
                 if ( Sensei()->settings->get( 'lesson_author' ) ) {
 
-                    $meta_html .= '<span class="lesson-author">' . apply_filters( 'sensei_author_text', __( 'Author: ', 'woothemes-sensei' ) ) . '<a href="' . get_author_posts_url( absint( get_post()->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+                    $meta_html .= '<span class="lesson-author">' .  __( 'Author: ', 'woothemes-sensei' ) . '<a href="' . get_author_posts_url( absint( get_post()->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
 
                 } // End If Statement
                 if ( '' != $lesson_complexity ) {
 
-                    $meta_html .= '<span class="lesson-complexity">' . apply_filters( 'sensei_complexity_text', __( 'Complexity: ', 'woothemes-sensei' ) ) . $lesson_complexity .'</span>';
+                    $meta_html .= '<span class="lesson-complexity">' .  __( 'Complexity: ', 'woothemes-sensei' ) . $lesson_complexity .'</span>';
 
                 }
 
                 if ( $single_lesson_complete ) {
 
-                    $meta_html .= '<span class="lesson-status complete">' . apply_filters( 'sensei_complete_text', __( 'Complete', 'woothemes-sensei' ) ) .'</span>';
+                    $meta_html .= '<span class="lesson-status complete">' .__( 'Complete', 'woothemes-sensei' ) .'</span>';
 
                 } elseif ( $user_lesson_status ) {
 
-                    $meta_html .= '<span class="lesson-status in-progress">' . apply_filters( 'sensei_in_progress_text', __( 'In Progress', 'woothemes-sensei' ) ) .'</span>';
+                    $meta_html .= '<span class="lesson-status in-progress">' . __( 'In Progress', 'woothemes-sensei' ) .'</span>';
 
                 } // End If Statement
 
@@ -3558,7 +3558,7 @@ class Sensei_Lesson {
 
                 <?php } else { ?>
 
-                    <div class="sensei-message info"><?php echo apply_filters( 'sensei_please_purchase_course_text', sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( apply_filters( 'sensei_sign_up_text', __( 'Sign Up', 'woothemes-sensei' ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ) ); ?></div>
+                    <div class="sensei-message info"><?php echo sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
 
                 <?php } ?>
 
@@ -3627,7 +3627,7 @@ class Sensei_Lesson {
 
         $before_html = '<header class="archive-header"><h1>';
         $after_html = '</h1></header>';
-        $html = $before_html . apply_filters( 'sensei_lessons_archive_text', __( 'Lessons Archive', 'woothemes-sensei' ) ) . $after_html;
+        $html = $before_html .  __( 'Lessons Archive', 'woothemes-sensei' ) . $after_html;
 
         echo apply_filters( 'sensei_lesson_archive_title', $html );
 

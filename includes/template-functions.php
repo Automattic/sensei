@@ -126,7 +126,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 
     			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_start_course_noonce' ) ); ?>" />
 
-    			<span><input name="course_start" type="submit" class="course-start" value="<?php echo apply_filters( 'sensei_start_course_text', __( 'Start taking this Course', 'woothemes-sensei' ) ); ?>"/></span>
+    			<span><input name="course_start" type="submit" class="course-start" value="<?php _e( 'Start taking this Course', 'woothemes-sensei' ); ?>"/></span>
 
     		</form><?php
     	} // End If Statement
@@ -199,7 +199,9 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 
 			                        <?php } ?>
 
-			                        <button type="submit" class="single_add_to_cart_button button alt"><?php echo $product->get_price_html(); ?> - <?php echo apply_filters('single_add_to_cart_text', __('Purchase this Course', 'woothemes-sensei'), $product->product_type); ?></button>
+			                        <button type="submit" class="single_add_to_cart_button button alt">
+                                        <?php echo $product->get_price_html(); ?> - <?php  _e('Purchase this Course', 'woothemes-sensei'); ?>
+                                    </button>
 			                    </form>
 
 			                <?php } // End If Statement ?>

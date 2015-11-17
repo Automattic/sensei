@@ -216,7 +216,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
 
             // update the message showed to user
-            Sensei()->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_saved_text', __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) ) . '</div>';
+            Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'woothemes-sensei' )  . '</div>';
         }
 
 		return $answers_saved;
@@ -521,7 +521,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         // Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
         do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
-        Sensei()->frontend->messages = '<div class="sensei-message note">' . apply_filters( 'sensei_quiz_reset_text', __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) ) . '</div>';
+        Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) . '</div>';
 
         return ( $deleted_answers && $deleted_grades ) ;
 
