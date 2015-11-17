@@ -120,6 +120,16 @@ Class Sensei_WC{
 
         $course_url = remove_query_arg('paged', WooThemes_Sensei_Utils::get_current_url() );
 
+        $free_courses = self::get_free_courses();
+        $paid_courses = self::get_paid_courses();
+
+        if ( empty( $free_courses ) || empty( $paid_courses )  ){
+            // do not show any WooCommerce filters if all courses are
+            // free or if all courses are paid
+            return $filter_links;
+
+        }
+
         $filter_links[] = array(    'id'=>'paid' ,
                                     'url'=> add_query_arg('course_filter', 'paid', $course_url),
                                     'title'=>__( 'Paid', 'woothemes-sensei' )
@@ -149,38 +159,8 @@ Class Sensei_WC{
         if( isset( $_GET['course_filter'] ) && 'free' == $_GET['course_filter']
             && 'course' == $query->get( 'post_type') && $query->is_main_query()  ){
 
-            // get all the free WooCommerce products
-            // will be used later to check for course with the id as meta
-            $woocommerce_free_product_ids = get_posts( array(
-                'post_type' => 'product',
-                'posts_per_page' => '1000',
-                'fields' => 'ids',
-                'meta_query'=> array(
-                    'relation' => 'OR',
-                    array(
-                        'key'=> '_regular_price',
-                        'value' => 0,
-                    ),
-                    array(
-                        'key'=> '_sale_price',
-                        'value' => 0,
-                    ),
-                ),
-            ));
-
             // setup the course meta query
-            $meta_query = array(
-                'relation' => 'OR',
-                array(
-                    'key'     => '_course_woocommerce_product',
-                    'compare' => 'NOT EXISTS',
-                ),
-                array(
-                    'key'     => '_course_woocommerce_product',
-                    'value' => $woocommerce_free_product_ids,
-                    'compare' => 'IN',
-                ),
-            );
+            $meta_query = self::get_free_courses_meta_query_args();
 
             // manipulate the query to return free courses
             $query->set('meta_query', $meta_query );
@@ -207,62 +187,12 @@ Class Sensei_WC{
         if( isset( $_GET['course_filter'] ) && 'paid' == $_GET['course_filter']
             && 'course' == $query->get( 'post_type') && $query->is_main_query() ){
 
-            // get all the paid WooCommerce products that has regular
-            // and sale price greater than 0
-            // will be used later to check for course with the id as meta
-            $paid_product_ids_with_sale = get_posts( array(
-                'post_type' => 'product',
-                'posts_per_page' => '1000',
-                'fields' => 'ids',
-                'meta_query'=> array(
-                    'relation' => 'AND',
-                    array(
-                        'key'=> '_regular_price',
-                        'compare' => '>',
-                        'value' => 0,
-                    ),
-                    array(
-                        'key'=> '_sale_price',
-                        'compare' => '>',
-                        'value' => 0,
-                    ),
-                ),
-            ));
-
-            // get all the paid WooCommerce products that has regular price
-            // greater than 0 without a sale price
-            // will be used later to check for course with the id as meta
-            $paid_product_ids_without_sale = get_posts( array(
-                'post_type' => 'product',
-                'posts_per_page' => '1000',
-                'fields' => 'ids',
-                'meta_query'=> array(
-                    'relation' => 'AND',
-                    array(
-                        'key'=> '_regular_price',
-                        'compare' => '>',
-                        'value' => 0,
-                    ),
-                    array(
-                        'key'=> '_sale_price',
-                        'compare' => '=',
-                        'value' => '',
-                    ),
-                ),
-            ));
-
-            // combine products ID's with regular and sale price grater than zero and those without
-            // sale but regular price greater than zero
-            $woocommerce_paid_product_ids = array_merge( $paid_product_ids_with_sale, $paid_product_ids_without_sale );
-
             // setup the course meta query
-            $meta_query = array(
-                array(
-                    'key'     => '_course_woocommerce_product',
-                    'value' => $woocommerce_paid_product_ids,
-                    'compare' => 'IN',
-                ),
-            );
+            $meta_query = self::get_paid_courses_meta_query_args();
+
+            if( empty( $meta_query[0]['value'] ) ){
+                $meta_query[0]['value']= '-1000'; // ensure no posts are shown
+            }
 
             // manipulate the query to return free courses
             $query->set('meta_query', $meta_query );
@@ -293,7 +223,7 @@ Class Sensei_WC{
 
     /**
      * Hooking into the single lesson page to alter the
-     * user acess permissions based on if they have purchased the
+     * user access permissions based on if they have purchased the
      * course the lesson belongs to.
      *
      * This function will only return false or the passed in user_access value.
@@ -378,20 +308,16 @@ Class Sensei_WC{
             if( $user_id ) {
 
                 // Get all courses for product
-                $args = array(
-                    'posts_per_page' => 1000,
-                    'post_type' => 'course',
-                    'meta_query' => array(
-                        array(
+                $args = Sensei_Course::get_default_query_args();
+                $args['meta_query'] = array( array(
                             'key' => '_course_woocommerce_product',
                             'value' => $item_id
-                        )
-                    ),
-                    'orderby' => 'menu_order date',
-                    'order' => 'ASC',
-                );
-                $courses = get_posts( $args );
+                        ) );
+                $args['orderby'] = 'menu_order date';
+                $args['order'] = 'ASC';
 
+                // loop through courses
+                $courses = get_posts( $args );
                 if( $courses && count( $courses ) > 0 ) {
 
                     foreach( $courses as $course ) {
@@ -516,5 +442,223 @@ Class Sensei_WC{
         return false;
 
     } // end is_product_in_car
+
+    /**
+     * Get all free WooCommerce products
+     *
+     * @since 1.9.0
+     *
+     * @return array $free_products{
+     *  @type int $wp_post_id
+     * }
+     */
+    public static function get_free_product_ids(){
+
+        return get_posts( array(
+            'post_type' => 'product',
+            'posts_per_page' => '1000',
+            'fields' => 'ids',
+            'meta_query'=> array(
+                'relation' => 'OR',
+                array(
+                    'key'=> '_regular_price',
+                    'value' => 0,
+                ),
+                array(
+                    'key'=> '_sale_price',
+                    'value' => 0,
+                ),
+            ),
+        ));
+
+    }// end get free product query
+
+    /**
+     * The metat query for courses that are free
+     *
+     * @since 1.9.0
+     * @return array $wp_meta_query_param
+     */
+    public static function get_free_courses_meta_query_args(){
+
+        return array(
+            'relation' => 'OR',
+            array(
+                'key'     => '_course_woocommerce_product',
+                'compare' => 'NOT EXISTS',
+            ),
+            array(
+                'key'     => '_course_woocommerce_product',
+                'value' => self::get_free_product_ids(),
+                'compare' => 'IN',
+            ),
+        );
+
+    }// get_free_courses_meta_query
+
+    /**
+     * The metat query for courses that are free
+     *
+     * @since 1.9.0
+     * @return array $wp_query_meta_query_args_param
+     */
+    public static function get_paid_courses_meta_query_args(){
+
+        return array(
+            array(
+                'key'     => '_course_woocommerce_product',
+                'value' => self::get_paid_product_ids(),
+                'compare' => 'IN',
+            ),
+        );
+
+    }// get_free_courses_meta_query
+
+    /**
+     * The WordPress Query args
+     * for paid products on sale
+     *
+     * @since 1.9.0
+     * @return array $product_query_args
+     */
+    public static function get_paid_products_on_sale_query_args(){
+
+        $args = array(
+                   'post_type' 		=> 'product',
+                   'posts_per_page' 		=> 1000,
+                   'orderby'         	=> 'date',
+                   'order'           	=> 'DESC',
+                   'suppress_filters' 	=> 0
+        );
+
+        $args[ 'fields' ]     = 'ids';
+
+        $args[ 'meta_query' ] = array(
+            'relation' => 'AND',
+            array(
+                'key'=> '_regular_price',
+                'compare' => '>',
+                'value' => 0,
+            ),
+            array(
+                'key'=> '_sale_price',
+                'compare' => '>',
+                'value' => 0,
+            ),
+        );
+
+        return $args;
+
+    } // get_paid_products_on_sale_query_args
+
+
+    /**
+     * Return the WordPress query args for
+     * products not on sale but that is not a free
+     *
+     * @since 1.9.0
+     *
+     * @return array
+     */
+    public static function get_paid_products_not_on_sale_query_args(){
+
+        $args = array(
+            'post_type' 		=> 'product',
+            'posts_per_page' 		=> 1000,
+            'orderby'         	=> 'date',
+            'order'           	=> 'DESC',
+            'suppress_filters' 	=> 0
+        );
+
+        $args[ 'fields' ]     = 'ids';
+        $args[ 'meta_query' ] = array(
+            'relation' => 'AND',
+            array(
+                'key'=> '_regular_price',
+                'compare' => '>',
+                'value' => 0,
+            ),
+            array(
+                'key'=> '_sale_price',
+                'compare' => '=',
+                'value' => '',
+            ),
+        );
+
+        return $args;
+
+
+    } // get_paid_courses_meta_query
+
+    /**
+     * Get all WooCommerce non-free product id's
+     *
+     * @since 1.9.0
+     *
+     * @return array $woocommerce_paid_product_ids
+     */
+    public static function get_paid_product_ids(){
+
+        // get all the paid WooCommerce products that has regular
+        // and sale price greater than 0
+        // will be used later to check for course with the id as meta
+        $paid_product_ids_with_sale =  get_posts( self::get_paid_products_on_sale_query_args() );
+
+        // get all the paid WooCommerce products that has regular price
+        // greater than 0 without a sale price
+        // will be used later to check for course with the id as meta
+        $paid_product_ids_without_sale = get_posts( self::get_paid_products_not_on_sale_query_args() );
+
+        // combine products ID's with regular and sale price grater than zero and those without
+        // sale but regular price greater than zero
+        $woocommerce_paid_product_ids = array_merge( $paid_product_ids_with_sale, $paid_product_ids_without_sale );
+
+        // if
+        if( empty($woocommerce_paid_product_ids) ){
+            return array( );
+        }
+        return $woocommerce_paid_product_ids;
+
+    }
+
+    /**
+     * Get all free courses.
+     *
+     * This course that have a WC product attached
+     * that has a price or sale price of zero and
+     * other courses with no WooCommerce products
+     * attached.
+     *
+     * @since 1.9.0
+     *
+     * @return array
+     */
+    public static function get_free_courses(){
+
+        $free_course_query_args = Sensei_Course::get_default_query_args();
+        $free_course_query_args[ 'meta_query' ] = self::get_free_courses_meta_query_args();
+
+        return get_posts( $free_course_query_args );
+
+    }
+
+    /**
+     * Return all products that are not free
+     *
+     * @since 1.9.0
+     * @return array
+     */
+    public static function get_paid_courses(){
+
+        $paid_course_query_args = Sensei_Course::get_default_query_args();
+
+        $paid_course_query_args[ 'meta_query' ] = self::get_paid_courses_meta_query_args();
+
+        if( empty( $paid_course_query_args[ 'meta_query' ][0]['value'] )   ){
+            $paid_course_query_args[ 'meta_query' ][0]['value'] = '-1000'; // no courses should be returned
+        }
+
+        return get_posts(  $paid_course_query_args );
+    }
 
 }// end Sensei_WC

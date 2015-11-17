@@ -2948,6 +2948,30 @@ class Sensei_Course {
 
     }
 
+    /**
+     * The very basic course query arguments
+     * so we don't have to repeat this througout
+     * the code base.
+     *
+     * Usage:
+     * $args = Sensei_Course::get_default_query_args();
+     * $args['custom_arg'] ='custom value';
+     * $courses = get_posts( $args )
+     *
+     * @since 1.9.0
+     *
+     * @return array
+     */
+    public static function get_default_query_args(){
+        return array(
+            'post_type' 		=> 'course',
+            'posts_per_page' 		=> 1000,
+            'orderby'         	=> 'date',
+            'order'           	=> 'DESC',
+            'suppress_filters' 	=> 0
+        );
+    }
+
 }// End Class
 
 /**
