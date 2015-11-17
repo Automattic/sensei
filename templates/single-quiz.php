@@ -33,9 +33,6 @@
 
     <section class="entry quiz-questions">
 
-        <?php  // Handle Quiz Completion @todo deprecate
-        do_action( 'sensei_complete_quiz' ); ?>
-
         <?php if ( sensei_quiz_has_questions() ): ?>
 
             <form method="POST" action="<?php echo esc_url_raw( get_permalink() ); ?>" enctype="multipart/form-data">
@@ -91,13 +88,6 @@
                              */
                             do_action( 'sensei_quiz_question_inside_after', sensei_get_the_question_id() );
 
-                        ?>
-
-                        <?php    // @todo deprecate
-                        // Question Type
-                        global $sensei_question_loop;
-                        $question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
-                        do_action( 'sensei_quiz_question_type', $question_type );
                         ?>
 
                     </li>
