@@ -19,7 +19,7 @@ Class Sensei_WC{
      */
     public static function load_woocommerce_integration_hooks(){
 
-        require_once( __DIR__ . 'hooks/woocommerce-hooks.php' );
+        require_once( __DIR__ . '/hooks/woocommerce.php' );
 
     }
     /**

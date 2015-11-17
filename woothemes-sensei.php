@@ -68,7 +68,7 @@ Domain path: /lang/
     */
     if(! is_admin() ){
 
-        require_once( 'includes/hooks/template-hooks.php' );
+        require_once( 'includes/hooks/template.php' );
 
     }
 
