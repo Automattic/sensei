@@ -147,9 +147,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
             }// end for each $file_keys
         }
 
-        // todo: the qustion types are too random. We need at least one of each. Sometimes files do not show up.
-        //$activity_value = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) , true );
-
     } // end testSaveUserAnswers
 
     /**

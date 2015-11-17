@@ -266,7 +266,6 @@ class Sensei_Frontend {
 
 	/**
 	 * sensei_output_content_wrapper function.
-	 * @todo trigger errors for version 2.0 for all old files
      *
 	 * @access public
 	 * @return void
@@ -294,8 +293,6 @@ class Sensei_Frontend {
 
 	/**
 	 * sensei_output_content_wrapper_end function.
-	 *
-     * @todo trigger errors for version 2.0 for all old files
      *
 	 * @access public
 	 * @return void
