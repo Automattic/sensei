@@ -129,17 +129,23 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
             if( empty( $completed_ids ) ){
 
-                $this->load_no_courses_message_hook('completed');
-
+                add_action( 'sensei_loop_course_inside_before', array( $this, 'completed_no_course_message_output' ) );
             }
 
             if( empty( $active_ids ) ){
 
-                $this->load_no_courses_message_hook('active');
+                add_action( 'sensei_loop_course_inside_before', array( $this, 'active_no_course_message_output' ) );
 
             }
 
-            $included_courses = Sensei_Utils::array_zip_merge( $active_ids, $completed_ids );
+            if( empty( $completed_ids ) &&  empty( $active_ids )  ){
+
+                $included_courses = array('-1000'); // don't show any courses
+
+            }else{
+                $included_courses = Sensei_Utils::array_zip_merge( $active_ids, $completed_ids );
+            }
+
 
         }
 
@@ -148,7 +154,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         // if the shortcode is not active or in active and the active and completed
         // tabs show up.
         $number_of_posts = $this->number;
-        if( 'active' != $this->status && !'active' != $this->status  ){
+        if( 'active' != $this->status && 'complete' != $this->status  ){
             $number_of_posts = 1000;
         }
 
@@ -166,17 +172,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         $this->query = new WP_Query( $query_args );
 
     }// end setup _course_query
-
-    /**
-     * Load the no courses message hook
-     *
-     * @since 1.9.0
-     */
-    public function load_no_courses_message_hook( $status ){
-
-        add_action( 'sensei_loop_course_inside_before', array( $this, $status . '_no_course_message_output' ) );
-
-    }
 
     /**
      * Output the message that tells the user they have
