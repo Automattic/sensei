@@ -75,7 +75,10 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
      */
     public function render(){
 
-        if( empty( $this->messages_query ) ){
+        $messages_disabled_in_settings =  ! ( ! isset( Sensei()->settings->settings['messages_disable'] )
+                                            || ! Sensei()->settings->settings['messages_disable'] ) ;
+
+        if( empty( $this->messages_query ) || $messages_disabled_in_settings ){
 
             return '';
 
