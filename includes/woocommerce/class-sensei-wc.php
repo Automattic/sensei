@@ -493,7 +493,8 @@ Class Sensei_WC{
             'relation' => 'OR',
             array(
                 'key'     => '_course_woocommerce_product',
-                'compare' => 'NOT EXISTS',
+                'value' => '-',
+                'compare' => '=',
             ),
             array(
                 'key'     => '_course_woocommerce_product',
