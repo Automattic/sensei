@@ -2393,7 +2393,7 @@ class Sensei_Course {
     }
 
     /**
-     * if the featured link is click on the course archive page
+     * if the featured link is clicked on the course archive page
      * filter the courses returned to only show those featured
      *
      * Hooked into pre_get_posts
@@ -2501,19 +2501,19 @@ class Sensei_Course {
 
         switch ( $query_type ) {
             case 'newcourses':
-                $html .= $before_html . apply_filters( 'sensei_new_courses_text', __( 'New Courses', 'woothemes-sensei' ) ) . $after_html;
+                $html .= $before_html . __( 'New Courses', 'woothemes-sensei' ) . $after_html;
                 break;
             case 'featuredcourses':
-                $html .= $before_html . apply_filters( 'sensei_featured_courses_text', __( 'Featured Courses', 'woothemes-sensei' ) ) . $after_html;
+                $html .= $before_html .  __( 'Featured Courses', 'woothemes-sensei' ) . $after_html;
                 break;
             case 'freecourses':
-                $html .= $before_html . apply_filters( 'sensei_free_courses_text', __( 'Free Courses', 'woothemes-sensei' ) ) . $after_html;
+                $html .= $before_html .  __( 'Free Courses', 'woothemes-sensei' ) . $after_html;
                 break;
             case 'paidcourses':
-                $html .= $before_html . apply_filters( 'sensei_paid_courses_text', __( 'Paid Courses', 'woothemes-sensei' ) ) . $after_html;
+                $html .= $before_html .  __( 'Paid Courses', 'woothemes-sensei' ) . $after_html;
                 break;
             default:
-                $html .= $before_html . apply_filters( 'sensei_courses_text', __( 'Courses', 'woothemes-sensei' ) ) . $after_html;
+                $html .= $before_html . __( 'Courses', 'woothemes-sensei' ) . $after_html;
                 break;
         } // End Switch Statement
 
