@@ -81,11 +81,10 @@ class Sensei_Autoloader {
             'Sensei_Shortcode_Unpurchased_Courses' => 'shortcodes/class-sensei-shortcode-unpurchased-courses.php',
             'Sensei_Legacy_Shortcodes'             => 'shortcodes/class-sensei-legacy-shortcodes.php',
 
-
             /**
              * WooCommerce
              */
-            'Sensei_WC' => 'woocommerce/class-sensei-wc.php',
+            'Sensei_WC' => 'class-sensei-wc.php',
 
         );
     }
