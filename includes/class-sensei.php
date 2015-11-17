@@ -1343,9 +1343,9 @@ class Sensei_Main {
      */
     public function flush_rewrite_rules(){
 
-        // ensures that the rewrite rules is flushed on the second
+        // ensures that the rewrite rules are flushed on the second
         // attempt. This ensure that the settings for any other process
-        // have been completed and save to the database before we refresh the
+        // have been completed and saved to the database before we refresh the
         // rewrite rules.
         $option =  get_option('sensei_flush_rewrite_rules');
         if( '1' == $option ) {
