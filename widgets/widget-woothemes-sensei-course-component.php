@@ -51,7 +51,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 												);
 
 		// Add support for the WooCommerce shelf.
-		if ( function_exists( 'is_woocommerce_activated' ) && is_woocommerce_activated() ) {
+		if ( Sensei_WC::is_woocommerce_active() ) {
 			$this->woo_widget_componentslist['freecourses'] = __( 'Free Courses', 'woothemes-sensei' );
 			$this->woo_widget_componentslist['paidcourses'] = __( 'Paid Courses', 'woothemes-sensei' );
 		}
