@@ -219,9 +219,11 @@ class Sensei_Legacy_Shortcodes {
 
         global $posts_array;
         $course_includes   = array();
+
         $query_args = Sensei()->course->get_archive_query_args( $shortcode_override, $amount, $course_includes, $course_excludes );
         $course_query = new WP_Query( $query_args );
         $posts_array = $course_query->get_posts();
+
         // output the courses
         if( ! empty( $posts_array ) ) {
 

@@ -198,10 +198,6 @@ Class Sensei_WC{
             // setup the course meta query
             $meta_query = self::get_paid_courses_meta_query_args();
 
-            if( empty( $meta_query[0]['value'] ) ){
-                $meta_query[0]['value']= '-1000'; // ensure no posts are shown
-            }
-
             // manipulate the query to return free courses
             $query->set('meta_query', $meta_query );
 
@@ -516,7 +512,9 @@ Class Sensei_WC{
         return array(
             array(
                 'key'     => '_course_woocommerce_product',
-                'value' => self::get_paid_product_ids(),
+                // when empty we give a false post_id to ensure the caller doesn't get any courses for their
+                // query
+                'value' => empty(  self::get_paid_product_ids() )? '-1000' : self::get_paid_product_ids() ,
                 'compare' => 'IN',
             ),
         );
@@ -670,10 +668,6 @@ Class Sensei_WC{
         $paid_course_query_args = Sensei_Course::get_default_query_args();
 
         $paid_course_query_args[ 'meta_query' ] = self::get_paid_courses_meta_query_args();
-
-        if( empty( $paid_course_query_args[ 'meta_query' ][0]['value'] )   ){
-            $paid_course_query_args[ 'meta_query' ][0]['value'] = '-1000'; // no courses should be returned
-        }
 
         return get_posts(  $paid_course_query_args );
     }

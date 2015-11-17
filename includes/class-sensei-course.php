@@ -695,97 +695,35 @@ class Sensei_Course {
 				break;
 			case 'freecourses':
 
-				// Sub Query to get all WooCommerce Products that have Zero price
-                $woocommerce_free_product_ids = get_posts( array(
-                    'post_type' => 'product',
-                    'posts_per_page' => '1000',
-                    'fields' => 'ids',
-                    'meta_query'=> array(
-                        'relation' => 'OR',
-                        array(
-                            'key'=> '_regular_price',
-                            'value' => 0,
-                        ),
-                        array(
-                            'key'=> '_sale_price',
-                            'value' => 0,
-                        ),
-                    ),
-                ));
+                $post_args = array(
+                    'post_type' 		=> 'course',
+                    'orderby'         	=> $orderby,
+                    'order'           	=> $order,
+                    'post_status'      	=> 'publish',
+                    'exclude'			=> $excludes,
+                    'suppress_filters' 	=> 0
+                );
+                // Sub Query to get all WooCommerce Products that have Zero price
+                $post_args['meta_query'] = Sensei_WC::get_free_courses_meta_query_args();
 
- 				$post_args = array(	'post_type' 		=> 'course',
-                                    'orderby'         	=> $orderby,
-                                    'order'           	=> $order,
-    								'post_status'      	=> 'publish',
-    								'exclude'			=> $excludes,
-    								'suppress_filters' 	=> 0
-									);
+                break;
 
-                $post_args['meta_query'] = array(
-                    'relation' => 'OR',
-                    array(
-                        'key'     => '_course_woocommerce_product',
-                        'compare' => 'NOT EXISTS',
-                    ),
-                    array(
-                        'key'     => '_course_woocommerce_product',
-                        'value' => $woocommerce_free_product_ids,
-                        'compare' => 'IN',
-                    ),
+			case 'paidcourses':
+
+                $post_args = array(
+                    'post_type' 		=> 'course',
+                    'orderby'         	=> $orderby,
+                    'order'           	=> $order,
+                    'post_status'      	=> 'publish',
+                    'exclude'			=> $excludes,
+                    'suppress_filters' 	=> 0
                 );
 
+                // Sub Query to get all WooCommerce Products that have price greater than zero
+                $post_args['meta_query'] = Sensei_WC::get_paid_courses_meta_query_args();
+
 				break;
-			case 'paidcourses':
-				// Sub Query to get all WooCommerce Products that have price greater than zero
-				$args = array(
-							   'post_type' => 'product',
-							   'post_status' => 'publish',
-							   'posts_per_page' => -1,
-							   'meta_query' => array(
-							   							array(
-													        'key' => '_price',
-													        'value' => '0',
-													        'compare' => '>',
-													        'type' => 'NUMERIC'
-													       )
-													)
-								);
- 				$posts = get_posts($args);
- 				$paid_wc_posts = array();
- 				foreach ( $posts as $post_item ) {
- 					array_push( $paid_wc_posts , $post_item->ID );
- 				} // End For Loop
-				$post_args = array(	'post_type' 		=> 'course',
-                                    'orderby'         	=> $orderby,
-                                    'order'           	=> $order,
-    								'post_status'      	=> 'publish',
-    								'exclude'			=> $excludes,
-    								'suppress_filters' 	=> 0
-									);
-				if ( 0 < count( $paid_wc_posts) ) {
- 					$post_args['meta_query'] = array(
-							   							'relation' => 'AND',
-													    array(
-													        'key' => '_course_woocommerce_product',
-													        'value' => '0',
-													        'compare' => '>',
-													        'type' => 'NUMERIC'
-													       ),
-													    array(
-													        'key' => '_course_woocommerce_product',
-													        'value' => $paid_wc_posts,
-													        'compare' => 'IN'
-													       )
-													);
- 				} else {
- 					$post_args['meta_query'] = array(
-													        'key' => '_course_woocommerce_product',
-													        'value' => '0',
-													        'compare' => '>',
-													        'type' => 'NUMERIC'
-													       );
- 				}
-				break;
+
 			case 'featuredcourses':
                 $post_args = array(	'post_type' 		=> 'course',
                                     'orderby'         	=> $orderby,
