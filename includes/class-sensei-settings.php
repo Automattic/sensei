@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * - init_sections()
  * - init_fields()
  * - get_duration_options()
- * - add_contextual_help()
  * - pages_array()
  */
 class Sensei_Settings extends Sensei_Settings_API {
@@ -31,7 +30,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function __construct () {
 	    parent::__construct(); // Required in extended classes.
-	    add_action( 'admin_head', array( $this, 'add_contextual_help' ) );
 
         add_action('init', array( __CLASS__, 'flush_rewrite_rules' ) );
 
@@ -621,17 +619,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		return $options;
 	} // End get_duration_options()
-
-	/**
-	 * Add contextual help to the settings screen.
-	 * @access  public
-	 * @since   1.0.0
-	 * @return  void
-	 */
-	public function add_contextual_help () {
-		// TODO
-	}  // End add_contextual_help()
-
 
 	/**
 	 * Return an array of pages.
