@@ -32,26 +32,11 @@ class Sensei_Shortcode_Loader{
      */
     public function __construct(){
 
-        // load all the hooks
-        $this->add_hooks();
-
         // create a list of shortcodes and the class that handles them
         $this->setup_shortcode_class_map();
 
         // setup all the shortcodes and load the listener into WP
         $this->initialize_shortcodes();
-    }
-
-    /**
-     * Add all shortcodes here
-     *
-     * This function adds shortcodes to WP that links to other functionality.
-     * @since 1.9.0
-     */
-    public function add_hooks(){
-
-        add_action('pre_get_posts',  array( $this, 'filter_courses_archive' ) );
-
     }
 
     /**
@@ -151,61 +136,6 @@ class Sensei_Shortcode_Loader{
         return $shortcode->render();
 
     }
-
-    /**
-     * sensei_filter_courses_archive function.
-     *
-     * @access public
-     * @param WP_Query $query
-     * @return void
-     */
-    public static function filter_courses_archive( $query ) {
-
-        if ( ! $query->is_main_query() )
-            return;
-
-        $query_type = '';
-        // Handle course archive page
-        if ( is_post_type_archive( 'course' ) ) {
-
-            if ( isset( $_GET[ 'action' ] ) && ( '' != esc_html( $_GET[ 'action' ] ) ) ) {
-                $query_type = esc_html( $_GET[ 'action' ] );
-            } // End If Statement
-
-            switch ( $query_type ) {
-                case 'newcourses':
-                    set_query_var( 'orderby', 'date' );
-                    set_query_var( 'order', 'DESC' );
-                    break;
-                case 'freecourses':
-                    set_query_var( 'orderby', 'date' );
-                    set_query_var( 'order', 'DESC' );
-                    set_query_var( 'meta_value', '-' ); /* TODO - WC */
-                    set_query_var( 'meta_key', '_course_woocommerce_product' );
-                    set_query_var( 'meta_compare', '=' );
-                    break;
-                case 'paidcourses':
-                    set_query_var( 'orderby', 'date' );
-                    set_query_var( 'order', 'DESC' );
-                    set_query_var( 'meta_value', '0' );
-                    set_query_var( 'meta_key', '_course_woocommerce_product' );
-                    set_query_var( 'meta_compare', '>' );
-                    break;
-                case 'featuredcourses':
-                    set_query_var( 'orderby', 'date' );
-                    set_query_var( 'order', 'DESC' );
-                    set_query_var( 'meta_value', 'featured' );
-                    set_query_var( 'meta_key', '_course_featured' );
-                    set_query_var( 'meta_compare', '=' );
-                    break;
-                default:
-
-                    break;
-
-            } // End Switch Statement
-
-        } // End If Statement
-    } // End filter_courses_archive()
 
 } // end class Sensei_Shortcodes
 new Sensei_Shortcode_Loader();
