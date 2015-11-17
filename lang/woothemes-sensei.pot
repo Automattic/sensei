@@ -572,11 +572,11 @@ msgstr ""
 msgid "View results"
 msgstr ""
 
-#: includes/class-sensei-course.php:1574, includes/shortcodes/class-sensei-shortcode-user-courses.php:202
+#: includes/class-sensei-course.php:1574, includes/shortcodes/class-sensei-shortcode-user-courses.php:211
 msgid "You have no active courses."
 msgstr ""
 
-#: includes/class-sensei-course.php:1575, includes/shortcodes/class-sensei-shortcode-user-courses.php:183
+#: includes/class-sensei-course.php:1575, includes/shortcodes/class-sensei-shortcode-user-courses.php:192
 msgid "You have not completed any courses yet."
 msgstr ""
 
@@ -592,7 +592,7 @@ msgstr ""
 msgid "View & reply to private messages sent to your course & lesson teachers."
 msgstr ""
 
-#: includes/class-sensei-course.php:1625, includes/shortcodes/class-sensei-shortcode-user-courses.php:206
+#: includes/class-sensei-course.php:1625, includes/shortcodes/class-sensei-shortcode-user-courses.php:215
 msgid "Start a Course!"
 msgstr ""
 
@@ -734,11 +734,11 @@ msgstr ""
 msgid " (Free Preview)"
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1242, includes/woocommerce/class-sensei-wc.php:455
+#: includes/class-sensei-frontend.php:1242, includes/woocommerce/class-sensei-wc.php:381
 msgid "You have already added this Course to your cart. Please %1$s to access the course."
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1242, includes/class-sensei-frontend.php:1242, includes/woocommerce/class-sensei-wc.php:453
+#: includes/class-sensei-frontend.php:1242, includes/class-sensei-frontend.php:1242, includes/woocommerce/class-sensei-wc.php:379
 msgid "complete the purchase"
 msgstr ""
 
@@ -2528,7 +2528,7 @@ msgid "Select the notifications that will be sent to all users."
 msgstr ""
 
 #: includes/class-sensei-settings.php:485
-msgid ""From" Name"
+msgid "\"From\" Name"
 msgstr ""
 
 #: includes/class-sensei-settings.php:486
@@ -2536,7 +2536,7 @@ msgid "The name from which all emails will be sent."
 msgstr ""
 
 #: includes/class-sensei-settings.php:494
-msgid ""From" Address"
+msgid "\"From\" Address"
 msgstr ""
 
 #: includes/class-sensei-settings.php:495
@@ -3219,22 +3219,22 @@ msgstr ""
 msgid "Or %1$s to access your purchased courses"
 msgstr ""
 
-#: includes/woocommerce/class-sensei-wc.php:125
+#: includes/woocommerce/class-sensei-wc.php:135
 msgid "Paid"
 msgstr ""
 
-#: includes/woocommerce/class-sensei-wc.php:130
+#: includes/woocommerce/class-sensei-wc.php:140
 msgid "Free"
 msgstr ""
 
-#: includes/woocommerce/class-sensei-wc.php:414
+#: includes/woocommerce/class-sensei-wc.php:340
 msgctxt "Purchase thank you note on Checkout page. The course link(s) will be show"
 msgid "You have purchased the following course:"
 msgid_plural "You have purchased the following courses:"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/woocommerce/class-sensei-wc.php:452
+#: includes/woocommerce/class-sensei-wc.php:378
 msgid "complete purchase"
 msgstr ""
 
@@ -3360,6 +3360,10 @@ msgstr ""
 
 #: templates/single-quiz/question_type-single-line.php:28
 msgid "Answer:"
+msgstr ""
+
+#: templates/teacher-archive.php:36
+msgid "There are no courses for this teacher."
 msgstr ""
 
 #: templates/user/login-form.php:40
