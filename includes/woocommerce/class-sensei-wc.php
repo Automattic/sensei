@@ -165,6 +165,14 @@ Class Sensei_WC{
             // manipulate the query to return free courses
             $query->set('meta_query', $meta_query );
 
+            // don't show any paid courses
+            $courses = self::get_paid_courses();
+            $ids = array();
+            foreach( $courses as $course ){
+                $ids[] = $course->ID;
+            }
+            $query->set( 'post__not_in', $ids );
+
         }// end if course_filter
 
         return $query;
@@ -454,7 +462,7 @@ Class Sensei_WC{
      */
     public static function get_free_product_ids(){
 
-        return get_posts( array(
+        return  get_posts( array(
             'post_type' => 'product',
             'posts_per_page' => '1000',
             'fields' => 'ids',
@@ -637,6 +645,14 @@ Class Sensei_WC{
 
         $free_course_query_args = Sensei_Course::get_default_query_args();
         $free_course_query_args[ 'meta_query' ] = self::get_free_courses_meta_query_args();
+
+        // don't show any paid courses
+        $courses = self::get_paid_courses();
+        $ids = array();
+        foreach( $courses as $course ){
+            $ids[] = $course->ID;
+        }
+        $free_course_query_args[ 'post__not_in' ] =  $ids;
 
         return get_posts( $free_course_query_args );
 
