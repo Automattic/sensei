@@ -1,93 +1,154 @@
 *** Sensei Changelog ***
 
+2015.17.11 - version 1.9 Beta
+For a list of files changed please see: https://github.com/woothemes/sensei/compare/version/1.8.9-beta-1...master#files_bucket
+
+* New   - Templates system completely overhauled. The templates now contain almost no logic, just hooks and html. Most functionality
+          is hooked in which allows for even more customization and easier update fixes. It is also easier to read. This
+          also includes the use of more functions to enforce greater code reuse.
+* New   - Shortcode all the things. We've heard you here and we've added more shortcodes so can worry less about templates.
+ 		  the new shortcodes are on our support documentation. The old shortcodes works fine.
+* New   - Course Archives template now overtakes the selected page giving you a new filterable list of courses.
+* New   - A Next lesson button for easier flow while students progress through a course.
+* New   - Custom round function that can be filtered, for developers to choose the decimals.
+* New   - Sensei() now officialy replaces $woothemes_sensei, which will be deprecated soon.
+* New   - php classes are now auto loaded when needed instead of loading all classes for every request.
+* New   - New filters for all sensei core post type for easier customization.
+* New   - Allow for zero graded questions, so you can ask things questions just for fun :)
+* New   - Option to send email to teacher when a learner completes a lesson
+* New   - Course management metabox to Edit Course screen so you can jump to learner management and grading directly.
+* New   - Renamed frontend.css to sensei.scss to avoid conflict and confusion with other plugins and themes.
+* New   - Course in progress icon change so that it doesn't look like it's loading all the time.
+* New   - Admin WordPress notice styles to align with core.
+* New   - Support for Twentysixteen WordPress default theme
+* Fix   - File upload popup didn't work on the single question edit screen.
+* Fix   - A call to the wrong get user function.
+* Fix   - Encoding issues when using strtolower fixed. The function now returns utf-8.
+* Fix   - Corrected a few typos.
+* Fix   - No more forced updates. You are free to do them when you choose.
+* Fix   - Broken html In certain places.
+* Fix   - Use slug when adding question type and not the name.
+* Fix   - Moved course details outside of H2 heading.
+* Fix   - Ensure that grading notes show up for gap fill questions.
+* Fix   - Remove extra forward slash when loading templates.
+* Fix   - Multi-line question answers not showing in admin grading.
+* Fix   - File upload paths on Multi-site.
+* Fix   - No more double "Quiz Quiz" on your single quiz.
+* Fix   - Sensei now handles url rule flushing so you don't see 404 for Sensei specific page and post types.
+* Fix   - Fix a few critical issues where we we <? instead of <?php
+* Fix   - The admin url 404 after installing sensei pages.
+* Tweak - Purchased courses now show up on top of the order review page in a WooCommerce notice.
+* Tweak - Many functions have been deprecated in favor of better named functions.
+* Tweak - We've removed all apply_filters around strings because they are redundant when string can already be alterd
+          by using translation filters.
+* Tweak - Deprecated all of the old template hooks in order to make place for new, more generic hooks.
+* Tweak - New congratulations messaging for when a user completed a lesson that doesn't require a pass to complete.
+* Tweak - Removed the CSS variations for Sensei messages.
+* Tweak - Set wp-login.php as a fallback in case a my courses page is not set.
+* Tweak - Sensei user capabilities now loaded plugin activation.
+* Tweak - Quiz post type title can't be edited any more as it is auto generated.
+* Tweak - Teachers are no redirected to admin url when they log in.
+* Tweak - Show admin bar to users who can 'edit_courses'.
+* Tweak - Better support for variable WooCommerce products.
+* Tweak - Improved help text on video embed field.
+* Tweak - A new class to handle all template related functionality.
+* Tweak - Template specific hooks moved to a separate file under includes/hooks/template.php.
+* Tweak - Add with_front property to rewrite rules for better url customization.
+* Tweak - All internal php classes files and names have been renamed to conform to our new naming structure
+          class-sensei-class-name.php, removing woothemes.
+* Tweak - Sensei moved over to Select 2 completely. No more chosen. This means better mobile support.
+* Tweak - All sensei scripts now load the script with the installed Sensei version appended.
+* Tweak - Better class and function comments to assist developer IDE with discovery.
+* Tweak - General code cleanup.
+
 2015.09.09 - version 1.8.8
-* Fixed: Administrator does not have access to the Sensei settings on new installs
-* Fixed: Drop downs not working correctly on certain admin screens.
+* Fixed - Administrator does not have access to the Sensei settings on new installs
+* Fixed - Drop downs not working correctly on certain admin screens.
 
 2015.09.07 - version 1.8.7
-* Fixed: Course created email sent twice
-* Fixed: Error notices on the lesson edit screen
-* Fixed: WP_Widget constructors updated as within WordPress Core
-* Fixed: Menu items with blank URL disappeared when the private messages functionality were disabled in settings.
-* Fixed: Answers disappear after adding a question
-* Fixed: Multiple Choice random order was applied by default even if the user didn't select this.
-* Fixed: TextArea question answers not displaying correctly in grading.
-* Fixed: Question type contains author name
-* Fixed: "Other Lessons" title always shows, even with no lessons under it.
-* Fixed: auto-grading not working for gap fill
-* Fixed: Double forward slash when loading templates
-* Fixed: Invalid prompt message when trying to leave the Add Question page
-* Fixed: Installing the sensei pages, the dropdowns for both pages are still empty on the first load.
-* Fixed: allow for course products to be part WooCommerce product bundles
-* Fixed: removed WordPress 4.3 table list notices
-* Tweak: Give the teacher the right access to Lesson comments
-* Tweak: Users with teacher role will now be sent to admin after login.
-* Tweak: Show admin bar to users who can 'edit_courses'
+* Fixed - Course created email sent twice
+* Fixed - Error notices on the lesson edit screen
+* Fixed - WP_Widget constructors updated as within WordPress Core
+* Fixed - Menu items with blank URL disappeared when the private messages functionality were disabled in settings.
+* Fixed - Answers disappear after adding a question
+* Fixed - Multiple Choice random order was applied by default even if the user didn't select this.
+* Fixed - TextArea question answers not displaying correctly in grading.
+* Fixed - Question type contains author name
+* Fixed - "Other Lessons" title always shows, even with no lessons under it.
+* Fixed - auto-grading not working for gap fill
+* Fixed - Double forward slash when loading templates
+* Fixed - Invalid prompt message when trying to leave the Add Question page
+* Fixed - Installing the sensei pages, the dropdowns for both pages are still empty on the first load.
+* Fixed - allow for course products to be part WooCommerce product bundles
+* Fixed - removed WordPress 4.3 table list notices
+* Tweak - Give the teacher the right access to Lesson comments
+* Tweak - Users with teacher role will now be sent to admin after login.
+* Tweak - Show admin bar to users who can 'edit_courses'
 
 2015.07.15 - version 1.8.6
-* Fix - Failure to load the JS in admin page because there was an extra dot in the file name.
-* Fix - a few Typos in comments and strings
-* Fix - Remove special character and replace with \' instead
-* Fix - change site_transients to normal transients and decrease the time from 30 days to 10
-* Fix - Create a fallback for round with 3 parameters. Added a check to use to use only 2 parameter for php version below 5.3
+* Fix   - Failure to load the JS in admin page because there was an extra dot in the file name.
+* Fix   - a few Typos in comments and strings
+* Fix   - Remove special character and replace with \' instead
+* Fix   - change site_transients to normal transients and decrease the time from 30 days to 10
+* Fix   - Create a fallback for round with 3 parameters. Added a check to use to use only 2 parameter for php version below 5.3
 * Tweak - Output course order via php instead of relying on JS to re-order on the front-end.
 
 2015.06.18 - version 1.8.5
-* Fix - Save the lesson preview checkbox unchecked state as well. The bug was that unchecked boxes does not get passed via $_POST in certain cases.
+* Fix   - Save the lesson preview checkbox unchecked state as well. The bug was that unchecked boxes does not get passed via $_POST in certain cases.
 * Tweak - Allow the quiz results rounding to be filtered. So you can now have decimal points shown to the user instead of the rounded up amount.
-* Fix - Module order screen now working. The fix is to remove chosen from the select box. This will be replaced by select2.
-* Fix - Update the modules order link on all courses admin page. The link went to the wrong place.
-* Fix - Add contact teacher button to lessons and quizzes.
-* Fix - Allow gap-fill questions to be auto graded again.
+* Fix   - Module order screen now working. The fix is to remove chosen from the select box. This will be replaced by select2.
+* Fix   - Update the modules order link on all courses admin page. The link went to the wrong place.
+* Fix   - Add contact teacher button to lessons and quizzes.
+* Fix   - Allow gap-fill questions to be auto graded again.
 
 2015.06.11 - version 1.8.4
-* Fix - Query post type changes for non Sensei queries. Added better checking to ensure this
-        query filter only applies to teachers.
-* Fix - Performance issues on the all courses page with a large user base.
-* Fix - Performance: user ajax search timed out due to large user base. Enforce minimum string search length.
-* Fix - Update all instances of 'numberofposts' with 'posts_per_page'. Also adding and upper
+* Fix   - Query post type changes for non Sensei queries. Added better checking to ensure this
+          query filter only applies to teachers.
+* Fix   - Performance issues on the all courses page with a large user base.
+* Fix   - Performance: user ajax search timed out due to large user base. Enforce minimum string search length.
+* Fix   - Update all instances of 'numberofposts' with 'posts_per_page'. Also adding and upper
         limit as '-1' (unlimited) is not good.
 
 2015.06.05 - version 1.8.3
-* Fix - Fixed an issue where only 10 questions could be seen in quizzes
+* Fix   - Fixed an issue where only 10 questions could be seen in quizzes
 * Tweak - Correctly pluralise the string 'Currently completed x lesson(s) of y in total'
 
 2015.06.02 - version 1.8.2
-* Fix - Sensei quiz settings not retrieved correctly
-* Fix - Modules management course selection Javascript error causing courses to be unselectable
-* Fix - Error notices showing up on the front end for non logged in users
+* Fix   - Sensei quiz settings not retrieved correctly
+* Fix   - Modules management course selection Javascript error causing courses to be unselectable
+* Fix   - Error notices showing up on the front end for non logged in users
 
 2015.05.28 - version 1.8.1
 * Tweak - Teacher role have to submit courses for review by default
 * Tweak - Language file updated.
-* Fix - Internal calls to WooCommerce active checking function changed to static
+* Fix   - Internal calls to WooCommerce active checking function changed to static
 
 2015.05.28 - version 1.8.0
-* New - Update the teacher role to give teachers more control. Also added further notifications for course ownership changes.
-* New - Sensei Modules extensions merged into Sensei Core
-* New - Disable notification on a per course basis
-* New - Bulk and Quick Edit support for some of the lessons properties
-* New - Bulk Editing for some of the lessons properties
-* New - Global Sensei instance function `Sensei()`
-* New - Plugin install welcome screen
+* New   - Update the teacher role to give teachers more control. Also added further notifications for course ownership changes.
+* New   - Sensei Modules extensions merged into Sensei Core
+* New   - Disable notification on a per course basis
+* New   - Bulk and Quick Edit support for some of the lessons properties
+* New   - Bulk Editing for some of the lessons properties
+* New   - Global Sensei instance function `Sensei()`
+* New   - Plugin install welcome screen
 * Tweak - Increase min width of find learner drop down and remove inline styles.
 * Tweak - Dummy content updated
 * Tweak - Within some hooked functions, use the values passed in instead of global values.
 * Tweak - Code Documentation updates and a few refactor a few functions.
 * Tweak - Set quiz type taxonomy public setting to false to avoid it showing up in theme bread crumbs
-* Fix - Remove error notices on on the analysis screen
-* Fix - Bug where lessons can’t be removed from module
-* Fix - Minify all scripts to avoid javascript errors
-* Fix - Remove error notices on on the grading screen
-* Fix - Errors on the single course front-end page
-* Fix - Remove error notices on on the grading screen
-* Fix - All questions were not available in he existing questions section
-* Fix - Remove error notice on the single quiz page when trying to access lessons status
-* Fix - Avoid errors fro the learner when the course has not yet been saved
-* Fix - Learner Management and Analysis page pagination
-* Fix - Correctly escape multi-line question answers to ensure they don’t save with and extra new line character after every list item.
-* Fix - fix bug where the selected module was not showing for none admin users
-* Fix - Fix error on the WP login page
+* Fix   - Remove error notices on on the analysis screen
+* Fix   - Bug where lessons can’t be removed from module
+* Fix   - Minify all scripts to avoid javascript errors
+* Fix   - Remove error notices on on the grading screen
+* Fix   - Errors on the single course front-end page
+* Fix   - Remove error notices on on the grading screen
+* Fix   - All questions were not available in he existing questions section
+* Fix   - Remove error notice on the single quiz page when trying to access lessons status
+* Fix   - Avoid errors fro the learner when the course has not yet been saved
+* Fix   - Learner Management and Analysis page pagination
+* Fix   - Correctly escape multi-line question answers to ensure they don’t save with and extra new line character after every list item.
+* Fix   - fix bug where the selected module was not showing for none admin users
+* Fix   - Fix error on the WP login page
 
 2015.04.23 - version 1.7.7
 * Fix - Security loophole introduce in WP. Escaping all urls.
