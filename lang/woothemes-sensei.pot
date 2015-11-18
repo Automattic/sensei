@@ -2528,7 +2528,7 @@ msgid "Select the notifications that will be sent to all users."
 msgstr ""
 
 #: includes/class-sensei-settings.php:475
-msgid ""From" Name"
+msgid "\"From\" Name"
 msgstr ""
 
 #: includes/class-sensei-settings.php:476
@@ -2536,7 +2536,7 @@ msgid "The name from which all emails will be sent."
 msgstr ""
 
 #: includes/class-sensei-settings.php:484
-msgid ""From" Address"
+msgid "\"From\" Address"
 msgstr ""
 
 #: includes/class-sensei-settings.php:485
