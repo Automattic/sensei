@@ -12,20 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author WooThemes
  * @since 1.2.0
  *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - remove_sortable_columns()
- * - extra_tablenav()
- * - table_search_form()
- * - get_columns()
- * - get_sortable_columns()
- * - get_column_info()
- * - single_row()
- * - get_row_data()
- * - no_items()
- * - get_bulk_actions()
- * - bulk_actions()
  */
 class Sensei_List_Table extends WP_List_Table {
 	public $token;

@@ -11,17 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.1.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - manual_update_admin_screen()
- * - manual_update_adminpage_hidden()
- * - update()
- * - assign_role_caps()
- * - set_default_quiz_grade_type()
- * - set_default_question_type()
- * - update_question_answer_data()
  */
 class Sensei_Updates {
 	public $token = 'woothemes-sensei';

@@ -11,19 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  * @category Widgets
  * @author WooThemes
  * @since 1.1.0
- *
- * TABLE OF CONTENTS
- *
- * protected $woo_widget_cssclass
- * protected $woo_widget_description
- * protected $woo_widget_idbase
- * protected $woo_widget_title
- *
- * - __construct()
- * - widget()
- * - update()
- * - form()
- * - load_component()
  */
 class WooThemes_Sensei_Course_Categories_Widget extends WP_Widget {
 	protected $woo_widget_cssclass;

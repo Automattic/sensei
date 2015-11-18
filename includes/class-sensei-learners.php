@@ -11,25 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.3.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - learners_admin_menu()
- * - enqueue_scripts()
- * - enqueue_styles()
- * - load_data_table_files()
- * - load_data_object()
- * - learners_page()
- * - learners_default_view()
- * - learners_headers()
- * - wrapper_container()
- * - learners_default_nav()
- * - get_redirect_url()
- * - remove_user_from_post()
- * - json_search_users()
- * - add_new_learners()
- * - add_learner_notices()
  */
 class Sensei_Learners {
 	public $token;

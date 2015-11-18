@@ -11,28 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - update_author()
- * - get_lesson_id()
- * - user_save_quiz_answers_listener()
- * - save_user_answers()
- * - get_user_answers()
- * - reset_button_click_listener()
- * - user_quiz_submit_listener()
- * - load_global_quiz_data()
- * - prepare_form_submitted_answers()
- * - reset_user_lesson_data()
- * - submit_answers_for_grading()
- * - get_user_question_answer()
- * - set_user_grades()
- * - get_user_grades()
- * - get_user_question_grade()
- * - save_user_answers_feedback()
- * - get_user_answers_feedback()
- * - get_user_question_feedback()
  */
  class Sensei_Quiz {
 	public $token;

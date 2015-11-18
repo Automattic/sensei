@@ -11,59 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Settings
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * public $token
- * public $page_slug
- * public $name
- * public $menu_label
- * public $settings
- * public $sections
- * public $fields
- * public $errors
- * public $settings_version
- *
- * public $has_range
- * public $has_imageselector
- *
- * - __construct()
- * - setup_settings()
- * - general_init()
- * - init_sections()
- * - init_fields()
- * - create_sections()
- * - create_fields()
- * - determine_method()
- * - parse_fields()
- * - register_settings_screen()
- * - settings_screen()
- * - get_settings()
- * - settings_fields()
- * - settings_errors()
- * - settings_description()
- * - form_field_text()
- * - form_field_checkbox()
- * - form_field_textarea()
- * - form_field_select()
- * - form_field_radio()
- * - form_field_multicheck()
- * - form_field_range()
- * - form_field_images()
- * - form_field_info()
- * - validate_fields()
- * - validate_field_text()
- * - validate_field_checkbox()
- * - validate_field_multicheck()
- * - validate_field_range()
- * - validate_field_url()
- * - check_field_timestamp()
- * - check_field_text()
- * - add_error()
- * - parse_errors()
- * - get_array_field_types()
- * - enqueue_scripts()
- * - enqueue_styles()
  */
 class Sensei_Settings_API {
 	public $token;

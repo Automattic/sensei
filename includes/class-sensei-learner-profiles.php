@@ -11,14 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.4.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - setup_permastruct()
- * - learner_profile_content()
- * - learner_profile_courses_heading()
- * - learner_profile_user_info()
  */
 class Sensei_Learner_Profiles {
 	private $profile_url_base;

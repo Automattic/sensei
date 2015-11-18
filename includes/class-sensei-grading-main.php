@@ -11,17 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.3.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - get_columns()
- * - get_sortable_columns()
- * - prepare_items()
- * - single_row()
- * - no_items()
- * - data_table_header()
- * - data_table_footer()
  */
 class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	public $user_id;

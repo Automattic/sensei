@@ -11,27 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - meta_box_setup()
- * - course_woocommerce_product_meta_box_content()
- * - course_prerequisite_meta_box_content()
- * - course_featured_meta_box_content()
- * - course_video_meta_box_content()
- * - meta_box_save()
- * - save_post_meta()
- * - course_lessons_meta_box_content
- * - add_column_headings()
- * - add_column_data()
- * - course_query()
- * - get_archive_query_args()
- * - course_image()
- * - course_count()
- * - course_lessons()
- * - course_lessons_completed()
- * - course_author_lesson_count()
  */
 class Sensei_Course {
     /**

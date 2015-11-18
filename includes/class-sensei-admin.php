@@ -11,18 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Administration
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - comments_admin_filter()
- * - install_page_output()
- * - create_page()
- * - create_pages()
- * - admin_styles_global()
- * - admin_install_notice()
- * - admin_notice_styles()
- *
  */
 class Sensei_Admin {
 

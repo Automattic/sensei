@@ -11,24 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.2.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - get_columns()
- * - get_sortable_columns()
- * - prepare_items()
- * - single_row()
- * - generate_report()
- * - get_row_data()
- * - get_courses()
- * - get_lessons()
- * - get_learners()
- * - stats_boxes()
- * - no_items()
- * - data_table_header()
- * - data_table_footer()
- * - search_button()
  */
 class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 	public $type;

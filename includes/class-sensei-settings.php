@@ -11,14 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - init_sections()
- * - init_fields()
- * - get_duration_options()
- * - pages_array()
  */
 class Sensei_Settings extends Sensei_Settings_API {
 

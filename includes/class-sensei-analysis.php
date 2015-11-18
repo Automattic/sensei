@@ -11,36 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - analysis_admin_menu()
- * - enqueue_scripts()
- * - enqueue_styles()
- * - load_data_table_files()
- * - load_data_object()
- * - analysis_page()
- * - analysis_default_view()
- * - analysis_user_profile_view()
- * - analysis_course_view()
- * - analysis_user_course_view()
- * - analysis_course_users_view()
- * - analysis_lesson_users_view()
- * - render_stats_box()
- * - analysis_headers()
- * - wrapper_container()
- * - analysis_default_nav()
- * - analysis_user_profile_nav()
- * - analysis_user_course_nav()
- * - analysis_course_nav()
- * - analysis_course_users_nav()
- * - analysis_lesson_users_nav()
- * - report_download_page()
- * - report_set_headers()
- * - load_report_object()
- * - report_write_download()
- * - user_search_columns_filter()
  */
 class Sensei_Analysis {
 	public $token;

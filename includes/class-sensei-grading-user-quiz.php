@@ -11,12 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.3.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - build_data_array()
- * - display()
  */
 class Sensei_Grading_User_Quiz {
 	public $user_id;

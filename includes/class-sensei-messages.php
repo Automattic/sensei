@@ -11,10 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.6.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
  */
 class Sensei_Messages {
 	public $token;

@@ -2,9 +2,9 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Class
+ * Sensei_Main
  *
- * Base class for Sensei.
+ * The main class for sensei.
  *
  * @package WordPress
  * @subpackage Sensei

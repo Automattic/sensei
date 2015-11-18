@@ -11,31 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Frontend
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - init()
- * - enqueue_scripts()
- * - enqueue_styles()
- * - sensei_get_template_part()
- * - sensei_get_template()
- * - sensei_locate_template()
- * - sensei_output_content_wrapper()
- * - sensei_output_content_wrapper_end()
- * - sensei_output_content_pagination()
- * - sensei_output_comments()
- * - sensei_nav_menu_items()
- * - sensei_nav_menu_item_classes()
- * - sensei_search_results_classes()
- * - sensei_single_title()
- * - sensei_course_image()
- * - sensei_lesson_image()
- * - sensei_course_archive_header()
- * - sensei_course_archive_course_title()
- * - sensei_login_fail_redirect()
- * - sensei_handle_login_request()
- * - sensei_process_registration()
  */
 class Sensei_Frontend {
 	public $token;

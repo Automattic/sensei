@@ -11,12 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - create_teacher_role()
- * - add_teacher_capabilities()
  */
 class Sensei_Teacher {
 

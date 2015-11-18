@@ -11,15 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.4.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - setup_permastruct()
- * - get_permalink()
- * - content()
- * - course_info()
- * - course_lessons()
  */
 class Sensei_Course_Results {
 

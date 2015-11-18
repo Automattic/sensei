@@ -11,24 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - sensei_admin_menu_items()
- * - load_posttype_objects()
- * - setup_course_post_type()
- * - setup_lesson_post_type()
- * - setup_quiz_post_type()
- * - setup_question_post_type()
- * - setup_course_category_taxonomy()
- * - setup_quiz_type_taxonomy()
- * - setup_question_type_taxonomy()
- * - setup_post_type_labels_base()
- * - create_post_type_labels()
- * - setup_post_type_messages()
- * - create_post_type_messages()
- * - enter_title_here()
  */
 class Sensei_PostTypes {
 	public $token;

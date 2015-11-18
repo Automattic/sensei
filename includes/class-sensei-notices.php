@@ -11,13 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @category Core
  * @author WooThemes
  * @since 1.6.3
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - add_notice()
- * - print_notices()
- * - clear_notices()
  */
 
 class Sensei_Notices{
