@@ -269,7 +269,7 @@ class Sensei_Updates {
 
 						</table>
 
-					</form>
+					</div>
 
 				<?php
 				} // End If Statement
@@ -1738,7 +1738,7 @@ class Sensei_Updates {
      * This runs the update to create the teacher role
      * @access public
      * @since 1.8.0
-     * @return void;
+     * @return bool;
      */
     public  function enhance_teacher_role ( ) {
 
