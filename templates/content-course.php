@@ -16,34 +16,33 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 <li <?php post_class(  WooThemes_Sensei_Course::get_course_loop_content_class() ); ?> >
 
-    <section class="course-content">
+    <?php
+    /**
+     * This action runs before the sensei course content. It runs inside the sensei
+     * content-course.php template.
+     *
+     * @since 1.9
+     *
+     * @param $post
+     */
+    do_action( 'sensei_course_content_before', get_post() );
+    ?>
 
-        <?php
-        /**
-         * This action runs before the sensei course content. It runs inside the sensei
-         * content-course.php template. This applies to the specific post type that you've targeted.
-         *
-         * @since 1.9
-         *
-         * @param $post
-         *
-         * @hooked Sensei()->course->course_image   - 10
-         * @hooked Sensei_Templates::the_title      - 15
-         */
-        do_action( 'sensei_course_content_before', get_post() );
-        ?>
+    <section class="course-content">
 
         <section class="entry">
 
             <?php
             /**
-             * Fires just before the post content in the content-course.php file.
+             * Fires just before the course content in the content-course.php file.
              *
              * @since 1.9
              *
              * @param WP_Post $post
              *
-             * @hooked  Sensei()->course->the_course_meta - 20
+             * @hooked Sensei()->course->course_image       - 10
+             * @hooked Sensei_Templates::the_title          - 15
+             * @hooked  Sensei()->course->the_course_meta   - 20
              */
             do_action('sensei_course_content_inside_before', get_post());
             ?>
@@ -56,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <?php
             /**
-             * Fires just after the post content in the content-course.php file.
+             * Fires just after the course content in the content-course.php file.
              *
              * @since 1.9
              *
@@ -70,5 +69,19 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </section> <!-- section .entry -->
 
     </section> <!-- section .course-content -->
+
+    <?php
+    /**
+     * Fires after the course block in the content-course.php file.
+     *
+     * @since 1.9
+     *
+     * @param WP_Post $post
+     *
+     * @hooked  Sensei()->course->the_course_free_lesson_preview - 20
+     */
+    do_action('sensei_course_content_after', get_post());
+    ?>
+
 
 </li> <!-- article .(<?php esc_attr_e( join( ' ', get_post_class( array( 'course', 'post' ) ) ) ); ?>  -->

@@ -70,7 +70,7 @@ class Sensei_Course {
         add_action('sensei_course_content_inside_before', array( $this, 'the_course_meta' ) );
 
         // backwards compatible template hooks
-        add_action('sensei_course_content_before', array( $this, 'content_before_backwards_compatibility_hooks' ));
+        add_action('sensei_course_content_inside_before', array( $this, 'content_before_backwards_compatibility_hooks' ));
         add_action('sensei_loop_course_before', array( $this,'loop_before_backwards_compatibility_hooks' ) );
 
         // add the user status on the course to the markup as a class
@@ -1882,7 +1882,7 @@ class Sensei_Course {
      * Backwards compatibility hooks added to ensure that
      * plugins and other parts of sensei still works.
      *
-     * This function hooks into `sensei_course_content_before`
+     * This function hooks into `sensei_course_content_inside_before`
      *
      * @since 1.9
      *
@@ -1892,14 +1892,14 @@ class Sensei_Course {
 
         if( has_action( 'sensei_course_image' ) ){
 
-            _doing_it_wrong('sensei_course_image','This action has been retired: . Please use sensei_course_content_before instead.', '1.9' );
+            _doing_it_wrong('sensei_course_image','This action has been retired: . Please use sensei_course_content_inside_before instead.', '1.9' );
             do_action('sensei_course_image', $post->ID );
 
         }
 
         if( has_action( 'sensei_course_archive_course_title' ) ){
 
-            _doing_it_wrong('sensei_course_archive_course_title','This action has been retired: . Please use sensei_course_content_before instead.', '1.9' );
+            _doing_it_wrong('sensei_course_archive_course_title','This action has been retired: . Please use sensei_course_content_inside_before instead.', '1.9' );
             do_action('sensei_course_archive_course_title', $post );
 
         }
@@ -1918,7 +1918,7 @@ class Sensei_Course {
     public  function loop_before_backwards_compatibility_hooks( ){
 
         global $post;
-        sensei_do_deprecated_action( 'sensei_course_archive_header','1.9.0','sensei_course_content_before', $post->post_type  );
+        sensei_do_deprecated_action( 'sensei_course_archive_header','1.9.0','sensei_course_content_inside_before', $post->post_type  );
 
     }
 

@@ -324,7 +324,7 @@ class Sensei_Utils {
 	 * @access public
 	 * @since  1.0.0
 	 * @param  array $args (default: array())
-	 * @return void
+	 * @return string
 	 */
 	public static function sensei_get_activity_value ( $args = array() ) {
 

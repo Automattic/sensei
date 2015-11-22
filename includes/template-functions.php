@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
     function sensei_course_archive_next_link( $type = 'newcourses' ) {
 
         _deprecated_function('sensei_course_archive_next_link', '1.9.0','This is no longer used or required in Sensei.');
+
     } // End sensei_course_archive_next_link()
 
 	 /**
