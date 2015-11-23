@@ -41,7 +41,7 @@ add_action('sensei_archive_before_course_loop', array( 'Sensei_Course', 'archive
 add_action('sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ) ,10, 1 );
 
 // add course content title to the courses on the archive page
-add_action('sensei_course_content_inside_before', array( 'Sensei_Templates', 'the_title' ) ,15, 1 );
+add_action('sensei_course_content_inside_before', array( 'Sensei_Templates', 'the_title' ) ,5, 1 );
 
 /***************************
  *

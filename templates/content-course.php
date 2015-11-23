@@ -40,8 +40,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
              *
              * @param WP_Post $post
              *
+             * @hooked Sensei_Templates::the_title          - 5
              * @hooked Sensei()->course->course_image       - 10
-             * @hooked Sensei_Templates::the_title          - 15
              * @hooked  Sensei()->course->the_course_meta   - 20
              */
             do_action('sensei_course_content_inside_before', get_post());
