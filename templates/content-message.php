@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 ?>
 
-<article <?php post_class( get_the_ID() ); ?> >
+<article <?php post_class( array( 'post','sensei_message'), get_the_ID() ); ?>>
 
     <section class="message-content">
 
