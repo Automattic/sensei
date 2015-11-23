@@ -386,10 +386,11 @@ class Sensei_Templates {
         $title_classes = apply_filters('sensei_the_title_classes', $post->post_type . '-title' );
 
         $html= '';
-        $html .= '<a href="' . get_permalink( $post->ID ) . '" >';
         $html .= '<'. $title_html_tag .' class="'. $title_classes .'" >';
-        $html .= $post->post_title . '</'. $title_html_tag. '>';
+        $html .= '<a href="' . get_permalink( $post->ID ) . '" >';
+        $html .= $post->post_title ;
         $html .= '</a>';
+        $html .= '</'. $title_html_tag. '>';
         echo $html;
 
     }// end the title
