@@ -159,12 +159,13 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         }
 
         // course query parameters
+        $query_var_paged = get_query_var('paged');
         $query_args = array(
             'post_type'        => 'course',
             'post_status'      => 'publish',
             'orderby'          => $this->orderby,
             'order'            => $this->order,
-            'paged' => empty( get_query_var('paged') )? 1 : get_query_var('paged'),
+            'paged' => empty( $query_var_paged )? 1 : $query_var_paged,
             'posts_per_page'   => $number_of_posts,
             'post__in'         => $included_courses,
         );

@@ -600,7 +600,8 @@ class Sensei_Question {
 
         // Data to check before showing feedback
         $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
-        $not_empty_user_quiz_grade = !empty( Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() ) );
+        $user_quiz_grade = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
+        $not_empty_user_quiz_grade = !empty( $user_quiz_grade );
         $reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
         $lesson_completed = Sensei_Utils::user_completed_lesson( $lesson_id );
         $quiz_grade_type = get_post_meta( $quiz_id , '_quiz_grade_type', true );

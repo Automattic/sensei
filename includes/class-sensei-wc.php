@@ -509,12 +509,14 @@ Class Sensei_WC{
      */
     public static function get_paid_courses_meta_query_args(){
 
+        $paid_product_ids = self::get_paid_product_ids();
+
         return array(
             array(
                 'key'     => '_course_woocommerce_product',
                 // when empty we give a false post_id to ensure the caller doesn't get any courses for their
                 // query
-                'value' => empty(  self::get_paid_product_ids() )? '-1000' : self::get_paid_product_ids() ,
+                'value' => empty( $paid_product_ids  )? '-1000' : $paid_product_ids,
                 'compare' => 'IN',
             ),
         );
