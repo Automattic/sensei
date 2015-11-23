@@ -61,7 +61,8 @@ class Sensei_Frontend {
 
 		// Scripts and Styles
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
-		add_action( 'wp_head', array( $this, 'enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
 		// Custom Menu Item filters
 		add_filter( 'wp_setup_nav_menu_item', array( $this, 'sensei_setup_nav_menu_item' ) );
 		add_filter( 'wp_nav_menu_objects', array( $this, 'sensei_wp_nav_menu_objects' ) );
@@ -146,7 +147,10 @@ class Sensei_Frontend {
 
             // Course Archive javascript
             if( is_post_type_archive( 'course' ) ){
-                wp_enqueue_script( $this->token . '-course-archive', esc_url( Sensei()->plugin_url . 'assets/js/frontend/course-archive' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
+
+                wp_register_script( 'sensei-course-archive-js', esc_url( Sensei()->plugin_url . 'assets/js/frontend/course-archive' . $suffix . '.js' ), array( 'jquery' ), '1', true );
+                wp_enqueue_script( 'sensei-course-archive-js' );
+
             }
 
 
