@@ -201,7 +201,8 @@ class Sensei_Legacy_Shortcodes {
 
         // Check that query returns results
         // Handle Pagination
-        $paged = empty( $wp_query->get( 'paged' ) ) ? 1 : empty( $wp_query->get( 'paged' ) );
+        $paged = $wp_query->get( 'paged' );
+        $paged = empty( $paged ) ? 1 : $paged;
 
 
         // Check for pagination settings
