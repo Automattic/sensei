@@ -2046,7 +2046,7 @@ class Sensei_Course {
 
                     <?php if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) ) && Sensei()->settings->settings['course_completion'] == 'complete' ) { ?>
 
-                        <span><input name="course_complete" type="submit" class="course-complete" value="<?php  _e( 'Mark as Complete', 'woothemes-sensei' ); ?>/></span>
+                        <span><input name="course_complete" type="submit" class="course-complete" value="<?php  _e( 'Mark as Complete', 'woothemes-sensei' ); ?>" /></span>
 
                    <?php  } // End If Statement
 
