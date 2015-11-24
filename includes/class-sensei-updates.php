@@ -128,9 +128,13 @@ class Sensei_Updates {
 
 							// Dynamic function call
 							if ( method_exists( $this, $value) ) {
+
 								$done_processing = call_user_func_array( array( $this, $value ), array( 50, $n ) );
-							} else {
+
+                            } elseif( $this->function_in_whitelist( $value ) ) {
+
 								$done_processing = call_user_func_array( $value, array( 50, $n ) );
+
 							} // End If Statement
 
 							// Add to functions list get args
@@ -157,9 +161,13 @@ class Sensei_Updates {
 
 							// Dynamic function call
 							if ( method_exists( $this, $value) ) {
-								$done_processing = call_user_func_array( array( $this, $value ), array( 50, $n ) );
-							} else {
+
+                                $done_processing = call_user_func_array( array( $this, $value ), array( 50, $n ) );
+
+							} elseif(  $this->function_in_whitelist( $value ) ) {
+
 								$done_processing = call_user_func_array( $value, array( 50, $n ) );
+
 							} // End If Statement
 
 							// Add to functions list get args
@@ -276,6 +284,29 @@ class Sensei_Updates {
 		} // End If Statement
 	} // End sensei_updates_page()
 
+    /**
+     * Since 1.9.0
+     *
+     * A list of safe to execute functions withing the
+     * updater context.
+     *
+     * @param string $function_name
+     */
+    public function function_in_whitelist( $function_name ){
+
+        $function_whitelist = array(
+            'status_changes_convert_questions',
+            'status_changes_fix_lessons',
+            'status_changes_convert_courses',
+            'status_changes_convert_lessons',
+            'status_changes_repair_course_statuses',
+
+        );
+
+        return in_array($function_name, $function_whitelist );
+
+    }// end function_in_whitelist
+
 	/**
 	 * Sort updates list by version number
 	 *
@@ -313,12 +344,15 @@ class Sensei_Updates {
 								if ( ! in_array( $function_name, $this->updates_run ) ) {
 									$updated = false;
 									if ( method_exists( $this, $function_name ) ) {
-										$updated = call_user_func( array( $this, $function_name ) );
-									} elseif( function_exists( $function_name ) ) {
-										$updated = call_user_func( $function_name );
-									} else {
-										// Nothing to see here...
-									} // End If Statement
+
+                                        $updated = call_user_func( array( $this, $function_name ) );
+
+									} elseif( $this->function_in_whitelist( $function_name ) ) {
+
+                                        $updated = call_user_func( $function_name );
+
+									}  // End If Statement
+
 									if ( $updated ) {
 										array_push( $this->updates_run, $function_name );
 									} // End If Statement
@@ -763,9 +797,6 @@ class Sensei_Updates {
 
 	public function remove_deleted_user_activity( $n = 50, $offset = 0 ) {
 
-
-//		remove_filter( 'comments_clauses', array( Sensei()->admin, 'comments_admin_filter' ) );
-
 		$all_activity = get_comments( array( 'status' => 'approve' ) );
 		$activity_count = array();
 		foreach( $all_activity as $activity ) {
@@ -806,8 +837,6 @@ class Sensei_Updates {
 		} else {
 			$current_page = intval( $offset / $n );
 		} // End If Statement
-
-//		add_filter( 'comments_clauses', array( Sensei()->admin, 'comments_admin_filter' ) );
 
 		if ( $current_page >= $total_pages ) {
 			return true;
