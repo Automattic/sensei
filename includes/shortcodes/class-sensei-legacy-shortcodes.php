@@ -131,8 +131,8 @@ class Sensei_Legacy_Shortcodes {
         $content = '';
         if( count( $posts_array ) > 0 ){
 
-            $before = '<section id="main-course" class="course-container">';
-            $before .= empty($title)? '' : '<header class="archive-header"><h1>'. $title .'</h1></header>';
+            $before = empty($title)? '' : '<header class="archive-header"><h2>'. $title .'</h2></header>';
+            $before .= '<section id="main-course" class="course-container">';
 
             $after = '</section>';
 
@@ -320,10 +320,13 @@ class Sensei_Legacy_Shortcodes {
         $category_output = get_the_term_list( $course_id, 'course-category', '', ', ', '' );
         $preview_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $course_id ) );
         $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
-
         ?>
-        <article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_id ) ) ); ?>">
 
+        <article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_id ) ) ); ?>">
+            <?php
+            // so that legacy shortcodes work with thir party plugins that wants to hook in
+            do_action('sensei_course_content_before',$course );
+            ?>
             <div class="course-content">
 
                 <?php Sensei()->course->course_image($course_id); ?>
@@ -369,10 +372,15 @@ class Sensei_Legacy_Shortcodes {
                 </section>
 
             </div>
+            <?php
+            // so that legacy shortcodes work with thir party plugins that wants to hook in
+            do_action('sensei_course_content_after', $course);
+            ?>
 
         </article>
 
         <?php
+
 
     } // end the_course
 
