@@ -122,6 +122,7 @@ class Sensei_Updates
         <h2><?php _e('Sensei Updates', 'woothemes-sensei'); ?></h2>
 
         <?php
+        $function_name= '';
         if ( isset($_GET['action']) && $_GET['action'] == 'update'
             && isset($_GET['n']) && intval($_GET['n']) >= 0
             && ( (isset($_POST['checked'][0]) && '' != $_POST['checked'][0]) || (isset($_GET['functions']) && '' != $_GET['functions']))) {
@@ -134,33 +135,44 @@ class Sensei_Updates
             // Check for updates to run
             if (isset($_POST['checked'][0]) && '' != $_POST['checked'][0]) {
 
-                foreach ($_POST['checked'] as $key => $value) {
+                foreach ($_POST['checked'] as $key => $function_name) {
+
+                    if( ! isset(  $_POST[ $function_name.'_nonce_field' ] ) 
+                        || ! wp_verify_nonce( $_POST[ $function_name.'_nonce_field' ] , 'run_'.$function_name ) ){
+
+                        wp_die(
+                            '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                            '<p>' . __( 'The nonce supplied in order to run this update function is invalid','woothemes-sensei') . '</p>',
+                            403
+                        );
+
+                    }
 
                     // Dynamic function call
-                    if (method_exists($this, $value)) {
+                    if (method_exists($this, $function_name)) {
 
-                        $done_processing = call_user_func_array(array($this, $value), array(50, $n));
+                        $done_processing = call_user_func_array(array($this, $function_name), array(50, $n));
 
-                    } elseif ($this->function_in_whitelist($value)) {
+                    } elseif ($this->function_in_whitelist($function_name)) {
 
-                        $done_processing = call_user_func_array($value, array(50, $n));
+                        $done_processing = call_user_func_array($function_name, array(50, $n));
 
                     } else {
 
-                        _doing_it_wrong( esc_html( $value) , 'Is not a valid Sensei updater function', 'Sensei 1.9.0');
+                        _doing_it_wrong( esc_html( $function_name) , 'Is not a valid Sensei updater function', 'Sensei 1.9.0');
                         return;
 
                     }// End If Statement
 
                 // Add to functions list get args
                 if ('' == $functions_list) {
-                    $functions_list .= $value;
+                    $functions_list .= $function_name;
                 } else {
-                    $functions_list .= '+' . $value;
+                    $functions_list .= '+' . $function_name;
                 } // End If Statement
 
                 // Mark update has having been run
-                $this->set_update_run($value);
+                $this->set_update_run($function_name);
 
             } // End For Loop
 
@@ -172,32 +184,43 @@ class Sensei_Updates
             // Existing functions from GET variables instead of POST
             $functions_array = $_GET['functions'];
 
-            foreach ($functions_array as $key => $value) {
+            foreach ($functions_array as $key => $function_name) {
+
+                if( ! isset( $_GET[ $function_name.'_nonce' ] )
+                    || ! wp_verify_nonce( $_GET[ $function_name.'_nonce' ] , 'run_'.$function_name ) ){
+
+                    wp_die(
+                        '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                        '<p>' . __( 'The nonce supplied in order to run this update function is invalid','woothemes-sensei') . '</p>',
+                        403
+                    );
+
+                }
 
                 // Dynamic function call
-                if (method_exists($this, $value)) {
+                if (method_exists($this, $function_name)) {
 
-                    $done_processing = call_user_func_array(array($this, $value), array(50, $n));
+                    $done_processing = call_user_func_array(array($this, $function_name), array(50, $n));
 
-                } elseif ($this->function_in_whitelist($value)) {
+                } elseif ($this->function_in_whitelist($function_name)) {
 
-                    $done_processing = call_user_func_array($value, array(50, $n));
+                    $done_processing = call_user_func_array($function_name, array(50, $n));
 
                 } else {
 
-                    _doing_it_wrong( esc_html( $value) , 'Is not a valid Sensei updater function', 'Sensei 1.9.0');
+                    _doing_it_wrong( esc_html( $function_name) , 'Is not a valid Sensei updater function', 'Sensei 1.9.0');
                     return;
 
                 } // End If Statement
 
                 // Add to functions list get args
                 if ('' == $functions_list) {
-                    $functions_list .= $value;
+                    $functions_list .= $function_name;
                 } else {
-                    $functions_list .= '+' . $value;
+                    $functions_list .= '+' . $function_name;
                 } // End If Statement
 
-                $this->set_update_run($value);
+                $this->set_update_run($function_name);
 
             } // End For Loop
 
@@ -207,16 +230,33 @@ class Sensei_Updates
 
             <h3><?php _e('Processing Updates...', 'woothemes-sensei'); ?></h3>
 
-            <p><?php _e('If your browser doesn&#8217;t start loading the next page automatically, click this button:', 'woothemes-sensei'); ?>
-                &nbsp;&nbsp;<a class="button"
-                               href="admin.php?page=sensei_updates&action=update&n=<?php echo($n + 50) ?>&functions[]=<?php echo $functions_list; ?>"><?php _e('Next', 'woothemes-sensei'); ?></a>
+            <p>
+
+                <?php _e( "If your browser doesn't start loading the next page automatically, click this button:", 'woothemes-sensei' ); ?>
+
+                <?php
+                $next_action_url = add_query_arg( array(
+                    'page' => 'sensei_updates',
+                    'action' => 'update',
+                    'n' => $n + 50,
+                    'functions' => array( $functions_list ),
+                    $function_name.'_nonce' => wp_create_nonce( 'run_'. $function_name ),
+                ), admin_url( 'admin.php' ) );
+                ?>
+
+                <a class="button"  href="<?php echo esc_url( $next_action_url ); ?>">
+
+                    <?php _e( 'Next', 'woothemes-sensei' ); ?>
+
+                </a>
+
             </p>
             <script type='text/javascript'>
                 <!--
                 function js_sensei_nextpage() {
-                    location.href = "admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 50) ?>&functions[]=<?php echo $functions_list; ?>";
+                    location.href = "<?php echo esc_url_raw(  $next_action_url );?>";
                 }
-                setTimeout("js_sensei_nextpage()", 250);
+                setTimeout( "js_sensei_nextpage()", 250 );
                 //-->
             </script>
 
@@ -291,15 +331,22 @@ class Sensei_Updates
                                     }
                                     ?>
                                     <td><p><?php echo $type_label; ?></p></td>
-                                    <td><p><input
-                                                onclick="javascript:return confirm('<?php echo addslashes(sprintf(__('Are you sure you want to run the \'%s\' update?', 'woothemes-sensei'), $data['title'])); ?>');"
-                                                id="update-sensei" class="button<?php if (!$update_run) {
-                                                echo ' button-primary';
-                                            } ?>" type="submit" value="<?php if ($update_run) {
-                                                _e('Re-run Update', 'woothemes-sensei');
-                                            } else {
-                                                _e('Run Update', 'woothemes-sensei');
-                                            } ?>" name="update"></p></td>
+                                    <td>
+                                        <p>
+                                            <input onclick="javascript:return confirm('<?php echo addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'woothemes-sensei' ), $data['title'] ) ); ?>');"
+                                                   id="update-sensei"
+                                                   class="button<?php if( ! $update_run ) { echo ' button-primary'; } ?>"
+                                                   type="submit"
+                                                   value="<?php if( $update_run ) { _e( 'Re-run Update', 'woothemes-sensei' ); } else { _e( 'Run Update', 'woothemes-sensei' ); } ?>"
+                                                   name="update">
+
+                                            <?php
+                                            $nonce_action = 'run_'.$update;
+                                            $nonce_field_name = $update.'_nonce_field';
+                                            wp_nonce_field( $nonce_action, $nonce_field_name, false, true );
+                                            ?>
+                                        </p>
+                                    </td>
                                 </tr>
                             </form>
                             <?php
@@ -367,46 +414,47 @@ class Sensei_Updates
 	public function update ( $type = 'auto' ) {
 
 		// Only allow admins to run update functions
-		if( current_user_can( 'manage_options' ) ) {
+		if( ! current_user_can( 'manage_options' ) ) {
+            return false;
+        }
 
-			$this->force_updates();
+        $this->force_updates();
 
-			// Run through all functions
-			foreach ( $this->updates as $version => $value ) {
-				foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
-					if ( $upgrade_type == $type ) {
-						$updated = false;
-						// Run the update function
-						foreach ( $function_to_run as $function_name => $update_data ) {
-							if ( isset( $function_name ) && '' != $function_name ) {
-								if ( ! in_array( $function_name, $this->updates_run ) ) {
-									$updated = false;
-									if ( method_exists( $this, $function_name ) ) {
+        // Run through all functions
+        foreach ( $this->updates as $version => $value ) {
+            foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
+                if ( $upgrade_type == $type ) {
+                    $updated = false;
+                    // Run the update function
+                    foreach ( $function_to_run as $function_name => $update_data ) {
+                        if ( isset( $function_name ) && '' != $function_name ) {
+                            if ( ! in_array( $function_name, $this->updates_run ) ) {
+                                $updated = false;
+                                if ( method_exists( $this, $function_name ) ) {
 
-                                        $updated = call_user_func( array( $this, $function_name ) );
+                                    $updated = call_user_func( array( $this, $function_name ) );
 
-									} elseif( $this->function_in_whitelist( $function_name ) ) {
+                                } elseif( $this->function_in_whitelist( $function_name ) ) {
 
-                                        $updated = call_user_func( $function_name );
+                                    $updated = call_user_func( $function_name );
 
-									}  // End If Statement
+                                }  // End If Statement
 
-									if ( $updated ) {
-										array_push( $this->updates_run, $function_name );
-									} // End If Statement
-								}
-							} // End If Statement
-						} // End For Loop
-					} // End If Statement
-				} // End For Loop
-			} // End For Loop
+                                if ( $updated ) {
+                                    array_push( $this->updates_run, $function_name );
+                                } // End If Statement
+                            }
+                        } // End If Statement
+                    } // End For Loop
+                } // End If Statement
+            } // End For Loop
+        } // End For Loop
 
-            $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
-			update_option( $this->token . '-upgrades', $this->updates_run );
-			return true;
+        $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
+        update_option( $this->token . '-upgrades', $this->updates_run );
 
-		}
-		return false;
+        return true;
+
 	} // End update()
 
 	private function force_updates() {
