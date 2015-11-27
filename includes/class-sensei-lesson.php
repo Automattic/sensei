@@ -1826,7 +1826,8 @@ class Sensei_Lesson {
 		if ( isset($_POST['lesson_add_course_nonce']) ) {
 			$nonce = esc_html( $_POST['lesson_add_course_nonce'] );
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_add_course_nonce' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'lesson_add_course_nonce' )
+            || ! current_user_can( 'edit_lessons' ) ) {
 			die('');
 		} // End If Statement
 		// Parse POST data
@@ -1854,9 +1855,13 @@ class Sensei_Lesson {
 		if ( isset($_POST['lesson_update_question_nonce']) ) {
 			$nonce = esc_html( $_POST['lesson_update_question_nonce'] );
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_nonce' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_nonce' )
+            ||  ! current_user_can( 'edit_questions' )) {
+
 			die('');
+
 		} // End If Statement
+
 		// Parse POST data
 		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that
 		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed.
@@ -1903,7 +1908,8 @@ class Sensei_Lesson {
 			$nonce = esc_html( $_POST['lesson_add_multiple_questions_nonce'] );
 		} // End If Statement
 
-		if( ! wp_verify_nonce( $nonce, 'lesson_add_multiple_questions_nonce' ) ) {
+		if( ! wp_verify_nonce( $nonce, 'lesson_add_multiple_questions_nonce' )
+            || ! current_user_can( 'edit_lessons' ) ) {
 			die( $return );
 		} // End If Statement
 
@@ -1958,7 +1964,8 @@ class Sensei_Lesson {
 			$nonce = esc_html( $_POST['lesson_remove_multiple_questions_nonce'] );
 		} // End If Statement
 
-		if( ! wp_verify_nonce( $nonce, 'lesson_remove_multiple_questions_nonce' ) ) {
+		if( ! wp_verify_nonce( $nonce, 'lesson_remove_multiple_questions_nonce' )
+        || ! current_user_can( 'edit_lessons' ) ) {
 			die('');
 		} // End If Statement
 
@@ -2004,7 +2011,8 @@ class Sensei_Lesson {
 			$nonce = esc_html( $_POST['lesson_add_existing_questions_nonce'] );
 		} // End If Statement
 
-		if( ! wp_verify_nonce( $nonce, 'lesson_add_existing_questions_nonce' ) ) {
+		if( ! wp_verify_nonce( $nonce, 'lesson_add_existing_questions_nonce' )
+        || ! current_user_can( 'edit_lessons' ) ) {
 			die('');
 		} // End If Statement
 
@@ -2050,11 +2058,18 @@ class Sensei_Lesson {
 	public function lesson_update_grade_type() {
 		//Add nonce security to the request
 		if ( isset($_POST['lesson_update_grade_type_nonce']) ) {
+
 			$nonce = esc_html( $_POST['lesson_update_grade_type_nonce'] );
+
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_update_grade_type_nonce' ) ) {
+
+		if ( ! wp_verify_nonce( $nonce, 'lesson_update_grade_type_nonce' )
+        || ! current_user_can( 'edit_lessons' ) ) {
+
 			die('');
+
 		} // End If Statement
+
 		// Parse POST data
 		$data = $_POST['data'];
 		$quiz_data = array();
@@ -2068,9 +2083,12 @@ class Sensei_Lesson {
 		if ( isset($_POST['lesson_update_question_order_nonce']) ) {
 			$nonce = esc_html( $_POST['lesson_update_question_order_nonce'] );
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_nonce' ) ) {
+
+        if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_nonce' )
+            ||! current_user_can( 'edit_lessons' ) ) {
 			die('');
 		} // End If Statement
+
 		// Parse POST data
 		$data = $_POST['data'];
 		$quiz_data = array();
@@ -2092,8 +2110,11 @@ class Sensei_Lesson {
 		if ( isset($_POST['lesson_update_question_order_random_nonce']) ) {
 			$nonce = esc_html( $_POST['lesson_update_question_order_random_nonce'] );
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_random_nonce' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_random_nonce' )
+            || ! current_user_can( 'edit_lessons' ) ) {
+
 			die('');
+
 		} // End If Statement
 		// Parse POST data
 		$data = $_POST['data'];
@@ -2943,7 +2964,8 @@ class Sensei_Lesson {
     public function all_lessons_edit_fields( $column_name, $post_type ) {
 
         // only show these options ont he lesson post type edit screen
-        if( 'lesson' != $post_type || 'lesson-course' != $column_name ){
+        if( 'lesson' != $post_type || 'lesson-course' != $column_name
+            || ! current_user_can( 'edit_lessons' ) ) {
             return;
         }
 
