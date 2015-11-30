@@ -795,12 +795,16 @@ section.entry span.course-price { padding-left: 10px; }
     }
 
     .button.next-lesson {
-      background: darkgray;
+      margin: -3px 0 0 1em;
       text-decoration: none;
-      padding: .327em 1em;
       float:right;
-      position: relative;
-      margin-top: -4px;
+      background: none;
+      color: darken($success, 10%);
+      border: 2px solid darken($success, 10%);
+      &:hover {
+        background: $success;
+        color: #fff;
+      }
     }
   }
 }
