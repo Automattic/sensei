@@ -1025,6 +1025,12 @@ section.entry span.course-price {
   display: inline-block; }
 
 /**
+* sensei_user_course shortcode styles
+*/
+#sensei-user-courses #user-course-status-toggle a.active {
+  color: #D4D4D4; }
+
+/**
  * Imports
  */
 /**
