@@ -3663,24 +3663,10 @@ class Sensei_Lesson {
         }
         ?>
 
-        <header>
+        <footer>
 
             <?php
-            if ( $quiz_id && is_user_logged_in() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $user_id ) ) {
-
-            $no_quiz_count = 0;
-            $has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
-
-            // Display lesson quiz status message
-            if ( $has_user_completed_lesson || $has_quiz_questions ) {
-                $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, $user_id, true );
-                echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
-                if( $has_quiz_questions ) {
-                    echo $status['extra'];
-                } // End If Statement
-            } // End If Statement
-
-            } elseif( $show_actions && $quiz_id && Sensei()->access_settings() ) {
+            if( $show_actions && $quiz_id && Sensei()->access_settings() ) {
 
                 $has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
                 if( $has_quiz_questions ) {
@@ -3714,7 +3700,7 @@ class Sensei_Lesson {
             } // End If Statement
             ?>
 
-        </header>
+        </footer>
 
         <?php
     } // End sensei_lesson_quiz_meta()
@@ -3744,6 +3730,42 @@ class Sensei_Lesson {
         } // End If Statement
 
     } //output_comments
+
+    /**
+     * Display the leeson quiz status if it should be shown
+     *
+     * @param int $lesson_id defaults to the global lesson id
+     * @param int $user_id defaults to the current user id
+     *
+     * @since 1.9.0
+     */
+    public static function user_lesson_quiz_status_message( $lesson_id = 0, $user_id = 0){
+
+        $lesson_id                 =  empty( $lesson_id ) ?  get_the_ID() : $lesson_id;
+        $user_id                   = empty( $lesson_id ) ?  get_current_user_id() : $user_id;
+        $lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
+        $quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+        $has_user_completed_lesson = WooThemes_Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
+
+
+        if ( $quiz_id && is_user_logged_in()
+            && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $user_id ) ) {
+
+            $no_quiz_count = 0;
+            $has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+
+            // Display lesson quiz status message
+            if ( $has_user_completed_lesson || $has_quiz_questions ) {
+                $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, $user_id, true );
+                echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+                if( $has_quiz_questions ) {
+                   // echo $status['extra'];
+                } // End If Statement
+            } // End If Statement
+
+        }
+
+    }
 
 } // End Class
 

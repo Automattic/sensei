@@ -228,6 +228,10 @@ add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson'
 // attach the lesson title
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'the_title' ), 15 );
 
+//@since 1.9.0
+// hook in the lesson image on the single lesson
+add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'user_lesson_quiz_status_message' ), 20 );
+
 // @since 1.9.0
 // add the single lesson meta
 add_action( 'sensei_single_lesson_content_inside_after', 'sensei_the_single_lesson_meta', 10 );
