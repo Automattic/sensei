@@ -2242,7 +2242,7 @@ class Sensei_Course {
 
         ?>
 
-        <form class="sensei-ordering" name="sensei-course-order" action="<?php echo Sensei_Utils::get_current_url(); ?>" method="POST">
+        <form class="sensei-ordering" name="sensei-course-order" action="<?php echo esc_attr( Sensei_Utils::get_current_url() ) ; ?>" method="POST">
             <select name="course-orderby" class="orderby">
                 <?php
                 foreach( $course_order_by_options as $value => $text ){
