@@ -1316,13 +1316,13 @@ class Sensei_Course {
                     } // End If Statement
 
                     $course_purchased = false;
-                    if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+                    if ( Sensei_WC::is_woocommerce_active() ) {
 
                         // Get the product ID
                         $wc_post_id = get_post_meta( absint( $course_item->ID ), '_course_woocommerce_product', true );
                         if ( 0 < $wc_post_id ) {
 
-                            $course_purchased = WooThemes_Sensei_Utils::sensei_customer_bought_product( $user->user_email, $user->ID, $wc_post_id );
+                            $course_purchased = Sensei_WC::has_customer_bought_product(  $user->ID, $wc_post_id );
 
                         } // End If Statement
 
@@ -2888,6 +2888,30 @@ class Sensei_Course {
             'suppress_filters' 	=> 0
         );
     }
+
+    /**
+     * Check if the prerequisite course is completed
+     * Courses with no pre-requisite should always return true
+     *
+     * @since 1.9.0
+     * @param $course_id
+     * @return bool
+     */
+    public static function is_prerequisite_complete( $course_id ){
+
+        $course_prerequisite_id = get_post_meta( $course_id, '_course_prerequisite', true );
+
+        // if it has a pre requisite course check it
+        if( ! empty(  $course_prerequisite_id ) ){
+
+            return Sensei_Utils::user_completed_course( $course_prerequisite_id, get_current_user_id() );
+
+        }
+
+        return true;
+
+    }// end is_prerequisite_complete
+
 
 }// End Class
 

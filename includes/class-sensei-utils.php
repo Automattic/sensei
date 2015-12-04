@@ -340,75 +340,35 @@ class Sensei_Utils {
 		return $activity_value;
 	} // End sensei_get_activity_value()
 
-	/**
-	 * Checks if a user (by email) has bought an item.
-	 * @access public
-	 * @since  1.0.0
-	 * @param  string $customer_email
-	 * @param  int $user_id
-	 * @param  int $product_id
-	 * @return bool
-	 */
-	public static function sensei_customer_bought_product ( $customer_email, $user_id, $product_id ) {
-		global $wpdb;
+    /**
+     * Checks if a user (by email) has bought an item.
+     *
+     * @deprecated since 1.9.0 use Sensei_WC::has_customer_bought_product($user_id, $product_id)
+     * @access public
+     * @since  1.0.0
+     * @param  string $customer_email
+     * @param  int $user_id
+     * @param  int $product_id
+     * @return bool
+     */
+    public static function sensei_customer_bought_product ( $customer_email, $user_id, $product_id ) {
 
-		$emails = array();
+        $emails = array();
 
-		if ( $user_id ) {
-			$user = get_user_by( 'id', intval( $user_id ) );
-			$emails[] = $user->user_email;
-		}
+        if ( $user_id ) {
+            $user = get_user_by( 'id', intval( $user_id ) );
+            $emails[] = $user->user_email;
+        }
 
-		if ( is_email( $customer_email ) )
-			$emails[] = $customer_email;
+        if ( is_email( $customer_email ) )
+            $emails[] = $customer_email;
 
-		if ( sizeof( $emails ) == 0 )
-			return false;
+        if ( sizeof( $emails ) == 0 )
+            return false;
 
-		$orders = get_posts( array(
-		    'posts_per_page' => -1,
-		    'meta_key'    => '_customer_user',
-		    'meta_value'  => intval( $user_id ),
-		    'post_type'   => 'shop_order',
-		    'post_status' =>  array( 'wc-processing', 'wc-completed' ),
-		) );
+        return Sensei_WC::has_customer_bought_product( $user_id, $product_id );
 
-		foreach ( $orders as $order_id ) {
-			$order = new WC_Order( $order_id->ID );
-			if ( $order->post_status == 'wc-completed' || $order->post_status == 'wc-processing' ) {
-				if ( 0 < sizeof( $order->get_items() ) ) {
-					foreach( $order->get_items() as $item ) {
-
-						// Allow product ID to be filtered
-						$product_id = apply_filters( 'sensei_bought_product_id', $product_id, $order );
-
-						// Check if user has bought product
-						if ( $item['product_id'] == $product_id || $item['variation_id'] == $product_id ) {
-
-							// Check if user has an active subscription for product
-							if( class_exists( 'WC_Subscriptions_Manager' ) ) {
-								$sub_key = WC_Subscriptions_Manager::get_subscription_key( $order_id->ID, $product_id );
-								if( $sub_key ) {
-									$sub = WC_Subscriptions_Manager::get_subscription( $sub_key );
-									if( $sub && isset( $sub['status'] ) ) {
-										if( 'active' == $sub['status'] ) {
-											return true;
-										} else {
-											return false;
-										}
-									}
-								}
-							}
-
-							// Customer has bought product
-							return true;
-						} // End If Statement
-
-					} // End For Loop
-				} // End If Statement
-			} // End If Statement
-		} // End For Loop
-	} // End sensei_customer_bought_product()
+    } // End sensei_customer_bought_product()
 
 	/**
 	 * Load the WordPress rich text editor

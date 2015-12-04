@@ -674,4 +674,226 @@ Class Sensei_WC{
         return get_posts(  $paid_course_query_args );
     }
 
+    /**
+     * Show the WooCommerce add to cart button for the  current course
+     *
+     * The function will only show the button if
+     * 1- the user can buy the course
+     * 2- if they have completed their pre-requisite
+     * 3- if the course has a valid product attached
+     *
+     * @since 1.9.0
+     * @param int $course_id
+     * @return string $html markup for the button or nothing if user not allowed to buy
+     */
+    public static function the_add_to_cart_button_html( $course_id ){
+
+        if ( ! Sensei_Course::is_prerequisite_complete( $course_id )) {
+            return '';
+        }
+
+        $wc_post_id = self::get_course_product_id( $course_id );
+
+        // Check if customer purchased the product
+        if ( self::has_customer_bought_product(  get_current_user_id(), $wc_post_id )
+            || empty( $wc_post_id ) ) {
+
+            return '';
+
+        }
+
+        // based on simple.php in WC templates/single-product/add-to-cart/
+        // Get the product
+        $product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
+
+        // do not show the button for invalid products, non purchasable products, out
+        // of stock product or if course is already in cart
+        if ( ! isset ( $product )
+            || ! is_object( $product )
+            || ! $product->is_purchasable()
+            || ! $product->is_in_stock()
+            || self::is_course_in_cart( $wc_post_id ) ) {
+
+            return '';
+
+        }
+
+        //
+        // button  output:
+        //
+        ?>
+
+        <form action="<?php echo esc_url( $product->add_to_cart_url() ); ?>"
+              class="cart"
+              method="post"
+              enctype="multipart/form-data">
+
+            <input type="hidden" name="product_id" value="<?php echo esc_attr( $product->id ); ?>" />
+
+            <input type="hidden" name="quantity" value="1" />
+
+            <?php if ( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) { ?>
+
+                <input type="hidden" name="variation_id" value="<?php echo $product->variation_id; ?>" />
+                <?php if( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 0 ) { ?>
+
+                    <?php foreach( $product->variation_data as $att => $val ) { ?>
+
+                        <input type="hidden" name="<?php echo esc_attr( $att ); ?>" id="<?php echo esc_attr( str_replace( 'attribute_', '', $att ) ); ?>" value="<?php echo esc_attr( $val ); ?>" />
+
+                    <?php } ?>
+
+                <?php } ?>
+
+            <?php } ?>
+
+            <button type="submit" class="single_add_to_cart_button button alt">
+                <?php echo $product->get_price_html(); ?> - <?php  _e('Purchase this Course', 'woothemes-sensei'); ?>
+            </button>
+
+        </form>
+
+        <?php
+    } // end the_add_to_cart_button_html
+
+    /**
+     * Alter the no permissions message on the single course page
+     * Changes the message to a WooCommerce specific message.
+     *
+     * @since 1.9.0
+     *
+     * @param $message
+     * @param $post_id
+     *
+     * @return string $message
+     */
+    public static function alter_no_permissions_message( $message, $post_id ){
+
+        if( empty( $post_id ) || 'course'!=get_post_type( $post_id ) ){
+            return  $message;
+        }
+
+        $product_id = self::get_course_product_id( $post_id );
+
+        if( ! $product_id
+            || self::has_customer_bought_product( get_current_user_id(),$product_id ) ){
+
+            return $message;
+
+        }
+
+        ob_start();
+        self::the_course_no_permissions_message( $post_id );
+        $woocommerce_course_no_permissions_message = ob_get_clean();
+
+        return $woocommerce_course_no_permissions_message ;
+
+    }
+    /**
+     * Show the no permissions message when a user is logged in
+     * and have not yet purchased the current course
+     *
+     * @since 1.9.0
+     */
+    public static function the_course_no_permissions_message( $course_id ){
+
+        // login link
+        $my_courses_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
+        $login_link =  '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
+
+        ?>
+
+        <p class="add-to-cart-login">
+            <?php echo sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link ); ?>
+        </p>
+
+    <?php }
+
+    /**
+     * Checks if a user has bought a product item.
+     *
+     * @since  1.9.0
+     *
+     * @param  int $user_id
+     * @param  int $product_id
+     *
+     * @return bool
+     */
+    public static function has_customer_bought_product ( $user_id, $product_id ){
+
+        $orders = get_posts( array(
+            'posts_per_page' => -1,
+            'meta_key'    => '_customer_user',
+            'meta_value'  => intval( $user_id ),
+            'post_type'   => 'shop_order',
+            'post_status' =>  array( 'wc-processing', 'wc-completed' ),
+        ) );
+
+        foreach ( $orders as $order_id ) {
+
+            $order = new WC_Order( $order_id->ID );
+
+            if ( $order->post_status != 'wc-completed' && $order->post_status != 'wc-processing' ) {
+
+                continue;
+            }
+
+            if ( ! ( 0 < sizeof( $order->get_items() ) ) ) {
+
+                continue;
+
+            }
+
+            foreach( $order->get_items() as $item ) {
+
+                // Check if user has bought product
+                if ( $item['product_id'] == $product_id || $item['variation_id'] == $product_id ) {
+
+                    // Check if user has an active subscription for product
+                    if( class_exists( 'WC_Subscriptions_Manager' ) ) {
+                        $sub_key = WC_Subscriptions_Manager::get_subscription_key( $order_id->ID, $product_id );
+                        if( $sub_key ) {
+                            $sub = WC_Subscriptions_Manager::get_subscription( $sub_key );
+                            if( $sub && isset( $sub['status'] ) ) {
+                                if( 'active' == $sub['status'] ) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+
+                    // Customer has bought product
+                    return true;
+                } // End If Statement
+
+            } // End For each item
+
+        } // End For each order
+
+    } // end has customer bought product
+
+    /**
+     * Return the product id for the given course
+     *
+     * @since 1.9.0
+     *
+     * @param int $course_id
+     *
+     * @return string $woocommerce_product_id or false if none exist
+     *
+     */
+    public static function get_course_product_id( $course_id ){
+
+        $product_id =  get_post_meta( $course_id, '_course_woocommerce_product', true );
+
+        if( empty( $product_id ) || 'product' != get_post_type( $product_id ) ){
+            return false;
+        }
+
+        return $product_id;
+
+    }
+
 }// end Sensei_WC

@@ -86,27 +86,17 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 * Helper functions.
 	 ***************************************************************************************************/
 
-
 	/**
 	 * sensei_check_prerequisite_course function.
 	 *
+     * @deprecated since 1.9.0 use Sensei_Course::is_prerequisite_complete( $course_id );
 	 * @access public
 	 * @param mixed $course_id
-	 * @return void
+	 * @return bool
 	 */
 	function sensei_check_prerequisite_course( $course_id ) {
-		global $current_user;
-		// Get User Meta
-		get_currentuserinfo();
-		$course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true);
-		$prequisite_complete = false;
-		if ( 0 < absint( $course_prerequisite_id ) ) {
-			$prequisite_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
-		} else {
-			$prequisite_complete = true;
-		} // End If Statement
 
-		return $prequisite_complete;
+        return Sensei_Course::is_prerequisite_complete( $course_id );
 
 	} // End sensei_check_prerequisite_course()
 
@@ -137,95 +127,14 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	/**
 	 * sensei_wc_add_to_cart function.
 	 *
+     * @deprecated since Sensei_WC::the_add_to_cart_button_html( $course_id );
 	 * @access public
 	 * @param mixed $course_id
 	 * @return void
 	 */
 	function sensei_wc_add_to_cart( $course_id ) {
 
-		$prerequisite_complete = sensei_check_prerequisite_course( $course_id );
-
-		if ( $prerequisite_complete ) {
-
-			global $post, $current_user, $woocommerce;
-
-			$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
-
-			// Get User Meta
-			get_currentuserinfo();
-
-			// Check if customer purchased the product
-			if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id ) ) { ?>
-
-			    <div class="sensei-message tick">
-
-			    	<?php _e( 'You are currently taking this course.', 'woothemes-sensei' ); ?>
-
-			    </div>
-
-			<?php } else {
-
-			    // based on simple.php in WC templates/single-product/add-to-cart/
-			    if ( 0 < $wc_post_id ) {
-
-			        // Get the product
-			        $product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
-			        if ( ! isset ( $product ) || ! is_object( $product ) ) return;
-			        if ( $product->is_purchasable() ) {
-			            // Check Product Availability
-			            $availability = $product->get_availability();
-			            if ($availability['availability']) {
-			                echo apply_filters( 'woocommerce_stock_html', '<p class="stock '.$availability['class'].'">'.$availability['availability'].'</p>', $availability['availability'] );
-			            } // End If Statement
-			            // Check for stock
-			            if ( $product->is_in_stock() ) { ?>
-
-			                <?php if (! sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
-
-			                    <form action="<?php echo esc_url( $product->add_to_cart_url() ); ?>" class="cart" method="post" enctype="multipart/form-data">
-			                        <input type="hidden" name="product_id" value="<?php echo esc_attr( $product->id ); ?>" />
-			                        <input type="hidden" name="quantity" value="1" />
-			                        <?php if ( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) { ?>
-
-			                            <input type="hidden" name="variation_id" value="<?php echo $product->variation_id; ?>" />
-			                            <?php if( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 0 ) { ?>
-
-			                                <?php foreach( $product->variation_data as $att => $val ) { ?>
-
-			                                    <input type="hidden" name="<?php echo esc_attr( $att ); ?>" id="<?php echo esc_attr( str_replace( 'attribute_', '', $att ) ); ?>" value="<?php echo esc_attr( $val ); ?>" />
-
-			                                <?php } ?>
-
-			                            <?php } ?>
-
-			                        <?php } ?>
-
-			                        <button type="submit" class="single_add_to_cart_button button alt">
-                                        <?php echo $product->get_price_html(); ?> - <?php  _e('Purchase this Course', 'woothemes-sensei'); ?>
-                                    </button>
-			                    </form>
-
-			                <?php } // End If Statement ?>
-
-			             <?php } // End If Statement
-
-			        } // End If Statement
-
-			    } // End If Statement
-
-			} // End If Statement
-
-			if ( !is_user_logged_in() ) {
-
-			    $my_courses_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
-			    $login_link =  '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>'; ?>
-			    <p class="add-to-cart-login">
-			        <?php echo sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link ); ?>
-			    </p>
-
-			<?php }
-
-	 	} // End If Statement
+		Sensei_WC::the_add_to_cart_button_html( $course_id );
 
 	} // End sensei_wc_add_to_cart()
 
@@ -1030,7 +939,7 @@ function the_no_permissions_title(){
  *
  * @since 1.9.0
  */
-function the_no_permissions_message(){
+function the_no_permissions_message( $post_id ){
 
     /**
      * Filter the no permissions message just before it is echo'd on the
@@ -1039,7 +948,7 @@ function the_no_permissions_message(){
      * @since 1.9.0
      * @param $no_permissions_message
      */
-    echo apply_filters( 'sensei_the_no_permissions_message', Sensei()->permissions_message['message'] );
+    echo apply_filters( 'sensei_the_no_permissions_message', Sensei()->permissions_message['message'] , $post_id );
 
 }
 
@@ -1048,7 +957,7 @@ function the_no_permissions_message(){
  *
  * @since 1.9.0
  */
-function sensei_the_excerpt(){
+function sensei_the_excerpt( $post_id ){
 
     global $post;
     the_excerpt( $post );
