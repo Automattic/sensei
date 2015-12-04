@@ -253,7 +253,7 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 		$activity_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$this->total_items = WooThemes_Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
+		$this->total_items = Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $this->total_items < $activity_args['offset'] ) {
@@ -262,7 +262,7 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 
 		}
-		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
 		// Need to always return an array, even with only 1 item
 		if ( !is_array($statuses) ) {

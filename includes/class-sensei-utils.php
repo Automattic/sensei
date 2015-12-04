@@ -54,7 +54,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_is_woocommerce_activated () {
 
-		return  WooThemes_Sensei_Utils::sensei_is_woocommerce_present() && isset( Sensei()->settings->settings['woocommerce_enabled'] ) && Sensei()->settings->settings['woocommerce_enabled'];
+		return  Sensei_Utils::sensei_is_woocommerce_present() && isset( Sensei()->settings->settings['woocommerce_enabled'] ) && Sensei()->settings->settings['woocommerce_enabled'];
 
 	} // End sensei_is_woocommerce_activated()
 
@@ -227,7 +227,7 @@ class Sensei_Utils {
 	public static function sensei_activity_ids ( $args = array() ) {
 
 
-		$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
+		$comments = Sensei_Utils::sensei_check_for_activity( $args, true );
 		// Need to always use an array, even with only 1 item
 		if ( !is_array($comments) ) {
 			$comments = array( $comments );
@@ -267,7 +267,7 @@ class Sensei_Utils {
 		$dataset_changes = false;
 
 		// If activity exists remove activity from log
-		$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $args['post_id'] ), 'user_id' => intval( $args['user_id'] ), 'type' => esc_attr( $args['type'] ) ), true );
+		$comments = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => intval( $args['post_id'] ), 'user_id' => intval( $args['user_id'] ), 'type' => esc_attr( $args['type'] ) ), true );
 		if( $comments ) {
 			// Need to always return an array, even with only 1 item
 			if ( !is_array( $comments ) ) {
@@ -297,7 +297,7 @@ class Sensei_Utils {
 
     	if( $user_id ) {
 
-			$activities = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_id ), true );
+			$activities = Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_id ), true );
 
 			if( $activities ) {
 
@@ -331,7 +331,7 @@ class Sensei_Utils {
 
 		$activity_value = false;
 		if ( !empty($args['field']) ) {
-			$comment = WooThemes_Sensei_Utils::sensei_check_for_activity( $args, true );
+			$comment = Sensei_Utils::sensei_check_for_activity( $args, true );
 
 			if ( isset( $comment->{$args['field']} ) && '' != $comment->{$args['field']} ) {
 				$activity_value = $comment->{$args['field']};
@@ -437,7 +437,7 @@ class Sensei_Utils {
 							'user_id' => $user_id,
 							'action' => 'update'
 						);
-				$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+				$answers_saved = Sensei_Utils::sensei_log_activity( $args );
 			}
 
 			// Handle file upload questions
@@ -455,7 +455,7 @@ class Sensei_Utils {
 									'user_id' => $user_id,
 									'action' => 'update'
 								);
-								$answers_saved = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+								$answers_saved = Sensei_Utils::sensei_log_activity( $args );
 							}
 						}
 					}
@@ -555,7 +555,7 @@ class Sensei_Utils {
 		$activity_logged = false;
 		if( intval( $quiz_id ) > 0 && intval( $user_id ) > 0 ) {
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+			$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 			$activity_logged = update_comment_meta( $user_lesson_status->comment_ID, 'grade', $grade );
 
 			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
@@ -600,7 +600,7 @@ class Sensei_Utils {
 		$activity_logged = false;
 		if( intval( $question_id ) > 0 && intval( $user_id ) > 0 ) {
 
-			$user_answer_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
+			$user_answer_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
 			$activity_logged = update_comment_meta( $user_answer_id, 'user_grade', $grade );
 
 			$answer_notes = get_post_meta( $question_id, '_answer_feedback', true );
@@ -620,7 +620,7 @@ class Sensei_Utils {
 
 		$activity_logged = false;
 		if( intval( $question_id ) > 0 ) {
-			$user_answer_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
+			$user_answer_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
 			$activity_logged = delete_comment_meta( $user_answer_id, 'user_grade' );
 		}
 
@@ -671,9 +671,9 @@ class Sensei_Utils {
 
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 			if( $course_id ) {
-				$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $course_id, $user_id );
+				$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, $user_id );
 				if( ! $is_user_taking_course ) {
-					WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+					Sensei_Utils::user_start_course( $user_id, $course_id );
 				}
 			}
 
@@ -696,11 +696,11 @@ class Sensei_Utils {
 			}
 
 			// Check if user is already taking the lesson
-			$activity_logged = WooThemes_Sensei_Utils::user_started_lesson( $lesson_id, $user_id );
+			$activity_logged = Sensei_Utils::user_started_lesson( $lesson_id, $user_id );
 			if( ! $activity_logged ) {
 
 				$metadata['start'] = current_time('mysql');
-				$activity_logged = WooThemes_Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $status, $metadata );
+				$activity_logged = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $status, $metadata );
 
             } else {
 
@@ -748,7 +748,7 @@ class Sensei_Utils {
 		$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
-		WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
+		Sensei_Utils::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
 
 		// Delete lesson status
 		$args = array(
@@ -757,7 +757,7 @@ class Sensei_Utils {
 			'user_id' => $user_id,
 		);
 		// This auto deletes the corresponding meta data, such as the quiz grade, and questions asked
-		WooThemes_Sensei_Utils::sensei_delete_activities( $args );
+		Sensei_Utils::sensei_delete_activities( $args );
 
 		if( ! $from_course ) {
 			do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
@@ -785,7 +785,7 @@ class Sensei_Utils {
 		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
 		foreach( $lesson_ids as $lesson_id ) {
-			WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id, true );
+			Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $user_id, true );
 		}
 
 		// Delete course status
@@ -795,7 +795,7 @@ class Sensei_Utils {
 			'user_id' => $user_id,
 		);
 
-		WooThemes_Sensei_Utils::sensei_delete_activities( $args );
+		Sensei_Utils::sensei_delete_activities( $args );
 
 		do_action( 'sensei_user_course_reset', $user_id, $course_id );
 
@@ -809,7 +809,7 @@ class Sensei_Utils {
 
 		if( intval( $quiz_id ) > 0 ) {
 			$questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
-			$questions = WooThemes_Sensei_Utils::array_sort_reorder( $questions );
+			$questions = Sensei_Utils::array_sort_reorder( $questions );
 		}
 
 		return $questions;
@@ -821,7 +821,7 @@ class Sensei_Utils {
 		$quiz_total = 0;
 
 		if( $quiz_id > 0 ) {
-			$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+			$questions = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 			$question_grade = 0;
 			foreach( $questions as $question ) {
 				$question_grade = Sensei()->question->get_question_grade( $question->ID );
@@ -849,7 +849,7 @@ class Sensei_Utils {
 				if( intval( $user_id ) == 0 ) {
 					$user_id = get_current_user_id();
 				}
-				$user_answer_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval($question), 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
+				$user_answer_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval($question), 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
 			}
 			if ( $user_answer_id ) {
 				$question_grade = get_comment_meta( $user_answer_id, 'user_grade', true );
@@ -877,7 +877,7 @@ class Sensei_Utils {
 				if( intval( $user_id ) == 0 ) {
 					$user_id = get_current_user_id();
 				}
-				$user_answer_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval($question), 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
+				$user_answer_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => intval($question), 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
 			}
 			if ( $user_answer_id ) {
 				$answer_notes = base64_decode( get_comment_meta( $user_answer_id, 'answer_note', true ) );
@@ -894,9 +894,9 @@ class Sensei_Utils {
 
 		$delete_answers = false;
 		if( intval( $quiz_id ) > 0 ) {
-			$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+			$questions = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 			foreach( $questions as $question ) {
-				$delete_answers = WooThemes_Sensei_Utils::sensei_delete_activities( array( 'post_id' => $question->ID, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ) );
+				$delete_answers = Sensei_Utils::sensei_delete_activities( array( 'post_id' => $question->ID, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ) );
 			}
 		}
 
@@ -911,7 +911,7 @@ class Sensei_Utils {
 		$delete_grade = false;
 		if( intval( $quiz_id ) > 0 ) {
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+			$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 			$delete_grade = delete_comment_meta( $user_lesson_status->comment_ID, 'grade' );
 		}
 
@@ -936,7 +936,7 @@ class Sensei_Utils {
 
 			// Don't store empty values, no point
 			if ( !empty($notes) ) {
-				$user_lesson_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
+				$user_lesson_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer', 'field' => 'comment_ID' ) );
 				$activity_logged = update_comment_meta( $user_lesson_id, 'answer_note', $notes );
 			}
 			else {
@@ -960,7 +960,7 @@ class Sensei_Utils {
 			// 	$sort_key = esc_html( $_GET['orderby'] );
 			// } // End If Statement
 			if ( '' != $sort_key ) {
-					WooThemes_Sensei_Utils::sort_array_by_key($return_array,$sort_key);
+					Sensei_Utils::sort_array_by_key($return_array,$sort_key);
 				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
 					$return_array = array_reverse( $return_array, true );
 				} // End If Statement
@@ -1056,7 +1056,7 @@ class Sensei_Utils {
 			}
 		}
 
-		return Woothemes_Sensei_Utils::round( $course_passmark );
+		return Sensei_Utils::round( $course_passmark );
 	}
 
 	/**
@@ -1083,7 +1083,7 @@ class Sensei_Utils {
 				// Check for lesson having questions, thus a quiz, thus having a grade
 				$has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
 				if ( $has_questions ) {
-					$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
+					$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
 					// Get user quiz grade
 					$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
 
@@ -1101,7 +1101,7 @@ class Sensei_Utils {
 
 		}
 
-		return WooThemes_Sensei_Utils::round( $total_grade );
+		return Sensei_Utils::round( $total_grade );
 	}
 
 	/**
@@ -1118,8 +1118,8 @@ class Sensei_Utils {
 		$pass = false;
 
 		if( $course_id > 0 && $user_id > 0 ) {
-			$passmark = WooThemes_Sensei_Utils::sensei_course_pass_grade( $course_id );
-			$user_grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $course_id, $user_id );
+			$passmark = Sensei_Utils::sensei_course_pass_grade( $course_id );
+			$user_grade = Sensei_Utils::sensei_course_user_grade( $course_id, $user_id );
 
 			if( $user_grade >= $passmark ) {
 				$pass = true;
@@ -1147,11 +1147,11 @@ class Sensei_Utils {
 
 		if( $course_id > 0 && $user_id > 0 ) {
 
-			$started_course = WooThemes_Sensei_Utils::user_started_course( $course_id, $user_id );
+			$started_course = Sensei_Utils::user_started_course( $course_id, $user_id );
 
 			if( $started_course ) {
-				$passmark = WooThemes_Sensei_Utils::sensei_course_pass_grade( $course_id ); // This happens inside sensei_user_passed_course()!
-				$user_grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $course_id, $user_id ); // This happens inside sensei_user_passed_course()!
+				$passmark = Sensei_Utils::sensei_course_pass_grade( $course_id ); // This happens inside sensei_user_passed_course()!
+				$user_grade = Sensei_Utils::sensei_course_user_grade( $course_id, $user_id ); // This happens inside sensei_user_passed_course()!
 				if( $user_grade >= $passmark ) {
 					$status = 'passed';
 					$box_class = 'tick';
@@ -1196,11 +1196,11 @@ class Sensei_Utils {
 			$course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
 
 			// Has user started course
-			$started_course = WooThemes_Sensei_Utils::user_started_course( $course_id, $user_id );
+			$started_course = Sensei_Utils::user_started_course( $course_id, $user_id );
 
 			// Has user completed lesson
-			$user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-			$lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
+			$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+			$lesson_complete = Sensei_Utils::user_completed_lesson( $user_lesson_status );
 
 			// Quiz ID
 			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
@@ -1250,9 +1250,9 @@ class Sensei_Utils {
 				// Lesson status will be "passed" (passmark reached)
 				elseif ( ! empty( $quiz_grade ) && abs( $quiz_grade ) >= 0 ) {
 					if( $is_lesson ) {
-						$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %s%%', 'woothemes-sensei' ), WooThemes_Sensei_Utils::round( $quiz_grade ) );
+						$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %s%%', 'woothemes-sensei' ), Sensei_Utils::round( $quiz_grade ) );
 					} else {
-						$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %s%%', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_grade ) );
+						$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %s%%', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_grade ) );
 					}
 				}
 
@@ -1278,7 +1278,7 @@ class Sensei_Utils {
 					if( $is_lesson ) {
 						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
 					} else {
-						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ) );
+						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ) );
 					}
 				}
 				// Lesson status must be "failed"
@@ -1286,9 +1286,9 @@ class Sensei_Utils {
 					$status = 'failed';
 					$box_class = 'alert';
 					if( $is_lesson ) {
-						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ),  WooThemes_Sensei_Utils::round( $quiz_grade ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ),  Sensei_Utils::round( $quiz_grade ) );
 					} else {
-						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ),  WooThemes_Sensei_Utils::round( $quiz_grade ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ),  Sensei_Utils::round( $quiz_grade ) );
 					}
 				}
 				// Lesson/Quiz requires a pass
@@ -1296,9 +1296,9 @@ class Sensei_Utils {
 					$status = 'not_started';
 					$box_class = 'info';
 					if( $is_lesson ) {
-						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ) );
 					} else {
-						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ),  WooThemes_Sensei_Utils::round( $quiz_passmark ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ) );
 					}
 				}
 			}
@@ -1329,7 +1329,7 @@ class Sensei_Utils {
 
 		if( $user_id && $course_id ) {
 			// Check if user is already on the Course
-			$activity_logged = WooThemes_Sensei_Utils::user_started_course( $course_id, $user_id );
+			$activity_logged = Sensei_Utils::user_started_course( $course_id, $user_id );
 			if ( ! $activity_logged ) {
 
 				// Add user to course
@@ -1339,7 +1339,7 @@ class Sensei_Utils {
 					'complete' => 0,
 				);
 
-				$activity_logged = WooThemes_Sensei_Utils::update_course_status( $user_id, $course_id, $course_status = 'in-progress', $course_metadata );
+				$activity_logged = Sensei_Utils::update_course_status( $user_id, $course_id, $course_status = 'in-progress', $course_metadata );
 
 				// Allow further actions
 				if ( $activity_logged ) {
@@ -1370,7 +1370,7 @@ class Sensei_Utils {
                 return false;
             }
 
-			$user_course_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status', 'field' => 'comment_ID' ) );
+			$user_course_status_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status', 'field' => 'comment_ID' ) );
 			if( $user_course_status_id ) {
 				return $user_course_status_id;
 			}
@@ -1421,7 +1421,7 @@ class Sensei_Utils {
 			// In WordPress 4.1 get_comments() allows a single query to cover multiple comment_post_IDs
 			if ( version_compare($wp_version, '4.1', '>=') ) {
 				$lesson_status_args['post__in'] = $lesson_ids;
-				$all_lesson_statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
+				$all_lesson_statuses = Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
 				// Need to always return an array, even with only 1 item
 				if ( !is_array($all_lesson_statuses) ) {
 					$all_lesson_statuses = array( $all_lesson_statuses );
@@ -1431,7 +1431,7 @@ class Sensei_Utils {
 			else {
 				foreach( $lesson_ids as $lesson_id ) {
 					$lesson_status_args['post_id'] = $lesson_id;
-					$each_lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
+					$each_lesson_status = Sensei_Utils::sensei_check_for_activity( $lesson_status_args, true );
 					// Check for valid return before using
 					if ( !empty($each_lesson_status->comment_approved) ) {
 						$all_lesson_statuses[] = $each_lesson_status;
@@ -1476,7 +1476,7 @@ class Sensei_Utils {
 			// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
 			$course_metadata['percent'] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
 
-			$activity_logged = WooThemes_Sensei_Utils::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
+			$activity_logged = Sensei_Utils::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
 
 			// Allow further actions
 			if ( 'complete' == $course_status ) {
@@ -1513,7 +1513,7 @@ class Sensei_Utils {
                     $course =   $course->ID;
                 }
 
-				$user_course_status = WooThemes_Sensei_Utils::user_course_status( $course , $user_id );
+				$user_course_status = Sensei_Utils::user_course_status( $course , $user_id );
 				if( isset( $user_course_status->comment_approved ) ){
                     $user_course_status = $user_course_status->comment_approved;
                 }
@@ -1541,7 +1541,7 @@ class Sensei_Utils {
 				$user_id = get_current_user_id();
 			}
 
-			$user_lesson_status_id = WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status', 'field' => 'comment_ID' ) );
+			$user_lesson_status_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status', 'field' => 'comment_ID' ) );
 			if( $user_lesson_status_id ) {
 				return $user_lesson_status_id;
 			}
@@ -1577,7 +1577,7 @@ class Sensei_Utils {
                 if( ! $user_id > 0 ){
                     return false;
                 }
-				$_user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson, $user_id );
+				$_user_lesson_status = Sensei_Utils::user_lesson_status( $lesson, $user_id );
 
 				if ( $_user_lesson_status ) {
 					$user_lesson_status = $_user_lesson_status->comment_approved;
@@ -1638,7 +1638,7 @@ class Sensei_Utils {
 				$user_id = get_current_user_id();
 			}
 
-			$user_course_status = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status' ), true );
+			$user_course_status = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status' ), true );
 			return $user_course_status;
 		}
 
@@ -1661,7 +1661,7 @@ class Sensei_Utils {
 
 		if( $lesson_id > 0 && $user_id > 0 ) {
 
-			$user_lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ), true );
+			$user_lesson_status = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status' ), true );
 			return $user_lesson_status;
 		}
 
@@ -1691,7 +1691,7 @@ class Sensei_Utils {
 		$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 
 		// Quiz Grade
-		$lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 		$quiz_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
 
 		// Check if Grade is greater than or equal to pass percentage
@@ -1731,7 +1731,7 @@ class Sensei_Utils {
 				unset( $args['keep_time'] ); // Keep updating what's happened
 			}
 
-			$comment_id = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+			$comment_id = Sensei_Utils::sensei_log_activity( $args );
 			if ( $comment_id && !empty($metadata) ) {
 				foreach( $metadata as $key => $value ) {
 					update_comment_meta( $comment_id, $key, $value );
@@ -1769,7 +1769,7 @@ class Sensei_Utils {
 				unset( $args['keep_time'] ); // Keep updating what's happened
 			}
 
-			$comment_id = WooThemes_Sensei_Utils::sensei_log_activity( $args );
+			$comment_id = Sensei_Utils::sensei_log_activity( $args );
 			if ( $comment_id && !empty($metadata) ) {
 				foreach( $metadata as $key => $value ) {
 					update_comment_meta( $comment_id, $key, $value );

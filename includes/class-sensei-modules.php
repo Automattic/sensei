@@ -457,8 +457,8 @@ class Sensei_Core_Modules
         $course_id = $post->ID;
         $title_text = '';
 
-        if (method_exists('WooThemes_Sensei_Utils', 'is_preview_lesson') && WooThemes_Sensei_Utils::is_preview_lesson($lesson_id)) {
-            $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity(array('post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status'));
+        if (method_exists('Sensei_Utils', 'is_preview_lesson') && Sensei_Utils::is_preview_lesson($lesson_id)) {
+            $is_user_taking_course = Sensei_Utils::sensei_check_for_activity(array('post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status'));
             if (!$is_user_taking_course) {
                 if (method_exists('WooThemes_Sensei_Frontend', 'sensei_lesson_preview_title_text')) {
                     $title_text = Sensei()->frontend->sensei_lesson_preview_title_text($course_id);
@@ -795,7 +795,7 @@ class Sensei_Core_Modules
         $lesson_count = 0;
         $completed_count = 0;
         foreach ($lessons as $lesson_id) {
-            $completed = WooThemes_Sensei_Utils::user_completed_lesson($lesson_id, $user_id);
+            $completed = Sensei_Utils::user_completed_lesson($lesson_id, $user_id);
             ++$lesson_count;
             if ($completed) {
                 ++$completed_count;

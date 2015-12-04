@@ -281,7 +281,7 @@ class Sensei_Learners {
 			switch( $post_type ) {
 
 				case 'course':
-					$removed = WooThemes_Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
+					$removed = Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
 
                     if( ! empty( $order_id ) && Sensei_WC::is_woocommerce_active()  ){
 
@@ -296,7 +296,7 @@ class Sensei_Learners {
 				break;
 
 				case 'lesson':
-					$removed = WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
+					$removed = Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
 				break;
 
 			}
@@ -372,7 +372,7 @@ class Sensei_Learners {
 		switch( $post_type ) {
 			case 'course':
 
-				$result = WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+				$result = Sensei_Utils::user_start_course( $user_id, $course_id );
 
 				// Complete each lesson if course is set to be completed
 				if( isset( $_POST['add_complete_course'] ) && 'yes' == $_POST['add_complete_course'] ) {
@@ -380,11 +380,11 @@ class Sensei_Learners {
 					$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
 					foreach( $lesson_ids as $id ) {
-						WooThemes_Sensei_Utils::sensei_start_lesson( $id, $user_id, true );
+						Sensei_Utils::sensei_start_lesson( $id, $user_id, true );
 					}
 
 					// Updates the Course status and it's meta data
-					WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
+					Sensei_Utils::user_complete_course( $course_id, $user_id );
 
 					do_action( 'sensei_user_course_end', $user_id, $course_id );
 				}
@@ -398,10 +398,10 @@ class Sensei_Learners {
 					$complete = true;
 				}
 
-				$result = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $complete );
+				$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $complete );
 
 				// Updates the Course status and it's meta data
-				WooThemes_Sensei_Utils::user_complete_course( $course_id, $user_id );
+				Sensei_Utils::user_complete_course( $course_id, $user_id );
 
 			break;
 		}

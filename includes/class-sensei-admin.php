@@ -802,7 +802,7 @@ class Sensei_Admin {
 	 */
 	public function delete_user_activity( $user_id = 0 ) {
 		if( $user_id ) {
-			WooThemes_Sensei_Utils::delete_all_user_activity( $user_id );
+			Sensei_Utils::delete_all_user_activity( $user_id );
 		}
 	}
 

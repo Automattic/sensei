@@ -118,7 +118,7 @@ Class Sensei_WC{
      */
     public static function add_course_archive_wc_filter_links( $filter_links ){
 
-        $course_url = remove_query_arg('paged', WooThemes_Sensei_Utils::get_current_url() );
+        $course_url = remove_query_arg('paged', Sensei_Utils::get_current_url() );
 
         $free_courses = self::get_free_courses();
         $paid_courses = self::get_paid_courses();
@@ -217,7 +217,7 @@ Class Sensei_WC{
         /**
          * this hooks is documented within the WooCommerce plugin.
          */
-        if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+        if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
 
             do_action( 'woocommerce_before_single_product' );
 
@@ -399,7 +399,7 @@ Class Sensei_WC{
     public static function is_course_in_cart( $course_id ){
 
         $wc_post_id = absint( get_post_meta( $course_id, '_course_woocommerce_product', true ) );
-        $user_course_status_id = WooThemes_Sensei_Utils::user_started_course( $course_id , get_current_user_id() );
+        $user_course_status_id = Sensei_Utils::user_started_course( $course_id , get_current_user_id() );
 
         if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
 

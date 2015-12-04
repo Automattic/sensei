@@ -35,7 +35,7 @@ class Sensei_Grading_User_Quiz {
 	 * @return array
 	 */
 	public function build_data_array() {
-		$data_array = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
+		$data_array = Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
 		return $data_array;
 	} // End build_data_array()
 

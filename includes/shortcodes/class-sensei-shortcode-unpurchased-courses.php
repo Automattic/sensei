@@ -100,7 +100,7 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
             $course_product_id = get_post_meta( $course->ID, '_course_woocommerce_product',true );
             if( is_numeric( $course_product_id )
                 &&
-                ! WooThemes_Sensei_Utils::user_started_course( $course->ID , get_current_user_id()  )
+                ! Sensei_Utils::user_started_course( $course->ID , get_current_user_id()  )
             ){
 
                     $paid_courses_not_taken[] = $course->ID;

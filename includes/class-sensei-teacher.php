@@ -958,7 +958,7 @@ class Sensei_Teacher {
         foreach( $teacher_courses as $course ){
 
             $course_learner_ids = array();
-            $activity_comments =  WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course->ID, 'type' => 'sensei_course_status', 'field' => 'user_id' ), true );
+            $activity_comments =  Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course->ID, 'type' => 'sensei_course_status', 'field' => 'user_id' ), true );
 
             if( empty( $activity_comments ) ||  ( is_array( $activity_comments  ) && ! ( count( $activity_comments ) > 0 ) ) ){
                 continue; // skip to the next course as there are no users on this course

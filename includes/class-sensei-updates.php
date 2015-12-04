@@ -566,7 +566,7 @@ class Sensei_Updates {
 				$quiz_id = $quiz->ID;
 
 				// Get current user answers
-				$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
+				$comments = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
 				// Need to always return an array, even with only 1 item
 				if ( !is_array($comments) ) {
 					$comments = array( $comments );
@@ -578,7 +578,7 @@ class Sensei_Updates {
 				}
 
 				// Get correct answers
-				$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+				$questions = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 				if( is_array( $questions ) ) {
 					foreach( $questions as $question ) {
 						$right_answer = get_post_meta( $question->ID, '_question_right_answer', true );
@@ -608,11 +608,11 @@ class Sensei_Updates {
 					foreach( $answers as $answer_id => $user_answer ) {
 						$question_id = $answers_linkup[ $quiz_id ][ $answer_id ];
 						$new_user_answers[ $question_id ] = $user_answer;
-						WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, '', $user_answer, $user_id );
+						Sensei_Utils::sensei_grade_question_auto( $question_id, '', $user_answer, $user_id );
 					}
 					$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-					WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-					WooThemes_Sensei_Utils::sensei_save_quiz_answers( $new_user_answers, $user_id );
+					Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+					Sensei_Utils::sensei_save_quiz_answers( $new_user_answers, $user_id );
 				}
 			}
 		}
@@ -1531,7 +1531,7 @@ class Sensei_Updates {
 					'complete' => $lessons_completed,
 					'percent' => abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) ),
 				);
-				WooThemes_Sensei_Utils::update_course_status( $user_id, $course_id, $status, $metadata );
+				Sensei_Utils::update_course_status( $user_id, $course_id, $status, $metadata );
 				$count++;
 
 			} // per course status

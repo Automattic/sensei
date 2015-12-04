@@ -742,7 +742,7 @@ class Sensei_Question {
         }
 
         // Check again that the lesson is complete
-        $user_lesson_end = WooThemes_Sensei_Utils::user_completed_lesson( Sensei()->quiz->get_lesson_id( $quiz_id), get_current_user_id() );
+        $user_lesson_end = Sensei_Utils::user_completed_lesson( Sensei()->quiz->get_lesson_id( $quiz_id), get_current_user_id() );
         $user_lesson_complete = false;
         if ( $user_lesson_end ) {
             $user_lesson_complete = true;
@@ -760,7 +760,7 @@ class Sensei_Question {
         $data[ 'question_right_answer' ]  = get_post_meta( $question_id , '_question_right_answer', true );
         $data[ 'question_wrong_answers' ] = get_post_meta( $question_id , '_question_wrong_answers', true );
         $data[ 'user_answer_entry' ]      = Sensei()->quiz->get_user_question_answer( $lesson_id,  $question_id , get_current_user_id() );
-        $data[ 'lesson_completed' ]       = WooThemes_Sensei_Utils::user_completed_course( $lesson_id, get_current_user_id( ) );
+        $data[ 'lesson_completed' ]       = Sensei_Utils::user_completed_course( $lesson_id, get_current_user_id( ) );
         $data[ 'quiz_grade_type' ]        = get_post_meta( $quiz_id , '_quiz_grade_type', true );
         $data[ 'reset_quiz_allowed' ]     = $reset_allowed;
         $data[ 'lesson_complete' ]        = $user_lesson_complete;

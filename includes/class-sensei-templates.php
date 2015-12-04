@@ -525,7 +525,7 @@ class Sensei_Templates {
     public static function deprecate_sensei_lesson_course_signup_hook(){
 
         $lesson_course_id = get_post_meta( get_the_ID(), '_lesson_course', true );
-        $user_taking_course = WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
+        $user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
 
         if(  !$user_taking_course ) {
 

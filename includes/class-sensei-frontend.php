@@ -765,13 +765,13 @@ class Sensei_Frontend {
 			switch ($sanitized_submit) {
                 case 'lesson-complete':
 
-					WooThemes_Sensei_Utils::sensei_start_lesson( $post->ID, $current_user->ID, $complete = true );
+					Sensei_Utils::sensei_start_lesson( $post->ID, $current_user->ID, $complete = true );
 
 					break;
 
                 case 'lesson-reset':
 
-					WooThemes_Sensei_Utils::sensei_remove_user_from_lesson( $post->ID, $current_user->ID );
+					Sensei_Utils::sensei_remove_user_from_lesson( $post->ID, $current_user->ID );
 
 					$this->messages = '<div class="sensei-message note">' .  __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) . '</div>';
 					break;
@@ -802,7 +802,7 @@ class Sensei_Frontend {
 						'percent' => 0, // No completed lessons yet
 						'complete' => 0,
 					);
-					$activity_logged = WooThemes_Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'in-progress', $course_metadata );
+					$activity_logged = Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'in-progress', $course_metadata );
 
 					if ( $activity_logged ) {
 						// Get all course lessons
@@ -810,7 +810,7 @@ class Sensei_Frontend {
 						// Mark all quiz user meta lessons as complete
 						foreach ( $course_lesson_ids as $lesson_item_id ){
 							// Mark lesson as complete
-							$activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_item_id, $current_user->ID, $complete = true );
+							$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_item_id, $current_user->ID, $complete = true );
 						} // End For Loop
 
 						// Update with final stats
@@ -818,7 +818,7 @@ class Sensei_Frontend {
 							'percent' => 100,
 							'complete' => count($course_lesson_ids),
 						);
-						$activity_logged = WooThemes_Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'complete', $course_metadata );
+						$activity_logged = Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'complete', $course_metadata );
 
 						do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
 
@@ -830,7 +830,7 @@ class Sensei_Frontend {
 
 				case __( 'Delete Course', 'woothemes-sensei' ):
 
-					WooThemes_Sensei_Utils::sensei_remove_user_from_course( $sanitized_course_id, $current_user->ID );
+					Sensei_Utils::sensei_remove_user_from_course( $sanitized_course_id, $current_user->ID );
 
 					// Success message
 					$this->messages = '<header class="archive-header"><div class="sensei-message tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
@@ -857,7 +857,7 @@ class Sensei_Frontend {
 		if ( 0 < intval( $lesson_id ) ) {
 			$lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $lesson_id );
 			foreach( $lesson_quiz_questions as $question ) {
-				$answer = maybe_unserialize( base64_decode( WooThemes_Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_user_answer', 'field' => 'comment_content' ) ) ) );
+				$answer = maybe_unserialize( base64_decode( Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $question->ID, 'user_id' => $current_user->ID, 'type' => 'sensei_user_answer', 'field' => 'comment_content' ) ) ) );
 				$user_answers[ $question->ID ] = $answer;
 			}
 		}
@@ -867,7 +867,7 @@ class Sensei_Frontend {
 
 	public function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
 		_deprecated_function( __FUNCTION__, '1.7', "WooThemes_Sensei_Utils::user_completed_lesson()" );
-		return WooThemes_Sensei_Utils::user_completed_lesson( $post_id, $user_id );
+		return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_lesson()
 
 	public function sensei_frontend_messages() {
@@ -1124,7 +1124,7 @@ class Sensei_Frontend {
 		$preview_text = __( ' (Preview)', 'woothemes-sensei' );
 
 		//if this is a paid course
-		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+		if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
     	    $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
     	    	$preview_text = __( ' (Free Preview)', 'woothemes-sensei' );
@@ -1147,7 +1147,7 @@ class Sensei_Frontend {
 				$course_id = get_post_meta( $post->ID, '_lesson_course', true );
 
 				// Check if the user is taking the course
-				if( is_singular( 'lesson' ) && WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) && ! WooThemes_Sensei_Utils::user_started_course( $course_id, $current_user->ID ) && $post->ID == $id ) {
+				if( is_singular( 'lesson' ) && Sensei_Utils::is_preview_lesson( $post->ID ) && ! Sensei_Utils::user_started_course( $course_id, $current_user->ID ) && $post->ID == $id ) {
 					$title .= ' ' . $this->sensei_lesson_preview_title_text( $course_id );
 				}
 			}
@@ -1159,14 +1159,14 @@ class Sensei_Frontend {
 		global $post, $current_user;
 
 		// Check if the user is taking the course
-		$is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
+		$is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
 		// Handle user starting the course
 		if ( isset( $_POST['course_start'] )
 		    && wp_verify_nonce( $_POST[ 'woothemes_sensei_start_course_noonce' ], 'woothemes_sensei_start_course_noonce' )
 		    && !$is_user_taking_course ) {
 
 			// Start the course
-			$activity_logged = WooThemes_Sensei_Utils::user_start_course( $current_user->ID, $post->ID );
+			$activity_logged = Sensei_Utils::user_start_course( $current_user->ID, $post->ID );
 			$this->data = new stdClass();
 			$this->data->is_user_taking_course = false;
 			if ( $activity_logged ) {
@@ -1210,7 +1210,7 @@ class Sensei_Frontend {
 		global $post, $woocommerce;
 
 		$wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
-        $user_course_status_id = WooThemes_Sensei_Utils::user_started_course($post->ID , get_current_user_id() );
+        $user_course_status_id = Sensei_Utils::user_started_course($post->ID , get_current_user_id() );
 		if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
 
 			if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
@@ -1284,7 +1284,7 @@ class Sensei_Frontend {
 						foreach( $course_ids as $course_id ) {
 
 							// Remove all course user meta
-							WooThemes_Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
+							Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
 
 						} // End For Loop
 					} // End If Statement
@@ -1304,7 +1304,7 @@ class Sensei_Frontend {
 
 		if( $user_id ) {
 
-			if( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+			if( Sensei_Utils::sensei_is_woocommerce_activated() ) {
 
 				// Get all user's orders
 				$order_args = array(
@@ -1372,10 +1372,10 @@ class Sensei_Frontend {
 
 					foreach( $course_ids as $course_id ) {
 
-						$user_course_status = WooThemes_Sensei_Utils::user_course_status( intval($course_id), $user_id );
+						$user_course_status = Sensei_Utils::user_course_status( intval($course_id), $user_id );
 
 						// Ignore course if already completed
-						if( WooThemes_Sensei_Utils::user_completed_course( $user_course_status ) ) {
+						if( Sensei_Utils::user_completed_course( $user_course_status ) ) {
 							continue;
 						}
 
@@ -1385,7 +1385,7 @@ class Sensei_Frontend {
 						}
 
 						// Mark course as started by user
-						WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+						Sensei_Utils::user_start_course( $user_id, $course_id );
 					}
 				}
 
@@ -1406,7 +1406,7 @@ class Sensei_Frontend {
 	public function activate_purchased_single_course() {
 		global $post, $current_user;
 
-		if( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+		if( Sensei_Utils::sensei_is_woocommerce_activated() ) {
 
 			if( ! is_user_logged_in() ) return;
 			if( ! isset( $post->ID ) ) return;
@@ -1418,10 +1418,10 @@ class Sensei_Frontend {
 				return;
 			}
 
-			$user_course_status = WooThemes_Sensei_Utils::user_course_status( intval($course_id), $user_id );
+			$user_course_status = Sensei_Utils::user_course_status( intval($course_id), $user_id );
 
 			// Ignore course if already completed
-			if( WooThemes_Sensei_Utils::user_completed_course( $user_course_status ) ) {
+			if( Sensei_Utils::user_completed_course( $user_course_status ) ) {
 
 				return;
 			}
@@ -1464,7 +1464,7 @@ class Sensei_Frontend {
                         foreach( $bundled_items as $item ){
 
                             if( $item->product_id == $course_product_id ) {
-                                WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+                                Sensei_Utils::user_start_course( $user_id, $course_id );
                                 return;
                             }
 
@@ -1474,7 +1474,7 @@ class Sensei_Frontend {
 
                     // handle regular products
                         if( $item['product_id'] == $course_product_id ) {
-                            WooThemes_Sensei_Utils::user_start_course( $user_id, $course_id );
+                            Sensei_Utils::user_start_course( $user_id, $course_id );
                             return;
                         }
 

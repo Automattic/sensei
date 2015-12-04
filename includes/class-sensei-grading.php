@@ -547,7 +547,7 @@ class Sensei_Grading {
         $user_id = $_GET['user'];
 
 
-        $questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+        $questions = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
         $quiz_lesson_id =  Sensei()->quiz->get_lesson_id( $quiz_id );
         $quiz_grade = 0;
         $count = 0;
@@ -605,7 +605,7 @@ class Sensei_Grading {
 			else {
 				$grade = 0;
 			}
-            WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
+            Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
 
             // Duplicating what Frontend->sensei_complete_quiz() does
             $pass_required = get_post_meta( $quiz_id, '_pass_required', true );
@@ -626,7 +626,7 @@ class Sensei_Grading {
             }
             $lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz()" above
 
-            WooThemes_Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
+            Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
 
             if(  in_array( $lesson_status, array( 'passed', 'graded'  ) ) ) {
 
@@ -764,7 +764,7 @@ class Sensei_Grading {
 			}
             elseif ( in_array( $question_type, $autogradable_question_types ) ) {
                 // Get user question grade
-                $question_grade = WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
+                $question_grade = Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
                 $all_question_grades[ $question_id ] = $question_grade;
                 $grade_total += $question_grade;
 
@@ -780,7 +780,7 @@ class Sensei_Grading {
         // Only if the whole quiz was autogradable do we set a grade
         if ( $quiz_autogradable ) {
 
-            $quiz_total = WooThemes_Sensei_Utils::sensei_get_quiz_total( $quiz_id );
+            $quiz_total = Sensei_Utils::sensei_get_quiz_total( $quiz_id );
 			// Check for zero total from grades
 			if ( 0 < $quiz_total ) {
             $grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
@@ -788,7 +788,7 @@ class Sensei_Grading {
 			else {
 				$grade = 0;
 			}
-            WooThemes_Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
+            Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
 
         } else {
 

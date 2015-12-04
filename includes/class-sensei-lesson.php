@@ -497,7 +497,7 @@ class Sensei_Lesson {
         foreach( $courses as $course ){
             $courses_options[ $course->ID ] = get_the_title( $course ) ;
         }
-        $html .= WooThemes_Sensei_Utils::generate_drop_down( $selected_lesson_course, $courses_options, $drop_down_args );
+        $html .= Sensei_Utils::generate_drop_down( $selected_lesson_course, $courses_options, $drop_down_args );
 
         // Course Actions Panel
 		if ( current_user_can( 'publish_courses' )) {
@@ -525,7 +525,7 @@ class Sensei_Lesson {
 							} // End For Loop
 						$html .= '</select>' . "\n";
 						// Course Product
-	  					if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+                        if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
 	  						// Get the Products
 							$select_course_woocommerce_product = get_post_meta( $post_item->ID, '_course_woocommerce_product', true );
 
@@ -2561,7 +2561,7 @@ class Sensei_Lesson {
         }
 
         // get the users current status on the lesson
-        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
+        $user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
 
 		// Set the default question order if it has not already been set for this quiz
 		$this->set_default_question_order( $quiz_id );
@@ -2960,7 +2960,7 @@ class Sensei_Lesson {
                     //pre-append the no change option
                     $course_options['-1']=  $no_change_text;
                     $course_attributes = array( 'name'=> 'lesson_course', 'id'=>'sensei-edit-lesson-course' , 'class'=>' ' );
-                    $course_field =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $course_options, $course_attributes );
+                    $course_field =  Sensei_Utils::generate_drop_down( '-1', $course_options, $course_attributes );
                     echo $this->generate_all_lessons_edit_field( __('Lesson Course', 'woothemes-sensei'),   $course_field  );
 
                     //
@@ -2970,7 +2970,7 @@ class Sensei_Lesson {
                     //pre-append the no change option
                     $lesson_complexities['-1']=  $no_change_text;
                     $complexity_dropdown_attributes = array( 'name'=> 'lesson_complexity', 'id'=>'sensei-edit-lesson-complexity' , 'class'=>' ');
-                    $complexity_filed =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $lesson_complexities, $complexity_dropdown_attributes );
+                    $complexity_filed =  Sensei_Utils::generate_drop_down( '-1', $lesson_complexities, $complexity_dropdown_attributes );
                     echo $this->generate_all_lessons_edit_field( __('Lesson Complexity', 'woothemes-sensei'),   $complexity_filed  );
 
                     ?>
@@ -2991,7 +2991,7 @@ class Sensei_Lesson {
                     $pass_required_select_attributes = array( 'name'=> 'pass_required',
                                                                 'id'=> 'sensei-edit-lesson-pass-required',
                                                                 'class'=>' '   );
-                    $require_pass_field =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
+                    $require_pass_field =  Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
                     echo $this->generate_all_lessons_edit_field( __('Pass required', 'woothemes-sensei'),   $require_pass_field  );
 
                     //
@@ -3010,7 +3010,7 @@ class Sensei_Lesson {
                     );
                     $quiz_reset_name_id = 'sensei-edit-enable-quiz-reset';
                     $quiz_reset_select_attributes = array( 'name'=> 'enable_quiz_reset', 'id'=>$quiz_reset_name_id, 'class'=>' ' );
-                    $quiz_reset_field =  WooThemes_Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
+                    $quiz_reset_field =  Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
                     echo $this->generate_all_lessons_edit_field( __('Enable quiz reset button', 'woothemes-sensei'), $quiz_reset_field  );
 
                     ?>
@@ -3180,7 +3180,7 @@ class Sensei_Lesson {
             if ( is_user_logged_in() ) {
 
                 // Check if Lesson is complete
-                $single_lesson_complete = WooThemes_Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
+                $single_lesson_complete = Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
                 if ( $single_lesson_complete ) {
 
                     $lesson_classes[] = 'lesson-completed';
@@ -3189,8 +3189,8 @@ class Sensei_Lesson {
 
             } // End If Statement
 
-            $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
-            if (  WooThemes_Sensei_Utils::is_preview_lesson( get_the_ID() ) && !$is_user_taking_course ) {
+            $is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+            if (  Sensei_Utils::is_preview_lesson( get_the_ID() ) && !$is_user_taking_course ) {
 
                 $lesson_classes[] = 'lesson-preview';
 
@@ -3217,7 +3217,7 @@ class Sensei_Lesson {
 
         $course_id = Sensei()->lesson->get_course_id( $lesson_id );
         $single_lesson_complete = false;
-        $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+        $is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
 
         // Get Lesson data
         $complexity_array = Sensei()->lesson->lesson_complexities();
@@ -3229,7 +3229,7 @@ class Sensei_Lesson {
 
         }
         $user_info = get_userdata( absint( get_post()->post_author ) );
-        $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $lesson_id);
+        $is_preview = Sensei_Utils::is_preview_lesson( $lesson_id);
         $preview_label = '';
         if ( $is_preview && !$is_user_taking_course ) {
 
@@ -3268,7 +3268,7 @@ class Sensei_Lesson {
                 <?php
 
                 $meta_html = '';
-                $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( get_the_ID(), get_current_user_id() );
+                $user_lesson_status = Sensei_Utils::user_lesson_status( get_the_ID(), get_current_user_id() );
 
                 $lesson_length = get_post_meta( $lesson_id, '_lesson_length', true );
                 if ( '' != $lesson_length ) {
@@ -3427,10 +3427,10 @@ class Sensei_Lesson {
             return;
         }
 
-        $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $lesson_id );
+        $is_preview = Sensei_Utils::is_preview_lesson( $lesson_id );
         $pre_requisite_complete = self::is_prerequisite_complete( $lesson_id , get_current_user_id() );
         $lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-        $user_taking_course = WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
+        $user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
 
         if ( $pre_requisite_complete && $is_preview && !$user_taking_course ) {
             ?>
@@ -3474,7 +3474,7 @@ class Sensei_Lesson {
                 if( is_user_logged_in() ) {
                     wp_get_current_user();
 
-                    $course_purchased = WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id );
+                    $course_purchased = Sensei_Utils::sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id );
 
                     if( $course_purchased ) {
 
@@ -3652,13 +3652,13 @@ class Sensei_Lesson {
         $lesson_prerequisite       = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
         $lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
         $quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
-        $has_user_completed_lesson = WooThemes_Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
+        $has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
         $show_actions              = is_user_logged_in() ? true : false;
 
         if( intval( $lesson_prerequisite ) > 0 ) {
 
             // If the user hasn't completed the prereq then hide the current actions
-            $show_actions = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
+            $show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
 
         }
         ?>
@@ -3745,18 +3745,18 @@ class Sensei_Lesson {
         $user_id                   = empty( $lesson_id ) ?  get_current_user_id() : $user_id;
         $lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
         $quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
-        $has_user_completed_lesson = WooThemes_Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
+        $has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
 
 
         if ( $quiz_id && is_user_logged_in()
-            && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $user_id ) ) {
+            && Sensei_Utils::user_started_course( $lesson_course_id, $user_id ) ) {
 
             $no_quiz_count = 0;
             $has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
 
             // Display lesson quiz status message
             if ( $has_user_completed_lesson || $has_quiz_questions ) {
-                $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, $user_id, true );
+                $status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, $user_id, true );
                 echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
                 if( $has_quiz_questions ) {
                    // echo $status['extra'];

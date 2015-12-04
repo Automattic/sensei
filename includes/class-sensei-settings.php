@@ -99,7 +99,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description'	=> __( 'Settings for public Learner Profiles.', 'woothemes-sensei' )
 		);
 
-		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() ) {
+		if ( Sensei_Utils::sensei_is_woocommerce_present() ) {
 			$sections['woocommerce-settings'] = array(
 				'name' 			=> __( 'WooCommerce', 'woothemes-sensei' ),
 				'description'	=> __( 'Optional settings for WooCommerce functions.', 'woothemes-sensei' )

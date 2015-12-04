@@ -178,13 +178,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
         // start the lesson before saving the data in case the user has not started the lesson
-        $activity_logged = WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+        $activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		//prepare the answers
 		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers , $files );
 
 		// save the user data
-        $answers_saved = WooThemes_Sensei_Utils::add_user_data( 'quiz_answers', $lesson_id, $prepared_answers, $user_id ) ;
+        $answers_saved = Sensei_Utils::add_user_data( 'quiz_answers', $lesson_id, $prepared_answers, $user_id ) ;
 
 		// were the answers saved correctly?
 		if( intval( $answers_saved ) > 0){
@@ -236,7 +236,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         }else{
 
-            $encoded_user_answers = WooThemes_Sensei_Utils::get_user_data( 'quiz_answers', $lesson_id  , $user_id );
+            $encoded_user_answers = Sensei_Utils::get_user_data( 'quiz_answers', $lesson_id  , $user_id );
 
         } // end if transient check
 
@@ -352,7 +352,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         // Get latest quiz answers and grades
         $lesson_id = Sensei()->quiz->get_lesson_id( $post->ID );
         $user_quizzes = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
-        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
+        $user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
         $user_quiz_grade = 0;
         if( isset( $user_lesson_status->comment_ID ) ) {
             $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
@@ -361,7 +361,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         if ( ! is_array($user_quizzes) ) { $user_quizzes = array(); }
 
         // Check again that the lesson is complete
-        $user_lesson_end = WooThemes_Sensei_Utils::user_completed_lesson( $user_lesson_status );
+        $user_lesson_end = Sensei_Utils::user_completed_lesson( $user_lesson_status );
         $user_lesson_complete = false;
         if ( $user_lesson_end ) {
             $user_lesson_complete = true;
@@ -427,7 +427,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             }elseif( 'file-upload' == $question_type  ){
                 $file_key = 'file_upload_' . $question_id;
                 if( isset( $files[ $file_key ] ) ) {
-                        $attachment_id = WooThemes_Sensei_Utils::upload_file(  $files[ $file_key ] );
+                        $attachment_id = Sensei_Utils::upload_file(  $files[ $file_key ] );
                         if( $attachment_id ) {
                             $answer = $attachment_id;
                         }
@@ -466,7 +466,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
         //get the users lesson status to make
-        $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+        $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
         if( ! isset( $user_lesson_status->comment_ID ) ) {
             // this user is not taking this lesson so this process is not needed
             return false;
@@ -485,17 +485,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         delete_transient( $answers_feedback_transient_key );
 
         // reset the quiz answers and feedback notes
-        $deleted_answers = WooThemes_Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
-        $deleted_grades = WooThemes_Sensei_Utils::delete_user_data( 'quiz_grades', $lesson_id, $user_id );
-        $deleted_user_feedback = WooThemes_Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
+        $deleted_answers = Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
+        $deleted_grades = Sensei_Utils::delete_user_data( 'quiz_grades', $lesson_id, $user_id );
+        $deleted_user_feedback = Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
 
         // Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
-        WooThemes_Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
+        Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
 
-        WooThemes_Sensei_Utils::update_lesson_status( $user_id , $lesson_id, 'in-progress', array( 'questions_asked' => '', 'grade' => '' ) );
+        Sensei_Utils::update_lesson_status( $user_id , $lesson_id, 'in-progress', array( 'questions_asked' => '', 'grade' => '' ) );
 
         // Update course completion
-        WooThemes_Sensei_Utils::update_course_status( $user_id, $course_id );
+        Sensei_Utils::update_course_status( $user_id, $course_id );
 
         // Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
         do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
@@ -559,7 +559,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          // This is to ensure we save the questions that we've asked this user and that this can't be change unless
          // the quiz is reset by admin or user( user: only if the setting is enabled ).
          // get the questions asked when when the quiz questions were generated for the user : Sensei_Lesson::lesson_quiz_questions
-         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+         $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
          $questions_asked = get_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', true );
          if( empty( $questions_asked ) ){
 
@@ -612,7 +612,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          } // end if ! is_wp_error( $grade ...
 
-         WooThemes_Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $lesson_status, $lesson_metadata );
+         Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $lesson_status, $lesson_metadata );
 
          if( 'passed' == $lesson_status || 'graded' == $lesson_status ){
 
@@ -682,7 +682,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          ||  ! is_array( $users_answers ) || ! isset( $users_answers[ $question_id ] ) ){
 
              //Fallback for pre 1.7.4 data
-             $comment =  WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ), true );
+             $comment =  Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ), true );
 
              if( ! isset( $comment->comment_content ) ){
                  return false;
@@ -732,7 +732,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          $success = false;
 
          // save that data for the user on the lesson comment meta
-         $comment_meta_id = WooThemes_Sensei_Utils::add_user_data( 'quiz_grades', $lesson_id, $quiz_grades, $user_id   );
+         $comment_meta_id = Sensei_Utils::add_user_data( 'quiz_grades', $lesson_id, $quiz_grades, $user_id   );
 
          // were the grades save successfully ?
          if( intval( $comment_meta_id ) > 0 ) {
@@ -780,7 +780,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          // get the data if nothing was stored in the transient
          if( empty( $user_grades  ) || false != $user_grades ){
 
-             $user_grades = WooThemes_Sensei_Utils::get_user_data( 'quiz_grades', $lesson_id, $user_id );
+             $user_grades = Sensei_Utils::get_user_data( 'quiz_grades', $lesson_id, $user_id );
 
              //set the transient with the new valid data for faster retrieval in future
              set_transient( $transient_key,  $user_grades, 10 * DAY_IN_SECONDS );
@@ -834,7 +834,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                  'type'    => 'sensei_user_answer'
              );
 
-             $question_activity = WooThemes_Sensei_Utils::sensei_check_for_activity( $args , true );
+             $question_activity = Sensei_Utils::sensei_check_for_activity( $args , true );
              $fall_back_grade = false;
              if( isset( $question_activity->comment_ID ) ){
                  $fall_back_grade = get_comment_meta(  $question_activity->comment_ID , 'user_grade', true );
@@ -880,8 +880,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
         // check if the lesson is started before saving, if not start the lesson for the user
-        if ( !( 0 < intval( WooThemes_Sensei_Utils::user_started_lesson( $lesson_id, $user_id) ) ) ) {
-            WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+        if ( !( 0 < intval( Sensei_Utils::user_started_lesson( $lesson_id, $user_id) ) ) ) {
+            Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
         }
 
         // encode the feedback
@@ -891,7 +891,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         }
 
         // save the user data
-        $feedback_saved = WooThemes_Sensei_Utils::add_user_data( 'quiz_answers_feedback', $lesson_id , $encoded_answers_feedback, $user_id ) ;
+        $feedback_saved = Sensei_Utils::add_user_data( 'quiz_answers_feedback', $lesson_id , $encoded_answers_feedback, $user_id ) ;
 
         //Were the the question feedback save correctly?
         if( intval( $feedback_saved ) > 0){
@@ -944,7 +944,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          // get the data if nothing was stored in the transient
          if( empty( $encoded_feedback  ) || !$encoded_feedback ){
 
-             $encoded_feedback = WooThemes_Sensei_Utils::get_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
+             $encoded_feedback = Sensei_Utils::get_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
 
              //set the transient with the new valid data for faster retrieval in future
              set_transient( $transient_key,  $encoded_feedback, 10 * DAY_IN_SECONDS);
@@ -1009,7 +1009,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                  'user_id' => $user_id,
                  'type'    => 'sensei_user_answer'
              );
-             $question_activity = WooThemes_Sensei_Utils::sensei_check_for_activity( $args , true );
+             $question_activity = Sensei_Utils::sensei_check_for_activity( $args , true );
 
              // set the default to false and return that if no old data is available.
              if( isset( $question_activity->comment_ID ) ){
@@ -1198,7 +1198,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     public static function  the_user_status_message( $quiz_id ){
 
         $lesson_id =  Sensei()->quiz->get_lesson_id( $quiz_id );
-        $status = WooThemes_Sensei_Utils::sensei_user_quiz_status_message( $lesson_id , get_current_user_id() );
+        $status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id , get_current_user_id() );
         echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
 
     }
@@ -1230,7 +1230,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          $lesson_course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
          $lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
          $show_actions = true;
-         $user_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
+         $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
 
          //setup quiz grade
          $user_quiz_grade = '';
@@ -1242,10 +1242,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          if( intval( $lesson_prerequisite ) > 0 ) {
 
              // If the user hasn't completed the prereq then hide the current actions
-             $show_actions = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $current_user->ID );
+             $show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $current_user->ID );
 
          }
-         if ( $show_actions && is_user_logged_in() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
+         if ( $show_actions && is_user_logged_in() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
 
              // Get Reset Settings
              $reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true ); ?>

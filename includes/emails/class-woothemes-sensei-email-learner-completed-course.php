@@ -48,7 +48,7 @@ class WooThemes_Sensei_Email_Learner_Completed_Course {
 
 		// Get passed status
 		$passed = __( 'passed', 'woothemes-sensei' );
-		if( ! WooThemes_Sensei_Utils::sensei_user_passed_course( $course_id, $user_id ) ) {
+		if( ! Sensei_Utils::sensei_user_passed_course( $course_id, $user_id ) ) {
 			$passed = __( 'failed', 'woothemes-sensei' );
 		}
 

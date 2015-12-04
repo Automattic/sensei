@@ -289,7 +289,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				break;
 
 			case 'lessons' :
-				$lesson_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_lesson_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status', 'status' => 'any' ) ) );
+				$lesson_learners = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_lesson_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
@@ -308,7 +308,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			case 'courses' :
 			default:
-                $course_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_course_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
+                $course_learners = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_course_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
@@ -447,13 +447,13 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		$activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$total_learners = WooThemes_Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
+		$total_learners = Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $total_learners < $activity_args['offset'] ) {
 			$new_paged = floor( $total_learners / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
-		$learners = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		$learners = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 		// Need to always return an array, even with only 1 item
 		if ( !is_array($learners) ) {
 			$learners = array( $learners );

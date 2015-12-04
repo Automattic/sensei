@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 <?php
 
-    WooThemes_Sensei_Utils::sensei_text_editor( $question_data[ 'user_answer_entry' ]  ,
+    Sensei_Utils::sensei_text_editor( $question_data[ 'user_answer_entry' ]  ,
                                                 'textquestion' . $question_data[ 'ID' ] ,
                                                 'sensei_question[' . $question_data[ 'ID' ] . ']' );
 

@@ -663,20 +663,20 @@ class Sensei_Main {
         // This doesn't appear to be purely WooCommerce related. Should it be in a separate function?
         $course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true );
         if( 0 < absint( $course_prerequisite_id ) ) {
-            $prereq_course_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, intval( $user_id ) );
+            $prereq_course_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, intval( $user_id ) );
             if ( ! $prereq_course_complete ) {
                 // Remove all course user meta
-                return WooThemes_Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
+                return Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
             }
         }
 
-        $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
+        $is_user_taking_course = Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
 
         if( ! $is_user_taking_course ) {
 
-            if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && WooThemes_Sensei_Utils::sensei_customer_bought_product( $user_email, $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) ) {
+            if ( Sensei_Utils::sensei_is_woocommerce_activated() && Sensei_Utils::sensei_customer_bought_product( $user_email, $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) ) {
 
-                $activity_logged = WooThemes_Sensei_Utils::user_start_course( intval( $user_id), intval( $course_id ) );
+                $activity_logged = Sensei_Utils::user_start_course( intval( $user_id), intval( $course_id ) );
 
                 $is_user_taking_course = false;
                 if ( true == $activity_logged ) {
@@ -722,7 +722,7 @@ class Sensei_Main {
                 // Count completed lessons
                 if ( 0 < absint( $course_prerequisite_id ) ) {
 
-                    $prerequisite_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
+                    $prerequisite_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
 
                 }
                 else {
@@ -742,8 +742,8 @@ class Sensei_Main {
                 $lesson_course_id = get_post_meta( $post->ID, '_lesson_course',true );
 
                 $update_course = $this->woocommerce_course_update( $lesson_course_id );
-                $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( $post->ID );
-                if ( $this->access_settings() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
+                $is_preview = Sensei_Utils::is_preview_lesson( $post->ID );
+                if ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
                     $user_allowed = true;
                 } elseif( $this->access_settings() && false == $is_preview ) {
 
@@ -752,7 +752,7 @@ class Sensei_Main {
                     $this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
                     $course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
                     $wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
-                    if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+                    if ( Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
                         if ( $is_preview ) {
                             $this->permissions_message['message'] = sprintf( __('This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
                         } else {
@@ -773,11 +773,11 @@ class Sensei_Main {
                 $lesson_course_id = get_post_meta( $lesson_id, '_lesson_course',true );
 
                 $update_course = $this->woocommerce_course_update( $lesson_course_id );
-                if ( ( $this->access_settings() && WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) || sensei_all_access() ) {
+                if ( ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) || sensei_all_access() ) {
 
                     // Check for prerequisite lesson for this quiz
                     $lesson_prerequisite_id = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true);
-                    $user_lesson_prerequisite_complete = WooThemes_Sensei_Utils::user_completed_lesson( $lesson_prerequisite_id, $current_user->ID);
+                    $user_lesson_prerequisite_complete = Sensei_Utils::user_completed_lesson( $lesson_prerequisite_id, $current_user->ID);
 
                     // Handle restrictions
                     if( sensei_all_access() ) {
@@ -794,13 +794,13 @@ class Sensei_Main {
                 } elseif( $this->access_settings() ) {
                     // Check if the user has started the course
 
-                    if ( is_user_logged_in() && ! WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) && ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) ) {
+                    if ( is_user_logged_in() && ! Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) && ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) ) {
 
                         $user_allowed = false;
                         $this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
                         $course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
                         $wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
-                        if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+                        if ( Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
                             $this->permissions_message['message'] = sprintf( __('Please purchase the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
                         } else {
                             $this->permissions_message['message'] = sprintf( __('Please sign up for the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
@@ -836,7 +836,7 @@ class Sensei_Main {
         $this->permissions_message = apply_filters( 'sensei_permissions_message', $this->permissions_message, $post->ID );
 
 
-        if( sensei_all_access() || WooThemes_Sensei_Utils::is_preview_lesson( $post->ID ) ) {
+        if( sensei_all_access() || Sensei_Utils::is_preview_lesson( $post->ID ) ) {
             $user_allowed = true;
         }
 
@@ -875,7 +875,7 @@ class Sensei_Main {
     public function sensei_woocommerce_complete_order ( $order_id = 0 ) {
         $order_user = array();
         // Check for WooCommerce
-        if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $order_id ) ) {
+        if ( Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $order_id ) ) {
             // Get order object
             $order = new WC_Order( $order_id );
             $user = get_user_by( 'id', $order->user_id );
@@ -943,7 +943,7 @@ class Sensei_Main {
                 // Loop and update those courses
                 foreach ($courses as $course_item){
                     // Check and Remove course from courses user meta
-                    $dataset_changes = WooThemes_Sensei_Utils::sensei_remove_user_from_course( $course_item->ID, $user_id );
+                    $dataset_changes = Sensei_Utils::sensei_remove_user_from_course( $course_item->ID, $user_id );
                 } // End For Loop
             } // End For Loop
         } // End If Statement
