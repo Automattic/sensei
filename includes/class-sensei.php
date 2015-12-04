@@ -151,7 +151,6 @@ class Sensei_Main {
         $this->template_url	= apply_filters( 'sensei_template_url', 'sensei/' );
         $this->permissions_message = array( 'title' => __( 'Permission Denied', 'woothemes-sensei' ), 'message' => __( 'Unfortunately you do not have permissions to access this page.', 'woothemes-sensei' ) );
 
-
         // Initialize the core Sensei functionality
         $this->init();
 
@@ -162,14 +161,14 @@ class Sensei_Main {
         register_activation_hook( $this->file, array( $this, 'activation' ) );
 
         // Setup post types.
-        $this->post_types = new WooThemes_Sensei_PostTypes();
+        $this->post_types = new Sensei_PostTypes();
         $this->post_types->token = 'woothemes-sensei-posttypes';
 
         // Lad the updates class
         $this->updates = new WooThemes_Sensei_Updates( $this );
 
         // Setup settings screen.
-        $this->settings = new WooThemes_Sensei_Settings();
+        $this->settings = new Sensei_Settings();
         $this->settings->token = 'woothemes-sensei-settings';
 
         // Setup Admin Settings data
@@ -186,7 +185,7 @@ class Sensei_Main {
         $this->settings->get_settings();
 
         // Load Course Results Class
-        $this->course_results = new WooThemes_Sensei_Course_Results();
+        $this->course_results = new Sensei_Course_Results();
         $this->course_results->token = $this->token;
 
         // Load the teacher role
@@ -208,7 +207,7 @@ class Sensei_Main {
         add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
 
         // Load Learner Management Functionality
-        $this->learners = new WooThemes_Sensei_Learners( $file );
+        $this->learners = new Sensei_Learners( $file );
         $this->learners->token = $this->token;
 
         // Differentiate between administration and frontend logic.
@@ -218,36 +217,36 @@ class Sensei_Main {
             new Sensei_Welcome();
 
             // Load Admin Class
-            $this->admin = new WooThemes_Sensei_Admin( $file );
+            $this->admin = new Sensei_Admin( $file );
             $this->admin->token = $this->token;
 
             // Load Analysis Reports
-            $this->analysis = new WooThemes_Sensei_Analysis( $file );
+            $this->analysis = new Sensei_Analysis( $file );
             $this->analysis->token = $this->token;
 
 
         } else {
 
             // Load Frontend Class
-            $this->frontend = new WooThemes_Sensei_Frontend();
+            $this->frontend = new Sensei_Frontend();
             $this->frontend->token = $this->token;
             $this->frontend->init();
 
             // Load notice Class
-            $this->notices = new WooThemes_Sensei_Notices();
+            $this->notices = new Sensei_Notices();
 
         }
 
         // Load Grading Functionality
-        $this->grading = new WooThemes_Sensei_Grading( $file );
+        $this->grading = new Sensei_Grading( $file );
         $this->grading->token = $this->token;
 
         // Load Email Class
-        $this->emails = new WooThemes_Sensei_Emails( $file );
+        $this->emails = new Sensei_Emails( $file );
         $this->emails->token = $this->token;
 
         // Load Learner Profiles Class
-        $this->learner_profiles = new WooThemes_Sensei_Learner_Profiles();
+        $this->learner_profiles = new Sensei_Learner_Profiles();
         $this->learner_profiles->token = $this->token;
 
         // Image Sizes
