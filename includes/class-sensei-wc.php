@@ -803,9 +803,9 @@ Class Sensei_WC{
 
         ?>
 
-        <p class="add-to-cart-login">
+        <span class="add-to-cart-login">
             <?php echo sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link ); ?>
-        </p>
+        </span>
 
     <?php }
 
