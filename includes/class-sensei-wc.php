@@ -896,4 +896,23 @@ Class Sensei_WC{
 
     }
 
+    /**
+     * Alter the body classes adding WooCommerce to the body
+     *
+     * @param array $classes
+     * @return array
+     */
+    public static function add_woocommerce_body_class( $classes ){
+
+        if( ! in_array( 'woocommerce', $classes ) ){
+
+            $classes[] ='woocommerce';
+
+        }
+
+
+        return $classes;
+
+    }
+
 }// end Sensei_WC
