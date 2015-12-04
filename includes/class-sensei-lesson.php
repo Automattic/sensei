@@ -525,7 +525,7 @@ class Sensei_Lesson {
 							} // End For Loop
 						$html .= '</select>' . "\n";
 						// Course Product
-                        if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+                        if ( Sensei_WC::is_woocommerce_active() ) {
 	  						// Get the Products
 							$select_course_woocommerce_product = get_post_meta( $post_item->ID, '_course_woocommerce_product', true );
 

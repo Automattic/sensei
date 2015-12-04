@@ -26,27 +26,23 @@ class Sensei_Utils {
 
 	/**
 	 * Check if WooCommerce is present.
+     *
+     * @deprecated since 1.9.0 use Sensei_WC::is_woocommerce_present()
 	 * @access public
 	 * @since  1.0.2
 	 * @static
-	 * @return void
+	 * @return bool
 	 */
 	public static function sensei_is_woocommerce_present () {
-		if ( class_exists( 'Woocommerce' ) ) {
-			return true;
-		} else {
-			$active_plugins = apply_filters( 'active_plugins', get_option('active_plugins' ) );
-			if ( is_array( $active_plugins ) && in_array( 'woocommerce/woocommerce.php', $active_plugins ) ) {
-				return true;
-			} else {
-				return false;
-			} // End If Statement
-		} // End If Statement
+
+        return Sensei_WC::is_woocommerce_present();
+
 	} // End sensei_is_woocommerce_present()
 
 	/**
 	 * Check if WooCommerce is active.
      *
+     * @deprecated since 1.9.0 use Sensei_WC::is_woocommerce_active
 	 * @access public
 	 * @since  1.0.2
 	 * @static
@@ -54,7 +50,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_is_woocommerce_activated () {
 
-		return  Sensei_Utils::sensei_is_woocommerce_present() && isset( Sensei()->settings->settings['woocommerce_enabled'] ) && Sensei()->settings->settings['woocommerce_enabled'];
+		return  Sensei_WC::is_woocommerce_active();
 
 	} // End sensei_is_woocommerce_activated()
 

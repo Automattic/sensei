@@ -136,7 +136,7 @@ class Sensei_Course {
 	 */
 	public function meta_box_setup () {
 
-		if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+		if ( Sensei_WC::is_woocommerce_active() ) {
 			// Add Meta Box for WooCommerce Course
 			add_meta_box( 'course-wc-product', __( 'WooCommerce Product', 'woothemes-sensei' ), array( $this, 'course_woocommerce_product_meta_box_content' ), $this->token, 'side', 'default' );
 		} // End If Statement
@@ -523,7 +523,7 @@ class Sensei_Course {
 		// $new_columns['id'] = __( 'ID' );
 		$new_columns['title'] = _x( 'Course Title', 'column name', 'woothemes-sensei' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'woothemes-sensei' );
-		if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+		if ( Sensei_WC::is_woocommerce_active() ) {
 			$new_columns['course-woocommerce-product'] = _x( 'WooCommerce Product', 'column name', 'woothemes-sensei' );
 		} // End If Statement
 		$new_columns['course-category'] = _x( 'Category', 'column name', 'woothemes-sensei' );
@@ -557,7 +557,7 @@ class Sensei_Course {
 			break;
 
 			case 'course-woocommerce-product':
-				if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+				if ( Sensei_WC::is_woocommerce_active() ) {
 					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true);
 					if ( 0 < absint( $course_woocommerce_product_id ) ) {
 						if ( 'product_variation' == get_post_type( $course_woocommerce_product_id ) ) {
@@ -1108,7 +1108,7 @@ class Sensei_Course {
 
 		$posts_array = array();
 		// Check for WooCommerce
-		if ( Sensei_Utils::sensei_is_woocommerce_activated() && 0 < $product_id ) {
+		if ( Sensei_WC::is_woocommerce_active() && 0 < $product_id ) {
 			$post_args = array(	'post_type' 		=> 'course',
 								'posts_per_page' 		=> -1,
 								'meta_key'        	=> '_course_woocommerce_product',
@@ -2051,7 +2051,7 @@ class Sensei_Course {
                    <?php  } // End If Statement
 
                     $course_purchased = false;
-                    if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+                    if ( Sensei_WC::is_woocommerce_active() ) {
                         // Get the product ID
                         $wc_post_id = get_post_meta( intval( $course->ID ), '_course_woocommerce_product', true );
                         if ( 0 < $wc_post_id ) {
@@ -2468,7 +2468,7 @@ class Sensei_Course {
         // Check if the user is taking the course
         $is_user_taking_course = Sensei_Utils::user_started_course( get_the_ID(), get_current_user_id() );
 
-        if(Sensei_Utils::sensei_is_woocommerce_activated()) {
+        if(Sensei_WC::is_woocommerce_active()) {
 
             $wc_post_id = get_post_meta( get_the_ID(), '_course_woocommerce_product', true );
             $product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
@@ -2664,7 +2664,7 @@ class Sensei_Course {
             $wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
 
             // Check for woocommerce
-            if ( Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < intval( $wc_post_id ) ) ) {
+            if ( Sensei_WC::is_woocommerce_active() && ( 0 < intval( $wc_post_id ) ) ) {
                 sensei_wc_add_to_cart($post->ID);
             } else {
                 sensei_start_course_form($post->ID);
@@ -2699,7 +2699,7 @@ class Sensei_Course {
             // Get the product ID
             $wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
             // Check for woocommerce
-            if ( Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < intval( $wc_post_id ) ) ) {
+            if ( Sensei_WC::is_woocommerce_active() && ( 0 < intval( $wc_post_id ) ) ) {
 
                 sensei_wc_add_to_cart($post->ID);
 

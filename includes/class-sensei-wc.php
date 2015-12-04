@@ -23,12 +23,29 @@ Class Sensei_WC{
 
     }
     /**
-     * check if WooCommerce plugin is loaded
+     * check if WooCommerce plugin is loaded and allowed by Sensei
      *
      * @since 1.9.0
      * @return bool
      */
     public static function is_woocommerce_active(){
+
+        $is_woocommerce_enabled_in_settings = isset( Sensei()->settings->settings['woocommerce_enabled'] ) && Sensei()->settings->settings['woocommerce_enabled'];
+        return self::is_woocommerce_present() && $is_woocommerce_enabled_in_settings;
+
+    } // end is_woocommerce_active
+
+    /**
+     * Checks if the WooCommerce plugin is installed and activation.
+     *
+     * If you need to check if WooCommerce is activated use Sensei_Utils::is_woocommerce_active().
+     * This function does nott check to see if the Sensei setting for WooCommerce is enabled.
+     *
+     * @since 1.9.0
+     *
+     * @return bool
+     */
+    public static function is_woocommerce_present(){
 
         $active_plugins = (array) get_option( 'active_plugins', array() );
 
@@ -38,9 +55,11 @@ Class Sensei_WC{
 
         }
 
-        return in_array( 'woocommerce/woocommerce.php', $active_plugins ) || array_key_exists( 'woocommerce/woocommerce.php', $active_plugins );
+        $is_woocommerce_plugin_present_and_activated = in_array( 'woocommerce/woocommerce.php', $active_plugins ) || array_key_exists( 'woocommerce/woocommerce.php', $active_plugins );
 
-    } // end is_woocommerce_active
+        return class_exists( 'Woocommerce' ) || $is_woocommerce_plugin_present_and_activated;
+
+    }// end is_woocommerce_present
 
     /**
      * Find the order active number (completed or processing ) for a given user on a course. It will return the latest order.
@@ -217,7 +236,7 @@ Class Sensei_WC{
         /**
          * this hooks is documented within the WooCommerce plugin.
          */
-        if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+        if ( Sensei_WC::is_woocommerce_active() ) {
 
             do_action( 'woocommerce_before_single_product' );
 

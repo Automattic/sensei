@@ -1124,7 +1124,7 @@ class Sensei_Frontend {
 		$preview_text = __( ' (Preview)', 'woothemes-sensei' );
 
 		//if this is a paid course
-		if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+		if ( Sensei_WC::is_woocommerce_active() ) {
     	    $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
     	    	$preview_text = __( ' (Free Preview)', 'woothemes-sensei' );
@@ -1304,7 +1304,7 @@ class Sensei_Frontend {
 
 		if( $user_id ) {
 
-			if( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+			if( Sensei_WC::is_woocommerce_active() ) {
 
 				// Get all user's orders
 				$order_args = array(
@@ -1406,7 +1406,7 @@ class Sensei_Frontend {
 	public function activate_purchased_single_course() {
 		global $post, $current_user;
 
-		if( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+		if( Sensei_WC::is_woocommerce_active() ) {
 
 			if( ! is_user_logged_in() ) return;
 			if( ! isset( $post->ID ) ) return;

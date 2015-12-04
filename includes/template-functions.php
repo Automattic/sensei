@@ -160,7 +160,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	function sensei_simple_course_price( $post_id ) {
 
 		//WooCommerce Pricing
-        if ( Sensei_Utils::sensei_is_woocommerce_activated() ) {
+        if ( Sensei_WC::is_woocommerce_active() ) {
     	    $wc_post_id = get_post_meta( $post_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
     	    	// Get the product

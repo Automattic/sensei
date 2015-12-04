@@ -674,7 +674,7 @@ class Sensei_Main {
 
         if( ! $is_user_taking_course ) {
 
-            if ( Sensei_Utils::sensei_is_woocommerce_activated() && Sensei_Utils::sensei_customer_bought_product( $user_email, $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) ) {
+            if ( Sensei_WC::is_woocommerce_active() && Sensei_Utils::sensei_customer_bought_product( $user_email, $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) ) {
 
                 $activity_logged = Sensei_Utils::user_start_course( intval( $user_id), intval( $course_id ) );
 
@@ -752,7 +752,7 @@ class Sensei_Main {
                     $this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
                     $course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
                     $wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
-                    if ( Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+                    if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
                         if ( $is_preview ) {
                             $this->permissions_message['message'] = sprintf( __('This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
                         } else {
@@ -800,7 +800,7 @@ class Sensei_Main {
                         $this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
                         $course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
                         $wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
-                        if ( Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $wc_post_id ) ) {
+                        if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
                             $this->permissions_message['message'] = sprintf( __('Please purchase the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
                         } else {
                             $this->permissions_message['message'] = sprintf( __('Please sign up for the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
@@ -875,7 +875,7 @@ class Sensei_Main {
     public function sensei_woocommerce_complete_order ( $order_id = 0 ) {
         $order_user = array();
         // Check for WooCommerce
-        if ( Sensei_Utils::sensei_is_woocommerce_activated() && ( 0 < $order_id ) ) {
+        if ( Sensei_WC::is_woocommerce_active() && ( 0 < $order_id ) ) {
             // Get order object
             $order = new WC_Order( $order_id );
             $user = get_user_by( 'id', $order->user_id );
