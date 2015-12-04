@@ -31,7 +31,7 @@ class Sensei_Frontend {
 
 		// 1.2.1
 		add_action( 'sensei_complete_lesson', array( $this, 'sensei_complete_lesson' ) );
-		add_action( 'sensei_complete_course', array( $this, 'sensei_complete_course' ) );
+		add_action( 'init', array( $this, 'sensei_complete_course' ), 5 );
 		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
 		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
 		add_action( 'sensei_complete_lesson_button', array( $this, 'sensei_complete_lesson_button' ) );
