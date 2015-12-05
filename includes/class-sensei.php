@@ -207,7 +207,7 @@ class Sensei_Main {
         add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
 
         // Load Learner Management Functionality
-        $this->learners = new Sensei_Learners( $file );
+        $this->learners = new Sensei_Learner_Management( $file );
         $this->learners->token = $this->token;
 
         // Differentiate between administration and frontend logic.

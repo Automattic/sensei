@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author WooThemes
  * @since 1.3.0
  */
-class Sensei_Learners {
-	public $token;
+class Sensei_Learner_Management {
+
 	public $name;
 	public $file;
 	public $page_slug;
@@ -208,7 +208,7 @@ class Sensei_Learners {
 	 */
 	public function wrapper_container( $which ) {
 		if ( 'top' == $which ) {
-			?><div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>"><?php
+			?><div id="woothemes-sensei" class="wrap <?php echo esc_attr( Sensei()->token ); ?>"><?php
 		} elseif ( 'bottom' == $which ) {
 			?></div><!--/#woothemes-sensei--><?php
 		} // End If Statement
@@ -336,7 +336,7 @@ class Sensei_Learners {
 
 		if ( $users ) {
 			foreach ( $users as $user ) {
-                $full_name = Sensei()->learners->get_learner_full_name( $user->ID );
+                $full_name = Sensei_Student::get_full_name( $user->ID );
 
                 if( trim($user->display_name ) == trim( $full_name ) ){
 
@@ -457,6 +457,7 @@ class Sensei_Learners {
      *
      * The user must have both name and surname otherwise display name will be returned.
      *
+     * @deprecated since 1.9.0 use Se
      * @since 1.8.0
      *
      * @param int $user_id | bool false for an invalid $user_id
@@ -503,4 +504,4 @@ class Sensei_Learners {
  * for backward compatibility
  * @since 1.9.0
  */
-class WooThemes_Sensei_Learners extends Sensei_Learners{}
+class WooThemes_Sensei_Learners extends Sensei_Learner_Management{}
