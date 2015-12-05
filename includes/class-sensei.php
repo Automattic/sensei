@@ -160,6 +160,102 @@ class Sensei_Main {
         // Run this on activation.
         register_activation_hook( $this->file, array( $this, 'activation' ) );
 
+        // load the classes need throughout sensei
+        $this->initialize_child_class_objects();
+
+        // Image Sizes
+        $this->init_image_sizes();
+
+        // Force WooCommerce Required Settings
+        $this->set_woocommerce_functionality();
+
+        // load all hooks
+        $this->load_hooks();
+
+    } // End __construct()
+
+    /**
+     * Load the foundations of Sensei.
+     * @since 1.9.0
+     */
+    protected function init(){
+
+        // Localisation
+        $this->load_plugin_textdomain();
+        add_action( 'init', array( $this, 'load_localisation' ), 0 );
+
+        // load the shortcode loader into memory, so as to listen to all for
+        // all shortcodes on the front end
+        new Sensei_Shortcode_Loader();
+
+    }
+
+    /**
+     * Global Sensei Instance
+     *
+     * Ensure that only one instance of the main Sensei class can be loaded.
+     *
+     * @since 1.8.0
+     * @static
+     * @see WC()
+     * @return WooThemes_Sensei Instance.
+     */
+    public static function instance() {
+
+        if ( is_null( self::$_instance ) ) {
+
+            //Sensei requires a reference to the main Sensei plugin file
+            $sensei_main_plugin_file = dirname ( dirname( __FILE__ ) ) . '/woothemes-sensei.php';
+
+            self::$_instance = new self( $sensei_main_plugin_file  );
+
+        }
+
+        return self::$_instance;
+
+    } // end instance()
+
+    /**
+     * This function is linked into the activation
+     * hook to reset flush the urls to ensure Sensei post types show up.
+     *
+     * @since 1.9.0
+     *
+     * @param $plugin
+     */
+    public static function activation_flush_rules( $plugin ){
+
+        if( strpos( $plugin, '/woothemes-sensei.php' ) > 0  ){
+
+            flush_rewrite_rules(true);
+
+        }
+
+    }
+
+    /**
+     * Cloning is forbidden.
+     * @since 1.8.0
+     */
+    public function __clone() {
+        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '2.1' );
+    }
+
+    /**
+     * Unserializing instances of this class is forbidden.
+     * @since 1.8.0
+     */
+    public function __wakeup() {
+        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '2.1' );
+    }
+
+    /**
+     * Load the properties for the main Sensei object
+     *
+     * @since 1.9.0
+     */
+    public function initialize_child_class_objects(){
+
         // Setup post types.
         $this->post_types = new Sensei_PostTypes();
         $this->post_types->token = 'woothemes-sensei-posttypes';
@@ -207,7 +303,7 @@ class Sensei_Main {
         add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
 
         // Load Learner Management Functionality
-        $this->learners = new Sensei_Learner_Management( $file );
+        $this->learners = new Sensei_Learner_Management( $this->file );
         $this->learners->token = $this->token;
 
         // Differentiate between administration and frontend logic.
@@ -217,11 +313,11 @@ class Sensei_Main {
             new Sensei_Welcome();
 
             // Load Admin Class
-            $this->admin = new Sensei_Admin( $file );
+            $this->admin = new Sensei_Admin( $this->file );
             $this->admin->token = $this->token;
 
             // Load Analysis Reports
-            $this->analysis = new Sensei_Analysis( $file );
+            $this->analysis = new Sensei_Analysis( $this->file );
             $this->analysis->token = $this->token;
 
 
@@ -238,22 +334,26 @@ class Sensei_Main {
         }
 
         // Load Grading Functionality
-        $this->grading = new Sensei_Grading( $file );
+        $this->grading = new Sensei_Grading( $this->file );
         $this->grading->token = $this->token;
 
         // Load Email Class
-        $this->emails = new Sensei_Emails( $file );
+        $this->emails = new Sensei_Emails( $this->file );
         $this->emails->token = $this->token;
 
         // Load Learner Profiles Class
         $this->learner_profiles = new Sensei_Learner_Profiles();
         $this->learner_profiles->token = $this->token;
 
-        // Image Sizes
-        $this->init_image_sizes();
+    }
 
-        // Force WooCommerce Required Settings
-        $this->set_woocommerce_functionality();
+    /**
+     * Initialize all Sensei hooks
+     *
+     * @since 1.9.0
+     */
+    public function load_hooks(){
+
         add_action( 'widgets_init', array( $this, 'register_widgets' ) );
         add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
 
@@ -287,81 +387,6 @@ class Sensei_Main {
         // check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
         add_action( 'init', array( $this, 'flush_rewrite_rules'), 101 );
 
-    } // End __construct()
-
-    /**
-     * Load the foundations of Sensei.
-     * @since 1.9.0
-     */
-    protected function init(){
-
-        // Localisation
-        $this->load_plugin_textdomain();
-        add_action( 'init', array( $this, 'load_localisation' ), 0 );
-
-        // load the shortcode loader into memory, so as to listen to all for
-        // all shortcodes on the front end
-        new Sensei_Shortcode_Loader();
-
-    }
-
-    /**
-     * This function is linked into the activation
-     * hook to reset flush the urls to ensure Sensei post types show up.
-     *
-     * @since 1.9.0
-     *
-     * @param $plugin
-     */
-    public static function activation_flush_rules( $plugin ){
-
-        if( strpos( $plugin, '/woothemes-sensei.php' ) > 0  ){
-
-            flush_rewrite_rules(true);
-
-        }
-
-    }
-
-    /**
-     * Global Sensei Instance
-     *
-     * Ensure that only one instance of the main Sensei class can be loaded.
-     *
-     * @since 1.8.0
-     * @static
-     * @see WC()
-     * @return WooThemes_Sensei Instance.
-     */
-    public static function instance() {
-
-        if ( is_null( self::$_instance ) ) {
-
-            //Sensei requires a reference to the main Sensei plugin file
-            $sensei_main_plugin_file = dirname ( dirname( __FILE__ ) ) . '/woothemes-sensei.php';
-
-            self::$_instance = new self( $sensei_main_plugin_file  );
-
-        }
-
-        return self::$_instance;
-
-    } // end instance()
-
-    /**
-     * Cloning is forbidden.
-     * @since 1.8.0
-     */
-    public function __clone() {
-        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '2.1' );
-    }
-
-    /**
-     * Unserializing instances of this class is forbidden.
-     * @since 1.8.0
-     */
-    public function __wakeup() {
-        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '2.1' );
     }
 
     /**
@@ -378,6 +403,8 @@ class Sensei_Main {
 
         } // End If Statement
     } // End run_updates()
+
+
 
     /**
      * Setup required WooCommerce settings.
