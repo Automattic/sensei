@@ -1890,19 +1890,8 @@ class Sensei_Course {
      */
     public function content_before_backwards_compatibility_hooks( $post ){
 
-        if( has_action( 'sensei_course_image' ) ){
-
-            _doing_it_wrong('sensei_course_image','This action has been retired: . Please use sensei_course_content_inside_before instead.', '1.9' );
-            do_action('sensei_course_image', $post->ID );
-
-        }
-
-        if( has_action( 'sensei_course_archive_course_title' ) ){
-
-            _doing_it_wrong('sensei_course_archive_course_title','This action has been retired: . Please use sensei_course_content_inside_before instead.', '1.9' );
-            do_action('sensei_course_archive_course_title', $post );
-
-        }
+        sensei_do_deprecated_action( 'sensei_course_image','1.9.0','sensei_course_content_inside_before' );
+        sensei_do_deprecated_action( 'sensei_course_archive_course_title','1.9.0','sensei_course_content_inside_before' );
 
     }
 
