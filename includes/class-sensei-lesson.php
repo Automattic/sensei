@@ -112,25 +112,25 @@ class Sensei_Lesson {
 	public function meta_box_setup () {
 
 		// Add Meta Box for Prerequisite Lesson
-		add_meta_box( 'lesson-prerequisite', __( 'Lesson Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-prerequisite', __( 'Lesson Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), Sensei()->token, 'side', 'default' );
 
 		// Add Meta Box for Lesson Course
-		add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), Sensei()->token, 'side', 'default' );
 
 		// Add Meta Box for Lesson Preview
-		add_meta_box( 'lesson-preview', __( 'Lesson Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-preview', __( 'Lesson Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), Sensei()->token, 'side', 'default' );
 
 		// Add Meta Box for Lesson Information
-		add_meta_box( 'lesson-info', __( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'lesson-info', __( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), Sensei()->token, 'normal', 'default' );
 
 		// Add Meta Box for Quiz Settings
-		add_meta_box( 'lesson-quiz-settings', __( 'Quiz Settings', 'woothemes-sensei' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'lesson-quiz-settings', __( 'Quiz Settings', 'woothemes-sensei' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), Sensei()->token, 'normal', 'default' );
 
 		// Add Meta Box for Lesson Quiz Questions
-		add_meta_box( 'lesson-quiz', __( 'Quiz Questions', 'woothemes-sensei' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'lesson-quiz', __( 'Quiz Questions', 'woothemes-sensei' ), array( $this, 'lesson_quiz_meta_box_content' ), Sensei()->token, 'normal', 'default' );
 
 		// Remove "Custom Settings" meta box.
-		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
+		remove_meta_box( 'woothemes-settings', Sensei()->token, 'normal' );
 
 		// Add JS scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -197,7 +197,7 @@ class Sensei_Lesson {
 		$posts_array = get_posts( $post_args );
 		// Build the HTML to Output
 		$html = '';
-		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
+		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . Sensei()->token . '_nonce', true, false  );
 		if ( count( $posts_array ) > 0 ) {
 			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="chosen_select widefat">' . "\n";
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
@@ -223,7 +223,7 @@ class Sensei_Lesson {
 		// Get existing post meta
 		$lesson_preview = get_post_meta( $post->ID, '_lesson_preview', true );
 		$html = '';
-		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
+		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . Sensei()->token . '_nonce', true, false  );
 
 		$checked = '';
 		if ( isset( $lesson_preview ) && ( '' != $lesson_preview ) ) {
@@ -247,7 +247,7 @@ class Sensei_Lesson {
 	public function meta_box_save ( $post_id ) {
 
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type( $post_id ) != $this->token ) || !isset(   $_POST[ 'woo_' . $this->token . '_nonce'] )  || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
+		if ( ( get_post_type( $post_id ) != Sensei()->token ) || !isset(   $_POST[ 'woo_' . Sensei()->token . '_nonce'] )  || ! wp_verify_nonce( $_POST[ 'woo_' . Sensei()->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		} // End If Statement
 		// Get the post type object.
@@ -284,7 +284,7 @@ class Sensei_Lesson {
 	public function quiz_update( $post_id ) {
 		global $post;
 		// Verify the nonce before proceeding.
-		if ( ( 'lesson' != get_post_type( $post_id ) )|| !isset(   $_POST[ 'woo_' . $this->token . '_nonce'] )  || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta') ) {
+		if ( ( 'lesson' != get_post_type( $post_id ) )|| !isset(   $_POST[ 'woo_' . Sensei()->token . '_nonce'] )  || ! wp_verify_nonce( $_POST[ 'woo_' . Sensei()->token . '_nonce' ], 'sensei-save-post-meta') ) {
 			if ( isset($post->ID) ) {
 				return $post->ID;
 			} else {
@@ -487,7 +487,7 @@ class Sensei_Lesson {
 		// Buid the HTML to Output
 		$html = '';
 		// Nonce
-		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
+		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . Sensei()->token . '_nonce', true, false  );
 
         // Select the course for the lesson
         $drop_down_args = array(
@@ -601,7 +601,7 @@ class Sensei_Lesson {
 
 	public function quiz_panel( $quiz_id = 0 ) {
 
-		$html = wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
+		$html = wp_nonce_field( 'sensei-save-post-meta','woo_' . Sensei()->token . '_nonce', true, false  );
 		$html .= '<div id="add-quiz-main">';
 			if ( 0 == $quiz_id ) {
 				$html .= '<p>';
@@ -2943,7 +2943,7 @@ class Sensei_Lesson {
                     echo '<h4>' . __('Lesson Information', 'woothemes-sensei') . '</h4>';
                     // create a nonce field to be  used as a security measure when saving the data
                     wp_nonce_field( 'bulk-edit-lessons', '_edit_lessons_nonce' );
-                    wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce'  );
+                    wp_nonce_field( 'sensei-save-post-meta','woo_' . Sensei()->token . '_nonce'  );
 
                     // unchanged option - we need this in because
                     // the default option in bulk edit should not be empty. If it is

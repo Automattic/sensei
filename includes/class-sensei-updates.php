@@ -31,7 +31,7 @@ class Sensei_Updates {
 
 		// Setup object data
 		$this->parent = $parent;
-		$this->updates_run = get_option( $this->token . '-upgrades', array() );
+		$this->updates_run = get_option( Sensei()->token . '-upgrades', array() );
 
 		// The list of upgrades to run
 		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => __( 'Assign role capabilities', 'woothemes-sensei' ), 'desc' => __( 'Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei' ), 'product' => 'Sensei' ) ),
@@ -76,7 +76,7 @@ class Sensei_Updates {
 							);
 
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
-		$this->version = get_option( $this->token . '-version' );
+		$this->version = get_option( Sensei()->token . '-version' );
 
 		// Manual Update Screen
 		add_action('admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
@@ -330,7 +330,7 @@ class Sensei_Updates {
 			} // End For Loop
 
             $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
-			update_option( $this->token . '-upgrades', $this->updates_run );
+			update_option( Sensei()->token . '-upgrades', $this->updates_run );
 			return true;
 
 		}
@@ -447,7 +447,7 @@ class Sensei_Updates {
 	private function set_update_run( $update ) {
 		array_push( $this->updates_run, $update );
         $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
-		update_option( $this->token . '-upgrades', $this->updates_run );
+		update_option( Sensei()->token . '-upgrades', $this->updates_run );
 	}
 
 	/**

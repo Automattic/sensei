@@ -48,11 +48,11 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function __construct ( $token ) {
 		// Class Variables
-		$this->token = $token;
+		Sensei()->token = $token;
 
 		parent::__construct( array(
-								'singular' => 'wp_list_table_' . $this->token, // Singular label
-								'plural'   => 'wp_list_table_' . $this->token . 's', // Plural label
+								'singular' => 'wp_list_table_' . Sensei()->token, // Singular label
+								'plural'   => 'wp_list_table_' . Sensei()->token . 's', // Plural label
 								'ajax'     => false // No Ajax for this table
 		) );
 		// Actions

@@ -35,7 +35,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function __construct () {
-		$this->token = 'woothemes-sensei';
+		Sensei()->token = 'woothemes-sensei';
 		$this->page_slug = 'woothemes-sensei-settings-api';
 
 		$this->sections = array();
@@ -166,7 +166,7 @@ class Sensei_Settings_API {
 	public function create_sections () {
 		if ( count( $this->sections ) > 0 ) {
 			foreach ( $this->sections as $k => $v ) {
-				add_settings_section( $k, $v['name'], array( $this, 'section_description' ), $this->token );
+				add_settings_section( $k, $v['name'], array( $this, 'section_description' ), Sensei()->token );
 			}
 		}
 	} // End create_sections()
@@ -185,7 +185,7 @@ class Sensei_Settings_API {
 				$method = $this->determine_method( $v, 'form' );
 				$name = $v['name'];
 				if ( $v['type'] == 'info' ) { $name = ''; }
-				add_settings_field( $k, $name, $method, $this->token, $v['section'], array( 'key' => $k, 'data' => $v ) );
+				add_settings_field( $k, $name, $method, Sensei()->token, $v['section'], array( 'key' => $k, 'data' => $v ) );
 
 				// Let the API know that we have a colourpicker field.
 				if ( $v['type'] == 'range' && $this->has_range == false ) { $this->has_range = true; }
@@ -228,8 +228,8 @@ class Sensei_Settings_API {
 			}
 		}
 
-		if ( $method == '' && function_exists ( $this->token . '_' . $type . '_field_' . $data['type'] ) ) {
-			$method = $this->token . '_' . $type . '_field_' . $data['type'];
+		if ( $method == '' && function_exists ( Sensei()->token . '_' . $type . '_field_' . $data['type'] ) ) {
+			$method = Sensei()->token . '_' . $type . '_field_' . $data['type'];
 		}
 
 		if ( $method == '' ) {
@@ -295,15 +295,15 @@ class Sensei_Settings_API {
 	public function settings_screen () {
 
 ?>
-<div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
+<div id="woothemes-sensei" class="wrap <?php echo esc_attr( Sensei()->token ); ?>">
 	<?php screen_icon( 'woothemes-sensei' ); ?>
 	<h2><?php echo esc_html( $this->name ); ?><?php if ( '' != $this->settings_version ) { echo ' <span class="version">' . $this->settings_version . '</span>'; } ?></h2>
 	<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 	<?php do_action( 'settings_before_form' ); ?>
 	<form action="options.php" method="post">
 		<?php $this->settings_tabs(); ?>
-		<?php settings_fields( $this->token ); ?>
-		<?php do_settings_sections( $this->token ); ?>
+		<?php settings_fields( Sensei()->token ); ?>
+		<?php do_settings_sections( Sensei()->token ); ?>
 		<?php submit_button(); ?>
 	</form>
 	<?php do_action( 'settings_after_form' ); ?>
@@ -319,7 +319,7 @@ class Sensei_Settings_API {
 	 */
 	public function get_settings () {
 		if ( ! is_array( $this->settings ) ) {
-			$this->settings = get_option( $this->token, array() );
+			$this->settings = get_option( Sensei()->token, array() );
 		}
 
 		foreach ( $this->fields as $k => $v ) {
@@ -341,7 +341,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function settings_fields () {
-		register_setting( $this->token, $this->token, array( $this, 'validate_fields' ) );
+		register_setting( Sensei()->token, Sensei()->token, array( $this, 'validate_fields' ) );
 		$this->create_sections();
 		$this->create_fields();
 	} // End settings_fields()
@@ -353,7 +353,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function settings_errors () {
-		echo settings_errors( $this->token . '-errors' );
+		echo settings_errors( Sensei()->token . '-errors' );
 	} // End settings_errors()
 
 	/**
@@ -378,7 +378,7 @@ class Sensei_Settings_API {
 	public function form_field_text ( $args ) {
 		$options = $this->get_settings();
 
-		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" value="' . esc_attr( $options[$args['key']] ) . '" />' . "\n";
+		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . Sensei()->token . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" value="' . esc_attr( $options[$args['key']] ) . '" />' . "\n";
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<span class="description">' . $args['data']['description'] . '</span>' . "\n";
 		}
@@ -394,7 +394,7 @@ class Sensei_Settings_API {
 	public function form_field_color ( $args ) {
 		$options = $this->get_settings();
 
-		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" class="color" value="' . esc_attr( $options[$args['key']] ) . '" />' . "\n";
+		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . Sensei()->token . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" class="color" value="' . esc_attr( $options[$args['key']] ) . '" />' . "\n";
 		echo '<div style="position:absolute;background:#FFF;z-index:99;border-radius:100%;" class="colorpicker"></div>';
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<span class="description">' . $args['data']['description'] . '</span>' . "\n";
@@ -416,7 +416,7 @@ class Sensei_Settings_API {
 			$has_description = true;
 			echo '<label for="' . esc_attr( $args['key'] ) . '">' . "\n";
 		}
-		echo '<input id="' . $args['key'] . '" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" type="checkbox" value="1"' . checked( esc_attr( $options[$args['key']] ), '1', false ) . ' />' . "\n";
+		echo '<input id="' . $args['key'] . '" name="' . Sensei()->token . '[' . esc_attr( $args['key'] ) . ']" type="checkbox" value="1"' . checked( esc_attr( $options[$args['key']] ), '1', false ) . ' />' . "\n";
 		if ( $has_description ) {
 			echo wp_kses( $args['data']['description'], array( 'a' => array(
 																	        'href' => array(),
@@ -437,7 +437,7 @@ class Sensei_Settings_API {
 	public function form_field_textarea ( $args ) {
 		$options = $this->get_settings();
 
-		echo '<textarea id="' . esc_attr( $args['key'] ) . '" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" cols="42" rows="5">' . esc_html( $options[$args['key']] ) . '</textarea>' . "\n";
+		echo '<textarea id="' . esc_attr( $args['key'] ) . '" name="' . Sensei()->token . '[' . esc_attr( $args['key'] ) . ']" cols="42" rows="5">' . esc_html( $options[$args['key']] ) . '</textarea>' . "\n";
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<p><span class="description">' . esc_html( $args['data']['description'] ) . '</span></p>' . "\n";
 		}
@@ -455,7 +455,7 @@ class Sensei_Settings_API {
 
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '';
-			$html .= '<select class="" id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']">' . "\n";
+			$html .= '<select class="" id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( Sensei()->token ) . '[' . esc_attr( $args['key'] ) . ']">' . "\n";
 				foreach ( $args['data']['options'] as $k => $v ) {
 					$html .= '<option value="' . esc_attr( $k ) . '"' . selected( esc_attr( $options[$args['key']] ), $k, false ) . '>' . $v . '</option>' . "\n";
 				}
@@ -481,7 +481,7 @@ class Sensei_Settings_API {
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '';
 			foreach ( $args['data']['options'] as $k => $v ) {
-				$html .= '<input type="radio" name="' . $this->token . '[' . esc_attr( $args['key'] ) . ']" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $options[$args['key']] ), $k, false ) . ' /> ' . $v . '<br />' . "\n";
+				$html .= '<input type="radio" name="' . Sensei()->token . '[' . esc_attr( $args['key'] ) . ']" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $options[$args['key']] ), $k, false ) . ' /> ' . $v . '<br />' . "\n";
 			}
 			echo $html;
 
@@ -512,7 +512,7 @@ class Sensei_Settings_API {
 					if ( in_array( $k, $args['data']['defaults'] ) ) { $checked = ' checked="checked"'; }
 				}
 				$html .= '<label for="checkbox-' . esc_attr( $k ) . '">' . "\n";
-				$html .= '<input type="checkbox" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . '][]" class="multicheck multicheck-' . esc_attr( $args['key'] ) . '" value="' . esc_attr( $k ) . '" id="checkbox-' . esc_attr( $k ) . '" ' . $checked . ' /> ' . $v . "\n";
+				$html .= '<input type="checkbox" name="' . esc_attr( Sensei()->token ) . '[' . esc_attr( $args['key'] ) . '][]" class="multicheck multicheck-' . esc_attr( $args['key'] ) . '" value="' . esc_attr( $k ) . '" id="checkbox-' . esc_attr( $k ) . '" ' . $checked . ' /> ' . $v . "\n";
 				$html .= '</label><br />' . "\n";
 			}
 			$html .= '</div>' . "\n";
@@ -536,7 +536,7 @@ class Sensei_Settings_API {
 
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '';
-			$html .= '<select id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" class="range-input">' . "\n";
+			$html .= '<select id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( Sensei()->token ) . '[' . esc_attr( $args['key'] ) . ']" class="range-input">' . "\n";
 				foreach ( $args['data']['options'] as $k => $v ) {
 					$html .= '<option value="' . esc_attr( $k ) . '"' . selected( esc_attr( $options[$args['key']] ), $k, false ) . '>' . $v . '</option>' . "\n";
 				}
@@ -562,7 +562,7 @@ class Sensei_Settings_API {
 		if ( isset( $args['data']['options'] ) && ( count( (array)$args['data']['options'] ) > 0 ) ) {
 			$html = '';
 			foreach ( $args['data']['options'] as $k => $v ) {
-				$html .= '<input type="radio" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $options[$args['key']] ), $k, false ) . ' /> ' . $v . '<br />' . "\n";
+				$html .= '<input type="radio" name="' . esc_attr( Sensei()->token ) . '[' . esc_attr( $args['key'] ) . ']" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $options[$args['key']] ), $k, false ) . ' /> ' . $v . '<br />' . "\n";
 			}
 			echo $html;
 
@@ -784,11 +784,11 @@ class Sensei_Settings_API {
 	protected function parse_errors () {
 		if ( count ( $this->errors ) > 0 ) {
 			foreach ( $this->errors as $k => $v ) {
-				add_settings_error( $this->token . '-errors', $k, $v, 'error' );
+				add_settings_error( Sensei()->token . '-errors', $k, $v, 'error' );
 			}
 		} else {
 			$message = sprintf( __( '%s updated', 'woothemes-sensei' ), $this->name );
-			add_settings_error( $this->token . '-errors', $this->token, $message, 'updated' );
+			add_settings_error( Sensei()->token . '-errors', Sensei()->token, $message, 'updated' );
 		}
 	} // End parse_errors()
 
