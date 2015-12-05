@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @since 1.0.0
  */
 class Sensei_Frontend {
+
 	public $token;
 	public $messages;
 	public $data;
@@ -20,7 +21,6 @@ class Sensei_Frontend {
 	/**
 	 * Constructor.
 	 * @since  1.0.0
-	 * @return  void
 	 */
 	public function __construct () {
 
@@ -202,7 +202,7 @@ class Sensei_Frontend {
 	function sensei_get_template_part( $slug, $name = '' ) {
 
         _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::get_part' );
-        return Sensei_Templates::get_part( $slug, $name );
+        Sensei_Templates::get_part( $slug, $name );
 
 	} // End sensei_get_template_part()
 
@@ -220,7 +220,7 @@ class Sensei_Frontend {
 	function sensei_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
 
         _deprecated_function( 'sensei_get_template', '1.9.0', 'Sensei_Templates::get_template' );
-        return Sensei_Templates::get_template($template_name, $args, $template_path, $default_path  );
+        Sensei_Templates::get_template($template_name, $args, $template_path, $default_path  );
 
 	} // End sensei_get_template()
 
@@ -237,7 +237,7 @@ class Sensei_Frontend {
 	function sensei_locate_template( $template_name, $template_path = '', $default_path = '' ) {
 
         _deprecated_function( 'sensei_locate_template', '1.9.0', 'Sensei_Templates::locate_template' );
-        return Sensei_Templates::locate_template( $template_name, $template_path, $default_path );
+        Sensei_Templates::locate_template( $template_name, $template_path, $default_path );
 
 	} // End sensei_locate_template()
 
@@ -473,8 +473,8 @@ class Sensei_Frontend {
 	 * Remove Sensei custom menu items depending on settings and logged in status.
 	 *
 	 * @access public
-	 * @param object $item
-	 * @return object $item
+	 * @param object $sorted_menu_items
+	 * @return object $sorted_menu_items
 	 */
 	public function sensei_wp_nav_menu_objects( $sorted_menu_items ) {
 
@@ -529,48 +529,57 @@ class Sensei_Frontend {
 	 * sensei_course_image output for course image Please use Sensei()->course->course_image instead.
      *
      * @deprecated since 1.9.0
-	 * @since  1.2.0
-	 * @return void
+     * @param $course_id
+     * @param string $width
+     * @param string $height
+     * @param bool|false $return
+     * @return string|void
 	 */
 	function sensei_course_image( $course_id, $width = '100', $height = '100', $return = false ) {
 
         trigger_error( 'Sensei Deprecated function: sensei_course_image since 1.9.0 . Please use Sensei()->course->course_image instead.');
 
-    	if ( $return ) {
-
-			return Sensei()->course->course_image( $course_id, $width, $height );
-
-		} else {
+    	if ( ! $return ) {
 
 			echo Sensei()->course->course_image( $course_id, $width, $height );
+            return '';
 
 		} // End If Statement
+
+		return Sensei()->course->course_image( $course_id, $width, $height );
 
 	} // End sensei_course_image()
 
 	/**
 	 * sensei_lesson_image output for lesson image
 	 * @since  1.2.0
-	 * @return void
      * @deprecated since 1.9.0
+     * @param $lesson_id
+     * @param string $width
+     * @param string $height
+     * @param bool|false $return
+     * @param bool|false $widget
+     * @return string
 	 */
 	function sensei_lesson_image( $lesson_id, $width = '100', $height = '100', $return = false, $widget = false ) {
 
-        if( $return ){
-
-            return Sensei()->lesson->lesson_image( $lesson_id, $width, $height, $widget );
-
-        }else{
+        if( ! $return ){
 
             echo Sensei()->lesson->lesson_image( $lesson_id, $width, $height, $widget );
-
+            return '';
         }
+
+        return Sensei()->lesson->lesson_image( $lesson_id, $width, $height, $widget );
+
 	} // End sensei_lesson_image()
 
-	function sensei_course_archive_pagination( $query ) {
+    /**
+     * @since 1.0.0
+     * @param WP_Query $query
+     */
+    function sensei_course_archive_pagination( $query ) {
 
 		if( ! is_admin() && $query->is_main_query() && isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'newcourses', 'featuredcourses', 'freecourses', 'paidcourses' ) ) ) {
-
 
 			$amount = 0;
 			if ( isset( Sensei()->settings->settings[ 'course_archive_amount' ] ) && ( 0 < absint( Sensei()->settings->settings[ 'course_archive_amount' ] ) ) ) {
@@ -592,10 +601,9 @@ class Sensei_Frontend {
 	 * @access public
 	 * @since  1.2.0
      * @deprecated since 1.9.0 use WooThemes_Sensei_Course::archive_header
-	 * @param string $query_type (default: '')
 	 * @return void
 	 */
-	function sensei_course_archive_header( $query_type = '', $before_html = '<header class="archive-header"><h1>', $after_html = '</h1></header>' ) {
+	function sensei_course_archive_header(  ) {
 
         trigger_error('This function sensei_course_archive_header has been depricated. Please use: WooThemes_Sensei_Course::course_archive_header ');
         WooThemes_Sensei_Course::archive_header( '', '<header class="archive-header"><h1>', '</h1></header>' );
@@ -608,11 +616,9 @@ class Sensei_Frontend {
      * @deprecated since 1.9.0
 	 * @access public
 	 * @since  1.2.1
-	 * @param string $before_html
-	 * @param  string $after_html
 	 * @return void
 	 */
-	public function sensei_lesson_archive_header( $query_type = '', $before_html = '<header class="archive-header"><h1>', $after_html = '</h1></header>' ) {
+	public function sensei_lesson_archive_header( ) {
         _deprecated_function( 'WooThemes_Sensei_Frontend::sensei_lesson_archive_header', '1.9.0', 'WooThemes_Sensei_Lesson::the_archive_header' );
         Sensei()->lesson->the_archive_header();
 	} // sensei_course_archive_header()
@@ -622,12 +628,13 @@ class Sensei_Frontend {
      */
 	public function sensei_message_archive_header( ){
         _deprecated_function('Sensei_Frontend::sensei_message_archive_header','Please use: Sense');
-        return Sensei_Messages::get_archive_header();
+        Sensei_Messages::the_archive_header();
 	} // sensei_message_archive_header()
 
 	/**
 	 * sensei_course_archive_course_title output for course archive page individual course title
 	 * @since  1.2.0
+     * @param WP_Post $post_item
 	 * @return void
 	 */
 	function sensei_course_archive_course_title( $post_item ) {
@@ -700,12 +707,11 @@ class Sensei_Frontend {
 
     /**
      * @deprecated since 1.9.0 use WooThemes_Sensei_Lesson::course_signup_link instead
-     * @param int $course_id
      */
-	public function sensei_lesson_course_signup_link( $course_id = 0 ) {
+	public function sensei_lesson_course_signup_link( ) {
 
         _deprecated_function('sensei_lesson_course_signup_link', '1.9.0', 'WooThemes_Sensei_Lesson::course_signup_link' );
-        WooThemes_Sensei_Lesson::course_signup_link( get_the_ID() );
+        WooThemes_Sensei_Lesson::course_signup_link();
 	}
 
 	public function lesson_tags_display( $lesson_id = 0 ) {
@@ -729,6 +735,9 @@ class Sensei_Frontend {
 		}
 	}
 
+    /**
+     * @param WP_Query $query
+     */
 	public function lesson_tag_archive_filter( $query ) {
     	if( is_tax( 'lesson-tag' ) && $query->is_main_query() ) {
     		// Limit to lessons only
@@ -870,10 +879,11 @@ class Sensei_Frontend {
 		return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_lesson()
 
+/**
+*
+ */
 	public function sensei_frontend_messages() {
-		if ( isset( $this->messages ) && '' != $this->messages ) {
-			echo $this->messages;
-		} // End If Statement
+		Sensei()->notices->print_notices();
 	} // End sensei_frontend_messages()
 
 	public function sensei_lesson_video( $post_id = 0 ) {
@@ -903,10 +913,20 @@ class Sensei_Frontend {
 	    }
 		if( ! $quiz_id || ( $quiz_id && ! $pass_required ) ) {
 			?>
-			<form class="lesson_button_form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>#lesson_complete">
-	            <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
+			<form class="lesson_button_form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
+	            <input type="hidden"
+                       name="woothemes_sensei_complete_lesson_noonce"
+                       id="woothemes_sensei_complete_lesson_noonce"
+                       value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>"
+                />
+
 	            <input type="hidden" name="quiz_action" value="lesson-complete" />
-	            <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php _e( 'Complete Lesson', 'woothemes-sensei' ); ?>"/></form></span>
+
+                <input type="submit"
+                       name="quiz_complete"
+                       class="quiz-submit complete"
+                       value="<?php _e( 'Complete Lesson', 'woothemes-sensei' ); ?>"/>
+
 	        </form>
 			<?php
 		} // End If Statement
@@ -927,19 +947,28 @@ class Sensei_Frontend {
 		if ( ! $quiz_id || !empty($reset_allowed) ) {
 		?>
 		<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
-            <input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
+
+            <input
+            type="hidden"
+            name="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>"
+            id="<?php echo esc_attr( 'woothemes_sensei_complete_lesson_noonce' ); ?>"
+            value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
+
             <input type="hidden" name="quiz_action" value="lesson-reset" />
-            <span><input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php _e( 'Reset Lesson', 'woothemes-sensei' ); ?>"/></form></span>
+
+            <input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php _e( 'Reset Lesson', 'woothemes-sensei' ); ?>"/>
+
         </form>
 		<?php
 		} // End If Statement
 	} // End sensei_reset_lesson_button()
 
-    public function sensei_lesson_quiz_meta( $post_id = 0, $user_id = 0 ) {
+    /**
+     * @deprecated since 1.9.0
+     */
+    public function sensei_lesson_quiz_meta( ) {
 
-        _deprecated_function( 'sensei_lesson_quiz_meta', '1.9.0', 'Sensei_lesson::footer_quiz_call_to_action' );
         Sensei_Lesson::footer_quiz_call_to_action();
-
 
 	} // End sensei_lesson_quiz_meta()
 
@@ -1213,7 +1242,7 @@ class Sensei_Frontend {
         $user_course_status_id = Sensei_Utils::user_started_course($post->ID , get_current_user_id() );
 		if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
 
-			if ( sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
+			if ( Sensei_WC::is_product_in_cart( $wc_post_id ) ) {
 				echo '<div class="sensei-message info">' . sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei') . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __('complete the purchase', 'woothemes-sensei') . '">' . __('complete the purchase', 'woothemes-sensei') . '</a>' );
 			} // End If Statement
 
@@ -1461,9 +1490,9 @@ class Sensei_Frontend {
                         $bundled_product = new WC_Product_Bundle( $product->id );
                         $bundled_items = $bundled_product->get_bundled_items();
 
-                        foreach( $bundled_items as $item ){
+                        foreach( $bundled_items as $bundled_item ){
 
-                            if( $item->product_id == $course_product_id ) {
+                            if( $bundled_item->product_id == $course_product_id ) {
                                 Sensei_Utils::user_start_course( $user_id, $course_id );
                                 return;
                             }
@@ -1503,10 +1532,9 @@ class Sensei_Frontend {
 	 * Redirect failed login attempts to the front end login page
 	 * in the case where the login fields are not left empty
 	 *
-	 * @param  string  $username
 	 * @return void redirect
 	 */
-	function sensei_login_fail_redirect( $username ) {
+	function sensei_login_fail_redirect( ) {
 
 		//if not posted from the sensei login form let
 		// WordPress or any other party handle the failed request
@@ -1515,7 +1543,6 @@ class Sensei_Frontend {
 	    	return ;
 
 	    }
-
 
     	// Get the reffering page, where did the post submission come from?
     	$referrer = add_query_arg('login', false, $_SERVER['HTTP_REFERER']);
@@ -1613,8 +1640,6 @@ class Sensei_Frontend {
 
 		    } // end if username $_REQUEST['log']  and password $_REQUEST['pwd'] is empty
 
-	    	return ;
-
 	    }elseif( ( isset( $_GET['login'] ) ) ) {
 	    	// else if this request is a redircect from a previously faile login request
 	    	$this->login_message_process();
@@ -1707,6 +1732,7 @@ class Sensei_Frontend {
 		wp_set_auth_cookie( $user_id, true );
 
 		// Redirect
+		global $wp;
 		if ( wp_get_referer() ) {
 			$redirect = esc_url( wp_get_referer() );
 		} else {
@@ -1753,7 +1779,6 @@ class Sensei_Frontend {
      * @return void redirect
      *
      */
-
     public function sensei_show_admin_bar () {
 
         if (current_user_can('edit_courses')) {

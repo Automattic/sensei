@@ -372,10 +372,10 @@ class Sensei_Course {
 	 *
 	 * @access public
 	 * @param int $post_id
-	 * @return void
+	 * @return int
 	 */
 	public function meta_box_save ( $post_id ) {
-		global $post, $messages;
+		global $post;
 
 		/* Verify the nonce before proceeding. */
 		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST['woo_' . $this->token . '_noonce'], plugin_basename(__FILE__) ) ) {

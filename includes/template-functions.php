@@ -144,7 +144,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 *
 	 * @deprecated since 1.9.0
 	 * @param int $wc_post_id (default: 0)
-	 * @return void
+	 * @return bool
 	 */
 	function sensei_check_if_product_is_in_cart( $wc_product_id = 0 ) {
         return Sensei_WC::is_product_in_cart( $wc_product_id );

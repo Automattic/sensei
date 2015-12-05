@@ -164,7 +164,7 @@ if ( ! function_exists( 'sensei_hex_lighter' ) ) {
  * WC Detection for backwards compatibility
  *
  * @since 1.9.0
- * @deprecated since 1.9.0 * It is better to call the Sensei_WC::is_woocommerce_active() directly
+ * @deprecated since 1.9.0 use  Sensei_WC::is_woocommerce_active()
  */
 if ( ! function_exists( 'is_woocommerce_active' ) ) {
     function is_woocommerce_active() {

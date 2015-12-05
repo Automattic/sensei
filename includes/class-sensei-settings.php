@@ -616,7 +616,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Return an array of pages.
 	 * @access private
 	 * @since  1.0.0
-	 * @return void
+	 * @return array
 	 */
 	private function pages_array() {
 		// REFACTOR - Transform this into a field type instead.

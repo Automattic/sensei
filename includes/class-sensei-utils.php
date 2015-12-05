@@ -59,7 +59,7 @@ class Sensei_Utils {
 	 * @access public
 	 * @since  1.0.0
 	 * @param  array $args (default: array())
-	 * @return void
+	 * @return bool | int
 	 */
 	public static function sensei_log_activity ( $args = array() ) {
 		global $wpdb;
@@ -218,7 +218,7 @@ class Sensei_Utils {
 	 * @access public
 	 * @since  1.0.0
 	 * @param  array $args (default: array())
-	 * @return void
+	 * @return array
 	 */
 	public static function sensei_activity_ids ( $args = array() ) {
 
@@ -399,10 +399,11 @@ class Sensei_Utils {
 
 	/**
 	 * Save quiz answers submitted by users
-	 * @param  boolean $submitted User's quiz answers
+	 * @param  array $submitted User's quiz answers
+     * @param int $user_id
 	 * @return boolean            Whether the answers were saved or not
 	 */
-	public static function sensei_save_quiz_answers( $submitted = false, $user_id = 0 ) {
+	public static function sensei_save_quiz_answers( $submitted = array(), $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
 		}
@@ -541,6 +542,7 @@ class Sensei_Utils {
 	 * @param  integer $quiz_id ID of quiz
 	 * @param  integer $grade   Grade received
 	 * @param  integer $user_id ID of user being graded
+     * @param  string $quiz_grade_type default 'auto'
 	 * @return boolean
 	 */
 	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0, $quiz_grade_type = 'auto' ) {
@@ -586,6 +588,7 @@ class Sensei_Utils {
 	 * Grade question
 	 * @param  integer $question_id ID of question
 	 * @param  integer $grade       Grade received
+     * @param int $user_id
 	 * @return boolean
 	 */
 	public static function sensei_grade_question( $question_id = 0, $grade = 0, $user_id = 0 ) {
@@ -727,8 +730,8 @@ class Sensei_Utils {
 	/**
 	 * Remove user from lesson, deleting all data from the corresponding quiz
 	 *
-	 * @param type $lesson_id
-	 * @param type $user_id
+	 * @param int $lesson_id
+	 * @param int $user_id
 	 * @return boolean
 	 */
 	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0, $from_course = false ) {
@@ -765,8 +768,8 @@ class Sensei_Utils {
 	/**
 	 * Remove a user from a course, deleting all activities across all lessons
 	 *
-	 * @param type $course_id
-	 * @param type $user_id
+	 * @param int $course_id
+	 * @param int $user_id
 	 * @return boolean
 	 */
 	public static function sensei_remove_user_from_course( $course_id = 0, $user_id = 0 ) {
@@ -918,6 +921,7 @@ class Sensei_Utils {
 	 * Add answer notes to question
 	 * @param  integer $question_id ID of question
 	 * @param  integer $user_id     ID of user
+     * @param string $notes
 	 * @return boolean
 	 */
 	public static function sensei_add_answer_notes( $question_id = 0, $user_id = 0, $notes = '' ) {
@@ -970,7 +974,7 @@ class Sensei_Utils {
 	/**
 	 * sort_array_by_key sorts array by key
 	 * @since  1.3.0
-	 * @param  $array by ref
+	 * @param  array $array by ref
 	 * @param  $key string column name in array
 	 * @return void
 	 */
@@ -1170,6 +1174,7 @@ class Sensei_Utils {
 	 * Set the status message displayed to the user for a quiz
 	 * @param  integer $lesson_id ID of quiz lesson
 	 * @param  integer $user_id   ID of user
+     * @param  bool $is_lesson
 	 * @return array              Status code and message
 	 */
 	public static function sensei_user_quiz_status_message( $lesson_id = 0, $user_id = 0, $is_lesson = false ) {
@@ -1305,6 +1310,7 @@ class Sensei_Utils {
 		$message = apply_filters( 'sensei_user_quiz_status_' . $status, $message );
 
 		if( $is_lesson && ! in_array( $status, array( 'login_required', 'not_started_course' ) ) ) {
+            $quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 			$extra = '<p><a class="button" href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' .  __( 'View the lesson quiz', 'woothemes-sensei' ) . '">' .  __( 'View the lesson quiz', 'woothemes-sensei' )  . '</a></p>';
 		}
 
@@ -1351,8 +1357,8 @@ class Sensei_Utils {
 	 * Check if a user has started a course or not
 	 *
 	 * @since  1.7.0
-	 * @param type $course_id
-	 * @param type $user_id
+	 * @param int $course_id
+	 * @param int $user_id
 	 * @return mixed false or comment_ID
 	 */
 	public static function user_started_course( $course_id = 0, $user_id = 0 ) {
@@ -1487,11 +1493,12 @@ class Sensei_Utils {
 	/**
 	 * Check if a user has completed a course or not
 	 *
-	 * @param mixed $course course_id or sensei_course_status entry
+	 * @param int | WP_Post | WP_Comment $course course_id or sensei_course_status entry
+     *
 	 * @param int $user_id
 	 * @return boolean
 	 */
-	public static function user_completed_course( $course = 0, $user_id = 0 ) {
+	public static function user_completed_course( $course , $user_id = 0 ) {
 
 		if( $course ) {
 			if ( is_object( $course ) && is_a( $course,'WP_Comment') ) {
@@ -1526,8 +1533,8 @@ class Sensei_Utils {
 	 * Check if a user has started a lesson or not
 	 *
 	 * @since  1.7.0
-	 * @param type $lesson_id
-	 * @param type $user_id
+	 * @param int $lesson_id
+	 * @param int $user_id
 	 * @return mixed false or comment_ID
 	 */
 	public static function user_started_lesson( $lesson_id = 0, $user_id = 0 ) {
@@ -1537,7 +1544,13 @@ class Sensei_Utils {
 				$user_id = get_current_user_id();
 			}
 
-			$user_lesson_status_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $lesson_id, 'user_id' => $user_id, 'type' => 'sensei_lesson_status', 'field' => 'comment_ID' ) );
+            $activity_args = array(
+                'post_id' => $lesson_id,
+                'user_id' => $user_id,
+                'type' => 'sensei_lesson_status',
+                'field' => 'comment_ID' );
+
+			$user_lesson_status_id = Sensei_Utils::sensei_get_activity_value( $activity_args );
 			if( $user_lesson_status_id ) {
 				return $user_lesson_status_id;
 			}
@@ -1622,8 +1635,8 @@ class Sensei_Utils {
 	 * Returns the requested course status
 	 *
 	 * @since 1.7.0
-	 * @param type $course_id
-	 * @param type $user_id
+	 * @param int $course_id
+	 * @param int $user_id
 	 * @return object
 	 */
 	public static function user_course_status( $course_id = 0, $user_id = 0 ) {
@@ -1744,10 +1757,10 @@ class Sensei_Utils {
 	 *
 	 * @access public
 	 * @since  1.7.0
-	 * @param type $user_id
-	 * @param type $course_id
-	 * @param type $status
-	 * @param type $metadata
+	 * @param int $user_id
+	 * @param int $course_id
+	 * @param string $status
+	 * @param array $metadata
 	 * @return mixed false or comment_ID
 	 */
 	public static function update_course_status( $user_id, $course_id, $status = 'in-progress', $metadata = array() ) {
@@ -1825,7 +1838,8 @@ class Sensei_Utils {
 	/**
 	 * Adjust the comment query to be faster on the database, used by Analysis admin
 	 * @since  1.7.0
-	 * @return array
+     * @param array $pieces
+	 * @return array $pieces
 	 */
 	public static function comment_total_sum_meta_value_filter( $pieces ) {
 		global $wpdb, $wp_version;
