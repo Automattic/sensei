@@ -15,13 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Sensei_Main {
 
     /**
-     * @var file
+     * @var string
      * Reference to the main plugin file
      */
     private $file;
 
     /**
-     * @var $_instance reference to the the main and only instance of the Sensei class.
+     * @var Sensei_Main $_instance to the the main and only instance of the Sensei class.
      * @since 1.8.0
      */
     protected static $_instance = null;
@@ -44,7 +44,7 @@ class Sensei_Main {
     public $template_url;
 
     /**
-     * @var WooThemes_Sensei_PostTypes
+     * @var Sensei_PostTypes
      * All Sensei sub classes. Currently used to access functionality contained within
      * within Sensei sub classes e.g. Sensei()->course->all_courses()
      */
@@ -60,6 +60,10 @@ class Sensei_Main {
      */
     public $course_results;
 
+    /**
+     * @var Sensei_Updates
+     */
+    public $updates;
     /**
      * @var WooThemes_Sensei_Course
      */
@@ -443,7 +447,7 @@ class Sensei_Main {
      **/
     public function virtual_order_payment_complete( $order_status, $order_id ) {
         $order = new WC_Order( $order_id );
-        if ( ! isset ( $order ) ) return;
+        if ( ! isset ( $order ) ) return '';
         if ( $order_status == 'wc-processing' && ( $order->post_status == 'wc-on-hold' || $order->post_status == 'wc-pending' || $order->post_status == 'wc-failed' ) ) {
             $virtual_order = true;
 
@@ -481,13 +485,14 @@ class Sensei_Main {
                 'category-courses' 	=> 'Category_Courses' )
         );
         foreach ( $widget_list as $key => $value ) {
-            if ( file_exists( $this->plugin_path . 'widgets/widget-woothemes-sensei-' . esc_attr( $key ) . '.php' ) ) {
-                require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-' . esc_attr( $key ) . '.php' );
+            if ( file_exists( $this->plugin_path . 'widgets/widget-woothemes-sensei-' . $key  . '.php' ) ) {
+                require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-' . $key  . '.php' );
                 register_widget( 'WooThemes_Sensei_' . $value . '_Widget' );
             }
         } // End For Loop
 
         do_action( 'sensei_register_widgets' );
+
     } // End register_widgets()
 
     /**
@@ -591,7 +596,7 @@ class Sensei_Main {
     public function template_loader ( $template = '' ) {
 
         _deprecated_function( 'Sensei()->template_loader', '1.9.0', 'Use Sensei_Templates::template_loader( $template ) instead' );
-        return Sensei_Templates::template_loader( $template );
+        Sensei_Templates::template_loader( $template );
 
     } // End template_loader()
 
@@ -637,12 +642,12 @@ class Sensei_Main {
      * @since  1.0.0
      * @param  int 			$course_id  (default: 0)
      * @param  array/Object $order_user (default: array()) Specific user's data.
-     * @return void
+     * @return bool|int
      */
     public function woocommerce_course_update ( $course_id = 0, $order_user = array()  ) {
         global $current_user;
 
-        if ( ! isset( $current_user ) || !$current_user->ID > 0 ) return;
+        if ( ! isset( $current_user ) || !$current_user->ID > 0 ) return false;
 
         $data_update = false;
 
@@ -696,10 +701,10 @@ class Sensei_Main {
      *
      * @access public
      * @param string $page (default: '')
-     * @param array $data (default: array())
+     *
      * @return bool
      */
-    public function check_user_permissions ( $page = '', $data = array() ) {
+    public function check_user_permissions ( $page = '' ) {
         // REFACTOR
         global $current_user, $post;
 
@@ -707,7 +712,7 @@ class Sensei_Main {
         if ( empty( $current_user->caps ) && Sensei()->settings->get('access_permission') ){
             $this->permissions_message['title'] = __('Restricted Access', 'woothemes-sensei' );
             $this->permissions_message['message'] = sprintf( __('You must be logged in to view this %s'), get_post_type() );
-            return;
+            return false;
         }
 
 
@@ -850,7 +855,7 @@ class Sensei_Main {
      * Check if visitors have access permission. If the "access_permission" setting is active, do a log in check.
      * @since  1.0.0
      * @access public
-     * @return void
+     * @return bool
      */
     public function access_settings () {
 
@@ -880,7 +885,7 @@ class Sensei_Main {
         if ( Sensei_WC::is_woocommerce_active() && ( 0 < $order_id ) ) {
             // Get order object
             $order = new WC_Order( $order_id );
-            $user = get_user_by( 'id', $order->user_id );
+            $user = get_user_by( 'id', $order->get_user_id() );
             $order_user['ID'] = $user->ID;
             $order_user['user_login'] = $user->user_login;
             $order_user['user_email'] = $user->user_email;
@@ -975,7 +980,7 @@ class Sensei_Main {
     public function sensei_woocommerce_reactivate_subscription( $user_id, $subscription_key ) {
         $subscription = WC_Subscriptions_Manager::get_users_subscription( $user_id, $subscription_key );
         $order = new WC_Order( $subscription['order_id'] );
-        $user = get_user_by( 'id', $order->user_id );
+        $user = get_user_by( 'id', $order->get_user_id() );
         $order_user = array();
         $order_user['ID'] = $user->ID;
         $order_user['user_login'] = $user->user_login;
