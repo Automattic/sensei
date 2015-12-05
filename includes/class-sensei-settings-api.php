@@ -48,6 +48,7 @@ class Sensei_Settings_API {
 		$this->has_tabs = false;
 		$this->tabs = array();
 		$this->settings_version = '';
+
 	} // End __construct()
 
 	/**
@@ -56,10 +57,12 @@ class Sensei_Settings_API {
 	 * @since  1.0.0
 	 * @return void
 	 */
-	public function setup_settings () {
-		add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
+	public function register_hook_listener() {
+
+        add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
 		add_action( 'init', array( $this, 'general_init' ) );
+
 	} // End setup_settings()
 
 	/**

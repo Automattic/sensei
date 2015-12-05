@@ -24,9 +24,10 @@ class Sensei_PostTypes {
 	 */
 	public function __construct () {
 
-
 		// Setup Post Types
 		$this->labels = array();
+        $this->token = 'woothemes-sensei-posttypes';
+
 		$this->setup_post_type_labels_base();
 		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );

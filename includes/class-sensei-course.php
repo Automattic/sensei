@@ -34,6 +34,9 @@ class Sensei_Course {
 	 * @since  1.0.0
 	 */
 	public function __construct () {
+
+        $this->token = 'course';
+
 		// Setup meta fields for this post type
 		$this->meta_fields = array( 'course_prerequisite', 'course_featured', 'course_video_embed', 'course_woocommerce_product' );
 		// Admin actions

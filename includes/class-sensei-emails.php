@@ -38,9 +38,6 @@ class Sensei_Emails {
 
 	/**
 	 * Constructor for the email class hooks in all emails that can be sent.
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct( $file ) {
 

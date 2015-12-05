@@ -13,15 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @since 1.4.0
  */
 class Sensei_Learner_Profiles {
-	private $profile_url_base;
-	public $token;
+    /**
+     * @var string
+     */
+    private $profile_url_base;
 
 	/**
 	 * Constructor.
 	 * @since  1.4.0
 	 */
 	public function __construct () {
-
 
 		// Setup learner profile URL base
 		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'woothemes-sensei') );

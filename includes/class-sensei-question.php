@@ -21,6 +21,7 @@ class Sensei_Question {
 	 * @since  1.0.0
 	 */
 	public function __construct () {
+        $this->token = 'question';
 		$this->question_types = $this->question_types();
 		$this->meta_fields = array( 'question_right_answer', 'question_wrong_answers' );
 		if ( is_admin() ) {

@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class Sensei_Frontend {
 
-	public $token;
 	public $messages;
 	public $data;
 
@@ -97,15 +96,6 @@ class Sensei_Frontend {
 	} // End __construct()
 
 	/**
-	 * Initialise the code.
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function init () {
-
-	} // End init()
-
-	/**
 	 * Graceful fallback for course and lesson variables on Frontend object
 	 *
 	 * @param string $key Key to get.
@@ -113,7 +103,6 @@ class Sensei_Frontend {
 	 * @return array|mixed
 	 */
 	public function __get( $key ) {
-
 
 		if ( 'lesson' == $key || 'course' == $key ) {
 			if ( WP_DEBUG ) {
@@ -141,8 +130,8 @@ class Sensei_Frontend {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			// My Courses tabs script
-			wp_register_script( $this->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
-			wp_enqueue_script( $this->token . '-user-dashboard' );
+			wp_register_script( Sensei()->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
+			wp_enqueue_script( Sensei()->token . '-user-dashboard' );
 
 
             // Course Archive javascript

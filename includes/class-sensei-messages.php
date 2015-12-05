@@ -22,6 +22,7 @@ class Sensei_Messages {
 	 * @since  1.6.0
 	 */
 	public function __construct () {
+        $this->token = 'messages';
 		$this->post_type = 'sensei_message';
 		$this->meta_fields = array( 'sender', 'receiver' );
 

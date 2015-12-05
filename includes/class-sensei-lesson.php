@@ -21,6 +21,9 @@ class Sensei_Lesson {
 	 * @since  1.0.0
 	 */
 	public function __construct () {
+
+        $this->token = 'lesson';
+
 		// Setup meta fields for this post type
 		$this->meta_fields = array( 'lesson_prerequisite', 'lesson_course', 'lesson_preview', 'lesson_length', 'lesson_complexity', 'lesson_video_embed' );
 

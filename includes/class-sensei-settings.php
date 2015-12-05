@@ -23,7 +23,21 @@ class Sensei_Settings extends Sensei_Settings_API {
 	public function __construct () {
 	    parent::__construct(); // Required in extended classes.
 
+        $this->token = 'woothemes-sensei-settings';
         add_action('init', array( __CLASS__, 'flush_rewrite_rules' ) );
+
+        // Setup Admin Settings data
+        if ( is_admin() ) {
+
+            $this->has_tabs 	= true;
+            $this->name 		= __( 'Sensei Settings', 'woothemes-sensei' );
+            $this->menu_label	= __( 'Settings', 'woothemes-sensei' );
+            $this->page_slug	= 'woothemes-sensei-settings';
+
+        } // End If Statement
+
+        $this->register_hook_listener();
+        $this->get_settings();
 
 	} // End __construct()
 

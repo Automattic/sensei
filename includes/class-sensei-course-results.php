@@ -14,7 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class Sensei_Course_Results {
 
-	public $token;
+    /**
+     * @var string
+     */
     public  $courses_url_base;
 
 	/**

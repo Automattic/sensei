@@ -14,12 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class Sensei_Admin {
 
-	public $token;
-
 	/**
 	 * Constructor.
 	 * @since  1.0.0
-	 * @return  void
 	 */
 	public function __construct () {
 
@@ -245,10 +242,10 @@ class Sensei_Admin {
 	function create_pages() {
 
 		// Courses page
-	    $this->create_page( esc_sql( _x('courses-overview', 'page_slug', 'woothemes-sensei') ), $this->token . '_courses_page_id', __('Courses', 'woothemes-sensei'), '[newcourses][featuredcourses][freecourses][paidcourses]' );
+	    $this->create_page( esc_sql( _x('courses-overview', 'page_slug', 'woothemes-sensei') ), Sensei()->token. '_courses_page_id', __('Courses', 'woothemes-sensei'), '[newcourses][featuredcourses][freecourses][paidcourses]' );
 
 		// User Dashboard page
-	    $this->create_page( esc_sql( _x('my-courses', 'page_slug', 'woothemes-sensei') ), $this->token . '_user_dashboard_page_id', __('My Courses', 'woothemes-sensei'), '[usercourses]' );
+	    $this->create_page( esc_sql( _x('my-courses', 'page_slug', 'woothemes-sensei') ), Sensei()->token . '_user_dashboard_page_id', __('My Courses', 'woothemes-sensei'), '[usercourses]' );
 
 	} // End create_pages()
 

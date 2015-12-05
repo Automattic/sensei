@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @since 1.3.0
  */
 class Sensei_Grading {
-	public $token;
+
 	public $name;
 	public $file;
 	public $page_slug;
@@ -253,7 +253,7 @@ class Sensei_Grading {
 	 */
 	public function wrapper_container( $which ) {
 		if ( 'top' == $which ) {
-			?><div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>"><?php
+			?><div id="woothemes-sensei" class="wrap woothemes-sensei"><?php
 		} elseif ( 'bottom' == $which ) {
 			?></div><!--/#woothemes-sensei--><?php
 		} // End If Statement

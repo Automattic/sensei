@@ -258,31 +258,15 @@ class Sensei_Main {
 
         // Setup post types.
         $this->post_types = new Sensei_PostTypes();
-        $this->post_types->token = 'woothemes-sensei-posttypes';
 
         // Lad the updates class
-        $this->updates = new WooThemes_Sensei_Updates( $this );
+        $this->updates = new Sensei_Updates( $this );
 
-        // Setup settings screen.
+        // Setup settings
         $this->settings = new Sensei_Settings();
-        $this->settings->token = 'woothemes-sensei-settings';
-
-        // Setup Admin Settings data
-        if ( is_admin() ) {
-
-            $this->settings->has_tabs 	= true;
-            $this->settings->name 		= __( 'Sensei Settings', 'woothemes-sensei' );
-            $this->settings->menu_label	= __( 'Settings', 'woothemes-sensei' );
-            $this->settings->page_slug	= 'woothemes-sensei-settings';
-
-        } // End If Statement
-
-        $this->settings->setup_settings();
-        $this->settings->get_settings();
 
         // Load Course Results Class
         $this->course_results = new Sensei_Course_Results();
-        $this->course_results->token = $this->token;
 
         // Load the teacher role
         $this->teacher = new Sensei_Teacher();
@@ -299,12 +283,11 @@ class Sensei_Main {
         //Add the quiz class
         $this->quiz = $this->post_types->quiz;
 
-        // load the modules class
+        // load the modules class after all plugsin are loaded
         add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
 
         // Load Learner Management Functionality
         $this->learners = new Sensei_Learner_Management( $this->file );
-        $this->learners->token = $this->token;
 
         // Differentiate between administration and frontend logic.
         if ( is_admin() ) {
@@ -314,19 +297,14 @@ class Sensei_Main {
 
             // Load Admin Class
             $this->admin = new Sensei_Admin( $this->file );
-            $this->admin->token = $this->token;
 
             // Load Analysis Reports
             $this->analysis = new Sensei_Analysis( $this->file );
-            $this->analysis->token = $this->token;
-
 
         } else {
 
             // Load Frontend Class
             $this->frontend = new Sensei_Frontend();
-            $this->frontend->token = $this->token;
-            $this->frontend->init();
 
             // Load notice Class
             $this->notices = new Sensei_Notices();
@@ -335,15 +313,12 @@ class Sensei_Main {
 
         // Load Grading Functionality
         $this->grading = new Sensei_Grading( $this->file );
-        $this->grading->token = $this->token;
 
         // Load Email Class
         $this->emails = new Sensei_Emails( $this->file );
-        $this->emails->token = $this->token;
 
         // Load Learner Profiles Class
         $this->learner_profiles = new Sensei_Learner_Profiles();
-        $this->learner_profiles->token = $this->token;
 
     }
 
