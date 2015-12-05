@@ -312,7 +312,7 @@ class Sensei_Settings_API {
 	 * Retrieve the settings from the database.
 	 * @access public
 	 * @since  1.0.0
-	 * @return void
+	 * @return array
 	 */
 	public function get_settings () {
 		if ( ! is_array( $this->settings ) ) {

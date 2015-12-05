@@ -234,7 +234,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		}
 
 		// Output users data
-        $user_name = Sensei()->learners->get_learner_full_name( $item->user_id );
+        $user_name = Sensei_Student::get_full_name( $item->user_id );
 
         if ( !$this->csv_output ) {
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) );

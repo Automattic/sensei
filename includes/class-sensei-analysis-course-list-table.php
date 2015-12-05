@@ -311,7 +311,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 				$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
 
 				// Output users data
-				$user_name = Sensei()->learners->get_learner_full_name( $item->user_id );
+				$user_name = Sensei_Student::get_full_name( $item->user_id );
 
 				if ( !$this->csv_output ) {
 
@@ -632,7 +632,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 		$course = get_post( $this->course_id );
 		$report = sanitize_title( $course->post_title ) . '-' . $this->view . 's-overview';
 		if ( $this->user_id ) {
-            $user_name = Sensei()->learners->get_learner_full_name( $this->user_id );
+            $user_name = Sensei_Student::get_full_name( $this->user_id );
 			$report = sanitize_title( $user_name  ) . '-' . $report;
 		}
 

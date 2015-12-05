@@ -253,7 +253,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			$grade = __( 'N/A', 'woothemes-sensei' );
 		}
 
-        $title = Sensei()->learners->get_learner_full_name( $item->user_id );
+        $title = Sensei_Student::get_full_name( $item->user_id );
 
 		// QuizID to be deprecated
 		$quiz_id = get_post_meta( $item->comment_post_ID, '_lesson_quiz', true );
