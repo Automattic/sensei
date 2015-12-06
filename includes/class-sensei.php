@@ -165,7 +165,7 @@ class Sensei_Main {
         register_activation_hook( $this->file, array( $this, 'activation' ) );
 
         // load the classes need throughout sensei
-        $this->initialize_child_class_objects();
+        $this->initialize_global_objects();
 
         // Image Sizes
         $this->init_image_sizes();
@@ -258,7 +258,7 @@ class Sensei_Main {
      *
      * @since 1.9.0
      */
-    public function initialize_child_class_objects(){
+    public function initialize_global_objects(){
 
         // Setup post types.
         $this->post_types = new Sensei_PostTypes();
