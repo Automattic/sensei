@@ -164,9 +164,6 @@ class Sensei_Main {
         // Run this on activation.
         register_activation_hook( $this->file, array( $this, 'activation' ) );
 
-        // load the classes need throughout sensei
-        $this->initialize_global_objects();
-
         // Image Sizes
         $this->init_image_sizes();
 
@@ -213,6 +210,9 @@ class Sensei_Main {
 
             self::$_instance = new self( $sensei_main_plugin_file  );
 
+            // load the global class objects needed throughout Sensei
+            self::$_instance->initialize_global_objects();
+
         }
 
         return self::$_instance;
@@ -242,7 +242,7 @@ class Sensei_Main {
      * @since 1.8.0
      */
     public function __clone() {
-        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '2.1' );
+        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '1.8' );
     }
 
     /**
@@ -250,7 +250,7 @@ class Sensei_Main {
      * @since 1.8.0
      */
     public function __wakeup() {
-        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '2.1' );
+        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '1.8' );
     }
 
     /**
