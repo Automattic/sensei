@@ -95,9 +95,9 @@ class Sensei_Main {
     public $frontend;
 
     /**
-     * @var String
+     * @var Sensei_Notices
      */
-    public $notice;
+    public $notices;
 
     /**
      * @var WooThemes_Sensei_Grading
