@@ -141,20 +141,20 @@ class Sensei_Course {
 
 		if ( Sensei_WC::is_woocommerce_active() ) {
 			// Add Meta Box for WooCommerce Course
-			add_meta_box( 'course-wc-product', __( 'WooCommerce Product', 'woothemes-sensei' ), array( $this, 'course_woocommerce_product_meta_box_content' ), Sensei()->token, 'side', 'default' );
+			add_meta_box( 'course-wc-product', __( 'WooCommerce Product', 'woothemes-sensei' ), array( $this, 'course_woocommerce_product_meta_box_content' ), $this->token, 'side', 'default' );
 		} // End If Statement
 		// Add Meta Box for Prerequisite Course
-		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'woothemes-sensei' ), array( $this, 'course_prerequisite_meta_box_content' ), Sensei()->token, 'side', 'default' );
+		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'woothemes-sensei' ), array( $this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Featured Course
-		add_meta_box( 'course-featured', __( 'Featured Course', 'woothemes-sensei' ), array( $this, 'course_featured_meta_box_content' ), Sensei()->token, 'side', 'default' );
+		add_meta_box( 'course-featured', __( 'Featured Course', 'woothemes-sensei' ), array( $this, 'course_featured_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Course Meta
-		add_meta_box( 'course-video', __( 'Course Video', 'woothemes-sensei' ), array( $this, 'course_video_meta_box_content' ), Sensei()->token, 'normal', 'default' );
+		add_meta_box( 'course-video', __( 'Course Video', 'woothemes-sensei' ), array( $this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box for Course Lessons
-		add_meta_box( 'course-lessons', __( 'Course Lessons', 'woothemes-sensei' ), array( $this, 'course_lessons_meta_box_content' ), Sensei()->token, 'normal', 'default' );
+		add_meta_box( 'course-lessons', __( 'Course Lessons', 'woothemes-sensei' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
         // Add Meta Box to link to Manage Learners
-        add_meta_box( 'course-manage', __( 'Course Management', 'woothemes-sensei' ), array( $this, 'course_manage_meta_box_content' ), Sensei()->token, 'side', 'default' );
+        add_meta_box( 'course-manage', __( 'Course Management', 'woothemes-sensei' ), array( $this, 'course_manage_meta_box_content' ), $this->token, 'side', 'default' );
         // Remove "Custom Settings" meta box.
-		remove_meta_box( 'woothemes-settings', Sensei()->token, 'normal' );
+		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 
         // add Disable email notification box
         add_meta_box( 'course-notifications', __( 'Course Notifications', 'woothemes-sensei' ), array( $this, 'course_notification_meta_box_content' ), 'course', 'normal', 'default' );
@@ -192,7 +192,7 @@ class Sensei_Course {
 
 		$html = '';
 
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . Sensei()->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . Sensei()->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
 
@@ -304,7 +304,7 @@ class Sensei_Course {
 
 		$html = '';
 
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . Sensei()->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . Sensei()->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
 			$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="chosen_select widefat">' . "\n";
@@ -334,7 +334,7 @@ class Sensei_Course {
 
 		$html = '';
 
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . Sensei()->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . Sensei()->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
+		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		$checked = '';
 		if ( isset( $course_featured ) && ( '' != $course_featured ) ) {
@@ -381,7 +381,7 @@ class Sensei_Course {
 		global $post;
 
 		/* Verify the nonce before proceeding. */
-		if ( ( get_post_type() != Sensei()->token ) || ! wp_verify_nonce( $_POST['woo_' . Sensei()->token . '_noonce'], plugin_basename(__FILE__) ) ) {
+		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST['woo_' . $this->token . '_noonce'], plugin_basename(__FILE__) ) ) {
 			return $post_id;
 		}
 
@@ -457,8 +457,8 @@ class Sensei_Course {
 		} // End If Statement
 
 		$html = '';
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . Sensei()->token . '_noonce' ) . '" id="'
-                 . esc_attr( 'woo_' . Sensei()->token . '_noonce' )
+		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="'
+                 . esc_attr( 'woo_' . $this->token . '_noonce' )
                  . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
 		if ( count( $posts_array ) > 0 ) {
