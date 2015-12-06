@@ -21,6 +21,7 @@ class Sensei_Analysis {
 	/**
 	 * Constructor
 	 * @since  1.0.0
+	 * @param string $file
 	 * @return  void
 	 */
 	public function __construct ( $file ) {
@@ -215,6 +216,7 @@ class Sensei_Analysis {
 	/**
 	 * An individual users' profile view for analysis, showing their Courses
 	 * @since  1.2.0
+	 * @param integer $user_id
 	 * @return void
 	 */
 	public function analysis_user_profile_view( $user_id ) {
@@ -242,6 +244,7 @@ class Sensei_Analysis {
 	/**
 	 * An individual Course view for analysis, showing the Courses Lessons
 	 * @since  1.2.0
+	 * @param integer $course_id
 	 * @return void
 	 */
 	public function analysis_course_view( $course_id ) {
@@ -269,6 +272,8 @@ class Sensei_Analysis {
 	/**
 	 * An individual Course view for analysis, showing a specific Learners Lessons
 	 * @since  1.2.0
+	 * @param integer $course_id
+	 * @param integer $user_id
 	 * @return void
 	 */
 	public function analysis_user_course_view( $course_id, $user_id ) {
@@ -296,6 +301,7 @@ class Sensei_Analysis {
 	/**
 	 * An individual Course view for analysis, showing all the Learners
 	 * @since  1.2.0
+	 * @param integer $course_id
 	 * @return void
 	 */
 	public function analysis_course_users_view( $course_id ) {
@@ -323,6 +329,7 @@ class Sensei_Analysis {
 	/**
 	 * An individual Lesson view for analysis, showing all the Learners
 	 * @since  1.2.0
+	 * @param integer $lesson_id
 	 * @return void
 	 */
 	public function analysis_lesson_users_view( $lesson_id ) {
@@ -633,7 +640,7 @@ class Sensei_Analysis {
 	/**
 	 * Write array data to CSV
 	 * @since  1.2.0
-	 * @param  array  $report_array data array
+	 * @param  array  $report_data data array
 	 * @return void
 	 */
 	public function report_write_download( $report_data = array() ) {
