@@ -242,10 +242,10 @@ class Sensei_Admin {
 	function create_pages() {
 
 		// Courses page
-	    $this->create_page( esc_sql( _x('courses-overview', 'page_slug', 'woothemes-sensei') ), Sensei()->token. '_courses_page_id', __('Courses', 'woothemes-sensei'), '[newcourses][featuredcourses][freecourses][paidcourses]' );
+	    $this->create_page( esc_sql( _x('courses-overview', 'page_slug', 'woothemes-sensei') ), 'woothemes-sensei_courses_page_id', __('Courses', 'woothemes-sensei'), '[newcourses][featuredcourses][freecourses][paidcourses]' );
 
 		// User Dashboard page
-	    $this->create_page( esc_sql( _x('my-courses', 'page_slug', 'woothemes-sensei') ), Sensei()->token . '_user_dashboard_page_id', __('My Courses', 'woothemes-sensei'), '[usercourses]' );
+	    $this->create_page( esc_sql( _x('my-courses', 'page_slug', 'woothemes-sensei') ), 'woothemes-sensei_user_dashboard_page_id', __('My Courses', 'woothemes-sensei'), '[usercourses]' );
 
 	} // End create_pages()
 
@@ -263,8 +263,8 @@ class Sensei_Admin {
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings', 'lesson-order', 'course-order' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( Sensei()->token . '-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
-		wp_enqueue_style( Sensei()->token . '-global' );
+		wp_register_style( 'woothemes-sensei-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
+		wp_enqueue_style( 'woothemes-sensei-global' );
 
         // Select 2 styles
         wp_enqueue_style( 'select2', Sensei()->plugin_url . 'assets/css/select2/select2.css', '', Sensei()->version, 'screen' );
@@ -272,8 +272,8 @@ class Sensei_Admin {
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
-			wp_register_style( Sensei()->token . '-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
-			wp_enqueue_style( Sensei()->token . '-admin-custom' );
+			wp_register_style( 'woothemes-sensei-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
+			wp_enqueue_style( 'woothemes-sensei-admin-custom' );
 
 		}
 

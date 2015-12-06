@@ -106,7 +106,7 @@ class Sensei_Learner_Management {
 	 */
 	public function enqueue_styles () {
 
-		wp_enqueue_style( Sensei()->token . '-admin' );
+		wp_enqueue_style( 'woothemes-sensei-admin' );
 
 	} // End enqueue_styles()
 
@@ -208,7 +208,7 @@ class Sensei_Learner_Management {
 	 */
 	public function wrapper_container( $which ) {
 		if ( 'top' == $which ) {
-			?><div id="woothemes-sensei" class="wrap <?php echo esc_attr( Sensei()->token ); ?>"><?php
+			?><div id="woothemes-sensei" class="wrap woothemes-sensei"><?php
 		} elseif ( 'bottom' == $which ) {
 			?></div><!--/#woothemes-sensei--><?php
 		} // End If Statement

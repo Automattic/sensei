@@ -31,7 +31,7 @@ class Sensei_Updates {
 
 		// Setup object data
 		$this->parent = $parent;
-		$this->updates_run = get_option( Sensei()->token . '-upgrades', array() );
+		$this->updates_run = get_option( 'woothemes-sensei-upgrades', array() );
 
 		// The list of upgrades to run
 		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => __( 'Assign role capabilities', 'woothemes-sensei' ), 'desc' => __( 'Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei' ), 'product' => 'Sensei' ) ),
@@ -76,7 +76,7 @@ class Sensei_Updates {
 							);
 
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
-		$this->version = get_option( Sensei()->token . '-version' );
+		$this->version = get_option( 'woothemes-sensei-version' );
 
 		// Manual Update Screen
 		add_action('admin_menu', array( $this, 'add_update_admin_screen' ), 50 );

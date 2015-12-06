@@ -226,7 +226,7 @@ class Sensei_Teacher {
         if( !current_user_can('manage_options') ){
             return;
         }
-        add_meta_box( 'sensei-teacher',  __( 'Teacher' , Sensei()->token ),  array( $this , 'teacher_meta_box_content' ),
+        add_meta_box( 'sensei-teacher',  __( 'Teacher' , 'woothemes-sensei'),  array( $this , 'teacher_meta_box_content' ),
             'course',
             'side',
             'core'

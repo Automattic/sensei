@@ -35,7 +35,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function __construct () {
-		Sensei()->token = 'woothemes-sensei';
+		$this->token = 'woothemes-sensei-settings';
 		$this->page_slug = 'woothemes-sensei-settings-api';
 
 		$this->sections = array();
@@ -166,7 +166,7 @@ class Sensei_Settings_API {
 	public function create_sections () {
 		if ( count( $this->sections ) > 0 ) {
 			foreach ( $this->sections as $k => $v ) {
-				add_settings_section( $k, $v['name'], array( $this, 'section_description' ), Sensei()->token );
+				add_settings_section( $k, $v['name'], array( $this, 'section_description' ), $this->token );
 			}
 		}
 	} // End create_sections()
@@ -319,7 +319,7 @@ class Sensei_Settings_API {
 	 */
 	public function get_settings () {
 		if ( ! is_array( $this->settings ) ) {
-			$this->settings = get_option( Sensei()->token, array() );
+			$this->settings = get_option( $this->token, array() );
 		}
 
 		foreach ( $this->fields as $k => $v ) {

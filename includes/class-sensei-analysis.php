@@ -84,7 +84,7 @@ class Sensei_Analysis {
 	 */
 	public function enqueue_styles () {
 
-		wp_enqueue_style( Sensei()->token . '-admin' );
+		wp_enqueue_style( 'woothemes-sensei-admin' );
 
 		wp_enqueue_style( 'woothemes-sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
 
