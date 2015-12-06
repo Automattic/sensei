@@ -313,6 +313,10 @@ class Sensei_Main {
             // Load notice Class
             $this->notices = new Sensei_Notices();
 
+            // Load built in themes support integration
+            new Sensei_Theme_Integration_Loader();
+
+
         }
 
         // Load Grading Functionality

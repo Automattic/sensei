@@ -83,6 +83,19 @@ class Sensei_Autoloader {
             'Sensei_Legacy_Shortcodes'             => 'shortcodes/class-sensei-legacy-shortcodes.php',
 
             /**
+             * Built in theme integration support
+             */
+            'Sensei_Theme_Integration_Loader' => 'theme-integrations/theme-integration-loader.php',
+            'Sensei__S'                       => 'theme-integrations/_s.php',
+            'Sensei_Twentyeleven'             => 'theme-integrations/twentyeleven.php',
+            'Sensei_Twentytwelve'             => 'theme-integrations/twentytwelve.php',
+            'Sensei_Twentythirteen'           => 'theme-integrations/Twentythirteen.php',
+            'Sensei_Twentyfourteen'           => 'theme-integrations/Twentyfourteen.php',
+            'Sensei_Twentyfifteen'            => 'theme-integrations/Twentyfifteen.php',
+            'Sensei_Twentysixteen'            => 'theme-integrations/Twentysixteen.php',
+            'Sensei_Storefront'               => 'theme-integrations/Storefront.php',
+
+            /**
              * WooCommerce
              */
             'Sensei_WC' => 'class-sensei-wc.php',
