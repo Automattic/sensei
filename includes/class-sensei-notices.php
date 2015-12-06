@@ -34,7 +34,7 @@ class Sensei_Notices{
 	*
 	* 
 	* @param string $message 
-	* @param string $type defaults to alert options( alert, tick , download , note   )
+	* @param string $type defaults to alert options( alert, tick , download , info   )
 	*
 	* @return void
 	*/

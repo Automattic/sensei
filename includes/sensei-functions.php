@@ -221,3 +221,29 @@ function sensei_is_a_course( $post ){
 	return "course" == get_post_type( $post );
 
 }
+
+/**
+ * Determine the login link
+ * on the frontend.
+ *
+ * This function will return the my-courses page link
+ * or the wp-login link.
+ *
+ * @since 1.9.0
+ */
+function sensei_user_login_url(){
+
+    $my_courses_page_id = intval( Sensei()->settings->get( 'my_course_page' ) );
+    $page = get_post( $my_courses_page_id );
+
+    if ( $my_courses_page_id && isset( $page->ID ) && 'page' == get_post_type( $page->ID )  ){
+
+        return get_permalink( $page->ID );
+
+    } else {
+
+        return wp_login_url();
+
+    }
+
+}// end sensei_user_login_link
