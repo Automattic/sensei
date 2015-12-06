@@ -15,7 +15,9 @@ function is_sensei() {
 	$taxonomies = array( 'course-category', 'quiz-type', 'question-type', 'lesson-tag' );
 
 	if( is_post_type_archive( $post_types ) || is_singular( $post_types ) || is_tax( $taxonomies ) ) {
+
 		$is_sensei = true;
+
 	}
 
 	if( is_object( $post ) && ! is_wp_error( $post ) ) {
@@ -24,8 +26,11 @@ function is_sensei() {
 		$my_courses_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
 
 		if( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) ) ) {
+
 			$is_sensei = true;
+
 		}
+
 	}
 
 	return apply_filters( 'is_sensei', $is_sensei, $post );

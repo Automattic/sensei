@@ -37,6 +37,12 @@ class Sensei_Shortcode_Loader{
 
         // setup all the shortcodes and load the listener into WP
         $this->initialize_shortcodes();
+
+        // add sensei body class for shortcodes
+        add_filter( 'body_class', array( $this, 'possibly_add_body_class' ));
+
+        // array( $this, 'add_body_class')
+
     }
 
     /**
@@ -105,7 +111,7 @@ class Sensei_Shortcode_Loader{
      * Respond to WordPress do_shortcode calls
      * for shortcodes registered in the initialize_shortcodes function.
      *
-     * @since 1.8.0
+     * @since 1.9.0
      *
      * @param $attributes
      * @param $content
@@ -134,6 +140,45 @@ class Sensei_Shortcode_Loader{
         }
 
         return $shortcode->render();
+
+    }
+
+    /**
+     * Add the Sensei body class if
+     * the current page has a Sensei shortcode.
+     *
+     * Note: legacy shortcodes not supported here.
+     *
+     * @since 1.9.0
+     *
+     * @param array $classes
+     * @return array
+     */
+    public function possibly_add_body_class ( $classes ) {
+
+        global $post;
+
+        $has_sensei_shortcode = false;
+
+        if ( is_a( $post, 'WP_Post' ) ) {
+
+            // check all registered Sensei shortcodes (not legacy shortcodes)
+            foreach ( $this->shortcode_classes as $shortcode => $class ){
+
+                if ( has_shortcode( $post->post_content, $shortcode ) ) {
+
+                    $has_sensei_shortcode = true;
+                }
+
+            }
+        }
+
+        if( $has_sensei_shortcode ) {
+            $classes[] = 'sensei' ;
+        }
+
+
+        return $classes;
 
     }
 
