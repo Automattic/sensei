@@ -257,6 +257,8 @@ function sensei_user_login_url(){
  * Checks the settings to see
  * if a user must be logged in to view content
  *
+ * duplicate of Sensei()->access_settings().
+ *
  * @since 1.9.0
  * @return bool
  */

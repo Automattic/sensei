@@ -713,7 +713,9 @@ class Sensei_Main {
         global $current_user, $post;
 
         // if use is not logged in
-        if ( empty( $current_user->caps ) && Sensei()->settings->get('access_permission') ){
+        // skipped for single lesson
+        if ( empty( $current_user->caps ) && Sensei()->settings->get('access_permission')
+            && 'lesson-single' !=  $page ){
             $this->permissions_message['title'] = __('Restricted Access', 'woothemes-sensei' );
             $this->permissions_message['message'] = sprintf( __('You must be logged in to view this %s'), get_post_type() );
             return false;
@@ -754,11 +756,13 @@ class Sensei_Main {
 
                 $update_course = $this->woocommerce_course_update( $lesson_course_id );
                 $is_preview = Sensei_Utils::is_preview_lesson( $post->ID );
+
                 if ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
                     $user_allowed = true;
                 } elseif( $this->access_settings() && false == $is_preview ) {
 
                     $user_allowed = true;
+
                 } else {
                     $this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
                     $course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
