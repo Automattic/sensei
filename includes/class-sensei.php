@@ -1120,9 +1120,11 @@ class Sensei_Main {
         //If object have items go through them all to find course
         if ( 0 < sizeof( $order_items ) ) {
 
-        echo '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
+            $course_details_html =  '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
+            $order_contains_courses = false;
 
-        foreach ( $order_items as $item ) {
+
+            foreach ( $order_items as $item ) {
 
                 $product_type = '';
                 if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
@@ -1159,14 +1161,28 @@ class Sensei_Main {
 
                             $title = $course->post_title;
                             $permalink = get_permalink( $course->ID );
-
-                            echo '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
+                            $order_contains_courses = true;
+                            $course_details_html .=  '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
                         }
-                    }
-                }
+
+
+                    } // end if has courses
+
+                } // end if $userPid
+
+            } // end for each order item
+
+            // Output Course details
+            if( $order_contains_courses ){
+
+                echo $course_details_html;
+
             }
-        }
-    }
+
+
+        } // end if  order items not empty
+
+    } // end func email course details
 
     /**
      * Filtering wp_count_comments to ensure that Sensei comments are ignored
