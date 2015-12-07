@@ -394,14 +394,14 @@ Class Sensei_WC{
 
         if( self::is_course_in_cart( $post->ID ) ){ ?>
 
-            <div class="sensei-message info">'
+            <div class="sensei-message info">
                 <?php
 
                 $cart_link =  '<a class="cart-complete" href="' . WC()->cart->get_checkout_url()
                               . '" title="' . __('complete purchase', 'woothemes-sensei') . '">'
                               . __('complete the purchase', 'woothemes-sensei') . '</a>';
 
-                sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei'), $cart_link );
+                echo sprintf(  __('You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei'), $cart_link );
 
                 ?>
             </div>
