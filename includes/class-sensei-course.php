@@ -1972,10 +1972,13 @@ class Sensei_Course {
         <?php } // End If Statement
 
         // number of completed lessons
-        if( is_user_logged_in() ){
+        if( Sensei_Utils::user_started_course( $course->ID,  get_current_user_id() )
+            || Sensei_Utils::user_completed_course( $course->ID,  get_current_user_id() )  ){
+
             $completed = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
             $lesson_count = count( $this->course_lessons( $course->ID ) );
             echo '<span class="course-lesson-progress">' . sprintf( __( '%1$d of %2$d lessons completed', 'woothemes-sensei' ) , $completed, $lesson_count  ) . '</span>';
+
         }
 
         sensei_simple_course_price( $course->ID );
