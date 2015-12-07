@@ -2859,6 +2859,18 @@ class Sensei_Lesson {
 
 	} // End lesson_image()
 
+    /**
+     * Ooutpu the lesson image
+     *
+     * @since 1.9.0
+     * @param integer $lesson_id
+     */
+    public static function the_lesson_image( $lesson_id = 0 ){
+
+        echo Sensei()->lesson->lesson_image( $lesson_id );
+
+    }
+
 	/**
 	 * Returns the the lesson excerpt.
 	 *

@@ -60,6 +60,11 @@ add_action('sensei_single_course_content_inside_before', array( 'Sensei_Template
 add_action( 'sensei_single_course_content_inside_before',array( 'Sensei_Course', 'the_title'), 10 );
 
 // @1.9.0
+// hook the single course title on the single course page
+add_action( 'sensei_single_course_content_inside_before', array( Sensei()->course , 'course_image'), 20 );
+
+
+// @1.9.0
 //Add legacy hooks deprecated in 1.9.0
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Templates','deprecate_course_single_meta_hooks'), 10 );
 
@@ -210,7 +215,7 @@ add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Templat
 
 //@since 1.9.0
 // hook in the lesson image on the single lesson
-add_action( 'sensei_single_lesson_content_inside_before', array( Sensei()->lesson, 'lesson_image' ), 10 );
+add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'the_lesson_image' ), 17 );
 
 //@since 1.9.0
 // hook in the lesson image on the single lesson deprecated hook function
