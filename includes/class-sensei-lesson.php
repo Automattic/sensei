@@ -3515,7 +3515,7 @@ class Sensei_Lesson {
 
             <?php } else { ?>
 
-            <?php if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ) : ?>
+            <?php if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) &&  sensei_is_login_required() )  : ?>
 
                 <div class="sensei-message info">
                     <?php

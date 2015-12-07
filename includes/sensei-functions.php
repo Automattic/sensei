@@ -252,3 +252,18 @@ function sensei_user_login_url(){
     }
 
 }// end sensei_user_login_link
+
+/**
+ * Checks the settings to see
+ * if a user must be logged in to view content
+ *
+ * @since 1.9.0
+ * @return bool
+ */
+function sensei_is_login_required(){
+
+    $login_required = isset( Sensei()->settings->settings['access_permission'] ) && ( true == Sensei()->settings->settings['access_permission'] );
+
+    return $login_required;
+
+}
