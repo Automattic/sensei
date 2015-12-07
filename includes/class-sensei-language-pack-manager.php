@@ -90,17 +90,30 @@ class Sensei_Language_Pack_Manager {
 	 * @return bool
 	 */
 	public static function has_language_pack_available( $locale = null ) {
-		if ( is_null( $locale ) ) {
+
+        if ( is_null( $locale ) ) {
+
 			$locale = get_locale();
+
 		}
 
 		if ( 'en_US' === $locale ) {
+
 			return false;
+
 		}
 
 		if ( 'yes' === get_option( 'sensei_needs_language_pack_install' ) ) {
+
 			return true;
+
 		}
+
+        if( isset( $_GET['translation_updated'] ) && 5 ==  $_GET['translation_updated'] ){
+
+            return false;
+
+        }
 
 		$version = get_option( 'woothemes_sensei_language_pack_version', array( '0', $locale ) );
 
@@ -116,6 +129,7 @@ class Sensei_Language_Pack_Manager {
 		}
 
 		return false;
+
 	}
 
 	/**
