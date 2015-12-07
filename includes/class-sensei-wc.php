@@ -137,8 +137,6 @@ Class Sensei_WC{
      */
     public static function add_course_archive_wc_filter_links( $filter_links ){
 
-        $course_url = remove_query_arg('paged', Sensei_Utils::get_current_url() );
-
         $free_courses = self::get_free_courses();
         $paid_courses = self::get_paid_courses();
 
@@ -149,14 +147,16 @@ Class Sensei_WC{
 
         }
 
-        $filter_links[] = array(    'id'=>'paid' ,
-                                    'url'=> add_query_arg('course_filter', 'paid', $course_url),
-                                    'title'=>__( 'Paid', 'woothemes-sensei' )
+        $filter_links[] = array(
+            'id'=>'paid' ,
+            'url'=> add_query_arg( array( 'course_filter'=>'paid'), Sensei_Course::get_courses_page_url() ),
+            'title'=>__( 'Paid', 'woothemes-sensei' )
         );
 
-        $filter_links[] = array(    'id'=>'free',
-                                    'url'=>add_query_arg('course_filter', 'free', $course_url),
-                                    'title'=>__( 'Free', 'woothemes-sensei' )
+        $filter_links[] = array(
+            'id'=>'free',
+            'url'=> add_query_arg( array( 'course_filter'=>'free'), Sensei_Course::get_courses_page_url() ),
+            'title'=>__( 'Free', 'woothemes-sensei' )
         );
 
         return $filter_links;
