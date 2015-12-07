@@ -248,7 +248,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 				}
 
-                $title = Sensei_Student::get_full_name( $user_activity->user_id );
+                $title = Sensei_Learner::get_full_name( $user_activity->user_id );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
                 /**

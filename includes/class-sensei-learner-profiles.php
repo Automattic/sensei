@@ -63,7 +63,7 @@ class Sensei_Learner_Profiles {
 		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
 			$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );
 
-            $name = Sensei_Student::get_full_name( $learner_user->ID );
+            $name = Sensei_Learner::get_full_name( $learner_user->ID );
 
 			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) . ' ' . $sep . ' ';
 		}

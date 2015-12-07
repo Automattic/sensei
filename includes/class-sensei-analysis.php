@@ -450,7 +450,7 @@ class Sensei_Analysis {
 
 			$user_id = intval( $_GET['user_id'] );
 			$url = esc_url( add_query_arg( array( 'page' => $this->page_slug, 'user' => $user_id ), admin_url( 'admin.php' ) ) );
-            $user_name = Sensei_Student::get_full_name( $user_id );
+            $user_name = Sensei_Learner::get_full_name( $user_id );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, $user_name );
 
 		} // End If Statement
@@ -471,7 +471,7 @@ class Sensei_Analysis {
 			$user_id = intval( $_GET['user_id'] );
 			$user_data = get_userdata( $user_id );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $user_id ), admin_url( 'admin.php' ) );
-            $user_name = Sensei_Student::get_full_name( $user_id );
+            $user_name = Sensei_Learner::get_full_name( $user_id );
             $title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, $user_name );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), $user_data->display_name );
 		} // End If Statement

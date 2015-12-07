@@ -284,7 +284,7 @@ class Sensei_Grading {
 		}
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
 
-            $user_name = Sensei_Student::get_full_name( $_GET['user_id'] );
+            $user_name = Sensei_Learner::get_full_name( $_GET['user_id'] );
 			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
 
 		} // End If Statement
@@ -318,7 +318,7 @@ class Sensei_Grading {
 		}
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 
-            $user_name = Sensei_Student::get_full_name( $_GET['user'] );
+            $user_name = Sensei_Learner::get_full_name( $_GET['user'] );
 			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
 
 		} // End If Statement

@@ -1,17 +1,14 @@
 <?php
 
 /**
- * Sensei_Student
+ * Responsible for all student specific functionality and helper functions
  *
- * The class is responsible for all student specific functionality and helper functions
- *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
+ * @package Users
  * @author Automattic
+ *
  * @since 1.9.0
  */
-class Sensei_Student{
+class Sensei_Learner{
 
     /**
      * Get the students full name

@@ -327,7 +327,7 @@ class Sensei_Learner_Management {
 
 		if ( $users ) {
 			foreach ( $users as $user ) {
-                $full_name = Sensei_Student::get_full_name( $user->ID );
+                $full_name = Sensei_Learner::get_full_name( $user->ID );
 
                 if( trim($user->display_name ) == trim( $full_name ) ){
 
@@ -457,7 +457,7 @@ class Sensei_Learner_Management {
      */
     public function get_learner_full_name( $user_id ){
 
-        return Sensei_Student::get_full_name( $user_id );
+        return Sensei_Learner::get_full_name( $user_id );
 
     } // end get_learner_full_name
 
