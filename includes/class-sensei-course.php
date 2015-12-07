@@ -2107,15 +2107,31 @@ class Sensei_Course {
         // for the course archive page
         if( $query->is_main_query() && is_post_type_archive('course') )
         {
-
-            $query->set( 'posts_per_page', apply_filters( 'sensei_archive_courses_per_page', get_option( 'posts_per_page' ) ) );
+            /**
+             * sensei_archive_courses_per_page
+             *
+             * Sensei courses per page on the course
+             * archive
+             *
+             * @since 1.9.0
+             * @param integer $posts_per_page default 10
+             */
+            $query->set( 'posts_per_page', apply_filters( 'sensei_archive_courses_per_page', 10 ) );
 
         }
         // for the my courses page
         elseif( is_page() && Sensei()->settings->get( 'my_course_page' ) == $post->ID  )
         {
-
-            $query->set( 'posts_per_page', apply_filters( 'sensei_my_courses_per_page', get_option( 'posts_per_page' ) ) );
+            /**
+             * sensei_my_courses_per_page
+             *
+             * Sensei courses per page on the my courses page
+             * as set in the settings
+             *
+             * @since 1.9.0
+             * @param integer $posts_per_page default 10
+             */
+            $query->set( 'posts_per_page', apply_filters( 'sensei_my_courses_per_page', 10 ) );
 
         }
 
