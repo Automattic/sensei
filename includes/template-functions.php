@@ -1080,3 +1080,17 @@ function sensei_courses_per_row(){
     echo Sensei_Course::get_loop_number_of_columns();
 
 }
+
+/**
+ * Wrapper function for Sensei_Templates::get_template( $template_name, $args, $path )
+ *
+ * @since 1.9.0
+ * @param $template_name
+ * @param $args
+ * @param $path
+ */
+function sensei_get_template( $template_name, $args, $path ){
+
+    Sensei_Templates::get_template( $template_name, $args, $path );
+
+}
