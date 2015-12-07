@@ -526,8 +526,6 @@ class Sensei_Frontend {
 	 */
 	function sensei_course_image( $course_id, $width = '100', $height = '100', $return = false ) {
 
-        trigger_error( 'Sensei Deprecated function: sensei_course_image since 1.9.0 . Please use Sensei()->course->course_image instead.');
-
     	if ( ! $return ) {
 
 			echo Sensei()->course->course_image( $course_id, $width, $height );
@@ -1029,9 +1027,9 @@ class Sensei_Frontend {
 
                     <article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ); ?>">
 
-	    			    <?php do_action( 'sensei_course_image', get_the_ID() ); ?>
+	    			    <?php sensei_do_deprecated_action('sensei_course_image','1.9.0', 'sensei_single_course_content_inside_before', get_the_ID() ); ?>
 
-	    			    <?php do_action( 'sensei_course_archive_course_title', $post ); ?>
+	    			    <?php sensei_do_deprecated_action( 'sensei_course_archive_course_title','1.9.0','sensei_course_content_inside_before', $post ); ?>
 
 	    			    <?php do_action( 'sensei_course_archive_meta' ); ?>
 

@@ -143,7 +143,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
                 $included_courses = array('-1000'); // don't show any courses
 
             }else{
-                $included_courses = Sensei_Utils::array_zip_merge( $active_ids, $completed_ids );
+                $included_courses = Sensei_Utils::array_zip_merge( (array)$active_ids, (array)$completed_ids );
             }
 
 

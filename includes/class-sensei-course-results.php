@@ -200,7 +200,7 @@ class Sensei_Course_Results {
     public static function fire_course_image_hook(){
 
         global $course;
-        do_action( 'sensei_course_image', $course->ID );
+        sensei_do_deprecated_action('sensei_course_image','1.9.0', 'sensei_single_course_content_inside_before', array( get_the_ID()) );
 
     }
 
