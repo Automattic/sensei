@@ -368,6 +368,11 @@ class Sensei_Templates {
      */
     public static function the_title( $post ){
 
+        // ID passed in
+        if( is_numeric( $post ) ){
+            $post = get_post( $post );
+        }
+
         /**
          * Filter the template html tag for the title
          *

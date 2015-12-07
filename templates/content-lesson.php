@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
          * content.php template. This applies to the specific post type that you've targeted.
          *
          * @since 1.9.0
-         * @param string $post_id
+         * @param string $lesson_id
          */
         do_action( 'sensei_content_lesson_before', get_the_ID() );
         ?>
@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
              * @hooked Sensei()->modules->module_archive_description -  11
              * @hooked Sensei_Lesson::the_lesson_meta                -  20
              *
-             * @param string $post_id
+             * @param string $lesson_id
              */
             do_action('sensei_content_lesson_inside_before', get_the_ID());
             ?>
@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
              *
              * @since 1.9.0
              *
-             * @param string $post_id
+             * @param string $lesson_id
              */
             do_action('sensei_content_lesson_inside_after', get_the_ID());
             ?>
@@ -71,7 +71,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
          * lesson-content.php template.
          *
          * @since 1.9.0
-         * @param string $post_id
+         * @param string $lesson_id
          */
         do_action( 'sensei_content_lesson_after', get_the_ID() );
         ?>

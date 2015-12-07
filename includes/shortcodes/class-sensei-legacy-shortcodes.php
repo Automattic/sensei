@@ -374,7 +374,7 @@ class Sensei_Legacy_Shortcodes {
             </div>
             <?php
             // so that legacy shortcodes work with thir party plugins that wants to hook in
-            do_action('sensei_course_content_after', $course);
+            do_action('sensei_course_content_after', $course->ID);
             ?>
 
         </article>

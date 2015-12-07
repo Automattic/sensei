@@ -1921,10 +1921,11 @@ class Sensei_Course {
      *
      * @since 1.9.0
      *
-     * @param WP_Post $course
+     * @param integer $course_id
      */
-    public function the_course_free_lesson_preview( $course ){
+    public function the_course_free_lesson_preview( $course_id ){
         // Meta data
+        $course = get_post( $course_id );
         $preview_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $course->ID ) );
         $is_user_taking_course = Sensei_Utils::user_started_course( $course->ID, get_current_user_id() );
 
@@ -1945,11 +1946,12 @@ class Sensei_Course {
      * Add course mata to the course meta hook
      *
      * @since 1.9.0
-     * @param WP_Post $course
+     * @param integer $course_id
      */
-    public function the_course_meta( $course ){
+    public function the_course_meta( $course_id ){
         echo '<p class="sensei-course-meta">';
 
+        $course = get_post( $course_id );
         $category_output = get_the_term_list( $course->ID, 'course-category', '', ', ', '' );
         $author_display_name = get_the_author_meta( 'display_name', $course->post_author  );
 

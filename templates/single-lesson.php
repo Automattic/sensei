@@ -24,12 +24,14 @@
          *
          * @since 1.9.0
          *
+         * @param integer $lesson_id
+         *
          * @hooked deprecated_lesson_image_hook - 10
          * @hooked deprecate_sensei_lesson_single_title - 15
          * @hooked Sensei_Lesson::lesson_image() -  17
          * @hooked deprecate_lesson_single_main_content_hook - 20
          */
-        do_action( 'sensei_single_lesson_content_inside_before' );
+        do_action( 'sensei_single_lesson_content_inside_before', get_the_ID() );
 
     ?>
 
@@ -66,9 +68,11 @@
          *
          * @since 1.9.0
          *
+         * @param integer $lesson_id
+         *
          * @hooked Sensei()->frontend->sensei_breadcrumb   - 30
          */
-        do_action( 'sensei_single_lesson_content_inside_after' );
+        do_action( 'sensei_single_lesson_content_inside_after', get_the_ID() );
 
     ?>
 

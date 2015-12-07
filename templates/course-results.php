@@ -39,9 +39,11 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
          *
          * @since 1.9.0
          *
+         * @param integer $course_id
+         *
          * @hooked Sensei_Course_Results::fire_sensei_message_hook() - 20
          */
-        do_action( 'sensei_course_results_content_inside_before' );
+        do_action( 'sensei_course_results_content_inside_before', $course->ID );
         ?>
 
         <header>
@@ -73,9 +75,11 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
          *
          * @since 1.9.0
          *
+         * @param integer $course_id
+         *
          * @hooked Sensei()->course_results->course_info - 20
          */
-        do_action( 'sensei_course_results_content_inside_after' );
+        do_action( 'sensei_course_results_content_inside_after', $course->ID );
         ?>
 
     </section>

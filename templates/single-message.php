@@ -21,10 +21,12 @@
      *
      * @since 1.9.0
      *
+     * @param integer $message_id
+     *
      * @hooked WooThemes_Sensei_Messages::the_title                 - 20
      * @hooked WooThemes_Sensei_Messages::the_message_sent_by_title - 40
      */
-    do_action( 'sensei_single_message_content_inside_before');
+    do_action( 'sensei_single_message_content_inside_before', get_the_ID());
     ?>
 
     <section class="entry">
@@ -39,9 +41,9 @@
      * action inside the single message template after the content
      * @since 1.9.0
      *
-     * @hooked
+     * @param integer $message_id
      */
-    do_action( 'sensei_single_message_content_inside_after');
+    do_action( 'sensei_single_message_content_inside_after', get_the_ID());
 
     ?>
 </article><!-- .post -->
