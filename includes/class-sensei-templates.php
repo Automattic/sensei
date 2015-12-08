@@ -5,8 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside W
  *
  * Handles all Template loading and redirecting functionality.
  *
- * @package Sensei
- * @category Templates
+ * @package Views
+ * @author Automattic
+ *
  * @since 1.9.0
  */
 class Sensei_Templates {

@@ -2,14 +2,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Generic List Table Class
+ * Generic Data Table parent Class in Sensei.
  *
- * All functionality pertaining to the Generic Data Table Class in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Core
+ * @author Automattic
+ *
  * @since 1.2.0
  *
  */
@@ -247,7 +245,7 @@ class Sensei_List_Table extends WP_List_Table {
 
 /**
  * Class WooThemes_Sensei_List_Table
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_List_Table extends Sensei_List_Table {}

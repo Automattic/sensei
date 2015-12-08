@@ -2,14 +2,10 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei_Main
+ * Responsible for loading Sensei and setting up the Main WordPress hooks.
  *
- * The main class for sensei.
- *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Core
+ * @author Automattic
  * @since 1.0.0
  */
 class Sensei_Main {
@@ -1407,7 +1403,7 @@ class Sensei_Main {
 
 /**
  * Class Woothemes_Sensei
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class Woothemes_Sensei extends Sensei_Main{ }

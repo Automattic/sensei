@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the settings in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Core
+ * @author Automattic
+ *
  * @since 1.0.0
  */
 class Sensei_Settings extends Sensei_Settings_API {
@@ -691,7 +690,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 /**
  * Class WooThemes_Sensei_Settings
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Settings extends Sensei_Settings{}

@@ -6,6 +6,10 @@
  * Responsible for loading the corrent supported theme if a
  * support theme is installed.
  *
+ * @package Views
+ * @subpackage Theme-Integration
+ * @author Automattic
+ *
  * @since 1.9.0
  */
 class Sensei_Theme_Integration_Loader {

@@ -1,14 +1,12 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside WP
 /**
- * Sensei Autoloader Class
- *
  * Loading all class files within the Sensei/includes directory
  *
- * The autoloader depends on the class and file name matching.
+ * The auto loader class listens for calls to classes within Sensei and loads
+ * the file containing the class.
  *
- * @package Sensei
- * @category Autoloader
+ * @package Core
  * @since 1.9.0
  */
 class Sensei_Autoloader {

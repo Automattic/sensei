@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the Admin Learners in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Users
+ * @author Automattic
+ *
  * @since 1.3.0
  */
 class Sensei_Learner_Management {
@@ -465,7 +464,7 @@ class Sensei_Learner_Management {
 
 /**
  * Class WooThemes_Sensei_Learners
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Learners extends Sensei_Learner_Management{}

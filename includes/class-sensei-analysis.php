@@ -2,14 +2,10 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Analysis Class
- *
  * All functionality pertaining to the Admin Analysis in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Analytics
+ * @author Automattic
  * @since 1.0.0
  */
 class Sensei_Analysis {
@@ -669,7 +665,7 @@ class Sensei_Analysis {
 
 /**
  * Class WooThemes_Sensei_Analysis
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Analysis extends Sensei_Analysis {}

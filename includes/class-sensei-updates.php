@@ -6,10 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * Class that contains the updates for Sensei data and structures.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Core
+ * @author Automattic
  * @since 1.1.0
  */
 class Sensei_Updates {
@@ -1753,7 +1751,7 @@ class Sensei_Updates {
 
 /**
  * Class WooThemes_Sensei_Updates
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Updates extends Sensei_Updates {}

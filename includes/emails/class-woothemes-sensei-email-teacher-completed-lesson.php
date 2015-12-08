@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Completed_Lesson' ) ) :
  *
  * An email sent to the teacher when one of their students completes a Lesson.
  *
- * @class 		WooThemes_Sensei_Email_Teacher_Completed_Lesson
- * @version		1.9.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_Teacher_Completed_Lesson {
 

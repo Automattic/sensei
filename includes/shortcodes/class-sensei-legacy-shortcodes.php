@@ -7,6 +7,13 @@
  * version 1.9
  *
  * These shortcodes will soon be deprecated.
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
+ * @since		1.6.0
+ *
  */
 class Sensei_Legacy_Shortcodes {
 

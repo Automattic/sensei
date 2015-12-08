@@ -1,6 +1,6 @@
 source: ./
 
-destination: sensei-reference
+destination: docs.woothemes.com/images/sensei-apidocs
 
 templateConfig: apigen/theme-sensei/config.neon
 
@@ -13,6 +13,7 @@ exclude:
     - inc/
     - node_modules/
     - sensei-apidocs/
+    - docs.woothemes.com/
     - tmp/
     - tests/
     - .sass-cache/
@@ -24,16 +25,16 @@ exclude:
 charset: [UTF-8]
 
 # elements with this name prefix will be considered as the "main project" (the rest will be considered as libraries)
-main: WC
+main: sensei
 
 # title of generated documentation
-title: WooCommerce
+title: Sensei Developer Reference
 
 # base url used for sitemap (useful for public doc)
 baseUrl: http://docs.woothemes.com/sensei-reference/
 
 # choose ApiGen template theme
-templateTheme: default
+templateTheme: theme-sensei
 
 # generate documentation for PHP internal classes
 php: false
@@ -48,7 +49,7 @@ tree: true
 deprecated: true
 
 # generate list of tasks with @todo annotation
-todo: true
+todo: false
 
 # add link to ZIP archive of documentation
 download: false

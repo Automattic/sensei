@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  *
  * A WooThemes standardized component widget.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Widgets
- * @author WooThemes
+ * @package Views
+ * @subpackage Widgets
+ * @author Automattic
+ *
  * @since 1.0.0
  */
 class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {

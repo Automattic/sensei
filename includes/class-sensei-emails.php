@@ -4,11 +4,8 @@
  *
  * Sensei Emails Class which handles the sending emails and email templates. This class loads in available emails.
  *
- * @class 		WooThemes_Sensei_Emails
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @category	Class
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
  */
 class Sensei_Emails {
 
@@ -441,7 +438,7 @@ class Sensei_Emails {
 
 /**
  * Class WooThemes_Sensei_Emails
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Emails extends Sensei_Emails{}

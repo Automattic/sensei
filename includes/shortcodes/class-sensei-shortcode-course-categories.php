@@ -17,10 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * This class is loaded in WP by the shortcode loader class.
  *
  * @class Sensei_Shortcode_Course_Categories
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
- * @package Sensei
- * @category Shortcodes
- * @author 	WooThemes
  */
 class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 

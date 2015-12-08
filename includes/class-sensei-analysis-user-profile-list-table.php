@@ -2,14 +2,11 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Analysis User Profile List Table Class
+ * Analysis User Profile Data Table in Sensei.
  *
- * All functionality pertaining to the Admin Analysis User Profile Data Table in Sensei.
+ * @package Analytics
+ * @author Automattic
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
  * @since 1.2.0
  */
 class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Table {
@@ -316,7 +313,7 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 
 /**
  * Class WooThemes_Sensei_Analysis_User_Profile_List_Table
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Table {}

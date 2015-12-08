@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Quiz_Submitted' ) ) :
  *
  * An email sent to the teacher when one of their students submits a quiz for manual grading.
  *
- * @class 		WooThemes_Sensei_Email_Teacher_Quiz_Submitted
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 

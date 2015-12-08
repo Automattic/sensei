@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the Messages post type in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Users
+ * @author Automattic
+ *
  * @since 1.6.0
  */
 class Sensei_Messages {
@@ -722,7 +721,7 @@ class Sensei_Messages {
 
 /**
  * Class WooThemes_Sensei_Messages
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Messages extends Sensei_Messages{}

@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Started_Course' ) ) :
  *
  * An email sent to the teacher when one of their students starts a course.
  *
- * @class 		WooThemes_Sensei_Email_Teacher_Started_Course
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_Teacher_Started_Course {
 

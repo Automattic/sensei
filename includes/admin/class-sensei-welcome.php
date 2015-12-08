@@ -1,26 +1,18 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
 /**
- * Sensei Welcome Page Class
- *
  * Shows a feature overview for the new version (major)
  *
  * Adapted from code in EDD (Copyright (c) 2012, Pippin Williamson) and WooCommerce and WP
  *
- * @author      WooThemes
- * @category    Admin
- * @package     Sensei/Admin
+ * @package Views
+ * @author Automattic
+ *
  * @version     1.8.0
 */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
-/**
- * Sensei_Welcome class
- *
- * @since 1.8.0
- */
 class Sensei_Welcome {
 
 	/**

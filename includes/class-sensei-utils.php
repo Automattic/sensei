@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * Common utility functions for Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Utilities
- * @author WooThemes
+ * @package Core
+ * @author Automattic
+ *
  * @since 1.0.0
  */
 class Sensei_Utils {
@@ -2232,7 +2231,7 @@ class Sensei_Utils {
 
 /**
  * Class WooThemes_Sensei_Utils
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Utils extends Sensei_Utils{}

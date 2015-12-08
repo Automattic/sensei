@@ -2,14 +2,11 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Learner Profiles Class
- *
  * All functionality pertaining to the learner profiles in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Views
+ * @author Automattic
+ *
  * @since 1.4.0
  */
 class Sensei_Learner_Profiles {
@@ -227,7 +224,7 @@ class Sensei_Learner_Profiles {
 
 /**
  * Class WooThemes_Sensei_Learner_Profiles
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Learner_Profiles extends Sensei_Learner_Profiles {}

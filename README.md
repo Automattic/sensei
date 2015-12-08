@@ -7,24 +7,31 @@ Sensei is a commercial plugin available from http://www.woothemes.com/products/s
 # Architecture
 
 Sensei structural model can be divided into components. These components are not well separated in the current
-version, but as we improve the plugin the code base will be divided and structured according these components. 
+version, but serves as a model for future changes.
 
+* Core
+  * Post Types
+  * Settings
 * Users
   * Teachers
   * Learners
-* Courses
-* Modules
-* Lessons
-* Messages
-* Analytics/Data
-* Settings
-* Quiz/Grading/Testing/Confirmation
+  * Messages
+  * Emails
+* Content
+  * Courses
+  * Modules
+  * Lessons
+  * Shortcodes
+* Analytics
+* Assessment
 * Views
   * Templates (Frontend)
   * Admin
-* Installation / Activation /
-* Shortcodes
-* Shop/Commerce
+  * Installation
+* Access Management
+  * eCommerce
+  * Membership
+  * Permissions
 
 ##Contributing to Sensei
 See our guidelines here: [Contributing to Sensei](https://github.com/woothemes/sensei/blob/master/CONTRIBUTING.md)

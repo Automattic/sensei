@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  *
  * A WooThemes Sensei Category Courses widget to display a list of Courses in a Course Category.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Widgets
- * @author WooThemes
+ * @package Views
+ * @subpackage Widgets
+ * @author Automattic
+ *
  * @since 1.1.0
  */
 class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {

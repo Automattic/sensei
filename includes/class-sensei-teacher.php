@@ -6,10 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the teacher role.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Users
+ * @author Automattic
  * @since 1.0.0
  */
 class Sensei_Teacher {
@@ -830,8 +828,8 @@ class Sensei_Teacher {
         }
 
         // load the email class
-        include('emails/class-woothemes-sensei-teacher-new-course-assignment.php');
-        $email = new Teacher_New_Course_Assignment();
+        include('emails/class-sensei-email-teacher-new-course-assignment.php');
+        $email = new Sensei_Email_Teacher_New_Course_Assignment();
         $email->trigger( $teacher_id, $course_id );
 
         return true;

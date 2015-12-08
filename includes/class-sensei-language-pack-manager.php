@@ -5,15 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Language Pack manager class
+ * Downloads available language packs.
  *
- * Downloads the language pack available.
+ * The class uses the language configured within your WordPress
+ * configuration file.
  *
- * @package    WordPress
- * @subpackage Sensei
- * @category   Core
- * @author     WooThemes
- * @since      1.9.0
+ * @package Core
+ * @author Automattic
+ *
+ * @since  1.9.0
  */
 class Sensei_Language_Pack_Manager {
 

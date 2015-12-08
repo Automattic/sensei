@@ -2,17 +2,15 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Settings API Class
- *
  * A settings API (wrapping the WordPress Settings API).
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Settings
- * @author WooThemes
+ * @package Core
+ * @author Automattic
+ *
  * @since 1.0.0
  */
 class Sensei_Settings_API {
+
 	public $token;
 	public $page_slug;
 	public $name;
@@ -867,7 +865,7 @@ class Sensei_Settings_API {
 
 /**
  * Class WooThemes_Sensei_Settings_API
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Settings_API extends Sensei_Settings_API{}

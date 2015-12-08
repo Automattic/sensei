@@ -16,10 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  *
  * @class Sensei_Shortcode_User_Courses
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
- * @package Sensei
- * @category Classes
- * @author 	WooThemes
  */
 class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 

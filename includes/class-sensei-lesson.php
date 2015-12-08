@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the lessons post type in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Content
+ * @author Automattic
+ *
  * @since 1.0.0
  */
 class Sensei_Lesson {
@@ -3786,7 +3785,7 @@ class Sensei_Lesson {
 
 /**
  * Class WooThemes_Sensei_Lesson
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Lesson extends Sensei_Lesson{}

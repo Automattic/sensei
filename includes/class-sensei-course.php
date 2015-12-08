@@ -6,13 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the Courses Post Type in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Content
+ * @author Automattic
  * @since 1.0.0
  */
 class Sensei_Course {
+
     /**
      * @var $token
      */
@@ -2930,7 +2929,7 @@ class Sensei_Course {
 
 /**
  * Class WooThemes_Sensei_Course
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Course extends Sensei_Course{}

@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * Sensei Module Functionality
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Administration
+ * @package Content
+ * @author Automattic
+ *
  * @since 1.8.0
  */
 class Sensei_Core_Modules

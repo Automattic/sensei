@@ -6,8 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside W
  *
  * All functions needed to integrate Sensei and WooCommerce
  *
- * @package Sensei
- * @category WooCommerce
+ * @package Access-Management
+ * @author Automattic
  * @since 1.9.0
  */
 

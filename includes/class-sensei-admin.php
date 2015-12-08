@@ -2,14 +2,10 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Administration Class
+ * Handles all admin views, assets and navigation.
  *
- * All functionality pertaining to the administration sections of Sensei.
- *
- * @package WordPress
- * @subpackage Sensei
- * @category Administration
- * @author WooThemes
+ * @package Views
+ * @author Automattic
  * @since 1.0.0
  */
 class Sensei_Admin {
@@ -1518,7 +1514,8 @@ class Sensei_Admin {
 
 /**
  * Legacy Class WooThemes_Sensei_Admin
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
+ * @ignore
  */
 class WooThemes_Sensei_Admin extends Sensei_Admin{ }

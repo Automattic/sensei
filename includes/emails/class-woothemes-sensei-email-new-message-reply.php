@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
  *
  * An email sent to the a user when they receive a reply to the private message.
  *
- * @class 		WooThemes_Sensei_Email_New_Message_Reply
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_New_Message_Reply {
 
