@@ -49,7 +49,11 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
-		extract( $args, EXTR_SKIP );
+
+        $before_widget = $args[ 'before_widget' ];
+        $before_title  = $args[ 'before_title' ];
+        $after_title   = $args[ 'after_title' ];
+        $after_widget  = $args[ 'after_widget' ];
 
 		/* Our variables from the widget settings. */
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );

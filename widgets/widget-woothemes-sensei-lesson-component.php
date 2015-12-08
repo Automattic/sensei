@@ -52,8 +52,11 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
-		extract( $args, EXTR_SKIP );
 
+        $before_widget = $args[ 'before_widget' ];
+        $before_title  = $args[ 'before_title' ];
+        $after_title   = $args[ 'after_title' ];
+        $after_widget  = $args[ 'after_widget' ];
 
 		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) && !is_user_logged_in() ) {
 			// No Output
