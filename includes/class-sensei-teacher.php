@@ -366,7 +366,7 @@ class Sensei_Teacher {
     public static function update_course_modules_author( $course_id ,$new_teacher_id ){
 
         if( empty( $course_id ) || empty( $new_teacher_id ) ){
-            return false;
+            return;
         }
 
         $terms_selected_on_course = wp_get_object_terms( $course_id, 'module' );
@@ -1500,10 +1500,10 @@ class Sensei_Teacher {
      * @since 1.8.7
      * @access public
      * @parameters obj $clauses
-     * @return obj $clauses
+     * @return WP_Comment_Query  $clauses
      */
 
-    public function restrict_comment_moderation($clauses) {
+    public function restrict_comment_moderation ( $clauses ) {
 
         global $pagenow;
 

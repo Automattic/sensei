@@ -241,7 +241,7 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 * @param int $post_id
-	 * @return void
+	 * @return integer $post_id
 	 */
 	public function meta_box_save ( $post_id ) {
 
@@ -278,7 +278,7 @@ class Sensei_Lesson {
      * Update the lesson quiz and all the post meta
 	 *
 	 * @access public
-	 * @return void
+	 * @return integer|boolean $post_id or false
 	 */
 	public function quiz_update( $post_id ) {
 		global $post;
@@ -292,7 +292,7 @@ class Sensei_Lesson {
 		} // End If Statement
 
 		if( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
-			return;
+			return false;
 		}
 
 		// Temporarily disable the filter
@@ -2108,7 +2108,7 @@ class Sensei_Lesson {
 	 *
 	 * @access private
 	 * @param array $data (default: array())
-	 * @return void
+	 * @return integer|boolean $course_id or false
 	 */
 	private function lesson_save_course( $data = array() ) {
 		global $current_user;
@@ -2182,7 +2182,7 @@ class Sensei_Lesson {
 	 *
 	 * @access private
 	 * @param array $data (default: array())
-	 * @return void
+	 * @return integer|boolean $question_id or false
 	 */
 	public function lesson_save_question( $data = array(), $context = 'quiz' ) {
 		$return = false;
@@ -2420,7 +2420,7 @@ class Sensei_Lesson {
 	 *
 	 * @access private
 	 * @param array $data (default: array())
-	 * @return void
+	 * @return boolean
 	 */
 	private function lesson_delete_question( $data = array() ) {
 

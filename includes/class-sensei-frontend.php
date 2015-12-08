@@ -156,7 +156,6 @@ class Sensei_Frontend {
 	 */
 	public function enqueue_styles () {
 
-
 		$disable_styles = false;
 		if ( isset( Sensei()->settings->settings[ 'styles_disable' ] ) ) {
 			$disable_styles = Sensei()->settings->settings[ 'styles_disable' ];
@@ -505,7 +504,7 @@ class Sensei_Frontend {
      * sensei_single_title output for single page title
      * @since  1.1.0
      * @return void
-     * @deprecate
+     * @deprecated
      */
     function the_single_title() {
 
@@ -1548,7 +1547,6 @@ class Sensei_Frontend {
 	 */
 	function sensei_handle_login_request( ) {
 
-
 		// Check that it is a sensei login request and if it has a valid nonce
 	    if(  isset( $_REQUEST['form'] ) && 'sensei-login' == $_REQUEST['form'] ) {
 
@@ -1556,7 +1554,6 @@ class Sensei_Frontend {
 		    if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'sensei-login' ) ){
 		    	return;
 		    }
-
 
 		    //get the page where the sensei log form is located
 		    $referrer = $_REQUEST['_wp_http_referer'];
@@ -1649,7 +1646,7 @@ class Sensei_Frontend {
 		global 	 $current_user;
 		// check the for the sensei specific registration requests
 		if( !isset( $_POST['sensei_reg_username'] ) && ! isset( $_POST['sensei_reg_email'] ) && !isset( $_POST['sensei_reg_password'] )){
-			// exit functionas this is not a sensei registration request
+			// exit if this is not a sensei registration request
 			return ;
 		}
 		// check for spam throw cheating huh
@@ -1738,8 +1735,7 @@ class Sensei_Frontend {
 	 */
 	public function login_message_process(){
 
-
-		    // setup the message variables
+            // setup the message variables
 			$message = '';
 
 			//only output message if the url contains login=failed and login=emptyfields

@@ -122,6 +122,7 @@ class Sensei_Learner_Management {
 		foreach ( $classes_to_load as $class_file ) {
 			Sensei()->load_class( $class_file );
 		} // End For Loop
+
 	} // End load_data_table_files()
 
 	/**
@@ -185,10 +186,10 @@ class Sensei_Learner_Management {
 	/**
 	 * learners_headers outputs Learners general headers
 	 * @since  1.6.0
+     * @param array $args
 	 * @return void
 	 */
 	public function learners_headers( $args = array( 'nav' => 'default' ) ) {
-
 
 		$function = 'learners_' . $args['nav'] . '_nav';
 		$this->$function();
@@ -196,6 +197,7 @@ class Sensei_Learner_Management {
 			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
 		<?php
 		do_action( 'sensei_learners_after_headers' );
+
 	} // End learners_headers()
 
 	/**

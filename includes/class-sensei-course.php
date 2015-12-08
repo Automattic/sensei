@@ -1127,15 +1127,6 @@ class Sensei_Course {
 	} // End get_product_courses()
 
 	/**
-	 * single_course_lesson_data sets up frontend data for single course lesson output
-	 * @since  1.2.1
-	 * @return void
-	 */
-	public function single_course_lesson_data() {
-
-	} // End single_course_lesson_data()
-
-	/**
 	 * Fix posts_per_page for My Courses page
 	 * @param  WP_Query $query
 	 * @return void

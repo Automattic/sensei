@@ -53,7 +53,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	*/
 	public function update_author( $post_id ){
 
-
 		// If this isn't a 'lesson' post, don't update it.
         // if this is a revision don't save it
 	    if ( isset( $_POST['post_type'] ) && 'lesson' != $_POST['post_type']
@@ -1042,7 +1041,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       */
 
      public function quiz_has_no_questions() {
-
 
          if( ! is_singular( 'quiz' ) )  {
              return;

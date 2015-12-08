@@ -75,7 +75,6 @@ class Sensei_Grading {
 	 */
 	public function enqueue_scripts () {
 
-
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// Load Grading JS
@@ -231,10 +230,10 @@ class Sensei_Grading {
 	/**
 	 * Outputs Grading general headers
 	 * @since  1.3.0
+     * @param array $args
 	 * @return void
 	 */
 	public function grading_headers( $args = array( 'nav' => 'default' ) ) {
-
 
 		$function = 'grading_' . $args['nav'] . '_nav';
 		$this->$function();

@@ -16,21 +16,44 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
  */
 class WooThemes_Sensei_Email_New_Message_Reply {
 
-	var $template;
+    /**
+     * @var string
+     */
+    var $template;
+
+    /**
+     * @var string
+     */
 	var $subject;
-	var $heading;
+
+    /**
+     * @var string
+     */
+    var $heading;
+
+    /**
+     * @var string
+     */
 	var $recipient;
+
 	var $original_sender;
 	var $original_receiver;
 	var $commenter;
+
+    /**
+     * @var WP_Post
+     */
 	var $message;
+
+    /**
+     * @var WP_Comment
+     */
 	var $comment;
 
 	/**
 	 * Constructor
 	 *
 	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'new-message-reply';
@@ -41,10 +64,13 @@ class WooThemes_Sensei_Email_New_Message_Reply {
 	/**
 	 * trigger function.
 	 *
-	 * @access public
+     * @param WP_Comment $comment
+     * @param string $message
+     *
 	 * @return void
 	 */
-	function trigger( $comment, $message ) {
+	function trigger ( $comment, $message ) {
+
 		global  $sensei_email_data;
 
 		$this->comment = $comment;

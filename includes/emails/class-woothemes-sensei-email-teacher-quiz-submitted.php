@@ -25,9 +25,6 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 
 	/**
 	 * Constructor
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'teacher-quiz-submitted';
@@ -37,8 +34,10 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 
 	/**
 	 * trigger function.
-	 *
-	 * @access public
+     *
+     * @param integer $learner_id
+     * @param integer $quiz_id
+     *
 	 * @return void
 	 */
 	function trigger( $learner_id = 0, $quiz_id = 0 ) {

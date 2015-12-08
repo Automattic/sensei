@@ -26,7 +26,6 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 	 * Constructor
 	 *
 	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'learner-graded-quiz';
@@ -37,10 +36,15 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 	/**
 	 * trigger function.
 	 *
-	 * @access public
+     * @param int $user_id
+     * @param int $quiz_id
+     * @param int $grade
+     * @param int $passmark
+     *
 	 * @return void
 	 */
-	function trigger( $user_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0 ) {
+	function trigger ( $user_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0 ) {
+
 		global  $sensei_email_data;
 
 		// Get learner user object

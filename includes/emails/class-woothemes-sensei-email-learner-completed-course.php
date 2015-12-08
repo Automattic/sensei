@@ -38,6 +38,10 @@ class WooThemes_Sensei_Email_Learner_Completed_Course {
 	 * trigger function.
 	 *
 	 * @access public
+     *
+     * @param int $user_id
+     * @param int $course_id
+     *
 	 * @return void
 	 */
 	function trigger( $user_id = 0, $course_id = 0 ) {

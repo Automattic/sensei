@@ -42,10 +42,12 @@ class Sensei_Learner_Profiles {
 	 */
 	public function setup_permastruct() {
 
+        if( isset( Sensei()->settings->settings[ 'learner_profile_enable' ] )
+            && Sensei()->settings->settings[ 'learner_profile_enable' ] ) {
 
-		if( isset( Sensei()->settings->settings[ 'learner_profile_enable' ] ) && Sensei()->settings->settings[ 'learner_profile_enable' ] ) {
 			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
 			add_rewrite_tag( '%learner_profile%', '([^&]+)' );
+
 		}
 	}
 

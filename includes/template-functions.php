@@ -178,7 +178,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 *
 	 * @access public
 	 * @param array $widget_args (default: array())
-	 * @return void
+	 * @return array
 	 */
 	function sensei_recent_comments_widget_filter( $widget_args = array() ) {
 		if ( ! isset( $widget_args['post_type'] ) ) $widget_args['post_type'] = array( 'post', 'page' );
@@ -190,7 +190,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 * sensei_course_archive_filter function.
 	 *
 	 * @access public
-	 * @param array $query ( default: array ( ) )
+	 * @param WP_Query $query ( default: array ( ) )
 	 * @return void
 	 */
 	function sensei_course_archive_filter( $query ) {

@@ -25,9 +25,6 @@ class WooThemes_Sensei_Email_Teacher_Completed_Lesson {
 
 	/**
 	 * Constructor
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'teacher-completed-lesson';
@@ -38,10 +35,13 @@ class WooThemes_Sensei_Email_Teacher_Completed_Lesson {
 	/**
 	 * trigger function.
 	 *
-	 * @access public
+     * @param int $learner_id
+     * @param int $lesson_id
+     *
 	 * @return void
 	 */
 	function trigger( $learner_id = 0, $lesson_id = 0 ) {
+
 		global $sensei_email_data;
 
 		// Get learner user object

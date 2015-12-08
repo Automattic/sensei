@@ -666,7 +666,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 	/**
 	 * The text for the search button
 	 * @since  1.7.0
-	 * @return void
+	 * @return string $text
 	 */
 	public function search_button( $text = '' ) {
 		switch( $this->type ) {

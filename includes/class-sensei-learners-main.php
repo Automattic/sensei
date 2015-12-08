@@ -21,7 +21,6 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	/**
 	 * Constructor
 	 * @since  1.6.0
-	 * @return  void
 	 */
 	public function __construct ( $course_id = 0, $lesson_id = 0 ) {
 		$this->course_id = intval( $course_id );
@@ -634,7 +633,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	/**
 	 * The text for the search button
 	 * @since  1.7.0
-	 * @return void
+	 * @return string $text
 	 */
 	public function search_button( $text = '' ) {
 

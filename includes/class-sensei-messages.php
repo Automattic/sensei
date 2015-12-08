@@ -436,7 +436,7 @@ class Sensei_Messages {
     }
 	/**
      * Only show allowed messages in messages archive
-     * @param  array $query Original query
+     * @param  WP_Query $query Original query
      * @return void
      */
 	public function message_list( $query ) {

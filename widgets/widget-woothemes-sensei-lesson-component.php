@@ -151,11 +151,12 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 
 	/**
 	 * Load the desired component, if a method is available for it.
-	 * @param  string $component The component to potentially be loaded.
+	 * @param  string $instance The component to potentially be loaded.
 	 * @since  5.0.8
 	 * @return void
 	 */
 	protected function load_component ( $instance ) {
+
 		global  $current_user;
 		// Get User Meta
 		get_currentuserinfo();

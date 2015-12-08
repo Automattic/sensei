@@ -303,10 +303,10 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 	/**
 	 * The text for the search button
 	 * @since  1.7.0
-	 * @return void
+	 * @return string
 	 */
 	public function search_button( $text = '' ) {
-		return __( 'Search Courses', 'woothemes-sensei' );;
+		return __( 'Search Courses', 'woothemes-sensei' );
 	}
 
 } // End Class

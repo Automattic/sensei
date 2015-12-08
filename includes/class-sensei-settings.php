@@ -17,7 +17,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Constructor.
 	 * @access public
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public function __construct () {
 	    parent::__construct(); // Required in extended classes.

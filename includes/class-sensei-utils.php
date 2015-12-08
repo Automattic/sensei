@@ -369,7 +369,7 @@ class Sensei_Utils {
 	 * Load the WordPress rich text editor
 	 * @param  string $content    Initial content for editor
 	 * @param  string $editor_id  ID of editor (only lower case characters - no spaces, underscores, hyphens, etc.)
-	 * @param  string $input_name Name for textarea form element
+	 * @param  string $input_name Name for text area form element
 	 * @return void
 	 */
 	public static function sensei_text_editor( $content = '', $editor_id = 'senseitexteditor', $input_name = '' ) {
@@ -403,6 +403,7 @@ class Sensei_Utils {
 	 * @return boolean            Whether the answers were saved or not
 	 */
 	public static function sensei_save_quiz_answers( $submitted = array(), $user_id = 0 ) {
+
 		if( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
 		}

@@ -20,7 +20,6 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	/**
 	 * Constructor
 	 * @since  1.3.0
-	 * @return  void
 	 */
 	public function __construct ( $args = null ) {
 

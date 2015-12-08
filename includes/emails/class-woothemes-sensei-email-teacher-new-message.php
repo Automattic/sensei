@@ -26,9 +26,6 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 
 	/**
 	 * Constructor
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'teacher-new-message';
@@ -40,6 +37,7 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 	 * trigger function.
 	 *
 	 * @access public
+     * @param integer $message_id
 	 * @return void
 	 */
 	function trigger( $message_id = 0 ) {

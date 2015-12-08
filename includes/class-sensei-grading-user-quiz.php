@@ -17,7 +17,6 @@ class Sensei_Grading_User_Quiz {
 	/**
 	 * Constructor
 	 * @since  1.3.0
-	 * @return  void
 	 */
 	public function __construct ( $user_id = 0, $quiz_id = 0 ) {
 		$this->user_id = intval( $user_id );

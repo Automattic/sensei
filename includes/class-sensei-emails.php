@@ -357,12 +357,14 @@ class Sensei_Emails {
 	/**
 	 * Send email to teacher on quiz submission
 	 *
-	 * @access public
-	 * @return void
-	 */
+	 *
+     * @param int $learner_id
+     * @param int $quiz_id
+     * @param int $grade
+     * @param int $passmark
+     * @param string $quiz_grade_type
+     */
 	function teacher_quiz_submitted( $learner_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0, $quiz_grade_type = 'manual' ) {
-
-
 
 		$send = false;
 
@@ -392,7 +394,6 @@ class Sensei_Emails {
 	 */
 	function teacher_new_message( $message_id = 0 ) {
 
-
 		$send = false;
 
 		if( isset( Sensei()->settings->settings['email_teachers'] ) ) {
@@ -416,7 +417,6 @@ class Sensei_Emails {
 	 * @return void
 	 */
 	function new_message_reply( $comment, $message ) {
-
 
 		$send = false;
 

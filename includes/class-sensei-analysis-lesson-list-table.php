@@ -17,7 +17,6 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	/**
 	 * Constructor
 	 * @since  1.2.0
-	 * @return  void
 	 */
 	public function __construct ( $lesson_id = 0 ) {
 		$this->lesson_id = intval( $lesson_id );
@@ -336,10 +335,14 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	/**
 	 * the text for the search button
 	 * @since  1.7.0
-	 * @return void
+	 * @return string $text
 	 */
 	public function search_button( $text = '' ) {
-		return __( 'Search Learners', 'woothemes-sensei' );;
+
+        $text =  __( 'Search Learners', 'woothemes-sensei' );
+
+        return $text;
+
 	}
 } // End Class
 

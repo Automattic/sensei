@@ -25,9 +25,6 @@ class WooThemes_Sensei_Email_Teacher_Started_Course {
 
 	/**
 	 * Constructor
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'teacher-started-course';
@@ -38,7 +35,9 @@ class WooThemes_Sensei_Email_Teacher_Started_Course {
 	/**
 	 * trigger function.
 	 *
-	 * @access public
+     * @param int $learner_id
+     * @param int $course_id
+     *
 	 * @return void
 	 */
 	function trigger( $learner_id = 0, $course_id = 0 ) {

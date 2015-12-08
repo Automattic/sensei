@@ -201,7 +201,6 @@ class Sensei_PostTypes {
 	 */
 	public function setup_lesson_post_type () {
 
-
 		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' );
 		$allow_comments = false;
 		if ( isset( Sensei()->settings->settings[ 'lesson_comments' ] ) ) {
@@ -249,7 +248,6 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_quiz_post_type () {
-
 
 		$args = array(
 		    'labels' => $this->create_post_type_labels(
@@ -369,7 +367,6 @@ class Sensei_PostTypes {
 	 */
 	public function setup_sensei_message_post_type () {
 
-
 		if( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			$args = array(
@@ -451,6 +448,7 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_quiz_type_taxonomy () {
+
 		// "Quiz Types" Custom Taxonomy
 		$labels = array(
 			'name' => _x( 'Quiz Types', 'taxonomy general name', 'woothemes-sensei' ),
@@ -486,6 +484,7 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_question_type_taxonomy () {
+
 		// "Question Types" Custom Taxonomy
 		$labels = array(
 			'name' => _x( 'Question Types', 'taxonomy general name', 'woothemes-sensei' ),

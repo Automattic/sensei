@@ -470,7 +470,6 @@ class Sensei_Updates {
 				} // End For Loop
 			} // End For Loop
 		} // End For Loop
-		return true;
 	} // End assign_role_caps
 
 	/**
@@ -492,7 +491,6 @@ class Sensei_Updates {
 			update_post_meta( $quiz->ID, '_quiz_grade_type', 'auto' );
 			update_post_meta( $quiz->ID, '_quiz_grade_type_disabled', '' );
 		}
-		return true;
 	} // End set_default_quiz_grade_type
 
 	/**
@@ -522,7 +520,6 @@ class Sensei_Updates {
 			wp_set_post_terms( $question->ID, array( 'multiple-choice' ), 'question-type' );
 		}
 
-		return true;
 	} // End set_default_question_type
 
 	/**
@@ -530,7 +527,7 @@ class Sensei_Updates {
 	 *
 	 * @since 1.3.0
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 */
 	public function update_question_answer_data( $n = 50, $offset = 0 ) {
 

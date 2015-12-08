@@ -1258,12 +1258,11 @@ class Sensei_Core_Modules
      *
      * @return void
      */
-    public function enqueue_styles()
-    {
-
+    public function enqueue_styles() {
 
         wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', Sensei()->version );
         wp_enqueue_style($this->taxonomy . '-frontend');
+
     }
 
     /**
@@ -1314,7 +1313,6 @@ class Sensei_Core_Modules
      * @return void
      */
     public function admin_enqueue_styles() {
-
 
         wp_register_style($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'css/modules-admin.css','',Sensei()->version );
         wp_enqueue_style($this->taxonomy . '-sortable');

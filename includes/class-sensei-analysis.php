@@ -18,7 +18,6 @@ class Sensei_Analysis {
 	 * Constructor
 	 * @since  1.0.0
 	 * @param string $file
-	 * @return  void
 	 */
 	public function __construct ( $file ) {
 		$this->name = __('Analysis', 'woothemes-sensei');
@@ -30,8 +29,9 @@ class Sensei_Analysis {
 			add_action( 'admin_menu', array( $this, 'analysis_admin_menu' ), 10);
 			add_action( 'analysis_wrapper_container', array( $this, 'wrapper_container'  ) );
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
-				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
+
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
+
 			}
 
 			add_action( 'admin_init', array( $this, 'report_download_page' ) );
@@ -57,19 +57,6 @@ class Sensei_Analysis {
 		}
 
 	} // End analysis_admin_menu()
-
-	/**
-	 * enqueue_scripts function.
-	 *
-	 * @description Load in JavaScripts where necessary.
-	 * @access public
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function enqueue_scripts () {
-		// None for now
-
-	} // End enqueue_scripts()
 
 	/**
 	 * enqueue_styles function.

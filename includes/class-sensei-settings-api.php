@@ -30,9 +30,9 @@ class Sensei_Settings_API {
 	 * Constructor.
 	 * @access public
 	 * @since  1.0.0
-	 * @return void
 	 */
 	public function __construct () {
+
 		$this->token = 'woothemes-sensei-settings';
 		$this->page_slug = 'woothemes-sensei-settings-api';
 
@@ -107,6 +107,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function settings_tabs () {
+
 		if ( ! $this->has_tabs ) { return; }
 
 		if ( count( $this->tabs ) > 0 ) {
@@ -270,7 +271,6 @@ class Sensei_Settings_API {
 	 */
 	public function register_settings_screen () {
 
-
 		if ( current_user_can( 'manage_sensei' ) ) {
 			$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
 
@@ -278,9 +278,11 @@ class Sensei_Settings_API {
 		}
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+
 			add_action( 'admin_notices', array( $this, 'settings_errors' ) );
 			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
+
 		}
 	} // End register_settings_screen()
 
@@ -351,7 +353,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function settings_errors () {
-		echo settings_errors( $this->token . '-errors' );
+        settings_errors( $this->token . '-errors' );
 	} // End settings_errors()
 
 	/**
@@ -794,7 +796,7 @@ class Sensei_Settings_API {
 	 * Return an array of field types expecting an array value returned.
 	 * @access protected
 	 * @since  1.0.0
-	 * @return void
+	 * @return array
 	 */
 	protected function get_array_field_types () {
 		return array( 'multicheck' );
@@ -808,8 +810,7 @@ class Sensei_Settings_API {
 	 */
 	public function enqueue_scripts () {
 
-
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script( 'farbtastic' );
 		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'farbtastic' ), Sensei()->version );
@@ -849,7 +850,6 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function enqueue_field_styles () {
-
 
 		if ( $this->has_range ) {
 			wp_enqueue_style( 'woothemes-sensei-settings-ranges', esc_url( Sensei()->plugin_url . 'assets/css/ranges.css' ), '', Sensei()->version );
