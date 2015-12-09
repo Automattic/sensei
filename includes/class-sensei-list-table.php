@@ -97,9 +97,11 @@ class Sensei_List_Table extends WP_List_Table {
 			<?php
 			if( isset( $_GET ) && count( $_GET ) > 0 ) {
 				foreach( $_GET as $k => $v ) {
-					if( 's' != $k ) {
-						?><input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" /><?php
-					}
+					if( 's' != $k ) { ?>
+
+                        <input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
+
+                    <?php  }
 				}
 			}
 			?>
