@@ -510,9 +510,6 @@ section.entry span.course-price { padding-left: 10px; }
           a {
             color: #333;
             background: #e2e2e2;
-            border-radius: 100px;
-            -moz-border-radius: 100px;
-            -webkit-border-radius: 100px;
           }
         }
         &.ui-state-disabled {
@@ -655,9 +652,6 @@ section.entry span.course-price { padding-left: 10px; }
   position: relative;
   margin: 20px 0; /* Just for demo spacing */
   background: darken($bg_light, 5%);
-  -moz-border-radius: 25px;
-  -webkit-border-radius: 25px;
-  border-radius: 25px;
   clear: both;
   > span {
     display: block;
@@ -670,9 +664,7 @@ section.entry span.course-price { padding-left: 10px; }
     color: #fff;
     min-width: 45px;
     font-weight: bold;
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
-    border-radius: 20px;
+
     @include borderbox();
   }
   &.orange > span {
