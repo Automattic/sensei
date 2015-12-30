@@ -61,7 +61,6 @@ a.sensei-certificate-link {
   float: right;
   margin-left: .236em;
   padding: .382em 1em;
-  @include border_radius(5px);
   color: #fff;
   font-weight: bold;
   text-decoration: none;
@@ -99,7 +98,6 @@ a.sensei-certificate-link {
       font-style: normal;
       font-weight: bold;
       color: darken($color_body, 20%);
-      @include border_radius(300px);
     }
   }
   .entry-actions  {
@@ -188,7 +186,6 @@ a.sensei-certificate-link {
 .course, .course-lessons, .course-container {
   .status  {
     padding: .382em 1em;
-    @include border_radius(5px);
     color: #fff;
     font-weight: bold;
     background: darken($bg_dark, 5%);
@@ -330,7 +327,6 @@ a.sensei-certificate-link {
             width: 100%;
             background: #FFF;
             border: 1px solid;
-            @include border_radius();
             padding: 10px;
             font-size: 85%;
             text-align: left;
@@ -716,7 +712,6 @@ section.entry span.course-price { padding-left: 10px; }
     margin: 1.387em 0 1.618em 0;
     padding: 1em 1.618em;
     border:none!important;
-    @include border_radius(5px);
     &:before  {
       @include iconbefore();
       font-size: 1.387em;
@@ -791,7 +786,6 @@ section.entry span.course-price { padding-left: 10px; }
       display: inline-block;
       padding: 5px 20px 4px;
       margin: -3px 0 0 1em;
-      @include border_radius(5px);
       text-decoration: none;
       font-size: 11px;
       font-weight: bold;
@@ -835,7 +829,6 @@ section.entry span.course-price { padding-left: 10px; }
     white-space: nowrap;
     -webkit-appearance: none;
 
-    @include border_radius(5px);
     background: $color_links;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;

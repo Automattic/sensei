@@ -93,11 +93,6 @@ a.sensei-certificate-link {
   float: right;
   margin-left: .236em;
   padding: .382em 1em;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
   color: #fff;
   font-weight: bold;
   text-decoration: none; }
@@ -134,12 +129,7 @@ a.sensei-certificate-link {
     #main .course .sensei-course-meta .course-price, #main .course-container .sensei-course-meta .course-price {
       font-style: normal;
       font-weight: bold;
-      color: #222222;
-      -webkit-border-radius: 300px;
-      border-radius: 300px;
-      -moz-background-clip: padding;
-      -webkit-background-clip: padding-box;
-      background-clip: padding-box; }
+      color: #222222; }
   #main .course .entry-actions span, #main .course-container .entry-actions span {
     margin: 0 1em 0 0; }
   #main .course .course-lessons > header, #main .course .module-lessons > header, #main .course-container .course-lessons > header, #main .course-container .module-lessons > header {
@@ -210,11 +200,6 @@ a.sensei-certificate-link {
 /* Status Indicators */
 .course .status, .course-lessons .status, .course-container .status {
   padding: .382em 1em;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
   color: #fff;
   font-weight: bold;
   background: #c6c6c6;
@@ -333,11 +318,6 @@ a.sensei-certificate-link {
         width: 100%;
         background: #FFF;
         border: 1px solid;
-        -webkit-border-radius: 10px;
-        border-radius: 10px;
-        -moz-background-clip: padding;
-        -webkit-background-clip: padding-box;
-        background-clip: padding-box;
         padding: 10px;
         font-size: 85%;
         text-align: left; }
@@ -640,12 +620,7 @@ section.entry span.course-price {
   clear: both;
   margin: 1.387em 0 1.618em 0;
   padding: 1em 1.618em;
-  border: none !important;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box; }
+  border: none !important; }
   .sensei p.sensei-message:before, .sensei div.sensei-message:before, .course-container p.sensei-message:before, .course-container div.sensei-message:before, .course p.sensei-message:before, .course div.sensei-message:before, .lesson p.sensei-message:before, .lesson div.sensei-message:before, .quiz p.sensei-message:before, .quiz div.sensei-message:before, .learner-info p.sensei-message:before, .learner-info div.sensei-message:before {
     font-family: 'FontAwesomeSensei';
     display: inline-block;
@@ -704,11 +679,6 @@ section.entry span.course-price {
     display: inline-block;
     padding: 5px 20px 4px;
     margin: -3px 0 0 1em;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
     text-decoration: none;
     font-size: 11px;
     font-weight: bold;
@@ -773,11 +743,6 @@ section.entry span.course-price {
   /* Opera/IE 8+ */
   white-space: nowrap;
   -webkit-appearance: none;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
   background: #52a8e8;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
