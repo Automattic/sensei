@@ -88,11 +88,11 @@ a.view-results,
 a.view-results-link,
 a.sensei-certificate-link {
   display: inline-block;
-  padding: 0.236em 0.857em;
+  padding: .236em .857em;
   background: #e6e6e6;
   float: right;
   margin-left: .236em;
-  padding: 0.382em 1em;
+  padding: .382em 1em;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   -moz-background-clip: padding;
@@ -209,7 +209,7 @@ a.sensei-certificate-link {
 
 /* Status Indicators */
 .course .status, .course-lessons .status, .course-container .status {
-  padding: 0.382em 1em;
+  padding: .382em 1em;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   -moz-background-clip: padding;
@@ -293,7 +293,7 @@ a.sensei-certificate-link {
       z-index: 1;
       margin: .53em 0; }
       .quiz form ol#sensei-quiz-list li ul li {
-        margin: 0 0 0.382em;
+        margin: 0 0 .382em;
         font-weight: normal;
         font-size: 0.9em;
         list-style: none; }
@@ -305,7 +305,7 @@ a.sensei-certificate-link {
         .quiz form ol#sensei-quiz-list li ul li.user_wrong {
           color: red; }
         .quiz form ol#sensei-quiz-list li ul li input {
-          margin: 0 0.382em 0 0; }
+          margin: 0 .382em 0 0; }
         .quiz form ol#sensei-quiz-list li ul li label {
           vertical-align: middle; }
     .quiz form ol#sensei-quiz-list li .answer_message {
@@ -459,7 +459,7 @@ section.entry span.course-price {
       float: left;
       position: relative;
       top: 1px;
-      margin: 0 0.2em 1px 0;
+      margin: 0 .2em 1px 0;
       border-bottom: 0 !important;
       padding: 0;
       white-space: nowrap; }
@@ -481,10 +481,7 @@ section.entry span.course-price {
         color: #555; }
       #my-courses.ui-tabs .ui-tabs-nav li.ui-state-active a {
         color: #333;
-        background: #e2e2e2;
-        border-radius: 100px;
-        -moz-border-radius: 100px;
-        -webkit-border-radius: 100px; }
+        background: #e2e2e2; }
       #my-courses.ui-tabs .ui-tabs-nav li.ui-state-disabled a {
         cursor: text; }
       #my-courses.ui-tabs .ui-tabs-nav li.ui-state-processing a {
@@ -554,7 +551,7 @@ section.entry span.course-price {
     padding: 0; }
     .course-container .archive-header h1 {
       margin: 0;
-      padding: 0 0 0.53em;
+      padding: 0 0 .53em;
       border: none;
       font-size: 1.387em;
       color: #333;
@@ -587,9 +584,6 @@ section.entry span.course-price {
   margin: 20px 0;
   /* Just for demo spacing */
   background: #ededed;
-  -moz-border-radius: 25px;
-  -webkit-border-radius: 25px;
-  border-radius: 25px;
   clear: both; }
   .meter > span {
     display: block;
@@ -602,9 +596,6 @@ section.entry span.course-price {
     color: #fff;
     min-width: 45px;
     font-weight: bold;
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
-    border-radius: 20px;
     -webkit-box-sizing: border-box;
     /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;
@@ -695,7 +686,7 @@ section.entry span.course-price {
     .sensei p.sensei-message.info:before, .sensei div.sensei-message.info:before, .course-container p.sensei-message.info:before, .course-container div.sensei-message.info:before, .course p.sensei-message.info:before, .course div.sensei-message.info:before, .lesson p.sensei-message.info:before, .lesson div.sensei-message.info:before, .quiz p.sensei-message.info:before, .quiz div.sensei-message.info:before, .learner-info p.sensei-message.info:before, .learner-info div.sensei-message.info:before {
       content: '\f05a'; }
     .sensei p.sensei-message.info a, .sensei div.sensei-message.info a, .course-container p.sensei-message.info a, .course-container div.sensei-message.info a, .course p.sensei-message.info a, .course div.sensei-message.info a, .lesson p.sensei-message.info a, .lesson div.sensei-message.info a, .quiz p.sensei-message.info a, .quiz div.sensei-message.info a, .learner-info p.sensei-message.info a, .learner-info div.sensei-message.info a {
-      color: #3b3b3b; }
+      color: #3c3c3c; }
       .sensei p.sensei-message.info a:hover, .sensei div.sensei-message.info a:hover, .course-container p.sensei-message.info a:hover, .course-container div.sensei-message.info a:hover, .course p.sensei-message.info a:hover, .course div.sensei-message.info a:hover, .lesson p.sensei-message.info a:hover, .lesson div.sensei-message.info a:hover, .quiz p.sensei-message.info a:hover, .quiz div.sensei-message.info a:hover, .learner-info p.sensei-message.info a:hover, .learner-info div.sensei-message.info a:hover {
         color: #2f2f2f; }
     .sensei p.sensei-message.info.info-special, .sensei div.sensei-message.info.info-special, .course-container p.sensei-message.info.info-special, .course-container div.sensei-message.info.info-special, .course p.sensei-message.info.info-special, .course div.sensei-message.info.info-special, .lesson p.sensei-message.info.info-special, .lesson div.sensei-message.info.info-special, .quiz p.sensei-message.info.info-special, .quiz div.sensei-message.info.info-special, .learner-info p.sensei-message.info.info-special, .learner-info div.sensei-message.info.info-special {
