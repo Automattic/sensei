@@ -246,7 +246,6 @@ a.sensei-certificate-link {
       li  {
         position: relative;
         margin: 0 0 1.618em;
-        font-size: 1.1em;
         > span  {
           display: block;
           margin: 0 0 1em;
@@ -711,92 +710,70 @@ section.entry span.course-price { padding-left: 10px; }
     clear: both;
     margin: 1.387em 0 1.618em 0;
     padding: 1em 1.618em;
-    border:none!important;
+    background: darken($bg_light, 3%);
+    border-top: 3px solid;
     &:before  {
       @include iconbefore();
       font-size: 1.387em;
       position: relative;
       top: .1em;
     }
-    a  {
-      text-decoration: underline;
-      &:hover  {
-        text-decoration: none;
+    a {
+      box-shadow: 0 1px 0 0 currentColor;
+      &:hover {
+        box-shadow: none;
       }
-    }
-    &.alert {
-      background:#ffd9c8;
-      &:before  {
-        content: '\f071';
-        color: $error;
-      }
-      a  {
-        color: darken($error, 10%);
+      &.next-lesson {
+        display: inline-block;
+        padding: .618em 1em;
+        line-height: 1em;
+        font-weight: bold;
+        background: darken($bg_light, 10%);
+        color: $color_body;
+        box-shadow: none;
         &:hover  {
-          color: darken($error, 15%);
+          background: darken($bg_light, 15%);
         }
       }
     }
+    &.alert {
+      border-top-color: $error;
+      &:before  {
+        content: '\f069';
+        color: $error;
+      }
+    }
     &.download, &.tick {
-      background: #edfcd5;
+      border-top-color: $success;
       &:before  {
         content: '\f019';
         color: $success;
       }
-      a  {
-        color: darken($success, 10%);;
-        &:hover  {
-          color: darken($success, 15%);
-        }
-      }
     }
     &.tick {
       &:before  {
-        content: '\f00c';
+        content: '\f046';
+        color: $success;
       }
     }
     &.info {
-      background:#eee;
-      &:before  {
-        content: '\f05a';
-      }
-      a  {
-        color: darken($color_body, 10%);;
-        &:hover  {
-          color: darken($color_body, 15%);
-        }
+      border-top-color: $color_links;
+      &:before {
+        content: '\f0c9';
+        color: $color_links;
       }
       &.info-special {
-        background:#dbf1ff;
+        &:before {
+          content: '\f10e';
+          color: $color_links;
+        }
       }
     }
     &.note {
-      background:#fef6d2;
+      border-top-color: $color_links;
       &:before  {
-        content: '\f0f6';
-      }
-    }
-    &.normal {
-      background:#eee; padding:9px 15px;
-    }
-    .view-quiz  {
-      float: right;
-    }
-    a.next-lesson {
-      display: inline-block;
-      padding: 5px 20px 4px;
-      margin: -3px 0 0 1em;
-      text-decoration: none;
-      font-size: 11px;
-      font-weight: bold;
-      text-transform: uppercase;
-      float:right;
-      background: none;
-      color: darken($success, 10%);
-      border: 2px solid darken($success, 10%);
-      &:hover {
-        background: $success;
-        color: #fff;
+        content: '\f0c9';
+        color: $color_links;
       }
     }
   }
