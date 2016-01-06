@@ -79,6 +79,14 @@ class Sensei_Theme_Integration_Loader {
             $supported_theme_class_file = trailingslashit( Sensei()->plugin_path ) . 'includes/theme-integrations/' . $this->active_theme . '.php';
             $supported_theme_class_name  = 'Sensei_'. ucfirst( $this->active_theme  );
 
+            // add name of theme as body class for detailed styling.
+            add_filter( 'body_class', 'sensei_current_theme' );
+            function sensei_current_theme( $classes ) {
+                $sensei_template = get_option( 'template' );
+                $classes[] = 'sensei-'. $sensei_template;
+                return $classes;
+            }
+
             // load the file or exit if there is no file for this theme
             if( ! file_exists( $supported_theme_class_file ) ){
                 return;
