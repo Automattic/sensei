@@ -92,7 +92,6 @@ a.sensei-certificate-link {
       padding-left: 1.618em;
       a {
         color: $color_body;
-        box-shadow: none;
       }
       &:first-child {
         padding-left: 0;
@@ -377,7 +376,7 @@ a.sensei-certificate-link {
       }
     }
     input.quiz-submit  {
-      margin-right: 10px;
+      margin-right: 1em;
     }
   }
 }
@@ -832,24 +831,23 @@ section.entry span.course-price { padding-left: 10px; }
   input.button,
   button.button {
     display: inline-block;
-    padding: 5px 20px 4px;
+    padding: 0.618em 1em;
     border: none;
-    color: #fff;
+    color: $bg_light;
     text-align: center;
     text-shadow: none;
     text-decoration: none;
-    text-transform: uppercase;
+    text-transform: none;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 1em;
     font-family: inherit; /* Make inputs use the correct typeface instead of the browser default */
     cursor: pointer; /* Inputs need pointers! */
     overflow: visible; /* IE fix */
-    width:auto; /* IE fix */
+    width: auto; /* IE fix */
     line-height: 1.618em;
     @include borderbox();
     white-space: nowrap;
     -webkit-appearance: none;
-
     background: $color_links;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
