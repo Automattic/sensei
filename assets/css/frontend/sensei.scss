@@ -242,11 +242,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
       }
     }
     .lesson  {
-      header  {
-        h2  {
-          margin: 0;
-        }
-      }
       p.lesson-meta  {
         font-size: .9em;
         color: lighten($color_body, 20%);
@@ -1106,5 +1101,16 @@ a.sensei-certificate-link {
 
   #my-courses.ui-tabs .ui-tabs-nav li a {
     border-bottom: none;
+  }
+}
+
+// Twenty Fourteen
+.sensei-twentyfourteen {
+  &.single-course #main .lesson {
+    margin-top: 0;
+  }
+
+  #my-courses.ui-tabs .ui-tabs-nav li {
+    margin-right: -3px;
   }
 }
