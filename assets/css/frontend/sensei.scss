@@ -144,16 +144,28 @@ a.sensei-certificate-link {
         }
       }
       p.lesson-meta  {
-        font-style: italic;
         font-size: .9em;
         color: lighten($color_body, 20%);
         a  {
-          color: #555;
+          color: $color_body;
         }
         span {
-          padding-left: 15px;
+          padding-left: 1.618em;
           &:first-child {
-            padding-left: 0px;
+            padding-left: 0;
+          }
+          &:before {
+            @include iconbefore();
+            color: $color_body;
+          }
+          &.lesson-author:before {
+            content: "\f19d";
+          }
+          &.lesson-complexity:before {
+            content: "\f1de";
+          }
+          &.lesson-length:before {
+            content: "\f017";
           }
         }
         .lesson-status  {
