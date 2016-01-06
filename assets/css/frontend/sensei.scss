@@ -67,16 +67,14 @@ a.sensei-certificate-link {
 }
 
 /* Courses */
-#main .course, #main .course-container {
+#main .course, 
+#main .course-container {
   @include clearfix();
   position: relative;
   margin: 0 0 1.618em;
   padding: 0 0 1em;
   border-bottom: 1px solid #e2e2e2;
   list-style: none;
-  header h2  {
-    margin: 0;
-  }
   .course-meta  {
     margin-bottom: 20px;
     clear: both;
@@ -88,11 +86,33 @@ a.sensei-certificate-link {
     }
   }
   .sensei-course-meta  {
-    font-style: italic;
     font-size: .9em;
     color: lighten($color_body, 20%);
-    a  {
-      color: #555;
+    span {
+      padding-left: 1.618em;
+      a {
+        color: $color_body;
+        box-shadow: none;
+      }
+      &:first-child {
+        padding-left: 0;
+      }
+      &:before {
+        @include iconbefore();
+        color: $color_body;
+      }
+      &.course-author:before {
+        content: "\f19d";
+      }
+      &.course-lesson-count:before {
+        content: "\f0c9";
+      }
+      &.course-category:before {
+        content: "\f07c";
+      }
+      &.course-lesson-progress:before {
+        content: "\f046";
+      }
     }
     .course-price  {
       font-style: normal;
