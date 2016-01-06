@@ -1019,3 +1019,84 @@ a.sensei-certificate-link {
     }
   }
 }
+
+
+
+/**
+ * Core Theme Styles
+ */
+
+.sensei-twentyfifteen {
+  #main .course, 
+  #main .course-container {
+    padding: 8.3333%;
+  }
+
+  #main article.lesson,
+  .single-course #main article.course,
+  #main #post-entries,
+  .sensei-breadcrumb {
+    padding: 8.3333%;
+    margin: 0 8.3333%;
+    border: $bg_dark;
+    background-color: $bg_light;
+  }
+
+  #main .course-lessons .lesson {
+    margin: 0;
+  }
+
+  #main #post-entries {
+    padding: 1em 2em;
+    overflow: hidden;
+  }
+
+  #main article.lesson ol {
+    list-style-position: inside;
+  }
+
+  .sensei-course-filters {
+    margin: 0 8.3333%;
+    padding: 0;
+    box-shadow: none;
+    background: $bg_light;
+    padding: 2%;
+  }
+
+  .sensei-ordering {
+    text-align: right;
+    float: right;
+    margin: 0 8.3333%;
+    padding: 2%;
+  }
+  .archive-header h1{
+    padding: 2%;
+    background: $bg_light;
+    margin: 2% 8.3333%;
+  }
+
+  nav.sensei-pagination, 
+  .post-type-archive .course-container li{
+    padding: 2%;
+    background: $bg_light;
+    margin: 2% 8.3333%;
+    width: 83.333%
+  }
+
+  nav.sensei-pagination{
+    text-align: center;
+    .page-numbers{
+      margin-bottom: 0;
+    }
+    &li a, &li span.current {
+      display: block;
+      border: 2px solid $bg_dark;
+      margin-right: 2px;
+      padding: 0.2em 0.5em;
+      background: $bg_dark;
+    }
+    &li span.current {
+      background: $bg_light;
+    }
+  }
+}
