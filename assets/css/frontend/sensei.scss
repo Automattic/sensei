@@ -953,9 +953,6 @@ a.sensei-certificate-link {
   }
   .single.logged-in #main .type-course  {
     border: none;
-    header h1  {
-      margin-right: 150px;
-    }
   }
 
   // Course Archives
@@ -1112,5 +1109,13 @@ a.sensei-certificate-link {
 
   #my-courses.ui-tabs .ui-tabs-nav li {
     margin-right: -3px;
+  }
+}
+
+// Twenty Thirteen
+.sensei-twentythirteen {
+  .entry-content #main-course img.alignleft, 
+  .entry-content #main-course .wp-caption.alignleft {
+    margin-left: 0;
   }
 }
