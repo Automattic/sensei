@@ -466,28 +466,30 @@ section.entry span.course-price { padding-left: 10px; }
     position: relative;
     zoom: 1;
     .ui-tabs-nav {
-      margin: 0 0 10px!important;
-      float: left;
+      margin: 0 0 1em;
       width: 100%;
-      padding: .2em 0 0;
+      border-bottom: 1px solid $bg_dark;
       li {
         list-style: none;
-        float: left;
+        display: inline-block;
         position: relative;
-        top: 1px;
-        margin: 0 .2em 1px 0;
-        border-bottom: 0 !important;
         padding: 0;
+        margin-right: -4px;
         white-space: nowrap;
         a {
-          float: left;
-          padding: 5px 20px;
+          display: block;
+          padding: 0.5em;
           font-weight: bold;
-          color: #777;
+          color: $color_body;
           text-decoration: none;
-          outline: none!important;
-          line-height: 1;
-          cursor: pointer;
+          outline: none;
+          background: darken($bg_light, 3%);
+          border-top: 1px solid $bg_dark;
+          border-right: 1px solid $bg_dark;
+          box-shadow: none;
+        }
+        &:first-child {
+            border-left: 1px solid $bg_dark;
         }
         &.ui-tabs-selected {
           margin-bottom: 0;
@@ -498,13 +500,23 @@ section.entry span.course-price { padding-left: 10px; }
         }
         &.ui-state-hover {
           a {
-            color: #555;
+            color: $color_links;
+            background: darken($bg_light, 5%);
           }
         }
         &.ui-state-active {
           a {
-            color: #333;
-            background: #e2e2e2;
+            color: $color_links;
+            background: $bg_light;
+            &:after {
+              position: absolute;
+              border-bottom: 1px solid $bg_light;
+              width: 100%;
+              height: 1px;
+              content: "";
+              left: 0;
+              bottom: -1px;
+            }
           }
         }
         &.ui-state-disabled {
@@ -871,6 +883,34 @@ section.entry span.course-price { padding-left: 10px; }
     text-align: right;
     float: right;
     margin: 0;
+  }
+}
+
+@media only screen and (max-width: 767px)  {
+  #my-courses {
+    &.ui-tabs {
+      .ui-tabs-nav {
+        border: none;
+        li {
+          display: block;
+          border: 1px solid $bg_dark;
+          a {
+            border: none;
+          }
+          &.ui-state-active {
+            a {
+              border: none;
+              &:after {
+                display: none;
+              }
+            }
+          }
+          &:not(:first-child) {
+            border-top: none;
+          }
+        }
+      }
+    }
   }
 }
 
