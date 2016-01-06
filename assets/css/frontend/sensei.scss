@@ -377,6 +377,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
       li  {
         position: relative;
         margin: 0 0 1.618em;
+        list-style-position: inside;
         > span  {
           display: block;
           margin: 0 0 1em;
@@ -1026,33 +1027,36 @@ a.sensei-certificate-link {
  * Core Theme Styles
  */
 
+// Twenty Sixteen
+.sensei-twentysixteen {
+  &.single-course #main .course,
+  &.single-lesson #main .lesson,
+  &.single-quiz #main .quiz,
+  .sensei-breadcrumb,
+  nav#post-entries {
+    padding: 0 7.6923%;
+  }
+}
+
+// Twenty Fifteen
 .sensei-twentyfifteen {
-  #main .course, 
-  #main .course-container {
+  &.single-course #main .course,
+  &.single-lesson #main .lesson,
+  &.single-quiz #main .quiz,
+  .sensei-breadcrumb,
+  nav#post-entries {
     padding: 8.3333%;
   }
 
-  #main article.lesson,
-  .single-course #main article.course,
-  #main #post-entries,
-  .sensei-breadcrumb {
-    padding: 8.3333%;
-    margin: 0 8.3333%;
-    border: $bg_dark;
-    background-color: $bg_light;
-  }
-
+  #main .course,
   #main .course-lessons .lesson {
     margin: 0;
+    padding: 1em;
   }
 
   #main #post-entries {
     padding: 1em 2em;
     overflow: hidden;
-  }
-
-  #main article.lesson ol {
-    list-style-position: inside;
   }
 
   .sensei-course-filters {
@@ -1098,5 +1102,9 @@ a.sensei-certificate-link {
     &li span.current {
       background: $bg_light;
     }
+  }
+
+  #my-courses.ui-tabs .ui-tabs-nav li a {
+    border-bottom: none;
   }
 }
