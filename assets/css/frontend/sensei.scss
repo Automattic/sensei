@@ -643,29 +643,29 @@ section.entry span.course-price { padding-left: 10px; }
 
 /* Course Progress Bars */
 .meter {
-  height: 25px;  /* Can be anything */
+  height: 1.618em; 
   position: relative;
-  margin: 20px 0; /* Just for demo spacing */
+  margin: 1.618em 0;
   background: darken($bg_light, 5%);
   clear: both;
   > span {
     display: block;
-    padding: 1px 10px 0 0;
+    padding: 0 1em 0 0;
     height: 100%;
     background-color: $success;
     position: relative;
     overflow: hidden;
     text-align: right;
-    color: #fff;
+    color: $bg_light;
     min-width: 45px;
     font-weight: bold;
 
     @include borderbox();
   }
-  &.orange > span {
-    background: $bg_dark;
+  &.orange > span, &.progressing > span {
+    background: $info;
   }
-  &.red > span {
+  &.red > span, &.starting > span {
     background: $error;
   }
 }

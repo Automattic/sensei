@@ -1622,11 +1622,11 @@ class Sensei_Course {
     public function get_progress_meter( $progress_percentage ){
 
         if ( 50 < $progress_percentage ) {
-            $class = ' green';
+            $class = ' green completed';
         } elseif ( 25 <= $progress_percentage && 50 >= $progress_percentage ) {
-            $class = ' orange';
+            $class = ' orange progressing';
         } else {
-            $class = ' red';
+            $class = ' red starting';
         }
         $progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' . $progress_percentage . '%">' . round( $progress_percentage ) . '%</span></div>';
 
