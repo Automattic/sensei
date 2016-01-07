@@ -2852,7 +2852,7 @@ class Sensei_Lesson {
 
 		} // End If Statement
 
-		$html .= '<a href="' . get_permalink( $lesson_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . $img_url . '</a>';
+		$html .= '<a href="' . get_permalink( $lesson_id ) . '" class="course-featured-image" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . $img_url . '</a>';
 
 		return $html;
 

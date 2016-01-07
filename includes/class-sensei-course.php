@@ -829,7 +829,7 @@ class Sensei_Course {
 
 		if ( '' != $img_url ) {
 
-			$html .= '<a href="' . get_permalink( $course_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $course_id ) ) . '">' . $img_url  .'</a>';
+			$html .= '<a href="' . get_permalink( $course_id ) . '" class="course-featured-image" title="' . esc_attr( get_post_field( 'post_title', $course_id ) ) . '">' . $img_url  .'</a>';
 
 		} // End If Statement
 

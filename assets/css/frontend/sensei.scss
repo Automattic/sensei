@@ -103,72 +103,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 
 
 /** 
- * Course Archives 
- */
-
-.sensei-ordering {
-  margin: 0 0 1em 0;
-}
-
-.sensei-course-filters {
-  margin: 0 0 2em 0;
-  padding: 0;
-    li {
-      float: left;
-      list-style: none;
-      .entry-content & {
-        margin: 0;
-      }
-        a {
-          display: block;
-          border: 2px solid #ddd;
-          margin-right: 5px;
-          padding: 0.5em 1em;
-          background: #eee;
-            &:hover {
-              background: #fff;
-              text-decoration: none;
-              border-color: #ccc;
-            }
-            &.active {
-              border-color: #ddd;
-              background: #fff;
-              cursor: default;
-            }
-        }
-    }
-}
-
-.course-container  {
-  margin: 0 0 4.236em;
-  .archive-header  {
-    border: none;
-    padding: 0;
-    h1  {
-      margin: 0;
-      padding: 0 0 .53em;
-      border: none;
-      font-size: 1.387em;
-      color: #333;
-      border-bottom: 2px solid $border_main;
-      width: 100%;
-    }
-  }
-  .navigation  {
-    float: right;
-    margin: -10px 0 0;
-    text-align: right;
-    a  {
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 11px;
-    }
-  }
-}
-
-
-
-/** 
  * Single Courses 
  */
 
@@ -297,7 +231,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
     border-top: 0;
   }
 }
-
 
 // Status Indicators
 .course, .course-lessons, .course-container {
@@ -710,6 +643,25 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
       display: none !important;
     }
   }
+
+  // Course Archives
+  .course {
+    .course-featured-image {
+      width: 20%;
+      margin-right: 5%;
+      display: block;
+      float: left;
+      @include clearfix;
+      .woo-image {
+        margin: 0;
+      }
+    }
+    header, .entry, .entry-actions {
+      float: right;
+      width: 75%;
+    }
+    @include clearfix;
+  }
 }
 
 // Course Progress Bars 
@@ -738,6 +690,93 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
   }
   &.red > span, &.starting > span {
     background: $error;
+  }
+}
+
+
+
+/**
+ * Course Archives
+ */
+
+#main .course, 
+#main .course-container {
+  .course-content {
+    .course-featured-image {
+      width: 20%;
+      margin-right: 5%;
+      display: block;
+      float: left;
+      @include clearfix;
+      .woo-image {
+        margin: 0;
+      }
+    }
+    header, .entry {
+      float: right;
+      width: 75%;
+    }
+    @include clearfix;
+  }
+}
+
+.sensei-ordering {
+  margin: 0 0 1em 0;
+}
+
+.sensei-course-filters {
+  margin: 0 0 2em 0;
+  padding: 0;
+    li {
+      float: left;
+      list-style: none;
+      .entry-content & {
+        margin: 0;
+      }
+        a {
+          display: block;
+          border: 2px solid #ddd;
+          margin-right: 5px;
+          padding: 0.5em 1em;
+          background: #eee;
+            &:hover {
+              background: #fff;
+              text-decoration: none;
+              border-color: #ccc;
+            }
+            &.active {
+              border-color: #ddd;
+              background: #fff;
+              cursor: default;
+            }
+        }
+    }
+}
+
+.course-container  {
+  margin: 0 0 4.236em;
+  .archive-header  {
+    border: none;
+    padding: 0;
+    h1  {
+      margin: 0;
+      padding: 0 0 .53em;
+      border: none;
+      font-size: 1.387em;
+      color: #333;
+      border-bottom: 2px solid $border_main;
+      width: 100%;
+    }
+  }
+  .navigation  {
+    float: right;
+    margin: -10px 0 0;
+    text-align: right;
+    a  {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
   }
 }
 
@@ -1028,6 +1067,11 @@ a.sensei-certificate-link {
   nav#post-entries {
     padding: 0 7.6923%;
   }
+
+  .course-featured-image,
+  .lesson-featured-image {
+    box-shadow: none;
+  }
 }
 
 // Twenty Fifteen
@@ -1044,6 +1088,11 @@ a.sensei-certificate-link {
   #main .course-lessons .lesson {
     margin: 0;
     padding: 1em;
+  }
+
+  .course-featured-image,
+  .lesson-featured-image {
+    border: none;
   }
 
   #main #post-entries {
