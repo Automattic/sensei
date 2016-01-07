@@ -2845,8 +2845,8 @@ class Sensei_Lesson {
 
  			// Display Image Placeholder if none
 			if ( Sensei()->settings->settings[ 'placeholder_images_enable' ] ) {
-
-                $img_url = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+             
+                $img_url = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="' . Sensei()->plugin_url . '/assets/images/placeholder.png" width="' . $width . '" height="' . $height . '" class="woo-image thumbnail alignleft" />' );
 
 			} // End If Statement
 
