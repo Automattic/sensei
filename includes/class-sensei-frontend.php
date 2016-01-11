@@ -1467,10 +1467,11 @@ class Sensei_Frontend {
 
 				$items = $order->get_items();
 				foreach( $items as $item ) {
+
                     $product = wc_get_product( $item['product_id'] );
 
                     // handle product bundles
-                    if( $product->is_type('bundle') ){
+                    if( is_object( $product ) &&  $product->is_type('bundle') ){
 
                         $bundled_product = new WC_Product_Bundle( $product->id );
                         $bundled_items = $bundled_product->get_bundled_items();
