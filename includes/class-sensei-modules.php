@@ -1169,8 +1169,12 @@ class Sensei_Core_Modules
         $modules = wp_get_post_terms($lesson_id, $this->taxonomy);
 
         //check if error returned
-        if( empty( $modules ) || isset( $modules['errors']  ) ){
+        if(    empty( $modules )
+            || is_wp_error( $modules )
+            || isset( $modules['errors'] ) ){
+
             return false;
+
         }
 
        // get the last item in the array there should be only be 1 really.
