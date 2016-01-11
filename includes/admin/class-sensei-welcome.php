@@ -82,20 +82,26 @@ class Sensei_Welcome {
 
             <div class="feature-section two-col">
 						<div class="col">
-				<div class="media-container">
-										<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/Screen-Shot-2015-12-01-at-15.25.24.png">
-									</div>
-				<h3>New Sensei Shortcodes</h3>
-				<p>Display your Sensei courses, teachers and messages wherever you want them with a selection of new shortcodes, giving you much more control over the display of your Sensei content.</p>
-			</div>
+							<div class="media-container">
+								<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/Screen-Shot-2015-12-01-at-15.25.24.png">
+							</div>
+						</div>
 						<div class="col">
-				<div class="media-container">
-										<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/language.jpg">
-									</div>
-				<h3>Sensei in Your Language</h3>
-				<p>Language packs can now be downloaded directly from the dashboard, enabling one-click translation updates.</p>
+							<h3>New Sensei Shortcodes</h3>
+							<p>Display your Sensei courses, teachers and messages wherever you want them with a selection of new shortcodes, giving you much more control over the display of your Sensei content.</p>
+						</div>
 			</div>
-					</div>
+			<div class="feature-section two-col">
+						<div class="col">
+							<div class="media-container">
+								<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/language.jpg">
+							</div>
+						</div>
+						<div class="col">
+							<h3>Sensei in Your Language</h3>
+							<p>Language packs can now be downloaded directly from the dashboard, enabling one-click translation updates.</p>
+						</div>
+			</div>
 
             <div class="feature-section three-col">
 						<div class="col">
