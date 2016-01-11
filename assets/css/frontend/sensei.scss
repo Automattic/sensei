@@ -114,6 +114,9 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
   padding: 0 0 1em;
   border-bottom: 1px solid #e2e2e2;
   list-style: none;
+  .course-featured-image img {
+    width: 100%;
+  }
   .course-meta  {
     margin-bottom: 20px;
     clear: both;
@@ -235,29 +238,36 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 // Status Indicators
 .course, .course-lessons, .course-container {
   .status  {
-    padding: .382em 1em;
-    color: #fff;
-    font-weight: bold;
-    background: darken($bg_dark, 5%);
-    display: inline-block;
+    clear: both;
+    width: 100%;
+    margin: 1.387em 0 1.618em 0;
+    padding: 1em 1.618em;
+    background: darken($bg_light, 3%);
+    border-top: 3px solid;
+    border-top-color: $color_links;
+    @include borderbox();
     &:before  {
       @include iconbefore();
     }
     &.completed  {
-      background: $success;
+      border-top-color: $success;
       &:before  {
-        content: "\f00c";
+        content: '\f019';
+        color: $success;
       }
     }
     &.in-progress  {
+      border-top-color: $color_links;
       &:before  {
-        content: "\f110";
+        content: '\f0c9';
+        color: $color_links;
       }
     }
     &.register  {
-      background: $error;
-      a  {
-        color: #fff;
+      border-top-color: $error;
+      &:before {
+        content: '\f069';
+        color: $error;
       }
     }
   }
@@ -277,19 +287,34 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
   .course-video {
     margin-bottom: 1.618em;
   }
-}
 
-.lesson  {
-  .lesson-meta  {
-    margin: 0 0 1.618em;
+  .lesson {
+    border: 1px solid $border_main;
+    padding: 0;
+    margin: 1.618em 0;
+    header h2 {
+      padding: 0.5em;
+      margin: 0;
+      background: darken($bg_light, 3%);
+      a {
+        color: $color_links;
+      }
+    }
+    .lesson-meta  {
+      padding: 1em;
+      margin: 0;
+    }
+    .entry {
+      padding: 1em;
+    }
   }
-}
 
-.lesson-tags  {
-  margin: 2em 0;
-  font-style: italic;
-  color: lighten($color_body, 20%);
-  font-size: .9em;
+  .lesson-tags  {
+    margin: 2em 0;
+    font-style: italic;
+    color: lighten($color_body, 20%);
+    font-size: .9em;
+  }
 }
 
 
@@ -1086,8 +1111,7 @@ a.sensei-certificate-link {
 
   #main .course,
   #main .course-lessons .lesson {
-    margin: 0;
-    padding: 1em;
+    margin: 0 0 1.618em;
   }
 
   .course-featured-image,
