@@ -28,7 +28,7 @@ class Sensei_Frontend {
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 
 		// 1.2.1
-		add_action( 'sensei_complete_lesson', array( $this, 'sensei_complete_lesson' ) );
+		add_action( 'wp_head', array( $this, 'sensei_complete_lesson' ), 10 );
 		add_action( 'init', array( $this, 'sensei_complete_course' ), 5 );
 		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
 		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
