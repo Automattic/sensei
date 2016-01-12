@@ -79,7 +79,7 @@ class Sensei_Learner_Management {
 		// Load Learners JS
 		wp_enqueue_script( 'sensei-learners-general',
             Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
-                            array('jquery','select2','sensei-chosen-ajax' ), Sensei()->version, true );
+                            array('jquery','sensei-core-select2','sensei-chosen-ajax' ), Sensei()->version, true );
 
 		$data = array(
 			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
