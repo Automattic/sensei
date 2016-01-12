@@ -25,6 +25,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <?php
 $count = 0;
 foreach( $question_data[ 'answer_options' ] as $id => $option ) {
+
+    $count++;
+
     ?>
 
     <li class="<?php esc_attr_e( $option[ 'option_class' ] ); ?>">
