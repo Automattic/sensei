@@ -166,7 +166,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
       margin: 0 1em 0 0;
     }
   }
-  .course-lessons, .module-lessons  {
+  .course-lessons  {
     > header  {
       margin: 2.244em 0 1.618em;
       padding: 2.244em 0 0;
@@ -223,15 +223,6 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
         }
       }
     }
-  }
-}
-
-// Modules Layout
-#main .course-container .module-lessons {
-  > header {
-    margin: 0 0 1.618em;
-    padding: 0;
-    border-top: 0;
   }
 }
 
@@ -314,6 +305,156 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
     font-style: italic;
     color: lighten($color_body, 20%);
     font-size: .9em;
+  }
+}
+
+
+
+/**
+ * Modules
+ */
+
+.module-archive #main .status, 
+#main .course .module-status {
+  padding:.382em 1em;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  -moz-background-clip:padding;
+  -webkit-background-clip:padding-box;
+  background-clip:padding-box;
+  color:#fff;
+  font-weight:bold;
+  background:#c6c6c6;
+  clear: both;
+  display: inline-block;
+}
+.module-archive #main .status:before, 
+#main .course .module-status:before {
+  // font-family: $FontAwesomeSensei;
+  display:inline-block;
+  font-size:100%;
+  margin-right:.618em;
+  font-weight:normal;
+  line-height:1em;
+  width:1em;
+}
+.module-archive #main .status.completed, 
+#main .course .module-status.completed {
+  background:#63a95f;
+}
+.module-archive #main .status.completed:before, 
+#main .course .module-status.completed:before {
+  content:"\f00c";
+}
+.module-archive #main .status.in-progress:before, 
+#main .course .module-status.in-progress:before {
+  content:"\f110";
+}
+.module-lessons .lesson-status  {
+  font-style: normal;
+}
+.module-lessons .lesson-status.complete  {
+  color: #63a95f;
+}
+.module-lessons .lesson-status.complete:before  {
+  //font-family: $FontAwesomeSensei;
+    display: inline-block;
+    font-size:100%;
+    margin-right:.618em;
+    font-weight: normal;
+    line-height: 1em;
+    width:1em;
+  content: '\f00c';
+}
+
+.module {
+  position: relative;
+  margin: 0 0 1.618em;
+  border: 1px solid $border_main;
+  border-bottom: none;
+  > header {
+    background: darken($bg_light, 3%);
+    h2 {
+      margin-bottom: 0;
+      padding: 0.5em;
+      a {
+        color: $color_body;
+      }
+    }
+  }
+    .module-description {
+      padding: 1em;
+      margin: 0;
+      font-style: italic;
+    }
+
+    .module-lessons {
+      header {
+        margin: 0;
+        padding: 0.618em 1em;
+        border-top: 1px solid $border_main;
+        border-bottom: 1px solid $border_main;
+        h3 {
+          margin: 0;
+        }
+      }
+      ul {
+        margin: 0;
+        padding: 0;
+        li {
+          list-style: none;
+          margin: 0;
+          position: relative;
+          a {
+            display: block;
+            border-bottom: 1px solid $border_main;
+            padding: 0.618em 1em;
+            text-decoration: none;
+            color: $color_links;
+            &:before {
+              @include iconbefore();
+              font-size: 1.2em;
+              content: '\f1db';
+              color: lighten($color_body, 50%);
+            }
+            &:hover {
+              &:before {
+                content: '\f192';
+                color: $color_body;
+              }
+            }
+            .preview-label {
+              float: right;
+              color: $success;
+              display: inline-block;
+              position: relative;
+              &:before {
+                @include iconbefore();
+                margin-right: 0.168em;
+                content: '\f046';
+              }
+            }
+          }
+          &.completed {
+            a {
+              color: $color_body;
+              &:before {
+                content: '\f00c';
+                color: $color_body;
+              }
+            }
+          }
+        }
+      }
+    }
+  
+
+  .module-status {
+    position: absolute;
+    right: 20px;
+    top: 1em;
+    margin: 0 !important;
+    font-size: inherit !important;
   }
 }
 
