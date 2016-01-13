@@ -680,18 +680,45 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /** 
  * Course Results 
  */
-
-.course-results-lessons {
-  h2 {
-    margin: 20px 0;
-    &.total-grade {
-      text-decoration: underline;
+#main .course-results {
+  .course {
+    padding: 0;
+    margin: 0;
+    border-bottom: none;
+  }
+  .course-results-lessons {
+    border: 1px solid $border_main;
+    border-bottom: none;
+    h2, h3 {
+      margin: 0;
+      padding: 0.618em 1em;
+      border-bottom: 1px solid $border_main;
+      background: darken($bg_light, 3%);
+      a {
+        color: $color_links;
+      }
       .lesson-grade {
-        text-decoration: underline;
+        float: right;
       }
     }
-    .lesson-grade {
-      float: right;
+    h4 {
+      margin: 0;
+      border-bottom: 1px solid $border_main;
+      @include borderbox();
+      @include clearfix;
+      a {
+        color: $color_links;
+        padding: 1em 1.618em;
+        float: left;
+        margin-right: 1%;
+      }
+      .lesson-grade {
+        padding: 1em 1.618em;
+        float: right;
+        width: 10%;
+        text-align: right;
+        border-left: 1px solid $border_main;
+      }
     }
   }
 }
