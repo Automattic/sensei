@@ -102,7 +102,7 @@ class Sensei_Analysis {
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
 		// Load Analysis data
-		$object_name = 'WooThemes_Sensei_Analysis_' . $name . '_List_Table';
+		$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
 		if ( is_null($optional_data) ) {
 			$sensei_analysis_object = new $object_name( $data );
 		} else {
