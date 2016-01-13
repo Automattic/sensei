@@ -10,269 +10,385 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author Automattic
  * @since 1.1.0
  */
-class Sensei_Updates {
-	public $token = 'woothemes-sensei';
-	public $version;
-	public $updates_run;
-	public $updates;
-	private $parent;
+class Sensei_Updates
+{
+    public $token = 'woothemes-sensei';
+    public $version;
+    public $updates_run;
+    public $updates;
+    private $parent;
 
-	/**
-	 * Constructor.
-	 *
-	 * @access  public
-	 * @since   1.1.0
-	 * @param   string $parent The main Sensei object by Ref.
-	 * @return  void
-	 */
-	public function __construct ( $parent ) {
+    /**
+     * Constructor.
+     *
+     * @access  public
+     * @since   1.1.0
+     * @param   string $parent The main Sensei object by Ref.
+     * @return  void
+     */
+    public function __construct($parent)
+    {
 
 		// Setup object data
 		$this->parent = $parent;
 		$this->updates_run = get_option( 'woothemes-sensei-upgrades', array() );
 
-		// The list of upgrades to run
-		$this->updates = array( '1.1.0' => array( 	'auto' 		=> array( 'assign_role_caps' => array( 'title' => __( 'Assign role capabilities', 'woothemes-sensei' ), 'desc' => __( 'Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei' ), 'product' => 'Sensei' ) ),
-													'manual' 	=> array()
-												),
-								'1.3.0' => array( 	'auto' 		=> array( 'set_default_quiz_grade_type' => array( 'title' => __( 'Set default quiz grade type', 'woothemes-sensei' ), 'desc' => __( 'Sets all quizzes to the default \'auto\' grade type.', 'woothemes-sensei' ) ),
-																		  'set_default_question_type' => array( 'title' => __( 'Set default question type', 'woothemes-sensei' ), 'desc' => __( 'Sets all questions to the default \'multiple choice\' type.', 'woothemes-sensei' ) )
-													),
-													'manual' 	=> array( 'update_question_answer_data' => array( 'title' => __( 'Update question answer data', 'woothemes-sensei' ), 'desc' => __( 'Updates questions to use the new question types structure.', 'woothemes-sensei' ) ) )
-												),
-								'1.4.0' => array( 	'auto' 		=> array( 'update_question_grade_points' => array( 'title' => __( 'Update question grade points', 'woothemes-sensei' ), 'desc' => __( 'Sets all question grade points to the default value of \'1\'.', 'woothemes-sensei' ) ) ),
-													'manual' 	=> array()
-												),
-								'1.5.0' => array( 	'auto' 		=> array( 'convert_essay_paste_questions' => array( 'title' => __( 'Convert essay paste questions into multi-line questions', 'woothemes-sensei' ), 'desc' => __( 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.', 'woothemes-sensei' ) ) ),
-													'manual' 	=> array( 'set_random_question_order' => array( 'title' => __( 'Set all quizzes to have a random question order', 'woothemes-sensei' ), 'desc' => __( 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.', 'woothemes-sensei' ) ),
-																		  'set_default_show_question_count' => array( 'title' => __( 'Set all quizzes to show all questions', 'woothemes-sensei' ), 'desc' => __( 'Sets all quizzes to show all questions - this can be changed per quiz.', 'woothemes-sensei' ) ),
-																		  'remove_deleted_user_activity' => array( 'title' => __( 'Remove Sensei activity for deleted users', 'woothemes-sensei' ), 'desc' => __( 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.', 'woothemes-sensei' ) ) )
-												),
-								'1.6.0' => array( 	'auto' 		=> array( 'add_teacher_role' => array( 'title' => __( 'Add \'Teacher\' role', 'woothemes-sensei' ), 'desc' => __( 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.', 'woothemes-sensei' ) ),
-																		  'add_sensei_caps' => array( 'title' => __( 'Add administrator capabilities', 'woothemes-sensei' ), 'desc' => __( 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.', 'woothemes-sensei' ) ),
-																		  'restructure_question_meta' => array( 'title' => __( 'Restructure question meta data', 'woothemes-sensei' ), 'desc' => __( 'Restructures the question meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.', 'woothemes-sensei' ) ),
-																		  'update_quiz_settings' => array( 'title' => __( 'Add new quiz settings', 'woothemes-sensei' ), 'desc' => __( 'Adds new settings to quizzes that were previously registered as global settings.', 'woothemes-sensei' ) ),
-																		  'reset_lesson_order_meta' => array( 'title' => __( 'Set default order of lessons', 'woothemes-sensei' ), 'desc' => __( 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.', 'woothemes-sensei' ) ), ),
-													'manual' 	=> array()
-												),
-								'1.7.0' => array( 	'auto' 		=> array( 'add_editor_caps' => array( 'title' => __( 'Add Editor capabilities', 'woothemes-sensei' ), 'desc' => __( 'Adds the \'manage_sensei_grades\' capability to the Editor role.', 'woothemes-sensei' ) ), ),
-													'forced' 	=> array(  'update_question_gap_fill_separators' => array( 'title' => __( 'Update Gap Fill questions', 'woothemes-sensei' ), 'desc' => __( 'Updates the format of gap fill questions to allow auto grading and greater flexibility in matching.', 'woothemes-sensei' ) ),
-																		  'update_quiz_lesson_relationship' => array( 'title' => __( 'Restructure quiz lesson relationship', 'woothemes-sensei' ), 'desc' => __( 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.', 'woothemes-sensei' ) ),
-																		  'status_changes_fix_lessons' => array( 'title' => __( 'Update lesson statuses', 'woothemes-sensei' ), 'desc' => __( 'Update existing lesson statuses.', 'woothemes-sensei' ) ),
-																		  'status_changes_convert_lessons' => array( 'title' => __( 'Convert lesson statuses', 'woothemes-sensei' ), 'desc' => __( 'Convert to new lesson statuses.', 'woothemes-sensei' ) ),
-																		  'status_changes_convert_courses' => array( 'title' => __( 'Convert course statuses', 'woothemes-sensei' ), 'desc' => __( 'Convert to new course statuses.', 'woothemes-sensei' ) ),
-																		  'status_changes_convert_questions' => array( 'title' => __( 'Convert question statuses', 'woothemes-sensei' ), 'desc' => __( 'Convert to new question statuses.', 'woothemes-sensei' ) ),
-																		  'update_legacy_sensei_comments_status' => array( 'title' => __( 'Convert legacy Sensei activity types', 'woothemes-sensei' ), 'desc' => __( 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.', 'woothemes-sensei' ) ),
-																		  'update_comment_course_lesson_comment_counts' => array( 'title' => __( 'Update comment counts', 'woothemes-sensei' ), 'desc' => __( 'Update comment counts on Courses and Lessons due to status changes.', 'woothemes-sensei' ) ), ),
-												),
-								'1.7.2' => array( 	'auto' 		=> array( 'index_comment_status_field' => array( 'title' => __( 'Add database index to comment statuses', 'woothemes-sensei' ), 'desc' => __( 'This indexes the comment statuses in the database, which will speed up all Sensei activity queries.', 'woothemes-sensei' ) ), ),
-													/*'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => __( 'Remove legacy Sensei activity types', 'woothemes-sensei' ), 'desc' => __( 'This removes all legacy (pre-1.7) Sensei activity types - only run this update once the update to v1.7 is complete and everything is stable.', 'woothemes-sensei' ) ) )*/
-												),
-                                '1.8.0' => array(   'auto' => array( 'enhance_teacher_role' => array( 'title' => 'Enhance the \'Teacher\' role', 'desc' => 'Adds the ability for a \'Teacher\' to create courses, lessons , quizes and manage their learners.' ), ),
-                            						'manual' 	=> array()
-                    							),
-							);
+        // The list of upgrades to run
+        $this->updates = array('1.1.0' => array('auto' => array('assign_role_caps' => array('title' => __('Assign role capabilities', 'woothemes-sensei'), 'desc' => __('Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei'), 'product' => 'Sensei')),
+            'manual' => array()
+        ),
+            '1.3.0' => array('auto' => array('set_default_quiz_grade_type' => array('title' => __('Set default quiz grade type', 'woothemes-sensei'), 'desc' => __('Sets all quizzes to the default \'auto\' grade type.', 'woothemes-sensei')),
+                'set_default_question_type' => array('title' => __('Set default question type', 'woothemes-sensei'), 'desc' => __('Sets all questions to the default \'multiple choice\' type.', 'woothemes-sensei'))
+            ),
+                'manual' => array('update_question_answer_data' => array('title' => __('Update question answer data', 'woothemes-sensei'), 'desc' => __('Updates questions to use the new question types structure.', 'woothemes-sensei')))
+            ),
+            '1.4.0' => array('auto' => array('update_question_grade_points' => array('title' => __('Update question grade points', 'woothemes-sensei'), 'desc' => __('Sets all question grade points to the default value of \'1\'.', 'woothemes-sensei'))),
+                'manual' => array()
+            ),
+            '1.5.0' => array('auto' => array('convert_essay_paste_questions' => array('title' => __('Convert essay paste questions into multi-line questions', 'woothemes-sensei'), 'desc' => __('Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.', 'woothemes-sensei'))),
+                'manual' => array('set_random_question_order' => array('title' => __('Set all quizzes to have a random question order', 'woothemes-sensei'), 'desc' => __('Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.', 'woothemes-sensei')),
+                    'set_default_show_question_count' => array('title' => __('Set all quizzes to show all questions', 'woothemes-sensei'), 'desc' => __('Sets all quizzes to show all questions - this can be changed per quiz.', 'woothemes-sensei')),
+                    'remove_deleted_user_activity' => array('title' => __('Remove Sensei activity for deleted users', 'woothemes-sensei'), 'desc' => __('Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.', 'woothemes-sensei')))
+            ),
+            '1.6.0' => array('auto' => array('add_teacher_role' => array('title' => __('Add \'Teacher\' role', 'woothemes-sensei'), 'desc' => __('Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.', 'woothemes-sensei')),
+                'add_sensei_caps' => array('title' => __('Add administrator capabilities', 'woothemes-sensei'), 'desc' => __('Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.', 'woothemes-sensei')),
+                'restructure_question_meta' => array('title' => __('Restructure question meta data', 'woothemes-sensei'), 'desc' => __('Restructures the question meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.', 'woothemes-sensei')),
+                'update_quiz_settings' => array('title' => __('Add new quiz settings', 'woothemes-sensei'), 'desc' => __('Adds new settings to quizzes that were previously registered as global settings.', 'woothemes-sensei')),
+                'reset_lesson_order_meta' => array('title' => __('Set default order of lessons', 'woothemes-sensei'), 'desc' => __('Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.', 'woothemes-sensei')),),
+                'manual' => array()
+            ),
+            '1.7.0' => array('auto' => array('add_editor_caps' => array('title' => __('Add Editor capabilities', 'woothemes-sensei'), 'desc' => __('Adds the \'manage_sensei_grades\' capability to the Editor role.', 'woothemes-sensei')),),
+                'forced' => array('update_question_gap_fill_separators' => array('title' => __('Update Gap Fill questions', 'woothemes-sensei'), 'desc' => __('Updates the format of gap fill questions to allow auto grading and greater flexibility in matching.', 'woothemes-sensei')),
+                    'update_quiz_lesson_relationship' => array('title' => __('Restructure quiz lesson relationship', 'woothemes-sensei'), 'desc' => __('Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.', 'woothemes-sensei')),
+                    'status_changes_fix_lessons' => array('title' => __('Update lesson statuses', 'woothemes-sensei'), 'desc' => __('Update existing lesson statuses.', 'woothemes-sensei')),
+                    'status_changes_convert_lessons' => array('title' => __('Convert lesson statuses', 'woothemes-sensei'), 'desc' => __('Convert to new lesson statuses.', 'woothemes-sensei')),
+                    'status_changes_convert_courses' => array('title' => __('Convert course statuses', 'woothemes-sensei'), 'desc' => __('Convert to new course statuses.', 'woothemes-sensei')),
+                    'status_changes_convert_questions' => array('title' => __('Convert question statuses', 'woothemes-sensei'), 'desc' => __('Convert to new question statuses.', 'woothemes-sensei')),
+                    'update_legacy_sensei_comments_status' => array('title' => __('Convert legacy Sensei activity types', 'woothemes-sensei'), 'desc' => __('Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.', 'woothemes-sensei')),
+                    'update_comment_course_lesson_comment_counts' => array('title' => __('Update comment counts', 'woothemes-sensei'), 'desc' => __('Update comment counts on Courses and Lessons due to status changes.', 'woothemes-sensei')),),
+            ),
+            '1.7.2' => array('auto' => array('index_comment_status_field' => array('title' => __('Add database index to comment statuses', 'woothemes-sensei'), 'desc' => __('This indexes the comment statuses in the database, which will speed up all Sensei activity queries.', 'woothemes-sensei')),),
+                /*'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => __( 'Remove legacy Sensei activity types', 'woothemes-sensei' ), 'desc' => __( 'This removes all legacy (pre-1.7) Sensei activity types - only run this update once the update to v1.7 is complete and everything is stable.', 'woothemes-sensei' ) ) )*/
+            ),
+            '1.8.0' => array('auto' => array('enhance_teacher_role' => array('title' => 'Enhance the \'Teacher\' role', 'desc' => 'Adds the ability for a \'Teacher\' to create courses, lessons , quizes and manage their learners.'),),
+                'manual' => array()
+            ),
+        );
 
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
 		$this->version = get_option( 'woothemes-sensei-version' );
 
-		// Manual Update Screen
-		add_action('admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
+        // Manual Update Screen
+        add_action('admin_menu', array($this, 'add_update_admin_screen'), 50);
 
-	} // End __construct()
+    } // End __construct()
 
-	/**
-	 * add_update_admin_screen Adds admin screen to run manual udpates
-	 *
-	 * @access public
-	 * @since  1.3.7
-	 * @return void
-	 */
-	public function add_update_admin_screen() {
-		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page( 'sensei', __( 'Sensei Updates', 'woothemes-sensei' ), __( 'Data Updates', 'woothemes-sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
-		}
-	} // End add_update_admin_screen()
+    /**
+     * add_update_admin_screen Adds admin screen to run manual udpates
+     *
+     * @access public
+     * @since  1.3.7
+     * @return void
+     */
+    public function add_update_admin_screen()
+    {
+        if (current_user_can('manage_options')) {
+            add_submenu_page('sensei', __('Sensei Updates', 'woothemes-sensei'), __('Data Updates', 'woothemes-sensei'), 'manage_options', 'sensei_updates', array($this, 'sensei_updates_page'));
+        }
+    } // End add_update_admin_screen()
 
-	/**
-	 * sensei_updates_page HTML output for manual update screen
-	 *
-	 * @access public
-	 * @since  1.3.7
-	 * @return void
-	 */
-	public function sensei_updates_page() {
+    /**
+     * sensei_updates_page HTML output for manual update screen
+     *
+     * @access public
+     * @since  1.3.7
+     * @return void
+     */
+    public function sensei_updates_page() {
 
-		// Only allow admins to load this page and run the update functions
-		if( current_user_can( 'manage_options' ) ) {
-			?>
-			<div class="wrap">
+        // Only allow admins to load this page and run the update functions
+        if ( ! current_user_can('manage_options')) {
 
-				<div id="icon-woothemes-sensei" class="icon32"><br></div>
-				<h2><?php _e( 'Sensei Updates', 'woothemes-sensei' ); ?></h2>
+            return;
 
-				<?php
-				if ( isset( $_GET['action'] ) && $_GET['action'] == 'update' && isset( $_GET['n'] ) && intval( $_GET['n'] ) >= 0 && ( ( isset( $_POST['checked'][0] ) && '' != $_POST['checked'][0] ) || ( isset( $_GET['functions'] ) && '' != $_GET['functions'] ) ) ) {
+        }
+        ?>
 
-					// Setup the data variables
-					$n = intval( $_GET['n'] );
-					$functions_list = '';
-					$done_processing = false;
+        <div class="wrap">
 
-					// Check for updates to run
-					if ( isset( $_POST['checked'][0] ) && '' != $_POST['checked'][0] ) {
+        <div id="icon-woothemes-sensei" class="icon32"><br></div>
+        <h2><?php _e('Sensei Updates', 'woothemes-sensei'); ?></h2>
 
-						foreach ( $_POST['checked'] as $key => $value ) {
+        <?php
+        $function_name= '';
+        if ( isset($_GET['action']) && $_GET['action'] == 'update'
+            && isset($_GET['n']) && intval($_GET['n']) >= 0
+            && ( (isset($_POST['checked'][0]) && '' != $_POST['checked'][0]) || (isset($_GET['functions']) && '' != $_GET['functions']))) {
 
-							// Dynamic function call
-							if ( method_exists( $this, $value) ) {
-								$done_processing = call_user_func_array( array( $this, $value ), array( 50, $n ) );
-							} else {
-								$done_processing = call_user_func_array( $value, array( 50, $n ) );
-							} // End If Statement
+            // Setup the data variables
+            $n = intval($_GET['n']);
+            $functions_list = '';
+            $done_processing = false;
 
-							// Add to functions list get args
-							if ( '' == $functions_list ) {
-								$functions_list .= $value;
-							} else {
-								$functions_list .= '+' . $value;
-							} // End If Statement
+            // Check for updates to run
+            if (isset($_POST['checked'][0]) && '' != $_POST['checked'][0]) {
 
-							// Mark update has having been run
-							$this->set_update_run( $value );
+                foreach ($_POST['checked'] as $key => $function_name) {
 
-						} // End For Loop
+                    if( ! isset(  $_POST[ $function_name.'_nonce_field' ] ) 
+                        || ! wp_verify_nonce( $_POST[ $function_name.'_nonce_field' ] , 'run_'.$function_name ) ){
 
-					} // End If Statement
+                        wp_die(
+                            '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                            '<p>' . __( 'The nonce supplied in order to run this update function is invalid','woothemes-sensei') . '</p>',
+                            403
+                        );
 
-					// Check for updates to run
-					if ( isset( $_GET['functions'] ) && '' != $_GET['functions'] ) {
+                    }
 
-						// Existing functions from GET variables instead of POST
-						$functions_array = $_GET['functions'];
+                    // Dynamic function call
+                    if (method_exists($this, $function_name)) {
 
-						foreach ( $functions_array as $key => $value ) {
+                        $done_processing = call_user_func_array(array($this, $function_name), array(50, $n));
 
-							// Dynamic function call
-							if ( method_exists( $this, $value) ) {
-								$done_processing = call_user_func_array( array( $this, $value ), array( 50, $n ) );
-							} else {
-								$done_processing = call_user_func_array( $value, array( 50, $n ) );
-							} // End If Statement
+                    } elseif ($this->function_in_whitelist($function_name)) {
 
-							// Add to functions list get args
-							if ( '' == $functions_list ) {
-								$functions_list .= $value;
-							} else {
-								$functions_list .= '+' . $value;
-							} // End If Statement
+                        $done_processing = call_user_func_array($function_name, array(50, $n));
 
-							$this->set_update_run( $value );
+                    } else {
 
-						} // End For Loop
+                        _doing_it_wrong( esc_html( $function_name) , 'Is not a valid Sensei updater function', 'Sensei 1.9.0');
+                        return;
 
-					} // End If Statement
+                    }// End If Statement
 
-					if ( ! $done_processing ) { ?>
+                // Add to functions list get args
+                if ('' == $functions_list) {
+                    $functions_list .= $function_name;
+                } else {
+                    $functions_list .= '+' . $function_name;
+                } // End If Statement
 
-						<h3><?php _e( 'Processing Updates...', 'woothemes-sensei' ); ?></h3>
+                // Mark update has having been run
+                $this->set_update_run($function_name);
 
-						<p><?php _e( 'If your browser doesn&#8217;t start loading the next page automatically, click this button:', 'woothemes-sensei' ); ?>&nbsp;&nbsp;<a class="button" href="admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 50) ?>&functions[]=<?php echo $functions_list; ?>"><?php _e( 'Next', 'woothemes-sensei' ); ?></a></p>
-						<script type='text/javascript'>
-						<!--
-						function sensei_nextpage() {
-							location.href = "admin.php?page=sensei_updates&action=update&n=<?php echo ($n + 50) ?>&functions[]=<?php echo $functions_list; ?>";
-						}
-						setTimeout( "sensei_nextpage()", 250 );
-						//-->
-						</script><?php
+            } // End For Loop
 
-					} else { ?>
+        } // End If Statement
 
-						<p><strong><?php _e( 'Update completed successfully!', 'woothemes-sensei' ); ?></strong></p>
-						<p><a href="<?php echo admin_url('edit.php?post_type=lesson'); ?>"><?php _e( 'Create a new lesson', 'woothemes-sensei' ); ?></a> or <a href="<?php echo admin_url('admin.php?page=sensei_updates'); ?>"><?php _e( 'run some more updates', 'woothemes-sensei' ); ?></a>.</p>
+        // Check for updates to run
+        if (isset($_GET['functions']) && '' != $_GET['functions']) {
 
-					<?php } // End If Statement
+            // Existing functions from GET variables instead of POST
+            $functions_array = $_GET['functions'];
 
-				} else { ?>
+            foreach ($functions_array as $key => $function_name) {
 
-					<h3><?php _e( 'Updates', 'woothemes-sensei' ); ?></h3>
-					<p><?php printf( __( 'These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'woothemes-sensei' ), '<code>', '</code>' ); ?></p>
+                if( ! isset( $_GET[ $function_name.'_nonce' ] )
+                    || ! wp_verify_nonce( $_GET[ $function_name.'_nonce' ] , 'run_'.$function_name ) ){
 
-					<div class="updated"><p><strong><?php _e( 'Only run these updates if you have been instructed to do so by WooThemes support staff.', 'woothemes-sensei' ); ?></strong></p></div>
+                    wp_die(
+                        '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                        '<p>' . __( 'The nonce supplied in order to run this update function is invalid','woothemes-sensei') . '</p>',
+                        403
+                    );
 
-					<table class="widefat" cellspacing="0" id="update-plugins-table">
+                }
 
-						<thead>
-							<tr>
-								<th scope="col" class="manage-column"><?php _e( 'Update', 'woothemes-sensei' ); ?></th>
-								<th scope="col" class="manage-column"><?php _e( 'Type', 'woothemes-sensei' ); ?></th>
-								<th scope="col" class="manage-column"><?php _e( 'Action', 'woothemes-sensei' ); ?></th>
-							</tr>
-						</thead>
+                // Dynamic function call
+                if (method_exists($this, $function_name)) {
 
-						<tfoot>
-							<tr>
-								<th scope="col" class="manage-column"><?php _e( 'Update', 'woothemes-sensei' ); ?></th>
-								<th scope="col" class="manage-column"><?php _e( 'Type', 'woothemes-sensei' ); ?></th>
-								<th scope="col" class="manage-column"><?php _e( 'Action', 'woothemes-sensei' ); ?></th>
-							</tr>
-						</tfoot>
+                    $done_processing = call_user_func_array(array($this, $function_name), array(50, $n));
 
-						<tbody class="updates">
-							<?php
-							// Sort updates with the latest at the top
-							uksort( $this->updates, array( $this, 'sort_updates' ) );
-							$this->updates = array_reverse( $this->updates, true );
-							$class = 'alternate';
-							foreach( $this->updates as $version => $version_updates ) {
-								foreach( $version_updates as $type => $updates ) {
-									foreach( $updates as $update => $data ) {
-										$update_run = $this->has_update_run( $update );
-										$product = 'Sensei';
-										if ( isset( $data['product'] ) && '' != $data['product'] ) {
-											$product = $data['product'];
-										} // End If Statement
-										?>
-										<form method="post" action="admin.php?page=sensei_updates&action=update&n=0" name="update-sensei" class="upgrade">
-											<tr class="<?php echo $class; ?>">
-												<td>
-													<p>
-														<input type="hidden" name="checked[]" value="<?php echo $update; ?>">
-														<strong><?php echo $data['title']; ?></strong><br><?php echo $data['desc']; ?><br>
-														<em><?php printf( __( 'Originally included in %s v%s', 'woothemes-sensei' ), $product, $version ); ?></em>
-													</p>
-												</td>
-												<?php
-												$type_label = __( 'Auto', 'woothemes-sensei' );
-												if( $type != 'auto' ) {
-													$type_label = __( 'Manual', 'woothemes-sensei' );
-												}
-												?>
-												<td><p><?php echo $type_label; ?></p></td>
-												<td><p><input onclick="javascript:return confirm('<?php echo addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'woothemes-sensei' ), $data['title'] ) ); ?>');" id="update-sensei" class="button<?php if( ! $update_run ) { echo ' button-primary'; } ?>" type="submit" value="<?php if( $update_run ) { _e( 'Re-run Update', 'woothemes-sensei' ); } else { _e( 'Run Update', 'woothemes-sensei' ); } ?>" name="update"></p></td>
-											</tr>
-										</form>
-										<?php
-										if( 'alternate' == $class ) {
-											$class = '';
-										} else {
-											$class = 'alternate';
-										}
-									}
-								}
-							}
-							?>
-						</tbody>
+                } elseif ($this->function_in_whitelist($function_name)) {
 
-						</table>
+                    $done_processing = call_user_func_array($function_name, array(50, $n));
 
-					</div>
+                } else {
 
-				<?php
-				} // End If Statement
-		} // End If Statement
-	} // End sensei_updates_page()
+                    _doing_it_wrong( esc_html( $function_name) , 'Is not a valid Sensei updater function', 'Sensei 1.9.0');
+                    return;
+
+                } // End If Statement
+
+                // Add to functions list get args
+                if ('' == $functions_list) {
+                    $functions_list .= $function_name;
+                } else {
+                    $functions_list .= '+' . $function_name;
+                } // End If Statement
+
+                $this->set_update_run($function_name);
+
+            } // End For Loop
+
+        } // End If Statement
+
+        if (!$done_processing) { ?>
+
+            <h3><?php _e('Processing Updates...', 'woothemes-sensei'); ?></h3>
+
+            <p>
+
+                <?php _e( "If your browser doesn't start loading the next page automatically, click this button:", 'woothemes-sensei' ); ?>
+
+                <?php
+                $next_action_url = add_query_arg( array(
+                    'page' => 'sensei_updates',
+                    'action' => 'update',
+                    'n' => $n + 50,
+                    'functions' => array( $functions_list ),
+                    $function_name.'_nonce' => wp_create_nonce( 'run_'. $function_name ),
+                ), admin_url( 'admin.php' ) );
+                ?>
+
+                <a class="button"  href="<?php echo esc_url( $next_action_url ); ?>">
+
+                    <?php _e( 'Next', 'woothemes-sensei' ); ?>
+
+                </a>
+
+            </p>
+            <script type='text/javascript'>
+                <!--
+                function js_sensei_nextpage() {
+                    location.href = "<?php echo esc_url_raw(  $next_action_url );?>";
+                }
+                setTimeout( "js_sensei_nextpage()", 250 );
+                //-->
+            </script>
+
+        <?php  } else { ?>
+
+            <p><strong><?php _e('Update completed successfully!', 'woothemes-sensei'); ?></strong></p>
+            <p>
+                <a href="<?php echo admin_url('edit.php?post_type=lesson'); ?>"><?php _e('Create a new lesson', 'woothemes-sensei'); ?></a>
+                or <a
+                    href="<?php echo admin_url('admin.php?page=sensei_updates'); ?>"><?php _e('run some more updates', 'woothemes-sensei'); ?></a>.
+            </p>
+
+        <?php } // End If Statement
+
+        } else { ?>
+
+            <h3><?php _e('Updates', 'woothemes-sensei'); ?></h3>
+            <p><?php printf(__('These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'woothemes-sensei'), '<code>', '</code>'); ?></p>
+
+            <div class="updated"><p>
+                    <strong><?php _e('Only run these updates if you have been instructed to do so by WooThemes support staff.', 'woothemes-sensei'); ?></strong>
+                </p></div>
+
+            <table class="widefat" cellspacing="0" id="update-plugins-table">
+
+                <thead>
+                <tr>
+                    <th scope="col" class="manage-column"><?php _e('Update', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Type', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Action', 'woothemes-sensei'); ?></th>
+                </tr>
+                </thead>
+
+                <tfoot>
+                <tr>
+                    <th scope="col" class="manage-column"><?php _e('Update', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Type', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Action', 'woothemes-sensei'); ?></th>
+                </tr>
+                </tfoot>
+
+                <tbody class="updates">
+                <?php
+                // Sort updates with the latest at the top
+                uksort($this->updates, array($this, 'sort_updates'));
+                $this->updates = array_reverse($this->updates, true);
+                $class = 'alternate';
+                foreach ($this->updates as $version => $version_updates) {
+                    foreach ($version_updates as $type => $updates) {
+                        foreach ($updates as $update => $data) {
+                            $update_run = $this->has_update_run($update);
+                            $product = 'Sensei';
+                            if (isset($data['product']) && '' != $data['product']) {
+                                $product = $data['product'];
+                            } // End If Statement
+                            ?>
+                            <form method="post" action="admin.php?page=sensei_updates&action=update&n=0"
+                                  name="update-sensei" class="upgrade">
+                                <tr class="<?php echo $class; ?>">
+                                    <td>
+                                        <p>
+                                            <input type="hidden" name="checked[]" value="<?php echo $update; ?>">
+                                            <strong><?php echo $data['title']; ?></strong><br><?php echo $data['desc']; ?>
+                                            <br>
+                                            <em><?php printf(__('Originally included in %s v%s', 'woothemes-sensei'), $product, $version); ?></em>
+                                        </p>
+                                    </td>
+                                    <?php
+                                    $type_label = __('Auto', 'woothemes-sensei');
+                                    if ($type != 'auto') {
+                                        $type_label = __('Manual', 'woothemes-sensei');
+                                    }
+                                    ?>
+                                    <td><p><?php echo $type_label; ?></p></td>
+                                    <td>
+                                        <p>
+                                            <input onclick="javascript:return confirm('<?php echo addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'woothemes-sensei' ), $data['title'] ) ); ?>');"
+                                                   id="update-sensei"
+                                                   class="button<?php if( ! $update_run ) { echo ' button-primary'; } ?>"
+                                                   type="submit"
+                                                   value="<?php if( $update_run ) { _e( 'Re-run Update', 'woothemes-sensei' ); } else { _e( 'Run Update', 'woothemes-sensei' ); } ?>"
+                                                   name="update">
+
+                                            <?php
+                                            $nonce_action = 'run_'.$update;
+                                            $nonce_field_name = $update.'_nonce_field';
+                                            wp_nonce_field( $nonce_action, $nonce_field_name, false, true );
+                                            ?>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </form>
+                            <?php
+                            if ('alternate' == $class) {
+                                $class = '';
+                            } else {
+                                $class = 'alternate';
+                            }
+                        }
+                    }
+                }
+                ?>
+                </tbody>
+
+            </table>
+
+            </div>
+
+            <?php
+        } // End If Statement
+    } // End sensei_updates_page()
+
+    /**
+     * Since 1.9.0
+     *
+     * A list of safe to execute functions withing the
+     * updater context.
+     *
+     * @param string $function_name
+     */
+    public function function_in_whitelist( $function_name ){
+
+        $function_whitelist = array(
+            'status_changes_convert_questions',
+            'status_changes_fix_lessons',
+            'status_changes_convert_courses',
+            'status_changes_convert_lessons',
+            'status_changes_repair_course_statuses',
+
+        );
+
+        return in_array($function_name, $function_whitelist );
+
+    }// end function_in_whitelist
 
 	/**
 	 * Sort updates list by version number
@@ -296,43 +412,49 @@ class Sensei_Updates {
 	public function update ( $type = 'auto' ) {
 
 		// Only allow admins to run update functions
-		if( current_user_can( 'manage_options' ) ) {
+		if( ! current_user_can( 'manage_options' ) ) {
+            return false;
+        }
 
-			$this->force_updates();
+        $this->force_updates();
 
-			// Run through all functions
-			foreach ( $this->updates as $version => $value ) {
-				foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
-					if ( $upgrade_type == $type ) {
-						$updated = false;
-						// Run the update function
-						foreach ( $function_to_run as $function_name => $update_data ) {
-							if ( isset( $function_name ) && '' != $function_name ) {
-								if ( ! in_array( $function_name, $this->updates_run ) ) {
-									$updated = false;
-									if ( method_exists( $this, $function_name ) ) {
-										$updated = call_user_func( array( $this, $function_name ) );
-									} elseif( function_exists( $function_name ) ) {
-										$updated = call_user_func( $function_name );
-									} else {
-										// Nothing to see here...
-									} // End If Statement
-									if ( $updated ) {
-										array_push( $this->updates_run, $function_name );
-									} // End If Statement
-								}
-							} // End If Statement
-						} // End For Loop
-					} // End If Statement
-				} // End For Loop
-			} // End For Loop
+        // Run through all functions
+        foreach ( $this->updates as $version => $value ) {
+            foreach ( $this->updates[$version] as $upgrade_type => $function_to_run ) {
+                if ( $upgrade_type == $type ) {
+                    $updated = false;
+                    // Run the update function
+                    foreach ( $function_to_run as $function_name => $update_data ) {
+                        if ( isset( $function_name ) && '' != $function_name ) {
+                            if ( ! in_array( $function_name, $this->updates_run ) ) {
+                                $updated = false;
+                                if ( method_exists( $this, $function_name ) ) {
 
             $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
 			update_option( Sensei()->token . '-upgrades', $this->updates_run );
 			return true;
 
-		}
-		return false;
+                                } elseif( $this->function_in_whitelist( $function_name ) ) {
+
+                                    $updated = call_user_func( $function_name );
+
+                                }  // End If Statement
+
+                                if ( $updated ) {
+                                    array_push( $this->updates_run, $function_name );
+                                } // End If Statement
+                            }
+                        } // End If Statement
+                    } // End For Loop
+                } // End If Statement
+            } // End For Loop
+        } // End For Loop
+
+        $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
+        update_option( $this->token . '-upgrades', $this->updates_run );
+
+        return true;
+
 	} // End update()
 
 	private function force_updates() {
@@ -758,9 +880,6 @@ class Sensei_Updates {
 
 	public function remove_deleted_user_activity( $n = 50, $offset = 0 ) {
 
-
-//		remove_filter( 'comments_clauses', array( Sensei()->admin, 'comments_admin_filter' ) );
-
 		$all_activity = get_comments( array( 'status' => 'approve' ) );
 		$activity_count = array();
 		foreach( $all_activity as $activity ) {
@@ -801,8 +920,6 @@ class Sensei_Updates {
 		} else {
 			$current_page = intval( $offset / $n );
 		} // End If Statement
-
-//		add_filter( 'comments_clauses', array( Sensei()->admin, 'comments_admin_filter' ) );
 
 		if ( $current_page >= $total_pages ) {
 			return true;
