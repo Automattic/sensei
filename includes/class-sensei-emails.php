@@ -4,11 +4,8 @@
  *
  * Sensei Emails Class which handles the sending emails and email templates. This class loads in available emails.
  *
- * @class 		WooThemes_Sensei_Emails
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @category	Class
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
  */
 class Sensei_Emails {
 
@@ -38,9 +35,6 @@ class Sensei_Emails {
 
 	/**
 	 * Constructor for the email class hooks in all emails that can be sent.
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct( $file ) {
 
@@ -363,12 +357,14 @@ class Sensei_Emails {
 	/**
 	 * Send email to teacher on quiz submission
 	 *
-	 * @access public
-	 * @return void
-	 */
+	 *
+     * @param int $learner_id
+     * @param int $quiz_id
+     * @param int $grade
+     * @param int $passmark
+     * @param string $quiz_grade_type
+     */
 	function teacher_quiz_submitted( $learner_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0, $quiz_grade_type = 'manual' ) {
-
-
 
 		$send = false;
 
@@ -398,7 +394,6 @@ class Sensei_Emails {
 	 */
 	function teacher_new_message( $message_id = 0 ) {
 
-
 		$send = false;
 
 		if( isset( Sensei()->settings->settings['email_teachers'] ) ) {
@@ -423,7 +418,6 @@ class Sensei_Emails {
 	 */
 	function new_message_reply( $comment, $message ) {
 
-
 		$send = false;
 
 		if( isset( Sensei()->settings->settings['email_global'] ) ) {
@@ -444,7 +438,7 @@ class Sensei_Emails {
 
 /**
  * Class WooThemes_Sensei_Emails
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Emails extends Sensei_Emails{}

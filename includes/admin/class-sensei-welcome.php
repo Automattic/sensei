@@ -1,26 +1,18 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
 /**
- * Sensei Welcome Page Class
- *
  * Shows a feature overview for the new version (major)
  *
  * Adapted from code in EDD (Copyright (c) 2012, Pippin Williamson) and WooCommerce and WP
  *
- * @author      WooThemes
- * @category    Admin
- * @package     Sensei/Admin
+ * @package Views
+ * @author Automattic
+ *
  * @version     1.8.0
 */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
-/**
- * Sensei_Welcome class
- *
- * @since 1.8.0
- */
 class Sensei_Welcome {
 
 	/**
@@ -90,39 +82,45 @@ class Sensei_Welcome {
 
             <div class="feature-section two-col">
 						<div class="col">
-				<div class="media-container">
-										<img src="http://placehold.it/1010x568/f3f3f3">
-									</div>
-				<h3>New Sensei Shortcodes</h3>
-				<p>Display your Sensei courses, teachers and messages wherever you want them with a selection of new shortcodes, giving you much more control over the display of your Sensei content.</p>
-			</div>
+							<div class="media-container">
+								<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/Screen-Shot-2015-12-01-at-15.25.24.png">
+							</div>
+						</div>
 						<div class="col">
-				<div class="media-container">
-										<img src="http://placehold.it/1010x568/f3f3f3">
-									</div>
-				<h3>Sensei in Your Language</h3>
-				<p>Language packs can now be downloaded directly from the dashboard, enabling one-click translation updates.</p>
+							<h3>New Sensei Shortcodes</h3>
+							<p>Display your Sensei courses, teachers and messages wherever you want them with a selection of new shortcodes, giving you much more control over the display of your Sensei content.</p>
+						</div>
 			</div>
-					</div>
+			<div class="feature-section two-col">
+						<div class="col">
+							<div class="media-container">
+								<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/language.jpg">
+							</div>
+						</div>
+						<div class="col">
+							<h3>Sensei in Your Language</h3>
+							<p>Language packs can now be downloaded directly from the dashboard, enabling one-click translation updates.</p>
+						</div>
+			</div>
 
             <div class="feature-section three-col">
 						<div class="col">
 				<div class="media-container">
-										<img src="http://placehold.it/311x250/f3f3f3">
+										<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/next.png">
 									</div>
 				<h3>Intuitive Lesson Navigation</h3>
-				<p>When you complete a lesson, you will now see an obvious button to guide you to the next lesson.</p>
+				<p>When you complete a lesson, you will now see an obvious link to guide you to the next lesson.</p>
 			</div>
 						<div class="col">
 				<div class="media-container">
-										<img src="http://placehold.it/311x250/f3f3f3">
+										<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/zero.png">
 									</div>
 				<h3>Zero-grade Questions</h3>
 				<p>Not all questions require a grade. Now you have the option to assign a grade of zero to any question.</p>
 			</div>
 						<div class="col">
 				<div class="media-container">
-										<img src="http://placehold.it/311x250/f3f3f3">
+										<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/templates.png">
 									</div>
 				<h3>Updated Template System</h3>
 				<p>A revised and optimized template system, including a new default Course Archive page, complete with filters for quickly displaying free, paid and featured courses.</p>

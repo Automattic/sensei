@@ -69,7 +69,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
         // setup prerequisite
         update_post_meta( $test_lesson_id,'_lesson_prerequisite', $test_lesson_prerequisite_id);
 
-        WooThemes_Sensei_Utils::user_start_lesson( $test_user_id ,$test_lesson_prerequisite_id );
+        Sensei_Utils::user_start_lesson( $test_user_id ,$test_lesson_prerequisite_id );
         $this->assertFalse( WooThemes_Sensei_Lesson::is_prerequisite_complete( $test_lesson_id, $test_user_id ),
             'Users that has NOT completeded prerequisite should return false.');
 

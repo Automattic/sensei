@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
          * content.php template. This applies to the specific post type that you've targeted.
          *
          * @since 1.9
-         * @param string $post_id
+         * @param string $message_id
          *
          * @hooked Sensei_Messages::the_message_title - 10
          * @hooked Sensei_Messages::the_message_sender - 20
@@ -40,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
              *
              * @since 1.9
              *
-             * @param string $post_id
+             * @param string $message_id
              */
             do_action('sensei_content_message_inside_before', get_the_ID());
             ?>
@@ -57,7 +57,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
              *
              * @since 1.9
              *
-             * @param string $post_id
+             * @param string $message_id
              */
             do_action('sensei_content_message_inside_after', get_the_ID());
             ?>
@@ -70,7 +70,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
          * message-content.php template.
          *
          * @since 1.9
-         * @param string $post_id
+         * @param string $message_id
          */
         do_action( 'sensei_content_message_after', get_the_ID() );
         ?>

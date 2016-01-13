@@ -97,7 +97,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
         // Test a case that is setup correctly which should return a positive result
         $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id  );
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
         $files = $this->factory->generate_test_files( $test_user_quiz_answers );
         $lesson_data_saved = Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files , $test_lesson_id  ,  $test_user_id  ) ;
 
@@ -105,8 +105,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertTrue(  intval(  $lesson_data_saved ) > 0 , 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
 
         //setup for the next group of assertions
-        $sensei_activity_logged = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) );
-        $status_comment = WooThemes_Sensei_Utils::user_lesson_status( $test_lesson_id, $test_user_id );
+        $sensei_activity_logged = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) );
+        $status_comment = Sensei_Utils::user_lesson_status( $test_lesson_id, $test_user_id );
         $saved_data = get_comment_meta( $status_comment->comment_ID, 'quiz_answers', true );
 
         // was the data that was just stored stored correctly ? Check the comment meta on the lesson id
@@ -235,7 +235,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
         // generate and save the test data
         $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
         $files = $this->factory->generate_test_files( $test_user_quiz_answers );
         Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
         $users_retrieved_answers = Sensei()->quiz->get_user_answers( $test_lesson_id, $test_user_id );
@@ -291,7 +291,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         //setup next assertion
         $test_quiz_id = Sensei()->lesson->lesson_quizzes($test_lesson_id);
         $test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
         $files = $this->factory->generate_test_files( $test_user_quiz_answers );
         Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
         delete_site_transient( $transient_key );
@@ -372,7 +372,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_lesson_quiz_id  );
 
         // assign the user to the lesson
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id  );
 
         // test for when there is no answers saved.
         $is_false_when_no_answers_saved = Sensei()->quiz->get_user_answers( $test_lesson_id, $test_user_id);
@@ -443,7 +443,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         // test for a valid user and lesson that has a sensei_lesson_status comment by this user
         $user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
         $user_quiz_grades = $this->factory->generate_user_quiz_grades( $user_quiz_answers );
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
         Sensei()->quiz->save_user_answers( $user_quiz_answers, array(), $test_lesson_id,  $test_user_id  ) ;
         Sensei()->quiz->set_user_grades( $user_quiz_grades, $test_lesson_id,  $test_user_id );
 
@@ -616,7 +616,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
             'user_id' => $old_data_user_id,
             'action' => 'update'
         );
-        WooThemes_Sensei_Utils::sensei_log_activity( $args );
+        Sensei_Utils::sensei_log_activity( $args );
 
         $old_data_answer = Sensei()->quiz->get_user_question_answer( $test_lesson_id, $random_question_id, $old_data_user_id );
 
@@ -659,7 +659,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
             'The function should return success for valid parameters');
 
         //setup for the next assertions
-        $test_lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $test_lesson_id, $test_user_id  );
+        $test_lesson_status = Sensei_Utils::user_lesson_status( $test_lesson_id, $test_user_id  );
         $retrieved_quiz_grades = get_comment_meta( $test_lesson_status->comment_ID, 'quiz_grades' , true );
         $random_index = array_rand( $test_user_grades  );
 
@@ -770,13 +770,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         //setup the next assertion
         $transient_key = 'quiz_grades_'. $test_user_id . '_' . $test_lesson_id;
         delete_site_transient( $transient_key );
-        WooThemes_Sensei_Utils::delete_user_data( 'quiz_grades',$test_lesson_id,  $test_user_id );
+        Sensei_Utils::delete_user_data( 'quiz_grades',$test_lesson_id,  $test_user_id );
         $random_question_id = array_rand( $test_user_grades );
         $old_data_args = array( 'post_id' => $random_question_id ,
                                 'user_id' => $test_user_id,
                                 'type' => 'sensei_user_answer',
                                 'data' => 'test answer' );
-        $old_data_activity_id = WooThemes_Sensei_Utils::sensei_log_activity( $old_data_args );
+        $old_data_activity_id = Sensei_Utils::sensei_log_activity( $old_data_args );
         update_comment_meta( $old_data_activity_id, 'user_grade', 1950  );
         $retrieved_grade = Sensei()->quiz->get_user_question_grade( $test_lesson_id, $random_question_id, $test_user_id );
 
@@ -816,15 +816,15 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
         // Test a case that is setup correctly which should return a positive result
         $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
         $lesson_data_saved = Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
 
         // did the correct data return a valid comment id on the lesson as a result?
         $this->assertTrue(  intval(  $lesson_data_saved ) > 0 , 'The comment id returned after saving the quiz feedback does not represent a valid comment ' );
 
         //setup for the next group of assertions
-        $sensei_activity_logged = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) );
-        $status_comment = WooThemes_Sensei_Utils::user_lesson_status( $test_lesson_id, $test_user_id );
+        $sensei_activity_logged = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $test_lesson_id, 'user_id'=> $test_user_id ) );
+        $status_comment = Sensei_Utils::user_lesson_status( $test_lesson_id, $test_user_id );
         $saved_feedback = get_comment_meta( $status_comment->comment_ID, 'quiz_answers_feedback', true );
 
         // was the data that was just stored stored correctly ? Check the comment meta on the lesson id
@@ -867,7 +867,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $this->assertFalse(Sensei()->quiz->get_user_answers_feedback( -1000, -121 ) , 'The function should return false for incorrect parameters');
 
         // save the answers to setup the next assertion
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
         $test_lesson_id = $this->factory->get_random_lesson_id();
         $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
         Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
@@ -898,7 +898,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $test_lesson_id = $this->factory->get_random_lesson_id();
         $test_quiz_id = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
         $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
         Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
         $test_question_id = array_rand( $test_user_answers_feedback );
         $retrieved_grade = Sensei()->quiz->get_user_question_feedback( $test_lesson_id, $test_question_id, $test_user_id );
@@ -910,13 +910,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         //setup the next assertion for backwards compatibility.
         $transient_key = 'sensei_answers_feedback_'.$test_user_id.'_'.$test_lesson_id;
         delete_transient( $transient_key );
-        WooThemes_Sensei_Utils::delete_user_data( 'quiz_answers_feedback',$test_lesson_id,  $test_user_id );
+        Sensei_Utils::delete_user_data( 'quiz_answers_feedback',$test_lesson_id,  $test_user_id );
         $random_question_id = array_rand( $test_user_answers_feedback );
         $old_data_args = array( 'post_id' => $random_question_id ,
             'user_id' => $test_user_id,
             'type' => 'sensei_user_answer',
             'data' => 'test answer feedback' );
-        $old_data_activity_id = WooThemes_Sensei_Utils::sensei_log_activity( $old_data_args );
+        $old_data_activity_id = Sensei_Utils::sensei_log_activity( $old_data_args );
         update_comment_meta( $old_data_activity_id, 'answer_note', base64_encode( 'Sensei sample feedback' ) );
         $retrieved_feedback = Sensei()->quiz->get_user_question_feedback( $test_lesson_id, $random_question_id, $test_user_id );
 
@@ -938,7 +938,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $test_lesson_id = $this->factory->get_random_lesson_id();
         $test_quiz_id = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
         $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
         Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
 
         // was it saved correctly?
@@ -990,7 +990,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         //setup next assertion
         $test_quiz_id = Sensei()->lesson->lesson_quizzes($test_lesson_id);
         $test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id  );
-        WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
 
         Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback , $test_lesson_id  ,  $test_user_id  ) ;
         delete_site_transient( $transient_key );
@@ -1027,7 +1027,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $test_user_id = wp_create_user('studQuestionsaskedOverwrite', 'studQuestionsaskedOverwrite', 'studQuestionsaskedOverwrite@test.com');
         $current_user =  get_user_by( 'id', $test_user_id );
         $test_lesson_id = $this->factory->get_random_lesson_id();
-        $user_lesson_status_comment_id = WooThemes_Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
+        $user_lesson_status_comment_id = Sensei_Utils::sensei_start_lesson( $test_lesson_id , $test_user_id  );
 
         // setup the quiz questions asked
         $test_quiz_id = Sensei()->lesson->lesson_quizzes($test_lesson_id);

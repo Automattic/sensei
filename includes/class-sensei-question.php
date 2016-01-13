@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the questions post type in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Assessment
+ * @author Automattic
+ *
  * @since 1.0.0
  */
 class Sensei_Question {
@@ -21,6 +20,7 @@ class Sensei_Question {
 	 * @since  1.0.0
 	 */
 	public function __construct () {
+        $this->token = 'question';
 		$this->question_types = $this->question_types();
 		$this->meta_fields = array( 'question_right_answer', 'question_wrong_answers' );
 		if ( is_admin() ) {
@@ -742,7 +742,7 @@ class Sensei_Question {
         }
 
         // Check again that the lesson is complete
-        $user_lesson_end = WooThemes_Sensei_Utils::user_completed_lesson( Sensei()->quiz->get_lesson_id( $quiz_id), get_current_user_id() );
+        $user_lesson_end = Sensei_Utils::user_completed_lesson( Sensei()->quiz->get_lesson_id( $quiz_id), get_current_user_id() );
         $user_lesson_complete = false;
         if ( $user_lesson_end ) {
             $user_lesson_complete = true;
@@ -760,7 +760,7 @@ class Sensei_Question {
         $data[ 'question_right_answer' ]  = get_post_meta( $question_id , '_question_right_answer', true );
         $data[ 'question_wrong_answers' ] = get_post_meta( $question_id , '_question_wrong_answers', true );
         $data[ 'user_answer_entry' ]      = Sensei()->quiz->get_user_question_answer( $lesson_id,  $question_id , get_current_user_id() );
-        $data[ 'lesson_completed' ]       = WooThemes_Sensei_Utils::user_completed_course( $lesson_id, get_current_user_id( ) );
+        $data[ 'lesson_completed' ]       = Sensei_Utils::user_completed_course( $lesson_id, get_current_user_id( ) );
         $data[ 'quiz_grade_type' ]        = get_post_meta( $quiz_id , '_quiz_grade_type', true );
         $data[ 'reset_quiz_allowed' ]     = $reset_allowed;
         $data[ 'lesson_complete' ]        = $user_lesson_complete;
@@ -965,7 +965,7 @@ class Sensei_Question {
                 $question_option[ 'type' ] = $answer_type;
 
                 // add the speci  fic option to the list of options for this question
-                $question_answers_options[] = $question_option;
+                $question_answers_options[$question_option[ 'ID' ]] = $question_option;
 
             } // end for each option
 
@@ -1104,7 +1104,7 @@ class Sensei_Question {
 
 /**
  * Class WooThemes_Sensei_Question
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Question extends Sensei_Question{}

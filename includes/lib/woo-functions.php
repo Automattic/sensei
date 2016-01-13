@@ -83,7 +83,7 @@ if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_upda
  */
 if( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
 	function sensei_check_woocommerce_version( $version = '2.1' ) {
-		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+		if ( Sensei_WC::is_woocommerce_active() ) {
 			global $woocommerce;
 			if( version_compare( $woocommerce->version, $version, ">=" ) ) {
 			    return true;

@@ -5,8 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside W
  *
  * Handles all Template loading and redirecting functionality.
  *
- * @package Sensei
- * @category Templates
+ * @package Views
+ * @author Automattic
+ *
  * @since 1.9.0
  */
 class Sensei_Templates {
@@ -368,6 +369,11 @@ class Sensei_Templates {
      */
     public static function the_title( $post ){
 
+        // ID passed in
+        if( is_numeric( $post ) ){
+            $post = get_post( $post );
+        }
+
         /**
          * Filter the template html tag for the title
          *
@@ -525,7 +531,7 @@ class Sensei_Templates {
     public static function deprecate_sensei_lesson_course_signup_hook(){
 
         $lesson_course_id = get_post_meta( get_the_ID(), '_lesson_course', true );
-        $user_taking_course = WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
+        $user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
 
         if(  !$user_taking_course ) {
 

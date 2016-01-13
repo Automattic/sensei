@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * Sensei Module Functionality
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Administration
+ * @package Content
+ * @author Automattic
+ *
  * @since 1.8.0
  */
 class Sensei_Core_Modules
@@ -457,8 +457,8 @@ class Sensei_Core_Modules
         $course_id = $post->ID;
         $title_text = '';
 
-        if (method_exists('WooThemes_Sensei_Utils', 'is_preview_lesson') && WooThemes_Sensei_Utils::is_preview_lesson($lesson_id)) {
-            $is_user_taking_course = WooThemes_Sensei_Utils::sensei_check_for_activity(array('post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status'));
+        if (method_exists('Sensei_Utils', 'is_preview_lesson') && Sensei_Utils::is_preview_lesson($lesson_id)) {
+            $is_user_taking_course = Sensei_Utils::sensei_check_for_activity(array('post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status'));
             if (!$is_user_taking_course) {
                 if (method_exists('WooThemes_Sensei_Frontend', 'sensei_lesson_preview_title_text')) {
                     $title_text = Sensei()->frontend->sensei_lesson_preview_title_text($course_id);
@@ -795,7 +795,7 @@ class Sensei_Core_Modules
         $lesson_count = 0;
         $completed_count = 0;
         foreach ($lessons as $lesson_id) {
-            $completed = WooThemes_Sensei_Utils::user_completed_lesson($lesson_id, $user_id);
+            $completed = Sensei_Utils::user_completed_lesson($lesson_id, $user_id);
             ++$lesson_count;
             if ($completed) {
                 ++$completed_count;
@@ -1169,8 +1169,12 @@ class Sensei_Core_Modules
         $modules = wp_get_post_terms($lesson_id, $this->taxonomy);
 
         //check if error returned
-        if( empty( $modules ) || isset( $modules['errors']  ) ){
+        if(    empty( $modules )
+            || is_wp_error( $modules )
+            || isset( $modules['errors'] ) ){
+
             return false;
+
         }
 
        // get the last item in the array there should be only be 1 really.
@@ -1258,12 +1262,11 @@ class Sensei_Core_Modules
      *
      * @return void
      */
-    public function enqueue_styles()
-    {
-
+    public function enqueue_styles() {
 
         wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', Sensei()->version );
         wp_enqueue_style($this->taxonomy . '-frontend');
+
     }
 
     /**
@@ -1295,7 +1298,7 @@ class Sensei_Core_Modules
 
         wp_enqueue_script( 'sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version , true);
         wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-chosen' ), Sensei()->version , true );
-        wp_enqueue_script( $this->taxonomy . '-admin', esc_url( $this->assets_url ) . 'js/modules-admin' . $suffix . '.js', array( 'jquery', 'sensei-chosen', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'select2' ), Sensei()->version, true );
+        wp_enqueue_script( $this->taxonomy . '-admin', esc_url( $this->assets_url ) . 'js/modules-admin' . $suffix . '.js', array( 'jquery', 'sensei-chosen', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'sensei-core-select2' ), Sensei()->version, true );
 
         // localized module data
         $localize_modulesAdmin = array(
@@ -1314,7 +1317,6 @@ class Sensei_Core_Modules
      * @return void
      */
     public function admin_enqueue_styles() {
-
 
         wp_register_style($this->taxonomy . '-sortable', esc_url($this->assets_url) . 'css/modules-admin.css','',Sensei()->version );
         wp_enqueue_style($this->taxonomy . '-sortable');
@@ -1969,7 +1971,7 @@ class Sensei_Core_Modules
 
             $author = Sensei_Core_Modules::get_term_author( $term->slug );
 
-            if( ! user_can( $author, 'manage_options' ) ) {
+            if( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
                 $term->name = $term->name . ' (' . $author->display_name . ') ';
             }
 

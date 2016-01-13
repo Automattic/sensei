@@ -19,8 +19,9 @@
  * is place above before all the content.
  *
  * @since 1.9.0
+ * @param $post_id
  */
-do_action('sensei_no_permissions_before_content');
+do_action('sensei_no_permissions_before_content', get_the_ID() );
 ?>
 
 <article <?php post_class( 'no-permission' ) ?> >
@@ -37,21 +38,22 @@ do_action('sensei_no_permissions_before_content');
      * is place just before the content.
      *
      * @since 1.9.0
+     * @param $post_id
      */
-    do_action('sensei_no_permissions_inside_before_content');
+    do_action('sensei_no_permissions_inside_before_content', get_the_ID() );
     ?>
 
     <section class="entry fix">
 
         <div class="sensei-message alert">
 
-            <?php the_no_permissions_message(); ?>
+            <?php the_no_permissions_message( get_the_ID() ); ?>
 
         </div>
 
         <p class="excerpt">
 
-            <?php sensei_the_excerpt(); ?>
+            <?php sensei_the_excerpt( get_the_ID() ); ?>
 
         </p>
 
@@ -63,8 +65,9 @@ do_action('sensei_no_permissions_before_content');
      * is place just after the content.
      *
      * @since 1.9.0
+     * @param $post_id
      */
-    do_action('sensei_no_permissions_inside_after_content');
+    do_action('sensei_no_permissions_inside_after_content', get_the_ID() );
     ?>
 
 </article><!-- .no-permissions -->
@@ -75,8 +78,9 @@ do_action('sensei_no_permissions_before_content');
  * is placed outside after the content.
  *
  * @since 1.9.0
+ * @param $post_id
  */
-do_action('sensei_no_permissions_after_content');
+do_action('sensei_no_permissions_after_content', get_the_ID() );
 ?>
 
 <?php get_sensei_footer(); ?>

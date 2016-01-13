@@ -7,6 +7,13 @@
  * version 1.9
  *
  * These shortcodes will soon be deprecated.
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
+ * @since		1.6.0
+ *
  */
 class Sensei_Legacy_Shortcodes {
 
@@ -319,7 +326,7 @@ class Sensei_Legacy_Shortcodes {
         $author_id = $course->post_author;
         $category_output = get_the_term_list( $course_id, 'course-category', '', ', ', '' );
         $preview_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $course_id ) );
-        $is_user_taking_course = WooThemes_Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+        $is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
         ?>
 
         <article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_id ) ) ); ?>">
@@ -374,7 +381,7 @@ class Sensei_Legacy_Shortcodes {
             </div>
             <?php
             // so that legacy shortcodes work with thir party plugins that wants to hook in
-            do_action('sensei_course_content_after', $course);
+            do_action('sensei_course_content_after', $course->ID);
             ?>
 
         </article>

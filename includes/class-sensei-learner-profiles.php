@@ -2,26 +2,24 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Learner Profiles Class
- *
  * All functionality pertaining to the learner profiles in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Views
+ * @author Automattic
+ *
  * @since 1.4.0
  */
 class Sensei_Learner_Profiles {
-	private $profile_url_base;
-	public $token;
+    /**
+     * @var string
+     */
+    private $profile_url_base;
 
 	/**
 	 * Constructor.
 	 * @since  1.4.0
 	 */
 	public function __construct () {
-
 
 		// Setup learner profile URL base
 		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'woothemes-sensei') );
@@ -44,10 +42,12 @@ class Sensei_Learner_Profiles {
 	 */
 	public function setup_permastruct() {
 
+        if( isset( Sensei()->settings->settings[ 'learner_profile_enable' ] )
+            && Sensei()->settings->settings[ 'learner_profile_enable' ] ) {
 
-		if( isset( Sensei()->settings->settings[ 'learner_profile_enable' ] ) && Sensei()->settings->settings[ 'learner_profile_enable' ] ) {
 			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
 			add_rewrite_tag( '%learner_profile%', '([^&]+)' );
+
 		}
 	}
 
@@ -62,7 +62,7 @@ class Sensei_Learner_Profiles {
 		if( isset( $wp_query->query_vars['learner_profile'] ) ) {
 			$learner_user = get_user_by( 'login', $wp_query->query_vars['learner_profile'] );
 
-            $name = Sensei()->learners->get_learner_full_name( $learner_user->ID );
+            $name = Sensei_Learner::get_full_name( $learner_user->ID );
 
 			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) . ' ' . $sep . ' ';
 		}
@@ -226,7 +226,7 @@ class Sensei_Learner_Profiles {
 
 /**
  * Class WooThemes_Sensei_Learner_Profiles
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Learner_Profiles extends Sensei_Learner_Profiles {}

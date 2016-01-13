@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to displaying of various notices accross.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Core
+ * @author Automattic
+ *
  * @since 1.6.3
  */
 
@@ -34,7 +33,7 @@ class Sensei_Notices{
 	*
 	* 
 	* @param string $message 
-	* @param string $type defaults to alert options( alert, tick , download , note   )
+	* @param string $type defaults to alert options( alert, tick , download , info   )
 	*
 	* @return void
 	*/
@@ -82,7 +81,7 @@ class Sensei_Notices{
 
 /**
  * Class Woothemes_Sensei_Notices
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class Woothemes_Sensei_Notices extends Sensei_Notices{}

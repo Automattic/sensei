@@ -2,18 +2,15 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Grading Overview List Table Class
+ * Admin Grading Overview Data Table in Sensei.
  *
- * All functionality pertaining to the Admin Grading Overview Data Table in Sensei.
- *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Assessment
+ * @author Automattic
  * @since 1.3.0
  */
 class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
-	public $user_id;
+
+    public $user_id;
 	public $course_id;
 	public $lesson_id;
 	public $view;
@@ -23,7 +20,6 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	/**
 	 * Constructor
 	 * @since  1.3.0
-	 * @return  void
 	 */
 	public function __construct ( $args = null ) {
 
@@ -195,14 +191,14 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		$activity_args = apply_filters( 'sensei_grading_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$total_statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
+		$total_statuses = Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $total_statuses < $activity_args['offset'] ) {
 			$new_paged = floor( $total_statuses / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
-		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 		// Need to always return an array, even with only 1 item
 		if ( !is_array($statuses) ) {
 			$statuses = array( $statuses );
@@ -253,7 +249,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			$grade = __( 'N/A', 'woothemes-sensei' );
 		}
 
-        $title = Sensei()->learners->get_learner_full_name( $item->user_id );
+        $title = Sensei_Learner::get_full_name( $item->user_id );
 
 		// QuizID to be deprecated
 		$quiz_id = get_post_meta( $item->comment_post_ID, '_lesson_quiz', true );
@@ -448,7 +444,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 /**
  * Class WooThems_Sensei_Grading_Main
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Grading_Main extends Sensei_Grading_Main{}

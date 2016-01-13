@@ -2,24 +2,17 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Administration Class
+ * Handles all admin views, assets and navigation.
  *
- * All functionality pertaining to the administration sections of Sensei.
- *
- * @package WordPress
- * @subpackage Sensei
- * @category Administration
- * @author WooThemes
+ * @package Views
+ * @author Automattic
  * @since 1.0.0
  */
 class Sensei_Admin {
 
-	public $token;
-
 	/**
 	 * Constructor.
 	 * @since  1.0.0
-	 * @return  void
 	 */
 	public function __construct () {
 
@@ -245,10 +238,10 @@ class Sensei_Admin {
 	function create_pages() {
 
 		// Courses page
-	    $this->create_page( esc_sql( _x('courses-overview', 'page_slug', 'woothemes-sensei') ), $this->token . '_courses_page_id', __('Courses', 'woothemes-sensei'), '[newcourses][featuredcourses][freecourses][paidcourses]' );
+	    $this->create_page( esc_sql( _x('courses-overview', 'page_slug', 'woothemes-sensei') ), 'woothemes-sensei_courses_page_id', __('Courses', 'woothemes-sensei'), '[newcourses][featuredcourses][freecourses][paidcourses]' );
 
 		// User Dashboard page
-	    $this->create_page( esc_sql( _x('my-courses', 'page_slug', 'woothemes-sensei') ), $this->token . '_user_dashboard_page_id', __('My Courses', 'woothemes-sensei'), '[usercourses]' );
+	    $this->create_page( esc_sql( _x('my-courses', 'page_slug', 'woothemes-sensei') ), 'woothemes-sensei_user_dashboard_page_id', __('My Courses', 'woothemes-sensei'), '[usercourses]' );
 
 	} // End create_pages()
 
@@ -266,17 +259,17 @@ class Sensei_Admin {
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings', 'lesson-order', 'course-order' ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( Sensei()->token . '-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
-		wp_enqueue_style( Sensei()->token . '-global' );
+		wp_register_style( 'woothemes-sensei-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
+		wp_enqueue_style( 'woothemes-sensei-global' );
 
         // Select 2 styles
-        wp_enqueue_style( 'select2', Sensei()->plugin_url . 'assets/css/select2/select2.css', '', Sensei()->version, 'screen' );
+        wp_enqueue_style( 'sensei-core-select2', Sensei()->plugin_url . 'assets/css/select2/select2.css', '', Sensei()->version, 'screen' );
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
-			wp_register_style( Sensei()->token . '-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
-			wp_enqueue_style( Sensei()->token . '-admin-custom' );
+			wp_register_style( 'woothemes-sensei-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
+			wp_enqueue_style( 'woothemes-sensei-admin-custom' );
 
 		}
 
@@ -299,7 +292,7 @@ class Sensei_Admin {
         $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
         // Select2 script used to enhance all select boxes
-        wp_register_script( 'select2', Sensei()->plugin_url . '/assets/js/select2/select2' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
+        wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . '/assets/js/select2/select2' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
 
         // load edit module scripts
         if( 'edit-module' ==  $screen->id ){
@@ -355,10 +348,29 @@ class Sensei_Admin {
 	function admin_installed_notice() {
 	    ?>
 	    <div id="message" class="updated sensei-message sensei-connect">
-	    	<p><?php _e( '<strong>Sensei has been installed</strong> &#8211; You\'re ready to start creating courses!', 'woothemes-sensei' ); ?></p>
-			<p class="submit"><a href="<?php echo admin_url('admin.php?page=woothemes-sensei-settings'); ?>" class="button-primary"><?php _e( 'Settings', 'woothemes-sensei' ); ?></a> <a class="docs button-primary" href="http://www.woothemes.com/sensei-docs/"><?php _e('Documentation', 'woothemes-sensei'); ?></a></p>
-			<p><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you teach courses online. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">Tweet</a>
-			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
+
+	    	<p>
+                <?php _e( '<strong>Sensei has been installed</strong> &#8211; You\'re ready to start creating courses!', 'woothemes-sensei' ); ?>
+            </p>
+
+			<p class="submit">
+                <a href="<?php echo admin_url('admin.php?page=woothemes-sensei-settings'); ?>" class="button-primary"><?php _e( 'Settings', 'woothemes-sensei' ); ?></a> <a class="docs button" href="http://www.woothemes.com/sensei-docs/">
+                    <?php _e('Documentation', 'woothemes-sensei'); ?>
+                </a>
+            </p>
+
+            <p>
+
+                <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you teach courses online. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">
+                    <?php _e('Tweet', 'woothemes-sensei'); ?>
+                </a>
+
+                <script>
+                    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+                </script>
+
+            </p>
+
 	    </div>
 	    <?php
 
@@ -379,7 +391,7 @@ class Sensei_Admin {
 
 				<p class="submit">
 					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php _e( 'Install', 'woothemes-sensei' ); ?></a>
-					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_dismiss_uri() ) ?>" class="docs button-primary"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a>
+					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_dismiss_uri() ) ?>" class="docs button"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a>
 				</p>
 		</div>
 		<?php
@@ -783,7 +795,7 @@ class Sensei_Admin {
 	 */
 	public function delete_user_activity( $user_id = 0 ) {
 		if( $user_id ) {
-			WooThemes_Sensei_Utils::delete_all_user_activity( $user_id );
+			Sensei_Utils::delete_all_user_activity( $user_id );
 		}
 	}
 
@@ -1404,7 +1416,13 @@ class Sensei_Admin {
                         :)
 
                     </p>
-                    <p class="submit"><a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary"><?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button-primary" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a></p>
+                    <p class="submit">
+                        <a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary">
+
+                            <?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?>
+
+                        </a>
+                    </p>
             </div>
             <?php
 		}
@@ -1496,7 +1514,8 @@ class Sensei_Admin {
 
 /**
  * Legacy Class WooThemes_Sensei_Admin
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
+ * @ignore
  */
 class WooThemes_Sensei_Admin extends Sensei_Admin{ }

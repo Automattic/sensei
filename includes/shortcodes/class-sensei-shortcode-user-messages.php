@@ -8,17 +8,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * This class is loaded int WP by the shortcode loader class.
  *
  * @class Sensei_Shortcode_Teachers
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
- * @package Sensei
- * @category Shortcodes
- * @author 	WooThemes
  */
 class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
 
     /**
-     * @var array $messages{
-     *     @type WP_Post
-     * }
+     * @var WP_Query
      * messages for the current user
      */
     protected $messages_query;
@@ -33,11 +33,7 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
      */
     public function __construct( $attributes, $content, $shortcode ){
 
-        if( is_user_logged_in() ){
-
-            $this->setup_messages_query();
-
-        }
+        $this->setup_messages_query();
 
     }
 
@@ -75,13 +71,21 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
      */
     public function render(){
 
+        if( !is_user_logged_in() ){
+
+            Sensei()->notices->add_notice( __('Please login to view your messages.','woothemes-sensei') , 'alert'  );
+
+        } elseif( 0 == $this->messages_query->post_count ){
+
+            Sensei()->notices->add_notice( __( 'You do not have any messages.', 'woothemes-sensei') , 'alert'  );
+        }
+
         $messages_disabled_in_settings =  ! ( ! isset( Sensei()->settings->settings['messages_disable'] )
                                             || ! Sensei()->settings->settings['messages_disable'] ) ;
 
-        if( empty( $this->messages_query ) || $messages_disabled_in_settings ){
-
+        // don't show anything if messages are disable
+        if( $messages_disabled_in_settings ){
             return '';
-
         }
 
         //set the wp_query to the current messages query
@@ -89,6 +93,7 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
         $wp_query = $this->messages_query;
 
         ob_start();
+        Sensei()->notices->print_notices();
         Sensei_Templates::get_part('loop', 'message');
         $messages_html = ob_get_clean();
 

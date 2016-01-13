@@ -2,14 +2,11 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Analysis User Profile List Table Class
+ * Analysis User Profile Data Table in Sensei.
  *
- * All functionality pertaining to the Admin Analysis User Profile Data Table in Sensei.
+ * @package Analytics
+ * @author Automattic
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
  * @since 1.2.0
  */
 class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Table {
@@ -253,7 +250,7 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 		$activity_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$this->total_items = WooThemes_Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
+		$this->total_items = Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $this->total_items < $activity_args['offset'] ) {
@@ -262,7 +259,7 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 
 		}
-		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
 		// Need to always return an array, even with only 1 item
 		if ( !is_array($statuses) ) {
@@ -306,17 +303,17 @@ class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Tabl
 	/**
 	 * The text for the search button
 	 * @since  1.7.0
-	 * @return void
+	 * @return string
 	 */
 	public function search_button( $text = '' ) {
-		return __( 'Search Courses', 'woothemes-sensei' );;
+		return __( 'Search Courses', 'woothemes-sensei' );
 	}
 
 } // End Class
 
 /**
  * Class WooThemes_Sensei_Analysis_User_Profile_List_Table
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Table {}

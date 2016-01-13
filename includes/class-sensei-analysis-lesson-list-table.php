@@ -2,14 +2,11 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Analysis Lesson List Table Class
+ * Admin Analysis Lesson Data Table in Sensei.
  *
- * All functionality pertaining to the Admin Analysis Lesson Data Table in Sensei.
+ * @package Analytics
+ * @author Automattic
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
  * @since 1.2.0
  */
 class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
@@ -20,7 +17,6 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	/**
 	 * Constructor
 	 * @since  1.2.0
-	 * @return  void
 	 */
 	public function __construct ( $lesson_id = 0 ) {
 		$this->lesson_id = intval( $lesson_id );
@@ -234,7 +230,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		}
 
 		// Output users data
-        $user_name = Sensei()->learners->get_learner_full_name( $item->user_id );
+        $user_name = Sensei_Learner::get_full_name( $item->user_id );
 
         if ( !$this->csv_output ) {
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) );
@@ -290,14 +286,14 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		$activity_args = apply_filters( 'sensei_analysis_lesson_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$this->total_items = WooThemes_Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
+		$this->total_items = Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $this->total_items < $activity_args['offset'] ) {
 			$new_paged = floor( $total_statuses / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
-		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 		// Need to always return an array, even with only 1 item
 		if ( !is_array($statuses) ) {
 			$statuses = array( $statuses );
@@ -339,10 +335,14 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	/**
 	 * the text for the search button
 	 * @since  1.7.0
-	 * @return void
+	 * @return string $text
 	 */
 	public function search_button( $text = '' ) {
-		return __( 'Search Learners', 'woothemes-sensei' );;
+
+        $text =  __( 'Search Learners', 'woothemes-sensei' );
+
+        return $text;
+
 	}
 } // End Class
 
@@ -350,7 +350,8 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 /**
  * Class WooThemes_Sensei_Analysis_Lesson_List_Table
  *
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
+ * @ignore
  */
 class WooThemes_Sensei_Analysis_Lesson_List_Table extends Sensei_Analysis_Lesson_List_Table {}

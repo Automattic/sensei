@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Started_Course' ) ) :
  *
  * An email sent to the teacher when one of their students starts a course.
  *
- * @class 		WooThemes_Sensei_Email_Teacher_Started_Course
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_Teacher_Started_Course {
 
@@ -25,9 +25,6 @@ class WooThemes_Sensei_Email_Teacher_Started_Course {
 
 	/**
 	 * Constructor
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'teacher-started-course';
@@ -38,7 +35,9 @@ class WooThemes_Sensei_Email_Teacher_Started_Course {
 	/**
 	 * trigger function.
 	 *
-	 * @access public
+     * @param int $learner_id
+     * @param int $course_id
+     *
 	 * @return void
 	 */
 	function trigger( $learner_id = 0, $course_id = 0 ) {

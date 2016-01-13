@@ -16,10 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  *
  * @class Sensei_Shortcode_User_Courses
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
- * @package Sensei
- * @category Classes
- * @author 	WooThemes
  */
 class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
@@ -143,7 +145,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
                 $included_courses = array('-1000'); // don't show any courses
 
             }else{
-                $included_courses = Sensei_Utils::array_zip_merge( $active_ids, $completed_ids );
+                $included_courses = Sensei_Utils::array_zip_merge( (array)$active_ids, (array)$completed_ids );
             }
 
 
@@ -239,9 +241,12 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         $this->attach_shortcode_hooks();
 
         ob_start();
+        echo '<section id="sensei-user-courses">';
         Sensei_Messages::the_my_messages_link();
         Sensei_Templates::get_template('loop-course.php');
         Sensei_Templates::get_template('globals/pagination.php');
+        echo '</section>';
+
         $shortcode_output =  ob_get_clean();
 
         $this->detach_shortcode_hooks();
@@ -367,47 +372,74 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
             var buttonContainer = jQuery('#user-course-status-toggle');
             var courseList = jQuery('ul.course-container');
 
-            //set initial state
-            show_all_active();
-            hide_all_completed();
-
+            ///
+            /// EVENT LISTENERS
+            ///
             buttonContainer.on('click','a#sensei-user-courses-active-action', function( e ){
 
                 e.preventDefault();
-                hide_all_completed();
-                show_all_active();
+                sensei_user_courses_hide_all_completed();
+                sensei_user_courses_show_all_active();
+                sensei_users_courses_toggle_button_active( e );
+
 
             });
 
             buttonContainer.on('click', 'a#sensei-user-courses-complete-action', function( e ){
 
                 e.preventDefault();
-                hide_all_active();
-                show_all_completed();
+                sensei_user_courses_hide_all_active();
+                sensei_user_courses_show_all_completed();
+                sensei_users_courses_toggle_button_active( e );
 
             });
 
-            function hide_all_completed(){
+
+            ///
+            // Set initial state
+            ///
+            jQuery( 'a#sensei-user-courses-active-action').trigger( 'click' );
+
+
+            ///
+            /// FUNCTIONS
+            ///
+            function sensei_user_courses_hide_all_completed(){
 
                 courseList.children('li.user-completed').hide();
 
             }
 
-            function hide_all_active(){
+            function sensei_user_courses_hide_all_active(){
 
                 courseList.children('li.user-active').hide();
 
             }
 
-            function show_all_completed(){
+            function sensei_user_courses_show_all_completed(){
 
                 courseList.children('li.user-completed').show();
 
             }
 
-            function show_all_active(){
+            function sensei_user_courses_show_all_active(){
 
                 courseList.children('li.user-active').show();
+
+            }
+
+            /**
+             * Toggle buttons active a classes
+             */
+            function sensei_users_courses_toggle_button_active( e ){
+
+                //reset both buttons
+                buttonContainer.children('a').removeClass( 'active' );
+                buttonContainer.children('a').addClass( 'inactive' );
+
+                // setup the curent clicked button
+                jQuery( e.target).addClass( 'active' ) ;
+                jQuery( e.target).removeClass( 'inactive' ) ;
 
             }
 

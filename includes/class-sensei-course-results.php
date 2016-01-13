@@ -2,19 +2,18 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Course Results Class
- *
  * All functionality pertaining to the course results pages in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Views
+ * @author Automattic
+ *
  * @since 1.4.0
  */
 class Sensei_Course_Results {
 
-	public $token;
+    /**
+     * @var string
+     */
     public  $courses_url_base;
 
 	/**
@@ -110,7 +109,7 @@ class Sensei_Course_Results {
 
 		global $course;
 
-		$course_status = WooThemes_Sensei_Utils::sensei_user_course_status_message( $course->ID, get_current_user_id());
+		$course_status = Sensei_Utils::sensei_user_course_status_message( $course->ID, get_current_user_id());
 		echo '<div class="sensei-message ' . $course_status['box_class'] . '">' . $course_status['message'] . '</div>';
 
 		sensei_do_deprecated_action( 'sensei_course_results_lessons','1.9.','sensei_course_results_content_inside_after', $course );
@@ -198,7 +197,7 @@ class Sensei_Course_Results {
     public static function fire_course_image_hook(){
 
         global $course;
-        do_action( 'sensei_course_image', $course->ID );
+        sensei_do_deprecated_action('sensei_course_image','1.9.0', 'sensei_single_course_content_inside_before', array( get_the_ID()) );
 
     }
 
@@ -206,7 +205,7 @@ class Sensei_Course_Results {
 
 /**
  * Class WooThemes_Sensei_Course_Results
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Course_Results extends Sensei_Course_Results{}

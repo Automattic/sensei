@@ -1,14 +1,12 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside WP
 /**
- * Sensei Autoloader Class
- *
  * Loading all class files within the Sensei/includes directory
  *
- * The autoloader depends on the class and file name matching.
+ * The auto loader class listens for calls to classes within Sensei and loads
+ * the file containing the class.
  *
- * @package Sensei
- * @category Autoloader
+ * @package Core
  * @since 1.9.0
  */
 class Sensei_Autoloader {
@@ -63,7 +61,8 @@ class Sensei_Autoloader {
             /**
              * Admin
              */
-            'Sensei_Welcome'=> 'admin/class-sensei-welcome.php' ,
+            'Sensei_Welcome'            => 'admin/class-sensei-welcome.php' ,
+            'Sensei_Learner_Management' => 'admin/class-sensei-learner-management.php' ,
 
             /**
              * Shortcodes
@@ -80,6 +79,19 @@ class Sensei_Autoloader {
             'Sensei_Shortcode_Course_Categories'   => 'shortcodes/class-sensei-shortcode-course-categories.php',
             'Sensei_Shortcode_Unpurchased_Courses' => 'shortcodes/class-sensei-shortcode-unpurchased-courses.php',
             'Sensei_Legacy_Shortcodes'             => 'shortcodes/class-sensei-legacy-shortcodes.php',
+
+            /**
+             * Built in theme integration support
+             */
+            'Sensei_Theme_Integration_Loader' => 'theme-integrations/theme-integration-loader.php',
+            'Sensei__S'                       => 'theme-integrations/_s.php',
+            'Sensei_Twentyeleven'             => 'theme-integrations/twentyeleven.php',
+            'Sensei_Twentytwelve'             => 'theme-integrations/twentytwelve.php',
+            'Sensei_Twentythirteen'           => 'theme-integrations/Twentythirteen.php',
+            'Sensei_Twentyfourteen'           => 'theme-integrations/Twentyfourteen.php',
+            'Sensei_Twentyfifteen'            => 'theme-integrations/Twentyfifteen.php',
+            'Sensei_Twentysixteen'            => 'theme-integrations/Twentysixteen.php',
+            'Sensei_Storefront'               => 'theme-integrations/Storefront.php',
 
             /**
              * WooCommerce

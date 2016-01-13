@@ -5,26 +5,21 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if (  class_exists( 'Teacher_New_Course_Assignment' ) ){
+if (  class_exists('Sensei_Email_Teacher_New_Course_Assignment') ){
     return;
 }
-
-/**
- * Return a new instance of this files class
- */
-return new Teacher_New_Course_Assignment();
 
 /**
  * Teacher Started Course
  *
  * An email sent to the teacher when one of their students starts a course.
  *
- * @class 		WooThemes_Sensei_Email_Teacher_Started_Course
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
-class Teacher_New_Course_Assignment {
+class Sensei_Email_Teacher_New_Course_Assignment {
 
 	var $template;
 	var $subject;
@@ -80,3 +75,8 @@ class Teacher_New_Course_Assignment {
 		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 	}
 }
+
+/**
+ * Return a new instance of this files class
+ */
+return new Sensei_Email_Teacher_New_Course_Assignment();

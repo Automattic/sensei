@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the Messages post type in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Users
+ * @author Automattic
+ *
  * @since 1.6.0
  */
 class Sensei_Messages {
@@ -22,6 +21,7 @@ class Sensei_Messages {
 	 * @since  1.6.0
 	 */
 	public function __construct () {
+        $this->token = 'messages';
 		$this->post_type = 'sensei_message';
 		$this->meta_fields = array( 'sender', 'receiver' );
 
@@ -436,7 +436,7 @@ class Sensei_Messages {
     }
 	/**
      * Only show allowed messages in messages archive
-     * @param  array $query Original query
+     * @param  WP_Query $query Original query
      * @return void
      */
 	public function message_list( $query ) {
@@ -721,7 +721,7 @@ class Sensei_Messages {
 
 /**
  * Class WooThemes_Sensei_Messages
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Messages extends Sensei_Messages{}

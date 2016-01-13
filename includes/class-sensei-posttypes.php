@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the post types and taxonomies in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Core
+ * @author Automattic
+ *
  * @since 1.0.0
  */
 class Sensei_PostTypes {
@@ -17,16 +16,36 @@ class Sensei_PostTypes {
 	public $slider_labels;
 	public $role_caps;
 
+    /**
+     * @var Sensei_Course
+     */
+    public $course;
+
+    /**
+     * @var Sensei_Lesson
+     */
+    public $lesson;
+
+    /**
+     * @var Sensei_Question
+     */
+    public $question;
+
+    /**
+     * @var Sensei_Quiz
+     */
+    public $quiz;
+
 	/**
 	 * Constructor
 	 * @since  1.0.0
-	 * @return  void
 	 */
 	public function __construct () {
 
-
 		// Setup Post Types
 		$this->labels = array();
+        $this->token = 'woothemes-sensei-posttypes';
+
 		$this->setup_post_type_labels_base();
 		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
@@ -90,7 +109,7 @@ class Sensei_PostTypes {
 	public function setup_course_post_type () {
 
 		$args = array(
-		    'labels'              => $this->create_post_type_labels( 'course', $this->labels['course']['singular'], $this->labels['course']['plural'], $this->labels['course']['menu'] ),
+		    'labels'              => $this->create_post_type_labels( $this->labels['course']['singular'], $this->labels['course']['plural'], $this->labels['course']['menu'] ),
 		    'public'              => true,
 		    'publicly_queryable'  => true,
 		    'show_ui'             => true,
@@ -159,6 +178,10 @@ class Sensei_PostTypes {
      * [newcourses][featuredcourses][freecourses][paidcourses]
      *
      * @since 1.9.0
+     *
+     * @param string $content
+     *
+     * @return bool
      */
     public function has_old_shortcodes( $content ){
 
@@ -178,7 +201,6 @@ class Sensei_PostTypes {
 	 */
 	public function setup_lesson_post_type () {
 
-
 		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' );
 		$allow_comments = false;
 		if ( isset( Sensei()->settings->settings[ 'lesson_comments' ] ) ) {
@@ -189,7 +211,7 @@ class Sensei_PostTypes {
 		} // End If Statement
 
 		$args = array(
-		    'labels' => $this->create_post_type_labels( 'lesson', $this->labels['lesson']['singular'], $this->labels['lesson']['plural'], $this->labels['lesson']['menu'] ),
+		    'labels' => $this->create_post_type_labels(  $this->labels['lesson']['singular'], $this->labels['lesson']['plural'], $this->labels['lesson']['menu'] ),
 		    'public' => true,
 		    'publicly_queryable' => true,
 		    'show_ui' => true,
@@ -227,10 +249,8 @@ class Sensei_PostTypes {
 	 */
 	public function setup_quiz_post_type () {
 
-
 		$args = array(
 		    'labels' => $this->create_post_type_labels(
-                'quiz',
                 $this->labels['quiz']['singular'],
                 $this->labels['quiz']['plural'],
                 $this->labels['quiz']['menu']
@@ -275,7 +295,7 @@ class Sensei_PostTypes {
 	public function setup_question_post_type () {
 
 		$args = array(
-		    'labels' => $this->create_post_type_labels( 'question', $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
+		    'labels' => $this->create_post_type_labels( $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
 		    'public' => false,
 		    'publicly_queryable' => true,
 		    'show_ui' => true,
@@ -315,7 +335,7 @@ class Sensei_PostTypes {
 	public function setup_multiple_question_post_type () {
 
 		$args = array(
-		    'labels' => $this->create_post_type_labels( 'multiple_question', $this->labels['multiple_question']['singular'], $this->labels['multiple_question']['plural'], $this->labels['multiple_question']['menu'] ),
+		    'labels' => $this->create_post_type_labels( $this->labels['multiple_question']['singular'], $this->labels['multiple_question']['plural'], $this->labels['multiple_question']['menu'] ),
 		    'public' => false,
 		    'publicly_queryable' => false,
 		    'show_ui' => false,
@@ -347,15 +367,14 @@ class Sensei_PostTypes {
 	 */
 	public function setup_sensei_message_post_type () {
 
-
 		if( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			$args = array(
-			    'labels' => $this->create_post_type_labels( 'sensei_message', $this->labels['sensei_message']['singular'], $this->labels['sensei_message']['plural'], $this->labels['sensei_message']['menu'] ),
+			    'labels' => $this->create_post_type_labels( $this->labels['sensei_message']['singular'], $this->labels['sensei_message']['plural'], $this->labels['sensei_message']['menu'] ),
 			    'public' => true,
 			    'publicly_queryable' => true,
 			    'show_ui' => true,
-			    'show_in_menu' => 'sensei',
+			    'show_in_menu' => 'admin.php?page=sensei',
 			    'show_in_nav_menus' => true,
 			    'query_var' => true,
 			    'exclude_from_search' => true,
@@ -429,6 +448,7 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_quiz_type_taxonomy () {
+
 		// "Quiz Types" Custom Taxonomy
 		$labels = array(
 			'name' => _x( 'Quiz Types', 'taxonomy general name', 'woothemes-sensei' ),
@@ -464,6 +484,7 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_question_type_taxonomy () {
+
 		// "Question Types" Custom Taxonomy
 		$labels = array(
 			'name' => _x( 'Question Types', 'taxonomy general name', 'woothemes-sensei' ),
@@ -592,13 +613,12 @@ class Sensei_PostTypes {
 	/**
 	 * Create the labels for a specified post type.
 	 * @since  1.0.0
-	 * @param  string $token    The post type for which to setup labels (used to provide context)
 	 * @param  string $singular The label for a singular instance of the post type
 	 * @param  string $plural   The label for a plural instance of the post type
 	 * @param  string $menu     The menu item label
 	 * @return array            An array of the labels to be used
 	 */
-	private function create_post_type_labels ( $token, $singular, $plural, $menu ) {
+	private function create_post_type_labels ( $singular, $plural, $menu ) {
 		$labels = array(
 		    'name' => sprintf( _x( '%s', 'post type general name', 'woothemes-sensei' ), $plural ),
 		    'singular_name' => sprintf( _x( '%s', 'post type singular name', 'woothemes-sensei' ), $singular ),
@@ -685,7 +705,8 @@ class Sensei_PostTypes {
 	 * Assigns the defaults for each user role capabilities.
 	 *
 	 * @since  1.1.0
-	 * @access public
+     *
+	 * @param array $post_types
 	 * @return void
 	 */
 	public function set_role_cap_defaults( $post_types = array() ) {
@@ -752,6 +773,7 @@ class Sensei_PostTypes {
 	 * Adds a 'Edit Quiz' link to the admin bar when viewing a Quiz linked to a corresponding Lesson
 	 * 
 	 * @since  1.7.0
+     * @param WP_Admin_Bar $bar
 	 * @return void
 	 */
 	public function quiz_admin_bar_menu( $bar ) {
@@ -772,7 +794,7 @@ class Sensei_PostTypes {
 
 /**
  * Class WooThemes_Sensei_PostTypes
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_PostTypes extends Sensei_PostTypes{}

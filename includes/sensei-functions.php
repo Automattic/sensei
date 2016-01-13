@@ -15,7 +15,9 @@ function is_sensei() {
 	$taxonomies = array( 'course-category', 'quiz-type', 'question-type', 'lesson-tag' );
 
 	if( is_post_type_archive( $post_types ) || is_singular( $post_types ) || is_tax( $taxonomies ) ) {
+
 		$is_sensei = true;
+
 	}
 
 	if( is_object( $post ) && ! is_wp_error( $post ) ) {
@@ -24,8 +26,11 @@ function is_sensei() {
 		$my_courses_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
 
 		if( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) ) ) {
+
 			$is_sensei = true;
+
 		}
+
 	}
 
 	return apply_filters( 'is_sensei', $is_sensei, $post );
@@ -164,11 +169,16 @@ if ( ! function_exists( 'sensei_hex_lighter' ) ) {
  * WC Detection for backwards compatibility
  *
  * @since 1.9.0
- * @deprecated since 1.9.0 * It is better to call the Sensei_WC::is_woocommerce_active() directly
+ * @deprecated since 1.9.0 use  Sensei_WC::is_woocommerce_active()
  */
 if ( ! function_exists( 'is_woocommerce_active' ) ) {
     function is_woocommerce_active() {
-        return Sensei_WC::is_woocommerce_active();
+        // calling is present instead of is active here
+        // as this function can override other is_woocommerce_active
+        // function in other woo plugins and Sensei_WC::is_woocommerce_active
+        // also check the sensei settings for enable WooCommerce support, which
+        // other plugins should not check against.
+        return Sensei_WC::is_woocommerce_present();
     }
 }
 
@@ -214,5 +224,48 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative="" , $ar
 function sensei_is_a_course( $post ){
 
 	return "course" == get_post_type( $post );
+
+}
+
+/**
+ * Determine the login link
+ * on the frontend.
+ *
+ * This function will return the my-courses page link
+ * or the wp-login link.
+ *
+ * @since 1.9.0
+ */
+function sensei_user_login_url(){
+
+    $my_courses_page_id = intval( Sensei()->settings->get( 'my_course_page' ) );
+    $page = get_post( $my_courses_page_id );
+
+    if ( $my_courses_page_id && isset( $page->ID ) && 'page' == get_post_type( $page->ID )  ){
+
+        return get_permalink( $page->ID );
+
+    } else {
+
+        return wp_login_url();
+
+    }
+
+}// end sensei_user_login_link
+
+/**
+ * Checks the settings to see
+ * if a user must be logged in to view content
+ *
+ * duplicate of Sensei()->access_settings().
+ *
+ * @since 1.9.0
+ * @return bool
+ */
+function sensei_is_login_required(){
+
+    $login_required = isset( Sensei()->settings->settings['access_permission'] ) && ( true == Sensei()->settings->settings['access_permission'] );
+
+    return $login_required;
 
 }

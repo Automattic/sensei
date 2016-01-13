@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_New_Message' ) ) :
  *
  * An email sent to the teacher when one of their students sends them a private message.
  *
- * @class 		WooThemes_Sensei_Email_Teacher_New_Message
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_Teacher_New_Message {
 
@@ -26,9 +26,6 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 
 	/**
 	 * Constructor
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'teacher-new-message';
@@ -40,6 +37,7 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 	 * trigger function.
 	 *
 	 * @access public
+     * @param integer $message_id
 	 * @return void
 	 */
 	function trigger( $message_id = 0 ) {

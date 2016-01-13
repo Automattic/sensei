@@ -24,7 +24,7 @@
          *
          * @hooked Sensei_Quiz::the_title               - 20
          * @hooked Sensei_Quiz::the_user_status_message - 40
-         * @param $quiz_id
+         * @param integer $quiz_id
          *
          */
         do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
@@ -129,10 +129,10 @@
      *
      * @since 1.9.0
      *
-     * @hooked
+     * @param integer $quiz_id
      *
      */
-    do_action( 'sensei_single_quiz_content_inside_after' );
+    do_action( 'sensei_single_quiz_content_inside_after', get_the_ID() );
 
     ?>
 

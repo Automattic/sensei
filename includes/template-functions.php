@@ -86,27 +86,17 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 * Helper functions.
 	 ***************************************************************************************************/
 
-
 	/**
 	 * sensei_check_prerequisite_course function.
 	 *
+     * @deprecated since 1.9.0 use Sensei_Course::is_prerequisite_complete( $course_id );
 	 * @access public
 	 * @param mixed $course_id
-	 * @return void
+	 * @return bool
 	 */
 	function sensei_check_prerequisite_course( $course_id ) {
-		global $current_user;
-		// Get User Meta
-		get_currentuserinfo();
-		$course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true);
-		$prequisite_complete = false;
-		if ( 0 < absint( $course_prerequisite_id ) ) {
-			$prequisite_complete = WooThemes_Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
-		} else {
-			$prequisite_complete = true;
-		} // End If Statement
 
-		return $prequisite_complete;
+        return Sensei_Course::is_prerequisite_complete( $course_id );
 
 	} // End sensei_check_prerequisite_course()
 
@@ -137,95 +127,14 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	/**
 	 * sensei_wc_add_to_cart function.
 	 *
+     * @deprecated since Sensei_WC::the_add_to_cart_button_html( $course_id );
 	 * @access public
 	 * @param mixed $course_id
 	 * @return void
 	 */
 	function sensei_wc_add_to_cart( $course_id ) {
 
-		$prerequisite_complete = sensei_check_prerequisite_course( $course_id );
-
-		if ( $prerequisite_complete ) {
-
-			global $post, $current_user, $woocommerce;
-
-			$wc_post_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
-
-			// Get User Meta
-			get_currentuserinfo();
-
-			// Check if customer purchased the product
-			if ( WooThemes_Sensei_Utils::sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id ) ) { ?>
-
-			    <div class="sensei-message tick">
-
-			    	<?php _e( 'You are currently taking this course.', 'woothemes-sensei' ); ?>
-
-			    </div>
-
-			<?php } else {
-
-			    // based on simple.php in WC templates/single-product/add-to-cart/
-			    if ( 0 < $wc_post_id ) {
-
-			        // Get the product
-			        $product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
-			        if ( ! isset ( $product ) || ! is_object( $product ) ) return;
-			        if ( $product->is_purchasable() ) {
-			            // Check Product Availability
-			            $availability = $product->get_availability();
-			            if ($availability['availability']) {
-			                echo apply_filters( 'woocommerce_stock_html', '<p class="stock '.$availability['class'].'">'.$availability['availability'].'</p>', $availability['availability'] );
-			            } // End If Statement
-			            // Check for stock
-			            if ( $product->is_in_stock() ) { ?>
-
-			                <?php if (! sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
-
-			                    <form action="<?php echo esc_url( $product->add_to_cart_url() ); ?>" class="cart" method="post" enctype="multipart/form-data">
-			                        <input type="hidden" name="product_id" value="<?php echo esc_attr( $product->id ); ?>" />
-			                        <input type="hidden" name="quantity" value="1" />
-			                        <?php if ( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) { ?>
-
-			                            <input type="hidden" name="variation_id" value="<?php echo $product->variation_id; ?>" />
-			                            <?php if( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 0 ) { ?>
-
-			                                <?php foreach( $product->variation_data as $att => $val ) { ?>
-
-			                                    <input type="hidden" name="<?php echo esc_attr( $att ); ?>" id="<?php echo esc_attr( str_replace( 'attribute_', '', $att ) ); ?>" value="<?php echo esc_attr( $val ); ?>" />
-
-			                                <?php } ?>
-
-			                            <?php } ?>
-
-			                        <?php } ?>
-
-			                        <button type="submit" class="single_add_to_cart_button button alt">
-                                        <?php echo $product->get_price_html(); ?> - <?php  _e('Purchase this Course', 'woothemes-sensei'); ?>
-                                    </button>
-			                    </form>
-
-			                <?php } // End If Statement ?>
-
-			             <?php } // End If Statement
-
-			        } // End If Statement
-
-			    } // End If Statement
-
-			} // End If Statement
-
-			if ( !is_user_logged_in() ) {
-
-			    $my_courses_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
-			    $login_link =  '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>'; ?>
-			    <p class="add-to-cart-login">
-			        <?php echo sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link ); ?>
-			    </p>
-
-			<?php }
-
-	 	} // End If Statement
+		Sensei_WC::the_add_to_cart_button_html( $course_id );
 
 	} // End sensei_wc_add_to_cart()
 
@@ -235,7 +144,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 *
 	 * @deprecated since 1.9.0
 	 * @param int $wc_post_id (default: 0)
-	 * @return void
+	 * @return bool
 	 */
 	function sensei_check_if_product_is_in_cart( $wc_product_id = 0 ) {
         return Sensei_WC::is_product_in_cart( $wc_product_id );
@@ -251,7 +160,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	function sensei_simple_course_price( $post_id ) {
 
 		//WooCommerce Pricing
-    	if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_activated() ) {
+        if ( Sensei_WC::is_woocommerce_active() ) {
     	    $wc_post_id = get_post_meta( $post_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
     	    	// Get the product
@@ -269,7 +178,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 *
 	 * @access public
 	 * @param array $widget_args (default: array())
-	 * @return void
+	 * @return array
 	 */
 	function sensei_recent_comments_widget_filter( $widget_args = array() ) {
 		if ( ! isset( $widget_args['post_type'] ) ) $widget_args['post_type'] = array( 'post', 'page' );
@@ -281,7 +190,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 * sensei_course_archive_filter function.
 	 *
 	 * @access public
-	 * @param array $query ( default: array ( ) )
+	 * @param WP_Query $query ( default: array ( ) )
 	 * @return void
 	 */
 	function sensei_course_archive_filter( $query ) {
@@ -437,12 +346,12 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 
 	function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
 		_deprecated_function( __FUNCTION__, '1.7', "WooThemes_Sensei_Utils::user_started_course()" );
-		return WooThemes_Sensei_Utils::user_started_course( $post_id, $user_id );
+		return Sensei_Utils::user_started_course( $post_id, $user_id );
 	} // End sensei_has_user_started_course()
 
 	function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
 		_deprecated_function( __FUNCTION__, '1.7', "WooThemes_Sensei_Utils::user_completed_lesson()" );
-		return WooThemes_Sensei_Utils::user_completed_lesson( $post_id, $user_id );
+		return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_lesson()
 
 /**
@@ -842,10 +751,10 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = ''  ){
     // Check for prerequisite lesson completions
     $pre_requisite_complete = WooThemes_Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
     $lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-    $user_taking_course = WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
+    $user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
 
     $is_preview = false;
-    if( WooThemes_Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
+    if( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 
         $is_preview = true;
         $pre_requisite_complete = true;
@@ -906,7 +815,7 @@ function sensei_the_single_lesson_meta(){
 
     // Get the meta info
     $lesson_course_id = absint( get_post_meta( get_the_ID(), '_lesson_course', true ) );
-    $is_preview = WooThemes_Sensei_Utils::is_preview_lesson( get_the_ID() );
+    $is_preview = Sensei_Utils::is_preview_lesson( get_the_ID() );
 
     // Get User Meta
     get_currentuserinfo();
@@ -915,7 +824,7 @@ function sensei_the_single_lesson_meta(){
     do_action( 'sensei_complete_lesson' );
     // Check that the course has been started
     if ( Sensei()->access_settings()
-        || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id())
+        || Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id())
         || $is_preview ) {
         ?>
         <section class="lesson-meta">
@@ -929,7 +838,7 @@ function sensei_the_single_lesson_meta(){
             <?php do_action( 'sensei_frontend_messages' ); ?>
 
             <?php if ( ! $is_preview
-                || WooThemes_Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id()) ) {
+                || Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id()) ) {
 
                 sensei_do_deprecated_action( 'sensei_lesson_quiz_meta','1.9.0', 'sensei_single_lesson_content_inside_before' ,array( get_the_ID(), get_current_user_id() )  );
 
@@ -1030,7 +939,7 @@ function the_no_permissions_title(){
  *
  * @since 1.9.0
  */
-function the_no_permissions_message(){
+function the_no_permissions_message( $post_id ){
 
     /**
      * Filter the no permissions message just before it is echo'd on the
@@ -1039,7 +948,7 @@ function the_no_permissions_message(){
      * @since 1.9.0
      * @param $no_permissions_message
      */
-    echo apply_filters( 'sensei_the_no_permissions_message', Sensei()->permissions_message['message'] );
+    echo apply_filters( 'sensei_the_no_permissions_message', Sensei()->permissions_message['message'] , $post_id );
 
 }
 
@@ -1048,7 +957,7 @@ function the_no_permissions_message(){
  *
  * @since 1.9.0
  */
-function sensei_the_excerpt(){
+function sensei_the_excerpt( $post_id ){
 
     global $post;
     the_excerpt( $post );
@@ -1169,5 +1078,19 @@ function sensei_the_course_results_lessons(){
 function sensei_courses_per_row(){
 
     echo Sensei_Course::get_loop_number_of_columns();
+
+}
+
+/**
+ * Wrapper function for Sensei_Templates::get_template( $template_name, $args, $path )
+ *
+ * @since 1.9.0
+ * @param $template_name
+ * @param $args
+ * @param $path
+ */
+function sensei_get_template( $template_name, $args, $path ){
+
+    Sensei_Templates::get_template( $template_name, $args, $path );
 
 }

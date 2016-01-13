@@ -55,7 +55,7 @@ global $course;
                     $lesson_grade = 'n/a';
                     $has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
                     if ( $has_questions ) {
-                        $lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson->ID, get_current_user_id() );
+                        $lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, get_current_user_id() );
                         // Get user quiz grade
                         $lesson_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
                         if ( $lesson_grade ) {
@@ -104,7 +104,7 @@ global $course;
                 $lesson_grade = 'n/a';
                 $has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
                 if ( $has_questions ) {
-                    $lesson_status = WooThemes_Sensei_Utils::user_lesson_status( $lesson->ID, get_current_user_id());
+                    $lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, get_current_user_id());
                     // Get user quiz grade
                     $lesson_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
                     if ( $lesson_grade ) {
@@ -137,7 +137,7 @@ global $course;
 
                 <?php
 
-                    $course_user_grade = WooThemes_Sensei_Utils::sensei_course_user_grade( $course->ID, get_current_user_id() );
+                    $course_user_grade = Sensei_Utils::sensei_course_user_grade( $course->ID, get_current_user_id() );
                     echo $course_user_grade . '%';
 
                 ?>

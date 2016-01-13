@@ -2,14 +2,11 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Grading User Quiz Class
+ * Grading User Profile in Sensei.
  *
- * All functionality pertaining to the Admin Grading User Profile in Sensei.
+ * @package Assessment
+ * @author Automattic
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
  * @since 1.3.0
  */
 class Sensei_Grading_User_Quiz {
@@ -20,7 +17,6 @@ class Sensei_Grading_User_Quiz {
 	/**
 	 * Constructor
 	 * @since  1.3.0
-	 * @return  void
 	 */
 	public function __construct ( $user_id = 0, $quiz_id = 0 ) {
 		$this->user_id = intval( $user_id );
@@ -35,7 +31,7 @@ class Sensei_Grading_User_Quiz {
 	 * @return array
 	 */
 	public function build_data_array() {
-		$data_array = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
+		$data_array = Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
 		return $data_array;
 	} // End build_data_array()
 
@@ -268,7 +264,7 @@ class Sensei_Grading_User_Quiz {
 
 /**
  * Class WooThemes_Sensei_Grading_User_Quiz
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Grading_User_Quiz extends Sensei_Grading_User_Quiz{}

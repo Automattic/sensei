@@ -6,10 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the settings in Sensei.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Core
+ * @author Automattic
+ *
  * @since 1.0.0
  */
 class Sensei_Settings extends Sensei_Settings_API {
@@ -18,12 +17,25 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Constructor.
 	 * @access public
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public function __construct () {
 	    parent::__construct(); // Required in extended classes.
 
+        $this->token = 'woothemes-sensei-settings';
         add_action('init', array( __CLASS__, 'flush_rewrite_rules' ) );
+
+        // Setup Admin Settings data
+        if ( is_admin() ) {
+
+            $this->has_tabs 	= true;
+            $this->name 		= __( 'Sensei Settings', 'woothemes-sensei' );
+            $this->menu_label	= __( 'Settings', 'woothemes-sensei' );
+            $this->page_slug	= 'woothemes-sensei-settings';
+
+        } // End If Statement
+
+        $this->register_hook_listener();
+        $this->get_settings();
 
 	} // End __construct()
 
@@ -99,7 +111,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description'	=> __( 'Settings for public Learner Profiles.', 'woothemes-sensei' )
 		);
 
-		if ( WooThemes_Sensei_Utils::sensei_is_woocommerce_present() ) {
+		if ( Sensei_WC::is_woocommerce_present() ) {
 			$sections['woocommerce-settings'] = array(
 				'name' 			=> __( 'WooCommerce', 'woothemes-sensei' ),
 				'description'	=> __( 'Optional settings for WooCommerce functions.', 'woothemes-sensei' )
@@ -616,7 +628,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Return an array of pages.
 	 * @access private
 	 * @since  1.0.0
-	 * @return void
+	 * @return array
 	 */
 	private function pages_array() {
 		// REFACTOR - Transform this into a field type instead.
@@ -677,7 +689,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 /**
  * Class WooThemes_Sensei_Settings
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Settings extends Sensei_Settings{}

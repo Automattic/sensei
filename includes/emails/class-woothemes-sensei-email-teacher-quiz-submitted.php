@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Quiz_Submitted' ) ) :
  *
  * An email sent to the teacher when one of their students submits a quiz for manual grading.
  *
- * @class 		WooThemes_Sensei_Email_Teacher_Quiz_Submitted
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 
@@ -25,9 +25,6 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 
 	/**
 	 * Constructor
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'teacher-quiz-submitted';
@@ -37,8 +34,10 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 
 	/**
 	 * trigger function.
-	 *
-	 * @access public
+     *
+     * @param integer $learner_id
+     * @param integer $quiz_id
+     *
 	 * @return void
 	 */
 	function trigger( $learner_id = 0, $quiz_id = 0 ) {

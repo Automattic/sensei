@@ -2,14 +2,10 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Sensei Analysis Course List Table Class
+ * Admin Analysis Course Data Table in Sensei.
  *
- * All functionality pertaining to the Admin Analysis Course Data Table in Sensei.
- *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Analytics
+ * @author Automattic
  * @since 1.2.0
  */
 class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
@@ -23,7 +19,6 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 	/**
 	 * Constructor
 	 * @since  1.2.0
-	 * @return  void
 	 */
 	public function __construct ( $course_id = 0, $user_id = 0 ) {
 		$this->course_id = intval( $course_id );
@@ -311,7 +306,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 				$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
 
 				// Output users data
-				$user_name = Sensei()->learners->get_learner_full_name( $item->user_id );
+				$user_name = Sensei_Learner::get_full_name( $item->user_id );
 
 				if ( !$this->csv_output ) {
 
@@ -348,7 +343,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 							'type' => 'sensei_lesson_status',
 							'status' => 'any',
 						);
-					$lesson_status = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_user_lesson', $lesson_args, $item, $this->user_id ), true );
+					$lesson_status = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_user_lesson', $lesson_args, $item, $this->user_id ), true );
 
 					if ( !empty($lesson_status) ) {
 						$user_start_date = get_comment_meta( $lesson_status->comment_ID, 'start', true );
@@ -417,7 +412,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 							'type' => 'sensei_lesson_status',
 							'status' => 'any',
 						);
-					$lesson_students = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
+					$lesson_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
 
 					// Get Course Completions
 					$lesson_args = array(
@@ -426,7 +421,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 							'status' => array( 'complete', 'graded', 'passed', 'failed' ),
 							'count' => true,
 						);
-					$lesson_completions = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
+					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
 
 					$lesson_average_grade = __('n/a', 'woothemes-sensei');
 					if ( false != get_post_meta($item->ID, '_quiz_has_questions', true) ) {
@@ -438,7 +433,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 								'meta_key' => 'grade',
 							);
 						add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-						$lesson_grades = WooThemes_Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
+						$lesson_grades = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
 						remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
 						$grade_count = !empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
@@ -504,14 +499,14 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 		$activity_args = apply_filters( 'sensei_analysis_course_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$this->total_items = WooThemes_Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
+		$this->total_items = Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $this->total_items < $activity_args['offset'] ) {
 			$new_paged = floor( $this->total_items / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
-		$statuses = WooThemes_Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 		// Need to always return an array, even with only 1 item
 		if ( !is_array($statuses) ) {
 			$statuses = array( $statuses );
@@ -632,7 +627,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 		$course = get_post( $this->course_id );
 		$report = sanitize_title( $course->post_title ) . '-' . $this->view . 's-overview';
 		if ( $this->user_id ) {
-            $user_name = Sensei()->learners->get_learner_full_name( $this->user_id );
+            $user_name = Sensei_Learner::get_full_name( $this->user_id );
 			$report = sanitize_title( $user_name  ) . '-' . $report;
 		}
 
@@ -647,7 +642,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 	/**
 	 * The text for the search button
 	 * @since  1.7.0
-	 * @return void
+	 * @return string $text
 	 */
 	public function search_button( $text = '' ) {
 		switch( $this->view ) {
@@ -668,7 +663,8 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 
 /**
  * Class WooThemes_Sensei_Analysis_Course_List_Table
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
+ * @ignore
  */
 class WooThemes_Sensei_Analysis_Course_List_Table extends Sensei_Analysis_Course_List_Table {}

@@ -5,10 +5,12 @@
  * Should be implemented by classes wishing to add shortcode functionality to Sensei.
  *
  * @interface Sensei_Shortcode
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
- * @package Sensei
- * @category Classes
- * @author 		WooThemes
  */
 interface Sensei_Shortcode_Interface {
 

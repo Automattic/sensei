@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  *
  * A WooThemes standardized component widget.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Widgets
- * @author WooThemes
+ * @package Views
+ * @subpackage Widgets
+ * @author Automattic
+ *
  * @since 1.0.0
  */
 class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
@@ -52,8 +52,11 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
-		extract( $args, EXTR_SKIP );
 
+        $before_widget = $args[ 'before_widget' ];
+        $before_title  = $args[ 'before_title' ];
+        $after_title   = $args[ 'after_title' ];
+        $after_widget  = $args[ 'after_widget' ];
 
 		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) && !is_user_logged_in() ) {
 			// No Output
@@ -151,11 +154,12 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 
 	/**
 	 * Load the desired component, if a method is available for it.
-	 * @param  string $component The component to potentially be loaded.
+	 * @param  string $instance The component to potentially be loaded.
 	 * @since  5.0.8
 	 * @return void
 	 */
 	protected function load_component ( $instance ) {
+
 		global  $current_user;
 		// Get User Meta
 		get_currentuserinfo();

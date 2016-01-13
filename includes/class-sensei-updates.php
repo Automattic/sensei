@@ -6,10 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * Class that contains the updates for Sensei data and structures.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Core
+ * @author Automattic
  * @since 1.1.0
  */
 class Sensei_Updates
@@ -31,9 +29,9 @@ class Sensei_Updates
     public function __construct($parent)
     {
 
-        // Setup object data
-        $this->parent = $parent;
-        $this->updates_run = get_option($this->token . '-upgrades', array());
+		// Setup object data
+		$this->parent = $parent;
+		$this->updates_run = get_option( 'woothemes-sensei-upgrades', array() );
 
         // The list of upgrades to run
         $this->updates = array('1.1.0' => array('auto' => array('assign_role_caps' => array('title' => __('Assign role capabilities', 'woothemes-sensei'), 'desc' => __('Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei'), 'product' => 'Sensei')),
@@ -77,8 +75,8 @@ class Sensei_Updates
             ),
         );
 
-        $this->updates = apply_filters('sensei_upgrade_functions', $this->updates, $this->updates);
-        $this->version = get_option($this->token . '-version');
+		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
+		$this->version = get_option( 'woothemes-sensei-version' );
 
         // Manual Update Screen
         add_action('admin_menu', array($this, 'add_update_admin_screen'), 50);
@@ -432,7 +430,9 @@ class Sensei_Updates
                                 $updated = false;
                                 if ( method_exists( $this, $function_name ) ) {
 
-                                    $updated = call_user_func( array( $this, $function_name ) );
+            $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
+			update_option( Sensei()->token . '-upgrades', $this->updates_run );
+			return true;
 
                                 } elseif( $this->function_in_whitelist( $function_name ) ) {
 
@@ -567,7 +567,7 @@ class Sensei_Updates
 	private function set_update_run( $update ) {
 		array_push( $this->updates_run, $update );
         $this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
-		update_option( $this->token . '-upgrades', $this->updates_run );
+		update_option( Sensei()->token . '-upgrades', $this->updates_run );
 	}
 
 	/**
@@ -592,7 +592,6 @@ class Sensei_Updates
 				} // End For Loop
 			} // End For Loop
 		} // End For Loop
-		return true;
 	} // End assign_role_caps
 
 	/**
@@ -614,7 +613,6 @@ class Sensei_Updates
 			update_post_meta( $quiz->ID, '_quiz_grade_type', 'auto' );
 			update_post_meta( $quiz->ID, '_quiz_grade_type_disabled', '' );
 		}
-		return true;
 	} // End set_default_quiz_grade_type
 
 	/**
@@ -644,7 +642,6 @@ class Sensei_Updates
 			wp_set_post_terms( $question->ID, array( 'multiple-choice' ), 'question-type' );
 		}
 
-		return true;
 	} // End set_default_question_type
 
 	/**
@@ -652,7 +649,7 @@ class Sensei_Updates
 	 *
 	 * @since 1.3.0
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 */
 	public function update_question_answer_data( $n = 50, $offset = 0 ) {
 
@@ -686,7 +683,7 @@ class Sensei_Updates
 				$quiz_id = $quiz->ID;
 
 				// Get current user answers
-				$comments = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
+				$comments = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $quiz_id, 'type' => 'sensei_quiz_answers' ), true  );
 				// Need to always return an array, even with only 1 item
 				if ( !is_array($comments) ) {
 					$comments = array( $comments );
@@ -698,7 +695,7 @@ class Sensei_Updates
 				}
 
 				// Get correct answers
-				$questions = WooThemes_Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
+				$questions = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 				if( is_array( $questions ) ) {
 					foreach( $questions as $question ) {
 						$right_answer = get_post_meta( $question->ID, '_question_right_answer', true );
@@ -728,11 +725,11 @@ class Sensei_Updates
 					foreach( $answers as $answer_id => $user_answer ) {
 						$question_id = $answers_linkup[ $quiz_id ][ $answer_id ];
 						$new_user_answers[ $question_id ] = $user_answer;
-						WooThemes_Sensei_Utils::sensei_grade_question_auto( $question_id, '', $user_answer, $user_id );
+						Sensei_Utils::sensei_grade_question_auto( $question_id, '', $user_answer, $user_id );
 					}
 					$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-					WooThemes_Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-					WooThemes_Sensei_Utils::sensei_save_quiz_answers( $new_user_answers, $user_id );
+					Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+					Sensei_Utils::sensei_save_quiz_answers( $new_user_answers, $user_id );
 				}
 			}
 		}
@@ -1646,7 +1643,7 @@ class Sensei_Updates
 					'complete' => $lessons_completed,
 					'percent' => abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) ),
 				);
-				WooThemes_Sensei_Utils::update_course_status( $user_id, $course_id, $status, $metadata );
+				Sensei_Utils::update_course_status( $user_id, $course_id, $status, $metadata );
 				$count++;
 
 			} // per course status
@@ -1868,7 +1865,7 @@ class Sensei_Updates
 
 /**
  * Class WooThemes_Sensei_Updates
- * for backward compatibility
+ * @ignore only for backward compatibility
  * @since 1.9.0
  */
 class WooThemes_Sensei_Updates extends Sensei_Updates {}

@@ -23,9 +23,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
      *
      * @since 1.9
      *
-     * @param $post
+     * @param integer $course_id
      */
-    do_action( 'sensei_course_content_before', get_post() );
+    do_action( 'sensei_course_content_before', get_the_ID() );
     ?>
 
     <section class="course-content">
@@ -38,13 +38,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
              *
              * @since 1.9
              *
-             * @param WP_Post $post
+             * @param integer $course_id
              *
              * @hooked Sensei_Templates::the_title          - 5
              * @hooked Sensei()->course->course_image       - 10
              * @hooked  Sensei()->course->the_course_meta   - 20
              */
-            do_action('sensei_course_content_inside_before', get_post());
+            do_action('sensei_course_content_inside_before', get_the_ID() );
             ?>
 
             <p class="course-excerpt">
@@ -59,11 +59,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
              *
              * @since 1.9
              *
-             * @param WP_Post $post
+             * @param integer $course_id
              *
              * @hooked  Sensei()->course->the_course_free_lesson_preview - 20
              */
-            do_action('sensei_course_content_inside_after', get_post());
+            do_action('sensei_course_content_inside_after', get_the_ID() );
             ?>
 
         </section> <!-- section .entry -->
@@ -76,11 +76,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
      *
      * @since 1.9
      *
-     * @param WP_Post $post
+     * @param integer $course_id
      *
      * @hooked  Sensei()->course->the_course_free_lesson_preview - 20
      */
-    do_action('sensei_course_content_after', get_post());
+    do_action('sensei_course_content_after', get_the_ID() );
     ?>
 
 

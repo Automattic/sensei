@@ -10,10 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * For the teacher include and excludes you can specify user-names or ids
  *
  * @class Sensei_Shortcode_Teachers
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
- * @package Sensei
- * @category Shortcodes
- * @author 	WooThemes
  */
 class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 
