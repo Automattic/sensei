@@ -50,35 +50,54 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 /**
  * Breadcrumbs + Navigation
  */
-
-.sensei-breadcrumb  {
-  background: $bg_light;
-  margin: 2em 0;
-  padding: 0.5em 1em;
-  font-style: italic;
-  color: lighten($color_body, 20%);
-  clear: both;
-  &:before  {
-    @include iconbefore();
-    content: '\f112';
+.sensei {
+  .sensei-breadcrumb  {
+    background: darken($bg_light, 3%);
+    padding: 0.618em 1em;
+    color: $color_body;
+    border: 1px solid $border_main;
+    border-top: none;
+    clear: both;
+    &:before  {
+      @include iconbefore();
+      content: '\f100';
+    }
+    a {
+      color: $color_links;
+    }
   }
-}
 
-.nav-next, .nav-prev  {
-  width: auto!important;
-}
-
-.nav-next  {
-  float: right;
-  .meta-nav:before {
-    content: "\2192";
+  #post-entries {
+    border: 1px solid $border_main;
+    padding: 0.618em 1em;
+    @include clearfix();
   }
-}
 
-.nav-prev  {
-  float: left;
-  .meta-nav:before {
-    content: "\2190";
+  .nav-next, .nav-prev  {
+    width: 49%;
+    a {
+      color: $color_links;
+    }
+  }
+
+  .nav-next  {
+    float: right;
+    text-align: right;
+    border-left: 1px solid $border_main;
+    &:after {
+      @include iconafter();
+      content: "\f105";
+    }
+  }
+
+  .nav-prev  {
+    float: left;
+    text-align: left;
+    border-right: 1px solid $border_main;
+    &:before {
+      @include iconbefore();
+      content: "\f104";
+    }
   }
 }
 
@@ -790,7 +809,7 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
         &.ui-state-active {
           a {
             color: $color_links;
-            background: $bg_light;
+            background: transparent;
             &:after {
               position: absolute;
               border-bottom: 1px solid $bg_light;
@@ -861,6 +880,9 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
       width: 75%;
     }
     @include clearfix;
+    header a {
+      color: $color_links;
+    }
   }
 }
 
@@ -1268,9 +1290,7 @@ a.sensei-certificate-link {
 .sensei-twentysixteen {
   &.single-course #main .course,
   &.single-lesson #main .lesson,
-  &.single-quiz #main .quiz,
-  .sensei-breadcrumb,
-  nav#post-entries {
+  &.single-quiz #main .quiz{
     padding: 0 7.6923%;
   }
 
@@ -1284,10 +1304,15 @@ a.sensei-certificate-link {
 .sensei-twentyfifteen {
   &.single-course #main .course,
   &.single-lesson #main .lesson,
-  &.single-quiz #main .quiz,
-  .sensei-breadcrumb,
-  nav#post-entries {
+  &.single-quiz #main .quiz {
     padding: 8.3333%;
+  }
+
+  #main #post-entries,
+  .sensei-breadcrumb {
+    margin: 0 8.3333%;
+    background: $bg_light;
+    border: none;
   }
 
   #main .course,
