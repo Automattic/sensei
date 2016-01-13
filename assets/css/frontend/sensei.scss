@@ -849,7 +849,14 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
         margin: 0;
       }
     }
-    header, .entry, .entry-actions {
+    header, 
+    .entry, 
+    .entry-actions {
+      width: 100%;
+    }
+    .course-featured-image ~ header, 
+    .course-featured-image ~ .entry,
+    .course-featured-image ~ .entry-actions {
       float: right;
       width: 75%;
     }
@@ -905,8 +912,14 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
         margin: 0;
       }
     }
+    // If featured image is not displayed, set width to 100%
     header, .entry {
-      float: right;
+      float: left;
+      width: 100%;
+    }
+    // If featured image is displayed, set width to 75%
+    .course-featured-image ~ header, 
+    .course-featured-image ~ .entry {
       width: 75%;
     }
     @include clearfix;
