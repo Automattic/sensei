@@ -81,14 +81,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             </article>
 
-        <?php
-        // end course lessons loop
-        endwhile;
-        ?>
-
-    <?php else: ?>
-
-        <?php _e('Sorry, this course has no lessons yet.','woothemes-sensei'); ?>
+        <?php endwhile; // end course lessons loop  ?>
 
     <?php endif; ?>
 
