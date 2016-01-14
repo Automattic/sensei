@@ -1301,7 +1301,8 @@ class Sensei_Course {
 
                     $active_html .= '<input type="hidden" name="course_complete_id" id="course-complete-id" value="' . esc_attr( absint( $course_item->ID ) ) . '" />';
 
-                    if ( 0 < absint( count( $course_lessons ) ) && Sensei()->settings->settings['course_completion'] == 'complete' ) {
+                    if ( 0 < absint( count( $course_lessons ) )
+                        && Sensei()->settings->settings['course_completion'] == 'complete' ){
 
                         $active_html .= '<span><input name="course_complete" type="submit" class="course-complete" value="'
                             .  __( 'Mark as Complete', 'woothemes-sensei' ) . '"/> </span>';
@@ -2031,7 +2032,9 @@ class Sensei_Course {
 
                     <input type="hidden" name="course_complete_id" id="course-complete-id" value="<?php esc_attr_e( intval( $course->ID ) ); ?>" />
 
-                    <?php if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) ) && Sensei()->settings->settings['course_completion'] == 'complete' ) { ?>
+                    <?php if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
+                        && Sensei()->settings->settings['course_completion'] == 'complete'
+                        && ! Sensei_Utils::user_completed_course( $course, get_current_user_id() )) { ?>
 
                         <span><input name="course_complete" type="submit" class="course-complete" value="<?php  _e( 'Mark as Complete', 'woothemes-sensei' ); ?>" /></span>
 
