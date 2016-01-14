@@ -331,8 +331,8 @@ class Sensei_Legacy_Shortcodes {
 
         <article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_id ) ) ); ?>">
             <?php
-            // so that legacy shortcodes work with thir party plugins that wants to hook in
-            do_action('sensei_course_content_before',$course );
+            // so that legacy shortcodes work with the party plugins that wants to hook in
+            do_action('sensei_course_content_before',$course->ID );
             ?>
             <div class="course-content">
 
