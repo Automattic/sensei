@@ -2604,6 +2604,16 @@ class Sensei_Course {
             );
         }
 
+        //setting lesson order
+        $course_lesson_order = get_post_meta( $course_id, '_lesson_order', true);
+        if( !empty( $course_lesson_order ) ){
+
+            $course_lesson_query_args['post__in'] = explode( ',', $course_lesson_order );
+            $course_lesson_query_args['orderby']= 'post__in' ;
+            unset( $course_lesson_query_args['order'] );
+
+        }
+
         $wp_query = new WP_Query( $course_lesson_query_args );
 
     }// load_single_course_lessons

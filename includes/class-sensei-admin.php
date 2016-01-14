@@ -1264,19 +1264,24 @@ class Sensei_Admin {
 
             foreach( $modules as $module ) {
 
-                $module_order_string = $_POST[ 'lesson-order-module-' . $module->term_id ];
 
-                if( $module_order_string ) {
-                    $order = explode( ',', $module_order_string );
+                if( isset( $_POST[ 'lesson-order-module-' . $module->term_id ] )
+                    && $_POST[ 'lesson-order-module-' . $module->term_id ] ) {
+
+                    $order = explode( ',', $_POST[ 'lesson-order-module-' . $module->term_id ] );
                     $i = 1;
                     foreach( $order as $lesson_id ) {
+
                         if( $lesson_id ) {
                             update_post_meta( $lesson_id, '_order_module_' . $module->term_id, $i );
                             ++$i;
                         }
-                    }
-                }
-            }
+
+                    }// end for each order
+
+                }// end if
+
+            } // end for each modules
 
 
 			if( $order_string ) {
