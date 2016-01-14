@@ -339,7 +339,10 @@ add_action( 'sensei_course_results_content_inside_before', array('Sensei_Course_
 
 // @since 1.9.0
 // load the course information on the course results page
-add_action( 'sensei_course_results_content_inside_after', array( Sensei()->course_results,'course_info') );
+add_action( 'sensei_course_results_content_inside_before_lessons', array( Sensei()->course_results,'course_info') );
+
+// @since 1.9.0
+add_action( 'sensei_course_results_content_inside_before', array( Sensei()->course,'course_image') );
 
 // @since 1.9.0
 // deprecate the course results top hook in favour of a new hook

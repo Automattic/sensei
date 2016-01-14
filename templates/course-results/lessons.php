@@ -121,7 +121,7 @@ global $course;
 
                     </a>
 
-                    <span class="lesson-grade"><?php echo  $lesson_grade; ?> '</span>
+                    <span class="lesson-grade"><?php echo  $lesson_grade; ?></span>
 
                 </h2>
 

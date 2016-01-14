@@ -41,7 +41,6 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
          *
          * @param integer $course_id
          *
-         * @hooked Sensei_Course_Results::fire_sensei_message_hook() - 20
          */
         do_action( 'sensei_course_results_content_inside_before', $course->ID );
         ?>
@@ -55,6 +54,20 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
         </header>
 
         <?php if ( is_user_logged_in() ):?>
+
+            <?php
+            /**
+             * This hook fire inside learner-profile.php inside directly before the content
+             *
+             * @since 1.9.0
+             *
+             * @param integer $course_id
+             *
+             * @hooked Sensei_Course_Results::course_info() - 20
+             */
+            do_action( 'sensei_course_results_content_inside_before_lessons', $course->ID );
+            ?>
+
 
             <section class="course-results-lessons">
                 <?php
