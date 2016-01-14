@@ -65,7 +65,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
         if(!  is_user_logged_in() ) {
             // show the login form
-            Sensei_Templates::get_template('user/login-form.php');
+            Sensei()->frontend->sensei_login_form();
             return;
         }
 
