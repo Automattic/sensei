@@ -69,6 +69,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                 <section class="entry">
 
+                    <?php sensei_the_module_status(); ?>
+
                     <section class="module-lessons">
 
                         <header>
@@ -81,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                             <?php while( sensei_module_has_lessons() ): the_post(); ?>
 
-                                <li class="<?php echo $status;?>">
+                                <li class="<?php sensei_the_lesson_status_class();?>">
 
                                     <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute() ?>" >
 

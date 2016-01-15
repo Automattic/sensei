@@ -595,6 +595,63 @@ function sensei_the_module_title(){
 
 }
 
+/**
+ * Give the current user's lesson progress status
+ * Used in the module loop on the courses page
+ *
+ * @since 1.9.0
+ * @return string
+ */
+function sensei_get_the_module_status(){
+
+    global $sensei_modules_loop;
+    $module_title = $sensei_modules_loop['current_module']->name;
+    $module_term_id = $sensei_modules_loop['current_module']->term_id;
+    $course_id = $sensei_modules_loop['course_id'];
+    $module_progress = Sensei()->modules->get_user_module_progress( $module_term_id, $course_id, get_current_user_id() );
+
+    $module_status =  '';
+    if ( $module_progress && $module_progress > 0) {
+
+        $module_status = __('Completed', 'woothemes-sensei');
+
+        if ($module_progress < 100) {
+
+            $module_status = __('In progress', 'woothemes-sensei');
+
+        }
+
+    }
+
+    $module_status_html = '<p class="status module-status completed">'
+                            . strtolower( str_replace( ' ', '-', $module_status  ) )
+                            . '</p>';
+
+    /**
+     * Filter the module status.
+     *
+     * This fires within the sensei_get_the_module_status function.
+     *
+     * @since 1.9.0
+     *
+     * @param $module_status_html
+     * @param $module_term_id
+     * @param $course_id
+     */
+    return apply_filters( 'sensei_the_module_status_html',  $module_status_html , $module_term_id, $course_id );
+
+}
+
+/**
+ * Print out the current module status
+ * @since 1.9.0
+ */
+function sensei_the_module_status(){
+
+    echo sensei_get_the_module_status();
+
+}
+
 /************************
  *
  * Single Quiz Functions
@@ -1090,4 +1147,36 @@ function sensei_get_template( $template_name, $args, $path ){
 
     Sensei_Templates::get_template( $template_name, $args, $path );
 
+}
+
+/**
+ * Returns the lesson status class
+ *
+ * must be used in the loop.
+ * @since 1.9.0
+ *
+ * @return string $status_class
+ */
+function get_the_lesson_status_class(){
+
+    $status_class = '';
+    $lesson_completed = Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
+
+    if ( $lesson_completed ) {
+        $status_class = 'completed';
+    }
+
+    return  $status_class;
+
+}// end get_the_lesson_status_class
+/**
+ * Outputs the lesson status class
+ *
+ * must be used in the lesson loop
+ *
+ * @since 1.9.0
+ */
+function sensei_the_lesson_status_class(){
+
+    echo get_the_lesson_status_class();
 }
