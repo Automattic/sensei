@@ -81,7 +81,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                             <?php while( sensei_module_has_lessons() ): the_post(); ?>
 
-                                <li class="' . $status . '">
+                                <li class="<?php echo $status;?>">
 
                                     <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute() ?>" >
 
