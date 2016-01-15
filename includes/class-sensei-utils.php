@@ -2202,7 +2202,7 @@ class Sensei_Utils {
      */
     public static function array_zip_merge( $array_a, $array_b ){
 
-        if( ! isset( $array_a[0]  ) || ! isset( $array_b[0] )  ){
+        if( ! is_array( $array_a ) || ! is_array( $array_b )  ){
             trigger_error('array_zip_merge requires both arrays to be indexed arrays ');
         }
 
