@@ -3803,6 +3803,24 @@ class Sensei_Lesson {
 
     }
 
+    /**
+     * On the lesson archive limit the number of words the show up if the access settings are enabled
+     *
+     * @since 1.9.0
+     * @param $content
+     * @return string
+     */
+    public static function limit_archive_content ( $content ){
+
+        if( is_archive('lesson') && Sensei()->settings->get('access_permission') ){
+
+            return wp_trim_words( $content, $num_words = 30, $more = '…' );
+        }
+
+        return $content;
+
+    } // end limit_archive_content
+
 } // End Class
 
 /**

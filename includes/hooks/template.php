@@ -301,6 +301,10 @@ add_action( 'sensei_loop_lesson_inside_before', array( Sensei()->lesson, 'the_ar
 //Output the lesson header on the content-lesson.php which runs inside the lessons loop
 add_action( 'sensei_content_lesson_inside_before', array( 'Sensei_Lesson', 'the_lesson_meta' ), 20 );
 
+// @since 1.9.0
+// output only part of the lesson on the archive
+add_filter('the_content', array( 'Sensei_Lesson','limit_archive_content' ) );
+
 /**************************
  *
  *
