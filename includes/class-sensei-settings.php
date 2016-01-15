@@ -57,6 +57,26 @@ class Sensei_Settings extends Sensei_Settings_API {
         return false;
     }
 
+    /**
+     * @since 1.9.0
+     *
+     * @param $setting
+     * @param $new_value
+     */
+    public function set( $setting, $new_value ){
+
+        $settings = get_option( $this->token, array() );
+
+        if( isset(  $settings[ $setting ] ) ){
+
+            $settings[ $setting ] = $new_value;
+            return update_option( $this->token,$settings );
+
+        }
+        return false;
+
+    }
+
 	/**
 	 * Register the settings screen within the WordPress admin.
 	 * @access public
