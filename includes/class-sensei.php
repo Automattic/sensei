@@ -717,10 +717,6 @@ class Sensei_Main {
             return false;
         }
 
-
-        // Get User Meta
-        get_currentuserinfo();
-
         $user_allowed = false;
 
         switch ( $page ) {

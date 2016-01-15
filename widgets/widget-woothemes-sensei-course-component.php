@@ -175,8 +175,6 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	protected function load_component ( $instance ) {
 		global  $current_user;
 
-		get_currentuserinfo();
-
 		$course_ids = array();
 		if ( 'activecourses' == esc_attr( $instance['component'] ) ) {
 			$courses = Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_status', 'status' => 'in-progress' ), true );

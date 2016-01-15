@@ -817,9 +817,6 @@ function sensei_the_single_lesson_meta(){
     $lesson_course_id = absint( get_post_meta( get_the_ID(), '_lesson_course', true ) );
     $is_preview = Sensei_Utils::is_preview_lesson( get_the_ID() );
 
-    // Get User Meta
-    get_currentuserinfo();
-
     // Complete Lesson Logic
     do_action( 'sensei_complete_lesson' );
     // Check that the course has been started
