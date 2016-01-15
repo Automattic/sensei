@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
 
         // If "All" is clicked, show all.
         if ( jQuery( this ).hasClass( 'all' ) ) {
-            jQuery( '#woothemes-sensei h2, #woothemes-sensei form p, #woothemes-sensei table.form-table, p.submit' ).show();
+            jQuery( '#woothemes-sensei section' ).show();
             return false;
         }
 
