@@ -250,39 +250,43 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 
             $modules = Sensei()->modules->get_course_modules( intval( $lesson_course_id ) );
 
-            foreach( (array) $modules as $module ) {
+            if( !empty( $modules )  ){
+                foreach( (array) $modules as $module ) {
 
-                $args = array(
-                    'post_type' => 'lesson',
-                    'post_status' => 'publish',
-                    'posts_per_page' => -1,
-                    'meta_query' => array(
-                        array(
-                            'key' => '_lesson_course',
-                            'value' => intval( $lesson_course_id ),
-                            'compare' => '='
-                        )
-                    ),
-                    'tax_query' => array(
-                        array(
-                            'taxonomy' => Sensei()->modules->taxonomy,
-                            'field' => 'id',
-                            'terms' => intval( $module->term_id )
-                        )
-                    ),
-                    'meta_key' => '_order_module_' . $module->term_id,
-                    'orderby' => 'meta_value_num date',
-                    'order' => 'ASC',
-                    'suppress_filters' => 0
-                );
+                    $args = array(
+                        'post_type' => 'lesson',
+                        'post_status' => 'publish',
+                        'posts_per_page' => -1,
+                        'meta_query' => array(
+                            array(
+                                'key' => '_lesson_course',
+                                'value' => intval( $lesson_course_id ),
+                                'compare' => '='
+                            )
+                        ),
+                        'tax_query' => array(
+                            array(
+                                'taxonomy' => Sensei()->modules->taxonomy,
+                                'field' => 'id',
+                                'terms' => intval( $module->term_id )
+                            )
+                        ),
+                        'meta_key' => '_order_module_' . $module->term_id,
+                        'orderby' => 'meta_value_num date',
+                        'order' => 'ASC',
+                        'suppress_filters' => 0
+                    );
 
-                $lessons = get_posts( $args );
-                if ( 0 < count( $lessons ) ) {
-                    foreach ($lessons as $lesson_item){
-                        $all_lessons[] = $lesson_item->ID;
-                    } // End For Loop
-                } // End If Statement
-            }
+                    $lessons = get_posts( $args );
+                    if ( 0 < count( $lessons ) ) {
+                        foreach ($lessons as $lesson_item){
+                            $all_lessons[] = $lesson_item->ID;
+                        } // End For Loop
+                    } // End If Statement
+
+                }//end for each
+
+            }// end if empty modules
 
             $args = array(
                 'post_type' => 'lesson',
