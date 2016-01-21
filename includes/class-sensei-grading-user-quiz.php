@@ -204,11 +204,17 @@ class Sensei_Grading_User_Quiz {
 
                                 if( 'multi-line' == Sensei()->question->get_question_type( $question->ID ) ){
 
-                                    $_user_answer = htmlspecialchars_decode( nl2br( esc_html($_user_answer) ) );
+
+                                     Sensei_Utils::sensei_text_editor( $_user_answer  , 'textquestion' . $question->ID  ,
+                                        'sensei_question[' . $question->ID  . ']' );
+
+                                }else{
+
+                                    echo esc_html(  apply_filters( 'sensei_answer_text', $_user_answer ) ) . "<br>";
 
                                 }
 
-								echo apply_filters( 'sensei_answer_text', $_user_answer ) . "<br>";
+
 							}
 						?></p>
 						<div class="right-answer">
