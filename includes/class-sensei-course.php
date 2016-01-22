@@ -1433,7 +1433,10 @@ class Sensei_Course {
                                         . '">' . __( 'View results', 'woothemes-sensei' )
                                         . '</a>';
 								}
-								$complete_html .= apply_filters( 'sensei_results_links', $results_link );
+                                /**
+                                 * Filter documented in Sensei_Course::the_course_action_buttons
+                                 */
+								$complete_html .= apply_filters( 'sensei_results_links', $results_link, $course_item->ID );
 								$complete_html .= '</p>';
 
 							}
@@ -2068,7 +2071,15 @@ class Sensei_Course {
                     if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) { ?>
 
                         <p class="sensei-results-links">
-                            <?php echo apply_filters( 'sensei_results_links', $results_link ); ?>
+                            <?php
+                            /**
+                             * Filter the results links
+                             *
+                             * @param string $results_links_html
+                             * @param integer $course_id
+                             */
+                            echo apply_filters( 'sensei_results_links', $results_link, $course->ID );
+                            ?>
                         </p>
 
                     <?php } // end if has filter  ?>
@@ -2708,7 +2719,10 @@ class Sensei_Course {
                         if( $has_quizzes ) {
                             $results_link = '<a class="view-results" href="' . Sensei()->course_results->get_permalink( $post->ID ) . '">' .  __( 'View results', 'woothemes-sensei' ) . '</a>';
                         }
-                        $results_link = apply_filters( 'sensei_results_links', $results_link );
+                        /**
+                         * Filter documented in Sensei_Course::the_course_action_buttons
+                         */
+                        $results_link = apply_filters( 'sensei_results_links', $results_link, $post->ID );
                         echo $results_link;
                         ?></p>
                 <?php } ?>
