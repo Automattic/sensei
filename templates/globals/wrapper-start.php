@@ -9,5 +9,6 @@
  * @version     1.6.4
  */
 ?>
-<div id="container">
-    <div id="content" role="main">
+
+<div id="content" class="page col-full">
+    <div id="main" class="col-left">
