@@ -541,14 +541,17 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		$total_courses = Sensei()->course->course_count( array('publish', 'private') );
 		$total_lessons = Sensei()->lesson->lesson_count( array('publish', 'private') );
 
-		$grade_args = array( 
+        /**
+         * filter the analysis tot grades query args
+         */
+		$grade_args = apply_filters( 'sensei_analysis_total_quiz_grades', array(
 				'type' => 'sensei_lesson_status',
 				'status' => 'any',
 				'meta_key' => 'grade',
-			);
+        ));
 
 		add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-		$total_quiz_grades = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_total_quiz_grades', $grade_args ), true );
+		$total_quiz_grades = Sensei_Utils::sensei_check_for_activity( $grade_args, true );
 		remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
 		$total_grade_count = !empty( $total_quiz_grades->total ) ? $total_quiz_grades->total : 1;
