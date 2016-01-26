@@ -3821,6 +3821,24 @@ class Sensei_Lesson {
 
     } // end limit_archive_content
 
+    /**
+     * Returns all publised lesson ID's
+     *
+     * @since 1.9.0
+     * @return array
+     */
+    public static function get_all_lesson_ids(){
+
+        return get_posts( array(
+            'post_type'=>'lesson',
+            'fields'=>'ids',
+            'post_status' => 'publish',
+            'numberposts' => 4000, // legacy support
+            'post_per_page' => 4000
+        ));
+
+    }
+
 } // End Class
 
 /**
