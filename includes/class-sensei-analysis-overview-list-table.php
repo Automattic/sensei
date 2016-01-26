@@ -292,13 +292,15 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 						'status' => 'any',
 						'meta_key' => 'percent',
 					);
-				add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-				$course_percentage = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), true );
-				remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
-				$percent_count = !empty( $course_percentage->total ) ? $course_percentage->total : 1;
-				$percent_total = !empty( $course_percentage->meta_sum ) ? doubleval( $course_percentage->meta_sum ) : 0;
-				$course_average_percent = abs( round( doubleval( $percent_total / $percent_count ), 2 ) );
+				$percent_count = count( Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), true ) );
+				$percent_total = Sensei_Grading::get_course_users_grades_sum( $item->ID );
+
+                $course_average_percent = 0;
+                if( $percent_count > 0 && $percent_total > 0 ){
+                    $course_average_percent = abs( round( doubleval( $percent_total / $percent_count ), 2 ) );
+                }
+
 
 				// Output course data
 				if ( $this->csv_output ) {
@@ -349,14 +351,16 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 							'status' => array( 'graded', 'passed', 'failed' ),
 							'meta_key' => 'grade',
 						);
-					add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-					$lesson_grades = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
-					remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
-					$grade_count = !empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
-					$grade_total = !empty( $lesson_grades->meta_sum ) ? doubleval( $lesson_grades->meta_sum ) : 0;
-					$lesson_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
-				}
+					$grade_count = count( Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true ));
+					$grade_total = Sensei_Grading::get_lessons_users_grades_sum( $item->ID );
+
+                    $lesson_average_grade = 0;
+                    if( $grade_total > 0 && $grade_count > 0 ){
+                        $lesson_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
+                    }
+
+                }
 				// Output lesson data
 				if ( $this->csv_output ) {
 					$lesson_title = apply_filters( 'the_title', $item->post_title, $item->ID );
@@ -409,13 +413,14 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 						'status' => 'any',
 						'meta_key' => 'grade',
 					);
-				add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-				$user_quiz_grades = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), true );
-				remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
-				$grade_count = !empty( $user_quiz_grades->total ) ? $user_quiz_grades->total : 1;
-				$grade_total = !empty( $user_quiz_grades->meta_sum ) ? doubleval( $user_quiz_grades->meta_sum ) : 0;
-				$user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
+				$grade_count = count( Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), true ));
+				$grade_total = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );
+
+                $user_average_grade = 0;
+                if( $grade_total > 0 && $grade_count > 0 ){
+                    $user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
+                }
 
 				// Output the users data
 				if ( $this->csv_output ) {
@@ -547,15 +552,12 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		$grade_args = apply_filters( 'sensei_analysis_total_quiz_grades', array(
 				'type' => 'sensei_lesson_status',
 				'status' => 'any',
-				'meta_key' => 'grade',
+
+                'meta_key' => 'grade'
         ));
 
-		add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-		$total_quiz_grades = Sensei_Utils::sensei_check_for_activity( $grade_args, true );
-		remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
-
-		$total_grade_count = !empty( $total_quiz_grades->total ) ? $total_quiz_grades->total : 1;
-		$total_grade_total = !empty( $total_quiz_grades->meta_sum ) ? doubleval( $total_quiz_grades->meta_sum ) : 0;
+		$total_grade_count = Sensei_Grading::get_graded_lessons_count();
+		$total_grade_total = Sensei_Grading::get_graded_lessons_sum();
 		$total_average_grade = abs( round( doubleval( $total_grade_total / $total_grade_count ), 2 ) );
 
 		$course_args = array( 
