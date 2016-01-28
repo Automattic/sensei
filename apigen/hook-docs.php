@@ -1,14 +1,26 @@
 <?php
 /**
- * Generate documentation for hooks in WC
+ * Generate documentation for hooks in Sensei
+ * Copied from  https://github.com/woothemes/woocommerce
  */
-class WC_HookFinder {
+class Sensei_HookFinder {
 	private static $current_file           = '';
 	private static $files_to_scan          = array();
 	private static $pattern_custom_actions = '/do_action(.*?);/i';
 	private static $pattern_custom_filters = '/apply_filters(.*?);/i';
 	private static $found_files            = array();
 	private static $custom_hooks_found     = '';
+    private static $sensei_directory =  '';
+    private static $docs_output_directory =  '';
+    private static $put_file =  '';
+
+    public static function initialize(){
+
+        self::$sensei_directory = dirname( dirname(__FILE__) );
+        self::$docs_output_directory = self::$sensei_directory . '/docs.woothemes.com/images/sensei-apidocs/';
+        self::$put_file =  self::$docs_output_directory.'/hook-docs.html';
+
+    }
 
 	private static function get_files( $pattern, $flags = 0, $path = '' ) {
 
@@ -44,29 +56,31 @@ class WC_HookFinder {
     }
 
 	private static function get_hook_link( $hook, $details = array() ) {
-		if ( ! empty( $details['class'] ) ) {
-			$link = 'http://docs.woothemes.com/wc-apidocs/source-class-' . $details['class'] . '.html#' . $details['line'];
-		} elseif ( ! empty( $details['function'] ) ) {
-			$link = 'http://docs.woothemes.com/wc-apidocs/source-function-' . $details['function'] . '.html#' . $details['line'];
-		} else {
-			$link = 'https://github.com/woothemes/woocommerce/search?utf8=%E2%9C%93&q=' . $hook;
-		}
+		//if ( ! empty( $details['class'] ) ) {
+		//	$link = 'http://docs.woothemes.com/sensei-apidocs/source-class-' . $details['class'] . '.html#' . $details['line'];
+		//} elseif ( ! empty( $details['function'] ) ) {
+		//	$link = 'http://docs.woothemes.com/sensei-apidocs/source-function-' . $details['function'] . '.html#' . $details['line'];
+		//} else {
+			$link = 'https://github.com/woothemes/sensei/search?utf8=%E2%9C%93&q=' . $hook;
+		//}
 
 		return '<a href="' . $link . '">' . $hook . '</a>';
 	}
 
 	public static function process_hooks() {
-		// If we have one, get the PHP files from it.
-		$template_files 	= self::get_files( '*.php', GLOB_MARK, '../templates/' );
-		$template_files[]	= '../includes/wc-template-functions.php';
-		$template_files[]	= '../includes/wc-template-hooks.php';
 
-		$shortcode_files 	= self::get_files( '*.php', GLOB_MARK, '../includes/shortcodes/' );
-		$widget_files	 	= self::get_files( '*.php', GLOB_MARK, '../includes/widgets/' );
-		$admin_files 		= self::get_files( '*.php', GLOB_MARK, '../includes/admin/' );
-		$class_files 		= self::get_files( '*.php', GLOB_MARK, '../includes/' );
+        self::initialize();
+
+		// If we have one, get the PHP files from it.
+		$template_files 	= self::get_files( '*.php', GLOB_MARK, self::$sensei_directory.'/templates/' );
+		$template_files[]	= self::$sensei_directory . '/includes/template-functions.php';
+
+		$shortcode_files 	= self::get_files( '*.php', GLOB_MARK, self::$sensei_directory.'/includes/shortcodes/' );
+		$widget_files	 	= self::get_files( '*.php', GLOB_MARK, self::$sensei_directory.'/widgets/' );
+		$admin_files 		= self::get_files( '*.php', GLOB_MARK, self::$sensei_directory.'/includes/admin/' );
+		$class_files 		= self::get_files( '*.php', GLOB_MARK, self::$sensei_directory.'/includes/' );
 		$other_files		= array(
-			'../woocommerce.php'
+            self::$sensei_directory.'/woothemes-sensei.php'
 		);
 
 		self::$files_to_scan = array(
@@ -84,23 +98,24 @@ class WC_HookFinder {
 
 		echo '<div id="content">';
 		echo '<h1>Action and Filter Hook Reference</h1>';
-		echo '<div class="description"><p>The following is a full list of actions and filters found in WooCommerce core.</p></div>';
+		echo '<div class="description"><p>The following is a full list of actions and filters found in Sensei.</p></div>';
 
 		foreach ( self::$files_to_scan as $heading => $files ) {
 			self::$custom_hooks_found = array();
 
 			foreach ( $files as $f ) {
 				self::$current_file = basename( $f );
+
+                if ( in_array( self::$current_file, $scanned ) ) {
+                    continue;
+                }
+
+                $scanned[] = self::$current_file;
+
 				$tokens             = token_get_all( file_get_contents( $f ) );
 				$token_type         = false;
 				$current_class      = '';
 				$current_function   = '';
-
-				if ( in_array( self::$current_file, $scanned ) ) {
-					continue;
-				}
-
-				$scanned[] = self::$current_file;
 
 				foreach ( $tokens as $index => $token ) {
 					if ( is_array( $token ) ) {
@@ -143,7 +158,7 @@ class WC_HookFinder {
 			}
 
 			foreach ( self::$custom_hooks_found as $hook => $details ) {
-				if ( ! strstr( $hook, 'woocommerce' ) && ! strstr( $hook, 'product' ) && ! strstr( $hook, 'wc_' ) ) {
+				if ( ! strstr( $hook, 'sensei' ) ) {
 					unset( self::$custom_hooks_found[ $hook ] );
 				}
 			}
@@ -169,15 +184,28 @@ class WC_HookFinder {
 
 		echo '</div><div id="footer">';
 
-		$html   = file_get_contents( '../wc-apidocs/todo.html' );
+
+
+        // change to the ouput directory before operating on the files
+        chdir(  self::$docs_output_directory );
+
+        $html   = file_get_contents( 'index.html' );
 		$header = current( explode( '<div id="content">', $html ) );
 		$header = str_replace( '<li class="active">', '<li>', $header );
 		$header = str_replace( '<li class="hooks">', '<li class="active">', $header );
 		$footer = end( explode( '<div id="footer">', $html ) );
 
-		file_put_contents( '../wc-apidocs/hook-docs.html', $header . ob_get_clean() . $footer );
+        //  delete old hook-docs file
+        if( file_exists( self::$put_file  )  ){
+
+            unlink( self::$put_file );
+
+        }
+
+		file_put_contents(  self::$put_file , $header . ob_get_clean() . $footer );
+
 		echo "Hook docs generated :)\n";
 	}
 }
 
-WC_HookFinder::process_hooks();
+Sensei_HookFinder::process_hooks();

@@ -31,7 +31,7 @@ main: sensei
 title: Sensei Developer Reference
 
 # base url used for sitemap (useful for public doc)
-baseUrl: http://docs.woothemes.com/sensei-reference/
+baseUrl: http://docs.woothemes.com/sensei-apidocs/
 
 # choose ApiGen template theme
 templateTheme: theme-sensei
