@@ -59,7 +59,7 @@ class Sensei_Settings_API {
 
         add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
-		add_action( 'init', array( $this, 'general_init' ) );
+        $this->general_init();
 
 	} // End setup_settings()
 
@@ -341,9 +341,8 @@ class Sensei_Settings_API {
 	 * @return array
 	 */
 	public function get_settings () {
-		if ( ! is_array( $this->settings ) ) {
-			$this->settings = get_option( $this->token, array() );
-		}
+
+        $this->settings = get_option( $this->token, array() );
 
 		foreach ( $this->fields as $k => $v ) {
 			if ( ! isset( $this->settings[$k] ) && isset( $v['default'] ) ) {

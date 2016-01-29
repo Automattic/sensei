@@ -178,6 +178,9 @@ class Sensei_Main {
         $this->load_plugin_textdomain();
         add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
+        // Setup settings
+        $this->settings = new Sensei_Settings();
+
         // load the shortcode loader into memory, so as to listen to all for
         // all shortcodes on the front end
         new Sensei_Shortcode_Loader();
@@ -258,9 +261,6 @@ class Sensei_Main {
 
         // Lad the updates class
         $this->updates = new Sensei_Updates( $this );
-
-        // Setup settings
-        $this->settings = new Sensei_Settings();
 
         // Load Course Results Class
         $this->course_results = new Sensei_Course_Results();
