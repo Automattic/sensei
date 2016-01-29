@@ -841,20 +841,22 @@ Class Sensei_WC{
     public static function has_customer_bought_product ( $user_id, $product_id ){
 
         $orders = get_posts( array(
-            'posts_per_page' => -1,
+            'numberposts' => -1,
+            'post_type' => 'shope_order',
             'meta_key'    => '_customer_user',
             'meta_value'  => intval( $user_id ),
-            'post_type'   => 'shop_order',
-            'post_status' =>  array( 'wc-processing', 'wc-completed' ),
+            'post_status' => array( 'wc-complete','wc-processing' ),
         ) );
 
         foreach ( $orders as $order_id ) {
 
             $order = new WC_Order( $order_id->ID );
 
-            if ( $order->post_status != 'wc-completed' && $order->post_status != 'wc-processing' ) {
+            // wc-active is the subscriptions complete status
+            if ( ! in_array( $order->post_status, array( 'wc-complete','wc-processing' ) ) ){
 
                 continue;
+
             }
 
             if ( ! ( 0 < sizeof( $order->get_items() ) ) ) {
@@ -870,9 +872,9 @@ Class Sensei_WC{
 
                     // Check if user has an active subscription for product
                     if( class_exists( 'WC_Subscriptions_Manager' ) ) {
-                        $sub_key = WC_Subscriptions_Manager::get_subscription_key( $order_id->ID, $product_id );
+                        $sub_key = wcs_get_subscription( $order );
                         if( $sub_key ) {
-                            $sub = WC_Subscriptions_Manager::get_subscription( $sub_key );
+                            $sub = wcs_get_subscription( $sub_key );
                             if( $sub && isset( $sub['status'] ) ) {
                                 if( 'active' == $sub['status'] ) {
                                     return true;
@@ -934,115 +936,64 @@ Class Sensei_WC{
     }
 
     /**
-     * Runs when an subscription is cancelled or expires.
-     *
-     * @since   1.3.3 created
-     * @since 1.9.0 moved to the Sensei_WC class
-     *
-     * @param   integer $user_id User ID
-     * @param   integer $subscription_key Subscription Unique Key
-     *
-     * @return  void
-     */
-    public static function end_subscription( $user_id, $subscription_key ) {
-
-        $subscription = wcs_get_subscription( $subscription_key );
-        Sensei()->sensei_woocommerce_cancel_order( $subscription['order_id'] );
-
-    }
-
-    /**
-     * Runs when an subscription is re-activated after suspension.
-     *
-     * @since   1.3.3 created
-     * @since 1.9.0 moved to the Sensei_WC class
-     *
-     * @param   integer $user_id User ID
-     * @param   integer $subscription_key Subscription Unique Key
-     *
-     * @return  void
-     */
-    public static function reactivate_subscription( $user_id, $subscription_key ) {
-
-        $subscription       = WC_Subscriptions_Manager::get_subscription( $user_id, $subscription_key );
-        $order              = wc_get_order( $subscription['order_id'] );
-        $order_user         = get_user_by( 'id', $order->get_user_id() );
-        $user               = array();
-        $user['ID']         = $order_user->ID;
-        $user['user_login'] = $order_user->user_login;
-        $user['user_email'] = $order_user->user_email;
-        $user['user_url']   = $order_user->user_url;
-        $courses            = Sensei()->course->get_product_courses( $subscription['product_id'] );
-
-        foreach ( $courses as $course_item ){
-
-            Sensei_WC::course_update( $course_item->ID, $order_user );
-
-        } // End For Loop
-
-    } // End sensei_woocommerce_reactivate_subscription
-
-    /**
      * Responds to when a subscription product is purchased
      *
      * @since   1.2.0
      * @since  1.9.0 move to class Sensei_WC
      *
-     * @param   integer $order_id order ID
+     * @param   WC_Order $order
      *
      * @return  void
      */
-    public static function activate_subscription(  $order_id = 0 ) {
+    public static function activate_subscription(  $order ) {
 
-        if ( 0 < intval( $order_id ) ) {
+        $order_user = get_user_by('id', $order->user_id);
+        $user['ID'] = $order_user->ID;
+        $user['user_login'] = $order_user->user_login;
+        $user['user_email'] = $order_user->user_email;
+        $user['user_url'] = $order_user->user_url;
 
-            $order = new WC_Order( $order_id );
-            $order_user = get_user_by('id', $order->user_id);
-            $user['ID'] = $order_user->ID;
-            $user['user_login'] = $order_user->user_login;
-            $user['user_email'] = $order_user->user_email;
-            $user['user_url'] = $order_user->user_url;
+        // Run through each product ordered
+        if ( ! sizeof($order->get_items() )>0 ) {
 
-            // Run through each product ordered
-            if (sizeof($order->get_items())>0) {
+            return;
 
-                foreach($order->get_items() as $item) {
+        }
 
-                    $product_type = '';
+        foreach($order->get_items() as $item) {
 
-                    if (isset($item['variation_id']) && $item['variation_id'] > 0) {
+            $product_type = '';
 
-                        $item_id = $item['variation_id'];
-                        $product_type = 'subscription_variation';
+            if (isset($item['variation_id']) && $item['variation_id'] > 0) {
 
-                    } else {
+                $item_id = $item['variation_id'];
+                $product_type = 'subscription_variation';
 
-                        $item_id = $item['product_id'];
+            } else {
 
-                    } // End If Statement
-
-                    $_product = self::get_product_object( $item_id, $product_type );
-
-                    // Get courses that use the WC product
-                    $courses = array();
-
-                    if ( $product_type == 'subscription_variation' ) {
-
-                        $courses = Sensei()->course->get_product_courses( $item_id );
-
-                    } // End If Statement
-                    // Loop and update those courses
-                    foreach ($courses as $course_item){
-
-                        $update_course = Sensei()->woocommerce_course_update( $course_item->ID, $user );
-
-                    } // End For Loop
-
-                } // End For Loop
+                $item_id = $item['product_id'];
 
             } // End If Statement
 
-        } // End If Statement
+            $_product = self::get_product_object( $item_id, $product_type );
+
+            // Get courses that use the WC product
+            $courses = array();
+
+            if ( ! in_array( $product_type, self::get_subscription_types() ) ) {
+
+                $courses = Sensei()->course->get_product_courses( $item_id );
+
+            } // End If Statement
+
+            // Loop and add the user to the course.
+            foreach ( $courses as $course_item ){
+
+                Sensei_Utils::user_start_course( intval( $user['ID'] ), $course_item->ID  );
+
+            } // End For Loop
+
+        } // End For Loop
 
     } // End activate_subscription()
 
@@ -1173,7 +1124,7 @@ Class Sensei_WC{
 
                     } // End If Statement
 
-                    $_product = Sensei()->sensei_get_woocommerce_product_object( $item_id, $product_type );
+                    $_product = Sensei_WC::get_product_object( $item_id, $product_type );
 
                     // Get courses that use the WC product
                     $courses = Sensei()->course->get_product_courses( $_product->id );
@@ -1200,13 +1151,20 @@ Class Sensei_WC{
      *
      * @since   1.2.0
      * @since   1.9.0 Move function to the Sensei_WC class
-     * @param   integer $order_id order ID
+     * @param   integer| WC_Order $order_id order ID
      * @return  void
      */
     public static function cancel_order ( $order_id ) {
 
         // Get order object
-        $order = new WC_Order( $order_id );
+        if( is_object( $order_id ) ){
+
+            $order = $order_id;
+
+        }else{
+
+            $order = new WC_Order( $order_id );
+        }
 
         // Run through each product ordered
         if ( 0 < sizeof( $order->get_items() ) ) {
@@ -1228,7 +1186,7 @@ Class Sensei_WC{
 
                 } // End If Statement
 
-                $_product = Sensei()->sensei_get_woocommerce_product_object( $item_id, $product_type );
+                $_product = Sensei_WC::get_product_object( $item_id, $product_type );
 
                 // Get courses that use the WC product
                 $courses = array();
@@ -1472,5 +1430,87 @@ Class Sensei_WC{
         return $order_status;
 
     }// end virtual_order_payment_complete
+
+
+    /**
+     * Determine if the user has and active subscription to give them access
+     * to the requested resource.
+     *
+     * @since 1.9.0
+     *
+     * @param  boolean$user_access_permission
+     * @param  integer $user_id
+     * @return boolean $user_access_permission
+     */
+    public static function get_subscription_permission( $user_access_permission, $user_id ){
+
+        global $post;
+
+        // ignore the current case if the following conditions are met
+        if ( ! class_exists( 'WC_Subscriptions' ) || empty( $user_id )
+            || ! in_array( $post->post_type, array( 'course','lesson','quiz' ) )
+            || ! wcs_user_has_subscription( $user_id) ){
+
+            return $user_access_permission;
+
+        }
+
+        // at this user has a subscription
+        // is the subscription on the the current course?
+
+        $course_id = 0;
+        if ( 'course' == $post->post_type ){
+
+            $course_id = $post->ID;
+
+        } elseif ( 'lesson' == $post->post_type ) {
+
+            $course_id = Sensei()->lesson->get_course_id( $post->ID );
+
+        } else {
+
+            $lesson_id =  Sensei()->quiz->get_lesson_id( $post->ID );
+            $course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+        }
+
+        // if the course has no subscription WooCommerce product attached to return the permissions as is
+        $product_id = Sensei_WC::get_course_product_id( $course_id );
+        $product = wc_get_product( $product_id );
+        if( ! in_array( $product->get_type(), self::get_subscription_types() ) ){
+
+            return $user_access_permission;
+
+        }
+
+        // give access if user has active subscription on the product otherwise retrict it
+        if( wcs_user_has_subscription( $user_id, $product_id, 'active'  ) ){
+
+            $user_access_permission = true;
+
+        }else{
+
+            $user_access_permission = false;
+            // do not show the WC permissions message
+            remove_filter( 'sensei_the_no_permissions_message', array( 'Sensei_WC', 'alter_no_permissions_message' ), 20, 2 );
+            Sensei()->permissions_message['title'] = __( 'No active subscription', 'woothemes-sensei' );
+            Sensei()->permissions_message['message'] = __( 'Sorry, you do not have an access to this content without an active subscription.', 'woothemes-sensei' );
+        }
+
+        return $user_access_permission;
+
+    } // end get_subscription_permission
+
+    /**
+     * Get all the valid subscription types.
+     *
+     * @since 1.9.0
+     * @return array
+     */
+    public static function get_subscription_types(){
+
+        return array( 'subscription','subscription_variation','variable-subscription' );
+
+    }
 
 }// end Sensei_WC

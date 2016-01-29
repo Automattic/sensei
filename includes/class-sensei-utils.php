@@ -323,7 +323,6 @@ class Sensei_Utils {
 	 */
 	public static function sensei_get_activity_value ( $args = array() ) {
 
-
 		$activity_value = false;
 		if ( !empty($args['field']) ) {
 			$comment = Sensei_Utils::sensei_check_for_activity( $args, true );

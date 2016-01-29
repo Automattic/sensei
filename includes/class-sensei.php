@@ -537,15 +537,16 @@ class Sensei_Main {
      * @return bool
      */
     public function check_user_permissions ( $page = '' ) {
-        // REFACTOR
+
         global $current_user, $post;
 
-        // if use is not logged in
-        // skipped for single lesson
+        // if user is not logged in skipped for single lesson
         if ( empty( $current_user->caps ) && Sensei()->settings->get('access_permission')
             && 'lesson-single' !=  $page ){
+
             $this->permissions_message['title'] = __('Restricted Access', 'woothemes-sensei' );
             $this->permissions_message['message'] = sprintf( __('You must be logged in to view this %s'), get_post_type() );
+
             return false;
         }
 
@@ -686,7 +687,18 @@ class Sensei_Main {
             $user_allowed = true;
         }
 
-        return apply_filters( 'sensei_access_permissions', $user_allowed );
+        /**
+         * Filter the permissions check final result. Which determines if the user has
+         * access to the given page.
+         *
+         * @since 1.0
+         *
+         * @param boolean $user_allowed
+         * @param integer $user_id
+         *
+         */
+        return apply_filters( 'sensei_access_permissions', $user_allowed, $current_user->ID );
+
     } // End get_placeholder_image()
 
 

@@ -94,9 +94,7 @@ add_filter( 'woocommerce_payment_complete_order_status',    array( 'Sensei_WC', 
  * WooCommerce Subscriptions
  *
  ************************************/
-add_action( 'reactivated_subscription',          array( 'Sensei_WC', 'reactivate_subscription' ), 10, 2 );
-add_action( 'subscription_expired',              array( 'Sensei_WC', 'end_subscription' ), 10, 2 );
-add_action( 'subscription_end_of_prepaid_term',  array( 'Sensei_WC', 'end_subscription' ), 10, 2 );
-add_action( 'cancelled_subscription',            array( 'Sensei_WC', 'end_subscription' ), 10, 2 );
-add_action( 'subscription_put_on-hold',          array( 'Sensei_WC', 'end_subscription' ), 10, 2 );
-add_action( 'subscriptions_activated_for_order', array( 'Sensei_WC', 'activate_subscription' ) );
+add_action( 'woocommerce_subscription_status_cancelled',         array( 'Sensei_WC', 'cancel_order' ),      50, 3 );
+add_action( 'woocommerce_subscription_status_pending_to_active', array( 'Sensei_WC', 'activate_subscription' ), 50, 3 );
+// filter the user permission of the subscription is not valid
+add_filter( 'sensei_access_permissions',               array( 'Sensei_WC', 'get_subscription_permission' ), 10, 2 );
