@@ -22,6 +22,7 @@ add_filter('pre_get_posts', array( 'Sensei_WC', 'course_archive_wc_filter_paid')
  */
 add_action('sensei_before_main_content', array('Sensei_WC', 'do_single_course_wc_single_product_action') ,50) ;
 
+
 /******************************
  *
  * Single Lesson Hooks
@@ -62,3 +63,40 @@ add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_WC', '
 // @since 1.9.0
 // add  woocommerce class to the the no permission body class to ensure WooCommerce elements are styled
 add_filter( 'body_class', array( 'Sensei_WC', 'add_woocommerce_body_class' ), 20, 1);
+
+
+/************************************
+ *
+ * Emails
+ *
+ ************************************/
+// Add Email link to course orders
+add_action( 'woocommerce_email_after_order_table', array( 'Sensei_WC', 'email_course_details' ), 10, 1 );
+
+/************************************
+ *
+ * Checkout
+ *
+ ************************************/
+add_action( 'woocommerce_payment_complete',                 array( 'Sensei_WC', 'complete_order' ) );
+add_action( 'woocommerce_thankyou' ,                        array( 'Sensei_WC', 'complete_order' ) );
+add_action( 'woocommerce_order_status_completed',           array( 'Sensei_WC', 'complete_order' ) );
+add_action( 'woocommerce_order_status_processing',          array( 'Sensei_WC', 'complete_order' ) );
+add_action( 'woocommerce_order_status_cancelled',           array( 'Sensei_WC', 'cancel_order' ) );
+add_action( 'woocommerce_order_status_refunded',            array( 'Sensei_WC', 'cancel_order' ) );
+// Disable guest checkout if a course is in the cart as we need a valid user to store data for
+add_filter( 'pre_option_woocommerce_enable_guest_checkout', array( 'Sensei_WC', 'disable_guest_checkout' ) );
+// Mark orders with virtual products as complete rather then stay processing
+add_filter( 'woocommerce_payment_complete_order_status',    array( 'Sensei_WC', 'virtual_order_payment_complete' ), 10, 2 );
+
+/************************************
+ *
+ * WooCommerce Subscriptions
+ *
+ ************************************/
+add_action( 'reactivated_subscription',          array( 'Sensei_WC', 'reactivate_subscription' ), 10, 2 );
+add_action( 'subscription_expired',              array( 'Sensei_WC', 'end_subscription' ), 10, 2 );
+add_action( 'subscription_end_of_prepaid_term',  array( 'Sensei_WC', 'end_subscription' ), 10, 2 );
+add_action( 'cancelled_subscription',            array( 'Sensei_WC', 'end_subscription' ), 10, 2 );
+add_action( 'subscription_put_on-hold',          array( 'Sensei_WC', 'end_subscription' ), 10, 2 );
+add_action( 'subscriptions_activated_for_order', array( 'Sensei_WC', 'activate_subscription' ) );
