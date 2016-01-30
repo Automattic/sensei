@@ -128,6 +128,10 @@ class Sensei_Admin {
 
 		$screen = get_current_screen();
 
+        if( empty( $screen ) ){
+            return;
+        }
+
 		if ( $screen->base == 'post' && $post_type == 'course' ) {
 
 			$parent_file  = 'edit.php?post_type=course';
