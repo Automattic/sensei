@@ -1483,9 +1483,11 @@ Class Sensei_WC{
 
         }
 
-        // give access if user has active subscription on the product otherwise retrict it
+        // give access if user has active subscription on the product otherwise restrict it.
+        // also check if the user was added to the course directly after the subscription started.
         if( wcs_user_has_subscription( $user_id, $product_id, 'active'  )
-            || wcs_user_has_subscription( $user_id, $product_id, 'pending-cancel'  ) ){
+            || wcs_user_has_subscription( $user_id, $product_id, 'pending-cancel'  )
+            || self::was_user_added_without_subscription( $user_id, $product_id, $course_id  ) ){
 
             $user_access_permission = true;
 
@@ -1512,6 +1514,68 @@ Class Sensei_WC{
 
         return array( 'subscription','subscription_variation','variable-subscription' );
 
+    }
+
+    /**
+     * Compare the user's subscriptions end date with the date
+     * the user was added to the course. If the user was added after
+     * the subscription ended they were manually added and this will return
+     * true.
+     *
+     * Important to note that all subscriptions for the user is compared.
+     *
+     * @since 1.9.0
+     *
+     * @param $user_id
+     * @param $product_id
+     * @param $course_id
+     *
+     * @return bool
+     */
+    public static function was_user_added_without_subscription($user_id, $product_id, $course_id ){
+
+        $course_start_date = '';
+        $subscription_start_date = '';
+        $is_a_subscription ='';
+        $was_user_added_without_subscription = true;
+
+        // if user is not on the course they were not added
+        if( ! Sensei_Utils::user_started_course( $course_id, $user_id ) ){
+
+            return false;
+
+        }
+
+        // if user doesn't have a subscription and is taking the course
+        // they were added manually
+        if ( ! wcs_user_has_subscription($user_id, $product_id)
+            && Sensei_Utils::user_started_course( $course_id, get_current_user_id() )  ){
+
+            return true;
+
+        }
+
+        $course_status =  Sensei_Utils::user_course_status( $course_id, $user_id );
+
+        // comparing dates setup data
+        $course_start_date = date_create( $course_status->comment_date );
+        $subscriptions = wcs_get_users_subscriptions( $user_id );
+
+        // comparing every subscription
+        foreach( (array) $subscriptions as $subscription ){
+
+            $current_subscription_start_date = date_create( $subscription->order_date );
+
+            // is current subscription date newer than course start date
+            if( $current_subscription_start_date > $course_start_date ){
+
+                $was_user_added_without_subscription = false;
+
+            }
+
+        }
+
+        return $was_user_added_without_subscription;
     }
 
 }// end Sensei_WC
