@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2015.17.11 - version 1.9 Release Candidate 2
+2016.01.02 - version 1.9
 For a list of files changed please see: https://github.com/woothemes/sensei/compare/version/1.8.9-beta-1...master#files_bucket
 
 * New   - Templates system completely overhauled. The templates now contain almost no logic, just hooks and html. Most functionality
@@ -21,6 +21,7 @@ For a list of files changed please see: https://github.com/woothemes/sensei/comp
 * New   - Course in progress icon change so that it doesn't look like it's loading all the time.
 * New   - Admin WordPress notice styles to align with core.
 * New   - Support for Twentysixteen WordPress default theme
+* Fix   - Integration support for WooCommerce subscriptions extension.
 * Fix   - File upload popup didn't work on the single question edit screen.
 * Fix   - A call to the wrong get user function.
 * Fix   - Encoding issues when using strtolower fixed. The function now returns utf-8.
