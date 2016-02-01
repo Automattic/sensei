@@ -94,7 +94,6 @@ add_filter( 'woocommerce_payment_complete_order_status',    array( 'Sensei_WC', 
  * WooCommerce Subscriptions
  *
  ************************************/
-add_action( 'woocommerce_subscription_status_cancelled',         array( 'Sensei_WC', 'cancel_order' ),      50, 3 );
 add_action( 'woocommerce_subscription_status_pending_to_active', array( 'Sensei_WC', 'activate_subscription' ), 50, 3 );
 // filter the user permission of the subscription is not valid
 add_filter( 'sensei_access_permissions',               array( 'Sensei_WC', 'get_subscription_permission' ), 10, 2 );
