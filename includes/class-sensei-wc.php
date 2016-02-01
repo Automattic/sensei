@@ -1484,7 +1484,8 @@ Class Sensei_WC{
         }
 
         // give access if user has active subscription on the product otherwise retrict it
-        if( wcs_user_has_subscription( $user_id, $product_id, 'active'  ) ){
+        if( wcs_user_has_subscription( $user_id, $product_id, 'active'  )
+            || wcs_user_has_subscription( $user_id, $product_id, 'pending-cancel'  ) ){
 
             $user_access_permission = true;
 
