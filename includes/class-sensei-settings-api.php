@@ -59,7 +59,7 @@ class Sensei_Settings_API {
 
         add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
-        $this->general_init();
+        add_action( 'init', array( $this, 'general_init' ), 5 );
 
 	} // End setup_settings()
 
