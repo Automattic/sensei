@@ -15,38 +15,6 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n\n"
 
-#: docs.woothemes.com/plugins/woodocs-functions/classes/class-woodocs-functions-settings.php:113
-msgid "WooCodex Page"
-msgstr ""
-
-#: docs.woothemes.com/plugins/woodocs-functions/classes/class-woodocs-functions-settings.php:114
-msgid "The page for the WooCodex Landing Page."
-msgstr ""
-
-#: docs.woothemes.com/plugins/woodocs-functions/classes/class-woodocs-functions-settings.php:123
-msgid "WooCommerce User Page"
-msgstr ""
-
-#: docs.woothemes.com/plugins/woodocs-functions/classes/class-woodocs-functions-settings.php:124
-msgid "The page for the WooCommerce User Documentation Landing Page."
-msgstr ""
-
-#: docs.woothemes.com/plugins/woodocs-functions/classes/class-woodocs-functions-settings.php:133
-msgid "WooCommerce Developer Page"
-msgstr ""
-
-#: docs.woothemes.com/plugins/woodocs-functions/classes/class-woodocs-functions-settings.php:134
-msgid "The page for the WooCommerce Developer Documentation Landing Page."
-msgstr ""
-
-#: docs.woothemes.com/plugins/woodocs-functions/classes/class-woodocs-functions-settings.php:143
-msgid "WooDojo Page"
-msgstr ""
-
-#: docs.woothemes.com/plugins/woodocs-functions/classes/class-woodocs-functions-settings.php:144
-msgid "The page for the WooDojo Landing Page."
-msgstr ""
-
 #: includes/admin/class-sensei-learner-management.php:26
 msgid "Learner Management"
 msgstr ""
@@ -2564,7 +2532,7 @@ msgid "Select the notifications that will be sent to all users."
 msgstr ""
 
 #: includes/class-sensei-settings.php:507
-msgid ""From" Name"
+msgid "\"From\" Name"
 msgstr ""
 
 #: includes/class-sensei-settings.php:508
@@ -2572,7 +2540,7 @@ msgid "The name from which all emails will be sent."
 msgstr ""
 
 #: includes/class-sensei-settings.php:516
-msgid ""From" Address"
+msgid "\"From\" Address"
 msgstr ""
 
 #: includes/class-sensei-settings.php:517
