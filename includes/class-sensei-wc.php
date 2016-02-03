@@ -19,7 +19,8 @@ Class Sensei_WC{
      */
     public static function load_woocommerce_integration_hooks(){
 
-        require_once( __DIR__ . '/hooks/woocommerce.php' );
+	    $woocommerce_hooks_file_path = Sensei()->plugin_path() . 'includes/hooks/woocommerce.php';
+        require_once( $woocommerce_hooks_file_path );
 
     }
     /**
