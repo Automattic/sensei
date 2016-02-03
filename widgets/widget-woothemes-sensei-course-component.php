@@ -259,8 +259,29 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		</ul>
 		<?php } else {
 			// No posts returned. This means the user either has no active or no completed courses.
-			$course_status = substr( esc_attr( $instance['component'] ) , 0, -7);
-			echo sprintf( __( 'You have no %1s courses.', 'woothemes-sensei' ), $course_status );
+			if( isset( $instance['component']  ) ) {
+
+				if ( 'featuredcourses' == $instance['component'] ) {
+
+					_e( 'You have no featured courses.', 'woothemes-sensei' );
+
+				} elseif ( 'activecourses' == $instance['component'] ) {
+
+					_e( 'You have no active courses.', 'woothemes-sensei' );
+
+				} elseif ( 'completedcourses' == $instance['component'] ) {
+					_e( 'You have no completed courses.', 'woothemes-sensei' );
+
+				}else{
+
+					_e( 'You have no courses.', 'woothemes-sensei' );
+
+				}
+
+			} // end if compoenetn status instance
+
 		} // End If Statement
+
 	} // End load_component()
+
 } // End Class
