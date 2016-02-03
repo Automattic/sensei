@@ -925,12 +925,14 @@ Class Sensei_WC{
     /**
      * Alter the body classes adding WooCommerce to the body
      *
+     * Speciall cases where this is needed is template no-permissions.php
+     *
      * @param array $classes
      * @return array
      */
     public static function add_woocommerce_body_class( $classes ){
 
-        if( ! in_array( 'woocommerce', $classes ) ){
+        if( ! in_array( 'woocommerce', $classes ) && defined( 'SENSEI_NO_PERMISSION' ) && SENSEI_NO_PERMISSION ){
 
             $classes[] ='woocommerce';
 

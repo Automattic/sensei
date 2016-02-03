@@ -308,6 +308,9 @@ class Sensei_Templates {
         $template = locate_template( $find );
         if ( ! $template ) $template = Sensei()->plugin_path() . '/templates/' . $file;
 
+	    // set a global constant so that we know that we're in this template
+	    define('SENSEI_NO_PERMISSION', true );
+
         return $template;
 
     }
