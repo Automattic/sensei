@@ -101,7 +101,7 @@ Class Sensei_WC{
                 // this order has been placed by the given user on the given course.
                 $product = wc_get_product( $item['product_id'] );
 
-                if ( $product->is_type( 'variable' )) {
+                if ( is_object( $product ) && $product->is_type( 'variable' )) {
 
                     $item_product_id = $item['variation_id'];
 
