@@ -558,7 +558,11 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 
 		$total_grade_count = Sensei_Grading::get_graded_lessons_count();
 		$total_grade_total = Sensei_Grading::get_graded_lessons_sum();
-		$total_average_grade = abs( round( doubleval( $total_grade_total / $total_grade_count ), 2 ) );
+		$total_average_grade = 0;
+		if( $total_grade_total > 0 &&  $total_grade_count >0   ){
+			$total_average_grade = abs( round( doubleval( $total_grade_total / $total_grade_count ), 2 ) );
+		}
+
 
 		$course_args = array( 
 				'type' => 'sensei_course_status',
