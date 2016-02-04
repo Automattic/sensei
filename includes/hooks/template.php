@@ -267,7 +267,7 @@ add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Lesson',
 
 // @since 1.9.0
 // hook the single lesson course_signup_link
-add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Lesson', 'course_signup_link' ), 30 );
+add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'course_signup_link' ), 30 );
 
 // @since 1.9.0
 // hook the deprecate breadcrumbs and comments hooks

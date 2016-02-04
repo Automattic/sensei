@@ -3550,7 +3550,7 @@ class Sensei_Lesson {
 
             <?php if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) &&  sensei_is_login_required() )  : ?>
 
-                <div class="sensei-message info">
+                <div class="sensei-message alert">
                     <?php
                     $course_link =  '<a href="'
                                         . esc_url( get_permalink( $course_id ) )
@@ -3558,7 +3558,16 @@ class Sensei_Lesson {
                                         . '">' . __( 'course', 'woothemes-sensei' )
                                     . '</a>';
 
-                    echo sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
+					if ( Sensei_Utils::is_preview_lesson( get_the_ID( ) ) ) {
+
+						echo sprintf( __( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ),  $course_link );
+
+					} else {
+
+						echo sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
+
+					}
+
                     ?>
                 </div>
 
