@@ -641,6 +641,7 @@ function sensei_get_the_module_status(){
 
 	$status_class = strtolower( str_replace( ' ', '-', $module_status  ) );
     $module_status_html = '<p class="status module-status ' . $status_class . '">'
+                            . $module_status
                             . '</p>';
 
     /**
