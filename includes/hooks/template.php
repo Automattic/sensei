@@ -70,7 +70,7 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Templat
 
 // @1.9.0
 // Filter the content and replace it with the excerpt if the user doesn't have full access
-add_filter( 'the_content', array('Sensei_Course', 'single_course_content' ) );
+add_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 
 // @1.9.0
 // Deprecate lessons specific single course hooks

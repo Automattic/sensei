@@ -2510,6 +2510,16 @@ class Sensei_Course {
             || ( $access_permission && !$has_product_attached)
             || 'full' == Sensei()->settings->get( 'course_single_content_display' ) ) {
 
+	        // compensate for core providing and empty $content
+
+	        if( empty( $content ) ){
+		        remove_filter( 'the_content', array( 'Sensei_Course', 'single_course_content') );
+		        $course = get_post( get_the_ID() );
+
+		        $content = apply_filters( 'the_content', $course->post_content );
+
+	        }
+
             return $content;
 
         } else {
