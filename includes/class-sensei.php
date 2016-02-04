@@ -281,7 +281,7 @@ class Sensei_Main {
         $this->quiz = $this->post_types->quiz;
 
         // load the modules class after all plugsin are loaded
-        add_action( 'plugins_loaded', array( $this, 'load_modules_class' ) );
+	    $this->load_modules_class();
 
         // Load Learner Management Functionality
         $this->learners = new Sensei_Learner_Management( $this->file );
@@ -544,7 +544,7 @@ class Sensei_Main {
         if ( empty( $current_user->caps ) && Sensei()->settings->get('access_permission')
             && 'lesson-single' !=  $page ){
 
-            $this->permissions_message['title'] = __('Restricted Access', 'woothemes-sensei' );
+            $this->permissions_message['title'] = __('Restricted Access:', 'woothemes-sensei' );
             $this->permissions_message['message'] = sprintf( __('You must be logged in to view this %s'), get_post_type() );
 
             return false;

@@ -144,6 +144,18 @@ add_filter('get_the_excerpt', array( 'Sensei_Course', 'full_content_excerpt_over
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 30 );
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course' , 'the_course_video' ), 40 );
 
+//
+//// no permissions template for the single course
+//
+add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_title'), 20 );
+add_action( 'sensei_no_permissions_inside_before_content', array( Sensei()->course , 'course_image'), 25 );
+add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course' , 'the_course_video' ), 40 );
+add_action( 'sensei_no_permissions_inside_after_content', array( Sensei()->modules, 'load_course_module_content_template') , 43 );
+add_action( 'sensei_no_permissions_inside_after_content' , array( 'Sensei_Course','the_course_lessons_title'), 45 );
+add_action( 'sensei_no_permissions_inside_after_content', array('Sensei_Course','load_single_course_lessons_query' ),50 );
+add_action( 'sensei_no_permissions_inside_after_content', 'course_single_lessons', 60 );
+add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Utils','restore_wp_query' ), 70);
+
 /***************************
  *
  *

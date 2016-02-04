@@ -760,9 +760,17 @@ class Sensei_Course {
 	 */
 	public function course_image( $course_id = 0, $width = '100', $height = '100', $return = false ) {
 
-        if( is_a( $course_id, 'WP_Post' ) ){
-            $course_id = $course_id->ID;
+        if ( is_a( $course_id, 'WP_Post' ) ) {
+
+	        $course_id = $course_id->ID;
+
         }
+
+		if ( 'course' !== get_post_type( $course_id )  ){
+
+			return;
+
+		}
 
 		$html = '';
 
@@ -2518,6 +2526,11 @@ class Sensei_Course {
      * @since 1.9.0
      */
     public static function the_course_lessons_title(){
+
+	    if ( ! is_singular( 'course' )  ) {
+		    return;
+	    }
+
         global $post;
         $none_module_lessons = Sensei()->modules->get_none_module_lessons( $post->ID  );
         $course_lessons = Sensei()->course->course_lessons( $post->ID );
@@ -2795,6 +2808,10 @@ class Sensei_Course {
     public static function the_course_video(){
 
         global $post;
+
+	    if ( ! is_singular( 'course' )  ) {
+		    return;
+	    }
         // Get the meta info
         $course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
 
@@ -2821,6 +2838,9 @@ class Sensei_Course {
      */
     public static function the_title(){
 
+	    if( ! is_singular( 'course' ) ){
+			return;
+	    }
         global $post;
 
         ?>
