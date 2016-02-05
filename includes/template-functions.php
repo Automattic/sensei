@@ -26,10 +26,6 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	  */
 	 function course_single_lessons() {
 
-		 if ( ! is_singular( 'course' )  ) {
-			 return;
-		 }
-
          // load backwards compatible template name if it exists in the users theme
          $located_template= locate_template( Sensei()->template_url . 'single-course/course-lessons.php' );
          if( $located_template ){
