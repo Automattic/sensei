@@ -19,7 +19,8 @@ Class Sensei_WC{
      */
     public static function load_woocommerce_integration_hooks(){
 
-        require_once( __DIR__ . '/hooks/woocommerce.php' );
+	    $woocommerce_hooks_file_path = Sensei()->plugin_path() . 'includes/hooks/woocommerce.php';
+        require_once( $woocommerce_hooks_file_path );
 
     }
     /**
@@ -101,7 +102,7 @@ Class Sensei_WC{
                 // this order has been placed by the given user on the given course.
                 $product = wc_get_product( $item['product_id'] );
 
-                if ( $product->is_type( 'variable' )) {
+                if ( is_object( $product ) && $product->is_type( 'variable' )) {
 
                     $item_product_id = $item['variation_id'];
 
@@ -260,6 +261,11 @@ Class Sensei_WC{
      * @return bool
      */
     public static function alter_can_user_view_lesson ( $can_user_view_lesson, $lesson_id, $user_id  ){
+
+	    // do not override access to admins
+	    if( sensei_all_access() || Sensei_Utils::is_preview_lesson( $lesson_id ) ){
+		    return true;
+	    }
 
         // check if the course has a valid product attached to it
         // which the user should have purchased if they want to access
@@ -920,12 +926,14 @@ Class Sensei_WC{
     /**
      * Alter the body classes adding WooCommerce to the body
      *
+     * Speciall cases where this is needed is template no-permissions.php
+     *
      * @param array $classes
      * @return array
      */
     public static function add_woocommerce_body_class( $classes ){
 
-        if( ! in_array( 'woocommerce', $classes ) ){
+        if( ! in_array( 'woocommerce', $classes ) && defined( 'SENSEI_NO_PERMISSION' ) && SENSEI_NO_PERMISSION ){
 
             $classes[] ='woocommerce';
 

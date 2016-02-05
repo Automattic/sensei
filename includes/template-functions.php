@@ -26,6 +26,10 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	  */
 	 function course_single_lessons() {
 
+		 if ( ! is_singular( 'course' )  ) {
+			 return;
+		 }
+
          // load backwards compatible template name if it exists in the users theme
          $located_template= locate_template( Sensei()->template_url . 'single-course/course-lessons.php' );
          if( $located_template ){
@@ -608,6 +612,10 @@ function sensei_the_module_title(){
  */
 function sensei_get_the_module_status(){
 
+	if( ! is_user_logged_in() ){
+		return '';
+	}
+
     global $sensei_modules_loop;
     $module_title = $sensei_modules_loop['current_module']->name;
     $module_term_id = $sensei_modules_loop['current_module']->term_id;
@@ -627,8 +635,13 @@ function sensei_get_the_module_status(){
 
     }
 
-    $module_status_html = '<p class="status module-status completed">'
-                            . strtolower( str_replace( ' ', '-', $module_status  ) )
+	if ( empty( $module_status ) ){
+		return '';
+	}
+
+	$status_class = strtolower( str_replace( ' ', '-', $module_status  ) );
+    $module_status_html = '<p class="status module-status ' . $status_class . '">'
+                            . $module_status
                             . '</p>';
 
     /**

@@ -1,5 +1,21 @@
 *** Sensei Changelog ***
 
+2016.01.03 - version 1.9.1
+* Fix   - Use strtolower function on hosts that do not support mb_stringtolower.
+* Fix   - Use $wpdb prefix for mysql queries where it wasn't added.
+* Fix   - Avoid division by zero error.
+* Fix   - Do not hide embedded videos for admins and when a lesson is in preview mode.
+* Fix   - The Woocommerce class should only be added to no-permissions template.
+* Fix   - Ensure we check for is_object before trying to access the object property.
+* Fix   - Add strings manually to allow for easier translation.
+* Fix   - Fatal error on certain hosts by providing a direct path to woocommerce hooks loading file.
+* Fix   - Fix the no permissions template when displaying a single course should also show lessons and possible modules.
+* Fix   - Fix the preview lesson to ensure the message shown is the same as it was in 1.8.8
+* Fix   - Modules status was now shows the correct status message and css class.
+* Fix   - Boolean question type html shows both false and true option correctly.
+* Fix   - Update POT file to ensure no error are present.
+* Fix   - Single course full or excerpt settings now show up exactly as it was set.
+
 2016.01.02 - version 1.9
 For a list of files changed please see: https://github.com/woothemes/sensei/compare/version/1.8.9-beta-1...master#files_bucket
 
