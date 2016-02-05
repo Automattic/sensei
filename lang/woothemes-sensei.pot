@@ -263,7 +263,7 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1207, includes/class-sensei-course.php:2539, templates/course-results/lessons.php:97
+#: includes/class-sensei-admin.php:1207, includes/class-sensei-course.php:2549, templates/course-results/lessons.php:97
 msgid "Other Lessons"
 msgstr ""
 
@@ -275,7 +275,7 @@ msgstr ""
 msgid "Save lesson order"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1321, includes/class-sensei-analysis-overview-list-table.php:46, includes/class-sensei-analysis-overview-list-table.php:638, includes/class-sensei-analysis.php:411, includes/class-sensei-course.php:1281, includes/class-sensei-course.php:1413, includes/class-sensei-course.php:1970, includes/class-sensei-course.php:2544, includes/class-sensei-frontend.php:974, includes/class-sensei-learners-main.php:535, includes/class-sensei-modules.php:1001, includes/class-sensei-posttypes.php:605, includes/class-sensei-posttypes.php:605, includes/class-sensei-settings.php:120, includes/shortcodes/class-sensei-legacy-shortcodes.php:356, templates/course-results/lessons.php:30, templates/single-course/modules.php:78, widgets/widget-woothemes-sensei-category-courses.php:385, widgets/widget-woothemes-sensei-course-component.php:499
+#: includes/class-sensei-admin.php:1321, includes/class-sensei-analysis-overview-list-table.php:46, includes/class-sensei-analysis-overview-list-table.php:638, includes/class-sensei-analysis.php:411, includes/class-sensei-course.php:1281, includes/class-sensei-course.php:1413, includes/class-sensei-course.php:1970, includes/class-sensei-course.php:2554, includes/class-sensei-frontend.php:974, includes/class-sensei-learners-main.php:535, includes/class-sensei-modules.php:1001, includes/class-sensei-posttypes.php:605, includes/class-sensei-posttypes.php:605, includes/class-sensei-settings.php:120, includes/shortcodes/class-sensei-legacy-shortcodes.php:356, templates/course-results/lessons.php:30, templates/single-course/modules.php:78, widgets/widget-woothemes-sensei-category-courses.php:385, widgets/widget-woothemes-sensei-course-component.php:499
 msgid "Lessons"
 msgstr ""
 
@@ -347,7 +347,7 @@ msgstr ""
 msgid "Learners"
 msgstr ""
 
-#: includes/class-sensei-analysis-course-list-table.php:82, includes/class-sensei-analysis-course-list-table.php:296, includes/class-sensei-analysis-course-list-table.php:353, includes/class-sensei-analysis-lesson-list-table.php:199, includes/class-sensei-analysis-overview-list-table.php:47, includes/class-sensei-analysis-overview-list-table.php:57, includes/class-sensei-analysis-user-profile-list-table.php:201, includes/class-sensei-course.php:2725, includes/class-sensei-grading-main.php:228, includes/class-sensei-learners-main.php:242, includes/class-sensei-modules.php:600, includes/template-functions.php:628
+#: includes/class-sensei-analysis-course-list-table.php:82, includes/class-sensei-analysis-course-list-table.php:296, includes/class-sensei-analysis-course-list-table.php:353, includes/class-sensei-analysis-lesson-list-table.php:199, includes/class-sensei-analysis-overview-list-table.php:47, includes/class-sensei-analysis-overview-list-table.php:57, includes/class-sensei-analysis-user-profile-list-table.php:201, includes/class-sensei-course.php:2735, includes/class-sensei-grading-main.php:228, includes/class-sensei-learners-main.php:242, includes/class-sensei-modules.php:600, includes/template-functions.php:628
 msgid "Completed"
 msgstr ""
 
@@ -355,7 +355,7 @@ msgstr ""
 msgid "Average Grade"
 msgstr ""
 
-#: includes/class-sensei-analysis-course-list-table.php:301, includes/class-sensei-analysis-course-list-table.php:382, includes/class-sensei-analysis-lesson-list-table.php:228, includes/class-sensei-analysis-user-profile-list-table.php:208, includes/class-sensei-course.php:2743, includes/class-sensei-grading-main.php:248, includes/class-sensei-grading-main.php:420, includes/class-sensei-learners-main.php:246, includes/class-sensei-lesson.php:3333
+#: includes/class-sensei-analysis-course-list-table.php:301, includes/class-sensei-analysis-course-list-table.php:382, includes/class-sensei-analysis-lesson-list-table.php:228, includes/class-sensei-analysis-user-profile-list-table.php:208, includes/class-sensei-course.php:2753, includes/class-sensei-grading-main.php:248, includes/class-sensei-grading-main.php:420, includes/class-sensei-learners-main.php:246, includes/class-sensei-lesson.php:3333
 msgid "In Progress"
 msgstr ""
 
@@ -632,7 +632,7 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: includes/class-sensei-course.php:1441, includes/class-sensei-course.php:2075, includes/class-sensei-course.php:2733
+#: includes/class-sensei-course.php:1441, includes/class-sensei-course.php:2075, includes/class-sensei-course.php:2743
 msgid "View results"
 msgstr ""
 
@@ -714,7 +714,7 @@ msgstr ""
 msgid "Paid Courses"
 msgstr ""
 
-#: includes/class-sensei-course.php:2784, includes/class-sensei-frontend.php:1074, includes/class-sensei-frontend.php:1102
+#: includes/class-sensei-course.php:2794, includes/class-sensei-frontend.php:1074, includes/class-sensei-frontend.php:1102
 msgid "Register"
 msgstr ""
 
@@ -2568,7 +2568,7 @@ msgid "Select the notifications that will be sent to all users."
 msgstr ""
 
 #: includes/class-sensei-settings.php:507
-msgid "'From' Name"
+msgid "\"From\" Name"
 msgstr ""
 
 #: includes/class-sensei-settings.php:508
@@ -2576,7 +2576,7 @@ msgid "The name from which all emails will be sent."
 msgstr ""
 
 #: includes/class-sensei-settings.php:516
-msgid "'From' Address"
+msgid "\"From\" Address"
 msgstr ""
 
 #: includes/class-sensei-settings.php:517
