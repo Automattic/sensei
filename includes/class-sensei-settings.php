@@ -504,7 +504,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 								);
 
 		$fields['email_from_name'] = array(
-								'name' => __( "'From' Name", 'woothemes-sensei' ),
+								'name' => __( '"From" Name', 'woothemes-sensei' ),
 								'description' => __( 'The name from which all emails will be sent.', 'woothemes-sensei' ),
 								'type' => 'text',
 								'default' => get_bloginfo( 'name' ),
@@ -513,7 +513,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 								);
 
 		$fields['email_from_address'] = array(
-								'name' => __( "'From' Address", 'woothemes-sensei' ),
+								'name' => __( '"From" Address', 'woothemes-sensei' ),
 								'description' => __( 'The address from which all emails will be sent.', 'woothemes-sensei' ),
 								'type' => 'text',
 								'default' => get_bloginfo( 'admin_email' ),
