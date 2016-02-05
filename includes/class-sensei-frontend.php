@@ -1595,7 +1595,8 @@ class Sensei_Frontend {
 				$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
 
 				//attempt logging in with the given details
-				$user = wp_signon( $creds, false );
+			    $secure_cookie = is_ssl() ? true : false;
+			    $user = wp_signon( $creds, $secure_cookie );
 
 				if ( is_wp_error($user) ){ // on login failure
                     wp_redirect( esc_url_raw( add_query_arg('login', 'failed', $referrer) ) );
