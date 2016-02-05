@@ -768,7 +768,16 @@ Class Sensei_WC{
 
             <button type="submit" class="single_add_to_cart_button button alt">
                 <?php $button_text = $product->get_price_html() . ' - ' . __( 'Purchase this Course', 'woothemes-sensei' ); ?>
-                <?php echo apply_filters( 'sensei_wc_single_add_to_cart_button_text', $button_text ); ?>
+                <?php
+                /**
+                 * Filter Add to Cart button text
+                 *
+                 * @since 1.9.1
+                 *
+                 * @param string $button_text
+                 */
+                echo apply_filters( 'sensei_wc_single_add_to_cart_button_text', $button_text );
+                ?>
             </button>
 
         </form>
