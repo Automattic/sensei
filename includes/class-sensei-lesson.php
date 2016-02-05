@@ -3694,6 +3694,12 @@ class Sensei_Lesson {
 
         $lesson_id                 =  empty( $lesson_id ) ?  get_the_ID() : $lesson_id;
         $user_id                   = empty( $lesson_id ) ?  get_current_user_id() : $user_id;
+
+
+	    if ( ! sensei_can_user_view_lesson( $lesson_id, $user_id ) ) {
+		    return;
+	    }
+
         $lesson_prerequisite       = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
         $lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
         $quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
@@ -3706,6 +3712,7 @@ class Sensei_Lesson {
             $show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
 
         }
+
         ?>
 
         <footer>
