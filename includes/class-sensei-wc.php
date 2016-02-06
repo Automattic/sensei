@@ -824,15 +824,43 @@ Class Sensei_WC{
 
         // login link
         $my_courses_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
-        $login_link =  '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
+	    $login_link =  '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
+	    $wc_product_id =  self::get_course_product_id( $course_id );
 
-        ?>
+	    if ( self::is_product_in_cart( $wc_product_id ) ) {
 
-        <span class="add-to-cart-login">
-            <?php echo sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link ); ?>
-        </span>
+		    $cart_link = '<a href="' . wc_get_checkout_url() . '" title="' . __( 'Checkout','woocommerce' ) . '">' . __( 'checkout', 'woocommerce' ) . '</a>';
 
-    <?php }
+		    $message = sprintf( __( 'This course is already in your cart, please proceed to %1$s, to gain access.', 'woothemes-sensei' ), $cart_link );
+		    ?>
+		    <span class="add-to-cart-login">
+		            <?php echo $message; ?>
+		        </span>
+
+		    <?php
+
+	    } elseif ( is_user_logged_in() ) {
+
+		    ?>
+		    <style>
+			    .sensei-message.alert {
+				    display: none;
+			    }
+		    </style>
+
+		    <?php
+
+	    } else {
+
+		    $message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
+	        ?>
+		        <span class="add-to-cart-login">
+		            <?php echo $message; ?>
+		        </span>
+
+	        <?php
+	    }
+    }
 
     /**
      * Checks if a user has bought a product item.

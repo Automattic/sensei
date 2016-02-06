@@ -553,26 +553,34 @@ class Sensei_Main {
         $user_allowed = false;
 
         switch ( $page ) {
-            case 'course-single':
-                // check for prerequisite course or lesson,
-                $course_prerequisite_id = (int) get_post_meta( $post->ID, '_course_prerequisite', true);
-                $update_course = Sensei_WC::course_update( $post->ID );
-                // Count completed lessons
-                if ( 0 < absint( $course_prerequisite_id ) ) {
+	        case 'course-single':
+		        // check for prerequisite course or lesson,
+		        $course_prerequisite_id = (int) get_post_meta( $post->ID, '_course_prerequisite', true );
+		        $update_course          = Sensei_WC::course_update( $post->ID );
+		        // Count completed lessons
+		        if ( 0 < absint( $course_prerequisite_id ) ) {
 
-                    $prerequisite_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
+			        $prerequisite_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
 
-                }
-                else {
-                    $prerequisite_complete = true;
-                } // End If Statement
-                // Handles restrictions
-                if ( !$prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) {
-                    $this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __('Restricted Access', 'woothemes-sensei' );
-                    $course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
-                    $this->permissions_message['message'] = sprintf( __('Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link );
-                } else {
+		        } else {
+			        $prerequisite_complete = true;
+		        } // End If Statement
+
+		        // Handles restrictions on the course
+		        if ( ( ! $prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) ) {
+
+			        $user_allowed                         = false;
+			        $course_link                          = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+			        $this->permissions_message['message'] = sprintf( __( 'Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link );
+
+		        } elseif ( ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
+
+			        $user_allowed                         = false;
+
+		        } else  {
+
                     $user_allowed = true;
+
                 } // End If Statement
                 break;
             case 'lesson-single':
