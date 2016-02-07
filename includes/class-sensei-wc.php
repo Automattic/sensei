@@ -801,7 +801,7 @@ Class Sensei_WC{
         $product_id = self::get_course_product_id( $post_id );
 
         if( ! $product_id
-            || self::has_customer_bought_product( get_current_user_id(),$product_id ) ){
+            || ! self::has_customer_bought_product( get_current_user_id(),$product_id ) ){
 
             return $message;
 
@@ -874,26 +874,15 @@ Class Sensei_WC{
      */
     public static function has_customer_bought_product ( $user_id, $product_id ){
 
-        $orders = get_posts( array(
-            'numberposts' => -1,
-            'post_type' => 'shope_order',
-            'meta_key'    => '_customer_user',
-            'meta_value'  => intval( $user_id ),
-            'post_status' => array( 'wc-complete','wc-processing' ),
-        ) );
+        $orders = self::get_user_product_orders( $user_id, $product_id );
 
         foreach ( $orders as $order_id ) {
 
             $order = new WC_Order( $order_id->ID );
 
             // wc-active is the subscriptions complete status
-            if ( ! in_array( $order->post_status, array( 'wc-complete','wc-processing' ) ) ){
-
-                continue;
-
-            }
-
-            if ( ! ( 0 < sizeof( $order->get_items() ) ) ) {
+            if ( ! in_array( $order->post_status, array( 'wc-complete','wc-processing' ) )
+                || ! ( 0 < sizeof( $order->get_items() ) )  ){
 
                 continue;
 
@@ -926,6 +915,9 @@ Class Sensei_WC{
             } // End For each item
 
         } // End For each order
+
+	    // default is no order
+	    return false;
 
     } // end has customer bought product
 
@@ -1138,6 +1130,13 @@ Class Sensei_WC{
         if ( Sensei_WC::is_woocommerce_active() && ( 0 < $order_id ) ) {
             // Get order object
             $order = new WC_Order( $order_id );
+
+	        if ( ! in_array( $order->get_status(), array( 'complete', 'processing' ) ) ) {
+
+		        return;
+
+	        }
+
             $user = get_user_by( 'id', $order->get_user_id() );
             $order_user['ID'] = $user->ID;
             $order_user['user_login'] = $user->user_login;
@@ -1168,7 +1167,7 @@ Class Sensei_WC{
                     // Loop and update those courses
                     foreach ( $courses as $course_item ) {
 
-                        $update_course = Sensei()->woocommerce_course_update( $course_item->ID, $order_user );
+                        $update_course = self::course_update( $course_item->ID, $order_user );
 
                     } // End For Loop
 
@@ -1192,15 +1191,21 @@ Class Sensei_WC{
      */
     public static function cancel_order ( $order_id ) {
 
-        // Get order object
-        if( is_object( $order_id ) ){
+		// Get order object
+		if( is_object( $order_id ) ){
 
-            $order = $order_id;
+			$order = $order_id;
 
-        }else{
+		}else{
 
-            $order = new WC_Order( $order_id );
-        }
+			$order = new WC_Order( $order_id );
+		}
+
+		if ( ! in_array( $order->get_status(), array( 'cancelled', 'refunded' ) ) ) {
+
+			return;
+
+		}
 
         // Run through each product ordered
         if ( 0 < sizeof( $order->get_items() ) ) {
@@ -1231,6 +1236,9 @@ Class Sensei_WC{
                 // Loop and update those courses
                 foreach ($courses as $course_item){
 
+	                if( self::has_customer_bought_product( $user_id, $course_item->ID ) ){
+		                continue;
+	                }
                     // Check and Remove course from courses user meta
                     $dataset_changes = Sensei_Utils::sensei_remove_user_from_course( $course_item->ID, $user_id );
 
@@ -1342,20 +1350,19 @@ Class Sensei_WC{
 
         $is_user_taking_course = Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
 
-        if( ! $is_user_taking_course ) {
+        if ( ! $is_user_taking_course
+            && Sensei_WC::is_woocommerce_active()
+            && 0 < $wc_post_id
+            && Sensei_WC::has_customer_bought_product( $user_id, $wc_post_id ) ) {
 
-            if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::has_customer_bought_product( $user_id, $wc_post_id ) && ( 0 < $wc_post_id ) ) {
+	            $activity_logged = Sensei_Utils::user_start_course( intval( $user_id ), intval( $course_id ) );
 
-                $activity_logged = Sensei_Utils::user_start_course( intval( $user_id), intval( $course_id ) );
+	            if ( true == $activity_logged ) {
 
-                $is_user_taking_course = false;
-                if ( true == $activity_logged ) {
+		            $is_user_taking_course = true;
 
-                    $is_user_taking_course = true;
+	            } // End If Statement
 
-                } // End If Statement
-
-            } // End If Statement
         }// end if is user taking course
 
         return $is_user_taking_course;
@@ -1622,5 +1629,25 @@ Class Sensei_WC{
 
         return $was_user_added_without_subscription;
     }
+
+	/**
+	 * Get all the orders for a specific user and product combination
+	 *
+	 * @param int $user_id
+	 * @param $product_id
+	 *
+	 * @return array $orders
+	 */
+	public static function get_user_product_orders( $user_id =  0, $product_id ) {
+
+		return get_posts( array(
+			'numberposts' => -1,
+			'post_type' => 'shop_order',
+			'meta_key'    => '_customer_user',
+			'meta_value'  => intval( $user_id ),
+			'post_status' => array( 'wc-complete','wc-processing' ),
+		) );
+
+	}
 
 }// end Sensei_WC

@@ -557,6 +557,7 @@ class Sensei_Main {
 		        // check for prerequisite course or lesson,
 		        $course_prerequisite_id = (int) get_post_meta( $post->ID, '_course_prerequisite', true );
 		        $update_course          = Sensei_WC::course_update( $post->ID );
+
 		        // Count completed lessons
 		        if ( 0 < absint( $course_prerequisite_id ) ) {
 
