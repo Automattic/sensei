@@ -3523,22 +3523,29 @@ class Sensei_Lesson {
 
                             </div>
 
-                    <?php } else { ?>
+                    <?php } else {
 
-                        <div class="sensei-message info">
+	                    if( ! Sensei_Utils::user_started_course( $course_id, $current_user->ID )  ){
 
-                            <?php
-                            $course_link = '<a href="' . esc_url( get_permalink( $course_id ) )
-                                            . '"title="' . __( 'Sign Up', 'woothemes-sensei' )
-                                            . '">' . __( 'course', 'woothemes-sensei' )
-                                            . '</a>';
+		                    ?>
 
-                            echo  sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
+	                        <div class="sensei-message info">
 
-                            ?>
+	                            <?php
+	                            $course_link = '<a href="' . esc_url( get_permalink( $course_id ) )
+	                                            . '"title="' . __( 'Sign Up', 'woothemes-sensei' )
+	                                            . '">' . __( 'course', 'woothemes-sensei' )
+	                                            . '</a>';
 
-                        </div>
-                    <?php } ?>
+	                            echo  sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
+
+	                            ?>
+
+	                        </div>
+                    <?php
+	                    }
+                    }
+	                ?>
 
                 <?php } else { ?>
 

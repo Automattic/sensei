@@ -263,8 +263,12 @@ Class Sensei_WC{
     public static function alter_can_user_view_lesson ( $can_user_view_lesson, $lesson_id, $user_id  ){
 
 	    // do not override access to admins
-	    if( sensei_all_access() || Sensei_Utils::is_preview_lesson( $lesson_id ) ){
-		    return true;
+	    $course_id = Sensei()->lesson->get_course_id( $lesson_id );
+	    if ( sensei_all_access() || Sensei_Utils::is_preview_lesson( $lesson_id )
+	         || Sensei_Utils::user_started_course( $course_id, $user_id )  ){
+
+			return true;
+
 	    }
 
         // check if the course has a valid product attached to it
