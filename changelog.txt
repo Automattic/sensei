@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2016.01.03 - version 1.9.1
+2016.02.07 - version 1.9.1
 * Fix   - Use strtolower function on hosts that do not support mb_stringtolower.
 * Fix   - Use $wpdb prefix for mysql queries where it wasn't added.
 * Fix   - Avoid division by zero error.
@@ -15,6 +15,11 @@
 * Fix   - Boolean question type html shows both false and true option correctly.
 * Fix   - Update POT file to ensure no error are present.
 * Fix   - Single course full or excerpt settings now show up exactly as it was set.
+* Fix   - Hide view quiz button from users not taking the lesson
+* Fix   - Hide login message from users who are already logged in
+* Fix   - WooCommerce bug where users couldn't purchases a course
+* Fix   - Ensure that users manually added to a paid course still have access.
+* Tweak - Remove the delete course button from my-course while still allowing developers to show it with a filter.
 
 2016.01.02 - version 1.9
 For a list of files changed please see: https://github.com/woothemes/sensei/compare/version/1.8.9-beta-1...master#files_bucket
