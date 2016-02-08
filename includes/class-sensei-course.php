@@ -1330,7 +1330,12 @@ class Sensei_Course {
 
                     } // End If Statement
 
-                    if ( false == $course_purchased ) {
+	                /**
+	                 * documented in class-sensei-course.php the_course_action_buttons function
+	                 */
+	                $show_delete_course_button = apply_filters( 'sensei_show_delete_course_button', false );
+
+                    if ( false == $course_purchased && $show_delete_course_button ) {
 
                         $active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="'
                             .  __( 'Delete Course', 'woothemes-sensei' ) . '"/></span>';
@@ -2063,7 +2068,20 @@ class Sensei_Course {
                         } // End If Statement
                     } // End If Statement
 
-                    if ( ! $course_purchased && ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() ) ) {?>
+                    /**
+                     * Hide or show the delete course button.
+                     *
+                     * This button on shows in certain instances, but this filter will hide it in those
+                     * cases. For other instances the button will be hidden.
+                     *
+                     * @since 1.9.0
+                     * @param bool $show_delete_course_button defaults to false
+                     */
+                    $show_delete_course_button = apply_filters( 'sensei_show_delete_course_button', false );
+
+                    if ( ! $course_purchased
+                         && ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
+                         && $show_delete_course_button ) { ?>
 
                         <span><input name="course_complete" type="submit" class="course-delete" value="<?php echo __( 'Delete Course', 'woothemes-sensei' ); ?>"/></span>
 
