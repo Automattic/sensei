@@ -733,7 +733,7 @@ Class Sensei_WC{
 
         // based on simple.php in WC templates/single-product/add-to-cart/
         // Get the product
-        $product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
+        $product = self::get_product_object( $wc_post_id );
 
         // do not show the button for invalid products, non purchasable products, out
         // of stock product or if course is already in cart
