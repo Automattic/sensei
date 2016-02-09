@@ -3,7 +3,7 @@
 Plugin Name: Sensei
 Plugin URI: http://www.woothemes.com/products/sensei/
 Description: A course management plugin that offers the smoothest platform for helping you teach anything.
-Version: 1.9.1
+Version: 1.9.2
 Author: WooThemes
 Author URI: http://www.woothemes.com/
 License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -50,7 +50,7 @@ Domain path: /lang/
     }
 
 	// set the sensei version number
-	Sensei()->version = '1.9.1';
+	Sensei()->version = '1.9.2';
 
     //backwards compatibility
     global $woothemes_sensei;

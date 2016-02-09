@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2016.00.00 - version 1.9.2
+* Fix   - Using $wpdb to prefix mysql queries, missed one instance in version 1.9.1
+
+
 2016.02.07 - version 1.9.1
 * Fix   - Use strtolower function on hosts that do not support mb_stringtolower.
 * Fix   - Use $wpdb prefix for mysql queries where it wasn't added.

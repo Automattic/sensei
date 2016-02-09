@@ -996,7 +996,7 @@ class Sensei_Grading {
 
         $comment_query_piece[ 'select']  = "SELECT   COUNT(*) AS total";
         $comment_query_piece[ 'from']    = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
-        $comment_query_piece[ 'where']   = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( wp_commentmeta.meta_key = 'grade')";
+        $comment_query_piece[ 'where']   = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->wp_commentmeta}.meta_key = 'grade')";
         $comment_query_piece[ 'orderby'] = " ORDER BY {$wpdb->comments}.comment_date_gmt DESC ";
 
         $comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'] . $comment_query_piece['orderby'];
