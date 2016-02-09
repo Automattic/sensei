@@ -2726,6 +2726,13 @@ class Sensei_Course {
      * @since 1.9.0
      */
     public static function the_course_enrolment_actions(){
+
+	    global $post;
+
+	    if ( 'course' != $post->post_type ) {
+			return;
+	    }
+
         ?>
         <section class="course-meta course-enrolment">
         <?php
@@ -2733,11 +2740,11 @@ class Sensei_Course {
         $is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
         if ( is_user_logged_in() && ! $is_user_taking_course ) {
 
-            // Get the product ID
-            $wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
+	        // Get the product ID
+	        $wc_product = wc_get_product( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
 
-            // Check for woocommerce
-            if ( Sensei_WC::is_woocommerce_active() && ( 0 < intval( $wc_post_id ) ) ) {
+	        // Check for woocommerce
+	        if ( Sensei_WC::is_woocommerce_active() && ( isset( $wc_product->price  ) ) ) {
 
                 Sensei_WC::the_add_to_cart_button_html($post->ID);
 
