@@ -1507,8 +1507,17 @@ class Sensei_Utils {
 				$user_course_status = $course;
 			}
 			else {
+
+				// check the user_id
 				if( ! $user_id ) {
+
 					$user_id = get_current_user_id();
+
+					if( empty( $user_id ) ){
+
+						return false;
+
+					}
 				}
 
                 if( is_a( $course, 'WP_Post' ) ){
