@@ -692,4 +692,36 @@ class Sensei_Templates {
         sensei_do_deprecated_action('sensei_quiz_question_type', '1.9.0', 'sensei_quiz_question_inside_after', $question_type);
 
     }
+
+
+	public static function the_register_button( $post_id = "" ){
+
+		global $current_user, $post;
+
+		if ( ! get_option('users_can_register')
+		     || 'course' != get_post_type( $post_id )
+		     || ! empty( $current_user->caps )
+		     || ! Sensei()->settings->get('access_permission')  ) {
+
+			return;
+
+		}
+
+		// if user is not logged in skipped for single lesson
+
+		// show a link to the my_courses page or the WordPress register page if
+		// not my courses page was set in the settings
+		if( !empty( $my_courses_page_id ) && $my_courses_page_id ){
+
+			$my_courses_url = get_permalink( $my_courses_page_id  );
+			$register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';
+			echo '<div class="status register">' . $register_link . '</div>' ;
+
+		} else{
+
+			wp_register( '<div class="status register">', '</div>' );
+
+		}
+
+	}
 }//end class

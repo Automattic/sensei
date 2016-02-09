@@ -2738,9 +2738,13 @@ class Sensei_Course {
 
             // Check for woocommerce
             if ( Sensei_WC::is_woocommerce_active() && ( 0 < intval( $wc_post_id ) ) ) {
-                sensei_wc_add_to_cart($post->ID);
+
+                Sensei_WC::the_add_to_cart_button_html($post->ID);
+
             } else {
+
                 sensei_start_course_form($post->ID);
+
             } // End If Statement
 
         } elseif ( is_user_logged_in() ) {
@@ -2772,17 +2776,29 @@ class Sensei_Course {
             <?php }
 
         } else {
-            // Get the product ID
-            $wc_post_id = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
-            // Check for woocommerce
-            if ( Sensei_WC::is_woocommerce_active() && ( 0 < intval( $wc_post_id ) ) ) {
 
-                sensei_wc_add_to_cart($post->ID);
+	        // Get the product ID
+            $wc_product = wc_get_product( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
+
+            // Check for woocommerce
+            if ( Sensei_WC::is_woocommerce_active() && ( isset( $wc_product->price  ) ) ) {
+
+	            Sensei_WC::the_add_to_cart_button_html( $post->ID );
 
             } else {
 
                 if( get_option( 'users_can_register') ) {
 
+	                // set the permissions message
+	                $anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
+	                $anchor_after = '</a>';
+	                $notice = sprintf(
+		                __('or log in to view this courses. Click here to %slogin%s.'),
+		                $anchor_before,
+		                $anchor_after
+	                );
+
+	                Sensei()->permissions_message['message'] = $notice;
 
                     $my_courses_page_id = '';
 

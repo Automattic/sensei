@@ -56,10 +56,6 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_WC', 'c
 // alter the no permissions message to show the woocommerce message instead
 add_filter( 'sensei_the_no_permissions_message', array( 'Sensei_WC', 'alter_no_permissions_message' ), 20, 2 );
 
-//@since 1.9.0
-// add the add to cart button for a valid purchasable course
-add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_WC', 'the_add_to_cart_button_html' ), 20, 1);
-
 // @since 1.9.0
 // add  woocommerce class to the the no permission body class to ensure WooCommerce elements are styled
 add_filter( 'body_class', array( 'Sensei_WC', 'add_woocommerce_body_class' ), 20, 1);

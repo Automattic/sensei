@@ -148,6 +148,7 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course'
 //// no permissions template for the single course
 //
 add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_title'), 20 );
+add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 23 );
 add_action( 'sensei_no_permissions_inside_before_content', array( Sensei()->course , 'course_image'), 25 );
 add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course' , 'the_course_video' ), 40 );
 add_action( 'sensei_no_permissions_inside_after_content', array( Sensei()->modules, 'load_course_module_content_template') , 43 );
