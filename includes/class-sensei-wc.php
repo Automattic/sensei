@@ -885,7 +885,7 @@ Class Sensei_WC{
             $order = new WC_Order( $order_id->ID );
 
             // wc-active is the subscriptions complete status
-            if ( ! in_array( $order->post_status, array( 'wc-complete','wc-processing' ) )
+            if ( ! in_array( $order->post_status, array( 'wc-processing', 'wc-completed' ) )
                 || ! ( 0 < sizeof( $order->get_items() ) )  ){
 
                 continue;
@@ -1649,7 +1649,7 @@ Class Sensei_WC{
 			'post_type' => 'shop_order',
 			'meta_key'    => '_customer_user',
 			'meta_value'  => intval( $user_id ),
-			'post_status' => array( 'wc-complete','wc-processing' ),
+			'post_status' => array( 'wc-processing', 'wc-completed' ),
 		) );
 
 	}

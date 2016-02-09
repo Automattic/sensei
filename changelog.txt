@@ -2,7 +2,7 @@
 
 2016.00.00 - version 1.9.2
 * Fix   - Using $wpdb to prefix mysql queries, missed one instance in version 1.9.1
-
+* Fix   - Use the correct wc statuses when checking if an order is acceptable.
 
 2016.02.07 - version 1.9.1
 * Fix   - Use strtolower function on hosts that do not support mb_stringtolower.
