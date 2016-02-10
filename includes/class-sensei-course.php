@@ -2738,7 +2738,8 @@ class Sensei_Course {
         <?php
         global  $post, $current_user;
         $is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
-        if ( is_user_logged_in() && ! $is_user_taking_course ) {
+
+	    if ( is_user_logged_in() && ! $is_user_taking_course ) {
 
 	        // Get the product ID
 	        $wc_product = wc_get_product( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );

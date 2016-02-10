@@ -272,6 +272,7 @@ class Sensei_Templates {
 
         } // Load the template file
 
+	    // if file is present set it to be loaded otherwise continue with the initial template given by WP
         if ( $file ) {
 
             $template = locate_template( $find );

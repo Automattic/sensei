@@ -1137,7 +1137,6 @@ class Sensei_Utils {
 	 * Set the status message displayed to the user for a course
 	 * @param  integer $course_id ID of course
 	 * @param  integer $user_id   ID of user
-	 * @return array              Status code and message
 	 */
 	public static function sensei_user_course_status_message( $course_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
