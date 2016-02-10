@@ -865,7 +865,6 @@ Class Sensei_WC{
 		    <?php
 
 	    } else {
-
 		    $message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
 	        ?>
 		        <span class="add-to-cart-login">
@@ -1661,6 +1660,29 @@ Class Sensei_WC{
 			'meta_value'  => intval( $user_id ),
 			'post_status' => array( 'wc-processing', 'wc-completed' ),
 		) );
+
+	}
+
+	/**
+	 * Determine if a course can be purchased. Purchasable
+	 * courses have valid products attached. These can also be products
+	 * with price of Zero.
+	 *
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param int $course_id
+	 *
+	 * @return bool
+	 */
+	public static function is_course_purchasable( $course_id = 0 ){
+
+		if( ! self::is_woocommerce_active() ){
+			return false;
+		}
+		$course_product = wc_get_product( self::get_course_product_id( $course_id ) );
+
+		return $course_product->is_purchasable();
 
 	}
 

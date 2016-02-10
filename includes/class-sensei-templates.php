@@ -151,62 +151,37 @@ class Sensei_Templates {
 
         } elseif ( is_single() && get_post_type() == 'course' ) {
 
-            if ( Sensei()->check_user_permissions( 'course-single' ) ) {
+            // possible backward compatible template include if theme overrides content-single-course.php
+            // this template was removed in 1.9.0 and code all moved into the main single-course.php file
+            self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-course.php', true );
 
-                // possible backward compatible template include if theme overrides content-single-course.php
-                // this template was removed in 1.9.0 and code all moved into the main single-course.php file
-                self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-course.php', true );
+            $file 	= 'single-course.php';
+            $find[] = $file;
+            $find[] = Sensei()->template_url . $file;
 
-                $file 	= 'single-course.php';
-                $find[] = $file;
-                $find[] = Sensei()->template_url . $file;
 
-            } else {
+        } elseif ( is_single() && get_post_type() == 'lesson' ) {  // check
 
-                // No Permissions Page
-                return self::get_no_permission_template();
+            // possible backward compatible template include if theme overrides content-single-lesson.php
+            // this template was removed in 1.9.0 and code all moved into the main single-lesson.php file
+            self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-lesson.php', true );
 
-            } // End If Statement
+            $file 	= 'single-lesson.php';
+            $find[] = $file;
+            $find[] = Sensei()->template_url . $file;
 
-        } elseif ( is_single() && get_post_type() == 'lesson' ) {
+        } elseif ( is_single() && get_post_type() == 'quiz' ) {  // check
 
-            if ( Sensei()->check_user_permissions( 'lesson-single' ) ) {
+            // possible backward compatible template include if theme overrides content-single-quiz.php
+            // this template was removed in 1.9.0 and code all moved into the main single-quiz.php file
+            self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-quiz.php' , true);
 
-                // possible backward compatible template include if theme overrides content-single-lesson.php
-                // this template was removed in 1.9.0 and code all moved into the main single-lesson.php file
-                self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-lesson.php', true );
+            $file 	= 'single-quiz.php';
+            $find[] = $file;
+            $find[] = Sensei()->template_url . $file;
 
-                $file 	= 'single-lesson.php';
-                $find[] = $file;
-                $find[] = Sensei()->template_url . $file;
 
-            } else {
-
-                // No Permissions Page
-                return self::get_no_permission_template();
-
-            } // End If Statement
-
-        } elseif ( is_single() && get_post_type() == 'quiz' ) {
-
-            if ( Sensei()->check_user_permissions( 'quiz-single' ) ) {
-
-                // possible backward compatible template include if theme overrides content-single-quiz.php
-                // this template was removed in 1.9.0 and code all moved into the main single-quiz.php file
-                self::locate_and_load_template_overrides( Sensei()->template_url . 'content-single-quiz.php' , true);
-
-                $file 	= 'single-quiz.php';
-                $find[] = $file;
-                $find[] = Sensei()->template_url . $file;
-
-            } else {
-
-                // No Permissions Page
-                return self::get_no_permission_template();
-
-            } // End If Statement
-
-        } elseif ( is_single() && get_post_type() == 'sensei_message' ) {
+        } elseif ( is_single() && get_post_type() == 'sensei_message' ) { //// check
 
             // possible backward compatible template include if theme overrides content-single-message.php
             // this template was removed in 1.9.0 and code all moved into the main single-message.php file
@@ -272,6 +247,7 @@ class Sensei_Templates {
 
         } // Load the template file
 
+	    // if file is present set it to be loaded otherwise continue with the initial template given by WP
         if ( $file ) {
 
             $template = locate_template( $find );

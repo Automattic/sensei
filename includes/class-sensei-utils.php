@@ -1083,6 +1083,10 @@ class Sensei_Utils {
 				$has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
 				if ( $has_questions ) {
 					$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
+
+					if(  empty( $user_lesson_status ) ){
+						continue;
+					}
 					// Get user quiz grade
 					$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
 
@@ -1133,7 +1137,6 @@ class Sensei_Utils {
 	 * Set the status message displayed to the user for a course
 	 * @param  integer $course_id ID of course
 	 * @param  integer $user_id   ID of user
-	 * @return array              Status code and message
 	 */
 	public static function sensei_user_course_status_message( $course_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
@@ -1165,8 +1168,7 @@ class Sensei_Utils {
 		}
 
 		$message = apply_filters( 'sensei_user_course_status_' . $status, $message );
-
-		return array( 'status' => $status, 'box_class' => $box_class, 'message' => $message );
+		Sensei()->notices->add_notice( $message, $box_class   );
 	}
 
 	/**
@@ -1302,6 +1304,24 @@ class Sensei_Utils {
 					}
 				}
 			}
+
+		}else{
+
+			$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+			$a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
+			$a_element .= __( 'course', 'woothemes-sensei' );
+			$a_element .= '</a>';
+
+			if ( Sensei_WC::is_course_purchasable( $course_id ) ){
+
+				$message = sprintf( __( 'Please purchase the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
+
+			} else {
+
+				$message = sprintf( __( 'Please sign up for the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
+
+			}
+
 
 		}
 

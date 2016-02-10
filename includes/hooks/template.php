@@ -351,10 +351,6 @@ add_action('sensei_learner_profile_inside_content_before', array( 'Sensei_Templa
 add_action( 'sensei_course_results_content_before', array('Sensei_Course_Results','deprecate_sensei_course_results_content_hook') );
 
 // @since 1.9.0
-// fire the sensei message hooke inside the course-result.php file
-add_action( 'sensei_course_results_content_inside_before', array('Sensei_Course_Results','fire_sensei_message_hook') );
-
-// @since 1.9.0
 // load the course information on the course results page
 add_action( 'sensei_course_results_content_inside_before_lessons', array( Sensei()->course_results,'course_info') );
 
@@ -442,10 +438,21 @@ add_action( 'sensei_loop_course_before', array( 'Sensei_Course', 'course_categor
  *
  **********************************/
 //@since 1.9.0
-//add a title to the teacher archive page when viewn siteurl/author/{teacher-username}
+//add a title to the teacher archive page when view site-url/author/{teacher-username}
 add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher', 'archive_title' ) );
 
 //@since 1.9.0
 // remove course meta from the teacher page until it can be refactored to allow only removing the
 // teacher name and not all lessons
 add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher', 'remove_course_meta_on_teacher_archive' ) );
+
+/**********************************
+ *
+ * Frontend notices display
+ *
+ **********************************/
+add_action( 'sensei_course_results_content_inside_before', array( Sensei()->notices,'maybe_print_notices' ) );
+add_action( 'sensei_no_permissions_inside_before_content', array( Sensei()->notices,'maybe_print_notices' ), 90 );
+add_action( 'sensei_single_course_content_inside_before', array( Sensei()->notices,'maybe_print_notices' ), 40 );
+add_action( 'sensei_single_lesson_content_inside_before', array( Sensei()->notices,'maybe_print_notices' ), 40 );
+
