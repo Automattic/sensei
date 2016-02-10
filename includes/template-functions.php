@@ -812,6 +812,12 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = ''  ){
 
     }
 
+	if ( 'quiz'== get_post_type( get_the_ID() ) ){
+
+		$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
+
+	}
+
     if( empty( $user_id ) ){
 
         $user_id = get_current_user_id();
