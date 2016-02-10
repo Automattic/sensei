@@ -3555,15 +3555,9 @@ class Sensei_Lesson {
 
             <?php } else { ?>
 
-            <?php if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) &&  sensei_is_login_required() )  : ?>
+					Sensei()->notices->add_notice( $message, 'alert' );
 
-                <div class="sensei-message alert">
-                    <?php
-                    $course_link =  '<a href="'
-                                        . esc_url( get_permalink( $course_id ) )
-                                        . '" title="' . __( 'Sign Up', 'woothemes-sensei' )
-                                        . '">' . __( 'course', 'woothemes-sensei' )
-                                    . '</a>';
+                 }
 
 					if ( Sensei_Utils::is_preview_lesson( get_the_ID( ) ) ) {
 

@@ -149,7 +149,6 @@ class Sensei_Main {
         $this->plugin_url = trailingslashit( plugins_url( '', $plugin = $file ) );
         $this->plugin_path = trailingslashit( dirname( $file ) );
         $this->template_url	= apply_filters( 'sensei_template_url', 'sensei/' );
-        $this->permissions_message = array( 'title' => __( 'Permission Denied', 'woothemes-sensei' ), 'message' => __( 'Unfortunately you do not have permissions to access this page.', 'woothemes-sensei' ) );
 
         // Initialize the core Sensei functionality
         $this->init();
@@ -540,16 +539,6 @@ class Sensei_Main {
 
         global $current_user, $post;
 
-        // if user is not logged in skipped for single lesson
-        if ( empty( $current_user->caps ) && Sensei()->settings->get('access_permission')
-            && 'lesson-single' !=  $page ){
-
-            $this->permissions_message['title'] = __('Restricted Access:', 'woothemes-sensei' );
-            $this->permissions_message['message'] = sprintf( __('You must be logged in to view this %s'), get_post_type() );
-
-            return false;
-        }
-
         $user_allowed = false;
 
         switch ( $page ) {
@@ -570,13 +559,22 @@ class Sensei_Main {
 		        // Handles restrictions on the course
 		        if ( ( ! $prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) ) {
 
-			        $user_allowed                         = false;
-			        $course_link                          = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
-			        $this->permissions_message['message'] = sprintf( __( 'Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link );
+			        $user_allowed = false;
+			        $course_link  = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+			        $this->notices->add_notice( sprintf( __( 'Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link ), 'info' );
 
-		        } elseif ( ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
+		        } elseif( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) && ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID )  ) {
 
-			        $user_allowed                         = false;
+			        $message = sprintf( __( 'Or %1$s login %2$s to access your purchased courses', 'woothemes-sensei' ), '<a href="'.sensei_user_login_url().'">', '</a>' );
+			        $this->notices->add_notice( $message, 'info' );
+
+
+		        } elseif ( ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID )  ) {
+
+					// users who haven't started the course are allowed to view it
+			        $user_allowed                         = true;
+
+
 
 		        } else  {
 
@@ -691,6 +689,7 @@ class Sensei_Main {
          */
         $this->permissions_message = apply_filters( 'sensei_permissions_message', $this->permissions_message, $post->ID );
 
+		// add the permissions message to the stack
 
         if( sensei_all_access() || Sensei_Utils::is_preview_lesson( $post->ID ) ) {
             $user_allowed = true;

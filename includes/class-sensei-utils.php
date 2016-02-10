@@ -1169,8 +1169,7 @@ class Sensei_Utils {
 		}
 
 		$message = apply_filters( 'sensei_user_course_status_' . $status, $message );
-
-		return array( 'status' => $status, 'box_class' => $box_class, 'message' => $message );
+		Sensei()->notices->add_notice( $message, $box_class   );
 	}
 
 	/**

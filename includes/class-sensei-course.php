@@ -2790,6 +2790,9 @@ class Sensei_Course {
             // Check for woocommerce
             if ( Sensei_WC::is_woocommerce_active() && ( isset( $wc_product->price  ) ) ) {
 
+	            $login_link =  '<a href="' . sensei_user_login_url() . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
+	            $message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
+	            Sensei()->notices->add_notice( $message, 'info' ) ;
 	            Sensei_WC::the_add_to_cart_button_html( $post->ID );
 
             } else {
@@ -2805,7 +2808,11 @@ class Sensei_Course {
 		                $anchor_after
 	                );
 
-	                Sensei()->permissions_message['message'] = $notice;
+	                // register the notice to display
+	                if( Sensei()->settings->get( 'access_permission' ) ){
+		                Sensei()->notices->add_notice( $notice, 'info' ) ;
+	                }
+
 
                     $my_courses_page_id = '';
 
