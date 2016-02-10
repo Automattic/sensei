@@ -1664,4 +1664,24 @@ Class Sensei_WC{
 
 	}
 
+	/**
+	 * Determine if a course can be purchased. Purchasable
+	 * courses have valid products attached. These can also be products
+	 * with price of Zero.
+	 *
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param int $course_id
+	 *
+	 * @return bool
+	 */
+	public static function is_course_purchasable( $course_id = 0 ){
+
+		$course_product = wc_get_product( self::get_course_product_id( $course_id ) );
+
+		return $course_product->is_purchasable();
+
+	}
+
 }// end Sensei_WC
