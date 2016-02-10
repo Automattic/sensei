@@ -1677,6 +1677,9 @@ Class Sensei_WC{
 	 */
 	public static function is_course_purchasable( $course_id = 0 ){
 
+		if( ! self::is_woocommerce_active() ){
+			return false;
+		}
 		$course_product = wc_get_product( self::get_course_product_id( $course_id ) );
 
 		return $course_product->is_purchasable();
