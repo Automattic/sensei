@@ -1016,7 +1016,6 @@ function the_no_permissions_message( $post_id ){
      * @param $no_permissions_message
      */
     echo apply_filters( 'sensei_the_no_permissions_message', Sensei()->permissions_message['message'] , $post_id );
-
 }
 
 /**

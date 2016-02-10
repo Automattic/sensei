@@ -71,7 +71,6 @@ class Sensei_Notices{
 	* 
 	* @return void
 	*/
-
 	public function clear_notices(){
 		// assign an empty array to clear all existing notices
 		$this->notices = array();
