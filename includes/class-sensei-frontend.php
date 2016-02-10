@@ -868,7 +868,7 @@ class Sensei_Frontend {
 *
  */
 	public function sensei_frontend_messages() {
-		Sensei()->notices->print_notices();
+		Sensei()->notices->maybe_print_notices();
 	} // End sensei_frontend_messages()
 
 	public function sensei_lesson_video( $post_id = 0 ) {
@@ -1052,7 +1052,7 @@ class Sensei_Frontend {
 	public function sensei_login_form() {
 		?>
 		<div id="my-courses">
-			<?php Sensei()->notices->print_notices(); ?>
+			<?php Sensei()->notices->maybe_print_notices(); ?>
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">

@@ -865,7 +865,6 @@ Class Sensei_WC{
 		    <?php
 
 	    } else {
-
 		    $message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
 	        ?>
 		        <span class="add-to-cart-login">

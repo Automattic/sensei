@@ -93,7 +93,7 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
         $wp_query = $this->messages_query;
 
         ob_start();
-        Sensei()->notices->print_notices();
+        Sensei()->notices->maybe_print_notices();
         Sensei_Templates::get_part('loop', 'message');
         $messages_html = ob_get_clean();
 

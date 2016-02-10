@@ -4,14 +4,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Sensei Notices Class
  *
- * All functionality pertaining to displaying of various notices accross.
+ * All functionality pertaining to displaying of various notices on the frontend.
  *
  * @package Core
  * @author Automattic
  *
  * @since 1.6.3
  */
-
 class Sensei_Notices{
 
 	/**
@@ -52,7 +51,7 @@ class Sensei_Notices{
 	* @return void
 	*/
 
-	public function print_notices(){
+	public function maybe_print_notices(){
 		if(  count( $this->notices ) > 0  ){
 			foreach ($this->notices  as  $notice) {
 

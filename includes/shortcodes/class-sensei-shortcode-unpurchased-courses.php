@@ -137,7 +137,7 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
             );
 
             Sensei()->notices->add_notice( $notice, 'info' );
-            Sensei()->notices->print_notices();
+            Sensei()->notices->maybe_print_notices();
 
             return '';
 
@@ -149,7 +149,7 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
         $wp_query = $this->query;
 
         ob_start();
-        Sensei()->notices->print_notices();
+        Sensei()->notices->maybe_print_notices();
         Sensei_Templates::get_template('loop-course.php');
         $shortcode_output =  ob_get_clean();
 
