@@ -1306,6 +1306,24 @@ class Sensei_Utils {
 				}
 			}
 
+		}else{
+
+			$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+			$a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
+			$a_element .= __( 'course', 'woothemes-sensei' );
+			$a_element .= '</a>';
+
+			if ( Sensei_WC::is_course_purchasable( $course_id ) ){
+
+				$message = sprintf( __( 'Please purchase the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
+
+			} else {
+
+				$message = sprintf( __( 'Please sign up for the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
+
+			}
+
+
 		}
 
 		// Legacy filter

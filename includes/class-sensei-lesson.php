@@ -3527,54 +3527,68 @@ class Sensei_Lesson {
 
                     <?php } else {
 
-	                    if( ! Sensei_Utils::user_started_course( $course_id, $current_user->ID )  ){
+		                    if( ! Sensei_Utils::user_started_course( $course_id, $current_user->ID )  ) { ?>
 
-		                    ?>
+		                        <div class="sensei-message info">
 
-	                        <div class="sensei-message info">
+		                            <?php
+		                            $course_link = '<a href="' . esc_url( get_permalink( $course_id ) )
+		                                            . '"title="' . __( 'Sign Up', 'woothemes-sensei' )
+		                                            . '">' . __( 'course', 'woothemes-sensei' )
+		                                            . '</a>';
 
-	                            <?php
-	                            $course_link = '<a href="' . esc_url( get_permalink( $course_id ) )
-	                                            . '"title="' . __( 'Sign Up', 'woothemes-sensei' )
-	                                            . '">' . __( 'course', 'woothemes-sensei' )
-	                                            . '</a>';
+		                            echo  sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
 
-	                            echo  sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
+		                            ?>
 
-	                            ?>
+		                        </div>
+	                        <?php  } // end if user started course
+                    }// end
+	               } else {
+	                $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
+	                $a_element .= __( 'course', 'woothemes-sensei' );
+	                $a_element .= '</a>';
 
-	                        </div>
-                    <?php
-	                    }
-                    }
-	                ?>
+	                if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
 
-                <?php } else { ?>
+						$message = sprintf( __( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
-                    <div class="sensei-message info"><?php echo sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+					}else{
 
-                <?php } ?>
+						$message = sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
-            <?php } else { ?>
+					}
 
 					Sensei()->notices->add_notice( $message, 'alert' );
 
                  }
 
-					if ( Sensei_Utils::is_preview_lesson( get_the_ID( ) ) ) {
+            } else { ?>
 
-						echo sprintf( __( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ),  $course_link );
+	            <?php if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) &&  sensei_is_login_required() )  : ?>
 
-					} else {
+	                <div class="sensei-message alert">
+	                    <?php
+	                    $course_link =  '<a href="'
+	                                        . esc_url( get_permalink( $course_id ) )
+	                                        . '" title="' . __( 'Sign Up', 'woothemes-sensei' )
+	                                        . '">' . __( 'course', 'woothemes-sensei' )
+	                                    . '</a>';
 
-						echo sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
+						if ( Sensei_Utils::is_preview_lesson( get_the_ID( ) ) ) {
 
-					}
+							echo sprintf( __( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ),  $course_link );
 
-                    ?>
-                </div>
+						} else {
 
-            <?php endif; ?>
+							echo sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
+
+						}
+
+	                    ?>
+	                </div>
+
+	            <?php endif; ?>
 
             <?php } // End If Statement ?>
 
