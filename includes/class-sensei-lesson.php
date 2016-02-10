@@ -3497,16 +3497,18 @@ class Sensei_Lesson {
             return;
 
         }
+
         ?>
 
         <section class="course-signup lesson-meta">
 
             <?php
+
+            global $current_user;
             $wc_post_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
 
-            if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
+            if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $course_id ) ) {
 
-                global $current_user;
                 if( is_user_logged_in() ) {
                     wp_get_current_user();
 
