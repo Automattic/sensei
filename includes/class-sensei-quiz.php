@@ -657,7 +657,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       * @param int $question_id
       * @param int  $user_id ( optional )
       *
-      * @return bool $answers_submitted
+      * @return bool|null $answers_submitted
       */
      public function get_user_question_answer( $lesson_id, $question_id, $user_id = 0 ){
 
@@ -684,7 +684,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              $comment =  Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ), true );
 
              if( ! isset( $comment->comment_content ) ){
-                 return false;
+                 return NULL;
              }
 
              return maybe_unserialize( base64_decode( $comment->comment_content ) );

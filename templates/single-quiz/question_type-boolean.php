@@ -70,7 +70,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                id="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-'. $option_value; ?>"
                name="<?php echo esc_attr( 'sensei_question[' . $question_data[ 'ID' ]  . ']' ); ?>"
                value="<?php echo $option_value; ?>"
-            <?php echo checked( $question_data[ 'user_answer_entry' ], $option, false ); ?>
+            <?php echo checked( $question_data[ 'user_answer_entry' ], $option_value, false ); ?>
             <?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>
 	    />
         <label for="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-' . $option_value; ?>">
