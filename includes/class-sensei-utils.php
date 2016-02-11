@@ -735,7 +735,6 @@ class Sensei_Utils {
 	 */
 	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0, $from_course = false ) {
 
-
 		if( ! $lesson_id ) return false;
 
 		if( intval( $user_id ) == 0 ) {
@@ -747,6 +746,10 @@ class Sensei_Utils {
 
 		// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
 		Sensei_Utils::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
+
+
+		// Delete quiz saved answers
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
 		// Delete lesson status
 		$args = array(

@@ -158,8 +158,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
      */
     public function testSaveUserAnswersUniquelyPerQuiz(){
 
-
-
         // setup data for the tests assertions
         $test_user_id = wp_create_user( 'UniquelyPerQuiz' , 'UniquelyPerQuiz','UniquelyPerQuiz@test-unique.com' );
         $test_lessons = $this->factory->get_random_lesson_id( 3 );
@@ -274,7 +272,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
     function testGetUserAnswersTransient(){
 
         // setup the test data
-
         $test_user_id = wp_create_user('studentTransientsGet', 'transientsGet', 'transientsGet@test.com');
         $test_lesson_id = $this->factory->get_random_lesson_id();
         $transient_key = 'sensei_answers_'.$test_user_id.'_'.$test_lesson_id;
@@ -286,7 +283,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         // test if the answer is taken from the transient
         $this->assertEquals( $transient_get_test_decoded , $users_retrieved_answers ,
             'The transient was not used before proceeding to get the users answers from DB' );
-
 
         //setup next assertion
         $test_quiz_id = Sensei()->lesson->lesson_quizzes($test_lesson_id);
@@ -319,8 +315,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
      */
     public function testGetQuizId(){
 
-
-        // save the user answers
+	    // save the user answers
         $this->assertTrue( method_exists( Sensei()->lesson, 'lesson_quizzes'),
             'The lesson class function `lesson_quizzes` does not exist ' );
 
@@ -340,9 +335,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
      */
     function testGetUserAnswers(){
 
-
-
-        // make sure the function exists
+		// make sure the function exists
         $this->assertTrue( method_exists( Sensei()->quiz, 'get_user_answers'),
             'The quiz class function `get_user_answers` does not exist ' );
 
@@ -413,7 +406,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
     public function testResetUserLessonData(){
 
         // setup globals for access by this method
-
         $test_lesson_id = $this->factory->get_random_lesson_id();
         $test_quiz_id = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
         // save the user answers
@@ -440,6 +432,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
             Sensei()->quiz->reset_user_lesson_data( $test_lesson_id , $test_user_id );
         $this->assertFalse(  $valid_parameters_for_user_with_no_lesson_status ,
             'The function should return false if the user that has no lesson status data stored' );
+
         // test for a valid user and lesson that has a sensei_lesson_status comment by this user
         $user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
         $user_quiz_grades = $this->factory->generate_user_quiz_grades( $user_quiz_answers );
