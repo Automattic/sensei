@@ -889,6 +889,12 @@ class Sensei_Frontend {
 
 		$quiz_id = 0;
 
+		//make sure user is taking course
+		$course_id = Sensei()->lesson->get_course_id( $post->ID );
+		if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ){
+			return;
+		}
+
 		// Lesson quizzes
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $post->ID );
 		$pass_required = true;
