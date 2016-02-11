@@ -669,12 +669,17 @@ Class Sensei_WC{
      *
      * @since 1.9.0
      *
+     * @param array $args
      * @return array
      */
-    public static function get_free_courses(){
+    public static function get_free_courses( $args = array() ){
 
         $free_course_query_args = Sensei_Course::get_default_query_args();
         $free_course_query_args[ 'meta_query' ] = self::get_free_courses_meta_query_args();
+
+	    if( !empty( $args ) ){
+		    wp_parse_args( $args, $free_course_query_args  );
+	    }
 
         // don't show any paid courses
         $courses = self::get_paid_courses();
@@ -692,13 +697,19 @@ Class Sensei_WC{
      * Return all products that are not free
      *
      * @since 1.9.0
+     * @param array $args override default arg values
+     *
      * @return array
      */
-    public static function get_paid_courses(){
+    public static function get_paid_courses( $args = array() ){
 
         $paid_course_query_args = Sensei_Course::get_default_query_args();
 
         $paid_course_query_args[ 'meta_query' ] = self::get_paid_courses_meta_query_args();
+
+	    if( !empty( $args ) ){
+		    wp_parse_args( $args, $paid_course_query_args  );
+	    }
 
         return get_posts(  $paid_course_query_args );
     }
