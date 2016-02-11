@@ -3503,41 +3503,27 @@ class Sensei_Lesson {
 
             if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $course_id ) ) {
 
-                if( is_user_logged_in() ) {
+                if( is_user_logged_in() && ! Sensei_Utils::user_started_course( $course_id, $current_user->ID )  ) {
 
-                    if( Sensei_WC::has_customer_bought_product( get_current_user_id(), $wc_post_id ) ) {
+	                    $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
+	                    $a_element .= __( 'course', 'woothemes-sensei' );
+	                    $a_element .= '</a>';
 
-                        $prereq_course_id = get_post_meta( $course_id, '_course_prerequisite',true );
-                        $course_link = '<a href="' . esc_url( get_permalink( $prereq_course_id ) ) . '" title="' . esc_attr( get_the_title( $prereq_course_id ) ) . '">' . __( 'the previous course', 'woothemes-sensei' )  . '</a>';
-	                    $message = sprintf( __( 'Please complete %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
-	                    Sensei()->notices->add_notice( $message, 'alert' );
+	                    if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
 
-                     } else {
+		                    $message = sprintf( __( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
-	                    if( ! Sensei_Utils::user_started_course( $course_id, $current_user->ID )  ) {
+	                    }else{
 
+		                    $message = sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
-		                    $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
-		                    $a_element .= __( 'course', 'woothemes-sensei' );
-		                    $a_element .= '</a>';
+	                    }
 
-		                    if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
+	                    Sensei()->notices->add_notice( $message, 'info' );
 
-			                    $message = sprintf( __( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
+                }
 
-		                    }else{
-
-			                    $message = sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
-
-		                    }
-
-		                    Sensei()->notices->add_notice( $message, 'info' );
-
-	                    } // end if user started course
-
-                    }// end
-
-	               } else {
+	            if( ! is_user_logged_in() ) {
 
 	                $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
 	                $a_element .= __( 'course', 'woothemes-sensei' );
@@ -3555,7 +3541,7 @@ class Sensei_Lesson {
 
 					Sensei()->notices->add_notice( $message, 'alert' );
 
-                 }
+	            }
 
             } else { ?>
 
