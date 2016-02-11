@@ -728,7 +728,7 @@ Class Sensei_WC{
      */
     public static function the_add_to_cart_button_html( $course_id ){
 
-        if ( ! Sensei_Course::is_prerequisite_complete( $course_id )) {
+        if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) || self::is_course_in_cart( $course_id ) ) {
             return '';
         }
 
