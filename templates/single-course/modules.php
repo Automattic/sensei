@@ -89,6 +89,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                                         <?php the_title(); ?>
 
+	                                    <?php  if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) ) { ?>
+
+	                                        <span class="preview-label"> Free Preview</span>
+
+                                        <?php } ?>
+
                                     </a>
 
                                 </li>
