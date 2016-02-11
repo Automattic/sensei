@@ -1,8 +1,24 @@
 *** Sensei Changelog ***
 
-2016.00.00 - version 1.9.2
+2016.02.11 - version 1.9.2
+* Fix   - Access permissions restored to the way it worked in version 1.8.8, totally removing the no-permissions templates.
 * Fix   - Using $wpdb to prefix mysql queries, missed one instance in version 1.9.1
 * Fix   - Use the correct wc statuses when checking if an order is acceptable.
+* Fix   - Ensure wc_get_product is wrapped inside a is WooCommerce active check to ensure the function exists.
+* Fix   - Avoid checking if a user is on a course if the user is not logged in, removing an error notice.
+* Fix   - ensure the take course button shows up for logged in user on the no-permissions template.
+* Fix   - Boolean questions should not have default values.
+* Fix   - Fix up the course component widget.
+* Fix   - Add the missing preview label for preview lessons that appear in modules on a single course.
+* Fix   - Remove users saved data from lesson when they are removed.
+* Fix   - Hide complete lesson button on lesson when the current user is not taking the lessons course.
+* Fix   - Hide preview if user is already taking course.
+* Fix   - Creating sensei pages now updated correctly within settings.
+* Tweak - Hide add to cart if the course is already in cart.
+* Tweak - Get user saved answers to return null of none was saved as false values could also be answer values.
+* Tweak - Function sensei_can_user_view_lesson will now also work from the quiz template context.
+* Tweak - Fix up the frontend notification system to use the notification functionality built into Sensei.
+* New   - Introduce a new function for checking if a course is purchasable.
 
 2016.02.07 - version 1.9.1
 * Fix   - Use strtolower function on hosts that do not support mb_stringtolower.
