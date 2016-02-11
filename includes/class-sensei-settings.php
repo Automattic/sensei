@@ -64,16 +64,10 @@ class Sensei_Settings extends Sensei_Settings_API {
      * @param $new_value
      */
     public function set( $setting, $new_value ){
-
+    	
         $settings = get_option( $this->token, array() );
-
-        if( isset(  $settings[ $setting ] ) ){
-
-            $settings[ $setting ] = $new_value;
-            return update_option( $this->token,$settings );
-
-        }
-        return false;
+		$settings[ $setting ] = $new_value;
+		return update_option( $this->token,$settings );
 
     }
 
