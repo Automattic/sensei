@@ -2741,13 +2741,11 @@ class Sensei_Course {
 
 	    if ( is_user_logged_in() && ! $is_user_taking_course ) {
 
-	        // Get the product ID
-	        $wc_product = wc_get_product( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
-
 	        // Check for woocommerce
-	        if ( Sensei_WC::is_woocommerce_active() && ( isset( $wc_product->price  ) ) ) {
+	        if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) ) {
 
-                Sensei_WC::the_add_to_cart_button_html($post->ID);
+		        // Get the product ID
+                Sensei_WC::the_add_to_cart_button_html($post->ID );
 
             } else {
 
@@ -2785,11 +2783,8 @@ class Sensei_Course {
 
         } else {
 
-	        // Get the product ID
-            $wc_product = wc_get_product( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
-
             // Check for woocommerce
-            if ( Sensei_WC::is_woocommerce_active() && ( isset( $wc_product->price  ) ) ) {
+		    if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) ) {
 
 	            $login_link =  '<a href="' . sensei_user_login_url() . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
 	            $message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
