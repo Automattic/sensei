@@ -1279,6 +1279,7 @@ class Sensei_Utils {
 						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
 					} else {
 						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ) );
+						$message .= sprintf( __( ' %1$sGo back to the lesson page%2$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" title="' . esc_attr( get_the_title( $lesson_id ) ) . '">', '</a>' );
 					}
 				}
 				// Lesson status must be "failed"
