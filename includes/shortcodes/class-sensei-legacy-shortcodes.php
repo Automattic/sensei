@@ -87,7 +87,7 @@ class Sensei_Legacy_Shortcodes {
      */
     public static function free_courses( $atts, $content = null ) {
 
-        return self::generate_shortcode_courses( __( 'Free Courses', 'woothemes-sensei' ) 'freecourses' );
+        return self::generate_shortcode_courses( __( 'Free Courses', 'woothemes-sensei' ), 'freecourses' );
 
     } // End free_courses()
 
