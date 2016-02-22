@@ -1202,58 +1202,62 @@ class Sensei_Core_Modules
 
     }
 
-    /**
-     * Get ordered array of all modules in course
-     *
-     * @since 1.8.0
-     *
-     * @param  integer $course_id ID of course
-     * @return array              Ordered array of module taxonomy term objects
-     */
-    public function get_course_modules($course_id = 0)
-    {
-        $course_id = intval($course_id);
-        if (0 < $course_id) {
+	/**
+	 * Get ordered array of all modules in course
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param  integer $course_id ID of course
+	 * @return array              Ordered array of module taxonomy term objects
+	 */
+	public function get_course_modules($course_id = 0)
+	{
+		$course_id = intval($course_id);
+		if ( empty(  $course_id ) ) {
+			return array();
+		}
 
-            // Get modules for course
-            $modules = wp_get_post_terms($course_id, $this->taxonomy);
+		// Get modules for course
+		$modules = wp_get_post_terms( $course_id, $this->taxonomy );
 
-            // Get custom module order for course
-            $order = $this->get_course_module_order($course_id);
+		// Get custom module order for course
+		$order = $this->get_course_module_order($course_id);
 
-            // Sort by custom order if custom order exists
-            if ($order) {
-                $ordered_modules = array();
-                $unordered_modules = array();
-                foreach ($modules as $module) {
-                    $order_key = array_search($module->term_id, $order);
-                    if ($order_key !== false) {
-                        $ordered_modules[$order_key] = $module;
-                    } else {
-                        $unordered_modules[] = $module;
-                    }
-                }
+		if ( ! $order) {
+			return $modules;
+		}
 
-                // Order modules correctly
-                ksort($ordered_modules);
+		// Sort by custom order
+		$ordered_modules = array();
+		$unordered_modules = array();
+		foreach ( $modules as $module ) {
+			$order_key = array_search($module->term_id, $order);
+			if ($order_key !== false) {
+				$ordered_modules[$order_key] = $module;
+			} else {
+				$unordered_modules[] = $module;
+			}
+		}
 
-                // Append modules that have not yet been ordered
-                if (count($unordered_modules) > 0) {
-                    $ordered_modules = array_merge($ordered_modules, $unordered_modules);
-                }
+		// Order modules correctly
+		ksort( $ordered_modules );
 
-            } else {
+		// Append modules that have not yet been ordered
+		if ( count($unordered_modules) > 0 ) {
+			$ordered_modules = array_merge($ordered_modules, $unordered_modules);
+		}
 
-                $ordered_modules = $modules;
+		// remove order key but maintain order
+		$ordered_modules_with_keys_in_sequence = array();
+		foreach ( $ordered_modules as $key => $module ) {
 
-            }
+			$ordered_modules_with_keys_in_sequence[] = $module;
 
-            return $ordered_modules;
+		}
 
-        }
+		return $ordered_modules_with_keys_in_sequence;
 
-        return false;
-    }
+	}
 
     /**
      * Load frontend CSS
