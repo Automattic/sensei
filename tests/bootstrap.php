@@ -32,7 +32,7 @@ class Sensei_Unit_Tests_Bootstrap {
 		tests_add_filter( 'setup_theme', array( $this, 'install_sensei' ) );
 		// load the WP testing environment
 		require_once( $this->wp_tests_dir . '/includes/bootstrap.php' );
-		// load WC testing framework
+		// load Sensei testing framework
 		$this->includes();
 	}
 	/**
@@ -44,14 +44,11 @@ class Sensei_Unit_Tests_Bootstrap {
 		require_once( $this->plugin_dir . '/woothemes-sensei.php' );
 	}
 	/**
-	 * Install Sensei after the test environment and WC have been loaded.
+	 * Install Sensei after the test environment and Sensei have been loaded.
 	 *
 	 * @since 2.2
 	 */
 	public function install_sensei() {
-		// clean existing install first
-		define( 'WP_UNINSTALL_PLUGIN', true );
-		WC_Install::install();
 		// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
 		$GLOBALS['wp_roles']->reinit();
 		echo "Installing Sensei..." . PHP_EOL;
