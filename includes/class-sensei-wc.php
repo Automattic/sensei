@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside W
  */
 
 Class Sensei_WC{
+
     /**
      * Load the files needed for the woocommerce integration.
      *
@@ -1509,7 +1510,7 @@ Class Sensei_WC{
      * @param  integer $user_id
      * @return boolean $user_access_permission
      */
-    public static function get_subscription_permission( $user_access_permission, $user_id ){
+    public static function get_subscription_permission( $user_access_permission , $user_id ){
 
         global $post;
 
@@ -1571,6 +1572,69 @@ Class Sensei_WC{
 
     } // end get_subscription_permission
 
+	/**
+	 * @since 1.9.0
+	 *
+	 * @param $has_user_started_course
+	 * @param $course_id
+	 * @param $user_id
+	 *
+	 * @return bool $has_user_started_course
+	 */
+	public static function get_subscription_user_started_course( $has_user_started_course, $course_id, $user_id ){
+
+		if ( ! is_user_logged_in( ) ) {
+
+			return $has_user_started_course;
+
+		}
+
+		// cached user course access for this process instance
+		global $sensei_wc_subscription_access_store;
+		if ( ! is_array( $sensei_wc_subscription_access_store ) ) {
+			$sensei_wc_subscription_access_store = array();
+		}
+
+		// user temp cached data so we don't output the mesage again
+		$user_data_index_key = $course_id .'_' . $user_id;
+		if ( isset( $sensei_wc_subscription_access_store[ $user_data_index_key  ] ) ) {
+
+			return $sensei_wc_subscription_access_store[ $user_data_index_key ];
+
+		} else {
+
+			if( empty( $course_id ) || empty( $user_id ) ){
+				return $has_user_started_course;
+			}
+
+			// if the course has no subscription WooCommerce product attached to return the permissions as is
+			$product_id = Sensei_WC::get_course_product_id( $course_id );
+			$product = wc_get_product( $product_id );
+			if( ! in_array( $product->get_type(), self::get_subscription_types() ) ){
+
+				return $has_user_started_course;
+
+			}
+
+			// give access if user has active subscription on the product otherwise restrict it.
+			// also check if the user was added to the course directly after the subscription started.
+			if( wcs_user_has_subscription( $user_id, $product_id, 'active'  )
+			    || wcs_user_has_subscription( $user_id, $product_id, 'pending-cancel'  )
+			    || self::was_user_added_without_subscription( $user_id, $product_id, $course_id  )  ){
+
+				$has_user_started_course = true;
+
+			} else {
+
+				$has_user_started_course = false;
+
+			}
+			$sensei_wc_subscription_access_store[ $user_data_index_key ] = $has_user_started_course;
+			return $has_user_started_course;
+		}
+
+	}
+
     /**
      * Get all the valid subscription types.
      *
@@ -1604,9 +1668,10 @@ Class Sensei_WC{
         $course_start_date = '';
         $subscription_start_date = '';
         $is_a_subscription ='';
-        $was_user_added_without_subscription = true;
+        $was_user_added_without_subscription = false;
 
         // if user is not on the course they were not added
+	    remove_filter( 'sensei_user_started_course',     array( 'Sensei_WC', 'get_subscription_user_started_course' ), 10, 3 );
         if( ! Sensei_Utils::user_started_course( $course_id, $user_id ) ){
 
             return false;
@@ -1621,6 +1686,8 @@ Class Sensei_WC{
             return true;
 
         }
+
+	    add_filter( 'sensei_user_started_course',     array( 'Sensei_WC', 'get_subscription_user_started_course' ), 10, 3 );
 
         $course_status =  Sensei_Utils::user_course_status( $course_id, $user_id );
 
@@ -1664,13 +1731,18 @@ Class Sensei_WC{
 	 */
 	public static function get_user_product_orders( $user_id =  0, $product_id ) {
 
-		return get_posts( array(
+		$args = array(
 			'numberposts' => -1,
 			'post_type' => 'shop_order',
 			'meta_key'    => '_customer_user',
 			'meta_value'  => intval( $user_id ),
-			'post_status' => array( 'wc-processing', 'wc-completed' ),
-		) );
+		);
+
+		if( class_exists( 'WC_Subscriptions_Manager' ) ) {
+			$args['post_type'] = array( 'shop_order', 'shop_subscription' );
+		}
+
+		return get_posts( $args );
 
 	}
 

@@ -74,8 +74,6 @@ add_action( 'woocommerce_email_after_order_table', array( 'Sensei_WC', 'email_co
  * Checkout
  *
  ************************************/
-//add_action( 'woocommerce_payment_complete',                 array( 'Sensei_WC', 'complete_order' ) );
-//add_action( 'woocommerce_thankyou' ,                        array( 'Sensei_WC', 'complete_order' ) );
 add_action( 'woocommerce_delete_shop_order_transients',           array( 'Sensei_WC', 'complete_order' ) );
 add_action( 'woocommerce_delete_shop_order_transients',            array( 'Sensei_WC', 'cancel_order' ) );
 // Disable guest checkout if a course is in the cart as we need a valid user to store data for
@@ -91,3 +89,6 @@ add_filter( 'woocommerce_payment_complete_order_status',    array( 'Sensei_WC', 
 add_action( 'woocommerce_subscription_status_pending_to_active', array( 'Sensei_WC', 'activate_subscription' ), 50, 3 );
 // filter the user permission of the subscription is not valid
 add_filter( 'sensei_access_permissions',               array( 'Sensei_WC', 'get_subscription_permission' ), 10, 2 );
+
+//block user from accessing course when subscription
+add_filter( 'sensei_user_started_course',     array( 'Sensei_WC', 'get_subscription_user_started_course' ), 10, 3 );

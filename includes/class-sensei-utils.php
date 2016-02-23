@@ -1385,21 +1385,47 @@ class Sensei_Utils {
 	 */
 	public static function user_started_course( $course_id = 0, $user_id = 0 ) {
 
+		$user_started_course = false;
+
 		if( $course_id ) {
+
 			if( ! $user_id ) {
 				$user_id = get_current_user_id();
 			}
 
-            if( ! $user_id > 0 ){
-                return false;
-            }
+            if ( ! $user_id > 0 ) {
 
-			$user_course_status_id = Sensei_Utils::sensei_get_activity_value( array( 'post_id' => $course_id, 'user_id' => $user_id, 'type' => 'sensei_course_status', 'field' => 'comment_ID' ) );
-			if( $user_course_status_id ) {
-				return $user_course_status_id;
-			}
+	            $user_started_course =  false;
+
+            } else {
+
+	            $activity_args = array(
+		            'post_id' => $course_id,
+		            'user_id' => $user_id,
+		            'type' => 'sensei_course_status',
+		            'field' => 'comment_ID'
+	            );
+
+				$user_course_status_id = Sensei_Utils::sensei_get_activity_value( $activity_args );
+
+				if ( $user_course_status_id ) {
+
+					$user_started_course = $user_course_status_id;
+
+				}
+            }
 		}
-		return false;
+
+		/**
+		 * Filter the user started course value
+		 *
+		 * @since 1.9.3
+		 *
+		 * @param bool $user_started_course
+		 * @param integer $course_id
+		 */
+		return apply_filters( 'sensei_user_started_course', $user_started_course, $course_id, $user_id );
+
 	}
 
 	/**
