@@ -1210,8 +1210,8 @@ class Sensei_Core_Modules
 	 * @param  integer $course_id ID of course
 	 * @return array              Ordered array of module taxonomy term objects
 	 */
-	public function get_course_modules($course_id = 0)
-	{
+	public function get_course_modules($course_id = 0) {
+
 		$course_id = intval($course_id);
 		if ( empty(  $course_id ) ) {
 			return array();

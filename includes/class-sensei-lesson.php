@@ -255,20 +255,29 @@ class Sensei_Lesson {
 		if ( !current_user_can( $post_type->cap->edit_post, $post_id ) ) {
 			return $post_id;
 		} // End If Statement
+
 		// Check if the current post type is a page
 		if ( 'page' == $_POST[ 'post_type' ] ) {
+
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
+
 				return $post_id;
+
 			} // End If Statement
 		} else {
 			if ( ! current_user_can( 'edit_post', $post_id ) ) {
 				return $post_id;
 			} // End If Statement
 		} // End If Statement
+
 		// Save the post meta data fields
 		if ( isset($this->meta_fields) && is_array($this->meta_fields) ) {
+
 			foreach ( $this->meta_fields as $meta_key ) {
+
+				remove_action( 'save_post', array( $this, 'meta_box_save') );
 				$this->save_post_meta( $meta_key, $post_id );
+
 			} // End For Loop
 		} // End If Statement
 	} // End meta_box_save()
