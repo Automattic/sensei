@@ -323,7 +323,6 @@ class Sensei_Utils {
 	 */
 	public static function sensei_get_activity_value ( $args = array() ) {
 
-
 		$activity_value = false;
 		if ( !empty($args['field']) ) {
 			$comment = Sensei_Utils::sensei_check_for_activity( $args, true );
@@ -736,7 +735,6 @@ class Sensei_Utils {
 	 */
 	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0, $from_course = false ) {
 
-
 		if( ! $lesson_id ) return false;
 
 		if( intval( $user_id ) == 0 ) {
@@ -748,6 +746,10 @@ class Sensei_Utils {
 
 		// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
 		Sensei_Utils::sensei_delete_quiz_answers( $lesson_quiz_id, $user_id );
+
+
+		// Delete quiz saved answers
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
 		// Delete lesson status
 		$args = array(
@@ -1084,6 +1086,10 @@ class Sensei_Utils {
 				$has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
 				if ( $has_questions ) {
 					$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
+
+					if(  empty( $user_lesson_status ) ){
+						continue;
+					}
 					// Get user quiz grade
 					$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
 
@@ -1134,7 +1140,6 @@ class Sensei_Utils {
 	 * Set the status message displayed to the user for a course
 	 * @param  integer $course_id ID of course
 	 * @param  integer $user_id   ID of user
-	 * @return array              Status code and message
 	 */
 	public static function sensei_user_course_status_message( $course_id = 0, $user_id = 0 ) {
 		if( intval( $user_id ) == 0 ) {
@@ -1166,8 +1171,7 @@ class Sensei_Utils {
 		}
 
 		$message = apply_filters( 'sensei_user_course_status_' . $status, $message );
-
-		return array( 'status' => $status, 'box_class' => $box_class, 'message' => $message );
+		Sensei()->notices->add_notice( $message, $box_class   );
 	}
 
 	/**
@@ -1303,6 +1307,24 @@ class Sensei_Utils {
 					}
 				}
 			}
+
+		}else{
+
+			$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+			$a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
+			$a_element .= __( 'course', 'woothemes-sensei' );
+			$a_element .= '</a>';
+
+			if ( Sensei_WC::is_course_purchasable( $course_id ) ){
+
+				$message = sprintf( __( 'Please purchase the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
+
+			} else {
+
+				$message = sprintf( __( 'Please sign up for the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
+
+			}
+
 
 		}
 
@@ -1508,8 +1530,17 @@ class Sensei_Utils {
 				$user_course_status = $course;
 			}
 			else {
+
+				// check the user_id
 				if( ! $user_id ) {
+
 					$user_id = get_current_user_id();
+
+					if( empty( $user_id ) ){
+
+						return false;
+
+					}
 				}
 
                 if( is_a( $course, 'WP_Post' ) ){
@@ -2202,7 +2233,7 @@ class Sensei_Utils {
      */
     public static function array_zip_merge( $array_a, $array_b ){
 
-        if( ! isset( $array_a[0]  ) || ! isset( $array_b[0] )  ){
+        if( ! is_array( $array_a ) || ! is_array( $array_b )  ){
             trigger_error('array_zip_merge requires both arrays to be indexed arrays ');
         }
 

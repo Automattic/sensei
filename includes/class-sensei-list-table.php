@@ -39,6 +39,18 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public $total_items = 0;
 
+
+    /**
+     * @var array $sortable_columns
+     *
+     */
+    public $sortable_columns = array();
+
+    /**
+     * @var array columns
+     */
+    public $columns = array();
+
 	/**
 	 * Constructor
 	 * @since  1.2.0
@@ -53,8 +65,10 @@ class Sensei_List_Table extends WP_List_Table {
 								'plural'   => 'wp_list_table_' . $this->token . 's', // Plural label
 								'ajax'     => false // No Ajax for this table
 		) );
+
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
+
 	} // End __construct()
 
 	/**
@@ -95,9 +109,11 @@ class Sensei_List_Table extends WP_List_Table {
 			<?php
 			if( isset( $_GET ) && count( $_GET ) > 0 ) {
 				foreach( $_GET as $k => $v ) {
-					if( 's' != $k ) {
-						?><input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" /><?php
-					}
+					if( 's' != $k ) { ?>
+
+                        <input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
+
+                    <?php  }
 				}
 			}
 			?>
@@ -135,7 +151,6 @@ class Sensei_List_Table extends WP_List_Table {
 		$columns = $this->get_columns();
 		$hidden = get_hidden_columns( $this->screen );
 
-		$sortable_columns = $this->get_sortable_columns();
 		/**
 		 * Filter the list table sortable columns for a specific screen.
 		 *
@@ -146,7 +161,7 @@ class Sensei_List_Table extends WP_List_Table {
 		 *
 		 * @param array $sortable_columns An array of sortable columns.
 		 */
-		$_sortable = apply_filters( "manage_{$this->screen->id}_sortable_columns", $sortable_columns );
+		$_sortable = apply_filters( "manage_{$this->screen->id}_sortable_columns", $this->get_sortable_columns() );
 
 		$sortable = array();
 		foreach ( $_sortable as $id => $data ) {

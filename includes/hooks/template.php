@@ -70,7 +70,7 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Templat
 
 // @1.9.0
 // Filter the content and replace it with the excerpt if the user doesn't have full access
-add_filter( 'the_content', array('Sensei_Course', 'single_course_content' ) );
+add_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 
 // @1.9.0
 // Deprecate lessons specific single course hooks
@@ -143,6 +143,19 @@ add_filter('get_the_excerpt', array( 'Sensei_Course', 'full_content_excerpt_over
 //Course meta
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 30 );
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course' , 'the_course_video' ), 40 );
+
+//
+//// no permissions template for the single course
+//
+add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_title'), 20 );
+add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 23 );
+add_action( 'sensei_no_permissions_inside_before_content', array( Sensei()->course , 'course_image'), 25 );
+add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course' , 'the_course_video' ), 40 );
+add_action( 'sensei_no_permissions_inside_after_content', array( Sensei()->modules, 'load_course_module_content_template') , 43 );
+add_action( 'sensei_no_permissions_inside_after_content' , array( 'Sensei_Course','the_course_lessons_title'), 45 );
+add_action( 'sensei_no_permissions_inside_after_content', array('Sensei_Course','load_single_course_lessons_query' ),50 );
+add_action( 'sensei_no_permissions_inside_after_content', 'course_single_lessons', 60 );
+add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Utils','restore_wp_query' ), 70);
 
 /***************************
  *
@@ -255,7 +268,7 @@ add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Lesson',
 
 // @since 1.9.0
 // hook the single lesson course_signup_link
-add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Lesson', 'course_signup_link' ), 30 );
+add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'course_signup_link' ), 30 );
 
 // @since 1.9.0
 // hook the deprecate breadcrumbs and comments hooks
@@ -301,6 +314,10 @@ add_action( 'sensei_loop_lesson_inside_before', array( Sensei()->lesson, 'the_ar
 //Output the lesson header on the content-lesson.php which runs inside the lessons loop
 add_action( 'sensei_content_lesson_inside_before', array( 'Sensei_Lesson', 'the_lesson_meta' ), 20 );
 
+// @since 1.9.0
+// output only part of the lesson on the archive
+add_filter('the_content', array( 'Sensei_Lesson','limit_archive_content' ) );
+
 /**************************
  *
  *
@@ -334,12 +351,11 @@ add_action('sensei_learner_profile_inside_content_before', array( 'Sensei_Templa
 add_action( 'sensei_course_results_content_before', array('Sensei_Course_Results','deprecate_sensei_course_results_content_hook') );
 
 // @since 1.9.0
-// fire the sensei message hooke inside the course-result.php file
-add_action( 'sensei_course_results_content_inside_before', array('Sensei_Course_Results','fire_sensei_message_hook') );
+// load the course information on the course results page
+add_action( 'sensei_course_results_content_inside_before_lessons', array( Sensei()->course_results,'course_info') );
 
 // @since 1.9.0
-// load the course information on the course results page
-add_action( 'sensei_course_results_content_inside_after', array( Sensei()->course_results,'course_info') );
+add_action( 'sensei_course_results_content_inside_before', array( Sensei()->course,'course_image') );
 
 // @since 1.9.0
 // deprecate the course results top hook in favour of a new hook
@@ -422,10 +438,21 @@ add_action( 'sensei_loop_course_before', array( 'Sensei_Course', 'course_categor
  *
  **********************************/
 //@since 1.9.0
-//add a title to the teacher archive page when viewn siteurl/author/{teacher-username}
+//add a title to the teacher archive page when view site-url/author/{teacher-username}
 add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher', 'archive_title' ) );
 
 //@since 1.9.0
 // remove course meta from the teacher page until it can be refactored to allow only removing the
 // teacher name and not all lessons
 add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher', 'remove_course_meta_on_teacher_archive' ) );
+
+/**********************************
+ *
+ * Frontend notices display
+ *
+ **********************************/
+add_action( 'sensei_course_results_content_inside_before', array( Sensei()->notices,'maybe_print_notices' ) );
+add_action( 'sensei_no_permissions_inside_before_content', array( Sensei()->notices,'maybe_print_notices' ), 90 );
+add_action( 'sensei_single_course_content_inside_before', array( Sensei()->notices,'maybe_print_notices' ), 40 );
+add_action( 'sensei_single_lesson_content_inside_before', array( Sensei()->notices,'maybe_print_notices' ), 40 );
+

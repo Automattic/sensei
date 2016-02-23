@@ -11,6 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @version     1.9.0
  */
 ?>
-
-    </main>
+        </div>
+        <?php get_sidebar(); ?>
 </div>

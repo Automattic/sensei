@@ -59,7 +59,7 @@ class Sensei_Settings_API {
 
         add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
-		add_action( 'init', array( $this, 'general_init' ) );
+        add_action( 'init', array( $this, 'general_init' ), 5 );
 
 	} // End setup_settings()
 
@@ -292,19 +292,42 @@ class Sensei_Settings_API {
 	 * @since  1.0.0
 	 * @return void
 	 */
-	public function settings_screen () {
+	public function settings_screen ()
+    {
 
-?>
-<div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
-	<?php screen_icon( 'woothemes-sensei' ); ?>
-	<h2><?php echo esc_html( $this->name ); ?><?php if ( '' != $this->settings_version ) { echo ' <span class="version">' . $this->settings_version . '</span>'; } ?></h2>
-	<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
-	<?php do_action( 'settings_before_form' ); ?>
-	<form action="options.php" method="post">
-		<?php $this->settings_tabs(); ?>
-		<?php settings_fields( $this->token ); ?>
-		<?php do_settings_sections( $this->token ); ?>
-		<?php submit_button(); ?>
+        ?>
+        <div id="woothemes-sensei" class="wrap <?php echo esc_attr($this->token); ?>">
+        <?php screen_icon('woothemes-sensei'); ?>
+        <h2><?php echo esc_html($this->name); ?><?php if ('' != $this->settings_version) {
+                echo ' <span class="version">' . $this->settings_version . '</span>';
+            } ?></h2>
+        <p class="powered-by-woo"><?php _e('Powered by', 'woothemes-sensei'); ?><a href="http://www.woothemes.com/"
+                                                                                   title="WooThemes"><img
+                    src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes"/></a></p>
+        <?php do_action('settings_before_form'); ?>
+        <form action="options.php" method="post">
+
+        <?php
+        $this->settings_tabs();
+        settings_fields($this->token);
+        $page = 'woothemes-sensei-settings';
+        foreach ($this->sections as $section_id => $section) {
+
+            echo '<section id="' . $section_id . '">';
+
+            if ($section['name'])
+                echo "<h2>{$section['name']}</h2>\n";
+
+            echo '<table class="form-table">';
+            do_settings_fields($page, $section_id );
+            echo '</table>';
+
+            echo '</section>';
+
+        }
+
+        submit_button();
+        ?>
 	</form>
 	<?php do_action( 'settings_after_form' ); ?>
 </div><!--/#woothemes-sensei-->
@@ -318,9 +341,8 @@ class Sensei_Settings_API {
 	 * @return array
 	 */
 	public function get_settings () {
-		if ( ! is_array( $this->settings ) ) {
-			$this->settings = get_option( $this->token, array() );
-		}
+
+        $this->settings = get_option( $this->token, array() );
 
 		foreach ( $this->fields as $k => $v ) {
 			if ( ! isset( $this->settings[$k] ) && isset( $v['default'] ) ) {

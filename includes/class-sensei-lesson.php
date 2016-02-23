@@ -255,20 +255,29 @@ class Sensei_Lesson {
 		if ( !current_user_can( $post_type->cap->edit_post, $post_id ) ) {
 			return $post_id;
 		} // End If Statement
+
 		// Check if the current post type is a page
 		if ( 'page' == $_POST[ 'post_type' ] ) {
+
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
+
 				return $post_id;
+
 			} // End If Statement
 		} else {
 			if ( ! current_user_can( 'edit_post', $post_id ) ) {
 				return $post_id;
 			} // End If Statement
 		} // End If Statement
+
 		// Save the post meta data fields
 		if ( isset($this->meta_fields) && is_array($this->meta_fields) ) {
+
 			foreach ( $this->meta_fields as $meta_key ) {
+
+				remove_action( 'save_post', array( $this, 'meta_box_save') );
 				$this->save_post_meta( $meta_key, $post_id );
+
 			} // End For Loop
 		} // End If Statement
 	} // End meta_box_save()
@@ -1719,7 +1728,7 @@ class Sensei_Lesson {
 
 			// Load the lessons script
             wp_enqueue_media();
-			wp_enqueue_script( 'sensei-lesson-metadata', Sensei()->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'select2' ,'jquery-ui-sortable' ), Sensei()->version, true );
+			wp_enqueue_script( 'sensei-lesson-metadata', Sensei()->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'sensei-core-select2' ,'jquery-ui-sortable' ), Sensei()->version, true );
 			wp_enqueue_script( 'sensei-lesson-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 			wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), Sensei()->version, true );
 
@@ -1826,7 +1835,8 @@ class Sensei_Lesson {
 		if ( isset($_POST['lesson_add_course_nonce']) ) {
 			$nonce = esc_html( $_POST['lesson_add_course_nonce'] );
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_add_course_nonce' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'lesson_add_course_nonce' )
+            || ! current_user_can( 'edit_lessons' ) ) {
 			die('');
 		} // End If Statement
 		// Parse POST data
@@ -1854,9 +1864,13 @@ class Sensei_Lesson {
 		if ( isset($_POST['lesson_update_question_nonce']) ) {
 			$nonce = esc_html( $_POST['lesson_update_question_nonce'] );
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_nonce' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_nonce' )
+            ||  ! current_user_can( 'edit_questions' )) {
+
 			die('');
+
 		} // End If Statement
+
 		// Parse POST data
 		// WP slashes all incoming data regardless of Magic Quotes setting (see wp_magic_quotes()), which means that
 		// even the $_POST['data'] encoded with encodeURIComponent has it's apostrophes slashed.
@@ -1903,7 +1917,8 @@ class Sensei_Lesson {
 			$nonce = esc_html( $_POST['lesson_add_multiple_questions_nonce'] );
 		} // End If Statement
 
-		if( ! wp_verify_nonce( $nonce, 'lesson_add_multiple_questions_nonce' ) ) {
+		if( ! wp_verify_nonce( $nonce, 'lesson_add_multiple_questions_nonce' )
+            || ! current_user_can( 'edit_lessons' ) ) {
 			die( $return );
 		} // End If Statement
 
@@ -1958,7 +1973,8 @@ class Sensei_Lesson {
 			$nonce = esc_html( $_POST['lesson_remove_multiple_questions_nonce'] );
 		} // End If Statement
 
-		if( ! wp_verify_nonce( $nonce, 'lesson_remove_multiple_questions_nonce' ) ) {
+		if( ! wp_verify_nonce( $nonce, 'lesson_remove_multiple_questions_nonce' )
+        || ! current_user_can( 'edit_lessons' ) ) {
 			die('');
 		} // End If Statement
 
@@ -2004,7 +2020,8 @@ class Sensei_Lesson {
 			$nonce = esc_html( $_POST['lesson_add_existing_questions_nonce'] );
 		} // End If Statement
 
-		if( ! wp_verify_nonce( $nonce, 'lesson_add_existing_questions_nonce' ) ) {
+		if( ! wp_verify_nonce( $nonce, 'lesson_add_existing_questions_nonce' )
+        || ! current_user_can( 'edit_lessons' ) ) {
 			die('');
 		} // End If Statement
 
@@ -2050,11 +2067,18 @@ class Sensei_Lesson {
 	public function lesson_update_grade_type() {
 		//Add nonce security to the request
 		if ( isset($_POST['lesson_update_grade_type_nonce']) ) {
+
 			$nonce = esc_html( $_POST['lesson_update_grade_type_nonce'] );
+
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_update_grade_type_nonce' ) ) {
+
+		if ( ! wp_verify_nonce( $nonce, 'lesson_update_grade_type_nonce' )
+        || ! current_user_can( 'edit_lessons' ) ) {
+
 			die('');
+
 		} // End If Statement
+
 		// Parse POST data
 		$data = $_POST['data'];
 		$quiz_data = array();
@@ -2068,9 +2092,12 @@ class Sensei_Lesson {
 		if ( isset($_POST['lesson_update_question_order_nonce']) ) {
 			$nonce = esc_html( $_POST['lesson_update_question_order_nonce'] );
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_nonce' ) ) {
+
+        if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_nonce' )
+            ||! current_user_can( 'edit_lessons' ) ) {
 			die('');
 		} // End If Statement
+
 		// Parse POST data
 		$data = $_POST['data'];
 		$quiz_data = array();
@@ -2092,8 +2119,11 @@ class Sensei_Lesson {
 		if ( isset($_POST['lesson_update_question_order_random_nonce']) ) {
 			$nonce = esc_html( $_POST['lesson_update_question_order_random_nonce'] );
 		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_random_nonce' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_random_nonce' )
+            || ! current_user_can( 'edit_lessons' ) ) {
+
 			die('');
+
 		} // End If Statement
 		// Parse POST data
 		$data = $_POST['data'];
@@ -2943,7 +2973,8 @@ class Sensei_Lesson {
     public function all_lessons_edit_fields( $column_name, $post_type ) {
 
         // only show these options ont he lesson post type edit screen
-        if( 'lesson' != $post_type || 'lesson-course' != $column_name ){
+        if( 'lesson' != $post_type || 'lesson-course' != $column_name
+            || ! current_user_can( 'edit_lessons' ) ) {
             return;
         }
 
@@ -3447,13 +3478,7 @@ class Sensei_Lesson {
         $user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
 
         if ( $pre_requisite_complete && $is_preview && !$user_taking_course ) {
-            ?>
 
-            <div class="sensei-message alert">
-                <?php echo Sensei()->permissions_message['message']; ?>
-            </div>
-
-            <?php
 
         }// end if
 
@@ -3475,72 +3500,84 @@ class Sensei_Lesson {
             return;
 
         }
+
         ?>
 
         <section class="course-signup lesson-meta">
 
             <?php
+
+            global $current_user;
             $wc_post_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
 
-            if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
+            if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $course_id ) ) {
 
-                global $current_user;
-                if( is_user_logged_in() ) {
-                    wp_get_current_user();
+                if( is_user_logged_in() && ! Sensei_Utils::user_started_course( $course_id, $current_user->ID )  ) {
 
-                    $course_purchased = Sensei_Utils::sensei_customer_bought_product( $current_user->user_email, $current_user->ID, $wc_post_id );
+	                    $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
+	                    $a_element .= __( 'course', 'woothemes-sensei' );
+	                    $a_element .= '</a>';
 
-                    if( $course_purchased ) {
+	                    if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
 
-                        $prereq_course_id = get_post_meta( $course_id, '_course_prerequisite',true );
-                        $course_link = '<a href="' . esc_url( get_permalink( $prereq_course_id ) ) . '" title="' . esc_attr( get_the_title( $prereq_course_id ) ) . '">' . __( 'the previous course', 'woothemes-sensei' )  . '</a>';
-                        ?>
-                            <div class="sensei-message info">
+		                    $message = sprintf( __( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
-                                <?php  echo sprintf( __( 'Please complete %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link ); ?>
+	                    }else{
 
-                            </div>
+		                    $message = sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
-                    <?php } else { ?>
+	                    }
 
-                        <div class="sensei-message info">
+	                    Sensei()->notices->add_notice( $message, 'info' );
 
-                            <?php
-                            $course_link = '<a href="' . esc_url( get_permalink( $course_id ) )
-                                            . '"title="' . __( 'Sign Up', 'woothemes-sensei' )
-                                            . '">' . __( 'course', 'woothemes-sensei' )
-                                            . '</a>';
+                }
 
-                            echo  sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
+	            if( ! is_user_logged_in() ) {
 
-                            ?>
+	                $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
+	                $a_element .= __( 'course', 'woothemes-sensei' );
+	                $a_element .= '</a>';
 
-                        </div>
-                    <?php } ?>
+	                if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
 
-                <?php } else { ?>
+						$message = sprintf( __( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
-                    <div class="sensei-message info"><?php echo sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">' . __( 'course', 'woothemes-sensei' ) . '</a>' ); ?></div>
+					}else{
 
-                <?php } ?>
+						$message = sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
-            <?php } else { ?>
+					}
 
-            <?php if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) &&  sensei_is_login_required() )  : ?>
+					Sensei()->notices->add_notice( $message, 'alert' );
 
-                <div class="sensei-message info">
-                    <?php
-                    $course_link =  '<a href="'
-                                        . esc_url( get_permalink( $course_id ) )
-                                        . '" title="' . __( 'Sign Up', 'woothemes-sensei' )
-                                        . '">' . __( 'course', 'woothemes-sensei' )
-                                    . '</a>';
+	            }
 
-                    echo sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
-                    ?>
-                </div>
+            } else { ?>
 
-            <?php endif; ?>
+	            <?php if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) &&  sensei_is_login_required() )  : ?>
+
+	                <div class="sensei-message alert">
+	                    <?php
+	                    $course_link =  '<a href="'
+	                                        . esc_url( get_permalink( $course_id ) )
+	                                        . '" title="' . __( 'Sign Up', 'woothemes-sensei' )
+	                                        . '">' . __( 'course', 'woothemes-sensei' )
+	                                    . '</a>';
+
+						if ( Sensei_Utils::is_preview_lesson( get_the_ID( ) ) ) {
+
+							echo sprintf( __( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ),  $course_link );
+
+						} else {
+
+							echo sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
+
+						}
+
+	                    ?>
+	                </div>
+
+	            <?php endif; ?>
 
             <?php } // End If Statement ?>
 
@@ -3663,6 +3700,12 @@ class Sensei_Lesson {
 
         $lesson_id                 =  empty( $lesson_id ) ?  get_the_ID() : $lesson_id;
         $user_id                   = empty( $lesson_id ) ?  get_current_user_id() : $user_id;
+
+
+	    if ( ! sensei_can_user_view_lesson( $lesson_id, $user_id ) ) {
+		    return;
+	    }
+
         $lesson_prerequisite       = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
         $lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
         $quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
@@ -3675,6 +3718,7 @@ class Sensei_Lesson {
             $show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
 
         }
+
         ?>
 
         <footer>
@@ -3778,6 +3822,42 @@ class Sensei_Lesson {
             } // End If Statement
 
         }
+
+    }
+
+    /**
+     * On the lesson archive limit the number of words the show up if the access settings are enabled
+     *
+     * @since 1.9.0
+     * @param $content
+     * @return string
+     */
+    public static function limit_archive_content ( $content ){
+
+        if( is_archive('lesson') && Sensei()->settings->get('access_permission') ){
+
+            return wp_trim_words( $content, $num_words = 30, $more = '…' );
+        }
+
+        return $content;
+
+    } // end limit_archive_content
+
+    /**
+     * Returns all publised lesson ID's
+     *
+     * @since 1.9.0
+     * @return array
+     */
+    public static function get_all_lesson_ids(){
+
+        return get_posts( array(
+            'post_type'=>'lesson',
+            'fields'=>'ids',
+            'post_status' => 'publish',
+            'numberposts' => 4000, // legacy support
+            'post_per_page' => 4000
+        ));
 
     }
 

@@ -64,6 +64,8 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
     public function __construct( $attributes, $content, $shortcode ){
 
         if(!  is_user_logged_in() ) {
+            // show the login form
+            Sensei()->frontend->sensei_login_form();
             return;
         }
 
@@ -302,9 +304,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @param $course
      */
-    public function attach_course_progress( $course ){
+    public function attach_course_progress( $course_id ){
 
-        $percentage = Sensei()->course->get_completion_percentage( $course->ID, get_current_user_id() );
+        $percentage = Sensei()->course->get_completion_percentage( $course_id, get_current_user_id() );
         echo Sensei()->course->get_progress_meter( $percentage );
 
     }// attach_course_progress
@@ -315,11 +317,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * Prints out the course action buttons
      *
-     * @param $course
+     * @param integer $course_id
      */
-    public function attach_course_buttons( $course ){
+    public function attach_course_buttons( $course_id ){
 
-        Sensei()->course->the_course_action_buttons( $course );
+        Sensei()->course->the_course_action_buttons( get_post( $course_id ) );
 
     }// attach_course_buttons
 

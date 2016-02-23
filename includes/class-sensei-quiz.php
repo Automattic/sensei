@@ -32,13 +32,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		add_action( 'template_redirect', array( $this, 'reset_button_click_listener'  ) );
 
         // fire the complete quiz button submit for grading action
-        add_action( 'sensei_complete_quiz', array( $this, 'user_quiz_submit_listener' ) );
+        add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_quiz_submit_listener' ) );
 
 		// fire the save user answers quiz button click responder
-		add_action( 'sensei_complete_quiz', array( $this, 'user_save_quiz_answers_listener' ) );
+		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_save_quiz_answers_listener' ) );
 
         // fire the load global data function
-        add_action( 'sensei_complete_quiz', array( $this, 'load_global_quiz_data' ), 80 );
+        add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'load_global_quiz_data' ), 80 );
 
         add_action( 'template_redirect', array ( $this, 'quiz_has_no_questions') );
 
@@ -140,7 +140,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         self::save_user_answers( $quiz_answers, $_FILES , $lesson_id  , get_current_user_id() );
 
         // remove the hook as it should only fire once per click
-        remove_action( 'sensei_complete_quiz', 'user_save_quiz_answers_listener' );
+        remove_action( 'sensei_single_quiz_content_inside_before', 'user_save_quiz_answers_listener' );
 
     } // end user_save_quiz_answers_listener
 
@@ -657,7 +657,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       * @param int $question_id
       * @param int  $user_id ( optional )
       *
-      * @return bool $answers_submitted
+      * @return bool|null $answers_submitted
       */
      public function get_user_question_answer( $lesson_id, $question_id, $user_id = 0 ){
 
@@ -684,7 +684,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
              $comment =  Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $question_id, 'user_id' => $user_id, 'type' => 'sensei_user_answer' ), true );
 
              if( ! isset( $comment->comment_content ) ){
-                 return false;
+                 return NULL;
              }
 
              return maybe_unserialize( base64_decode( $comment->comment_content ) );

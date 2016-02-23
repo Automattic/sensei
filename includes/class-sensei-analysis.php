@@ -102,7 +102,7 @@ class Sensei_Analysis {
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
 		// Load Analysis data
-		$object_name = 'WooThemes_Sensei_Analysis_' . $name . '_List_Table';
+		$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
 		if ( is_null($optional_data) ) {
 			$sensei_analysis_object = new $object_name( $data );
 		} else {
@@ -346,7 +346,7 @@ class Sensei_Analysis {
 	 */
 	public function render_stats_box( $title, $data ) {
 		?><div class="postbox">
-			<h3><span><?php echo $title; ?></span></h3>
+			<h2><span><?php echo $title; ?></span></h2>
 			<div class="inside">
 				<p class="stat"><?php echo $data; ?></p>
 			</div>
@@ -417,7 +417,7 @@ class Sensei_Analysis {
 				break;
 		}
 		?>
-			<h2><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h2>
+			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
 		<?php
 	} // End analysis_default_nav()
 
@@ -438,7 +438,7 @@ class Sensei_Analysis {
 
 		} // End If Statement
 		?>
-			<h2><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h2>
+			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
 		<?php
 	} // End analysis_user_profile_nav()
 
@@ -464,7 +464,7 @@ class Sensei_Analysis {
 			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
-			<h2><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h2>
+			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
 		<?php
 	} // End analysis_user_course_nav()
 
@@ -482,7 +482,7 @@ class Sensei_Analysis {
 			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>',esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
-			<h2><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h2>
+			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
 		<?php
 	} // End analysis_course_nav()
 
@@ -500,7 +500,7 @@ class Sensei_Analysis {
 			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
-			<h2><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h2>
+			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
 		<?php
 	} // End analysis_course_users_nav()
 
@@ -521,7 +521,7 @@ class Sensei_Analysis {
 			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $lesson_id ) );
 		}
 		?>
-			<h2><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h2>
+			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
 		<?php
 	} // End analysis_lesson_users_nav()
 

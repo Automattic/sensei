@@ -57,6 +57,20 @@ class Sensei_Settings extends Sensei_Settings_API {
         return false;
     }
 
+    /**
+     * @since 1.9.0
+     *
+     * @param $setting
+     * @param $new_value
+     */
+    public function set( $setting, $new_value ){
+    	
+        $settings = get_option( $this->token, array() );
+		$settings[ $setting ] = $new_value;
+		return update_option( $this->token,$settings );
+
+    }
+
 	/**
 	 * Register the settings screen within the WordPress admin.
 	 * @access public
@@ -555,7 +569,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 								'required' => 1
 								);
 
-		if ( Sensei_WC::is_woocommerce_active() ) {
+		if ( Sensei_WC::is_woocommerce_present() ) {
 			// WooCommerce Settings
     		$fields['woocommerce_enabled'] = array(
 									'name' => __( 'Enable WooCommerce Courses', 'woothemes-sensei' ),

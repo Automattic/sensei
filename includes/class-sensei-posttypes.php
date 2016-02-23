@@ -374,7 +374,7 @@ class Sensei_PostTypes {
 			    'public' => true,
 			    'publicly_queryable' => true,
 			    'show_ui' => true,
-			    'show_in_menu' => 'sensei',
+			    'show_in_menu' => 'admin.php?page=sensei',
 			    'show_in_nav_menus' => true,
 			    'query_var' => true,
 			    'exclude_from_search' => true,
@@ -619,6 +619,9 @@ class Sensei_PostTypes {
 	 * @return array            An array of the labels to be used
 	 */
 	private function create_post_type_labels ( $singular, $plural, $menu ) {
+
+		$lower_case_plural =  function_exists( 'mb_strtolower' ) ? mb_strtolower( $plural, 'UTF-8') :  strtolower( $plural );
+
 		$labels = array(
 		    'name' => sprintf( _x( '%s', 'post type general name', 'woothemes-sensei' ), $plural ),
 		    'singular_name' => sprintf( _x( '%s', 'post type singular name', 'woothemes-sensei' ), $singular ),
@@ -629,8 +632,8 @@ class Sensei_PostTypes {
 		    'all_items' => sprintf( __( 'All %s', 'woothemes-sensei' ), $plural ),
 		    'view_item' => sprintf( __( 'View %s', 'woothemes-sensei' ), $singular ),
 		    'search_items' => sprintf( __( 'Search %s', 'woothemes-sensei' ), $plural ),
-		    'not_found' =>  sprintf( __( 'No %s found', 'woothemes-sensei' ), mb_strtolower( $plural, 'UTF-8') ),
-		    'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'woothemes-sensei' ), mb_strtolower( $plural, 'UTF-8') ),
+		    'not_found' =>  sprintf( __( 'No %s found', 'woothemes-sensei' ), $lower_case_plural ) ,
+		    'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'woothemes-sensei' ),  $lower_case_plural ),
 		    'parent_item_colon' => '',
 		    'menu_name' => sprintf( __( '%s', 'woothemes-sensei' ), $menu )
 		  );

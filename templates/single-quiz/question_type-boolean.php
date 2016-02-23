@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
     // setup the options the right answer set by the admin/teacher
     // will be compared to.
-    $boolean_options = array( 'true', 'false' );
+    $boolean_options = array( true, false );
 
     //loop through the 2 boolean options and compare them with
     // the selected right answer
@@ -60,18 +60,20 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         }// end if $user_correct .. $question_grade
 
+	    $option_value = $option ? 'true' : 'false';
+
     ?>
 
     <li class="<?php esc_attr_e( $answer_class ); ?>">
 
         <input type="radio"
-               id="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-true'; ?>"
+               id="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-'. $option_value; ?>"
                name="<?php echo esc_attr( 'sensei_question[' . $question_data[ 'ID' ]  . ']' ); ?>"
-               value="true"
-            <?php echo checked( $question_data[ 'user_answer_entry' ], $option, false ); ?>
+               value="<?php echo $option_value; ?>"
+            <?php echo checked( $question_data[ 'user_answer_entry' ], $option_value, false ); ?>
             <?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>
-
-        <label for="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-'.$option; ?>">
+	    />
+        <label for="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-' . $option_value; ?>">
             <?php
 
             if( 'true' == $option ){

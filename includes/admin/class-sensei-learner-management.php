@@ -79,7 +79,7 @@ class Sensei_Learner_Management {
 		// Load Learners JS
 		wp_enqueue_script( 'sensei-learners-general',
             Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
-                            array('jquery','select2','sensei-chosen-ajax' ), Sensei()->version, true );
+                            array('jquery','sensei-core-select2','sensei-chosen-ajax' ), Sensei()->version, true );
 
 		$data = array(
 			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
@@ -252,22 +252,38 @@ class Sensei_Learner_Management {
 
 	public function remove_user_from_post() {
 
+        // Parse POST data
+        $data = sanitize_text_field( $_POST['data'] );
+        $action_data = array();
+        parse_str( $data, $action_data );
 
-		$return = '';
+		// Security checks
+        // ensure the current user may remove users from post
+        // only teacher or admin can remove users
 
-		// Security check
+        // check the nonce, valid post
 		$nonce = '';
 		if ( isset($_POST['remove_user_from_post_nonce']) ) {
 			$nonce = esc_html( $_POST['remove_user_from_post_nonce'] );
 		}
-		if ( ! wp_verify_nonce( $nonce, 'remove_user_from_post_nonce' ) ) {
-			die( $return );
-		}
+        $post =  get_post( intval( $action_data[ 'post_id' ] ) );
 
-		// Parse POST data
-		$data = $_POST['data'];
-		$action_data = array();
-		parse_str( $data, $action_data );
+        // validate the user
+        $may_remove_user = false;
+        if( current_user_can('manage_sensei')
+            ||  $post->post_author == get_current_user_id() ){
+
+            $may_remove_user = true;
+
+        }
+
+        if( ! wp_verify_nonce( $nonce, 'remove_user_from_post_nonce' )
+            || ! is_a( $post ,'WP_Post' )
+            || ! $may_remove_user ){
+
+            die('');
+
+        }
 
 		if( $action_data['user_id'] && $action_data['post_id'] && $action_data['post_type'] ) {
 
@@ -294,12 +310,12 @@ class Sensei_Learner_Management {
 			}
 
 			if( $removed ) {
-				$return = 'removed';
+				die( 'removed' );
 			}
 
 		}
 
-		die( $return );
+		die('');
 	}
 
 	public function json_search_users() {

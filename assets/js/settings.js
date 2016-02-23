@@ -15,16 +15,18 @@ jQuery(document).ready(function($) {
 
         // If "All" is clicked, show all.
         if ( jQuery( this ).hasClass( 'all' ) ) {
-            jQuery( '#woothemes-sensei h3, #woothemes-sensei form p, #woothemes-sensei table.form-table, p.submit' ).show();
+            jQuery( '#woothemes-sensei section' ).show();
             return false;
         }
+
+        // Hide all sections.
+        jQuery( '#woothemes-sensei section' ).hide();
 
         // If the link is a tab, show only the specified tab.
         var toShow = jQuery( this ).attr( 'href' );
         // Remove the first occurance of # from the selected string (will be added manually below).
         toShow = toShow.replace( '#', '', toShow );
-        jQuery( '#woothemes-sensei h3, #woothemes-sensei form > p:not(".submit"), #woothemes-sensei table' ).hide(); // Hide all sections.
-        jQuery( 'h3#' + toShow ).show().nextUntil( 'h3.section-heading', 'p, table, table p' ).show(); // Show the appropriate section.
+        jQuery("#"+toShow).show();
 
         return false;
     });

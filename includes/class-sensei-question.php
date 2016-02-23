@@ -965,7 +965,7 @@ class Sensei_Question {
                 $question_option[ 'type' ] = $answer_type;
 
                 // add the speci  fic option to the list of options for this question
-                $question_answers_options[] = $question_option;
+                $question_answers_options[$question_option[ 'ID' ]] = $question_option;
 
             } // end for each option
 

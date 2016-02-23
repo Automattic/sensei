@@ -28,8 +28,8 @@ class Sensei_Frontend {
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 
 		// 1.2.1
-		add_action( 'sensei_complete_lesson', array( $this, 'sensei_complete_lesson' ) );
-		add_action( 'init', array( $this, 'sensei_complete_course' ), 5 );
+		add_action( 'wp_head', array( $this, 'sensei_complete_lesson' ), 10 );
+		add_action( 'wp_head', array( $this, 'sensei_complete_course' ), 10 );
 		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
 		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
 		add_action( 'sensei_complete_lesson_button', array( $this, 'sensei_complete_lesson_button' ) );
@@ -868,7 +868,7 @@ class Sensei_Frontend {
 *
  */
 	public function sensei_frontend_messages() {
-		Sensei()->notices->print_notices();
+		Sensei()->notices->maybe_print_notices();
 	} // End sensei_frontend_messages()
 
 	public function sensei_lesson_video( $post_id = 0 ) {
@@ -888,6 +888,12 @@ class Sensei_Frontend {
 		global  $post;
 
 		$quiz_id = 0;
+
+		//make sure user is taking course
+		$course_id = Sensei()->lesson->get_course_id( $post->ID );
+		if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ){
+			return;
+		}
 
 		// Lesson quizzes
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $post->ID );
@@ -1052,7 +1058,7 @@ class Sensei_Frontend {
 	public function sensei_login_form() {
 		?>
 		<div id="my-courses">
-			<?php Sensei()->notices->print_notices(); ?>
+			<?php Sensei()->notices->maybe_print_notices(); ?>
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">
@@ -1467,10 +1473,11 @@ class Sensei_Frontend {
 
 				$items = $order->get_items();
 				foreach( $items as $item ) {
+
                     $product = wc_get_product( $item['product_id'] );
 
                     // handle product bundles
-                    if( $product->is_type('bundle') ){
+                    if( is_object( $product ) &&  $product->is_type('bundle') ){
 
                         $bundled_product = new WC_Product_Bundle( $product->id );
                         $bundled_items = $bundled_product->get_bundled_items();
@@ -1594,7 +1601,8 @@ class Sensei_Frontend {
 				$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
 
 				//attempt logging in with the given details
-				$user = wp_signon( $creds, false );
+			    $secure_cookie = is_ssl() ? true : false;
+			    $user = wp_signon( $creds, $secure_cookie );
 
 				if ( is_wp_error($user) ){ // on login failure
                     wp_redirect( esc_url_raw( add_query_arg('login', 'failed', $referrer) ) );

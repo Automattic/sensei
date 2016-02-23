@@ -848,7 +848,7 @@ class Sensei_Teacher {
 
         $course_id = $post->ID;
 
-        if( 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id )
+        if( 'publish'== $old_status || 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id )
             || 'trash' == get_post_status( $course_id ) || 'draft' == get_post_status( $course_id ) ) {
 
             return false;
@@ -875,8 +875,8 @@ class Sensei_Teacher {
         $recipient = get_option('admin_email', true);
 
         // don't send if the course is created by admin
-        if( $recipient == $teacher->user_email ){
-            return;
+        if( $recipient == $teacher->user_email || current_user_can( 'manage_options' )){
+            return false;
         }
 
         /**

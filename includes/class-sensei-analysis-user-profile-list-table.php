@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @since 1.2.0
  */
-class Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Table {
+class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	public $user_id;
 	public $page_slug = 'sensei_analysis';
 

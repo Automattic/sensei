@@ -22,6 +22,7 @@ add_filter('pre_get_posts', array( 'Sensei_WC', 'course_archive_wc_filter_paid')
  */
 add_action('sensei_before_main_content', array('Sensei_WC', 'do_single_course_wc_single_product_action') ,50) ;
 
+
 /******************************
  *
  * Single Lesson Hooks
@@ -55,10 +56,38 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_WC', 'c
 // alter the no permissions message to show the woocommerce message instead
 add_filter( 'sensei_the_no_permissions_message', array( 'Sensei_WC', 'alter_no_permissions_message' ), 20, 2 );
 
-//@since 1.9.0
-// add the add to cart button for a valid purchasable course
-add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_WC', 'the_add_to_cart_button_html' ), 20, 1);
-
 // @since 1.9.0
 // add  woocommerce class to the the no permission body class to ensure WooCommerce elements are styled
 add_filter( 'body_class', array( 'Sensei_WC', 'add_woocommerce_body_class' ), 20, 1);
+
+
+/************************************
+ *
+ * Emails
+ *
+ ************************************/
+// Add Email link to course orders
+add_action( 'woocommerce_email_after_order_table', array( 'Sensei_WC', 'email_course_details' ), 10, 1 );
+
+/************************************
+ *
+ * Checkout
+ *
+ ************************************/
+//add_action( 'woocommerce_payment_complete',                 array( 'Sensei_WC', 'complete_order' ) );
+//add_action( 'woocommerce_thankyou' ,                        array( 'Sensei_WC', 'complete_order' ) );
+add_action( 'woocommerce_delete_shop_order_transients',           array( 'Sensei_WC', 'complete_order' ) );
+add_action( 'woocommerce_delete_shop_order_transients',            array( 'Sensei_WC', 'cancel_order' ) );
+// Disable guest checkout if a course is in the cart as we need a valid user to store data for
+add_filter( 'pre_option_woocommerce_enable_guest_checkout', array( 'Sensei_WC', 'disable_guest_checkout' ) );
+// Mark orders with virtual products as complete rather then stay processing
+add_filter( 'woocommerce_payment_complete_order_status',    array( 'Sensei_WC', 'virtual_order_payment_complete' ), 10, 2 );
+
+/************************************
+ *
+ * WooCommerce Subscriptions
+ *
+ ************************************/
+add_action( 'woocommerce_subscription_status_pending_to_active', array( 'Sensei_WC', 'activate_subscription' ), 50, 3 );
+// filter the user permission of the subscription is not valid
+add_filter( 'sensei_access_permissions',               array( 'Sensei_WC', 'get_subscription_permission' ), 10, 2 );

@@ -161,12 +161,10 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 	protected function load_component ( $instance ) {
 
 		global  $current_user;
-		// Get User Meta
-		get_currentuserinfo();
+
 		/*
 		newlessons
 		*/
-
 		$posts_array = array();
 
 		$post_args = array(	'post_type' 		=> 'lesson',

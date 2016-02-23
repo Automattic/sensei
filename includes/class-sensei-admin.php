@@ -128,6 +128,10 @@ class Sensei_Admin {
 
 		$screen = get_current_screen();
 
+        if( empty( $screen ) ){
+            return;
+        }
+
 		if ( $screen->base == 'post' && $post_type == 'course' ) {
 
 			$parent_file  = 'edit.php?post_type=course';
@@ -196,21 +200,14 @@ class Sensei_Admin {
 	 * @param string $page_title (default: '')
 	 * @param string $page_content (default: '')
 	 * @param int $post_parent (default: 0)
-	 * @return void
+	 * @return integer $page_id
 	 */
-	function create_page( $slug, $option, $page_title = '', $page_content = '', $post_parent = 0 ) {
+	function create_page( $slug, $page_title = '', $page_content = '', $post_parent = 0 ) {
 		global $wpdb;
 
-		$option_value = get_option( $option );
-
-		if ( $option_value > 0 && get_post( $option_value ) )
-			return;
-
-		$page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM " . $wpdb->posts . " WHERE post_name = %s LIMIT 1;", $slug ) );
-		if ( $page_found ) :
-			if ( ! $option_value )
-				update_option( $option, $page_found );
-			return;
+        $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM " . $wpdb->posts . " WHERE post_name = %s LIMIT 1;", $slug ) );
+		if ( $page_id ) :
+			return $page_id;
 		endif;
 
 		$page_data = array(
@@ -223,9 +220,11 @@ class Sensei_Admin {
 	        'post_parent' 		=> $post_parent,
 	        'comment_status' 	=> 'closed'
 	    );
+
 	    $page_id = wp_insert_post( $page_data );
 
-	    update_option( $option, $page_id );
+	    return $page_id;
+
 	} // End create_page()
 
 
@@ -238,10 +237,12 @@ class Sensei_Admin {
 	function create_pages() {
 
 		// Courses page
-	    $this->create_page( esc_sql( _x('courses-overview', 'page_slug', 'woothemes-sensei') ), 'woothemes-sensei_courses_page_id', __('Courses', 'woothemes-sensei'), '[newcourses][featuredcourses][freecourses][paidcourses]' );
+	    $new_course_page_id = $this->create_page( esc_sql( _x('courses-overview', 'page_slug', 'woothemes-sensei') ),  __('Courses', 'woothemes-sensei'), '' );
+        Sensei()->settings->set( 'course_page', $new_course_page_id );
 
-		// User Dashboard page
-	    $this->create_page( esc_sql( _x('my-courses', 'page_slug', 'woothemes-sensei') ), 'woothemes-sensei_user_dashboard_page_id', __('My Courses', 'woothemes-sensei'), '[usercourses]' );
+        // User Dashboard page
+	    $new_my_course_page_id = $this->create_page( esc_sql( _x('my-courses', 'page_slug', 'woothemes-sensei') ), __('My Courses', 'woothemes-sensei'), '[sensei_user_courses]' );
+        Sensei()->settings->set( 'my_course_page',$new_my_course_page_id  );
 
 	} // End create_pages()
 
@@ -263,7 +264,7 @@ class Sensei_Admin {
 		wp_enqueue_style( 'woothemes-sensei-global' );
 
         // Select 2 styles
-        wp_enqueue_style( 'select2', Sensei()->plugin_url . 'assets/css/select2/select2.css', '', Sensei()->version, 'screen' );
+        wp_enqueue_style( 'sensei-core-select2', Sensei()->plugin_url . 'assets/css/select2/select2.css', '', Sensei()->version, 'screen' );
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
@@ -292,7 +293,7 @@ class Sensei_Admin {
         $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
         // Select2 script used to enhance all select boxes
-        wp_register_script( 'select2', Sensei()->plugin_url . '/assets/js/select2/select2' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
+        wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . '/assets/js/select2/select2' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
 
         // load edit module scripts
         if( 'edit-module' ==  $screen->id ){
@@ -1264,19 +1265,24 @@ class Sensei_Admin {
 
             foreach( $modules as $module ) {
 
-                $module_order_string = $_POST[ 'lesson-order-module-' . $module->term_id ];
 
-                if( $module_order_string ) {
-                    $order = explode( ',', $module_order_string );
+                if( isset( $_POST[ 'lesson-order-module-' . $module->term_id ] )
+                    && $_POST[ 'lesson-order-module-' . $module->term_id ] ) {
+
+                    $order = explode( ',', $_POST[ 'lesson-order-module-' . $module->term_id ] );
                     $i = 1;
                     foreach( $order as $lesson_id ) {
+
                         if( $lesson_id ) {
                             update_post_meta( $lesson_id, '_order_module_' . $module->term_id, $i );
                             ++$i;
                         }
-                    }
-                }
-            }
+
+                    }// end for each order
+
+                }// end if
+
+            } // end for each modules
 
 
 			if( $order_string ) {
@@ -1482,7 +1488,9 @@ class Sensei_Admin {
         if (isset($_GET['install_sensei_pages']) && $_GET['install_sensei_pages']) {
 
             Sensei()->admin->create_pages();
+
             update_option('skip_install_sensei_pages', 1);
+
             $install_complete = true;
             $settings_url = remove_query_arg('install_sensei_pages');
 
@@ -1497,8 +1505,8 @@ class Sensei_Admin {
 
         if ($install_complete) {
 
-            // Flush rules after install
-            flush_rewrite_rules( true );
+            // refresh the rewrite rules on init
+            update_option('sensei_flush_rewrite_rules', '1');
 
             // Set installed option
             update_option('sensei_installed', 0);
