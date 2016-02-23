@@ -7,7 +7,6 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
      */
     public function __construct(){
         parent::__construct();
-        include_once('factory/Sensei-Factory.php');
     }
 
     /**
