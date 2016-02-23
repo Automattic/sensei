@@ -492,7 +492,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
             if( 'file-upload' == $question_type){
                 //setup the sample image file location within the test folders
-                $test_images_directory = dirname( dirname( __FILE__) ) . '/images/';
+                $test_images_directory = dirname( dirname( dirname( __FILE__) ) ) . '/images/';
 
                 // make a copy of the file intended for upload as
                 // it will be moved to the new location during the upload
