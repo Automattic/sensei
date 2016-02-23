@@ -27,6 +27,11 @@
             <directory suffix=".php">./tmp/</directory>
         </blacklist>
     </filter>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
     <logging>
         <log type="coverage-clover" target="./clover.xml" charset="UTF-8" />
     </logging>
