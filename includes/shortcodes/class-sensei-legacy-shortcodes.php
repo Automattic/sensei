@@ -58,7 +58,7 @@ class Sensei_Legacy_Shortcodes {
      */
     public static function paid_courses( $atts, $content = null ) {
 
-        return self::generate_shortcode_courses( 'Paid Courses', 'paidcourses' );
+        return self::generate_shortcode_courses( __( 'Paid Courses', 'woothemes-sensei' ), 'paidcourses' );
 
     } // End paid_courses()
 
@@ -73,7 +73,7 @@ class Sensei_Legacy_Shortcodes {
      */
     public static function featured_courses( $atts, $content = null ) {
 
-        return self::generate_shortcode_courses( 'Featured Courses', 'featuredcourses' );
+        return self::generate_shortcode_courses( __( 'Featured Courses', 'woothemes-sensei' ), 'featuredcourses' );
 
     } // End featured_courses()
 
@@ -87,7 +87,7 @@ class Sensei_Legacy_Shortcodes {
      */
     public static function free_courses( $atts, $content = null ) {
 
-        return self::generate_shortcode_courses( 'Free Courses', 'freecourses' );
+        return self::generate_shortcode_courses( __( 'Free Courses', 'woothemes-sensei' ), 'freecourses' );
 
     } // End free_courses()
 
@@ -101,7 +101,7 @@ class Sensei_Legacy_Shortcodes {
      */
     public static function new_courses( $atts, $content = null ) {
 
-        return self::generate_shortcode_courses( 'New Courses', 'newcourses' );
+        return self::generate_shortcode_courses( __( 'New Courses', 'woothemes-sensei' ), 'newcourses' );
 
     } // End new_courses()
 
