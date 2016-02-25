@@ -9,8 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // security check
  * in this function, the functions load_shortcode will be called and it will
  * instantiate the correct shortcode handling class as it was registered.
  *
- * @package Sensei
- * @category Shortcodes
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
  */
 class Sensei_Shortcode_Loader{
@@ -32,25 +35,16 @@ class Sensei_Shortcode_Loader{
      */
     public function __construct(){
 
-        // load all the hooks
-        $this->add_hooks();
-
         // create a list of shortcodes and the class that handles them
         $this->setup_shortcode_class_map();
 
         // setup all the shortcodes and load the listener into WP
         $this->initialize_shortcodes();
-    }
 
-    /**
-     * Add all shortcodes here
-     *
-     * This function adds shortcodes to WP that links to other functionality.
-     * @since 1.9.0
-     */
-    public function add_hooks(){
+        // add sensei body class for shortcodes
+        add_filter( 'body_class', array( $this, 'possibly_add_body_class' ));
 
-        add_action('pre_get_posts',  array( $this, 'filter_courses_archive' ) );
+        // array( $this, 'add_body_class')
 
     }
 
@@ -82,12 +76,7 @@ class Sensei_Shortcode_Loader{
         );
 
         // legacy shortcode handling:
-        add_shortcode( 'allcourses',      array( __CLASS__, 'all_courses' ) );
-        add_shortcode( 'newcourses',      array( __CLASS__,'new_courses' ) );
-        add_shortcode( 'featuredcourses', array( __CLASS__,'featured_courses') );
-        add_shortcode( 'freecourses',     array( __CLASS__,'free_courses') );
-        add_shortcode( 'paidcourses',     array( __CLASS__,'paid_courses') );
-        add_shortcode( 'usercourses',     array( __CLASS__,'user_courses' ) );
+        Sensei_Legacy_Shortcodes::init();
 
     }
 
@@ -125,7 +114,7 @@ class Sensei_Shortcode_Loader{
      * Respond to WordPress do_shortcode calls
      * for shortcodes registered in the initialize_shortcodes function.
      *
-     * @since 1.8.0
+     * @since 1.9.0
      *
      * @param $attributes
      * @param $content
@@ -158,189 +147,43 @@ class Sensei_Shortcode_Loader{
     }
 
     /**
-     * sensei_filter_courses_archive function.
+     * Add the Sensei body class if
+     * the current page has a Sensei shortcode.
      *
-     * @access public
-     * @param WP_Query $query
-     * @return void
+     * Note: legacy shortcodes not supported here.
+     *
+     * @since 1.9.0
+     *
+     * @param array $classes
+     * @return array
      */
-    public static function filter_courses_archive( $query ) {
+    public function possibly_add_body_class ( $classes ) {
 
-        if ( ! $query->is_main_query() )
-            return;
+        global $post;
 
-        $query_type = '';
-        // Handle course archive page
-        if ( is_post_type_archive( 'course' ) ) {
+        $has_sensei_shortcode = false;
 
-            if ( isset( $_GET[ 'action' ] ) && ( '' != esc_html( $_GET[ 'action' ] ) ) ) {
-                $query_type = esc_html( $_GET[ 'action' ] );
-            } // End If Statement
+        if ( is_a( $post, 'WP_Post' ) ) {
 
-            switch ( $query_type ) {
-                case 'newcourses':
-                    set_query_var( 'orderby', 'date' );
-                    set_query_var( 'order', 'DESC' );
-                    break;
-                case 'freecourses':
-                    set_query_var( 'orderby', 'date' );
-                    set_query_var( 'order', 'DESC' );
-                    set_query_var( 'meta_value', '-' ); /* TODO - WC */
-                    set_query_var( 'meta_key', '_course_woocommerce_product' );
-                    set_query_var( 'meta_compare', '=' );
-                    break;
-                case 'paidcourses':
-                    set_query_var( 'orderby', 'date' );
-                    set_query_var( 'order', 'DESC' );
-                    set_query_var( 'meta_value', '0' );
-                    set_query_var( 'meta_key', '_course_woocommerce_product' );
-                    set_query_var( 'meta_compare', '>' );
-                    break;
-                case 'featuredcourses':
-                    set_query_var( 'orderby', 'date' );
-                    set_query_var( 'order', 'DESC' );
-                    set_query_var( 'meta_value', 'featured' );
-                    set_query_var( 'meta_key', '_course_featured' );
-                    set_query_var( 'meta_compare', '=' );
-                    break;
-                default:
+            // check all registered Sensei shortcodes (not legacy shortcodes)
+            foreach ( $this->shortcode_classes as $shortcode => $class ){
 
-                    break;
+                if ( has_shortcode( $post->post_content, $shortcode ) ) {
 
-            } // End Switch Statement
+                    $has_sensei_shortcode = true;
+                }
 
-        } // End If Statement
-    } // End filter_courses_archive()
+            }
+        }
 
-    /**
-     * all_courses shortcode output function.
-     *
-     * The function should only be called indirectly through do_shortcode()
-     *
-     * @access public
-     * @param mixed $atts
-     * @param mixed $content (default: null)
-     * @return void
-     */
-    public static function all_courses( $atts, $content = null ) {
-
-        ob_start();
-        Sensei()->frontend->sensei_get_template( 'loop-course.php' );
-        $content = ob_get_clean();
-        return $content;
-
-    } // all_courses()
-
-    /**
-     * shortcode_new_courses function.
-     *
-     * @access public
-     * @param mixed $atts
-     * @param mixed $content (default: null)
-     * @return void
-     */
-    public static function new_courses( $atts, $content = null ) {
-        global $shortcode_override;
-        extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
-
-        $shortcode_override = 'newcourses';
-
-        ob_start();
-        Sensei()->frontend->sensei_get_template( 'loop-course.php' );
-        $content = ob_get_clean();
-        return $content;
-
-    } // End new_courses()
-
-    /**
-     * featured_courses function.
-     *
-     * @access public
-     * @param mixed $atts
-     * @param mixed $content (default: null)
-     * @return void
-     */
-    public static function featured_courses( $atts, $content = null ) {
-
-        global  $shortcode_override;
-        extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
-
-        if ( isset( Sensei()->settings->settings[ 'course_archive_featured_enable' ] ) && Sensei()->settings->settings[ 'course_archive_featured_enable' ] ) {
-            $shortcode_override = 'featuredcourses';
-            ob_start();
-            Sensei()->frontend->sensei_get_template( 'loop-course.php' );
-            $content = ob_get_clean();
-        } // End If Statement
-        return $content;
-    } // End featured_courses()
+        if( $has_sensei_shortcode ) {
+            $classes[] = 'sensei' ;
+        }
 
 
-    /**
-     * shortcode_free_courses function.
-     *
-     * @access public
-     * @param mixed $atts
-     * @param mixed $content (default: null)
-     * @return void
-     */
-    public static function free_courses( $atts, $content = null ) {
-        global  $shortcode_override;
-        extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
+        return $classes;
 
-        if ( isset( Sensei()->settings->settings[ 'course_archive_free_enable' ] ) && Sensei()->settings->settings[ 'course_archive_free_enable' ] ) {
-            $shortcode_override = 'freecourses';
-            ob_start();
-            Sensei()->frontend->sensei_get_template( 'loop-course.php' );
-            $content = ob_get_clean();
-            return $content;
-        } // End If Statement
-        return $content;
-    } // End free_courses()
-
-
-    /**
-     * paid_courses function.
-     *
-     * @access public
-     * @param mixed $atts
-     * @param mixed $content (default: null)
-     * @return void
-     */
-    public static function paid_courses( $atts, $content = null ) {
-        global $shortcode_override;
-        extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
-
-        if ( isset( Sensei()->settings->settings[ 'course_archive_paid_enable' ] ) && Sensei()->settings->settings[ 'course_archive_paid_enable' ] ) {
-            $shortcode_override = 'paidcourses';
-            ob_start();
-            Sensei()->frontend->sensei_get_template( 'loop-course.php' );
-            $content = ob_get_clean();
-            return $content;
-        } // End If Statement
-        return $content;
-    } // End paid_courses()
-
-
-    /**
-     * user_courses function.
-     *
-     * @access public
-     * @param mixed $atts
-     * @param mixed $content (default: null)
-     * @return void
-     */
-    public static function user_courses( $atts, $content = null ) {
-        global $shortcode_override;
-        extract( shortcode_atts( array(	'amount' => 0 ), $atts ) );
-
-        $shortcode_override = 'usercourses';
-
-        ob_start();
-        Sensei()->frontend->sensei_get_template( 'user/my-courses.php' );
-        $content = ob_get_clean();
-        return $content;
-
-    } // End user_courses()
+    }
 
 } // end class Sensei_Shortcodes
 new Sensei_Shortcode_Loader();

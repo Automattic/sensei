@@ -1,171 +1,98 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
- * The Template for displaying True/False Questions.
+ * The Template for displaying True/False ( Boolean ) Question type.
  *
- * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-boolean.php
- *
- * @author      WooThemes
- * @package     Sensei/Templates
- * @version     1.3.0
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
+?>
 
-global $post, $woothemes_sensei, $current_user;
+<?php
 
-// Get Frontend Data
-$lesson_id = $woothemes_sensei->quiz->get_lesson_id( $post->ID );
-$question_item = $woothemes_sensei->quiz->data->question_item;
-$question_count = $woothemes_sensei->quiz->data->question_count;
-$quiz_passmark = $woothemes_sensei->quiz->data->quiz_passmark;
-$user_quiz_grade = $woothemes_sensei->quiz->data->user_quiz_grade;
-$lesson_complete = $woothemes_sensei->quiz->data->user_lesson_complete;
-$reset_quiz_allowed = $woothemes_sensei->quiz->data->reset_quiz_allowed;
-$quiz_grade_type = $woothemes_sensei->quiz->data->quiz_grade_type;
-
-// Question Meta
-$question_id = $question_item->ID;
-$question_right_answer = get_post_meta( $question_id, '_question_right_answer', true );
-$question_wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
-$question_grade = $woothemes_sensei->question->get_question_grade( $question_id );
-
-// retrieve users stored data.
-$user_answer_entry = $woothemes_sensei->quiz->get_user_question_answer( $lesson_id, $question_id, $current_user->ID );
-$user_question_grade = $woothemes_sensei->quiz->get_user_question_grade( $lesson_id, $question_id, $current_user->ID );
-
-// Question media
-$question_media = get_post_meta( $question_id, '_question_media', true );
-$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = $question_media_description = '';
-if( 0 < intval( $question_media ) ) {
-	$mimetype = get_post_mime_type( $question_media );
-	if( $mimetype ) {
-		$mimetype_array = explode( '/', $mimetype);
-		if( isset( $mimetype_array[0] ) && $mimetype_array[0] ) {
-			$question_media_type = $mimetype_array[0];
-			$question_media_url = wp_get_attachment_url( $question_media );
-			$attachment = get_post( $question_media );
-			$question_media_title = $attachment->post_title;
-			$question_media_description = $attachment->post_content;
-			switch( $question_media_type ) {
-				case 'image':
-					$image_size = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
-					$attachment_src = wp_get_attachment_image_src( $question_media, $image_size );
-					$question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank"><img src="' . $attachment_src[0] . '" width="' . $attachment_src[1] . '" height="' . $attachment_src[2] . '" /></a>';
-				break;
-
-				case 'audio':
-					$question_media_link = wp_audio_shortcode( array( 'src' => $question_media_url ) );
-				break;
-
-				case 'video':
-					$question_media_link = wp_video_shortcode( array( 'src' => $question_media_url ) );
-				break;
-
-				default:
-					$question_media_filename = basename( $question_media_url );
-					$question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_filename . '</a>';
-				break;
-			}
-		}
-	}
-}
-
-// Merge right and wrong answers and randomize
-array_push( $question_wrong_answers, $question_right_answer );
-shuffle($question_wrong_answers);
-$question_text = get_the_title( $question_item );
-$question_description = apply_filters( 'the_content', $question_item->post_content );
-
-$answer_message = false;
-$answer_notes = false;
-if( ( $lesson_complete && $user_quiz_grade != '' ) || ( $lesson_complete && ! $reset_quiz_allowed && 'auto' == $quiz_grade_type ) || ( 'auto' == $quiz_grade_type && ! $reset_quiz_allowed && $user_quiz_grade != '' ) ) {
-	$user_correct = false;
-	$answer_message = __( 'Incorrect', 'woothemes-sensei' );
-	$answer_message_class = 'user_wrong';
-	// For zero grade mark as 'correct' but add no classes
-	if ( 0 == $question_grade ) {
-		$user_correct = true;
-		$answer_message = '';
-		$answer_message_class = '';
-	}
-	else if( $user_question_grade > 0 ) {
-		$user_correct = true;
-		$answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
-		$answer_message_class = 'user_right';
-	}
-
-    $answer_notes = $woothemes_sensei->quiz->get_user_question_feedback( $lesson_id, $question_id, $current_user->ID );
-
-    if( $answer_notes ) {
-		$answer_message_class .= ' has_notes';
-	}
-}
+    /**
+     * Get the question data with the current quiz id
+     * All data is loaded in this array to keep the template clean.
+     */
+    $question_data = WooThemes_Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
+    $boolean_options = array( 'true', 'false' );
 
 ?>
-<li class="boolean">
-	<span class="question"><?php echo apply_filters( 'sensei_question_title', esc_html( $question_text ) ); ?> <span class="grade">[<?php echo $question_grade; ?>]</span></span>
-	<?php echo $question_description; ?>
-	<?php if( $question_media_link ) { ?>
-		<div class="question_media_display">
-			<?php echo $question_media_link; ?>
-			<dl>
-				<?php if( $question_media_title ) { ?>
-					<dt><?php echo $question_media_title; ?></dt>
-				<?php } ?>
-				<?php if( $question_media_description ) { ?>
-					<?php echo '<dd>' . $question_media_description . '</dd>'; ?>
-				<?php } ?>
-			</dl>
-		</div>
-	<?php } ?>
-	<?php if( $answer_message ) { ?>
-		<div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
-			<span><?php echo $answer_message; ?></span>
-		</div>
-	<?php } ?>
-	<input type="hidden" name="<?php echo esc_attr( 'question_id_' . $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
-	<ul class="answers">
-		<?php
-		$answer_class = '';
-		// Add classes to indicate correctness, only if there is a grade
-		if( isset( $user_correct ) && 0 < $question_grade ) {
-			if( $question_right_answer == 'true' ) {
-				if( $user_correct ) {
-					$answer_class = 'user_right';
-				}
-				$answer_class .= ' right_answer';
-			} else {
-				if( ! $user_correct ) {
-					$answer_class = 'user_wrong';
-				}
-			}
-		}
-		?>
-		<li class="<?php esc_attr_e( $answer_class ); ?>">
-            <input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-true'; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="true" <?php echo checked( $user_answer_entry, 'true', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;
-            <label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-true'; ?>"><?php _e( 'True', 'woothemes-sensei' ); ?>
-            </label>
-        </li>
-		<?php
-		$answer_class = '';
-		// Add classes to indicate correctness, only if there is a grade
-		if( isset( $user_correct ) && 0 < $question_grade ) {
-			if( $question_right_answer == 'false' ) {
-				if( $user_correct ) {
-					$answer_class = 'user_right';
-				}
-				$answer_class .= ' right_answer';
-			} else {
-				if( ! $user_correct ) {
-					$answer_class = 'user_wrong';
-				}
-			}
-		}
-		?>
-		<li class="<?php esc_attr_e( $answer_class ); ?>">
-            <input type="radio" id="<?php echo esc_attr( 'question_' . $question_id ) . '-option-false'; ?>" name="<?php echo esc_attr( 'sensei_question[' . $question_id . ']' ); ?>" value="false" <?php echo checked( $user_answer_entry, 'false', false ); ?><?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>>&nbsp;
-            <label for="<?php echo esc_attr( 'question_' . $question_id ) . '-option-false'; ?>"><?php _e( 'False', 'woothemes-sensei' ); ?></label>
-        </li>
-	</ul>
-	<?php if( $answer_notes ) { ?>
-		<div class="sensei-message info info-special"><?php echo apply_filters( 'the_content', $answer_notes ); ?></div>
-	<?php } ?>
-</li>
+
+<ul class="answers options">
+
+    <?php
+
+    // setup the options the right answer set by the admin/teacher
+    // will be compared to.
+    $boolean_options = array( true, false );
+
+    //loop through the 2 boolean options and compare them with
+    // the selected right answer
+    foreach ( $boolean_options as $option ){
+
+        $answer_class = '';
+
+        // Add classes to indicate correctness, only if there is a grade
+        if( isset( $question_data[ 'user_correct' ] ) && 0 < $question_data['question_grade'] ) {
+
+            if( $question_right_answer == $question_data[ 'question_right_answer' ] ) {
+
+                if( $question_data[ 'user_correct' ] ) {
+
+                    $answer_class = 'user_right';
+
+                }
+
+                $answer_class .= ' right_answer';
+
+            } else {
+
+                if( ! $question_data[ 'user_correct' ] ) {
+
+                    $answer_class = 'user_wrong';
+
+                }
+
+            } // end if right answer == current booloean options
+
+        }// end if $user_correct .. $question_grade
+
+	    $option_value = $option ? 'true' : 'false';
+
+    ?>
+
+    <li class="<?php esc_attr_e( $answer_class ); ?>">
+
+        <input type="radio"
+               id="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-'. $option_value; ?>"
+               name="<?php echo esc_attr( 'sensei_question[' . $question_data[ 'ID' ]  . ']' ); ?>"
+               value="<?php echo $option_value; ?>"
+            <?php echo checked( $question_data[ 'user_answer_entry' ], $option_value, false ); ?>
+            <?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>
+	    />
+        <label for="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-' . $option_value; ?>">
+            <?php
+
+            if( 'true' == $option ){
+
+                _e( 'True', 'woothemes-sensei' );
+
+            }else{
+
+                _e( 'False', 'woothemes-sensei' );
+
+            }
+
+            ?>
+
+
+        </label>
+
+    </li>
+
+    <?php } ?>
+
+</ul>

@@ -10,29 +10,29 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 // Get data for email content
-global $woothemes_sensei, $sensei_email_data;
+global $sensei_email_data;
 extract( $sensei_email_data );
 
 // Load colours
 $bg = '#f5f5f5';
-if( isset( $woothemes_sensei->settings->settings['email_background_color'] ) && '' != $woothemes_sensei->settings->settings['email_background_color'] ) {
-	$bg = $woothemes_sensei->settings->settings['email_background_color'];
+if( isset( Sensei()->settings->settings['email_background_color'] ) && '' != Sensei()->settings->settings['email_background_color'] ) {
+	$bg = Sensei()->settings->settings['email_background_color'];
 }
 
 $body = '#fdfdfd';
-if( isset( $woothemes_sensei->settings->settings['email_body_background_color'] ) && '' != $woothemes_sensei->settings->settings['email_body_background_color'] ) {
-	$body = $woothemes_sensei->settings->settings['email_body_background_color'];
+if( isset( Sensei()->settings->settings['email_body_background_color'] ) && '' != Sensei()->settings->settings['email_body_background_color'] ) {
+	$body = Sensei()->settings->settings['email_body_background_color'];
 }
 
 $base = '#557da1';
-if( isset( $woothemes_sensei->settings->settings['email_base_color'] ) && '' != $woothemes_sensei->settings->settings['email_base_color'] ) {
-	$base = $woothemes_sensei->settings->settings['email_base_color'];
+if( isset( Sensei()->settings->settings['email_base_color'] ) && '' != Sensei()->settings->settings['email_base_color'] ) {
+	$base = Sensei()->settings->settings['email_base_color'];
 }
 $base_text 	= sensei_light_or_dark( $base, '#202020', '#ffffff' );
 
 $text = '#505050';
-if( isset( $woothemes_sensei->settings->settings['email_text_color'] ) && '' != $woothemes_sensei->settings->settings['email_text_color'] ) {
-	$text = $woothemes_sensei->settings->settings['email_text_color'];
+if( isset( Sensei()->settings->settings['email_text_color'] ) && '' != Sensei()->settings->settings['email_text_color'] ) {
+	$text = Sensei()->settings->settings['email_text_color'];
 }
 
 $bg_darker_10 = sensei_hex_darker( $bg, 10 );
@@ -107,8 +107,8 @@ $header_content_h1 = "
             	<tr>
                 	<td align="center" valign="top">
                 		<?php
-                			if ( isset( $woothemes_sensei->settings->settings['email_header_image'] ) && '' != $woothemes_sensei->settings->settings['email_header_image'] ) {
-                				$img = $woothemes_sensei->settings->settings['email_header_image'];
+                			if ( isset( Sensei()->settings->settings['email_header_image'] ) && '' != Sensei()->settings->settings['email_header_image'] ) {
+                				$img = Sensei()->settings->settings['email_header_image'];
                 				echo '<p style="margin-top:0;"><img src="' . esc_url( $img ) . '" alt="' . get_bloginfo( 'name' ) . '" /></p>';
                 			}
                 		?>

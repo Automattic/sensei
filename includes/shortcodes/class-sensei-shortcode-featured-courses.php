@@ -6,10 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Renders the [sensei_featured_courses] shortcode to display all featured courses
  *
  * @class Sensei_Shortcode_Recent_Courses
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
- * @package Sensei
- * @category Shortcodes
- * @author 	WooThemes
  */
 class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
 
@@ -114,7 +116,7 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
         $wp_query = $this->query;
 
         ob_start();
-        include('templates/loop.php');
+        Sensei_Templates::get_template('loop-course.php');
         $shortcode_output =  ob_get_clean();
 
         //restore old query

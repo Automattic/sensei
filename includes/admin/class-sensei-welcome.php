@@ -1,26 +1,18 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
 /**
- * Sensei Welcome Page Class
- *
  * Shows a feature overview for the new version (major)
  *
  * Adapted from code in EDD (Copyright (c) 2012, Pippin Williamson) and WooCommerce and WP
  *
- * @author      WooThemes
- * @category    Admin
- * @package     Sensei/Admin
+ * @package Views
+ * @author Automattic
+ *
  * @version     1.8.0
 */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
-/**
- * Sensei_Welcome class
- *
- * @since 1.8.0
- */
 class Sensei_Welcome {
 
 	/**
@@ -88,54 +80,52 @@ class Sensei_Welcome {
 
             <?php  $this->intro(); ?>
 
-            <div class="changelog">
-                <h4><?php _e( 'Enhanced Teacher role', 'woothemes-sensei' ); ?></h4>
-                <p><?php _e( 'Teachers now have the ability to create and manage their own courses.', 'woothemes-sensei' ); ?></p>
+            <div class="feature-section two-col">
+						<div class="col">
+							<div class="media-container">
+								<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/Screen-Shot-2015-12-01-at-15.25.24.png">
+							</div>
+						</div>
+						<div class="col">
+							<h3>New Sensei Shortcodes</h3>
+							<p>Display your Sensei courses, teachers and messages wherever you want them with a selection of new shortcodes, giving you much more control over the display of your Sensei content.</p>
+						</div>
+			</div>
+			<div class="feature-section two-col">
+						<div class="col">
+							<div class="media-container">
+								<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/language.jpg">
+							</div>
+						</div>
+						<div class="col">
+							<h3>Sensei in Your Language</h3>
+							<p>Language packs can now be downloaded directly from the dashboard, enabling one-click translation updates.</p>
+						</div>
+			</div>
 
-                <div class="changelog about-integrations">
-                    <div class="sensei-feature feature-section col three-col">
-                        <div>
-                            <h4><?php _e( 'Content by Teachers', 'woothemes-sensei' ); ?></h4>
-                            <p><?php printf( __( 'Users with the \'Teacher\' role can now create their own courses, lessons and quizzes, or you can assign existing courses to any teacher. %sDocumentation%s', 'woothemes-sensei' ), '<a href="http://docs.woothemes.com/document/sensei-roles-capabilities/#section-3">', '</a>') ; ?></p>
-                        </div>
-                        <div>
-                            <h4><?php _e( 'Course Marketplace', 'woothemes-sensei' ); ?></h4>
-                            <p><?php printf( __( 'Using our %sProduct Vendors%s extension for WooCommerce, you can enable teachers to create their own course products and earn commission on sales of their courses.', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/products/product-vendors/">', '</a>' ); ?></p>
-                        </div>
-                        <div class="last-feature">
-                            <h4><?php _e( 'Do More with Sensei', 'woothemes-sensei' ); ?></h4>
-                            <p><?php printf( __( 'Browse our %sSensei Extensions%s', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/product-category/sensei-extensions/">', '</a>' ); ?></p>
-                            <p><?php printf( __( 'Browse our %sSensei Compatible Themes%s', 'woothemes-sensei' ), '<a href="http://www.woothemes.com/product-category/themes/sensei-themes">', '</a>' ); ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="changelog">
-                <div class="feature-section col three-col">
-                    <div>
-                        <h4><?php _e( 'Revised admin menu', 'woothemes-sensei' ); ?></h4>
-                        <p><?php _e( 'The Sensei admin menu has been restructured to be more logical, giving Courses its own top-level menu item.', 'woothemes-sensei' ); ?></p>
-                    </div>
-                    <div>
-                        <h4><?php _e( 'Modules in core', 'woothemes-sensei' ); ?></h4>
-                        <p><?php printf( __( 'Modules functionality is now included in Sensei core so you no longer need the Modules extension. If you were previously using it, you can go to your %sPlugins%s page and delete it.', 'woothemes-sensei' ), '<a href="plugins.php">', '</a>' ); ?></p>
-                    </div>
-                    <div class="last-feature">
-                        <h4><?php _e( 'Email notifications per course', 'woothemes-sensei' ); ?></h4>
-                        <p><?php _e( 'We\'ve added a new option in the Course edit screen so that you can now disable email notifications on a per-course basis.', 'woothemes-sensei' ); ?></p>
-                    </div>
-                </div>
-                <div class="feature-section col three-col">
-                    <div>
-                        <h4><?php _e( 'Easier Lesson editing', 'woothemes-sensei' ); ?></h4>
-                        <p><?php _e( 'Many of the lesson and quiz options can now be changed via the Quick Edit and Bulk Edit functions.', 'woothemes-sensei' ); ?></p>
-                    </div>
-                    <div>
-                    	<h4><?php _e( 'Teacher content visibility', 'woothemes-sensei' ); ?></h4>
-                        <p><?php _e( 'When viewing the WordPress Admin, teachers can only see/edit their own course content, and can only see data for learners taking their courses.', 'woothemes-sensei' ); ?></p>
-                    </div>
-                </div>
-            </div>
+            <div class="feature-section three-col">
+						<div class="col">
+				<div class="media-container">
+										<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/next.png">
+									</div>
+				<h3>Intuitive Lesson Navigation</h3>
+				<p>When you complete a lesson, you will now see an obvious link to guide you to the next lesson.</p>
+			</div>
+						<div class="col">
+				<div class="media-container">
+										<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/zero.png">
+									</div>
+				<h3>Zero-grade Questions</h3>
+				<p>Not all questions require a grade. Now you have the option to assign a grade of zero to any question.</p>
+			</div>
+						<div class="col">
+				<div class="media-container">
+										<img src="https://docs.woothemes.com/wp-content/uploads/2015/12/templates.png">
+									</div>
+				<h3>Updated Template System</h3>
+				<p>A revised and optimized template system, including a new default Course Archive page, complete with filters for quickly displaying free, paid and featured courses.</p>
+			</div>
+					</div>
 
             <hr />
 
@@ -290,7 +280,7 @@ class Sensei_Welcome {
 					$message = __( 'Thanks for installing!', 'woothemes-sensei' );
 				}
 
-				printf( __( '%s Sensei %s takes teaching with WordPress to a whole new level! We hope you enjoy using it.', 'woothemes-sensei' ), $message, $major_version );
+				printf( __( '%s We hope you enjoy using Sensei %s.', 'woothemes-sensei' ), $message, $major_version );
 			?>
 		</div>
 

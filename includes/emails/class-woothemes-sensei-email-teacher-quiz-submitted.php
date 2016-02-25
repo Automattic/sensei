@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Quiz_Submitted' ) ) :
  *
  * An email sent to the teacher when one of their students submits a quiz for manual grading.
  *
- * @class 		WooThemes_Sensei_Email_Teacher_Quiz_Submitted
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 
@@ -25,9 +25,6 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 
 	/**
 	 * Constructor
-	 *
-	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'teacher-quiz-submitted';
@@ -37,12 +34,14 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 
 	/**
 	 * trigger function.
-	 *
-	 * @access public
+     *
+     * @param integer $learner_id
+     * @param integer $quiz_id
+     *
 	 * @return void
 	 */
 	function trigger( $learner_id = 0, $quiz_id = 0 ) {
-		global $woothemes_sensei, $sensei_email_data;
+		global  $sensei_email_data;
 
 		// Get learner user object
 		$this->learner = new WP_User( $learner_id );
@@ -68,7 +67,7 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 		$this->recipient = stripslashes( $this->teacher->user_email );
 
 		// Send mail
-		$woothemes_sensei->emails->send( $this->recipient, $this->subject, $woothemes_sensei->emails->get_content( $this->template ) );
+		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 	}
 }
 

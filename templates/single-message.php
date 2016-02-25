@@ -4,41 +4,48 @@
  *
  * Override this template by copying it to yourtheme/sensei/single-message.php
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.6.0
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
+?>
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+<?php  get_sensei_header();  ?>
 
-get_header();
+<article <?php post_class(); ?> >
 
-/**
- * sensei_before_main_content hook
- *
- * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
- */
-do_action( 'sensei_before_main_content' );
+    <?php
+    /**
+     * Action inside the single message template before the content
+     *
+     * @since 1.9.0
+     *
+     * @param integer $message_id
+     *
+     * @hooked WooThemes_Sensei_Messages::the_title                 - 20
+     * @hooked WooThemes_Sensei_Messages::the_message_sent_by_title - 40
+     */
+    do_action( 'sensei_single_message_content_inside_before', get_the_ID());
+    ?>
 
-/**
- * sensei_single_main_content hook
- *
- * @hooked sensei_single_main_content - 10 (outputs main content)
- */
-do_action( 'sensei_single_main_content' );
+    <section class="entry">
 
-/**
- * sensei_after_main_content hook
- *
- * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)
- */
-do_action( 'sensei_after_main_content' );
+        <?php the_content(); ?>
 
-/**
- * sensei_sidebar hook
- *
- * @hooked sensei_get_sidebar - 10
- */
-do_action( 'sensei_sidebar' );
+    </section>
 
-get_footer(); ?>
+    <?php
+
+    /**
+     * action inside the single message template after the content
+     * @since 1.9.0
+     *
+     * @param integer $message_id
+     */
+    do_action( 'sensei_single_message_content_inside_after', get_the_ID());
+
+    ?>
+</article><!-- .post -->
+
+<?php get_sensei_footer(); ?>

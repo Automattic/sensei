@@ -633,8 +633,7 @@ jQuery(document).ready( function($) {
 	 						jQuery( '#lesson-course-actions' ).show();
 							jQuery( '#lesson-course-details' ).addClass( 'hidden' );
 							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(  jQuery( '#course-title' ).attr( 'value' ) ) );
-							jQuery( '#lesson-course-options' ).val( response );
-							jQuery( '#lesson-course-options' ).trigger( 'chosen:updated' );
+							jQuery( '#lesson-course-options' ).val( response).trigger("change");;
 	 					} else {
 	 						// TODO - course creation fail message
 	 					}

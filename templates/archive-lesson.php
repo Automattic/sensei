@@ -1,58 +1,48 @@
 <?php
 /**
- * The Template for displaying lesson archives.
+ * The Template for displaying lesson archives, including the lesson page template.
+ * This template also handels the lesson modules taxonomy and the lessons_tag taxonomy.
  *
- * Override this template by copying it to yourtheme/sensei/archive-lesson.php
+ * Override this template by copying it to your_theme/sensei/archive-lesson.php
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.0.0
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
+?>
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+<?php  get_sensei_header();  ?>
 
-get_header();
+    <?php
 
-/**
- * sensei_before_main_content hook
- *
- * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
- */
-do_action('sensei_before_main_content');
+        /**
+         * Action before lesson archive loop. This action runs within the archive-lesson.php.
+         *
+         * It will be executed even if there are no posts on the archive page.
+         */
+        do_action( 'sensei_archive_before_lesson_loop' );
 
-/**
- * sensei_lesson_archive_main_content hook
- *
- * @hooked sensei_lesson_archive_main_content - 10 (outputs main lesson archive content loop)
- */
-do_action( 'sensei_lesson_archive_main_content' );
+    ?>
 
-/**
- * sensei_breadcrumb hook
- *
- * @hooked sensei_breadcrumb - 10 (outputs sensei breadcrumb trail)
- */
-do_action('sensei_breadcrumb');
+    <?php if ( have_posts() ): ?>
 
-/**
- * sensei_pagination hook
- *
- * @hooked sensei_pagination - 10 (outputs archive pagination)
- */
-do_action('sensei_pagination');
+        <?php sensei_load_template( 'loop-lesson.php' ); ?>
 
-/**
- * sensei_after_main_content hook
- *
- * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)
- */
-do_action('sensei_after_main_content');
+    <?php else: ?>
 
-/**
- * sensei_sidebar hook
- *
- * @hooked sensei_get_sidebar - 10
- */
-do_action('sensei_sidebar');
+        <p><?php _e( 'No lessons found that match your selection.', 'woothemes-sensei' ); ?></p>
 
-get_footer(); ?>
+    <?php  endif; // End If Statement ?>
+
+    <?php
+
+        /**
+         * Action after lesson archive  loop on the archive-lesson.php template file
+         * It will be executed even if there are no posts on the archive page.
+         *
+         * @since 1.9.0
+         */
+        do_action( 'sensei_archive_after_lesson_loop' );
+    ?>
+<?php get_sensei_footer(); ?>

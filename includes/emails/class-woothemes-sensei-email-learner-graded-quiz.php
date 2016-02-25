@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Learner_Graded_Quiz' ) ) :
  *
  * An email sent to the learner when their quiz has been graded (auto or manual).
  *
- * @class 		WooThemes_Sensei_Email_Learner_Graded_Quiz
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 
@@ -26,7 +26,6 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 	 * Constructor
 	 *
 	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'learner-graded-quiz';
@@ -37,11 +36,16 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 	/**
 	 * trigger function.
 	 *
-	 * @access public
+     * @param int $user_id
+     * @param int $quiz_id
+     * @param int $grade
+     * @param int $passmark
+     *
 	 * @return void
 	 */
-	function trigger( $user_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0 ) {
-		global $woothemes_sensei, $sensei_email_data;
+	function trigger ( $user_id = 0, $quiz_id = 0, $grade = 0, $passmark = 0 ) {
+
+		global  $sensei_email_data;
 
 		// Get learner user object
 		$this->user = new WP_User( $user_id );
@@ -80,7 +84,7 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 		$this->recipient = stripslashes( $this->user->user_email );
 
 		// Send mail
-		$woothemes_sensei->emails->send( $this->recipient, $this->subject, $woothemes_sensei->emails->get_content( $this->template ) );
+		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 	}
 }
 

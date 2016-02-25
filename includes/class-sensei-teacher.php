@@ -6,17 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * All functionality pertaining to the teacher role.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Core
- * @author WooThemes
+ * @package Users
+ * @author Automattic
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * - __construct()
- * - create_teacher_role()
- * - add_teacher_capabilities()
  */
 class Sensei_Teacher {
 
@@ -198,9 +190,12 @@ class Sensei_Teacher {
             'edit_private_sensei_messages' => true,
             'read_private_sensei_messages' => true,
 
-            'edit_comment' => true,
+            // Comments -
+            // Necessary cap so Teachers can moderate comments
+            // on their own lessons. We restrict access to other
+            // post types in $this->restrict_posts_menu_page()
 
-            // Group post type Todo: find out from Hugh
+            'edit_posts' => true,
 
         ));
 
@@ -229,7 +224,7 @@ class Sensei_Teacher {
         if( !current_user_can('manage_options') ){
             return;
         }
-        add_meta_box( 'sensei-teacher',  __( 'Teacher' , $this->token ),  array( $this , 'teacher_meta_box_content' ),
+        add_meta_box( 'sensei-teacher',  __( 'Teacher' , 'woothemes-sensei'),  array( $this , 'teacher_meta_box_content' ),
             'course',
             'side',
             'core'
@@ -371,7 +366,7 @@ class Sensei_Teacher {
     public static function update_course_modules_author( $course_id ,$new_teacher_id ){
 
         if( empty( $course_id ) || empty( $new_teacher_id ) ){
-            return false;
+            return;
         }
 
         $terms_selected_on_course = wp_get_object_terms( $course_id, 'module' );
@@ -460,14 +455,14 @@ class Sensei_Teacher {
      * @return array $users user id array
      */
     public function update_course_lessons_author ( $course_id, $new_author  ){
-        global $woothemes_sensei;
+
 
         if( empty( $course_id ) || empty( $new_author ) ){
             return false;
         }
 
         //get a list of course lessons
-        $lessons = $woothemes_sensei->course->course_lessons( $course_id );
+        $lessons = Sensei()->course->course_lessons( $course_id );
 
         if( empty( $lessons )  ||  ! is_array( $lessons )  ){
             return false;
@@ -489,7 +484,7 @@ class Sensei_Teacher {
 
             // update quiz author
             //get the lessons quiz
-            $lesson_quizzes = $woothemes_sensei->lesson->lesson_quizzes( $lesson->ID );
+            $lesson_quizzes = Sensei()->lesson->lesson_quizzes( $lesson->ID );
             if( is_array( $lesson_quizzes ) ){
                 foreach ( $lesson_quizzes as $quiz_id ) {
                     // update quiz with new author
@@ -563,15 +558,13 @@ class Sensei_Teacher {
      * @return bool $is_admin_teacher
      */
     public function is_admin_teacher ( ){
-        global $current_user;
 
         if( ! is_user_logged_in()){
             return false;
         }
         $is_admin_teacher = false;
-        $user_roles = $current_user->roles;
 
-        if( is_admin() &&  in_array(  'teacher',  $user_roles )   ){
+        if( is_admin() && Sensei_Teacher::is_a_teacher( get_current_user_id() )  ){
 
             $is_admin_teacher = true;
 
@@ -835,8 +828,8 @@ class Sensei_Teacher {
         }
 
         // load the email class
-        include('emails/class-woothemes-sensei-teacher-new-course-assignment.php');
-        $email = new Teacher_New_Course_Assignment();
+        include('emails/class-sensei-email-teacher-new-course-assignment.php');
+        $email = new Sensei_Email_Teacher_New_Course_Assignment();
         $email->trigger( $teacher_id, $course_id );
 
         return true;
@@ -855,7 +848,7 @@ class Sensei_Teacher {
 
         $course_id = $post->ID;
 
-        if( 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id )
+        if( 'publish'== $old_status || 'course' != get_post_type( $course_id ) || 'auto-draft' == get_post_status( $course_id )
             || 'trash' == get_post_status( $course_id ) || 'draft' == get_post_status( $course_id ) ) {
 
             return false;
@@ -882,8 +875,8 @@ class Sensei_Teacher {
         $recipient = get_option('admin_email', true);
 
         // don't send if the course is created by admin
-        if( $recipient == $teacher->user_email ){
-            return;
+        if( $recipient == $teacher->user_email || current_user_can( 'manage_options' )){
+            return false;
         }
 
         /**
@@ -963,7 +956,7 @@ class Sensei_Teacher {
         foreach( $teacher_courses as $course ){
 
             $course_learner_ids = array();
-            $activity_comments =  WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course->ID, 'type' => 'sensei_course_status', 'field' => 'user_id' ), true );
+            $activity_comments =  Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course->ID, 'type' => 'sensei_course_status', 'field' => 'user_id' ), true );
 
             if( empty( $activity_comments ) ||  ( is_array( $activity_comments  ) && ! ( count( $activity_comments ) > 0 ) ) ){
                 continue; // skip to the next course as there are no users on this course
@@ -1507,22 +1500,74 @@ class Sensei_Teacher {
      * @since 1.8.7
      * @access public
      * @parameters obj $clauses
-     * @return obj $clauses
+     * @return WP_Comment_Query  $clauses
      */
 
-    public function restrict_comment_moderation($clauses) {
+    public function restrict_comment_moderation ( $clauses ) {
 
         global $pagenow;
 
-        $user = wp_get_current_user();
+        if( self::is_a_teacher( get_current_user_id() ) && $pagenow == "edit-comments.php") {
 
-        if( in_array( 'teacher', (array) $user->roles ) && $pagenow == "edit-comments.php") {
+            $clauses->query_vars['post_author'] = get_current_user_id();
 
-            $clauses->query_vars['post_author'] = $user->ID;
         }
 
         return $clauses;
 
     }   // end restrict_comment_moderation()
+
+    /**
+     * Determine if a user is a teacher by ID
+     *
+     * @param int $user_id
+     *
+     * @return bool
+     */
+    public static function is_a_teacher( $user_id ){
+
+        $user = get_user_by('id', $user_id);
+
+        if( isset( $user->roles ) && in_array(  'teacher',  $user->roles )   ){
+
+            return true;
+
+        }else{
+
+            return false;
+
+        }
+
+    }// end is_a_teacher
+
+    /**
+     * The archive title on the teacher archive filter
+     *
+     * @since 1.9.0
+     */
+    public static function archive_title(){
+
+        $author = get_user_by( 'id', get_query_var( 'author' ) );
+        $author_name = $author->display_name;
+        ?>
+            <h2 class="teacher-archive-title">
+
+                <?php echo sprintf( __( 'All courses by %s', 'woothemes-sensei') , $author_name ); ?>
+
+            </h2>
+        <?php
+
+    }// archive title
+
+    /**
+     * Removing course meta on the teacher archive page
+     *
+     * @since 1.9.0
+     */
+    public static function remove_course_meta_on_teacher_archive(){
+
+        remove_action('sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+
+    }
 
 } // End Class

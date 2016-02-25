@@ -1,14 +1,12 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside WP
 /**
- * Sensei Autoloader Class
- *
  * Loading all class files within the Sensei/includes directory
  *
- * The autoloader depends on the class and file name matching.
+ * The auto loader class listens for calls to classes within Sensei and loads
+ * the file containing the class.
  *
- * @package Sensei
- * @category Autoloader
+ * @package Core
  * @since 1.9.0
  */
 class Sensei_Autoloader {
@@ -19,7 +17,7 @@ class Sensei_Autoloader {
     private $include_path = 'includes';
 
     /**
-     * @var class file map. List of classes mapped to their files
+     * @var array $class_file_map. List of classes mapped to their files
      */
     private $class_file_map = array();
 
@@ -55,26 +53,50 @@ class Sensei_Autoloader {
 
         $this->class_file_map = array(
 
-            'WooThemes_Sensei' => 'class-woothemes-sensei.php',
-            'WooThemes_Sensei_Updates' => 'class-woothemes-sensei-updates.php',
+            /**
+             * Main Sensei class
+             */
+            'Sensei_Main' => 'class-sensei.php',
 
-            /* Shortcode specific */
-            'Sensei_Shortcode_Loader'           => 'shortcodes/class-sensei-shortcode-loader.php',
-            'Sensei_Shortcode_Interface'        => 'shortcodes/interface-sensei-shortcode.php',
-            'Sensei_Shortcode_Featured_Courses' => 'shortcodes/class-sensei-shortcode-featured-courses.php',
-            'Sensei_Shortcode_User_Courses'     => 'shortcodes/class-sensei-shortcode-user-courses.php',
-            'Sensei_Shortcode_Courses'          => 'shortcodes/class-sensei-shortcode-courses.php',
-            'Sensei_Shortcode_Teachers'         => 'shortcodes/class-sensei-shortcode-teachers.php',
-            'Sensei_Shortcode_User_Messages'    => 'shortcodes/class-sensei-shortcode-user-messages.php',
-            'Sensei_Shortcode_Course_Page'      => 'shortcodes/class-sensei-shortcode-course-page.php',
-            'Sensei_Shortcode_Lesson_Page'      => 'shortcodes/class-sensei-shortcode-lesson-page.php',
-            'Sensei_Shortcode_Course_Categories' => 'shortcodes/class-sensei-shortcode-course-categories.php',
+            /**
+             * Admin
+             */
+            'Sensei_Welcome'            => 'admin/class-sensei-welcome.php' ,
+            'Sensei_Learner_Management' => 'admin/class-sensei-learner-management.php' ,
+
+            /**
+             * Shortcodes
+             */
+            'Sensei_Shortcode_Loader'              => 'shortcodes/class-sensei-shortcode-loader.php',
+            'Sensei_Shortcode_Interface'           => 'shortcodes/interface-sensei-shortcode.php',
+            'Sensei_Shortcode_Featured_Courses'    => 'shortcodes/class-sensei-shortcode-featured-courses.php',
+            'Sensei_Shortcode_User_Courses'        => 'shortcodes/class-sensei-shortcode-user-courses.php',
+            'Sensei_Shortcode_Courses'             => 'shortcodes/class-sensei-shortcode-courses.php',
+            'Sensei_Shortcode_Teachers'            => 'shortcodes/class-sensei-shortcode-teachers.php',
+            'Sensei_Shortcode_User_Messages'       => 'shortcodes/class-sensei-shortcode-user-messages.php',
+            'Sensei_Shortcode_Course_Page'         => 'shortcodes/class-sensei-shortcode-course-page.php',
+            'Sensei_Shortcode_Lesson_Page'         => 'shortcodes/class-sensei-shortcode-lesson-page.php',
+            'Sensei_Shortcode_Course_Categories'   => 'shortcodes/class-sensei-shortcode-course-categories.php',
             'Sensei_Shortcode_Unpurchased_Courses' => 'shortcodes/class-sensei-shortcode-unpurchased-courses.php',
+            'Sensei_Legacy_Shortcodes'             => 'shortcodes/class-sensei-legacy-shortcodes.php',
+
+            /**
+             * Built in theme integration support
+             */
+            'Sensei_Theme_Integration_Loader' => 'theme-integrations/theme-integration-loader.php',
+            'Sensei__S'                       => 'theme-integrations/_s.php',
+            'Sensei_Twentyeleven'             => 'theme-integrations/twentyeleven.php',
+            'Sensei_Twentytwelve'             => 'theme-integrations/twentytwelve.php',
+            'Sensei_Twentythirteen'           => 'theme-integrations/Twentythirteen.php',
+            'Sensei_Twentyfourteen'           => 'theme-integrations/Twentyfourteen.php',
+            'Sensei_Twentyfifteen'            => 'theme-integrations/Twentyfifteen.php',
+            'Sensei_Twentysixteen'            => 'theme-integrations/Twentysixteen.php',
+            'Sensei_Storefront'               => 'theme-integrations/Storefront.php',
 
             /**
              * WooCommerce
              */
-            'Sensei_WC' => 'woocommerce/class-sensei-wc.php',
+            'Sensei_WC' => 'class-sensei-wc.php',
 
         );
     }
@@ -84,15 +106,40 @@ class Sensei_Autoloader {
      */
     public function autoload( $class ){
 
-        // exit if we didn't provide mapping for this class
-        if( ! isset( $this->class_file_map[ $class ]  ) ){
+        // only handle classes with the word `sensei` in it
+        if( ! is_numeric( strpos ( strtolower( $class ), 'sensei') ) ){
 
             return;
 
         }
 
-        $file_location = $this->include_path . $this->class_file_map[ $class ];
-        require_once( $file_location);
+        // exit if we didn't provide mapping for this class
+        if( isset( $this->class_file_map[ $class ] ) ){
+
+            $file_location = $this->include_path . $this->class_file_map[ $class ];
+            require_once( $file_location);
+            return;
+
+        }
+
+        // check for file in the main includes directory
+        $class_file_path = $this->include_path . 'class-'.str_replace( '_','-', strtolower( $class ) ) . '.php';
+        if( file_exists( $class_file_path ) ){
+
+            require_once( $class_file_path );
+            return;
+        }
+
+        // lastly check legacy types
+        $stripped_woothemes_from_class = str_replace( 'woothemes_','', strtolower( $class ) ); // remove woothemes
+        $legacy_class_file_path = $this->include_path . 'class-'.str_replace( '_','-', strtolower( $stripped_woothemes_from_class ) ) . '.php';
+        if( file_exists( $legacy_class_file_path ) ){
+
+            require_once( $legacy_class_file_path );
+            return;
+        }
+
+        return;
 
     }// end autoload
 

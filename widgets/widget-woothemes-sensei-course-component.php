@@ -6,35 +6,22 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  *
  * A WooThemes standardized component widget.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Widgets
- * @author WooThemes
- * @since 1.0.0
+ * @package Views
+ * @subpackage Widgets
+ * @author Automattic
  *
- * TABLE OF CONTENTS
- *
- * protected $woo_widget_cssclass
- * protected $woo_widget_description
- * protected $woo_widget_idbase
- * protected $woo_widget_title
- *
- * - __construct()
- * - widget()
- * - update()
- * - form()
- * - load_component()
+ * @since 1.1.0
  */
 class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	protected $woo_widget_cssclass;
 	protected $woo_widget_description;
 	protected $woo_widget_idbase;
 	protected $woo_widget_title;
+	protected $instance;
 
 	/**
 	 * Constructor function.
 	 * @since  1.0.0
-	 * @return  void
 	 */
 	public function __construct() {
 		/* Widget variable settings. */
@@ -51,10 +38,11 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 												);
 
 		// Add support for the WooCommerce shelf.
-		if ( function_exists( 'is_woocommerce_activated' ) && is_woocommerce_activated() ) {
+		if ( Sensei_WC::is_woocommerce_active() ) {
 			$this->woo_widget_componentslist['freecourses'] = __( 'Free Courses', 'woothemes-sensei' );
 			$this->woo_widget_componentslist['paidcourses'] = __( 'Paid Courses', 'woothemes-sensei' );
 		}
+
 		/* Widget settings. */
 		$widget_ops = array( 'classname' => $this->woo_widget_cssclass, 'description' => $this->woo_widget_description );
 
@@ -73,36 +61,42 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
-		extract( $args, EXTR_SKIP );
 
 		remove_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 
-		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) && !is_user_logged_in() ) {
+		//don't show active or completed course if a user is not logged in
+		if ( ! in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) )
+		     || ( ! is_user_logged_in() && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) )  ) {
 			// No Output
-		} else {
-			/* Our variables from the widget settings. */
-			$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
+            return;
 
-			/* Before widget (defined by themes). */
-			echo $before_widget;
+		}
 
-			/* Display the widget title if one was input (before and after defined by themes). */
-			if ( $title ) { echo $before_title . $title . $after_title; }
+		$this->instance = $instance;
 
-			/* Widget content. */
-			// Add actions for plugins/themes to hook onto.
-			do_action( $this->woo_widget_cssclass . '_top' );
+		/* Our variables from the widget settings. */
+		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
 
-			if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) ) {
-				$this->load_component( $instance );
-			}
+		/* Before widget (defined by themes). */
+		echo $args['before_widget'];
 
-			// Add actions for plugins/themes to hook onto.
-			do_action( $this->woo_widget_cssclass . '_bottom' );
+		/* Display the widget title if one was input (before and after defined by themes). */
+		if ( $title ) { echo $args['before_title'] . $title . $args['after_title']; }
 
-			/* After widget (defined by themes). */
-			echo $after_widget;
-		} // End If Statement
+		/* Widget content. */
+		// Add actions for plugins/themes to hook onto.
+		do_action( $this->woo_widget_cssclass . '_top' );
+
+		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) ) {
+			$this->load_component( $instance );
+		}
+
+		// Add actions for plugins/themes to hook onto.
+		do_action( $this->woo_widget_cssclass . '_bottom' );
+
+		/* After widget (defined by themes). */
+		echo $args['after_widget'];
+
 
 		add_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 
@@ -175,85 +169,244 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 	/**
 	 * Load the desired component, if a method is available for it.
-	 * @param  string $component The component to potentially be loaded.
+	 *
+	 * @param array $instance The component to potentially be loaded.
      *
 	 * @since  1.0.0
 	 * @return void
 	 */
 	protected function load_component ( $instance ) {
-		global $woothemes_sensei, $current_user;
 
-		get_currentuserinfo();
+		$courses = array();
 
-		$course_ids = array();
-		if ( 'activecourses' == esc_attr( $instance['component'] ) ) {
-			$courses = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_status', 'status' => 'in-progress' ), true );
-			// Need to always return an array, even with only 1 item
-			if ( !is_array($courses) ) {
-				$courses = array( $courses );
-			}
-			foreach( $courses AS $course ) {
-				$course_ids[] = $course->comment_post_ID;
-			}
-		} elseif( 'completedcourses' == esc_attr( $instance['component'] ) ) {
-			$courses = WooThemes_Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_status', 'status' => 'complete' ), true );
-			// Need to always return an array, even with only 1 item
-			if ( !is_array($courses) ) {
-				$courses = array( $courses );
-			}
-			foreach( $courses AS $course ) {
-				$course_ids[] = $course->comment_post_ID;
-			}
-		} // End If Statement
+		if ( 'usercourses' == esc_attr( $instance['component'] ) ) {
+			// usercourses == new courses
+			$courses =  $this->get_new_courses( );
 
-		$posts_array = array();
+		} elseif ( 'activecourses' == esc_attr( $instance['component'] ) ) {
+
+			$courses =  $this->get_active_courses( );
+
+
+		} elseif ( 'completedcourses' == esc_attr( $instance['component'] ) ) {
+
+			$courses =  $this->get_completed_courses();
+
+		} elseif ( 'featuredcourses' == esc_attr( $instance['component'] ) ) {
+
+			$courses =  $this->get_featured_courses();
+
+		} elseif ( 'paidcourses' == esc_attr( $instance['component'] ) ) {
+
+			$args = array( 'posts_per_page' => $this->instance['limit'] );
+			$courses =  Sensei_WC::get_paid_courses( $args );
+
+		} elseif ( 'freecourses' == esc_attr( $instance['component'] ) ) {
+
+			$args = array( 'posts_per_page' => $this->instance['limit'] );
+			$courses =  Sensei_WC::get_free_courses( $args );
+
+		} else {
+
+			return;
+
+		}
 
 		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes
-		if ( !empty($instance['limit']) && intval( $instance['limit'] ) >= 1 && intval( $instance['limit'] ) < count($course_ids) ) {
-			$course_ids = array_slice( $course_ids, 0, intval( $instance['limit'] ) ); // This does mean the order by is effectively ignored
-		}
-		if ( ! empty( $course_ids ) ) {
-			$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ), $course_ids );
-		} else {
-			if ( 'activecourses' == esc_attr( $instance['component'] ) || 'completedcourses' == esc_attr( $instance['component'] ) ) {
-				$posts_array = array();
-			} else {
-				$posts_array = $woothemes_sensei->post_types->course->course_query( intval( $instance['limit'] ), esc_attr( $instance['component'] ) );
-			}
-		} // End If Statement
+		if ( !empty($instance['limit']) && intval( $instance['limit'] ) >= 1 && intval( $instance['limit'] ) < count($courses) ) {
 
-		if ( count( $posts_array ) > 0 ) { ?>
-			<ul>
-			<?php foreach ($posts_array as $post_item){
-		    	$post_id = absint( $post_item->ID );
-		    	$post_title = $post_item->post_title;
-		    	$user_info = get_userdata( absint( $post_item->post_author ) );
-		    	$author_link = get_author_posts_url( absint( $post_item->post_author ) );
-		    	$author_display_name = $user_info->display_name;
-		    	$author_id = $post_item->post_author;
-		    ?>
-		    	<li class="fix">
-		    		<?php do_action( 'sensei_course_image', $post_id ); ?>
-		    		<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a>
-		    		<br />
-		    		<?php if ( isset( $woothemes_sensei->settings->settings[ 'course_author' ] ) && ( $woothemes_sensei->settings->settings[ 'course_author' ] ) ) { ?>
-    					<span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_html( $author_display_name ); ?></a></span>
-    					<br />
-    				<?php } // End If Statement ?>
-    				<span class="course-lesson-count"><?php echo $woothemes_sensei->post_types->course->course_lesson_count( $post_id ) . '&nbsp;' . apply_filters( 'sensei_lessons_text', __( 'Lessons', 'woothemes-sensei' ) ); ?></span>
-    				<br />
-    				<?php sensei_simple_course_price( $post_id ); ?>
-		    	</li>
-		    <?php } // End For Loop ?>
-		    <?php if ( 'activecourses' == esc_attr( $instance['component'] ) || 'completedcourses' == esc_attr( $instance['component'] ) ) {
-		    	$my_account_page_id = intval( $woothemes_sensei->settings->settings[ 'my_course_page' ] );
-		    	echo '<li class="my-account fix"><a href="'. esc_url( get_permalink( $my_account_page_id ) ) .'">'.__('My Courses', 'woothemes-sensei').' <span class="meta-nav"></span></a></li>';
-		    } // End If Statement ?>
-		</ul>
-		<?php } else {
-			// No posts returned. This means the user either has no active or no completed courses.
-			$course_status = substr( esc_attr( $instance['component'] ) , 0, -7);
-			echo sprintf( __( 'You have no %1s courses.', 'woothemes-sensei' ), $course_status );
-		} // End If Statement
+			$courses = array_slice( $courses, 0, intval( $instance['limit'] ) );
+
+		}
+
+		if ( empty( $courses ) && $instance['limit'] != 0 ) {
+
+			$this->display_no_courses_message();
+			return;
+
+		}
+
+		$this->display_courses( $courses );
+
 	} // End load_component()
+
+
+	/**
+	 * Output the message telling the user that
+	 * there are no course for their desired settings
+	 *
+	 * @since 1.9.2
+	 */
+	public function display_no_courses_message ( ) {
+
+		if ( 'featuredcourses' == $this->instance['component'] ) {
+
+			_e( 'You have no featured courses.', 'woothemes-sensei' );
+
+		} elseif ( 'activecourses' == $this->instance['component'] ) {
+
+			_e( 'You have no active courses.', 'woothemes-sensei' );
+
+		} elseif ( 'completedcourses' == $this->instance['component'] ) {
+
+			_e( 'You have no completed courses.', 'woothemes-sensei' );
+
+		}else{
+
+			_e( 'You have no courses.', 'woothemes-sensei' );
+
+		}
+	}
+
+	/**
+	 * Output the widget courses
+	 *
+	 * @since 1.9.2
+	 * @param array $courses
+	 */
+	public function display_courses( $courses = array() ){ ?>
+		<ul>
+			<?php
+
+			foreach ($courses as $course) {
+
+				$post_id = absint( $course->ID );
+				$post_title = $course->post_title;
+				$user_info = get_userdata( absint( $course->post_author ) );
+				$author_link = get_author_posts_url( absint( $course->post_author ) );
+				$author_display_name = $user_info->display_name;
+				$author_id = $course->post_author;
+				?>
+
+				<li class="fix">
+
+					<?php do_action( 'sensei_course_image', $post_id ); ?>
+
+					<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>"
+					   title="<?php echo esc_attr( $post_title ); ?>">
+
+						<?php echo $post_title; ?>
+
+					</a>
+					<br />
+
+					<?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
+						<span class="course-author">
+							<?php _e( 'by ', 'woothemes-sensei' ); ?>
+							<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
+								<?php echo esc_html( $author_display_name ); ?>
+							</a>
+						</span>
+						<br />
+					<?php } // End If Statement ?>
+
+					<span class="course-lesson-count">
+						<?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' . __( 'Lessons', 'woothemes-sensei' ); ?>
+					</span>
+
+					<br />
+
+					<?php sensei_simple_course_price( $post_id ); ?>
+
+				</li>
+
+			<?php
+			} // End For Loop
+
+			if ( 'activecourses' == esc_attr( $this->instance['component'] ) || 'completedcourses' == esc_attr( $this->instance['component'] ) ) {
+				$my_account_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
+				echo '<li class="my-account fix"><a href="'. esc_url( get_permalink( $my_account_page_id ) ) .'">'
+				     .__('My Courses', 'woothemes-sensei')
+				     .'<span class="meta-nav"></span></a></li>';
+			} // End If Statement
+
+			?>
+		</ul>
+
+	<?php }
+
+	/**
+	 * The default course query args
+	 *
+	 * @return array
+	 */
+	public function get_default_query_args(){
+
+		return array(
+				'post_type' => 'course',
+				'orderby'         	=> 'date',
+				'order'           	=> 'DESC',
+				'post_status'      	=> 'publish',
+				'posts_per_page' => $this->instance['limit'],
+				'suppress_filters' => 0,
+		);
+
+	}
+
+	/**
+	 * Get all new course IDS
+	 * @since 1.9.2
+	 *
+	 * @return array $courses
+	 */
+	public function get_new_courses ( ) {
+
+		return get_posts( $this->get_default_query_args( ) );
+
+	}
+
+	/**
+	 * Get all active course IDS for the current user
+	 * @since 1.9.2
+	 *
+	 * @return array $courses
+	 */
+	public function get_active_courses ( ) {
+
+		$courses = array();
+		$activity_args = array( 'user_id' => get_current_user_id(), 'type' => 'sensei_course_status', 'status' => 'in-progress' );
+		$user_courses_activity = (array) Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+
+		foreach( $user_courses_activity AS $activity ) {
+			$courses[] = get_post( $activity->comment_post_ID );
+		}
+
+		return $courses;
+
+	}
+
+	/**
+	 * Get all active course IDS for the current user
+	 * @since 1.9.2
+	 *
+	 * @return array $courses
+	 */
+	public function get_completed_courses ( ) {
+
+		$courses = array();
+		$activity_args = array( 'user_id' => get_current_user_id(), 'type' => 'sensei_course_status', 'status' => 'complete' );
+		$user_courses_activity = (array) Sensei_Utils::sensei_check_for_activity( $activity_args , true );
+
+		foreach( $user_courses_activity AS $activity ) {
+			$courses[] = get_post( $activity->comment_post_ID );
+		}
+		return $courses;
+	}
+
+	/**
+	 * Get all active course IDS for the current user
+	 * @since 1.9.2
+	 *
+	 * @return array $courses
+	 */
+	public function get_featured_courses ( ) {
+
+		$query_args = $this->get_default_query_args();
+		$query_args[ 'meta_key' ] = '_course_featured';
+		$query_args[ 'meta_value' ] = 'featured';
+		$query_args[ 'meta_compare' ] = '=';
+
+		return get_posts( $query_args );
+
+	}
 } // End Class

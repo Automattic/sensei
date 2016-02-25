@@ -2,50 +2,53 @@
 /**
  * The Template for displaying course archives, including the course page template.
  *
- * Override this template by copying it to yourtheme/sensei/archive-course.php
+ * Override this template by copying it to your_theme/sensei/archive-course.php
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.0.0
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
+?>
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+<?php  get_sensei_header();  ?>
 
-get_header();
+    <?php
 
-/**
- * sensei_before_main_content hook
- *
- * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
- */
-do_action('sensei_before_main_content');
+        /**
+         * This action before course archive loop. This hook fires within the archive-course.php
+         * It fires even if the current archive has no posts.
+         *
+         * @since 1.9.0
+         *
+         * @hooked Sensei_Course::course_archive_sorting 20
+         * @hooked Sensei_Course::course_archive_filters 20
+         * @hooked Sensei_Templates::deprecated_archive_hook 80
+         */
+        do_action( 'sensei_archive_before_course_loop' );
 
-/**
- * sensei_course_archive_main_content hook
- *
- * @hooked sensei_course_archive_main_content - 10 (outputs main course archive content loop)
- */
-do_action( 'sensei_course_archive_main_content' );
+    ?>
 
-/**
- * sensei_pagination hook
- *
- * @hooked sensei_pagination - 10 (outputs archive pagination)
- */
-do_action('sensei_pagination');
+    <?php if ( have_posts() ): ?>
 
-/**
- * sensei_after_main_content hook
- *
- * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)
- */
-do_action('sensei_after_main_content');
+        <?php sensei_load_template( 'loop-course.php' ); ?>
 
-/**
- * sensei_sidebar hook
- *
- * @hooked sensei_get_sidebar - 10
- */
-do_action('sensei_sidebar');
+    <?php else: ?>
 
-get_footer(); ?>
+        <p><?php _e( 'No courses found that match your selection.', 'woothemes-sensei' ); ?></p>
+
+    <?php  endif; // End If Statement ?>
+
+    <?php
+
+        /**
+         * This action runs after including the course archive loop. This hook fires within the archive-course.php
+         * It fires even if the current archive has no posts.
+         *
+         * @since 1.9.0
+         */
+        do_action( 'sensei_archive_after_course_loop' );
+
+    ?>
+
+<?php get_sensei_footer(); ?>

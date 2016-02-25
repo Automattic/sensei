@@ -7,10 +7,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * This class is loaded int WP by the shortcode loader class.
  *
  * @class Sensei_Shortcode_User_Courses
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
- * @package Sensei
- * @category Classes
- * @author 	WooThemes
  */
 class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 
@@ -205,7 +207,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
         $wp_query = $this->query;
 
         ob_start();
-        include('templates/loop.php');
+        Sensei_Templates::get_template('loop-course.php');
         $shortcode_output =  ob_get_clean();
 
         //restore old query

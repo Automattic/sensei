@@ -9,10 +9,10 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Learner_Completed_Course' ) ) :
  *
  * An email sent to the learner when they complete a course.
  *
- * @class 		WooThemes_Sensei_Email_Learner_Completed_Course
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_Learner_Completed_Course {
 
@@ -38,17 +38,21 @@ class WooThemes_Sensei_Email_Learner_Completed_Course {
 	 * trigger function.
 	 *
 	 * @access public
+     *
+     * @param int $user_id
+     * @param int $course_id
+     *
 	 * @return void
 	 */
 	function trigger( $user_id = 0, $course_id = 0 ) {
-		global $woothemes_sensei, $sensei_email_data;
+		global  $sensei_email_data;
 
 		// Get learner user object
 		$this->user = new WP_User( $user_id );
 
 		// Get passed status
 		$passed = __( 'passed', 'woothemes-sensei' );
-		if( ! WooThemes_Sensei_Utils::sensei_user_passed_course( $course_id, $user_id ) ) {
+		if( ! Sensei_Utils::sensei_user_passed_course( $course_id, $user_id ) ) {
 			$passed = __( 'failed', 'woothemes-sensei' );
 		}
 
@@ -65,7 +69,7 @@ class WooThemes_Sensei_Email_Learner_Completed_Course {
 		$this->recipient = stripslashes( $this->user->user_email );
 
 		// Send mail
-		$woothemes_sensei->emails->send( $this->recipient, $this->subject, $woothemes_sensei->emails->get_content( $this->template ) );
+		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 	}
 }
 

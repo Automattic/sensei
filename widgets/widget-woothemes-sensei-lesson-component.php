@@ -6,24 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  *
  * A WooThemes standardized component widget.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Widgets
- * @author WooThemes
+ * @package Views
+ * @subpackage Widgets
+ * @author Automattic
+ *
  * @since 1.0.0
- *
- * TABLE OF CONTENTS
- *
- * protected $woo_widget_cssclass
- * protected $woo_widget_description
- * protected $woo_widget_idbase
- * protected $woo_widget_title
- *
- * - __construct()
- * - widget()
- * - update()
- * - form()
- * - load_component()
  */
 class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 	protected $woo_widget_cssclass;
@@ -65,8 +52,11 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
-		extract( $args, EXTR_SKIP );
 
+        $before_widget = $args[ 'before_widget' ];
+        $before_title  = $args[ 'before_title' ];
+        $after_title   = $args[ 'after_title' ];
+        $after_widget  = $args[ 'after_widget' ];
 
 		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) && !is_user_logged_in() ) {
 			// No Output
@@ -164,18 +154,17 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 
 	/**
 	 * Load the desired component, if a method is available for it.
-	 * @param  string $component The component to potentially be loaded.
+	 * @param  string $instance The component to potentially be loaded.
 	 * @since  5.0.8
 	 * @return void
 	 */
 	protected function load_component ( $instance ) {
-		global $woothemes_sensei, $current_user;
-		// Get User Meta
-		get_currentuserinfo();
+
+		global  $current_user;
+
 		/*
 		newlessons
 		*/
-
 		$posts_array = array();
 
 		$post_args = array(	'post_type' 		=> 'lesson',
@@ -202,7 +191,7 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 		    		<?php do_action( 'sensei_lesson_image', $post_id, '100', '100', false, true ); ?>
 		    		<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a>
 		    		<br />
-		    		<?php if ( isset( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) && ( $woothemes_sensei->settings->settings[ 'lesson_author' ] ) ) { ?>
+		    		<?php if ( isset( Sensei()->settings->settings[ 'lesson_author' ] ) && ( Sensei()->settings->settings[ 'lesson_author' ] ) ) { ?>
     					<span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_html( $author_display_name ); ?></a></span>
     					<br />
     				<?php } // End If Statement ?>

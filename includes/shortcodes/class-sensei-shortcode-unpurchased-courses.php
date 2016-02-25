@@ -7,10 +7,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * This class is loaded int WP by the shortcode loader class.
  *
  * @class Sensei_Shortcode_Unpurchased_Courses
+ *
+ * @package Content
+ * @subpackage Shortcode
+ * @author Automattic
+ *
  * @since 1.9.0
- * @package Sensei
- * @category Shortcodes
- * @author 	WooThemes
  */
 class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface {
 
@@ -47,10 +49,6 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
      */
     public function __construct( $attributes, $content, $shortcode ){
 
-        if( !is_user_logged_in() ) {
-            return;
-        }
-
         // set up all argument need for constructing the course query
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
         $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
@@ -79,6 +77,7 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
      */
     protected function setup_course_query(){
 
+
         // course query parameters to be used for all courses
         $query_args = array(
             'post_type'        => 'course',
@@ -100,7 +99,7 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
             $course_product_id = get_post_meta( $course->ID, '_course_woocommerce_product',true );
             if( is_numeric( $course_product_id )
                 &&
-                ! WooThemes_Sensei_Utils::user_started_course( $course->ID , get_current_user_id()  )
+                ! Sensei_Utils::user_started_course( $course->ID , get_current_user_id()  )
             ){
 
                     $paid_courses_not_taken[] = $course->ID;
@@ -109,11 +108,11 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
 
         } // end foreach
 
-
         // setup the course query again and only use the course the user has not purchased.
         // this query will be loaded into the global WP_Query in the render function.
-        $query_args['post__in'] = $paid_courses_not_taken;
-        $query_args['posts_per_page'] = $this->number;
+        $query_args[ 'post__in' ] = $paid_courses_not_taken;
+        $query_args[ 'posts_per_page' ] = $this->number;
+
         $this->query = new WP_Query( $query_args );
 
     }// end setup _course_query
@@ -127,18 +126,31 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
 
         global $wp_query;
 
-        if( ! is_user_logged_in() ) {
+        if ( ! is_user_logged_in() ) {
+
+            $anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
+            $anchor_after = '</a>';
+            $notice = sprintf(
+                __('You must be logged in to view the non-purchased courses. Click here to %slogin%s.'),
+                $anchor_before,
+                $anchor_after
+            );
+
+            Sensei()->notices->add_notice( $notice, 'info' );
+            Sensei()->notices->maybe_print_notices();
+
             return '';
+
         }
 
         // keep a reference to old query
         $current_global_query = $wp_query;
-
         // assign the query setup in $this-> setup_course_query
         $wp_query = $this->query;
 
         ob_start();
-        include('templates/loop.php');
+        Sensei()->notices->maybe_print_notices();
+        Sensei_Templates::get_template('loop-course.php');
         $shortcode_output =  ob_get_clean();
 
         //restore old query

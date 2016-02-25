@@ -4,48 +4,49 @@
  *
  * Override this template by copying it to yourtheme/sensei/archive-message.php
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.6.0
+ * @author 		Automattic
+ * @package 	Sensei
+ * @category    Templates
+ * @version     1.9.0
  */
+?>
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+<?php  get_sensei_header();  ?>
 
-get_header();
-
+<?php
 /**
- * sensei_before_main_content hook
+ * This action before course messages archive loop. This hook fires within the archive-message.php file.
+ * It fires even if the current archive has no no messages.
  *
- * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
+ * @since 1.9.0
+ *
+ * @hooked Sensei_Messages::the_archive_header -20
  */
-do_action('sensei_before_main_content');
+do_action( 'sensei_archive_before_message_loop' );
+?>
 
+<section id="main-sensei_message" class="sensei_message-container">
+
+    <?php if ( have_posts() ): ?>
+
+        <?php sensei_load_template('loop-message.php'); ?>
+
+    <?php else: ?>
+
+        <p> <?php _e('You do not have any messages.','woothemes-sensei'); ?> </p>
+
+    <?php  endif; // End If Statement ?>
+
+</section>
+
+<?php
 /**
- * sensei_message_archive_main_content hook
+ * This action before course messages archive loop. This hook fires within the archive-message.php file.
+ * It fires even if the current archive has no no messages.
  *
- * @hooked sensei_message_archive_main_content - 10 (outputs main message archive content loop)
+ * @since 1.9.0
  */
-do_action( 'sensei_message_archive_main_content' );
+do_action( 'sensei_archive_after_message_loop' );
+?>
 
-/**
- * sensei_pagination hook
- *
- * @hooked sensei_pagination - 10 (outputs archive pagination)
- */
-do_action('sensei_pagination');
-
-/**
- * sensei_after_main_content hook
- *
- * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)
- */
-do_action('sensei_after_main_content');
-
-/**
- * sensei_sidebar hook
- *
- * @hooked sensei_get_sidebar - 10
- */
-do_action('sensei_sidebar');
-
-get_footer(); ?>
+<?php get_sensei_footer(); ?>

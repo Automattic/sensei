@@ -9,28 +9,51 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
  *
  * An email sent to the a user when they receive a reply to the private message.
  *
- * @class 		WooThemes_Sensei_Email_New_Message_Reply
- * @version		1.6.0
- * @package		Sensei/Classes/Emails
- * @author 		WooThemes
+ * @package Users
+ * @author Automattic
+ *
+ * @since		1.6.0
  */
 class WooThemes_Sensei_Email_New_Message_Reply {
 
-	var $template;
+    /**
+     * @var string
+     */
+    var $template;
+
+    /**
+     * @var string
+     */
 	var $subject;
-	var $heading;
+
+    /**
+     * @var string
+     */
+    var $heading;
+
+    /**
+     * @var string
+     */
 	var $recipient;
+
 	var $original_sender;
 	var $original_receiver;
 	var $commenter;
+
+    /**
+     * @var WP_Post
+     */
 	var $message;
+
+    /**
+     * @var WP_Comment
+     */
 	var $comment;
 
 	/**
 	 * Constructor
 	 *
 	 * @access public
-	 * @return void
 	 */
 	function __construct() {
 		$this->template = 'new-message-reply';
@@ -41,11 +64,14 @@ class WooThemes_Sensei_Email_New_Message_Reply {
 	/**
 	 * trigger function.
 	 *
-	 * @access public
+     * @param WP_Comment $comment
+     * @param string $message
+     *
 	 * @return void
 	 */
-	function trigger( $comment, $message ) {
-		global $woothemes_sensei, $sensei_email_data;
+	function trigger ( $comment, $message ) {
+
+		global  $sensei_email_data;
 
 		$this->comment = $comment;
 		$this->message = $message;
@@ -90,7 +116,7 @@ class WooThemes_Sensei_Email_New_Message_Reply {
 		}
 
 		// Send mail
-		$woothemes_sensei->emails->send( $this->recipient, $this->subject, $woothemes_sensei->emails->get_content( $this->template ) );
+		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 	}
 }
 

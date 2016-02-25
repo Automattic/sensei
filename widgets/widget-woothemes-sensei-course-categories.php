@@ -6,24 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  *
  * A WooThemes Sensei Course Categories widget.
  *
- * @package WordPress
- * @subpackage Sensei
- * @category Widgets
- * @author WooThemes
+ * @package Views
+ * @subpackage Widgets
+ * @author Automattic
+ *
  * @since 1.1.0
- *
- * TABLE OF CONTENTS
- *
- * protected $woo_widget_cssclass
- * protected $woo_widget_description
- * protected $woo_widget_idbase
- * protected $woo_widget_title
- *
- * - __construct()
- * - widget()
- * - update()
- * - form()
- * - load_component()
  */
 class WooThemes_Sensei_Course_Categories_Widget extends WP_Widget {
 	protected $woo_widget_cssclass;
@@ -61,28 +48,32 @@ class WooThemes_Sensei_Course_Categories_Widget extends WP_Widget {
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
-		extract( $args, EXTR_SKIP );
 
-			/* Our variables from the widget settings. */
-			$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
+        $before_widget = $args[ 'before_widget' ];
+        $before_title  = $args[ 'before_title' ];
+        $after_title   = $args[ 'after_title' ];
+        $after_widget  = $args[ 'after_widget' ];
 
-			/* Before widget (defined by themes). */
-			echo $before_widget;
+        /* Our variables from the widget settings. */
+        $title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
 
-			/* Display the widget title if one was input (before and after defined by themes). */
-			if ( $title ) { echo $before_title . $title . $after_title; }
+        /* Before widget (defined by themes). */
+        echo $before_widget;
 
-			/* Widget content. */
-			// Add actions for plugins/themes to hook onto.
-			do_action( $this->woo_widget_cssclass . '_top' );
+        /* Display the widget title if one was input (before and after defined by themes). */
+        if ( $title ) { echo $before_title . $title . $after_title; }
 
-			$this->load_component( $instance );
+        /* Widget content. */
+        // Add actions for plugins/themes to hook onto.
+        do_action( $this->woo_widget_cssclass . '_top' );
 
-			// Add actions for plugins/themes to hook onto.
-			do_action( $this->woo_widget_cssclass . '_bottom' );
+        $this->load_component( $instance );
 
-			/* After widget (defined by themes). */
-			echo $after_widget;
+        // Add actions for plugins/themes to hook onto.
+        do_action( $this->woo_widget_cssclass . '_bottom' );
+
+        /* After widget (defined by themes). */
+        echo $after_widget;
 
 	} // End widget()
 
