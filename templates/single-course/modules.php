@@ -93,7 +93,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	                                    $course_id = Sensei()->lesson->get_course_id( get_the_ID() );
 	                                    if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) && ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() )  ) { ?>
 
-	                                        <span class="preview-label">Free Preview</span>
+	                                        <span class="preview-label"><?php _e( 'Free Preview', 'woothemes-sensei' ); ?></span>
 
                                         <?php } ?>
 
