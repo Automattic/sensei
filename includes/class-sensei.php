@@ -1142,12 +1142,12 @@ class Sensei_Main {
             // documentation url if any
             if ( $this->get_documentation_url() ) {
                 /* translators: Docs as in Documentation */
-                $custom_actions['docs'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_documentation_url(), esc_html__( 'Docs', 'woocommerce-account-funds' ) );
+                $custom_actions['docs'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_documentation_url(), esc_html__( 'Docs', 'woothemes-sensei' ) );
             }
 
             // support url if any
             if ( $this->get_support_url() ) {
-                $custom_actions['support'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_support_url(), esc_html_x( 'Support', 'noun', 'woocommerce-account-funds' ) );
+                $custom_actions['support'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_support_url(), esc_html_x( 'Support', 'noun', 'woothemes-sensei' ) );
             }
 
             // add the links to the front of the actions list   
@@ -1163,7 +1163,7 @@ class Sensei_Main {
         public function get_settings_link( $plugin_id = null ) {
             $settings_url = $this->get_settings_url( $plugin_id );
             if ( $settings_url ) {
-                return sprintf( '<a href="%s">%s</a>', $settings_url, esc_html_x( 'Configure', 'plugin action link', 'woocommerce-account-funds' ) );
+                return sprintf( '<a href="%s">%s</a>', $settings_url, esc_html_x( 'Configure', 'plugin action link', 'woothemes-sensei' ) );
             }
 
             // no settings
@@ -1176,7 +1176,7 @@ class Sensei_Main {
          * @return string plugin settings URL
          */
         public function get_settings_url( $plugin_id = null ) {
-            return admin_url( 'admin.php?page=wc-settings&tab=account_funds' );
+            return admin_url( 'admin.php?page=woothemes-sensei-settings&tab=general' );
         }
 
         /**
