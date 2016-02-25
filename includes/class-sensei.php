@@ -138,6 +138,11 @@ class Sensei_Main {
     public $analysis;
 
     /**
+     * @var $id
+     */
+    private $id;
+
+    /**
      * Constructor method.
      * @param  string $file The base file of the plugin.
      * @since  1.0.0
@@ -342,6 +347,9 @@ class Sensei_Main {
 
         // check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
         add_action( 'init', array( $this, 'flush_rewrite_rules'), 101 );
+
+        // Add plugin action links filter
+        add_filter( 'plugin_action_links_' . plugin_basename( $this->file ), array( $this, 'plugin_action_links' ) );
 
     }
 
@@ -1115,6 +1123,107 @@ class Sensei_Main {
 
         return  Sensei_WC::virtual_order_payment_complete( $order_status, $order_id );
     }
+
+    /**
+         * Add custom action links on the plugin screen.
+         *
+         * @param   mixed $actions Plugin Actions Links
+         * @return  array
+         */
+        public function plugin_action_links( $actions ) {
+
+            $custom_actions = array();
+
+            // settings url(s)
+            if ( $this->get_settings_link( $this->get_id() ) ) {
+                $custom_actions['configure'] = $this->get_settings_link( $this->get_id() );
+            }
+
+            // documentation url if any
+            if ( $this->get_documentation_url() ) {
+                /* translators: Docs as in Documentation */
+                $custom_actions['docs'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_documentation_url(), esc_html__( 'Docs', 'woothemes-sensei' ) );
+            }
+
+            // support url if any
+            if ( $this->get_support_url() ) {
+                $custom_actions['support'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_support_url(), esc_html_x( 'Support', 'noun', 'woothemes-sensei' ) );
+            }
+
+            // add the links to the front of the actions list   
+            return array_merge( $custom_actions, $actions );
+        }
+
+        /**
+         * Returns the "Configure" plugin action link to go directly to the plugin
+         * settings page (if any)
+         *
+         * @return string plugin configure link
+         */
+        public function get_settings_link( $plugin_id = null ) {
+            $settings_url = $this->get_settings_url( $plugin_id );
+            if ( $settings_url ) {
+                return sprintf( '<a href="%s">%s</a>', $settings_url, esc_html_x( 'Configure', 'plugin action link', 'woothemes-sensei' ) );
+            }
+
+            // no settings
+            return '';
+        }
+
+        /**
+         * Gets the plugin configuration URL
+         *
+         * @return string plugin settings URL
+         */
+        public function get_settings_url( $plugin_id = null ) {
+            return admin_url( 'admin.php?page=woothemes-sensei-settings&tab=general' );
+        }
+
+        /**
+         * Gets the plugin documentation url, used for the 'Docs' plugin action
+         *
+         * @return string documentation URL
+         */
+        public function get_documentation_url() {
+            return sprintf( 'https://docs.woothemes.com/documentation/plugins/sensei/' );
+        }
+
+        /**
+         * Gets the support URL, used for the 'Support' plugin action link
+         *
+         * @return string support url
+         */
+        public function get_support_url() {
+            return 'https://www.woothemes.com/my-account/tickets/';
+        }
+
+        /**
+         * Returns the plugin id
+         *
+         * @return string plugin id
+         */
+        public function get_id() {
+            return $this->id;
+        }
+
+        /**
+         * Returns true if the current page is the admin general configuration page
+         *
+         * @return boolean true if the current page is the admin general configuration page
+         */
+        public function is_general_configuration_page() {
+            return isset( $_GET['page'] ) && 'woothemes-sensei-settings' == $_GET['page'] && ( ! isset( $_GET['tab'] ) || 'general' == $_GET['tab'] );
+        }
+
+
+        /**
+         * Returns the admin configuration url for the admin general configuration page
+         * 
+         * @return string admin configuration url for the admin general configuration page
+         */
+        public function get_general_configuration_url() {
+            return admin_url( 'admin.php?page=woothemes-sensei-settings&tab=general' );
+        }
 
 } // End Class
 
