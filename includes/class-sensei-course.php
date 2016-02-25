@@ -1116,23 +1116,53 @@ class Sensei_Course {
 	 */
 	public function get_product_courses( $product_id = 0 ) {
 
-		$posts_array = array();
-		// Check for WooCommerce
-		if ( Sensei_WC::is_woocommerce_active() && 0 < $product_id ) {
-			$post_args = array(	'post_type' 		=> 'course',
-								'posts_per_page' 		=> -1,
-								'meta_key'        	=> '_course_woocommerce_product',
-	    						'meta_value'      	=> $product_id,
-	    						'post_status'       => 'publish',
-								'suppress_filters' 	=> 0,
-								'orderby' 			=> 'menu_order date',
-								'order' 			=> 'ASC',
-								);
-			$posts_array = get_posts( $post_args );
-		} // End If Statement
-		return $posts_array;
+		if ( ! Sensei_WC::is_woocommerce_active() || empty( $product_id ) ) {
+			return array();
+		}
+
+		//check for variation
+		$product = wc_get_product( $product_id );
+
+		if ( 'variable' == $product->get_type()  ) {
+
+			$variations = $product->get_available_variations();
+			$courses  = array();
+
+			foreach ( $variations as $variation  ) {
+
+				$variation_courses = get_posts( self::get_product_courses_query_args( $variation[ 'variation_id' ] ) );
+				$courses = array_merge( $courses, $variation_courses );
+
+			}
+
+			return $courses;
+
+		} else {
+
+			return get_posts( self::get_product_courses_query_args( $product->get_id() ) );
+
+		}
 
 	} // End get_product_courses()
+
+	/**
+	 * @param $product_id
+	 *
+	 * @return array
+	 */
+	public static function get_product_courses_query_args ( $product_id ) {
+
+		return array(	'post_type' 		=> 'course',
+		                 'posts_per_page' 		=> -1,
+		                 'meta_key'        	=> '_course_woocommerce_product',
+		                 'meta_value'      	=> $product_id,
+		                 'post_status'       => 'publish',
+		                 'suppress_filters' 	=> 0,
+		                 'orderby' 			=> 'menu_order date',
+		                 'order' 			=> 'ASC',
+		);
+
+	}
 
 	/**
 	 * Fix posts_per_page for My Courses page

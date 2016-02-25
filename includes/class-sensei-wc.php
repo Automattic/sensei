@@ -897,9 +897,18 @@ Class Sensei_WC{
      *
      * @return bool
      */
-    public static function has_customer_bought_product ( $user_id, $product_id ){
+    public static function has_customer_bought_product ( $user_id, $product_id ) {
 
-        $orders = self::get_user_product_orders( $user_id, $product_id );
+	    $product = wc_get_product( $product_id );
+
+	    // get variations parent
+	    if ( 'variation' == $product->get_type()  ) {
+
+		    $product_id = $product->parent->get_id();
+
+	    }
+
+	    $orders = self::get_user_product_orders( $user_id, $product_id );
 
         foreach ( $orders as $order_id ) {
 
@@ -956,17 +965,30 @@ Class Sensei_WC{
      * @return string $woocommerce_product_id or false if none exist
      *
      */
-    public static function get_course_product_id( $course_id ){
+	public static function get_course_product_id( $course_id ){
 
-        $product_id =  get_post_meta( $course_id, '_course_woocommerce_product', true );
+		$product_id =  get_post_meta( $course_id, '_course_woocommerce_product', true );
 
-        if( empty( $product_id ) || 'product' != get_post_type( $product_id ) ){
-            return false;
-        }
+		if( empty( $product_id ) ){
+			return false;
+		}
 
-        return $product_id;
+		$product = wc_get_product( $product_id );
 
-    }
+		if( ! $product ){
+			return false;
+		}
+
+		// handle variations
+		if ( isset(  $product->variation_id ) ) {
+
+			return $product->variation_id;
+
+		}
+
+		return $product->get_id();
+
+	}
 
     /**
      * Alter the body classes adding WooCommerce to the body
@@ -1376,7 +1398,6 @@ Class Sensei_WC{
         $is_user_taking_course = Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
 
         if ( ! $is_user_taking_course
-            && Sensei_WC::is_woocommerce_active()
             && 0 < $wc_post_id
             && Sensei_WC::has_customer_bought_product( $user_id, $wc_post_id ) ) {
 
@@ -1738,8 +1759,10 @@ Class Sensei_WC{
 			'meta_value'  => intval( $user_id ),
 		);
 
-		if( class_exists( 'WC_Subscriptions_Manager' ) ) {
-			$args['post_type'] = array( 'shop_order', 'shop_subscription' );
+		$product = wc_get_product( $product_id );
+
+		if( class_exists( 'WC_Subscriptions_Manager' ) && 'subscription' == $product->get_type()  ) {
+			$args['post_type'] = 'shop_subscription';
 		}
 
 		return get_posts( $args );
