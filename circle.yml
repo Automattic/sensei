@@ -32,6 +32,8 @@ dependencies:
       - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
       # setup phpunit
       - wget https://phar.phpunit.de/phpunit.phar && chmod +x phpunit.phar && mv phpunit.phar /home/ubuntu/.phpenv/shims/phpunit
+      #Sensei Specific remove npm file as it is not needed
+      - cd $plugin_tests_dir; && rm package.json
 
 ## tests override
 test:
@@ -39,4 +41,5 @@ test:
   # comment out the below line to run a code coverage report.
   - cd $plugin_tests_dir; phpunit
   ## LINE 2/2 to uncomment if you want to run a code coverage report. #
-  - cd $plugin_tests_dir; phpunit --coverage-html $CIRCLE_ARTIFACTS
+  - cd $plugin_tests_dir;
+  - phpunit --coverage-html $CIRCLE_ARTIFACTS
