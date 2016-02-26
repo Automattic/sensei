@@ -5,19 +5,6 @@ machine:
   php:
     version: 5.2
 
-dependencies:
-  pre:
-    - bash tests/bin/install.sh sensei_test root '' localhost $WP_VERSION
-    - bash tests/bin/circle.sh before
-    - WP_VERSION=latest WP_MULTISITE=0
-    - WP_VERSION=4.1 WP_MULTISITE=0
-    - WP_VERSION=4.0 WP_MULTISITE=0
-  post:
-    - cp ~/MY-PROJECT/MY-SITE /etc/apache2/sites-available
-    - a2ensite MY-SITE
-    - sudo service apache2 restart
-    - bash tests/bin/travis.sh after
-
 test:
   override:
     - phpunit --coverage-clover ./clover.xml
