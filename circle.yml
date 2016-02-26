@@ -38,8 +38,5 @@ dependencies:
 ## tests override
 test:
   override:
-  # comment out the below line to run a code coverage report.
-  - cd $plugin_loc; phpunit
-  ## LINE 2/2 to uncomment if you want to run a code coverage report. #
-  - cd $plugin_loc;
-  - phpunit --coverage-html $CIRCLE_ARTIFACTS
+  #run tests with coverage
+  - cd $plugin_loc; phpunit --coverage-html $CIRCLE_ARTIFACTS
