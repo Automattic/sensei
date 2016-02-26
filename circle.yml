@@ -32,7 +32,7 @@ dependencies:
       # set up database
       - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
       # setup phpunit
-      - wget https://phar.phpunit.de/phpunit.phar && chmod +x phpunit.phar && mv phpunit.phar /home/ubuntu/.phpenv/shims/phpunit
+      - wget https://phar.phpunit.de/phpunit-old.phar && chmod +x phpunit-old.phar && mv phpunit-old.phar /home/ubuntu/.phpenv/shims/phpunit
       #Sensei Specific remove npm file as it is not needed
 
 ## tests override
