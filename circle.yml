@@ -5,8 +5,34 @@ machine:
     America/Los_Angeles # Set the timezone
 
   php:
-      version: 5.4.0
+    version: 5.4.21
 
+  # Add some environment variables
+  environment:
+    CIRCLE_ENV: test
+    WP_MULTISITE: 0
+    WP_CORE_DIR: /home/ubuntu/wordpress-develop
+    WP_TESTS_DIR: /home/ubuntu/wordpress-develop/tests/phpunit
+    plugin_loc: /home/ubuntu/$CIRCLE_PROJECT_REPONAME
+    plugin_slug: $CIRCLE_PROJECT_REPONAME
+    plugin_dir: /home/ubuntu/wordpress-develop/src/wp-content/plugins/$plugin_slug
+    plugin_tests_dir: /home/ubuntu/wordpress-develop/src/wp-content/plugins/$plugin_slug/tests
+
+## Customize dependencies
 dependencies:
   pre:
-    - ./tests/bin/install.sh
+      #enable xdebug. LINE 1/2 to uncomment if you want to run a code coverage report.
+      - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
+      #setup WP install
+      - git clone git://develop.git.wordpress.org/ $WP_CORE_DIR;
+      - cd $WP_CORE_DIR && cp wp-tests-config-sample.php wp-tests-config.php && sed -i "s/youremptytestdbnamehere/wordpress_test/" wp-tests-config.php && sed -i "s/yourusernamehere/root/" wp-tests-config.php && sed -i "s/yourpasswordhere//" wp-tests-config.php;
+      # move plugin into tests/src
+      - mv $plugin_loc $plugin_dir;
+      # set up database
+      - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
+      # setup phpunit
+      - wget https://phar.phpunit.de/phpunit.phar && chmod +x phpunit.phar && mv phpunit.phar /home/ubuntu/.phpenv/shims/phpunit
+
+## tests override
+test:
+  override: # comment out the below line to run a code coverage report. - cd $plugin_tests_dir; phpunit ## LINE 2/2 to uncomment if you want to run a code coverage report. # - cd $plugin_tests_dir; phpunit --coverage-html $CIRCLE_ARTIFACTS - See more at: http://unfoldingneurons.com/2014/using-circleci-com-for-automated-wordpress-plugin-testing#sthash.q5J9YXRY.dpuf
