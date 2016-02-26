@@ -9,4 +9,4 @@ machine:
 
 dependencies:
   pre:
-    - ./tests/bin/install.sh sensei_test root '' localhost 4.4.2
+    - ./tests/bin/install.sh
