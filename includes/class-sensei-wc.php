@@ -268,7 +268,7 @@ Class Sensei_WC{
 	    if ( sensei_all_access() || Sensei_Utils::is_preview_lesson( $lesson_id )
 	         || Sensei_Utils::user_started_course( $course_id, $user_id )  ){
 
-			return true;
+			return $can_user_view_lesson;
 
 	    }
 

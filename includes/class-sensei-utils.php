@@ -1297,10 +1297,13 @@ class Sensei_Utils {
 					}
 				}
 				// Lesson/Quiz requires a pass
-				elseif( $pass_required ) {
+				if( $pass_required  ) {
 					$status = 'not_started';
 					$box_class = 'info';
-					if( $is_lesson ) {
+
+					if( ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, get_current_user_id() ) ) {
+						$message = '';
+					}  else if( $is_lesson ) {
 						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ) );
 					} else {
 						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ) );

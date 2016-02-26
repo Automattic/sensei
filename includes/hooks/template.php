@@ -264,7 +264,7 @@ add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Template
 
 // @since 1.9.0
 // hook in the lesson prerequisite completion message
-add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Lesson', 'prerequisite_complete_message' ), 20 );
+add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'prerequisite_complete_message' ), 20 );
 
 // @since 1.9.0
 // hook the single lesson course_signup_link

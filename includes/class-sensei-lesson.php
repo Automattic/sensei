@@ -3598,7 +3598,7 @@ class Sensei_Lesson {
         if ( ! WooThemes_Sensei_Lesson::is_prerequisite_complete(  get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
 
             $prerequisite_lesson_link  = '<a href="' . esc_url( get_permalink( $lesson_prerequisite ) ) . '" title="' . esc_attr(  sprintf( __( 'You must first complete: %1$s', 'woothemes-sensei' ), get_the_title( $lesson_prerequisite ) ) ) . '">' . get_the_title( $lesson_prerequisite ). '</a>';
-            echo sprintf( __( 'You must first complete %1$s before viewing this Lesson', 'woothemes-sensei' ), $prerequisite_lesson_link );
+            Sensei()->notices->add_notice( sprintf( __( 'You must first complete %1$s before viewing this Lesson', 'woothemes-sensei' ), $prerequisite_lesson_link ), 'info');
 
         }
 
@@ -3815,7 +3815,11 @@ class Sensei_Lesson {
             // Display lesson quiz status message
             if ( $has_user_completed_lesson || $has_quiz_questions ) {
                 $status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, $user_id, true );
-                echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+
+	            if( ! empty( $status['message']  ) ){
+	                echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+                }
+
                 if( $has_quiz_questions ) {
                    // echo $status['extra'];
                 } // End If Statement
