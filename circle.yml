@@ -5,4 +5,4 @@ machine:
     America/Los_Angeles # Set the timezone
 
   php:
-      version: 5.4
+      version: 5.5.11
