@@ -365,7 +365,14 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 		$courses = array();
 		$activity_args = array( 'user_id' => get_current_user_id(), 'type' => 'sensei_course_status', 'status' => 'in-progress' );
-		$user_courses_activity = (array) Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+		$user_courses_activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+
+		if ( ! is_array( $user_courses_activity ) ) {
+
+			$user_courses_activity_arr[] = $user_courses_activity;
+			$user_courses_activity = $user_courses_activity_arr;
+
+		}
 
 		foreach( $user_courses_activity AS $activity ) {
 			$courses[] = get_post( $activity->comment_post_ID );
@@ -385,10 +392,24 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 		$courses = array();
 		$activity_args = array( 'user_id' => get_current_user_id(), 'type' => 'sensei_course_status', 'status' => 'complete' );
-		$user_courses_activity = (array) Sensei_Utils::sensei_check_for_activity( $activity_args , true );
+
+		$user_courses_activity = Sensei_Utils::sensei_check_for_activity( $activity_args , true );
+
+		if ( ! is_array( $user_courses_activity ) ) {
+
+			$user_courses_activity_arr[] = $user_courses_activity;
+			$user_courses_activity = $user_courses_activity_arr;
+
+		}
 
 		foreach( $user_courses_activity AS $activity ) {
-			$courses[] = get_post( $activity->comment_post_ID );
+
+			if( isset(  $activity->comment_post_ID ) ){
+
+				$courses[] = get_post( $activity->comment_post_ID );
+
+			}
+
 		}
 		return $courses;
 	}
