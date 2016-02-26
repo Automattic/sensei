@@ -9,4 +9,4 @@ machine:
 
 dependencies:
   pre:
-    - bash tests/bin/install.sh
+    - tests/bin/install.sh
