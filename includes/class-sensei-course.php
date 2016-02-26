@@ -826,8 +826,8 @@ class Sensei_Course {
 
  				// Display Image Placeholder if none
 				if ( Sensei()->settings->get( 'placeholder_images_enable' ) ) {
-
-                    $img_url = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+                    
+                    $img_url = apply_filters( 'sensei_course_placeholder_image_url', '<img src="' . Sensei()->plugin_url . 'assets/images/placeholder.png" width="' . $width . '" height="' . $height . '" class="woo-image thumbnail alignleft" />' );
 
 				} // End If Statement
 
@@ -837,7 +837,7 @@ class Sensei_Course {
 
 		if ( '' != $img_url ) {
 
-			$html .= '<a href="' . get_permalink( $course_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $course_id ) ) . '">' . $img_url  .'</a>';
+			$html .= '<a href="' . get_permalink( $course_id ) . '" class="course-featured-image" title="' . esc_attr( get_post_field( 'post_title', $course_id ) ) . '">' . $img_url  .'</a>';
 
 		} // End If Statement
 
@@ -1312,7 +1312,7 @@ class Sensei_Course {
                 // Course Categories
                 if ( '' != $category_output ) {
 
-                    $active_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';
+                    $active_html .= '<span class="course-category">' . sprintf( __( 'Categories: %s', 'woothemes-sensei' ), $category_output ) . '</span>';
 
                 } // End If Statement
                 $active_html .= '<span class="course-lesson-progress">' . sprintf( __( '%1$d of %2$d lessons completed', 'woothemes-sensei' ) , $lessons_completed, $lesson_count  ) . '</span>';
@@ -1669,11 +1669,11 @@ class Sensei_Course {
     public function get_progress_meter( $progress_percentage ){
 
         if ( 50 < $progress_percentage ) {
-            $class = ' green';
+            $class = ' green completed';
         } elseif ( 25 <= $progress_percentage && 50 >= $progress_percentage ) {
-            $class = ' orange';
+            $class = ' orange progressing';
         } else {
-            $class = ' red';
+            $class = ' red starting';
         }
         $progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' . $progress_percentage . '%">' . round( $progress_percentage ) . '%</span></div>';
 

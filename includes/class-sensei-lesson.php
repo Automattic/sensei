@@ -2875,14 +2875,14 @@ class Sensei_Lesson {
 
  			// Display Image Placeholder if none
 			if ( Sensei()->settings->settings[ 'placeholder_images_enable' ] ) {
-
-                $img_url = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+             
+                $img_url = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="' . Sensei()->plugin_url . 'assets/images/placeholder.png" width="' . $width . '" height="' . $height . '" class="woo-image thumbnail alignleft" />' );
 
 			} // End If Statement
 
 		} // End If Statement
 
-		$html .= '<a href="' . get_permalink( $lesson_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . $img_url . '</a>';
+		$html .= '<a href="' . get_permalink( $lesson_id ) . '" class="course-featured-image" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . $img_url . '</a>';
 
 		return $html;
 

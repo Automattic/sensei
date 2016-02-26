@@ -68,7 +68,7 @@ global $course;
                         }
                     }
                     ?>
-                    <h2>
+                    <h4>
 
                         <a href="<?php esc_url_raw( get_permalink( $lesson->ID ) ); ?>"
                            title="<?php esc_attr_e( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) ); ?>">
@@ -81,7 +81,7 @@ global $course;
                             <?php echo $lesson_grade; ?>
                         </span>
 
-                    </h2>
+                    </h4>
 
                 <?php
 
@@ -126,7 +126,7 @@ global $course;
                 }
                 ?>
 
-                <h2>
+                <h4>
 
                     <a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ) ?>" title="<?php esc_attr_e( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) ) ?>" >
 
@@ -134,16 +134,16 @@ global $course;
 
                     </a>
 
-                    <span class="lesson-grade"><?php echo  $lesson_grade; ?></span>
+                    <span class="lesson-grade"><?php echo $lesson_grade; ?></span>
 
-                </h2>
+                </h4>
 
             <?php endforeach; // lessons ?>
 
         <?php endif; // lessons count > 0  ?>
 
 
-        <h2 class="total-grade">
+        <h3 class="total-grade">
 
             <?php _e( 'Total Grade', 'woothemes-sensei' ); ?>
             <span class="lesson-grade">
@@ -157,7 +157,7 @@ global $course;
 
             </span>
 
-        </h2>
+        </h3>
 
     </article>
 
