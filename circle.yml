@@ -3,3 +3,6 @@ machine:
 
   timezone:
     America/Los_Angeles # Set the timezone
+
+  php:
+      version: 5.4
