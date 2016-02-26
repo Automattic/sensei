@@ -1757,6 +1757,7 @@ Class Sensei_WC{
 			'post_type' => 'shop_order',
 			'meta_key'    => '_customer_user',
 			'meta_value'  => intval( $user_id ),
+			'post_status' => array('wc-complete', 'wc-processing'),
 		);
 
 		$product = wc_get_product( $product_id );
