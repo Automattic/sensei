@@ -1,6 +1,5 @@
+## Customize the test machine
 machine:
-  timezone:
-    Europe/Copenhagen
 
-  php:
-    version: 5.3
+  timezone:
+    America/Los_Angeles # Set the timezone
