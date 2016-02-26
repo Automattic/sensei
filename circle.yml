@@ -33,7 +33,7 @@ dependencies:
       # setup phpunit
       - wget https://phar.phpunit.de/phpunit.phar && chmod +x phpunit.phar && mv phpunit.phar /home/ubuntu/.phpenv/shims/phpunit
       #Sensei Specific remove npm file as it is not needed
-      - cd $plugin_tests_dir; && rm package.json
+      - cd $plugin_loc; && rm package.json
 
 ## tests override
 test:
