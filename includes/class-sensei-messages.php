@@ -666,7 +666,7 @@ class Sensei_Messages {
 
         ?>
         <h2>
-            <a href="<?php esc_url( get_permalink( $message_post_id ) );?>">
+            <a href="<?php echo esc_url_raw( get_the_permalink( $message_post_id ) );?>">
                 <?php echo  $title; ?>
             </a>
 
