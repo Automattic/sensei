@@ -36,6 +36,8 @@ class Sensei_Settings_API {
 		$this->token = 'woothemes-sensei-settings';
 		$this->page_slug = 'woothemes-sensei-settings-api';
 
+		$this->settings = null;
+
 		$this->sections = array();
 		$this->fields = array();
 		$this->remaining_fields = array();
@@ -75,7 +77,9 @@ class Sensei_Settings_API {
 		$this->get_settings();
 		if ( $this->has_tabs == true ) {
 			$this->create_tabs();
-		} // End If Statement
+		}
+		add_action( 'sensei_settings_title', array( $this, 'settings_tabs' ) );
+		add_action( 'sensei_settings_title', array( $this, 'display_version_number' ) );
 	} // End general_init()
 
 	/**
@@ -107,36 +111,39 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function settings_tabs () {
+		if ( ! $this->has_tabs || 0 >= count( $this->tabs ) ) { return; }
 
-		if ( ! $this->has_tabs ) { return; }
+		$html = '';
 
-		if ( count( $this->tabs ) > 0 ) {
-			$html = '';
+		$html .= '<h2 class="nav-tab-wrapper">' . "\n";
 
-			$html .= '<ul id="settings-sections" class="subsubsub hide-if-no-js">' . "\n";
+		$sections = array();
 
-			$sections = array(
-						'all' => array( 'href' => '#all', 'name' => __( 'All', 'woothemes-sensei' ), 'class' => 'current all tab' )
-					);
+		$current_tab = '';
+		if ( isset( $_GET['tab'] ) && '' != $_GET['tab'] ) $current_tab = sanitize_title_with_dashes( $_GET['tab'] );
 
-			foreach ( $this->tabs as $k => $v ) {
-				$sections[$k] = array( 'href' => '#' . esc_attr( $k ), 'name' => esc_attr( $v['name'] ), 'class' => 'tab' );
-			}
+		$count = 0;
+		foreach ( $this->tabs as $k => $v ) {
+			$count++;
+			$class = 'nav-tab';
+			if ( ( '' == $current_tab && 1 == $count ) || $current_tab == $k ) $class .= ' nav-tab-active'; // If no current tab is set, highlight the first one. Otherwise, highlight the current tab.
+			$tab = $k;
 
-			$count = 1;
-			foreach ( $sections as $k => $v ) {
-				$count++;
-				$html .= '<li><a href="' . $v['href'] . '"';
-				if ( isset( $v['class'] ) && ( $v['class'] != '' ) ) { $html .= ' class="' . esc_attr( $v['class'] ) . '"'; }
-				$html .= '>' . esc_attr( $v['name'] ) . '</a>';
-				if ( $count <= count( $sections ) ) { $html .= ' | '; }
-				$html .= '</li>' . "\n";
-			}
-
-			$html .= '</ul><div class="clear"></div>' . "\n";
-
-			echo $html;
+			$sections[$k] = array( 'href' => esc_url_raw( remove_query_arg( 'updated', add_query_arg( 'tab', urlencode( $tab ) ) ) ), 'name' => esc_attr( $v['name'] ), 'class' => $class, 'id' => esc_attr( $k ) );
 		}
+
+		$count = 1;
+		foreach ( $sections as $k => $v ) {
+			$count++;
+			$html .= '<a href="' . $v['href'] . '"';
+			if ( isset( $v['id'] ) && ( $v['id'] != '' ) ) { $html .= ' id="' . esc_attr( $v['id'] ) . '"'; }
+			$html .= ' class="' . esc_attr( $v['class'] ) . '"';
+			$html .= '>' . esc_attr( $v['name'] ) . '</a>';
+		}
+
+		$html .= '</h2>' . "\n";
+
+		echo $html;
 	} // End settings_tabs()
 
 	/**
@@ -178,15 +185,13 @@ class Sensei_Settings_API {
 	 */
 	public function create_fields () {
 		if ( count( $this->sections ) > 0 ) {
-			// $this->parse_fields( $this->fields );
-
 			foreach ( $this->fields as $k => $v ) {
 				$method = $this->determine_method( $v, 'form' );
 				$name = $v['name'];
 				if ( $v['type'] == 'info' ) { $name = ''; }
 				add_settings_field( $k, $name, $method, $this->token, $v['section'], array( 'key' => $k, 'data' => $v ) );
 
-				// Let the API know that we have a colourpicker field.
+				// Let the API know that we have a range field.
 				if ( $v['type'] == 'range' && $this->has_range == false ) { $this->has_range = true; }
 			}
 		}
@@ -243,27 +248,6 @@ class Sensei_Settings_API {
 	} // End determine_method()
 
 	/**
-	 * Parse the fields into an array index on the sections property.
-	 * @access public
-	 * @since  1.0.0
-	 * @param  array $fields
-	 * @return void
-	 */
-	public function parse_fields ( $fields ) {
-		foreach ( $fields as $k => $v ) {
-			if ( isset( $v['section'] ) && ( $v['section'] != '' ) && ( isset( $this->sections[$v['section']] ) ) ) {
-				if ( ! isset( $this->sections[$v['section']]['fields'] ) ) {
-					$this->sections[$v['section']]['fields'] = array();
-				}
-
-				$this->sections[$v['section']]['fields'][$k] = $v;
-			} else {
-				$this->remaining_fields[$k] = $v;
-			}
-		}
-	} // End parse_fields()
-
-	/**
 	 * Register the settings screen within the WordPress admin.
 	 * @access public
 	 * @since 1.0.0
@@ -292,36 +276,36 @@ class Sensei_Settings_API {
 	 * @since  1.0.0
 	 * @return void
 	 */
-	public function settings_screen ()
-    {
+	public function settings_screen () {
+		$tab = 'default-settings';
+		$section = array( 'name' => __( 'General', 'woothemes-sensei' ) );
 
-        ?>
-        <div id="woothemes-sensei" class="wrap <?php echo esc_attr($this->token); ?>">
+		if ( isset( $_GET['tab'] ) ) {
+			$tab = sanitize_title_with_dashes( $_GET['tab'] );
+		}
+		if ( isset( $this->sections[$tab] ) ) {
+			$section = $this->sections[$tab];
+		}
+?>
+        <div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
         <?php screen_icon( 'woothemes-sensei' ); ?>
-        <h2><?php echo esc_html($this->name); ?><?php if ('' != $this->settings_version) {
-                echo ' <span class="version">' . $this->settings_version . '</span>';
-            } ?></h2>
+        <h2><?php do_action( 'sensei_settings_title' ); ?></h2>
         <?php do_action( 'settings_before_form' ); ?>
         <form action="options.php" method="post">
-
         <?php
-        $this->settings_tabs();
-        settings_fields($this->token);
+        settings_fields( $this->token );
         $page = 'woothemes-sensei-settings';
-        foreach ($this->sections as $section_id => $section) {
 
-            echo '<section id="' . $section_id . '">';
+        echo '<section id="' . esc_attr( $tab ) . '">';
 
-            if ($section['name'])
-                echo "<h2>{$section['name']}</h2>\n";
+        if ($section['name'])
+            echo "<h2>{$section['name']}</h2>\n";
 
-            echo '<table class="form-table">';
-            do_settings_fields($page, $section_id );
-            echo '</table>';
+        echo '<table class="form-table">';
+        do_settings_fields( $page, $tab );
+        echo '</table>';
 
-            echo '</section>';
-
-        }
+        echo '</section>';
 
         submit_button();
         ?>
@@ -332,21 +316,34 @@ class Sensei_Settings_API {
 	} // End settings_screen()
 
 	/**
+	 * Display the version number.
+	 * @access public
+	 * @since  1.9.3
+	 * @return array
+	 */
+	public function display_version_number () {
+		if ('' != $this->settings_version) {
+            echo ' <span class="version">' . $this->settings_version . '</span>' . "\n";
+        }
+	}
+
+	/**
 	 * Retrieve the settings from the database.
 	 * @access public
 	 * @since  1.0.0
 	 * @return array
 	 */
 	public function get_settings () {
+		if ( null == $this->settings ) {
+	        $this->settings = get_option( $this->token, array() );
 
-        $this->settings = get_option( $this->token, array() );
-
-		foreach ( $this->fields as $k => $v ) {
-			if ( ! isset( $this->settings[$k] ) && isset( $v['default'] ) ) {
-				$this->settings[$k] = $v['default'];
-			}
-			if ( $v['type'] == 'checkbox' && $this->settings[$k] != true ) {
-				$this->settings[$k] = 0;
+			foreach ( $this->fields as $k => $v ) {
+				if ( ! isset( $this->settings[$k] ) && isset( $v['default'] ) ) {
+					$this->settings[$k] = $v['default'];
+				}
+				if ( $v['type'] == 'checkbox' && $this->settings[$k] != true ) {
+					$this->settings[$k] = 0;
+				}
 			}
 		}
 
@@ -648,9 +645,10 @@ class Sensei_Settings_API {
 
 		foreach ( $this->fields as $k => $v ) {
 			// Make sure checkboxes are present even when false.
-			if ( $v['type'] == 'checkbox' && ! isset( $input[$k] ) ) { $input[$k] = false; }
-			if ( $v['type'] == 'multicheck' && ! isset( $input[$k] ) ) { $input[$k] = false; }
+			if ( $v['type'] == 'checkbox' && ! isset( $input[$k] ) && isset( $options[$k] ) ) { $input[$k] = $options[$k]; }
+			if ( $v['type'] == 'multicheck' && ! isset( $input[$k] ) && isset( $options[$k] ) ) { $input[$k] = $options[$k]; }
 
+			// If the field is present, run our validation checks.
 			if ( isset( $input[$k] ) ) {
 				// Perform checks on required fields.
 				if ( isset( $v['required'] ) && ( $v['required'] == true ) ) {
@@ -658,7 +656,7 @@ class Sensei_Settings_API {
 						$this->add_error( $k, $v );
 						continue;
 					} else {
-						if ( $input[$k] == '' ) {
+						if ( '' == $input[$k] ) {
 							$this->add_error( $k, $v );
 							continue;
 						}
