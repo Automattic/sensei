@@ -323,7 +323,7 @@ class Sensei_Settings_API {
 	 */
 	public function display_version_number () {
 		if ('' != $this->settings_version) {
-            echo ' <span class="version">' . $this->settings_version . '</span>' . "\n";
+            echo ' <span class="version">' . esc_html( $this->settings_version ) . '</span>' . "\n";
         }
 	}
 
@@ -338,10 +338,15 @@ class Sensei_Settings_API {
 	        $this->settings = get_option( $this->token, array() );
 
 			foreach ( $this->fields as $k => $v ) {
-				if ( ! isset( $this->settings[$k] ) && isset( $v['default'] ) ) {
-					$this->settings[$k] = $v['default'];
+				$default = '';
+				if ( isset( $v['default'] ) ) {
+					$default = $v['default'];
 				}
-				if ( $v['type'] == 'checkbox' && $this->settings[$k] != true ) {
+				if ( ! isset( $this->settings[$k] ) ) {
+					$this->settings[$k] = $default;
+				}
+
+				if ( 'checkbox' == $v['type'] && true != $this->settings[$k] ) {
 					$this->settings[$k] = 0;
 				}
 			}
@@ -645,8 +650,9 @@ class Sensei_Settings_API {
 
 		foreach ( $this->fields as $k => $v ) {
 			// Make sure checkboxes are present even when false.
-			if ( $v['type'] == 'checkbox' && ! isset( $input[$k] ) && isset( $options[$k] ) ) { $input[$k] = $options[$k]; }
-			if ( $v['type'] == 'multicheck' && ! isset( $input[$k] ) && isset( $options[$k] ) ) { $input[$k] = $options[$k]; }
+			// Set these to false as we can assume that, if they're not present, the user unchecked the checkboxes.
+			if ( $v['type'] == 'checkbox' && ! isset( $input[$k] ) ) { $input[$k] = false; }
+			if ( $v['type'] == 'multicheck' && ! isset( $input[$k] ) ) { $input[$k] = false; }
 
 			// If the field is present, run our validation checks.
 			if ( isset( $input[$k] ) ) {
