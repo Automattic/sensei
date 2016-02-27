@@ -888,6 +888,37 @@ section.entry span.course-price { padding-left: 10px; }
   -webkit-appearance: none;
 }
 
+// Tabs
+  #user-course-status-toggle {
+    position: relative;
+    zoom: 1;
+    margin: 0 0 1em;
+    width: 100%;
+      a {
+        display: block;
+        position: relative;
+        white-space: nowrap;
+        padding: 0.5em;
+        font-weight: bold;
+        color: $color_links;
+        text-decoration: none;
+        outline: none;
+        background: #fff;
+        border: 1px solid $bg_dark;
+        box-shadow: none;
+          &.active {
+            background: #fff;
+            color: $color_body;
+          }
+          &:first-child {
+            border-bottom: none;
+          }
+          &:hover {
+            background: darken($bg_light, 3%);
+          }
+        }
+  }
+
 /* RESPOND */
 @media only screen and (min-width: 768px)  {
   #main .course  {
@@ -904,6 +935,24 @@ section.entry span.course-price { padding-left: 10px; }
     }
   }
 
+// Tabs
+  #user-course-status-toggle {
+    border-bottom: 1px solid $bg_dark;
+      a {
+        display: inline-block;
+        margin: 0;
+        border-bottom: 1px solid $bg_dark;
+        position: relative;
+        bottom: -1px;
+          &.active {
+            border-bottom: 1px solid #fff;
+              &:hover {
+                background: #fff;
+              }
+          }
+      }
+    }
+
   /* Course Archives */
   .sensei-ordering {
     text-align: right;
@@ -915,17 +964,6 @@ section.entry span.course-price { padding-left: 10px; }
 .sensei-pagination{
   .page-numbers li{
     display: inline-block;
-  }
-}
-
-/**
-* sensei_user_course shortcode styles
-*/
-#sensei-user-courses {
-  #user-course-status-toggle {
-    a.active{
-      color: #D4D4D4;
-    }
   }
 }
 
