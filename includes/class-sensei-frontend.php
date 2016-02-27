@@ -188,7 +188,6 @@ class Sensei_Frontend {
 	 */
 	function sensei_get_template_part( $slug, $name = '' ) {
 
-        _deprecated_function( 'class-woothemes-sensei-frontend.php', '1.9.0', 'Sensei_Templates::get_part' );
         Sensei_Templates::get_part( $slug, $name );
 
 	} // End sensei_get_template_part()
