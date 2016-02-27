@@ -2833,7 +2833,7 @@ class Sensei_Lesson {
 		// Get Width and Height settings
 		if ( ( $width == '100' ) && ( $height == '100' ) ) {
 
-			if ( is_singular( 'lesson' ) ) {
+			if ( is_singular( 'lesson' ) || !empty( $lesson_id  ) ) {
 
 				if ( ! $widget && ! Sensei()->settings->settings[ 'lesson_single_image_enable' ] ) {
 
@@ -3626,7 +3626,21 @@ class Sensei_Lesson {
 
         $before_html = '<header class="archive-header"><h1>';
         $after_html = '</h1></header>';
-        $html = $before_html .  __( 'Lessons Archive', 'woothemes-sensei' ) . $after_html;
+
+	    $title= '';
+	    if ( is_post_type_archive( 'lesson' ) ){
+
+	        $title = __( 'Lessons Archive', 'woothemes-sensei' );
+
+	    } elseif ( is_tax( 'module' ) ) {
+
+		    global $wp_query;
+		    $term = $wp_query->get_queried_object();
+		    $title = $term->name;
+
+	    }
+
+        $html = $before_html . $title . $after_html;
 
         echo apply_filters( 'sensei_lesson_archive_title', $html );
 
