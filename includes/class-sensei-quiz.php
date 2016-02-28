@@ -1088,10 +1088,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
       * Filter the single title and add the Quiz to it.
       *
       * @param string $title
-      * @param int $id title post id
+      * @param int $post_id title post id
+      *
       * @return string $quiz_title
       */
-     public static function single_quiz_title( $title, $post_id ){
+     public static function single_quiz_title( $title, $post_id = 0 ){
 
          if( 'quiz' == get_post_type( $post_id ) ){
 
