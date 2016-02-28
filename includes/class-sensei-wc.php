@@ -603,7 +603,7 @@ Class Sensei_WC{
 
         $args = array(
             'post_type' 		=> 'product',
-            'posts_per_page' 		=> 1000,
+            'posts_per_page' 	=> 1000,
             'orderby'         	=> 'date',
             'order'           	=> 'DESC',
             'suppress_filters' 	=> 0

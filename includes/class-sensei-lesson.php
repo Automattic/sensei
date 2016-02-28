@@ -3333,7 +3333,7 @@ class Sensei_Lesson {
 
                 }
 
-                if ( $single_lesson_complete ) {
+                if ( Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() ) ) {
 
                     $meta_html .= '<span class="lesson-status complete">' .__( 'Complete', 'woothemes-sensei' ) .'</span>';
 
