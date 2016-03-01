@@ -319,7 +319,8 @@ class Sensei_Legacy_Shortcodes {
     public static function the_course( $course_id ){
 
         // Get meta data
-        $course =  get_post( $course_id );
+        $course_data = get_post( $course_id );
+        $course =  apply_filters( 'sensei_courses_shortcode_course_data', $course_data );
         $user_info = get_userdata( absint( $course->post_author ) );
         $author_link = get_author_posts_url( absint( $course->post_author ) );
         $author_display_name = $user_info->display_name;
