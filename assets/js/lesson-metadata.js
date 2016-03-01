@@ -227,7 +227,7 @@ jQuery(document).ready( function($) {
  	}
 
  	/**
- 	 * Save rnadom question order for quiz
+ 	 * Save random question order for quiz
  	 *
  	 * @since 1.5.0
  	 * access public
