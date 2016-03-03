@@ -356,8 +356,8 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
     public function course_toggle_actions(){ ?>
 
         <section id="user-course-status-toggle">
-            <a id="sensei-user-courses-active-action" href=""><?php _e('Active Courses'); ?></a>
-            <a id="sensei-user-courses-complete-action" href=""><?php _e('Completed Courses'); ?></a>
+			<a id="sensei-user-courses-active-action" href=""><?php _e( 'Active Courses', 'woothemes-sensei' ); ?></a>
+			<a id="sensei-user-courses-complete-action" href=""><?php _e( 'Completed Courses', 'woothemes-sensei' ); ?></a>
         </section>
 
 
