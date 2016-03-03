@@ -1,5 +1,16 @@
 *** Sensei Changelog ***
 
+2016.03.03 - version 1.9.3
+* Fix	- Message titles now link to the individual messages.
+* Fix	- Make sure Sensei does not affect the display of blog posts.
+* Fix	- Fixed a few php warnings.
+* Fix	- Courses linked to product variations can now be purchased.
+* Fix	- Make "Free Preview" translation ready.
+* Fix	- Make sure lessons can't be viewed until the prerequisite is complete.
+* Fix	- Fixed the course component widget for active and completed courses.
+* Fix	- Ensure courses can't be accessed if linked to a subscription that is on-hold, cancelled, or expired.
+* Tweak	- Improved appearance of tabs when using [sensei_user_courses]
+
 2016.02.11 - version 1.9.2
 * Fix   - Access permissions restored to the way it worked in version 1.8.8, totally removing the no-permissions templates.
 * Fix   - Using $wpdb to prefix mysql queries, missed one instance in version 1.9.1
