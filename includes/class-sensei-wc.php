@@ -1631,7 +1631,7 @@ Class Sensei_WC{
 			// if the course has no subscription WooCommerce product attached to return the permissions as is
 			$product_id = Sensei_WC::get_course_product_id( $course_id );
 			$product = wc_get_product( $product_id );
-			if( ! in_array( $product->get_type(), self::get_subscription_types() ) ){
+			if( ! is_object( $product ) || ! in_array( $product->get_type(), self::get_subscription_types() ) ){
 
 				return $has_user_started_course;
 
