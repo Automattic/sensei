@@ -1273,9 +1273,8 @@ class Sensei_Utils {
 
                 }
 
-			}
-            // Lesson/Quiz not complete
-			else {
+			} else {  // Lesson/Quiz not complete
+
 				// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete)
 				if ( isset( $user_lesson_status->comment_approved ) && 'ungraded' == $user_lesson_status->comment_approved ) {
 					$status = 'complete';
@@ -1297,7 +1296,7 @@ class Sensei_Utils {
 					}
 				}
 				// Lesson/Quiz requires a pass
-				if( $pass_required  ) {
+				elseif ( $pass_required  ) {
 					$status = 'not_started';
 					$box_class = 'info';
 
