@@ -175,7 +175,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 		}
 
-
         // start the lesson before saving the data in case the user has not started the lesson
         $activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
@@ -191,6 +190,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             // save transient to make retrieval faster
             $transient_key = 'sensei_answers_'.$user_id.'_'.$lesson_id;
             set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
+
+			//ensure these questions are saved for the user
+			$questions_asked_csv = implode( ',', array_keys( $quiz_answers ) );
+			update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_csv );
 
             // update the message showed to user
             Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'woothemes-sensei' )  . '</div>';

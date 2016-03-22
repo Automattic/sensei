@@ -717,7 +717,6 @@ function sensei_setup_the_question(){
     $index = $sensei_question_loop['current'];
     $sensei_question_loop['current_question'] =  $sensei_question_loop['questions'][ $index ] ;
 
-
 }// end sensei_setup_the_question
 
 /**

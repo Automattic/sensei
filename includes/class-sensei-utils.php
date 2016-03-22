@@ -397,6 +397,8 @@ class Sensei_Utils {
 
 	/**
 	 * Save quiz answers submitted by users
+	 *
+	 * @deprecated since 1.9.4 use Sensei_Quiz::save_user_answers
 	 * @param  array $submitted User's quiz answers
      * @param int $user_id
 	 * @return boolean            Whether the answers were saved or not
