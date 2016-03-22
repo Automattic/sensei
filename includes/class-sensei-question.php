@@ -600,15 +600,13 @@ class Sensei_Question {
 
         // Data to check before showing feedback
         $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
-        $user_quiz_grade = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
-        $not_empty_user_quiz_grade = !empty( $user_quiz_grade );
+        $user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
         $reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-        $lesson_completed = Sensei_Utils::user_completed_lesson( $lesson_id );
-        $quiz_grade_type = get_post_meta( $quiz_id , '_quiz_grade_type', true );
+        $lesson_completed   = Sensei_Utils::user_completed_lesson( $lesson_id );
+        $quiz_grade_type    = get_post_meta( $quiz_id , '_quiz_grade_type', true );
+		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && 'graded' == $user_lesson_status->comment_approved;
 
-        if( ( $lesson_completed  && $not_empty_user_quiz_grade  )
-            ||  ( $lesson_completed && ! $reset_quiz_allowed && 'auto' == $quiz_grade_type )
-            || ( 'auto' == $quiz_grade_type && ! $reset_quiz_allowed && $not_empty_user_quiz_grade ) ) {
+	    if ( $lesson_completed  && $quiz_graded ) {
 
             $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
 
