@@ -59,9 +59,7 @@ Domain path: /lang/
     /**
     * Hook in WooCommerce functionality
     */
-    if( Sensei_WC::is_woocommerce_active() ){
-        add_action('init', array( 'Sensei_WC', 'load_woocommerce_integration_hooks' ) );
-    }
+	add_action('init', array( 'Sensei_WC', 'load_woocommerce_integration_hooks' ) );
 
     /**
      * Load all Template hooks

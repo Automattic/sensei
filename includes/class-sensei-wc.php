@@ -20,6 +20,10 @@ Class Sensei_WC{
      */
     public static function load_woocommerce_integration_hooks(){
 
+	    if( ! Sensei_WC::is_woocommerce_active() ){
+		    return;
+	    }
+
 	    $woocommerce_hooks_file_path = Sensei()->plugin_path() . 'includes/hooks/woocommerce.php';
         require_once( $woocommerce_hooks_file_path );
 
