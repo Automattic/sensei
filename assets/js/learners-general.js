@@ -69,7 +69,6 @@ jQuery(document).ready( function($) {
             dataToPost += 'user_id=' + user_id;
             dataToPost += '&post_id=' + post_id;
             dataToPost += '&post_type=' + post_type;
-            dataToPost += '&order_id=' + orderId;
 
             jQuery.post(
                 ajaxurl,
