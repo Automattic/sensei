@@ -117,7 +117,7 @@ class Sensei_List_Table extends WP_List_Table {
 				}
 			}
 			?>
-			<?php $this->search_box( __( 'Search Users' ,'woothemes-sensei' ), 'search_id'); ?>
+			<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users' ,'woothemes-sensei' ) ), 'search_id' ); ?>
 		</form><?php
 	} // End table_search_form()
 
