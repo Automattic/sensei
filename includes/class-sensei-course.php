@@ -1123,15 +1123,15 @@ class Sensei_Course {
 		//check for variation
 		$product = wc_get_product( $product_id );
 
-		if ( 'variable' == $product->get_type()  ) {
+		if ( in_array( $product->get_type(), array( 'variable-subscription', 'variable' ) ) ) {
 
 			$variations = $product->get_available_variations();
-			$courses  = array();
+			$courses    = array();
 
-			foreach ( $variations as $variation  ) {
+			foreach ( $variations as $variation ) {
 
-				$variation_courses = get_posts( self::get_product_courses_query_args( $variation[ 'variation_id' ] ) );
-				$courses = array_merge( $courses, $variation_courses );
+				$variation_courses = get_posts( self::get_product_courses_query_args( $variation['variation_id'] ) );
+				$courses           = array_merge( $courses, $variation_courses );
 
 			}
 
