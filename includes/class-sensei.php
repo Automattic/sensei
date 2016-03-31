@@ -345,6 +345,9 @@ class Sensei_Main {
         // Check for and activate JetPack LaTeX support
         add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support'), 200 ); // Runs after Jetpack has loaded it's modules
 
+		// Check for and activate WP QuickLaTeX support
+		add_action( 'plugins_loaded', array( $this, 'wp_quicklatex_support'), 200 ); // Runs after Plugins have loaded
+
         // check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
         add_action( 'init', array( $this, 'flush_rewrite_rules'), 101 );
 
@@ -883,6 +886,18 @@ class Sensei_Main {
             add_filter( 'sensei_answer_text', 'latex_markup' );
         }
     }
+    
+	/**
+	 * Checks that the WP QuickLaTeX plugin has been activated to support LaTeX within question titles and answers
+	 *
+	 * @return null
+	 */
+	public function wp_quicklatex_support() {
+		if ( function_exists( 'quicklatex_parser') ) {
+			add_filter( 'sensei_question_title', 'quicklatex_parser' );
+			add_filter( 'sensei_answer_text', 'quicklatex_parser' );
+		}
+	}
 
     /**
      * Load the module functionality.
