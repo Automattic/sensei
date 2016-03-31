@@ -345,6 +345,9 @@ class Sensei_Main {
         // Check for and activate JetPack LaTeX support
         add_action( 'plugins_loaded', array( $this, 'jetpack_latex_support'), 200 ); // Runs after Jetpack has loaded it's modules
 
+		// Check for and activate WP QuickLaTeX support
+		add_action( 'plugins_loaded', array( $this, 'wp_quicklatex_support'), 200 ); // Runs after Plugins have loaded
+
         // check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
         add_action( 'init', array( $this, 'flush_rewrite_rules'), 101 );
 
@@ -883,6 +886,18 @@ class Sensei_Main {
             add_filter( 'sensei_answer_text', 'latex_markup' );
         }
     }
+    
+	/**
+	 * Checks that the WP QuickLaTeX plugin has been activated to support LaTeX within question titles and answers
+	 *
+	 * @return null
+	 */
+	public function wp_quicklatex_support() {
+		if ( function_exists( 'quicklatex_parser') ) {
+			add_filter( 'sensei_question_title', 'quicklatex_parser' );
+			add_filter( 'sensei_answer_text', 'quicklatex_parser' );
+		}
+	}
 
     /**
      * Load the module functionality.
@@ -1185,7 +1200,7 @@ class Sensei_Main {
          * @return string documentation URL
          */
         public function get_documentation_url() {
-            return sprintf( 'https://docs.woothemes.com/documentation/plugins/sensei/' );
+            return sprintf( 'https://docs.woothemes.com/documentation/plugins/sensei/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Docs&utm_campaign=SenseiPlugin' );
         }
 
         /**
@@ -1194,7 +1209,7 @@ class Sensei_Main {
          * @return string support url
          */
         public function get_support_url() {
-            return 'https://www.woothemes.com/my-account/tickets/';
+            return 'https://www.woothemes.com/my-account/create-a-ticket/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Support&utm_campaign=SenseiPlugin';
         }
 
         /**
