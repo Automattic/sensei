@@ -74,7 +74,7 @@ add_action( 'woocommerce_email_after_order_table', array( 'Sensei_WC', 'email_co
  * Checkout
  *
  ************************************/
-add_action( 'woocommerce_delete_shop_order_transients',           array( 'Sensei_WC', 'complete_order' ) );
+add_action( 'woocommerce_delete_shop_order_transients',           array( 'Sensei_WC', 'complete_order' ),2 );
 add_action( 'woocommerce_delete_shop_order_transients',            array( 'Sensei_WC', 'cancel_order' ) );
 // Disable guest checkout if a course is in the cart as we need a valid user to store data for
 add_filter( 'pre_option_woocommerce_enable_guest_checkout', array( 'Sensei_WC', 'disable_guest_checkout' ) );
