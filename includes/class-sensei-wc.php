@@ -1764,7 +1764,7 @@ Class Sensei_WC{
 			'post_type' => 'shop_order',
 			'meta_key'    => '_customer_user',
 			'meta_value'  => intval( $user_id ),
-			'post_status' => array('wc-complete', 'wc-processing'),
+			'post_status' => array('wc-completed', 'wc-processing'),
 		);
 
 		// possibly change the product type
