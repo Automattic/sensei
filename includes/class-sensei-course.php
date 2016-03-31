@@ -1128,6 +1128,13 @@ class Sensei_Course {
 			$variations = $product->get_available_variations();
 			$courses    = array();
 
+			// possibly check if the course is not linked to the variation parent product
+			$variation_parent_courses = get_posts( self::get_product_courses_query_args( $product_id ) );
+
+			if ( ! empty( $variation_parent_courses ) ) {
+				$courses = array_merge( $courses, $variation_parent_courses );
+			}
+
 			foreach ( $variations as $variation ) {
 
 				$variation_courses = get_posts( self::get_product_courses_query_args( $variation['variation_id'] ) );
