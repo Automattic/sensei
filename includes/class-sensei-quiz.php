@@ -192,8 +192,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
 
 			//ensure these questions are saved for the user
-			$questions_asked_csv = implode( ',', array_keys( $quiz_answers ) );
-			update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_csv );
+			//if saved they should not be overwritten on save
+			// only through reset can they be removed
+			$questions_asked_csv = get_comment_meta( $activity_logged, 'questions_asked', true );
+			if( empty( $questions_asked_csv ) ){
+				$questions_asked_csv = implode( ',', array_keys( $quiz_answers ) );
+				update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_csv );
+			}
+
 
             // update the message showed to user
             Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'woothemes-sensei' )  . '</div>';

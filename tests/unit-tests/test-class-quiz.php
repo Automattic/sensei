@@ -1054,7 +1054,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
         $questions_asked_string = get_comment_meta( $user_lesson_status_comment_id , 'questions_asked', true);
         $questions_asked_count_after_submitting = count( explode( ',', $questions_asked_string ) );
 
-
         //check if questions asked have not been overwritten
         $this->assertEquals( $questions_asked_count, $questions_asked_count_after_submitting,
             'Questions asked user data does not match what was set when the lesson quiz questions was generated.' );
