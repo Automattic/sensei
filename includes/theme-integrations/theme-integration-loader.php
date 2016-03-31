@@ -30,7 +30,8 @@ class Sensei_Theme_Integration_Loader {
 
         $this->setup_themes();
         $this->setup_currently_active_theme();
-        $this->possibly_load_supported_theme_wrappers();
+
+        add_action( 'init', array( $this, 'possibly_load_supported_theme_wrappers' ) );
 
     }
 
@@ -71,9 +72,19 @@ class Sensei_Theme_Integration_Loader {
      *
      * @since 1.9.0
      */
-    private function possibly_load_supported_theme_wrappers(){
+    public function possibly_load_supported_theme_wrappers(){
 
-        if ( in_array( $this->active_theme, $this->themes ) ){
+	    /**
+	     * Allow developer to stop the loading of the default supported theme wrappers.
+	     * After removing this you can follow the documentation on how to add theme support.
+	     *
+	     * @since 1.9.4 introduced filter
+	     *
+	     * @param boolean $load_default_supported_theme_wrappers
+	     */
+	    $load_default_supported_theme_wrappers = apply_filters('sensei_load_default_supported_theme_wrappers', true );
+
+        if ( in_array( $this->active_theme, $this->themes ) && $load_default_supported_theme_wrappers ) {
 
             // setup file and class names
             $supported_theme_class_file = trailingslashit( Sensei()->plugin_path ) . 'includes/theme-integrations/' . $this->active_theme . '.php';
