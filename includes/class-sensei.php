@@ -1200,7 +1200,7 @@ class Sensei_Main {
          * @return string documentation URL
          */
         public function get_documentation_url() {
-            return sprintf( 'https://docs.woothemes.com/documentation/plugins/sensei/' );
+            return sprintf( 'https://docs.woothemes.com/documentation/plugins/sensei/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Docs&utm_campaign=SenseiPlugin' );
         }
 
         /**
@@ -1209,7 +1209,7 @@ class Sensei_Main {
          * @return string support url
          */
         public function get_support_url() {
-            return 'https://www.woothemes.com/my-account/tickets/';
+            return 'https://www.woothemes.com/my-account/create-a-ticket/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Support&utm_campaign=SenseiPlugin';
         }
 
         /**
