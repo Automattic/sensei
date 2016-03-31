@@ -1,5 +1,13 @@
 *** Sensei Changelog ***
 
+2016.04.01 - version 1.9.4
+* Fix	- Ensures current quiz grade is displayed when submitting autograded quizzes.
+* Fix	- Ensures grading notes are always displayed when quiz is manually graded.
+* Fix	- Prevents fatal error when adding learner to a course.
+* Fix	- Prevents Uncaught ReferenceError when removing learner from a course.
+* Fix	- Ensures questions don't change after submission when using a subset of questions in a quiz.
+* Fix	- Fixes label text on search button in Learner Management.
+
 2016.03.03 - version 1.9.3
 * Fix	- Message titles now link to the individual messages.
 * Fix	- Make sure Sensei does not affect the display of blog posts.
@@ -10,6 +18,7 @@
 * Fix	- Fixed the course component widget for active and completed courses.
 * Fix	- Ensure courses can't be accessed if linked to a subscription that is on-hold, cancelled, or expired.
 * Tweak	- Improved appearance of tabs when using [sensei_user_courses]
+* New	- Added 'Configure', 'Docs', and 'Support' links to Sensei on Plugins page.
 
 2016.02.11 - version 1.9.2
 * Fix   - Access permissions restored to the way it worked in version 1.8.8, totally removing the no-permissions templates.
