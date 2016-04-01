@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2016.04.01 - version 1.9.4
+2016.04.04 - version 1.9.4
 * Fix	- Ensure current quiz grade is displayed when submitting autograded quizzes.
 * Fix	- Ensure grading notes are always displayed when quiz is manually graded.
 * Fix	- Prevent fatal error when adding learner to a course.
