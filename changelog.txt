@@ -8,6 +8,7 @@
 * Fix	- Ensure questions don't change after submission when using a subset of questions in a quiz.
 * Fix	- Fixed label text on search button in Learner Management.
 * Fix	- Fixed incorrect WC order status.
+* Fix	- Fixed an issue with is_course_purchasable()
 * New	- Added support for WP QuickLaTeX plugin.
 * New	- Added new 'sensei_courses_shortcode_course_data' filter in courses.
 * New	- Added a 'sensei_load_default_supported_theme_wrappers' filter to allow disabling custom theme wrappers.
