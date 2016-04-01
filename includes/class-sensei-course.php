@@ -2877,6 +2877,11 @@ class Sensei_Course {
 	    if ( ! is_singular( 'course' )  ) {
 		    return;
 	    }
+
+		if ( ! sensei_can_user_view_course() ) {
+			return;
+		}
+
         // Get the meta info
         $course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
 
