@@ -1,12 +1,17 @@
 *** Sensei Changelog ***
 
 2016.04.01 - version 1.9.4
-* Fix	- Ensures current quiz grade is displayed when submitting autograded quizzes.
-* Fix	- Ensures grading notes are always displayed when quiz is manually graded.
-* Fix	- Prevents fatal error when adding learner to a course.
-* Fix	- Prevents Uncaught ReferenceError when removing learner from a course.
-* Fix	- Ensures questions don't change after submission when using a subset of questions in a quiz.
-* Fix	- Fixes label text on search button in Learner Management.
+* Fix	- Ensure current quiz grade is displayed when submitting autograded quizzes.
+* Fix	- Ensure grading notes are always displayed when quiz is manually graded.
+* Fix	- Prevent fatal error when adding learner to a course.
+* Fix	- Prevent Uncaught ReferenceError when removing learner from a course.
+* Fix	- Ensure questions don't change after submission when using a subset of questions in a quiz.
+* Fix	- Fixed label text on search button in Learner Management.
+* Fix	- Fixed incorrect WC order status.
+* New	- Added support for WP QuickLaTeX plugin.
+* New	- Added new 'sensei_courses_shortcode_course_data' filter in courses.
+* New	- Added a 'sensei_load_default_supported_theme_wrappers' filter to allow disabling custom theme wrappers.
+* Tweak	- Updated support link in Plugins page.
 
 2016.03.03 - version 1.9.3
 * Fix	- Message titles now link to the individual messages.
