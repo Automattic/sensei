@@ -2915,7 +2915,7 @@ class Sensei_Course {
         if ( '' != $course_video_embed ) { ?>
 
             <div class="course-video">
-                <?php echo html_entity_decode($course_video_embed); ?>
+                <?php echo do_shortcode( html_entity_decode( $course_video_embed ) ); ?>
             </div>
 
         <?php } // End If Statement

@@ -1797,7 +1797,13 @@ Class Sensei_WC{
 		if( ! self::is_woocommerce_active() ){
 			return false;
 		}
-		$course_product = wc_get_product( self::get_course_product_id( $course_id ) );
+
+		$course_product_id = self::get_course_product_id( $course_id );
+
+		if ( ! $course_product_id )
+			return false;
+
+		$course_product = wc_get_product( $course_product_id );
 
 		return $course_product->is_purchasable();
 
