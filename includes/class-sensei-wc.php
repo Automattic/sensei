@@ -1173,7 +1173,7 @@ Class Sensei_WC{
      * @param   int $order_id WC order ID
      * @return  void
      */
-    public static function complete_order ( $order_id = 0, $a1 ) {
+    public static function complete_order ( $order_id = 0 ) {
 
         $order_user = array();
 

@@ -1132,7 +1132,7 @@ class Sensei_Course {
 			$variation_parent_courses = get_posts( self::get_product_courses_query_args( $product_id ) );
 
 			if ( ! empty( $variation_parent_courses ) ) {
-				$courses = array_merge( $courses, $variation_parent_courses );
+				$courses           = array_merge( $courses, $variation_parent_courses );
 			}
 
 			foreach ( $variations as $variation ) {
