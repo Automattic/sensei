@@ -39,4 +39,4 @@ dependencies:
 test:
   override:
   #run tests with coverage
-  - cd $plugin_loc; phpunit --coverage-html $CIRCLE_ARTIFACTS
+  - cd $plugin_loc; phpunit #ignoring coverage for speed reasons: --coverage-html $CIRCLE_ARTIFACTS
