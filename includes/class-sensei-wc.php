@@ -1194,7 +1194,7 @@ Class Sensei_WC{
 		$order_user['user_email'] = $user->user_email;
 		$order_user['user_url'] = $user->user_url;
 
-		if ( empty ( sizeof( $order->get_items() ) ) ) {
+		if ( 0 == sizeof( $order->get_items() ) ) {
 			return;
 		}
 
