@@ -1360,15 +1360,17 @@ Class Sensei_WC{
 	public static function course_update ( $course_id = 0, $order_user = array()  ) {
 
 		global $current_user;
+		$has_valid_user_object = isset( $current_user->ID ) || isset( $order_user['ID'] );
+		if( ! $has_valid_user_object ){
+			return false;
+		}
 
-		if ( ! isset( $current_user ) || !$current_user->ID > 0 ) return false;
+		$has_valid_user_id = ! empty( $current_user->ID ) || ! empty( $order_user['ID'] );
+		if ( ! $has_valid_user_id ) {
+			return false;
+		}
 
-		$data_update = false;
-
-		// Get the product ID
-		$wc_post_id = get_post_meta( intval( $course_id ), '_course_woocommerce_product', true );
-
-		// Check if in the admin
+		//setup user data
 		if ( is_admin() ) {
 
 			$user_login = $order_user['user_login'];
@@ -1378,12 +1380,21 @@ Class Sensei_WC{
 
 		} else {
 
-			$user_login = $current_user->user_login;
-			$user_email = $current_user->user_email;
-			$user_url = $current_user->user_url;
-			$user_id = $current_user->ID;
+			$user_id = empty( $current_user->ID ) ? $order_user['ID'] : $current_user->ID;
+			$user = get_user_by( 'id', $user_id );
 
-		} // End If Statement
+			if( ! $user ) {
+				return false;
+			}
+
+			$user_login = $user->user_login;
+			$user_email = $user->user_email;
+			$user_url   = $user->user_url;
+
+		}
+
+		// Get the product ID
+		$wc_post_id = get_post_meta( intval( $course_id ), '_course_woocommerce_product', true );
 
 		// This doesn't appear to be purely WooCommerce related. Should it be in a separate function?
 		$course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true );
