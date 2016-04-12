@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		$this->file = $file;
         $this->token = 'quiz';
 		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required','enable_quiz_reset' );
-		add_action( 'save_post', array( $this, 'update_author' ));
+		add_action( 'save_post', array( $this, 'update_after_lesson_change' ));
 
 		// listen to the reset button click
 		add_action( 'template_redirect', array( $this, 'reset_button_click_listener'  ) );
@@ -48,48 +48,44 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     } // End __construct()
 
 	/**
-	* Update the quiz author when the lesson post type is save
+	* Update the quiz data when the lesson is changed
 	*
 	* @param int $post_id
 	* @return void
 	*/
-	public function update_author( $post_id ){
+	public function update_after_lesson_change( $post_id ){
 
 		// If this isn't a 'lesson' post, don't update it.
-        // if this is a revision don't save it
-	    if ( isset( $_POST['post_type'] ) && 'lesson' != $_POST['post_type']
-            || wp_is_post_revision( $post_id ) ) {
+		// if this is a revision don't save it
+		if ( ! isset( $_POST['post_type'] )
+		     || 'lesson' !== $_POST['post_type']
+			|| wp_is_post_revision( $post_id ) ) {
+				return;
+		}
 
-                return;
+		// Get the lesson author id to be use late.
+		$saved_lesson           = get_post( $post_id );
+		$new_lesson_author_id = $saved_lesson->post_author;
 
-        }
-	    // get the lesson author id to be use late
-	    $saved_post = get_post( $post_id );
-	    $new_lesson_author_id =  $saved_post->post_author;
+		// Get the lessons quiz.
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $post_id );
+		if ( ! $quiz_id ) {
+			return;
+		}
 
-	    //get the lessons quiz
-		$lesson_quizzes = Sensei()->lesson->lesson_quizzes( $post_id );
-	    foreach ( (array) $lesson_quizzes as $quiz_item ) {
+		// Setup the quiz items new author value.
+		$my_post = array(
+			  'ID'          => $quiz_id,
+			  'post_author' => $new_lesson_author_id,
+			  'post_name' => $saved_lesson->post_name,
+		);
 
-	    	if( ! $quiz_item ) {
-	    		continue;
-	    	}
+		// Remove the action so that it doesn't fire again.
+		remove_action( 'save_post', array( $this, 'update_author' ) );
 
-		    // setup the quiz items new author value
-			$my_post = array(
-			      'ID'           => $quiz_item,
-			      'post_author' =>  $new_lesson_author_id
-			);
-
-            // remove the action so that it doesn't fire again
-            remove_action( 'save_post', array( $this, 'update_author' ));
-
-			// Update the post into the database
-		  	wp_update_post( $my_post );
-	    }
-
-	    return;
-	}// end update_author
+		// Update the post into the database.
+		wp_update_post( $my_post );
+	}
 
 
 	/**
