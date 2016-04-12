@@ -1886,7 +1886,7 @@ class Sensei_Lesson {
 		// Question Save and Delete logic
 		if ( isset( $question_data['action'] ) && ( $question_data['action'] == 'delete' ) ) {
 			// Delete the Question
-			$return = $this->lesson_delete_question($question_data);
+			$return = $this->lesson_remove_question($question_data);
 		} else {
 			// Save the Question
 			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
@@ -2446,33 +2446,36 @@ class Sensei_Lesson {
 
 
 	/**
-	 * lesson_delete_question function.
+	 * Remove question from lesson
 	 *
 	 * @access private
 	 * @param array $data (default: array())
 	 * @return boolean
 	 */
-	private function lesson_delete_question( $data = array() ) {
+	private function lesson_remove_question( $data = array() ) {
 
 		// Get which question to delete
 		$question_id = 0;
 		if ( isset( $data[ 'question_id' ] ) && ( 0 < absint( $data[ 'question_id' ] ) ) ) {
 			$question_id = absint( $data[ 'question_id' ] );
 		} // End If Statement
-		// Delete the question
-		if ( 0 < $question_id ) {
-			$quizzes = get_post_meta( $question_id, '_quiz_id', false );
 
-			foreach( $quizzes as $quiz_id ) {
-				if( $quiz_id == $data['quiz_id'] ) {
-					delete_post_meta( $question_id, '_quiz_id', $quiz_id );
-				}
+		if ( empty( $question_id ) ) {
+			return false;
+		}
+
+		// remove the question from the lesson quiz
+		$quizzes = get_post_meta( $question_id, '_quiz_id', false );
+
+		foreach( $quizzes as $quiz_id ) {
+			if( $quiz_id == $data['quiz_id'] ) {
+				delete_post_meta( $question_id, '_quiz_id', $quiz_id );
 			}
+		}
 
-			return true;
-		} // End If Statement
-		return false;
-	} // End lesson_delete_question()
+		return true;
+
+	}
 
 
 	/**
