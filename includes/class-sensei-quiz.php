@@ -42,6 +42,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         add_action( 'template_redirect', array ( $this, 'quiz_has_no_questions') );
 
+		// remove post when lesson is permanently deleted
+		add_action( 'delete_post', array( $this, 'maybe_delete_quiz' ) );
 
     } // End __construct()
 
@@ -1332,6 +1334,24 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          return (bool) $reset_allowed;
 
      }
+
+	 /**
+	  * @since 1.9.5
+	  *
+	  * @param integer $post_id of the post being permanently deleted
+	  */
+	 public function maybe_delete_quiz( $post_id ){
+
+		 $quiz_id = Sensei()->lesson->lesson_quizzes( $post_id );
+
+		 if ( empty( $quiz_id ) || 'lesson' != get_post_type( $post_id ) ) {
+			 return;
+		 }
+
+		 wp_delete_post( $quiz_id );
+
+
+	 }
 
  } // End Class WooThemes_Sensei_Quiz
 
