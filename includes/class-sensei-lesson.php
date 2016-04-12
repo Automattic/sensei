@@ -459,6 +459,10 @@ class Sensei_Lesson {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
 
+		//quick edit work around
+		if ( 'lesson_preview' == $post_key &&  isset( $_POST['action'] ) && $_POST['action'] =='inline-save' ) {
+			$new_meta_value = '-1';
+		}
         // update field with the new value
         if( -1 != $new_meta_value  ){
             return update_post_meta( $post_id, $meta_key, $new_meta_value );
