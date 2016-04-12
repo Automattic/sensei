@@ -58,9 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                     <?php
                     /**
-                     * Output all course lessons. If none found for this course
-                     * a notice will be displayed. What is displayed
-                     * is manipulated via a
+                     * Display the lesson excerpt
                      */
                     the_excerpt();
                     ?>
