@@ -1974,20 +1974,27 @@ class Sensei_Lesson {
 		} // End If Statement
 
 		if( ! wp_verify_nonce( $nonce, 'lesson_remove_multiple_questions_nonce' )
-        || ! current_user_can( 'edit_lessons' ) ) {
+        || ! current_user_can( 'edit_lessons' ) || ! isset( $_POST['data'] ) ) {
 			die('');
 		} // End If Statement
 
 		// Parse POST data
-		$data = $_POST['data'];
 		$question_data = array();
-		parse_str( $data, $question_data );
+		parse_str( $_POST['data'], $question_data );
 
-		if( is_array( $question_data ) ) {
-			wp_delete_post( $question_data['question_id'], true );
+		$question_id_to_remove      = $question_data['question_id'];
+		$quiz_id_to_be_removed_from = $question_data['quiz_id'];
+
+		// remove the question from the lesson quiz
+		$quizzes = get_post_meta( $question_id_to_remove, '_quiz_id', false );
+		foreach( $quizzes as $quiz_id ) {
+			if( $quiz_id == $quiz_id_to_be_removed_from  ) {
+				delete_post_meta( $question_id_to_remove, '_quiz_id', $quiz_id );
+				die( 'Deleted' );
+			}
 		}
 
-		die( 'Deleted' );
+		die('');
 	}
 
 	public function get_question_category_limit() {
