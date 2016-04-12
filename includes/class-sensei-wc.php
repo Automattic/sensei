@@ -1619,13 +1619,8 @@ Class Sensei_WC{
 	 */
 	public static function get_subscription_user_started_course( $has_user_started_course, $course_id, $user_id ) {
 
-
 		// avoid changing the filter value in case a user is currently being added to a course
-		if( isset( $_POST[ 'payment_method' ] ) ) {
-			return $has_user_started_course;
-		}
-
-		if ( ! is_user_logged_in( ) ) {
+		if( ! is_user_logged_in() || is_admin() || isset( $_POST[ 'payment_method' ] ) || isset( $_POST['order_status']  ) ) {
 			return $has_user_started_course;
 		}
 
