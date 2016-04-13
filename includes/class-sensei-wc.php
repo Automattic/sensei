@@ -1184,7 +1184,7 @@ Class Sensei_WC{
 		// Get order object
 		$order = new WC_Order( $order_id );
 
-		if ( ! in_array( $order->get_status(), array( 'complete', 'processing' ) ) ) {
+		if ( ! in_array( $order->get_status(), array( 'completed', 'processing' ) ) ) {
 			return;
 		}
 
