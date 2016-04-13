@@ -2661,6 +2661,7 @@ class Sensei_Course {
         }
 
         $course_lesson_query_args = array(
+	        'post_status'       => 'publish',
             'post_type'         => 'lesson',
             'posts_per_page'    => 500,
             'orderby'           => 'date',
@@ -2671,7 +2672,6 @@ class Sensei_Course {
                     'value' => intval( $course_id ),
                 ),
             ),
-            'post_status'       => 'public',
             'suppress_filters'  => 0,
         );
 
