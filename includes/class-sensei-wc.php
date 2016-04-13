@@ -1619,37 +1619,35 @@ Class Sensei_WC{
 	 */
 	public static function get_subscription_user_started_course( $has_user_started_course, $course_id, $user_id ) {
 
+		// avoid changing the filter value in the following cases
+		if( empty( $course_id ) || empty( $user_id ) || ! is_user_logged_in() || is_admin()
+		    || isset( $_POST[ 'payment_method' ] ) || isset( $_POST['order_status']  ) ) {
 
-		// avoid changing the filter value in case a user is currently being added to a course
-		if( isset( $_POST[ 'payment_method' ] ) ) {
 			return $has_user_started_course;
-		}
 
-		if ( ! is_user_logged_in( ) ) {
-			return $has_user_started_course;
 		}
 
 		// cached user course access for this process instance
+		// also using temp cached data so we don't output the message again
 		global $sensei_wc_subscription_access_store;
 
 		if ( ! is_array( $sensei_wc_subscription_access_store ) ) {
 			$sensei_wc_subscription_access_store = array();
 		}
 
-		// user temp cached data so we don't output the mesage again
 		$user_data_index_key = $course_id .'_' . $user_id;
-
 		if ( isset( $sensei_wc_subscription_access_store[ $user_data_index_key  ] ) ) {
 			return $sensei_wc_subscription_access_store[ $user_data_index_key ];
-		}
-
-		if( empty( $course_id ) || empty( $user_id ) ){
-			return $has_user_started_course;
 		}
 
 		// if the course has no subscription WooCommerce product attached to return the permissions as is
 		$product_id = Sensei_WC::get_course_product_id( $course_id );
 		$product = wc_get_product( $product_id );
+
+		if ( ! $product ) {
+			return $has_user_started_course;
+		}
+
 		if( ! is_object( $product ) || ! in_array( $product->get_type(), self::get_subscription_types() ) ){
 
 			return $has_user_started_course;
@@ -1672,7 +1670,6 @@ Class Sensei_WC{
 
 		$sensei_wc_subscription_access_store[ $user_data_index_key ] = $has_user_started_course;
 		return $has_user_started_course;
-
 	}
 
 	/**
