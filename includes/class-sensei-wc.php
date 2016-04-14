@@ -1783,15 +1783,6 @@ Class Sensei_WC{
 			'post_status' => array('wc-completed', 'wc-processing'),
 		);
 
-		// possibly change the product type
-		$product = wc_get_product( $product_id );
-		if( class_exists( 'WC_Subscriptions_Manager' )
-			&& in_array( $product->get_type(), array( 'subscription', 'subscription_variation' ) ) ) {
-
-				$args['post_type'] = 'shop_subscription';
-
-		}
-
 		return get_posts( $args );
 
 	}
