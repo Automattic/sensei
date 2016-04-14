@@ -347,6 +347,9 @@ class Sensei_Core_Modules
     public function save_module_course($module_id)
     {
 
+	    if( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) {
+		    return;
+	    }
         // Get module's existing courses
         $args = array(
             'post_type' => 'course',
@@ -1291,7 +1294,9 @@ class Sensei_Core_Modules
             'edit-tags.php',
             'course_page_module-order',
             'post-new.php',
-            'post.php'
+            'post.php',
+	        'term.php',
+
         ) );
 
         if ( ! in_array( $hook, $script_on_pages_white_list ) ) {
