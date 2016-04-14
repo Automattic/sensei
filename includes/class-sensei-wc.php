@@ -1768,8 +1768,12 @@ Class Sensei_WC{
 	 */
 	public static function get_user_product_orders( $user_id =  0, $product_id ) {
 
+		if ( empty( $user_id ) ) {
+			return array();
+		}
+
 		$args = array(
-			'numberposts' => -1,
+			'posts_per_page' => 5000,
 			'post_type' => 'shop_order',
 			'meta_key'    => '_customer_user',
 			'meta_value'  => intval( $user_id ),
