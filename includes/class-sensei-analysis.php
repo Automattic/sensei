@@ -362,21 +362,8 @@ class Sensei_Analysis {
 
 		$function = 'analysis_' . $args['nav'] . '_nav';
 		$this->$function();
-		?>
-			<p class="powered-by-woo">
-
-                <?php _e( 'Powered by', 'woothemes-sensei' ); ?>
-
-                <a href="http://www.woothemes.com/" title="WooThemes">
-
-                    <img src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" />
-
-                </a>
-
-            </p>
-
-		<?php
 		do_action( 'sensei_analysis_after_headers' );
+
 	} // End analysis_headers()
 
 	/**
@@ -400,24 +387,11 @@ class Sensei_Analysis {
 	 */
 	public function analysis_default_nav() {
 
-		$title = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ) ), esc_html( $this->name ) );
-		$view = isset($_GET['view']) ? esc_html( $_GET['view'] ) : '';
-		switch ( $view ) { 
-			case 'courses' :
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', __( 'Courses', 'woothemes-sensei' ) );
-				break;
-
-			case 'lessons' :
-				$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;%s</span>', __( 'Lessons', 'woothemes-sensei' ) );
-				break;
-
-			case 'users' :
-			default :
-				$title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;%s</span>', __( 'Learners', 'woothemes-sensei' ) );
-				break;
-		}
+		$title = $this->name;
 		?>
-			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
+			<h1>
+				<?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?>
+			</h1>
 		<?php
 	} // End analysis_default_nav()
 
