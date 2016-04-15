@@ -1735,7 +1735,13 @@ class Sensei_Course {
             $user_id = get_current_user_id();
         }
 
-        echo '<span class="progress statement  course-completion-rate">' . $this->get_progress_statement( $course_id, $user_id  ) . '</span>';
+	    $progress_statement = $this->get_progress_statement( $course_id, $user_id  );
+	    if( ! empty( $progress_statement ) ){
+
+		    echo '<span class="progress statement  course-completion-rate">' . $progress_statement . '</span>';
+
+	    }
+
     }
 
     /**
