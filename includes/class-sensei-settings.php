@@ -579,22 +579,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 									'section' => 'woocommerce-settings'
 									);
 
-			$fields['course_archive_free_enable'] = array(
-									'name' => __( 'Free Courses Panel', 'woothemes-sensei' ),
-									'description' => __( 'Output the Free Courses Panel on the Course Archive Page.', 'woothemes-sensei' ),
-									'type' => 'checkbox',
-									'default' => true,
-									'section' => 'woocommerce-settings'
-									);
-
-			$fields['course_archive_paid_enable'] = array(
-									'name' => __( 'Paid Courses Panel', 'woothemes-sensei' ),
-									'description' => __( 'Output the Paid Courses Panel on the Course Archive Page.', 'woothemes-sensei' ),
-									'type' => 'checkbox',
-									'default' => true,
-									'section' => 'woocommerce-settings'
-									);
-
 		} // End If Statement
 
 		if ( 'en_US' !== get_locale() ) {
