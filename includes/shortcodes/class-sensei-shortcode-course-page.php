@@ -73,19 +73,22 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 
         }
 
-        //set the wp_query to the current courses query
-        global $wp_query, $post;
+        // Set the wp_query to the current courses query.
+        global $wp_query, $post, $pages;
 
         // backups
-        $global_post_ref = $post;
-        $global_wp_query_ref = $wp_query;
+        $global_post_ref     = clone $post;
+        $global_wp_query_ref = clone $wp_query;
+	    $global_pages_ref    = $pages;
 
-        $post = get_post( $this->id );
-        $wp_query->post = get_post( $this->id ); //  set this in case some the course hooks resets the query
-        $wp_query = $this->course_page_query;
+	    $this->set_global_vars();
 
+	    // Capture output.
         ob_start();
-        self::the_single_course_content();
+	    add_filter( 'sensei_show_main_footer', '__return_false' );
+	    add_filter( 'sensei_show_main_header', '__return_false' );
+	    add_action( 'sensei_single_course_lessons_before', array( $this, 'set_global_vars' ), 1, 0 );
+        Sensei_Templates::get_template( 'single-course.php' );
         $shortcode_output = ob_get_clean();
 
         // set back the global query and post
@@ -93,36 +96,28 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
         $wp_query       = $global_wp_query_ref;
         $post           = $global_post_ref;
         $wp_query->post = $global_post_ref;
-        wp_reset_query();
+	    $pages          = $global_pages_ref;
 
         return $shortcode_output;
 
     }// end render
 
-    /**
-     * Print out the single course content markup
-     *
-     * @since 1.9.0
-     */
-    public static function the_single_course_content(){
-        ?>
+	/**
+	 * Set global variables to the currently requested course.
+	 *
+	 * @since 1.9.5 introduced
+	 */
+	public function set_global_vars() {
 
-        <article <?php post_class( array( 'course', 'post' ) ); ?> >
+		global $wp_query, $post, $pages;
+
+		// Alter global var states.
+		$post                                = get_post( $this->id );
+		$pages                               = array( $post->post_content );
+		$wp_query                            = $this->course_page_query;
+		$wp_query->post                      = get_post( $this->id ); //  set this in case some the course hooks resets the query
+	}
 
 
-            <?php  do_action( 'sensei_single_course_content_inside_before' );  ?>
-
-            <section class="entry fix">
-
-                <?php //the_content(); ?>
-
-            </section>
-
-            <?php  do_action( 'sensei_single_course_content_inside_after' );  ?>
-
-        </article>
-
-        <?php
-    }// end the_single_course_content
 
 }// end class
