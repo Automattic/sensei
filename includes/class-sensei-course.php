@@ -2192,9 +2192,9 @@ class Sensei_Course {
              * archive
              *
              * @since 1.9.0
-             * @param integer $posts_per_page default 10
+             * @param integer $posts_per_page defaults to the value of get_option( 'posts_per_page' )
              */
-            $query->set( 'posts_per_page', apply_filters( 'sensei_archive_courses_per_page', 10 ) );
+            $query->set( 'posts_per_page', apply_filters( 'sensei_archive_courses_per_page', get_option( 'posts_per_page' ) ) );
 
         }
         // for the my courses page
