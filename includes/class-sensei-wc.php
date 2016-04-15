@@ -652,6 +652,22 @@ Class Sensei_WC{
 		// will be used later to check for course with the id as meta
 		$paid_product_ids_without_sale = get_posts( self::get_paid_products_not_on_sale_query_args() );
 
+		// get variable subscriptions (normal subscriptions are already included with paid products)
+		if ( class_exists( 'WC_Subscriptions_Manager' ) ) {
+
+			$variable_subscription_query_args = self::get_paid_products_not_on_sale_query_args();
+
+			$variable_subscription_query_args[ 'meta_query' ] = array(
+				array(
+					'key'=> '_subscription_sign_up_fee',
+					'compare' => 'EXISTS',
+				),
+			);
+
+			$paid_product_ids_without_sale = array_merge( $paid_product_ids_without_sale, get_posts( $variable_subscription_query_args )  );
+
+		}
+
 		// combine products ID's with regular and sale price grater than zero and those without
 		// sale but regular price greater than zero
 		$woocommerce_paid_product_ids = array_merge( $paid_product_ids_with_sale, $paid_product_ids_without_sale );
