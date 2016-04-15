@@ -1332,6 +1332,24 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
      }
 
 	 /**
+	  * @param $lesson_id
+	  *
+	  * @return bool
+	  */
+	 public static function is_pass_required( $lesson_id ) {
+
+		 $quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+         $reset_allowed = get_post_meta( $quiz_id, '_pass_required', true );
+         //backwards compatibility
+         if( 'on' == $reset_allowed ) {
+	         $reset_allowed = 1;
+         }
+
+         return (bool) $reset_allowed;
+	 }
+
+	 /**
 	  * @since 1.9.5
 	  *
 	  * @param integer $post_id of the post being permanently deleted
