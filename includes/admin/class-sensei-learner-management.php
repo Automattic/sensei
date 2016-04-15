@@ -193,9 +193,6 @@ class Sensei_Learner_Management {
 
 		$function = 'learners_' . $args['nav'] . '_nav';
 		$this->$function();
-		?>
-			<p class="powered-by-woo"><?php _e( 'Powered by', 'woothemes-sensei' ); ?><a href="http://www.woothemes.com/" title="WooThemes"><img src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes" /></a></p>
-		<?php
 		do_action( 'sensei_learners_after_headers' );
 
 	} // End learners_headers()
@@ -220,7 +217,7 @@ class Sensei_Learner_Management {
 	 * @return void
 	 */
 	public function learners_default_nav() {
-		$title = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ) ), esc_html( $this->name ) );
+		$title = $this->name;
 		if ( isset( $_GET['course_id'] ) ) { 
 			$course_id = intval( $_GET['course_id'] );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) );
@@ -231,7 +228,7 @@ class Sensei_Learner_Management {
 			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>'; 
 		}
 		?>
-			<h2><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?></h2>
+			<h1><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?></h1>
 		<?php
 	} // End learners_default_nav()
 
