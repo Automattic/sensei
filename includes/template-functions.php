@@ -392,24 +392,9 @@ function sensei_has_user_completed_prerequisite_lesson( $current_lesson_id, $use
  * @return bool
  *
  */
-function sensei_have_modules( $course_post_id = '' ){
+function sensei_have_modules(  ){
 
-	global $post, $wp_query, $sensei_modules_loop;
-
-	// set the current course to be the global post again
-	wp_reset_query();
-	$post = $wp_query->post;
-
-	if( empty( $course_post_id ) ){
-
-		$course_id = $post->ID;
-
-	}
-
-	// doesn't apply to none course post types
-	if( ! sensei_is_a_course( $course_id )  ){
-		return false;
-	}
+	global $sensei_modules_loop;
 
 	// check the current item compared to the total number of modules
 	if( $sensei_modules_loop[ 'current' ] + 1 > $sensei_modules_loop[ 'total' ]  ){
