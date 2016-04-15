@@ -2873,25 +2873,34 @@ class Sensei_Lesson {
 
 		} // End If Statement
 
-		$img_url = '';
+		$img_element = '';
 
 		if ( has_post_thumbnail( $lesson_id ) ) {
 
-   			// Get Featured Image
-   			$img_url = get_the_post_thumbnail( $lesson_id, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
+			// Get Featured Image
+			$img_element = get_the_post_thumbnail( $lesson_id, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
 
  		} else {
 
  			// Display Image Placeholder if none
 			if ( Sensei()->settings->settings[ 'placeholder_images_enable' ] ) {
 
-                $img_url = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+                $img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
 
 			} // End If Statement
 
 		} // End If Statement
 
-		$html .= '<a href="' . get_permalink( $lesson_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . $img_url . '</a>';
+		if ( is_singular( 'lesson' ) ) {
+
+			$html .=  $img_element;
+
+		} else {
+
+			$html .= '<a href="' . get_permalink( $lesson_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . $img_element . '</a>';
+
+		}
+
 
 		return $html;
 
