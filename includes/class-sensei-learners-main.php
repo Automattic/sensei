@@ -211,11 +211,19 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
      *
 	 * @param object $item The current item
      *
-     * @return void
+     * @return array $column_data
 	 */
 	protected function get_row_data( $item ) {
 		global $wp_version;
 
+		if( ! $item ) {
+			return array(
+				'title' => __( 'No results found', 'woothemes-sensei' ),
+				'num_learners' => '',
+				'updated' => '',
+				'actions' => '',
+			);
+		}
 		switch ( $this->view ) {
 			case 'learners' :
 
