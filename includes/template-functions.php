@@ -359,6 +359,68 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	} // End sensei_has_user_completed_lesson()
 
 /**
+ * Determine whether a user can view a course.
+ *
+ * @since x.x.x
+ *
+ * @param int $course_id
+ * @param int $user_id
+ * @return bool
+ */
+function sensei_can_user_view_course( $course_id = 0, $user_id = 0 )
+{
+	if( empty( $course_id ) ){
+
+		$course_id = get_the_ID();
+
+	}
+
+    if( empty( $user_id ) ){
+
+        $user_id = get_current_user_id();
+
+    }
+
+	// Content Access Permissions
+	$access_permission = false;
+
+	if ( ! Sensei()->settings->get('access_permission')  || sensei_all_access() ) {
+
+		$access_permission = true;
+
+	} // End If Statement
+
+	// Check if the user is taking the course
+	$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, $user_id );
+
+	if ( Sensei_WC::is_woocommerce_active() ) {
+
+		$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
+		$product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
+
+		$has_product_attached = isset ( $product ) && is_object ( $product );
+
+	} else {
+
+		$has_product_attached = false;
+
+	}
+
+	$can_user_view_course = ( ( is_user_logged_in() && $is_user_taking_course ) || ( $access_permission && ! $has_product_attached ) );
+
+    /**
+     * Filter the can user view course function
+     *
+     * @since x.x.x
+     *
+     * @param bool $can_user_view_course
+     * @param string $course_id
+     * @param string $user_id
+     */
+    return apply_filters( 'sensei_can_user_view_course', $can_user_view_course, $course_id, $user_id );
+}
+
+/**
  * Determine if a user has completed the pre-requisite lesson.
  *
  * @uses

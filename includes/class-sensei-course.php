@@ -2536,33 +2536,7 @@ class Sensei_Course {
 
         }
 
-        // Content Access Permissions
-        $access_permission = false;
-
-        if ( ! Sensei()->settings->get('access_permission')  || sensei_all_access() ) {
-
-            $access_permission = true;
-
-        } // End If Statement
-
-        // Check if the user is taking the course
-        $is_user_taking_course = Sensei_Utils::user_started_course( get_the_ID(), get_current_user_id() );
-
-        if(Sensei_WC::is_woocommerce_active()) {
-
-            $wc_post_id = get_post_meta( get_the_ID(), '_course_woocommerce_product', true );
-            $product = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
-
-            $has_product_attached = isset ( $product ) && is_object ( $product );
-
-        } else {
-
-            $has_product_attached = false;
-
-        }
-
-        if ( ( is_user_logged_in() && $is_user_taking_course )
-            || ( $access_permission && !$has_product_attached)
+        if ( sensei_can_user_view_course()
             || 'full' == Sensei()->settings->get( 'course_single_content_display' ) ) {
 
 	        // compensate for core providing and empty $content
@@ -2903,6 +2877,11 @@ class Sensei_Course {
 	    if ( ! is_singular( 'course' )  ) {
 		    return;
 	    }
+
+		if ( ! sensei_can_user_view_course() ) {
+			return;
+		}
+
         // Get the meta info
         $course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
 
