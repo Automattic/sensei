@@ -2836,7 +2836,7 @@ class Sensei_Course {
 	                $anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
 	                $anchor_after = '</a>';
 	                $notice = sprintf(
-		                __('or log in to view this courses. Click here to %slogin%s.'),
+		                __('or %slog in%s to view this courses.', 'woothemes-sensei'),
 		                $anchor_before,
 		                $anchor_after
 	                );
