@@ -922,6 +922,15 @@ function sensei_the_single_lesson_meta(){
  */
 function get_sensei_header(){
 
+	/**
+	 * Allow user to stop the output of
+	 * get_sensei_header which also includes a call to get_header.
+	 * @since 1.9.5 introduced
+	 */
+	if ( ! apply_filters( 'sensei_show_main_header', true ) ) {
+		return;
+	}
+
     if ( ! defined( 'ABSPATH' ) ) exit;
 
     get_header();
@@ -946,6 +955,15 @@ function get_sensei_header(){
  * @since 1.9.0
  */
 function get_sensei_footer(){
+
+	/**
+	 * Allow user to stop the output of
+	 * get_sensei_footer which also includes a call to get_header.
+	 * @since 1.9.5 introduced
+	 */
+	if ( ! apply_filters( 'sensei_show_main_footer', true ) ) {
+		return;
+	}
 
     /**
      * sensei_pagination hook
