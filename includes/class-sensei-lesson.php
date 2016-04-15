@@ -3793,16 +3793,11 @@ class Sensei_Lesson {
      */
     public static function output_comments(){
 
-        if( ! is_user_logged_in() ){
-            return;
-        }
-
-        $pre_requisite_complete = Sensei()->lesson->is_prerequisite_complete( get_the_ID(), get_current_user_id() );
         $course_id = Sensei()->lesson->get_course_id( get_the_ID() );
         $allow_comments = Sensei()->settings->settings[ 'lesson_comments' ];
         $user_taking_course = Sensei_Utils::user_started_course($course_id );
 
-        $lesson_allow_comments = $allow_comments && $pre_requisite_complete  && $user_taking_course;
+        $lesson_allow_comments = $allow_comments  && $user_taking_course;
 
         if (  $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
 
