@@ -388,7 +388,7 @@ class Sensei_Admin {
 	public function language_pack_install_notice() {
 		?>
 		<div id="message" class="updated sensei-message sensei-connect">
-				<p><?php _e( '<strong>Sensei in your language</strong> &#8211; There is a translation available for your language.', 'woothemes-sensei' ); ?><p>
+				<p><?php echo sprintf( __( '%sSensei in your language %s. There is a translation available for your language.', 'woothemes-sensei' ),'<strong>','</strong>' ); ?><p>
 
 				<p class="submit">
 					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php _e( 'Install', 'woothemes-sensei' ); ?></a>
@@ -600,7 +600,7 @@ class Sensei_Admin {
 	 * @param  boolean $ignore_course Ignore lesson course when dulicating
 	 * @return object                 Duplicate post object
 	 */
-	private function duplicate_post( $post, $suffix = ' (Duplicate)', $ignore_course = false ) {
+	private function duplicate_post( $post, $suffix, $ignore_course = false ) {
 
 		$new_post = array();
 
@@ -610,11 +610,10 @@ class Sensei_Admin {
 			}
 		}
 
-		$new_post['post_title'] .= __( $suffix, 'woothemes-sensei' );
-
-		$new_post['post_date'] = current_time( 'mysql' );
-		$new_post['post_date_gmt'] = get_gmt_from_date( $new_post['post_date'] );
-		$new_post['post_modified'] = $new_post['post_date'];
+		$new_post['post_title']       .= empty( $suffix ) ? _( '(Duplicate)', 'woothemes-sensei') : $suffix;
+		$new_post['post_date']         = current_time( 'mysql' );
+		$new_post['post_date_gmt']     = get_gmt_from_date( $new_post['post_date'] );
+		$new_post['post_modified']     = $new_post['post_date'];
 		$new_post['post_modified_gmt'] = $new_post['post_date_gmt'];
 
 		switch( $post->post_type ) {
@@ -745,7 +744,7 @@ class Sensei_Admin {
 				$published = intval( $num_posts->publish );
 				$post_type = get_post_type_object( $type );
 
-				$text = _n( '%s ' . $post_type->labels->singular_name, '%s ' . $post_type->labels->name, $published, 'woothemes-sensei' );
+				$text = '%s ' . $post_type->labels->singular_name;
 				$text = sprintf( $text, number_format_i18n( $published ) );
 
 				if ( current_user_can( $post_type->cap->edit_posts ) ) {
@@ -1409,18 +1408,16 @@ class Sensei_Admin {
 
             <div id="message" class="error sensei-message sensei-connect">
                     <p>
-                        <strong>
-
-                            <?php _e('Your theme does not declare Sensei support', 'woothemes-sensei' ); ?>
-
-                        </strong> &#8211;
-
-                        <?php _e( 'if you encounter layout issues please read our integration guide or choose a ', 'woothemes-sensei' ); ?>
-
-                        <a href="http://www.woothemes.com/product-category/themes/sensei-themes/"> <?php  _e( 'Sensei theme', 'woothemes-sensei' ) ?> </a>
-
+                        <?php
+                        echo sprintf( __('%s Your theme does not declare Sensei support %s, if you encounter layout issues
+                                            please read our integration guide or choose a %s Sensei theme %s', 'woothemes-sensei' ),
+	                                        '<strong>',
+	                                        '</strong>',
+                                            '<a href="http://www.woothemes.com/product-category/themes/sensei-themes/">',
+	                                        '</a>'
+                                );
+                        ?>
                         :)
-
                     </p>
                     <p class="submit">
                         <a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary">
