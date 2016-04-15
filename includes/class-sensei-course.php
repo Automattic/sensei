@@ -2976,7 +2976,7 @@ class Sensei_Course {
 
         if( ! empty($term) ){
 
-            $title = $term->name;
+            $title = __('Category') . ' ' . $term->name;
 
         }else{
 
@@ -2985,7 +2985,7 @@ class Sensei_Course {
         }
 
         $html = '<h2 class="sensei-category-title">';
-        $html .= __('Category') . ' ' . $title;
+        $html .=  $title;
         $html .= '</h2>';
 
         echo apply_filters( 'course_category_title', $html , $term->term_id );
