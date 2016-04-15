@@ -528,8 +528,8 @@ Class Sensei_WC{
 			),
 			array(
 				'key'     => '_course_woocommerce_product',
-				'value' => self::get_free_product_ids(),
-				'compare' => 'IN',
+				'value' => self::get_paid_product_ids(),
+				'compare' => 'NOT IN',
 			),
 		);
 
