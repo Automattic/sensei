@@ -70,8 +70,8 @@ global $course;
                     ?>
                     <h2>
 
-                        <a href="<?php esc_url_raw( get_permalink( $lesson->ID ) ); ?>"
-                           title="<?php esc_attr_e( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) ); ?>">
+                        <a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>"
+                           title="<?php echo esc_attr_e( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) ); ?>">
 
                             <?php esc_html_e( $lesson->post_title ); ?>
 
