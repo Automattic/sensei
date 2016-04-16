@@ -1254,7 +1254,12 @@ class Sensei_Frontend {
 		global $post;
 
 		if( is_search() && in_array( $post->post_type, array( 'course', 'lesson' ) ) ) {
-			$content = '<p class="course-excerpt">' . the_excerpt( ) . '</p>';
+
+			// Prevent infinite loop, because wp_trim_excerpt calls the_content filter again
+			remove_filter( 'the_content', array( $this, 'sensei_search_results_excerpt' ) );
+
+			// Don't echo the excerpt
+			$content = '<p class="course-excerpt">' . get_the_excerpt( ) . '</p>';
 		}
 
 		return $content;
