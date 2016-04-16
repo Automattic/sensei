@@ -968,6 +968,45 @@ section.entry span.course-price { padding-left: 10px; }
 }
 
 /**
+Module archive
+*/
+body.tax-module #main .lesson-content .lesson-meta {
+  margin: 0px 0px 1.618em;
+
+  span{
+    font-style: italic;
+    font-size: 0.9em;
+    color: rgb(136, 136, 136);
+    padding-right: 1em;
+  }
+  .lesson-status{
+    &.complete {
+      color: rgb(99, 169, 95);
+    }
+    &.in-progress {
+      color: rgb(100, 100, 100);
+    }
+    &::before {
+      font-family: FontAwesomeSensei;
+      display: inline-block;
+      font-size: 100%;
+      margin-right: 0.618em;
+      font-weight: normal;
+      line-height: 1em;
+      width: 1em;
+
+    }
+
+    &.complete::before {
+      content: '\f00c';
+    }
+    &.in-progress::before {
+      content: '\f0ca';
+    }
+  }
+}
+
+/**
  * Imports
  */
 @import 'grid';
