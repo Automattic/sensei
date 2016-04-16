@@ -505,7 +505,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         // Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
         do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
-        Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) . '</div>';
+        Sensei()->notices->add_notice( __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) , 'info');
 
         return ( $deleted_answers && $deleted_grades ) ;
 
