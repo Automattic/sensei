@@ -371,8 +371,9 @@ class Sensei_Learner_Management {
 		if( ( ! isset( $_POST['add_user_id'] ) || '' ==  $_POST['add_user_id'] ) || ! isset( $_POST['add_post_type'] ) || ! isset( $_POST['add_course_id'] ) || ! isset( $_POST['add_lesson_id'] ) ) return $result;
 
 		$post_type = $_POST['add_post_type'];
-		$user_id = absint( $_POST['add_user_id'] );
+		$user_id   = absint( $_POST['add_user_id'] );
 		$course_id = absint( $_POST['add_course_id'] );
+		$lesson_id = isset( $_POST['add_lesson_id'] ) ? $_POST['add_lesson_id'] : '';
 
 		switch( $post_type ) {
 			case 'course':
@@ -397,7 +398,7 @@ class Sensei_Learner_Management {
 			break;
 
 			case 'lesson':
-                $lesson_id = absint( $_POST['add_lesson_id'] );
+
 				$complete = false;
 				if( isset( $_POST['add_complete_lesson'] ) && 'yes' == $_POST['add_complete_lesson'] ) {
 					$complete = true;
