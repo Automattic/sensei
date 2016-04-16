@@ -47,6 +47,12 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 
 		global  $sensei_email_data;
 
+		$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+
+		if ( ! Sensei_Utils::user_started_lesson( $lesson_id, $user_id ) ) {
+			return;
+		}
+
 		// Get learner user object
 		$this->user = new WP_User( $user_id );
 
@@ -63,8 +69,6 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a quiz', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
 			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a quiz', 'woothemes-sensei' ), $this->template );
 		}
-
-		$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 
 		// Construct data array
 		$sensei_email_data = apply_filters( 'sensei_email_data', array(

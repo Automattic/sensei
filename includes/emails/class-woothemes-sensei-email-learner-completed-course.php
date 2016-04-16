@@ -47,6 +47,10 @@ class WooThemes_Sensei_Email_Learner_Completed_Course {
 	function trigger( $user_id = 0, $course_id = 0 ) {
 		global  $sensei_email_data;
 
+		if ( ! Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+			return;
+		}
+
 		// Get learner user object
 		$this->user = new WP_User( $user_id );
 

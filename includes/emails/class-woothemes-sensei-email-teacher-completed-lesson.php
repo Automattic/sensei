@@ -44,6 +44,10 @@ class WooThemes_Sensei_Email_Teacher_Completed_Lesson {
 
 		global $sensei_email_data;
 
+		if ( ! Sensei_Utils::user_started_lesson( $lesson_id, $learner_id ) ) {
+			return;
+		}
+
 		// Get learner user object
 		$this->learner = new WP_User( $learner_id );
 
