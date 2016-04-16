@@ -567,7 +567,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          // get the questions asked when when the quiz questions were generated for the user : Sensei_Lesson::lesson_quiz_questions
          $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 	     if( ! isset(  $user_lesson_status->comment_ID ) ){
-		     $user_lesson_status = Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		     $user_lesson_status_id = Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		     $user_lesson_status = get_comment($user_lesson_status);
 	     }
          $questions_asked = isset(  $user_lesson_status->comment_ID ) ? get_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', true ): array();
          if( empty( $questions_asked ) ){
