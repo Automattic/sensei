@@ -99,6 +99,9 @@ class Sensei_Course {
         // flush rewrite rules when saving a course
         add_action('save_post', array( 'Sensei_Course', 'flush_rewrite_rules' ) );
 
+		// Allow course archive to be setup as the home page
+		add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+
 	} // End __construct()
 
 	/**
@@ -3063,6 +3066,61 @@ class Sensei_Course {
         return true;
 
     }// end is_prerequisite_complete
+
+	/**
+	 * Allowing user to set course archive page as front page
+	 *
+	 * @since 1.9.5
+	 * @param WP_Query $query hooked in from pre_get_posts
+	 */
+	function allow_course_archive_on_front_page( $query ) {
+
+		global $wp;
+
+		// avoid infinite loop
+		remove_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+
+		$query_check = clone $query;
+		$posts = $query_check->get_posts();
+		$possible_home_page = array_shift( $posts );
+
+		// check all conditions
+		$not_a_valid_static_front_page = 0 == intval( get_option( 'page_on_front' ) )
+		                                 || is_admin()
+		                                 || ! $query->is_main_query()
+		                                 || ! empty( $wp->query_string )
+		                                 || ! isset( $possible_home_page->ID )
+		                                 || 'page' !=$possible_home_page->post_type
+		                                 || $possible_home_page->ID != get_option( 'page_on_front' ) ;
+
+		if ( $not_a_valid_static_front_page ) {
+			// add action again to check subsequent calls
+			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+			return;
+
+		}
+
+		// for a valid post that doesn't have any of the old short codes set the archive the same
+		// as the page URI
+		$settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
+		if( ! is_a( $settings_course_page, 'WP_Post')
+		    ||  Sensei()->post_types->has_old_shortcodes( $settings_course_page->post_content )
+			|| $settings_course_page->ID != get_option( 'page_on_front' ) ){
+
+			return;
+
+		}
+
+
+		$query->set( 'post_type', 'course' );
+		$query->set( 'page_id', '' );
+
+		// Set properties to match an archive
+		$query->is_page              = 0;
+		$query->is_singular          = 0;
+		$query->is_post_type_archive = 1;
+		$query->is_archive           = 1;
+	}
 
 
 }// End Class
