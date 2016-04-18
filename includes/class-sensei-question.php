@@ -655,6 +655,10 @@ class Sensei_Question {
         $lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
         $question_item = $sensei_question_loop['current_question'];
 
+	    if( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id()  ) ){
+			return;
+	    }
+
         // Setup variable needed to determine if the message should show and what it should show
         $user_quiz_grade             = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
         $lesson_complete             = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
@@ -680,7 +684,7 @@ class Sensei_Question {
 		$failed_and_reset_not_allowed =  $user_quiz_grade < $quiz_required_pass_grade && ! $reset_quiz_allowed ;
 
         if (  $completed_with_valid_grade
-              || ! $pass_required
+              || $lesson_complete && ! $pass_required
               || $failed_and_reset_not_allowed
               || $completed_with_valid_grade_and_reset_not_allowed
               || $grade_type_auto_a_valid_grade_and_reset_not_allowed  ) {
