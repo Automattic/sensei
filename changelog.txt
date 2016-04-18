@@ -1,5 +1,37 @@
 *** Sensei Changelog ***
 
+2016.04.18 - version 1.9.5
+* Fix	- The purchase course button wasn't showing up on some courses.
+* Fix	- Ensure courses are activated when order status is processing or completed.
+* Fix	- Ensure course linked to a subscription is activated immediately after purchase.
+* Fix	- Ensure the [sensei_course_page] shortcode displays lessons in modules.
+* Fix	- Fixed a few potential fatal errors when adding a learner to a course.
+* Fix	- Fixed the learner profile url when WordPress is installed in a separate folder.
+* Fix	- Ensure purchased courses don't display a price on the My Courses page.
+* Fix	- Remove link from lesson image on single lesson page.
+* Fix	- Ensure is_sensei() returns true on module archive pages.
+* Fix	- Ensure comments display on lessons for registered learners, if enabled.
+* Fix	- Ensure quiz shows correct message when submitted for manual grading.
+* Fix	- Ensure links in results page link to lesson pages.
+* Fix	- Ensure module is not removed from course when editing module via quick edit.
+* Fix	- Ensure quick editing a lesson does not remove any of its settings.
+* Fix	- Fixed input ids on multiple choice questions.
+* Fix	- Show appropriate message in Learner Management when a search returns no results.
+* Fix	- Ensure lesson/course completion emails are not sent to learners before completion.
+* Fix	- Prevent questions being deleted from original lesson, when deleting them from a duplicated lesson.
+* Fix	- When updating a lesson slug, ensure the corresponding quiz slug is also updated.
+* Fix	- When a lesson is permanently deleted, also delete the corresponding quiz.
+* Tweak	- Removed empty span tag from single course page.
+* Tweak	- Added some new hooks to the [sensei_user_courses] shortcode.
+* Tweak	- Removed two redundant settings from the WooCommerce settings section.
+* Tweak	- Course archive page now displays the number of courses per page as specified in Settings > Reading (Blog pages show at most...)
+* Tweak	- Improved the login message when a guest visitor views a course page.
+* Tweak	- Changed heading tags in admin pages to conform to WordPress standards.
+* Tweak	- Moved arrows after the text in course/lesson/quiz navigation.
+* Tweak	- Improved string formatting for a few strings to make translation easier.
+* New	- Added "menu_order" as an orderby parameter on [sensei_courses] to order courses as specified in Courses > Order Courses
+
+
 2016.04.04 - version 1.9.4
 * Fix	- Ensure current quiz grade is displayed when submitting autograded quizzes.
 * Fix	- Ensure grading notes are always displayed when quiz is manually graded.
