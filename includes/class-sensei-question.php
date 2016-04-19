@@ -598,18 +598,23 @@ class Sensei_Question {
         $quiz_id = get_the_ID();
         $lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
+	    // lesson should be complete before showing anything
+	    $lesson_completed   = Sensei_Utils::user_completed_lesson( $lesson_id );
+	    if( ! $lesson_completed ){
+		    return;
+	    }
+
         // Data to check before showing feedback
         $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
         $user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
         $reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-        $lesson_completed   = Sensei_Utils::user_completed_lesson( $lesson_id );
         $quiz_grade_type    = get_post_meta( $quiz_id , '_quiz_grade_type', true );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && 'graded' == $user_lesson_status->comment_approved;
 
 	    $quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
 	    $failed_and_reset_not_allowed =  $user_quiz_grade < $quiz_required_pass_grade && ! $reset_quiz_allowed ;
 
-	    if ( $lesson_completed  && $quiz_graded || $failed_and_reset_not_allowed ) {
+	    if ( $quiz_graded || $failed_and_reset_not_allowed ) {
 
             $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
 
@@ -652,8 +657,14 @@ class Sensei_Question {
 
         // Post Data
         $quiz_id = $sensei_question_loop['quiz_id'];
+	    $question_item = $sensei_question_loop['current_question'];
+
+	    // Make sure this user has complete the lesson before we show anything
         $lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-        $question_item = $sensei_question_loop['current_question'];
+	    $lesson_complete = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+	    if( ! $lesson_complete ){
+		   return;
+	    }
 
 	    if( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id()  ) ){
 			return;
@@ -661,7 +672,7 @@ class Sensei_Question {
 
         // Setup variable needed to determine if the message should show and what it should show
         $user_quiz_grade             = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
-        $lesson_complete             = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+
         $reset_quiz_allowed          = Sensei_Quiz::is_reset_allowed( $lesson_id );
 	    $pass_required               = Sensei_Quiz::is_pass_required( $lesson_id );
         $quiz_grade_type             = get_post_meta( $quiz_id, '_quiz_grade_type', true );
