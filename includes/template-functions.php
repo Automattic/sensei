@@ -113,7 +113,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 		$prerequisite_complete = sensei_check_prerequisite_course( $course_id );
 
 		if ( $prerequisite_complete ) {
-		?><form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
+		?><form method="POST" action="<?php echo esc_url( get_permalink( $course_id ) ); ?>">
 
     			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_start_course_noonce' ) ); ?>" />
 
