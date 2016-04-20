@@ -21,6 +21,7 @@
 * Fix	- Prevent questions being deleted from original lesson, when deleting them from a duplicated lesson.
 * Fix	- When updating a lesson slug, ensure the corresponding quiz slug is also updated.
 * Fix	- When a lesson is permanently deleted, also delete the corresponding quiz.
+* Fix	- Ensure deleted lessons are not displayed on the course page.
 * Tweak	- Removed empty span tag from single course page.
 * Tweak	- Added some new hooks to the [sensei_user_courses] shortcode.
 * Tweak	- Removed two redundant settings from the WooCommerce settings section.
