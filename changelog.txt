@@ -22,6 +22,8 @@
 * Fix	- When updating a lesson slug, ensure the corresponding quiz slug is also updated.
 * Fix	- When a lesson is permanently deleted, also delete the corresponding quiz.
 * Fix	- Ensure deleted lessons are not displayed on the course page.
+* Fix	- Course archive page now works if set as front page.
+* Fix	- Fixed up some formatting issues on the module archive page.
 * Tweak	- Removed empty span tag from single course page.
 * Tweak	- Added some new hooks to the [sensei_user_courses] shortcode.
 * Tweak	- Removed two redundant settings from the WooCommerce settings section.
