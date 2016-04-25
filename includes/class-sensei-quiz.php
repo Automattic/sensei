@@ -1238,7 +1238,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          global $post, $current_user;
 
-         $lesson_id = (int) get_post_meta( $post->ID, '_quiz_lesson', true );
+	     $lesson_id = Sensei()->quiz->get_lesson_id( $post->ID );
          $lesson_course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
          $lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
          $show_actions = true;
