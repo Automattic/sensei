@@ -24,6 +24,8 @@
 * Fix	- Ensure deleted lessons are not displayed on the course page.
 * Fix	- Course archive page now works if set as front page.
 * Fix	- Fixed up some formatting issues on the module archive page.
+* Fix	- When learner does not achieve the passmark, ensure the required passmark is displayed.
+* Fix	- Ensure correct/incorrect answers are indicated, according to https://docs.woothemes.com/document/sensei-quiz-settings-flowchart/
 * Tweak	- Removed empty span tag from single course page.
 * Tweak	- Added some new hooks to the [sensei_user_courses] shortcode.
 * Tweak	- Removed two redundant settings from the WooCommerce settings section.
