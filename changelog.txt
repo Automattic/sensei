@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2016.04.18 - version 1.9.5
+2016.04.26 - version 1.9.5
 * Fix	- The purchase course button wasn't showing up on some courses.
 * Fix	- Ensure courses are activated when order status is processing or completed.
 * Fix	- Ensure course linked to a subscription is activated immediately after purchase.
