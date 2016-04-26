@@ -598,18 +598,19 @@ class Sensei_Question {
         $quiz_id = get_the_ID();
         $lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
-	    // lesson should be complete before showing anything
-	    $lesson_completed   = Sensei_Utils::user_completed_lesson( $lesson_id );
-	    if( ! $lesson_completed ){
+	    // Make sure this user has submitted answers before we show anything
+	    $user_answers = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
+	    if ( empty( $user_answers ) ) {
 		    return;
 	    }
 
-        // Data to check before showing feedback
+
+	    // Data to check before showing feedback
         $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
         $user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
         $reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
         $quiz_grade_type    = get_post_meta( $quiz_id , '_quiz_grade_type', true );
-		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && 'graded' == $user_lesson_status->comment_approved;
+		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && in_array( $user_lesson_status->comment_approved, array( 'graded', 'passed' ) );
 
 	    $quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
 	    $failed_and_reset_not_allowed =  $user_quiz_grade < $quiz_required_pass_grade && ! $reset_quiz_allowed ;
@@ -644,107 +645,99 @@ class Sensei_Question {
 
     }// end answer_feedback_notes
 
-    /**
-     * This function has to be run inside the quiz question loop on the single quiz page.
-     *
-     *
-     * @since 1.9.0
-     * @param string $question_id
-     */
-    public static function the_answer_result_indication( $question_id ){
+	/**
+	 * This function has to be run inside the quiz question loop on the single quiz page.
+	 *
+	 * It show the correct/incorrect answer per question depending on the quiz logic explained here:
+	 * https://docs.woothemes.com/document/sensei-quiz-settings-flowchart/
+	 *
+	 * Pseudo code for logic:  https://github.com/Automattic/sensei/issues/1422#issuecomment-214494263
+	 *
+	 * @since 1.9.0
+	 */
+	public static function the_answer_result_indication(){
 
-        global $post,  $current_user, $sensei_question_loop;
+		global $post,  $current_user, $sensei_question_loop;
 
-        // Post Data
-        $quiz_id = $sensei_question_loop['quiz_id'];
-	    $question_item = $sensei_question_loop['current_question'];
+		$answer_message       = '';
+		$answer_message_class = '';
+		$quiz_id              = $sensei_question_loop['quiz_id'];
+		$question_item        = $sensei_question_loop['current_question'];
+		$lesson_id            = Sensei()->quiz->get_lesson_id( $quiz_id );
 
-	    // Make sure this user has complete the lesson before we show anything
-        $lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-	    $lesson_complete = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
-	    if( ! $lesson_complete ){
-		   return;
-	    }
-
-	    if( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id()  ) ){
+		if ( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
 			return;
-	    }
+		}
 
-        // Setup variable needed to determine if the message should show and what it should show
-        $user_quiz_grade             = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
+		// Make sure this user has submitted answers before we show anything
+		$user_answers = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
+		if ( empty( $user_answers ) ) {
+			return;
+		}
 
-        $reset_quiz_allowed          = Sensei_Quiz::is_reset_allowed( $lesson_id );
-	    $pass_required               = Sensei_Quiz::is_pass_required( $lesson_id );
-        $quiz_grade_type             = get_post_meta( $quiz_id, '_quiz_grade_type', true );
+		if ( ! Sensei_Quiz::is_pass_required( $lesson_id ) ) {
+			self::output_result_indication( $lesson_id, $question_item->ID);
+			return;
+		}
 
-        // retrieve the question total grade
-        $question_grade = Sensei()->question->get_question_grade( $question_id );
-
-        // retrieve grade the user achieved
-        $user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
-
-        // Question ID
-        $question_id = $question_item->ID;
-
-        // conditions to check
-        $completed_with_valid_grade = $lesson_complete && $user_quiz_grade != '' ;
-        $completed_with_valid_grade_and_reset_not_allowed = $lesson_complete &&  $user_quiz_grade != '' && ! $reset_quiz_allowed ;
-        $grade_type_auto_a_valid_grade_and_reset_not_allowed =  'auto' == $quiz_grade_type && ! $reset_quiz_allowed && $user_quiz_grade != '' ;
-
+		$user_quiz_grade          = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
-		$failed_and_reset_not_allowed =  $user_quiz_grade < $quiz_required_pass_grade && ! $reset_quiz_allowed ;
+		$user_passed              =  $user_quiz_grade > $quiz_required_pass_grade;
 
-        if (  $completed_with_valid_grade
-              || $lesson_complete && ! $pass_required
-              || $failed_and_reset_not_allowed
-              || $completed_with_valid_grade_and_reset_not_allowed
-              || $grade_type_auto_a_valid_grade_and_reset_not_allowed  ) {
+		if ( $user_passed ) {
+			self::output_result_indication( $lesson_id, $question_item->ID);
+			return;
+		}
 
-            $user_correct = false;
-            $answer_message = __( 'Incorrect', 'woothemes-sensei' );
-            $answer_message_class = 'user_wrong';
-            // For zero grade mark as 'correct' but add no classes
-            if ( 0 == $question_grade ) {
+		if ( ! Sensei_Quiz::is_reset_allowed( $lesson_id ) ) {
+			self::output_result_indication( $lesson_id, $question_item->ID);
+			return;
+		}
+	}
 
-                $user_correct = true;
-                $answer_message = '';
-                $answer_message_class = '';
+	/**
+	 * @since 1.9.5
+	 *
+	 * @param integer $lesson_id
+	 * @param integer $question_id
+	 */
+	public function output_result_indication( $lesson_id, $question_id ) {
 
-            } else if( $user_question_grade > 0 ) {
+		$question_grade       = Sensei()->question->get_question_grade( $question_id );
+		$user_question_grade  = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 
-                $user_correct = true;
-                $answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
-                $answer_message_class = 'user_right';
+		// Defaults
+		$user_correct         = false;
+		$answer_message_class = 'user_wrong';
+		$answer_message       = __( 'Incorrect - Right Answer:','woothemes-sensei') . ' ' . self::get_correct_answer( $question_id );
 
-            }
+		// For zero grade mark as 'correct' but add no classes
+		if ( 0 == $question_grade   ) {
+			$user_correct         = true;
+			$answer_message_class = '';
+			$answer_message       = '';
+		} elseif( $user_question_grade > 0 ) {
+			$user_correct         = true;
+			$answer_message_class = 'user_right';
+			$answer_message       = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
+		}
 
-            // attach the correct answer if the question is auto gradable and user got it wrong
-            if( !$user_correct && ( ! $reset_quiz_allowed || ! $pass_required   ) ){
+		// setup answer feedback class
+		$answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
+		if( $answer_notes ) {
+			$answer_message_class .= ' has_notes';
+		}
 
-                $answer_message .=  ' - '. __('Right Answer:','woothemes-sensei') . ' ' . self::get_correct_answer( $question_item->ID );
+		?>
+		<div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
 
-            }
+			<span><?php echo $answer_message; ?></span>
 
-            // answer feedback
-            $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, $current_user->ID );
-            if( $answer_notes ) {
-                $answer_message_class .= ' has_notes';
-            }
-            ?>
+		</div>
+		<?php
+	}
 
-            <div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
-
-                <span><?php echo $answer_message; ?></span>
-
-            </div>
-
-            <?php
-
-        } // end if user can see all the goodies
-
-    }// end the_answer_result_indication
-
-    /**
+	/**
      * Generate the question template data and return it as an array.
      *
      * @since 1.9.0
