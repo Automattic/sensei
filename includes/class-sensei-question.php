@@ -393,7 +393,13 @@ class Sensei_Question {
 		else {
 			$question_grade = intval( $question_grade_raw );
 		}
-		return $question_grade;
+
+		/**
+		 * Filter the grade for the given question.
+		 *
+		 * @since 1.9.6 introduced
+		 */
+		return apply_filters( 'sensei_get_question_grade', $question_grade, $question_id );
 
 	} // end get_question_grade
 
@@ -448,7 +454,7 @@ class Sensei_Question {
 
         $title_html  = '<span class="question question-title">';
         $title_html .= $title;
-        $title_html .= '<span class="grade"><?php sensi_the_question_grade()?></span>';
+        $title_html .= '<span class="grade">' . Sensei()->question->get_question_grade( $question_id ) . '</span>';
         $title_html .='</span>';
 
         return $title_html;
