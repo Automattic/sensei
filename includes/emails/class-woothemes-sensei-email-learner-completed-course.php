@@ -30,8 +30,6 @@ class WooThemes_Sensei_Email_Learner_Completed_Course {
 	 */
 	function __construct() {
 		$this->template = 'learner-completed-course';
-		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a course', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-		$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a course', 'woothemes-sensei' ), $this->template );
 	}
 
 	/**
@@ -54,6 +52,15 @@ class WooThemes_Sensei_Email_Learner_Completed_Course {
 		// Get learner user object
 		$this->user = new WP_User( $user_id );
 
+		// Set recipient (learner)
+		$this->recipient = stripslashes( $this->user->user_email );
+		
+		do_action('sensei_before_mail', $this->recipient);
+		
+		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a course', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
+		$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a course', 'woothemes-sensei' ), $this->template );
+ 
+
 		// Get passed status
 		$passed = __( 'passed', 'woothemes-sensei' );
 		if( ! Sensei_Utils::sensei_user_passed_course( $course_id, $user_id ) ) {
@@ -69,11 +76,10 @@ class WooThemes_Sensei_Email_Learner_Completed_Course {
 			'passed'			=> $passed,
 		), $this->template );
 
-		// Set recipient (learner)
-		$this->recipient = stripslashes( $this->user->user_email );
-
 		// Send mail
 		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
+
+		do_action('sensei_after_sending_email');
 	}
 }
 

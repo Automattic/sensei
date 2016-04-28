@@ -879,6 +879,8 @@ class Sensei_Teacher {
             return false;
         }
 
+        do_action('sensei_before_mail', $recipient);
+
         /**
          * Filter the email Header for the admin-teacher-new-course-created template
          *
@@ -923,6 +925,8 @@ class Sensei_Teacher {
 
         // Send mail
         Sensei()->emails->send( $recipient, $subject , Sensei()->emails->get_content( $template ) );
+
+        do_action('sensei_after_sending_email');
 
     }// end notify admin of course creation
 

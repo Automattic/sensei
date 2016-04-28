@@ -28,8 +28,6 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 	 */
 	function __construct() {
 		$this->template = 'teacher-quiz-submitted';
-		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has submitted a quiz for grading', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-		$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has submitted a quiz for grading', 'woothemes-sensei' ), $this->template );
 	}
 
 	/**
@@ -57,6 +55,15 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 		$teacher_id = get_post_field( 'post_author', $course_id, 'raw' );
 		$this->teacher = new WP_User( $teacher_id );
 
+		// Set recipient (teacher)
+		$this->recipient = stripslashes( $this->teacher->user_email );
+		
+		do_action('sensei_before_mail', $this->recipient);
+		
+		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has submitted a quiz for grading', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
+		$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has submitted a quiz for grading', 'woothemes-sensei' ), $this->template );
+ 
+
 		// Construct data array
 		$sensei_email_data = apply_filters( 'sensei_email_data', array(
 			'template'			=> $this->template,
@@ -68,11 +75,10 @@ class WooThemes_Sensei_Email_Teacher_Quiz_Submitted {
 			'lesson_id'			=> $lesson_id,
 		), $this->template );
 
-		// Set recipient (teacher)
-		$this->recipient = stripslashes( $this->teacher->user_email );
-
 		// Send mail
 		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
+
+		do_action('sensei_after_sending_email');
 	}
 }
 
