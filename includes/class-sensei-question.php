@@ -707,7 +707,7 @@ class Sensei_Question {
 	 * @param integer $lesson_id
 	 * @param integer $question_id
 	 */
-	public function output_result_indication( $lesson_id, $question_id ) {
+	public static function output_result_indication( $lesson_id, $question_id ) {
 
 		$question_grade       = Sensei()->question->get_question_grade( $question_id );
 		$user_question_grade  = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
