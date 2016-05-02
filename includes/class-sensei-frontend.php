@@ -1692,7 +1692,7 @@ class Sensei_Frontend {
 		// Check the e-mail address
 		$email_error_notice = '';
 		if ( $new_user_email == '' ) {
-			$email_error_notice = __( '<strong>ERROR</strong>: Please type your e-mail address.' );
+			$email_error_notice = __( '<strong>ERROR</strong>: Please enter an email address.' );
 		} elseif ( ! is_email( $new_user_email ) ) {
 			$email_error_notice = __( '<strong>ERROR</strong>: The email address isn&#8217;t correct.' );
 		} elseif ( email_exists( $new_user_email ) ) {
@@ -1709,14 +1709,14 @@ class Sensei_Frontend {
 
 		// exit on email address error
 		if( empty( $new_user_password ) ){
-			Sensei()->notices->add_notice(  __( '<strong>ERROR</strong>: The password field may not be empty, please enter a secure password.' )  , 'alert');
+			Sensei()->notices->add_notice(  __( '<strong>ERROR</strong>: The password field is empty.' )  , 'alert');
 			return;
 		}
 
 		// register user
 		$user_id = wp_create_user( $new_user_name, $new_user_password, $new_user_email );
 		if ( ! $user_id || is_wp_error( $user_id ) ) {
-			Sensei()->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn\'t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert');
+			Sensei()->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert');
 		}
 
 		// notify the user
