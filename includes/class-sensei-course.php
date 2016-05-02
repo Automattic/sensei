@@ -2979,7 +2979,7 @@ class Sensei_Course {
 
         if( ! empty($term) ){
 
-            $title = __('Category') . ' ' . $term->name;
+            $title = __( 'Category', 'woothemes-sensei' ) . ' ' . $term->name;
 
         }else{
 
