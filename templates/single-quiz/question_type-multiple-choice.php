@@ -30,7 +30,7 @@ foreach( $question_data[ 'answer_options' ] as $id => $option ) {
 
     ?>
 
-    <li class="<?php esc_attr_e( $option[ 'option_class' ] ); ?>">
+    <li class="<?php echo esc_attr( $option[ 'option_class' ] ); ?>">
         <input type="<?php echo $option[ 'type' ]; ?>"
                id="<?php echo esc_attr( 'question_' . $question_data['ID'] ) . '-option-' . $count; ?>"
                name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>[]"

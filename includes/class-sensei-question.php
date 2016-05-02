@@ -587,7 +587,7 @@ class Sensei_Question {
         ?>
 
             <input type="hidden" name="question_id_<?php $question_id;?>" value="<?php $question_id;?>" />
-            <input type="hidden" name="questions_asked[]" value="<?php esc_attr_e( $question_id ); ?>" />
+            <input type="hidden" name="questions_asked[]" value="<?php echo esc_attr( $question_id ); ?>" />
 
         <?php
     }
@@ -735,7 +735,7 @@ class Sensei_Question {
 		}
 
 		?>
-		<div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
+		<div class="answer_message <?php echo esc_attr( $answer_message_class ); ?>">
 
 			<span><?php echo $answer_message; ?></span>
 

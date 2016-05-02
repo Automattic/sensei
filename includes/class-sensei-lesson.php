@@ -3321,7 +3321,7 @@ class Sensei_Lesson {
         <header>
             <h2>
                 <a href="<?php echo esc_url_raw( get_permalink( $lesson_id ) ) ?>"
-                   title="<?php esc_attr_e( $heading_link_title ) ?>" >
+                   title="<?php echo esc_attr( $heading_link_title ) ?>" >
                     <?php echo $count_markup. get_the_title( $lesson_id ) . $preview_label; ?>
                 </a>
             </h2>
