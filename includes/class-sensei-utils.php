@@ -1215,7 +1215,7 @@ class Sensei_Utils {
 			// Quiz grade
 			$quiz_grade = 0;
 			if ( $user_lesson_status ) {
-				$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+				$quiz_grade = get_comment_meta( $user_lesson_status[0]->comment_ID, 'grade', true );
 			}
 
 			// Quiz passmark
