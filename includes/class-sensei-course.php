@@ -3077,6 +3077,10 @@ class Sensei_Course {
 
 		global $wp;
 
+		if ( ! is_page() ){
+			return; // This only needs to run on the home page. See https://github.com/Automattic/sensei/issues/1438
+		}
+
 		// avoid infinite loop
 		remove_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
 
