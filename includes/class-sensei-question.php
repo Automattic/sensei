@@ -688,7 +688,7 @@ class Sensei_Question {
 
 		$user_quiz_grade          = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
-		$user_passed              =  $user_quiz_grade > $quiz_required_pass_grade;
+		$user_passed              =  $user_quiz_grade >= $quiz_required_pass_grade;
 
 		if ( $user_passed ) {
 			self::output_result_indication( $lesson_id, $question_item->ID);
