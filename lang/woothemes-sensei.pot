@@ -830,7 +830,7 @@ msgstr ""
 msgid "Reset"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:95, includes/class-sensei-grading-user-quiz.php:106, includes/class-sensei-question.php:42, includes/class-sensei-question.php:1086
+#: includes/class-sensei-grading-user-quiz.php:95, includes/class-sensei-grading-user-quiz.php:106, includes/class-sensei-question.php:42, includes/class-sensei-question.php:1092
 msgid "Multiple Choice"
 msgstr ""
 
@@ -2111,11 +2111,11 @@ msgstr ""
 msgid "All categories"
 msgstr ""
 
-#: includes/class-sensei-question.php:712
+#: includes/class-sensei-question.php:718
 msgid "Incorrect - Right Answer:"
 msgstr ""
 
-#: includes/class-sensei-question.php:722
+#: includes/class-sensei-question.php:728
 msgid "Grade: %d"
 msgstr ""
 
