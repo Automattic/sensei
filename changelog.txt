@@ -1,5 +1,12 @@
 *** Sensei Changelog ***
 
+2016.05.05 - version 1.9.6
+* Fix - Fixed an issue prevent Modern Tribe's The Event Calendar from functioning properly.
+* Fix - Ensure the question grade is shown inline with questions.
+* Fix - Prevent a PHP notice when calling question results.
+* Fix - Prevent a situation where quiz answers are revealed prior to submission.
+* Fix - Use the course ID when building the permalink for the start course form.
+
 2016.04.26 - version 1.9.5
 * Fix	- The purchase course button wasn't showing up on some courses.
 * Fix	- Ensure courses are activated when order status is processing or completed.
