@@ -134,6 +134,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         global $post;
         $lesson_id = $this->get_lesson_id( $post->ID );
         $quiz_answers = $_POST[ 'sensei_question' ];
+
+        // Get question keys
+		$quiz_questions = array_fill_keys( wp_list_pluck( $lesson_quiz_questions, 'ID' ), null);
+
+		// Merge user answers and question ids with no value
+		$quiz_answers = $quiz_answers + $quiz_questions;
+
         // call the save function
         self::save_user_answers( $quiz_answers, $_FILES , $lesson_id  , get_current_user_id() );
 
