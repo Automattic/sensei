@@ -1063,7 +1063,7 @@ class Sensei_Utils {
 		/**
 		 * Filter the course pass mark
 		 *
-		 * @since 1.9.6
+		 * @since 1.9.7
 		 *
 	 	 * @param integer $course_id ID of course
 		 */
@@ -1119,7 +1119,7 @@ class Sensei_Utils {
 		/**
 		 * Filter the user total grade for course
 		 *
-		 * @since 1.9.6
+		 * @since 1.9.7
 		 *
 	 	 * @param integer $course_id ID of course
 	 	 * @param integer $user_id   ID of user
