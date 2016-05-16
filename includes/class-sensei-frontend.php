@@ -84,6 +84,9 @@ class Sensei_Frontend {
 		add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'activate_purchased_single_course' ), 10 );
 
+		// Set lesson start time on viewing lesson
+		add_action('lesson_start_status', array($this, 'lesson_start_status'));
+
 		// Lesson tags
 		add_action( 'sensei_lesson_meta_extra', array( $this, 'lesson_tags_display' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'lesson_tag_archive_filter' ), 10, 1 );
@@ -759,7 +762,6 @@ class Sensei_Frontend {
                 case 'lesson-complete':
 
 					Sensei_Utils::sensei_start_lesson( $post->ID, $current_user->ID, $complete = true );
-
 					break;
 
                 case 'lesson-reset':
@@ -1280,7 +1282,7 @@ class Sensei_Frontend {
 			} else {
 				// Than its real product set it's id to item_id
 				$item_id = $item['product_id'];
-			} 
+			}
 
             if ( $item_id > 0 ) {
 
@@ -1782,6 +1784,22 @@ class Sensei_Frontend {
         }
 
     }
+
+
+	/**
+	* Trigger start lesson on first viewing lesson
+	*/
+	public function lesson_start_status(){
+		global $post, $current_user;
+		Sensei_Utils::sensei_start_lesson( $post->ID, $current_user->ID, $complete = false );
+		$activity_logged = Sensei_Utils::user_started_lesson( $post->ID, $current_user->ID );
+		if( $activity_logged ){
+			$current_user_activity = get_comment($activity_logged);
+			$metadata = array();
+			$metadata['num_lesson_viewed'] =  get_comment_meta( $current_user_activity->comment_ID, 'num_lesson_viewed', true ) + 1;
+			Sensei_Utils::update_lesson_status( $current_user->ID, $post->ID, $current_user_activity->comment_approved, $metadata );
+		}
+	}
 
 } // End Class
 
