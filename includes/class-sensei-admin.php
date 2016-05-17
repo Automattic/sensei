@@ -600,7 +600,7 @@ class Sensei_Admin {
 	 * @param  boolean $ignore_course Ignore lesson course when dulicating
 	 * @return object                 Duplicate post object
 	 */
-	private function duplicate_post( $post, $suffix, $ignore_course = false ) {
+	private function duplicate_post( $post, $suffix = null, $ignore_course = false ) {
 
 		$new_post = array();
 
@@ -610,7 +610,7 @@ class Sensei_Admin {
 			}
 		}
 
-		$new_post['post_title']       .= empty( $suffix ) ? _( '(Duplicate)', 'woothemes-sensei') : $suffix;
+		$new_post['post_title']       .= empty( $suffix ) ? __( '(Duplicate)', 'woothemes-sensei') : $suffix;
 		$new_post['post_date']         = current_time( 'mysql' );
 		$new_post['post_date_gmt']     = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified']     = $new_post['post_date'];
