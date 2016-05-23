@@ -1532,21 +1532,23 @@ class Sensei_Core_Modules
      * Register the modules taxonomy
      *
      * @since 1.8.0
+     * @since 1.9.7 Added `not_found` label.
      */
     public function setup_modules_taxonomy(){
 
         $labels = array(
-            'name' => __('Modules', 'woothemes-sensei'),
-            'singular_name' => __('Module', 'woothemes-sensei'),
-            'search_items' => __('Search Modules', 'woothemes-sensei'),
-            'all_items' => __('All Modules', 'woothemes-sensei'),
-            'parent_item' => __('Parent Module', 'woothemes-sensei'),
-            'parent_item_colon' => __('Parent Module:', 'woothemes-sensei'),
-            'edit_item' => __('Edit Module', 'woothemes-sensei'),
-            'update_item' => __('Update Module', 'woothemes-sensei'),
-            'add_new_item' => __('Add New Module', 'woothemes-sensei'),
-            'new_item_name' => __('New Module Name', 'woothemes-sensei'),
-            'menu_name' => __('Modules', 'woothemes-sensei'),
+            'name'              => __( 'Modules',           'woothemes-sensei' ),
+            'singular_name'     => __( 'Module',            'woothemes-sensei' ),
+            'search_items'      => __( 'Search Modules',    'woothemes-sensei' ),
+            'all_items'         => __( 'All Modules',       'woothemes-sensei' ),
+            'parent_item'       => __( 'Parent Module',     'woothemes-sensei' ),
+            'parent_item_colon' => __( 'Parent Module:',    'woothemes-sensei' ),
+            'edit_item'         => __( 'Edit Module',       'woothemes-sensei' ),
+            'update_item'       => __( 'Update Module',     'woothemes-sensei' ),
+            'add_new_item'      => __( 'Add New Module',    'woothemes-sensei' ),
+            'new_item_name'     => __( 'New Module Name',   'woothemes-sensei' ),
+            'menu_name'         => __( 'Modules',           'woothemes-sensei' ),
+            'not_found'         => __( 'No modules found.', 'woothemes-sensei' ),
         );
 
         /**
