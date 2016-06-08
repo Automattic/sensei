@@ -620,9 +620,15 @@ class Sensei_Question {
 
 	    $quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
 	    $failed_and_reset_not_allowed =  $user_quiz_grade < $quiz_required_pass_grade && ! $reset_quiz_allowed && $quiz_graded;
-
+	
+		$show_answers = false;
 	    if ( $quiz_graded || $failed_and_reset_not_allowed ) {
-
+	    	$show_answers = true;
+	    }
+	    
+	    $show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
+		
+		if( $show_answers ) {
             $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
 
             if( $answer_notes ) { ?>
