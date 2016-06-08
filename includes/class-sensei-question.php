@@ -620,14 +620,27 @@ class Sensei_Question {
 
 	    $quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
 	    $failed_and_reset_not_allowed =  $user_quiz_grade < $quiz_required_pass_grade && ! $reset_quiz_allowed && $quiz_graded;
-	
+
+		// Check if answers must be shown
 		$show_answers = false;
 	    if ( $quiz_graded || $failed_and_reset_not_allowed ) {
 	    	$show_answers = true;
 	    }
-	    
+
+	    /**
+         * Allow dynamic overriding of whether to show question answers or not
+         *
+         * @since 1.9.7
+         * 
+         * @param boolean $show_answers
+         * @param integer $question_id
+         * @param integer $quiz_id
+         * @param integer $lesson_id
+         * @param integer $user_id
+         */
 	    $show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
-		
+
+		// Show answers if allowed
 		if( $show_answers ) {
             $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
 
