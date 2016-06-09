@@ -700,22 +700,20 @@ class Sensei_Question {
 			return;
 		}
 
-		if ( ! Sensei_Quiz::is_pass_required( $lesson_id ) ) {
-			self::output_result_indication( $lesson_id, $question_item->ID);
-			return;
-		}
-
 		$user_quiz_grade          = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
-		$user_passed              =  $user_quiz_grade >= $quiz_required_pass_grade;
+		$user_passed              = $user_quiz_grade >= $quiz_required_pass_grade;
 
-		if ( $user_passed ) {
-			self::output_result_indication( $lesson_id, $question_item->ID);
-			return;
+		$show_answers = false;
+		if( ! Sensei_Quiz::is_pass_required( $lesson_id ) || $user_passed || ! Sensei_Quiz::is_reset_allowed( $lesson_id ) ) {
+			$show_answers = true;
 		}
 
-		if ( ! Sensei_Quiz::is_reset_allowed( $lesson_id ) ) {
-			self::output_result_indication( $lesson_id, $question_item->ID);
+		// This filter is documented in self::answer_feedback_notes()
+		$show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_item->ID, $quiz_id, $lesson_id, get_current_user_id() );
+
+		if( $show_answers ) {
+			Sensei_Question::output_result_indication( $lesson_id, $question_item->ID);
 			return;
 		}
 	}
