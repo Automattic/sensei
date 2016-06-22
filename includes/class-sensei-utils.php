@@ -1669,9 +1669,11 @@ class Sensei_Utils {
 			 *
 			 * @since 1.9.7
 			 *
-			 * @param string  $user_lesson_status	User lesson status
+			 * @param string  	$user_lesson_status	User lesson status
+			 * @param int  		$lesson_id	ID of lesson
+			 * @param in	  	$user_id	ID of user
 			 */
-			$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status );
+			$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status, $lesson_id, $user_id );
 			
 			if ( 'in-progress' != $user_lesson_status ) {
 				// Check for Passed or Completed Setting
