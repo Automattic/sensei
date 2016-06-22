@@ -1060,7 +1060,7 @@ class Sensei_Utils {
 			}
 		}
 
-		return apply_filters( 'sensei_course_pass_grade', Sensei_Utils::round( $course_passmark ), $course_id );
+		return Sensei_Utils::round( $course_passmark );
 	}
 
 	/**
@@ -1109,7 +1109,7 @@ class Sensei_Utils {
 
 		}
 
-		return apply_filters( 'sensei_course_user_grade', Sensei_Utils::round( $total_grade ), $course_id, $user_id );
+		return Sensei_Utils::round( $total_grade );
 	}
 
 	/**
