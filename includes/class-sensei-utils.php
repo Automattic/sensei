@@ -1059,16 +1059,8 @@ class Sensei_Utils {
 				$course_passmark = ( $total_passmark / $lesson_count );
 			}
 		}
-		
-		/**
-		 * Filter the course pass mark
-		 *
-		 * @since 1.9.7
-		 *
-     	 * @param integer $course_passmark	Pass mark for course
-	 	 * @param integer $course_id 		ID of course
-		 */
-		return apply_filters( 'sensei_course_pass_grade', Sensei_Utils::round( $course_passmark ), $course_id );
+
+		return Sensei_Utils::round( $course_passmark );
 	}
 
 	/**
@@ -1116,17 +1108,8 @@ class Sensei_Utils {
 			}
 
 		}
-		
-		/**
-		 * Filter the user total grade for course
-		 *
-		 * @since 1.9.7
-		 *
-     	 * @param integer $total_grade	User's total grade
-	 	 * @param integer $course_id 	ID of course
-	 	 * @param integer $user_id   	ID of user
-		 */
-		return apply_filters( 'sensei_course_user_grade', Sensei_Utils::round( $total_grade ), $course_id, $user_id );
+
+		return Sensei_Utils::round( $total_grade );
 	}
 
 	/**
@@ -1680,6 +1663,16 @@ class Sensei_Utils {
 
 				$lesson_id = $lesson;
 			}
+			
+			/**
+			 * Filter the user lesson status
+			 *
+			 * @since 1.9.7
+			 *
+			 * @param string  $user_lesson_status	User lesson status
+			 */
+			$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status );
+			
 			if ( 'in-progress' != $user_lesson_status ) {
 				// Check for Passed or Completed Setting
 				// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
