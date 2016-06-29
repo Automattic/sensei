@@ -268,7 +268,7 @@ class Sensei_Welcome {
 		);
 		shuffle( $tweets );
 		?>
-		<h1><?php printf( __( 'Welcome to Sensei %s', 'woothemes-sensei' ), $major_version ); ?></h1>
+		<h1><?php printf( __( 'Welcome to Sensei', 'woothemes-sensei' ) ); ?></h1>
 
 		<div class="about-text sensei-about-text">
 			<?php
@@ -280,7 +280,7 @@ class Sensei_Welcome {
 					$message = __( 'Thanks for installing!', 'woothemes-sensei' );
 				}
 
-				printf( __( '%s We hope you enjoy using Sensei %s.', 'woothemes-sensei' ), $message, $major_version );
+				printf( __( '%s We hope you enjoy using Sensei.', 'woothemes-sensei' ), $message );
 			?>
 		</div>
 
