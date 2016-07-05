@@ -100,8 +100,9 @@ class Sensei_Course {
         add_action('save_post', array( 'Sensei_Course', 'flush_rewrite_rules' ) );
 
 		// Allow course archive to be setup as the home page
-		add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
-
+		if ( ! empty( get_option( 'page_on_front' ) ) ) {
+			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+		}
 	} // End __construct()
 
 	/**
@@ -3068,40 +3069,40 @@ class Sensei_Course {
     }// end is_prerequisite_complete
 
 	/**
-	 * Allowing user to set course archive page as front page
+	 * Allowing user to set course archive page as front page.
+	 *
+	 * Expects to be called during pre_get_posts, but only if page_on_front is set
+	 * to a non-empty value.
 	 *
 	 * @since 1.9.5
 	 * @param WP_Query $query hooked in from pre_get_posts
 	 */
 	function allow_course_archive_on_front_page( $query ) {
+		// Flag used to indicate if our test query is running: we use this instead of temporarily
+		// hooking/unhooking due to a core WP bug @see https://core.trac.wordpress.org/ticket/17817
+		static $running = false;
 
-		global $wp;
-
-		if ( ! is_page() ){
-			return; // This only needs to run on the home page. See https://github.com/Automattic/sensei/issues/1438
+		// Bail if it's clear we're not looking at a static front page or if the $running flag is
+		// set @see https://github.com/Automattic/sensei/issues/1438
+		if ( $running || ! $query->is_main_query() || ! is_page() || is_admin() ) {
+			return;
 		}
 
-		// avoid infinite loop
-		remove_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
-
+		// Set the flag indicating our test query is (about to be) running
+		$running = true;
 		$query_check = clone $query;
 		$posts = $query_check->get_posts();
-		$possible_home_page = array_shift( $posts );
+		$running = false;
 
-		// check all conditions
-		$not_a_valid_static_front_page = 0 == intval( get_option( 'page_on_front' ) )
-		                                 || is_admin()
-		                                 || ! $query->is_main_query()
-		                                 || ! empty( $wp->query_string )
-		                                 || ! isset( $possible_home_page->ID )
-		                                 || 'page' !=$possible_home_page->post_type
-		                                 || $possible_home_page->ID != get_option( 'page_on_front' ) ;
-
-		if ( $not_a_valid_static_front_page ) {
-			// add action again to check subsequent calls
-			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+		if ( ! $query_check->have_posts() ) {
 			return;
+		}
 
+		// Check if the first returned post matches the currently set static frontpage
+		$post = array_shift( $posts );
+
+		if ( 'page' !== $post->post_type || $post->ID != get_option( 'page_on_front' ) ) {
+			return;
 		}
 
 		// for a valid post that doesn't have any of the old short codes set the archive the same
@@ -3112,9 +3113,7 @@ class Sensei_Course {
 			|| $settings_course_page->ID != get_option( 'page_on_front' ) ){
 
 			return;
-
 		}
-
 
 		$query->set( 'post_type', 'course' );
 		$query->set( 'page_id', '' );
@@ -3124,6 +3123,9 @@ class Sensei_Course {
 		$query->is_singular          = 0;
 		$query->is_post_type_archive = 1;
 		$query->is_archive           = 1;
+
+		// We don't need this callback to run for subsequent queries
+		remove_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
 	}
 
 
