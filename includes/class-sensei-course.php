@@ -100,7 +100,7 @@ class Sensei_Course {
         add_action('save_post', array( 'Sensei_Course', 'flush_rewrite_rules' ) );
 
 		// Allow course archive to be setup as the home page
-		if ( ! empty( get_option( 'page_on_front' ) ) ) {
+		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
 		}
 	} // End __construct()
