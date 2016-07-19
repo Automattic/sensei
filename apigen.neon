@@ -1,6 +1,6 @@
 source: ./
 
-destination: docs.woothemes.com/images/sensei-apidocs
+destination: docs.woocommerce.com/images/sensei-apidocs
 
 templateConfig: apigen/theme-sensei/config.neon
 
@@ -13,7 +13,7 @@ exclude:
     - inc/
     - node_modules/
     - sensei-apidocs/
-    - docs.woothemes.com/
+    - docs.woocommerce.com/
     - tmp/
     - tests/
     - .sass-cache/
@@ -31,7 +31,7 @@ main: sensei
 title: Sensei Developer Reference
 
 # base url used for sitemap (useful for public doc)
-baseUrl: http://docs.woothemes.com/sensei-apidocs/
+baseUrl: http://docs.woocommerce.com/sensei-apidocs/
 
 # choose ApiGen template theme
 templateTheme: theme-sensei
