@@ -15,10 +15,9 @@ class Sensei_HookFinder {
     private static $put_file =  '';
 
     public static function initialize(){
-
         self::$sensei_directory = dirname( dirname(__FILE__) );
-        self::$docs_output_directory = self::$sensei_directory . '/docs.woothemes.com/images/sensei-apidocs/';
-        self::$put_file =  self::$docs_output_directory.'/hook-docs.html';
+        self::$docs_output_directory = self::$sensei_directory . '/docs.woocommerce.com/images/sensei-apidocs/';
+        self::$put_file =  self::$docs_output_directory.'hook-docs.html';
 
     }
 
