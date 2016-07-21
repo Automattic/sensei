@@ -1137,7 +1137,17 @@ class Sensei_Lesson {
 			}
 
 		$html .= '</div>';
-
+		
+		/**
+		 * Filter the quiz panel add html
+		 *
+		 * @since 1.9.7
+		 *
+		 * @param string  	$html
+		 * @param string	$context
+		 */
+		$html = apply_filters( 'sensei_quiz_panel_add', $html, $context );
+		
 		return $html;
 	}
 
