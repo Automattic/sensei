@@ -81,7 +81,7 @@ jQuery(document).ready( function($) {
 	 */
  	jQuery.fn.resetAddQuestionForm = function() {
  	    jQuery( '#add-new-question' ).find('div').find('input').each( function() {
-			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
+			if ( jQuery( this ).attr( 'type' ) != 'radio' && jQuery( this ).attr( 'type' ) != 'number' ) {
 				jQuery(this).attr( 'value', '' );
 			} // End If Statement
 		});
