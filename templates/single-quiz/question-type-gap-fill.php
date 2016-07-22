@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying Gap Fill Line Questions.
  *
- * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-gap-fill.php
+ * Override this template by copying it to yourtheme/sensei/single-quiz/question-type-gap-fill.php
  *
  * @author 		Automattic
  * @package 	Sensei

@@ -30,12 +30,12 @@ Domain path: /lang/
 
 	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-    require_once( 'includes/class-sensei-autoloader.php' );
-    require_once( 'includes/lib/woo-functions.php' );
-    require_once( 'includes/sensei-functions.php' );
+    require_once( __DIR__ . '/includes/class-sensei-autoloader.php' );
+    require_once( __DIR__ . '/includes/lib/woo-functions.php' );
+    require_once( __DIR__ . '/includes/sensei-functions.php' );
 
     if ( ! is_admin() ) {
-        require_once( 'includes/template-functions.php' );
+        require_once( __DIR__ . '/includes/template-functions.php' );
     }
 
     /**
@@ -66,7 +66,7 @@ Domain path: /lang/
     */
     if(! is_admin() ){
 
-        require_once( 'includes/hooks/template.php' );
+        require_once( __DIR__ . '/includes/hooks/template.php' );
 
     }
 
