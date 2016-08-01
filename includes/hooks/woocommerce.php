@@ -30,6 +30,12 @@ add_action('sensei_before_main_content', array('Sensei_WC', 'do_single_course_wc
  ******************************/
 add_filter( 'sensei_can_user_view_lesson', array( 'Sensei_WC','alter_can_user_view_lesson' ), 20, 3 );
 
+/**
+ * Before my courses
+ */
+add_filter( 'sensei_my_courses_before', array( 'Sensei_WC','assign_user_to_unassigned_purchased_courses' ) );
+
+
 /******************************
  *
  * Order and checkout hooks
