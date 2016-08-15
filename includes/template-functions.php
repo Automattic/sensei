@@ -666,7 +666,7 @@ function sensei_the_module_status(){
  * Get the module ID.
  * This must be used within the Sensei module loop.
  *
- * @since 1.9.6
+ * @since 1.9.7
  *
  * @return int $id Module ID.
  */
@@ -680,7 +680,7 @@ function sensei_get_the_module_id() {
 	 *
 	 * This fires within the sensei_get_the_module_id function.
 	 *
-	 * @since 1.9.6
+	 * @since 1.9.7
 	 *
 	 * @param int $module_term_id Module ID.
 	 */
@@ -689,7 +689,7 @@ function sensei_get_the_module_id() {
 
 /**
  * Print out the current module ID
- * @since 1.9.6
+ * @since 1.9.7
  */
 function sensei_the_module_id(){
 

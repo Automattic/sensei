@@ -46,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                  * are no modules to show.
                  *
                  * @since 1.9.0
-                 * @since 1.9.6 Added the module ID to the parameters.
+                 * @since 1.9.7 Added the module ID to the parameters.
                  *
                  * @hooked Sensei()->modules->course_modules_title - 20
                  *
@@ -121,7 +121,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                  * This hook will not trigger if there are no modules to show.
                  *
                  * @since 1.9.0
-                 * @since 1.9.6 Added the module ID to the parameters.
+                 * @since 1.9.7 Added the module ID to the parameters.
                  *
                  * @param int sensei_get_the_module_id() Module ID.
                  */
