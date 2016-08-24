@@ -83,8 +83,8 @@ class Sensei_Teacher {
         add_filter( 'request', array( $this, 'restrict_media_library' ), 10, 1 );
         add_filter( 'ajax_query_attachments_args', array( $this, 'restrict_media_library_modal' ), 10, 1 );
 
-        // update lesson owner to course teacher when saved
-        add_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
+        // update lesson owner to course teacher before insert
+        add_filter( 'wp_insert_post_data',  array( $this, 'update_lesson_teacher' ), '99', 2 );
 
         // If a Teacher logs in, redirect to /wp-admin/
         add_filter( 'wp_login', array( $this, 'teacher_login_redirect') , 10, 2 );
@@ -1336,29 +1336,29 @@ class Sensei_Teacher {
      *
      * @param int $lesson_id
      */
-    public function update_lesson_teacher( $lesson_id ){
+    public function update_lesson_teacher( $data, $postarr = array() ){
 
-        if( 'lesson'!= get_post_type() ){
-            return;
+        if( 'lesson' != $data['post_type'] ){
+            return $data;
         }
 
-        // this should only run once per request cycle
-        remove_action( 'save_post',  array( $this, 'update_lesson_teacher' ) );
+        $lesson_id = isset( $postarr['ID'] ) ? $postarr['ID'] : null;
+
+        if ( empty( $lesson_id ) || ! $lesson_id ) {
+          return $data;
+        }
 
         $course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
         if(  empty( $course_id ) || ! $course_id ){
-            return;
+            return $data;
         }
 
         $course = get_post( $course_id );
 
-        $lesson_update_args= array(
-            'ID' => $lesson_id ,
-            'post_author' => $course->post_author
-        );
-        wp_update_post( $lesson_update_args );
+        $data['post_author'] = $course->post_author;
 
+        return $data;
     } // end update_lesson_teacher
 
     /**
