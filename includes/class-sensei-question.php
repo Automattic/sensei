@@ -587,7 +587,7 @@ class Sensei_Question {
         ?>
 
             <input type="hidden" name="question_id_<?php $question_id;?>" value="<?php $question_id;?>" />
-            <input type="hidden" name="questions_asked[]" value="<?php esc_attr_e( $question_id ); ?>" />
+            <input type="hidden" name="questions_asked[]" value="<?php echo esc_attr( $question_id ); ?>" />
 
         <?php
     }
@@ -752,7 +752,7 @@ class Sensei_Question {
 		}
 
 		?>
-		<div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
+		<div class="answer_message <?php echo esc_attr( $answer_message_class ); ?>">
 
 			<span><?php echo $answer_message; ?></span>
 
@@ -874,7 +874,7 @@ class Sensei_Question {
                 $upload_size_unit = (int) $upload_size_unit;
 
             }
-            $max_upload_size = sprintf( __( 'Maximum upload file size: %d%s' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
+            $max_upload_size = sprintf( __( 'Maximum upload file size: %d%s', 'woothemes-sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
 
             // Assemble all the data needed by the file upload template
             $question_data[ 'answer_media_url' ]      = $answer_media_url;

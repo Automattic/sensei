@@ -520,7 +520,7 @@ function sensei_module_has_lessons(){
  */
 function sensei_the_module_title_attribute(){
 
-	esc_attr_e( sensei_get_the_module_title() );
+	echo esc_attr( sensei_get_the_module_title() );
 
 }
 
@@ -759,7 +759,7 @@ function sensei_the_question_class(){
 
     }// end foreach
 
-    esc_attr_e( trim( $html_classes ) );
+    echo esc_attr( trim( $html_classes ) );
 
 }
 

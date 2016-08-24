@@ -2012,7 +2012,7 @@ class Sensei_Course {
 
             <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?>
 
-                <a href="<?php esc_attr_e( get_author_posts_url( $course->post_author ) ); ?>" title="<?php esc_attr_e( $author_display_name ); ?>"><?php esc_attr_e( $author_display_name   ); ?></a>
+                <a href="<?php echo esc_attr( get_author_posts_url( $course->post_author ) ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_attr( $author_display_name ); ?></a>
 
             </span>
 
@@ -2087,12 +2087,12 @@ class Sensei_Course {
                 <form method="POST" action="<?php  echo esc_url( remove_query_arg( array( 'active_page', 'completed_page' ) ) ); ?>">
 
                     <input type="hidden"
-                           name="<?php esc_attr_e( 'woothemes_sensei_complete_course_noonce' ) ?>"
-                           id="<?php  esc_attr_e( 'woothemes_sensei_complete_course_noonce' ); ?>"
-                           value="<?php esc_attr_e( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
+                           name="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ) ?>"
+                           id="<?php  echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
+                           value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
                         />
 
-                    <input type="hidden" name="course_complete_id" id="course-complete-id" value="<?php esc_attr_e( intval( $course->ID ) ); ?>" />
+                    <input type="hidden" name="course_complete_id" id="course-complete-id" value="<?php echo esc_attr( intval( $course->ID ) ); ?>" />
 
                     <?php if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
                         && Sensei()->settings->settings['course_completion'] == 'complete'
@@ -2979,7 +2979,7 @@ class Sensei_Course {
 
         if( ! empty($term) ){
 
-            $title = __('Category') . ' ' . $term->name;
+            $title = __( 'Category', 'woothemes-sensei' ) . ' ' . $term->name;
 
         }else{
 

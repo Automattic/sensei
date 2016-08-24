@@ -78,4 +78,4 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
     </section> <!-- article .lesson-content -->
 
-</article> <!-- article .(<?php esc_attr_e( join( ' ', get_post_class( array( 'lesson', 'post' ) ) ) ); ?>  -->
+</article> <!-- article .(<?php echo esc_attr( join( ' ', get_post_class( array( 'lesson', 'post' ) ) ) ); ?>  -->
