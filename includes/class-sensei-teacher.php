@@ -83,8 +83,8 @@ class Sensei_Teacher {
         add_filter( 'request', array( $this, 'restrict_media_library' ), 10, 1 );
         add_filter( 'ajax_query_attachments_args', array( $this, 'restrict_media_library_modal' ), 10, 1 );
 
-        // update lesson owner to course teacher before insert saved
-        add_action( 'wp_insert_post_data',  array( $this, 'update_lesson_teacher' ) );
+        // update lesson owner to course teacher before insert
+        add_filter( 'wp_insert_post_data',  array( $this, 'update_lesson_teacher' ), '99', 2 );
 
         // If a Teacher logs in, redirect to /wp-admin/
         add_filter( 'wp_login', array( $this, 'teacher_login_redirect') , 10, 2 );
