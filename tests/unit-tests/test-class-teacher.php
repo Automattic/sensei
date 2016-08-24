@@ -201,6 +201,41 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 
     }// end testUpdateCourseModulesAuthorChangeLessons
 
+    public function testUpdateLessonTeacher() {
+      // setup assertions
+      $test_teacher_id = wp_create_user( 'teacherUpdateLessonTeacher', 'teacherUpdateLessonTeacher', 'teacherUpdateLessonTeacher@test.com' );
+      $test_teacher_id_two = wp_create_user( 'teacherTwoUpdateLessonTeacher', 'teacherTwoUpdateLessonTeacher', 'teacherTwoUpdateLessonTeacher@test.com' );
+
+      // create test course with current admin as owner
+      $test_course_id = $this->factory->get_random_course_id();
+      // set course teacher to $test_teacher_id
+      wp_update_post( array( 'ID' => $test_course_id, 'post_author'=> $test_teacher_id ) );
+
+      // add sample lessons to course
+      $test_lessons = $this->factory->get_lessons();
+      foreach( $test_lessons as $lesson_id ){
+          update_post_meta( $lesson_id, '_lesson_course', intval( $test_course_id ) );
+
+          $lesson = get_post( $lesson_id, ARRAY_A );
+          $id = wp_insert_post( array_merge( $lesson, array( 'post_title' => 'A Lesson with ID ' . $lesson['ID'] ) ) );
+
+          $lesson = get_post( $id, ARRAY_A );
+          $this->assertEquals( $test_teacher_id, intval( $lesson['post_author'] ) );
+      }
+
+      // change course teacher
+      wp_update_post( array( 'ID' => $test_course_id, 'post_author'=> $test_teacher_id_two ) );
+
+      foreach( $test_lessons as $lesson_id ){
+
+          $lesson = get_post( $lesson_id, ARRAY_A );
+          $lesson_id = wp_insert_post( array_merge( $lesson, array( 'post_title' => 'An Updated Lesson with ID ' . $lesson['ID'] ) ) );
+
+          $lesson = get_post( $lesson_id, ARRAY_A );
+          $this->assertEquals( $test_teacher_id_two, intval( $lesson['post_author'] ) );
+      }
+    }
+
     /**
      * Test Sensei()->Teacher->add_courses_to_author_archive
      * Test for the normal case on
