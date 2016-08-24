@@ -921,6 +921,10 @@ Class Sensei_WC{
 
 		$product = wc_get_product( $product_id );
 
+		if ( false === $product ) {
+			return false;
+		}
+
 		// get variations parent
 		if ( 'variation' == $product->get_type()  ) {
 
