@@ -35,6 +35,7 @@ class Sensei_Lesson {
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
+			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
 
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 10, 1 );
@@ -281,6 +282,48 @@ class Sensei_Lesson {
 			} // End For Loop
 		} // End If Statement
 	} // End meta_box_save()
+
+	/**
+	 * When course lessons are being ordered by the user,
+	 * and a new published lesson has not been added to
+	 * course lesson order meta, add it last.
+	 *
+	 * Hooked into `post_save`
+	 *
+	 * @access public
+	 * @param int $lesson_id
+	 * @return void
+	 */
+	public function add_lesson_to_course_order( $lesson_id = 0 ) {
+		$lesson_id = intval( $lesson_id );
+
+		if ( empty( $lesson_id ) ) {
+			return;
+		}
+
+		if ( 'lesson' != get_post_type( $lesson_id ) ) {
+			return;
+		}
+
+		if ( get_post_status( $lesson_id ) !== 'publish' ) {
+			return;
+		}
+
+		$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
+
+		if ( empty( $course_id ) ) {
+			return;
+		}
+
+		$order_string_array = explode( ',', get_post_meta( intval( $course_id ), '_lesson_order', true ) );
+		$order_ids = array_map( 'intval', $order_string_array );
+
+		if ( !empty( $order_ids ) && !in_array( $lesson_id, $order ) ) {
+				$order_ids[] = $lesson_id;
+				// assumes Sensei admin is loaded
+				Sensei()->admin->save_lesson_order( implode( ',', $order_ids ), $course_id );
+		}
+	}
 
 
 	/**
