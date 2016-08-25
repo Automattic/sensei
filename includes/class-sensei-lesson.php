@@ -318,7 +318,7 @@ class Sensei_Lesson {
 		$order_string_array = explode( ',', get_post_meta( intval( $course_id ), '_lesson_order', true ) );
 		$order_ids = array_map( 'intval', $order_string_array );
 
-		if ( !empty( $order_ids ) && !in_array( $lesson_id, $order ) ) {
+		if ( !empty( $order_ids ) && !in_array( $lesson_id, $order_ids ) ) {
 				$order_ids[] = $lesson_id;
 				// assumes Sensei admin is loaded
 				Sensei()->admin->save_lesson_order( implode( ',', $order_ids ), $course_id );
