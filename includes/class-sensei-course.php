@@ -3078,21 +3078,19 @@ class Sensei_Course {
 	 * @param WP_Query $query hooked in from pre_get_posts
 	 */
 	function allow_course_archive_on_front_page( $query ) {
-		// Flag used to indicate if our test query is running: we use this instead of temporarily
-		// hooking/unhooking due to a core WP bug @see https://core.trac.wordpress.org/ticket/17817
-		static $running = false;
-
 		// Bail if it's clear we're not looking at a static front page or if the $running flag is
 		// set @see https://github.com/Automattic/sensei/issues/1438
-		if ( $running || ! $query->is_main_query() || ! is_page() || is_admin() ) {
+		if ( ! $query->is_main_query() || ! is_page() || is_admin() ) {
 			return;
 		}
 
+		// We don't need this callback to run for subsequent queries (nothing after the main query interests us
+		// besides the need to avoid an infinite loop of doom when we call get_posts() on our cloned query
+		remove_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+
 		// Set the flag indicating our test query is (about to be) running
-		$running = true;
 		$query_check = clone $query;
 		$posts = $query_check->get_posts();
-		$running = false;
 
 		if ( ! $query_check->have_posts() ) {
 			return;
@@ -3123,9 +3121,6 @@ class Sensei_Course {
 		$query->is_singular          = 0;
 		$query->is_post_type_archive = 1;
 		$query->is_archive           = 1;
-
-		// We don't need this callback to run for subsequent queries
-		remove_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
 	}
 
 
