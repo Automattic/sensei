@@ -15,10 +15,9 @@ class Sensei_HookFinder {
     private static $put_file =  '';
 
     public static function initialize(){
-
         self::$sensei_directory = dirname( dirname(__FILE__) );
-        self::$docs_output_directory = self::$sensei_directory . '/docs.woothemes.com/images/sensei-apidocs/';
-        self::$put_file =  self::$docs_output_directory.'/hook-docs.html';
+        self::$docs_output_directory = self::$sensei_directory . '/docs.woocommerce.com/images/sensei-apidocs/';
+        self::$put_file =  self::$docs_output_directory.'hook-docs.html';
 
     }
 
@@ -57,9 +56,9 @@ class Sensei_HookFinder {
 
 	private static function get_hook_link( $hook, $details = array() ) {
 		//if ( ! empty( $details['class'] ) ) {
-		//	$link = 'http://docs.woothemes.com/sensei-apidocs/source-class-' . $details['class'] . '.html#' . $details['line'];
+		//	$link = 'https://docs.woocommerce.com/sensei-apidocs/source-class-' . $details['class'] . '.html#' . $details['line'];
 		//} elseif ( ! empty( $details['function'] ) ) {
-		//	$link = 'http://docs.woothemes.com/sensei-apidocs/source-function-' . $details['function'] . '.html#' . $details['line'];
+		//	$link = 'https://docs.woocommerce.com/sensei-apidocs/source-function-' . $details['function'] . '.html#' . $details['line'];
 		//} else {
 			$link = 'https://github.com/woothemes/sensei/search?utf8=%E2%9C%93&q=' . $hook;
 		//}

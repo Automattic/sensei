@@ -3047,8 +3047,8 @@ class Sensei_Lesson {
                     //
                     $pass_required_options = array(
                         '-1' => $no_change_text,
-                         '0' => __('No','woothemes'),
-                         '1' => __('Yes','woothemes'),
+                         '0' => __( 'No', 'woothemes-sensei' ),
+                         '1' => __( 'Yes', 'woothemes-sensei' ),
                     );
 
                     $pass_required_select_attributes = array( 'name'=> 'pass_required',
@@ -3068,8 +3068,8 @@ class Sensei_Lesson {
                     //
                     $quiz_reset_select__options = array(
                         '-1' => $no_change_text,
-                        '0' => __('No','woothemes'),
-                        '1' => __('Yes','woothemes'),
+                        '0' => __( 'No', 'woothemes-sensei' ),
+                        '1' => __( 'Yes', 'woothemes-sensei' ),
                     );
                     $quiz_reset_name_id = 'sensei-edit-enable-quiz-reset';
                     $quiz_reset_select_attributes = array( 'name'=> 'enable_quiz_reset', 'id'=>$quiz_reset_name_id, 'class'=>' ' );
@@ -3321,7 +3321,7 @@ class Sensei_Lesson {
         <header>
             <h2>
                 <a href="<?php echo esc_url_raw( get_permalink( $lesson_id ) ) ?>"
-                   title="<?php esc_attr_e( $heading_link_title ) ?>" >
+                   title="<?php echo esc_attr( $heading_link_title ) ?>" >
                     <?php echo $count_markup. get_the_title( $lesson_id ) . $preview_label; ?>
                 </a>
             </h2>

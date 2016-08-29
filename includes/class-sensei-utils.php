@@ -1663,6 +1663,18 @@ class Sensei_Utils {
 
 				$lesson_id = $lesson;
 			}
+			
+			/**
+			 * Filter the user lesson status
+			 *
+			 * @since 1.9.7
+			 *
+			 * @param string  	$user_lesson_status	User lesson status
+			 * @param int  		$lesson_id			ID of lesson
+			 * @param int	  	$user_id			ID of user
+			 */
+			$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status, $lesson_id, $user_id );
+			
 			if ( 'in-progress' != $user_lesson_status ) {
 				// Check for Passed or Completed Setting
 				// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting

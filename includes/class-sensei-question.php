@@ -587,7 +587,7 @@ class Sensei_Question {
         ?>
 
             <input type="hidden" name="question_id_<?php $question_id;?>" value="<?php $question_id;?>" />
-            <input type="hidden" name="questions_asked[]" value="<?php esc_attr_e( $question_id ); ?>" />
+            <input type="hidden" name="questions_asked[]" value="<?php echo esc_attr( $question_id ); ?>" />
 
         <?php
     }
@@ -621,8 +621,27 @@ class Sensei_Question {
 	    $quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
 	    $failed_and_reset_not_allowed =  $user_quiz_grade < $quiz_required_pass_grade && ! $reset_quiz_allowed && $quiz_graded;
 
+		// Check if answers must be shown
+		$show_answers = false;
 	    if ( $quiz_graded || $failed_and_reset_not_allowed ) {
+	    	$show_answers = true;
+	    }
 
+	    /**
+         * Allow dynamic overriding of whether to show question answers or not
+         *
+         * @since 1.9.7
+         * 
+         * @param boolean $show_answers
+         * @param integer $question_id
+         * @param integer $quiz_id
+         * @param integer $lesson_id
+         * @param integer $user_id
+         */
+	    $show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
+
+		// Show answers if allowed
+		if( $show_answers ) {
             $answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
 
             if( $answer_notes ) { ?>
@@ -681,22 +700,20 @@ class Sensei_Question {
 			return;
 		}
 
-		if ( ! Sensei_Quiz::is_pass_required( $lesson_id ) ) {
-			self::output_result_indication( $lesson_id, $question_item->ID);
-			return;
-		}
-
 		$user_quiz_grade          = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
-		$user_passed              =  $user_quiz_grade >= $quiz_required_pass_grade;
+		$user_passed              = $user_quiz_grade >= $quiz_required_pass_grade;
 
-		if ( $user_passed ) {
-			self::output_result_indication( $lesson_id, $question_item->ID);
-			return;
+		$show_answers = false;
+		if( ! Sensei_Quiz::is_pass_required( $lesson_id ) || $user_passed || ! Sensei_Quiz::is_reset_allowed( $lesson_id ) ) {
+			$show_answers = true;
 		}
 
-		if ( ! Sensei_Quiz::is_reset_allowed( $lesson_id ) ) {
-			self::output_result_indication( $lesson_id, $question_item->ID);
+		// This filter is documented in self::answer_feedback_notes()
+		$show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_item->ID, $quiz_id, $lesson_id, get_current_user_id() );
+
+		if( $show_answers ) {
+			Sensei_Question::output_result_indication( $lesson_id, $question_item->ID);
 			return;
 		}
 	}
@@ -735,7 +752,7 @@ class Sensei_Question {
 		}
 
 		?>
-		<div class="answer_message <?php esc_attr_e( $answer_message_class ); ?>">
+		<div class="answer_message <?php echo esc_attr( $answer_message_class ); ?>">
 
 			<span><?php echo $answer_message; ?></span>
 
@@ -857,7 +874,7 @@ class Sensei_Question {
                 $upload_size_unit = (int) $upload_size_unit;
 
             }
-            $max_upload_size = sprintf( __( 'Maximum upload file size: %d%s' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
+            $max_upload_size = sprintf( __( 'Maximum upload file size: %d%s', 'woothemes-sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
 
             // Assemble all the data needed by the file upload template
             $question_data[ 'answer_media_url' ]      = $answer_media_url;

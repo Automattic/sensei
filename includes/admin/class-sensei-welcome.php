@@ -239,11 +239,6 @@ class Sensei_Welcome {
 				line-height: 1.4;
 			}
 
-            p.sensei-actions a.button-primary {
-                background: #42A2CE;
-                border-color: #849DAD;
-            }
-
             p.sensei-actions .twitter-share-button {
 				margin-top: -3px;
 				margin-left: 3px;
@@ -268,7 +263,7 @@ class Sensei_Welcome {
 		);
 		shuffle( $tweets );
 		?>
-		<h1><?php printf( __( 'Welcome to Sensei %s', 'woothemes-sensei' ), $major_version ); ?></h1>
+		<h1><?php printf( __( 'Welcome to Sensei', 'woothemes-sensei' ) ); ?></h1>
 
 		<div class="about-text sensei-about-text">
 			<?php
@@ -280,7 +275,7 @@ class Sensei_Welcome {
 					$message = __( 'Thanks for installing!', 'woothemes-sensei' );
 				}
 
-				printf( __( '%s We hope you enjoy using Sensei %s.', 'woothemes-sensei' ), $message, $major_version );
+				printf( __( '%s We hope you enjoy using Sensei.', 'woothemes-sensei' ), $message );
 			?>
 		</div>
 
@@ -294,8 +289,8 @@ class Sensei_Welcome {
         </div>
 
 		<p class="sensei-actions">
-			<a href="<?php echo admin_url('admin.php?page=woothemes-sensei-settings'); ?>" class="button button-primary"><?php _e( 'Settings', 'woothemes-sensei' ); ?></a>
-			<a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/documentation/plugins/sensei/', 'woothemes-sensei' ) ); ?>" class="docs button button-primary"><?php _e( 'Docs', 'woothemes-sensei' ); ?></a>
+			<a href="<?php echo admin_url('admin.php?page=woothemes-sensei-settings'); ?>" class="button"><?php _e( 'Settings', 'woothemes-sensei' ); ?></a>
+			<a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/documentation/plugins/sensei/', 'woothemes-sensei' ) ); ?>" class="docs button"><?php _e( 'Docs', 'woothemes-sensei' ); ?></a>
 			<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/products/sensei" data-text="<?php echo esc_attr( $tweets[0] ); ?>" data-via="WooThemes" data-size="large">Tweet</a>
 			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 		</p>

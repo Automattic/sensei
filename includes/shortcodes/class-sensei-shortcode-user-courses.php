@@ -210,7 +210,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
                 <?php _e( 'You have no active courses.', 'woothemes-sensei' ); ?>
 
-                <a href="<?php esc_attr_e( Sensei_Course::get_courses_page_url() ); ?>">
+                <a href="<?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
 
                     <?php  _e( 'Start a Course!', 'woothemes-sensei' ); ?>
 
