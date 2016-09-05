@@ -90,12 +90,12 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
 			margin: 0 0 0 10px!important;
 		}
 	}
-	h2 span.version  {
-		font-size: 0.4em;
+	span.version  {
+		font-size: 1em;
 		font-weight: bold;
 		position: relative;
-		top: -4px;
-		left: 5px;
+		float: right;
+		top: -32px;
 		padding: 2px 5px;
 		border: 1px solid #ccc;
 		background: #f5f5f5;
