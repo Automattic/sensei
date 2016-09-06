@@ -616,7 +616,7 @@ class Sensei_Question {
         $user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
         $reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
         $quiz_grade_type    = get_post_meta( $quiz_id , '_quiz_grade_type', true );
-		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && in_array( $user_lesson_status->comment_approved, array( 'graded', 'passed' ) );
+		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'ungraded', 'in-progress' ) );
 
 	    $quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
 	    $failed_and_reset_not_allowed =  $user_quiz_grade < $quiz_required_pass_grade && ! $reset_quiz_allowed && $quiz_graded;
@@ -690,7 +690,7 @@ class Sensei_Question {
 		$question_item        = $sensei_question_loop['current_question'];
 		$lesson_id            = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$user_lesson_status   = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
-		$quiz_graded          = isset( $user_lesson_status->comment_approved ) && in_array( $user_lesson_status->comment_approved, array( 'graded', 'passed' ) );
+		$quiz_graded          = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
 
 		if ( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
 			return;
