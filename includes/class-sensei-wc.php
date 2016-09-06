@@ -1374,34 +1374,27 @@ Class Sensei_WC{
 
 			foreach( $order->get_items() as $item ) {
 
-				$product_type = '';
 				if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
-
 					$item_id = $item['variation_id'];
-					$product_type = 'variation';
-
 				} else {
-
 					$item_id = $item['product_id'];
-
 				} // End If Statement
 
-				$_product = Sensei_WC::get_product_object( $item_id, $product_type );
 
-				// Get courses that use the WC product
-				$courses = array();
-				$courses = Sensei()->course->get_product_courses( $item_id );
+                if ( self::has_customer_bought_product( $user_id, $item_id ) ){
 
-				// Loop and update those courses
-				foreach ($courses as $course_item){
+                    // Get courses that use the WC product
+                    $courses = Sensei()->course->get_product_courses( $item_id );
 
-					if( self::has_customer_bought_product( $user_id, $course_item->ID ) ){
-						continue;
-					}
-					// Check and Remove course from courses user meta
-					$dataset_changes = Sensei_Utils::sensei_remove_user_from_course( $course_item->ID, $user_id );
+                    // Loop and update those courses
+                    foreach ($courses as $course_item){
 
-				} // End For Loop
+                        // Check and Remove course from courses user meta
+                        Sensei_Utils::sensei_remove_user_from_course( $course_item->ID, $user_id );
+
+                    } // End For Loop
+
+                } // End If Statement
 
 			} // End For Loop
 
