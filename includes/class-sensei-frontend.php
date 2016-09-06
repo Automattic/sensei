@@ -871,7 +871,7 @@ class Sensei_Frontend {
 	} // End sensei_frontend_messages()
 
 	public function sensei_lesson_video( $post_id = 0 ) {
-		if ( 0 < intval( $post_id ) ) {
+		if ( 0 < intval( $post_id ) && sensei_can_user_view_lesson( $post_id ) ) {
 			$lesson_video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
 			if ( 'http' == substr( $lesson_video_embed, 0, 4) ) {
         		// V2 - make width and height a setting for video embed
