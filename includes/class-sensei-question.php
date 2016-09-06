@@ -1134,7 +1134,17 @@ class Sensei_Question {
 
         }
 
-        return $right_answer;
+        /**
+         * Filters the correct answer response.
+         *
+         * Can be used for text filters.
+         *
+         * @since 1.9.7
+         *
+         * @param string $right_answer Correct answer.
+         * @param int    $question_id  Question ID
+         */
+        return apply_filters( 'sensei_questions_get_correct_answer', $right_answer, $question_id );
 
     } // get_correct_answer
 
