@@ -25,7 +25,7 @@ jQuery(document).ready(function($) {
         // If the link is a tab, show only the specified tab.
         var toShow = jQuery( this ).attr( 'href' );
         // Remove the first occurance of # from the selected string (will be added manually below).
-        toShow = toShow.replace( '#', '', toShow );
+        toShow = toShow.replace( '#', '' );
         jQuery("#"+toShow).show();
 
         return false;

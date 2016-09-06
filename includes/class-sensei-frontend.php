@@ -871,7 +871,7 @@ class Sensei_Frontend {
 	} // End sensei_frontend_messages()
 
 	public function sensei_lesson_video( $post_id = 0 ) {
-		if ( 0 < intval( $post_id ) ) {
+		if ( 0 < intval( $post_id ) && sensei_can_user_view_lesson( $post_id ) ) {
 			$lesson_video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
 			if ( 'http' == substr( $lesson_video_embed, 0, 4) ) {
         		// V2 - make width and height a setting for video embed
@@ -1084,17 +1084,17 @@ class Sensei_Frontend {
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_username"><?php _e( 'Username', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
-							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="<?php if ( ! empty( $_POST['sensei_reg_username'] ) ) esc_attr_e( $_POST['sensei_reg_username'] ); ?>" />
+							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="<?php if ( ! empty( $_POST['sensei_reg_username'] ) ) echo esc_attr( $_POST['sensei_reg_username'] ); ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_email"><?php _e( 'Email address', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
-							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="<?php if ( ! empty( $_POST['sensei_reg_email'] ) ) esc_attr_e( $_POST['sensei_reg_email'] ); ?>" />
+							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="<?php if ( ! empty( $_POST['sensei_reg_email'] ) ) echo esc_attr( $_POST['sensei_reg_email'] ); ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
-							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="<?php if ( ! empty( $_POST['sensei_reg_password'] ) ) esc_attr_e( $_POST['sensei_reg_password'] ); ?>" />
+							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="<?php if ( ! empty( $_POST['sensei_reg_password'] ) ) echo esc_attr( $_POST['sensei_reg_password'] ); ?>" />
 						</p>
 
 						<!-- Spam Trap -->
@@ -1692,7 +1692,7 @@ class Sensei_Frontend {
 		// Check the e-mail address
 		$email_error_notice = '';
 		if ( $new_user_email == '' ) {
-			$email_error_notice = __( '<strong>ERROR</strong>: Please type your e-mail address.' );
+			$email_error_notice = __( '<strong>ERROR</strong>: Please enter an email address.' );
 		} elseif ( ! is_email( $new_user_email ) ) {
 			$email_error_notice = __( '<strong>ERROR</strong>: The email address isn&#8217;t correct.' );
 		} elseif ( email_exists( $new_user_email ) ) {
@@ -1709,14 +1709,14 @@ class Sensei_Frontend {
 
 		// exit on email address error
 		if( empty( $new_user_password ) ){
-			Sensei()->notices->add_notice(  __( '<strong>ERROR</strong>: The password field may not be empty, please enter a secure password.' )  , 'alert');
+			Sensei()->notices->add_notice(  __( '<strong>ERROR</strong>: The password field is empty.' )  , 'alert');
 			return;
 		}
 
 		// register user
 		$user_id = wp_create_user( $new_user_name, $new_user_password, $new_user_email );
 		if ( ! $user_id || is_wp_error( $user_id ) ) {
-			Sensei()->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn\'t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert');
+			Sensei()->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert');
 		}
 
 		// notify the user

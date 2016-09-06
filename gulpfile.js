@@ -9,15 +9,16 @@
  * 3) Run gulp to mifiy javascript and css using the 'gulp' command.
  */
 
-var gulp      = require( 'gulp' );
-var rename    = require( 'gulp-rename' );
-var uglify    = require( 'gulp-uglify' );
-var minifyCSS = require( 'gulp-minify-css' );
-var chmod     = require( 'gulp-chmod' );
-var del       = require( 'del' );
-var sass      = require( 'gulp-sass' );
-var wpPot     = require( 'gulp-wp-pot' );
-var sort      = require( 'gulp-sort' );
+var gulp            = require( 'gulp' );
+var rename          = require( 'gulp-rename' );
+var uglify          = require( 'gulp-uglify' );
+var minifyCSS       = require( 'gulp-minify-css' );
+var chmod           = require( 'gulp-chmod' );
+var del             = require( 'del' );
+var sass            = require( 'gulp-sass' );
+var wpPot           = require( 'gulp-wp-pot' );
+var sort            = require( 'gulp-sort' );
+var checktextdomain = require( 'gulp-checktextdomain' );
 
 var paths = {
 	scripts: ['assets/js/*.js' ],
@@ -70,4 +71,27 @@ gulp.task( 'pot', function() {
 			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
 		}) )
 		.pipe( gulp.dest( 'lang' ) );
+});
+
+gulp.task ( 'textdomain' , function() {
+	return gulp.src( [ '**/*.php', '!node_modules/**'] )
+		.pipe( checktextdomain({
+			text_domain: 'woothemes-sensei',
+			keywords: [
+				'__:1,2d',
+				'_e:1,2d',
+				'_x:1,2c,3d',
+				'esc_html__:1,2d',
+				'esc_html_e:1,2d',
+				'esc_html_x:1,2c,3d',
+				'esc_attr__:1,2d',
+				'esc_attr_e:1,2d',
+				'esc_attr_x:1,2c,3d',
+				'_ex:1,2c,3d',
+				'_n:1,2,4d',
+				'_nx:1,2,4c,5d',
+				'_n_noop:1,2,3d',
+				'_nx_noop:1,2,3c,4d'
+			]
+		}));
 });

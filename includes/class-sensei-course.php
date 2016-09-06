@@ -100,8 +100,9 @@ class Sensei_Course {
         add_action('save_post', array( 'Sensei_Course', 'flush_rewrite_rules' ) );
 
 		// Allow course archive to be setup as the home page
-		add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
-
+		if ( (int) get_option( 'page_on_front' ) > 0 ) {
+			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+		}
 	} // End __construct()
 
 	/**
@@ -2012,7 +2013,7 @@ class Sensei_Course {
 
             <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?>
 
-                <a href="<?php esc_attr_e( get_author_posts_url( $course->post_author ) ); ?>" title="<?php esc_attr_e( $author_display_name ); ?>"><?php esc_attr_e( $author_display_name   ); ?></a>
+                <a href="<?php echo esc_attr( get_author_posts_url( $course->post_author ) ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_attr( $author_display_name ); ?></a>
 
             </span>
 
@@ -2087,12 +2088,12 @@ class Sensei_Course {
                 <form method="POST" action="<?php  echo esc_url( remove_query_arg( array( 'active_page', 'completed_page' ) ) ); ?>">
 
                     <input type="hidden"
-                           name="<?php esc_attr_e( 'woothemes_sensei_complete_course_noonce' ) ?>"
-                           id="<?php  esc_attr_e( 'woothemes_sensei_complete_course_noonce' ); ?>"
-                           value="<?php esc_attr_e( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
+                           name="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ) ?>"
+                           id="<?php  echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
+                           value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
                         />
 
-                    <input type="hidden" name="course_complete_id" id="course-complete-id" value="<?php esc_attr_e( intval( $course->ID ) ); ?>" />
+                    <input type="hidden" name="course_complete_id" id="course-complete-id" value="<?php echo esc_attr( intval( $course->ID ) ); ?>" />
 
                     <?php if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
                         && Sensei()->settings->settings['course_completion'] == 'complete'
@@ -2979,7 +2980,7 @@ class Sensei_Course {
 
         if( ! empty($term) ){
 
-            $title = __('Category') . ' ' . $term->name;
+            $title = __( 'Category', 'woothemes-sensei' ) . ' ' . $term->name;
 
         }else{
 
@@ -3068,40 +3069,38 @@ class Sensei_Course {
     }// end is_prerequisite_complete
 
 	/**
-	 * Allowing user to set course archive page as front page
+	 * Allowing user to set course archive page as front page.
+	 *
+	 * Expects to be called during pre_get_posts, but only if page_on_front is set
+	 * to a non-empty value.
 	 *
 	 * @since 1.9.5
 	 * @param WP_Query $query hooked in from pre_get_posts
 	 */
 	function allow_course_archive_on_front_page( $query ) {
-
-		global $wp;
-
-		if ( ! is_page() ){
-			return; // This only needs to run on the home page. See https://github.com/Automattic/sensei/issues/1438
+		// Bail if it's clear we're not looking at a static front page or if the $running flag is
+		// set @see https://github.com/Automattic/sensei/issues/1438
+		if ( ! $query->is_main_query() || ! is_page() || is_admin() ) {
+			return;
 		}
 
-		// avoid infinite loop
+		// We don't need this callback to run for subsequent queries (nothing after the main query interests us
+		// besides the need to avoid an infinite loop of doom when we call get_posts() on our cloned query
 		remove_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
 
+		// Set the flag indicating our test query is (about to be) running
 		$query_check = clone $query;
 		$posts = $query_check->get_posts();
-		$possible_home_page = array_shift( $posts );
 
-		// check all conditions
-		$not_a_valid_static_front_page = 0 == intval( get_option( 'page_on_front' ) )
-		                                 || is_admin()
-		                                 || ! $query->is_main_query()
-		                                 || ! empty( $wp->query_string )
-		                                 || ! isset( $possible_home_page->ID )
-		                                 || 'page' !=$possible_home_page->post_type
-		                                 || $possible_home_page->ID != get_option( 'page_on_front' ) ;
-
-		if ( $not_a_valid_static_front_page ) {
-			// add action again to check subsequent calls
-			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+		if ( ! $query_check->have_posts() ) {
 			return;
+		}
 
+		// Check if the first returned post matches the currently set static frontpage
+		$post = array_shift( $posts );
+
+		if ( 'page' !== $post->post_type || $post->ID != get_option( 'page_on_front' ) ) {
+			return;
 		}
 
 		// for a valid post that doesn't have any of the old short codes set the archive the same
@@ -3112,9 +3111,7 @@ class Sensei_Course {
 			|| $settings_course_page->ID != get_option( 'page_on_front' ) ){
 
 			return;
-
 		}
-
 
 		$query->set( 'post_type', 'course' );
 		$query->set( 'page_id', '' );

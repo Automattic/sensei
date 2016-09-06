@@ -131,7 +131,7 @@ class Sensei_Shortcode_Unpurchased_Courses implements Sensei_Shortcode_Interface
             $anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
             $anchor_after = '</a>';
             $notice = sprintf(
-                __('You must be logged in to view the non-purchased courses. Click here to %slogin%s.'),
+                __('You must be logged in to view the non-purchased courses. Click here to %slogin%s.', 'woothemes-sensei' ),
                 $anchor_before,
                 $anchor_after
             );

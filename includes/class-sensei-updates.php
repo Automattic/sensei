@@ -140,7 +140,7 @@ class Sensei_Updates
 
                         wp_die(
                             '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
-                            '<p>' . __( 'The nonce supplied in order to run this update function is invalid','woothemes-sensei') . '</p>',
+                            '<p>' . __( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
                             403
                         );
 
@@ -189,7 +189,7 @@ class Sensei_Updates
 
                     wp_die(
                         '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
-                        '<p>' . __( 'The nonce supplied in order to run this update function is invalid','woothemes-sensei') . '</p>',
+                        '<p>' . __( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
                         403
                     );
 

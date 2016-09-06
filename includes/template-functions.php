@@ -520,7 +520,7 @@ function sensei_module_has_lessons(){
  */
 function sensei_the_module_title_attribute(){
 
-	esc_attr_e( sensei_get_the_module_title() );
+	echo esc_attr( sensei_get_the_module_title() );
 
 }
 
@@ -662,6 +662,41 @@ function sensei_the_module_status(){
 
 }
 
+/**
+ * Get the module ID.
+ * This must be used within the Sensei module loop.
+ *
+ * @since 1.9.7
+ *
+ * @return int $id Module ID.
+ */
+function sensei_get_the_module_id() {
+	global $sensei_modules_loop;
+
+	$module_term_id = $sensei_modules_loop['current_module']->term_id;
+
+	/**
+	 * Filter the module ID.
+	 *
+	 * This fires within the sensei_get_the_module_id function.
+	 *
+	 * @since 1.9.7
+	 *
+	 * @param int $module_term_id Module ID.
+	 */
+	return apply_filters( 'sensei_the_module_id', $module_term_id );
+}
+
+/**
+ * Print out the current module ID
+ * @since 1.9.7
+ */
+function sensei_the_module_id(){
+
+	echo sensei_get_the_module_id();
+
+}
+
 /************************
  *
  * Single Quiz Functions
@@ -759,7 +794,7 @@ function sensei_the_question_class(){
 
     }// end foreach
 
-    esc_attr_e( trim( $html_classes ) );
+    echo esc_attr( trim( $html_classes ) );
 
 }
 

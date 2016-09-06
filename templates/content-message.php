@@ -77,4 +77,4 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
     </section> <!-- article .message-content -->
 
-</article> <!-- article .(<?php esc_attr_e( join( ' ', get_post_class( array( 'sensei_message', 'post' ) ) ) ); ?>  -->
+</article> <!-- article .(<?php echo sc_attr( join( ' ', get_post_class( array( 'sensei_message', 'post' ) ) ) ); ?>  -->

@@ -318,6 +318,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         global $post, $current_user;
         $lesson_id = $this->get_lesson_id( $post->ID );
         $quiz_answers = $_POST[ 'sensei_question' ];
+        $lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $post->ID );
+
+        // Get question keys
+        $quiz_questions = array_fill_keys( wp_list_pluck( $lesson_quiz_questions, 'ID' ), null);
+
+        // Merge user answers and question ids with no value
+        $quiz_answers = $quiz_answers + $quiz_questions;
 
         self::submit_answers_for_grading( $quiz_answers, $_FILES ,  $lesson_id  , $current_user->ID );
 
@@ -1211,8 +1218,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         $lesson_id =  Sensei()->quiz->get_lesson_id( $quiz_id );
         $status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id , get_current_user_id() );
-        echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+        $message = '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
 
+        if ( !empty( Sensei()->frontend->messages ) ) {
+          $message .= Sensei()->frontend->messages;
+        }
+
+        echo $message;
     }
 
      /**

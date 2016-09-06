@@ -31,7 +31,7 @@ global $course;
 
     </header>
 
-    <article class="<?php  esc_attr_e( join( ' ', get_post_class( array( 'course', 'post' ), $course->ID ) ) ); ?> ">
+    <article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course->ID ) ) ); ?> ">
 
         <?php
 
@@ -73,7 +73,7 @@ global $course;
                         <a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>"
                            title="<?php echo esc_attr_e( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) ); ?>">
 
-                            <?php esc_html_e( $lesson->post_title ); ?>
+                            <?php echo esc_html( $lesson->post_title ); ?>
 
                         </a>
 

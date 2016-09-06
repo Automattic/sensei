@@ -303,6 +303,95 @@ Class Sensei_WC{
 
 	}
 
+	public static function assign_user_to_unassigned_purchased_courses() {
+		global $current_user;
+
+		if ( false === self::is_woocommerce_active() ) {
+			return;
+		}
+
+		if ( empty( $current_user ) ) {
+			$current_user = wp_get_current_user();
+		}
+
+		if ( ! ( $current_user instanceof WP_User ) ) {
+			return;
+		}
+
+		$user_id = $current_user->ID;
+
+		// get current user's active courses
+		$active_courses = Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_status' ), true );
+
+		if ( empty( $active_courses ) ) {
+			$active_courses = array();
+		}
+
+		if ( ! is_array( $active_courses ) ) {
+			$active_courses = array( $active_courses );
+		}
+
+		$active_course_ids = array_map( function ($c) { return $c->comment_post_ID; }, $active_courses );
+
+		$orders_query = new WP_Query( array(
+			'post_type'   => 'shop_order',
+			'posts_per_page' => -1,
+			'post_status' => array( 'wc-processing', 'wc-completed' ),
+			'meta_key'=> '_customer_user',
+			'meta_value'=> $user_id,
+			'fields' => 'ids'
+		) );
+
+		// get user's processing and completed orders
+		$user_order_ids = $orders_query->get_posts();
+
+		if ( empty( $user_order_ids ) ) {
+			$user_order_ids = array();
+		}
+
+		if ( ! is_array( $user_order_ids ) ) {
+			$user_order_ids = array( $user_order_ids );
+		}
+
+		$user_orders = array_map( function ( $order_data ) { return new WC_Order( $order_data ); }, $user_order_ids );
+
+		foreach ( $user_orders as $user_order ) {
+			foreach ($user_order->get_items() as $item) {
+				if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
+					$item_id = $item['variation_id'];
+				} else {
+					$item_id = $item['product_id'];
+				}
+
+				$product = Sensei()->sensei_get_woocommerce_product_object( $item_id );
+
+				$product_courses = Sensei()->course->get_product_courses( $product->id );
+
+				foreach ( $product_courses as $course ) {
+					$course_id = $course->ID;
+					$order_id = self::get_learner_course_active_order_id( $user_id, $course_id );
+
+					if ( in_array( $order_id, $user_order_ids ) &&
+							 ! in_array( $course_id, $active_course_ids ) ) {
+						// user ordered a course and not assigned to it. Fix this by assigning them now
+
+						$course_metadata = array(
+							'start' => current_time('mysql'),
+							'percent' => 0,
+							'complete' => 0,
+						);
+
+						$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, $status = 'in-progress', $course_metadata );
+
+						if ( $comment_id ) {
+							do_action( 'sensei_user_course_start', $user_id, $course_id );
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Add course link to order thank you and details pages.
 	 *
@@ -875,7 +964,7 @@ Class Sensei_WC{
 
 		if ( self::is_product_in_cart( $wc_product_id ) ) {
 
-			$cart_link = '<a href="' . wc_get_checkout_url() . '" title="' . __( 'Checkout','woocommerce' ) . '">' . __( 'checkout', 'woocommerce' ) . '</a>';
+			$cart_link = '<a href="' . wc_get_checkout_url() . '" title="' . __( 'Checkout', 'woocommerce' ) . '">' . __( 'checkout', 'woocommerce' ) . '</a>';
 
 			$message = sprintf( __( 'This course is already in your cart, please proceed to %1$s, to gain access.', 'woothemes-sensei' ), $cart_link );
 			?>
@@ -920,6 +1009,10 @@ Class Sensei_WC{
 	public static function has_customer_bought_product ( $user_id, $product_id ) {
 
 		$product = wc_get_product( $product_id );
+
+		if ( false === $product ) {
+			return false;
+		}
 
 		// get variations parent
 		if ( 'variation' == $product->get_type()  ) {
@@ -1281,34 +1374,27 @@ Class Sensei_WC{
 
 			foreach( $order->get_items() as $item ) {
 
-				$product_type = '';
 				if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
-
 					$item_id = $item['variation_id'];
-					$product_type = 'variation';
-
 				} else {
-
 					$item_id = $item['product_id'];
-
 				} // End If Statement
 
-				$_product = Sensei_WC::get_product_object( $item_id, $product_type );
 
-				// Get courses that use the WC product
-				$courses = array();
-				$courses = Sensei()->course->get_product_courses( $item_id );
+                if ( self::has_customer_bought_product( $user_id, $item_id ) ){
 
-				// Loop and update those courses
-				foreach ($courses as $course_item){
+                    // Get courses that use the WC product
+                    $courses = Sensei()->course->get_product_courses( $item_id );
 
-					if( self::has_customer_bought_product( $user_id, $course_item->ID ) ){
-						continue;
-					}
-					// Check and Remove course from courses user meta
-					$dataset_changes = Sensei_Utils::sensei_remove_user_from_course( $course_item->ID, $user_id );
+                    // Loop and update those courses
+                    foreach ($courses as $course_item){
 
-				} // End For Loop
+                        // Check and Remove course from courses user meta
+                        Sensei_Utils::sensei_remove_user_from_course( $course_item->ID, $user_id );
+
+                    } // End For Loop
+
+                } // End If Statement
 
 			} // End For Loop
 

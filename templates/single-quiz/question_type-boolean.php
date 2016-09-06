@@ -64,7 +64,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
     ?>
 
-    <li class="<?php esc_attr_e( $answer_class ); ?>">
+    <li class="<?php echo esc_attr( $answer_class ); ?>">
 
         <input type="radio"
                id="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-'. $option_value; ?>"

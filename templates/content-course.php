@@ -84,4 +84,4 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     ?>
 
 
-</li> <!-- article .(<?php esc_attr_e( join( ' ', get_post_class( array( 'course', 'post' ) ) ) ); ?>  -->
+</li> <!-- article .(<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ) ) ) ); ?>  -->
