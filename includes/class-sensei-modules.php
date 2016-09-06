@@ -1273,9 +1273,19 @@ class Sensei_Core_Modules
      * @return void
      */
     public function enqueue_styles() {
-
-        wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', Sensei()->version );
-        wp_enqueue_style($this->taxonomy . '-frontend');
+    	
+    	$disable_styles = false;
+		if ( isset( Sensei()->settings->settings[ 'styles_disable' ] ) ) {
+			$disable_styles = Sensei()->settings->settings[ 'styles_disable' ];
+		} // End If Statement
+		
+		// Add filter for theme overrides
+		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
+		
+		if ( ! $disable_styles ) {
+	        wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', Sensei()->version );
+    	    wp_enqueue_style($this->taxonomy . '-frontend');
+		}
 
     }
 
