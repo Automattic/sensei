@@ -1259,7 +1259,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          //setup quiz grade
          $user_quiz_grade = '';
          if( ! empty( $user_lesson_status  ) ){
-             $user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+
+	         // user lesson status can return as an array.
+	         if ( is_array( $user_lesson_status ) ) {
+		         $comment_ID = $user_lesson_status[0]->comment_ID;
+
+	         } else {
+		         $comment_ID = $user_lesson_status->comment_ID;
+	         }
+
+	         $user_quiz_grade = get_comment_meta( $comment_ID, 'grade', true );
          }
 
 
