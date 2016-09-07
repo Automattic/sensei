@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
@@ -1059,8 +1059,16 @@ class Sensei_Utils {
 				$course_passmark = ( $total_passmark / $lesson_count );
 			}
 		}
-
-		return Sensei_Utils::round( $course_passmark );
+		
+		/**
+		 * Filter the course pass mark
+		 *
+		 * @since 1.9.7
+		 *
+     	 * @param integer $course_passmark	Pass mark for course
+	 	 * @param integer $course_id 		ID of course
+		 */
+		return apply_filters( 'sensei_course_pass_grade', Sensei_Utils::round( $course_passmark ), $course_id );
 	}
 
 	/**
@@ -1108,8 +1116,17 @@ class Sensei_Utils {
 			}
 
 		}
-
-		return Sensei_Utils::round( $total_grade );
+		
+		/**
+		 * Filter the user total grade for course
+		 *
+		 * @since 1.9.7
+		 *
+     	 * @param integer $total_grade	User's total grade
+	 	 * @param integer $course_id 	ID of course
+	 	 * @param integer $user_id   	ID of user
+		 */
+		return apply_filters( 'sensei_course_user_grade', Sensei_Utils::round( $total_grade ), $course_id, $user_id );
 	}
 
 	/**
