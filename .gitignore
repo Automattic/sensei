@@ -3,3 +3,4 @@ node_modules/*
 .idea
 vendor/*
 docs.woothemes.com/*
+tests/images/test-*
