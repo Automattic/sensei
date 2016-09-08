@@ -14,7 +14,7 @@ class Sensei_WPML {
 		* string localisation
 		* It runs before any email string is obtained and localised
 		*
-		* @since 1.9.6
+		* @since 1.9.7
 		*
 		* @param string  $email_address Recipient's email address 
 		*/
@@ -30,7 +30,7 @@ class Sensei_WPML {
 		* It runs just after wp_mail() call
 		* No params
 		*
-		* @since 1.9.6
+		* @since 1.9.7
 		*/
 		do_action('wpml_restore_language_from_email');
 	}
