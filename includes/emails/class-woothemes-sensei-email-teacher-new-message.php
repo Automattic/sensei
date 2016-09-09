@@ -29,8 +29,6 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 	 */
 	function __construct() {
 		$this->template = 'teacher-new-message';
-		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have received a new private message', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-		$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has sent you a private message', 'woothemes-sensei' ), $this->template );
 	}
 
 	/**
@@ -50,6 +48,15 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 
 		$teacher_username = get_post_meta( $message_id, '_receiver', true );
 		$this->teacher = get_user_by( 'login', $teacher_username );
+
+		// Set recipient (teacher)
+		$this->recipient = stripslashes( $this->teacher->user_email );
+		
+		do_action('sensei_before_mail', $this->recipient);
+		
+		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have received a new private message', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
+		$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has sent you a private message', 'woothemes-sensei' ), $this->template );
+ 
 
 		$content_type = get_post_meta( $message_id, '_posttype', true );
 		$content_id = get_post_meta( $message_id, '_post', true );
@@ -75,11 +82,10 @@ class WooThemes_Sensei_Email_Teacher_New_Message {
 			'content_type'		=> $content_type,
 		), $this->template );
 
-		// Set recipient (teacher)
-		$this->recipient = stripslashes( $this->teacher->user_email );
-
 		// Send mail
 		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
+
+		do_action('sensei_after_sending_email');
 
 		wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) ) );
 		exit;

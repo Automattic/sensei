@@ -1,6 +1,5 @@
 *** Sensei Changelog ***
 
-2016.05.05 - version 1.9.6
 * Fix - Fixed an issue prevent Modern Tribe's The Event Calendar from functioning properly.
 * Fix - Ensure the question grade is shown inline with questions.
 * Fix - Prevent a PHP notice when calling question results.

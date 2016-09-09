@@ -57,8 +57,6 @@ class WooThemes_Sensei_Email_New_Message_Reply {
 	 */
 	function __construct() {
 		$this->template = 'new-message-reply';
-		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have a new message', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-		$this->heading = apply_filters( 'sensei_email_heading', __( 'You have received a reply to your private message', 'woothemes-sensei' ), $this->template );
 	}
 
 	/**
@@ -84,6 +82,19 @@ class WooThemes_Sensei_Email_New_Message_Reply {
 		$original_receiver = get_post_meta( $this->message->ID, '_receiver', true );
 		$this->original_receiver = get_user_by( 'login', $original_receiver );
 
+		// Set recipient
+		if( $this->commenter->user_login == $original_sender ) {
+			$this->recipient = stripslashes( $this->original_receiver->user_email );
+		} else {
+			$this->recipient = stripslashes( $this->original_sender->user_email );
+		}
+		
+		do_action('sensei_before_mail', $this->recipient);
+		
+		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have a new message', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
+		$this->heading = apply_filters( 'sensei_email_heading', __( 'You have received a reply to your private message', 'woothemes-sensei' ), $this->template );
+ 
+
 		$content_type = get_post_meta( $this->message->ID, '_posttype', true );
 		$content_id = get_post_meta( $this->message->ID, '_post', true );
 		$content_title = get_the_title( $content_id );
@@ -108,15 +119,11 @@ class WooThemes_Sensei_Email_New_Message_Reply {
 			'content_type'		=> $content_type,
 		), $this->template );
 
-		// Set recipient
-		if( $this->commenter->user_login == $original_sender ) {
-			$this->recipient = stripslashes( $this->original_receiver->user_email );
-		} else {
-			$this->recipient = stripslashes( $this->original_sender->user_email );
-		}
 
 		// Send mail
 		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
+
+		do_action('sensei_after_sending_email');
 	}
 }
 
