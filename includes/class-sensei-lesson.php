@@ -150,9 +150,25 @@ class Sensei_Lesson {
 	public function lesson_info_meta_box_content () {
 		global $post;
 
-		$lesson_length = get_post_meta( $post->ID, '_lesson_length', true );
-		$lesson_complexity = get_post_meta( $post->ID, '_lesson_complexity', true );
-		$complexity_array = $this->lesson_complexities();
+		$allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array()
+			),
+			'video'  => array(
+				'width'  => array(),
+				'height' => array(),
+				'src'    => array()
+			),
+		);
+
+		$lesson_length      = get_post_meta( $post->ID, '_lesson_length', true );
+		$lesson_complexity  = get_post_meta( $post->ID, '_lesson_complexity', true );
+		$complexity_array   = $this->lesson_complexities();
 		$lesson_video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
 
 		$html = '';
@@ -163,13 +179,13 @@ class Sensei_Lesson {
 		$html .= '<p><label for="lesson_complexity">' . __( 'Lesson Complexity', 'woothemes-sensei' ) . ': </label>';
 		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="chosen_select lesson-complexity-select">';
 			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-			foreach ($complexity_array as $key => $value){
+			foreach ( $complexity_array as $key => $value ){
 				$html .= '<option value="' . esc_attr( $key ) . '"' . selected( $key, $lesson_complexity, false ) . '>' . esc_html( $value ) . '</option>' . "\n";
 			} // End For Loop
 		$html .= '</select></p>' . "\n";
 
 		$html .= '<p><label for="lesson_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
-		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . $lesson_video_embed . '</textarea></p>' . "\n";
+		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . wp_kses( $lesson_video_embed, $allowed_html ) . '</textarea></p>' . "\n";
 		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
@@ -497,7 +513,23 @@ class Sensei_Lesson {
 
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'lesson_video_embed' == $post_key) {
-			$new_meta_value = esc_html( $_POST[$post_key] );
+			$allowed_html = array(
+				'embed'  => array(),
+				'iframe' => array(
+					'width'           => array(),
+					'height'          => array(),
+					'src'             => array(),
+					'frameborder'     => array(),
+					'allowfullscreen' => array()
+				),
+				'video'  => array(
+					'width'  => array(),
+					'height' => array(),
+					'src'    => array()
+				),
+			);
+
+			$new_meta_value = wp_kses( $_POST[ $post_key ], $allowed_html );
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
@@ -1180,7 +1212,7 @@ class Sensei_Lesson {
 			}
 
 		$html .= '</div>';
-		
+
 		/**
 		 * Filter the quiz panel add html
 		 *
@@ -1190,7 +1222,7 @@ class Sensei_Lesson {
 		 * @param string	$context
 		 */
 		$html = apply_filters( 'sensei_quiz_panel_add', $html, $context );
-		
+
 		return $html;
 	}
 

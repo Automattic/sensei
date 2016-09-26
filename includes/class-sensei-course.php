@@ -359,12 +359,28 @@ class Sensei_Course {
 	public function course_video_meta_box_content () {
 		global $post;
 
+		$allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array()
+			),
+			'video'  => array(
+				'width'  => array(),
+				'height' => array(),
+				'src'    => array()
+			),
+		);
+
 		$course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
 
 		$html = '';
 
 		$html .= '<label class="screen-reader-text" for="course_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . '</label>';
-		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . $course_video_embed . '</textarea>';
+		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . wp_kses( $course_video_embed, $allowed_html ) . '</textarea>';
 		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
@@ -431,7 +447,23 @@ class Sensei_Course {
 		$meta_key = '_' . $post_key;
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'course_video_embed' == $post_key) {
-			$new_meta_value = esc_html( $_POST[$post_key] );
+			$allowed_html = array(
+				'embed'  => array(),
+				'iframe' => array(
+					'width'           => array(),
+					'height'          => array(),
+					'src'             => array(),
+					'frameborder'     => array(),
+					'allowfullscreen' => array()
+				),
+				'video'  => array(
+					'width'  => array(),
+					'height' => array(),
+					'src'    => array()
+				),
+			);
+
+			$new_meta_value = wp_kses( $_POST[$post_key], $allowed_html );
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
@@ -503,7 +535,7 @@ class Sensei_Course {
 
     public function course_manage_meta_box_content () {
         global $post;
-        
+
         $manage_url = esc_url( add_query_arg( array( 'page' => 'sensei_learners', 'course_id' => $post->ID, 'view' => 'learners' ), admin_url( 'admin.php') ) );
 
         $grading_url = esc_url( add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => $post->ID, 'view' => 'learners' ), admin_url( 'admin.php') ) );
@@ -2913,6 +2945,7 @@ class Sensei_Course {
 	    if ( ! is_singular( 'course' )  ) {
 		    return;
 	    }
+
         // Get the meta info
         $course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
 
@@ -2925,7 +2958,7 @@ class Sensei_Course {
         if ( '' != $course_video_embed ) { ?>
 
             <div class="course-video">
-                <?php echo do_shortcode( html_entity_decode( $course_video_embed ) ); ?>
+                <?php echo wp_kses( do_shortcode( $course_video_embed ), $allowed_html ); ?>
             </div>
 
         <?php } // End If Statement
