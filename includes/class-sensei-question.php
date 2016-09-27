@@ -370,7 +370,7 @@ class Sensei_Question {
 
 	/**
 	 * Given a question ID, return the grade that can be achieved.
-	 * 
+	 *
 	 * @since 1.9
 	 *
 	 * @param int $question_id
@@ -411,8 +411,13 @@ class Sensei_Question {
      * @param $question_type
      */
     public static function load_question_template( $question_type ){
+		$template_loaded = Sensei_Templates::get_template( 'single-quiz/question_type-' . $question_type . '.php' );
 
-        Sensei_Templates::get_template  ( 'single-quiz/question_type-' . $question_type . '.php' );
+		if ( ! $template_loaded ) {
+			Sensei_Templates::get_template( 'single-quiz/question-type-' . $question_type . '.php' );
+		} else {
+			_deprecated_file( 'question_type-' . $question_type . '.php', '1.9.8', 'question-type-' . $question_type . '.php' );
+		}
     }
 
     /**
@@ -631,7 +636,7 @@ class Sensei_Question {
          * Allow dynamic overriding of whether to show question answers or not
          *
          * @since 1.9.7
-         * 
+         *
          * @param boolean $show_answers
          * @param integer $question_id
          * @param integer $quiz_id
