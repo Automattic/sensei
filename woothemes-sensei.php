@@ -28,6 +28,7 @@ Domain path: /lang/
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+<<<<<<< HEAD
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once( __DIR__ . '/includes/class-sensei-autoloader.php' );
@@ -69,11 +70,9 @@ add_action( 'init', array( 'Sensei_WC', 'load_woocommerce_integration_hooks' ) )
 
 /**
  * Load all Template hooks
-*/
+ */
 if ( ! is_admin() ) {
-
 	require_once( __DIR__ . '/includes/hooks/template.php' );
-
 }
 
 /**
