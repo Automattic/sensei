@@ -1854,7 +1854,7 @@ class Sensei_Updates
      */
     public  function enhance_teacher_role ( ) {
 
-        require_once( __DIR__ . 'class-sensei-teacher.php' );
+        require_once( __DIR__ . '/class-sensei-teacher.php' );
         $teacher = new Sensei_Teacher();
         $teacher->create_role();
         return true;

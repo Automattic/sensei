@@ -95,7 +95,7 @@ class Sensei_Theme_Integration_Loader {
                 return;
             }
             include_once( $supported_theme_class_file );
-            include_once( __DIR__ . 'twentytwelve.php' );
+            include_once( __DIR__ . '/twentytwelve.php' );
             //initialize the class or exit if there is no class for this theme
             if( ! class_exists( $supported_theme_class_name ) ){
                 return;

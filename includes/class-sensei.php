@@ -753,7 +753,7 @@ class Sensei_Main {
      */
     public function load_class ( $class_name = '' ) {
         if ( '' != $class_name && '' != $this->token ) {
-            require_once( __DIR__ . 'class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php' );
+            require_once( __DIR__ . '/class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php' );
         } // End If Statement
     } // End load_class()
 
@@ -917,7 +917,7 @@ class Sensei_Main {
             &&  'Sensei_Modules' != get_class( $sensei_modules ) ) {
 
             //Load the modules class
-            require_once( __DIR__ . 'class-sensei-modules.php');
+            require_once( __DIR__ . '/class-sensei-modules.php');
             Sensei()->modules = new Sensei_Core_Modules( $this->file );
 
         }else{
