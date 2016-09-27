@@ -78,7 +78,13 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	  */
 	 function quiz_question_type( $question_type = 'multiple-choice' ) {
 
-         Sensei_Templates::get_template( 'single-quiz/question_type-' . $question_type . '.php' );
+		$template_loaded = Sensei_Templates::get_template( 'single-quiz/question_type-' . $question_type . '.php' );
+
+		if ( ! $template_loaded ) {
+			Sensei_Templates::get_template( 'single-quiz/question-type-' . $question_type . '.php' );
+		} else {
+			_deprecated_file( 'question_type-' . $question_type . '.php', '1.9.8', 'question-type-' . $question_type . '.php' );
+		}
 
 	 } // End lesson_single_meta()
 
