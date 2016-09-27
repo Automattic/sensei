@@ -753,7 +753,7 @@ class Sensei_Main {
      */
     public function load_class ( $class_name = '' ) {
         if ( '' != $class_name && '' != $this->token ) {
-            require_once( 'class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php' );
+            require_once( __DIR__ . 'class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php' );
         } // End If Statement
     } // End load_class()
 
@@ -889,7 +889,7 @@ class Sensei_Main {
             add_filter( 'sensei_answer_text', 'latex_markup' );
         }
     }
-    
+
 	/**
 	 * Checks that the WP QuickLaTeX plugin has been activated to support LaTeX within question titles and answers
 	 *
@@ -917,7 +917,7 @@ class Sensei_Main {
             &&  'Sensei_Modules' != get_class( $sensei_modules ) ) {
 
             //Load the modules class
-            require_once( 'class-sensei-modules.php');
+            require_once( __DIR__ . 'class-sensei-modules.php');
             Sensei()->modules = new Sensei_Core_Modules( $this->file );
 
         }else{
@@ -1168,7 +1168,7 @@ class Sensei_Main {
                 $custom_actions['support'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_support_url(), esc_html_x( 'Support', 'noun', 'woothemes-sensei' ) );
             }
 
-            // add the links to the front of the actions list   
+            // add the links to the front of the actions list
             return array_merge( $custom_actions, $actions );
         }
 
@@ -1236,7 +1236,7 @@ class Sensei_Main {
 
         /**
          * Returns the admin configuration url for the admin general configuration page
-         * 
+         *
          * @return string admin configuration url for the admin general configuration page
          */
         public function get_general_configuration_url() {

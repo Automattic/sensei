@@ -3,6 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying True/False ( Boolean ) Question type.
  *
+ * Override this template by copying it to yourtheme/sensei/single-quiz/question-type-boolean.php
+ *
  * @author 		Automattic
  * @package 	Sensei
  * @category    Templates

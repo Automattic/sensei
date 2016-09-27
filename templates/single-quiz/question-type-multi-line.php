@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying Multi Line Questions.
  *
- * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-multi-line.php
+ * Override this template by copying it to yourtheme/sensei/single-quiz/question-type-multi-line.php
  *
  * @author 		Automattic
  * @package 	Sensei
@@ -29,5 +29,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                                                 'sensei_question[' . $question_data[ 'ID' ] . ']' );
 
 ?>
-
-
