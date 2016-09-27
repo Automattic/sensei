@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
@@ -1059,7 +1059,7 @@ class Sensei_Utils {
 				$course_passmark = ( $total_passmark / $lesson_count );
 			}
 		}
-		
+
 		/**
 		 * Filter the course pass mark
 		 *
@@ -1116,7 +1116,7 @@ class Sensei_Utils {
 			}
 
 		}
-		
+
 		/**
 		 * Filter the user total grade for course
 		 *
