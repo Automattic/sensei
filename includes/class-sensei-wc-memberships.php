@@ -15,6 +15,7 @@ class Sensei_WC_Memberships {
 		}
 
 		add_action( 'sensei_display_start_course_form', array( __CLASS__, 'display_start_course_form_to_members_only' ) );
+		add_action( 'wc_memberships_user_membership_status_changed', array( __CLASS__, 'start_courses_associated_with_membership' ) );
 	}
 
 	/**
@@ -54,4 +55,65 @@ class Sensei_WC_Memberships {
 		$is_wc_memberships_present_and_activated = in_array( self::WC_MEMBERSHIPS_PLUGIN_PATH, $active_plugins, true ) || array_key_exists( self::WC_MEMBERSHIPS_PLUGIN_PATH, $active_plugins );
 		return class_exists( 'WC_Memberships' ) || $is_wc_memberships_present_and_activated;
     }
+
+	/**
+	 * Start courses associated with an active membership if not already started
+	 * so they show up on "my courses".
+	 *
+	 * Hooked into wc_memberships_user_membership_status_changed
+	 *
+	 * @param WC_Memberships_User_Membership $user_membership the user membership
+	 */
+	public static function start_courses_associated_with_membership( $user_membership ) {
+
+		if ( false === self::is_wc_memberships_active() ) {
+			return;
+		}
+
+		if ( ! $user_membership ) {
+			return;
+		}
+
+		$user_id = $user_membership->get_user_id();
+		$membership_plan = $user_membership->get_plan();
+
+		if ( false === wc_memberships_is_user_active_member($user_id, $membership_plan->get_id() ) ) {
+			// User is Inactive so just Bail for now
+			return;
+		}
+
+		self::each_course( $membership_plan, function ( $course_id ) use ( $user_id ) {
+			if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+				Sensei_Utils::user_start_course( $user_id, $course_id );
+			}
+		} );
+	}
+
+	/**
+	 * Evaluate $callable for all the plan's posts that are of post_type course
+	 *
+	 * @param WC_Memberships_Membership_Plan $membership_plan
+	 * @param $callable
+	 */
+	private static function each_course($membership_plan, $callable ) {
+		if ( ! is_callable( $callable ) ) {
+			// Bail if no callable provided
+			return;
+		}
+
+		$restricted_content = $membership_plan->get_restricted_content();
+
+		foreach ( $restricted_content->get_posts() as $maybe_course ) {
+			if ( empty( $maybe_course ) || 'course' !== $maybe_course->post_type ) {
+				continue;
+			}
+
+			$course_id = $maybe_course->ID;
+			call_user_func( $callable, $course_id );
+		}
+	}
+
+	public static function is_my_courses_page( $post_id ) {
+		return is_page() && intval( Sensei()->settings->get( 'my_course_page' ) ) === intval( $post_id );
+	}
 }
