@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Sensei_Lesson {
 	public $token;
 	public $meta_fields;
+	public $allowed_html;
 
 	/**
 	 * Constructor.
@@ -27,6 +28,22 @@ class Sensei_Lesson {
 		$this->meta_fields = array( 'lesson_prerequisite', 'lesson_course', 'lesson_preview', 'lesson_length', 'lesson_complexity', 'lesson_video_embed' );
 
         $this->question_order = '';
+
+		$this->allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => array(
+				'width'  => array(),
+				'height' => array(),
+				'src'    => array(),
+			),
+		);
 
 		// Admin actions
 		if ( is_admin() ) {
@@ -150,22 +167,6 @@ class Sensei_Lesson {
 	public function lesson_info_meta_box_content () {
 		global $post;
 
-		$allowed_html = array(
-			'embed'  => array(),
-			'iframe' => array(
-				'width'           => array(),
-				'height'          => array(),
-				'src'             => array(),
-				'frameborder'     => array(),
-				'allowfullscreen' => array()
-			),
-			'video'  => array(
-				'width'  => array(),
-				'height' => array(),
-				'src'    => array()
-			),
-		);
-
 		$lesson_length      = get_post_meta( $post->ID, '_lesson_length', true );
 		$lesson_complexity  = get_post_meta( $post->ID, '_lesson_complexity', true );
 		$complexity_array   = $this->lesson_complexities();
@@ -185,7 +186,7 @@ class Sensei_Lesson {
 		$html .= '</select></p>' . "\n";
 
 		$html .= '<p><label for="lesson_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
-		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . wp_kses( $lesson_video_embed, $allowed_html ) . '</textarea></p>' . "\n";
+		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . wp_kses( $lesson_video_embed, $this->allowed_html ) . '</textarea></p>' . "\n";
 		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
@@ -513,23 +514,7 @@ class Sensei_Lesson {
 
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'lesson_video_embed' == $post_key) {
-			$allowed_html = array(
-				'embed'  => array(),
-				'iframe' => array(
-					'width'           => array(),
-					'height'          => array(),
-					'src'             => array(),
-					'frameborder'     => array(),
-					'allowfullscreen' => array()
-				),
-				'video'  => array(
-					'width'  => array(),
-					'height' => array(),
-					'src'    => array()
-				),
-			);
-
-			$new_meta_value = wp_kses( $_POST[ $post_key ], $allowed_html );
+			$new_meta_value = wp_kses( $_POST[ $post_key ], $this->allowed_html );
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
