@@ -3079,8 +3079,8 @@ class Sensei_Course {
 	 */
 	function allow_course_archive_on_front_page( $query ) {
 		// Bail if it's clear we're not looking at a static front page or if the $running flag is
-		// set @see https://github.com/Automattic/sensei/issues/1438
-		if ( ! $query->is_main_query() || ! is_page() || is_admin() ) {
+		// set @see https://github.com/Automattic/sensei/issues/1438 and https://github.com/Automattic/sensei/issues/1491
+		if ( ! $query->is_main_query() || ! ( is_page() && is_front_page() ) || is_admin() ) {
 			return;
 		}
 
