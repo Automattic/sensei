@@ -31,7 +31,7 @@ class Sensei_Course {
 	/**
 	 * @var array The HTML allowed for message boxes.
 	 */
-	public  $allowed_html
+	public static $allowed_html;
 
 	/**
 	 * Constructor.
@@ -55,7 +55,7 @@ class Sensei_Course {
 			$this->my_courses_page = false;
 		} // End If Statement
 
-		$this->allowed_html = array(
+		self::$allowed_html = array(
 			'embed'  => array(),
 			'iframe' => array(
 				'width'           => array(),
@@ -385,7 +385,7 @@ class Sensei_Course {
 		$html = '';
 
 		$html .= '<label class="screen-reader-text" for="course_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . '</label>';
-		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . wp_kses( $course_video_embed, $this->allowed_html ) . '</textarea>';
+		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . wp_kses( $course_video_embed, self::$allowed_html ) . '</textarea>';
 		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
@@ -452,7 +452,7 @@ class Sensei_Course {
 		$meta_key = '_' . $post_key;
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'course_video_embed' == $post_key) {
-			$new_meta_value = wp_kses( $_POST[$post_key], $this->allowed_html );
+			$new_meta_value = wp_kses( $_POST[$post_key], self::$allowed_html );
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
@@ -2947,7 +2947,7 @@ class Sensei_Course {
         if ( '' != $course_video_embed ) { ?>
 
             <div class="course-video">
-                <?php echo wp_kses( do_shortcode( $course_video_embed ), $this->allowed_html ); ?>
+                <?php echo wp_kses( do_shortcode( $course_video_embed ), self::$allowed_html ); ?>
             </div>
 
         <?php } // End If Statement
