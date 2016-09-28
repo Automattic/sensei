@@ -814,8 +814,12 @@ class Sensei_Admin {
 					$data = '';
 
 					if( $post_id ) {
-						$data = get_post_meta( $post_id, '_' . $field['id'], true );
-						if( ! $data && isset( $field['default'] ) ) {
+						if ( 'plain-text' !== $field['type'] ) {
+							$data = get_post_meta( $post_id, '_' . $field['id'], true );
+							if( ! $data && isset( $field['default'] ) ) {
+								$data = $field['default'];
+							}
+						} else {
 							$data = $field['default'];
 						}
 					} else {
@@ -828,9 +832,8 @@ class Sensei_Admin {
 						}
 					}
 
-					$disabled = '';
-					if( isset( $field['disabled'] ) && $field['disabled'] ) {
-						$disabled = disabled( $field['disabled'], true, false );
+					if ( ! isset( $field['disabled'] ) ) {
+						$field['disabled'] = false;
 					}
 
 					if( 'hidden' != $field['type'] ) {
@@ -857,13 +860,21 @@ class Sensei_Admin {
 							}
 
 							switch( $field['type'] ) {
+								case 'plain-text':
+									$html .= '<strong>' . esc_html( $data ) . '</strong>';
+									break;
 								case 'text':
 								case 'password':
-									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $data . '" ' . $disabled . ' />' . "\n";
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'type="' . esc_attr( $field['type'] ) . '" ';
+									$html .= 'name="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'placeholder="' . esc_attr( $field['placeholder'] ) . '" ';
+									$html .= 'value="' . esc_attr( $data ) . '" ';
+									$html .= disabled( $field['disabled'], true, false );
+									$html .= ' />' . "\n";
 								break;
 
 								case 'number':
-
 									$min = '';
 									if( isset( $field['min'] ) ) {
 										$min = 'min="' . esc_attr( $field['min'] ) . '"';
@@ -874,11 +885,24 @@ class Sensei_Admin {
 										$max = 'max="' . esc_attr( $field['max'] ) . '"';
 									}
 
-									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $data . '" ' . $min . '  ' . $max . ' class="small-text" ' . $disabled . ' />' . "\n";
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'type="' . esc_attr( $field['type'] ) . '" ';
+									$html .= 'name="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'placeholder="' . esc_attr( $field['placeholder'] ) . '" ';
+									$html .= 'value="' . esc_attr( $data ) . '" ';
+									$html .= $min . '  ' . $max . ' '; // $min and $max are escaped above, for better readibility
+									$html .= 'class="small-text" ';
+									$html .= disabled( $field['disabled'], true, false );
+									$html .= ' />' . "\n";
 								break;
 
 								case 'textarea':
-									$html .= '<textarea id="' . esc_attr( $field['id'] ) . '" rows="5" cols="50" name="' . esc_attr( $field['id'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" ' . $disabled . '>' . $data . '</textarea><br/>'. "\n";
+									$html .= '<textarea id="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'rows="5" cols="50" ';
+									$html .= 'name="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'placeholder="' . esc_attr( $field['placeholder'] ) . '" ';
+									$html .= disabled( $field['disabled'], true, false );
+									$html .= '>' . strip_tags( $data ) . '</textarea><br/>'. "\n";
 								break;
 
 								case 'checkbox':
@@ -897,8 +921,13 @@ class Sensei_Admin {
                                         $checked_value = 1;
                                         $data = intval( $data );
                                     }
-									$checked = checked( $checked_value, $data, false );
-									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" ' . $checked . ' ' . $disabled . '/>' . "\n";
+
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'type="' . esc_attr( $field['type'] ) . '" ';
+									$html .= 'name="' . esc_attr( $field['id'] ) . '" ';
+									$html .= checked( $checked_value, $data, false );
+									$html .= disabled( $field['disabled'], true, false );
+									$html .= " /> \n";
 								break;
 
 								case 'checkbox_multi':
@@ -907,7 +936,16 @@ class Sensei_Admin {
 										if( in_array( $k, $data ) ) {
 											$checked = true;
 										}
-										$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $field['id'] ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" ' . $disabled . ' /> ' . $v . '</label> ' . "\n";
+
+										$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '">';
+											$html .= '<input type="checkbox" ';
+											$html .= checked( $checked, true, false ) . ' ';
+											$html .= 'name="' . esc_attr( $field['id'] ) . '[]" ';
+											$html .= 'value="' . esc_attr( $k ) . '" ';
+											$html .= 'id="' . esc_attr( $field['id'] . '_' . $k ) . '" ';
+											$html .= disabled( $field['disabled'], true, false );
+											$html .= ' /> ' . esc_html( $v );
+										$html .= "</label> \n";
 									}
 								break;
 
@@ -917,36 +955,63 @@ class Sensei_Admin {
 										if( $k == $data ) {
 											$checked = true;
 										}
-										$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $field['id'] ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" ' . $disabled . ' /> ' . $v . '</label> ' . "\n";
+
+										$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '">';
+											$html .= '<input type="radio" ';
+											$html .= checked( $checked, true, false ) . ' ';
+											$html .= 'name="' . esc_attr( $field['id'] ) . '" ';
+											$html .= 'value="' . esc_attr( $k ) . '" ';
+											$html .= 'id="' . esc_attr( $field['id'] . '_' . $k ) . '" ';
+											$html .= disabled( $field['disabled'], true, false );
+											$html .= ' /> ' . esc_html( $v );
+										$html .= "</label> \n";
 									}
 								break;
 
 								case 'select':
-									$html .= '<select name="' . esc_attr( $field['id'] ) . '" id="' . esc_attr( $field['id'] ) . '" ' . $disabled . '>' . "\n";
+									$html .= '<select name="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'id="' . esc_attr( $field['id'] ) . '" ';
+									$html .= disabled( $field['disabled'], true, false );
+									$html .= ">\n";
+
 									foreach( $field['options'] as $k => $v ) {
 										$selected = false;
 										if( $k == $data ) {
 											$selected = true;
 										}
-										$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>' . "\n";
+
+										$html .= '<option ' . selected( $selected, true, false ) . ' ';
+										$html .= 'value="' . esc_attr( $k ) . '">' . esc_html( $v ) . "</option>\n";
 									}
-									$html .= '</select><br/>' . "\n";
+
+									$html .= "</select><br/>\n";
 								break;
 
 								case 'select_multi':
-									$html .= '<select name="' . esc_attr( $field['id'] ) . '[]" id="' . esc_attr( $field['id'] ) . '" multiple="multiple" ' . $disabled . '>' . "\n";
+									$html .= '<select name="' . esc_attr( $field['id'] ) . '[]" ';
+									$html .= 'id="' . esc_attr( $field['id'] ) . '" multiple="multiple" ';
+									$html .= disabled( $field['disabled'], true, false );
+									$html .= ">\n";
+
 									foreach( $field['options'] as $k => $v ) {
 										$selected = false;
 										if( in_array( $k, $data ) ) {
 											$selected = true;
 										}
-										$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '" />' . $v . '</option>' . "\n";
+										$html .= '<option ' . selected( $selected, true, false ) . ' ';
+										$html .= 'value="' . esc_attr( $k ) . '" />' . esc_html( $v ) . "</option>\n";
 									}
-									$html .= '</select> . "\n"';
+
+									$html .= "</select>\n";
 								break;
 
 								case 'hidden':
-									$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $field['id'] ) . '" value="' . $data . '" ' . $disabled . '/>' . "\n";
+									$html .= '<input id="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'type="' . esc_attr( $field['type'] ) . '" ';
+									$html .= 'name="' . esc_attr( $field['id'] ) . '" ';
+									$html .= 'value="' . esc_attr( $data ) . '" ';
+									$html .= disabled( $field['disabled'], true, false );
+									$html .= "/>\n";
 								break;
 
 							}
@@ -960,14 +1025,13 @@ class Sensei_Admin {
 						}
 
 					if( 'hidden' != $field['type'] ) {
-						$html .= '</p>' . "\n";
+						$html .= "</p>\n";
 					}
 
 				}
 
-			$html .= '</div>' . "\n";
-
-		$html .= '</div>' . "\n";
+			$html .= "</div>\n";
+		$html .= "</div>\n";
 
 		return $html;
 	}
@@ -982,7 +1046,7 @@ class Sensei_Admin {
 		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?><div id="course-order" class="wrap course-order">
-		<h2><?php _e( 'Order Courses', 'woothemes-sensei' ); ?></h2><?php
+		<h2><?php esc_html_e( 'Order Courses', 'woothemes-sensei' ); ?></h2><?php
 
 		$html = '';
 
@@ -991,7 +1055,7 @@ class Sensei_Admin {
 
 			if( $ordered ) {
 				$html .= '<div class="updated fade">' . "\n";
-				$html .= '<p>' . __( 'The course order has been saved.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$html .= '<p>' . esc_html__( 'The course order has been saved.', 'woothemes-sensei' ) . '</p>' . "\n";
 				$html .= '</div>' . "\n";
 			}
 		}
@@ -1032,7 +1096,7 @@ class Sensei_Admin {
 			$html .= '</ul>' . "\n";
 
 			$html .= '<input type="hidden" name="course-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
-			$html .= '<input type="submit" class="button-primary" value="' . __( 'Save course order', 'woothemes-sensei' ) . '" />' . "\n";
+			$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save course order', 'woothemes-sensei' ) . '" />' . "\n";
 		}
 
 		echo $html;
@@ -1055,7 +1119,7 @@ class Sensei_Admin {
 			if( $course_id ) {
 
 				$update_args = array(
-					'ID' => $course_id,
+					'ID'         => absint( $course_id ),
 					'menu_order' => $i,
 				);
 
@@ -1088,17 +1152,17 @@ class Sensei_Admin {
 
 			if( $ordered ) {
 				$html .= '<div class="updated fade">' . "\n";
-				$html .= '<p>' . __( 'The lesson order has been saved.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$html .= '<p>' . esc_html__( 'The lesson order has been saved.', 'woothemes-sensei' ) . '</p>' . "\n";
 				$html .= '</div>' . "\n";
 			}
 		}
 
 		$args = array(
-			'post_type' => 'course',
-			'post_status' => array('publish', 'draft', 'future', 'private'),
+			'post_type'      => 'course',
+			'post_status'    => array('publish', 'draft', 'future', 'private'),
 			'posts_per_page' => -1,
-			'orderby' => 'name',
-			'order' => 'ASC',
+			'orderby'        => 'name',
+			'order'          => 'ASC',
 		);
 		$courses = get_posts( $args );
 
@@ -1106,7 +1170,7 @@ class Sensei_Admin {
 		$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
 		$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
 		$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
-		$html .= '<option value="">' . __( 'Select a course', 'woothemes-sensei' ) . '</option>' . "\n";
+		$html .= '<option value="">' . esc_html__( 'Select a course', 'woothemes-sensei' ) . '</option>' . "\n";
 
 		foreach( $courses as $course ) {
 			$course_id = '';
@@ -1117,7 +1181,7 @@ class Sensei_Admin {
 		}
 
 		$html .= '</select>' . "\n";
-		$html .= '<input type="submit" class="button-primary lesson-order-select-course-submit" value="' . __( 'Select', 'woothemes-sensei' ) . '" />' . "\n";
+		$html .= '<input type="submit" class="button-primary lesson-order-select-course-submit" value="' . esc_attr__( 'Select', 'woothemes-sensei' ) . '" />' . "\n";
 		$html .= '</form>' . "\n";
 
 		$html .= '<script type="text/javascript">' . "\n";
@@ -1139,34 +1203,34 @@ class Sensei_Admin {
                 foreach( $modules as $module ) {
 
                     $args = array(
-                        'post_type' => 'lesson',
-                        'post_status' => 'publish',
+                        'post_type'      => 'lesson',
+                        'post_status'    => 'publish',
                         'posts_per_page' => -1,
-                        'meta_query' => array(
+                        'meta_query'     => array(
                             array(
-                                'key' => '_lesson_course',
-                                'value' => intval( $course_id ),
+                                'key'     => '_lesson_course',
+                                'value'   => intval( $course_id ),
                                 'compare' => '='
                             )
                         ),
                         'tax_query' => array(
                             array(
                                 'taxonomy' => Sensei()->modules->taxonomy,
-                                'field' => 'id',
-                                'terms' => intval( $module->term_id )
+                                'field'    => 'id',
+                                'terms'    => intval( $module->term_id )
                             )
                         ),
-                        'meta_key' => '_order_module_' . $module->term_id,
-                        'orderby' => 'meta_value_num date',
-                        'order' => 'ASC',
+                        'meta_key'         => '_order_module_' . $module->term_id,
+                        'orderby'          => 'meta_value_num date',
+                        'order'            => 'ASC',
                         'suppress_filters' => 0
                     );
 
                     $lessons = get_posts( $args );
 
                     if( count( $lessons ) > 0 ) {
-                        $html .= '<h3>' . $module->name . '</h3>' . "\n";
-                        $html .= '<ul class="sortable-lesson-list" data-module_id="' . $module->term_id . '">' . "\n";
+                        $html .= '<h3>' . esc_html( $module->name ) . '</h3>' . "\n";
+                        $html .= '<ul class="sortable-lesson-list" data-module_id="' . esc_attr( $module->term_id ) . '">' . "\n";
 
                         $count = 0;
                         foreach( $lessons as $lesson ) {
@@ -1178,14 +1242,14 @@ class Sensei_Admin {
                                 $class .= ' alternate';
                             }
 
-                            $html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
+                            $html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . esc_html( $lesson->post_title ) . '</span></li>' . "\n";
 
                             $displayed_lessons[] = $lesson->ID;
                         }
 
                         $html .= '</ul>' . "\n";
 
-                        $html .= '<input type="hidden" name="lesson-order-module-' . $module->term_id . '" value="" />' . "\n";
+                        $html .= '<input type="hidden" name="lesson-order-module-' . esc_attr( $module->term_id ) . '" value="" />' . "\n";
                     }
                 }
 
@@ -1203,7 +1267,7 @@ class Sensei_Admin {
                     }
 
 					if( 0 < count( $displayed_lessons ) ) {
-						$html .= '<h3>' . __( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
+						$html .= '<h3>' . esc_html__( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
 					}
 
 					$html .= '<ul class="sortable-lesson-list" data-module_id="0">' . "\n";
@@ -1227,21 +1291,21 @@ class Sensei_Admin {
 							$class .= ' alternate';
 
 						}
-						$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . $lesson->post_title . '</span></li>' . "\n";
+						$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . esc_html( $lesson->post_title ) . '</span></li>' . "\n";
 
 						$displayed_lessons[] = $lesson->ID;
 					}
 					$html .= '</ul>' . "\n";
 				} else {
 					if( 0 == count( $displayed_lessons ) ) {
-						$html .= '<p><em>' . __( 'There are no lessons in this course.', 'woothemes-sensei' ) . '</em></p>';
+						$html .= '<p><em>' . esc_html__( 'There are no lessons in this course.', 'woothemes-sensei' ) . '</em></p>';
 					}
 				}
 
 				if( 0 < count( $displayed_lessons ) ) {
 					$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
-					$html .= '<input type="hidden" name="course_id" value="' . $course_id . '" />' . "\n";
-					$html .= '<input type="submit" class="button-primary" value="' . __( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
+					$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
+					$html .= '<input type="submit" class="button-primary" value="' . esc_html__( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
 				}
 			}
 		}
@@ -1316,12 +1380,12 @@ class Sensei_Admin {
 		global $nav_menu_selected_id;
 
 		$menu_items = array(
-			'#senseicourses' => __( 'Courses', 'woothemes-sensei' ),
-			'#senseilessons' => __( 'Lessons', 'woothemes-sensei' ),
-			'#senseimycourses' => __( 'My Courses', 'woothemes-sensei' ),
+			'#senseicourses'        => __( 'Courses', 'woothemes-sensei' ),
+			'#senseilessons'        => __( 'Lessons', 'woothemes-sensei' ),
+			'#senseimycourses'      => __( 'My Courses', 'woothemes-sensei' ),
 			'#senseilearnerprofile' => __( 'My Profile', 'woothemes-sensei' ),
-			'#senseimymessages' => __( 'My Messages', 'woothemes-sensei' ),
-			'#senseiloginlogout' => __( 'Login', 'woothemes-sensei' ) . '|' . __( 'Logout', 'woothemes-sensei' )
+			'#senseimymessages'     => __( 'My Messages', 'woothemes-sensei' ),
+			'#senseiloginlogout'    => __( 'Login', 'woothemes-sensei' ) . '|' . __( 'Logout', 'woothemes-sensei' )
 		);
 
 		$menu_items_obj = array();
@@ -1348,7 +1412,7 @@ class Sensei_Admin {
 			<div id="tabs-panel-sensei-links-all" class="tabs-panel tabs-panel-view-all tabs-panel-active">
 
 				<ul id="sensei-linkschecklist" class="list:sensei-links categorychecklist form-no-clear">
-					<?php echo walk_nav_menu_tree( array_map( 'wp_setup_nav_menu_item', $menu_items_obj ), 0, (object)array( 'walker' => $walker ) ); ?>
+					<?php echo walk_nav_menu_tree( array_map( 'wp_setup_nav_menu_item', $menu_items_obj ), 0, (object) array( 'walker' => $walker ) ); ?>
 				</ul>
 
 			</div>
@@ -1408,21 +1472,23 @@ class Sensei_Admin {
 
             <div id="message" class="error sensei-message sensei-connect">
                     <p>
-                        <?php
-                        echo sprintf( __('%s Your theme does not declare Sensei support %s, if you encounter layout issues
-                                            please read our integration guide or choose a %s Sensei theme %s', 'woothemes-sensei' ),
-	                                        '<strong>',
-	                                        '</strong>',
-                                            '<a href="http://www.woothemes.com/product-category/themes/sensei-themes/">',
-	                                        '</a>'
-                                );
-                        ?>
+                        <strong>
+
+                            <?php esc_html_e( 'Your theme does not declare Sensei support', 'woothemes-sensei' ); ?>
+
+                        </strong> &#8211;
+
+                        <?php esc_html_e( 'if you encounter layout issues please read our integration guide or choose a ', 'woothemes-sensei' ); ?>
+
+                        <a href="http://www.woothemes.com/product-category/themes/sensei-themes/"> <?php esc_html_e( 'Sensei theme', 'woothemes-sensei' ) ?> </a>
+
                         :)
+
                     </p>
                     <p class="submit">
                         <a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary">
 
-                            <?php _e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?>
+                            <?php esc_html_e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php esc_html_e( 'Hide this notice', 'woothemes-sensei' ); ?>
 
                         </a>
                     </p>
