@@ -1,5 +1,18 @@
 *** Sensei Changelog ***
 
+2016.09.29 - version 1.9.7
+* Improve Module taxonomy labels
+* Fix - Lesson doesn't appear on Course archive until ordering is resaved
+* Fix - Errors when duplicating course with lessons
+* Fix - Add modules-frontend.css to sensei_disable_styles filter
+* Fix - Grade unanswered questions too
+* Fix - Paypal "Cancel and return" causing a fatal error
+* Fix - Do not create duplicate membership rules on save
+* Fix - Random users not being assigned to courses after purchase
+* Fix - "Quiz saved" notice not appearing
+* Various security fixes
+
+- version 1.9.6
 * Fix - Fixed an issue prevent Modern Tribe's The Event Calendar from functioning properly.
 * Fix - Ensure the question grade is shown inline with questions.
 * Fix - Prevent a PHP notice when calling question results.
