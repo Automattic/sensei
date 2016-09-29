@@ -3029,7 +3029,7 @@ class Sensei_Course {
      */
     public static function alter_course_category_order( $query ){
 
-        if( ! is_tax( 'course-category' ) || ! $query->is_main_query() ){
+        if( ! $query->is_main_query() || ! is_tax( 'course-category' ) ) {
             return $query;
         }
 
