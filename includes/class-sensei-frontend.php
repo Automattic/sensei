@@ -15,12 +15,29 @@ class Sensei_Frontend {
 
 	public $messages;
 	public $data;
+	public $allowed_html;
 
 	/**
 	 * Constructor.
 	 * @since  1.0.0
 	 */
 	public function __construct () {
+
+		$this->allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => array(
+				'width'  => array(),
+				'height' => array(),
+				'src'    => array(),
+			),
+		);
 
 		// Template output actions
 		add_action( 'sensei_before_main_content', array( $this, 'sensei_output_content_wrapper' ), 10 );
@@ -878,7 +895,7 @@ class Sensei_Frontend {
         		$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed )/*, array( 'width' => 100 , 'height' => 100)*/ );
         	} // End If Statement
         	if ( '' != $lesson_video_embed ) {
-        	?><div class="video"><?php echo do_shortcode( html_entity_decode( $lesson_video_embed ) ); ?></div><?php
+        	?><div class="video"><?php echo wp_kses( do_shortcode( html_entity_decode( $lesson_video_embed ) ), $this->allowed_html ); ?></div><?php
         	} // End If Statement
         } // End If Statement
 	} // End sensei_lesson_video()
@@ -1280,7 +1297,7 @@ class Sensei_Frontend {
 			} else {
 				// Than its real product set it's id to item_id
 				$item_id = $item['product_id'];
-			} 
+			}
 
             if ( $item_id > 0 ) {
 

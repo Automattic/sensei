@@ -42,9 +42,6 @@ class Sensei_Messages {
         // Block WordPress from sending comment moderator emails on the sensei messages post types
         add_filter('comment_moderation_recipients', array( $this, 'stop_wp_comment_emails' ),  20, 2  );
 
-		// Process saving of message posts
-		add_action( 'save_post', array( $this, 'save_message' ) );
-
 		// Add message links to courses & lessons
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'send_message_link' ), 35 );
 
@@ -84,20 +81,18 @@ class Sensei_Messages {
 
 		$settings = array(
 			array(
-				'id' 			=> 'sender',
-				'label'			=> __( 'Message sent by:', 'woothemes-sensei' ),
-				'description'	=> __( 'The username of the learner who sent this message.', 'woothemes-sensei' ),
-				'type'			=> 'text',
-				'default'		=> '',
-				'placeholder'	=> __( 'Learner username', 'woothemes-sensei' ),
+				'id'          => 'sender',
+				'label'       => __( 'Message sent by:', 'woothemes-sensei' ),
+				'description' => __( 'The username of the learner who sent this message.', 'woothemes-sensei' ),
+				'type'        => 'plain-text',
+				'default'     => get_post_meta( $post->ID, '_sender', true ),
 			),
 			array(
-				'id' 			=> 'receiver',
-				'label'			=> __( 'Message received by:', 'woothemes-sensei' ),
-				'description'	=> __( 'The username of the teacher who received this message.', 'woothemes-sensei' ),
-				'type'			=> 'text',
-				'default'		=> '',
-				'placeholder'	=> __( 'Teacher username', 'woothemes-sensei' ),
+				'id'          => 'receiver',
+				'label'       => __( 'Message received by:', 'woothemes-sensei' ),
+				'description' => __( 'The username of the teacher who received this message.', 'woothemes-sensei' ),
+				'type'        => 'plain-text',
+				'default'     => get_post_meta( $post->ID, '_receiver', true ),
 			),
 		);
 
@@ -105,58 +100,21 @@ class Sensei_Messages {
 
 		if( isset( $message_posttype ) && $message_posttype ) {
 
-			$args = array(
-				'post_type' => $message_posttype,
-				'posts_per_page' => -1,
-				'orderby' => 'name',
-				'order' => 'ASC',
-				'post_status' => 'publish',
-			);
-
-			$posts = get_posts( $args );
-
-			$post_options[0] = sprintf( __( 'Select %1$s', 'woothemes-sensei' ), $message_posttype );
-			foreach( $posts as $post_item ) {
-				$post_options[ $post_item->ID ] = $post_item->post_title;
-			}
+			$course = get_post( get_post_meta( $post->ID, '_post', true ) );
+			$course_name = $course->post_title;
 
 			$settings[] = array(
-				'id' 			=> 'post',
-				'label'			=> sprintf( __( 'Message from %1$s:', 'woothemes-sensei' ), $message_posttype ),
-				'description'	=> sprintf( __( 'The %1$s to which this message relates.', 'woothemes-sensei' ), $message_posttype ),
-				'type'			=> 'select',
-				'default'		=> 0,
-				'options'		=> $post_options,
+				'id'          => 'post',
+				'label'       => sprintf( __( 'Message from %1$s:', 'woothemes-sensei' ), $message_posttype ),
+				'description' => sprintf( __( 'The %1$s to which this message relates.', 'woothemes-sensei' ), $message_posttype ),
+				'type'        => 'plain-text',
+				'default'     => $course_name,
 			);
 		}
 
 		$html = Sensei()->admin->render_settings( $settings, $post->ID, 'message-info' );
 
 		echo $html;
-	}
-
-	public function save_message( $post_id = 0 ) {
-		global $post;
-
-		if( $this->post_type != get_post_type() ) return;
-
-		if( isset( $_POST['sender'] ) && $_POST['sender'] ) {
-			update_post_meta( $post_id, '_sender', $_POST['sender'] );
-		}
-
-		if( isset( $_POST['receiver'] ) && $_POST['receiver'] ) {
-			update_post_meta( $post_id, '_receiver', $_POST['receiver'] );
-		}
-
-		if( isset( $_POST['post'] ) && $_POST['post'] ) {
-			update_post_meta( $post_id, '_post', $_POST['post'] );
-		}
-
-		remove_action( 'save_post', array( $this, 'save_message' ) );
-
-		wp_update_post( array( 'ID' => $post_id, 'comment_status' => 'open' ) );
-
-		add_action( 'save_post', array( $this, 'save_message' ) );
 	}
 
 	public function send_message_link( $post_id = 0, $user_id = 0 ) {
@@ -210,14 +168,16 @@ class Sensei_Messages {
 
 		$html = '';
 
-		if( ! isset( $post->ID ) ) return $html;
+		if( ! isset( $post->ID ) ) {
+			return $html;
+		}
 
         //confirm private message
         $confirmation = '';
         if( isset( $_GET[ 'send' ] ) && 'complete' == $_GET[ 'send' ] ) {
 
-            $confirmation_message = __('Your private message has been sent.', 'woothemes-sensei');
-            $confirmation = '<div class="sensei-message tick">' . $confirmation_message . '</div>';
+            $confirmation_message = __( 'Your private message has been sent.', 'woothemes-sensei' );
+            $confirmation = '<div class="sensei-message tick">' . esc_html( $confirmation_message ) . '</div>';
 
         }
 
@@ -230,9 +190,7 @@ class Sensei_Messages {
 				$html .= '<textarea name="contact_message" placeholder="' . __( 'Enter your private message.', 'woothemes-sensei' ) . '"></textarea>';
 			$html .= '</p>';
 			$html .= '<p class="form-row">';
-				$html .= '<input type="hidden" name="post_id" value="' . $post->ID . '" />';
-				$html .= '<input type="hidden" name="sender_id" value="' . $current_user->ID . '" />';
-				$html .= '<input type="hidden" name="receiver_id" value="' . $post->post_author . '" />';
+				$html .= '<input type="hidden" name="post_id" value="' . absint( $post->ID ) . '" />';
 				$html .= wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
 				$html .= '<input type="submit" class="send_message" value="' . __( 'Send Message', 'woothemes-sensei' ) . '" />';
 			$html .= '</p>';
@@ -244,12 +202,22 @@ class Sensei_Messages {
 
 	public function save_new_message() {
 
-		if( ! isset( $_POST['sensei_message_teacher_nonce'] ) ) return;
+		if ( ! isset( $_POST['sensei_message_teacher_nonce'] ) || ! isset( $_POST['post_id'] ) ) {
+			return;
+		}
 
-		if( ! wp_verify_nonce( $_POST['sensei_message_teacher_nonce'], 'message_teacher' ) ) return;
+		if ( ! wp_verify_nonce( $_POST['sensei_message_teacher_nonce'], 'message_teacher' ) ) {
+			return;
+		}
 
-		$message_id = $this->save_new_message_post( $_POST['sender_id'], $_POST['receiver_id'], $_POST['contact_message'], $_POST['post_id'] );
+		$post         = get_post( absint( $_POST['post_id'] ) );
+		$current_user = wp_get_current_user();
 
+		if ( is_wp_error( $post ) ) {
+			return false;
+		}
+
+		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {

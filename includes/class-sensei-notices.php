@@ -24,12 +24,32 @@ class Sensei_Notices{
 	protected $has_printed;
 
 	/**
-	*  constructor 
+	 * @var array The HTML allowed for message boxes.
+	 */
+	protected $allowed_html;
+
+	/**
+	*  constructor
  	*/
 	public function __construct(){
 		//initialize the notices variable
 		$this->notices = array();
 		$this->has_printed = false;
+		$this->allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => array(
+				'width'  => array(),
+				'height' => array(),
+				'src'    => array(),
+			),
+		);
 	}
 
 	/**
@@ -64,9 +84,9 @@ class Sensei_Notices{
 			foreach ($this->notices  as  $notice) {
 
 				$classes = 'sensei-message '. $notice['type'];
-				$html = '<div class="'. $classes . '">'. $notice['content'] . '</div>';
+				$html = '<div class="'. esc_attr( $classes ) . '">'. wp_kses( $notice['content'], $this->allowed_html ) . '</div>';
 
-				echo $html; 
+				echo $html;
 			}
 			// empty the notice queue to avoid reprinting the same notices
 			$this->clear_notices();
@@ -79,8 +99,8 @@ class Sensei_Notices{
 	} // end print_notice()
 
 	/**
-	*  Clear all notices  
-	* 
+	*  Clear all notices
+	*
 	* @return void
 	*/
 	public function clear_notices(){
