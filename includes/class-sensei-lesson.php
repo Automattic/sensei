@@ -884,7 +884,7 @@ class Sensei_Lesson {
 									$question_media_filename = basename( $question_media_url );
 									$question_media_title = $question_media_filename;
 								}
-								$question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . esc_attr( $question_media_title ) . '</a>';
+								$question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . esc_html( $question_media_title ) . '</a>';
 								$question_media_link_class = '';
 							}
 
@@ -924,7 +924,7 @@ class Sensei_Lesson {
 							}
 							$row_title = sprintf( esc_html__( 'Selected from \'%1$s\' ', 'woothemes-sensei' ), $multiple_data[0] );
 
-							$html .= '<td class="table-count question-number question-count-column"><span class="number hidden">' . esc_html( $question_counter ) . '</span><span class="hidden total-number">' . $multiple_data[1] . '</span><span class="row-numbers">' . esc_html( $row_numbers ) . '</span></td>';
+							$html .= '<td class="table-count question-number question-count-column"><span class="number hidden">' . esc_html( $question_counter ) . '</span><span class="hidden total-number">' . esc_html( $multiple_data[1] ) . '</span><span class="row-numbers">' . esc_html( $row_numbers ) . '</span></td>';
 							$html .= '<td>' . esc_html( $row_title ) . '</td>';
 							$html .= '<td class="question-grade-column"></td>';
 							$html .= '<td><input type="hidden" name="question_id" class="row_question_id" id="question_' . esc_attr( $question_counter ) . '_id" value="' . esc_attr( $question_id ) . '" /></td>';
@@ -1489,11 +1489,11 @@ class Sensei_Lesson {
 
 				    	$html .= '<input type="hidden" class="answer_order" name="answer_order" value="' . esc_attr( $answer_order_string ) . '" />';
 				    	$html .= '<span class="hidden right_answer_count">' . esc_html( $total_right ) . '</span>';
-				    	$html .= '<span class="hidden wrong_answer_count">' . esc_html( $total_wrong . '</span>';
+				    	$html .= '<span class="hidden wrong_answer_count">' . esc_html( $total_wrong ) . '</span>';
 
 				    	$html .= '<div class="add_answer_options">';
-					    	$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . $question_counter . '">' . esc_html__( 'Add right answer', 'woothemes-sensei' ) . '</a>';
-					    	$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . $question_counter . '">' . esc_html__( 'Add wrong answer', 'woothemes-sensei' ) . '</a>';
+					    	$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add right answer', 'woothemes-sensei' ) . '</a>';
+					    	$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add wrong answer', 'woothemes-sensei' ) . '</a>';
 				    	$html .= '</div>';
 
                         $html .= $this->quiz_panel_question_feedback( $question_counter, $question_id , 'multiple-choice' );
@@ -1533,7 +1533,7 @@ class Sensei_Lesson {
 	  				$html .= '</div>';
 				break;
 				case 'multi-line':
-					$html .= '<div class="question_multiline_fields ' . $question_class . '">';
+					$html .= '<div class="question_multiline_fields ' . esc_attr( $question_class ) . '">';
 						// Guides for grading
 						if( $question_counter ) {
 							$field_id = 'question_' . esc_attr( $question_counter ) . '_add_question_right_answer_multiline';
