@@ -381,7 +381,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 */
 function sensei_has_user_completed_prerequisite_lesson( $current_lesson_id, $user_id ) {
 
-    return WooThemes_Sensei_Lesson::is_pre_requisite_complete( $current_lesson_id, $user_id );
+    return WooThemes_Sensei_Lesson::is_prerequisite_complete( $current_lesson_id, $user_id );
 
 } // End sensei_has_user_completed_prerequisite_lesson()
 
