@@ -2931,26 +2931,20 @@ class Sensei_Course {
 
         global $post;
 
-	    if ( ! is_singular( 'course' )  ) {
-		    return;
-	    }
+	if ( ! is_singular( 'course' )  ) {
+		return;
+	}
 
         // Get the meta info
         $course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
 
-        if ( 'http' == substr( $course_video_embed, 0, 4) ) {
-
-            $course_video_embed = wp_oembed_get( esc_url( $course_video_embed ) );
-
-        } // End If Statement
-
-        if ( '' != $course_video_embed ) { ?>
-
-            <div class="course-video">
-                <?php echo wp_kses( do_shortcode( $course_video_embed ), self::$allowed_html ); ?>
-            </div>
-
-        <?php } // End If Statement
+	if ( '' != $course_video_embed ) {
+		printf(
+			'<div class="course-video">%s</div>',
+			/** This filter is already documented in core. wp-includes/post-template.php */
+			apply_filters( 'the_content', $course_video_embed )
+		);
+	}
     }
 
     /**
