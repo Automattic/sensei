@@ -331,7 +331,11 @@ Class Sensei_WC{
 			$active_courses = array( $active_courses );
 		}
 
-		$active_course_ids = array_map( function ($c) { return $c->comment_post_ID; }, $active_courses );
+		$active_course_ids = array();
+
+		foreach ( $active_courses as $c ) {
+			$active_course_ids[] = $c->comment_post_ID;
+		}
 
 		$orders_query = new WP_Query( array(
 			'post_type'   => 'shop_order',
@@ -353,7 +357,11 @@ Class Sensei_WC{
 			$user_order_ids = array( $user_order_ids );
 		}
 
-		$user_orders = array_map( function ( $order_data ) { return new WC_Order( $order_data ); }, $user_order_ids );
+		$user_orders = array();
+
+		foreach ( $user_order_ids as $order_data ) {
+			$user_orders[] =  new WC_Order( $order_data );
+		}
 
 		foreach ( $user_orders as $user_order ) {
 			foreach ($user_order->get_items() as $item) {
@@ -363,7 +371,7 @@ Class Sensei_WC{
 					$item_id = $item['product_id'];
 				}
 
-				$product = Sensei()->sensei_get_woocommerce_product_object( $item_id );
+				$product = self::get_product_object( $item_id );
 
 				$product_courses = Sensei()->course->get_product_courses( $product->id );
 
