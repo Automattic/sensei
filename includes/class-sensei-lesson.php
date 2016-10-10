@@ -3601,11 +3601,9 @@ class Sensei_Lesson {
                         $prereq_course_id = get_post_meta( $course_id, '_course_prerequisite',true );
                         $course_link = '<a href="' . esc_url( get_permalink( $prereq_course_id ) ) . '" title="' . esc_attr( get_the_title( $prereq_course_id ) ) . '">' . __( 'the previous course', 'woothemes-sensei' )  . '</a>';
                         ?>
-                            <div class="sensei-message info">
 
-                                <?php  echo sprintf( __( 'Please complete %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link ); ?>
 
-                            </div>
+
 
                     <?php } else { ?>
 
