@@ -3102,7 +3102,7 @@ class Sensei_Course {
 	function allow_course_archive_on_front_page( $query ) {
 		// Bail if it's clear we're not looking at a static front page or if the $running flag is
 		// set @see https://github.com/Automattic/sensei/issues/1438 and https://github.com/Automattic/sensei/issues/1491
-		if ( ! $query->is_main_query() || ! ( is_page() && is_front_page() ) || is_admin() ) {
+		if ( ! $query->is_main_query() || ! $this->is_home_and_front_page_is_page( $query ) || is_admin() ) {
 			return;
 		}
 
@@ -3143,6 +3143,11 @@ class Sensei_Course {
 		$query->is_singular          = 0;
 		$query->is_post_type_archive = 1;
 		$query->is_archive           = 1;
+	}
+
+	private function is_home_and_front_page_is_page($query ) {
+		return $query->is_home() && 'page' == get_option( 'show_on_front') && get_option( 'page_on_front' ) &&
+		       $query->get( 'page_id' ) && get_option( 'page_on_front' ) == $query->get( 'page_id' );
 	}
 
 
