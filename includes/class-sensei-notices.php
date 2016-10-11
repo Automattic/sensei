@@ -49,6 +49,10 @@ class Sensei_Notices{
 				'height' => array(),
 				'src'    => array(),
 			),
+			'a' => array(
+				'href'  => array(),
+				'title' => array()
+			)
 		);
 	}
 
