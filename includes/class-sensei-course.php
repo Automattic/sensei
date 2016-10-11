@@ -3102,7 +3102,7 @@ class Sensei_Course {
 	function allow_course_archive_on_front_page( $query ) {
 		// Bail if it's clear we're not looking at a static front page or if the $running flag is
 		// set @see https://github.com/Automattic/sensei/issues/1438 and https://github.com/Automattic/sensei/issues/1491
-		if ( ! $query->is_main_query() || ! $this->is_home_and_front_page_is_page( $query ) || is_admin() ) {
+		if ( is_admin() || false === $query->is_main_query() || false === $this->is_front_page( $query ) ) {
 			return;
 		}
 
@@ -3145,9 +3145,30 @@ class Sensei_Course {
 		$query->is_archive           = 1;
 	}
 
-	private function is_home_and_front_page_is_page($query ) {
-		return $query->is_home() && 'page' == get_option( 'show_on_front') && get_option( 'page_on_front' ) &&
-		       $query->get( 'page_id' ) && get_option( 'page_on_front' ) == $query->get( 'page_id' );
+	/**
+	 * Workaround for determining if this is the front page.
+	 * We cannot use is_front_page() on pre_get_posts, or it will throw notices.
+	 * See https://core.trac.wordpress.org/ticket/21790
+	 *
+	 * @param WP_Query $query
+	 * @return bool
+	 */
+	private function is_front_page( $query ) {
+		if ( 'page' != get_option( 'show_on_front' ) ) {
+			return false;
+		}
+
+		$page_on_front = get_option( 'page_on_front', '' );
+		if ( empty( $page_on_front ) ) {
+			return false;
+		}
+
+		$page_id = $query->get( 'page_id', '' );
+		if ( empty( $page_id ) ) {
+			return false;
+		}
+
+		return $page_on_front == $page_id;
 	}
 
 
