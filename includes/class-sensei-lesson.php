@@ -3961,8 +3961,7 @@ class Sensei_Lesson {
      */
     public static function limit_archive_content ( $content ){
 
-        if( is_post_type_archive( 'lesson' ) && Sensei()->settings->get('access_permission') ){
-
+        if ( is_post_type_archive( 'lesson' ) && Sensei()->settings->get('access_permission') ) {
             return wp_trim_words( $content, $num_words = 30, $more = '…' );
         }
 
