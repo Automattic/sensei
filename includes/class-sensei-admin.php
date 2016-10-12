@@ -1129,15 +1129,12 @@ class Sensei_Admin {
 	}
 
 	public function save_course_order( $order_string = '' ) {
-		$order = explode( ',', $order_string );
-
-		update_option( 'sensei_course_order', $order_string );
+		$order = [];
 
 		$i = 1;
-		foreach( $order as $course_id ) {
-
+		foreach ( explode( ',', $order_string ) as $course_id ) {
 			if( $course_id ) {
-
+				$order[] = $course_id;
 				$update_args = array(
 					'ID'         => absint( $course_id ),
 					'menu_order' => $i,
@@ -1148,6 +1145,8 @@ class Sensei_Admin {
 				++$i;
 			}
 		}
+
+		update_option( 'sensei_course_order', implode( ',', $order ) );
 
 		return true;
 	}
