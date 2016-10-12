@@ -60,6 +60,9 @@ class Sensei_Admin {
 		// Allow Teacher access the admin area
 		add_filter( 'woocommerce_prevent_admin_access', array( $this, 'admin_access' ) );
 
+		// remove a course from course order when trashed
+		add_action('transition_post_status', array( $this, 'remove_trashed_course_from_course_order' ) );
+
 	} // End __construct()
 
 	/**
@@ -1078,12 +1081,19 @@ class Sensei_Admin {
                 $all_course_ids = array_unique( array_merge( $ordered_course_ids , $all_course_ids ) );
             }
 
+			$should_update_order = false;
+			$new_course_order = array();
 
 			$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
 			$html .= '<ul class="sortable-course-list">' . "\n";
 			$count = 0;
 			foreach ( $all_course_ids as $course_id ) {
                 $course = get_post( $course_id );
+				if ( in_array( $course->post_status, array( 'trash', 'auto-draft' ), true ) ) {
+					$should_update_order = true;
+					continue;
+				}
+				$new_course_order[] = $course_id;
 				$count++;
 				$class = 'course';
 				if ( $count == 1 ) { $class .= ' first'; }
@@ -1091,7 +1101,13 @@ class Sensei_Admin {
 				if ( $count % 2 != 0 ) {
 					$class .= ' alternate';
 				}
-				$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $course->ID ) . '" style="width: 100%;"> ' . $course->post_title . '</span></li>' . "\n";
+
+				$title = $course->post_title;
+				if ( $course->post_status === 'draft' ) {
+					$title .= ' (Draft)';
+				}
+
+				$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $course->ID ) . '" style="width: 100%;"> ' . esc_html( $title ) . '</span></li>' . "\n";
 			}
 			$html .= '</ul>' . "\n";
 
@@ -1102,6 +1118,10 @@ class Sensei_Admin {
 		echo $html;
 
 		?></div><?php
+
+		if ( $should_update_order ) {
+			$this->save_course_order( implode( ',', $new_course_order ) );
+		}
 	}
 
 	public function get_course_order() {
@@ -1109,15 +1129,12 @@ class Sensei_Admin {
 	}
 
 	public function save_course_order( $order_string = '' ) {
-		$order = explode( ',', $order_string );
-
-		update_option( 'sensei_course_order', $order_string );
+		$order = [];
 
 		$i = 1;
-		foreach( $order as $course_id ) {
-
+		foreach ( explode( ',', $order_string ) as $course_id ) {
 			if( $course_id ) {
-
+				$order[] = $course_id;
 				$update_args = array(
 					'ID'         => absint( $course_id ),
 					'menu_order' => $i,
@@ -1128,6 +1145,8 @@ class Sensei_Admin {
 				++$i;
 			}
 		}
+
+		update_option( 'sensei_course_order', implode( ',', $order ) );
 
 		return true;
 	}
@@ -1580,6 +1599,38 @@ class Sensei_Admin {
         }
 
     }// end install_pages
+
+	/**
+	 * Remove a course from course order option when trashed
+	 *
+	 * @since 1.9.8
+	 * @param $new_status null|string
+	 * @param $old_status null|string
+	 * @param $post null|WP_Post
+	 */
+	public function remove_trashed_course_from_course_order($new_status = null, $old_status = null, $post = null ) {
+		if ( empty( $new_status ) || empty( $old_status ) || $new_status === $old_status ) {
+			return;
+		}
+
+		if ( empty( $post ) || 'course' !== $post->post_type ) {
+			return;
+		}
+
+		if ( 'trash' === $new_status ) {
+			$order_string = $this->get_course_order();
+
+			if( ! empty( $order_string ) ) {
+				$course_id = $post->ID;
+				$ordered_course_ids = array_map( 'intval', explode(',' , $order_string ) );
+				$course_id_position = array_search( $course_id, $ordered_course_ids );
+				if ( false !== $course_id_position ) {
+					array_splice( $ordered_course_ids, $course_id_position, 1 );
+					$this->save_course_order( implode( ',', $ordered_course_ids ) );
+				}
+			}
+		}
+	}
 
 } // End Class
 
