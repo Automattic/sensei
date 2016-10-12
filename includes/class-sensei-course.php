@@ -2947,7 +2947,7 @@ class Sensei_Course {
         if ( '' != $course_video_embed ) { ?>
 
             <div class="course-video">
-                <?php echo wp_kses( do_shortcode( $course_video_embed ), self::$allowed_html ); ?>
+                <?php echo Sensei_Utils::wp_kses( do_shortcode( $course_video_embed ), self::$allowed_html ); ?>
             </div>
 
         <?php } // End If Statement
