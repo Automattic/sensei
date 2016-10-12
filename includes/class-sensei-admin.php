@@ -1078,12 +1078,19 @@ class Sensei_Admin {
                 $all_course_ids = array_unique( array_merge( $ordered_course_ids , $all_course_ids ) );
             }
 
+			$should_update_order = false;
+			$new_course_order = array();
 
 			$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
 			$html .= '<ul class="sortable-course-list">' . "\n";
 			$count = 0;
 			foreach ( $all_course_ids as $course_id ) {
                 $course = get_post( $course_id );
+				if ( in_array( $course->post_status, array( 'trash', 'auto-draft' ), true ) ) {
+					$should_update_order = true;
+					continue;
+				}
+				$new_course_order[] = $course_id;
 				$count++;
 				$class = 'course';
 				if ( $count == 1 ) { $class .= ' first'; }
@@ -1091,7 +1098,13 @@ class Sensei_Admin {
 				if ( $count % 2 != 0 ) {
 					$class .= ' alternate';
 				}
-				$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $course->ID ) . '" style="width: 100%;"> ' . $course->post_title . '</span></li>' . "\n";
+
+				$title = $course->post_title;
+				if ( $course->post_status === 'draft' ) {
+					$title .= ' (Draft)';
+				}
+
+				$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $course->ID ) . '" style="width: 100%;"> ' . esc_html( $title ) . '</span></li>' . "\n";
 			}
 			$html .= '</ul>' . "\n";
 
@@ -1102,6 +1115,10 @@ class Sensei_Admin {
 		echo $html;
 
 		?></div><?php
+
+		if ( $should_update_order ) {
+			$this->save_course_order( implode( ',', $new_course_order ) );
+		}
 	}
 
 	public function get_course_order() {
