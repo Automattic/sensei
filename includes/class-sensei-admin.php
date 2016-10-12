@@ -60,6 +60,9 @@ class Sensei_Admin {
 		// Allow Teacher access the admin area
 		add_filter( 'woocommerce_prevent_admin_access', array( $this, 'admin_access' ) );
 
+		// remove a course from course order when trashed
+		add_action('transition_post_status', array( $this, 'remove_trashed_course_from_course_order' ) );
+
 	} // End __construct()
 
 	/**
@@ -1597,6 +1600,38 @@ class Sensei_Admin {
         }
 
     }// end install_pages
+
+	/**
+	 * Remove a course from course order option when trashed
+	 *
+	 * @since 1.9.8
+	 * @param $new_status null|string
+	 * @param $old_status null|string
+	 * @param $post null|WP_Post
+	 */
+	public function remove_trashed_course_from_course_order($new_status = null, $old_status = null, $post = null ) {
+		if ( empty( $new_status ) || empty( $old_status ) || $new_status === $old_status ) {
+			return;
+		}
+
+		if ( empty( $post ) || 'course' !== $post->post_type ) {
+			return;
+		}
+
+		if ( 'trash' === $new_status ) {
+			$order_string = $this->get_course_order();
+
+			if( ! empty( $order_string ) ) {
+				$course_id = $post->ID;
+				$ordered_course_ids = array_map( 'intval', explode(',' , $order_string ) );
+				$course_id_position = array_search( $course_id, $ordered_course_ids );
+				if ( false !== $course_id_position ) {
+					array_splice( $ordered_course_ids, $course_id_position, 1 );
+					$this->save_course_order( implode( ',', $ordered_course_ids ) );
+				}
+			}
+		}
+	}
 
 } // End Class
 
