@@ -64,11 +64,7 @@ class Sensei_Course {
 				'frameborder'     => array(),
 				'allowfullscreen' => array(),
 			),
-			'video'  => array(
-				'width'  => array(),
-				'height' => array(),
-				'src'    => array(),
-			),
+			'video'  => Sensei_Utils::get_video_html_tag_allowed_attributes()
 		);
 
 		// Update course completion upon completion of a lesson
