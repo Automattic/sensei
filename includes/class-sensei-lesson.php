@@ -186,7 +186,7 @@ class Sensei_Lesson {
 		$html .= '</select></p>' . "\n";
 
 		$html .= '<p><label for="lesson_video_embed">' . esc_html__( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
-		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . wp_kses( $lesson_video_embed, $this->allowed_html ) . '</textarea></p>' . "\n";
+		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . Sensei_Utils::wp_kses( $lesson_video_embed, $this->allowed_html ) . '</textarea></p>' . "\n";
 		$html .= '<p>' .  esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;

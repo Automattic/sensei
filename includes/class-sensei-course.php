@@ -385,7 +385,7 @@ class Sensei_Course {
 		$html = '';
 
 		$html .= '<label class="screen-reader-text" for="course_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . '</label>';
-		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . wp_kses( $course_video_embed, self::$allowed_html ) . '</textarea>';
+		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . Sensei_Utils::wp_kses( $course_video_embed, self::$allowed_html ) . '</textarea>';
 		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
