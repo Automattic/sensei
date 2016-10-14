@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying Single Line Questions.
  *
- * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-single-line.php
+ * Override this template by copying it to yourtheme/sensei/single-quiz/question-type-single-line.php
  *
  * @author 		Automattic
  * @package 	Sensei

@@ -135,7 +135,7 @@ class Sensei_Updates
 
                 foreach ($_POST['checked'] as $key => $function_name) {
 
-                    if( ! isset(  $_POST[ $function_name.'_nonce_field' ] ) 
+                    if( ! isset(  $_POST[ $function_name.'_nonce_field' ] )
                         || ! wp_verify_nonce( $_POST[ $function_name.'_nonce_field' ] , 'run_'.$function_name ) ){
 
                         wp_die(
@@ -1854,7 +1854,7 @@ class Sensei_Updates
      */
     public  function enhance_teacher_role ( ) {
 
-        require_once('class-sensei-teacher.php');
+        require_once( __DIR__ . '/class-sensei-teacher.php' );
         $teacher = new Sensei_Teacher();
         $teacher->create_role();
         return true;
