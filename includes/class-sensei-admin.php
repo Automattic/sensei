@@ -1089,7 +1089,7 @@ class Sensei_Admin {
 			$count = 0;
 			foreach ( $all_course_ids as $course_id ) {
                 $course = get_post( $course_id );
-				if ( in_array( $course->post_status, array( 'trash', 'auto-draft' ), true ) ) {
+				if ( empty( $course ) || in_array( $course->post_status, array( 'trash', 'auto-draft' ), true ) ) {
 					$should_update_order = true;
 					continue;
 				}
