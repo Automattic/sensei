@@ -2354,6 +2354,20 @@ class Sensei_Utils {
 		return wp_kses_split($string, $allowed_html, $allowed_protocols);
 	}
 
+	public static function get_video_html_tag_allowed_attributes() {
+		return array(
+			'autoplay' => array(),
+			'controls' => array(),
+			'height'   => array(),
+			'loop'     => array(),
+			'muted'    => array(),
+			'poster'   => array(),
+			'preload'  => array(),
+			'src'      => array(),
+			'width'    => array(),
+		);
+	}
+
 } // End Class
 
 /**

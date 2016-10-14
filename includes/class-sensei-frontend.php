@@ -32,11 +32,7 @@ class Sensei_Frontend {
 				'frameborder'     => array(),
 				'allowfullscreen' => array(),
 			),
-			'video'  => array(
-				'width'  => array(),
-				'height' => array(),
-				'src'    => array(),
-			),
+			'video'  => Sensei_Utils::get_video_html_tag_allowed_attributes()
 		);
 
 		// Template output actions
