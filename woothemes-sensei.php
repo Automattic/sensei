@@ -27,9 +27,10 @@ Domain path: /lang/
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-<<<<<<< HEAD
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+*
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 require_once( __DIR__ . '/includes/class-sensei-autoloader.php' );
 require_once( __DIR__ . '/includes/lib/woo-functions.php' );
