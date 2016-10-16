@@ -3,6 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying Multiple Choice Questions.
  *
+ * Override this template by copying it to yourtheme/sensei/single-quiz/question-type-multiple-choice.php
+ *
  * @author 		Automattic
  * @package 	Sensei
  * @category    Templates
@@ -48,6 +50,3 @@ foreach( $question_data[ 'answer_options' ] as $id => $option ) {
 <?php } // End For Loop ?>
 
 </ul>
-
-
-

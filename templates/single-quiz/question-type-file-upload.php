@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The Template for displaying File Upload Questions.
  *
- * Override this template by copying it to yourtheme/sensei/single-quiz/question_type-file-upload.php
+ * Override this template by copying it to yourtheme/sensei/single-quiz/question-type-file-upload.php
  *
  * @author 		Automattic
  * @package 	Sensei

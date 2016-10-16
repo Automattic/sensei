@@ -75,7 +75,7 @@ class Sensei_Templates {
 
         $located = self::locate_template( $template_name, $template_path, $default_path );
 
-        if( ! empty( $located ) ){
+        if( ! empty( $located ) ) {
 
             do_action( 'sensei_before_template_part', $template_name, $template_path, $located );
 
@@ -83,7 +83,10 @@ class Sensei_Templates {
 
             do_action( 'sensei_after_template_part', $template_name, $template_path, $located );
 
+			return true;
         }
+
+		return false;
 
     } // end get template
 
