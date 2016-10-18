@@ -32,7 +32,7 @@ class Sensei_Frontend {
 				'frameborder'     => array(),
 				'allowfullscreen' => array(),
 			),
-			'video'  => Sensei_Utils::get_video_html_tag_allowed_attributes()
+			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes()
 		);
 
 		// Template output actions
@@ -891,7 +891,7 @@ class Sensei_Frontend {
         		$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed )/*, array( 'width' => 100 , 'height' => 100)*/ );
         	} // End If Statement
         	if ( '' != $lesson_video_embed ) {
-				?><div class="video"><?php echo Sensei_Utils::wp_kses( do_shortcode( html_entity_decode( $lesson_video_embed ) ), $this->allowed_html ); ?></div><?php
+				?><div class="video"><?php echo Sensei_Wp_Kses::wp_kses( do_shortcode( html_entity_decode( $lesson_video_embed ) ), $this->allowed_html ); ?></div><?php
         	} // End If Statement
         } // End If Statement
 	} // End sensei_lesson_video()
