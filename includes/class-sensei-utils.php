@@ -2331,43 +2331,6 @@ class Sensei_Utils {
 
         return $merged_array;
     }
-
-	/**
-	 * Essentially a copy of wp_kses() with a custom hook
-	 * see https://github.com/Automattic/sensei/issues/1560
-	 * @param $string
-	 * @param $allowed_html
-	 * @param array $allowed_protocols
-	 * @return string
-	 */
-	public static function wp_kses($string, $allowed_html, $allowed_protocols = array() ) {
-		if ( empty( $allowed_protocols ) ) {
-			$allowed_protocols = wp_allowed_protocols();
-		}
-		$string = wp_kses_no_null( $string, array( 'slash_zero' => 'keep' ) );
-		$string = wp_kses_js_entities($string);
-		$string = wp_kses_normalize_entities($string);
-		/**
-		 * Filter content similar to pre_kses
-		 */
-		$string = apply_filters( 'sensei_pre_kses', $string, $allowed_html, $allowed_protocols );
-		return wp_kses_split($string, $allowed_html, $allowed_protocols);
-	}
-
-	public static function get_video_html_tag_allowed_attributes() {
-		return array(
-			'autoplay' => array(),
-			'controls' => array(),
-			'height'   => array(),
-			'loop'     => array(),
-			'muted'    => array(),
-			'poster'   => array(),
-			'preload'  => array(),
-			'src'      => array(),
-			'width'    => array(),
-		);
-	}
-
 } // End Class
 
 /**

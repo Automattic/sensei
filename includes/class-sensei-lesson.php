@@ -29,17 +29,7 @@ class Sensei_Lesson {
 
         $this->question_order = '';
 
-		$this->allowed_html = array(
-			'embed'  => array(),
-			'iframe' => array(
-				'width'           => array(),
-				'height'          => array(),
-				'src'             => array(),
-				'frameborder'     => array(),
-				'allowfullscreen' => array(),
-			),
-			'video'  => Sensei_Utils::get_video_html_tag_allowed_attributes(),
-		);
+		$this->allowed_html = Sensei_Wp_Kses::get_default_wp_kses_allowed_html();
 
 		// Admin actions
 		if ( is_admin() ) {
@@ -182,7 +172,7 @@ class Sensei_Lesson {
 		$html .= '</select></p>' . "\n";
 
 		$html .= '<p><label for="lesson_video_embed">' . esc_html__( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
-		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . Sensei_Utils::wp_kses( $lesson_video_embed, $this->allowed_html ) . '</textarea></p>' . "\n";
+		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . Sensei_Wp_Kses::wp_kses( $lesson_video_embed, $this->allowed_html ) . '</textarea></p>' . "\n";
 		$html .= '<p>' .  esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
@@ -3936,7 +3926,7 @@ class Sensei_Lesson {
                 $status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, $user_id, true );
 
 	            if( ! empty( $status['message']  ) ){
-	                echo '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' . esc_html( $status['message'] ) . '</div>';
+	                echo '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' . Sensei_Wp_Kses::wp_kses( $status['message'] ) . '</div>';
                 }
 
                 if( $has_quiz_questions ) {
