@@ -2249,9 +2249,9 @@ class Sensei_Utils {
         $mode = apply_filters( 'sensei_round_mode', $mode , $val, $context, $precision   );
 
         if ( version_compare(PHP_VERSION, '5.3.0') >= 0 ) {
-
+						// @codingStandardsIgnoreStart
             return round( $val, $precision, $mode );
-
+						// @codingStandardsIgnoreEnd
         }else{
 
             return round( $val, $precision );

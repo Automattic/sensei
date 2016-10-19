@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class Sensei_Frontend {
 
-	public $messages;
+	public $messages = null;
 	public $data;
 	public $allowed_html;
 
