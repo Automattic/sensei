@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2016.10.19 - version 1.9.9
+
+* Hotfix - Address possible fatal on older PHP versions
+
 2016.10.18 - version 1.9.8
 * Fix - Removed HTML output on lesson complete message
 * Fix - The video HTML tag now works properly in the video embed field
