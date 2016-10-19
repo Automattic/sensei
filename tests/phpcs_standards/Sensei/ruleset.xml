@@ -12,6 +12,7 @@
 	<exclude-pattern>*/apigen/*</exclude-pattern>
 	<exclude-pattern>*/lang/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/.git/*</exclude-pattern>
 
 	<!-- <rule ref="Squiz.PHP.CommentedOutCode"/> -->
