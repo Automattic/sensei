@@ -1129,7 +1129,7 @@ class Sensei_Admin {
 	}
 
 	public function save_course_order( $order_string = '' ) {
-		$order = [];
+		$order = array();
 
 		$i = 1;
 		foreach ( explode( ',', $order_string ) as $course_id ) {
