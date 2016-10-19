@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<ruleset name="Sensei">
+	<description>Sensei Custom Ruleset</description>
+
+
+	<!-- <rule ref="Squiz.PHP.CommentedOutCode"/> -->
+	<!-- <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/> -->
+	<!-- <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/> -->
+	<!-- <rule ref="Generic.Commenting.Todo"/> -->
+	<!-- <rule ref="Generic.ControlStructures.InlineControlStructure"/> -->
+
+	<rule ref="PHPCompatibility">
+		<exclude name="PHPCompatibility.PHP.DefaultTimezoneRequired" />
+	</rule>
+
+	<!--
+	We may also want to to include all the rules in a standard
+	-->
+	<!-- <rule ref="WordPress-Core"> -->
+		<!--
+		We may want a middle ground though. The best way to do this is add the
+		entire ruleset, then rule by rule, remove ones that don't suit a project. We
+		can do this by running `phpcs` with the '-s' flag, to see the names of the
+		different Sniffs, as their rules are broken. From here, we can opt to
+		exclude problematic sniffs like so.
+		-->
+
+		<!-- <exclude name="WordPress.WhiteSpace.ControlStructureSpacing" /> -->
+		<!-- <exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed" /> -->
+		<!-- <exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword" /> -->
+		<!-- <exclude name="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket" /> -->
+		<!-- <exclude name="PEAR.Functions.FunctionCallSignature.SpaceAfterOpenBracket" /> -->
+		<!-- <exclude name="WordPress.XSS.EscapeOutput" /> -->
+	<!-- </rule> -->
+</ruleset>
