@@ -1,0 +1,29 @@
+{
+  "name" : "wimg/php-compatibility",
+  "description" : "This is a set of sniffs for PHP_CodeSniffer that checks for PHP version compatibility.",
+  "require" : {
+    "php" : ">=5.1.2",
+    "ext-tokenizer" : "*",
+    "squizlabs/php_codesniffer" : "~2.0"
+  },
+  "require-dev" : {
+    "satooshi/php-coveralls" : "dev-master"
+  },
+  "license" : "LGPL-3.0",
+  "keywords" : [ "compatibility", "phpcs", "standards" ],
+  "autoload" : {
+    "psr-4" : {
+      "PHPCompatibility\\" : ""
+    }
+  },
+  "type" : "phpcodesniffer-standard",
+  "support" : {
+    "issues" : "https://github.com/wimg/PHPCompatibility/issues",
+    "source" : "https://github.com/wimg/PHPCompatibility"
+  },
+  "authors" : [ {
+    "name" : "Wim Godden",
+    "role" : "lead"
+  } ],
+  "homepage" : "http://techblog.wimgodden.be/tag/codesniffer/"
+}
