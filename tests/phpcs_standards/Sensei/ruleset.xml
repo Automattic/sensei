@@ -2,6 +2,17 @@
 <ruleset name="Sensei">
 	<description>Sensei Custom Ruleset</description>
 
+	<config name="testVersion" value="5.2-7.0"/>
+	<arg name="report" value="summary"/>
+	<arg value="s"/>
+
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/templates/*</exclude-pattern>
+	<exclude-pattern>*/assets/*</exclude-pattern>
+	<exclude-pattern>*/apigen/*</exclude-pattern>
+	<exclude-pattern>*/lang/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/.git/*</exclude-pattern>
 
 	<!-- <rule ref="Squiz.PHP.CommentedOutCode"/> -->
 	<!-- <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/> -->
