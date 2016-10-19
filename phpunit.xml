@@ -18,6 +18,7 @@
     <testsuites>
         <testsuite name="Sensei Test Suite">
             <directory suffix=".php">./tests/</directory>
+            <exclude>./tests/phpcs_standards</exclude>
         </testsuite>
     </testsuites>
     <filter>
