@@ -39,6 +39,6 @@ dependencies:
 test:
   override:
   # run phpcs
-  - cd $plugin_loc; php tests/bin/phpcs.phar --standard=Sensei .
+  - cd $plugin_loc; php tests/bin/phpcs.phar --report-full --report-summary --standard=Sensei .
   #run tests with coverage
   - cd $plugin_loc; phpunit #ignoring coverage for speed reasons: --coverage-html $CIRCLE_ARTIFACTS
