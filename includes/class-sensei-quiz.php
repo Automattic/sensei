@@ -388,14 +388,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         // Build frontend data object for backwards compatibility
         // using this is no longer recommended
-        $this->data->user_quiz_grade = $user_quiz_grade;// Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
+        $this->data->user_quiz_grade = $user_quiz_grade;
         $this->data->quiz_passmark = $quiz_passmark;
         $this->data->quiz_lesson = $quiz_lesson_id;
-        $this->data->quiz_grade_type = $quiz_grade_type; // get_post_meta( $quiz_id, '_quiz_grade_type', true );
+        $this->data->quiz_grade_type = $quiz_grade_type;
         $this->data->user_lesson_end = $user_lesson_end;
-        $this->data->user_lesson_complete = $user_lesson_complete; //Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+        $this->data->user_lesson_complete = $user_lesson_complete;
         $this->data->lesson_quiz_questions = $lesson_quiz_questions;
-        $this->data->reset_quiz_allowed = $reset_allowed; // Sensei_Quiz::is_reset_allowed( $lesson_id );
+        $this->data->reset_quiz_allowed = $reset_allowed;
 
     } // end load_global_quiz_data
 

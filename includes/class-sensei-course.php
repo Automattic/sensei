@@ -543,7 +543,6 @@ class Sensei_Course {
 	 */
 	public function add_column_headings ( $defaults ) {
 		$new_columns['cb'] = '<input type="checkbox" />';
-		// $new_columns['id'] = __( 'ID' );
 		$new_columns['title'] = _x( 'Course Title', 'column name', 'woothemes-sensei' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'woothemes-sensei' );
 		if ( Sensei_WC::is_woocommerce_active() ) {
@@ -887,17 +886,13 @@ class Sensei_Course {
 
 		$post_args = array(	'post_type'         => 'course',
 							'posts_per_page'    => -1,
-//							'orderby'           => 'menu_order date',
-//							'order'             => 'ASC',
 							'post_status'       => $post_status,
 							'suppress_filters'  => 0,
 							'fields'            => 'ids',
 							);
 
 		// Allow WP to generate the complex final query, just shortcut to only do an overall count
-//		add_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
-//		remove_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 
 		return count( $courses_query->posts );
 	} // End course_count()
@@ -1016,10 +1011,7 @@ class Sensei_Course {
 				}
 				elseif ( $has_questions ) {
 					$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-//					$questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
-//					if( count( $questions ) > 0 ) {
-						$course_quizzes[] = $quiz_id;
-//					}
+					$course_quizzes[] = $quiz_id;
 				}
 			}
 		}

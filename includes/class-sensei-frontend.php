@@ -56,7 +56,6 @@ class Sensei_Frontend {
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_start' ), 10 );
 
-		// add_filter( 'get_comments_number', array( $this, 'sensei_lesson_comment_count' ), 1 );
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 );
 
 		//1.6.2
@@ -888,7 +887,7 @@ class Sensei_Frontend {
 			$lesson_video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
 			if ( 'http' == substr( $lesson_video_embed, 0, 4) ) {
         		// V2 - make width and height a setting for video embed
-        		$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed )/*, array( 'width' => 100 , 'height' => 100)*/ );
+        		$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed ) );
         	} // End If Statement
         	if ( '' != $lesson_video_embed ) {
 				?><div class="video"><?php echo Sensei_Wp_Kses::wp_kses( do_shortcode( html_entity_decode( $lesson_video_embed ) ), $this->allowed_html ); ?></div><?php
@@ -1581,7 +1580,6 @@ class Sensei_Frontend {
 
 		    //get the page where the sensei log form is located
 		    $referrer = $_REQUEST['_wp_http_referer'];
-		    //$redirect = $_REQUEST['_sensei_redirect'];
 
 		    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )
 		    	 && ( isset( $_REQUEST['pwd'] ) && !empty( $_REQUEST['pwd'] ) ) ){
