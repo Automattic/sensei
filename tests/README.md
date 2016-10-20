@@ -12,28 +12,20 @@
 
 4) Install the tests:
 
-    ```
     $ tests/bin/install_vvv.sh
-    ```
 
 ### In your local machine
 
 1) Install [PHPUnit](http://phpunit.de/) by following their [installation guide](https://phpunit.de/getting-started.html). If you've installed it correctly, this should display the version:
 
-    ```
-     $ phpunit --version
+    $ phpunit --version
 
-    ```
 
 2) Install WordPress and the WP Unit Test lib using the `install.sh` script. Change to the plugin root directory and type:
 
-    $ tests/bin/install.sh <db-name> <db-user> <db-password> [db-host]
+    $ tests/bin/install.sh
 
-Sample usage:
-
-    $ tests/bin/install.sh woocommerce_tests root root localhost
-
-**Important**: The `<db-name>` database will be created if it doesn't exist and all data will be removed during testing.
+**Important**: You might need to change the DB parameters accordingly within the `install.sh` file.
 
 ## Running Tests
 
