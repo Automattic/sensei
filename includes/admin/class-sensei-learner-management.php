@@ -49,6 +49,7 @@ class Sensei_Learner_Management {
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 			add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
+			add_action( 'wp_ajax_reset_user_post', array( $this, 'reset_user_post' ) );
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
 		}
 	} // End __construct()
@@ -105,11 +106,18 @@ class Sensei_Learner_Management {
             Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
                             array('jquery','sensei-core-select2','sensei-chosen-ajax' ), Sensei()->version, true );
 
+
+		wp_localize_script( 'sensei-learners-general', 'slgL10n', array(
+			'inprogress'    => __( 'In Progress', 'woothemes-sensei' ),
+		) );
+
 		$data = array(
 			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
 			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
 			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
-			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
+			'reset_lesson_confirm' => __( 'Are you sure you want to reset the progress of this user for this lesson?', 'woothemes-sensei' ),
+			'reset_course_confirm' => __( 'Are you sure you want to reset the progress of this user for this course?', 'woothemes-sensei' ),
+			'modify_user_post_nonce' => wp_create_nonce( 'modify_user_post_nonce' ),
             'search_users_nonce' => wp_create_nonce( 'search-users' ),
             'selectplaceholder'=> __( 'Select Learner', 'woothemes-sensei' )
 		);
@@ -274,72 +282,85 @@ class Sensei_Learner_Management {
 		die();
 	}
 
-	public function remove_user_from_post() {
-
-        // Parse POST data
-        $data = sanitize_text_field( $_POST['data'] );
-        $action_data = array();
-        parse_str( $data, $action_data );
+	public function handle_reset_remove_user_post( $action ) {
+		// Parse POST data
+		$data = sanitize_text_field( $_POST[ 'data' ] );
+		$action_data = array();
+		parse_str( $data, $action_data );
 
 		// Security checks
-        // ensure the current user may remove users from post
-        // only teacher or admin can remove users
+		// ensure the current user may remove users from post
+		// only teacher or admin can remove users
 
-        // check the nonce, valid post
+		// check the nonce, valid post
 		$nonce = '';
-		if ( isset($_POST['remove_user_from_post_nonce']) ) {
-			$nonce = esc_html( $_POST['remove_user_from_post_nonce'] );
+		if ( isset( $_POST[ 'modify_user_post_nonce' ] ) ) {
+			$nonce = esc_html( $_POST[ 'modify_user_post_nonce' ] );
 		}
-        $post =  get_post( intval( $action_data[ 'post_id' ] ) );
 
-        // validate the user
-        $may_remove_user = false;
-        if( current_user_can('manage_sensei')
-            ||  $post->post_author == get_current_user_id() ){
+		$post = get_post( intval( $action_data[ 'post_id' ] ) );
 
-            $may_remove_user = true;
+		// validate the user
+		$may_remove_user = false;
+		if ( current_user_can('manage_sensei') || $post->post_author == get_current_user_id() ) {
+			$may_remove_user = true;
+		}
 
-        }
+		if ( ! wp_verify_nonce( $nonce, 'modify_user_post_nonce' ) || ! is_a( $post, 'WP_Post' ) || ! $may_remove_user ) {
+			exit('');
+		}
 
-        if( ! wp_verify_nonce( $nonce, 'remove_user_from_post_nonce' )
-            || ! is_a( $post ,'WP_Post' )
-            || ! $may_remove_user ){
-
-            die('');
-
-        }
-
-		if( $action_data['user_id'] && $action_data['post_id'] && $action_data['post_type'] ) {
-
+		if ( $action_data[ 'user_id' ] && $action_data[ 'post_id' ] && $action_data[ 'post_type' ] ) {
 			$user_id = intval( $action_data['user_id'] );
 			$post_id = intval( $action_data['post_id'] );
 			$post_type = sanitize_text_field( $action_data['post_type'] );
 
 			$user = get_userdata( $user_id );
 
-			switch( $post_type ) {
+			switch ( $action ) {
+				case 'reset':
+					switch ( $post_type ) {
+						case 'course':
+							$lesson_ids = Sensei()->course->course_lessons( $post_id, 'any', 'ids' );
+							$altered = true;
+							foreach ( $lesson_ids as $lesson_id ) {
+								$altered &= Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+							}
+						break;
 
-				case 'course':
-
-                    $removed = Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
-
+						case 'lesson':
+							$altered = Sensei()->quiz->reset_user_lesson_data( $post_id, $user_id );
+						break;
+					}
 				break;
 
-				case 'lesson':
+				case 'remove':
+					switch ( $post_type ) {
+						case 'course':
+							$altered = Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
+						break;
 
-					$removed = Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
-
+						case 'lesson':
+							$altered = Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
+						break;
+					}
 				break;
-
 			}
 
-			if( $removed ) {
-				die( 'removed' );
+			if ( $altered ) {
+				exit( 'altered' );
 			}
-
 		}
 
-		die('');
+		exit('');
+	}
+
+	public function reset_user_post() {
+		$this->handle_reset_remove_user_post( 'reset' );
+	}
+
+	public function remove_user_from_post() {
+		$this->handle_reset_remove_user_post( 'remove' );
 	}
 
 	public function json_search_users() {

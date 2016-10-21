@@ -81,6 +81,17 @@ class Sensei_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Makes the table non-fixed to display action buttons properly.
+	 *
+	 * @access protected
+	 *
+	 * @return array List of CSS classes for the table tag.
+	 */
+	protected function get_table_classes() {
+		return array_diff( parent::get_table_classes(), array( 'fixed' ) );
+	}
+
+	/**
 	 * extra_tablenav adds extra markup in the toolbars before or after the list
 	 * @since  1.2.0
 	 * @param string $which, helps you decide if you add the markup after (bottom) or before (top) the list
