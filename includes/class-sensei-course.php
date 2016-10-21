@@ -34,6 +34,14 @@ class Sensei_Course {
 	public static $allowed_html;
 
 	/**
+	 * @var array List of shortcodes that require authentication.
+	 */
+	public static $shortcodes_auth = array(
+		'usercourses',
+		'sensei_user_courses',
+	);
+
+	/**
 	 * Constructor.
 	 * @since  1.0.0
 	 */
@@ -116,11 +124,32 @@ class Sensei_Course {
         // flush rewrite rules when saving a course
         add_action('save_post', array( 'Sensei_Course', 'flush_rewrite_rules' ) );
 
+	add_action( 'template_redirect', array( __CLASS__, 'shortcode_redirect_course_login' ), 10, 1 );
+
 		// Allow course archive to be setup as the home page
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
 		}
 	} // End __construct()
+
+	/**
+	 * If not logged in, loops through the shortcodes_auth and if the current post contains one of them
+	 * the user will be redirected to wp login
+	 *
+	 * @since 1.9.10
+	 */
+	public static function shortcode_redirect_course_login() {
+		if ( ! is_user_logged_in() ) {
+			$post_content = get_post( get_the_ID() )->post_content;
+
+			foreach ( self::$shortcodes_auth as $shortcode ) {
+				if ( has_shortcode( $post_content, $shortcode ) ) {
+					wp_redirect( wp_login_url( get_permalink() ) );
+					break;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Fires when a quiz has been graded to check if the Course status needs changing

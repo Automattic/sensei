@@ -15,8 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <?php
 /**
  * Executes before the Sensei my courses markup begins. This hook
- * only fires whe a user is logged in. If you need to add
- * something here for when users are logged out use `sensei_login_form_before`.
+ * only fires whe a user is logged in.o
  *
  * @since 1.9.0
  */
@@ -52,8 +51,7 @@ do_action( 'sensei_my_courses_before' );
 <?php
 /**
  * Executes after the Sensei my courses template markup ends. This hook
- * only fires whe a user is logged in. If you need to add
- * something here for when users are logged out use `sensei_login_form_after`.
+ * only fires when a user is logged in.
  *
  * @since 1.9.0
  */
