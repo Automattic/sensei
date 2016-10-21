@@ -511,7 +511,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		    Sensei()->notices->add_notice( __( 'Quiz Reset Successfully.', 'woothemes-sensei' ) , 'info');
 	    }
 
-        return ( $deleted_answers && $deleted_grades ) ;
+		return true;
 
     } // end reset_user_lesson_data
 
