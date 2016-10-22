@@ -1292,7 +1292,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                     value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
              <!--#end Action Nonce's -->
 
-             <?php if ( '' == $user_quiz_grade) { ?>
+             <?php if ( '' == $user_quiz_grade && 'ungraded' !== $user_lesson_status->comment_approved ) { ?>
 
                  <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php  _e( 'Complete Quiz', 'woothemes-sensei' ); ?>"/></span>
 
