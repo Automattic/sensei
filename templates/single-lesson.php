@@ -52,7 +52,11 @@
         } else {
             ?>
 
-                <p> <?php the_excerpt(); ?> </p>
+                <p>
+
+                    <?php echo get_the_excerpt(); ?>
+
+                </p>
 
             <?php
         }
