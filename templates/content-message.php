@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <p class="message-excerpt">
 
-                <?php the_excerpt();?>
+                <?php echo get_the_excerpt(); ?>
 
             </p>
 

@@ -49,7 +49,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <p class="course-excerpt">
 
-                <?php the_excerpt(); ?>
+                <?php echo get_the_excerpt(); ?>
 
             </p>
 
@@ -84,4 +84,4 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     ?>
 
 
-</li> <!-- article .(<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ) ) ) ); ?>  -->
+</li>
