@@ -45,6 +45,8 @@ do_action( 'sensei_loop_message_before' );
     ?>
 
     <?php
+    wp_reset_query();
+
     /**
      * This runs after the post type items in the loop.php template. It runs
      * only for the specified post type
