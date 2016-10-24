@@ -2645,8 +2645,8 @@ class Sensei_Course {
         // title should be Other Lessons if there are lessons belonging to models.
         $title = __('Other Lessons', 'woothemes-sensei');
 
-        // show lessons if the number of lesson in the course is the same as those that isn't assigned to a module
-        if( count( $course_lessons ) == count( $none_module_lessons )  ){
+        // show header if there are lessons the number of lesson in the course is the same as those that isn't assigned to a module
+        if ( ! empty( $course_lessons ) && count( $course_lessons ) == count( $none_module_lessons ) ) {
 
             $title = __('Lessons', 'woothemes-sensei');
 
