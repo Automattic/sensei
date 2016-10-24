@@ -3167,6 +3167,26 @@ class Sensei_Course {
 		return $page_on_front == $page_id;
 	}
 
+	/**
+	 * Show a message telling the user to complete the previous course if they haven't done so yet
+	 *
+	 * @since 1.9.10
+	 */
+	public static function prerequisite_complete_message() {
+		if ( ! self::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) ) {
+			$course_prerequisite_id = (int) get_post_meta( get_the_ID(), '_course_prerequisite', true );
+			$prerequisite_course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) )
+				. '" title="'
+				. sprintf(
+					esc_attr__( 'You must first complete: %1$s', 'woothemes-sensei' ),
+					get_the_title( $course_prerequisite_id ) )
+				 . '">' . get_the_title( $course_prerequisite_id ). '</a>';
+
+			Sensei()->notices->add_notice( sprintf(
+				esc_html__( 'You must first complete %1$s before viewing this course', 'woothemes-sensei' ),
+				$prerequisite_course_link ), 'info');
+		}
+	}
 
 }// End Class
 
