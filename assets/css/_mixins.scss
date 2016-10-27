@@ -145,7 +145,7 @@ $fontpath:          'includes/fonts/';
 @mixin opacity($opacity:0.75)
 {
     opacity: $opacity;
-    filter:#{"alpha(opacity=$opacity * 100)"};
+    filter: alpha(opacity=$opacity * 100);
 }
 
 @mixin rotate($degree:1deg)

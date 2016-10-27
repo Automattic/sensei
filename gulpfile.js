@@ -23,7 +23,7 @@ var checktextdomain = require( 'gulp-checktextdomain' );
 var paths = {
 	scripts: ['assets/js/*.js' ],
 	adminScripts: ['assets/js/admin/*.js'],
-	css: ['assets/css/*.css'],
+	css: ['assets/css/*.scss'],
     frontedCss: ['assets/css/frontend/*.scss']
 };
 
@@ -36,6 +36,7 @@ gulp.task( 'default', [ 'CSS','FrontendCSS','JS','adminJS' ] );
 gulp.task( 'CSS', ['clean'], function() {
 	return gulp.src( paths.css )
         .pipe( sass().on('error', sass.logError))
+	.pipe( minifyCSS({ keepBreaks: false }) )
 		.pipe( gulp.dest( 'assets/css' ) );
 });
 
