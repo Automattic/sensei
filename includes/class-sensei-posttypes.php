@@ -276,6 +276,9 @@ class Sensei_PostTypes {
             ),
 		    'map_meta_cap' => true,
 		    'capability_type' => 'quiz',
+			'capabilities' => array(
+				'edit_published_posts' => 'do_not_allow',
+			),
 		    'has_archive' => false,
 		    'hierarchical' => false,
 		    'menu_position' => 20, // Below "Pages"
