@@ -63,6 +63,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 			default:
 				$columns = array(
 					'title' => __( 'Learner', 'woothemes-sensei' ),
+					'email' => __( 'Email', 'woothemes-sensei' ),
 					'registered' => __( 'Date Registered', 'woothemes-sensei' ),
 					'active_courses' => __( 'Active Courses', 'woothemes-sensei' ),
 					'completed_courses' => __( 'Completed Courses', 'woothemes-sensei' ),
@@ -108,6 +109,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 			default:
 				$columns = array(
 					'title' => array( 'user_login', false ),
+					'email' => array( 'user_email', false ),
 					'registered' => array( 'registered', false ),
 					'active_courses' => array( 'active_courses', false ),
 					'completed_courses' => array( 'completed_courses', false ),
@@ -422,6 +424,8 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
                     $user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
                 }
 
+				$user_email = $item->user_email;
+
 				// Output the users data
 				if ( $this->csv_output ) {
                     $user_name = Sensei_Learner::get_full_name( $item->ID );
@@ -432,6 +436,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 					$user_average_grade .= '%';
 				} // End If Statement
 				$column_data = apply_filters( 'sensei_analysis_overview_column_data', array( 'title' => $user_name,
+												'email' => $user_email,
 												'registered' => $item->user_registered,
 												'active_courses' => ( $user_courses_started - $user_courses_ended ),
 												'completed_courses' => $user_courses_ended,
