@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <?php
 /**
  * Executes before the Sensei my courses markup begins. This hook
- * only fires whe a user is logged in.o
+ * only fires whe a user is logged in.
  *
  * @since 1.9.0
  */
