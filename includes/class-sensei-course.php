@@ -36,7 +36,7 @@ class Sensei_Course {
 	/**
 	 * @var array List of shortcodes that require authentication.
 	 */
-	public static $shortcodes_auth = array(
+	public static $required_auth_shortcodes = array(
 		'usercourses',
 		'sensei_user_courses',
 	);
@@ -133,20 +133,28 @@ class Sensei_Course {
 	} // End __construct()
 
 	/**
-	 * If not logged in, loops through the shortcodes_auth and if the current post contains one of them
+	 * If not logged in, loops through the required_auth_shortcodes and if the current post contains one of them
 	 * the user will be redirected to wp login
 	 *
 	 * @since 1.9.10
 	 */
 	public static function shortcode_redirect_course_login() {
-		if ( ! is_user_logged_in() ) {
-			$post_content = get_post( get_the_ID() )->post_content;
+		if ( is_user_logged_in() ) {
+			return;
+		}
 
-			foreach ( self::$shortcodes_auth as $shortcode ) {
-				if ( has_shortcode( $post_content, $shortcode ) ) {
-					wp_redirect( wp_login_url( get_permalink() ) );
-					break;
-				}
+		$post = get_post();
+
+		if ( ! $post ) {
+			return;
+		}
+
+		$post_content = $post->post_content;
+
+		foreach ( self::$required_auth_shortcodes as $shortcode ) {
+			if ( has_shortcode( $post_content, $shortcode ) ) {
+				wp_redirect( wp_login_url( sensei_get_current_page_url() ) );
+				exit;
 			}
 		}
 	}
