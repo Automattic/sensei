@@ -40,13 +40,5 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
         // make sure the version number was set on the new sensei instance
         $this->assertTrue( isset( Sensei()->version ), 'The version number is not set on the global Sensei object');
-
-		// read the plugin and get the version number
-		//--> use  built in wp function
-
-		// load an instance of the main class and check the version number
-		//--> this should be loaded in global $woothemes_sensei.
-		//test if the lesson object is loaded
-		//$this->assertTrue( false , 'The plugin listings version and the code variable version numbers do not match'  );
 	}
 }

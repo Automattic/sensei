@@ -2593,8 +2593,6 @@ class Sensei_Lesson {
 
 		$post_args = array(	'post_type'         => 'lesson',
 							'posts_per_page'    => -1,
-//							'orderby'           => 'menu_order date',
-//							'order'             => 'ASC',
 							'post_status'       => $post_status,
 							'suppress_filters'  => 0,
 							'fields'            => 'ids',
@@ -2615,9 +2613,7 @@ class Sensei_Lesson {
 		}
 
 		// Allow WP to generate the complex final query, just shortcut to only do an overall count
-//		add_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 		$lessons_query = new WP_Query( apply_filters( 'sensei_lesson_count', $post_args ) );
-//		remove_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 
 		return count( $lessons_query->posts );
 	} // End lesson_count()

@@ -72,7 +72,7 @@ class Sensei_Utils {
 					'comment_content' => !empty($args['data']) ? esc_html( $args['data'] ) : '',
 					'comment_type' => esc_attr( $args['type'] ),
 					'user_id' => intval( $args['user_id'] ),
-					'comment_approved' => !empty($args['status']) ? esc_html( $args['status'] ) : 'log', // 'log' == 'sensei_user_answer'
+					'comment_approved' => !empty($args['status']) ? esc_html( $args['status'] ) : 'log',
 				);
 		// Allow extra data
 		if ( !empty($args['username']) ) {
@@ -178,7 +178,7 @@ class Sensei_Utils {
 			}
 		}
 		else {
-			$args['status'] = 'any'; // 'log' == 'sensei_user_answer'
+			$args['status'] = 'any';
 		}
 
 		// Take into account WP < 4.1 will automatically add ' comment_approved = 1 OR comment_approved = 0 '
@@ -960,9 +960,6 @@ class Sensei_Utils {
 	public static function array_sort_reorder( $return_array ) {
 		if ( isset( $_GET['orderby'] ) && '' != esc_html( $_GET['orderby'] ) ) {
 			$sort_key = '';
-			// if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->sortable_columns ) ) {
-			// 	$sort_key = esc_html( $_GET['orderby'] );
-			// } // End If Statement
 			if ( '' != $sort_key ) {
 					Sensei_Utils::sort_array_by_key($return_array,$sort_key);
 				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
@@ -1703,8 +1700,6 @@ class Sensei_Utils {
 			if ( 'in-progress' != $user_lesson_status ) {
 				// Check for Passed or Completed Setting
 				// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
-//				$course_completion = Sensei()->settings->settings[ 'course_completion' ];
-//				if ( 'passed' == $course_completion ) {
 					switch( $user_lesson_status ) {
 						case 'complete':
 						case 'graded':
@@ -2231,7 +2226,7 @@ class Sensei_Utils {
      */
     public static function round( $val, $precision = 0, $mode = PHP_ROUND_HALF_UP, $context = ''  ){
 
-        /**å
+        /**
          * Change the precision for the Sensei_Utils::round function.
          * the precision given will be passed into the php round function
          * @since 1.8.5
