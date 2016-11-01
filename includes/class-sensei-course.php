@@ -1157,6 +1157,10 @@ class Sensei_Course {
 		//check for variation
 		$product = wc_get_product( $product_id );
 
+		if ( ! is_object( $product ) ) {
+			return array();
+		}
+
 		if ( in_array( $product->get_type(), array( 'variable-subscription', 'variable' ) ) ) {
 
 			$variations = $product->get_available_variations();
