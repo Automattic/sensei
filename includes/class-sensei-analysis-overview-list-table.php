@@ -390,38 +390,6 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 
 			case 'users' :
 			default:
-				// Get Started Courses
-				$course_args = array( 
-						'user_id' => $item->ID,
-						'type' => 'sensei_course_status',
-						'status' => 'any',
-					);
-				$user_courses_started = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item ) );
-
-				// Get Completed Courses
-				$course_args = array( 
-						'user_id' => $item->ID,
-						'type' => 'sensei_course_status',
-						'status' => 'complete',
-					);
-				$user_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item ) );
-
-				// Get Quiz Grades
-				$grade_args = array( 
-						'user_id' => $item->ID,
-						'type' => 'sensei_lesson_status',
-						'status' => 'any',
-						'meta_key' => 'grade',
-					);
-
-				$grade_count = count( Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), true ));
-				$grade_total = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );
-
-                $user_average_grade = 0;
-                if( $grade_total > 0 && $grade_count > 0 ){
-                    $user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
-                }
-
 				// Output the users data
 				if ( $this->csv_output ) {
                     $user_name = Sensei_Learner::get_full_name( $item->ID );
@@ -429,14 +397,14 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 				else {
 					$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->ID ), admin_url( 'admin.php' ) );
 					$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $item->display_name . '</a></strong>';
-					$user_average_grade .= '%';
+					$item->average_grade .= '%';
 				} // End If Statement
 				$column_data = apply_filters( 'sensei_analysis_overview_column_data', array( 'title' => $user_name,
-												'registered' => $item->user_registered,
-												'active_courses' => ( $user_courses_started - $user_courses_ended ),
-												'completed_courses' => $user_courses_ended,
-												'average_grade' => $user_average_grade,
-											), $item, $this );
+					'registered' => $item->user_registered,
+					'active_courses' => $item->active_courses,
+					'completed_courses' => $item->completed_courses,
+					'average_grade' => $item->average_grade,
+				), $item, $this );
 				break;
 		} // end switch
 		return $column_data;
@@ -528,6 +496,50 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		$wp_user_search = new WP_User_Query( $args );
         $learners = $wp_user_search->get_results();
 		$this->total_items = $wp_user_search->get_total();
+
+		foreach ( $learners as $item ) {
+			// Get Started Courses
+			$course_args = array(
+				'user_id' => $item->ID,
+				'type' => 'sensei_course_status',
+				'status' => 'any',
+			);
+			$user_courses_started = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item ) );
+
+			// Get Completed Courses
+			$course_args = array(
+				'user_id' => $item->ID,
+				'type' => 'sensei_course_status',
+				'status' => 'complete',
+			);
+			$user_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item ) );
+
+			// Get Quiz Grades
+			$grade_args = array(
+				'user_id' => $item->ID,
+				'type' => 'sensei_lesson_status',
+				'status' => 'any',
+				'meta_key' => 'grade',
+			);
+
+			$grade_count = count( Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), true ));
+			$grade_total = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );
+
+			$user_average_grade = 0;
+
+			if ( $grade_total > 0 && $grade_count > 0 ) {
+				$user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
+			}
+
+			$item->active_courses = $user_courses_started - $user_courses_ended;
+			$item->completed_courses = $user_courses_ended;
+			$item->average_grade = $user_average_grade;
+		}
+
+		// need to re-order because of the meta data appended above
+		if ( isset( $_GET[ 'orderby' ] ) && '' != esc_html( $_GET[ 'orderby' ] ) ) {
+			$learners = Sensei_Utils::sort_objects_array_by_field( $learners, $_GET['orderby'], $_GET['order'] === 'asc' ? 1 : -1 );
+		}
 
         return $learners;
 

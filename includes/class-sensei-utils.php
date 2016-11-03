@@ -976,6 +976,23 @@ class Sensei_Utils {
 	} // End array_sort_reorder()
 
 	/**
+	 * Sorts an array of objects by a field
+	 *
+	 * @since  1.9.10
+	 * @param  array $array Array of objects
+	 * @param  string $key Key to order by
+	 * @param  int $key Direction to order by, 1 or -1.
+	 * @return void
+	 */
+	public static function sort_objects_array_by_field( $array, $key, $direction ) {
+		usort( $array, function( $a, $b ) use ( $key, $direction ) {
+			return $direction * strcmp( $a->$key, $b->$key );
+		} );
+
+		return $array;
+	} // End sort_objects_array_by_field()
+
+	/**
 	 * sort_array_by_key sorts array by key
 	 * @since  1.3.0
 	 * @param  array $array by ref
