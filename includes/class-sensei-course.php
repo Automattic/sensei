@@ -377,12 +377,16 @@ class Sensei_Course {
 		global $post;
 
 		$course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
+		$course_video_embed = Sensei_Wp_Kses::maybe_sanitize( $course_video_embed, self::$allowed_html );
 
 		$html = '';
 
 		$html .= '<label class="screen-reader-text" for="course_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . '</label>';
-		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . Sensei_Wp_Kses::wp_kses( $course_video_embed, self::$allowed_html ) . '</textarea>';
-		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
+		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">';
+
+		$html .= $course_video_embed . '</textarea><p>';
+
+		$html .= __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
 
@@ -447,8 +451,9 @@ class Sensei_Course {
 		// Get the meta key.
 		$meta_key = '_' . $post_key;
 		// Get the posted data and sanitize it for use as an HTML class.
-		if ( 'course_video_embed' == $post_key) {
-			$new_meta_value = wp_kses( $_POST[$post_key], self::$allowed_html );
+		if ( 'course_video_embed' == $post_key ) {
+			$new_meta_value = ( isset( $_POST[ $post_key ] ) ) ? $_POST[ $post_key ] : '';
+			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, self::$allowed_html );
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
@@ -2932,10 +2937,14 @@ class Sensei_Course {
 
         } // End If Statement
 
+	$course_video_embed = do_shortcode( $course_video_embed );
+
+	$course_video_embed = Sensei_Wp_Kses::maybe_sanitize( $course_video_embed, self::$allowed_html );
+
         if ( '' != $course_video_embed ) { ?>
 
             <div class="course-video">
-                <?php echo Sensei_Wp_Kses::wp_kses( do_shortcode( $course_video_embed ), self::$allowed_html ); ?>
+                <?php echo $course_video_embed; ?>
             </div>
 
         <?php } // End If Statement
