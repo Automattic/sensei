@@ -1104,10 +1104,14 @@ class Sensei_Frontend {
 							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="<?php if ( ! empty( $_POST['sensei_reg_email'] ) ) echo esc_attr( $_POST['sensei_reg_email'] ); ?>" />
 						</p>
 
+						<?php if ( Sensei()->settings->get( 'auto_generate_password' ) ): ?>
+						<p id="reg_passmail"><?php _e( 'Registration confirmation will be emailed to you.', 'woothemes-sensei' ); ?></p>
+						<?php else: ?>
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
 							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="<?php if ( ! empty( $_POST['sensei_reg_password'] ) ) echo esc_attr( $_POST['sensei_reg_password'] ); ?>" />
 						</p>
+						<?php endif; ?>
 
 						<!-- Spam Trap -->
 						<div style="left:-999em; position:absolute;"><label for="trap"><?php _e( 'Anti-spam', 'woothemes-sensei' ); ?></label><input type="text" name="email_2" id="trap" tabindex="-1" /></div>
@@ -1660,6 +1664,25 @@ class Sensei_Frontend {
 	} // End  sensei_login_fail_redirect_to_front_end_login
 
 	/**
+	 * Email login credentials to a newly-registered user.
+	 *
+	 * @param int $user_id User ID.
+	 * @param string $plaintext_pass Password of the User.
+	 */
+	public function sensei_new_user_email( $user_id, $plaintext_pass ) {
+		$user = get_userdata( $user_id );
+
+		$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
+
+		$message = sprintf( __( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
+		$message .= sprintf( __( 'Password: %s' ), $plaintext_pass ) . "\r\n\r\n";
+		$message .= __( 'To authenticate to Sensei, visit the following address:' ) . "\r\n\r\n";
+		$message .= '<' . network_site_url( 'my-courses' ) . ">\r\n\r\n";
+
+		wp_mail( $user->user_email, sprintf( __( '[%s] Your username and password info' ), $blogname ), $message );
+	}
+
+	/**
 	 * handle sensei specific registration requests
 	 *
 	 * @return void redirect
@@ -1667,11 +1690,15 @@ class Sensei_Frontend {
 	 */
 	public function sensei_process_registration(){
 		global 	 $current_user;
+		$auto_generate_password = Sensei()->settings->get( 'auto_generate_password' );
+
 		// check the for the sensei specific registration requests
-		if( !isset( $_POST['sensei_reg_username'] ) && ! isset( $_POST['sensei_reg_email'] ) && !isset( $_POST['sensei_reg_password'] )){
+		if ( ! isset( $_POST[ 'sensei_reg_username' ] ) || ! isset( $_POST[ 'sensei_reg_email' ] ) 
+			|| ( ! $auto_generate_password && ! isset( $_POST[ 'sensei_reg_password' ] ) ) ) {
 			// exit if this is not a sensei registration request
-			return ;
+			return;
 		}
+
 		// check for spam throw cheating huh
 		if( isset( $_POST['email_2'] ) &&  '' !== $_POST['email_2']   ){
 			$message = 'Error:  The spam field should be empty';
@@ -1682,7 +1709,7 @@ class Sensei_Frontend {
 		// retreive form variables
 		$new_user_name		= sanitize_user( $_POST['sensei_reg_username'] );
 		$new_user_email		= $_POST['sensei_reg_email'];
-		$new_user_password	= $_POST['sensei_reg_password'];
+		$new_user_password	= $auto_generate_password ? wp_generate_password( 12, false ) : $_POST[ 'sensei_reg_password' ];
 
 		// Check the username
 		$username_error_notice = '';
@@ -1731,7 +1758,7 @@ class Sensei_Frontend {
 		}
 
 		// notify the user
-		wp_new_user_notification( $user_id, $new_user_password );
+		$this->sensei_new_user_email( $user_id, $new_user_password );
 
 		// set global current user aka log the user in
 		$current_user = get_user_by( 'id', $user_id );

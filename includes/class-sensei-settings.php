@@ -167,6 +167,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 								'section' => 'default-settings'
 								);
 
+		$fields['auto_generate_password'] = array(
+								'name' => __( 'Registration process', 'woothemes-sensei' ),
+								'description' => __( 'Automatically generate passwords for users.', 'woothemes-sensei', 'woothemes-sensei' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'default-settings'
+								);
+
 		$fields['messages_disable'] = array(
 								'name' => __( 'Disable Private Messages', 'woothemes-sensei' ),
 								'description' => __( 'Disable the private message functions between learners and teachers.', 'woothemes-sensei' ),
