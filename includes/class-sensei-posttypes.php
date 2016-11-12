@@ -374,7 +374,7 @@ class Sensei_PostTypes {
 			    'public' => true,
 			    'publicly_queryable' => true,
 			    'show_ui' => true,
-			    'show_in_menu' => 'admin.php?page=sensei',
+				'show_in_menu' => false,
 			    'show_in_nav_menus' => true,
 			    'query_var' => true,
 			    'exclude_from_search' => true,
@@ -387,7 +387,7 @@ class Sensei_PostTypes {
 			    'map_meta_cap' => true,
 			    'capability_type' => 'question',
 			    'has_archive' => true,
-			    'hierarchical' => false,
+				'hierarchical' => true,
 			    'menu_position' => 50,
 			    'supports' => array( 'title', 'editor', 'comments' ),
 			);

@@ -149,11 +149,6 @@ class Sensei_Admin {
             $submenu_file = 'edit-tags.php?taxonomy=module';
             $parent_file  = 'edit.php?post_type=course';
 
-		} elseif ( in_array( $screen->id, array( 'sensei_message', 'edit-sensei_message' ) ) ) {
-
-            $submenu_file = 'edit.php?post_type=sensei_message';
-			$parent_file  = 'sensei';
-
 		}
 	}
 
