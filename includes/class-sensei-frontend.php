@@ -153,6 +153,17 @@ class Sensei_Frontend {
 
             }
 
+			wp_enqueue_script( 'password-strength-meter' );
+			wp_enqueue_script( 'sensei-password-strength-meter', Sensei()->plugin_url . 'assets/js/password-strength-meter.js', array( 'password-strength-meter' ), Sensei()->version );
+
+			wp_localize_script( 'sensei-password-strength-meter', 'pwsL10n', array(
+				'empty'    => __( 'Please enter a password', 'woothemes-sensei' ),
+				'short'    => __( 'Very weak', 'woothemes-sensei' ),
+				'bad'      => __( 'Weak', 'woothemes-sensei' ),
+				'good'     => __( 'Medium', 'woothemes-sensei' ),
+				'strong'   => __( 'Strong', 'woothemes-sensei' ),
+				'mismatch' => __( 'Mismatch', 'woothemes-sensei' )
+			) );
 
 			// Allow additional scripts to be loaded
 			do_action( 'sensei_additional_scripts' );
@@ -1107,6 +1118,8 @@ class Sensei_Frontend {
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
 							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="<?php if ( ! empty( $_POST['sensei_reg_password'] ) ) echo esc_attr( $_POST['sensei_reg_password'] ); ?>" />
+							<span id="sensei_password_strength"></span>
+							<p class="description indicator-hint"><?php echo wp_get_password_hint(); ?></p>
 						</p>
 
 						<!-- Spam Trap -->
