@@ -354,6 +354,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 								'section' => 'lesson-settings'
 								);
 
+		$fields['lesson_export_quiz_to_pdf'] = array(
+								'name' => __( 'Allow learners to export Quiz', 'woothemes-sensei' ),
+								'description' => __( 'This will allow learners to export the quiz to PDF once they have finished it.', 'woothemes-sensei' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'lesson-settings'
+								);
+
 		$fields['lesson_author'] = array(
 								'name' => __( 'Display Lesson Author', 'woothemes-sensei' ),
 								'description' => __( 'Output the Lesson Author on Course single page & Lesson archive page.', 'woothemes-sensei' ),

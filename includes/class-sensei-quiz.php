@@ -34,6 +34,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         // fire the complete quiz button submit for grading action
         add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_quiz_submit_listener' ) );
 
+		// whether we need to output PDF or not, hook on template_redirect because we need post
+		add_action( 'template_redirect', array( $this, 'user_export_quiz_listener' ) );
+
 		// fire the save user answers quiz button click responder
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_save_quiz_answers_listener' ) );
 
@@ -114,6 +117,49 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	} // end lesson
 
+	/**
+	 * user_export_quiz_listener
+	 *
+	 * This function hooks into the template_redirect and sends a PDF file to the client
+	 */
+	public function user_export_quiz_listener() {
+		if ( ! isset( $_POST[ 'quiz_export' ] ) || ! Sensei()->settings->get( 'lesson_export_quiz_to_pdf' ) ) {
+			return;
+		}
+
+		global $post;
+
+		$lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $post->ID );
+
+		$pdf = new FPDF();
+		$pdf->AddPage();
+
+		foreach ( $lesson_quiz_questions as $question ) {
+			$right_answers = get_post_meta( $question->ID, '_question_right_answer', true );
+			$wrong_answers = get_post_meta( $question->ID, '_question_wrong_answers', true );
+
+			$pdf->SetFont( 'Arial' , 'B' ,16 );
+			$pdf->Cell( 40, 10, __( 'Question: ', 'woothemes-sensei' ) . $question->post_title );
+			$pdf->Ln();
+			$pdf->Write( 5, __( 'Right answers:', 'woothemes-sensei' ) );
+			$pdf->Ln();
+			$pdf->SetFont( 'Arial', '', 16);
+			$pdf->Write( 5, implode( "\n", $right_answers ) );
+			$pdf->Ln();
+			$pdf->Ln();
+			$pdf->SetFont( 'Arial', 'B', 16 );
+			$pdf->Write( 5, __( 'Wrong answers:', 'woothemes-sensei' ) );
+			$pdf->Ln();
+			$pdf->SetFont( 'Arial', '', 16);
+			$pdf->Write( 5, implode( "\n", $wrong_answers ) );
+			$pdf->Ln();
+			$pdf->Ln();
+			$pdf->Ln();
+		}
+
+		$pdf->Output( 'I' );
+		exit;
+	}
 
     /**
      * user_save_quiz_answers_listener
@@ -1297,6 +1343,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                  <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php  _e( 'Complete Quiz', 'woothemes-sensei' ); ?>"/></span>
 
                  <span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php _e( 'Save Quiz', 'woothemes-sensei' ); ?>"/></span>
+
+             <?php } else if ( Sensei()->settings->get( 'lesson_export_quiz_to_pdf' ) ) { ?>
+                 <span><input type="submit" name="quiz_export" class="quiz-submit export" value="<?php _e( 'Export Quiz', 'woothemes-sensei' ); ?>"/></span>
 
              <?php } // End If Statement ?>
 
