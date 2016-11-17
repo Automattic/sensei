@@ -735,12 +735,7 @@ class Sensei_Teacher {
 
                 foreach(  $course_lessons as $lesson ){
 
-                    $quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
-                    if( !empty( $quiz_id ) ) {
-
-                        array_push( $quiz_scope, $quiz_id );
-
-                    }
+                    array_push( $quiz_scope, $lesson->ID );
 
                 }
 
