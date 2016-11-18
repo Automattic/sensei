@@ -1457,12 +1457,13 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Checks if a user has completed a course by checking every lesson status
+	 * Checks if a user has completed a course by checking every lesson status,
+	 * and then updates the course metadata with that information.
 	 *
 	 * @since  1.7.0
 	 * @param  integer $course_id Course ID
 	 * @param  integer $user_id   User ID
-	 * @return int
+	 * @return mixed boolean or comment_ID
 	 */
 	public static function user_complete_course( $course_id = 0, $user_id = 0 ) {
 		global  $wp_version;
@@ -1483,7 +1484,7 @@ class Sensei_Utils {
 				);
 
 			// Grab all of this Courses' lessons, looping through each...
-			$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+			$lesson_ids = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
 			$total_lessons = count( $lesson_ids );
 				// ...if course completion not set to 'passed', and all lessons are complete or graded,
 				// ......then all lessons are 'passed'
