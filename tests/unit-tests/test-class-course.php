@@ -118,7 +118,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
         for(  $i = 0 ; $i < 3; $i++ ){
             WooThemes_Sensei_Utils::update_lesson_status(  $test_user_id, $test_lessons[$i], 'complete');
         }
-        $expected_percentage = 3/count( $test_lessons ) * 100;
+        $expected_percentage = round( 3/count( $test_lessons ) * 100, 2 );
         $this->assertEquals( $expected_percentage , Sensei()->course->get_completion_percentage( $test_course_id, $test_user_id ),'Course completed percentage is not accurate' );
 
         // complete all lessons
