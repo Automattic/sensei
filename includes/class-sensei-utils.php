@@ -1552,11 +1552,7 @@ class Sensei_Utils {
 			// Update meta data on how many lessons have been completed
 			$course_metadata['complete'] = $lessons_completed;
 			// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
-			if ( 0 === $total_lessons ) {
-				$course_metadata[ 'percent' ] = 0;
-			} else {
-				$course_metadata[ 'percent' ] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
-			}
+			$course_metadata[ 'percent' ] = self::calculate_completion_percentage( $lessons_completed, $total_lessons );
 
 			$activity_logged = Sensei_Utils::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
 
@@ -1568,6 +1564,20 @@ class Sensei_Utils {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get completion percentage
+	 * @param $numerator
+	 * @param $denominator
+	 * @return int|number
+	 */
+	public static function calculate_completion_percentage( $numerator, $denominator ) {
+		if ( 0 === $denominator ) {
+			return 0;
+		}
+
+		return abs( round( ( doubleval( $numerator ) * 100 ) / ( $denominator ), 0 ) );
 	}
 
 	/**
