@@ -1570,14 +1570,15 @@ class Sensei_Utils {
 	 * Get completion percentage
 	 * @param $numerator
 	 * @param $denominator
+	 * @param int $precision
 	 * @return int|number
 	 */
-	public static function calculate_completion_percentage( $numerator, $denominator ) {
+	public static function calculate_completion_percentage( $numerator, $denominator, $precision = 0 ) {
 		if ( 0 === $denominator ) {
 			return 0;
 		}
 
-		return abs( round( ( doubleval( $numerator ) * 100 ) / ( $denominator ), 0 ) );
+		return abs( round( ( doubleval( $numerator ) * 100 ) / ( $denominator ), $precision ) );
 	}
 
 	/**
