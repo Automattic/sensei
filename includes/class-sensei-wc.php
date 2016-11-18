@@ -553,6 +553,11 @@ Class Sensei_WC{
 	 * @return bool
 	 */
 	public static function is_product_in_cart( $product_id ){
+		if ( false === Sensei_Utils::is_request( 'frontend' ) ) {
+			// WC Cart is not loaded when we are on Admin or doing a Cronjob
+			// see https://github.com/Automattic/sensei/issues/1622
+			return false;
+		}
 
 		if ( 0 < $product_id ) {
 
