@@ -592,17 +592,12 @@ class Sensei_Grading {
         if( $_POST['all_questions_graded'] == 'yes' ) {
 
             // set the users total quiz grade
-			if ( 0 < intval( $quiz_grade_total ) ) {
-            $grade = abs( round( ( doubleval( $quiz_grade ) * 100 ) / ( $quiz_grade_total ), 2 ) );
-			}
-			else {
-				$grade = 0;
-			}
+			$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $quiz_grade, $quiz_grade_total, 2 );
             Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
 
             // Duplicating what Frontend->sensei_complete_quiz() does
             $pass_required = get_post_meta( $quiz_id, '_pass_required', true );
-            $quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+            $quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
             $lesson_metadata = array();
             if ( $pass_required ) {
                 // Student has reached the pass mark and lesson is complete
@@ -772,15 +767,8 @@ class Sensei_Grading {
 
         // Only if the whole quiz was autogradable do we set a grade
         if ( $quiz_autogradable ) {
-
             $quiz_total = Sensei_Utils::sensei_get_quiz_total( $quiz_id );
-			// Check for zero total from grades
-			if ( 0 < $quiz_total ) {
-            $grade = abs( round( ( doubleval( $grade_total ) * 100 ) / ( $quiz_total ), 2 ) );
-			}
-			else {
-				$grade = 0;
-			}
+			$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $grade_total, $quiz_total, 2 );
             Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id, $quiz_grade_type );
 
         } else {

@@ -1476,7 +1476,7 @@ class Sensei_Updates
 						}
 					}
 					$meta_data['complete'] = $lessons_completed;
-					$meta_data['percent'] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
+					$meta_data['percent'] = Sensei_Utils::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons, 0 );
 				}
 				else {
 					// Course has no lessons, therefore cannot be 'complete'
@@ -1632,7 +1632,7 @@ class Sensei_Updates
 				// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
 				$metadata = array(
 					'complete' => $lessons_completed,
-					'percent' => abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) ),
+					'percent' => Sensei_Utils::quotient_as_absolute_rounded_number( $lessons_completed, $total_lessons, 0 )
 				);
 				Sensei_Utils::update_course_status( $user_id, $course_id, $status, $metadata );
 				$count++;

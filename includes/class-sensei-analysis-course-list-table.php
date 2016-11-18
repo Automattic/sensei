@@ -437,7 +437,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 
 						$grade_count = !empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
 						$grade_total = !empty( $lesson_grades->meta_sum ) ? doubleval( $lesson_grades->meta_sum ) : 0;
-						$lesson_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
+						$lesson_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
 					}
 					// Output lesson data
 					if ( $this->csv_output ) {

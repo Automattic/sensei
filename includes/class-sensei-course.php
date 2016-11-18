@@ -1343,7 +1343,7 @@ class Sensei_Course {
 
 
 
-                $progress_percentage = Sensei_Utils::calculate_completion_percentage( $lessons_completed, $lesson_count, 0 );
+                $progress_percentage = Sensei_Utils::quotient_as_absolute_rounded_percentage( $lessons_completed, $lesson_count, 0 );
 
                 $active_html .= $this->get_progress_meter( $progress_percentage );
 
@@ -1838,7 +1838,7 @@ class Sensei_Course {
         }
 
         $total_lessons = count( $this->course_lessons( $course_id ) );
-        $percentage = Sensei_Utils::calculate_completion_percentage( $completed, $total_lessons, 2 );
+        $percentage = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons, 2 );
 
         /**
          *
