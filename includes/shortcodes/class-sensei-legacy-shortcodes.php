@@ -299,7 +299,7 @@ class Sensei_Legacy_Shortcodes {
                 $more_link_url =  esc_url( add_query_arg( $quer_args, $course_pagination_link ) );
 
                 // next/more
-                $html  = '<div class="navigation"><div class="nav-next">';
+                $html  = '<div class="navigation"><div class="sensei-nav-next">';
                 $html .= '<a href="' . $more_link_url . '">';
                 $html .= $more_link_text;
                 $html .= '<span class="meta-nav"></span></a></div>';

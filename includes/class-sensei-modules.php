@@ -657,14 +657,14 @@ class Sensei_Core_Modules
                 <?php if ($next_module) {
                     $module_link = add_query_arg('course_id', intval($_GET['course_id']), get_term_link($next_module, $this->taxonomy));
                     ?>
-                    <div class="nav-next fr"><a href="<?php echo esc_url($module_link); ?>"
+                    <div class="sensei-nav-next fr"><a href="<?php echo esc_url($module_link); ?>"
                                                 title="<?php esc_attr_e('Next module', 'woothemes-sensei'); ?>"><?php echo $next_module->name; ?>
                             <span class="meta-nav"></span></a></div>
                 <?php } ?>
                 <?php if ($prev_module) {
                     $module_link = add_query_arg('course_id', intval($_GET['course_id']), get_term_link($prev_module, $this->taxonomy));
                     ?>
-                    <div class="nav-prev fl"><a href="<?php echo esc_url($module_link); ?>"
+                    <div class="sensei-nav-prev fl"><a href="<?php echo esc_url($module_link); ?>"
                                                 title="<?php _e('Previous module', 'woothemes-sensei'); ?>"><span
                                 class="meta-nav"></span> <?php echo $prev_module->name; ?></a></div>
                 <?php } ?>
