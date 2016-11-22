@@ -619,13 +619,11 @@ class Sensei_Question {
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'ungraded', 'in-progress' ) );
 
 	    $quiz_required_pass_grade = intval( get_post_meta($quiz_id, '_quiz_passmark', true) );
-	    $failed_and_reset_not_allowed =  $user_quiz_grade < $quiz_required_pass_grade && ! $reset_quiz_allowed && $quiz_graded;
+		$succeeded = $user_quiz_grade >= $quiz_required_pass_grade;
+		$failed_and_reset_not_allowed = ! $succeeded && ! $reset_quiz_allowed;
 
 		// Check if answers must be shown
-		$show_answers = false;
-	    if ( $quiz_graded || $failed_and_reset_not_allowed ) {
-	    	$show_answers = true;
-	    }
+		$show_answers = $quiz_graded && ( $succeeded || $failed_and_reset_not_allowed );
 
 	    /**
          * Allow dynamic overriding of whether to show question answers or not
