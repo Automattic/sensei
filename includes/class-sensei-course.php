@@ -3076,13 +3076,22 @@ class Sensei_Course {
         $course_prerequisite_id = get_post_meta( $course_id, '_course_prerequisite', true );
 
         // if it has a pre requisite course check it
+		$prerequisite_complete = true;
+
         if( ! empty(  $course_prerequisite_id ) ){
 
-            return Sensei_Utils::user_completed_course( $course_prerequisite_id, get_current_user_id() );
+			$prerequisite_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, get_current_user_id() );
 
         }
 
-        return true;
+		/**
+		 * Filter course prerequisite complete
+		 *
+		 * @since 1.9.10
+		 * @param bool $prerequisite_complete
+		 * @param int $course_id
+		 */
+        return apply_filters( 'sensei_course_is_prerequisite_complete', $prerequisite_complete, $course_id );
 
     }// end is_prerequisite_complete
 
