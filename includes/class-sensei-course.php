@@ -3192,9 +3192,19 @@ class Sensei_Course {
 					$course_title )
 				 . '">' . $course_title . '</a>';
 
-			Sensei()->notices->add_notice( sprintf(
+			$complete_prerequisite_message = sprintf(
 				esc_html__( 'You must first complete %1$s before viewing this course', 'woothemes-sensei' ),
-				$prerequisite_course_link ), 'info');
+				$prerequisite_course_link );
+
+			/**
+			 * Filter sensei_course_complete_prerequisite_message.
+			 *
+			 * @since 1.9.10
+			 * @param string $complete_prerequisite_message the message to filter
+			 */
+			$filtered_message = apply_filters( 'sensei_course_complete_prerequisite_message', $complete_prerequisite_message );
+
+			Sensei()->notices->add_notice( $filtered_message, 'info' );
 		}
 	}
 
