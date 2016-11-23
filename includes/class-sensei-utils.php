@@ -1553,7 +1553,7 @@ class Sensei_Utils {
 			// Update meta data on how many lessons have been completed
 			$course_metadata['complete'] = $lessons_completed;
 			// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
-			$course_metadata['percent'] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
+			$course_metadata[ 'percent' ] = self::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons );
 
 			$activity_logged = Sensei_Utils::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
 
@@ -1565,6 +1565,29 @@ class Sensei_Utils {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get completion percentage
+	 * @param $numerator
+	 * @param $denominator
+	 * @param int $decimal_places_to_round
+	 * @return int|number
+	 */
+	public static function quotient_as_absolute_rounded_percentage($numerator, $denominator, $decimal_places_to_round = 0 ) {
+		return self::quotient_as_absolute_rounded_number( $numerator * 100.0, $denominator, $decimal_places_to_round );
+	}
+
+	public static function quotient_as_absolute_rounded_number($numerator, $denominator, $decimal_places_to_round = 0 ) {
+		if ( 0 === $denominator ) {
+			return 0;
+		}
+
+		return self::as_absolute_rounded_number( doubleval( $numerator ) / ( $denominator ), $decimal_places_to_round );
+	}
+
+	public static function as_absolute_rounded_number($number, $decimal_places_to_round = 0 ) {
+		return abs( round( ( doubleval( $number ) ), $decimal_places_to_round ) );
 	}
 
 	/**
@@ -1804,7 +1827,7 @@ class Sensei_Utils {
 		$quiz_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
 
 		// Check if Grade is greater than or equal to pass percentage
-		$quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+		$quiz_passmark = self::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
 		if ( $quiz_passmark <= intval( $quiz_grade ) ) {
 			return true;
 		}

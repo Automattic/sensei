@@ -360,7 +360,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $pass_required = get_post_meta( $post->ID, '_pass_required', true );
 
         // Get quiz pass mark
-        $quiz_passmark = abs( round( doubleval( get_post_meta( $post->ID, '_quiz_passmark', true ) ), 2 ) );
+        $quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $post->ID, '_quiz_passmark', true ), 2 );
 
         // Get latest quiz answers and grades
         $lesson_id = Sensei()->quiz->get_lesson_id( $post->ID );
@@ -568,7 +568,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
          $pass_required = get_post_meta( $quiz_id, '_pass_required', true );
 
          // Get the minimum percentage need to pass this quiz
-         $quiz_pass_percentage = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+         $quiz_pass_percentage = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
 
          // Handle Quiz Questions asked
          // This is to ensure we save the questions that we've asked this user and that this can't be change unless
