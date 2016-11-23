@@ -3077,13 +3077,22 @@ class Sensei_Course {
         $course_prerequisite_id = get_post_meta( $course_id, '_course_prerequisite', true );
 
         // if it has a pre requisite course check it
+		$prerequisite_complete = true;
+
         if( ! empty(  $course_prerequisite_id ) ){
 
-            return Sensei_Utils::user_completed_course( $course_prerequisite_id, get_current_user_id() );
+			$prerequisite_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, get_current_user_id() );
 
         }
 
-        return true;
+		/**
+		 * Filter course prerequisite complete
+		 *
+		 * @since 1.9.10
+		 * @param bool $prerequisite_complete
+		 * @param int $course_id
+		 */
+        return apply_filters( 'sensei_course_is_prerequisite_complete', $prerequisite_complete, $course_id );
 
     }// end is_prerequisite_complete
 
@@ -3168,6 +3177,37 @@ class Sensei_Course {
 		return $page_on_front == $page_id;
 	}
 
+	/**
+	 * Show a message telling the user to complete the previous course if they haven't done so yet
+	 *
+	 * @since 1.9.10
+	 */
+	public static function prerequisite_complete_message() {
+		if ( ! self::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) ) {
+			$course_prerequisite_id = absint( get_post_meta( get_the_ID(), '_course_prerequisite', true ) );
+			$course_title = get_the_title( $course_prerequisite_id );
+			$prerequisite_course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) )
+				. '" title="'
+				. sprintf(
+					esc_attr__( 'You must first complete: %1$s', 'woothemes-sensei' ),
+					$course_title )
+				 . '">' . $course_title . '</a>';
+
+			$complete_prerequisite_message = sprintf(
+				esc_html__( 'You must first complete %1$s before viewing this course', 'woothemes-sensei' ),
+				$prerequisite_course_link );
+
+			/**
+			 * Filter sensei_course_complete_prerequisite_message.
+			 *
+			 * @since 1.9.10
+			 * @param string $complete_prerequisite_message the message to filter
+			 */
+			$filtered_message = apply_filters( 'sensei_course_complete_prerequisite_message', $complete_prerequisite_message );
+
+			Sensei()->notices->add_notice( $filtered_message, 'info' );
+		}
+	}
 
 }// End Class
 
