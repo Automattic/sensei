@@ -1757,7 +1757,7 @@ class Sensei_Lesson {
 			),
 			array(
 				'id' 			=> 'enable_quiz_reset',
-				'label'			=> esc_html__( 'Allow user to retake the quiz once completed', 'woothemes-sensei' ),
+				'label'			=> esc_html__( 'Allow user to retake the quiz', 'woothemes-sensei' ),
 				'description'	=> esc_html__( 'Enables the quiz reset button.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
 				'default'		=> '',
