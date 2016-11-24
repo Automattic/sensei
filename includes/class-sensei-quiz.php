@@ -134,8 +134,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         global $post;
         $lesson_id = $this->get_lesson_id( $post->ID );
         $quiz_answers = $_POST[ 'sensei_question' ];
-        // call the save function
-        self::save_user_answers( $quiz_answers, $_FILES , $lesson_id  , get_current_user_id() );
+
+		// call the save function
+		$answers_saved = self::save_user_answers( $quiz_answers, $_FILES , $lesson_id  , get_current_user_id() );
+
+		if ( intval( $answers_saved ) > 0 ) {
+			// update the message showed to user
+			Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'woothemes-sensei' )  . '</div>';
+		}
 
         // remove the hook as it should only fire once per click
         remove_action( 'sensei_single_quiz_content_inside_before', 'user_save_quiz_answers_listener' );
@@ -197,10 +203,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 				$questions_asked_csv = implode( ',', array_keys( $quiz_answers ) );
 				update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_csv );
 			}
-
-
-            // update the message showed to user
-            Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'woothemes-sensei' )  . '</div>';
         }
 
 		return $answers_saved;
