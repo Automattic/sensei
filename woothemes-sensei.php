@@ -69,6 +69,11 @@ Domain path: /lang/
 	add_action('init', array( 'Sensei_WC', 'load_woocommerce_integration_hooks' ) );
 
     /**
+     * Hook in WooCommerce Memberships functionality
+     */
+    add_action('init', array( 'Sensei_WC_Memberships', 'load_wc_memberships_integration_hooks' ) );
+
+    /**
      * Load all Template hooks
     */
     if(! is_admin() ){

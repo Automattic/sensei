@@ -16,6 +16,7 @@ class Sensei_WC_Memberships {
 
 		add_action( 'sensei_display_start_course_form', array( __CLASS__, 'display_start_course_form_to_members_only' ) );
 		add_action( 'wc_memberships_user_membership_status_changed', array( __CLASS__, 'start_courses_associated_with_membership' ) );
+		add_action( 'wc_memberships_user_membership_saved', array( __CLASS__, 'on_wc_memberships_user_membership_saved' ), 10, 2 );
 	}
 
 	/**
@@ -55,6 +56,25 @@ class Sensei_WC_Memberships {
 		$is_wc_memberships_present_and_activated = in_array( self::WC_MEMBERSHIPS_PLUGIN_PATH, $active_plugins, true ) || array_key_exists( self::WC_MEMBERSHIPS_PLUGIN_PATH, $active_plugins );
 		return class_exists( 'WC_Memberships' ) || $is_wc_memberships_present_and_activated;
     }
+
+	/**
+	 * Start courses associated with new membership
+	 * so they show up on "my courses".
+	 *
+	 * Hooked into wc_memberships_user_membership_saved and wc_memberships_user_membership_created
+	 * @param $membership_plan
+	 * @param array $args
+	 */
+	public static function on_wc_memberships_user_membership_saved( $membership_plan, $args = array() ) {
+		$user_membership_id = isset( $args['user_membership_id'] ) ? absint( $args['user_membership_id'] ) : null;
+
+		if ( !$user_membership_id ) {
+			return;
+		}
+
+		$user_membership = wc_memberships_get_user_membership( $user_membership_id );
+		return self::start_courses_associated_with_membership( $user_membership );
+	}
 
 	/**
 	 * Start courses associated with an active membership if not already started
