@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Sensei_Lesson {
 	public $token;
 	public $meta_fields;
+	public $allowed_html;
 
 	/**
 	 * Constructor.
@@ -27,6 +28,8 @@ class Sensei_Lesson {
 		$this->meta_fields = array( 'lesson_prerequisite', 'lesson_course', 'lesson_preview', 'lesson_length', 'lesson_complexity', 'lesson_video_embed' );
 
         $this->question_order = '';
+
+		$this->allowed_html = Sensei_Wp_Kses::get_default_wp_kses_allowed_html();
 
 		// Admin actions
 		if ( is_admin() ) {
@@ -112,22 +115,22 @@ class Sensei_Lesson {
 	public function meta_box_setup () {
 
 		// Add Meta Box for Prerequisite Lesson
-		add_meta_box( 'lesson-prerequisite', __( 'Lesson Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-prerequisite', esc_html__( 'Lesson Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
 
 		// Add Meta Box for Lesson Course
-		add_meta_box( 'lesson-course', __( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-course', esc_html__( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
 
 		// Add Meta Box for Lesson Preview
-		add_meta_box( 'lesson-preview', __( 'Lesson Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-preview', esc_html__( 'Lesson Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'default' );
 
 		// Add Meta Box for Lesson Information
-		add_meta_box( 'lesson-info', __( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'lesson-info', esc_html__( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
 
 		// Add Meta Box for Quiz Settings
-		add_meta_box( 'lesson-quiz-settings', __( 'Quiz Settings', 'woothemes-sensei' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'lesson-quiz-settings', esc_html__( 'Quiz Settings', 'woothemes-sensei' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
 
 		// Add Meta Box for Lesson Quiz Questions
-		add_meta_box( 'lesson-quiz', __( 'Quiz Questions', 'woothemes-sensei' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'lesson-quiz', esc_html__( 'Quiz Questions', 'woothemes-sensei' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
 
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
@@ -150,27 +153,32 @@ class Sensei_Lesson {
 	public function lesson_info_meta_box_content () {
 		global $post;
 
-		$lesson_length = get_post_meta( $post->ID, '_lesson_length', true );
-		$lesson_complexity = get_post_meta( $post->ID, '_lesson_complexity', true );
-		$complexity_array = $this->lesson_complexities();
+		$lesson_length      = get_post_meta( $post->ID, '_lesson_length', true );
+		$lesson_complexity  = get_post_meta( $post->ID, '_lesson_complexity', true );
+		$complexity_array   = $this->lesson_complexities();
 		$lesson_video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
+
+		$lesson_video_embed = Sensei_Wp_Kses::maybe_sanitize( $lesson_video_embed, $this->allowed_html );
 
 		$html = '';
 		// Lesson Length
-		$html .= '<p><label for="lesson_length">' . __( 'Lesson Length in minutes', 'woothemes-sensei' ) . ': </label>';
+		$html .= '<p><label for="lesson_length">' . esc_html__( 'Lesson Length in minutes', 'woothemes-sensei' ) . ': </label>';
 		$html .= '<input type="number" id="lesson-length" name="lesson_length" class="small-text" value="' . esc_attr( $lesson_length ) . '" /></p>' . "\n";
 		// Lesson Complexity
-		$html .= '<p><label for="lesson_complexity">' . __( 'Lesson Complexity', 'woothemes-sensei' ) . ': </label>';
+		$html .= '<p><label for="lesson_complexity">' . esc_html__( 'Lesson Complexity', 'woothemes-sensei' ) . ': </label>';
 		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="chosen_select lesson-complexity-select">';
-			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
-			foreach ($complexity_array as $key => $value){
+			$html .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
+			foreach ( $complexity_array as $key => $value ){
 				$html .= '<option value="' . esc_attr( $key ) . '"' . selected( $key, $lesson_complexity, false ) . '>' . esc_html( $value ) . '</option>' . "\n";
 			} // End For Loop
 		$html .= '</select></p>' . "\n";
 
-		$html .= '<p><label for="lesson_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
-		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . $lesson_video_embed . '</textarea></p>' . "\n";
-		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
+		$html .= '<p><label for="lesson_video_embed">' . esc_html__( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
+		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">';
+
+		$html .= $lesson_video_embed . '</textarea></p>' . "\n";
+
+		$html .= '<p>' .  esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
 
@@ -200,13 +208,13 @@ class Sensei_Lesson {
 		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
 		if ( count( $posts_array ) > 0 ) {
 			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="chosen_select widefat">' . "\n";
-			$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+			$html .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 				} // End For Loop
 			$html .= '</select>' . "\n";
 		} else {
-			$html .= '<p>' . esc_html( __( 'No lessons exist yet. Please add some first.', 'woothemes-sensei' ) ) . '</p>';
+			$html .= '<p>' . esc_html__( 'No lessons exist yet. Please add some first.', 'woothemes-sensei' ) . '</p>';
 		} // End If Statement
 		// Output the HTML
 		echo $html;
@@ -231,7 +239,7 @@ class Sensei_Lesson {
 	 	} // End If Statement
 
 	 	$html .= '<label for="lesson_preview">';
-	 	$html .= '<input type="checkbox" id="lesson_preview" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . __( 'Allow this lesson to be viewed without purchase/login', 'woothemes-sensei' ) . '<br>';
+	 	$html .= '<input type="checkbox" id="lesson_preview" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . esc_html__( 'Allow this lesson to be viewed without purchase/login', 'woothemes-sensei' ) . '<br>';
 
 		// Output the HTML
 		echo $html;
@@ -497,7 +505,8 @@ class Sensei_Lesson {
 
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'lesson_video_embed' == $post_key) {
-			$new_meta_value = esc_html( $_POST[$post_key] );
+			$new_meta_value = isset( $_POST[ $post_key ] ) ? $_POST[ $post_key ] : '';
+			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, $this->allowed_html );
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
@@ -562,22 +571,22 @@ class Sensei_Lesson {
 				$html .= '<div id="lesson-course-actions">';
 					$html .= '<p>';
 						// Add a course action link
-						$html .= '<a id="lesson-course-add" href="#course-add" class="lesson-add-course">+ ' . __('Add New Course', 'woothemes-sensei' ) . '</a>';
+						$html .= '<a id="lesson-course-add" href="#course-add" class="lesson-add-course">+ ' . esc_html__('Add New Course', 'woothemes-sensei' ) . '</a>';
 					$html .= '</p>';
 				$html .= '</div>';
 				// Add a course input fields
 				$html .= '<div id="lesson-course-details" class="hidden">';
 					$html .= '<p>';
 						// Course Title input
-						$html .= '<label>' . __( 'Course Title' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<label>' . esc_html__( 'Course Title' , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<input type="text" id="course-title" name="course_title" value="" size="25" class="widefat" />';
 	  					// Course Description input
-	  					$html .= '<label>' . __( 'Description' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<label>' . esc_html__( 'Description' , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<textarea rows="10" cols="40" id="course-content" name="course_content" value="" size="300" class="widefat"></textarea>';
 	  					// Course Prerequisite
-	  					$html .= '<label>' . __( 'Course Prerequisite' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<label>' . esc_html__( 'Course Prerequisite' , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="chosen_select widefat">' . "\n";
-							$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+							$html .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
 							foreach ($posts_array as $post_item){
 								$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 							} // End For Loop
@@ -603,9 +612,9 @@ class Sensei_Lesson {
 	    											'suppress_filters' 	=> 0
 													);
 							$products_array = get_posts( $product_args );
-							$html .= '<label>' . __( 'WooCommerce Product' , 'woothemes-sensei' ) . '</label> ';
+							$html .= '<label>' . esc_html__( 'WooCommerce Product' , 'woothemes-sensei' ) . '</label> ';
 	  						$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
-								$html .= '<option value="-">' . __( 'None', 'woothemes-sensei' ) . '</option>';
+								$html .= '<option value="-">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
 								$prev_parent_id = 0;
 								foreach ($products_array as $products_item){
 
@@ -638,14 +647,14 @@ class Sensei_Lesson {
 							$html .= '<input type="hidden" name="course_woocommerce_product" id="course-woocommerce-product-options" value="-" />';
 						}
 						// Course Category
-	  					$html .= '<label>' . __( 'Course Category' , 'woothemes-sensei' ) . '</label> ';
-	  					$cat_args = array( 'echo' => false, 'hierarchical' => true, 'show_option_none' => __( 'None', 'woothemes-sensei' ), 'taxonomy' => 'course-category', 'orderby' => 'name', 'id' => 'course-category-options', 'name' => 'course_category', 'class' => 'widefat' );
+	  					$html .= '<label>' . esc_html__( 'Course Category' , 'woothemes-sensei' ) . '</label> ';
+	  					$cat_args = array( 'echo' => false, 'hierarchical' => true, 'show_option_none' => esc_html__( 'None', 'woothemes-sensei' ), 'taxonomy' => 'course-category', 'orderby' => 'name', 'id' => 'course-category-options', 'name' => 'course_category', 'class' => 'widefat' );
 						$html .= wp_dropdown_categories(apply_filters('widget_course_categories_dropdown_args', $cat_args)) . "\n";
 	  					// Save the course action button
-	  					$html .= '<a title="' . esc_attr( __( 'Save Course', 'woothemes-sensei' ) ) . '" href="#add-course-metadata" class="lesson_course_save button button-highlighted">' . esc_html( __( 'Add Course', 'woothemes-sensei' ) ) . '</a>';
+	  					$html .= '<a title="' . esc_attr__( 'Save Course', 'woothemes-sensei' ) . '" href="#add-course-metadata" class="lesson_course_save button button-highlighted">' . esc_html__( 'Add Course', 'woothemes-sensei' ) . '</a>';
 						$html .= '&nbsp;&nbsp;&nbsp;';
 						// Cancel action link
-						$html .= '<a href="#course-add-cancel" class="lesson_course_cancel">' . __( 'Cancel', 'woothemes-sensei' ) . '</a>';
+						$html .= '<a href="#course-add-cancel" class="lesson_course_cancel">' . esc_html__( 'Cancel', 'woothemes-sensei' ) . '</a>';
 					$html .= '</p>';
 				$html .= '</div>';
 			} // End If Statement
@@ -661,7 +670,7 @@ class Sensei_Lesson {
 			if ( 0 == $quiz_id ) {
 				$html .= '<p>';
 					// Default message and Add a Quiz button
-					$html .= esc_html( __( 'Once you have saved your lesson you will be able to add questions.', 'woothemes-sensei' ) );
+					$html .= esc_html__( 'Once you have saved your lesson you will be able to add questions.', 'woothemes-sensei' );
 				$html .= '</p>';
 			}
 
@@ -692,7 +701,7 @@ class Sensei_Lesson {
 			}
 
 			// Inner DIV
-			$html .= '<div id="add-quiz-metadata"' . $quiz_class . '>';
+			$html .= '<div id="add-quiz-metadata"' . esc_attr( $quiz_class ) . '>';
 
 				// Quiz ID
 				$html .= '<input type="hidden" name="quiz_id" id="quiz_id" value="' . esc_attr( $quiz_id ) . '" />';
@@ -700,14 +709,14 @@ class Sensei_Lesson {
 				// Default Message
 				if ( 0 == $quiz_id ) {
 					$html .= '<p class="save-note">';
-						$html .= esc_html( __( 'Please save your lesson in order to add questions to your quiz.', 'woothemes-sensei' ) );
+						$html .= esc_html__( 'Please save your lesson in order to add questions to your quiz.', 'woothemes-sensei' );
 					$html .= '</p>';
 				} // End If Statement
 
 			$html .= '</div>';
 
 			// Question Container DIV
-			$html .= '<div id="add-question-main"' . $quiz_class . '>';
+			$html .= '<div id="add-question-main"' . esc_attr( $quiz_class ) . '>';
 				// Inner DIV
 				$html .= '<div id="add-question-metadata">';
 
@@ -718,19 +727,19 @@ class Sensei_Lesson {
 								<thead>
 								    <tr>
 								        <th class="question-count-column">#</th>
-								        <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
-								        <th style="width:45px;">' . __( 'Grade', 'woothemes-sensei' ) . '</th>
-								        <th style="width:125px;">' . __( 'Type', 'woothemes-sensei' ) . '</th>
-								        <th style="width:125px;">' . __( 'Action', 'woothemes-sensei' ) . '</th>
+								        <th>' . esc_html__( 'Question', 'woothemes-sensei' ) . '</th>
+								        <th style="width:45px;">' . esc_html__( 'Grade', 'woothemes-sensei' ) . '</th>
+								        <th style="width:125px;">' . esc_html__( 'Type', 'woothemes-sensei' ) . '</th>
+								        <th style="width:125px;">' . esc_html__( 'Action', 'woothemes-sensei' ) . '</th>
 								    </tr>
 								</thead>
 								<tfoot>
 								    <tr>
 									    <th class="question-count-column">#</th>
-									    <th>' . __( 'Question', 'woothemes-sensei' ) . '</th>
-									    <th>' . __( 'Grade', 'woothemes-sensei' ) . '</th>
-									    <th>' . __( 'Type', 'woothemes-sensei' ) . '</th>
-									    <th>' . __( 'Action', 'woothemes-sensei' ) . '</th>
+									    <th>' . esc_html__( 'Question', 'woothemes-sensei' ) . '</th>
+									    <th>' . esc_html__( 'Grade', 'woothemes-sensei' ) . '</th>
+									    <th>' . esc_html__( 'Type', 'woothemes-sensei' ) . '</th>
+									    <th>' . esc_html__( 'Action', 'woothemes-sensei' ) . '</th>
 								    </tr>
 								</tfoot>';
 
@@ -739,7 +748,7 @@ class Sensei_Lesson {
 
 					$html .= '<tbody id="no-questions-message" class="' . esc_attr( $message_class ) . '">';
 						$html .= '<tr>';
-							$html .= '<td colspan="5">' . __( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
+							$html .= '<td colspan="5">' . esc_html__( 'There are no Questions for this Quiz yet. Please add some below.', 'woothemes-sensei' ) . '</td>';
 						$html .= '</tr>';
 					$html .= '</tbody>';
 
@@ -753,7 +762,7 @@ class Sensei_Lesson {
 						$this->question_order = '';
 					}
 
-					$html .= '<input type="hidden" id="question-order" name="question-order" value="' . $this->question_order . '" />';
+					$html .= '<input type="hidden" id="question-order" name="question-order" value="' . esc_attr( $this->question_order ) . '" />';
 
 				$html .= '</div>';
 
@@ -844,7 +853,7 @@ class Sensei_Lesson {
 				$question_media = get_post_meta( $question_id, '_question_media', true );
 				$question_media_type = $question_media_thumb = $question_media_link = $question_media_title = '';
 				$question_media_thumb_class = $question_media_link_class = $question_media_delete_class = 'hidden';
-				$question_media_add_button = __( 'Add file', 'woothemes-sensei' );
+				$question_media_add_button = esc_html__( 'Add file', 'woothemes-sensei' );
 				if( 0 < intval( $question_media ) ) {
 					$mimetype = get_post_mime_type( $question_media );
 					if( $mimetype ) {
@@ -867,11 +876,11 @@ class Sensei_Lesson {
 									$question_media_filename = basename( $question_media_url );
 									$question_media_title = $question_media_filename;
 								}
-								$question_media_link = '<a class="' . $question_media_type . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_title . '</a>';
+								$question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . esc_html( $question_media_title ) . '</a>';
 								$question_media_link_class = '';
 							}
 
-							$question_media_add_button = __( 'Change file', 'woothemes-sensei' );
+							$question_media_add_button = esc_html__( 'Change file', 'woothemes-sensei' );
 						}
 					}
 				}
@@ -884,18 +893,18 @@ class Sensei_Lesson {
 				if( ! $question_type ) { $question_type = 'multiple-choice'; }
 			}
 
-			$html .= '<tbody class="' . $question_class . '">';
+			$html .= '<tbody class="' . esc_attr( $question_class ) . '">';
 
 				if( 'quiz' == $context ) {
 					$html .= '<tr>';
 						if( $question_type != 'category' ) {
 							$question = get_post( $question_id );
-							$html .= '<td class="table-count question-number question-count-column"><span class="number">' . $question_counter . '</span></td>';
+							$html .= '<td class="table-count question-number question-count-column"><span class="number">' . esc_html( $question_counter ) . '</span></td>';
 							$html .= '<td>' . esc_html( $question->post_title ) . '</td>';
 							$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 							$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', __( 'True/False', 'woothemes-sensei' ) ), $question_type ) );
 							$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
-							$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Remove Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html( __( 'Remove', 'woothemes-sensei' ) ) . '</a></td>';
+							$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'woothemes-sensei' ) . '" href="#question_' . esc_attr( $question_counter ) .'" class="question_table_edit">' . esc_html__( 'Edit', 'woothemes-sensei' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'woothemes-sensei' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'woothemes-sensei' ) . '</a></td>';
 
 						} else {
 
@@ -905,13 +914,13 @@ class Sensei_Lesson {
 							} else {
 								$row_numbers = $question_counter . ' - ' . $end_number;
 							}
-							$row_title = sprintf( __( 'Selected from \'%1$s\' ', 'woothemes-sensei' ), $multiple_data[0] );
+							$row_title = sprintf( esc_html__( 'Selected from \'%1$s\' ', 'woothemes-sensei' ), $multiple_data[0] );
 
-							$html .= '<td class="table-count question-number question-count-column"><span class="number hidden">' . $question_counter . '</span><span class="hidden total-number">' . $multiple_data[1] . '</span><span class="row-numbers">' . esc_html( $row_numbers ) . '</span></td>';
+							$html .= '<td class="table-count question-number question-count-column"><span class="number hidden">' . esc_html( $question_counter ) . '</span><span class="hidden total-number">' . esc_html( $multiple_data[1] ) . '</span><span class="row-numbers">' . esc_html( $row_numbers ) . '</span></td>';
 							$html .= '<td>' . esc_html( $row_title ) . '</td>';
 							$html .= '<td class="question-grade-column"></td>';
-							$html .= '<td><input type="hidden" name="question_id" class="row_question_id" id="question_' . $question_counter . '_id" value="' . $question_id . '" /></td>';
-							$html .= '<td><a title="' . esc_attr( __( 'Edit Question', 'woothemes-sensei' ) ) . '" href="#question_' . $question_counter .'" class="question_table_edit" style="visibility:hidden;">' . esc_html( __( 'Edit', 'woothemes-sensei' ) ) . '</a> <a title="' . esc_attr( __( 'Remove Question(s)', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_multiple_delete" rel="' . $question_id . '">' . esc_html( __( 'Remove', 'woothemes-sensei' ) ) . '</a></td>';
+							$html .= '<td><input type="hidden" name="question_id" class="row_question_id" id="question_' . esc_attr( $question_counter ) . '_id" value="' . esc_attr( $question_id ) . '" /></td>';
+							$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'woothemes-sensei' ) . '" href="#question_' . esc_attr( $question_counter ) .'" class="question_table_edit" style="visibility:hidden;">' . esc_html__( 'Edit', 'woothemes-sensei' ) . '</a> <a title="' . esc_attr__( 'Remove Question(s)', 'woothemes-sensei' ) . '" href="#add-question-metadata" class="question_multiple_delete" rel="' . esc_attr( $question_id ) . '">' . esc_html__( 'Remove', 'woothemes-sensei' ) . '</a></td>';
 
 						}
 					$html .= '</tr>';
@@ -927,55 +936,55 @@ class Sensei_Lesson {
 					$question = get_post( $question_id );
 					$html .= '<tr class="question-quick-edit ' . esc_attr( $edit_class ) . '">';
 						$html .= '<td colspan="5">';
-							$html .= '<span class="hidden question_original_counter">' . $question_counter . '</span>';
+							$html .= '<span class="hidden question_original_counter">' . esc_html( $question_counter ) . '</span>';
 					    	$html .= '<div class="question_required_fields">';
 
 						    	// Question title
 						    	$html .= '<div>';
-							    	$html .= '<label for="question_' . $question_counter . '">' . __( 'Question:', 'woothemes-sensei' ) . '</label> ';
-							    	$html .= '<input type="text" id="question_' . $question_counter . '" name="question" value="' . esc_attr( htmlspecialchars( $question->post_title ) ) . '" size="25" class="widefat" />';
+							    	$html .= '<label for="question_' . esc_attr( $question_counter ) . '">' . esc_html__( 'Question:', 'woothemes-sensei' ) . '</label> ';
+							    	$html .= '<input type="text" id="question_' . esc_attr( $question_counter ) . '" name="question" value="' . esc_attr( htmlspecialchars( $question->post_title ) ) . '" size="25" class="widefat" />';
 						    	$html .= '</div>';
 
 						    	// Question description
 						    	$html .= '<div>';
-							    	$html .= '<label for="question_' . $question_counter . '_desc">' . __( 'Question Description (optional):', 'woothemes-sensei' ) . '</label> ';
+							    	$html .= '<label for="question_' . esc_attr( $question_counter ) . '_desc">' . esc_html__( 'Question Description (optional):', 'woothemes-sensei' ) . '</label> ';
 						    	$html .= '</div>';
-							    	$html .= '<textarea id="question_' . $question_counter . '_desc" name="question_description" class="widefat" rows="4">' . esc_textarea( $question->post_content ) . '</textarea>';
+							    	$html .= '<textarea id="question_' . esc_attr( $question_counter ) . '_desc" name="question_description" class="widefat" rows="4">' . esc_textarea( $question->post_content ) . '</textarea>';
 
 						    	// Question grade
 						    	$html .= '<div>';
-							    	$html .= '<label for="question_' . $question_counter . '_grade">' . __( 'Question grade:', 'woothemes-sensei' ) . '</label> ';
-							    	$html .= '<input type="number" id="question_' . $question_counter . '_grade" class="question_grade small-text" name="question_grade" min="0" value="' . $question_grade . '" />';
+							    	$html .= '<label for="question_' . esc_attr( $question_counter ) . '_grade">' . esc_html__( 'Question grade:', 'woothemes-sensei' ) . '</label> ';
+							    	$html .= '<input type="number" id="question_' . esc_attr( $question_counter ) . '_grade" class="question_grade small-text" name="question_grade" min="0" value="' . esc_attr( $question_grade ) . '" />';
 						    	$html .= '</div>';
 
 						    	// Random order
 						    	if( $question_type == 'multiple-choice' ) {
 						    		$html .= '<div>';
-						    			$html .= '<label for="' . $question_counter . '_random_order"><input type="checkbox" name="random_order" class="random_order" id="' . $question_counter . '_random_order" value="yes" ' . checked( $random_order, 'yes', false ) . ' /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
+						    			$html .= '<label for="' . esc_attr( $question_counter ) . '_random_order"><input type="checkbox" name="random_order" class="random_order" id="' . esc_attr( $question_counter ) . '_random_order" value="yes" ' . checked( $random_order, 'yes', false ) . ' /> ' . esc_html__( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
 						    		$html .= '</div>';
 						    	}
 
 						    	// Question media
 						    	$html .= '<div>';
-							    	$html .= '<label for="question_' . $question_counter . '_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
-							    	$html .= '<button id="question_' . $question_counter . '_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . $question_media_add_button . '</button>';
-							    	$html .= '<button id="question_' . $question_counter . '_media_button_delete" class="delete_media_file_button button-secondary ' . $question_media_delete_class . '">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
-							    	$html .= '<span id="question_' . $question_counter . '_media_link" class="question_media_link ' . $question_media_link_class . '">' . $question_media_link . '</span>';
-							    	$html .= '<br/><img id="question_' . $question_counter . '_media_preview" class="question_media_preview ' . $question_media_thumb_class . '" src="' . $question_media_thumb . '" /><br/>';
-							    	$html .= '<input type="hidden" id="question_' . $question_counter . '_media" class="question_media" name="question_media" value="' . $question_media . '" />';
+							    	$html .= '<label for="question_' . esc_attr( $question_counter ) . '_media_button">' . esc_html__( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
+							    	$html .= '<button id="question_' . esc_attr( $question_counter ) . '_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . esc_attr__( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . esc_attr__( 'Add to question', 'woothemes-sensei' ) . '">' . esc_html( $question_media_add_button ) . '</button>';
+							    	$html .= '<button id="question_' . esc_attr( $question_counter ) . '_media_button_delete" class="delete_media_file_button button-secondary ' . esc_attr( $question_media_delete_class ) . '">' . esc_html__( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
+							    	$html .= '<span id="question_' . esc_attr( $question_counter ) . '_media_link" class="question_media_link ' . esc_attr( $question_media_link_class ) . '">' . esc_html( $question_media_link ) . '</span>';
+							    	$html .= '<br/><img id="question_' . esc_attr( $question_counter ) . '_media_preview" class="question_media_preview ' . esc_attr( $question_media_thumb_class ) . '" src="' . esc_url( $question_media_thumb ) . '" /><br/>';
+							    	$html .= '<input type="hidden" id="question_' . esc_attr( $question_counter ) . '_media" class="question_media" name="question_media" value="' . esc_attr( $question_media ) . '" />';
 						    	$html .= '</div>';
 
 						    $html .= '</div>';
 
 						    $html .= $this->quiz_panel_question_field( $question_type, $question_id, $question_counter );
 
-						    $html .= '<input type="hidden" id="question_' . $question_counter . '_question_type" class="question_type" name="question_type" value="' . $question_type . '" />';
-							$html .= '<input type="hidden" name="question_id" class="row_question_id" id="question_' . $question_counter . '_id" value="' . $question_id . '" />';
+						    $html .= '<input type="hidden" id="question_' . esc_attr( $question_counter ) . '_question_type" class="question_type" name="question_type" value="' . esc_attr( $question_type ) . '" />';
+							$html .= '<input type="hidden" name="question_id" class="row_question_id" id="question_' . esc_attr( $question_counter ) . '_id" value="' . esc_attr( $question_id ) . '" />';
 
 							if( 'quiz' == $context ) {
 					    		$html .= '<div class="update-question">';
-						    		$html .= '<a href="#question-edit-cancel" class="lesson_question_cancel" title="' . esc_attr( __( 'Cancel', 'woothemes-sensei' ) ) . '">' . __( 'Cancel', 'woothemes-sensei' ) . '</a> ';
-						    		$html .= '<a title="' . esc_attr( __( 'Update Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="question_table_save button button-highlighted">' . esc_html( __( 'Update', 'woothemes-sensei' ) ) . '</a>';
+						    		$html .= '<a href="#question-edit-cancel" class="lesson_question_cancel" title="' . esc_attr__( 'Cancel', 'woothemes-sensei' ) . '">' . esc_html__( 'Cancel', 'woothemes-sensei' ) . '</a> ';
+						    		$html .= '<a title="' . esc_attr__( 'Update Question', 'woothemes-sensei' ) . '" href="#add-question-metadata" class="question_table_save button button-highlighted">' . esc_html__( 'Update', 'woothemes-sensei' ) . '</a>';
 					    		$html .= '</div>';
 					    	}
 
@@ -1001,10 +1010,10 @@ class Sensei_Lesson {
 
 			if( 'quiz' == $context ) {
 	    		$html .= '<h2 class="nav-tab-wrapper add-question-tabs">';
-	    			$html .= '<a id="tab-new" class="nav-tab nav-tab-active">' . __( 'New Question'  , 'woothemes-sensei' ) . '</a>';
-	    			$html .= '<a id="tab-existing" class="nav-tab">' . __( 'Existing Questions'  , 'woothemes-sensei' ) . '</a>';
+	    			$html .= '<a id="tab-new" class="nav-tab nav-tab-active">' . esc_html__( 'New Question'  , 'woothemes-sensei' ) . '</a>';
+	    			$html .= '<a id="tab-existing" class="nav-tab">' . esc_html__( 'Existing Questions'  , 'woothemes-sensei' ) . '</a>';
                     if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats )  && ! Sensei()->teacher->is_admin_teacher() ) {
-	    				$html .= '<a id="tab-multiple" class="nav-tab">' . __( 'Category Questions'  , 'woothemes-sensei' ) . '</a>';
+	    				$html .= '<a id="tab-multiple" class="nav-tab">' . esc_html__( 'Category Questions'  , 'woothemes-sensei' ) . '</a>';
 	    			}
 	    		$html .= '</h2>';
 	    	}
@@ -1012,24 +1021,24 @@ class Sensei_Lesson {
 	    	$html .= '<div class="tab-content" id="tab-new-content">';
 
 	    		if( 'quiz' == $context ) {
-	    			$html .= '<p><em>' . sprintf( __( 'Add a new question to this quiz - your question will also be added to the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
+	    			$html .= '<p><em>' . sprintf( esc_html__( 'Add a new question to this quiz - your question will also be added to the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
 	    		}
 
 				$html .= '<div class="question">';
 					$html .= '<div class="question_required_fields">';
 
 						// Question title
-						$html .= '<p><label>' . __( 'Question:'  , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<p><label>' . esc_html__( 'Question:'  , 'woothemes-sensei' ) . '</label> ';
 	  					$html .= '<input type="text" id="add_question" name="question" value="" size="25" class="widefat" /></p>';
 
 						// Question description
 						$html .= '<p>';
-							$html .= '<label for="question_desc">' . __( 'Question Description (optional):', 'woothemes-sensei' ) . '</label> ';
+							$html .= '<label for="question_desc">' . esc_html__( 'Question Description (optional):', 'woothemes-sensei' ) . '</label> ';
 						$html .= '</p>';
 						$html .= '<textarea id="question_desc" name="question_description" class="widefat" rows="4"></textarea>';
 
 	  					// Question type
-						$html .= '<p><label>' . __( 'Question Type:' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<p><label>' . esc_html__( 'Question Type:' , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<select id="add-question-type-options" name="question_type" class="chosen_select widefat question-type-select">' . "\n";
 							foreach ( $question_types as $type => $label ) {
 								$html .= '<option value="' . esc_attr( $type ) . '">' . esc_html( $label ) . '</option>' . "\n";
@@ -1039,9 +1048,9 @@ class Sensei_Lesson {
 						// Question category
 						if( 'quiz' == $context ) {
 							if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
-								$html .= '<p><label>' . __( 'Question Category:' , 'woothemes-sensei' ) . '</label> ';
+								$html .= '<p><label>' . esc_html__( 'Question Category:' , 'woothemes-sensei' ) . '</label> ';
 								$html .= '<select id="add-question-category-options" name="question_category" class="chosen_select widefat question-category-select">' . "\n";
-								$html .= '<option value="">' . __( 'None', 'woothemes-sensei' ) . '</option>' . "\n";
+								$html .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>' . "\n";
 								foreach( $question_cats as $cat ) {
 									$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';
 								} // End For Loop
@@ -1050,19 +1059,19 @@ class Sensei_Lesson {
 						}
 
 	  					// Question grade
-						$html .= '<p><label>' . __( 'Question Grade:'  , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<p><label>' . esc_html__( 'Question Grade:'  , 'woothemes-sensei' ) . '</label> ';
 						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="0" value="1" /></p>' . "\n";
 
 						// Random order
 						$html .= '<p class="add_question_random_order">';
-			    			$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . __( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
+			    			$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . esc_html__( 'Randomise answer order', 'woothemes-sensei' ) . '</label>';
 			    		$html .= '</p>';
 
 			    		// Question media
 						$html .= '<p>';
-					    	$html .= '<label for="question_add_new_media_button">' . __( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
-					    	$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . __( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . __( 'Add to question', 'woothemes-sensei' ) . '">' . __( 'Add file', 'woothemes-sensei' ) . '</button>';
-					    	$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . __( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
+					    	$html .= '<label for="question_add_new_media_button">' . esc_html__( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
+					    	$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . esc_attr__( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . esc_attr__( 'Add to question', 'woothemes-sensei' ) . '">' . esc_html__( 'Add file', 'woothemes-sensei' ) . '</button>';
+					    	$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . esc_html__( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
 					    	$html .= '<span id="question_add_new_media_link" class="question_media_link hidden"></span>';
 					    	$html .= '<br/><img id="question_add_new_media_preview" class="question_media_preview hidden" src="" /><br/>';
 					    	$html .= '<input type="hidden" id="question_add_new_media" class="question_media" name="question_media" value="" />';
@@ -1077,7 +1086,7 @@ class Sensei_Lesson {
 
 				if( 'quiz' == $context ) {
 					$html .= '<div class="add-question">';
-			    		$html .= '<a title="' . esc_attr( __( 'Add Question', 'woothemes-sensei' ) ) . '" href="#add-question-metadata" class="add_question_save button button-primary button-highlighted">' . esc_html( __( 'Add Question', 'woothemes-sensei' ) ) . '</a>';
+			    		$html .= '<a title="' . esc_attr__( 'Add Question', 'woothemes-sensei' ) . '" href="#add-question-metadata" class="add_question_save button button-primary button-highlighted">' . esc_html__( 'Add Question', 'woothemes-sensei' ) . '</a>';
 		    		$html .= '</div>';
 		    	}
 
@@ -1087,28 +1096,28 @@ class Sensei_Lesson {
 
 			    $html .= '<div class="tab-content hidden" id="tab-existing-content">';
 
-			    	$html .= '<p><em>' . sprintf( __( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
+			    	$html .= '<p><em>' . sprintf( esc_html__( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
 
 			    	$html .= '<div id="existing-filters" class="alignleft actions">
 			    				<select id="existing-status">
-			    					<option value="all">' . __( 'All', 'woothemes-sensei' ) . '</option>
-			    					<option value="unused">' . __( 'Unused', 'woothemes-sensei' ) . '</option>
-			    					<option value="used">' . __( 'Used', 'woothemes-sensei' ) . '</option>
+			    					<option value="all">' . esc_html__( 'All', 'woothemes-sensei' ) . '</option>
+			    					<option value="unused">' . esc_html__( 'Unused', 'woothemes-sensei' ) . '</option>
+			    					<option value="used">' . esc_html__( 'Used', 'woothemes-sensei' ) . '</option>
 			    				</select>
 			    				<select id="existing-type">
-			    					<option value="">' . __( 'All Types', 'woothemes-sensei' ) . '</option>';
+			    					<option value="">' . esc_html__( 'All Types', 'woothemes-sensei' ) . '</option>';
 							    	foreach ( $question_types as $type => $label ) {
 										$html .= '<option value="' . esc_attr( $type ) . '">' . esc_html( $label ) . '</option>';
 									}
     				$html .= '</select>
     							<select id="existing-category">
-			    					<option value="">' . __( 'All Categories', 'woothemes-sensei' ) . '</option>';
+			    					<option value="">' . esc_html__( 'All Categories', 'woothemes-sensei' ) . '</option>';
 				    				foreach( $question_cats as $cat ) {
 										$html .= '<option value="' . esc_attr( $cat->slug ) . '">' . esc_html( $cat->name ) . '</option>';
 									}
     				$html .= '</select>
-    							<input type="text" id="existing-search" placeholder="' . __( 'Search', 'woothemes-sensei' ) . '" />
-    							<a class="button" id="existing-filter-button">' . __( 'Filter', 'woothemes-sensei' ) . '</a>
+    							<input type="text" id="existing-search" placeholder="' . esc_attr__( 'Search', 'woothemes-sensei' ) . '" />
+    							<a class="button" id="existing-filter-button">' . esc_html__( 'Filter', 'woothemes-sensei' ) . '</a>
 			    			</div>';
 
 			    	$html .= '<table id="existing-table" class="widefat">';
@@ -1116,17 +1125,17 @@ class Sensei_Lesson {
 			    		$html .= '<thead>
 									    <tr>
 									        <th scope="col" class="column-cb check-column"><input type="checkbox" /></th>
-									        <th scope="col">' . __( 'Question', 'woothemes-sensei' ) . '</th>
-									        <th scope="col">' . __( 'Type', 'woothemes-sensei' ) . '</th>
-									        <th scope="col">' . __( 'Category', 'woothemes-sensei' ) . '</th>
+									        <th scope="col">' . esc_html__( 'Question', 'woothemes-sensei' ) . '</th>
+									        <th scope="col">' . esc_html__( 'Type', 'woothemes-sensei' ) . '</th>
+									        <th scope="col">' . esc_html__( 'Category', 'woothemes-sensei' ) . '</th>
 									    </tr>
 									</thead>
 									<tfoot>
 									    <tr>
 										    <th scope="col" class="check-column"><input type="checkbox" /></th>
-									        <th scope="col">' . __( 'Question', 'woothemes-sensei' ) . '</th>
-									        <th scope="col">' . __( 'Type', 'woothemes-sensei' ) . '</th>
-									        <th scope="col">' . __( 'Category', 'woothemes-sensei' ) . '</th>
+									        <th scope="col">' . esc_html__( 'Question', 'woothemes-sensei' ) . '</th>
+									        <th scope="col">' . esc_html__( 'Type', 'woothemes-sensei' ) . '</th>
+									        <th scope="col">' . esc_html__( 'Category', 'woothemes-sensei' ) . '</th>
 									    </tr>
 									</tfoot>';
 						$html .= '<tbody id="existing-questions">';
@@ -1150,11 +1159,11 @@ class Sensei_Lesson {
 
 			    	$html .= '<div id="existing-pagination">';
 			    		$html .= '<input type="hidden" id="existing-page" value="1" />';
-			    		$html .= '<a class="prev no-paging">&larr; ' . __( 'Previous', 'woothemes-sensei') . '</a> <a class="next ' . esc_attr( $next_class ) . '">' . __( 'Next', 'woothemes-sensei') . ' &rarr;</a>';
+			    		$html .= '<a class="prev no-paging">&larr; ' . esc_html__( 'Previous', 'woothemes-sensei') . '</a> <a class="next ' . esc_attr( $next_class ) . '">' . esc_html__( 'Next', 'woothemes-sensei') . ' &rarr;</a>';
 			    	$html .= '</div>';
 
 			    	$html .= '<div class="existing-actions">';
-			    		$html .= '<a title="' . esc_attr( __( 'Add Selected Question(s)', 'woothemes-sensei' ) ) . '" class="add_existing_save button button-primary button-highlighted">' . esc_html( __( 'Add Selected Question(s)', 'woothemes-sensei' ) ) . '</a></p>';
+			    		$html .= '<a title="' . esc_attr__( 'Add Selected Question(s)', 'woothemes-sensei' ) . '" class="add_existing_save button button-primary button-highlighted">' . esc_html__( 'Add Selected Question(s)', 'woothemes-sensei' ) . '</a></p>';
 			    	$html .= '</div>';
 
 			    $html .= '</div>';
@@ -1162,25 +1171,25 @@ class Sensei_Lesson {
 			    if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
 				    $html .= '<div class="tab-content hidden" id="tab-multiple-content">';
 
-				    	$html .= '<p><em>' . sprintf( __( 'Add any number of questions from a specified category. Edit your question categories %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) . '">', '</a>' ) . '</em></p>';
+				    	$html .= '<p><em>' . sprintf( esc_html__( 'Add any number of questions from a specified category. Edit your question categories %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) . '">', '</a>' ) . '</em></p>';
 
 						$html .= '<p><select id="add-multiple-question-category-options" name="multiple_category" class="chosen_select widefat question-category-select">' . "\n";
-						$html .= '<option value="">' . __( 'Select a Question Category', 'woothemes-sensei' ) . '</option>' . "\n";
+						$html .= '<option value="">' . esc_html__( 'Select a Question Category', 'woothemes-sensei' ) . '</option>' . "\n";
 						foreach( $question_cats as $cat ) {
 							$html .= '<option value="' . esc_attr( $cat->term_id ) . '">' . esc_html( $cat->name ) . '</option>';
 						} // End For Loop
 						$html .= '</select></p>' . "\n";
 
-						$html .= '<p>' . __( 'Number of questions:', 'woothemes-sensei' ) . ' <input type="number" min="1" value="1" max="1" id="add-multiple-question-count" class="small-text"/>';
+						$html .= '<p>' . esc_html__( 'Number of questions:', 'woothemes-sensei' ) . ' <input type="number" min="1" value="1" max="1" id="add-multiple-question-count" class="small-text"/>';
 
-						$html .= '<a title="' . esc_attr( __( 'Add Question(s)', 'woothemes-sensei' ) ) . '" class="add_multiple_save button button-primary button-highlighted">' . esc_html( __( 'Add Question(s)', 'woothemes-sensei' ) ) . '</a></p>';
+						$html .= '<a title="' . esc_attr__( 'Add Question(s)', 'woothemes-sensei' ) . '" class="add_multiple_save button button-primary button-highlighted">' . esc_html__( 'Add Question(s)', 'woothemes-sensei' ) . '</a></p>';
 
 				    $html .= '</div>';
 				}
 			}
 
 		$html .= '</div>';
-		
+
 		/**
 		 * Filter the quiz panel add html
 		 *
@@ -1190,7 +1199,7 @@ class Sensei_Lesson {
 		 * @param string	$context
 		 */
 		$html = apply_filters( 'sensei_quiz_panel_add', $html, $context );
-		
+
 		return $html;
 	}
 
@@ -1294,7 +1303,7 @@ class Sensei_Lesson {
 		$question_cat_list = strip_tags( get_the_term_list( $question_id, 'question-category', '', ', ', '' ) );
 
 		$html .= '<tr class="' . esc_attr( $existing_class ) . '">
-					<td class="cb"><input type="checkbox" value="' . $question_id . '" class="existing-item" /></td>
+					<td class="cb"><input type="checkbox" value="' . esc_attr( $question_id ) . '" class="existing-item" /></td>
 					<td>' . get_the_title( $question_id ) . '</td>
 					<td>' . esc_html( $question_type ) . '</td>
 					<td>' . esc_html( $question_cat_list ) . '</td>
@@ -1361,7 +1370,7 @@ class Sensei_Lesson {
 
 			if( ! $html ) {
 				$html = '<tr class="alternate">
-								<td class="no-results" colspan="4"><em>' . __( 'There are no questions matching your search.', 'woothemes-sensei' ) . '</em></td>
+								<td class="no-results" colspan="4"><em>' . esc_html__( 'There are no questions matching your search.', 'woothemes-sensei' ) . '</em></td>
 							  </tr>';
 			}
 
@@ -1398,7 +1407,7 @@ class Sensei_Lesson {
 
 			switch ( $question_type ) {
 				case 'multiple-choice':
-					$html .= '<div class="question_default_fields multiple-choice-answers ' . str_replace( ' hidden', '', $question_class ) . '">';
+					$html .= '<div class="question_default_fields multiple-choice-answers ' . esc_attr( str_replace( ' hidden', '', $question_class ) ) . '">';
 
 						$right_answers = (array) $right_answer;
 						// Calculate total right answers available (defaults to 1)
@@ -1413,7 +1422,7 @@ class Sensei_Lesson {
 							if ( !isset( $right_answers[ $i ] ) ) { $right_answers[ $i ] = ''; }
 							$right_answer_id = $this->get_answer_id( $right_answers[ $i ] );
 							// Right Answer
-							$right_answer = '<label class="answer" for="question_' . $question_counter . '_right_answer_' . $i . '"><span>' . __( 'Right:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . $question_counter . '_right_answer_' . $i . '" name="question_right_answers[]" value="' . esc_attr( $right_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+							$right_answer = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_right_answer_' . $i . '"><span>' . esc_html__( 'Right:' , 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '" name="question_right_answers[]" value="' . esc_attr( $right_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
 							if( $question_id ) {
 								$answers[ $right_answer_id ] = $right_answer;
 							} else {
@@ -1434,8 +1443,8 @@ class Sensei_Lesson {
                         foreach ( $wrong_answers as $i => $answer ){
 
                             $answer_id = $this->get_answer_id( $answer );
-                            $wrong_answer = '<label class="answer" for="question_' . $question_counter . '_wrong_answer_' . $i . '"><span>' . __( 'Wrong:' , 'woothemes-sensei' ) ;
-                            $wrong_answer .= '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . $question_counter . '_wrong_answer_' . $i ;
+                            $wrong_answer = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i ) . '"><span>' . esc_html__( 'Wrong:' , 'woothemes-sensei' ) ;
+                            $wrong_answer .= '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i ) ;
                             $wrong_answer .= '" name="question_wrong_answers[]" value="' . esc_attr( $answer ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
                             if( $question_id ) {
 
@@ -1470,13 +1479,13 @@ class Sensei_Lesson {
 				    		$html .= $answer;
 				    	}
 
-				    	$html .= '<input type="hidden" class="answer_order" name="answer_order" value="' . $answer_order_string . '" />';
-				    	$html .= '<span class="hidden right_answer_count">' . $total_right . '</span>';
-				    	$html .= '<span class="hidden wrong_answer_count">' . $total_wrong . '</span>';
+				    	$html .= '<input type="hidden" class="answer_order" name="answer_order" value="' . esc_attr( $answer_order_string ) . '" />';
+				    	$html .= '<span class="hidden right_answer_count">' . esc_html( $total_right ) . '</span>';
+				    	$html .= '<span class="hidden wrong_answer_count">' . esc_html( $total_wrong ) . '</span>';
 
 				    	$html .= '<div class="add_answer_options">';
-					    	$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . $question_counter . '">' . __( 'Add right answer', 'woothemes-sensei' ) . '</a>';
-					    	$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . $question_counter . '">' . __( 'Add wrong answer', 'woothemes-sensei' ) . '</a>';
+					    	$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add right answer', 'woothemes-sensei' ) . '</a>';
+					    	$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add wrong answer', 'woothemes-sensei' ) . '</a>';
 				    	$html .= '</div>';
 
                         $html .= $this->quiz_panel_question_feedback( $question_counter, $question_id , 'multiple-choice' );
@@ -1484,15 +1493,15 @@ class Sensei_Lesson {
 			    	$html .= '</div>';
 				break;
 				case 'boolean':
-					$html .= '<div class="question_boolean_fields ' . $question_class . '">';
+					$html .= '<div class="question_boolean_fields ' . esc_attr( $question_class ) . '">';
 						if( $question_id ) {
-							$field_name = 'question_' . $question_id . '_right_answer_boolean';
+							$field_name = 'question_' . esc_attr( $question_id ) . '_right_answer_boolean';
 						} else {
 							$field_name = 'question_right_answer_boolean';
 							$right_answer = 'true';
 						}
-						$html .= '<label for="question_' . $question_id . '_boolean_true"><input id="question_' . $question_id . '_boolean_true" type="radio" name="' . $field_name . '" value="true" '. checked( $right_answer, 'true', false ) . ' /> ' . __( 'True', 'woothemes-sensei' ) . '</label>';
-						$html .= '<label for="question_' . $question_id . '_boolean_false"><input id="question_' . $question_id . '_boolean_false" type="radio" name="' . $field_name . '" value="false" '. checked( $right_answer, 'false', false ) . ' /> ' . __( 'False', 'woothemes-sensei' ) . '</label>';
+						$html .= '<label for="question_' . esc_attr( $question_id ) . '_boolean_true"><input id="question_' . esc_attr( $question_id ) . '_boolean_true" type="radio" name="' . esc_attr( $field_name ) . '" value="true" '. checked( $right_answer, 'true', false ) . ' /> ' . esc_html__( 'True', 'woothemes-sensei' ) . '</label>';
+						$html .= '<label for="question_' . esc_attr( $question_id ) . '_boolean_false"><input id="question_' . esc_attr( $question_id ) . '_boolean_false" type="radio" name="' . esc_attr( $field_name ) . '" value="false" '. checked( $right_answer, 'false', false ) . ' /> ' . esc_html__( 'False', 'woothemes-sensei' ) . '</label>';
 
                     $html .= $this->quiz_panel_question_feedback( $question_counter, $question_id, 'boolean' );
 
@@ -1503,47 +1512,47 @@ class Sensei_Lesson {
 					if ( isset( $gapfill_array[0] ) ) { $gapfill_pre = $gapfill_array[0]; } else { $gapfill_pre = ''; }
 					if ( isset( $gapfill_array[1] ) ) { $gapfill_gap = $gapfill_array[1]; } else { $gapfill_gap = ''; }
 					if ( isset( $gapfill_array[2] ) ) { $gapfill_post = $gapfill_array[2]; } else { $gapfill_post = ''; }
-					$html .= '<div class="question_gapfill_fields ' . $question_class . '">';
+					$html .= '<div class="question_gapfill_fields ' . esc_attr( $question_class ) . '">';
 						// Fill in the Gaps
-						$html .= '<label>' . __( 'Text before the Gap:' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' . $gapfill_pre . '" size="25" class="widefat gapfill-field" />';
-	  					$html .= '<label>' . __( 'The Gap:' , 'woothemes-sensei' ) . '</label> ';
-	  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="' . $gapfill_gap . '" size="25" class="widefat gapfill-field" />';
-	  					$html .= '<label>' . __( 'Text after the Gap:' , 'woothemes-sensei' ) . '</label> ';
-	  					$html .= '<input type="text" id="question_' . $question_counter . '_add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="' . $gapfill_post . '" size="25" class="widefat gapfill-field" />';
-	  					$html .= '<label>' . __( 'Preview:' , 'woothemes-sensei' ) . '</label> ';
-	  					$html .= '<p class="gapfill-preview">' . $gapfill_pre . '&nbsp;<u>' . $gapfill_gap . '</u>&nbsp;' . $gapfill_post . '</p>';
+						$html .= '<label>' . esc_html__( 'Text before the Gap:' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<input type="text" id="question_' . esc_attr( $question_counter ) . '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' . esc_attr( $gapfill_pre ) . '" size="25" class="widefat gapfill-field" />';
+	  					$html .= '<label>' . esc_html__( 'The Gap:' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="question_' . esc_attr( $question_counter ) . '_add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="' . esc_attr( $gapfill_gap ) . '" size="25" class="widefat gapfill-field" />';
+	  					$html .= '<label>' . esc_html__( 'Text after the Gap:' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<input type="text" id="question_' . esc_attr( $question_counter ) . '_add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="' . esc_attr( $gapfill_post ) . '" size="25" class="widefat gapfill-field" />';
+	  					$html .= '<label>' . esc_html__( 'Preview:' , 'woothemes-sensei' ) . '</label> ';
+	  					$html .= '<p class="gapfill-preview">' . esc_html( $gapfill_pre ) . '&nbsp;<u>' . esc_html( $gapfill_gap ) . '</u>&nbsp;' . esc_html( $gapfill_post ) . '</p>';
 	  				$html .= '</div>';
 				break;
 				case 'multi-line':
-					$html .= '<div class="question_multiline_fields ' . $question_class . '">';
+					$html .= '<div class="question_multiline_fields ' . esc_attr( $question_class ) . '">';
 						// Guides for grading
 						if( $question_counter ) {
-							$field_id = 'question_' . $question_counter . '_add_question_right_answer_multiline';
+							$field_id = 'question_' . esc_attr( $question_counter ) . '_add_question_right_answer_multiline';
 						} else {
 							$field_id = 'add_question_right_answer_multiline';
 						}
-						$html .= '<label>' . __( 'Guide/Teacher Notes for grading the answer' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<textarea id="' . $field_id . '" name="add_question_right_answer_multiline" rows="4" cols="40" class="widefat">' . $right_answer . '</textarea>';
+						$html .= '<label>' . esc_html__( 'Guide/Teacher Notes for grading the answer' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<textarea id="' . esc_attr( $field_id ) . '" name="add_question_right_answer_multiline" rows="4" cols="40" class="widefat">' . esc_textarea( $right_answer ) . '</textarea>';
 					$html .= '</div>';
 				break;
 				case 'single-line':
-					$html .= '<div class="question_singleline_fields ' . $question_class . '">';
+					$html .= '<div class="question_singleline_fields ' . esc_attr( $question_class ) . '">';
 						// Recommended Answer
 						if( $question_counter ) {
-							$field_id = 'question_' . $question_counter . '_add_question_right_answer_singleline';
+							$field_id = 'question_' . esc_attr( $question_counter ) . '_add_question_right_answer_singleline';
 						} else {
 							$field_id = 'add_question_right_answer_singleline';
 						}
-						$html .= '<label>' . __( 'Recommended Answer' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<input type="text" id="' . $field_id . '" name="add_question_right_answer_singleline" value="' . $right_answer . '" size="25" class="widefat" />';
+						$html .= '<label>' . esc_html__( 'Recommended Answer' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<input type="text" id="' . esc_attr( $field_id ) . '" name="add_question_right_answer_singleline" value="' . esc_attr( $right_answer ) . '" size="25" class="widefat" />';
 					$html .= '</div>';
 				break;
 				case 'file-upload':
-					$html .= '<div class="question_fileupload_fields ' . $question_class . '">';
+					$html .= '<div class="question_fileupload_fields ' . esc_attr( $question_class ) . '">';
 						if( $question_counter ) {
-							$right_field_id = 'question_' . $question_counter . '_add_question_right_answer_fileupload';
-							$wrong_field_id = 'question_' . $question_counter . '_add_question_wrong_answer_fileupload';
+							$right_field_id = 'question_' . esc_attr( $question_counter ) . '_add_question_right_answer_fileupload';
+							$wrong_field_id = 'question_' . esc_attr( $question_counter ) . '_add_question_wrong_answer_fileupload';
 						} else {
 							$right_field_id = 'add_question_right_answer_fileupload';
 							$wrong_field_id = 'add_question_wrong_answer_fileupload';
@@ -1553,12 +1562,12 @@ class Sensei_Lesson {
 						if( isset( $wrong_answers[0] ) ) {
 							$wrong_answer = $wrong_answers[0];
 						}
-						$html .= '<label>' . __( 'Description for student explaining what needs to be uploaded' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<textarea id="' . $wrong_field_id . '" name="add_question_wrong_answer_fileupload" rows="4" cols="40" class="widefat">' . $wrong_answer . '</textarea>';
+						$html .= '<label>' . esc_html__( 'Description for student explaining what needs to be uploaded' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<textarea id="' . esc_attr( $wrong_field_id ) . '" name="add_question_wrong_answer_fileupload" rows="4" cols="40" class="widefat">' . esc_textarea( $wrong_answer ) . '</textarea>';
 
 						// Guides for grading
-						$html .= '<label>' . __( 'Guide/Teacher Notes for grading the upload' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<textarea id="' . $right_field_id . '" name="add_question_right_answer_fileupload" rows="4" cols="40" class="widefat">' . $right_answer . '</textarea>';
+						$html .= '<label>' . esc_html__( 'Guide/Teacher Notes for grading the upload' , 'woothemes-sensei' ) . '</label> ';
+						$html .= '<textarea id="' . esc_attr( $right_field_id ) . '" name="add_question_right_answer_fileupload" rows="4" cols="40" class="widefat">' . esc_textarea( $right_answer ) . '</textarea>';
 					$html .= '</div>';
 				break;
 			}
@@ -1582,7 +1591,7 @@ class Sensei_Lesson {
         }// end if
 
 		if( $question_counter ) {
-			$field_name = 'answer_' . $question_counter . '_feedback';
+			$field_name = 'answer_' . esc_attr( $question_counter ) . '_feedback';
 		}
 
 		$feedback = '';
@@ -1590,9 +1599,9 @@ class Sensei_Lesson {
 			$feedback = get_post_meta( $question_id, '_answer_feedback', true );
 		}
 
-		$html = '<p title="' . __( 'This feedback will be automatically displayed to the student once they have completed the quiz.', 'woothemes-sensei' ) . '">';
-		$html .= '<label for="' . $field_name . '">' . __( 'Answer Feedback' , 'woothemes-sensei' ) . ':</label>';
-		$html .= '<textarea id="' . $field_name . '" name="' . $field_name . '" rows="4" cols="40" class="answer_feedback widefat">' . $feedback . '</textarea>';
+		$html = '<p title="' . esc_attr__( 'This feedback will be automatically displayed to the student once they have completed the quiz.', 'woothemes-sensei' ) . '">';
+		$html .= '<label for="' . esc_attr( $field_name ) . '">' . esc_html__( 'Answer Feedback' , 'woothemes-sensei' ) . ':</label>';
+		$html .= '<textarea id="' . esc_attr( $field_name ) . '" name="' . esc_attr( $field_name ) . '" rows="4" cols="40" class="answer_feedback widefat">' . esc_textarea( $feedback ) . '</textarea>';
 		$html .= '</p>';
 
 		return $html;
@@ -1660,7 +1669,7 @@ class Sensei_Lesson {
 		if( $quiz_id ) {
 			$html .= $this->quiz_settings_panel( $lesson_id, $quiz_id );
 		} else {
-			$html .= '<p><em>' . __( 'There is no quiz for this lesson yet - please add one in the \'Quiz Questions\' box.', 'woothemes-sensei' ) . '</em></p>';
+			$html .= '<p><em>' . esc_html__( 'There is no quiz for this lesson yet - please add one in the \'Quiz Questions\' box.', 'woothemes-sensei' ) . '</em></p>';
 		}
 
 		echo $html;
@@ -1709,15 +1718,15 @@ class Sensei_Lesson {
 		$settings = array(
 			array(
 				'id' 			=> 'pass_required',
-				'label'			=> __( 'Pass required to complete lesson', 'woothemes-sensei' ),
-				'description'	=> __( 'The passmark must be achieved before the lesson is complete.', 'woothemes-sensei' ),
+				'label'			=> esc_html__( 'Pass required to complete lesson', 'woothemes-sensei' ),
+				'description'	=> esc_html__( 'The passmark must be achieved before the lesson is complete.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
 				'default'		=> '',
 				'checked'		=> 'on',
 			),
 			array(
 				'id' 			=> 'quiz_passmark',
-				'label'			=> __( 'Quiz passmark percentage', 'woothemes-sensei' ),
+				'label'			=> esc_html__( 'Quiz passmark percentage', 'woothemes-sensei' ),
 				'description'	=> '',
 				'type'			=> 'number',
 				'default'		=> 0,
@@ -1728,17 +1737,17 @@ class Sensei_Lesson {
 			),
 			array(
 				'id' 			=> 'show_questions',
-				'label'			=> __( 'Number of questions to show', 'woothemes-sensei' ),
-				'description'	=> __( 'Show a random selection of questions from this quiz each time a student views it.', 'woothemes-sensei' ),
+				'label'			=> esc_html__( 'Number of questions to show', 'woothemes-sensei' ),
+				'description'	=> esc_html__( 'Show a random selection of questions from this quiz each time a student views it.', 'woothemes-sensei' ),
 				'type'			=> 'number',
 				'default'		=> '',
-				'placeholder'	=> __( 'All', 'woothemes-sensei' ),
+				'placeholder'	=> esc_html__( 'All', 'woothemes-sensei' ),
 				'min'			=> 1,
 				'max'			=> $question_count,
 			),
 			array(
 				'id' 			=> 'random_question_order',
-				'label'			=> __( 'Randomise question order', 'woothemes-sensei' ),
+				'label'			=> esc_html__( 'Randomise question order', 'woothemes-sensei' ),
 				'description'	=> '',
 				'type'			=> 'checkbox',
 				'default'		=> 'no',
@@ -1746,16 +1755,16 @@ class Sensei_Lesson {
 			),
 			array(
 				'id' 			=> 'quiz_grade_type',
-				'label'			=> __( 'Grade quiz automatically', 'woothemes-sensei' ),
-				'description'	=> __( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions. Questions that have a grade of zero are skipped during autograding.', 'woothemes-sensei' ),
+				'label'			=> esc_html__( 'Grade quiz automatically', 'woothemes-sensei' ),
+				'description'	=> esc_html__( 'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions. Questions that have a grade of zero are skipped during autograding.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
 				'default'		=> 'auto',
 				'checked'		=> 'auto',
 			),
 			array(
 				'id' 			=> 'enable_quiz_reset',
-				'label'			=> __( 'Allow user to retake the quiz', 'woothemes-sensei' ),
-				'description'	=> __( 'Enables the quiz reset button.', 'woothemes-sensei' ),
+				'label'			=> esc_html__( 'Allow user to retake the quiz', 'woothemes-sensei' ),
+				'description'	=> esc_html__( 'Enables the quiz reset button.', 'woothemes-sensei' ),
 				'type'			=> 'checkbox',
 				'default'		=> '',
 				'checked'		=> 'on',
@@ -1795,8 +1804,26 @@ class Sensei_Lesson {
             }
 
 			// Localise script
-			$translation_strings = array( 'right_colon' => __( 'Right:', 'woothemes-sensei' ), 'wrong_colon' => __( 'Wrong:', 'woothemes-sensei' ), 'add_file' => __( 'Add file', 'woothemes-sensei' ), 'change_file' => __( 'Change file', 'woothemes-sensei' ), 'confirm_remove' => __( 'Are you sure you want to remove this question?', 'woothemes-sensei' ), 'confirm_remove_multiple' => __( 'Are you sure you want to remove these questions?', 'woothemes-sensei' ), 'too_many_for_cat' => __( 'You have selected more questions than this category contains - please reduce the number of questions that you are adding.', 'woothemes-sensei' ) );
-			$ajax_vars = array( 'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ), 'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ), 'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ), 'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ), 'lesson_add_multiple_questions_nonce' => wp_create_nonce( 'lesson_add_multiple_questions_nonce' ), 'lesson_remove_multiple_questions_nonce' => wp_create_nonce( 'lesson_remove_multiple_questions_nonce' ), 'lesson_add_existing_questions_nonce' => wp_create_nonce( 'lesson_add_existing_questions_nonce' ), 'filter_existing_questions_nonce' => wp_create_nonce( 'filter_existing_questions_nonce' ) );
+			$translation_strings = array(
+				'right_colon' => esc_html__( 'Right:', 'woothemes-sensei' ),
+				'wrong_colon' => esc_html__( 'Wrong:', 'woothemes-sensei' ),
+				'add_file' => esc_html__( 'Add file', 'woothemes-sensei' ),
+				'change_file' => esc_html__( 'Change file', 'woothemes-sensei' ),
+				'confirm_remove' => esc_html__( 'Are you sure you want to remove this question?','woothemes-sensei' ), 'confirm_remove_multiple' => esc_html__( 'Are you sure you want to remove these questions?', 'woothemes-sensei' ),
+				'too_many_for_cat' => esc_html__( 'You have selected more questions than this category contains - please reduce the number of questions that you are adding.', 'woothemes-sensei' )
+			);
+
+			$ajax_vars = array(
+				'lesson_update_question_nonce' => wp_create_nonce( 'lesson_update_question_nonce' ),
+				'lesson_add_course_nonce' => wp_create_nonce( 'lesson_add_course_nonce' ),
+				'lesson_update_grade_type_nonce' => wp_create_nonce( 'lesson_update_grade_type_nonce' ), 'lesson_update_question_order_nonce' => wp_create_nonce( 'lesson_update_question_order_nonce' ),
+				'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ),
+				'lesson_add_multiple_questions_nonce' => wp_create_nonce( 'lesson_add_multiple_questions_nonce' ),
+				'lesson_remove_multiple_questions_nonce' => wp_create_nonce( 'lesson_remove_multiple_questions_nonce' ),
+				'lesson_add_existing_questions_nonce' => wp_create_nonce( 'lesson_add_existing_questions_nonce' ),
+				'filter_existing_questions_nonce' => wp_create_nonce( 'filter_existing_questions_nonce' )
+			);
+
 			$data = array_merge( $translation_strings, $ajax_vars );
 			wp_localize_script( 'sensei-lesson-metadata', 'woo_localized_data', $data );
 
@@ -1866,13 +1893,13 @@ class Sensei_Lesson {
 			case 'lesson-course':
 				$lesson_course_id = get_post_meta( $id, '_lesson_course', true);
 				if ( 0 < absint( $lesson_course_id ) ) {
-					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_course_id ) ) ) ) . '">' . get_the_title( absint( $lesson_course_id ) ) . '</a>';
+					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . sprintf( esc_attr__( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_course_id ) ) ) . '">' . get_the_title( absint( $lesson_course_id ) ) . '</a>';
 				} // End If Statement
 			break;
 			case 'lesson-prerequisite':
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true);
 				if ( 0 < absint( $lesson_prerequisite_id ) ) {
-					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) ) . '">' . get_the_title( absint( $lesson_prerequisite_id ) ) . '</a>';
+					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . sprintf( esc_attr__( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) . '">' . get_the_title( absint( $lesson_prerequisite_id ) ) . '</a>';
 				} // End If Statement
 			break;
 			default:
@@ -1999,7 +2026,7 @@ class Sensei_Lesson {
 				$post_data = array(
 					'post_content' => '',
 					'post_status' => 'publish',
-					'post_title' => sprintf( __( '%1$s Question(s) from %2$s', 'woothemes-sensei' ), $question_number, $cat->name ),
+					'post_title' => sprintf( esc_html__( '%1$s Question(s) from %2$s', 'woothemes-sensei' ), $question_number, $cat->name ),
 					'post_type' => 'multiple_question'
 				);
 
@@ -2551,9 +2578,9 @@ class Sensei_Lesson {
 	public function lesson_complexities() {
 
 		// V2 - make filter for this array
-        $lesson_complexities = array( 	'easy' => __( 'Easy', 'woothemes-sensei' ),
-									'std' => __( 'Standard', 'woothemes-sensei' ),
-									'hard' => __( 'Hard', 'woothemes-sensei' )
+        $lesson_complexities = array( 	'easy' => esc_html__( 'Easy', 'woothemes-sensei' ),
+									'std' => esc_html__( 'Standard', 'woothemes-sensei' ),
+									'hard' => esc_html__( 'Hard', 'woothemes-sensei' )
 									);
 
 		return $lesson_complexities;
@@ -2572,8 +2599,6 @@ class Sensei_Lesson {
 
 		$post_args = array(	'post_type'         => 'lesson',
 							'posts_per_page'    => -1,
-//							'orderby'           => 'menu_order date',
-//							'order'             => 'ASC',
 							'post_status'       => $post_status,
 							'suppress_filters'  => 0,
 							'fields'            => 'ids',
@@ -2594,9 +2619,7 @@ class Sensei_Lesson {
 		}
 
 		// Allow WP to generate the complex final query, just shortcut to only do an overall count
-//		add_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 		$lessons_query = new WP_Query( apply_filters( 'sensei_lesson_count', $post_args ) );
-//		remove_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 
 		return count( $lessons_query->posts );
 	} // End lesson_count()
@@ -2946,7 +2969,7 @@ class Sensei_Lesson {
  			// Display Image Placeholder if none
 			if ( Sensei()->settings->settings[ 'placeholder_images_enable' ] ) {
 
-                $img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+                $img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . esc_attr( $width ) . 'x' . esc_attr( $height ) . '" class="woo-image thumbnail alignleft" />' );
 
 			} // End If Statement
 
@@ -3061,7 +3084,7 @@ class Sensei_Lesson {
         <fieldset class="sensei-edit-field-set inline-edit-lesson">
             <div class="sensei-inline-edit-col column-<?php echo $column_name ?>">
                     <?php
-                    echo '<h4>' . __('Lesson Information', 'woothemes-sensei') . '</h4>';
+                    echo '<h4>' . esc_html__('Lesson Information', 'woothemes-sensei') . '</h4>';
                     // create a nonce field to be  used as a security measure when saving the data
                     wp_nonce_field( 'bulk-edit-lessons', '_edit_lessons_nonce' );
                     wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce'  );
@@ -3069,7 +3092,7 @@ class Sensei_Lesson {
                     // unchanged option - we need this in because
                     // the default option in bulk edit should not be empty. If it is
                     // the user will erase data they didn't want to touch.
-                    $no_change_text = '-- ' . __('No Change', 'woothemes-sensei') . ' --';
+                    $no_change_text = '-- ' . esc_html__('No Change', 'woothemes-sensei') . ' --';
 
                     //
                     //course selection
@@ -3085,7 +3108,7 @@ class Sensei_Lesson {
                     $course_options['-1']=  $no_change_text;
                     $course_attributes = array( 'name'=> 'lesson_course', 'id'=>'sensei-edit-lesson-course' , 'class'=>' ' );
                     $course_field =  Sensei_Utils::generate_drop_down( '-1', $course_options, $course_attributes );
-                    echo $this->generate_all_lessons_edit_field( __('Lesson Course', 'woothemes-sensei'),   $course_field  );
+                    echo $this->generate_all_lessons_edit_field( esc_html__('Lesson Course', 'woothemes-sensei'),   $course_field  );
 
                     //
                     // lesson complexity selection
@@ -3095,7 +3118,7 @@ class Sensei_Lesson {
                     $lesson_complexities['-1']=  $no_change_text;
                     $complexity_dropdown_attributes = array( 'name'=> 'lesson_complexity', 'id'=>'sensei-edit-lesson-complexity' , 'class'=>' ');
                     $complexity_filed =  Sensei_Utils::generate_drop_down( '-1', $lesson_complexities, $complexity_dropdown_attributes );
-                    echo $this->generate_all_lessons_edit_field( __('Lesson Complexity', 'woothemes-sensei'),   $complexity_filed  );
+                    echo $this->generate_all_lessons_edit_field( esc_html__('Lesson Complexity', 'woothemes-sensei'),   $complexity_filed  );
 
                     ?>
 
@@ -3108,34 +3131,34 @@ class Sensei_Lesson {
                     //
                     $pass_required_options = array(
                         '-1' => $no_change_text,
-                         '0' => __( 'No', 'woothemes-sensei' ),
-                         '1' => __( 'Yes', 'woothemes-sensei' ),
+                         '0' => esc_html__( 'No', 'woothemes-sensei' ),
+                         '1' => esc_html__( 'Yes', 'woothemes-sensei' ),
                     );
 
                     $pass_required_select_attributes = array( 'name'=> 'pass_required',
                                                                 'id'=> 'sensei-edit-lesson-pass-required',
                                                                 'class'=>' '   );
                     $require_pass_field =  Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
-                    echo $this->generate_all_lessons_edit_field( __('Pass required', 'woothemes-sensei'),   $require_pass_field  );
+                    echo $this->generate_all_lessons_edit_field( esc_html__('Pass required', 'woothemes-sensei'),   $require_pass_field  );
 
                     //
                     // Quiz pass percentage
                     //
                     $quiz_pass_percentage_field = '<input name="quiz_passmark" id="sensei-edit-quiz-pass-percentage" type="number" />';
-                    echo $this->generate_all_lessons_edit_field( __('Pass Percentage', 'woothemes-sensei'), $quiz_pass_percentage_field  );
+                    echo $this->generate_all_lessons_edit_field( esc_html__('Pass Percentage', 'woothemes-sensei'), $quiz_pass_percentage_field  );
 
                     //
                     // Enable quiz reset button
                     //
                     $quiz_reset_select__options = array(
                         '-1' => $no_change_text,
-                        '0' => __( 'No', 'woothemes-sensei' ),
-                        '1' => __( 'Yes', 'woothemes-sensei' ),
+                        '0' => esc_html__( 'No', 'woothemes-sensei' ),
+                        '1' => esc_html__( 'Yes', 'woothemes-sensei' ),
                     );
                     $quiz_reset_name_id = 'sensei-edit-enable-quiz-reset';
                     $quiz_reset_select_attributes = array( 'name'=> 'enable_quiz_reset', 'id'=>$quiz_reset_name_id, 'class'=>' ' );
                     $quiz_reset_field =  Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
-                    echo $this->generate_all_lessons_edit_field( __('Enable quiz reset button', 'woothemes-sensei'), $quiz_reset_field  );
+                    echo $this->generate_all_lessons_edit_field( esc_html__('Enable quiz reset button', 'woothemes-sensei'), $quiz_reset_field  );
 
                     ?>
             </div>
@@ -3158,7 +3181,7 @@ class Sensei_Lesson {
 
         $html = '';
         $html = '<div class="inline-edit-group" >';
-        $html .=  '<span class="title">'. $title .'</span> ';
+        $html .=  '<span class="title">'. esc_html( $title ) .'</span> ';
         $html .= '<span class="input-text-wrap">';
         $html .= $field;
         $html .= '</span>';
@@ -3358,7 +3381,7 @@ class Sensei_Lesson {
         if ( $is_preview && !$is_user_taking_course ) {
 
             $preview_label = Sensei()->frontend->sensei_lesson_preview_title_text( $lesson_id);
-            $preview_label = '<span class="preview-heading">' . $preview_label . '</span>';
+            $preview_label = '<span class="preview-heading">' . esc_html( $preview_label ) . '</span>';
 
         }
 
@@ -3372,16 +3395,16 @@ class Sensei_Lesson {
          */
         if( apply_filters( 'sensei_show_lesson_numbers', false ) ) {
 
-            $count_markup =  '<span class="lesson-number">' . $loop_lesson_number. '</span>';
+            $count_markup =  '<span class="lesson-number">' . esc_html( $loop_lesson_number ) . '</span>';
 
         }
 
-        $heading_link_title = sprintf( __( 'Start %s', 'woothemes-sensei' ), get_the_title( $lesson_id ) );
+        $heading_link_title = sprintf( esc_html__( 'Start %s', 'woothemes-sensei' ), get_the_title( $lesson_id ) );
 
         ?>
         <header>
             <h2>
-                <a href="<?php echo esc_url_raw( get_permalink( $lesson_id ) ) ?>"
+                <a href="<?php echo esc_url( get_permalink( $lesson_id ) ) ?>"
                    title="<?php echo esc_attr( $heading_link_title ) ?>" >
                     <?php echo $count_markup. get_the_title( $lesson_id ) . $preview_label; ?>
                 </a>
@@ -3397,18 +3420,18 @@ class Sensei_Lesson {
                 $lesson_length = get_post_meta( $lesson_id, '_lesson_length', true );
                 if ( '' != $lesson_length ) {
 
-                    $meta_html .= '<span class="lesson-length">' .  __( 'Length: ', 'woothemes-sensei' ) . $lesson_length . __( ' minutes', 'woothemes-sensei' ) . '</span>';
+                    $meta_html .= '<span class="lesson-length">' .  esc_html__( 'Length: ', 'woothemes-sensei' ) . esc_html( $lesson_length ) . esc_html__( ' minutes', 'woothemes-sensei' ) . '</span>';
 
                 }
 
                 if ( Sensei()->settings->get( 'lesson_author' ) ) {
 
-                    $meta_html .= '<span class="lesson-author">' .  __( 'Author: ', 'woothemes-sensei' ) . '<a href="' . get_author_posts_url( absint( get_post()->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+                    $meta_html .= '<span class="lesson-author">' .  esc_html__( 'Author: ', 'woothemes-sensei' ) . '<a href="' . get_author_posts_url( absint( get_post()->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
 
                 } // End If Statement
                 if ( '' != $lesson_complexity ) {
 
-                    $meta_html .= '<span class="lesson-complexity">' .  __( 'Complexity: ', 'woothemes-sensei' ) . $lesson_complexity .'</span>';
+                    $meta_html .= '<span class="lesson-complexity">' .  esc_html__( 'Complexity: ', 'woothemes-sensei' ) . $lesson_complexity .'</span>';
 
                 }
 
@@ -3418,7 +3441,7 @@ class Sensei_Lesson {
 
                 } elseif ( $user_lesson_status ) {
 
-                    $meta_html .= '<span class="lesson-status in-progress">' . __( 'In Progress', 'woothemes-sensei' ) .'</span>';
+                    $meta_html .= '<span class="lesson-status in-progress">' . esc_html__( 'In Progress', 'woothemes-sensei' ) .'</span>';
 
                 } // End If Statement
 
@@ -3593,17 +3616,17 @@ class Sensei_Lesson {
 
                 if( is_user_logged_in() && ! Sensei_Utils::user_started_course( $course_id, $current_user->ID )  ) {
 
-	                    $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
-	                    $a_element .= __( 'course', 'woothemes-sensei' );
+	                    $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' )  . '">';
+	                    $a_element .= esc_html__( 'course', 'woothemes-sensei' );
 	                    $a_element .= '</a>';
 
 	                    if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
 
-		                    $message = sprintf( __( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
+		                    $message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 	                    }else{
 
-		                    $message = sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
+		                    $message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 	                    }
 
@@ -3613,17 +3636,17 @@ class Sensei_Lesson {
 
 	            if( ! is_user_logged_in() ) {
 
-	                $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
-	                $a_element .= __( 'course', 'woothemes-sensei' );
+	                $a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' )  . '">';
+	                $a_element .= esc_html__( 'course', 'woothemes-sensei' );
 	                $a_element .= '</a>';
 
 	                if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
 
-						$message = sprintf( __( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
+						$message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 					}else{
 
-						$message = sprintf( __( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
+						$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 					}
 
@@ -3639,17 +3662,17 @@ class Sensei_Lesson {
 	                    <?php
 	                    $course_link =  '<a href="'
 	                                        . esc_url( get_permalink( $course_id ) )
-	                                        . '" title="' . __( 'Sign Up', 'woothemes-sensei' )
-	                                        . '">' . __( 'course', 'woothemes-sensei' )
+	                                        . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' )
+	                                        . '">' . esc_html__( 'course', 'woothemes-sensei' )
 	                                    . '</a>';
 
 						if ( Sensei_Utils::is_preview_lesson( get_the_ID( ) ) ) {
 
-							echo sprintf( __( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ),  $course_link );
+							echo sprintf( esc_html__( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ),  $course_link );
 
 						} else {
 
-							echo sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
+							echo sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
 
 						}
 
@@ -3676,8 +3699,8 @@ class Sensei_Lesson {
         $lesson_has_pre_requisite = $lesson_prerequisite > 0;
         if ( ! WooThemes_Sensei_Lesson::is_prerequisite_complete(  get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
 
-            $prerequisite_lesson_link  = '<a href="' . esc_url( get_permalink( $lesson_prerequisite ) ) . '" title="' . esc_attr(  sprintf( __( 'You must first complete: %1$s', 'woothemes-sensei' ), get_the_title( $lesson_prerequisite ) ) ) . '">' . get_the_title( $lesson_prerequisite ). '</a>';
-            Sensei()->notices->add_notice( sprintf( __( 'You must first complete %1$s before viewing this Lesson', 'woothemes-sensei' ), $prerequisite_lesson_link ), 'info');
+            $prerequisite_lesson_link  = '<a href="' . esc_url( get_permalink( $lesson_prerequisite ) ) . '" title="' . sprintf( esc_attr__( 'You must first complete: %1$s', 'woothemes-sensei' ), get_the_title( $lesson_prerequisite ) ) . '">' . get_the_title( $lesson_prerequisite ). '</a>';
+            Sensei()->notices->add_notice( sprintf( esc_html__( 'You must first complete %1$s before viewing this Lesson', 'woothemes-sensei' ), $prerequisite_lesson_link ), 'info');
 
         }
 
@@ -3709,7 +3732,7 @@ class Sensei_Lesson {
 	    $title= '';
 	    if ( is_post_type_archive( 'lesson' ) ){
 
-	        $title = __( 'Lessons Archive', 'woothemes-sensei' );
+	        $title = esc_html__( 'Lessons Archive', 'woothemes-sensei' );
 
 	    } elseif ( is_tax( 'module' ) ) {
 
@@ -3826,10 +3849,10 @@ class Sensei_Lesson {
                     <p>
 
                         <a class="button"
-                           href="<?php echo esc_url_raw( get_permalink( $quiz_id ) ); ?>"
-                           title="<?php _e( 'View the Lesson Quiz', 'woothemes-sensei'  ); ?>">
+                           href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>"
+                           title="<?php esc_attr_e( 'View the Lesson Quiz', 'woothemes-sensei'  ); ?>">
 
-                            <?php  _e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?>
+                            <?php  esc_html_e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?>
 
                         </a>
 
@@ -3905,7 +3928,7 @@ class Sensei_Lesson {
                 $status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, $user_id, true );
 
 	            if( ! empty( $status['message']  ) ){
-	                echo '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+	                echo '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' . Sensei_Wp_Kses::wp_kses( $status['message'] ) . '</div>';
                 }
 
                 if( $has_quiz_questions ) {
@@ -3926,8 +3949,7 @@ class Sensei_Lesson {
      */
     public static function limit_archive_content ( $content ){
 
-        if( is_post_type_archive( 'lesson' ) && Sensei()->settings->get('access_permission') ){
-
+        if ( is_post_type_archive( 'lesson' ) && Sensei()->settings->get('access_permission') ) {
             return wp_trim_words( $content, $num_words = 30, $more = '…' );
         }
 

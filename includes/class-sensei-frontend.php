@@ -15,12 +15,25 @@ class Sensei_Frontend {
 
 	public $messages;
 	public $data;
+	public $allowed_html;
 
 	/**
 	 * Constructor.
 	 * @since  1.0.0
 	 */
 	public function __construct () {
+
+		$this->allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes()
+		);
 
 		// Template output actions
 		add_action( 'sensei_before_main_content', array( $this, 'sensei_output_content_wrapper' ), 10 );
@@ -43,7 +56,6 @@ class Sensei_Frontend {
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_start' ), 10 );
 
-		// add_filter( 'get_comments_number', array( $this, 'sensei_lesson_comment_count' ), 1 );
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 );
 
 		//1.6.2
@@ -875,10 +887,14 @@ class Sensei_Frontend {
 			$lesson_video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
 			if ( 'http' == substr( $lesson_video_embed, 0, 4) ) {
         		// V2 - make width and height a setting for video embed
-        		$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed )/*, array( 'width' => 100 , 'height' => 100)*/ );
+        		$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed ) );
         	} // End If Statement
+
+		$lesson_video_embed = do_shortcode( html_entity_decode( $lesson_video_embed ) );
+		$lesson_video_embed = Sensei_Wp_Kses::maybe_sanitize( $lesson_video_embed, $this->allowed_html );
+
         	if ( '' != $lesson_video_embed ) {
-        	?><div class="video"><?php echo do_shortcode( html_entity_decode( $lesson_video_embed ) ); ?></div><?php
+				?><div class="video"><?php echo $lesson_video_embed; ?></div><?php
         	} // End If Statement
         } // End If Statement
 	} // End sensei_lesson_video()
@@ -1280,7 +1296,7 @@ class Sensei_Frontend {
 			} else {
 				// Than its real product set it's id to item_id
 				$item_id = $item['product_id'];
-			} 
+			}
 
             if ( $item_id > 0 ) {
 
@@ -1568,7 +1584,6 @@ class Sensei_Frontend {
 
 		    //get the page where the sensei log form is located
 		    $referrer = $_REQUEST['_wp_http_referer'];
-		    //$redirect = $_REQUEST['_sensei_redirect'];
 
 		    if ( ( isset( $_REQUEST['log'] ) && !empty( $_REQUEST['log'] ) )
 		    	 && ( isset( $_REQUEST['pwd'] ) && !empty( $_REQUEST['pwd'] ) ) ){

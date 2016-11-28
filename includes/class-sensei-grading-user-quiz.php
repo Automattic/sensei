@@ -203,12 +203,18 @@ class Sensei_Grading_User_Quiz {
 							foreach ( $user_answer_content as $_user_answer ) {
 
                                 if( 'multi-line' == Sensei()->question->get_question_type( $question->ID ) ){
-
-                                    $_user_answer = htmlspecialchars_decode( nl2br( esc_html($_user_answer) ) );
-
+                                    $_user_answer = htmlspecialchars_decode( nl2br( $_user_answer ) );
                                 }
 
-								echo apply_filters( 'sensei_answer_text', $_user_answer ) . "<br>";
+								$_user_answer = wp_kses( apply_filters( 'sensei_answer_text', $_user_answer ), array(
+									'a' => array(
+										'href' => array(),
+										'title' => array(),
+										'target' => array(),
+									)
+								) );
+
+								echo $_user_answer . "<br>";
 							}
 						?></p>
 						<div class="right-answer">

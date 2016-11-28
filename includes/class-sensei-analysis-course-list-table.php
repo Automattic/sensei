@@ -107,7 +107,6 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 					'started' => array( 'started', false ),
 					'completed' => array( 'completed', false ),
 					'user_status' => array( 'user_status', false ),
-//					'grade' => array( 'grade', false ),
 					'percent' => array( 'percent', false )
 				);
 				break;
@@ -438,7 +437,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 
 						$grade_count = !empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
 						$grade_total = !empty( $lesson_grades->meta_sum ) ? doubleval( $lesson_grades->meta_sum ) : 0;
-						$lesson_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
+						$lesson_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
 					}
 					// Output lesson data
 					if ( $this->csv_output ) {
@@ -525,7 +524,6 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 							'posts_per_page'      => $args['number'],
 							'offset'              => $args['offset'],
 							'meta_key'            => '_order_' . $this->course_id,
-//							'orderby'             => $args['orderby'],
 							'order'               => $args['order'],
 							'meta_query'          => array(
 								array(

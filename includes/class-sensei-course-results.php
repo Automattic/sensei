@@ -27,7 +27,12 @@ class Sensei_Course_Results {
 
 		// Setup permalink structure for course results
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
+
+		// Support older WordPress theme (< 4.4)
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
+
+		// Support newer WordPress theme (>= 4.4)
+		add_filter( 'document_title_parts', array( $this, 'page_title' ), 10, 2 );
 
 		// Load course results
 		add_action( 'sensei_course_results_content_inside_before', array( $this, 'deprecate_course_result_info_hook' ), 10 );
@@ -49,7 +54,7 @@ class Sensei_Course_Results {
 
 	/**
 	 * Adding page title for course results page
-	 * @param  string $title Original title
+	 * @param  mixed  $title Original title
 	 * @param  string $sep   Seeparator string
 	 * @return string        Modified title
 	 */
@@ -57,7 +62,12 @@ class Sensei_Course_Results {
 		global $wp_query;
 		if( isset( $wp_query->query_vars['course_results'] ) ) {
 			$course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );
-			$title = __( 'Course Results: ', 'woothemes-sensei' ) . $course->post_title . ' ' . $sep . ' ';
+			$modified_title = __( 'Course Results: ', 'woothemes-sensei' ) . $course->post_title . ' ' . $sep . ' ';
+			if ( is_array( $title ) ) {
+				$title['title'] = $modified_title;
+			} else {
+				$title = $modified_title;
+			}
 		}
 		return $title;
 	}

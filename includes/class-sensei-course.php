@@ -29,6 +29,11 @@ class Sensei_Course {
     public  $my_courses_page;
 
 	/**
+	 * @var array The HTML allowed for message boxes.
+	 */
+	public static $allowed_html;
+
+	/**
 	 * Constructor.
 	 * @since  1.0.0
 	 */
@@ -49,6 +54,18 @@ class Sensei_Course {
 		} else {
 			$this->my_courses_page = false;
 		} // End If Statement
+
+		self::$allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes()
+		);
 
 		// Update course completion upon completion of a lesson
 		add_action( 'sensei_user_lesson_end', array( $this, 'update_status_after_lesson_change' ), 10, 2 );
@@ -360,12 +377,16 @@ class Sensei_Course {
 		global $post;
 
 		$course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
+		$course_video_embed = Sensei_Wp_Kses::maybe_sanitize( $course_video_embed, self::$allowed_html );
 
 		$html = '';
 
 		$html .= '<label class="screen-reader-text" for="course_video_embed">' . __( 'Video Embed Code', 'woothemes-sensei' ) . '</label>';
-		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">' . $course_video_embed . '</textarea>';
-		$html .= '<p>' .  __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
+		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">';
+
+		$html .= $course_video_embed . '</textarea><p>';
+
+		$html .= __( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
 
@@ -430,8 +451,9 @@ class Sensei_Course {
 		// Get the meta key.
 		$meta_key = '_' . $post_key;
 		// Get the posted data and sanitize it for use as an HTML class.
-		if ( 'course_video_embed' == $post_key) {
-			$new_meta_value = esc_html( $_POST[$post_key] );
+		if ( 'course_video_embed' == $post_key ) {
+			$new_meta_value = ( isset( $_POST[ $post_key ] ) ) ? $_POST[ $post_key ] : '';
+			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, self::$allowed_html );
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
@@ -503,7 +525,7 @@ class Sensei_Course {
 
     public function course_manage_meta_box_content () {
         global $post;
-        
+
         $manage_url = esc_url( add_query_arg( array( 'page' => 'sensei_learners', 'course_id' => $post->ID, 'view' => 'learners' ), admin_url( 'admin.php') ) );
 
         $grading_url = esc_url( add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => $post->ID, 'view' => 'learners' ), admin_url( 'admin.php') ) );
@@ -526,7 +548,6 @@ class Sensei_Course {
 	 */
 	public function add_column_headings ( $defaults ) {
 		$new_columns['cb'] = '<input type="checkbox" />';
-		// $new_columns['id'] = __( 'ID' );
 		$new_columns['title'] = _x( 'Course Title', 'column name', 'woothemes-sensei' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'woothemes-sensei' );
 		if ( Sensei_WC::is_woocommerce_active() ) {
@@ -870,17 +891,13 @@ class Sensei_Course {
 
 		$post_args = array(	'post_type'         => 'course',
 							'posts_per_page'    => -1,
-//							'orderby'           => 'menu_order date',
-//							'order'             => 'ASC',
 							'post_status'       => $post_status,
 							'suppress_filters'  => 0,
 							'fields'            => 'ids',
 							);
 
 		// Allow WP to generate the complex final query, just shortcut to only do an overall count
-//		add_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
-//		remove_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 
 		return count( $courses_query->posts );
 	} // End course_count()
@@ -999,10 +1016,7 @@ class Sensei_Course {
 				}
 				elseif ( $has_questions ) {
 					$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-//					$questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
-//					if( count( $questions ) > 0 ) {
-						$course_quizzes[] = $quiz_id;
-//					}
+					$course_quizzes[] = $quiz_id;
 				}
 			}
 		}
@@ -1334,7 +1348,7 @@ class Sensei_Course {
 
 
 
-                $progress_percentage = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $lesson_count ), 0 ) );
+                $progress_percentage = Sensei_Utils::quotient_as_absolute_rounded_percentage( $lessons_completed, $lesson_count, 0 );
 
                 $active_html .= $this->get_progress_meter( $progress_percentage );
 
@@ -1829,7 +1843,7 @@ class Sensei_Course {
         }
 
         $total_lessons = count( $this->course_lessons( $course_id ) );
-        $percentage = $completed / $total_lessons * 100;
+        $percentage = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons, 2 );
 
         /**
          *
@@ -2915,6 +2929,7 @@ class Sensei_Course {
 	    if ( ! is_singular( 'course' )  ) {
 		    return;
 	    }
+
         // Get the meta info
         $course_video_embed = get_post_meta( $post->ID, '_course_video_embed', true );
 
@@ -2924,10 +2939,14 @@ class Sensei_Course {
 
         } // End If Statement
 
+	$course_video_embed = do_shortcode( $course_video_embed );
+
+	$course_video_embed = Sensei_Wp_Kses::maybe_sanitize( $course_video_embed, self::$allowed_html );
+
         if ( '' != $course_video_embed ) { ?>
 
             <div class="course-video">
-                <?php echo do_shortcode( html_entity_decode( $course_video_embed ) ); ?>
+                <?php echo $course_video_embed; ?>
             </div>
 
         <?php } // End If Statement
@@ -3060,13 +3079,22 @@ class Sensei_Course {
         $course_prerequisite_id = get_post_meta( $course_id, '_course_prerequisite', true );
 
         // if it has a pre requisite course check it
+		$prerequisite_complete = true;
+
         if( ! empty(  $course_prerequisite_id ) ){
 
-            return Sensei_Utils::user_completed_course( $course_prerequisite_id, get_current_user_id() );
+			$prerequisite_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, get_current_user_id() );
 
         }
 
-        return true;
+		/**
+		 * Filter course prerequisite complete
+		 *
+		 * @since 1.9.10
+		 * @param bool $prerequisite_complete
+		 * @param int $course_id
+		 */
+        return apply_filters( 'sensei_course_is_prerequisite_complete', $prerequisite_complete, $course_id );
 
     }// end is_prerequisite_complete
 
@@ -3081,8 +3109,8 @@ class Sensei_Course {
 	 */
 	function allow_course_archive_on_front_page( $query ) {
 		// Bail if it's clear we're not looking at a static front page or if the $running flag is
-		// set @see https://github.com/Automattic/sensei/issues/1438
-		if ( ! $query->is_main_query() || ! is_page() || is_admin() ) {
+		// set @see https://github.com/Automattic/sensei/issues/1438 and https://github.com/Automattic/sensei/issues/1491
+		if ( is_admin() || false === $query->is_main_query() || false === $this->is_front_page( $query ) ) {
 			return;
 		}
 
@@ -3125,6 +3153,63 @@ class Sensei_Course {
 		$query->is_archive           = 1;
 	}
 
+	/**
+	 * Workaround for determining if this is the front page.
+	 * We cannot use is_front_page() on pre_get_posts, or it will throw notices.
+	 * See https://core.trac.wordpress.org/ticket/21790
+	 *
+	 * @param WP_Query $query
+	 * @return bool
+	 */
+	private function is_front_page( $query ) {
+		if ( 'page' != get_option( 'show_on_front' ) ) {
+			return false;
+		}
+
+		$page_on_front = get_option( 'page_on_front', '' );
+		if ( empty( $page_on_front ) ) {
+			return false;
+		}
+
+		$page_id = $query->get( 'page_id', '' );
+		if ( empty( $page_id ) ) {
+			return false;
+		}
+
+		return $page_on_front == $page_id;
+	}
+
+	/**
+	 * Show a message telling the user to complete the previous course if they haven't done so yet
+	 *
+	 * @since 1.9.10
+	 */
+	public static function prerequisite_complete_message() {
+		if ( ! self::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) ) {
+			$course_prerequisite_id = absint( get_post_meta( get_the_ID(), '_course_prerequisite', true ) );
+			$course_title = get_the_title( $course_prerequisite_id );
+			$prerequisite_course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) )
+				. '" title="'
+				. sprintf(
+					esc_attr__( 'You must first complete: %1$s', 'woothemes-sensei' ),
+					$course_title )
+				 . '">' . $course_title . '</a>';
+
+			$complete_prerequisite_message = sprintf(
+				esc_html__( 'You must first complete %1$s before viewing this course', 'woothemes-sensei' ),
+				$prerequisite_course_link );
+
+			/**
+			 * Filter sensei_course_complete_prerequisite_message.
+			 *
+			 * @since 1.9.10
+			 * @param string $complete_prerequisite_message the message to filter
+			 */
+			$filtered_message = apply_filters( 'sensei_course_complete_prerequisite_message', $complete_prerequisite_message );
+
+			Sensei()->notices->add_notice( $filtered_message, 'info' );
+		}
+	}
 
 }// End Class
 

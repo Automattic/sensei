@@ -219,6 +219,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 								'section' => 'default-settings'
 								);
 
+		$fields['sensei_video_embed_html_sanitization_disable'] = array(
+								'name' => __( 'Disable HTML security', 'woothemes-sensei' ),
+								'description' => __( 'Allow all kind of HTML tags in Video Embed. Security Caution: Enabling this indicates a risk of XSS attacks!', 'woothemes-sensei' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'default-settings'
+								);
+
     	// Course Settings
 
     	$fields['course_completion'] = array(

@@ -1,5 +1,36 @@
 *** Sensei Changelog ***
 
+2016.10.19 - version 1.9.9
+
+* Hotfix - Address possible fatal on older PHP versions
+
+2016.10.18 - version 1.9.8
+* Fix - Removed HTML output on lesson complete message
+* Fix - The video HTML tag now works properly in the video embed field
+* Fix - Deleted/non-existant courses showing in course order list
+* Fix - Completed lessons showing 'in progress' label
+* Fix - Missing link in log in message
+* Fix - Conflict with Heroic Knowledge Base
+* Fix - HTML showing in grading for uploaded files
+* Fix - Lessons show 'please complete the previous course'
+* Fix - Conflict with Jetpack: iframe video embeds converting to shortcodes
+* Fix - Parse errors on PHP <5.3
+* Fix - typo in sensei_has_user_completed_prerequisite_lesson
+* Fix - Conflict with Wishlist Member
+
+2016.09.29 - version 1.9.7
+* Improve Module taxonomy labels
+* Fix - Lesson doesn't appear on Course archive until ordering is resaved
+* Fix - Errors when duplicating course with lessons
+* Fix - Add modules-frontend.css to sensei_disable_styles filter
+* Fix - Grade unanswered questions too
+* Fix - Paypal "Cancel and return" causing a fatal error
+* Fix - Do not create duplicate membership rules on save
+* Fix - Random users not being assigned to courses after purchase
+* Fix - "Quiz saved" notice not appearing
+* Various security fixes
+
+2016.05.05 - version 1.9.6
 * Fix - Fixed an issue prevent Modern Tribe's The Event Calendar from functioning properly.
 * Fix - Ensure the question grade is shown inline with questions.
 * Fix - Prevent a PHP notice when calling question results.
