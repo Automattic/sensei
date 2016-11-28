@@ -82,25 +82,6 @@ class Sensei_WC_Memberships {
 			return;
 		}
 
-		self::each_course( $membership_plan, function ( $course_id ) use ( $user_id ) {
-			if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
-				Sensei_Utils::user_start_course( $user_id, $course_id );
-			}
-		} );
-	}
-
-	/**
-	 * Evaluate $callable for all the plan's posts that are of post_type course
-	 *
-	 * @param WC_Memberships_Membership_Plan $membership_plan
-	 * @param $callable
-	 */
-	private static function each_course($membership_plan, $callable ) {
-		if ( ! is_callable( $callable ) ) {
-			// Bail if no callable provided
-			return;
-		}
-
 		$restricted_content = $membership_plan->get_restricted_content();
 
 		foreach ( $restricted_content->get_posts() as $maybe_course ) {
@@ -109,7 +90,9 @@ class Sensei_WC_Memberships {
 			}
 
 			$course_id = $maybe_course->ID;
-			call_user_func( $callable, $course_id );
+			if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+				Sensei_Utils::user_start_course( $user_id, $course_id );
+			}
 		}
 	}
 
