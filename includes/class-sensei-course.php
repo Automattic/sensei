@@ -2216,7 +2216,7 @@ class Sensei_Course {
 
         }
         // for the my courses page
-        elseif( is_page() && Sensei()->settings->get( 'my_course_page' ) == $post->ID  )
+        elseif( isset( $post ) && is_page() && Sensei()->settings->get( 'my_course_page' ) == $post->ID  )
         {
             /**
              * sensei_my_courses_per_page

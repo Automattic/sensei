@@ -1381,20 +1381,7 @@ class Sensei_Utils {
 			// Check if user is already on the Course
 			$activity_logged = Sensei_Utils::user_started_course( $course_id, $user_id );
 			if ( ! $activity_logged ) {
-
-				// Add user to course
-				$course_metadata = array(
-					'start' => current_time('mysql'),
-					'percent' => 0, // No completed lessons yet
-					'complete' => 0,
-				);
-
-				$activity_logged = Sensei_Utils::update_course_status( $user_id, $course_id, $course_status = 'in-progress', $course_metadata );
-
-				// Allow further actions
-				if ( $activity_logged ) {
-					do_action( 'sensei_user_course_start', $user_id, $course_id );
-				}
+				$activity_logged = self::start_user_on_course($user_id, $course_id);
 			}
 		}
 
@@ -2368,6 +2355,30 @@ class Sensei_Utils {
 			case 'frontend' :
 				return ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' );
 		}
+	}
+
+	/**
+	 * @param $user_id
+	 * @param $course_id
+	 * @return mixed
+	 */
+	public static function start_user_on_course($user_id, $course_id)
+	{
+		// Add user to course
+		$course_metadata = array(
+			'start' => current_time('mysql'),
+			'percent' => 0, // No completed lessons yet
+			'complete' => 0,
+		);
+
+		$activity_logged = self::update_course_status($user_id, $course_id, $course_status = 'in-progress', $course_metadata);
+
+		// Allow further actions
+		if ($activity_logged) {
+			do_action('sensei_user_course_start', $user_id, $course_id);
+			return $activity_logged;
+		}
+		return $activity_logged;
 	}
 } // End Class
 
