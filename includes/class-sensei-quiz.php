@@ -122,7 +122,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
      * @since 1.7.3
      * @return bool $saved;
      */
-    public function user_save_quiz_answers_listener(){
+    public function user_save_quiz_answers_listener() {
 
         if( ! isset( $_POST[ 'quiz_save' ])
             || !isset( $_POST[ 'sensei_question' ] )
@@ -133,7 +133,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         global $post;
         $lesson_id = $this->get_lesson_id( $post->ID );
-        $quiz_answers = $_POST[ 'sensei_question' ];
+        $quiz_answers = $this->merge_quiz_answers_with_questions_asked( $_POST, $post->ID );
 
 		// call the save function
 		$answers_saved = self::save_user_answers( $quiz_answers, $_FILES , $lesson_id  , get_current_user_id() );
@@ -163,7 +163,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	 *
 	 * @return false or int $answers_saved
 	 */
-	public static function save_user_answers( $quiz_answers, $files = array(), $lesson_id , $user_id = 0 ){
+	public static function save_user_answers( $quiz_answers, $files = array(), $lesson_id , $user_id = 0 ) {
 
         if( ! ( $user_id > 0 ) ){
             $user_id = get_current_user_id();
@@ -319,14 +319,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         global $post, $current_user;
         $lesson_id = $this->get_lesson_id( $post->ID );
-        $quiz_answers = $_POST[ 'sensei_question' ];
-        $lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $post->ID );
-
-        // Get question keys
-        $quiz_questions = array_fill_keys( wp_list_pluck( $lesson_quiz_questions, 'ID' ), null);
-
-        // Merge user answers and question ids with no value
-        $quiz_answers = $quiz_answers + $quiz_questions;
+        $quiz_answers = $this->merge_quiz_answers_with_questions_asked( $_POST, $post->ID );
 
         self::submit_answers_for_grading( $quiz_answers, $_FILES ,  $lesson_id  , $current_user->ID );
 
@@ -1395,6 +1388,29 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
 	 }
+
+     /**
+      * Merge quiz answers with questions asked
+      *
+      * Also, remove any question_ids not part of
+      * the question set for this lesson quiz
+      *
+      * @param $post_global
+      * @param $quiz_id
+      * @return array
+      */
+     private function merge_quiz_answers_with_questions_asked( $post_global, $quiz_id )
+     {
+         $quiz_answers = isset( $post_global[ 'sensei_question' ] ) ? $post_global[ 'sensei_question' ] : array() ;
+         $questions_asked_this_time = isset( $post_global['questions_asked'] ) ? $post_global['questions_asked'] : array();
+         $merged = array();
+
+         foreach ( array_unique( $questions_asked_this_time ) as $question_id ) {
+             $merged[$question_id] = isset( $quiz_answers[$question_id] ) ? $quiz_answers[$question_id] : '';
+         }
+
+         return $merged;
+     }
 
  } // End Class WooThemes_Sensei_Quiz
 
