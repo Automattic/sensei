@@ -94,6 +94,11 @@ class Sensei_WC_Memberships {
 			return;
 		}
 
+		$auto_start_courses = self::should_auto_start_membership_courses( $user_membership );
+		if ( false === $auto_start_courses ) {
+			return;
+		}
+
 		$user_id = $user_membership->get_user_id();
 		$membership_plan = $user_membership->get_plan();
 
@@ -110,10 +115,35 @@ class Sensei_WC_Memberships {
 			}
 
 			$course_id = $maybe_course->ID;
-			if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+
+			/**
+			 * filter sensei_wc_memberships_auto_start_course
+			 * determine if we should automatically start users on a specific course that is part of a user membership
+			 * and has not started yet.
+			 *
+			 * @param bool $auto_start_courses
+			 * @param WC_Memberships_User_Membership $user_membership the user membership
+			 * @param $course_id int the course that will be started
+			 * @param $user_id int the user that will start this course
+			 */
+			$auto_start_course = (bool) apply_filters( 'sensei_wc_memberships_auto_start_course', true, $user_membership, $course_id, $user_id );
+
+			if ( $auto_start_course && false === Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
 				Sensei_Utils::user_start_course( $user_id, $course_id );
 			}
 		}
+	}
+
+	private static function should_auto_start_membership_courses( $user_membership ) {
+		$auto_start_courses = (bool) Sensei()->settings->get( 'sensei_wc_memberships_auto_start_courses' );
+
+		/**
+		 * determine if we should automatically start users on any courses that are part of this user membership;
+		 *
+		 * @param bool $auto_start_courses
+		 * @param WC_Memberships_User_Membership $user_membership the user membership
+		 */
+		return (bool) apply_filters( 'sensei_wc_memberships_auto_start_courses', $auto_start_courses, $user_membership );
 	}
 
 	public static function is_my_courses_page( $post_id ) {
