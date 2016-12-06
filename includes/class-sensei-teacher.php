@@ -423,7 +423,9 @@ class Sensei_Teacher {
                 wp_set_object_terms( $course_id, $term_id , 'module', true );
 
                 // remove old term
-                wp_remove_object_terms( $course_id, $term->term_id, 'module' );
+                if ( $term_id != $term->term_id ) {
+                    wp_remove_object_terms( $course_id, $term->term_id, 'module' );
+                }
 
                 // update the lessons within the current module term
                 $lessons = Sensei()->course->course_lessons( $course_id );
