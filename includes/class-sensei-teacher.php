@@ -371,6 +371,22 @@ class Sensei_Teacher {
 
         $terms_selected_on_course = wp_get_object_terms( $course_id, 'module' );
 
+        // Get existing module ordering, if any.
+        $term_order = get_post_meta( intval($course_id), '_module_order', true );
+
+        $sorted_terms = array();
+
+        foreach ( $term_order as $term_id ) {
+            foreach ( $terms_selected_on_course as $term ) {
+                if ( $term->term_id == $term_id ) {
+                    $sorted_terms[] = $term;
+                    break;
+                }
+            }
+        }
+
+        $terms_selected_on_course = $sorted_terms;
+
         if( empty( $terms_selected_on_course ) ){
             return;
         }
