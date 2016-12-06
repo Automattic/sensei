@@ -423,7 +423,9 @@ class Sensei_Teacher {
                 wp_set_object_terms( $course_id, $term_id , 'module', true );
 
                 // remove old term
-                wp_remove_object_terms( $course_id, $term->term_id, 'module' );
+                if ( $term_id != $term->term_id ) {
+                    wp_remove_object_terms( $course_id, $term->term_id, 'module' );
+                }
 
                 // update the lessons within the current module term
                 $lessons = Sensei()->course->course_lessons( $course_id );
@@ -434,10 +436,28 @@ class Sensei_Teacher {
                         // add the new term, the false at the end says to replace all terms on this module
                         // with the new term.
                         wp_set_object_terms( $lesson->ID, $term_id , 'module', false );
-                        update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), 0 );
+
+                        // Copy existing order if defined.
+                        $existing_order = get_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ), true );
+
+                        if ( ! empty( $existing_order ) ) {
+                            update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), $existing_order );
+
+                            // Delete old meta if different.
+                            if ( $term_id != $term->term_id ) {
+                                delete_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ) );
+                            }
+                        } else {
+                            update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), 0 );
+                        }
                     }
 
                 }// end for each
+
+                // Delete the old term if different.
+                if ( $term_id != $term->term_id ) {
+                    wp_delete_term( $term->term_id, 'module' );
+                }
 
             }
         }
