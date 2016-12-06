@@ -391,6 +391,8 @@ class Sensei_Teacher {
             return;
         }
 
+        $new_terms = array();
+
         foreach( $terms_selected_on_course as $term ){
 
             $term_author = Sensei_Core_Modules::get_term_author( $term->slug );
@@ -443,6 +445,9 @@ class Sensei_Teacher {
                     wp_remove_object_terms( $course_id, $term->term_id, 'module' );
                 }
 
+                // save ID in order array.
+                $new_terms[] = $term->term_id;
+
                 // update the lessons within the current module term
                 $lessons = Sensei()->course->course_lessons( $course_id );
                 foreach( $lessons as $lesson  ){
@@ -472,6 +477,9 @@ class Sensei_Teacher {
 
             }
         }
+
+        // save order for modules.
+        update_post_meta( intval($course_id), '_module_order', $new_terms );
 
     }// end update_course_module_terms_author
 
