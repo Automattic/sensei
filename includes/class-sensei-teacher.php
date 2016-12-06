@@ -454,6 +454,11 @@ class Sensei_Teacher {
 
                 }// end for each
 
+                // Delete the old term if different.
+                if ( $term_id != $term->term_id ) {
+                    wp_delete_term( $term->term_id, 'module' );
+                }
+
             }
         }
 
