@@ -289,7 +289,9 @@ class Sensei_Course {
 				$html .= '</p>'."\n";
 
 			} else {
-
+				if ( !empty( $select_course_woocommerce_product ) ) {
+					$html .= '<input type="hidden" name="course_woocommerce_product" value="'. absint( $select_course_woocommerce_product ) . '">';
+				}
                 $html .= '<p>' . "\n";
 					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . "\n";
 				$html .= '</p>'."\n";
