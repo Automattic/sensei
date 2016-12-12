@@ -2809,9 +2809,9 @@ class Sensei_Course {
                 Sensei_WC::the_add_to_cart_button_html($post->ID );
 
             } else {
-                $should_display_start_course_form = apply_filters( 'sensei_display_start_course_form', $post->ID );
+                $should_display_start_course_form = (bool) apply_filters( 'sensei_display_start_course_form', true, $post->ID );
 
-                if ( false !== $should_display_start_course_form ) {
+                if ( $should_display_start_course_form ) {
                   sensei_start_course_form( $post->ID );
                 }
             } // End If Statement

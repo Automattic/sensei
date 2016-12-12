@@ -14,7 +14,7 @@ class Sensei_WC_Memberships {
 			return;
 		}
 
-		add_action( 'sensei_display_start_course_form', array( __CLASS__, 'display_start_course_form_to_members_only' ) );
+		add_filter( 'sensei_display_start_course_form', array( __CLASS__, 'display_start_course_form_to_members_only' ), 10, 2 );
 		add_action( 'wc_memberships_user_membership_status_changed', array( __CLASS__, 'start_courses_associated_with_membership' ) );
 		add_action( 'wc_memberships_user_membership_saved', array( __CLASS__, 'on_wc_memberships_user_membership_saved' ), 10, 2 );
 	}
@@ -27,20 +27,24 @@ class Sensei_WC_Memberships {
 	 * @param $course_id the course in question
 	 * @return int|bool the course id or false in case a restriction applies
 	 */
-	public static function display_start_course_form_to_members_only( $course_id ) {
+	public static function display_start_course_form_to_members_only( $should_display, $course_id ) {
 
 		if ( false === self::is_wc_memberships_active() ) {
-			return $course_id;
+			return $should_display;
 		}
 
 		$course_restriction_rules = WC_Memberships::instance()->get_rules_instance()->get_post_content_restriction_rules( $course_id );
 		if ( false === $course_restriction_rules || empty( $course_restriction_rules ) ) {
-			return $course_id;
+			return $should_display;
 		}
 
 		$can_view_course = current_user_can( self::WC_MEMBERSHIPS_VIEW_RESTRICTED_POST_CONTENT, $course_id );
 
-		return ( false === $can_view_course ) ? false : $course_id;
+		if ( false === $can_view_course ) {
+			$should_display = false;
+		}
+
+		return $should_display;
 	}
 
 	/**
@@ -125,6 +129,7 @@ class Sensei_WC_Memberships {
 			 * @param WC_Memberships_User_Membership $user_membership the user membership
 			 * @param $course_id int the course that will be started
 			 * @param $user_id int the user that will start this course
+			 * @since 1.9.10
 			 */
 			$auto_start_course = (bool) apply_filters( 'sensei_wc_memberships_auto_start_course', true, $user_membership, $course_id, $user_id );
 
