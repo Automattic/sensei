@@ -11,16 +11,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside W
  * @since 1.9.0
  */
 
-Class Sensei_WC{
+class Sensei_WC {
 
 	/**
 	 * Load the files needed for the woocommerce integration.
 	 *
 	 * @since 1.9.0
 	 */
-	public static function load_woocommerce_integration_hooks(){
+	public static function load_woocommerce_integration_hooks() {
 
-		if( ! Sensei_WC::is_woocommerce_active() ){
+		if( ! self::is_woocommerce_active() ){
 			return;
 		}
 
@@ -94,43 +94,22 @@ Class Sensei_WC{
 
 		}
 
-		foreach( $orders_query->get_posts() as $order ){
-
+		foreach( $orders_query->get_posts() as $order ) {
 			$order = new WC_Order( $order->ID );
 			$items = $order->get_items();
 
-			$user_orders =  array();
-
-			foreach( $items as $item ){
+			foreach ( $items as $item ) {
 
 				// if the product id on the order and the one given to this function
 				// this order has been placed by the given user on the given course.
-				$product = wc_get_product( $item['product_id'] );
-
-				if ( is_object( $product ) && $product->is_type( 'variable' )) {
-
-					$item_product_id = $item['variation_id'];
-
-				} else {
-
-					$item_product_id =  $item['product_id'];
-
-				}
-
-				if( $course_product_id == $item_product_id ){
-
+				$item_product_id = self::get_item_id_from_item( $item );
+				if ( $course_product_id == $item_product_id ) {
 					return $order->id;
-
 				}
+			}
+		}
 
-
-			}//end for each order item
-
-		} // end for each order
-
-		// if we reach this place we found no order
 		return false;
-
 	} // end get_learner_course_active_order_ids
 
 	/**
@@ -303,10 +282,41 @@ Class Sensei_WC{
 
 	}
 
-	public static function assign_user_to_unassigned_purchased_courses() {
+	/**
+	 * @param WP_Query $query
+     */
+	public static function assign_user_to_unassigned_purchased_courses( $query ) {
 		global $current_user;
 
+		if ( is_admin() ) {
+			return;
+		}
 		if ( false === self::is_woocommerce_active() ) {
+			return;
+		}
+
+		if ( !$query->is_main_query() ) {
+			return;
+		}
+
+		if ( !$query->is_page()) {
+			return;
+		}
+
+		$queried_object = $query->get_queried_object();
+
+		if ( !$queried_object ) {
+			return;
+		}
+
+		$object_id = absint( $queried_object->ID );
+		$my_courses_page = Sensei()->settings->get( 'my_course_page' );
+		if ( false === $my_courses_page ) {
+			return;
+		}
+		$my_courses_page_id = absint( $my_courses_page );
+
+		if ( $object_id !== $my_courses_page_id ) {
 			return;
 		}
 
@@ -318,6 +328,7 @@ Class Sensei_WC{
 			return;
 		}
 
+		remove_action( 'pre_get_posts', array( __CLASS__, __FUNCTION__ ) );
 		$user_id = $current_user->ID;
 
 		// get current user's active courses
@@ -365,15 +376,11 @@ Class Sensei_WC{
 
 		foreach ( $user_orders as $user_order ) {
 			foreach ($user_order->get_items() as $item) {
-				if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
-					$item_id = $item['variation_id'];
-				} else {
-					$item_id = $item['product_id'];
-				}
+				$item_id = self::get_item_id_from_item( $item );
 
 				$product = self::get_product_object( $item_id );
 
-				$product_courses = Sensei()->course->get_product_courses( $product->id );
+				$product_courses = Sensei()->course->get_product_courses( $product->get_id() );
 
 				foreach ( $product_courses as $course ) {
 					$course_id = $course->ID;
@@ -382,18 +389,7 @@ Class Sensei_WC{
 					if ( in_array( $order_id, $user_order_ids ) &&
 							 ! in_array( $course_id, $active_course_ids ) ) {
 						// user ordered a course and not assigned to it. Fix this by assigning them now
-
-						$course_metadata = array(
-							'start' => current_time('mysql'),
-							'percent' => 0,
-							'complete' => 0,
-						);
-
-						$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, $status = 'in-progress', $course_metadata );
-
-						if ( $comment_id ) {
-							do_action( 'sensei_user_course_start', $user_id, $course_id );
-						}
+						$activity_logged = Sensei_Utils::start_user_on_course( $user_id, $course_id) ;
 					}
 				}
 			}
@@ -1387,12 +1383,7 @@ Class Sensei_WC{
 
 			foreach( $order->get_items() as $item ) {
 
-				if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
-					$item_id = $item['variation_id'];
-				} else {
-					$item_id = $item['product_id'];
-				} // End If Statement
-
+				$item_id = self::get_item_id_from_item($item); // End If Statement
 
                 if ( self::has_customer_bought_product( $user_id, $item_id ) ){
 
@@ -1929,6 +1920,21 @@ Class Sensei_WC{
 
 		return $course_product->is_purchasable();
 
+	}
+
+	/**
+	 * @param $item
+	 * @return mixed
+	 */
+	private static function get_item_id_from_item($item)
+	{
+		if (isset($item['variation_id']) && (0 < $item['variation_id'])) {
+			$item_id = $item['variation_id'];
+			return $item_id;
+		} else {
+			$item_id = $item['product_id'];
+			return $item_id;
+		}
 	}
 
 }// end Sensei_WC
