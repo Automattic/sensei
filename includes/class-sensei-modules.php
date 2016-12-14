@@ -102,7 +102,10 @@ class Sensei_Core_Modules
         //store new modules created on the course edit screen
         add_action( 'wp_ajax_sensei_add_new_module_term', array( 'Sensei_Core_Modules','add_new_module_term' ) );
 
-        $this->add_get_terms_filters();
+        // for non admin users, only show taxonomies that belong to them
+        add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
+        // add the teacher name next to the module term in for admin users
+        add_filter('get_terms', array( $this, 'append_teacher_name_to_module' ), 70, 3 );
         add_filter('get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
 
         // remove the default modules  metabox
@@ -247,7 +250,6 @@ class Sensei_Core_Modules
 
             $module_id = intval( $_POST['lesson_module'] );
 
-            $this->remove_get_terms_filters();
             // Assign lesson to selected module
             wp_set_object_terms($post_id, $module_id, $this->taxonomy, false);
 
@@ -255,8 +257,6 @@ class Sensei_Core_Modules
             if (!get_post_meta($post_id, '_order_module_' . $module_id, true)) {
                 update_post_meta($post_id, '_order_module_' . $module_id, 0);
             }
-
-            $this->add_get_terms_filters();
         }
 
         return true;
@@ -1795,7 +1795,6 @@ class Sensei_Core_Modules
             <?php endif; ?>
         </div>
     <?php
-
     } // end course_module_metabox
 
 
@@ -1977,8 +1976,9 @@ class Sensei_Core_Modules
         }
 
         // in certain cases the array is passed in as reference to the parent term_id => parent_id
+        // In other cases we explicitly require ids (as in 'tt_ids' or 'ids')
         // simply return this as wp doesn't need an array of stdObject Term
-        if (isset( $args['fields'] ) && 'id=>parent' == $args['fields']) {
+        if (isset( $args['fields'] ) && in_array( $args['fields'], array( 'id=>parent', 'tt_ids', 'ids' ) ) ) {
 
             return $terms;
 
@@ -2122,19 +2122,5 @@ class Sensei_Core_Modules
         wp_reset_query();
         $post = $wp_query->post;
     }// end teardown_single_course_module_loop
-
-    private function remove_get_terms_filters()
-    {
-        remove_filter('get_terms', array($this, 'filter_module_terms'), 20);
-        remove_filter('get_terms', array($this, 'append_teacher_name_to_module'), 70);
-    }
-
-    private function add_get_terms_filters()
-    {
-        // for non admin users, only show taxonomies that belong to them
-        add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
-        // add the teacher name next to the module term in for admin users
-        add_filter('get_terms', array( $this, 'append_teacher_name_to_module' ), 70, 3 );
-    }
 
 } // end modules class
