@@ -105,6 +105,9 @@ class Sensei_WC_Memberships {
 
 		$user_id = $user_membership->get_user_id();
 		$membership_plan = $user_membership->get_plan();
+		if ( empty( $membership_plan ) ) {
+			return;
+		}
 
 		if ( false === wc_memberships_is_user_active_member($user_id, $membership_plan->get_id() ) ) {
 			// User is Inactive so just Bail for now
