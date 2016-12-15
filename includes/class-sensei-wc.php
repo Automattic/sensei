@@ -76,7 +76,7 @@ class Sensei_WC {
 	 * @param $course_id
 	 * @return array $user_course_orders
 	 */
-	public static function get_learner_course_active_order_id( $user_id, $course_id ){
+	public static function get_learner_course_active_order_id( $user_id, $course_id, $check_parent_products = false ){
 
 		$course_product_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
 
@@ -103,9 +103,11 @@ class Sensei_WC {
 				// if the product id on the order and the one given to this function
 				// this order has been placed by the given user on the given course.
 				$item_product_id = self::get_item_id_from_item( $item );
-				if ( $course_product_id == $item_product_id ) {
+				$parent_product_id = self::get_item_id_from_item( $item, true );
+				if ( $course_product_id == $item_product_id || $check_parent_products && $parent_product_id == $course_product_id ) {
 					return $order->id;
 				}
+
 			}
 		}
 
@@ -330,70 +332,7 @@ class Sensei_WC {
 
 		remove_action( 'pre_get_posts', array( __CLASS__, __FUNCTION__ ) );
 		$user_id = $current_user->ID;
-
-		// get current user's active courses
-		$active_courses = Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $current_user->ID, 'type' => 'sensei_course_status' ), true );
-
-		if ( empty( $active_courses ) ) {
-			$active_courses = array();
-		}
-
-		if ( ! is_array( $active_courses ) ) {
-			$active_courses = array( $active_courses );
-		}
-
-		$active_course_ids = array();
-
-		foreach ( $active_courses as $c ) {
-			$active_course_ids[] = $c->comment_post_ID;
-		}
-
-		$orders_query = new WP_Query( array(
-			'post_type'   => 'shop_order',
-			'posts_per_page' => -1,
-			'post_status' => array( 'wc-processing', 'wc-completed' ),
-			'meta_key'=> '_customer_user',
-			'meta_value'=> $user_id,
-			'fields' => 'ids'
-		) );
-
-		// get user's processing and completed orders
-		$user_order_ids = $orders_query->get_posts();
-
-		if ( empty( $user_order_ids ) ) {
-			$user_order_ids = array();
-		}
-
-		if ( ! is_array( $user_order_ids ) ) {
-			$user_order_ids = array( $user_order_ids );
-		}
-
-		$user_orders = array();
-
-		foreach ( $user_order_ids as $order_data ) {
-			$user_orders[] =  new WC_Order( $order_data );
-		}
-
-		foreach ( $user_orders as $user_order ) {
-			foreach ($user_order->get_items() as $item) {
-				$item_id = self::get_item_id_from_item( $item );
-
-				$product = self::get_product_object( $item_id );
-
-				$product_courses = Sensei()->course->get_product_courses( $product->get_id() );
-
-				foreach ( $product_courses as $course ) {
-					$course_id = $course->ID;
-					$order_id = self::get_learner_course_active_order_id( $user_id, $course_id );
-
-					if ( in_array( $order_id, $user_order_ids ) &&
-							 ! in_array( $course_id, $active_course_ids ) ) {
-						// user ordered a course and not assigned to it. Fix this by assigning them now
-						$activity_logged = Sensei_Utils::start_user_on_course( $user_id, $course_id) ;
-					}
-				}
-			}
-		}
+		self::start_purchased_courses_for_user( $user_id );
 	}
 
 	/**
@@ -1924,16 +1863,107 @@ class Sensei_WC {
 
 	/**
 	 * @param $item
+	 * @param bool $always_return_parent_product_id
 	 * @return mixed
 	 */
-	private static function get_item_id_from_item($item)
+	private static function get_item_id_from_item( $item, $always_return_parent_product_id = false )
 	{
-		if (isset($item['variation_id']) && (0 < $item['variation_id'])) {
-			$item_id = $item['variation_id'];
-			return $item_id;
-		} else {
-			$item_id = $item['product_id'];
-			return $item_id;
+		if (false === $always_return_parent_product_id
+			&& isset($item['variation_id']) && (0 < $item['variation_id'])) {
+			return $item['variation_id'];
+		}
+
+		return $item['product_id'];
+	}
+
+	/**
+	 * @param $item_id
+	 * @return array
+	 */
+	private static function get_courses_from_product_id($item_id)
+	{
+		$product = self::get_product_object($item_id);
+
+		$product_courses = Sensei()->course->get_product_courses($product->get_id());
+		return $product_courses;
+	}
+
+	/**
+	 * @param $user_id
+	 */
+	private static function start_purchased_courses_for_user( $user_id )
+	{
+		// get current user's active courses
+		$active_courses = Sensei_Utils::sensei_check_for_activity(array('user_id' => $user_id, 'type' => 'sensei_course_status'), true);
+
+		if (empty($active_courses)) {
+			$active_courses = array();
+		}
+
+		if (!is_array($active_courses)) {
+			$active_courses = array($active_courses);
+		}
+
+		$active_course_ids = array();
+
+		foreach ($active_courses as $c) {
+			$active_course_ids[] = $c->comment_post_ID;
+		}
+
+		$orders_query = new WP_Query(array(
+			'post_type' => 'shop_order',
+			'posts_per_page' => -1,
+			'post_status' => array('wc-processing', 'wc-completed'),
+			'meta_key' => '_customer_user',
+			'meta_value' => $user_id,
+			'fields' => 'ids'
+		));
+
+		// get user's processing and completed orders
+		$user_order_ids = $orders_query->get_posts();
+
+		if (empty($user_order_ids)) {
+			$user_order_ids = array();
+		}
+
+		if (!is_array($user_order_ids)) {
+			$user_order_ids = array($user_order_ids);
+		}
+
+		$user_orders = array();
+
+		foreach ($user_order_ids as $order_data) {
+			$user_orders[] = new WC_Order($order_data);
+		}
+
+		foreach ($user_orders as $user_order) {
+			foreach ($user_order->get_items() as $item) {
+				$item_id = self::get_item_id_from_item( $item );
+
+				$product_courses = self::get_courses_from_product_id( $item_id );
+				$is_variation = isset($item['variation_id']) && !empty($item['variation_id']);
+				$is_course_linked_to_parent_product = false;
+
+				if (empty($product_courses) && $is_variation) {
+					// if we get no products from a variable sub course,
+					// check if there are any courses linked to the parent product id
+					$item_id = self::get_item_id_from_item($item, true);
+					$product_courses = self::get_courses_from_product_id( $item_id );
+					$is_course_linked_to_parent_product = !empty($product_courses);
+				}
+
+				foreach ($product_courses as $course) {
+					$course_id = $course->ID;
+					$order_id = self::get_learner_course_active_order_id($user_id, $course_id, $is_course_linked_to_parent_product);
+
+					if (in_array($order_id, $user_order_ids) &&
+						!in_array($course_id, $active_course_ids)
+					) {
+						// user ordered a course and not assigned to it. Fix this by assigning them now
+						Sensei_Utils::start_user_on_course($user_id, $course_id);
+					}
+				}
+			}
 		}
 	}
 
