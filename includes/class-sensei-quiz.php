@@ -1214,9 +1214,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $lesson_id =  Sensei()->quiz->get_lesson_id( $quiz_id );
         $status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id , get_current_user_id() );
         $message = '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+        $messages = Sensei()->frontend->messages;
 
-        if ( !empty( Sensei()->frontend->messages ) ) {
-          $message .= Sensei()->frontend->messages;
+        if ( !empty( $messages ) ) {
+          $message .= $messages;
         }
 
         echo $message;
