@@ -326,7 +326,8 @@ class Sensei_WC {
 			$current_user = wp_get_current_user();
 		}
 
-		if ( ! ( $current_user instanceof WP_User ) ) {
+		if ( ! ( $current_user instanceof WP_User ) || $current_user->ID == 0 ) {
+			// return in case of anonymous user or no user
 			return;
 		}
 

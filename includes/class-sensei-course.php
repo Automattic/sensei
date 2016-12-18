@@ -2871,7 +2871,7 @@ class Sensei_Course {
 
 	                // register the notice to display
 	                if( Sensei()->settings->get( 'access_permission' ) ){
-		                Sensei()->notices->add_notice( $notice, 'info' ) ;
+		                Sensei()->notices->add_notice( apply_filters( 'sensei_couse_access_permission_message', $notice, $post->ID ) , 'info' ) ;
 	                }
 
 
@@ -2898,12 +2898,12 @@ class Sensei_Course {
                     // If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
                     // is false, link to My Courses. If not, link to default WordPress registration page.
                     if( !empty( $my_courses_page_id ) && $my_courses_page_id && !$wp_register_link){
-
-                        $my_courses_url = get_permalink( $my_courses_page_id  );
-                        $register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';
-                        echo '<div class="status register">' . $register_link . '</div>' ;
-
-                    } else{
+						if ( true === (bool)apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+							$my_courses_url = get_permalink( $my_courses_page_id  );
+							$register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';
+							echo '<div class="status register">' . $register_link . '</div>' ;
+						}
+                    } else {
 
                         wp_register( '<div class="status register">', '</div>' );
 

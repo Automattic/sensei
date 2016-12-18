@@ -15,8 +15,22 @@ class Sensei_WC_Memberships {
 		}
 
 		add_filter( 'sensei_display_start_course_form', array( __CLASS__, 'display_start_course_form_to_members_only' ), 10, 2 );
+		add_filter( 'sensei_user_can_register_for_course', array( __CLASS__, 'display_start_course_form_to_members_only' ), 10, 2 );
 		add_action( 'wc_memberships_user_membership_status_changed', array( __CLASS__, 'start_courses_associated_with_membership' ) );
 		add_action( 'wc_memberships_user_membership_saved', array( __CLASS__, 'on_wc_memberships_user_membership_saved' ), 10, 2 );
+	}
+
+	public static function is_course_access_restricted( $access_restricted, $course_id ) {
+		if ( false === self::is_wc_memberships_active() ) {
+			return $access_restricted;
+		}
+
+		if ( get_current_user_id() > 0 ) {
+			$access_restricted = !current_user_can( self::WC_MEMBERSHIPS_VIEW_RESTRICTED_POST_CONTENT, $course_id );
+			return $access_restricted;
+		}
+
+		return wc_memberships_is_post_content_restricted( $course_id );
 	}
 
 	/**
@@ -29,22 +43,7 @@ class Sensei_WC_Memberships {
 	 */
 	public static function display_start_course_form_to_members_only( $should_display, $course_id ) {
 
-		if ( false === self::is_wc_memberships_active() ) {
-			return $should_display;
-		}
-
-		$course_restriction_rules = WC_Memberships::instance()->get_rules_instance()->get_post_content_restriction_rules( $course_id );
-		if ( false === $course_restriction_rules || empty( $course_restriction_rules ) ) {
-			return $should_display;
-		}
-
-		$can_view_course = current_user_can( self::WC_MEMBERSHIPS_VIEW_RESTRICTED_POST_CONTENT, $course_id );
-
-		if ( false === $can_view_course ) {
-			$should_display = false;
-		}
-
-		return $should_display;
+		return !self::is_course_access_restricted( $should_display, $course_id );
 	}
 
 	/**
