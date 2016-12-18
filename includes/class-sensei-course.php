@@ -120,7 +120,21 @@ class Sensei_Course {
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
 		}
-	} // End __construct()
+	}
+
+	/**
+	 * @param $message
+	 */
+	private static function add_course_access_permission_message( $message )
+	{
+		global $post;
+		if ( Sensei()->settings->get('access_permission') ) {
+			$message = apply_filters( 'sensei_couse_access_permission_message', $message, $post->ID );
+			if (!empty($message)) {
+				Sensei()->notices->add_notice($message, 'info');
+			}
+		}
+	}
 
 	/**
 	 * Fires when a quiz has been graded to check if the Course status needs changing
@@ -2604,9 +2618,7 @@ class Sensei_Course {
             return $content;
 
         } else {
-
             return '<p class="course-excerpt">' . get_post(  get_the_ID() )->post_excerpt . '</p>';
-
         }
 
     }// end single_course_content
@@ -2801,6 +2813,7 @@ class Sensei_Course {
         <?php
         global  $post, $current_user;
         $is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
+		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
 
 	    if ( is_user_logged_in() && ! $is_user_taking_course ) {
 
@@ -2812,7 +2825,9 @@ class Sensei_Course {
 
             } else {
                 $should_display_start_course_form = (bool) apply_filters( 'sensei_display_start_course_form', true, $post->ID );
-
+				if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
+					self::add_course_access_permission_message( '' );
+				}
                 if ( $should_display_start_course_form ) {
                   sensei_start_course_form( $post->ID );
                 }
@@ -2869,11 +2884,7 @@ class Sensei_Course {
 		                $anchor_after
 	                );
 
-	                // register the notice to display
-	                if( Sensei()->settings->get( 'access_permission' ) ){
-		                Sensei()->notices->add_notice( apply_filters( 'sensei_couse_access_permission_message', $notice, $post->ID ) , 'info' ) ;
-	                }
-
+					self::add_course_access_permission_message( $notice );
 
                     $my_courses_page_id = '';
 
