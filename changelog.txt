@@ -1,5 +1,9 @@
 *** Sensei Changelog ***
 
+2016.12.20 - version 1.9.10
+
+* WordPress 4.7 Compatibility release
+
 2016.10.19 - version 1.9.9
 
 * Hotfix - Address possible fatal on older PHP versions
