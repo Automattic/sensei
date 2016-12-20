@@ -57,7 +57,7 @@ Domain path: /lang/
     }
 
 	// set the sensei version number
-    Sensei()->version = '1.9.8';
+    Sensei()->version = '1.9.9';
 
     //backwards compatibility
     global $woothemes_sensei;

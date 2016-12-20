@@ -178,7 +178,6 @@ class Sensei_Settings_API {
 	 */
 	public function create_fields () {
 		if ( count( $this->sections ) > 0 ) {
-			// $this->parse_fields( $this->fields );
 
 			foreach ( $this->fields as $k => $v ) {
 				$method = $this->determine_method( $v, 'form' );

@@ -40,7 +40,6 @@ class Sensei_Grading {
 			add_action( 'admin_init', array( $this, 'admin_process_grading_submission' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_grading_notices' ) );
-//			add_action( 'sensei_grading_notices', array( $this, 'sensei_grading_notices' ) );
 		} // End If Statement
 
 		// Ajax functions
@@ -218,7 +217,6 @@ class Sensei_Grading {
 		?>
 		<div id="poststuff" class="sensei-grading-wrap user-profile">
 			<div class="sensei-grading-main">
-				<?php // do_action( 'sensei_grading_notices' ); ?>
 				<?php $sensei_grading_user_profile->display(); ?>
 			</div>
 		</div>

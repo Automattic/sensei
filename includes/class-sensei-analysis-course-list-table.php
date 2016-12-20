@@ -107,7 +107,6 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 					'started' => array( 'started', false ),
 					'completed' => array( 'completed', false ),
 					'user_status' => array( 'user_status', false ),
-//					'grade' => array( 'grade', false ),
 					'percent' => array( 'percent', false )
 				);
 				break;
@@ -525,7 +524,6 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 							'posts_per_page'      => $args['number'],
 							'offset'              => $args['offset'],
 							'meta_key'            => '_order_' . $this->course_id,
-//							'orderby'             => $args['orderby'],
 							'order'               => $args['order'],
 							'meta_query'          => array(
 								array(

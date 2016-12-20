@@ -62,13 +62,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      * @param string $shortcode the shortcode that was called for this instance
      */
     public function __construct( $attributes, $content, $shortcode ){
-
-        if(!  is_user_logged_in() ) {
-            // show the login form
-            Sensei()->frontend->sensei_login_form();
-            return;
-        }
-
         // set up all argument need for constructing the course query
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
         $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';

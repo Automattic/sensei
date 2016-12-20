@@ -169,15 +169,7 @@ class Sensei_Legacy_Shortcodes {
 
         ob_start();
 
-        if( is_user_logged_in() ){
-
-            Sensei_Templates::get_template( 'user/my-courses.php' );
-
-        }else{
-
-            Sensei()->frontend->sensei_login_form();
-
-        }
+        Sensei_Templates::get_template( 'user/my-courses.php' );
 
         $content = ob_get_clean();
         return $content;

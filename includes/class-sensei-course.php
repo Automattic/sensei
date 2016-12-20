@@ -34,6 +34,14 @@ class Sensei_Course {
 	public static $allowed_html;
 
 	/**
+	 * @var array List of shortcodes that require authentication.
+	 */
+	public static $required_auth_shortcodes = array(
+		'usercourses',
+		'sensei_user_courses',
+	);
+
+	/**
 	 * Constructor.
 	 * @since  1.0.0
 	 */
@@ -116,11 +124,40 @@ class Sensei_Course {
         // flush rewrite rules when saving a course
         add_action('save_post', array( 'Sensei_Course', 'flush_rewrite_rules' ) );
 
+	add_action( 'template_redirect', array( __CLASS__, 'shortcode_redirect_course_login' ), 10, 1 );
+
 		// Allow course archive to be setup as the home page
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
 		}
 	} // End __construct()
+
+	/**
+	 * If not logged in, loops through the required_auth_shortcodes and if the current post contains one of them
+	 * the user will be redirected to wp login
+	 *
+	 * @since 1.9.10
+	 */
+	public static function shortcode_redirect_course_login() {
+		if ( is_user_logged_in() ) {
+			return;
+		}
+
+		$post = get_post();
+
+		if ( ! $post ) {
+			return;
+		}
+
+		$post_content = $post->post_content;
+
+		foreach ( self::$required_auth_shortcodes as $shortcode ) {
+			if ( has_shortcode( $post_content, $shortcode ) ) {
+				wp_redirect( wp_login_url( sensei_get_current_page_url() ) );
+				exit;
+			}
+		}
+	}
 
 	/**
 	 * Fires when a quiz has been graded to check if the Course status needs changing
@@ -543,7 +580,6 @@ class Sensei_Course {
 	 */
 	public function add_column_headings ( $defaults ) {
 		$new_columns['cb'] = '<input type="checkbox" />';
-		// $new_columns['id'] = __( 'ID' );
 		$new_columns['title'] = _x( 'Course Title', 'column name', 'woothemes-sensei' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'woothemes-sensei' );
 		if ( Sensei_WC::is_woocommerce_active() ) {
@@ -887,17 +923,13 @@ class Sensei_Course {
 
 		$post_args = array(	'post_type'         => 'course',
 							'posts_per_page'    => -1,
-//							'orderby'           => 'menu_order date',
-//							'order'             => 'ASC',
 							'post_status'       => $post_status,
 							'suppress_filters'  => 0,
 							'fields'            => 'ids',
 							);
 
 		// Allow WP to generate the complex final query, just shortcut to only do an overall count
-//		add_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
-//		remove_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 
 		return count( $courses_query->posts );
 	} // End course_count()
@@ -1016,10 +1048,7 @@ class Sensei_Course {
 				}
 				elseif ( $has_questions ) {
 					$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-//					$questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
-//					if( count( $questions ) > 0 ) {
-						$course_quizzes[] = $quiz_id;
-//					}
+					$course_quizzes[] = $quiz_id;
 				}
 			}
 		}
