@@ -192,7 +192,9 @@ class Sensei_Course {
 
 		$select_course_woocommerce_product = get_post_meta( $post->ID, '_course_woocommerce_product', true );
 
-		$post_args = array(	'post_type' 		=> array( 'product', 'product_variation' ),
+		// Don't get product variations. Allows us to skip the dangerously non-performant `get_product` loop on line
+		// 227. Explicitly do not update the caches either.
+		$post_args = array(	'post_type' 		=> array( 'product' ),
 							'posts_per_page' 		=> -1,
 							'orderby'         	=> 'title',
     						'order'           	=> 'DESC',
@@ -206,7 +208,10 @@ class Sensei_Course {
 									'operator'	=> 'NOT IN'
 								)
 							),
-							'suppress_filters' 	=> 0
+							'suppress_filters' 	=> 0,
+							'cache_results'			 => false,
+							'update_post_meta_cache' => false,
+							'update_post_term_cache' => false,
 							);
 		$posts_array = get_posts( $post_args );
 
