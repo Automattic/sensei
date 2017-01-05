@@ -2402,6 +2402,32 @@ class Sensei_Utils {
 				return ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' );
 		}
 	}
+
+
+    public static function course_videos_count( $course_id ) {
+
+        global $wpdb;
+
+        $query = <<<EOF
+SELECT count( * )
+FROM {$wpdb->prefix}postmeta
+INNER JOIN (
+    SELECT post_id
+    FROM {$wpdb->prefix}postmeta
+    WHERE meta_key = '_lesson_course'
+    AND meta_value = %d
+) lessons 
+ON lessons.post_id = {$wpdb->prefix}postmeta.post_id
+WHERE meta_key = '_lesson_video_embed'
+AND ( trim( meta_value ) > '' )
+EOF;
+
+        $query = $wpdb->prepare( $query, $course_id );
+
+        return intval( $wpdb->get_var( $query ) );
+
+    }
+
 } // End Class
 
 /**
