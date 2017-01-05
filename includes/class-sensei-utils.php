@@ -1503,6 +1503,9 @@ class Sensei_Utils {
 				$user_id = get_current_user_id();
 			}
 
+            Sensei()->course->sync_completion_percentage( $course_id, $user_id );
+            self::sync_course_user_grade( $course_id, $user_id );
+
 			$course_status = 'in-progress';
 			$course_metadata = array();
 			$course_completion = Sensei()->settings->settings[ 'course_completion' ];
