@@ -1068,63 +1068,93 @@ class Sensei_Utils {
 		return apply_filters( 'sensei_course_pass_grade', Sensei_Utils::round( $course_passmark ), $course_id );
 	}
 
-	/**
-	 * Get user total grade for course
-	 * @param  integer $course_id ID of course
-	 * @param  integer $user_id   ID of user
-	 * @return integer            User's total grade
-	 */
-	public static function sensei_course_user_grade( $course_id = 0, $user_id = 0 ) {
+    /**
+     * Get user total grade for course
+     * @param  integer $course_id ID of course
+     * @param  integer $user_id   ID of user
+     * @return integer            User's total grade
+     */
+    public static function sensei_course_user_grade( $course_id = 0, $user_id = 0 )
+    {
 
+        if ( empty( $course_id ) ) {
+            return 0;
+        }
 
-		if( intval( $user_id ) == 0 ) {
-			$user_id = get_current_user_id();
-		}
+        if ( intval( $user_id ) == 0 ) {
+            $user_id = get_current_user_id();
+        }
 
-		$total_grade = 0;
+        $course_comment = Sensei_Utils::user_course_status( $course_id, $user_id );
+        $grade = get_comment_meta( $course_comment->comment_ID, '_grade', true );
+        if ( is_numeric( $grade ) ) {
+            return $grade;
+        } else {
+            return self::sync_course_user_grade( $course_id, $user_id );
+        }
 
-		if( $course_id > 0 && $user_id > 0 ) {
-			$lessons = Sensei()->course->course_lessons( $course_id );
-			$lesson_count = 0;
-			$total_grade = 0;
-			foreach( $lessons as $lesson ) {
+    }
 
-				// Check for lesson having questions, thus a quiz, thus having a grade
-				$has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
-				if ( $has_questions ) {
-					$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
+    public static function sync_course_user_grade( $course_id = 0, $user_id = 0 ) {
 
-					if(  empty( $user_lesson_status ) ){
-						continue;
-					}
-					// Get user quiz grade
-					$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+        if ( empty( $course_id ) ) {
+            return 0;
+        }
 
-					// Add up total grade
-					$total_grade += $quiz_grade;
+        if ( intval( $user_id ) == 0 ) {
+            $user_id = get_current_user_id();
+        }
 
-					++$lesson_count;
-				}
-			}
+        $total_grade = 0;
 
-			// Might be a case of no lessons with quizzes
-			if ( $lesson_count ) {
-				$total_grade = ( $total_grade / $lesson_count );
-			}
+        if( $course_id > 0 && $user_id > 0 ) {
+            $lessons = Sensei()->course->course_lessons( $course_id );
+            $lesson_count = 0;
+            $total_grade = 0;
+            foreach( $lessons as $lesson ) {
 
-		}
+                // Check for lesson having questions, thus a quiz, thus having a grade
+                $has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
+                if ( $has_questions ) {
+                    $user_lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
 
-		/**
-		 * Filter the user total grade for course
-		 *
-		 * @since 1.9.7
-		 *
-     	 * @param integer $total_grade	User's total grade
-	 	 * @param integer $course_id 	ID of course
-	 	 * @param integer $user_id   	ID of user
-		 */
-		return apply_filters( 'sensei_course_user_grade', Sensei_Utils::round( $total_grade ), $course_id, $user_id );
-	}
+                    if(  empty( $user_lesson_status ) ){
+                        continue;
+                    }
+                    // Get user quiz grade
+                    $quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+
+                    // Add up total grade
+                    $total_grade += $quiz_grade;
+
+                    ++$lesson_count;
+                }
+            }
+
+            // Might be a case of no lessons with quizzes
+            if ( $lesson_count ) {
+                $total_grade = ( $total_grade / $lesson_count );
+            }
+
+        }
+
+        /**
+         * Filter the user total grade for course
+         *
+         * @since 1.9.7
+         *
+         * @param integer $total_grade	User's total grade
+         * @param integer $course_id 	ID of course
+         * @param integer $user_id   	ID of user
+         */
+        $total_grade = apply_filters( 'sensei_course_user_grade', Sensei_Utils::round( $total_grade ), $course_id, $user_id );
+
+        $course_comment = Sensei_Utils::user_course_status( $course_id, $user_id );
+        update_comment_meta( $course_comment->comment_ID, '_grade', $total_grade );
+
+        return $total_grade;
+
+    }
 
 	/**
 	 * Check if user has passed a course
