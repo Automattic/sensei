@@ -298,7 +298,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 
                 $course_average_percent = 0;
                 if( $percent_count > 0 && $percent_total > 0 ){
-                    $course_average_percent = abs( round( doubleval( $percent_total / $percent_count ), 2 ) );
+                    $course_average_percent = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 );
                 }
 
 
@@ -357,7 +357,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 
                     $lesson_average_grade = 0;
                     if( $grade_total > 0 && $grade_count > 0 ){
-                        $lesson_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
+                        $lesson_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
                     }
 
                 }
@@ -419,7 +419,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 
                 $user_average_grade = 0;
                 if( $grade_total > 0 && $grade_count > 0 ){
-                    $user_average_grade = abs( round( doubleval( $grade_total / $grade_count ), 2 ) );
+                    $user_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
                 }
 
 				// Output the users data
@@ -560,7 +560,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		$total_grade_total = Sensei_Grading::get_graded_lessons_sum();
 		$total_average_grade = 0;
 		if( $total_grade_total > 0 &&  $total_grade_count >0   ){
-			$total_average_grade = abs( round( doubleval( $total_grade_total / $total_grade_count ), 2 ) );
+			$total_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $total_grade_total, $total_grade_count, 2 );
 		}
 
 
@@ -574,7 +574,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 				'status' => 'complete',
 			);
 		$total_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_total_courses_ended', $course_args ) );
-		$average_courses_per_learner = abs( round( doubleval( $total_courses_started / $user_count ), 2 ) );
+		$average_courses_per_learner = Sensei_Utils::quotient_as_absolute_rounded_number( $total_courses_started, $user_count, 2 );
 
 		// Setup the boxes to render
 		$stats_to_render = array( 

@@ -72,7 +72,7 @@ class Sensei_Utils {
 					'comment_content' => !empty($args['data']) ? esc_html( $args['data'] ) : '',
 					'comment_type' => esc_attr( $args['type'] ),
 					'user_id' => intval( $args['user_id'] ),
-					'comment_approved' => !empty($args['status']) ? esc_html( $args['status'] ) : 'log', // 'log' == 'sensei_user_answer'
+					'comment_approved' => !empty($args['status']) ? esc_html( $args['status'] ) : 'log',
 				);
 		// Allow extra data
 		if ( !empty($args['username']) ) {
@@ -178,7 +178,7 @@ class Sensei_Utils {
 			}
 		}
 		else {
-			$args['status'] = 'any'; // 'log' == 'sensei_user_answer'
+			$args['status'] = 'any';
 		}
 
 		// Take into account WP < 4.1 will automatically add ' comment_approved = 1 OR comment_approved = 0 '
@@ -960,9 +960,6 @@ class Sensei_Utils {
 	public static function array_sort_reorder( $return_array ) {
 		if ( isset( $_GET['orderby'] ) && '' != esc_html( $_GET['orderby'] ) ) {
 			$sort_key = '';
-			// if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->sortable_columns ) ) {
-			// 	$sort_key = esc_html( $_GET['orderby'] );
-			// } // End If Statement
 			if ( '' != $sort_key ) {
 					Sensei_Utils::sort_array_by_key($return_array,$sort_key);
 				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
@@ -1384,20 +1381,7 @@ class Sensei_Utils {
 			// Check if user is already on the Course
 			$activity_logged = Sensei_Utils::user_started_course( $course_id, $user_id );
 			if ( ! $activity_logged ) {
-
-				// Add user to course
-				$course_metadata = array(
-					'start' => current_time('mysql'),
-					'percent' => 0, // No completed lessons yet
-					'complete' => 0,
-				);
-
-				$activity_logged = Sensei_Utils::update_course_status( $user_id, $course_id, $course_status = 'in-progress', $course_metadata );
-
-				// Allow further actions
-				if ( $activity_logged ) {
-					do_action( 'sensei_user_course_start', $user_id, $course_id );
-				}
+				$activity_logged = self::start_user_on_course($user_id, $course_id);
 			}
 		}
 
@@ -1460,12 +1444,13 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Checks if a user has completed a course by checking every lesson status
+	 * Checks if a user has completed a course by checking every lesson status,
+	 * and then updates the course metadata with that information.
 	 *
 	 * @since  1.7.0
 	 * @param  integer $course_id Course ID
 	 * @param  integer $user_id   User ID
-	 * @return int
+	 * @return mixed boolean or comment_ID
 	 */
 	public static function user_complete_course( $course_id = 0, $user_id = 0 ) {
 		global  $wp_version;
@@ -1486,7 +1471,7 @@ class Sensei_Utils {
 				);
 
 			// Grab all of this Courses' lessons, looping through each...
-			$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+			$lesson_ids = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
 			$total_lessons = count( $lesson_ids );
 				// ...if course completion not set to 'passed', and all lessons are complete or graded,
 				// ......then all lessons are 'passed'
@@ -1555,7 +1540,7 @@ class Sensei_Utils {
 			// Update meta data on how many lessons have been completed
 			$course_metadata['complete'] = $lessons_completed;
 			// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
-			$course_metadata['percent'] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
+			$course_metadata[ 'percent' ] = self::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons );
 
 			$activity_logged = Sensei_Utils::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
 
@@ -1567,6 +1552,29 @@ class Sensei_Utils {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get completion percentage
+	 * @param $numerator
+	 * @param $denominator
+	 * @param int $decimal_places_to_round
+	 * @return int|number
+	 */
+	public static function quotient_as_absolute_rounded_percentage($numerator, $denominator, $decimal_places_to_round = 0 ) {
+		return self::quotient_as_absolute_rounded_number( $numerator * 100.0, $denominator, $decimal_places_to_round );
+	}
+
+	public static function quotient_as_absolute_rounded_number($numerator, $denominator, $decimal_places_to_round = 0 ) {
+		if ( 0 === $denominator ) {
+			return 0;
+		}
+
+		return self::as_absolute_rounded_number( doubleval( $numerator ) / ( $denominator ), $decimal_places_to_round );
+	}
+
+	public static function as_absolute_rounded_number($number, $decimal_places_to_round = 0 ) {
+		return abs( round( ( doubleval( $number ) ), $decimal_places_to_round ) );
 	}
 
 	/**
@@ -1703,8 +1711,6 @@ class Sensei_Utils {
 			if ( 'in-progress' != $user_lesson_status ) {
 				// Check for Passed or Completed Setting
 				// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
-//				$course_completion = Sensei()->settings->settings[ 'course_completion' ];
-//				if ( 'passed' == $course_completion ) {
 					switch( $user_lesson_status ) {
 						case 'complete':
 						case 'graded':
@@ -1808,7 +1814,7 @@ class Sensei_Utils {
 		$quiz_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
 
 		// Check if Grade is greater than or equal to pass percentage
-		$quiz_passmark = abs( round( doubleval( get_post_meta( $quiz_id, '_quiz_passmark', true ) ), 2 ) );
+		$quiz_passmark = self::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
 		if ( $quiz_passmark <= intval( $quiz_grade ) ) {
 			return true;
 		}
@@ -2231,7 +2237,7 @@ class Sensei_Utils {
      */
     public static function round( $val, $precision = 0, $mode = PHP_ROUND_HALF_UP, $context = ''  ){
 
-        /**å
+        /**
          * Change the precision for the Sensei_Utils::round function.
          * the precision given will be passed into the php round function
          * @since 1.8.5
@@ -2331,6 +2337,49 @@ class Sensei_Utils {
 
         return $merged_array;
     }
+
+	/**
+	 * What type of request is this?
+	 *
+	 * @param  string $type admin, ajax, cron or frontend.
+	 * @return bool
+	 */
+	public static function is_request( $type ) {
+		switch ( $type ) {
+			case 'admin' :
+				return is_admin();
+			case 'ajax' :
+				return defined( 'DOING_AJAX' );
+			case 'cron' :
+				return defined( 'DOING_CRON' );
+			case 'frontend' :
+				return ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' );
+		}
+	}
+
+	/**
+	 * @param $user_id
+	 * @param $course_id
+	 * @return mixed
+	 */
+	public static function start_user_on_course($user_id, $course_id)
+	{
+		// Add user to course
+		$course_metadata = array(
+			'start' => current_time('mysql'),
+			'percent' => 0, // No completed lessons yet
+			'complete' => 0,
+		);
+
+		$activity_logged = self::update_course_status($user_id, $course_id, $course_status = 'in-progress', $course_metadata);
+
+		// Allow further actions
+		if ($activity_logged) {
+			do_action('sensei_user_course_start', $user_id, $course_id);
+			return $activity_logged;
+		}
+		return $activity_logged;
+	}
 } // End Class
 
 /**

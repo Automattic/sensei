@@ -33,7 +33,7 @@ add_filter( 'sensei_can_user_view_lesson', array( 'Sensei_WC','alter_can_user_vi
 /**
  * Before my courses
  */
-add_filter( 'sensei_my_courses_before', array( 'Sensei_WC','assign_user_to_unassigned_purchased_courses' ) );
+add_filter( 'pre_get_posts', array( 'Sensei_WC','assign_user_to_unassigned_purchased_courses' ) );
 
 
 /******************************

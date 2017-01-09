@@ -66,4 +66,18 @@ class Sensei_Wp_Kses {
             'width'    => array(),
         );
     }
+
+	/**
+	 * Will act as a sanitization or an identity function, depending on HTML security settings.
+	 *
+	 * @param string $content Content
+	 * @param array $allowed_html
+	 * @return string Content
+	 */
+	public static function maybe_sanitize( $content, $allowed_html )
+	{
+		$html_security = ! Sensei()->settings->get( 'sensei_video_embed_html_sanitization_disable' );
+
+		return $html_security ? self::wp_kses( $content, $allowed_html ) : $content;
+	}
 }

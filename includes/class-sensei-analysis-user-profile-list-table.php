@@ -42,7 +42,6 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			'started' => __( 'Date Started', 'woothemes-sensei' ),
 			'completed' => __( 'Date Completed', 'woothemes-sensei' ),
 			'status' => __( 'Status', 'woothemes-sensei' ),
-//			'grade' => __( 'Grade', 'woothemes-sensei' ),
 			'percent' => __( 'Percent Complete', 'woothemes-sensei' ),
 		);
 		$columns = apply_filters( 'sensei_analysis_user_profile_columns', $columns );
@@ -60,7 +59,6 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			'started' => array( 'started', false ),
 			'completed' => array( 'completed', false ),
 			'status' => array( 'status', false ),
-//			'grade' => array( 'grade', false ),
 			'percent' => array( 'percent', false )
 		);
 		$columns = apply_filters( 'sensei_analysis_user_profile_columns_sortable', $columns );

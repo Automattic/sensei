@@ -68,7 +68,6 @@ class Sensei_Updates
                     'update_comment_course_lesson_comment_counts' => array('title' => __('Update comment counts', 'woothemes-sensei'), 'desc' => __('Update comment counts on Courses and Lessons due to status changes.', 'woothemes-sensei')),),
             ),
             '1.7.2' => array('auto' => array('index_comment_status_field' => array('title' => __('Add database index to comment statuses', 'woothemes-sensei'), 'desc' => __('This indexes the comment statuses in the database, which will speed up all Sensei activity queries.', 'woothemes-sensei')),),
-                /*'manual' 		=> array( 'remove_legacy_comments' => array( 'title' => __( 'Remove legacy Sensei activity types', 'woothemes-sensei' ), 'desc' => __( 'This removes all legacy (pre-1.7) Sensei activity types - only run this update once the update to v1.7 is complete and everything is stable.', 'woothemes-sensei' ) ) )*/
             ),
             '1.8.0' => array('auto' => array('enhance_teacher_role' => array('title' => 'Enhance the \'Teacher\' role', 'desc' => 'Adds the ability for a \'Teacher\' to create courses, lessons , quizes and manage their learners.'),),
                 'manual' => array()
@@ -461,11 +460,6 @@ class Sensei_Updates
 
 		if( ! isset( $_GET['page'] ) || 'sensei_updates' != $_GET['page'] ) {
 
-			// $skip_forced_updates = false;
-			// if( ! get_option( 'woothemes-sensei-force-updates', false ) ) {
-			// 	$skip_forced_updates = true;
-			// }
-
 			// Force critical updates if only if lessons already exist
 			$skip_forced_updates = false;
 			$lesson_posts = wp_count_posts( 'lesson' );
@@ -507,9 +501,6 @@ class Sensei_Updates
 				$update_title = __( 'Important Sensei updates required', 'woothemes-sensei' );
 
 				$update_message = '<h1>' . __( 'Important Sensei upgrades required!', 'woothemes-sensei' ) . '</h1>' . "\n";
-
-				// $update_message .= '<h4>' . sprintf( __( 'These updates are only required if you are updating from a previous version of Sensei. If you are installing Sensei for the first time, %1$syou can dismiss this page by clicking here%2$s.', 'woothemes-sensei' ), '<a href="' . add_query_arg( array( 'sensei_skip_forced_updates' => 'true' ) ) . '">', '</a>' ) . '</h4>' ."\n";
-
 				$update_message .= '<p>' . __( 'The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'woothemes-sensei' ) . '</p>' . "\n";
 
 				$update_message .= '<p><b>' . __( 'To run the upgrades click on each of the links below in the order that they appear.', 'woothemes-sensei' ) . '</b></p>' . "\n";
@@ -1485,7 +1476,7 @@ class Sensei_Updates
 						}
 					}
 					$meta_data['complete'] = $lessons_completed;
-					$meta_data['percent'] = abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) );
+					$meta_data['percent'] = Sensei_Utils::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons, 0 );
 				}
 				else {
 					// Course has no lessons, therefore cannot be 'complete'
@@ -1641,7 +1632,7 @@ class Sensei_Updates
 				// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
 				$metadata = array(
 					'complete' => $lessons_completed,
-					'percent' => abs( round( ( doubleval( $lessons_completed ) * 100 ) / ( $total_lessons ), 0 ) ),
+					'percent' => Sensei_Utils::quotient_as_absolute_rounded_number( $lessons_completed, $total_lessons, 0 )
 				);
 				Sensei_Utils::update_course_status( $user_id, $course_id, $status, $metadata );
 				$count++;
