@@ -16,6 +16,12 @@ class Sensei_Learner_Management {
 	public $name;
 	public $file;
 	public $page_slug;
+	public $learner_bulk_actions = null;
+	const ACTION_SENSEI_ADMIN_LEARNER_MANAGEMENT_ENQUEUE_SCRIPTS = 'sensei_admin_learner_management_enqueue_scripts';
+	const ACTION_SENSEI_LEARNERS_ADD_LEARNER_FORM = 'sensei_learners_bulk_add_learners_form';
+	const NONCE_SENSEI_BULK_ADD_LEARNERS = 'bulk-add-learners';
+	const SENSEI_BULK_ADD_LEARNERS_NONCE_FIELD_NAME = 'sensei_bulk_add_learners_nonce';
+
 
 	/**
 	 * Constructor
@@ -37,6 +43,7 @@ class Sensei_Learner_Management {
 			}
 
 			add_action( 'admin_init', array( $this, 'add_new_learners' ) );
+			add_action( 'admin_init', array( $this, 'bulk_learner_actions' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
 		} // End If Statement
@@ -73,8 +80,8 @@ class Sensei_Learner_Management {
 	 * @return void
 	 */
 	public function enqueue_scripts () {
-
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
+		$suffix = $is_debug ? '' : '.min';
 
 		// Load Learners JS
 		wp_enqueue_script( 'sensei-learners-general',
@@ -91,6 +98,23 @@ class Sensei_Learner_Management {
 		);
 
 		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
+
+		$bulk_learner_actions_dependencies = array( 'jquery', 'sensei-core-select2', 'sensei-chosen-ajax' );
+		$sensei_learners_bulk_actions_js = 'sensei-learners-bulk-actions-js';
+		wp_enqueue_script( $sensei_learners_bulk_actions_js, Sensei()->plugin_url . 'assets/js/learners-bulk-actions' . $suffix . '.js', $bulk_learner_actions_dependencies, Sensei()->version, true );
+
+		$data = array(
+			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
+			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
+			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
+			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
+			'bulk_add_learners_nonce' => wp_create_nonce( self::NONCE_SENSEI_BULK_ADD_LEARNERS ),
+			'select_course_placeholder'=> __( 'Select Course', 'woothemes-sensei' ),
+			'is_debug' => $is_debug,
+			'sensei_version' => Sensei()->version
+		);
+
+		wp_localize_script( $sensei_learners_bulk_actions_js, 'sensei_learners_bulk_data', $data );
 
 	} // End enqueue_scripts()
 
@@ -359,6 +383,52 @@ class Sensei_Learner_Management {
 
 		wp_send_json( $found_users );
 	}
+	
+	public function bulk_learner_actions() {
+//		var_dump($_POST); die;
+		if ( !is_admin() || !isset( $_POST['bulk_learner_action'] ) ) {
+			return;
+		}
+
+		if ( ! isset( $_POST[self::SENSEI_BULK_ADD_LEARNERS_NONCE_FIELD_NAME] ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( $_POST[self::SENSEI_BULK_ADD_LEARNERS_NONCE_FIELD_NAME], self::NONCE_SENSEI_BULK_ADD_LEARNERS ) ) {
+			return;
+		}
+
+		
+		$bulk_learner_action = $_POST['bulk_learner_action'];
+		$query_args = array( 'page' => $this->page_slug, 'view' => 'learners' );
+		
+		if ( 'bulk_add_learners_from_course' === $bulk_learner_action ) {
+			if ( !isset( $_POST['add_to_course_id'] ) ) {
+				return;
+			}
+
+			if ( !isset( $_POST['course_to_add_from_id'] ) ) {
+				return;
+			}
+
+			$add_to_course_id = absint( $_POST['add_to_course_id'] );
+			$course_to_add_from_id = absint( $_POST['course_to_add_from_id'] );
+			$course_learner_ids = Sensei_Learner::get_all_active_learner_ids_for_course( $course_to_add_from_id );
+			foreach ( $course_learner_ids as $course_learner_id ) {
+				Sensei_Utils::user_start_course( $course_learner_id, $add_to_course_id );
+			}
+
+			$query_args['message'] = 'success_bulk';
+			$query_args['course_id'] = $add_to_course_id;
+		} else {
+			$query_args['message'] = 'error';
+		}
+
+		$redirect_url = apply_filters( 'sensei_learners_bulk_learner_redirect_url', add_query_arg( $query_args, admin_url( 'admin.php' ) ) );
+
+		wp_safe_redirect( esc_url_raw( $redirect_url ) );
+		exit;
+	}
 
 	public function add_new_learners() {
 
@@ -439,11 +509,12 @@ class Sensei_Learner_Management {
 
 	public function add_learner_notices() {
 		if( isset( $_GET['page'] ) && $this->page_slug == $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
-			if( 'success' == $_GET['message'] ) {
-				$msg = array(
-					'updated',
-					__( 'Learner added successfully!', 'woothemes-sensei' ),
-				);
+			if( 'error' != $_GET['message'] ) {
+				$message = __( 'Learner added successfully!', 'woothemes-sensei' );
+				if ( 'success_bulk' == $_GET['message'] ) {
+					$message = __( 'Learners added successfully!', 'woothemes-sensei' );
+				}
+				$msg = array( 'updated', $message );
 			} else {
 				$msg = array(
 					'error',

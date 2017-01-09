@@ -52,4 +52,28 @@ class Sensei_Learner{
 
     }// end get_full_name
 
+    public static function get_all_active_learner_ids_for_course( $course_id ) {
+        $post_id = absint( $course_id );
+
+        if( !$post_id ) {
+            return array();
+        }
+
+        $activity_args = array(
+            'post_id' => $post_id,
+            'type' => 'sensei_course_status',
+            'status' => 'any'
+        );
+
+
+        $learners = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+
+        if ( !is_array($learners) ) {
+            $learners = array( $learners );
+        }
+
+        $learner_ids = wp_list_pluck( $learners, 'user_id' );
+
+        return $learner_ids;
+    }
 }

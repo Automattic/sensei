@@ -42,9 +42,18 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_action( 'sensei_learners_extra', array( $this, 'add_learners_box' ) );
+		add_action( 'sensei_learners_extra', array( $this, 'bulk_add_learners_box' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	} // End __construct()
+
+	public function get_course_id() {
+		return $this->course_id;
+	}
+
+	public function get_lesson_id() {
+		return $this->lesson_id;
+	}
 
 	/**
 	 * Define the columns that are going to be used in the table
@@ -632,6 +641,55 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						do_action( 'sensei_learners_add_learner_form' );
 					?>
 					<?php wp_nonce_field( 'add_learner_to_sensei', 'add_learner_nonce' ); ?>
+				</form>
+			</div>
+		</div>
+		<?php
+	}
+
+	public function bulk_add_learners_box() {
+		if( !$this->course_id || $this->course_id && $this->lesson_id ) {
+			return;
+		}
+
+		if ( get_post_type( $this->course_id ) !== 'course' ) {
+			return;
+		}
+
+		$post_type = __( 'Course', 'woothemes-sensei' );
+		$form_post_type = 'course';
+		$form_course_id = $this->course_id;
+		$course_title = get_the_title( $form_course_id );
+		// Select the course for the lesson
+		$drop_down_args = array(
+			'name'=>'course_to_add_from_id',
+			'id' => 'bulk-import-users-from-course-options'
+		);
+		$courses = WooThemes_Sensei_Course::get_all_courses();
+		$courses_options = array();
+		foreach( $courses as $course ){
+			if ($course->ID == $form_course_id) {
+				continue;
+			}
+			$courses_options[ $course->ID ] = get_the_title( $course ) ;
+		}
+		$select_course_dropdown = Sensei_Utils::generate_drop_down( '', $courses_options, $drop_down_args );
+
+		?>
+		<div class="postbox">
+			<h3><?php printf( __( 'Bulk Learner %1$s Actions', 'woothemes-sensei' ), $post_type ); ?></h3>
+			<div class="inside">
+				<h4><?php echo sprintf( __( 'Bulk-add to \'%1$s\' from another course', 'woothemes-sensei' ), $course_title ) ?></h4>
+				<form name="bulk_add_learners_from_course" action="" method="post">
+					<p>
+						<label for="bulk_add_learners_csv"><?php _e( 'Select Course', 'woothemes-sensei' ); ?></label><br>
+						<?php echo $select_course_dropdown ?>
+					</p>
+					<p><?php submit_button( sprintf( __( 'Add', 'woothemes-sensei' ), $course_title ), 'primary', 'bulk_add_learner_submit', false, array() ); ?></p>
+
+					<input type="hidden" name="add_to_course_id" value="<?php echo $form_course_id; ?>" />
+					<input type="hidden" name="bulk_learner_action" value="bulk_add_learners_from_course" />
+					<?php wp_nonce_field( Sensei_Learner_Management::NONCE_SENSEI_BULK_ADD_LEARNERS, Sensei_Learner_Management::SENSEI_BULK_ADD_LEARNERS_NONCE_FIELD_NAME ); ?>
 				</form>
 			</div>
 		</div>
