@@ -499,6 +499,10 @@ class Sensei_WC {
 
 			$product = wc_get_product( $product_id );
 
+			if ( !is_object( $product ) ) {
+				return false;
+			}
+
 			$parent_id = '';
 			if( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) {
 				$wc_product_id = $product->parent->id;
@@ -1111,8 +1115,6 @@ class Sensei_WC {
 				$item_id = $item['product_id'];
 
 			} // End If Statement
-
-			$_product = self::get_product_object( $item_id, $product_type );
 
 			// Get courses that use the WC product
 			$courses = array();
@@ -1884,6 +1886,9 @@ class Sensei_WC {
 	private static function get_courses_from_product_id($item_id)
 	{
 		$product = self::get_product_object($item_id);
+		if ( !is_object( $product ) ) {
+			return array();
+		}
 
 		$product_courses = Sensei()->course->get_product_courses($product->get_id());
 		return $product_courses;
