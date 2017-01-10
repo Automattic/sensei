@@ -398,20 +398,19 @@ class Sensei_Learner_Management {
 			return;
 		}
 
-		
+		if ( !isset( $_POST['add_to_course_id'] ) ) {
+			return;
+		}
+
+		$add_to_course_id = absint( $_POST['add_to_course_id'] );
 		$bulk_learner_action = $_POST['bulk_learner_action'];
-		$query_args = array( 'page' => $this->page_slug, 'view' => 'learners' );
+		$query_args = array( 'page' => $this->page_slug, 'view' => 'learners', 'message' => 'error', 'course_id' => $add_to_course_id );
 		
 		if ( 'bulk_add_learners_from_course' === $bulk_learner_action ) {
-			if ( !isset( $_POST['add_to_course_id'] ) ) {
-				return;
-			}
-
 			if ( !isset( $_POST['course_to_add_from_id'] ) ) {
 				return;
 			}
 
-			$add_to_course_id = absint( $_POST['add_to_course_id'] );
 			$course_to_add_from_id = absint( $_POST['course_to_add_from_id'] );
 			$course_learner_ids = Sensei_Learner::get_all_active_learner_ids_for_course( $course_to_add_from_id );
 			foreach ( $course_learner_ids as $course_learner_id ) {
@@ -419,9 +418,38 @@ class Sensei_Learner_Management {
 			}
 
 			$query_args['message'] = 'success_bulk';
-			$query_args['course_id'] = $add_to_course_id;
-		} else {
-			$query_args['message'] = 'error';
+		}
+
+		if ( 'bulk_add_learners_from_file'  === $bulk_learner_action ) {
+			if ( !isset( $_FILES['bulk_add_learners_csv'] ) ) {
+				return;
+			}
+
+			$file_upload_entry = $_FILES['bulk_add_learners_csv'];
+			$upload = wp_handle_upload($file_upload_entry, array('test_form' => false));
+			if( !isset($upload['error']) && isset($upload['file'])) {
+				ini_set("auto_detect_line_endings", true);
+				$file = $upload['file'];
+				$handle = fopen($file, 'r');
+
+				if (false !== $handle) {
+					$line = '';
+					while ( $line !== false ) {
+						if ( !empty( $line ) ) {
+							$email = trim( $line );
+							$user = get_user_by( 'email', $email );
+							if ( $user !== false ) {
+								$user_id = $user->ID;
+								Sensei_Utils::user_start_course( $user_id, $add_to_course_id );
+							}
+						}
+						$line = fgets( $handle );
+					}
+					fclose($handle);
+					wp_delete_file( $file );
+					$query_args['message'] = 'success_bulk';
+				}
+			}
 		}
 
 		$redirect_url = apply_filters( 'sensei_learners_bulk_learner_redirect_url', add_query_arg( $query_args, admin_url( 'admin.php' ) ) );

@@ -657,7 +657,6 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		}
 
 		$post_type = __( 'Course', 'woothemes-sensei' );
-		$form_post_type = 'course';
 		$form_course_id = $this->course_id;
 		$course_title = get_the_title( $form_course_id );
 		// Select the course for the lesson
@@ -682,13 +681,27 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				<h4><?php echo sprintf( __( 'Bulk-add to \'%1$s\' from another course', 'woothemes-sensei' ), $course_title ) ?></h4>
 				<form name="bulk_add_learners_from_course" action="" method="post">
 					<p>
-						<label for="bulk_add_learners_csv"><?php _e( 'Select Course', 'woothemes-sensei' ); ?></label><br>
+						<label for="course_to_add_from_id"><?php _e( 'Select Course', 'woothemes-sensei' ); ?></label><br>
 						<?php echo $select_course_dropdown ?>
 					</p>
 					<p><?php submit_button( sprintf( __( 'Add', 'woothemes-sensei' ), $course_title ), 'primary', 'bulk_add_learner_submit', false, array() ); ?></p>
 
 					<input type="hidden" name="add_to_course_id" value="<?php echo $form_course_id; ?>" />
 					<input type="hidden" name="bulk_learner_action" value="bulk_add_learners_from_course" />
+					<?php wp_nonce_field( Sensei_Learner_Management::NONCE_SENSEI_BULK_ADD_LEARNERS, Sensei_Learner_Management::SENSEI_BULK_ADD_LEARNERS_NONCE_FIELD_NAME ); ?>
+				</form>
+			</div>
+
+			<div class="inside">
+				<h4><?php echo sprintf( __( 'Bulk-add to \'%1$s\' from a user email list', 'woothemes-sensei' ), $course_title ) ?></h4>
+				<form name="bulk_add_learners_from_list" enctype="multipart/form-data" action="" method="post">
+					<p>
+						<label for="bulk_add_learners_csv"><?php _e( 'Add a text file containing line-separted (existing) user emails.', 'woothemes-sensei' ); ?></label><br>
+						<input type="file" accept="text/csv, text/plain, application/csv" name="bulk_add_learners_csv">
+					</p>
+					<p><?php submit_button( sprintf( __( 'Add', 'woothemes-sensei' ), $course_title ), 'primary', 'bulk_add_learner_submit', false, array() ); ?></p>
+					<input type="hidden" name="add_to_course_id" value="<?php echo $form_course_id; ?>" />
+					<input type="hidden" name="bulk_learner_action" value="bulk_add_learners_from_file" />
 					<?php wp_nonce_field( Sensei_Learner_Management::NONCE_SENSEI_BULK_ADD_LEARNERS, Sensei_Learner_Management::SENSEI_BULK_ADD_LEARNERS_NONCE_FIELD_NAME ); ?>
 				</form>
 			</div>
