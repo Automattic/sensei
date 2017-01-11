@@ -1881,7 +1881,7 @@ class Sensei_Utils {
      *
 	 * @return mixed false or comment_ID
 	 */
-	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array() ) {
+	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array(), $args_overrides = array() ) {
 		$comment_id = false;
 		if ( !empty($status) ) {
 			$args = array(
@@ -1895,6 +1895,8 @@ class Sensei_Utils {
 			if( 'in-progress' == $status ) {
 				unset( $args['keep_time'] ); // Keep updating what's happened
 			}
+
+			$args = array_merge( $args, $args_overrides );
 
 			$comment_id = Sensei_Utils::sensei_log_activity( $args );
 			if ( $comment_id && !empty($metadata) ) {
