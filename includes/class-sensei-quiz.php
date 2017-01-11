@@ -626,7 +626,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          } // end if ! is_wp_error( $grade ...
 
-         Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $lesson_status, $lesson_metadata );
+         Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $lesson_status, $lesson_metadata, array( 'keep_time' => false ) );
 
          if( 'passed' == $lesson_status || 'graded' == $lesson_status ){
 
