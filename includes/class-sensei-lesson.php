@@ -3855,9 +3855,9 @@ class Sensei_Lesson {
 
                         <a class="button"
                            href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>"
-                           title="<?php esc_attr_e( 'View the Lesson Quiz', 'woothemes-sensei'  ); ?>">
+                           title="<?php echo apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ); ?>">
 
-                            <?php  esc_html_e( 'View the Lesson Quiz', 'woothemes-sensei' ); ?>
+                            <?php echo apply_filters( 'sensei_view_lesson_quiz_text', __( 'View the Lesson Quiz', 'woothemes-sensei' ) ) ?>
 
                         </a>
 
