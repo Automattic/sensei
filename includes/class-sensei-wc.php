@@ -288,39 +288,64 @@ class Sensei_WC {
 	 * @param WP_Query $query
      */
 	public static function assign_user_to_unassigned_purchased_courses( $query ) {
-		global $current_user;
-
-		if ( is_admin() ) {
-			return;
-		}
-		if ( false === self::is_woocommerce_active() ) {
+		if ( is_admin() || false === self::is_woocommerce_active() || !$query->is_main_query() ) {
 			return;
 		}
 
-		if ( !$query->is_main_query() ) {
+		$in_my_courses = self::is_my_courses_page( $query );
+		$in_learner_profile = isset( $query->query_vars ) && isset( $query->query_vars['learner_profile'] );
+
+		if (!$in_learner_profile && !$in_my_courses ) {
 			return;
 		}
 
-		if ( !$query->is_page()) {
+		$user_id = $in_learner_profile ? self::user_id_from_query( $query ) : ($in_my_courses ? self::current_user_id() : null);
+
+		if ( !$user_id ) {
 			return;
+		}
+
+		remove_action( 'pre_get_posts', array( __CLASS__, __FUNCTION__ ) );
+
+		self::start_purchased_courses_for_user( $user_id );
+	}
+
+	private static function is_my_courses_page( $query ) {
+		if ( !$query->is_page() ) {
+			return false;
 		}
 
 		$queried_object = $query->get_queried_object();
 
 		if ( !$queried_object ) {
-			return;
+			return false;
 		}
 
 		$object_id = absint( $queried_object->ID );
 		$my_courses_page = Sensei()->settings->get( 'my_course_page' );
 		if ( false === $my_courses_page ) {
-			return;
+			return false;
 		}
 		$my_courses_page_id = absint( $my_courses_page );
 
 		if ( $object_id !== $my_courses_page_id ) {
-			return;
+			return false;
 		}
+
+		return true;
+	}
+
+	private static function user_id_from_query($query ) {
+		$user = get_user_by('login', esc_html( $query->query_vars['learner_profile'] ) );
+		if ( !$user ) {
+			return false;
+		}
+		return $user->ID;
+	}
+
+	private static function current_user_id() {
+		global $current_user;
+
 
 		if ( empty( $current_user ) ) {
 			$current_user = wp_get_current_user();
@@ -328,12 +353,11 @@ class Sensei_WC {
 
 		if ( ! ( $current_user instanceof WP_User ) || $current_user->ID == 0 ) {
 			// return in case of anonymous user or no user
-			return;
+			return false;
 		}
 
-		remove_action( 'pre_get_posts', array( __CLASS__, __FUNCTION__ ) );
-		$user_id = $current_user->ID;
-		self::start_purchased_courses_for_user( $user_id );
+		return $current_user->ID;
+
 	}
 
 	/**
