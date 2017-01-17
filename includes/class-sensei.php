@@ -884,9 +884,15 @@ class Sensei_Main {
      * @since 1.7.0
      */
     public function jetpack_latex_support() {
-        if ( function_exists( 'latex_markup') ) {
-            add_filter( 'sensei_question_title', 'latex_markup' );
-            add_filter( 'sensei_answer_text', 'latex_markup' );
+        $this->maybe_add_latex_support_via( 'latex_markup' );
+    }
+
+    private function maybe_add_latex_support_via($func_name ) {
+        if ( function_exists( $func_name ) ) {
+            add_filter( 'sensei_question_title', $func_name );
+            add_filter( 'sensei_answer_text', $func_name );
+            add_filter( 'sensei_question_answer_notes', $func_name );
+            add_filter( 'sensei_questions_get_correct_answer', $func_name );
         }
     }
     
@@ -896,10 +902,7 @@ class Sensei_Main {
 	 * @return null
 	 */
 	public function wp_quicklatex_support() {
-		if ( function_exists( 'quicklatex_parser') ) {
-			add_filter( 'sensei_question_title', 'quicklatex_parser' );
-			add_filter( 'sensei_answer_text', 'quicklatex_parser' );
-		}
+        $this->maybe_add_latex_support_via( 'quicklatex_parser' );
 	}
 
     /**
