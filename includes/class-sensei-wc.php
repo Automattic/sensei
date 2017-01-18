@@ -1,5 +1,8 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside WP
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+} // security check, don't load file outside WP
 
 /**
  * Sensei WooCommerce class
@@ -102,10 +105,10 @@ class Sensei_WC {
 
 				// if the product id on the order and the one given to this function
 				// this order has been placed by the given user on the given course.
-				$item_product_id = self::get_item_id_from_item( $item );
-				$parent_product_id = self::get_item_id_from_item( $item, true );
+				$item_product_id = Sensei_WC_Utils::get_item_id_from_item($item);
+				$parent_product_id = Sensei_WC_Utils::get_item_id_from_item($item, true);
 				if ( $course_product_id == $item_product_id || $check_parent_products && $parent_product_id == $course_product_id ) {
-					return $order->id;
+					return Sensei_WC_Utils::get_order_id($order);
 				}
 
 			}
@@ -262,7 +265,7 @@ class Sensei_WC {
 		// the current lesson
 		$course_id = get_post_meta( $lesson_id , '_lesson_course', true);
 		$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
-		$product = Sensei()->sensei_get_woocommerce_product_object($wc_post_id);
+		$product = self::get_product_object( $wc_post_id );
 		if( isset ($product) && is_object($product) ){
 
 			// valid product found
@@ -310,6 +313,10 @@ class Sensei_WC {
 		self::start_purchased_courses_for_user( $user_id );
 	}
 
+	/**
+	 * @param $query WP_Query
+	 * @return bool
+	 */
 	private static function is_my_courses_page( $query ) {
 		if ( !$query->is_page() ) {
 			return false;
@@ -376,29 +383,18 @@ class Sensei_WC {
 
 		$order_id = get_query_var( 'order-received' );
 		$order = new WC_Order( $order_id );
+		$status = Sensei_WC_Utils::get_order_status( $order );
 
 		// exit early if not wc-completed or wc-processing
-		if( 'wc-completed' != $order->post_status
-			&& 'wc-processing' != $order->post_status  ) {
+		if ( !in_array( $status, array( 'wc-completed', 'wc-processing' ) ) ) {
 			return;
 		}
 
 		$course_links = array(); // store the for links for courses purchased
 		foreach ( $order->get_items() as $item ) {
+			$item_id = Sensei_WC_Utils::get_item_id_from_item( $item );
 
-			if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
-
-				// If item has variation_id then its a variation of the product
-				$item_id = $item['variation_id'];
-
-			} else {
-
-				//If not its real product set its id to item_id
-				$item_id = $item['product_id'];
-
-			} // End If Statement
-
-			$user_id = get_post_meta( $order->id, '_customer_user', true );
+			$user_id = get_post_meta( Sensei_WC_Utils::get_order_id( $order ), '_customer_user', true );
 
 			if( $user_id ) {
 
@@ -430,7 +426,7 @@ class Sensei_WC {
 		}// end loop through orders
 
 		// add the courses to the WooCommerce notice
-		if( ! empty( $course_links) ){
+		if( ! empty( $course_links ) ){
 
 			$courses_html = _nx(
 				'You have purchased the following course:',
@@ -527,14 +523,11 @@ class Sensei_WC {
 				return false;
 			}
 
-			$parent_id = '';
-			if( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) {
-				$wc_product_id = $product->parent->id;
-			}
 			foreach( WC()->cart->get_cart() as $cart_item_key => $values ) {
 
 				$cart_product = $values['data'];
-				if( $product_id == $cart_product->id ) {
+				$cart_product_id = Sensei_WC_Utils::get_product_id( $cart_product );
+				if( $product_id == $cart_product_id ) {
 
 					return true;
 
@@ -855,14 +848,14 @@ class Sensei_WC {
 			  method="post"
 			  enctype="multipart/form-data">
 
-			<input type="hidden" name="product_id" value="<?php echo esc_attr( $product->id ); ?>" />
+			<input type="hidden" name="product_id" value="<?php echo esc_attr( Sensei_WC_Utils::get_product_id( $product ) ); ?>" />
 
 			<input type="hidden" name="quantity" value="1" />
 
-			<?php if ( isset( $product->variation_id ) && 0 < intval( $product->variation_id ) ) { ?>
+			<?php if ( Sensei_WC_Utils::is_product_variation( $product ) ) { ?>
 
-				<input type="hidden" name="variation_id" value="<?php echo $product->variation_id; ?>" />
-				<?php if( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 0 ) { ?>
+				<input type="hidden" name="variation_id" value="<?php echo Sensei_WC_Utils::get_product_variation_id( $product ); ?>" />
+				<?php if ( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 0 ) { ?>
 
 					<?php foreach( $product->variation_data as $att => $val ) { ?>
 
@@ -1005,7 +998,8 @@ class Sensei_WC {
 			$order = new WC_Order( $order_id->ID );
 
 			// wc-active is the subscriptions complete status
-			if ( ! in_array( $order->post_status, array( 'wc-processing', 'wc-completed' ) )
+			$status = 'wc-' . $order->get_status();
+			if ( ! in_array( $status, array( 'wc-processing', 'wc-completed' ) )
 				|| ! ( 0 < sizeof( $order->get_items() ) )  ){
 
 				continue;
@@ -1015,7 +1009,7 @@ class Sensei_WC {
 			foreach( $order->get_items() as $item ) {
 
 				// Check if user has bought product
-				if ( $item['product_id'] == $product_id || $item['variation_id'] == $product_id ) {
+				if ( Sensei_WC_Utils::has_user_bought_product( $product_id, $item ) ) {
 
 					// Check if user has an active subscription for product
 					if( class_exists( 'WC_Subscriptions_Manager' ) ) {
@@ -1069,14 +1063,11 @@ class Sensei_WC {
 			return false;
 		}
 
-		// handle variations
-		if ( isset(  $product->variation_id ) ) {
-
-			return $product->variation_id;
-
+		if ( Sensei_WC_Utils::is_product_variation( $product ) ) {
+			return Sensei_WC_Utils::get_product_variation_id( $product );
 		}
 
-		return $product->get_id();
+		return Sensei_WC_Utils::get_product_id( $product );
 
 	}
 
@@ -1128,17 +1119,11 @@ class Sensei_WC {
 		foreach($order->get_items() as $item) {
 
 			$product_type = '';
-
-			if (isset($item['variation_id']) && $item['variation_id'] > 0) {
-
-				$item_id = $item['variation_id'];
+			if (Sensei_WC_Utils::is_wc_item_variation($item)) {
 				$product_type = 'subscription_variation';
+			}
 
-			} else {
-
-				$item_id = $item['product_id'];
-
-			} // End If Statement
+			$item_id = Sensei_WC_Utils::get_item_id_from_item($item);
 
 			// Get courses that use the WC product
 			$courses = array();
@@ -1173,15 +1158,16 @@ class Sensei_WC {
 	public static function email_course_details(  $order ){
 
 		global $woocommerce;
+		$post_status = Sensei_WC_Utils::get_order_status( $order );
 
 		// exit early if not wc-completed or wc-processing
-		if( 'wc-completed' != $order->post_status
-			&& 'wc-processing' != $order->post_status  ) {
+		if( 'wc-completed' != $post_status
+			&& 'wc-processing' != $post_status   ) {
 			return;
 		}
 
 		$order_items = $order->get_items();
-		$order_id = $order->id;
+		$order_id = Sensei_WC_Utils::get_order_id( $order );
 
 		//If object have items go through them all to find course
 		if ( 0 < sizeof( $order_items ) ) {
@@ -1191,16 +1177,7 @@ class Sensei_WC {
 
 
 			foreach ( $order_items as $item ) {
-
-				$product_type = '';
-				if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
-					// If item has variation_id then its from variation
-					$item_id = $item['variation_id'];
-					$product_type = 'variation';
-				} else {
-					// If not its real product set its id to item_id
-					$item_id = $item['product_id'];
-				} // End If Statement
+				$item_id = Sensei_WC_Utils::get_item_id_from_item($item);
 
 				$user_id = get_post_meta( $order_id, '_customer_user', true );
 
@@ -1267,8 +1244,9 @@ class Sensei_WC {
 		}
 		// Get order object
 		$order = new WC_Order( $order_id );
+		$order_status = Sensei_WC_Utils::get_order_status( $order );
 
-		if ( ! in_array( $order->get_status(), array( 'completed', 'processing' ) ) ) {
+		if ( ! in_array( $order_status, array( 'wc-completed', 'wc-processing' ) ) ) {
 			return;
 		}
 
@@ -1286,21 +1264,22 @@ class Sensei_WC {
 		foreach( $order->get_items() as $item ) {
 
 			$product_type = '';
-			if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
-
-				$item_id = $item['variation_id'];
+			if ( Sensei_WC_Utils::is_wc_item_variation( $item ) ) {
 				$product_type = 'variation';
+			}
 
-			} else {
-
-				$item_id = $item['product_id'];
-
-			} // End If Statement
+			$item_id = Sensei_WC_Utils::get_item_id_from_item($item);
 
 			$_product = Sensei_WC::get_product_object( $item_id, $product_type );
 
+			if ( !$_product ) {
+				continue;
+			}
+
+			$_product_id = Sensei_WC_Utils::get_product_id( $_product );
+
 			// Get courses that use the WC product
-			$courses = Sensei()->course->get_product_courses( $_product->id );
+			$courses = Sensei()->course->get_product_courses( $_product_id );
 
 			// Loop and update those courses
 			foreach ( $courses as $course_item ) {
@@ -1349,7 +1328,7 @@ class Sensei_WC {
 
 			foreach( $order->get_items() as $item ) {
 
-				$item_id = self::get_item_id_from_item($item); // End If Statement
+				$item_id = Sensei_WC_Utils::get_item_id_from_item($item); // End If Statement
 
                 if ( self::has_customer_bought_product( $user_id, $item_id ) ){
 
@@ -1889,21 +1868,6 @@ class Sensei_WC {
 	}
 
 	/**
-	 * @param $item
-	 * @param bool $always_return_parent_product_id
-	 * @return mixed
-	 */
-	private static function get_item_id_from_item( $item, $always_return_parent_product_id = false )
-	{
-		if (false === $always_return_parent_product_id
-			&& isset($item['variation_id']) && (0 < $item['variation_id'])) {
-			return $item['variation_id'];
-		}
-
-		return $item['product_id'];
-	}
-
-	/**
 	 * @param $item_id
 	 * @return array
 	 */
@@ -1968,21 +1932,21 @@ class Sensei_WC {
 
 		foreach ($user_orders as $user_order) {
 			foreach ($user_order->get_items() as $item) {
-				$item_id = self::get_item_id_from_item( $item );
+				$item_id = Sensei_WC_Utils::get_item_id_from_item($item);
 
 				$product_courses = self::get_courses_from_product_id( $item_id );
-				$is_variation = isset($item['variation_id']) && !empty($item['variation_id']);
+				$is_variation = Sensei_WC_Utils::is_wc_item_variation($item);
 				$is_course_linked_to_parent_product = false;
 
 				if (empty($product_courses) && $is_variation) {
 					// if we get no products from a variable sub course,
 					// check if there are any courses linked to the parent product id
-					$item_id = self::get_item_id_from_item($item, true);
+					$item_id = Sensei_WC_Utils::get_item_id_from_item($item, true);
 					$product_courses = self::get_courses_from_product_id( $item_id );
-					$is_course_linked_to_parent_product = !empty($product_courses);
+					$is_course_linked_to_parent_product = !empty( $product_courses );
 				}
 
-				foreach ($product_courses as $course) {
+				foreach ( $product_courses as $course ) {
 					$course_id = $course->ID;
 					$order_id = self::get_learner_course_active_order_id($user_id, $course_id, $is_course_linked_to_parent_product);
 
@@ -1996,5 +1960,6 @@ class Sensei_WC {
 			}
 		}
 	}
+
 
 }// end Sensei_WC
