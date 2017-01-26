@@ -417,10 +417,17 @@ class Sensei_Main {
      * @return  void
      */
     public function load_plugin_textdomain () {
-
+        global $wp_version;
         $domain = 'woothemes-sensei';
+
+        if ( version_compare( $wp_version, '4.7', '>=' ) && is_admin() ) {
+            $wp_user_locale = get_user_locale();
+        } else {
+            $wp_user_locale = get_locale();
+        }
+
         // The "plugin_locale" filter is also used in load_plugin_textdomain()
-        $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+        $locale = apply_filters( 'plugin_locale', $wp_user_locale, $domain );
         load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
         load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 
