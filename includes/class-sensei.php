@@ -302,6 +302,8 @@ class Sensei_Main {
             // Load Analysis Reports
             $this->analysis = new Sensei_Analysis( $this->file );
 
+            // Load Learner Admin Management Functionality
+            $this->learners_admin = new Sensei_Learners_Admin_Main( $this->file );
         } else {
 
             // Load Frontend Class

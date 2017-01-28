@@ -1,57 +1,57 @@
 jQuery(document).ready( function() {
     var $ = jQuery.noConflict();
+    var selectedUserIds = [];
+
     var config = sensei_learners_bulk_data;
+    var $hidden_selected_user_ids = $('#bulk-action-user-ids');
+    var $bulk_learner_action_submit = $('#bulk-learner-action-submit');
+    var $bulk_learner_actions_form = $('#bulk-learner-actions-form');
+    var $action_selector = $('#bulk-action-selector-top');
+    var $bulk_action_course_select = $('#bulk-action-course-select');
 
     if (config.is_debug) {
         console.log('Sensei v' + config.sensei_version +  ': Learners Bulk Actions');
     }
 
-    $('#bulk-import-users-from-course-options').select2({
+    $bulk_action_course_select.select2({
       placeholder: sensei_learners_bulk_data.select_course_placeholder,
-      width:'300px',
+      width:'300px'
     });
 
-    // jQuery('input#add_learner_search').select2({
-    //     minimumInputLength: 3,
-    //     placeholder: woo_learners_general_data.selectplaceholder,
-    //     width:'300px',
-    //
-    //     ajax: {
-    //         // in wp-admin ajaxurl is supplied by WordPress and is available globaly
-    //         url: ajaxurl,
-    //         dataType: 'json',
-    //         cache: true,
-    //         id: function(user){ return bond._id; },
-    //         data: function (input, page) { // page is the one-based page number tracked by Select2
-    //             return {
-    //                 term: input, //search term
-    //                 page: page || 1,
-    //                 action: 'sensei_json_search_courses',
-    //                 security: 	woo_learners_general_data.search_users_nonce,
-    //                 default: ''
-    //             };
-    //         },
-    //         results: function (users, page) {
-    //             var validUsers = [];
-    //             jQuery.each( users, function (i, val) {
-    //                 if( ! jQuery.isEmptyObject( val )  ){
-    //                     validUser = { id: i , details: val  };
-    //                     validUsers.push( validUser );
-    //                 }
-    //             });
-    //             // wrap the users inside results for select 2 usage
-    //             return {  results: validUsers };
-    //         }
-    //     },
-    //
-    //     initSelection: function (element, callback) {
-    //         //callback();
-    //     },
-    //     formatResult: function( user ){
-    //         return  user.details ;
-    //     },
-    //     formatSelection: function( user ){
-    //         return user.details;
-    //     }
-    // }); // end select2
+    $('.sensei_user_select_id').on('change', function (evt) {
+        var $checkbox = $(this),
+            val = parseInt($checkbox.val(), 10),
+            arrayIndex = selectedUserIds.indexOf(val);
+        evt.preventDefault();
+        evt.stopPropagation();
+        if ($checkbox.is(':checked')) {
+            if (arrayIndex < 0) {
+                selectedUserIds.push(val);
+            }
+        } else {
+            if (arrayIndex > -1) {
+                selectedUserIds.splice(arrayIndex, 1);
+            }
+        }
+    });
+
+    $bulk_learner_action_submit.on('click', function (evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (selectedUserIds.length === 0) {
+            // please selectt some users
+            return;
+        }
+        if ($action_selector.val().trim() == '') {
+            return;
+        }
+        if (parseInt($bulk_action_course_select.val(), 10) === 0) {
+            // select a course
+            return;
+        }
+        $hidden_selected_user_ids.val(selectedUserIds.join(','));
+        console.log( 'submitting', $hidden_selected_user_ids.val());
+
+        $bulk_learner_actions_form.submit();
+    });
 });

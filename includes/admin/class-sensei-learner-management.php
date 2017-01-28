@@ -16,12 +16,6 @@ class Sensei_Learner_Management {
 	public $name;
 	public $file;
 	public $page_slug;
-	public $learner_bulk_actions = null;
-	const ACTION_SENSEI_ADMIN_LEARNER_MANAGEMENT_ENQUEUE_SCRIPTS = 'sensei_admin_learner_management_enqueue_scripts';
-	const ACTION_SENSEI_LEARNERS_ADD_LEARNER_FORM = 'sensei_learners_bulk_add_learners_form';
-	const NONCE_SENSEI_BULK_ADD_LEARNERS = 'bulk-add-learners';
-	const SENSEI_BULK_ADD_LEARNERS_NONCE_FIELD_NAME = 'sensei_bulk_add_learners_nonce';
-
 
 	/**
 	 * Constructor
@@ -37,7 +31,7 @@ class Sensei_Learner_Management {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30);
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container'  ) );
-			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+			if ( isset( $_GET['page'] ) && ( ( $_GET['page'] == $this->page_slug ) || ( $_GET['page'] == 'sensei_learner_admin' ) ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
@@ -98,24 +92,6 @@ class Sensei_Learner_Management {
 		);
 
 		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
-
-		$bulk_learner_actions_dependencies = array( 'jquery', 'sensei-core-select2', 'sensei-chosen-ajax' );
-		$sensei_learners_bulk_actions_js = 'sensei-learners-bulk-actions-js';
-		wp_enqueue_script( $sensei_learners_bulk_actions_js, Sensei()->plugin_url . 'assets/js/learners-bulk-actions' . $suffix . '.js', $bulk_learner_actions_dependencies, Sensei()->version, true );
-
-		$data = array(
-			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
-			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
-			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
-			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
-			'bulk_add_learners_nonce' => wp_create_nonce( self::NONCE_SENSEI_BULK_ADD_LEARNERS ),
-			'select_course_placeholder'=> __( 'Select Course', 'woothemes-sensei' ),
-			'is_debug' => $is_debug,
-			'sensei_version' => Sensei()->version
-		);
-
-		wp_localize_script( $sensei_learners_bulk_actions_js, 'sensei_learners_bulk_data', $data );
-
 	} // End enqueue_scripts()
 
 	/**
