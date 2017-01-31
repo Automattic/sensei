@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Learners_Admin_Main {
 
-    const ACTION_SENSEI_ADMIN_LEARNER_MANAGEMENT_ENQUEUE_SCRIPTS = 'sensei_admin_learner_management_enqueue_scripts';
     const ACTION_SENSEI_LEARNERS_ADD_LEARNER_FORM = 'sensei_learners_bulk_add_learners_form';
     const NONCE_SENSEI_BULK_ADD_LEARNERS = 'bulk-add-learners';
     const SENSEI_BULK_ADD_LEARNERS_NONCE_FIELD_NAME = 'sensei_bulk_add_learners_nonce';

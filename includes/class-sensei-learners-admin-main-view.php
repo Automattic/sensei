@@ -66,11 +66,9 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
             'per_page' => $this->query_args['per_page']
         ) );
 
-    } // End prepare_items()
+    }
 
     protected function get_row_data( $item ) {
-        global $wp_version;
-
         if( ! $item ) {
             return array(
                 'learner' => __( 'No results found', 'woothemes-sensei' ),
@@ -78,9 +76,7 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
             );
         }
         $learner = $item;
-
         $courses = $this->get_learner_courses_html( $item->course_statuses );
-
         $column_data = array(
             'learner' =>  $this->get_learner_html( $learner ),
             'overview' => $courses
@@ -141,7 +137,7 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
                         <option value="add_to_course">Add to Course</option>
                         <option value="remove_from_course">Remove from Course</option>
                     </select>
-                    <?php $this->courses_select($courses, -1, 'bulk-action-course-select', 'course_id', 'Select Course' ); ?>
+                    <?php $this->courses_select( $courses, -1, 'bulk-action-course-select', 'course_id', 'Select Course' ); ?>
                     <input type="hidden" id="bulk-action-user-ids"  name="bulk_action_user_ids" class="button action" value="">
                     <input type="submit" id="bulk-learner-action-submit" class="button action" value="Apply">
                 </form>
@@ -167,19 +163,10 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
         <?php
     }
 
-    /**
-     * The text for the search button
-     * @since  1.7.0
-     * @return string $text
-     */
     public function search_button( $text = '' ) {
         return __( 'Search Learners', 'woothemes-sensei' );
     }
 
-    /**
-     * @param $courses
-     * @return array|string
-     */
     private function get_learner_courses_html($courses)
     {
         if ( empty($courses) ) {
@@ -272,5 +259,5 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
         $this->query_args = $args;
         return $args;
     }
-} // End Class
+}
 
