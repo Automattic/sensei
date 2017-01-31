@@ -197,9 +197,9 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
             if ($courses_completed > 0) {
                 $html .= ', ' . $courses_completed . ' '. esc_html__('Completed', 'woothemes-sensei');
             }
-            $html .= '<br/>';
+            $html .= ' <a href="#" class="learner-course-overview-detail-btn" >...<span>more</span></a><br/>';
             $courses = implode('<br />', $course_arr);
-            return $html . $courses;
+            return $html . '<div class="learner-course-overview-detail" style="display:none">' . $courses . '</div>';
         }
     }
 

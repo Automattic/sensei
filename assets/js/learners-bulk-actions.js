@@ -1,4 +1,4 @@
-jQuery(document).ready( function() {
+jQuery(document).ready(function() {
     var $ = jQuery.noConflict(),
         selectedUserIds = [],
         config = sensei_learners_bulk_data,
@@ -9,8 +9,11 @@ jQuery(document).ready( function() {
         $bulkActionCourseSelect = $('#bulk-action-course-select'),
         $selectUserCheckboxes = $('.sensei_user_select_id'),
         $cbSelectAll = $('#cb-select-all-1'),
+        $learnerCourseOverviewDetail = $('.learner-course-overview-detail'),
+        $learnerCourseOverviewDetailButton = $('.learner-course-overview-detail-btn'),
         $cbSelectAllTwo = $('#cb-select-all-2'),
-        updateSelectedUserIdsFromCheckbox, logDebug;
+        updateSelectedUserIdsFromCheckbox,
+        logDebug;
 
     updateSelectedUserIdsFromCheckbox = function ($checkbox) {
         var val = parseInt($checkbox.val(), 10),
@@ -33,6 +36,19 @@ jQuery(document).ready( function() {
     }
 
     logDebug('Learners Bulk Actions');
+
+    $learnerCourseOverviewDetailButton.on('click', function (evt) {
+        var $elem = $(this),
+            $overviewDiv = $elem.siblings('.learner-course-overview-detail').first();
+
+        $learnerCourseOverviewDetail.filter(':visible').slideUp( "slow" );
+        if ( $overviewDiv.is( ":hidden" ) ) {
+            $overviewDiv.slideDown("slow");
+        } else {
+            $overviewDiv.slideUp("slow");
+
+        }
+    });
 
     $bulkActionCourseSelect.select2({
       placeholder: sensei_learners_bulk_data.select_course_placeholder,
