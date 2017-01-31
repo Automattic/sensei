@@ -60,14 +60,13 @@ class Sensei_Learners_Admin_Main {
         }
     }
 
-    private function redirect_to_learner_admin_index( $result, $notice ) {
+    private function redirect_to_learner_admin_index( $result ) {
         $url = add_query_arg(array(
             'page' => $this->page_slug,
-            'result' => $result,
-            'notice' => $notice,
+            'message' => $result,
         ), admin_url( 'admin.php' ));
-        wp_redirect( $url );
-        wp_die();
+        wp_safe_redirect( $url );
+        exit;
     }
 
     public function handle_http_post() {
@@ -82,14 +81,14 @@ class Sensei_Learners_Admin_Main {
         $sensei_bulk_action = $_POST['sensei_bulk_action'];
 
         if (!in_array( $sensei_bulk_action, array( 'add_to_course', 'remove_from_course' ) )) {
-            $this->redirect_to_learner_admin_index( 'error', 'invalid-action' );
+            $this->redirect_to_learner_admin_index( 'error-invalid-action' );
         }
 
         $course_id = isset( $_POST['course_id'] ) ? $_POST['course_id'] : 0;
         $user_ids = isset( $_POST['bulk_action_user_ids'] ) ? array_map('absint', explode(',', $_POST['bulk_action_user_ids'])) : array();
         $course = get_post( $course_id );
         if (empty($course)) {
-            $this->redirect_to_learner_admin_index( 'error', 'invalid-course' );
+            $this->redirect_to_learner_admin_index( 'error-invalid-course' );
         }
         foreach ( $user_ids as $user_id ) {
             $user = new WP_User( $user_id );
@@ -103,7 +102,7 @@ class Sensei_Learners_Admin_Main {
                 Sensei_Utils::sensei_remove_user_from_course($course_id, $user_id);
             }
         }
-//        $this->redirect_to_learner_admin_index( 'success', 'action-success' );
+        $this->redirect_to_learner_admin_index( 'success-action-success' );
     }
 
     public function enqueue_scripts() {
@@ -162,6 +161,7 @@ class Sensei_Learners_Admin_Main {
         }
         add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30);
         add_action( 'admin_init', array( $this, 'handle_http_post' ) );
+        add_action( 'admin_notices', array( $this, 'add_notices' ) );
     }
 
     public function learners_admin_menu() {
@@ -169,6 +169,33 @@ class Sensei_Learners_Admin_Main {
         if ( current_user_can( 'manage_sensei_grades' ) ) {
             $learners_page = add_submenu_page( 'sensei', 'Learner Admin', 'Learner Admin', 'manage_sensei_grades', 'sensei_learner_admin', array( $this, 'learner_admin_page' ) );
         }
+    }
+
+    public function add_notices() {
+        if (!$this->is_current_page()) {
+            return;
+        }
+        if (!isset($_GET['message'])) {
+            return;
+        }
+        $msg = $_GET['message'];
+        $msgClass = 'notice-error';
+        $trans = $msg;
+        if ('error-invalid-action' === $msg) {
+            $trans = esc_html__( 'This bulk action is not supported', 'woothemes-sensei' );
+        }
+        if ('error-invalid-course' === $msg) {
+            $trans = esc_html__( 'Invalid Course', 'woothemes-sensei' );
+        }
+        if ('success-action-success' === $msg) {
+            $msgClass = 'notice-success';
+            $trans = esc_html__( 'Bulk learner action succeeded', 'woothemes-sensei' );
+        }
+        ?>
+        <div class="learners-notice <?php echo $msgClass; ?>">
+            <p><?php echo $trans; ?></p>
+        </div>
+        <?php
     }
 
 } // End Class
