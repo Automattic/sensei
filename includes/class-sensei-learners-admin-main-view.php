@@ -139,6 +139,7 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
                     </select>
                     <?php $this->courses_select( $courses, -1, 'bulk-action-course-select', 'course_id', 'Select Course' ); ?>
                     <input type="hidden" id="bulk-action-user-ids"  name="bulk_action_user_ids" class="button action" value="">
+                    <?php wp_nonce_field( Sensei_Learners_Admin_Main::NONCE_SENSEI_BULK_LEARNER_ACTIONS, Sensei_Learners_Admin_Main::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD ); ?>
                     <input type="submit" id="bulk-learner-action-submit" class="button action" value="Apply">
                 </form>
             </div>

@@ -4,26 +4,12 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 } // Exit if accessed directly
 
-/**
- * Sensei Learners Sensei_Learners_Admin_Main List Table Class
- *
- * All functionality pertaining to the Admin Learners Overview Data Table in Sensei.
- *
- * @package Assessment
- * @author Automattic
- *
- * @since 1.3.0
- */
+
 class Sensei_Learners_Admin_Main {
 
-    const ACTION_SENSEI_LEARNERS_ADD_LEARNER_FORM = 'sensei_learners_bulk_add_learners_form';
-    const NONCE_SENSEI_BULK_ADD_LEARNERS = 'bulk-add-learners';
-    const SENSEI_BULK_ADD_LEARNERS_NONCE_FIELD_NAME = 'sensei_bulk_add_learners_nonce';
-    
-    public $course_id = 0;
-    public $lesson_id = 0;
-    public $view = '';
-    public $page_slug = 'sensei_learner_admin';
+    const NONCE_SENSEI_BULK_LEARNER_ACTIONS = 'sensei-bulk-learner-actions';
+    const SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD = '_sensei_bulk_learner_actions_field';
+    private $page_slug = 'sensei_learner_admin';
     private $name;
     private $query_args = array();
 
@@ -83,6 +69,8 @@ class Sensei_Learners_Admin_Main {
             $this->redirect_to_learner_admin_index( 'error-invalid-action' );
         }
 
+        check_admin_referer( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS, self::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD );
+
         $course_id = isset( $_POST['course_id'] ) ? $_POST['course_id'] : 0;
         $user_ids = isset( $_POST['bulk_action_user_ids'] ) ? array_map('absint', explode(',', $_POST['bulk_action_user_ids'])) : array();
         $course = get_post( $course_id );
@@ -118,7 +106,7 @@ class Sensei_Learners_Admin_Main {
             'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
             'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
             'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
-            'bulk_add_learners_nonce' => wp_create_nonce( self::NONCE_SENSEI_BULK_ADD_LEARNERS ),
+            'bulk_add_learners_nonce' => wp_create_nonce( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS ),
             'select_course_placeholder'=> __( 'Select Course', 'woothemes-sensei' ),
             'is_debug' => $is_debug,
             'sensei_version' => Sensei()->version
@@ -197,5 +185,5 @@ class Sensei_Learners_Admin_Main {
         <?php
     }
 
-} // End Class
+}
 
