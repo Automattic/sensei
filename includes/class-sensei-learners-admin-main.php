@@ -95,8 +95,10 @@ class Sensei_Learners_Admin_Main {
     public function enqueue_scripts() {
         $is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
         $suffix = '';
+        $underscore_path = Sensei()->plugin_url . 'assets/vendor/underscore/underscore-min.js';
+        wp_register_script( 'sensei-admin-underscore-min',$underscore_path );
 
-        $bulk_learner_actions_dependencies = array( 'jquery', 'sensei-core-select2' );
+        $bulk_learner_actions_dependencies = array( 'sensei-admin-underscore-min', 'jquery', 'sensei-core-select2', 'jquery-ui-dialog' );
         $sensei_learners_bulk_actions_js = 'sensei_learners_admin_bulk_actions_script';
         $the_file = Sensei()->plugin_url . 'assets/js/learners-bulk-actions' . $suffix . '.js';
         wp_enqueue_script( $sensei_learners_bulk_actions_js, $the_file, $bulk_learner_actions_dependencies, Sensei()->version, true );
@@ -142,7 +144,7 @@ class Sensei_Learners_Admin_Main {
         return isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug );
     }
 
-    public function hook() {
+    private function hook() {
         if ( $this->is_current_page() ) {
             add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 30 );
         }
