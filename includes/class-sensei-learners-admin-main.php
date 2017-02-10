@@ -71,22 +71,33 @@ class Sensei_Learners_Admin_Main {
 
         check_admin_referer( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS, self::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD );
 
-        $course_id = isset( $_POST['course_id'] ) ? $_POST['course_id'] : 0;
+        $course_ids = isset( $_POST['bulk_action_course_ids'] ) ? explode(',', $_POST['bulk_action_course_ids'] ) : array();
         $user_ids = isset( $_POST['bulk_action_user_ids'] ) ? array_map('absint', explode(',', $_POST['bulk_action_user_ids'])) : array();
-        $course = get_post( $course_id );
-        if (empty($course)) {
-            $this->redirect_to_learner_admin_index( 'error-invalid-course' );
+
+        foreach ($course_ids as $course_id) {
+            // Validate courses before continuing
+            $course = get_post( absint( $course_id ) );
+            if (empty($course)) {
+                $this->redirect_to_learner_admin_index( 'error-invalid-course' );
+            }
         }
+
         foreach ( $user_ids as $user_id ) {
             $user = new WP_User( $user_id );
             if ( $user->exists() && 'add_to_course' === $sensei_bulk_action ) {
-                Sensei_Utils::user_start_course( $user_id, $course_id );
+                foreach ($course_ids as $course_id) {
+                    Sensei_Utils::user_start_course( $user_id, absint( $course_id ) );
+                }
             }
             if ( $user->exists() && 'remove_from_course' === $sensei_bulk_action ) {
-                if (!Sensei_Utils::user_started_course( $course_id, $user_id )) {
-                    continue;
+
+                foreach ($course_ids as $course_id) {
+                    if (!Sensei_Utils::user_started_course( absint( $course_id ), $user_id )) {
+                        continue;
+                    }
+                    Sensei_Utils::sensei_remove_user_from_course($course_id, $user_id);
                 }
-                Sensei_Utils::sensei_remove_user_from_course($course_id, $user_id);
+
             }
         }
         $this->redirect_to_learner_admin_index( 'success-action-success' );
@@ -95,11 +106,15 @@ class Sensei_Learners_Admin_Main {
     public function enqueue_scripts() {
         $is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
         $suffix = '';
-        $underscore_path = Sensei()->plugin_url . 'assets/vendor/underscore/underscore-min.js';
-        wp_register_script( 'sensei-admin-underscore-min',$underscore_path );
 
-        $bulk_learner_actions_dependencies = array( 'sensei-admin-underscore-min', 'jquery', 'sensei-core-select2', 'jquery-ui-dialog' );
-        $sensei_learners_bulk_actions_js = 'sensei_learners_admin_bulk_actions_script';
+        $jquery_modal_js_path = Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.8.0/jquery.modal.min.js';
+        wp_register_script( 'sensei-admin-jquery-modal', $jquery_modal_js_path );
+
+        $jquery_modal_css_filepath = Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.8.0/jquery.modal.min.css';
+        wp_enqueue_style( 'sensei-admin-jquery-modal-css', $jquery_modal_css_filepath );
+
+        $bulk_learner_actions_dependencies = array( 'jquery', 'sensei-core-select2', 'sensei-admin-jquery-modal' );
+        $sensei_learners_bulk_actions_js = 'sensei-learners-admin-bulk-actions-js';
         $the_file = Sensei()->plugin_url . 'assets/js/learners-bulk-actions' . $suffix . '.js';
         wp_enqueue_script( $sensei_learners_bulk_actions_js, $the_file, $bulk_learner_actions_dependencies, Sensei()->version, true );
 
