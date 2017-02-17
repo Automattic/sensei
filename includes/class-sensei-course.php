@@ -1844,7 +1844,7 @@ class Sensei_Course {
 
 		$course_comment = Sensei_Utils::user_course_status( $course_id, $user_id );
 		$percentage = get_comment_meta( $course_comment->comment_ID, '_completion_percentage', true );
-		if ( $percentage !== false ) {
+		if ( $percentage !== false && $percentage !== '' ) {
 			return $percentage;
 		} else {
 			return $this->sync_completion_percentage( $course_id, $user_id );
