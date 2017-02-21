@@ -33,7 +33,7 @@ class Sensei_Utils {
 	 * @return bool
 	 */
 	public static function sensei_is_woocommerce_present () {
-
+		_deprecated_function(__FUNCTION__, Sensei()->version, 'Sensei_WC::is_woocommerce_present');
         return Sensei_WC::is_woocommerce_present();
 
 	} // End sensei_is_woocommerce_present()
@@ -2379,6 +2379,19 @@ class Sensei_Utils {
 			return $activity_logged;
 		}
 		return $activity_logged;
+	}
+
+	public static function is_plugin_present_and_activated($plugin_class_to_look_for, $plugin_registered_path) {
+		$active_plugins = (array) get_option( 'active_plugins', array() );
+
+		if ( is_multisite() ){
+
+			$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
+
+		}
+
+		$plugin_present_and_activated = in_array( $plugin_registered_path, $active_plugins ) || array_key_exists( $plugin_registered_path, $active_plugins );
+		return class_exists( $plugin_class_to_look_for ) || $plugin_present_and_activated;
 	}
 } // End Class
 
