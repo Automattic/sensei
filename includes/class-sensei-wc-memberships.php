@@ -72,13 +72,10 @@ class Sensei_WC_Memberships {
 	 * @return bool
 	 */
 	public static function is_wc_memberships_active() {
-		$active_plugins = (array) get_option( 'active_plugins', array() );
-
-		if ( is_multisite() ){
-			$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
-		}
-		$is_wc_memberships_present_and_activated = in_array( self::WC_MEMBERSHIPS_PLUGIN_PATH, $active_plugins, true ) || array_key_exists( self::WC_MEMBERSHIPS_PLUGIN_PATH, $active_plugins );
-		return class_exists( 'WC_Memberships' ) || $is_wc_memberships_present_and_activated;
+		return Sensei_Utils::is_plugin_present_and_activated(
+			'WC_Memberships',
+			self::WC_MEMBERSHIPS_PLUGIN_PATH
+		);
     }
 
 	/**
