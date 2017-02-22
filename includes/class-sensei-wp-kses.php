@@ -20,13 +20,12 @@ class Sensei_Wp_Kses {
             $allowed_html = self::get_default_wp_kses_allowed_html();
         }
         $string = wp_kses_no_null( $string, array( 'slash_zero' => 'keep' ) );
-        $string = wp_kses_js_entities($string);
-        $string = wp_kses_normalize_entities($string);
+        $string = wp_kses_normalize_entities( $string );
         /**
          * Filter content similar to pre_kses
          */
         $string = apply_filters( 'sensei_pre_kses', $string, $allowed_html, $allowed_protocols );
-        return wp_kses_split($string, $allowed_html, $allowed_protocols);
+        return wp_kses_split( $string, $allowed_html, $allowed_protocols );
     }
 
     static function get_default_wp_kses_allowed_html() {

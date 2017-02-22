@@ -120,7 +120,21 @@ class Sensei_Course {
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
 		}
-	} // End __construct()
+	}
+
+	/**
+	 * @param $message
+	 */
+	private static function add_course_access_permission_message( $message )
+	{
+		global $post;
+		if ( Sensei()->settings->get('access_permission') ) {
+			$message = apply_filters( 'sensei_couse_access_permission_message', $message, $post->ID );
+			if (!empty($message)) {
+				Sensei()->notices->add_notice($message, 'info');
+			}
+		}
+	}
 
 	/**
 	 * Fires when a quiz has been graded to check if the Course status needs changing
@@ -294,7 +308,9 @@ class Sensei_Course {
 				$html .= '</p>'."\n";
 
 			} else {
-
+				if ( !empty( $select_course_woocommerce_product ) ) {
+					$html .= '<input type="hidden" name="course_woocommerce_product" value="'. absint( $select_course_woocommerce_product ) . '">';
+				}
                 $html .= '<p>' . "\n";
 					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . "\n";
 				$html .= '</p>'."\n";
@@ -2243,7 +2259,7 @@ class Sensei_Course {
 
         }
         // for the my courses page
-        elseif( is_page() && Sensei()->settings->get( 'my_course_page' ) == $post->ID  )
+        elseif( isset( $post ) && is_page() && Sensei()->settings->get( 'my_course_page' ) == $post->ID  )
         {
             /**
              * sensei_my_courses_per_page
@@ -2629,9 +2645,7 @@ class Sensei_Course {
             return $content;
 
         } else {
-
             return '<p class="course-excerpt">' . get_post(  get_the_ID() )->post_excerpt . '</p>';
-
         }
 
     }// end single_course_content
@@ -2826,6 +2840,7 @@ class Sensei_Course {
         <?php
         global  $post, $current_user;
         $is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
+		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
 
 	    if ( is_user_logged_in() && ! $is_user_taking_course ) {
 
@@ -2836,9 +2851,13 @@ class Sensei_Course {
                 Sensei_WC::the_add_to_cart_button_html($post->ID );
 
             } else {
-
-                sensei_start_course_form($post->ID);
-
+                $should_display_start_course_form = (bool) apply_filters( 'sensei_display_start_course_form', true, $post->ID );
+				if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
+					self::add_course_access_permission_message( '' );
+				}
+                if ( $should_display_start_course_form ) {
+                  sensei_start_course_form( $post->ID );
+                }
             } // End If Statement
 
         } elseif ( is_user_logged_in() ) {
@@ -2892,11 +2911,7 @@ class Sensei_Course {
 		                $anchor_after
 	                );
 
-	                // register the notice to display
-	                if( Sensei()->settings->get( 'access_permission' ) ){
-		                Sensei()->notices->add_notice( $notice, 'info' ) ;
-	                }
-
+					self::add_course_access_permission_message( $notice );
 
                     $my_courses_page_id = '';
 
@@ -2921,12 +2936,12 @@ class Sensei_Course {
                     // If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
                     // is false, link to My Courses. If not, link to default WordPress registration page.
                     if( !empty( $my_courses_page_id ) && $my_courses_page_id && !$wp_register_link){
-
-                        $my_courses_url = get_permalink( $my_courses_page_id  );
-                        $register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';
-                        echo '<div class="status register">' . $register_link . '</div>' ;
-
-                    } else{
+						if ( true === (bool)apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+							$my_courses_url = get_permalink( $my_courses_page_id  );
+							$register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';
+							echo '<div class="status register">' . $register_link . '</div>' ;
+						}
+                    } else {
 
                         wp_register( '<div class="status register">', '</div>' );
 
