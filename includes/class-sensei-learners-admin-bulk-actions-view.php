@@ -4,19 +4,24 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 } // Exit if accessed directly
 
-class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
+class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Table {
 
 
     public $view = '';
     public $page_slug = 'sensei_learner_admin';
     private $name;
     private $query_args = array();
+    /**
+     * @var Sensei_Learners_Admin_Bulk_Actions_Controller
+     */
+    private $controller;
 
     /**
      * Sensei_Learners_Admin_Main_View constructor.
-     * @param Sensei_Learners_Admin_Main $controller
+     * @param Sensei_Learners_Admin_Bulk_Actions_Controller $controller
      */
     public function __construct( $controller ) {
+        $this->controller = $controller;
         $this->name = $controller->get_name();
         $this->page_slug = $controller->get_page_slug();
         parent::__construct( $this->page_slug );
@@ -27,15 +32,16 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
     }
 
     public function output_headers() {
+        $link_back_to_lm = '<a href="' . esc_attr( $this->controller->analysis->get_url() ) . '">' . esc_html( $this->controller->analysis->get_name() ) . '</a>';
         $title = $this->name;
+        $subtitle = '';
         if ( isset( $this->query_args['filter_by_course_id'] ) ) {
-            $course = get_post($this->query_args['filter_by_course_id'] );
-            if ( !empty($course ) ) {
-                $title .= ' (' . $course->post_title . ')';
+            $course = get_post( absint( $this->query_args['filter_by_course_id'] ) );
+            if ( !empty( $course ) ) {
+                $subtitle .= '<h2>' . $course->post_title . '</h2>';
             }
-
         }
-        echo '<h1>'. $title . '</h1>';
+        echo '<h1>'. $link_back_to_lm . ' | ' . $title . '</h1>' . $subtitle;
     }
 
     function get_columns() {
@@ -124,20 +130,27 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
     private function render_bulk_actions_form( $courses ) {
         ?>
         <form id="bulk-learner-actions-form" "action="" method="post">
-        <p for="bulk-action-selector-top" class="screen-reader-text"><?php echo esc_html__( 'Select bulk action', 'woothemes-sensei' ); ?></p>
-        <select name="sensei_bulk_action" id="bulk-action-selector-top">
-            <option value=""><?php echo esc_html__('Bulk Learner Actions', 'woothemes-sensei'); ?></option>
-            <option value="add_to_course"><?php echo esc_html__( 'Assign to Course', 'woothemes-sensei' ); ?></option>
-            <option value="remove_from_course"><?php echo esc_html__( 'Unassign from Course', 'woothemes-sensei' ); ?></option>
-        </select>
         <p for="bulk-action-course-select" class="screen-reader-text"><?php echo esc_html__( 'Select Course', 'woothemes-sensei' ); ?></p>
         <?php $this->courses_select( $courses, -1, 'bulk-action-course-select', 'course_id', 'Select Course', true ); ?>
         <input type="hidden" id="bulk-action-user-ids"  name="bulk_action_user_ids" value="">
+        <input type="hidden" id="sensei-bulk-action"  name="sensei_bulk_action" value="">
         <input type="hidden" id="bulk-action-course-ids"  name="bulk_action_course_ids" value="">
-        <?php wp_nonce_field( Sensei_Learners_Admin_Main::NONCE_SENSEI_BULK_LEARNER_ACTIONS, Sensei_Learners_Admin_Main::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD ); ?>
+        <?php wp_nonce_field( Sensei_Learners_Admin_Bulk_Actions_Controller::NONCE_SENSEI_BULK_LEARNER_ACTIONS, Sensei_Learners_Admin_Bulk_Actions_Controller::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD ); ?>
         <button type="submit" id="bulk-learner-action-submit" class="button button-primary action"><?php echo esc_html__( 'Apply', 'woothemes-sensei' ); ?></button>
         </form>
         <?php
+    }
+
+    private function render_bulk_action_select_box() {
+        $rendered =
+            '<select name="sensei_bulk_action_select" id="bulk-action-selector-top">' .
+            '<option value="">' . esc_html__('Bulk Learner Actions', 'woothemes-sensei' ) . '</option>';
+        $bulk_actions = $this->controller->get_known_bulk_actions();
+        foreach ( $bulk_actions as $value => $translation ) {
+            $rendered .= '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) .'</option>';
+        }
+
+        return $rendered . '</select>';
     }
 
 
@@ -153,7 +166,8 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
                 <div id="sensei-bulk-learner-actions-modal" style="display:none;">
                     <?php $this->render_bulk_actions_form( $courses ); ?>
                 </div>
-                <button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action"><?php echo esc_html__( 'Bulk Learner Actions', 'woothemes-sensei' ); ?></button>
+                <?php echo $this->render_bulk_action_select_box(); ?>
+                <button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action"><?php echo esc_html__( 'Apply', 'woothemes-sensei' ); ?></button>
             </div>
             <div class="alignleft actions">
                 <form action="" method="get">
@@ -266,7 +280,8 @@ class Sensei_Learners_Admin_Main_View extends WooThemes_Sensei_List_Table {
             $filter_type = in_array( $_GET['filter_type'], array('inc', 'exc') ) ? $_GET['filter_type'] : 'inc';
         }
         $page = $this->page_slug;
-        $args = compact( 'page', 'per_page', 'offset', 'orderby', 'order', 'search', 'filter_by_course_id', 'filter_type' );
+        $view = $this->controller->get_view();
+        $args = compact( 'page', 'view', 'per_page', 'offset', 'orderby', 'order', 'search', 'filter_by_course_id', 'filter_type' );
         $this->query_args = $args;
         return $args;
     }

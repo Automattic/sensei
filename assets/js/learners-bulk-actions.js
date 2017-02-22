@@ -91,6 +91,7 @@ jQuery(document).ready(function() {
             $bulkLearnerActionSubmit = $('#bulk-learner-action-submit'),
             $bulkLearnerActionsForm = $('#bulk-learner-actions-form'),
             $actionSelector = $('#bulk-action-selector-top'),
+            $hiddenSenseiBulkAction = $('#sensei-bulk-action'),
             $courseSelect = $('.sensei-course-select'),
             $bulkActionCourseSelect = $('#bulk-action-course-select'),
             $selectUserCheckboxes = $('.sensei_user_select_id'),
@@ -155,6 +156,10 @@ jQuery(document).ready(function() {
             }
         });
 
+        $actionSelector.on('change', function (evt) {
+            $hiddenSenseiBulkAction.val($actionSelector.val().trim());
+        });
+
         $bulkLearnerActionSubmit.on('click', function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
@@ -162,7 +167,7 @@ jQuery(document).ready(function() {
             bulkUserActions.setCourseIds(
               $bulkActionCourseSelect.val()
             ).setAction(
-              $actionSelector.val().trim()
+                $hiddenSenseiBulkAction.val().trim()
             );
 
             var validationResult = bulkUserActions.validate();

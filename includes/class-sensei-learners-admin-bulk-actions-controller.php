@@ -5,11 +5,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 
-class Sensei_Learners_Admin_Main {
+class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
     const NONCE_SENSEI_BULK_LEARNER_ACTIONS = 'sensei-bulk-learner-actions';
     const SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD = '_sensei_bulk_learner_actions_field';
+    const ADD_TO_COURSE = 'add_to_course';
+    const REMOVE_FROM_COURSE = 'remove_from_course';
+    const RESET_COURSE = 'reset_course';
+    /**
+     * @var array|null we only do these actions
+     */
+    private $known_bulk_actions = null;
     private $page_slug = 'sensei_learner_admin';
+    private $view = 'sensei_learner_admin';
     private $name;
     private $query_args = array();
 
@@ -37,21 +45,50 @@ class Sensei_Learners_Admin_Main {
         return $this->page_slug;
     }
 
-    public function __construct( $file ) {
-        $this->name = __( 'Learner Admin', 'woothemes-sensei' );
-        $this->file = $file;
+    /**
+     * Sensei_Learners_Admin_Main constructor.
+     * @param $analysis Sensei_Learner_Management
+     */
+    public function __construct( $analysis ) {
+        $this->analysis = $analysis;
+        $this->name =  __( 'Bulk Learner Actions', 'woothemes-sensei' );
+        $this->file = $analysis->file;
+        $this->page_slug = $this->analysis->page_slug;
         if ( is_admin() ) {
             $this->hook();
         }
     }
 
     private function redirect_to_learner_admin_index( $result ) {
-        $url = add_query_arg(array(
-            'page' => $this->page_slug,
+        $url = add_query_arg( array(
+            'page' => $this->get_page_slug(),
+            'view' => $this->get_view(),
             'message' => $result,
         ), admin_url( 'admin.php' ));
         wp_safe_redirect( $url );
         exit;
+    }
+
+    private function get_page_url_parts() {
+        return array(
+            'page' => $this->get_page_slug(),
+            'view' => $this->get_view()
+        );
+    }
+
+    public function get_url() {
+        return add_query_arg( $this->get_page_url_parts(), admin_url( 'admin.php' ));
+    }
+
+    public function get_known_bulk_actions() {
+        if ( null === $this->known_bulk_actions ) {
+            $this->known_bulk_actions = array(
+                self::ADD_TO_COURSE => __( 'Assign to Course(s)', 'woothemes-sensei' ),
+                self::REMOVE_FROM_COURSE => __( 'Unassign from Course(s)', 'woothemes-sensei' ),
+                self::RESET_COURSE => __( 'Reset Course(s)', 'woothemes-sensei' )
+            );
+        }
+        return (array)apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $this->known_bulk_actions );
     }
 
     public function handle_http_post() {
@@ -65,7 +102,7 @@ class Sensei_Learners_Admin_Main {
 
         $sensei_bulk_action = $_POST['sensei_bulk_action'];
 
-        if (!in_array( $sensei_bulk_action, array( 'add_to_course', 'remove_from_course' ) )) {
+        if (!in_array( $sensei_bulk_action, array_keys( $this->get_known_bulk_actions() ) )) {
             $this->redirect_to_learner_admin_index( 'error-invalid-action' );
         }
 
@@ -74,22 +111,25 @@ class Sensei_Learners_Admin_Main {
         $course_ids = isset( $_POST['bulk_action_course_ids'] ) ? explode(',', $_POST['bulk_action_course_ids'] ) : array();
         $user_ids = isset( $_POST['bulk_action_user_ids'] ) ? array_map('absint', explode(',', $_POST['bulk_action_user_ids'])) : array();
 
-        foreach ($course_ids as $course_id) {
+        foreach ( $course_ids as $course_id ) {
             // Validate courses before continuing
             $course = get_post( absint( $course_id ) );
-            if (empty($course)) {
+            if ( empty( $course ) ) {
                 $this->redirect_to_learner_admin_index( 'error-invalid-course' );
             }
         }
 
         foreach ( $user_ids as $user_id ) {
             $user = new WP_User( $user_id );
-            if ( $user->exists() && 'add_to_course' === $sensei_bulk_action ) {
+            if ( !$user->exists() ) {
+                continue;
+            }
+            if ( self::ADD_TO_COURSE === $sensei_bulk_action ) {
                 foreach ($course_ids as $course_id) {
                     Sensei_Utils::user_start_course( $user_id, absint( $course_id ) );
                 }
             }
-            if ( $user->exists() && 'remove_from_course' === $sensei_bulk_action ) {
+            if ( self::REMOVE_FROM_COURSE === $sensei_bulk_action ) {
 
                 foreach ($course_ids as $course_id) {
                     if (!Sensei_Utils::user_started_course( absint( $course_id ), $user_id )) {
@@ -98,6 +138,13 @@ class Sensei_Learners_Admin_Main {
                     Sensei_Utils::sensei_remove_user_from_course($course_id, $user_id);
                 }
 
+            }
+            if ( self::RESET_COURSE === $sensei_bulk_action ) {
+                if (!Sensei_Utils::user_started_course( absint( $course_id ), $user_id )) {
+                    continue;
+                }
+                Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id);
+                Sensei_Utils::user_start_course( $user_id, absint( $course_id ) );
             }
         }
         $this->redirect_to_learner_admin_index( 'success-action-success' );
@@ -135,10 +182,13 @@ class Sensei_Learners_Admin_Main {
 
     public function learner_admin_page() {
         // Load Learners data
-        $sensei_learners_main_view = new Sensei_Learners_Admin_Main_View($this);
+        $sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View($this);
         $sensei_learners_main_view->prepare_items();
         // Wrappers
         do_action( 'sensei_learner_admin_before_container' );
+        ?>
+        <div id="woothemes-sensei" class="wrap woothemes-sensei">
+        <?php
         do_action( 'sensei_learner_admin_wrapper_container', 'top' );
         $sensei_learners_main_view->output_headers();
         ?>
@@ -152,20 +202,26 @@ class Sensei_Learners_Admin_Main {
         </div>
         <?php
         do_action( 'sensei_learner_admin_wrapper_container', 'bottom' );
+        ?> </div> <?php
         do_action( 'sensei_learner_admin_after_container' );
     }
 
     private function is_current_page() {
-        return isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug );
+        return isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug )
+            && isset( $_GET['view'] ) && ( $_GET['view'] == $this->view );
     }
 
     private function hook() {
         if ( $this->is_current_page() ) {
             add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 30 );
         }
-        add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30);
+//        add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30);
         add_action( 'admin_init', array( $this, 'handle_http_post' ) );
         add_action( 'admin_notices', array( $this, 'add_notices' ) );
+    }
+
+    public function get_view() {
+        return $this->view;
     }
 
     public function learners_admin_menu() {

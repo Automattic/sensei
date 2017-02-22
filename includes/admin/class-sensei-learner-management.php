@@ -16,6 +16,7 @@ class Sensei_Learner_Management {
 	public $name;
 	public $file;
 	public $page_slug;
+	public $bulk_actions_controller;
 
 	/**
 	 * Constructor
@@ -39,6 +40,7 @@ class Sensei_Learner_Management {
 			add_action( 'admin_init', array( $this, 'add_new_learners' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
+			$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
 		} // End If Statement
 
 		// Ajax functions
@@ -153,7 +155,11 @@ class Sensei_Learner_Management {
 	 * @return void
 	 */
 	public function learners_page() {
-
+		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
+		if ( $this->bulk_actions_controller->get_view() === $type ) {
+			$this->bulk_actions_controller->learner_admin_page();
+			return;
+		}
 		// Load Learners data
 		$course_id = 0;
 		$lesson_id = 0;
@@ -227,7 +233,7 @@ class Sensei_Learner_Management {
 			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>'; 
 		}
 		?>
-			<h1><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?></h1>
+			<h1><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?> | <a href="<?php echo esc_attr($this->bulk_actions_controller->get_url()); ?>"><?php echo $this->bulk_actions_controller->get_name(); ?></a></h1>
 		<?php
 	} // End learners_default_nav()
 
@@ -474,7 +480,15 @@ class Sensei_Learner_Management {
 
         return Sensei_Learner::get_full_name( $user_id );
 
-    } // end get_learner_full_name
+    }
+
+	public function get_url() {
+		return add_query_arg(array('page' => $this->page_slug), admin_url('admin.php') );
+	}
+
+	public function get_name() {
+		return $this->name;
+	}
 
 } // End Class
 
