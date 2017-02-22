@@ -1738,6 +1738,9 @@ class Sensei_WC {
 					if (in_array($order_id, $user_order_ids) &&
 						!in_array($course_id, $active_course_ids)
 					) {
+						if ( Sensei_WC_Subscriptions::has_user_bought_subscription_but_cancelled( $course_id, $user_id ) ) {
+							continue;
+						}
 						// user ordered a course and not assigned to it. Fix this by assigning them now
 						Sensei_Utils::start_user_on_course($user_id, $course_id);
 					}
