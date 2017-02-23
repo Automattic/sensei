@@ -700,7 +700,7 @@ class Sensei_WC {
 		$paid_product_ids_without_sale = get_posts( self::get_paid_products_not_on_sale_query_args() );
 
 		// get variable subscriptions (normal subscriptions are already included with paid products)
-		if ( self::is_wc_subscriptions_active() ) {
+		if ( Sensei_WC_Subscriptions::is_wc_subscriptions_active() ) {
 
 			$variable_subscription_query_args = self::get_paid_products_not_on_sale_query_args();
 
@@ -1004,7 +1004,7 @@ class Sensei_WC {
 				if ( Sensei_WC_Utils::has_user_bought_product( $product_id, $item ) ) {
 
 					// Check if user has an active subscription for product
-					if( self::is_wc_subscriptions_active() ) {
+					if( Sensei_WC_Subscriptions::is_wc_subscriptions_active() ) {
 						$user_bought_subscription_but_cancelled = wcs_user_has_subscription( $user_id, $product_id, 'cancelled' );
 						if ( $user_bought_subscription_but_cancelled ) {
 							// assume the user was refunded, so technically it is ok to display a buy product

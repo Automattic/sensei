@@ -33,7 +33,7 @@ class Sensei_WC_Subscriptions {
     }
 
     public static function has_user_bought_subscription_but_cancelled( $course_id, $user_id ) {
-        if ( !Sensei_WC::is_wc_subscriptions_active() ) {
+        if ( !self::is_wc_subscriptions_active() ) {
             return false;
         }
         $product_id = Sensei_WC::get_course_product_id( $course_id );
