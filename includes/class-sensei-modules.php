@@ -104,10 +104,9 @@ class Sensei_Core_Modules
 
         // for non admin users, only show taxonomies that belong to them
         add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
-        add_filter('get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
-
         // add the teacher name next to the module term in for admin users
         add_filter('get_terms', array( $this, 'append_teacher_name_to_module' ), 70, 3 );
+        add_filter('get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
 
         // remove the default modules  metabox
         add_action('admin_init',array( 'Sensei_Core_Modules' , 'remove_default_modules_box' ));
@@ -1796,7 +1795,6 @@ class Sensei_Core_Modules
             <?php endif; ?>
         </div>
     <?php
-
     } // end course_module_metabox
 
 
@@ -1978,8 +1976,9 @@ class Sensei_Core_Modules
         }
 
         // in certain cases the array is passed in as reference to the parent term_id => parent_id
+        // In other cases we explicitly require ids (as in 'tt_ids' or 'ids')
         // simply return this as wp doesn't need an array of stdObject Term
-        if (isset( $args['fields'] ) && 'id=>parent' == $args['fields']) {
+        if (isset( $args['fields'] ) && in_array( $args['fields'], array( 'id=>parent', 'tt_ids', 'ids' ) ) ) {
 
             return $terms;
 

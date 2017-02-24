@@ -12,6 +12,7 @@ machine:
     CIRCLE_ENV: test
     WP_MULTISITE: 0
     WP_CORE_DIR: /home/ubuntu/wordpress-develop
+    SENSEI_CODING_STANDARD_DIR: /home/ubuntu/sensei_coding_standard
     WP_TESTS_DIR: /home/ubuntu/wordpress-develop/tests/phpunit
     plugin_loc: /home/ubuntu/$CIRCLE_PROJECT_REPONAME
     plugin_slug: $CIRCLE_PROJECT_REPONAME
@@ -34,9 +35,12 @@ dependencies:
       # setup phpunit
       - wget https://phar.phpunit.de/phpunit-old.phar && chmod +x phpunit-old.phar && mv phpunit-old.phar /home/ubuntu/.phpenv/shims/phpunit
       #Sensei Specific remove npm file as it is not needed
+      # Clone sensei-coding-standard
+      - git clone https://github.com/Automattic/sensei-coding-standard.git $SENSEI_CODING_STANDARD_DIR;
 
 ## tests override
 test:
   override:
   #run tests with coverage
+  - cd $SENSEI_CODING_STANDARD_DIR; php bin/phpcs.phar --report-full --report-summary --standard=Sensei $plugin_loc
   - cd $plugin_loc; phpunit #ignoring coverage for speed reasons: --coverage-html $CIRCLE_ARTIFACTS

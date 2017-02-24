@@ -1,5 +1,22 @@
 *** Sensei Changelog ***
 
+2017.01.10 - version 1.9.11
+
+* Improved WC Memberships integration. Added option to "Auto-start" courses belonging to memberships when activated
+* Improved robustness of quiz save/submit when using random questions
+* Added option to disable HTML sanitization on video embeds to support legacy video providers
+* Fix - Logged out users get correct message on courses protected by memberships
+* Fix - Course results <head> title displayed
+* Fix - Only consider published lessons for completion percentages
+* Fix - Get rid several division by zero warnings
+* Fix - Display Course prerequisite message
+* Fix - Ensure a teacher cannot change the product associated with a course
+* Fix - correctly assign free subscription courses
+
+2016.12.20 - version 1.9.10
+
+* WordPress 4.7 Compatibility release
+
 2016.10.19 - version 1.9.9
 
 * Hotfix - Address possible fatal on older PHP versions
