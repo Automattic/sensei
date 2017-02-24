@@ -42,6 +42,13 @@ class Sensei_WC_Subscriptions {
         }
 
         $user_bought_subscription_but_cancelled = wcs_user_has_subscription( $user_id, $product_id, 'cancelled' );
+
+        if ($user_bought_subscription_but_cancelled && self::is_user_eligible_for_access( $user_id, $product_id, $course_id ) ) {
+            // we still need to make sure that the user has not bought this again,
+            // thus having catually an active subscription too: use case user buys, user cancels, user buys again
+            return false;
+        }
+
         if ( !$user_bought_subscription_but_cancelled ) {
             return false;
         }
@@ -154,15 +161,9 @@ class Sensei_WC_Subscriptions {
 
         }
 
-        // give access if user has active subscription on the product otherwise restrict it.
-        // also check if the user was added to the course directly after the subscription started.
-        if( wcs_user_has_subscription( $user_id, $product_id, 'active'  )
-            || wcs_user_has_subscription( $user_id, $product_id, 'pending-cancel'  )
-            || self::was_user_added_without_subscription( $user_id, $product_id, $course_id  ) ){
-
+        if ( self::is_user_eligible_for_access( $user_id, $product_id, $course_id) ) {
             $user_access_permission = true;
-
-        }else{
+        } else {
 
             $user_access_permission = false;
             // do not show the WC permissions message
@@ -224,11 +225,7 @@ class Sensei_WC_Subscriptions {
 
         }
 
-        // give access if user has active subscription on the product otherwise restrict it.
-        // also check if the user was added to the course directly after the subscription started.
-        if ( wcs_user_has_subscription( $user_id, $product_id, 'active' )
-            || wcs_user_has_subscription( $user_id, $product_id, 'pending-cancel' )
-            || self::was_user_added_without_subscription( $user_id, $product_id, $course_id  )  ){
+        if ( self::is_user_eligible_for_access( $user_id, $product_id, $course_id ) ) {
 
             $has_user_started_course = true;
 
@@ -331,5 +328,21 @@ class Sensei_WC_Subscriptions {
     public static function get_subscription_types() {
         return apply_filters('sensei_wc_subscriptions_get_subscription_types', self::$default_subscription_types);
 
+    }
+
+    /**
+     * give access if user has active subscription on the product otherwise restrict it.
+     * also check if the user was added to the course directly after the subscription started.
+     * @param $user_id
+     * @param $product_id
+     * @param $course_id
+     * @return bool
+     */
+    private static function is_user_eligible_for_access($user_id, $product_id, $course_id)
+    {
+
+        return wcs_user_has_subscription($user_id, $product_id, 'active')
+        || wcs_user_has_subscription($user_id, $product_id, 'pending-cancel')
+        || self::was_user_added_without_subscription($user_id, $product_id, $course_id);
     }
 }
