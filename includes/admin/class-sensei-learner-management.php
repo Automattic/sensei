@@ -17,6 +17,7 @@ class Sensei_Learner_Management {
 	public $file;
 	public $page_slug;
 	public $bulk_actions_controller;
+	const SENSEI_LEARNER_MANAGEMENT_PER_PAGE = 'sensei_learner_management_per_page';
 
 	/**
 	 * Constructor
@@ -30,6 +31,7 @@ class Sensei_Learner_Management {
 
 		// Admin functions
 		if ( is_admin() ) {
+			add_filter('set-screen-option', array($this, 'set_learner_management_screen_option'), 20, 3);
 			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30);
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container'  ) );
 			if ( isset( $_GET['page'] ) && ( ( $_GET['page'] == $this->page_slug ) || ( $_GET['page'] == 'sensei_learner_admin' ) ) ) {
@@ -62,9 +64,29 @@ class Sensei_Learner_Management {
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
+			add_action("load-$learners_page", array($this, "load_screen_options_when_on_bulk_actions") );
 		}
 
 	} // End learners_admin_menu()
+
+	public function set_learner_management_screen_option($status, $option, $value) {
+		if ( self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE == $option ) {
+			return $value;
+		}
+		return $status;
+	}
+	
+	public function load_screen_options_when_on_bulk_actions() {
+		if ( isset($this->bulk_actions_controller) && $this->bulk_actions_controller->is_current_page() ) {
+
+			$args = array(
+				'label' => __('Learners per page', 'woothemes-sensei'),
+				'default' => 20,
+				'option' => self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE
+			);
+			add_screen_option( 'per_page', $args );
+		}
+	}
 
 	/**
 	 * enqueue_scripts function.

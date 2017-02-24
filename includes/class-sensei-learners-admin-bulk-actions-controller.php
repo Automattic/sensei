@@ -77,7 +77,19 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
     }
 
     public function get_url() {
-        return add_query_arg( $this->get_page_url_parts(), admin_url( 'admin.php' ));
+        return $this->build_admin_url( $this->get_page_url_parts() );
+    }
+
+    private function build_admin_url( $args_array ) {
+        return add_query_arg( $args_array, admin_url( 'admin.php' ));
+    }
+
+    public function get_learner_management_course_url( $course_id ) {
+        return $this->build_admin_url(array(
+            'page' => 'sensei_learners',
+            'course_id' => absint($course_id),
+            'view' => 'learners')
+        );
     }
 
     public function get_known_bulk_actions() {
@@ -206,7 +218,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
         do_action( 'sensei_learner_admin_after_container' );
     }
 
-    private function is_current_page() {
+    public function is_current_page() {
         return isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug )
             && isset( $_GET['view'] ) && ( $_GET['view'] == $this->view );
     }

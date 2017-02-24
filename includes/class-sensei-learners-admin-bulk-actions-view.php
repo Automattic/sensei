@@ -130,8 +130,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
     private function render_bulk_actions_form( $courses ) {
         ?>
         <form id="bulk-learner-actions-form" "action="" method="post">
-        <p for="bulk-action-course-select" class="screen-reader-text"><?php echo esc_html__( 'Select Course', 'woothemes-sensei' ); ?></p>
-        <?php $this->courses_select( $courses, -1, 'bulk-action-course-select', 'course_id', 'Select Course', true ); ?>
+        <label for="bulk-action-course-select" class="screen-reader-text"><?php echo esc_html__( 'Select Course(s)', 'woothemes-sensei' ); ?></label>
+        <?php $this->courses_select( $courses, -1, 'bulk-action-course-select', 'course_id', 'Select Course(s)', true ); ?>
         <input type="hidden" id="bulk-action-user-ids"  name="bulk_action_user_ids" value="">
         <input type="hidden" id="sensei-bulk-action"  name="sensei_bulk_action" value="">
         <input type="hidden" id="bulk-action-course-ids"  name="bulk_action_course_ids" value="">
@@ -167,7 +167,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
                     <?php $this->render_bulk_actions_form( $courses ); ?>
                 </div>
                 <?php echo $this->render_bulk_action_select_box(); ?>
-                <button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action"><?php echo esc_html__( 'Apply', 'woothemes-sensei' ); ?></button>
+                <button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action"><?php echo esc_html__( 'Select Courses', 'woothemes-sensei' ); ?></button>
             </div>
             <div class="alignleft actions">
                 <form action="" method="get">
@@ -212,7 +212,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
                 $course = get_post($course_id);
 //                $span_style = 'display: inline; padding: .2em .6em .3em; font-size: 75%; font-weight: 700; line-height: 1; color: #fff; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: .25em;';
                 $span_style = $course_status == 'c' ? ' button-primary action' : ' action';
-                $course_arr[] = '<button class="button' . $span_style . '" data-course-id="' . $course_id . '">' . $course->post_title . '</span>';
+                $course_arr[] = '<a  href="' . $this->controller->get_learner_management_course_url( $course_id ) . '"class="button' . $span_style . '" data-course-id="' . $course_id . '">' . $course->post_title . '</a>';
             }
 
             $html = $courses_total - $courses_completed . ' ' . esc_html__('Courses', 'woothemes-sensei') . ' ' . esc_html__('In Progress', 'woothemes-sensei');
@@ -258,8 +258,20 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
             $search = esc_html( $_GET['s'] );
         } // End If Statement
 
-        $per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
-        $per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
+
+        $screen = get_current_screen();
+        $per_page = 0;
+        if (!empty( $screen ) ) {
+            $screen_option = $screen->get_option( 'per_page', 'option' );
+            $per_page = absint( get_user_meta( get_current_user_id(), $screen_option, true) );
+            if ( empty ( $per_page ) || $per_page < 1 ) {
+                // get the default value if none is set
+                $per_page = absint( $screen->get_option( 'per_page', 'default' ) );
+            }
+        } else {
+            $per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
+            $per_page = absint( apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' ) );
+        }
 
         $paged = $this->get_pagenum();
         $offset = 0;

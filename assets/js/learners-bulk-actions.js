@@ -22,6 +22,10 @@ jQuery(document).ready(function() {
       var selectedUserIds = [];
       var courseIds = [];
       var bulkAction = '';
+        var validTemplate = {
+            isValid: true,
+            reason: ''
+        };
 
       return {
         updateSelectedUserIdsFromCheckbox: function ($checkbox) {
@@ -44,6 +48,7 @@ jQuery(document).ready(function() {
         },
         setAction: function (ac) {
           bulkAction = ac;
+            return this;
         },
         setCourseIds: function (newCourseIds) {
           courseIds = _map(newCourseIds, function (v) {
@@ -53,33 +58,62 @@ jQuery(document).ready(function() {
         },
         resetSelectedUserIds: function () {
           selectedUserIds = [];
-          courseIds = [];
-          bulkAction = '';
-          return this;
+            return this;
+        },
+        resetAll: function () {
+            this.resetSelectedUserIds();
+            courseIds = [];
+            bulkAction = '';
+            return this;
+        },
+        validator: function() {
+          return {
+              validateBulkAction: function() {
+                  if (bulkAction == '') {
+                      return {
+                          isValid: false,
+                          reason: 'Select an action'
+                      };
+                  }
+                  return validTemplate;
+              },
+              validateCourseIds: function () {
+                  if (_filter(courseIds, function (v) { return !isNaN(v);}).length === 0) {
+                      return {
+                          isValid: false,
+                          reason: 'Select a course'
+                      };
+                  }
+                  return validTemplate;
+              },
+              validateSelectedUserIds: function () {
+                  if (selectedUserIds.length === 0) {
+                      return {
+                          isValid: false,
+                          reason: 'Select some learners'
+                      };
+                  }
+                  return validTemplate;
+              },
+              validate: function () {
+                  var validations = [
+                      this.validateSelectedUserIds,
+                      this.validateBulkAction,
+                      this.validateCourseIds
+                  ], currentValidator;
+
+                  while (validations.length > 0) {
+                      currentValidatorResult = validations.shift().call(this);
+                      if (!currentValidatorResult.isValid) {
+                          return currentValidatorResult;
+                      }
+                  }
+                  return validTemplate;
+              }
+          }
         },
         validate: function () {
-          if (selectedUserIds.length === 0) {
-              return {
-                isValid: false,
-                reason: 'Select some learners'
-              };
-          }
-          if (_filter(courseIds, function (v) { return !isNaN(v);}).length === 0) {
-              return {
-                isValid: false,
-                reason: 'Select a course'
-              };
-          }
-          if (bulkAction == '') {
-              return {
-                isValid: false,
-                reason: 'Select an action'
-              };
-          }
-          return {
-            isValid: true,
-            reason: ''
-          };
+            return this.validator().validate();
         }
       }
 
@@ -98,7 +132,9 @@ jQuery(document).ready(function() {
             $cbSelectAll = $('#cb-select-all-1'),
             $learnerCourseOverviewDetail = $('.learner-course-overview-detail'),
             $learnerCourseOverviewDetailButton = $('.learner-course-overview-detail-btn'),
-            $cbSelectAllTwo = $('#cb-select-all-2');
+            $cbSelectAllTwo = $('#cb-select-all-2'),
+            $modalToggle = $('#sensei-bulk-learner-actions-modal-toggle'),
+            $modalContent = $('#sensei-bulk-learner-actions-modal');
 
         var hookSelectAll = function ($selectAll, $otherSelectAll) {
             $selectAll.on('click', function (evt) {
@@ -113,9 +149,22 @@ jQuery(document).ready(function() {
                     $selectUserCheckboxes.removeAttr('checked');
                     $otherSelectAll.removeAttr('checked');
                 }
+                toggleSelectCoursesIfUsersAndBulkActionValid();
             });
+
         };
 
+        var toggleSelectCoursesIfUsersAndBulkActionValid = function () {
+            var validator = bulkUserActions.validator(),
+                bulkActionValidationResult = validator.validateBulkAction(),
+                selectedUserIdsValidationResult = validator.validateSelectedUserIds();
+
+            if (bulkActionValidationResult.isValid && selectedUserIdsValidationResult.isValid) {
+                $modalToggle.removeAttr("disabled");
+            } else {
+                $modalToggle.attr("disabled", true);
+            }
+        };
 
         $courseSelect.select2({
           placeholder: sensei_learners_bulk_data.select_course_placeholder,
@@ -127,13 +176,16 @@ jQuery(document).ready(function() {
             evt.preventDefault();
             evt.stopPropagation();
             bulkUserActions.updateSelectedUserIdsFromCheckbox($checkbox);
+            toggleSelectCoursesIfUsersAndBulkActionValid();
+
         });
 
         hookSelectAll($cbSelectAll, $cbSelectAllTwo);
         hookSelectAll($cbSelectAllTwo, $cbSelectAll);
-        var $modalContent = $('#sensei-bulk-learner-actions-modal');
 
-        var $modalToggle = $('#sensei-bulk-learner-actions-modal-toggle').on('click', function (evt) {
+
+        $modalToggle.attr("disabled", true);
+        $modalToggle.on('click', function (evt) {
           $modalContent.modal({
             fadeDuration: 100,
             fadeDelay: 0.5
@@ -158,7 +210,23 @@ jQuery(document).ready(function() {
 
         $actionSelector.on('change', function (evt) {
             $hiddenSenseiBulkAction.val($actionSelector.val().trim());
+            bulkUserActions.setAction($hiddenSenseiBulkAction.val());
+            toggleSelectCoursesIfUsersAndBulkActionValid();
         });
+
+        $bulkActionCourseSelect.on('change', function () {
+            var courseIdsValid = bulkUserActions.setCourseIds(
+                $bulkActionCourseSelect.val()
+            ).validator().validateCourseIds().isValid;
+
+            if (courseIdsValid) {
+                $bulkLearnerActionSubmit.removeAttr("disabled");
+            } else {
+                $bulkLearnerActionSubmit.attr("disabled", true);
+            }
+        });
+
+        $bulkLearnerActionSubmit.attr('disabled', true);
 
         $bulkLearnerActionSubmit.on('click', function (evt) {
             evt.preventDefault();
@@ -182,21 +250,5 @@ jQuery(document).ready(function() {
         });
 
     })(bulkUserActions);
-
-
-
-    // var $trg = $('#bulk-learner-actions-trigger-btn');
-    // var allFields = $([]);
-
-    // };
-    // // var tpl = _.template($('#sensei-bulk-actions-modal-tpl').html());
-    // // console.log(tpl());
-    //
-    //
-    //
-
-    //
-
-    //
 
 });
