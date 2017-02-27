@@ -14,35 +14,39 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: includes/admin/class-sensei-learner-management.php:27
+#: includes/admin/class-sensei-learner-management.php:28
 msgid "Learner Management"
 msgstr ""
 
-#: includes/admin/class-sensei-learner-management.php:87, includes/class-sensei-learners-admin-bulk-actions-controller.php:169
+#: includes/admin/class-sensei-learner-management.php:83
+msgid "Learners per page"
+msgstr ""
+
+#: includes/admin/class-sensei-learner-management.php:109, includes/class-sensei-learners-admin-bulk-actions-controller.php:181
 msgid "Are you sure you want to remove this user?"
 msgstr ""
 
-#: includes/admin/class-sensei-learner-management.php:88, includes/class-sensei-learners-admin-bulk-actions-controller.php:170
+#: includes/admin/class-sensei-learner-management.php:110, includes/class-sensei-learners-admin-bulk-actions-controller.php:182
 msgid "Are you sure you want to remove the user from this lesson?"
 msgstr ""
 
-#: includes/admin/class-sensei-learner-management.php:89, includes/class-sensei-learners-admin-bulk-actions-controller.php:171
+#: includes/admin/class-sensei-learner-management.php:111, includes/class-sensei-learners-admin-bulk-actions-controller.php:183
 msgid "Are you sure you want to remove the user from this course?"
 msgstr ""
 
-#: includes/admin/class-sensei-learner-management.php:92
+#: includes/admin/class-sensei-learner-management.php:114
 msgid "Select Learner"
 msgstr ""
 
-#: includes/admin/class-sensei-learner-management.php:448
+#: includes/admin/class-sensei-learner-management.php:470
 msgid "Learner added successfully!"
 msgstr ""
 
-#: includes/admin/class-sensei-learner-management.php:450
+#: includes/admin/class-sensei-learner-management.php:472
 msgid "Learners added successfully!"
 msgstr ""
 
-#: includes/admin/class-sensei-learner-management.php:456
+#: includes/admin/class-sensei-learner-management.php:478
 msgid "Error adding learner."
 msgstr ""
 
@@ -951,31 +955,31 @@ msgstr ""
 msgid "Bulk Learner Actions"
 msgstr ""
 
-#: includes/class-sensei-learners-admin-bulk-actions-controller.php:86
+#: includes/class-sensei-learners-admin-bulk-actions-controller.php:98
 msgid "Assign to Course(s)"
 msgstr ""
 
-#: includes/class-sensei-learners-admin-bulk-actions-controller.php:87
+#: includes/class-sensei-learners-admin-bulk-actions-controller.php:99
 msgid "Unassign from Course(s)"
 msgstr ""
 
-#: includes/class-sensei-learners-admin-bulk-actions-controller.php:88
+#: includes/class-sensei-learners-admin-bulk-actions-controller.php:100
 msgid "Reset Course(s)"
 msgstr ""
 
-#: includes/class-sensei-learners-admin-bulk-actions-controller.php:174, includes/class-sensei-learners-admin-bulk-actions-view.php:133
+#: includes/class-sensei-learners-admin-bulk-actions-controller.php:186
 msgid "Select Course"
 msgstr ""
 
-#: includes/class-sensei-learners-admin-bulk-actions-controller.php:245
+#: includes/class-sensei-learners-admin-bulk-actions-controller.php:257
 msgid "This bulk action is not supported"
 msgstr ""
 
-#: includes/class-sensei-learners-admin-bulk-actions-controller.php:248
+#: includes/class-sensei-learners-admin-bulk-actions-controller.php:260
 msgid "Invalid Course"
 msgstr ""
 
-#: includes/class-sensei-learners-admin-bulk-actions-controller.php:252
+#: includes/class-sensei-learners-admin-bulk-actions-controller.php:264
 msgid "Bulk learner action succeeded"
 msgstr ""
 
@@ -991,8 +995,16 @@ msgstr ""
 msgid "$select_label"
 msgstr ""
 
-#: includes/class-sensei-learners-admin-bulk-actions-view.php:139, includes/class-sensei-learners-admin-bulk-actions-view.php:170
+#: includes/class-sensei-learners-admin-bulk-actions-view.php:133
+msgid "Select Course(s)"
+msgstr ""
+
+#: includes/class-sensei-learners-admin-bulk-actions-view.php:139
 msgid "Apply"
+msgstr ""
+
+#: includes/class-sensei-learners-admin-bulk-actions-view.php:170
+msgid "Select Courses"
 msgstr ""
 
 #: includes/class-sensei-learners-admin-bulk-actions-view.php:183, includes/class-sensei-lesson.php:1120
@@ -3096,11 +3108,11 @@ msgstr ""
 msgid "View the lesson quiz"
 msgstr ""
 
-#: includes/class-sensei-wc-subscriptions.php:170
+#: includes/class-sensei-wc-subscriptions.php:171
 msgid "No active subscription"
 msgstr ""
 
-#: includes/class-sensei-wc-subscriptions.php:171
+#: includes/class-sensei-wc-subscriptions.php:172
 msgid "Sorry, you do not have an access to this content without an active subscription."
 msgstr ""
 
