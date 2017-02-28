@@ -1498,11 +1498,10 @@ class Sensei_Admin {
 
                         </strong> &#8211;
 
-                        <?php esc_html_e( 'if you encounter layout issues please read our integration guide or choose a ', 'woothemes-sensei' ); ?>
-
-                        <a href="http://www.woothemes.com/product-category/themes/sensei-themes/"> <?php esc_html_e( 'Sensei theme', 'woothemes-sensei' ) ?> </a>
-
-                        :)
+                        <?php printf( /* translator: %s theme name */
+                            esc_html__( 'if you encounter layout issues please read our integration guide or choose a %s :)', 'woothemes-sensei' ),
+                            '<a href="http://www.woothemes.com/product-category/themes/sensei-themes/">'. esc_html__( 'Sensei theme', 'woothemes-sensei' ) . '</a>'
+                        ); ?>
 
                     </p>
                     <p class="submit">
