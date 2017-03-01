@@ -1,5 +1,17 @@
 *** Sensei Changelog ***
 
+2017.03.01 - version 1.9.12
+
+* Bulk Learner Actions - Initial version. You can now assign, unassign and reset multiple users on (multiple) courses.
+* Compatibility with Woocommerce 2.7
+* Initial support for the new user defined locale settings on wp 4.7
+* Fix - Jetpack Compat: Add Beautiful Math Support on quiz feedback
+* Fix - Correctly display answer feedback on quizzes
+* Fix - Cancelled trial subscriptions do not retain course access after trial expires.
+* Fix - Purchased course doesn’t show on learner profile
+* Fix - Error when updating course as a teacher in WP 4.7
+* Bugfixes, improvements
+
 2017.01.10 - version 1.9.11
 
 * Improved WC Memberships integration. Added option to "Auto-start" courses belonging to memberships when activated
