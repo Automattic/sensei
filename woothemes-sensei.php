@@ -97,20 +97,6 @@ Domain path: /lang/
      * All the activation checks needed to ensure Sensei is ready for use
      * @since 1.8.0
      */
-    function activate_sensei () {
-
-        // create the teacher role on activation and ensure that it has all the needed capabilities
-        Sensei()->teacher->create_role();
-
-        //Setup all the role capabilities needed
-        Sensei()->updates->add_sensei_caps();
-        Sensei()->updates->add_editor_caps();
-        Sensei()->updates->assign_role_caps();
-
-        //Flush rules
-        add_action( 'activated_plugin' , array( 'Sensei_Main','activation_flush_rules' ), 10 );
-
-        //Load the Welcome Screen
-        add_action( 'activated_plugin' , array( 'Sensei_Welcome','redirect' ), 20 );
-
-    }// end activate_sensei
+    function activate_sensei() {
+        Sensei()->activate();
+    }

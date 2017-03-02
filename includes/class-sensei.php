@@ -1253,6 +1253,26 @@ class Sensei_Main {
             return admin_url( 'admin.php?page=woothemes-sensei-settings&tab=general' );
         }
 
+    /**
+     * Activate sensei. Should only be called from Sensei activation hook
+     * @since 1.9.13
+     */
+    public function activate() {
+        // create the teacher role on activation and ensure that it has all the needed capabilities
+        $this->teacher->create_role();
+
+        //Setup all the role capabilities needed
+        $this->updates->add_sensei_caps();
+        $this->updates->add_editor_caps();
+        $this->updates->assign_role_caps();
+
+        //Flush rules
+        add_action( 'activated_plugin' , array( __CLASS__, 'activation_flush_rules' ), 10 );
+
+        //Load the Welcome Screen
+        add_action( 'activated_plugin' , array( 'Sensei_Welcome','redirect' ), 20 );
+    }
+
 } // End Class
 
 /**
