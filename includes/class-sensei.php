@@ -12,9 +12,9 @@ class Sensei_Main {
 
     /**
      * @var string
-     * Reference to the main plugin file
+     * Reference to the main plugin file name
      */
-    private $file;
+    private $main_plugin_file_name;
 
     /**
      * @var Sensei_Main $_instance to the the main and only instance of the Sensei class.
@@ -147,12 +147,12 @@ class Sensei_Main {
      * @param  string $file The base file of the plugin.
      * @since  1.0.0
      */
-    public function __construct ( $file, $args ) {
+    public function __construct ( $main_plugin_file_name, $args ) {
 
         // Setup object data
-        $this->file = $file;
-        $this->plugin_url = trailingslashit( plugins_url( '', $plugin = $file ) );
-        $this->plugin_path = trailingslashit( dirname( $file ) );
+        $this->main_plugin_file_name = $main_plugin_file_name;
+        $this->plugin_url = trailingslashit( plugins_url( '', $plugin = $this->main_plugin_file_name ) );
+        $this->plugin_path = trailingslashit( dirname( $this->main_plugin_file_name ) );
         $this->template_url	= apply_filters( 'sensei_template_url', 'sensei/' );
         $this->version = isset( $args['version'] ) ? $args['version'] : null;
 
@@ -165,7 +165,7 @@ class Sensei_Main {
         }
 
         // Run this on activation.
-        register_activation_hook( $this->file, array( $this, 'activation' ) );
+        register_activation_hook( $this->main_plugin_file_name, array( $this, 'activation' ) );
 
         // Image Sizes
         $this->init_image_sizes();
@@ -311,7 +311,7 @@ class Sensei_Main {
 	    $this->load_modules_class();
 
         // Load Learner Management Functionality
-        $this->learners = new Sensei_Learner_Management( $this->file );
+        $this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name );
 
         // Differentiate between administration and frontend logic.
         if ( is_admin() ) {
@@ -320,10 +320,10 @@ class Sensei_Main {
             new Sensei_Welcome();
 
             // Load Admin Class
-            $this->admin = new Sensei_Admin( $this->file );
+            $this->admin = new Sensei_Admin( $this->main_plugin_file_name );
 
             // Load Analysis Reports
-            $this->analysis = new Sensei_Analysis( $this->file );
+            $this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
         } else {
 
             // Load Frontend Class
@@ -339,10 +339,10 @@ class Sensei_Main {
         }
 
         // Load Grading Functionality
-        $this->grading = new Sensei_Grading( $this->file );
+        $this->grading = new Sensei_Grading( $this->main_plugin_file_name );
 
         // Load Email Class
-        $this->emails = new Sensei_Emails( $this->file );
+        $this->emails = new Sensei_Emails( $this->main_plugin_file_name );
 
         // Load Learner Profiles Class
         $this->learner_profiles = new Sensei_Learner_Profiles();
@@ -378,7 +378,7 @@ class Sensei_Main {
         add_action( 'init', array( $this, 'flush_rewrite_rules'), 101 );
 
         // Add plugin action links filter
-        add_filter( 'plugin_action_links_' . plugin_basename( $this->file ), array( $this, 'plugin_action_links' ) );
+        add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
 
     }
 
@@ -429,7 +429,7 @@ class Sensei_Main {
      */
     public function load_localisation () {
 
-        load_plugin_textdomain( 'woothemes-sensei', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+        load_plugin_textdomain( 'woothemes-sensei', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
     } // End load_localisation()
 
@@ -452,7 +452,7 @@ class Sensei_Main {
         // The "plugin_locale" filter is also used in load_plugin_textdomain()
         $locale = apply_filters( 'plugin_locale', $wp_user_locale, $domain );
         load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
-        load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+        load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
     } // End load_plugin_textdomain()
 
@@ -477,8 +477,8 @@ class Sensei_Main {
      */
     public function install () {
 
-        register_activation_hook( $this->file, array( $this, 'activate_sensei' ) );
-        register_activation_hook( $this->file, 'flush_rewrite_rules' );
+        register_activation_hook( $this->main_plugin_file_name, array( $this, 'activate_sensei' ) );
+        register_activation_hook( $this->main_plugin_file_name, 'flush_rewrite_rules' );
 
     } // End install()
 
@@ -951,7 +951,7 @@ class Sensei_Main {
 
             //Load the modules class
             require_once( 'class-sensei-modules.php');
-            Sensei()->modules = new Sensei_Core_Modules( $this->file );
+            Sensei()->modules = new Sensei_Core_Modules( $this->main_plugin_file_name );
 
         }else{
             // fallback for people still using the modules extension.
