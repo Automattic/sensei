@@ -160,7 +160,9 @@ class Sensei_Main {
         $this->init();
 
         // Installation
-        if ( is_admin() && ! defined( 'DOING_AJAX' ) ) $this->install();
+        if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+            $this->install();
+        }
 
         // Run this on activation.
         register_activation_hook( $this->file, array( $this, 'activation' ) );
@@ -339,6 +341,7 @@ class Sensei_Main {
 
         add_action( 'widgets_init', array( $this, 'register_widgets' ) );
         add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
+        add_action( 'after_setup_theme', array( $this, 'sensei_load_template_functions' ) );
 
         // Filter comment counts
         add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
@@ -1271,6 +1274,26 @@ class Sensei_Main {
 
         //Load the Welcome Screen
         add_action( 'activated_plugin' , array( 'Sensei_Welcome','redirect' ), 20 );
+    }
+
+    /**
+     * Load Sensei Template Functions
+     *
+     * @since 1.9.12
+     */
+    public function sensei_load_template_functions() {
+        require_once( $this->resolve_path( 'includes/template-functions.php' ) );
+    }
+
+    /**
+     * path relative to plugin basedir
+     * @param $path
+     * @return string
+     * @since 1.9.?
+     *
+     */
+    private function resolve_path( $path ) {
+        return trailingslashit( $this->plugin_path ) . $path;
     }
 
 } // End Class

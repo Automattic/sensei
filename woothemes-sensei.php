@@ -35,17 +35,6 @@ Domain path: /lang/
     require_once( 'includes/sensei-functions.php' );
 
     /**
-     * Load Sensei Template Functions
-     *
-     * @since 1.9.8
-     */
-    function sensei_load_template_functions() {
-        require_once( 'includes/template-functions.php' );
-    }
-
-    add_action( 'after_setup_theme', 'sensei_load_template_functions' );
-
-    /**
      * Returns the global Sensei Instance.
      *
      * @since 1.8.0
