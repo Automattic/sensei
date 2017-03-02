@@ -541,7 +541,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 	public function stats_boxes () {
 
 		// Get the data required
-		$user_count = count_users();
+		$user_count = count_users( 'memory' );
 		$user_count = apply_filters( 'sensei_analysis_total_users', $user_count['total_users'], $user_count );
 		$total_courses = Sensei()->course->course_count( array('publish', 'private') );
 		$total_lessons = Sensei()->lesson->lesson_count( array('publish', 'private') );
