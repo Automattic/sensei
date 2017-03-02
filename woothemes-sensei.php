@@ -28,43 +28,45 @@ Domain path: /lang/
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
 
-    require_once( 'includes/class-sensei-autoloader.php' );
-    require_once( 'includes/lib/woo-functions.php' );
-    require_once( 'includes/sensei-functions.php' );
+require_once( 'includes/class-sensei-autoloader.php' );
+require_once( 'includes/lib/woo-functions.php' );
+require_once( 'includes/sensei-functions.php' );
 
-    /**
-     * Returns the global Sensei Instance.
-     *
-     * @since 1.8.0
-     */
-    function Sensei() {
-        return Sensei_Main::instance( array( 'version' => '1.9.12' ) );
-    }
+/**
+ * Returns the global Sensei Instance.
+ *
+ * @since 1.8.0
+ */
+function Sensei() {
+    return Sensei_Main::instance( array( 'version' => '1.9.12' ) );
+}
 
-    //backwards compatibility
-    global $woothemes_sensei;
-    $woothemes_sensei = Sensei();
+//backwards compatibility
+global $woothemes_sensei;
+$woothemes_sensei = Sensei();
 
-    /**
-     * Plugin updates
-     * @since  1.0.1
-     */
-    woothemes_queue_update( plugin_basename( __FILE__ ), 'bad2a02a063555b7e2bee59924690763', 152116 );
+/**
+ * Plugin updates
+ * @since  1.0.1
+ */
+woothemes_queue_update( plugin_basename( __FILE__ ), 'bad2a02a063555b7e2bee59924690763', 152116 );
 
-    /**
-     * Sensei Activation Hook registration
-     * @since 1.8.0
-     */
-    register_activation_hook( __FILE__, 'activate_sensei' );
+/**
+ * Sensei Activation Hook registration
+ * @since 1.8.0
+ */
+register_activation_hook( __FILE__, 'activate_sensei' );
 
-    /**
-     * Activate_sensei
-     *
-     * All the activation checks needed to ensure Sensei is ready for use
-     * @since 1.8.0
-     */
-    function activate_sensei() {
-        Sensei()->activate();
-    }
+/**
+ * Activate_sensei
+ *
+ * All the activation checks needed to ensure Sensei is ready for use
+ * @since 1.8.0
+ */
+function activate_sensei() {
+    Sensei()->activate();
+}
