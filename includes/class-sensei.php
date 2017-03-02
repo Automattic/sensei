@@ -160,7 +160,7 @@ class Sensei_Main {
         $this->init();
 
         // Installation
-        if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+        if ( is_admin() && !defined( 'DOING_AJAX' ) ) {
             $this->install();
         }
 
@@ -179,7 +179,7 @@ class Sensei_Main {
      * Load the foundations of Sensei.
      * @since 1.9.0
      */
-    protected function init(){
+    protected function init() {
 
         // Localisation
         $this->load_plugin_textdomain();
@@ -192,6 +192,26 @@ class Sensei_Main {
         // all shortcodes on the front end
         new Sensei_Shortcode_Loader();
 
+        /**
+         * Hook in WooCommerce functionality
+         */
+        add_action('init', array( 'Sensei_WC', 'load_woocommerce_integration_hooks' ) );
+
+        /**
+         * Hook in WooCommerce Memberships functionality
+         */
+        add_action('init', array( 'Sensei_WC_Memberships', 'load_wc_memberships_integration_hooks' ) );
+
+        /**
+         * Hook in WooCommerce Memberships functionality
+         */
+        add_action('init', array( 'Sensei_WC_Subscriptions', 'load_wc_subscriptions_integration_hooks' ) );
+        /**
+         * Load all Template hooks
+         */
+        if( !is_admin() ){
+            require_once( 'includes/hooks/template.php' );
+        }
     }
 
     /**
@@ -1286,8 +1306,8 @@ class Sensei_Main {
     }
 
     /**
-     * path relative to plugin basedir
-     * @param $path
+     * Get full path for a path relative to plugin basedir
+     * @param $path string
      * @return string
      * @since 1.9.?
      *

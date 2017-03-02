@@ -48,27 +48,6 @@ Domain path: /lang/
     $woothemes_sensei = Sensei();
 
     /**
-     * Hook in WooCommerce functionality
-     */
-    add_action('init', array( 'Sensei_WC', 'load_woocommerce_integration_hooks' ) );
-
-    /**
-     * Hook in WooCommerce Memberships functionality
-     */
-    add_action('init', array( 'Sensei_WC_Memberships', 'load_wc_memberships_integration_hooks' ) );
-
-    /**
-     * Hook in WooCommerce Memberships functionality
-     */
-    add_action('init', array( 'Sensei_WC_Subscriptions', 'load_wc_subscriptions_integration_hooks' ) );
-    /**
-     * Load all Template hooks
-     */
-    if( !is_admin() ){
-        require_once( 'includes/hooks/template.php' );
-    }
-
-    /**
      * Plugin updates
      * @since  1.0.1
      */
