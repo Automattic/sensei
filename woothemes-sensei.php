@@ -32,9 +32,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-require_once( 'includes/class-sensei-autoloader.php' );
-require_once( 'includes/lib/woo-functions.php' );
-require_once( 'includes/sensei-functions.php' );
+require_once( 'includes/class-sensei-bootstrap.php' );
+
+Sensei_Bootstrap::get_instance()->bootstrap();
 
 /**
  * Returns the global Sensei Instance.

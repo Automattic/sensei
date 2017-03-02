@@ -154,4 +154,3 @@ class Sensei_Autoloader {
     }// end autoload
 
 }
-new Sensei_Autoloader();
