@@ -341,7 +341,8 @@ class Sensei_Main {
         add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
 
         // Filter comment counts
-        add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
+        // non-performant at scale so disabled.
+        //add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
 
         add_action( 'body_class', array( $this, 'body_class' ) );
 
