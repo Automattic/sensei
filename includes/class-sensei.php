@@ -147,13 +147,14 @@ class Sensei_Main {
      * @param  string $file The base file of the plugin.
      * @since  1.0.0
      */
-    public function __construct ( $file ) {
+    public function __construct ( $file, $args ) {
 
         // Setup object data
         $this->file = $file;
         $this->plugin_url = trailingslashit( plugins_url( '', $plugin = $file ) );
         $this->plugin_path = trailingslashit( dirname( $file ) );
         $this->template_url	= apply_filters( 'sensei_template_url', 'sensei/' );
+        $this->version = isset( $args['version'] ) ? $args['version'] : null;
 
         // Initialize the core Sensei functionality
         $this->init();
@@ -201,14 +202,14 @@ class Sensei_Main {
      * @see WC()
      * @return WooThemes_Sensei Instance.
      */
-    public static function instance() {
+    public static function instance( $args ) {
 
         if ( is_null( self::$_instance ) ) {
 
             //Sensei requires a reference to the main Sensei plugin file
             $sensei_main_plugin_file = dirname ( dirname( __FILE__ ) ) . '/woothemes-sensei.php';
 
-            self::$_instance = new self( $sensei_main_plugin_file  );
+            self::$_instance = new self( $sensei_main_plugin_file, $args  );
 
             // load the global class objects needed throughout Sensei
             self::$_instance->initialize_global_objects();

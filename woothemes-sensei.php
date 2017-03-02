@@ -50,14 +50,9 @@ Domain path: /lang/
      *
      * @since 1.8.0
      */
-    function Sensei(){
-
-        return Sensei_Main::instance();
-
+    function Sensei() {
+        return Sensei_Main::instance( array( 'version' => '1.9.12' ) );
     }
-
-	// set the sensei version number
-    Sensei()->version = '1.9.12';
 
     //backwards compatibility
     global $woothemes_sensei;
@@ -80,10 +75,8 @@ Domain path: /lang/
     /**
      * Load all Template hooks
      */
-    if(! is_admin() ){
-
+    if( !is_admin() ){
         require_once( 'includes/hooks/template.php' );
-
     }
 
     /**
