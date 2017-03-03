@@ -2393,6 +2393,17 @@ class Sensei_Utils {
 		$plugin_present_and_activated = in_array( $plugin_registered_path, $active_plugins ) || array_key_exists( $plugin_registered_path, $active_plugins );
 		return class_exists( $plugin_class_to_look_for ) || $plugin_present_and_activated;
 	}
+
+	/**
+	 * Hard - Resets a Learner's Course Progress
+	 * @param $course_id int
+	 * @param $user_id int
+	 * @return mixed
+	 */
+	public static function reset_course_for_user( $course_id, $user_id ) {
+		self::sensei_remove_user_from_course( $course_id, $user_id );
+		return self::user_start_course( $user_id, $course_id );
+	}
 } // End Class
 
 /**
