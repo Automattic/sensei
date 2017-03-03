@@ -300,6 +300,10 @@ class Sensei_Learner_Management {
 
 		$post = get_post( intval( $action_data[ 'post_id' ] ) );
 
+		if ( empty($post) ) {
+			exit('');
+		}
+
 		// validate the user
 		$may_remove_user = false;
 		if ( current_user_can('manage_sensei') || $post->post_author == get_current_user_id() ) {
@@ -320,12 +324,13 @@ class Sensei_Learner_Management {
 				exit('');
 			}
 
+			$altered = true;
+
 			switch ( $action ) {
 				case 'reset':
 					switch ( $post_type ) {
 						case 'course':
 							$lesson_ids = Sensei()->course->course_lessons( $post_id, 'any', 'ids' );
-							$altered = true;
 							foreach ( $lesson_ids as $lesson_id ) {
 								$altered = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 							}
