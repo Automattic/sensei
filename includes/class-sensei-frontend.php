@@ -735,7 +735,7 @@ class Sensei_Frontend {
      * @param WP_Query $query
      */
 	public function lesson_tag_archive_filter( $query ) {
-    	if( is_tax( 'lesson-tag' ) && $query->is_main_query() ) {
+    	if( $query->is_main_query() && is_tax( 'lesson-tag' ) ) {
     		// Limit to lessons only
     		$query->set( 'post_type', 'lesson' );
 

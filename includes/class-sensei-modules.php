@@ -535,7 +535,7 @@ class Sensei_Core_Modules
      */
     public function module_archive_filter($query)
     {
-        if (is_tax($this->taxonomy) && $query->is_main_query()) {
+        if ( $query->is_main_query() && is_tax($this->taxonomy) ) {
 
 
             // Limit to lessons only
