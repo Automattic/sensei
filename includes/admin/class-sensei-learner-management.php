@@ -316,6 +316,9 @@ class Sensei_Learner_Management {
 			$post_type = sanitize_text_field( $action_data['post_type'] );
 
 			$user = get_userdata( $user_id );
+			if ( false === $user ) {
+				exit('');
+			}
 
 			switch ( $action ) {
 				case 'reset':
@@ -324,7 +327,7 @@ class Sensei_Learner_Management {
 							$lesson_ids = Sensei()->course->course_lessons( $post_id, 'any', 'ids' );
 							$altered = true;
 							foreach ( $lesson_ids as $lesson_id ) {
-								$altered &= Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+								$altered = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 							}
 						break;
 
