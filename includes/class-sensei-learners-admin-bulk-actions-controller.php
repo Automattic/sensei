@@ -133,31 +133,33 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
         foreach ( $user_ids as $user_id ) {
             $user = new WP_User( $user_id );
+
             if ( !$user->exists() ) {
                 continue;
             }
-            if ( self::ADD_TO_COURSE === $sensei_bulk_action ) {
-                foreach ($course_ids as $course_id) {
-                    Sensei_Utils::user_start_course( $user_id, absint( $course_id ) );
-                }
-            }
-            if ( self::REMOVE_FROM_COURSE === $sensei_bulk_action ) {
 
-                foreach ($course_ids as $course_id) {
-                    if (!Sensei_Utils::user_started_course( absint( $course_id ), $user_id )) {
+            foreach ( $course_ids as $course_id ) {
+
+                if ( self::ADD_TO_COURSE === $sensei_bulk_action ) {
+                    Sensei_Utils::user_start_course( $user_id, $course_id );
+                }
+
+                if ( self::REMOVE_FROM_COURSE === $sensei_bulk_action ) {
+                    if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
                         continue;
                     }
-                    Sensei_Utils::sensei_remove_user_from_course($course_id, $user_id);
+                    Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
                 }
 
-            }
-            if ( self::RESET_COURSE === $sensei_bulk_action ) {
-                if (!Sensei_Utils::user_started_course( absint( $course_id ), $user_id )) {
-                    continue;
+                if ( self::RESET_COURSE === $sensei_bulk_action ) {
+                    if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+                        continue;
+                    }
+                    Sensei_Utils::reset_course_for_user( $course_id, $user_id );
                 }
-                Sensei_Utils::reset_course_for_user( absint( $course_id ), absint( $user_id ) );
             }
         }
+
         $this->redirect_to_learner_admin_index( 'success-action-success' );
     }
 
