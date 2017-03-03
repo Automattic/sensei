@@ -238,8 +238,8 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		$activity_args = array( 
 				'user_id' => $this->user_id,
 				'type' => 'sensei_course_status',
-				'number' => $args['number'],
-				'offset' => $args['offset'],
+				'number' => isset( $args['number'] ) ? $args['number'] : 0 ,
+				'offset' => isset( $args['offset'] ) ? $args['offset'] : 0 ,
 				'orderby' => $args['orderby'],
 				'order' => $args['order'],
 				'status' => 'any',
@@ -314,4 +314,4 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
  * @ignore only for backward compatibility
  * @since 1.9.0
  */
-class WooThemes_Sensei_Analysis_User_Profile_List_Table extends WooThemes_Sensei_List_Table {}
+class WooThemes_Sensei_Analysis_User_Profile_List_Table extends Sensei_Analysis_User_Profile_List_Table {}
