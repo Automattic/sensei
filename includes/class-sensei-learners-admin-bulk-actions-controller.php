@@ -155,8 +155,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
                 if (!Sensei_Utils::user_started_course( absint( $course_id ), $user_id )) {
                     continue;
                 }
-                Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id);
-                Sensei_Utils::user_start_course( $user_id, absint( $course_id ) );
+                Sensei_Utils::reset_course_for_user( absint( $course_id ), absint( $user_id ) );
             }
         }
         $this->redirect_to_learner_admin_index( 'success-action-success' );

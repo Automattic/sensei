@@ -330,10 +330,7 @@ class Sensei_Learner_Management {
 				case 'reset':
 					switch ( $post_type ) {
 						case 'course':
-							$lesson_ids = Sensei()->course->course_lessons( $post_id, 'any', 'ids' );
-							foreach ( $lesson_ids as $lesson_id ) {
-								$altered = Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
-							}
+							$altered = Sensei_Utils::reset_course_for_user( $post_id, $user_id );
 						break;
 
 						case 'lesson':
