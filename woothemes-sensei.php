@@ -30,9 +30,10 @@ Domain path: /lang/
 
 	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-    require_once( 'includes/class-sensei-autoloader.php' );
-    require_once( 'includes/lib/woo-functions.php' );
-    require_once( 'includes/sensei-functions.php' );
+    require_once 'includes/class-sensei-autoloader.php';
+    require_once 'includes/lib/woo-functions.php';
+    require_once 'includes/sensei-functions.php';
+    require_once 'assets/fpdf/fpdf.php';
 
     /**
      * Load Sensei Template Functions
