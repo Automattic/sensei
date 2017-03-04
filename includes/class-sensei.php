@@ -210,7 +210,7 @@ class Sensei_Main {
          * Load all Template hooks
          */
         if( !is_admin() ){
-            require_once( 'includes/hooks/template.php' );
+            require_once( $this->resolve_path( 'includes/hooks/template.php' ) );
         }
     }
 
