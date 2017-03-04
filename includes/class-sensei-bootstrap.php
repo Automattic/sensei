@@ -19,6 +19,9 @@ class Sensei_Bootstrap {
      */
     private $autoloader = null;
 
+    /**
+     * @var bool
+     */
     private $is_bootstrapped = false;
 
     private function __construct() {
