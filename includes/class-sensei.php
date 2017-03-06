@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+} // Exit if accessed directly
 
 /**
  * Responsible for loading Sensei and setting up the Main WordPress hooks.
