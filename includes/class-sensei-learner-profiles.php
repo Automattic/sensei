@@ -94,8 +94,12 @@ class Sensei_Learner_Profiles {
 				$permalink = trailingslashit( get_home_url() ) . '?learner_profile=' . $user->user_nicename;
 			}
 		}
-
-		return $permalink;
+		
+        /**
+         * This allows filtering of the Learner Profile permalinks.
+         * @since 1.9.13
+         */
+		return apply_filters( 'sensei_learner_profile_permalink', $permalink, $user );
 	}
 
 	/**
