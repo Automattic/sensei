@@ -1908,20 +1908,9 @@ class Sensei_Core_Modules
             return $terms;
         }
 
-        $term_objects = $this->filter_terms_by_owner( $terms, get_current_user_id() );
+        $terms_filtered = $this->filter_terms_by_owner( $terms, get_current_user_id() );
 
-        // if term objects were passed in send back objects
-        // if term id were passed in send that back
-        if( is_object( $terms[0] ) ){
-            return $term_objects;
-        }
-
-        $terms = array();
-        foreach( $term_objects as $term_object ){
-            $terms[] = $term_object->term_id;
-        }
-
-        return $terms;
+        return $terms_filtered;
 
 
     }// end filter_course_selected_terms
@@ -1937,25 +1926,21 @@ class Sensei_Core_Modules
      */
     public function filter_terms_by_owner( $terms, $user_id ){
 
-        $users_terms = array();
+        return array_filter(
+            $terms,
+            function ( $term ) use ( $user_id ) {
 
-        foreach( $terms as $index => $term ){
+                if( is_numeric( $term ) ){
+                    // the term id was given, get the term object
+                    $term = get_term( $term, 'module' );
+                }
 
-            if( is_numeric( $term ) ){
-                // the term id was given, get the term object
-                $term = get_term( $term, 'module' );
+                $author = Sensei_Core_Modules::get_term_author( $term->slug );
+
+                return $user_id == $author->ID;
+
             }
-
-            $author = Sensei_Core_Modules::get_term_author( $term->slug );
-
-            if ( $user_id == $author->ID ) {
-                // add the term to the teachers terms
-                $users_terms[] = $term;
-            }
-
-        }
-
-        return $users_terms;
+        );
 
     } // end filter terms by owner
 
