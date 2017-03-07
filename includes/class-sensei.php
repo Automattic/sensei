@@ -140,6 +140,11 @@ class Sensei_Main {
     public $analysis;
 
     /**
+     * @var Sensei_REST_API_Main
+     */
+    public $rest_api;
+
+    /**
      * @var $id
      */
     private $id;
@@ -351,6 +356,8 @@ class Sensei_Main {
 
         // Load WPML compatibility class
         $this->Sensei_WPML = new Sensei_WPML();
+
+        $this->rest_api = new Sensei_REST_API_Main();
 
     }
 

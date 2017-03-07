@@ -98,6 +98,7 @@ class Sensei_Autoloader {
         $this->initialize_class_file_map();
 
         $this->autoloader_namespaces = array(
+            new Sensei_Autoloader_Namespace( 'Sensei_REST_API', 'rest-api' ),
             new Sensei_Autoloader_Namespace( 'Sensei'         , '')
         );
 
