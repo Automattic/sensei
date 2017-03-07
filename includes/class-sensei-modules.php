@@ -103,10 +103,10 @@ class Sensei_Core_Modules
         add_action( 'wp_ajax_sensei_add_new_module_term', array( 'Sensei_Core_Modules','add_new_module_term' ) );
 
         // for non admin users, only show taxonomies that belong to them
-        add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
+        //add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
         // add the teacher name next to the module term in for admin users
         add_filter('get_terms', array( $this, 'append_teacher_name_to_module' ), 70, 3 );
-        add_filter('get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
+        //add_filter('get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
 
         // remove the default modules  metabox
         add_action('admin_init',array( 'Sensei_Core_Modules' , 'remove_default_modules_box' ));
