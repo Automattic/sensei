@@ -132,6 +132,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 			);
 		} // End If Statement
 
+		if ( Sensei_WC_Memberships::is_wc_memberships_active() ) {
+			$sections['sensei-wc-memberships-settings'] = array(
+				'name' 			=> __( 'WooCommerce Memberships', 'woothemes-sensei' ),
+				'description'	=> __( 'Optional settings for WooCommerce Memberships functions.', 'woothemes-sensei' )
+			);
+		} // End If Statement
+
 		if ( 'en_US' !== get_locale() ) {
 			$sections['language-settings'] = array(
 				'name' 			=> __( 'Language', 'woothemes-sensei' ),
@@ -214,6 +221,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['js_disable'] = array(
 								'name' => __( 'Disable Sensei Javascript', 'woothemes-sensei' ),
 								'description' => __( 'Prevent the frontend javascript from loading. This affects the progress bars and the My Courses tabs.', 'woothemes-sensei' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'default-settings'
+								);
+
+		$fields['sensei_video_embed_html_sanitization_disable'] = array(
+								'name' => __( 'Disable HTML security', 'woothemes-sensei' ),
+								'description' => __( 'Allow any HTML tags in the Video Embed field. Warning: Enabling this may leave your site more vulnerable to XSS attacks', 'woothemes-sensei' ),
 								'type' => 'checkbox',
 								'default' => false,
 								'section' => 'default-settings'
@@ -580,6 +595,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 									);
 
 		} // End If Statement
+
+		if ( Sensei_WC_Memberships::is_wc_memberships_active() ) {
+			$fields['sensei_wc_memberships_auto_start_courses'] = array(
+				'name' => __( 'Auto-start courses belonging to a membership', 'woothemes-sensei' ),
+				'description' => __( 'Automatically start courses belonging to a WC Membership when activated', 'woothemes-sensei' ),
+				'type' => 'checkbox',
+				'default' => false,
+				'section' => 'sensei-wc-memberships-settings'
+			);
+		}
 
 		if ( 'en_US' !== get_locale() ) {
 			$fields['install_language_pack'] = array(

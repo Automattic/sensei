@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+} // Exit if accessed directly
 
 /**
  * Responsible for loading Sensei and setting up the Main WordPress hooks.
@@ -12,9 +14,9 @@ class Sensei_Main {
 
     /**
      * @var string
-     * Reference to the main plugin file
+     * Reference to the main plugin file name
      */
-    private $file;
+    private $main_plugin_file_name;
 
     /**
      * @var Sensei_Main $_instance to the the main and only instance of the Sensei class.
@@ -138,6 +140,11 @@ class Sensei_Main {
     public $analysis;
 
     /**
+     * @var Sensei_REST_API_Main
+     */
+    public $rest_api;
+
+    /**
      * @var $id
      */
     private $id;
@@ -147,22 +154,25 @@ class Sensei_Main {
      * @param  string $file The base file of the plugin.
      * @since  1.0.0
      */
-    public function __construct ( $file ) {
+    public function __construct ( $main_plugin_file_name, $args ) {
 
         // Setup object data
-        $this->file = $file;
-        $this->plugin_url = trailingslashit( plugins_url( '', $plugin = $file ) );
-        $this->plugin_path = trailingslashit( dirname( $file ) );
+        $this->main_plugin_file_name = $main_plugin_file_name;
+        $this->plugin_url = trailingslashit( plugins_url( '', $plugin = $this->main_plugin_file_name ) );
+        $this->plugin_path = trailingslashit( dirname( $this->main_plugin_file_name ) );
         $this->template_url	= apply_filters( 'sensei_template_url', 'sensei/' );
+        $this->version = isset( $args['version'] ) ? $args['version'] : null;
 
         // Initialize the core Sensei functionality
         $this->init();
 
         // Installation
-        if ( is_admin() && ! defined( 'DOING_AJAX' ) ) $this->install();
+        if ( is_admin() && !defined( 'DOING_AJAX' ) ) {
+            $this->install();
+        }
 
         // Run this on activation.
-        register_activation_hook( $this->file, array( $this, 'activation' ) );
+        register_activation_hook( $this->main_plugin_file_name, array( $this, 'activation' ) );
 
         // Image Sizes
         $this->init_image_sizes();
@@ -176,7 +186,7 @@ class Sensei_Main {
      * Load the foundations of Sensei.
      * @since 1.9.0
      */
-    protected function init(){
+    protected function init() {
 
         // Localisation
         $this->load_plugin_textdomain();
@@ -189,6 +199,26 @@ class Sensei_Main {
         // all shortcodes on the front end
         new Sensei_Shortcode_Loader();
 
+        /**
+         * Hook in WooCommerce functionality
+         */
+        add_action('init', array( 'Sensei_WC', 'load_woocommerce_integration_hooks' ) );
+
+        /**
+         * Hook in WooCommerce Memberships functionality
+         */
+        add_action('init', array( 'Sensei_WC_Memberships', 'load_wc_memberships_integration_hooks' ) );
+
+        /**
+         * Hook in WooCommerce Memberships functionality
+         */
+        add_action('init', array( 'Sensei_WC_Subscriptions', 'load_wc_subscriptions_integration_hooks' ) );
+        /**
+         * Load all Template hooks
+         */
+        if( !is_admin() ){
+            require_once( $this->resolve_path( 'includes/hooks/template.php' ) );
+        }
     }
 
     /**
@@ -201,14 +231,14 @@ class Sensei_Main {
      * @see WC()
      * @return WooThemes_Sensei Instance.
      */
-    public static function instance() {
+    public static function instance( $args ) {
 
         if ( is_null( self::$_instance ) ) {
 
             //Sensei requires a reference to the main Sensei plugin file
             $sensei_main_plugin_file = dirname ( dirname( __FILE__ ) ) . '/woothemes-sensei.php';
 
-            self::$_instance = new self( $sensei_main_plugin_file  );
+            self::$_instance = new self( $sensei_main_plugin_file, $args  );
 
             // load the global class objects needed throughout Sensei
             self::$_instance->initialize_global_objects();
@@ -288,7 +318,7 @@ class Sensei_Main {
 	    $this->load_modules_class();
 
         // Load Learner Management Functionality
-        $this->learners = new Sensei_Learner_Management( $this->file );
+        $this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name );
 
         // Differentiate between administration and frontend logic.
         if ( is_admin() ) {
@@ -297,11 +327,10 @@ class Sensei_Main {
             new Sensei_Welcome();
 
             // Load Admin Class
-            $this->admin = new Sensei_Admin( $this->file );
+            $this->admin = new Sensei_Admin( $this->main_plugin_file_name );
 
             // Load Analysis Reports
-            $this->analysis = new Sensei_Analysis( $this->file );
-
+            $this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
         } else {
 
             // Load Frontend Class
@@ -317,16 +346,18 @@ class Sensei_Main {
         }
 
         // Load Grading Functionality
-        $this->grading = new Sensei_Grading( $this->file );
+        $this->grading = new Sensei_Grading( $this->main_plugin_file_name );
 
         // Load Email Class
-        $this->emails = new Sensei_Emails( $this->file );
+        $this->emails = new Sensei_Emails( $this->main_plugin_file_name );
 
         // Load Learner Profiles Class
         $this->learner_profiles = new Sensei_Learner_Profiles();
 
         // Load WPML compatibility class
         $this->Sensei_WPML = new Sensei_WPML();
+
+        $this->rest_api = new Sensei_REST_API_Main();
 
     }
 
@@ -339,6 +370,7 @@ class Sensei_Main {
 
         add_action( 'widgets_init', array( $this, 'register_widgets' ) );
         add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
+        add_action( 'after_setup_theme', array( $this, 'sensei_load_template_functions' ) );
 
         // Filter comment counts
         add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
@@ -355,7 +387,7 @@ class Sensei_Main {
         add_action( 'init', array( $this, 'flush_rewrite_rules'), 101 );
 
         // Add plugin action links filter
-        add_filter( 'plugin_action_links_' . plugin_basename( $this->file ), array( $this, 'plugin_action_links' ) );
+        add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
 
     }
 
@@ -406,7 +438,7 @@ class Sensei_Main {
      */
     public function load_localisation () {
 
-        load_plugin_textdomain( 'woothemes-sensei', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+        load_plugin_textdomain( 'woothemes-sensei', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
     } // End load_localisation()
 
@@ -417,12 +449,19 @@ class Sensei_Main {
      * @return  void
      */
     public function load_plugin_textdomain () {
-
+        global $wp_version;
         $domain = 'woothemes-sensei';
+
+        if ( version_compare( $wp_version, '4.7', '>=' ) && is_admin() ) {
+            $wp_user_locale = get_user_locale();
+        } else {
+            $wp_user_locale = get_locale();
+        }
+
         // The "plugin_locale" filter is also used in load_plugin_textdomain()
-        $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+        $locale = apply_filters( 'plugin_locale', $wp_user_locale, $domain );
         load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
-        load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+        load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
     } // End load_plugin_textdomain()
 
@@ -447,8 +486,8 @@ class Sensei_Main {
      */
     public function install () {
 
-        register_activation_hook( $this->file, array( $this, 'activate_sensei' ) );
-        register_activation_hook( $this->file, 'flush_rewrite_rules' );
+        register_activation_hook( $this->main_plugin_file_name, array( $this, 'activate_sensei' ) );
+        register_activation_hook( $this->main_plugin_file_name, 'flush_rewrite_rules' );
 
     } // End install()
 
@@ -884,9 +923,15 @@ class Sensei_Main {
      * @since 1.7.0
      */
     public function jetpack_latex_support() {
-        if ( function_exists( 'latex_markup') ) {
-            add_filter( 'sensei_question_title', 'latex_markup' );
-            add_filter( 'sensei_answer_text', 'latex_markup' );
+        $this->maybe_add_latex_support_via( 'latex_markup' );
+    }
+
+    private function maybe_add_latex_support_via($func_name ) {
+        if ( function_exists( $func_name ) ) {
+            add_filter( 'sensei_question_title', $func_name );
+            add_filter( 'sensei_answer_text', $func_name );
+            add_filter( 'sensei_question_answer_notes', $func_name );
+            add_filter( 'sensei_questions_get_correct_answer', $func_name );
         }
     }
     
@@ -896,10 +941,7 @@ class Sensei_Main {
 	 * @return null
 	 */
 	public function wp_quicklatex_support() {
-		if ( function_exists( 'quicklatex_parser') ) {
-			add_filter( 'sensei_question_title', 'quicklatex_parser' );
-			add_filter( 'sensei_answer_text', 'quicklatex_parser' );
-		}
+        $this->maybe_add_latex_support_via( 'quicklatex_parser' );
 	}
 
     /**
@@ -918,7 +960,7 @@ class Sensei_Main {
 
             //Load the modules class
             require_once( 'class-sensei-modules.php');
-            Sensei()->modules = new Sensei_Core_Modules( $this->file );
+            Sensei()->modules = new Sensei_Core_Modules( $this->main_plugin_file_name );
 
         }else{
             // fallback for people still using the modules extension.
@@ -1242,6 +1284,46 @@ class Sensei_Main {
         public function get_general_configuration_url() {
             return admin_url( 'admin.php?page=woothemes-sensei-settings&tab=general' );
         }
+
+    /**
+     * Activate sensei. Should only be called from Sensei activation hook
+     * @since 1.9.13
+     */
+    public function activate() {
+        // create the teacher role on activation and ensure that it has all the needed capabilities
+        $this->teacher->create_role();
+
+        //Setup all the role capabilities needed
+        $this->updates->add_sensei_caps();
+        $this->updates->add_editor_caps();
+        $this->updates->assign_role_caps();
+
+        //Flush rules
+        add_action( 'activated_plugin' , array( __CLASS__, 'activation_flush_rules' ), 10 );
+
+        //Load the Welcome Screen
+        add_action( 'activated_plugin' , array( 'Sensei_Welcome','redirect' ), 20 );
+    }
+
+    /**
+     * Load Sensei Template Functions
+     *
+     * @since 1.9.12
+     */
+    public function sensei_load_template_functions() {
+        require_once( $this->resolve_path( 'includes/template-functions.php' ) );
+    }
+
+    /**
+     * Get full path for a path relative to plugin basedir
+     * @param $path string
+     * @return string
+     * @since 1.9.?
+     *
+     */
+    private function resolve_path( $path ) {
+        return trailingslashit( $this->plugin_path ) . $path;
+    }
 
 } // End Class
 

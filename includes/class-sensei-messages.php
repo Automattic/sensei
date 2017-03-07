@@ -412,7 +412,7 @@ class Sensei_Messages {
 
 		if( is_admin() ) return;
 
-		if( is_post_type_archive( $this->post_type ) && $query->is_main_query() ) {
+		if( $query->is_main_query() && is_post_type_archive( $this->post_type ) ) {
 			wp_get_current_user();
 			$username = $current_user->user_login;
 

@@ -16,6 +16,8 @@ class Sensei_Learner_Management {
 	public $name;
 	public $file;
 	public $page_slug;
+	public $bulk_actions_controller;
+	const SENSEI_LEARNER_MANAGEMENT_PER_PAGE = 'sensei_learner_management_per_page';
 
 	/**
 	 * Constructor
@@ -29,9 +31,10 @@ class Sensei_Learner_Management {
 
 		// Admin functions
 		if ( is_admin() ) {
+			add_filter('set-screen-option', array($this, 'set_learner_management_screen_option'), 20, 3);
 			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30);
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container'  ) );
-			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+			if ( isset( $_GET['page'] ) && ( ( $_GET['page'] == $this->page_slug ) || ( $_GET['page'] == 'sensei_learner_admin' ) ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
@@ -39,12 +42,14 @@ class Sensei_Learner_Management {
 			add_action( 'admin_init', array( $this, 'add_new_learners' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
+			$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
 		} // End If Statement
 
 		// Ajax functions
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 			add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
+			add_action( 'wp_ajax_reset_user_post', array( $this, 'reset_user_post' ) );
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
 		}
 	} // End __construct()
@@ -60,9 +65,29 @@ class Sensei_Learner_Management {
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
+			add_action("load-$learners_page", array($this, "load_screen_options_when_on_bulk_actions") );
 		}
 
 	} // End learners_admin_menu()
+
+	public function set_learner_management_screen_option($status, $option, $value) {
+		if ( self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE == $option ) {
+			return $value;
+		}
+		return $status;
+	}
+	
+	public function load_screen_options_when_on_bulk_actions() {
+		if ( isset($this->bulk_actions_controller) && $this->bulk_actions_controller->is_current_page() ) {
+
+			$args = array(
+				'label' => __('Learners per page', 'woothemes-sensei'),
+				'default' => 20,
+				'option' => self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE
+			);
+			add_screen_option( 'per_page', $args );
+		}
+	}
 
 	/**
 	 * enqueue_scripts function.
@@ -73,25 +98,31 @@ class Sensei_Learner_Management {
 	 * @return void
 	 */
 	public function enqueue_scripts () {
-
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
+		$suffix = $is_debug ? '' : '.min';
 
 		// Load Learners JS
 		wp_enqueue_script( 'sensei-learners-general',
             Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
                             array('jquery','sensei-core-select2','sensei-chosen-ajax' ), Sensei()->version, true );
 
+
+		wp_localize_script( 'sensei-learners-general', 'slgL10n', array(
+			'inprogress'    => __( 'In Progress', 'woothemes-sensei' ),
+		) );
+
 		$data = array(
 			'remove_generic_confirm' => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
 			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
 			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
-			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
+			'reset_lesson_confirm' => __( 'Are you sure you want to reset the progress of this user for this lesson?', 'woothemes-sensei' ),
+			'reset_course_confirm' => __( 'Are you sure you want to reset the progress of this user for this course?', 'woothemes-sensei' ),
+			'modify_user_post_nonce' => wp_create_nonce( 'modify_user_post_nonce' ),
             'search_users_nonce' => wp_create_nonce( 'search-users' ),
             'selectplaceholder'=> __( 'Select Learner', 'woothemes-sensei' )
 		);
 
 		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
-
 	} // End enqueue_scripts()
 
 	/**
@@ -154,7 +185,11 @@ class Sensei_Learner_Management {
 	 * @return void
 	 */
 	public function learners_page() {
-
+		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
+		if ( $this->bulk_actions_controller->get_view() === $type ) {
+			$this->bulk_actions_controller->learner_admin_page();
+			return;
+		}
 		// Load Learners data
 		$course_id = 0;
 		$lesson_id = 0;
@@ -228,7 +263,7 @@ class Sensei_Learner_Management {
 			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>'; 
 		}
 		?>
-			<h1><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?></h1>
+			<h1><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?> | <a href="<?php echo esc_attr($this->bulk_actions_controller->get_url()); ?>"><?php echo $this->bulk_actions_controller->get_name(); ?></a></h1>
 		<?php
 	} // End learners_default_nav()
 
@@ -247,72 +282,90 @@ class Sensei_Learner_Management {
 		die();
 	}
 
-	public function remove_user_from_post() {
-
-        // Parse POST data
-        $data = sanitize_text_field( $_POST['data'] );
-        $action_data = array();
-        parse_str( $data, $action_data );
+	public function handle_reset_remove_user_post( $action ) {
+		// Parse POST data
+		$data = sanitize_text_field( $_POST[ 'data' ] );
+		$action_data = array();
+		parse_str( $data, $action_data );
 
 		// Security checks
-        // ensure the current user may remove users from post
-        // only teacher or admin can remove users
+		// ensure the current user may remove users from post
+		// only teacher or admin can remove users
 
-        // check the nonce, valid post
+		// check the nonce, valid post
 		$nonce = '';
-		if ( isset($_POST['remove_user_from_post_nonce']) ) {
-			$nonce = esc_html( $_POST['remove_user_from_post_nonce'] );
+		if ( isset( $_POST[ 'modify_user_post_nonce' ] ) ) {
+			$nonce = esc_html( $_POST[ 'modify_user_post_nonce' ] );
 		}
-        $post =  get_post( intval( $action_data[ 'post_id' ] ) );
 
-        // validate the user
-        $may_remove_user = false;
-        if( current_user_can('manage_sensei')
-            ||  $post->post_author == get_current_user_id() ){
+		$post = get_post( intval( $action_data[ 'post_id' ] ) );
 
-            $may_remove_user = true;
+		if ( empty($post) ) {
+			exit('');
+		}
 
-        }
+		// validate the user
+		$may_remove_user = false;
+		if ( current_user_can('manage_sensei') || $post->post_author == get_current_user_id() ) {
+			$may_remove_user = true;
+		}
 
-        if( ! wp_verify_nonce( $nonce, 'remove_user_from_post_nonce' )
-            || ! is_a( $post ,'WP_Post' )
-            || ! $may_remove_user ){
+		if ( ! wp_verify_nonce( $nonce, 'modify_user_post_nonce' ) || ! is_a( $post, 'WP_Post' ) || ! $may_remove_user ) {
+			exit('');
+		}
 
-            die('');
-
-        }
-
-		if( $action_data['user_id'] && $action_data['post_id'] && $action_data['post_type'] ) {
-
+		if ( $action_data[ 'user_id' ] && $action_data[ 'post_id' ] && $action_data[ 'post_type' ] ) {
 			$user_id = intval( $action_data['user_id'] );
 			$post_id = intval( $action_data['post_id'] );
 			$post_type = sanitize_text_field( $action_data['post_type'] );
 
 			$user = get_userdata( $user_id );
-
-			switch( $post_type ) {
-
-				case 'course':
-
-                    $removed = Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
-
-				break;
-
-				case 'lesson':
-
-					$removed = Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
-
-				break;
-
+			if ( false === $user ) {
+				exit('');
 			}
 
-			if( $removed ) {
-				die( 'removed' );
+			$altered = true;
+
+			switch ( $action ) {
+				case 'reset':
+					switch ( $post_type ) {
+						case 'course':
+							$altered = Sensei_Utils::reset_course_for_user( $post_id, $user_id );
+						break;
+
+						case 'lesson':
+							$altered = Sensei()->quiz->reset_user_lesson_data( $post_id, $user_id );
+						break;
+					}
+				break;
+
+				case 'remove':
+					switch ( $post_type ) {
+						case 'course':
+							$altered = Sensei_Utils::sensei_remove_user_from_course( $post_id, $user_id );
+						break;
+
+						case 'lesson':
+							$altered = Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
+						break;
+					}
+				break;
 			}
 
+			if ( $altered ) {
+				exit( 'altered' );
+			}
 		}
 
-		die('');
+		exit('');
+	}
+
+	public function reset_user_post() {
+		$this->handle_reset_remove_user_post( 'reset' );
+	}
+
+	public function remove_user_from_post() {
+		$this->handle_reset_remove_user_post( 'remove' );
 	}
 
 	public function json_search_users() {
@@ -439,11 +492,12 @@ class Sensei_Learner_Management {
 
 	public function add_learner_notices() {
 		if( isset( $_GET['page'] ) && $this->page_slug == $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
-			if( 'success' == $_GET['message'] ) {
-				$msg = array(
-					'updated',
-					__( 'Learner added successfully!', 'woothemes-sensei' ),
-				);
+			if( 'error' != $_GET['message'] ) {
+				$message = __( 'Learner added successfully!', 'woothemes-sensei' );
+				if ( 'success_bulk' == $_GET['message'] ) {
+					$message = __( 'Learners added successfully!', 'woothemes-sensei' );
+				}
+				$msg = array( 'updated', $message );
 			} else {
 				$msg = array(
 					'error',
@@ -474,7 +528,15 @@ class Sensei_Learner_Management {
 
         return Sensei_Learner::get_full_name( $user_id );
 
-    } // end get_learner_full_name
+    }
+
+	public function get_url() {
+		return add_query_arg(array('page' => $this->page_slug), admin_url('admin.php') );
+	}
+
+	public function get_name() {
+		return $this->name;
+	}
 
 } // End Class
 

@@ -53,6 +53,9 @@ class Sensei_Admin {
 
 		// Add notices to WP dashboard
 		add_action( 'admin_notices', array( $this, 'theme_compatibility_notices' ) );
+		// warn users in case admin_email is not a real WP_User
+		add_action( 'admin_notices', array( $this, 'notify_if_admin_email_not_real_admin_user' ) );
+
 
 		// Reset theme notices when switching themes
 		add_action( 'switch_theme', array( $this, 'reset_theme_check_notices' ) );
@@ -1468,6 +1471,7 @@ class Sensei_Admin {
                                 'twentyfourteen',
                                 'twentyfifteen',
                                 'twentysixteen',
+								'twentyseventeen',
                                 'storefront',
                                                 );
 
@@ -1497,11 +1501,10 @@ class Sensei_Admin {
 
                         </strong> &#8211;
 
-                        <?php esc_html_e( 'if you encounter layout issues please read our integration guide or choose a ', 'woothemes-sensei' ); ?>
-
-                        <a href="http://www.woothemes.com/product-category/themes/sensei-themes/"> <?php esc_html_e( 'Sensei theme', 'woothemes-sensei' ) ?> </a>
-
-                        :)
+                        <?php printf( /* translator: %s theme name */
+                            esc_html__( 'if you encounter layout issues please read our integration guide or choose a %s :)', 'woothemes-sensei' ),
+                            '<a href="http://www.woothemes.com/product-category/themes/sensei-themes/">'. esc_html__( 'Sensei theme', 'woothemes-sensei' ) . '</a>'
+                        ); ?>
 
                     </p>
                     <p class="submit">
@@ -1629,6 +1632,19 @@ class Sensei_Admin {
 					$this->save_course_order( implode( ',', $ordered_course_ids ) );
 				}
 			}
+		}
+	}
+
+	public function notify_if_admin_email_not_real_admin_user() {
+		$admin_user = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
+		if ( false === $admin_user ) {
+			?><div id="message" class="error sensei-message sensei-connect">
+				<p>
+					<strong>
+						<?php printf( esc_html__( 'For Sensei to work correctly, your admin_email setting needs to correspond to an existing admin user email. Please create one for %s', 'woothemes-sensei' ), esc_html__( get_bloginfo( 'admin_email' ) )); ?>
+					</strong>
+				</p>
+			</div><?php
 		}
 	}
 

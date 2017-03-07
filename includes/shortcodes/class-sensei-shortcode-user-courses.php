@@ -90,6 +90,20 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         $this->setup_course_query();
     }
 
+    private function should_filter_course_by_status($course_status, $user_id) {
+        $should_filter = Sensei_WC_Subscriptions::has_user_bought_subscription_but_cancelled(
+            $course_status->comment_post_ID,
+            $user_id
+        );
+
+        return (bool)apply_filters(
+            'sensei_setup_course_query_should_filter_course_by_status',
+            $should_filter,
+            $course_status,
+            $user_id
+        );
+    }
+
     /**
      * Sets up the object course query
      * that will be used in the render method.
@@ -97,10 +111,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      * @since 1.9.0
      */
     protected function setup_course_query(){
-
-        $status_query = array( 'user_id' => get_current_user_id(), 'type' => 'sensei_course_status' );
+        $user_id = get_current_user_id();
+        $status_query = array( 'user_id' => $user_id, 'type' => 'sensei_course_status' );
         $user_courses_logs = Sensei_Utils::sensei_check_for_activity( $status_query , true );
         if ( !is_array($user_courses_logs) ) {
+            87;
 
             $user_courses_logs = array( $user_courses_logs );
 
@@ -108,7 +123,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
         $completed_ids = $active_ids = array();
         foreach( $user_courses_logs as $course_status ) {
-
+            if (true === $this->should_filter_course_by_status($course_status, $user_id) ) {
+                continue;
+            }
             if ( Sensei_Utils::user_completed_course( $course_status, get_current_user_id() ) ) {
 
                 $completed_ids[] = $course_status->comment_post_ID;
@@ -125,11 +142,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
             $included_courses =  $completed_ids;
 
 
-        }elseif( 'active'==$this->status ){
+        } elseif( 'active' == $this->status ) {
 
             $included_courses =  $active_ids;
 
-        }else{ // all courses
+        } else { // all courses
 
             if( empty( $completed_ids ) ){
 

@@ -44,8 +44,6 @@ class Sensei_Shortcode_Loader{
         // add sensei body class for shortcodes
         add_filter( 'body_class', array( $this, 'possibly_add_body_class' ));
 
-        // array( $this, 'add_body_class')
-
     }
 
     /**

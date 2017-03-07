@@ -585,7 +585,7 @@ class Sensei_Analysis {
 	 * @return object                 class instance object
 	 */
 	public function load_report_object( $name = '', $data = 0, $optional_data = null ) {
-		$object_name = 'WooThemes_Sensei_Analysis_' . $name . '_List_Table';
+		$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
 		if ( is_null($optional_data) ) {
 			$sensei_analysis_report_object = new $object_name( $data );
 		} else {

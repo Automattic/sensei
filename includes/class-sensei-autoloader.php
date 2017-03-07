@@ -1,5 +1,62 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // security check, don't load file outside WP
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // security check, don't load file outside WP
+}
+
+class Sensei_Autoloader_Namespace {
+    /**
+     * @var path to the includes directory within Sensei.
+     */
+    private $include_path = 'includes';
+    private $namespace = 'sensei';
+
+    /**
+     * Sensei_Autoloader_Namespace constructor.
+     * @param string $namespace
+     * @param string $namespace_path path relative to includes
+     */
+    public function __construct( $namespace = 'sensei', $namespace_path = '' ) {
+        $this->namespace = $namespace;
+        // setup a relative path for the current autoload instance
+        $this->include_path = trailingslashit( trailingslashit(untrailingslashit(dirname(__FILE__))) . $namespace_path );
+    }
+
+    private function format_namespace() {
+        return strtolower( $this->namespace );
+    }
+
+    /**
+     * @param $class string
+     * @return bool
+     */
+    public function load_class( $class ) {
+
+        if( ! is_numeric( strpos ( strtolower( $class ), $this->format_namespace() ) ) ) {
+            return false;
+        }
+
+        // check for file in the main includes directory
+        $class_file_path = $this->include_path . 'class-'.str_replace( '_','-', strtolower( $class ) ) . '.php';
+        if( file_exists( $class_file_path ) ){
+
+            require_once( $class_file_path );
+            return true;
+        }
+
+        // lastly check legacy types
+        $stripped_woothemes_from_class = str_replace( 'woothemes_','', strtolower( $class ) ); // remove woothemes
+        $legacy_class_file_path = $this->include_path . 'class-'.str_replace( '_','-', strtolower( $stripped_woothemes_from_class ) ) . '.php';
+        if( file_exists( $legacy_class_file_path ) ){
+
+            require_once( $legacy_class_file_path );
+            return true;
+        }
+
+        return false;
+
+    }// end autoload
+}
+
 /**
  * Loading all class files within the Sensei/includes directory
  *
@@ -21,6 +78,8 @@ class Sensei_Autoloader {
      */
     private $class_file_map = array();
 
+    private $autoloader_namespaces = array();
+
     /**
      * Constructor
      * @since 1.9.0
@@ -37,6 +96,11 @@ class Sensei_Autoloader {
 
         //setup the class file map
         $this->initialize_class_file_map();
+
+        $this->autoloader_namespaces = array(
+            new Sensei_Autoloader_Namespace( 'Sensei_REST_API', 'rest-api' ),
+            new Sensei_Autoloader_Namespace( 'Sensei'         , '')
+        );
 
         // add Sensei custom auto loader
         spl_autoload_register( array( $this, 'autoload' )  );
@@ -99,6 +163,11 @@ class Sensei_Autoloader {
             'Sensei_WC' => 'class-sensei-wc.php',
 
             /**
+             * WooCommerce Memberships
+             */
+            'Sensei_WC_Memberships' => 'class-sensei-wc-memberships.php',
+
+            /**
             * WPML
             */
             'Sensei_WPML' => 'wpml/class-sensei-wpml.php'
@@ -127,21 +196,10 @@ class Sensei_Autoloader {
 
         }
 
-        // check for file in the main includes directory
-        $class_file_path = $this->include_path . 'class-'.str_replace( '_','-', strtolower( $class ) ) . '.php';
-        if( file_exists( $class_file_path ) ){
-
-            require_once( $class_file_path );
-            return;
-        }
-
-        // lastly check legacy types
-        $stripped_woothemes_from_class = str_replace( 'woothemes_','', strtolower( $class ) ); // remove woothemes
-        $legacy_class_file_path = $this->include_path . 'class-'.str_replace( '_','-', strtolower( $stripped_woothemes_from_class ) ) . '.php';
-        if( file_exists( $legacy_class_file_path ) ){
-
-            require_once( $legacy_class_file_path );
-            return;
+        foreach ( $this->autoloader_namespaces as $namespace ) {
+            if (true === $namespace->load_class( $class ) ) {
+                return;
+            }
         }
 
         return;
@@ -149,4 +207,3 @@ class Sensei_Autoloader {
     }// end autoload
 
 }
-new Sensei_Autoloader();

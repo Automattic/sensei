@@ -158,6 +158,8 @@ class Sensei_Lesson {
 		$complexity_array   = $this->lesson_complexities();
 		$lesson_video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
 
+		$lesson_video_embed = Sensei_Wp_Kses::maybe_sanitize( $lesson_video_embed, $this->allowed_html );
+
 		$html = '';
 		// Lesson Length
 		$html .= '<p><label for="lesson_length">' . esc_html__( 'Lesson Length in minutes', 'woothemes-sensei' ) . ': </label>';
@@ -172,7 +174,10 @@ class Sensei_Lesson {
 		$html .= '</select></p>' . "\n";
 
 		$html .= '<p><label for="lesson_video_embed">' . esc_html__( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
-		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">' . Sensei_Wp_Kses::wp_kses( $lesson_video_embed, $this->allowed_html ) . '</textarea></p>' . "\n";
+		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">';
+
+		$html .= $lesson_video_embed . '</textarea></p>' . "\n";
+
 		$html .= '<p>' .  esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
 		echo $html;
@@ -500,7 +505,8 @@ class Sensei_Lesson {
 
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'lesson_video_embed' == $post_key) {
-			$new_meta_value = wp_kses( $_POST[ $post_key ], $this->allowed_html );
+			$new_meta_value = isset( $_POST[ $post_key ] ) ? $_POST[ $post_key ] : '';
+			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, $this->allowed_html );
 		} else {
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
@@ -2593,8 +2599,6 @@ class Sensei_Lesson {
 
 		$post_args = array(	'post_type'         => 'lesson',
 							'posts_per_page'    => -1,
-//							'orderby'           => 'menu_order date',
-//							'order'             => 'ASC',
 							'post_status'       => $post_status,
 							'suppress_filters'  => 0,
 							'fields'            => 'ids',
@@ -2615,9 +2619,7 @@ class Sensei_Lesson {
 		}
 
 		// Allow WP to generate the complex final query, just shortcut to only do an overall count
-//		add_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 		$lessons_query = new WP_Query( apply_filters( 'sensei_lesson_count', $post_args ) );
-//		remove_filter( 'posts_clauses', array( 'WooThemes_Sensei_Utils', 'get_posts_count_only_filter' ) );
 
 		return count( $lessons_query->posts );
 	} // End lesson_count()
