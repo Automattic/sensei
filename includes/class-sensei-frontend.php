@@ -1595,13 +1595,13 @@ class Sensei_Frontend {
 		    	if( is_email(  trim( $_REQUEST['log'] ) )  ){
 		    		$login = sanitize_email( $_REQUEST['log'] );
 
-		    		// query wordpress for the users details
-		    		$user = get_user_by( 'email', $login );
+	    			// Occasionally a user's username IS an email,
+	    			// but they have changed their actual email, so check for this case.
+	    			$user = get_user_by( 'login', $login );
 
 		    		if( ! $user ) {
-		    			// Occasionally a user's username IS an email,
-		    			// but they have changed their actual email, so check for this case.
-		    			$user = get_user_by( 'login', $login );
+		    			// Ok, fallback to checking by email.
+		    			$user = get_user_by( 'email', $login );
 		    		}
 
 		    		// validate the user object
