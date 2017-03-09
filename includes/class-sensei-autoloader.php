@@ -97,9 +97,11 @@ class Sensei_Autoloader {
         //setup the class file map
         $this->initialize_class_file_map();
 
+
         $this->autoloader_bundles = array(
-            new Sensei_Autoloader_Bundle( 'Sensei_REST_API', 'rest-api' ),
-            new Sensei_Autoloader_Bundle( 'Sensei'         , '')
+            new Sensei_Autoloader_Bundle( 'Sensei_REST_API'     , 'rest-api'      ),
+            new Sensei_Autoloader_Bundle( 'Sensei_Domain_Models', 'domain-models' ),
+            new Sensei_Autoloader_Bundle( 'Sensei'              , ''              )
         );
 
         // add Sensei custom auto loader
