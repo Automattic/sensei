@@ -126,7 +126,7 @@ class Sensei_WC_Memberships {
 			return;
 		}
 
-		if ( false === wc_memberships_is_user_active_member($user_id, $membership_plan->get_id() ) ) {
+		if ( false === self::is_user_active_member( $user_id, $membership_plan->get_id() ) ) {
 			// User is Inactive so just Bail for now
 			return;
 		}
@@ -173,5 +173,38 @@ class Sensei_WC_Memberships {
 
 	public static function is_my_courses_page( $post_id ) {
 		return is_page() && intval( Sensei()->settings->get( 'my_course_page' ) ) === intval( $post_id );
+	}
+
+	/**
+	 * @param int $user_id
+	 * @param int $membership_plan_id
+	 * @return bool
+	 */
+	private static function is_user_active_member( $user_id, $membership_plan_id )
+	{
+		if ( true === version_compare(wc_memberships()->get_version(), '1.7.0', '>=') ) {
+			/**
+			 * Sensei WC Memberships "start_courses_associated_with_membership_skip_cache" Filter
+			 *
+			 * Overrides `wc_memberships_is_user_active_member` cache control on WC Memberships >= 1.7.0
+			 * Busts cache when false. We default to false, as this is triggered on membership save/status-change and we don't want stale info
+			 *
+			 * @since 1.9.13
+			 *
+			 * @param bool $use_cache (default false)
+			 * @param int $user_id
+			 * @param int $membership_plan
+			 */
+			$use_cache = (bool)apply_filters(
+				'sensei_wc_memberships_start_courses_associated_with_membership_skip_cache',
+				false,
+				$user_id,
+				$membership_plan_id
+			);
+
+			return wc_memberships_is_user_active_member($user_id, $membership_plan_id, $use_cache);
+		} else {
+			return wc_memberships_is_user_active_member($user_id, $membership_plan_id);
+		}
 	}
 }
