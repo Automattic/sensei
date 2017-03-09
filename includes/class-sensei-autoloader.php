@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // security check, don't load file outside WP
 }
 
-class Sensei_Autoloader_Namespace {
+class Sensei_Autoloader_Bundle {
     /**
      * @var path to the includes directory within Sensei.
      */
@@ -78,7 +78,7 @@ class Sensei_Autoloader {
      */
     private $class_file_map = array();
 
-    private $autoloader_namespaces = array();
+    private $autoloader_bundles = array();
 
     /**
      * Constructor
@@ -97,9 +97,9 @@ class Sensei_Autoloader {
         //setup the class file map
         $this->initialize_class_file_map();
 
-        $this->autoloader_namespaces = array(
-            new Sensei_Autoloader_Namespace( 'Sensei_REST_API', 'rest-api' ),
-            new Sensei_Autoloader_Namespace( 'Sensei'         , '')
+        $this->autoloader_bundles = array(
+            new Sensei_Autoloader_Bundle( 'Sensei_REST_API', 'rest-api' ),
+            new Sensei_Autoloader_Bundle( 'Sensei'         , '')
         );
 
         // add Sensei custom auto loader
@@ -196,8 +196,8 @@ class Sensei_Autoloader {
 
         }
 
-        foreach ( $this->autoloader_namespaces as $namespace ) {
-            if (true === $namespace->load_class( $class ) ) {
+        foreach ($this->autoloader_bundles as $bundle ) {
+            if (true === $bundle->load_class( $class ) ) {
                 return;
             }
         }
