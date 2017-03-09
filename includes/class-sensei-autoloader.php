@@ -8,21 +8,21 @@ class Sensei_Autoloader_Bundle {
      * @var path to the includes directory within Sensei.
      */
     private $include_path = 'includes';
-    private $namespace = 'sensei';
+    private $bundle_identifier = 'sensei';
 
     /**
-     * Sensei_Autoloader_Namespace constructor.
-     * @param string $namespace
+     * Sensei_Autoloader_Bundle constructor.
+     * @param string $bundle_identifier
      * @param string $namespace_path path relative to includes
      */
-    public function __construct( $namespace = 'sensei', $namespace_path = '' ) {
-        $this->namespace = $namespace;
+    public function __construct( $bundle_identifier = 'sensei', $bundle_identifier_path = '' ) {
+        $this->bundle_identifier = $bundle_identifier;
         // setup a relative path for the current autoload instance
-        $this->include_path = trailingslashit( trailingslashit(untrailingslashit(dirname(__FILE__))) . $namespace_path );
+        $this->include_path = trailingslashit( trailingslashit(untrailingslashit(dirname(__FILE__))) . $bundle_identifier_path );
     }
 
     private function format_namespace() {
-        return strtolower( $this->namespace );
+        return strtolower( $this->bundle_identifier );
     }
 
     /**
