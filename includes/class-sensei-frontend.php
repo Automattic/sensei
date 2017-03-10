@@ -1616,7 +1616,7 @@ class Sensei_Frontend {
 		    	}
 
 				// get setup the rest of the creds array
-				$creds['user_password'] = sanitize_text_field( $_REQUEST['pwd'] );
+				$creds['user_password'] = $_REQUEST['pwd'];
 				$creds['remember'] = isset( $_REQUEST['rememberme'] ) ? true : false ;
 
 				//attempt logging in with the given details
