@@ -10,6 +10,15 @@
  * @version     1.9.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+} // Exit if accessed directly
+
+if ( !isset( $this ) || !is_a( $this, 'Sensei_Main' ) ) {
+    //FIXME: this whole thing should be a class injected with a Sensei instance
+    throw new Exception( 'Template hooks cannot be included outside of a Sensei_Main instance' );
+}
+
 /***************************
  *
  *
@@ -38,7 +47,7 @@ add_action( 'sensei_archive_before_course_loop', array ( 'Sensei_Templates', 'de
 add_action('sensei_archive_before_course_loop', array( 'Sensei_Course', 'archive_header' ), 10, 0 );
 
 // add the course image above the content
-add_action('sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ) ,10, 1 );
+add_action('sensei_course_content_inside_before', array( $this->course, 'course_image' ) ,10, 1 );
 
 // add course content title to the courses on the archive page
 add_action('sensei_course_content_inside_before', array( 'Sensei_Templates', 'the_title' ) ,5, 1 );
@@ -61,7 +70,7 @@ add_action( 'sensei_single_course_content_inside_before',array( 'Sensei_Course',
 
 // @1.9.0
 // hook the single course title on the single course page
-add_action( 'sensei_single_course_content_inside_before', array( Sensei()->course , 'course_image'), 20 );
+add_action( 'sensei_single_course_content_inside_before', array( $this->course , 'course_image'), 20 );
 
 
 // @1.9.0
@@ -149,9 +158,9 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course'
 //
 add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_title'), 20 );
 add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 23 );
-add_action( 'sensei_no_permissions_inside_before_content', array( Sensei()->course , 'course_image'), 25 );
+add_action( 'sensei_no_permissions_inside_before_content', array( $this->course , 'course_image'), 25 );
 add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course' , 'the_course_video' ), 40 );
-add_action( 'sensei_no_permissions_inside_after_content', array( Sensei()->modules, 'load_course_module_content_template') , 43 );
+add_action( 'sensei_no_permissions_inside_after_content', array( $this->modules, 'load_course_module_content_template') , 43 );
 add_action( 'sensei_no_permissions_inside_after_content' , array( 'Sensei_Course','the_course_lessons_title'), 45 );
 add_action( 'sensei_no_permissions_inside_after_content', array('Sensei_Course','load_single_course_lessons_query' ),50 );
 add_action( 'sensei_no_permissions_inside_after_content', 'course_single_lessons', 60 );
@@ -312,7 +321,7 @@ add_action( 'sensei_loop_lesson_inside_before', array( 'Sensei_Lesson', 'depreca
 
 // @1.9.0
 //The archive title header on the lesson archive loop
-add_action( 'sensei_loop_lesson_inside_before', array( Sensei()->lesson, 'the_archive_header' ), 20 );
+add_action( 'sensei_loop_lesson_inside_before', array( $this->lesson, 'the_archive_header' ), 20 );
 
 // @since 1.9.0
 //Output the lesson header on the content-lesson.php which runs inside the lessons loop
@@ -360,10 +369,10 @@ add_action( 'sensei_course_results_content_before', array('Sensei_Course_Results
 
 // @since 1.9.0
 // load the course information on the course results page
-add_action( 'sensei_course_results_content_inside_before_lessons', array( Sensei()->course_results,'course_info') );
+add_action( 'sensei_course_results_content_inside_before_lessons', array( $this->course_results,'course_info') );
 
 // @since 1.9.0
-add_action( 'sensei_course_results_content_inside_before', array( Sensei()->course,'course_image') );
+add_action( 'sensei_course_results_content_inside_before', array( $this->course,'course_image') );
 
 // @since 1.9.0
 // deprecate the course results top hook in favour of a new hook
@@ -459,8 +468,8 @@ add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher'
  * Frontend notices display
  *
  **********************************/
-add_action( 'sensei_course_results_content_inside_before', array( Sensei()->notices,'maybe_print_notices' ) );
-add_action( 'sensei_no_permissions_inside_before_content', array( Sensei()->notices,'maybe_print_notices' ), 90 );
-add_action( 'sensei_single_course_content_inside_before', array( Sensei()->notices,'maybe_print_notices' ), 40 );
-add_action( 'sensei_single_lesson_content_inside_before', array( Sensei()->notices,'maybe_print_notices' ), 40 );
+add_action( 'sensei_course_results_content_inside_before', array( $this->notices,'maybe_print_notices' ) );
+add_action( 'sensei_no_permissions_inside_before_content', array( $this->notices,'maybe_print_notices' ), 90 );
+add_action( 'sensei_single_course_content_inside_before', array( $this->notices,'maybe_print_notices' ), 40 );
+add_action( 'sensei_single_lesson_content_inside_before', array( $this->notices,'maybe_print_notices' ), 40 );
 

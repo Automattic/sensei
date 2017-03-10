@@ -150,11 +150,16 @@ class Sensei_Main {
     private $id;
 
     /**
+     * @var Sensei_Shortcode_Loader
+     */
+    private $shortcode_loader;
+
+    /**
      * Constructor method.
      * @param  string $file The base file of the plugin.
      * @since  1.0.0
      */
-    public function __construct ( $main_plugin_file_name, $args ) {
+    private function __construct ( $main_plugin_file_name, $args ) {
 
         // Setup object data
         $this->main_plugin_file_name = $main_plugin_file_name;
@@ -192,12 +197,7 @@ class Sensei_Main {
         $this->load_plugin_textdomain();
         add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
-        // Setup settings
-        $this->settings = new Sensei_Settings();
-
-        // load the shortcode loader into memory, so as to listen to all for
-        // all shortcodes on the front end
-        new Sensei_Shortcode_Loader();
+        $this->initialize_global_objects();
 
         /**
          * Hook in WooCommerce functionality
@@ -213,12 +213,6 @@ class Sensei_Main {
          * Hook in WooCommerce Memberships functionality
          */
         add_action('init', array( 'Sensei_WC_Subscriptions', 'load_wc_subscriptions_integration_hooks' ) );
-        /**
-         * Load all Template hooks
-         */
-        if( !is_admin() ){
-            require_once( $this->resolve_path( 'includes/hooks/template.php' ) );
-        }
     }
 
     /**
@@ -239,9 +233,6 @@ class Sensei_Main {
             $sensei_main_plugin_file = dirname ( dirname( __FILE__ ) ) . '/woothemes-sensei.php';
 
             self::$_instance = new self( $sensei_main_plugin_file, $args  );
-
-            // load the global class objects needed throughout Sensei
-            self::$_instance->initialize_global_objects();
 
         }
 
@@ -288,7 +279,13 @@ class Sensei_Main {
      *
      * @since 1.9.0
      */
-    public function initialize_global_objects(){
+    public function initialize_global_objects() {
+        // Setup settings
+        $this->settings = new Sensei_Settings();
+
+        // load the shortcode loader into memory, so as to listen to all for
+        // all shortcodes on the front end
+        $this->shortcode_loader = new Sensei_Shortcode_Loader();
 
         // Setup post types.
         $this->post_types = new Sensei_PostTypes();
@@ -358,7 +355,6 @@ class Sensei_Main {
         $this->Sensei_WPML = new Sensei_WPML();
 
         $this->rest_api = new Sensei_REST_API_Main();
-
     }
 
     /**
@@ -389,6 +385,12 @@ class Sensei_Main {
         // Add plugin action links filter
         add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
 
+        /**
+         * Load all Template hooks
+         */
+        if( !is_admin() ){
+            require_once( $this->resolve_path( 'includes/hooks/template.php' ) );
+        }
     }
 
     /**
@@ -960,12 +962,12 @@ class Sensei_Main {
 
             //Load the modules class
             require_once( 'class-sensei-modules.php');
-            Sensei()->modules = new Sensei_Core_Modules( $this->main_plugin_file_name );
+            $this->modules = new Sensei_Core_Modules( $this->main_plugin_file_name );
 
         }else{
             // fallback for people still using the modules extension.
             global $sensei_modules;
-            Sensei()->modules = $sensei_modules;
+            $this->modules = $sensei_modules;
             add_action( 'admin_notices', array( $this, 'disable_sensei_modules_extension'), 30 );
         }
     }
@@ -1318,7 +1320,7 @@ class Sensei_Main {
      * Get full path for a path relative to plugin basedir
      * @param $path string
      * @return string
-     * @since 1.9.?
+     * @since 1.9.13
      *
      */
     private function resolve_path( $path ) {
