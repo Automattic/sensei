@@ -1247,3 +1247,30 @@ function sensei_the_lesson_status_class(){
 
     echo get_the_lesson_status_class();
 }
+
+/**
+ * Get the module description.
+ * This is to be used within the Sensei module loop.
+ *
+ *
+ * @return string Module description.
+ */
+function sensei_get_the_module_description() {
+	global $sensei_modules_loop;
+	$module_description = $sensei_modules_loop['current_module']->description;
+	/**
+	 * Filter the module description.
+	 *
+	 * This fires within the sensei_get_the_module_description function.
+	 *
+	 * @param $module_description Module Description.
+	 */
+	return apply_filters( 'sensei_the_module_description', $module_description );
+}
+
+/**
+ * Print out the current module Description
+ */
+function sensei_the_module_description(){
+	echo sensei_get_the_module_description();
+}

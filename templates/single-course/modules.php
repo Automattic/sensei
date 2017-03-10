@@ -72,6 +72,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                 <section class="entry">
 
+                    <p class="module-description"><?php sensei_the_module_description(); ?></p>
+
                     <?php sensei_the_module_status(); ?>
 
                     <section class="module-lessons">
