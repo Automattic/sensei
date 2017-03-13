@@ -208,17 +208,43 @@ class Sensei_WC {
 	 * Load the WooCommerce single product actions above
 	 * single courses if woocommerce is active allowing purchase
 	 * information and actions to be hooked from WooCommerce.
+	 *
+	 * Only triggers on single courses when there is a product associated with them.
+	 * Sets the product global to the course product when empty
 	 */
-	public static function do_single_course_wc_single_product_action(){
+	public static function do_single_course_wc_single_product_action() {
+		global $wp_query, $product;
+
+		if ( false === Sensei_WC::is_woocommerce_active() ) {
+			return;
+		}
+
+		if ( empty( $wp_query ) || false === $wp_query->is_single() ) {
+			return;
+		}
+
+		$course = $wp_query->get_queried_object();
+		if ( empty( $course ) || 'course' !== $course->post_type ) {
+			return;
+		}
+
+		$course_product_id = Sensei_WC::get_course_product_id( absint( $course->ID ) );
+
+		if ( empty( $course_product_id ) ) {
+			// no need to proceed, as no product is related to this course
+			return;
+		}
+
+		if ( empty( $product ) ) {
+			// product is not defined, set it to be the course product to mitigate fatals from wc hooks triggered
+			// expecting it to be set
+			$product = wc_get_product( absint( $course_product_id ) );
+		}
 
 		/**
 		 * this hooks is documented within the WooCommerce plugin.
 		 */
-		if ( Sensei_WC::is_woocommerce_active() ) {
-
-			do_action( 'woocommerce_before_single_product' );
-
-		} // End If Statement
+		do_action( 'woocommerce_before_single_product' );
 
 	}// end do_single_course_wc_single_product_action
 
