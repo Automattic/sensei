@@ -63,12 +63,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      */
     public function __construct( $attributes, $content, $shortcode ){
 
-        if(!  is_user_logged_in() ) {
-            // show the login form
-            Sensei()->frontend->sensei_login_form();
-            return;
-        }
-
         // set up all argument need for constructing the course query
         $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
         $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
@@ -86,8 +80,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
         }
 
-        // setup the course query that will be used when rendering
-        $this->setup_course_query();
+
     }
 
     private function should_filter_course_by_status($course_status, $user_id) {
@@ -243,13 +236,16 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @return string $content
      */
-    public function render(){
+    public function render() {
 
         global $wp_query;
 
-        if(!  is_user_logged_in() ) {
-            return '';
+        if( false === is_user_logged_in() ) {
+            // show the login form
+            return $this->render_login_form();
         }
+        // setup the course query that will be used when rendering
+        $this->setup_course_query();
 
         // keep a reference to old query
         $current_global_query = $wp_query;
@@ -476,5 +472,16 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         </script>
 
     <?php }
+
+    /**
+     * @return string
+     */
+    private function render_login_form()
+    {
+        ob_start();
+        Sensei()->frontend->sensei_login_form();
+        $shortcode_output = ob_get_clean();
+        return $shortcode_output;
+    }
 
 }
