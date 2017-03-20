@@ -55,6 +55,7 @@ class Sensei_Wp_Kses {
 
     public static function get_video_html_tag_allowed_attributes() {
         return array(
+            'source'   => array(),
             'autoplay' => array(),
             'controls' => array(),
             'height'   => array(),
