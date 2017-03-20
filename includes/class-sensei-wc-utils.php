@@ -103,4 +103,23 @@ class Sensei_WC_Utils {
 
         return $product_id;
     }
+
+    /**
+     * @param $post_or_id WP_Post|int
+     * @return null|WC_Product
+     */
+    public static function get_product( $post_or_id ) {
+        return self::wc_version_less_than('2.7') ? get_product( $post_or_id ) : wc_get_product( $post_or_id );
+    }
+
+    /**
+     * @param $product WC_Abstract_Legacy_Product
+     * @return mixed
+     */
+    public static function get_variation_data( $product ) {
+        if ( self::wc_version_less_than('2.7') ) {
+            return $product->variation_data;
+        }
+        return $product->is_type( 'variation' ) ? wc_get_product_variation_attributes( $product->get_id() ) : '';
+    }
 }
