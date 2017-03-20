@@ -237,15 +237,15 @@ class Sensei_Course {
 
 					if ( 'product_variation' == $post_item->post_type ) {
 
-						$product_object = get_product( $post_item->ID );
+						$product_object = Sensei_WC_Utils::get_product( $post_item->ID );
 						$parent_id = wp_get_post_parent_id( $post_item->ID );
 
                         if( sensei_check_woocommerce_version( '2.1' ) ) {
-							$formatted_variation = wc_get_formatted_variation( $product_object->variation_data, true );
+							$formatted_variation = wc_get_formatted_variation( Sensei_WC_Utils::get_variation_data( $product_object ), true );
 
 						} else {
                             // fall back to pre wc 2.1
-							$formatted_variation = woocommerce_get_formatted_variation( $product_object->variation_data, true );
+							$formatted_variation = woocommerce_get_formatted_variation( Sensei_WC_Utils::get_variation_data( $product_object ), true );
 
 						}
 
