@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+} // Exit if accessed directly
+
 /**
  * Class Sensei_REST_API_Endpoint_Version
  * returns the current sensei version;
