@@ -2404,6 +2404,21 @@ class Sensei_Utils {
 		self::sensei_remove_user_from_course( $course_id, $user_id );
 		return self::user_start_course( $user_id, $course_id );
 	}
+
+	/**
+	 * @param $setting_name string
+	 * @param null|string $filter_to_apply
+	 * @return bool
+	 */
+	public static function get_setting_as_flag($setting_name, $filter_to_apply = null ) {
+		$setting_on = false;
+
+		if ( isset( Sensei()->settings->settings[ $setting_name ] ) ) {
+			$setting_on = (bool)Sensei()->settings->settings[ $setting_name ];
+		}
+
+		return ( null !== $filter_to_apply ) ? (bool)apply_filters($filter_to_apply, $setting_on) : $setting_on;
+	}
 } // End Class
 
 /**
