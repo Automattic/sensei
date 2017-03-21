@@ -36,7 +36,7 @@ class Sensei_Domain_Models_Course {
      * @param $object_or_id_or_data_array int|WP_Post|array
      */
     function __construct( $data = array() ) {
-        if ( empty( $wp_entity ) ) {
+        if ( empty( $this->wp_entity ) ) {
             throw new Sensei_Domain_Models_Exception( 'your model declaration is missing a $wp_entity' );
         }
         $this->fields = $this->group_declared_fields_by_type( $this->declare_model_fields() );
