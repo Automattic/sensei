@@ -37,6 +37,6 @@ class Sensei_REST_API_Helper {
     }
 
     public function base_namespace_url() {
-        return $this->rest_url() . $this->api->get_namespace();
+        return $this->rest_url() . $this->api->get_name_space();
     }
 }
