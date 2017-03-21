@@ -23,11 +23,11 @@ class Sensei_Domain_Models_Course {
         'title' => 'title',
         'author' => 'author',
         'content' => 'content',
-//        'excerpt' => 'excerpt',
+        'excerpt' => 'excerpt',
         'modules' => 'modules',
-//        'featured' => 'featured',
-//        'module_order' => 'module_order',
-//        'video_embed' => 'video_embed'
+        'featured' => 'featured',
+        'module_order' => 'module_order',
+        'video_embed' => 'video_embed'
     );
 
     private $data;
