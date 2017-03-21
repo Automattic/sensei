@@ -140,7 +140,7 @@ class Sensei_Main {
     public $analysis;
 
     /**
-     * @var Sensei_REST_API_Main
+     * @var Sensei_REST_API_V1
      */
     public $rest_api;
 
@@ -158,6 +158,16 @@ class Sensei_Main {
      * @var Sensei_View_Helper
      */
     public $view_helper;
+
+    /**
+     * @var Sensei_WP_Cli
+     */
+    private $wp_cli;
+
+    /**
+     * @var Sensei_Feature_Flags
+     */
+    public $feature_flags;
 
     /**
      * Constructor method.
@@ -288,6 +298,9 @@ class Sensei_Main {
         // Setup settings
         $this->settings = new Sensei_Settings();
 
+        // feature flags
+        $this->feature_flags = new Sensei_Feature_Flags();
+
         // load the shortcode loader into memory, so as to listen to all for
         // all shortcodes on the front end
         $this->shortcode_loader = new Sensei_Shortcode_Loader();
@@ -335,6 +348,8 @@ class Sensei_Main {
 
             // Load Analysis Reports
             $this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
+            $this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
         } else {
 
             // Load Frontend Class
@@ -361,7 +376,9 @@ class Sensei_Main {
         // Load WPML compatibility class
         $this->Sensei_WPML = new Sensei_WPML();
 
-        $this->rest_api = new Sensei_REST_API_Main();
+        $this->rest_api = new Sensei_REST_API_V1();
+        
+        $this->wp_cli = new Sensei_WP_Cli();
     }
 
     /**
