@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+} // Exit if accessed directly
+
 class Sensei_REST_API_Helper {
     /**
      * @var Sensei_REST_API_V1
