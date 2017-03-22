@@ -74,7 +74,7 @@ class Sensei_Domain_Models_Course {
         if ( 'WP_Post' === $this->wp_entity ) {
             return get_post( absint( $id ), ARRAY_A );
         }
-        throw new Error( 'Please declare the wp entity an instance of this model is serialized to' );
+        throw new Sensei_Domain_Models_Exception( 'Please declare the wp entity an instance of this model is serialized to' );
     }
 
     public function __get( $field ) {
@@ -146,6 +146,10 @@ class Sensei_Domain_Models_Course {
                 ->get_from( 'course_module_ids' )
                 ->build(),
             $this->derived_field()
+                ->with_name( 'module_order' )
+                ->get_from( 'module_order' )
+                ->build(),
+            $this->derived_field()
                 ->with_name( 'lessons' )
                 ->get_from( 'course_lessons' )
                 ->build(),
@@ -178,11 +182,16 @@ class Sensei_Domain_Models_Course {
 
     protected function course_module_ids() {
         $modules = Sensei()->modules->get_course_modules( absint( $this->id ) );
-        return wp_list_pluck( $modules, 'term_id' );
+        return array_map( 'absint', wp_list_pluck( $modules, 'term_id' ) );
     }
 
+    /**
+     * Get module order callable
+     * @return array
+     */
     protected function module_order() {
-        return Sensei()->modules->get_course_module_order( absint( $this->id ) );
+        $modules = Sensei()->modules->get_course_module_order( absint( $this->id ) );
+        return ( empty( $modules ) ) ? array() : array_map( 'absint', $modules );
     }
 
     public static function find_one_by_id( $course_id ) {
