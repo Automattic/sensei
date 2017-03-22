@@ -4,7 +4,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 } // Exit if accessed directly
 
-class Sensei_Domain_Models_Field {
+/**
+ * Class Sensei_Domain_Models_Field_Declaration
+ * @package Domain_Models
+ */
+class Sensei_Domain_Models_Field_Declaration {
 
     const FIELD   = 'field';
     const META    = 'meta_field';
@@ -25,6 +29,7 @@ class Sensei_Domain_Models_Field {
     public $primary;
     public $required;
     public $supported_outputs;
+    public $json_name;
     private $default_value;
     private $value_type;
 
@@ -48,6 +53,7 @@ class Sensei_Domain_Models_Field {
         $this->primary           = (bool)$this->value_or_default( $args, 'primary', false );
         $this->required          = (bool)$this->value_or_default( $args, 'required', false );
         $this->supported_outputs = $this->value_or_default( $args, 'supported_outputs', array( 'json' ) );
+        $this->json_name         = $this->value_or_default( $args, 'json_name', $this->name );
         $this->value_type        = $this->value_or_default( $args, 'value_type', 'any' );
         $this->default_value     = $this->value_or_default( $args, 'default_value' );
 
@@ -116,5 +122,9 @@ class Sensei_Domain_Models_Field {
         }
 
         return $value;
+    }
+
+    public function suppports_output_type( $type ) {
+        return in_array( $type, $this->supported_outputs, true );
     }
 }
