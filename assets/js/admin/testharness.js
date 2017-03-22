@@ -142,7 +142,10 @@ jQuery(document).ready(function() {
                     result: response
                 });
             }).fail(function (err) {
-                console.log( err );
+                self.dispatch({
+                    type: ACTIONS.UPDATE_RESULT,
+                    result: err.responseJSON
+                });
             }).always(function (whatever) {
                 console.log( whatever );
             });
