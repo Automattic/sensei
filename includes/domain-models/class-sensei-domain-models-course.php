@@ -4,52 +4,38 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 } // Exit if accessed directly
 
-
 /**
  * Class Sensei_Domain_Models_Course
- * @package Core
+ * @package Domain_Models
  */
 class Sensei_Domain_Models_Course {
 
-    protected static $post_type = 'course';
-    protected $wp_entity = 'WP_Post';
+    private static $field_declarations_by_model = array();
 
-    protected $required_fields = array(
-        'title'
-    );
-
-    protected $json_fields = array(
-        'id' => 'id',
-        'title' => 'title',
-        'author' => 'author',
-        'content' => 'content',
-        'excerpt' => 'excerpt',
-        'modules' => 'modules',
-        'featured' => 'featured',
-        'module_order' => 'module_order',
-        'video_embed' => 'video_embed'
-    );
-
+    /**
+     * @var array
+     */
     private $data;
 
     /**
-     * @param $object_or_id_or_data_array int|WP_Post|array
+     * @var array the model fields Sensei_Domain_Models_Field
+     */
+    private $fields;
+
+
+    /**
+     * Sensei_Domain_Models_Course constructor.
+     * @param array|int|WP_Post|WP_Comment|WP_User $data the data object. either an int id, a wp entity
+     * @since 1.9.13
      */
     function __construct( $data = array() ) {
-        if ( empty( $this->wp_entity ) ) {
-            throw new Sensei_Domain_Models_Exception( 'your model declaration is missing a $wp_entity' );
-        }
-        $this->fields = $this->group_declared_fields_by_type( $this->declare_model_fields() );
+        $this->fields = $this->initialize_model_fields();
         $this->data = array();
 
-        if ( is_numeric( $data  ) ) {
-            $model_data = $this->get_wp_entity_from_id( absint( $data ) );
-        } else if ( is_array( $data ) ) {
+        if ( is_array( $data ) ) {
             $model_data = $data;
-        } else if ( is_a( $data, $this->wp_entity ) ) {
-            $model_data = $data->to_array();
         } else {
-            throw new Exception('does not understand data');
+            $model_data = $this->get_data_array_from_entity( $data );
         }
 
         $post_array_keys = array_keys( $model_data );
@@ -70,20 +56,36 @@ class Sensei_Domain_Models_Course {
         }
     }
 
-    protected function get_wp_entity_from_id( $id ) {
-        if ( 'WP_Post' === $this->wp_entity ) {
-            return get_post( absint( $id ), ARRAY_A );
+    protected function get_data_array_from_entity( $entity ) {
+        if ( is_numeric( $entity  ) ) {
+            return get_post( absint( $entity ), ARRAY_A );
+        } else if ( is_a( $entity, 'WP_Post' ) ) {
+            return $entity->to_array();
+        } else {
+            throw new Sensei_Domain_Models_Exception('does not understand entity');
         }
-        throw new Sensei_Domain_Models_Exception( 'Please declare the wp entity an instance of this model is serialized to' );
     }
 
-    public function __get( $field ) {
-        if (!isset( $this->fields[$field] ) ) {
+    /**
+     * @param string $field_name
+     * @return mixed|null
+     */
+    public function __get( $field_name ) {
+        if ( !isset( $this->fields[$field_name] ) ) {
             return null;
         }
 
-        $field_declaration = $this->fields[$field];
+        $field_declaration = $this->fields[$field_name];
 
+        $this->load_field_value_if_missing( $field_declaration );
+
+        return $this->prepare_value( $field_declaration );
+    }
+
+    /**
+     * @param Sensei_Domain_Models_Field $field_declaration
+     */
+    protected function load_field_value_if_missing($field_declaration ) {
         $field_name = $field_declaration->name;
         if ( !isset( $this->data[ $field_name ] ) ) {
             if ( $field_declaration->is_meta_field() ) {
@@ -96,8 +98,6 @@ class Sensei_Domain_Models_Course {
                 $this->data[ $field_name ] = null;
             }
         }
-
-        return $this->prepare_value( $field_declaration );
     }
 
     public function get_id() {
@@ -116,67 +116,55 @@ class Sensei_Domain_Models_Course {
         return $this->field()->of_type( Sensei_Domain_Models_Field::DERIVED );
     }
 
-    protected function declare_model_fields() {
+    protected function declare_fields() {
         return array(
             $this->field()
                 ->with_name( 'id' )
-                ->get_from( 'ID' )
-                ->with_before_return( 'cast_absint' )
-                ->build(),
+                ->map_from( 'ID' )
+                ->with_before_return( 'cast_absint' ),
             $this->field()
                 ->with_name( 'title' )
-                ->get_from( 'post_title' )
-                ->build(),
+                ->map_from( 'post_title' )
+                ->required( true ),
             $this->field()
                 ->with_name( 'author' )
-                ->get_from( 'post_author' )
-                ->with_before_return( 'cast_absint' )
-                ->build(),
+                ->map_from( 'post_author' )
+                ->with_before_return( 'cast_absint' ),
             $this->field()
                 ->with_name( 'content' )
-                ->get_from( 'post_content' )
-                ->build(),
+                ->map_from( 'post_content' ),
             $this->field()
                 ->with_name( 'excerpt' )
-                ->get_from( 'post_excerpt' )
-                ->build(),
+                ->map_from( 'post_excerpt' ),
 
             $this->derived_field()
                 ->with_name( 'modules' )
-                ->get_from( 'course_module_ids' )
-                ->build(),
+                ->map_from( 'course_module_ids' ),
             $this->derived_field()
                 ->with_name( 'module_order' )
-                ->get_from( 'module_order' )
-                ->build(),
+                ->map_from( 'module_order' ),
             $this->derived_field()
                 ->with_name( 'lessons' )
-                ->get_from( 'course_lessons' )
-                ->build(),
+                ->map_from( 'course_lessons' ),
 
             $this->meta_field()
                 ->with_name( 'prerequisite' )
-                ->get_from( '_course_prerequisite' )
-                ->with_before_return( 'cast_absint' )
-                ->build(),
+                ->map_from( '_course_prerequisite' )
+                ->with_before_return( 'cast_absint' ),
             $this->meta_field()
                 ->with_name( 'featured' )
-                ->get_from( '_course_featured' )
-                ->with_before_return( 'cast_bool' )
-                ->build(),
+                ->map_from( '_course_featured' )
+                ->with_before_return( 'cast_bool' ),
             $this->meta_field()
                 ->with_name( 'video_embed' )
-                ->get_from( '_course_video_embed' )
-                ->build(),
+                ->map_from( '_course_video_embed' ),
             $this->meta_field()
                 ->with_name( 'woocommerce_product' )
-                ->get_from( '_course_woocommerce_product' )
-                ->with_before_return( 'cast_absint' )
-                ->build(),
+                ->map_from( '_course_woocommerce_product' )
+                ->with_before_return( 'cast_absint' ),
             $this->meta_field()
                 ->with_name( 'lesson_order' )
-                ->get_from( '_lesson_order' )
-                ->build()
+                ->map_from( '_lesson_order' )
         );
     }
 
@@ -197,19 +185,29 @@ class Sensei_Domain_Models_Course {
     public static function find_one_by_id( $course_id ) {
         $course_id = absint( $course_id );
         $course = get_post( $course_id );
-        if (!empty( $course ) && $course->post_type === self::$post_type ) {
+        if (!empty( $course ) && $course->post_type === 'course' ) {
             return new self( $course );
         }
         return null;
     }
 
     public function get_json_field_mappings() {
-        return $this->json_fields;
+        return array(
+            'id' => 'id',
+            'title' => 'title',
+            'author' => 'author',
+            'content' => 'content',
+            'excerpt' => 'excerpt',
+            'modules' => 'modules',
+            'featured' => 'featured',
+            'module_order' => 'module_order',
+            'video_embed' => 'video_embed'
+        );
     }
 
     public static function all() {
         $query = new WP_Query( array(
-            'post_type' => self::$post_type
+            'post_type' => 'course'
         ) );
         $results = array();
         foreach ( $query->get_posts() as $course_post ) {
@@ -225,7 +223,7 @@ class Sensei_Domain_Models_Course {
      */
     public static function new_from_request( $request ) {
         $id = isset( $request['id'] ) ? absint( $request['id'] ) : null;
-        $title = $request['title'];
+        $title = isset( $request['title'] ) ? esc_html( $request['title'] ) : '';
 
         return new self( array(
             'id' => $id,
@@ -282,15 +280,26 @@ class Sensei_Domain_Models_Course {
     }
 
     /**
-     * @param $declared_fields array
+     * @param $declared_field_builders array
      * @return array
      */
-    private function group_declared_fields_by_type( $declared_fields ) {
+    private function group_declared_fields_by_type($declared_field_builders ) {
         $fields = array(
         );
-        foreach ( $declared_fields as $field ) {
+        foreach ( $declared_field_builders as $field_builder ) {
+            $field = $field_builder->build();
             $fields[$field->name] = $field;
         }
         return $fields;
+    }
+
+    private function initialize_model_fields()
+    {
+        $self_class = get_class($this);
+        if (!isset(self::$field_declarations_by_model[$self_class])) {
+            // lazy-load model declarations when the first model if this type is constructed
+            self::$field_declarations_by_model[$self_class] = $this->group_declared_fields_by_type($this->declare_fields());
+        }
+        return self::$field_declarations_by_model[$self_class];
     }
 }
