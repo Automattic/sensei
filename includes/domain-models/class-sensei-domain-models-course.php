@@ -86,7 +86,7 @@ class Sensei_Domain_Models_Course {
     }
 
     /**
-     * @param Sensei_Domain_Models_Field $field_declaration
+     * @param Sensei_Domain_Models_Field_Declaration $field_declaration
      */
     protected function load_field_value_if_missing( $field_declaration ) {
         $field_name = $field_declaration->name;
@@ -111,15 +111,15 @@ class Sensei_Domain_Models_Course {
     }
 
     protected static function field() {
-        return new Sensei_Domain_Models_Field_Builder();
+        return new Sensei_Domain_Models_Field_Declaration_Builder();
     }
 
     protected static function meta_field() {
-        return self::field()->of_type( Sensei_Domain_Models_Field::META );
+        return self::field()->of_type( Sensei_Domain_Models_Field_Declaration::META );
     }
 
     protected static function derived_field() {
-        return self::field()->of_type( Sensei_Domain_Models_Field::DERIVED );
+        return self::field()->of_type( Sensei_Domain_Models_Field_Declaration::DERIVED );
     }
 
     protected static function declare_fields() {
@@ -159,13 +159,15 @@ class Sensei_Domain_Models_Course {
 
             self::derived_field()
                 ->with_name( 'modules' )
-                ->map_from( 'course_module_ids' ),
+                ->map_from( 'course_module_ids' )
+                ->with_json_name( 'module_ids' ),
             self::derived_field()
                 ->with_name( 'module_order' )
                 ->map_from( 'module_order' ),
             self::derived_field()
                 ->with_name( 'lessons' )
-                ->map_from( 'course_lessons' ),
+                ->map_from( 'course_lessons' )
+                ->not_visible(),
 
             self::meta_field()
                 ->with_name( 'prerequisite' )
@@ -176,7 +178,8 @@ class Sensei_Domain_Models_Course {
                 ->with_name( 'featured' )
                 ->map_from( '_course_featured' )
                 ->with_value_type('boolean')
-                ->with_before_return( 'cast_bool' ),
+                ->with_before_return( 'cast_bool' )
+                ->with_json_name( 'is_featured' ),
             self::meta_field()
                 ->with_name( 'video_embed' )
                 ->map_from( '_course_video_embed' ),
@@ -215,18 +218,14 @@ class Sensei_Domain_Models_Course {
     }
 
     public function get_json_field_mappings() {
-        return array(
-            'id' => 'id',
-            'title' => 'title',
-            'author' => 'author',
-            'content' => 'content',
-            'excerpt' => 'excerpt',
-            'status' => 'status',
-            'modules' => 'modules',
-            'featured' => 'featured',
-            'module_order' => 'module_order',
-            'video_embed' => 'video_embed'
-        );
+        $mappings = array();
+        foreach ( self::get_field_declarations() as $field_declaration ) {
+            if ( !$field_declaration->suppports_output_type( 'json' ) ) {
+                continue;
+            }
+            $mappings[$field_declaration->json_name] = $field_declaration->name;
+        }
+        return $mappings;
     }
 
     public static function all() {
@@ -268,8 +267,8 @@ class Sensei_Domain_Models_Course {
     }
 
     public function upsert() {
-        $fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field::FIELD );
-        $meta_fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field::META );
+        $fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field_Declaration::FIELD );
+        $meta_fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field_Declaration::META );
         return $this->save_entity( $fields, $meta_fields );
     }
     
@@ -321,7 +320,7 @@ class Sensei_Domain_Models_Course {
 
     /**
      * @param $data
-     * @param $field_declaration Sensei_Domain_Models_Field
+     * @param $field_declaration Sensei_Domain_Models_Field_Declaration
      * @return mixed|null
      */
     private function prepare_value( $field_declaration ) {
@@ -377,7 +376,7 @@ class Sensei_Domain_Models_Course {
     }
 
     /**
-     * @param $field_declaration Sensei_Domain_Models_Field
+     * @param $field_declaration Sensei_Domain_Models_Field_Declaration
      * @param $post_array_keys array
      * @param $model_data array
      * @param $key string
