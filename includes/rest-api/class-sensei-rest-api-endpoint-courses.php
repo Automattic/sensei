@@ -43,8 +43,22 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
      * @return WP_REST_Response
      */
     public function create_item( $request ) {
-        $course = $this->prepare_item_for_database( $request );
-        return $this->succeed( array() );
+        $update_existing = isset( $request['id'] ) ? absint( $request['id'] ) : null;
+        if ( null === $update_existing ) {
+            $course = $this->prepare_item_for_database( $request );
+            $validation = $course->validate();
+            if ( true !== $validation ) {
+                // Got a validation Error. Return that
+                return $this->fail_with( $validation );
+            }
+            $id_or_error = $course->upsert();
+            if ( is_wp_error( $id_or_error ) ) {
+                //
+                return $this->fail_with( $id_or_error );
+            }
+            $hydrated_result = Sensei_Domain_Models_Course::find_one_by_id( $id_or_error );
+            return $this->created( $this->to_json( array('id' => $id_or_error ) ) );
+        }
     }
 
     /**
@@ -95,7 +109,11 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
             return $results;
         }
 
-        return $this->model_to_json( $entity );
+        if ( is_a( $entity, 'Sensei_Domain_Models_Course' ) ) {
+            return $this->model_to_json( $entity );
+        }
+
+        return $entity;
     }
 
     /**
