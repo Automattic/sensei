@@ -17,11 +17,19 @@ class Sensei_Domain_Models_Field_Builder {
             'type' => Sensei_Domain_Models_Field::FIELD,
             'required' => false,
             'map_from' => null,
-            'before_return' => null
+            'before_return' => null,
+            'value_type' => 'any',
+            'default_value' => null,
+            'supported_outputs' => array( 'json' )
         );
     }
     public function build() {
         return new Sensei_Domain_Models_Field( $this->args );
+    }
+
+    public function with_default_value( $default_value ) {
+        $this->args['default_value'] = $default_value;
+        return $this;
     }
 
     public function with_name( $name ) {
@@ -46,6 +54,16 @@ class Sensei_Domain_Models_Field_Builder {
 
     public function required( $required = true ) {
         $this->args['required'] = $required;
+        return $this;
+    }
+
+    public function with_supported_outputs( $supported_outputs = array() ) {
+        $this->args['supported_outputs'] = $supported_outputs;
+        return $this;
+    }
+
+    public function with_value_type( $value_type ) {
+        $this->args['value_type'] = $value_type;
         return $this;
     }
 }
