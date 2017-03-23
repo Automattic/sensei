@@ -460,7 +460,7 @@ class Sensei_Question {
 			$title_html .= '<span class="grade">' . $question_grade . '</span>';
 			$title_html .='</span>';
 		} else {
-			$title_html .= ' (' . sprintf( esc_html__( 'Question Point Value: %s', 'woothemes-sensei' ), $question_grade ) . ')';
+			$title_html .= ' [' . sprintf( esc_html__( 'Question Point Value: %s', 'woothemes-sensei' ), $question_grade ) . ']';
 		}
 
 
