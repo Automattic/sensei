@@ -32,8 +32,8 @@ class Sensei_REST_API_V1 {
         }
         $this->helper = new Sensei_REST_API_Helper( $this );
         $this->endpoints = $this->get_endpoints();
-        foreach ($this->endpoints as $base => $endpoint ) {
-            register_rest_route( $this->get_api_prefix(),  $base, $endpoint->register() );
+        foreach ($this->endpoints as $endpoint ) {
+            $endpoint->register( $this );
         }
     }
 
@@ -46,9 +46,8 @@ class Sensei_REST_API_V1 {
 
     public function get_endpoints() {
         return apply_filters( 'sensei_rest_api_v1_get_endpoints', array(
-            '/version'             => new Sensei_REST_API_Endpoint_Version( $this ),
-            '/courses/(?P<id>\d+)' => new Sensei_REST_API_Endpoint_Courses( $this ),
-            '/courses'             => new Sensei_REST_API_Endpoint_Courses( $this )
+            new Sensei_REST_API_Endpoint_Version( $this ),
+            new Sensei_REST_API_Endpoint_Courses( $this )
         ) );
     }
 
