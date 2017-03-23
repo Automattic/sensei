@@ -13,7 +13,7 @@ class Sensei_REST_API_V1 {
      * @var Sensei_REST_API_Helper
      */
     private $helper;
-    private $namespace = 'sensei/v1';
+    private $api_prefix = 'sensei/v1';
     private $endpoints = array();
 
     /**
@@ -33,7 +33,7 @@ class Sensei_REST_API_V1 {
         $this->helper = new Sensei_REST_API_Helper( $this );
         $this->endpoints = $this->get_endpoints();
         foreach ($this->endpoints as $base => $endpoint ) {
-            register_rest_route( $this->get_name_space(),  $base, $endpoint->register() );
+            register_rest_route( $this->get_api_prefix(),  $base, $endpoint->register() );
         }
     }
 
@@ -57,7 +57,7 @@ class Sensei_REST_API_V1 {
         return $rest_api_enabled && function_exists( 'register_rest_route' );
     }
     
-    public function get_name_space() {
-        return apply_filters( 'sensei_rest_api_v1_get_namespace', $this->namespace );
+    public function get_api_prefix() {
+        return apply_filters( 'sensei_rest_api_v1_get_api_prefix', $this->api_prefix );
     }
 }
