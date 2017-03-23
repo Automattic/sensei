@@ -44,21 +44,28 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
      */
     public function create_item( $request ) {
         $update_existing = isset( $request['id'] ) ? absint( $request['id'] ) : null;
-        if ( null === $update_existing ) {
-            $course = $this->prepare_item_for_database( $request );
-            $validation = $course->validate();
-            if ( true !== $validation ) {
-                // Got a validation Error. Return that
-                return $this->fail_with( $validation );
+        $exists = null;
+        if ( null !== $update_existing ) {
+            $exists = Sensei_Domain_Models_Course::find_one_by_id( $update_existing );
+            if ( empty( $exists ) ) {
+                return $this->not_found( __( 'Course does not exist', 'woothemes-sensei' ) );
             }
-            $id_or_error = $course->upsert();
-            if ( is_wp_error( $id_or_error ) ) {
-                //
-                return $this->fail_with( $id_or_error );
-            }
-            $hydrated_result = Sensei_Domain_Models_Course::find_one_by_id( $id_or_error );
-            return $this->created( $this->to_json( array('id' => $id_or_error ) ) );
         }
+        $course = $this->prepare_item_for_database( $request );
+        if ( null !== $update_existing && $exists ) {
+            $course = $exists->merge_updates_from_request( $request );
+        }
+        $validation = $course->validate();
+        if ( true !== $validation ) {
+            // Got a validation Error. Return that
+            return $this->fail_with( $validation );
+        }
+        $id_or_error = $course->upsert();
+        if ( is_wp_error( $id_or_error ) ) {
+            return $this->fail_with( $id_or_error );
+        }
+
+        return $this->created( $this->to_json( array('id' => absint( $id_or_error ) ) ) );
     }
 
     /**
@@ -89,7 +96,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 
     private function admin_permissions_check( $request ) {
         // we are only going to allow admins to access the rest api for now
-        return Sensei()->feature_flags->is_enabled( 'REST_API_V1_SKIP_PERMISSIONS' ) || current_user_can( 'manage_sensei' );
+        return Sensei()->feature_flags->is_enabled( 'rest_api_v1_skip_permissions' ) || current_user_can( 'manage_sensei' );
     }
 
     /**
@@ -130,12 +137,16 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
         return $result;
     }
 
+    /**
+     * @param $model Sensei_Domain_Models_Course
+     * @return array
+     */
     protected function add_links( $model ) {
         $helper = $this->api->get_helper();
         return array(
             'self' => array(
                 array(
-                    'href' => esc_url( $helper->base_namespace_url() . '/courses/' . $model->id )
+                    'href' => esc_url( $helper->base_namespace_url() . '/courses/' . $model->get_id() )
                 )
             ),
             'collection' => array(
