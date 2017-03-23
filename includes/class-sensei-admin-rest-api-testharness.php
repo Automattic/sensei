@@ -12,18 +12,16 @@ class Sensei_Admin_Rest_Api_Testharness {
         $this->file = $file;
         $this->page_slug = 'sensei_rest_api_testharness';
 
-        if ( Sensei()->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
-            add_action( 'init', array( $this, 'initialize' ) );
+        add_action( 'init', array( $this, 'initialize' ) );
 
-            // Admin functions
-            if (is_admin()) {
-                add_action('admin_menu', array($this, 'testharness_admin_menu'), 10);
+        // Admin functions
+        if (is_admin()) {
+            add_action('admin_menu', array($this, 'testharness_admin_menu'), 10);
 
-                if ( $this->is_this_page() ) {
+            if ( $this->is_this_page() ) {
 
-                    add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+                add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
-                }
             }
         }
     }
