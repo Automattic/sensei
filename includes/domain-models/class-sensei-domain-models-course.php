@@ -94,14 +94,14 @@ class Sensei_Domain_Models_Course {
             if ( $field_declaration->is_meta_field() ) {
                 $map_from = $field_declaration->get_name_to_map_from();
                 $value = get_post_meta( $this->get_id(), $map_from, true );
-                $this->data[ $field_name ] = $value;
+                $this->set_value( $field_name, $value );
             } else if ( $field_declaration->is_derived_field() ) {
                 $map_from = $field_declaration->get_name_to_map_from();
                 $value = call_user_func( array( $this, $map_from ) );
-                $this->data[ $field_name ] = $value;
+                $this->set_value( $field_name, $value );
             } else {
                 // load the default value for the field
-                $this->data[ $field_name ] = $field_declaration->get_default_value();
+                $this->set_value( $field_name, $field_declaration->get_default_value() );
             }
         }
     }
@@ -243,7 +243,8 @@ class Sensei_Domain_Models_Course {
 
     protected static function get_entities() {
         $query = new WP_Query( array(
-            'post_type' => 'course'
+            'post_type' => 'course',
+            'post_status' => 'any'
         ) );
         return $query->get_posts();
     }
@@ -376,6 +377,25 @@ class Sensei_Domain_Models_Course {
     }
 
     /**
+     * @param $other WP_REST_Request
+     * @return Sensei_Domain_Models_Course
+     */
+    public function merge_updates_from_request( $request, $updating = false ) {
+        $fields = self::get_field_declarations();
+        $field_data = array();
+        foreach ( $fields as $field ) {
+            if ( $field->is_derived_field() ) {
+                continue;
+            }
+            if ( isset( $request[$field->name] ) && !( $updating && $field->primary ) ) {
+                $field_data[ $field->name ] = $request[$field->name];
+                $this->set_value( $field->name, $request[$field->name] );
+            }
+        }
+        return $this;
+    }
+
+    /**
      * @param $field_declaration Sensei_Domain_Models_Field_Declaration
      * @param $post_array_keys array
      * @param $model_data array
@@ -385,9 +405,25 @@ class Sensei_Domain_Models_Course {
     {
         $map_from = $field_declaration->get_name_to_map_from();
         if (in_array($map_from, $post_array_keys)) {
-            $this->data[$key] = $model_data[$map_from];
+            $this->set_value( $key, $model_data[$map_from] );
         } else if (in_array($key, $post_array_keys)) {
-            $this->data[$key] = $model_data[$key];
+            $this->set_value( $key, $model_data[$key] );
         }
+    }
+
+    /**
+     * @param $field
+     * @param $value
+     * @return void
+     */
+    public function set_value( $field, $value )
+    {
+        if (!isset( $this->fields[$field] ) ) {
+            return;
+        }
+
+        $field_declaration = $this->fields[$field];
+        $val = $field_declaration->cast_value( $value );
+        $this->data[$field_declaration->name] = $val;
     }
 }
