@@ -8,17 +8,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Sensei_REST_API_Endpoint_Version
  * returns the current sensei version;
  */
-class Sensei_REST_API_Endpoint_Version extends WP_REST_Controller {
+class Sensei_REST_API_Endpoint_Version extends Sensei_REST_API_Controller {
 
     public function register() {
-        return array(
+        register_rest_route( $this->api->get_api_prefix(),  '/version', array(
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( $this, 'get_items' ),
                 'permission_callback' => array( $this, 'get_items_permissions_check' ),
                 'args'                => array()
             )
-        );
+        ) );
     }
 
     public function get_items( $request ) {
