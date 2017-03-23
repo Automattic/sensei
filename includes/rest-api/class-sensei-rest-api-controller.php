@@ -23,6 +23,10 @@ class Sensei_REST_API_Controller extends WP_REST_Controller {
         $this->api = $api;
     }
 
+    public function register() {
+        throw new Exception( 'override me' );
+    }
+
     protected function succeed( $data ) {
         return new WP_REST_Response( $data, self::HTTP_SUCCESS );
     }
