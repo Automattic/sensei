@@ -3,27 +3,28 @@
 
 class Sensei_Admin_Rest_Api_Testharness {
 
+    private $name;
+    private $file;
+    private $page_slug;
+
     function __construct( $file )
     {
-
         $this->file = $file;
         $this->page_slug = 'sensei_rest_api_testharness';
 
-        add_action( 'init', array( $this, 'initialize' ) );
+        if ( Sensei()->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
+            add_action( 'init', array( $this, 'initialize' ) );
 
-        // Admin functions
-        if (is_admin()) {
-            add_action('admin_menu', array($this, 'testharness_admin_menu'), 10);
+            // Admin functions
+            if (is_admin()) {
+                add_action('admin_menu', array($this, 'testharness_admin_menu'), 10);
 
-            if ( $this->is_this_page() ) {
+                if ( $this->is_this_page() ) {
 
-                add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+                    add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
+                }
             }
-
-//            add_action('admin_init', array($this, 'report_download_page'));
-
-//            add_filter('user_search_columns', array($this, 'user_search_columns_filter'), 10, 3);
         }
     }
 
