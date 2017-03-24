@@ -122,4 +122,12 @@ class Sensei_WC_Utils {
         }
         return $product->is_type( 'variation' ) ? wc_get_product_variation_attributes( $product->get_id() ) : '';
     }
+
+    public static function get_formatted_variation( $variation = '', $flat = false ) {
+        if ( self::wc_version_less_than('2.7') ) {
+            return woocommerce_get_formatted_variation( $variation, $flat );
+        }
+
+        return wc_get_formatted_variation( $variation, $flat );
+    }
 }

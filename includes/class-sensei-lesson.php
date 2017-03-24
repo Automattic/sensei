@@ -619,9 +619,9 @@ class Sensei_Lesson {
 								foreach ($products_array as $products_item){
 
 									if ( 'product_variation' == $products_item->post_type ) {
-										$product_object = get_product( $products_item->ID );
-										$parent_id = wp_get_post_parent_id( $products_item->ID );
-										$product_name = ucwords( woocommerce_get_formatted_variation( $product_object->variation_data, true ) );
+										$product_object = Sensei_WC_Utils::get_product( $products_item->ID );
+										$parent_id = Sensei_WC_Utils::get_product_id( $product_object );
+										$product_name = ucwords( Sensei_WC_Utils::get_formatted_variation( Sensei_WC_Utils::get_variation_data( $product_object ), true ) );
 									} else {
 										$parent_id = false;
 										$prev_parent_id = 0;
