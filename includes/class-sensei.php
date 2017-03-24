@@ -155,6 +155,11 @@ class Sensei_Main {
     private $shortcode_loader;
 
     /**
+     * @var Sensei_View_Helper
+     */
+    public $view_helper;
+
+    /**
      * Constructor method.
      * @param  string $file The base file of the plugin.
      * @since  1.0.0
@@ -316,6 +321,8 @@ class Sensei_Main {
 
         // Load Learner Management Functionality
         $this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name );
+
+        $this->view_helper = new Sensei_View_Helper();
 
         // Differentiate between administration and frontend logic.
         if ( is_admin() ) {
@@ -1334,4 +1341,5 @@ class Sensei_Main {
  * @ignore only for backward compatibility
  * @since 1.9.0
  */
-class Woothemes_Sensei extends Sensei_Main{ }
+class Woothemes_Sensei extends Sensei_Main {
+}

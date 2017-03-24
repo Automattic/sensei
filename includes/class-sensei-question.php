@@ -451,18 +451,13 @@ class Sensei_Question {
          * hook document in class-woothemes-sensei-message.php the_title()
          */
         $title = apply_filters( 'sensei_single_title', $title, 'question');
-		$styles_disabled = $disable_styles = Sensei_Utils::get_setting_as_flag( 'styles_disable', 'sensei_disable_styles' );
+		
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
         $title_html  = '<span class="question question-title">';
         $title_html .= $title;
-		if ( false === $styles_disabled ) {
-			$title_html .= '<span class="grade">' . $question_grade . '</span>';
-			$title_html .='</span>';
-		} else {
-			$title_html .= ' [' . sprintf( esc_html__( 'Question Point Value: %s', 'woothemes-sensei' ), $question_grade ) . ']';
-		}
-
+		$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
+		$title_html .='</span>';
 
         return $title_html;
     }
