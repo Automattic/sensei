@@ -217,6 +217,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 								'default' => false,
 								'section' => 'default-settings'
 								);
+		$fields['quiz_question_points_format'] = array(
+								'name' => __( 'Quiz question points format', 'woothemes-sensei' ),
+								'description' => __( 'Set the quiz question points format (be sure to include an `%s`)', 'woothemes-sensei' ),
+								'type' => 'text',
+								'default' => '[Points: %s]',
+								'section' => 'default-settings'
+								);
 
 		$fields['js_disable'] = array(
 								'name' => __( 'Disable Sensei Javascript', 'woothemes-sensei' ),
