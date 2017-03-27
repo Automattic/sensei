@@ -46,6 +46,14 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	} // End __construct()
 
+	public function get_course_id() {
+		return $this->course_id;
+	}
+
+	public function get_lesson_id() {
+		return $this->lesson_id;
+	}
+
 	/**
 	 * Define the columns that are going to be used in the table
 	 * @since  1.7.0

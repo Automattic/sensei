@@ -86,15 +86,3 @@ add_action( 'woocommerce_delete_shop_order_transients',     array( 'Sensei_WC', 
 add_filter( 'pre_option_woocommerce_enable_guest_checkout', array( 'Sensei_WC', 'disable_guest_checkout' ) );
 // Mark orders with virtual products as complete rather then stay processing
 add_filter( 'woocommerce_payment_complete_order_status',    array( 'Sensei_WC', 'virtual_order_payment_complete' ), 10, 2 );
-
-/************************************
- *
- * WooCommerce Subscriptions
- *
- ************************************/
-add_action( 'woocommerce_subscription_status_pending_to_active', array( 'Sensei_WC', 'activate_subscription' ), 50, 3 );
-// filter the user permission of the subscription is not valid
-add_filter( 'sensei_access_permissions',               array( 'Sensei_WC', 'get_subscription_permission' ), 10, 2 );
-
-//block user from accessing course when subscription
-add_filter( 'sensei_user_started_course',     array( 'Sensei_WC', 'get_subscription_user_started_course' ), 10, 3 );

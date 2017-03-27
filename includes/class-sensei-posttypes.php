@@ -201,7 +201,7 @@ class Sensei_PostTypes {
 	 */
 	public function setup_lesson_post_type () {
 
-		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' );
+		$supports_array = array( 'title', 'editor', 'excerpt', 'thumbnail' );
 		$allow_comments = false;
 		if ( isset( Sensei()->settings->settings[ 'lesson_comments' ] ) ) {
 			$allow_comments = Sensei()->settings->settings[ 'lesson_comments' ];

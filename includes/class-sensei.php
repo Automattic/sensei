@@ -301,7 +301,6 @@ class Sensei_Main {
 
             // Load Analysis Reports
             $this->analysis = new Sensei_Analysis( $this->file );
-
         } else {
 
             // Load Frontend Class
@@ -417,10 +416,17 @@ class Sensei_Main {
      * @return  void
      */
     public function load_plugin_textdomain () {
-
+        global $wp_version;
         $domain = 'woothemes-sensei';
+
+        if ( version_compare( $wp_version, '4.7', '>=' ) && is_admin() ) {
+            $wp_user_locale = get_user_locale();
+        } else {
+            $wp_user_locale = get_locale();
+        }
+
         // The "plugin_locale" filter is also used in load_plugin_textdomain()
-        $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+        $locale = apply_filters( 'plugin_locale', $wp_user_locale, $domain );
         load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
         load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 
@@ -884,9 +890,15 @@ class Sensei_Main {
      * @since 1.7.0
      */
     public function jetpack_latex_support() {
-        if ( function_exists( 'latex_markup') ) {
-            add_filter( 'sensei_question_title', 'latex_markup' );
-            add_filter( 'sensei_answer_text', 'latex_markup' );
+        $this->maybe_add_latex_support_via( 'latex_markup' );
+    }
+
+    private function maybe_add_latex_support_via($func_name ) {
+        if ( function_exists( $func_name ) ) {
+            add_filter( 'sensei_question_title', $func_name );
+            add_filter( 'sensei_answer_text', $func_name );
+            add_filter( 'sensei_question_answer_notes', $func_name );
+            add_filter( 'sensei_questions_get_correct_answer', $func_name );
         }
     }
     
@@ -896,10 +908,7 @@ class Sensei_Main {
 	 * @return null
 	 */
 	public function wp_quicklatex_support() {
-		if ( function_exists( 'quicklatex_parser') ) {
-			add_filter( 'sensei_question_title', 'quicklatex_parser' );
-			add_filter( 'sensei_answer_text', 'quicklatex_parser' );
-		}
+        $this->maybe_add_latex_support_via( 'quicklatex_parser' );
 	}
 
     /**

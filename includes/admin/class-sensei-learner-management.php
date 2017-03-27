@@ -16,6 +16,8 @@ class Sensei_Learner_Management {
 	public $name;
 	public $file;
 	public $page_slug;
+	public $bulk_actions_controller;
+	const SENSEI_LEARNER_MANAGEMENT_PER_PAGE = 'sensei_learner_management_per_page';
 
 	/**
 	 * Constructor
@@ -29,9 +31,10 @@ class Sensei_Learner_Management {
 
 		// Admin functions
 		if ( is_admin() ) {
+			add_filter('set-screen-option', array($this, 'set_learner_management_screen_option'), 20, 3);
 			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30);
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container'  ) );
-			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+			if ( isset( $_GET['page'] ) && ( ( $_GET['page'] == $this->page_slug ) || ( $_GET['page'] == 'sensei_learner_admin' ) ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
@@ -39,6 +42,7 @@ class Sensei_Learner_Management {
 			add_action( 'admin_init', array( $this, 'add_new_learners' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
+			$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
 		} // End If Statement
 
 		// Ajax functions
@@ -60,9 +64,29 @@ class Sensei_Learner_Management {
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
+			add_action("load-$learners_page", array($this, "load_screen_options_when_on_bulk_actions") );
 		}
 
 	} // End learners_admin_menu()
+
+	public function set_learner_management_screen_option($status, $option, $value) {
+		if ( self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE == $option ) {
+			return $value;
+		}
+		return $status;
+	}
+	
+	public function load_screen_options_when_on_bulk_actions() {
+		if ( isset($this->bulk_actions_controller) && $this->bulk_actions_controller->is_current_page() ) {
+
+			$args = array(
+				'label' => __('Learners per page', 'woothemes-sensei'),
+				'default' => 20,
+				'option' => self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE
+			);
+			add_screen_option( 'per_page', $args );
+		}
+	}
 
 	/**
 	 * enqueue_scripts function.
@@ -73,8 +97,8 @@ class Sensei_Learner_Management {
 	 * @return void
 	 */
 	public function enqueue_scripts () {
-
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
+		$suffix = $is_debug ? '' : '.min';
 
 		// Load Learners JS
 		wp_enqueue_script( 'sensei-learners-general',
@@ -91,7 +115,6 @@ class Sensei_Learner_Management {
 		);
 
 		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
-
 	} // End enqueue_scripts()
 
 	/**
@@ -154,7 +177,11 @@ class Sensei_Learner_Management {
 	 * @return void
 	 */
 	public function learners_page() {
-
+		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
+		if ( $this->bulk_actions_controller->get_view() === $type ) {
+			$this->bulk_actions_controller->learner_admin_page();
+			return;
+		}
 		// Load Learners data
 		$course_id = 0;
 		$lesson_id = 0;
@@ -228,7 +255,7 @@ class Sensei_Learner_Management {
 			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>'; 
 		}
 		?>
-			<h1><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?></h1>
+			<h1><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?> | <a href="<?php echo esc_attr($this->bulk_actions_controller->get_url()); ?>"><?php echo $this->bulk_actions_controller->get_name(); ?></a></h1>
 		<?php
 	} // End learners_default_nav()
 
@@ -439,11 +466,12 @@ class Sensei_Learner_Management {
 
 	public function add_learner_notices() {
 		if( isset( $_GET['page'] ) && $this->page_slug == $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
-			if( 'success' == $_GET['message'] ) {
-				$msg = array(
-					'updated',
-					__( 'Learner added successfully!', 'woothemes-sensei' ),
-				);
+			if( 'error' != $_GET['message'] ) {
+				$message = __( 'Learner added successfully!', 'woothemes-sensei' );
+				if ( 'success_bulk' == $_GET['message'] ) {
+					$message = __( 'Learners added successfully!', 'woothemes-sensei' );
+				}
+				$msg = array( 'updated', $message );
 			} else {
 				$msg = array(
 					'error',
@@ -474,7 +502,15 @@ class Sensei_Learner_Management {
 
         return Sensei_Learner::get_full_name( $user_id );
 
-    } // end get_learner_full_name
+    }
+
+	public function get_url() {
+		return add_query_arg(array('page' => $this->page_slug), admin_url('admin.php') );
+	}
+
+	public function get_name() {
+		return $this->name;
+	}
 
 } // End Class
 

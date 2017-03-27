@@ -1035,11 +1035,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                  $feedback = get_post_meta( $question_id, '_answer_feedback', true );
              }
 
-             return $feedback;
-
+         } else {
+            $feedback = $all_feedback[ $question_id ];
          }
 
-         return $all_feedback[ $question_id ];
+         /**
+          * Filter the user question feedback.
+          *
+          * @since 1.9.12
+          * @param string $feedback
+          * @param int    $lesson_id
+          * @param int    $question_id
+          * @param int    $user_id
+          */
+         return apply_filters( 'sensei_user_question_feedback', $feedback, $lesson_id, $question_id, $user_id );
 
      } // end get_user_question_feedback
 
