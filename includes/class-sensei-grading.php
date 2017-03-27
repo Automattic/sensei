@@ -788,7 +788,7 @@ class Sensei_Grading {
     /**
      * Grade question automatically
      *
-     * This function checks the question typ and then grades it accordingly.
+     * This function checks the question type and then grades it accordingly.
      *
      * @since 1.7.4
      *

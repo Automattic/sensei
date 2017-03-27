@@ -568,7 +568,7 @@ class Sensei_Utils {
 	/**
 	 * Grade question automatically
      *
-     * This function checks the question typ and then grades it accordingly.
+     * This function checks the question type and then grades it accordingly.
      *
      * @deprecated since 1.7.4 use WooThemes_Sensei_Grading::grade_question_auto instead
      *
