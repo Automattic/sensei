@@ -14,7 +14,6 @@ class Sensei_Feature_Flags {
     public function __construct() {
         $this->feature_flags = array();
         $this->default_feature_settings = (array) apply_filters( 'sensei_default_feature_flag_settings', array(
-            'rest_api_testharness' => false,
             'rest_api_v1' => false,
             'rest_api_v1_skip_permissions' => false
         ));
