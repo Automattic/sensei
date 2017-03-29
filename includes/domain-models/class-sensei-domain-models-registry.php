@@ -21,12 +21,9 @@ class Sensei_Domain_Models_Registry {
 
     public function get_factory( $klass ) {
         $klass = is_string( $klass ) ? $klass : get_class( $klass );
-        if ( false === strpos( 'Sensei_Domain_Models_', $klass ) ) {
-            $klass = 'Sensei_Domain_Models_' . $klass;
-        }
         $this->get_field_declarations( $klass );
         if ( !isset( $this->factories[$klass] ) ) {
-            $this->factories[$klass] = new Sensei_Domain_Models_Factory($klass, $this);
+            $this->factories[$klass] = new Sensei_Domain_Models_Factory ($klass, $this );
         }
 
         return $this->factories[$klass];

@@ -24,12 +24,15 @@ class Sensei_REST_API_V1 {
     }
 
     /**
+     * bootstrap registry
      * register all endpoints
      */
     public function register() {
         if ( !$this->can_use_rest_api() ) {
             return;
         }
+        Sensei_Domain_Models_Registry::get_instance()
+            ->set_data_store( 'Sensei_Domain_Models_Course', new Sensei_Domain_Models_Course_Data_Store_Cpt() );
         $this->helper = new Sensei_REST_API_Helper( $this );
         $this->endpoints = $this->get_endpoints();
         foreach ($this->endpoints as $endpoint ) {

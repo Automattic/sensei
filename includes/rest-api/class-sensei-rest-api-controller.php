@@ -14,17 +14,37 @@ class Sensei_REST_API_Controller extends WP_REST_Controller {
      * @var Sensei_REST_API_V1
      */
     protected $api;
+    /**
+     * @var string the endpoint base
+     */
+    protected $base = null;
+    /**
+     * @var string the domain model class this endpoint serves
+     */
+    protected $domain_model_class = null;
+    /**
+     * @var Sensei_Domain_Models_Factory
+     */
+    protected $factory = null;
 
     /**
      * Sensei_REST_API_Controller constructor.
      * @param $api Sensei_REST_API_V1
+     * @throws Sensei_Domain_Models_Exception
      */
     public function __construct( $api ) {
         $this->api = $api;
+        if ( empty( $this->base ) ) {
+            throw new Sensei_Domain_Models_Exception( 'Need to put a string with a backslash in $base' );
+        }
+        if ( !empty( $this->domain_model_class ) ) {
+            $this->factory = Sensei_Domain_Models_Registry::get_instance()
+                ->get_factory( $this->domain_model_class );
+        }
     }
 
     public function register() {
-        throw new Exception( 'override me' );
+        throw new Sensei_Domain_Models_Exception( 'override me' );
     }
 
     protected function succeed( $data ) {
