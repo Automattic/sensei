@@ -259,6 +259,10 @@ abstract class Sensei_Domain_Models_Model_Abstract {
         return absint( $value );
     }
 
+    protected function as_nullable_uint( $value ) {
+        return ( empty( $value ) && !is_numeric( $value ) ) ? null : $this->as_uint( $value );
+    }
+
     /**
      * @param $data
      * @param $field_declaration Sensei_Domain_Models_Field_Declaration

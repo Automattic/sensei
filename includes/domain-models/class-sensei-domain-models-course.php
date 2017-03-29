@@ -60,8 +60,7 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
             self::meta_field()
                 ->with_name( 'prerequisite' )
                 ->map_from( '_course_prerequisite' )
-                ->with_value_type('int')
-                ->with_before_return( 'as_uint' ),
+                ->with_before_return( 'as_nullable_uint' ),
             self::meta_field()
                 ->with_name( 'featured' )
                 ->map_from( '_course_featured' )
@@ -75,8 +74,7 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
                 ->with_name( 'woocommerce_product' )
                 ->map_from( '_course_woocommerce_product' )
                 ->with_json_name( 'woocommerce_product_id' )
-                ->with_value_type('int')
-                ->with_before_return( 'as_uint' ),
+                ->with_before_return( 'as_nullable_uint' ),
             self::meta_field()
                 ->with_name( 'lesson_order' )
                 ->map_from( '_lesson_order' )
