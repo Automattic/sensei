@@ -4,10 +4,12 @@
 class Sensei_Domain_Models_Registry {
 
     private static $instance = null;
+    private $data_stores;
 
     private function __construct() {
         $this->field_declarations_by_model = array();
         $this->factories = array();
+        $this->data_stores = array();
     }
 
     public static function get_instance() {
@@ -92,9 +94,7 @@ class Sensei_Domain_Models_Registry {
     }
 
     private function get_domain_model_class( $thing ) {
-        if (!is_string( $thing ) ) {
-            $thing = get_class( $thing );
-        }
+        $thing = $this->ensure_class_string( $thing );
 
         $this->get_field_declarations( $thing );
 
@@ -126,5 +126,36 @@ class Sensei_Domain_Models_Registry {
             }
         }
         return $filtered;
+    }
+
+    /**
+     * @param $type_class string the sensei domain model class
+     * @param $data_store Sensei_Domain_Models_Data_Store the data store instance
+     * @return $this
+     */
+    public function set_data_store( $type_class, $data_store ) {
+        $type_class = $this->ensure_class_string( $type_class );
+        $this->data_stores[$type_class] = $data_store;
+        return $this;
+    }
+
+    /**
+     * @param $type_class string
+     * @return Sensei_Domain_Models_Data_Store
+     * @throws Sensei_Domain_Models_Exception
+     */
+    public function get_data_store( $type_class ) {
+        $type_class = $this->ensure_class_string( $type_class );
+        if (!isset( $this->data_stores[$type_class] ) ) {
+            throw new Sensei_Domain_Models_Exception( 'No datastore set for class ' . $type_class );
+        }
+        return $this->data_stores[$type_class];
+    }
+
+    private function ensure_class_string( $thing ) {
+        if (!is_string( $thing ) ) {
+            return get_class( $thing );
+        }
+        return $thing;
     }
 }
