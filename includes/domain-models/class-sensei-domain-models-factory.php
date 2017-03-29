@@ -51,7 +51,7 @@ class Sensei_Domain_Models_Factory {
     }
 
     public function get_field_declarations( $filter_by_type = null ) {
-        return $this->registry->get_field_declarations( $filter_by_type );
+        return $this->registry->get_field_declarations( $this->klass, $filter_by_type );
     }
 
     /**

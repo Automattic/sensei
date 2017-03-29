@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * returns the current sensei version;
  */
 class Sensei_REST_API_Endpoint_Version extends Sensei_REST_API_Controller {
-
+    protected $base = '/version';
     public function register() {
-        register_rest_route( $this->api->get_api_prefix(),  '/version', array(
+        register_rest_route( $this->api->get_api_prefix(),  $this->base, array(
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( $this, 'get_items' ),

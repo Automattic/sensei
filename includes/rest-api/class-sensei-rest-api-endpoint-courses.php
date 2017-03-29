@@ -5,8 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
-
+    
     protected $base = '/courses';
+    protected $domain_model_class = 'Sensei_Domain_Models_Course';
 
     public function register() {
         $prefix = $this->api->get_api_prefix();
@@ -42,13 +43,6 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
                 'args'            => $this->get_endpoint_args_for_item_schema( true ),
             ),
         ) );
-    }
-
-    public function __construct(Sensei_REST_API_V1 $api)
-    {
-        parent::__construct($api);
-        $this->factory = Sensei_Domain_Models_Registry::get_instance()
-            ->get_factory( 'Course' );
     }
 
     public function get_items( $request ) {
