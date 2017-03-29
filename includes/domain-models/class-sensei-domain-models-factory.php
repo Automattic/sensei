@@ -60,7 +60,7 @@ class Sensei_Domain_Models_Factory {
      * return object|null
      */
     public function get_entity( $id) {
-        return $this->call_fn( 'get_entity', $id);
+        return $this->get_data_store()->get_entity( $id );
     }
 
     /**
@@ -68,13 +68,16 @@ class Sensei_Domain_Models_Factory {
      * @return array
      */
     public function get_entities() {
-        return $this->call_fn( 'get_entities' );
+        return $this->get_data_store()->get_entities();
     }
 
-    private function call_fn() {
-        $args = func_get_args();
-        $fn_name = array_shift( $args );
-        return call_user_func_array( array( $this->get_domain_model_class( $this->klass ), $fn_name ), $args );
+    /**
+     * @return Sensei_Domain_Models_Data_Store
+     * @throws Sensei_Domain_Models_Exception
+     */
+    public function get_data_store() {
+        return Sensei_Domain_Models_Registry::get_instance()
+            ->get_data_store( $this->klass );
     }
 
     public function create_object( $entity) {
