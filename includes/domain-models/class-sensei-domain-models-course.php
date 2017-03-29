@@ -10,19 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 
-    /**
-     * @param $field_declaration Sensei_Domain_Models_Field_Declaration
-     * @return mixed
-     */
-    protected function get_meta_field_value($field_declaration ) {
-        $map_from = $field_declaration->get_name_to_map_from();
-        return get_post_meta( $this->get_id(), $map_from, true );
-    }
-
-    public function get_id() {
-        return $this->id;
-    }
-
     public static function declare_fields() {
         return array(
             self::field()
@@ -87,12 +74,17 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
             self::meta_field()
                 ->with_name( 'woocommerce_product' )
                 ->map_from( '_course_woocommerce_product' )
+                ->with_json_name( 'woocommerce_product_id' )
                 ->with_value_type('int')
                 ->with_before_return( 'as_uint' ),
             self::meta_field()
                 ->with_name( 'lesson_order' )
                 ->map_from( '_lesson_order' )
         );
+    }
+
+    public function get_id() {
+        return $this->id;
     }
 
     protected function course_module_ids() {
@@ -107,19 +99,6 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
     protected function module_order() {
         $modules = Sensei()->modules->get_course_module_order( absint( $this->id ) );
         return ( empty( $modules ) ) ? array() : array_map( 'absint', $modules );
-    }
-
-    public static function get_entity( $course_id ) {
-        $course = get_post( absint( $course_id ) );
-        return !empty( $course ) && $course->post_type === 'course' ? $course : null;
-    }
-
-    public static function get_entities() {
-        $query = new WP_Query( array(
-            'post_type' => 'course',
-            'post_status' => 'any'
-        ) );
-        return $query->get_posts();
     }
     
     public function save_entity( $fields, $meta_fields = array() ) {
