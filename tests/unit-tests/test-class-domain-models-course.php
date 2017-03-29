@@ -67,4 +67,18 @@ class Sensei_Class_Domain_Models_Course_Test extends WP_UnitTestCase {
         $modules = $course->modules;
         $this->assertEquals($modules, $expected);
     }
+
+    public function testModuleOrderDerivedFieldCallModuleOrder() {
+        $expected = array(2, 1, 3);
+        $course = $this->getMockBuilder( $this->modelClassName )
+            ->setMethods(array('module_order'))
+            ->getMock();
+
+        $course->expects($this->once())
+            ->method('module_order')
+            ->will($this->returnValue($expected));
+
+        $module_order = $course->module_order;
+        $this->assertEquals($module_order, $expected);
+    }
 }
