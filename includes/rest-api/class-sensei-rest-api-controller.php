@@ -43,6 +43,48 @@ class Sensei_REST_API_Controller extends WP_REST_Controller {
         }
     }
 
+    /**
+     * @param $entity array|Sensei_Domain_Models_Model_Collection|Sensei_Domain_Models_Model_Abstract
+     * @return array
+     */
+    protected function prepare_data_transfer_object( $entity ) {
+        if ( is_array( $entity ) ) {
+            return $entity;
+        }
+
+        if ( is_a( $entity, 'Sensei_Domain_Models_Model_Collection' ) ) {
+            $results = array();
+            foreach ( $entity->get_items() as $model ) {
+                $results[] = $this->model_to_data_transfer_object( $model );
+            }
+            return $results;
+        }
+
+        if ( is_a( $entity, 'Sensei_Domain_Models_Model_Abstract' ) ) {
+            return $this->model_to_data_transfer_object( $entity );
+        }
+
+        return $entity;
+    }
+
+    /**
+     * @param $model Sensei_Domain_Models_Model_Abstract
+     * @return array
+     */
+    protected function model_to_data_transfer_object($model ) {
+        $result = array();
+        foreach ( $model->get_json_field_mappings() as $mapping_name => $field_name ) {
+            $value = $model->__get( $field_name );
+            $result[$mapping_name] = $value;
+        }
+        $result['_links'] = $this->add_links( $model );
+        return $result;
+    }
+
+    protected function add_links( $model ) {
+        return array();
+    }
+
     public function register() {
         throw new Sensei_Domain_Models_Exception( 'override me' );
     }
