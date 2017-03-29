@@ -51,7 +51,8 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 
     protected function get_data_array_from_entity( $entity ) {
         if ( is_numeric( $entity  ) ) {
-            return get_post( absint( $entity ), ARRAY_A );
+            $data_store = $this->get_data_store();
+            return $data_store->get_entity( $entity );
         } else if ( is_a( $entity, 'WP_Post' ) ) {
             return $entity->to_array();
         } else {
@@ -126,6 +127,8 @@ abstract class Sensei_Domain_Models_Model_Abstract {
             $this->set_value( $key, $model_data[$map_from] );
         } else if (in_array($key, $post_array_keys)) {
             $this->set_value( $key, $model_data[$key] );
+        } else {
+            $this->set_value( $key, $field_declaration->get_default_value() );
         }
     }
 
@@ -136,7 +139,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
         $field_name = $field_declaration->name;
         if ( !isset( $this->data[ $field_name ] ) ) {
             if ( $field_declaration->is_meta_field() ) {
-                $value = $this->get_meta_field_value( $field_declaration );
+                $value = $this->get_data_store()->get_meta_field_value( $this, $field_declaration );
                 $this->set_value( $field_name, $value );
             } else if ( $field_declaration->is_derived_field() ) {
                 $map_from = $field_declaration->get_name_to_map_from();
@@ -218,22 +221,6 @@ abstract class Sensei_Domain_Models_Model_Abstract {
     }
 
     /**
-     * @param $field_declaration Sensei_Domain_Models_Field_Declaration
-     * @return mixed
-     */
-    protected function get_meta_field_value( $field ) {
-        throw new Sensei_Domain_Models_Exception('override me ' . __FUNCTION__ );
-    }
-
-    public static function get_entity( $course_id ) {
-        throw new Sensei_Domain_Models_Exception('override me ' . __FUNCTION__ );
-    }
-
-    public static function get_entities() {
-        throw new Sensei_Domain_Models_Exception('override me ' . __FUNCTION__);
-    }
-
-    /**
      * @param $declared_field_builders array of Sensei_Domain_Models_Field_Builder
      * @return array
      */
@@ -285,5 +272,14 @@ abstract class Sensei_Domain_Models_Model_Abstract {
         }
 
         return $value;
+    }
+
+    /**
+     * @return Sensei_Domain_Models_Data_Store
+     * @throws Sensei_Domain_Models_Exception
+     */
+    protected function get_data_store()
+    {
+        return Sensei_Domain_Models_Registry::get_instance()->get_data_store(get_class($this));
     }
 }
