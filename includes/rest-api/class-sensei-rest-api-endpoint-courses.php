@@ -50,7 +50,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
         
         if (null === $item_id ) {
             $models = $this->factory->all();
-            $data = $this->prepare_for_data_transfer( $models );
+            $data = $this->prepare_data_transfer_object( $models );
             return $this->succeed( $data );
         }
 
@@ -59,7 +59,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
             return $this->not_found( __( 'Course not found' ) );
         }
 
-        return $this->succeed( $this->prepare_for_data_transfer( $course ) );
+        return $this->succeed( $this->prepare_data_transfer_object( $course ) );
     }
 
     /**
@@ -91,7 +91,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
             return $this->fail_with( $id_or_error );
         }
 
-        return $this->created( $this->prepare_for_data_transfer( array('id' => absint( $id_or_error ) ) ) );
+        return $this->created( $this->prepare_data_transfer_object( array('id' => absint( $id_or_error ) ) ) );
     }
     
     public function delete_item( $request ) {
@@ -140,44 +140,6 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
     private function admin_permissions_check( $request ) {
         // we are only going to allow admins to access the rest api for now
         return Sensei()->feature_flags->is_enabled( 'rest_api_v1_skip_permissions' ) || current_user_can( 'manage_sensei' );
-    }
-
-    /**
-     * @param $entity array|Sensei_Domain_Models_Model_Collection|Sensei_Domain_Models_Course
-     * @return array
-     */
-    private function prepare_for_data_transfer( $entity ) {
-        if ( is_array( $entity ) ) {
-            return $entity;
-        }
-
-        if ( is_a( $entity, 'Sensei_Domain_Models_Model_Collection' ) ) {
-            $results = array();
-            foreach ( $entity->get_items() as $model ) {
-                $results[] = $this->model_to_json( $model );
-            }
-            return $results;
-        }
-
-        if ( is_a( $entity, 'Sensei_Domain_Models_Course' ) ) {
-            return $this->model_to_json( $entity );
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @param $model Sensei_Domain_Models_Course
-     * @return array
-     */
-    private function model_to_json( $model ) {
-        $result = array();
-        foreach ( $model->get_json_field_mappings() as $mapping_name => $field_name ) {
-            $value = $model->__get( $field_name );
-            $result[$mapping_name] = $value;
-        }
-        $result['_links'] = $this->add_links( $model );
-        return $result;
     }
 
     /**
