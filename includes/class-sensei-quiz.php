@@ -1132,7 +1132,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
              }
 
-             $title = sprintf( __( '%s Quiz', 'woothemes-sensei' ), $title_with_no_quizzes );
+             $title = $title_with_no_quizzes .  ' ' . __( 'Quiz', 'woothemes-sensei' );
          }
 
          /**
