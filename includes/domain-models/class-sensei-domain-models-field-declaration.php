@@ -32,6 +32,7 @@ class Sensei_Domain_Models_Field_Declaration {
     public $supported_outputs;
     public $description;
     public $json_name;
+    public $validations;
     private $default_value;
     private $value_type;
 
@@ -52,15 +53,14 @@ class Sensei_Domain_Models_Field_Declaration {
         $this->type              = $args['type'];
         $this->map_from          = $this->value_or_default( $args, 'map_from' );
         $this->before_return     = $this->value_or_default( $args, 'before_return' );
-        $this->primary           = (bool)$this->value_or_default( $args, 'primary', false );
-        $this->required          = (bool)$this->value_or_default( $args, 'required', false );
+        $this->primary           = $this->value_or_default( $args, 'primary', false );
+        $this->required          = $this->value_or_default( $args, 'required', false );
         $this->supported_outputs = $this->value_or_default( $args, 'supported_outputs', array( 'json' ) );
         $this->json_name         = $this->value_or_default( $args, 'json_name', $this->name );
         $this->value_type        = $this->value_or_default( $args, 'value_type', 'any' );
         $this->default_value     = $this->value_or_default( $args, 'default_value' );
         $this->description       = $this->value_or_default( $args, 'description', '' );
-
-
+        $this->validations       = $this->value_or_default( $args, 'validations', array() );
     }
 
     private function value_or_default( $args, $name, $default = null ) {

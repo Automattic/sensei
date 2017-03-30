@@ -13,16 +13,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Domain_Models_Field_Declaration_Builder {
     function __construct() {
         $this->args = array(
-            'name' => '',
-            'type' => Sensei_Domain_Models_Field_Declaration::FIELD,
-            'required' => false,
-            'map_from' => null,
-            'before_return' => null,
-            'value_type' => 'any',
-            'default_value' => null,
-            'json_name' => null,
+            'name'              => '',
+            'type'              => Sensei_Domain_Models_Field_Declaration::FIELD,
+            'required'          => false,
+            'map_from'          => null,
+            'before_return'     => null,
+            'value_type'        => 'any',
+            'default_value'     => null,
+            'json_name'         => null,
             'supported_outputs' => array( 'json' ),
-            'description' => null,
+            'description'       => null,
+            'validations'       => array(),
         );
     }
     public function build() {
@@ -72,6 +73,10 @@ class Sensei_Domain_Models_Field_Declaration_Builder {
 
     public function with_description( $description ) {
         return $this->set( 'description', $description );
+    }
+
+    public function with_validations( $validations ) {
+        return $this->set( 'validations', is_array( $validations ) ? $validations : array( $validations ) );
     }
 
     private function set( $name, $value ) {
