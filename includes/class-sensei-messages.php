@@ -30,8 +30,9 @@ class Sensei_Messages {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
 
-		// Save new private message
-		add_action( 'init', array( $this, 'save_new_message' ), 1 );
+		// Save new private message (priority low to ensure sensei_message post type is
+		// registered
+		add_action( 'init', array( $this, 'save_new_message' ), 101 );
 
 		// Monitor when new reply is posted
 		add_action( 'comment_post', array( $this, 'message_reply_received' ), 10, 1 );
