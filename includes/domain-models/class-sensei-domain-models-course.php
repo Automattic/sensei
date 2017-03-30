@@ -28,7 +28,9 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
                 ->with_name( 'author' )
                 ->map_from( 'post_author' )
                 ->with_value_type('integer')
+                ->with_validations( 'validate_author' )
                 ->with_description( __( 'The author identifier.', 'woothemes-sensei' ) )
+                ->with_default_value( get_current_user_id() )
                 ->with_before_return( 'as_uint' ),
             self::field()
                 ->with_name( 'content' )
@@ -48,6 +50,7 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
             self::field()
                 ->with_name( 'status' )
                 ->with_value_type('string')
+                ->with_validations( 'validate_status' )
                 ->with_description( __( 'The course status.', 'woothemes-sensei' ) )
                 ->map_from( 'post_status' ),
 
@@ -112,23 +115,38 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
         return ( empty( $modules ) ) ? array() : array_map( 'absint', $modules );
     }
 
-    /**
-     * validate object
-     * @return bool|WP_Error
-     */
-    public function validate() {
-        $validation_errors = array();
-        $title = $this->title;
-        if ( empty( $title ) ) {
-            $validation_errors[] = new WP_Error(
-                'empty_title',
-                __( 'title cannot be empty', 'woothemes-sensei' )
-            );
+    protected function validate_author( $author_id ) {
+        $author = $this->get_author( $author_id );
+        if ( null === $author ) {
+            return new WP_Error( 'invalid-author-id', __( 'Invalid author id', 'woothemes-sensei' ) );
         }
-        if ( count( $validation_errors ) > 0 ) {
-            return $this->validation_error( $validation_errors );
+        // the author should be able to create courses
+        if (false === user_can( $author, 'create_courses' ) ) {
+            return new WP_Error( 'invalid-author-permissions', __( 'Invalid author permissions', 'woothemes-sensei' ) );
         }
         return true;
+    }
+
+    protected function validate_status( $status ) {
+        if ('publish' === $status ) {
+            $author_id = $this->author;
+            if ( empty( $author_id ) ) {
+                return new WP_Error( 'missing-author-id', __( 'Cannot publish when author is missing', 'woothemes-sensei' ) );
+            }
+            $author = $this->get_author( $author_id );
+            // the author should be able to publish courses
+            if (false === user_can( $author, 'publish_courses' ) ) {
+                return new WP_Error( 'invalid-status-permissions', __( 'Author Cannot publish courses', 'woothemes-sensei' ) );
+            }
+        }
+
+        return true;
+    }
+
+    protected function get_author( $author_id ) {
+        return Sensei_Domain_Models_Registry::get_instance()
+            ->get_data_store( 'users' )
+            ->get_entity( $author_id );
     }
 
     /**
