@@ -27,8 +27,12 @@ class Sensei_Domain_Models_Course_Data_Store_Cpt implements Sensei_Domain_Models
         }
     }
 
-    public function save( $fields, $meta_fields = array() ) {
-//        $fields['meta_input'] = $meta_fields;
+    /**
+     * @param $entity Sensei_Domain_Models_Model_Abstract
+     * @return mixed
+     */
+    public function upsert( $entity, $fields, $meta_fields = array() ) {
+        //        $fields['meta_input'] = $meta_fields;
         $success = wp_insert_post( $fields, true );
         if ( is_wp_error( $success ) ) {
             //todo: something wrong
@@ -49,11 +53,7 @@ class Sensei_Domain_Models_Course_Data_Store_Cpt implements Sensei_Domain_Models
         $course = get_post( absint( $course_id ) );
         return !empty( $course ) && $course->post_type === 'course' ? $course->to_array() : null;
     }
-
-    /**
-     * @param $field_declaration Sensei_Domain_Models_Field_Declaration
-     * @return mixed
-     */
+    
     public function get_meta_field_value( $course, $field_declaration ) {
         $map_from = $field_declaration->get_name_to_map_from();
         return get_post_meta( $course->get_id(), $map_from, true );

@@ -27,5 +27,20 @@ interface Sensei_Domain_Models_Data_Store {
      * @param $field_declaration Sensei_Domain_Models_Field_Declaration
      * @return mixed
      */
-    public function get_meta_field_value( $entity, $field_declaration );
+    public function get_meta_field_value( $model, $field_declaration );
+
+    /**
+     * @param $model Sensei_Domain_Models_Model_Abstract
+     * @param array $args
+     * @return mixed
+     */
+    public function delete( $model, $args = array() );
+
+    /**
+     * @param $entity Sensei_Domain_Models_Model_Abstract
+     * @return mixed
+     */
+    public function upsert( $entity, $fields, $meta_fields = array() );
+
+
 }

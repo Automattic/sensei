@@ -15,25 +15,30 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
             self::field()
                 ->with_name( 'id' )
                 ->map_from( 'ID' )
-                ->with_value_type('int')
+                ->with_value_type('integer')
+                ->with_description( __( 'Unique identifier for the object.', 'woothemes-sensei' ) )
                 ->with_before_return( 'as_uint' ),
             self::field()
                 ->with_name( 'title' )
                 ->map_from( 'post_title' )
                 ->with_value_type('string')
+                ->with_description( __( 'The course title.', 'woothemes-sensei' ) )
                 ->required( true ),
             self::field()
                 ->with_name( 'author' )
                 ->map_from( 'post_author' )
-                ->with_value_type('int')
+                ->with_value_type('integer')
+                ->with_description( __( 'The author identifier.', 'woothemes-sensei' ) )
                 ->with_before_return( 'as_uint' ),
             self::field()
                 ->with_name( 'content' )
                 ->with_value_type('string')
+                ->with_description( __( 'The course content.', 'woothemes-sensei' ) )
                 ->map_from( 'post_content' ),
             self::field()
                 ->with_name( 'excerpt' )
                 ->with_value_type('string')
+                ->with_description( __( 'The course excerpt.', 'woothemes-sensei' ) )
                 ->map_from( 'post_excerpt' ),
             self::field()
                 ->with_name( 'type' )
@@ -43,36 +48,44 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
             self::field()
                 ->with_name( 'status' )
                 ->with_value_type('string')
+                ->with_description( __( 'The course status.', 'woothemes-sensei' ) )
                 ->map_from( 'post_status' ),
 
             self::derived_field()
                 ->with_name( 'modules' )
                 ->map_from( 'course_module_ids' )
+                ->with_description( __( 'The course module ids.', 'woothemes-sensei' ) )
                 ->with_json_name( 'module_ids' ),
             self::derived_field()
                 ->with_name( 'module_order' )
+                ->with_description( __( 'The course module id order.', 'woothemes-sensei' ) )
                 ->map_from( 'module_order' ),
             self::derived_field()
                 ->with_name( 'lessons' )
+                ->with_description( __( 'The course lessons.', 'woothemes-sensei' ) )
                 ->map_from( 'course_lessons' )
                 ->not_visible(),
 
             self::meta_field()
                 ->with_name( 'prerequisite' )
                 ->map_from( '_course_prerequisite' )
+                ->with_description( __( 'The course prerequisite.', 'woothemes-sensei' ) )
                 ->with_before_return( 'as_nullable_uint' ),
             self::meta_field()
                 ->with_name( 'featured' )
                 ->map_from( '_course_featured' )
+                ->with_description( __( 'Is the course featured.', 'woothemes-sensei' ) )
                 ->with_value_type('boolean')
                 ->with_before_return( 'as_bool' )
                 ->with_json_name( 'is_featured' ),
             self::meta_field()
                 ->with_name( 'video_embed' )
+                ->with_description( __( 'The course video embed html.', 'woothemes-sensei' ) )
                 ->map_from( '_course_video_embed' ),
             self::meta_field()
                 ->with_name( 'woocommerce_product' )
                 ->map_from( '_course_woocommerce_product' )
+                ->with_description( __( 'The product associated with this course.', 'woothemes-sensei' ) )
                 ->with_json_name( 'woocommerce_product_id' )
                 ->with_before_return( 'as_nullable_uint' ),
             self::meta_field()
@@ -97,22 +110,6 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
     protected function module_order() {
         $modules = Sensei()->modules->get_course_module_order( absint( $this->id ) );
         return ( empty( $modules ) ) ? array() : array_map( 'absint', $modules );
-    }
-    
-    public function save_entity( $fields, $meta_fields = array() ) {
-//        $fields['meta_input'] = $meta_fields;
-        $success = wp_insert_post( $fields, true );
-        if ( is_wp_error( $success ) ) {
-            //todo: something wrong
-            return $success;
-        }
-        return absint( $success );
-    }
-
-    public function delete_entity() {
-        $store = new Sensei_Domain_Models_Course_Data_Store_Cpt();
-        $store->delete( $this );
-        return $this;
     }
 
     /**
