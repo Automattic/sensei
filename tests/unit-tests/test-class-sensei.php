@@ -31,6 +31,10 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
     }
 
+	function testSenseiFunctionReturnSameSenseiInstance() {
+		$this->assertSame( Sensei(), Sensei(), 'Sensei() should always return the same Sensei_Main instance' );
+	}
+
 	/**
 	 * Testing the version numbers before releasing the plugin.
 	 *
