@@ -73,7 +73,7 @@ class Sensei_REST_API_Controller extends WP_REST_Controller {
      */
     protected function model_to_data_transfer_object($model ) {
         $result = array();
-        foreach ( $model->get_json_field_mappings() as $mapping_name => $field_name ) {
+        foreach ($model->get_data_transfer_object_field_mappings() as $mapping_name => $field_name ) {
             $value = $model->__get( $field_name );
             $result[$mapping_name] = $value;
         }

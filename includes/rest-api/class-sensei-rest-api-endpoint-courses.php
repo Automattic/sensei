@@ -5,9 +5,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
-    
+
     protected $base = '/courses';
     protected $domain_model_class = 'Sensei_Domain_Models_Course';
+    protected $post_type = 'course';
+
+    public function __construct(Sensei_REST_API_V1 $api) {
+        parent::__construct($api);
+        $obj = get_post_type_object( $this->post_type );
+        $this->rest_base = ! empty( $obj->rest_base ) ? $obj->rest_base : $obj->name;
+
+        $this->meta = new WP_REST_Post_Meta_Fields( $this->post_type );
+    }
 
     public function register() {
         $prefix = $this->api->get_api_prefix();
@@ -47,7 +56,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 
     public function get_items( $request ) {
         $item_id = isset( $request['id'] ) ? absint( $request['id'] ) : null;
-        
+
         if (null === $item_id ) {
             $models = $this->factory->all();
             $data = $this->prepare_data_transfer_object( $models );
@@ -93,7 +102,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 
         return $this->created( $this->prepare_data_transfer_object( array('id' => absint( $id_or_error ) ) ) );
     }
-    
+
     public function delete_item( $request ) {
         $id = isset( $request['id'] ) ? absint( $request['id'] ) : null;
         if ( empty( $id ) ) {
@@ -165,5 +174,27 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
                 )
             )
         );
+    }
+
+    /**
+     * Retrieves the item's schema, conforming to JSON Schema.
+     * @access public
+     *
+     * @return array Item schema data.
+     */
+    public function get_item_schema() {
+        $fields = $this->factory->get_field_declarations();
+        $properties = array();
+        foreach ( $fields as $field_declaration ) {
+            $properties[$field_declaration->json_name] = $field_declaration->as_item_schema_property();
+        }
+        $schema = array(
+            '$schema'    => 'http://json-schema.org/schema#',
+            'title'      => 'course',
+            'type'       => 'object',
+            'properties' => (array)apply_filters( 'sensei_rest_api_course_schema_properties', $properties )
+        );
+
+        return $this->add_additional_fields_schema( $schema );
     }
 }
