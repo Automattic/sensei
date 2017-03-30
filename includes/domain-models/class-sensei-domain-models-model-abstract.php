@@ -193,14 +193,54 @@ abstract class Sensei_Domain_Models_Model_Abstract {
     public function get_id() {
         throw new Sensei_Domain_Models_Exception('override me ' . __FUNCTION__ );
     }
-
+    
     /**
-     * validate this instance
-     * @return bool|WP_Error
+     * validates this object instance
      * @throws Sensei_Domain_Models_Exception
+     * @return bool|WP_Error
      */
     public function validate() {
-        throw new Sensei_Domain_Models_Exception('override me ' . __FUNCTION__ );
+        $validation_errors = array();
+
+        foreach ( $this->fields as $key => $field_declaration ) {
+            $is_valid = $this->run_field_validations( $field_declaration );
+            if ( is_wp_error( $is_valid ) ) {
+                $validation_errors[] = $is_valid->get_error_data();
+            }
+        }
+        if ( count( $validation_errors ) > 0 ) {
+            return $this->validation_error( $validation_errors );
+        }
+        return true;
+    }
+
+    /**
+     * @param $field_declaration Sensei_Domain_Models_Field_Declaration
+     * @return bool|WP_Error
+     */
+    protected function run_field_validations( $field_declaration ) {
+        if ( $field_declaration->is_derived_field() ) {
+            return true;
+        }
+        $value = $this->get_value_for( $field_declaration->name );
+        if ( $field_declaration->required && empty( $value ) ) {
+            return new WP_Error(
+                'required-field-empty',
+                sprintf( __( '%s cannot be empty', 'woothemes-sensei' ), $field_declaration->name )
+            );
+        } else if ( !$field_declaration->required && ! empty( $value ) ) {
+            foreach ( $field_declaration->validations as $method_name ) {
+                $result = call_user_func( array($this, $method_name ), $value );
+                if ( is_wp_error( $result ) ) {
+                    $result->add_data(array(
+                        'reason' => $result->get_error_messages(),
+                        'field' => $field_declaration->name,
+                        'value' => $value ) );
+                    return $result;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -267,6 +307,6 @@ abstract class Sensei_Domain_Models_Model_Abstract {
      */
     protected function get_data_store()
     {
-        return Sensei_Domain_Models_Registry::get_instance()->get_data_store(get_class($this));
+        return Sensei_Domain_Models_Registry::get_instance()->get_data_store_for_domain_model(get_class($this));
     }
 }
