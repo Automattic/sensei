@@ -1064,18 +1064,18 @@ section.entry span.course-price {
 /**
 Module archive
 */
-#main .lesson-content .lesson-meta {
+body.tax-module #main .lesson-content .lesson-meta {
   margin: 0px 0px 1.618em; }
-  #main .lesson-content .lesson-meta span {
+  body.tax-module #main .lesson-content .lesson-meta span {
     font-style: italic;
     font-size: 0.9em;
     color: #888888;
     padding-right: 1em; }
-  #main .lesson-content .lesson-meta .lesson-status.complete {
+  body.tax-module #main .lesson-content .lesson-meta .lesson-status.complete {
     color: #63a95f; }
-  #main .lesson-content .lesson-meta .lesson-status.in-progress {
+  body.tax-module #main .lesson-content .lesson-meta .lesson-status.in-progress {
     color: #646464; }
-  #main .lesson-content .lesson-meta .lesson-status::before {
+  body.tax-module #main .lesson-content .lesson-meta .lesson-status::before {
     font-family: FontAwesomeSensei;
     display: inline-block;
     font-size: 100%;
@@ -1083,9 +1083,9 @@ Module archive
     font-weight: normal;
     line-height: 1em;
     width: 1em; }
-  #main .lesson-content .lesson-meta .lesson-status.complete::before {
+  body.tax-module #main .lesson-content .lesson-meta .lesson-status.complete::before {
     content: '\f00c'; }
-  #main .lesson-content .lesson-meta .lesson-status.in-progress::before {
+  body.tax-module #main .lesson-content .lesson-meta .lesson-status.in-progress::before {
     content: '\f0ca'; }
 
 /**
