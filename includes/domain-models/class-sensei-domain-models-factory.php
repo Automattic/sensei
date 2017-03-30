@@ -77,7 +77,7 @@ class Sensei_Domain_Models_Factory {
      */
     public function get_data_store() {
         return Sensei_Domain_Models_Registry::get_instance()
-            ->get_data_store( $this->klass );
+            ->get_data_store_for_domain_model( $this->klass );
     }
 
     public function create_object( $entity) {

@@ -4,7 +4,7 @@
 class Sensei_Domain_Models_Registry {
 
     private static $instance = null;
-    private $data_stores;
+    protected $data_stores;
 
     private function __construct() {
         $this->field_declarations_by_model = array();
@@ -130,10 +130,8 @@ class Sensei_Domain_Models_Registry {
      * @param $data_store Sensei_Domain_Models_Data_Store the data store instance
      * @return $this
      */
-    public function set_data_store( $type_class, $data_store ) {
-        $type_class = $this->ensure_class_string( $type_class );
-        $this->data_stores[$type_class] = $data_store;
-        return $this;
+    public function set_data_store_for_domain_model( $type_class, $data_store ) {
+        return $this->set_data_store( $type_class, $data_store );
     }
 
     /**
@@ -141,12 +139,33 @@ class Sensei_Domain_Models_Registry {
      * @return Sensei_Domain_Models_Data_Store
      * @throws Sensei_Domain_Models_Exception
      */
-    public function get_data_store( $type_class ) {
+    public function get_data_store_for_domain_model( $type_class ) {
         $type_class = $this->ensure_class_string( $type_class );
         if (!isset( $this->data_stores[$type_class] ) ) {
             throw new Sensei_Domain_Models_Exception( 'No datastore set for class ' . $type_class );
         }
-        return $this->data_stores[$type_class];
+        return $this->get_data_store( $type_class );
+    }
+
+    /**
+     * @param $name string
+     * @param $data_store_instance Sensei_Domain_Models_Data_Store
+     * @return $this
+     */
+    public function set_data_store($name, $data_store_instance ) {
+        $this->data_stores[$name] = $data_store_instance;
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @return null|Sensei_Domain_Models_Data_Store
+     */
+    public function get_data_store( $name ) {
+        if ( isset( $this->data_stores[ $name ] ) ) {
+            return $this->data_stores[ $name ];
+        }
+        return null;
     }
 
     private function ensure_class_string( $thing ) {
