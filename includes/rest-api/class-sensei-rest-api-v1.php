@@ -32,7 +32,8 @@ class Sensei_REST_API_V1 {
             return;
         }
         Sensei_Domain_Models_Registry::get_instance()
-            ->set_data_store( 'Sensei_Domain_Models_Course', new Sensei_Domain_Models_Course_Data_Store_Cpt() );
+            ->set_data_store( 'Sensei_Domain_Models_Course', new Sensei_Domain_Models_Course_Data_Store_Cpt() )
+            ->set_data_store( 'Sensei_Domain_Models_Module', new Sensei_Domain_Models_Module_Data_Store() );
         $this->helper = new Sensei_REST_API_Helper( $this );
         $this->endpoints = $this->get_endpoints();
         foreach ($this->endpoints as $endpoint ) {
@@ -50,7 +51,8 @@ class Sensei_REST_API_V1 {
     public function get_endpoints() {
         return apply_filters( 'sensei_rest_api_v1_get_endpoints', array(
             new Sensei_REST_API_Endpoint_Version( $this ),
-            new Sensei_REST_API_Endpoint_Courses( $this )
+            new Sensei_REST_API_Endpoint_Courses( $this ),
+            new Sensei_REST_API_Endpoint_Modules( $this )
         ) );
     }
 
