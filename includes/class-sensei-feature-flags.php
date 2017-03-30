@@ -34,12 +34,10 @@ class Sensei_Feature_Flags {
         $full_feature_name = 'sensei_feature_flag_' . $feature;
         if ( !isset( $this->feature_flags[$feature] ) ) {
             $feature_define = strtoupper( $full_feature_name );
-            $value = defined( $feature_define ) ? true : $this->default_feature_settings[$feature];
-            $this->feature_flags[$feature] = (bool) apply_filters(
-                $full_feature_name, $value
-            );
+            $value = defined( $feature_define ) ? (bool)constant( $feature_define ) : $this->default_feature_settings[$feature];
+            $this->feature_flags[$feature] = $value;
         }
 
-        return (bool)$this->feature_flags[$feature];
+        return (bool)apply_filters( $full_feature_name, $this->feature_flags[$feature] );
     }
 }
