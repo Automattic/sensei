@@ -41,7 +41,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 
         $post_array_keys = array_keys( $model_data );
         foreach ( $this->fields as $key => $field_declaration ) {
-            // eager load anything that is not a meta_field or a derived_field
+            // eager load anything that is not a meta or derived field
             if ( false === $field_declaration->is_field() ) {
                 continue;
             }
@@ -72,11 +72,8 @@ abstract class Sensei_Domain_Models_Model_Abstract {
         if ( !isset( $this->fields[$field_name] ) ) {
             return null;
         }
-
         $field_declaration = $this->fields[$field_name];
-
         $this->load_field_value_if_missing( $field_declaration );
-
         return $this->prepare_value( $field_declaration );
     }
 
@@ -155,14 +152,14 @@ abstract class Sensei_Domain_Models_Model_Abstract {
     public function upsert() {
         $fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field_Declaration::FIELD );
         $meta_fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field_Declaration::META );
-        return $this->save_entity( $fields, $meta_fields );
+        return $this->get_data_store()->upsert( $this, $fields, $meta_fields );
     }
 
     public function delete() {
-        return $this->delete_entity();
+        return $this->get_data_store()->delete( $this );
     }
 
-    public function get_json_field_mappings() {
+    public function get_data_transfer_object_field_mappings() {
         $mappings = array();
         foreach ( self::get_field_declarations( get_class( $this ) ) as $field_declaration ) {
             if ( !$field_declaration->suppports_output_type( 'json' ) ) {
@@ -182,21 +179,6 @@ abstract class Sensei_Domain_Models_Model_Abstract {
         return $field_values_to_insert;
     }
 
-    public function delete_entity() {
-        throw new Sensei_Domain_Models_Exception('override me ' . __FUNCTION__);
-    }
-
-    /**
-     * @param $fields
-     * @param array $meta_fields
-     * @throws Sensei_Domain_Models_Exception
-     * @return mixed|WP_Error
-     */
-    public function save_entity( $fields, $meta_fields = array() ) {
-        throw new Sensei_Domain_Models_Exception('override me ' . __FUNCTION__);
-    }
-
-
     /**
      * @throws Sensei_Domain_Models_Exception
      * @return array
@@ -213,8 +195,9 @@ abstract class Sensei_Domain_Models_Model_Abstract {
     }
 
     /**
-     * validate object
+     * validate this instance
      * @return bool|WP_Error
+     * @throws Sensei_Domain_Models_Exception
      */
     public function validate() {
         throw new Sensei_Domain_Models_Exception('override me ' . __FUNCTION__ );

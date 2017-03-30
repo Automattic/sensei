@@ -15,11 +15,12 @@ class Sensei_Domain_Models_Field_Declaration {
     const DERIVED = 'derived_field';
 
     const STRING_VALUE  = 'string';
-    const INT_VALUE     = 'int';
+    const INT_VALUE     = 'integer';
     const ARRAY_VALUE   = 'array';
     const OBJECT_VALUE  = 'object';
     const BOOLEAN_VALUE = 'boolean';
     const ANY_VALUE     = 'any';
+    const ENUM          = 'enum';
 
     public $before_return;
     public $before_output;
@@ -29,6 +30,7 @@ class Sensei_Domain_Models_Field_Declaration {
     public $primary;
     public $required;
     public $supported_outputs;
+    public $description;
     public $json_name;
     private $default_value;
     private $value_type;
@@ -56,6 +58,7 @@ class Sensei_Domain_Models_Field_Declaration {
         $this->json_name         = $this->value_or_default( $args, 'json_name', $this->name );
         $this->value_type        = $this->value_or_default( $args, 'value_type', 'any' );
         $this->default_value     = $this->value_or_default( $args, 'default_value' );
+        $this->description       = $this->value_or_default( $args, 'description', '' );
 
 
     }
@@ -126,5 +129,15 @@ class Sensei_Domain_Models_Field_Declaration {
 
     public function suppports_output_type( $type ) {
         return in_array( $type, $this->supported_outputs, true );
+    }
+
+    public function as_item_schema_property() {
+        $schema = array(
+            'description' => $this->description,
+            'type' => $this->value_type,
+            'required' => $this->required,
+            'context' => array( 'view', 'edit' )
+        );
+        return $schema;
     }
 }

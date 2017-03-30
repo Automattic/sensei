@@ -21,7 +21,8 @@ class Sensei_Domain_Models_Field_Declaration_Builder {
             'value_type' => 'any',
             'default_value' => null,
             'json_name' => null,
-            'supported_outputs' => array( 'json' )
+            'supported_outputs' => array( 'json' ),
+            'description' => null,
         );
     }
     public function build() {
@@ -67,6 +68,10 @@ class Sensei_Domain_Models_Field_Declaration_Builder {
 
     public function with_json_name( $json_name ) {
         return $this->set( 'json_name', $json_name );
+    }
+
+    public function with_description( $description ) {
+        return $this->set( 'description', $description );
     }
 
     private function set( $name, $value ) {
