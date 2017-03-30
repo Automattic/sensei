@@ -1,5 +1,26 @@
 *** Sensei Changelog ***
 
+__ - version 1.9.13
+
+* Add Experimental Course Admin REST API (disabled by default)
+* Add Allow user to change question points text formatting
+* Add support for `source` tag for videos
+* Allow admin to reset quiz for single student
+* Warn users when admin_email not a wp admin email
+* Fix random HTML rendering into REST endpoints for course shortcodes
+* Fix Fatal error when viewing Sensei course in combination with the Products Bundle plugin
+* Fix Module description not displayed on course page
+* Fix Login form sanitizes password
+* Fix Teacher not able to see the graded quizzes
+* Fix Single Course Page: Displaying "Lessons" header when there are no lessons
+* Fix issue when username is an email, but user has different email [Pri] Normal [Type] Enhancement
+* Fix WC >= 2.7-beta and WC 3.0 Compat in Lesson Admin
+* Fix Allow Memberships cache control on start_courses_associated_with_membership
+* Fix 'reset' learner bulk action not resetting all courses
+* Add filter for learner profile permalink
+* Fix empty CSV analysis export for learners
+* Various fixes and improvements
+
 2017.03.01 - version 1.9.12
 
 * Bulk Learner Actions - Initial version. You can now assign, unassign and reset multiple users on (multiple) courses.
