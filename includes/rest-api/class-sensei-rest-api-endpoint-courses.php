@@ -41,7 +41,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
             ),
             array(
                 'methods'         => WP_REST_Server::EDITABLE,
-                'callback'        => array( $this, 'create_item' ),
+                'callback'        => array( $this, 'update_item' ),
                 'permission_callback' => array( $this, 'create_item_permissions_check' ),
                 'args'            => $this->get_endpoint_args_for_item_schema( true ),
             ),
@@ -76,26 +76,54 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
      * @return WP_REST_Response
      */
     public function create_item( $request ) {
-        $update_existing = isset( $request['id'] ) ? absint( $request['id'] ) : null;
-        $exists = null;
-        if ( null !== $update_existing ) {
-            $exists = $this->factory->find_one_by_id( $update_existing );
-            if ( empty( $exists ) ) {
-                return $this->not_found( __( 'Course does not exist', 'woothemes-sensei' ) );
+        $is_update = false;
+        return $this->create_or_update( $request, $is_update );
+    }
+
+    /**
+     * @param WP_REST_Request $request
+     * @return WP_REST_Response
+     */
+    public function update_item($request) {
+        $is_update = true;
+        return $this->create_or_update( $request, $is_update );
+    }
+
+    /**
+     * @param WP_REST_Request $request
+     * @param bool $is_update
+     * @return WP_REST_Response
+     */
+    protected function create_or_update( $request, $is_update = false ) {
+        $model_to_update = null;
+        if ( $is_update ) {
+            $id = isset( $request['id'] ) ? absint( $request['id'] ) : null;
+            if ( ! empty( $id ) ) {
+                $model_to_update = $this->factory->find_one_by_id( $id );
+                if ( empty( $model_to_update ) ) {
+                    return $this->not_found( __( 'Course does not exist', 'woothemes-sensei' ) );
+                }
             }
         }
 
-        if ( null !== $update_existing && null === $exists ) {
-            $course = $exists->merge_updates_from_request( $request );
+        if ( $is_update && $model_to_update ) {
+            $course = $model_to_update->merge_updates_from_request( $request );
         } else {
             $course = $this->prepare_item_for_database( $request );
         }
+
+        if ( is_wp_error( $course ) ) {
+            $wp_err = $course;
+            return $this->fail_with( $wp_err );
+        }
+
         $validation = $course->validate();
-        if ( true !== $validation ) {
-            // Got a validation Error. Return that
+        if ( is_wp_error( $validation )  ) {
             return $this->fail_with( $validation );
         }
+
         $id_or_error = $course->upsert();
+
         if ( is_wp_error( $id_or_error ) ) {
             return $this->fail_with( $id_or_error );
         }
@@ -142,13 +170,21 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
         return $this->admin_permissions_check( $request );
     }
 
+    /**
+     * @param WP_REST_Request $request
+     * @return bool
+     */
     public function delete_item_permissions_check( $request ) {
         return $this->admin_permissions_check( $request );
     }
 
+    /**
+     * @param WP_REST_Request $request
+     * @return bool
+     */
     private function admin_permissions_check( $request ) {
         // we are only going to allow admins to access the rest api for now
-        return Sensei()->feature_flags->is_enabled( 'rest_api_v1_skip_permissions' ) || current_user_can( 'manage_sensei' );
+        return current_user_can( 'manage_sensei' );
     }
 
     /**

@@ -43,7 +43,7 @@ class Sensei_Class_Domain_Models_Course_Test extends WP_UnitTestCase {
                 'post_type' => $type,
                 'post_status' => $status
             )));
-        Sensei_Domain_Models_Registry::get_instance()->set_data_store( $this->modelClassName, $mockDataProvider );
+        Sensei_Domain_Models_Registry::get_instance()->set_data_store_for_domain_model( $this->modelClassName, $mockDataProvider );
         $course = new Sensei_Domain_Models_Course(1);
         $this->assertEquals($course->get_id(), $id);
         $this->assertEquals($course->title, $title);
