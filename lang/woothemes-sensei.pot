@@ -292,8 +292,8 @@ msgstr ""
 msgid "Theme Integration Guide"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1644
-msgid "For Sensei to work correctly, your admin_email setting needs to correspond to an existing admin user email. Please create one for %s"
+#: includes/class-sensei-admin.php:1645
+msgid "For Sensei to work correctly, your admin_email setting needs to correspond to an existing admin user email (currently set to: %s)"
 msgstr ""
 
 #: includes/class-sensei-analysis-course-list-table.php:57, includes/class-sensei-analysis-lesson-list-table.php:42, includes/class-sensei-analysis-overview-list-table.php:65, includes/class-sensei-grading-main.php:59, includes/class-sensei-learners-admin-bulk-actions-view.php:50, includes/class-sensei-learners-main.php:67
