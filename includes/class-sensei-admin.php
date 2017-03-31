@@ -1636,12 +1636,13 @@ class Sensei_Admin {
 	}
 
 	public function notify_if_admin_email_not_real_admin_user() {
-		$admin_user = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
-		if ( false === $admin_user ) {
+		$maybe_admin = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
+
+		if ( false === $maybe_admin || false === user_can( $maybe_admin, 'manage_options' ) ) {
 			?><div id="message" class="error sensei-message sensei-connect">
 				<p>
 					<strong>
-						<?php printf( esc_html__( 'For Sensei to work correctly, your admin_email setting needs to correspond to an existing admin user email. Please create one for %s', 'woothemes-sensei' ), esc_html__( get_bloginfo( 'admin_email' ) )); ?>
+						<?php printf( esc_html__( 'For Sensei to work correctly, your admin_email setting needs to correspond to an existing admin user email (currently set to: %s)', 'woothemes-sensei' ), esc_html__( get_bloginfo( 'admin_email' ) )); ?>
 					</strong>
 				</p>
 			</div><?php
