@@ -1639,10 +1639,12 @@ class Sensei_Admin {
 		$maybe_admin = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
 		if ( false === $maybe_admin || false === user_can( $maybe_admin, 'manage_options' ) ) {
+			$general_settings_url = '<a href="' . esc_attr( esc_url( admin_url( 'options-general.php' ) ) ) . '">' . __( 'setting', 'woothemes-sensei' ) . '</a>';
+			$current_setting = esc_html__( get_bloginfo( 'admin_email' ) );
 			?><div id="message" class="error sensei-message sensei-connect">
 				<p>
 					<strong>
-						<?php printf( esc_html__( 'For Sensei to work correctly, your admin_email setting needs to correspond to an existing admin user email (currently set to: %s)', 'woothemes-sensei' ), esc_html__( get_bloginfo( 'admin_email' ) )); ?>
+						<?php printf( esc_html__( 'For Sensei to work correctly, your Email Address %s needs to belong to an existing Administrator email (currently set to: %s).', 'woothemes-sensei' ), $general_settings_url, $current_setting ); ?>
 					</strong>
 				</p>
 			</div><?php
