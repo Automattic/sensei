@@ -118,7 +118,7 @@ jQuery(document).ready( function($) {
     };
 
 
-    jQuery('input#add_learner_search').select2({
+    jQuery('select#add_learner_search').select2({
         minimumInputLength: 3,
         placeholder: woo_learners_general_data.selectplaceholder,
         width:'300px',
@@ -129,36 +129,30 @@ jQuery(document).ready( function($) {
             dataType: 'json',
             cache: true,
             id: function(user){ return bond._id; },
-            data: function (input, page) { // page is the one-based page number tracked by Select2
+            data: function (params) { // page is the one-based page number tracked by Select2
                 return {
-                    term: input, //search term
-                    page: page || 1,
+                    term: params.term, //search term
+                    page: params.page || 1,
                     action: 'sensei_json_search_users',
                     security: 	woo_learners_general_data.search_users_nonce,
                     default: ''
                 };
             },
-            results: function (users, page) {
+            processResults: function (users, page) {
+
                 var validUsers = [];
                 jQuery.each( users, function (i, val) {
                     if( ! jQuery.isEmptyObject( val )  ){
-                        validUser = { id: i , details: val  };
+                        validUser = { id: i , text: val  };
                         validUsers.push( validUser );
                     }
                 });
                 // wrap the users inside results for select 2 usage
-                return {  results: validUsers };
+                return {
+                    results: validUsers,
+                    page: page
+                };
             }
-        },
-
-        initSelection: function (element, callback) {
-            //callback();
-        },
-        formatResult: function( user ){
-            return  user.details ;
-        },
-        formatSelection: function( user ){
-            return user.details;
         }
     }); // end select2
 
