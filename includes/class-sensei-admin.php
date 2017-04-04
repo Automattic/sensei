@@ -268,9 +268,10 @@ class Sensei_Admin {
 		// Global Styles for icons and menu items
 		wp_register_style( 'woothemes-sensei-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
 		wp_enqueue_style( 'woothemes-sensei-global' );
+		$select_two_location = '/assets/vendor/select2-4.0.3/dist/css/select2.css';
 
         // Select 2 styles
-        wp_enqueue_style( 'sensei-core-select2', Sensei()->plugin_url . 'assets/css/select2/select2.css', '', Sensei()->version, 'screen' );
+        wp_enqueue_style( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location, '', Sensei()->version, 'screen' );
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
@@ -297,9 +298,10 @@ class Sensei_Admin {
 
         // Allow developers to load non-minified versions of scripts
         $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$select_two_location = '/assets/vendor/select2-4.0.3/dist/js/select2.full';
 
         // Select2 script used to enhance all select boxes
-        wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . '/assets/js/select2/select2' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
+        wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location. $suffix . '.js', array( 'jquery' ), Sensei()->version );
 
         // load edit module scripts
         if( 'edit-module' ==  $screen->id ){
