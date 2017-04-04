@@ -23,8 +23,8 @@ class Sensei_Db_Query_Learners {
             "SELECT u.ID AS 'user_id', u.user_nicename, u.user_login, u.user_email, " .
             "GROUP_CONCAT(c.comment_post_ID, '|', IF(c.comment_approved = 'complete', 'c', 'p' )) AS 'course_statuses'," .
             " COUNT(c.comment_approved) AS 'course_count'" .
-            " FROM `{$wpdb->prefix}users` AS u" .
-            " LEFT JOIN (SELECT * from `{$wpdb->prefix}comments` as sc WHERE sc.comment_type = 'sensei_course_status') as c ON u.ID = c.user_id";
+            " FROM `{$wpdb->users}` AS u" .
+            " LEFT JOIN (SELECT * from `{$wpdb->comments}` as sc WHERE sc.comment_type = 'sensei_course_status') as c ON u.ID = c.user_id";
         if ( !empty( $this->search ) || !empty( $this->filter_by_course_id ) ) {
             $sql .= ' WHERE';
             if ( !empty( $this->search ) ) {
