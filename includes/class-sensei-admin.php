@@ -301,7 +301,7 @@ class Sensei_Admin {
 		$select_two_location = '/assets/vendor/select2-4.0.3/dist/js/select2.full';
 
         // Select2 script used to enhance all select boxes
-        wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location. $suffix . '.js', array( 'jquery' ), Sensei()->version );
+        wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location . $suffix . '.js', array( 'jquery' ), Sensei()->version );
 
         // load edit module scripts
         if( 'edit-module' ==  $screen->id ){
