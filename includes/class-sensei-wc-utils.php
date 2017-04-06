@@ -123,11 +123,28 @@ class Sensei_WC_Utils {
         return $product->is_type( 'variation' ) ? wc_get_product_variation_attributes( $product->get_id() ) : '';
     }
 
+    /**
+     * @param string $variation
+     * @param bool $flat
+     * @return string
+     */
     public static function get_formatted_variation( $variation = '', $flat = false ) {
         if ( self::wc_version_less_than('2.7') ) {
             return woocommerce_get_formatted_variation( $variation, $flat );
         }
 
         return wc_get_formatted_variation( $variation, $flat );
+    }
+
+    /*
+     * @param $product WC_Product|WC_Abstract_Legacy_Product
+     * @return array|mixed|string
+     */
+    public static function get_product_variation_data( $product ) {
+        if ( self::wc_version_less_than('3.0.0') ) {
+            return ( isset( $product->variation_data ) && is_array( $product->variation_data ) ) ? $product->variation_data : array();
+        }
+
+        return self::is_product_variation( $product ) ? wc_get_product_variation_attributes( $product->get_id() ) : '';
     }
 }

@@ -870,12 +870,14 @@ class Sensei_WC {
 
 			<input type="hidden" name="quantity" value="1" />
 
-			<?php if ( Sensei_WC_Utils::is_product_variation( $product ) ) { ?>
+			<?php if ( Sensei_WC_Utils::is_product_variation( $product ) ) {
+				$variation_data = Sensei_WC_Utils::get_product_variation_data( $product );
+				?>
 
 				<input type="hidden" name="variation_id" value="<?php echo Sensei_WC_Utils::get_product_variation_id( $product ); ?>" />
-				<?php if ( isset( $product->variation_data ) && is_array( $product->variation_data ) && count( $product->variation_data ) > 0 ) { ?>
+				<?php if ( is_array( $variation_data ) && count( $variation_data ) > 0 ) { ?>
 
-					<?php foreach( $product->variation_data as $att => $val ) { ?>
+					<?php foreach( $variation_data as $att => $val ) { ?>
 
 						<input type="hidden" name="<?php echo esc_attr( $att ); ?>" id="<?php echo esc_attr( str_replace( 'attribute_', '', $att ) ); ?>" value="<?php echo esc_attr( $val ); ?>" />
 
@@ -1003,10 +1005,9 @@ class Sensei_WC {
 		}
 
 		// get variations parent
-		if ( 'variation' == $product->get_type()  ) {
 
-			$product_id = $product->parent->get_id();
-
+		if ( Sensei_WC_Utils::is_product_variation( $product ) ) {
+			$product_id = Sensei_WC_Utils::get_product_id( $product );
 		}
 
 		$orders = self::get_user_product_orders( $user_id, $product_id );
