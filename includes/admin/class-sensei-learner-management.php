@@ -406,7 +406,7 @@ class Sensei_Learner_Management {
 
                 }
 
-                $found_users[ $user->ID ] = $name  . ' (#' . $user->ID . ' &ndash; ' . sanitize_email( $user->user_email ) . ')';
+                $found_users[ $user->ID ] = $name  . ' (#' . $user->ID . ' - ' . sanitize_email( $user->user_email ) . ')';
 			}
 		}
 
