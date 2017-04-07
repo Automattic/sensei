@@ -695,11 +695,11 @@ msgstr ""
 msgid "Paid Courses"
 msgstr ""
 
-#: includes/class-sensei-course.php:2874, includes/class-sensei-wc.php:950
+#: includes/class-sensei-course.php:2874, includes/class-sensei-wc.php:952
 msgid "log in"
 msgstr ""
 
-#: includes/class-sensei-course.php:2875, includes/class-sensei-wc.php:977
+#: includes/class-sensei-course.php:2875, includes/class-sensei-wc.php:979
 msgid "Or %1$s to access your purchased courses"
 msgstr ""
 
@@ -3191,19 +3191,19 @@ msgstr[1] ""
 msgid "complete purchase"
 msgstr ""
 
-#: includes/class-sensei-wc.php:889
+#: includes/class-sensei-wc.php:891
 msgid "Purchase this Course"
 msgstr ""
 
-#: includes/class-sensei-wc.php:957
+#: includes/class-sensei-wc.php:959
 msgid "This course is already in your cart, please proceed to %1$s, to gain access."
 msgstr ""
 
-#: includes/class-sensei-wc.php:1158
+#: includes/class-sensei-wc.php:1159
 msgid "Course details"
 msgstr ""
 
-#: includes/class-sensei-wc.php:1191
+#: includes/class-sensei-wc.php:1192
 msgid "View course: %1$s"
 msgstr ""
 
