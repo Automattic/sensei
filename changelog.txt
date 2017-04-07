@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-__ - version 1.9.13
+2017.03.01 - version 1.9.13
 
 * Add Experimental Course Admin REST API (disabled by default)
 * Add Allow user to change question points text formatting
@@ -15,6 +15,7 @@ __ - version 1.9.13
 * Fix Single Course Page: Displaying "Lessons" header when there are no lessons
 * Fix issue when username is an email, but user has different email [Pri] Normal [Type] Enhancement
 * Fix WC >= 2.7-beta and WC 3.0 Compat in Lesson Admin
+* Fix WC 3.0 Select2 conflict by Upgrading to Select2 v4
 * Fix Allow Memberships cache control on start_courses_associated_with_membership
 * Fix 'reset' learner bulk action not resetting all courses
 * Add filter for learner profile permalink
