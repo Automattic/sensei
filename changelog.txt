@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2017.03.01 - version 1.9.13
+2017.04.07 - version 1.9.13
 
 * Add Experimental Course Admin REST API (disabled by default)
 * Add Allow user to change question points text formatting
