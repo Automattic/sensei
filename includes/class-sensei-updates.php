@@ -150,9 +150,9 @@ class Sensei_Updates
 
                         $done_processing = call_user_func_array(array($this, $function_name), array(50, $n));
 
-                    } elseif ($this->function_in_whitelist($function_name)) {
+                    } elseif ( $this->function_in_whitelist( $function_name ) && function_exists( $function_name ) ) {
 
-                        $done_processing = call_user_func_array($function_name, array(50, $n));
+                        $done_processing = call_user_func_array( $function_name, array( 50, $n ) );
 
                     } else {
 
@@ -373,19 +373,28 @@ class Sensei_Updates
      * updater context.
      *
      * @param string $function_name
+     * @return bool
      */
-    public function function_in_whitelist( $function_name ){
+    public function function_in_whitelist( $function_name ) {
 
-        $function_whitelist = array(
+        /**
+         * Filters the function whitelist for Sensei_Updates::function_in_whitelist.
+         * Allows extensions to add/remove whitelisted functions.
+         *
+         * @since 1.9.??
+         *
+         * @param array $function_whitelist
+         * @return array
+         */
+        $function_whitelist = (array)apply_filters( 'sensei_updates_function_whitelist', array(
             'status_changes_convert_questions',
             'status_changes_fix_lessons',
             'status_changes_convert_courses',
             'status_changes_convert_lessons',
             'status_changes_repair_course_statuses',
+        ) );
 
-        );
-
-        return in_array($function_name, $function_whitelist );
+        return in_array( $function_name, $function_whitelist );
 
     }// end function_in_whitelist
 
