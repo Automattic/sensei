@@ -113,6 +113,14 @@ class Sensei_WC_Utils {
     }
 
     /**
+     * @param $product WC_Product
+     * @return null|WC_Product
+     */
+    public static function get_parent_product($product ) {
+        return self::get_product( self::get_product_id( $product ) );
+    }
+
+    /**
      * @param $product WC_Abstract_Legacy_Product
      * @return mixed
      */
