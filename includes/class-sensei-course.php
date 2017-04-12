@@ -605,14 +605,15 @@ class Sensei_Course {
 					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true);
 					if ( 0 < absint( $course_woocommerce_product_id ) ) {
 						if ( 'product_variation' == get_post_type( $course_woocommerce_product_id ) ) {
-							$product_object = get_product( $course_woocommerce_product_id );
+							$product_object = Sensei_WC_Utils::get_product( $course_woocommerce_product_id );
 							if( sensei_check_woocommerce_version( '2.1' ) ) {
-								$formatted_variation = wc_get_formatted_variation( $product_object->variation_data, true );
+								$formatted_variation = wc_get_formatted_variation( Sensei_WC_Utils::get_product_variation_data( $product_object ), true );
 							} else {
-								$formatted_variation = woocommerce_get_formatted_variation( $product_object->variation_data, true );
+								$formatted_variation = Sensei_WC_Utils::get_formatted_variation( Sensei_WC_Utils::get_product_variation_data( $product_object ), true );
 							}
-							$course_woocommerce_product_id = $product_object->parent->post->ID;
-							$product_name = $product_object->parent->post->post_title . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( $formatted_variation );
+							$course_woocommerce_product_id = Sensei_WC_Utils::get_product_id( $product_object );
+							$parent = Sensei_WC_Utils::get_parent_product( $product_object );
+							$product_name = $parent->get_title() . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( $formatted_variation );
 						} else {
 							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
 						} // End If Statement
