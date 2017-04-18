@@ -91,8 +91,8 @@ class Sensei_Updates
      */
     public function add_update_admin_screen()
     {
-        if (current_user_can('manage_options')) {
-            add_submenu_page('sensei', __('Sensei Updates', 'woothemes-sensei'), __('Data Updates', 'woothemes-sensei'), 'manage_options', 'sensei_updates', array($this, 'sensei_updates_page'));
+        if (current_user_can('manage_sensei')) {
+            add_submenu_page('sensei', __('Sensei Updates', 'woothemes-sensei'), __('Data Updates', 'woothemes-sensei'), 'manage_sensei', 'sensei_updates', array($this, 'sensei_updates_page'));
         }
     } // End add_update_admin_screen()
 
@@ -106,7 +106,7 @@ class Sensei_Updates
     public function sensei_updates_page() {
 
         // Only allow admins to load this page and run the update functions
-        if ( ! current_user_can('manage_options')) {
+        if ( ! current_user_can('manage_sensei')) {
 
             return;
 
@@ -420,7 +420,7 @@ class Sensei_Updates
 	public function update ( $type = 'auto' ) {
 
 		// Only allow admins to run update functions
-		if( ! current_user_can( 'manage_options' ) ) {
+		if( ! current_user_can( 'manage_sensei' ) ) {
             return false;
         }
 
