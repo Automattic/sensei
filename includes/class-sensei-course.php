@@ -239,6 +239,12 @@ class Sensei_Course {
 					if ( 'product_variation' == $post_item->post_type ) {
 
 						$product_object = Sensei_WC_Utils::get_product( $post_item->ID );
+
+						if ( empty( $product_object ) ) {
+							// Product variation has been orphaned. Treat it like it has also been deleted.
+							continue;
+						}
+
 						$parent_id = wp_get_post_parent_id( $post_item->ID );
 
                         if( sensei_check_woocommerce_version( '2.1' ) ) {

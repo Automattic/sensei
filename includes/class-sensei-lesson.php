@@ -620,6 +620,10 @@ class Sensei_Lesson {
 
 									if ( 'product_variation' == $products_item->post_type ) {
 										$product_object = Sensei_WC_Utils::get_product( $products_item->ID );
+										if ( empty( $product_object ) ) {
+											// Product variation has been orphaned. Treat it like it has also been deleted.
+											continue;
+										}
 										$parent_id = Sensei_WC_Utils::get_product_id( $product_object );
 										$product_name = ucwords( Sensei_WC_Utils::get_formatted_variation( Sensei_WC_Utils::get_variation_data( $product_object ), true ) );
 									} else {
@@ -639,7 +643,7 @@ class Sensei_Lesson {
 										$html .= '</optgroup>';
 									}
 
-									$html .= '<option value="' . esc_attr( absint( $products_item->ID ) ) . '">' . esc_html( $products_item->post_title ) . '</option>' . "\n";
+									$html .= '<option value="' . esc_attr( absint( $products_item->ID ) ) . '">' . esc_html( $product_name ) . '</option>' . "\n";
 								} // End For Loop
 							$html .= '</select>' . "\n";
 						} else {
