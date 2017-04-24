@@ -257,12 +257,9 @@ class Sensei_Course {
 						}
 
                         $product_name = ucwords( $formatted_variation );
-                        if( empty( $product_name ) ){
-
-                            $product_name = __( 'Variation #', 'woothemes-sensei' ) . $product_object->variation_id;
-
+                        if ( empty( $product_name ) ) {
+                            $product_name = __( 'Variation #', 'woothemes-sensei' ) . Sensei_WC_Utils::get_product_variation_id( $product_object );
                         }
-
 					} else {
 
 						$parent_id = false;
