@@ -274,10 +274,9 @@ class Sensei_Core_Modules
         ?>
         <div class="form-field">
             <label for="module_courses"><?php _e('Course(s)', 'woothemes-sensei'); ?></label>
-            <input type="hidden" id="module_courses" name="module_courses" class="ajax_chosen_select_courses"
-                    placeholder="<?php esc_attr_e('Search for courses', 'woothemes-sensei'); ?>" />
-            <span
-                class="description"><?php _e('Search for and select the courses that this module will belong to.', 'woothemes-sensei'); ?></span>
+            <select name="module_courses" id="module_courses" class="ajax_chosen_select_courses" multiple="multiple">
+            </select>
+            <span class="description"><?php _e('Search for and select the courses that this module will belong to.', 'woothemes-sensei'); ?></span>
         </div>
     <?php
     }
