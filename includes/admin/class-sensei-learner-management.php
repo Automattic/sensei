@@ -444,8 +444,6 @@ class Sensei_Learner_Management {
 
 					// Updates the Course status and it's meta data
 					Sensei_Utils::user_complete_course( $course_id, $user_id );
-
-					do_action( 'sensei_user_course_end', $user_id, $course_id );
 				}
 
 			break;
