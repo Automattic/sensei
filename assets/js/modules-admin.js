@@ -58,7 +58,7 @@ jQuery( document ).ready( function ( e ) {
     /**
      * Searching for courses on the modules admin edit screen
      */
-    jQuery('input.ajax_chosen_select_courses').select2({
+    jQuery('select.ajax_chosen_select_courses').select2({
         minimumInputLength: 2,
         placeholder: modulesAdmin.selectplaceholder,
         width:'300px',
@@ -68,47 +68,30 @@ jQuery( document ).ready( function ( e ) {
             url: ajaxurl,
             dataType: 'json',
             cache: true,
-            id: function(user){ return bond._id; },
-            data: function (input, page) { // page is the one-based page number tracked by Select2
+            data: function (params) { // page is the one-based page number tracked by Select2
                 return {
-                    term: input, //search term
-                    page: page || 1,
+                    term: params.term, //search term
+                    page: params.page || 1,
                     action: 'sensei_json_search_courses',
                     security: 	modulesAdmin.search_courses_nonce,
                     default: ''
                 };
             },
-            results: function (courses, page) {
+            processResults: function (courses, page) {
+
                 var validCourses = [];
                 jQuery.each( courses, function (i, val) {
                     if( ! jQuery.isEmptyObject( val )  ){
-                        validcourse = { id: i , details: val  };
+                        validcourse = { id: i , text: val  };
                         validCourses.push( validcourse );
                     }
                 });
                 // wrap the users inside results for select 2 usage
-                return {  results: validCourses };
+                return {
+                    results: validCourses,
+                    page: page
+                };
             }
-        },
-        initSelection: function(element, callback) {
-
-
-            // get the initial values
-            var defaultValues= element.data('defaults');
-
-            //clear the elements values
-            element.val('');
-
-            if( defaultValues.length > 0 ){
-                callback( defaultValues );
-            }
-
-        },
-        formatResult: function( user ){
-            return  user.details ;
-        },
-        formatSelection: function( user ){
-            return user.details;
         }
     }); // end select2
 
