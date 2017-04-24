@@ -1,5 +1,16 @@
 *** Sensei Changelog ***
 
+2017.04.25 - version 1.9.14
+
+* Fix minor syntax in course categories widget #1786
+* Add filter for permitted data update functions #1783
+* WC 3.0 Compat: Fix admin course notices #1788
+* WC 3.0 Compat: Ignore orphaned product variations #1789
+* Make sure sensei_message save hook runs after CPT is registered #1770. Fixes Compatibility issue with Safe Redirect Manager
+* Fix non-localization friendly quiz title #1768
+* use $wpdb->users and $wpdb->comments instead of $wpdb->prefix on Bulk Learner Action Query
+
+
 2017.04.07 - version 1.9.13
 
 * Add Experimental Course Admin REST API (disabled by default)
