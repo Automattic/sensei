@@ -844,9 +844,12 @@ class Sensei_Main {
         }
 
         $statuses = array( '' ); // Default to the WP normal comments
+        // WC excludes these so exclude them too
+        $wc_statuses_to_exclude = array( 'order_note', 'webhook_delivery' );
         $stati = $wpdb->get_results( "SELECT comment_type FROM {$wpdb->comments} GROUP BY comment_type", ARRAY_A );
         foreach ( (array) $stati AS $status ) {
-            if ( 'sensei_' != substr($status['comment_type'], 0, 7 ) ) {
+            if ( 'sensei_' != substr($status['comment_type'], 0, 7 ) &&
+                ! in_array( $status['comment_type'], $wc_statuses_to_exclude ) ) {
                 $statuses[] = $status['comment_type'];
             }
         }
