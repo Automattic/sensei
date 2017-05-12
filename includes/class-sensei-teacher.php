@@ -369,11 +369,14 @@ class Sensei_Teacher {
             return;
         }
 
-        $terms_selected_on_course = wp_get_object_terms( $course_id, 'module' );
+        $terms_selected_on_course = Sensei()->modules->get_course_modules( $course_id );
 
         if( empty( $terms_selected_on_course ) ){
             return;
         }
+
+        // Store new terms for saving order at end.
+        $new_terms = array();
 
         foreach( $terms_selected_on_course as $term ){
 
@@ -423,7 +426,12 @@ class Sensei_Teacher {
                 wp_set_object_terms( $course_id, $term_id , 'module', true );
 
                 // remove old term
-                wp_remove_object_terms( $course_id, $term->term_id, 'module' );
+                if ( $term_id != $term->term_id ) {
+                    wp_remove_object_terms( $course_id, $term->term_id, 'module' );
+                }
+
+                // save ID in order array.
+                $new_terms[] = $term_id;
 
                 // update the lessons within the current module term
                 $lessons = Sensei()->course->course_lessons( $course_id );
@@ -434,13 +442,29 @@ class Sensei_Teacher {
                         // add the new term, the false at the end says to replace all terms on this module
                         // with the new term.
                         wp_set_object_terms( $lesson->ID, $term_id , 'module', false );
-                        update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), 0 );
+
+                        // Copy existing order if defined.
+                        $existing_order = get_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ), true );
+
+                        if ( ! empty( $existing_order ) ) {
+                            update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), $existing_order );
+
+                            // Delete old meta if different.
+                            if ( $term_id != $term->term_id ) {
+                                delete_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ) );
+                            }
+                        } else {
+                            update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), 0 );
+                        }
                     }
 
                 }// end for each
 
             }
         }
+
+        // save order for modules.
+        update_post_meta( intval($course_id), '_module_order', $new_terms );
 
     }// end update_course_module_terms_author
 
@@ -1218,24 +1242,32 @@ class Sensei_Teacher {
         // get all roles
         $roles = get_editable_roles();
 
+
         // get roles with the course edit capability
         // and then get the users with those roles
-        $users_who_can_edit_courses = array();
-        foreach( $roles as $role_item ){
-
-            $role = get_role( strtolower( $role_item['name'] ) );
-
-            if( is_a( $role, 'WP_Role' ) && $role->has_cap('edit_courses') ){
-
-                $user_query_args = array( 'role' => $role->name, 'fields' => array( 'ID', 'display_name' ) );
-                $role_users_who_can_edit_courses = get_users( $user_query_args );
-
-                // add user from the current $user_role to all users
-                $users_who_can_edit_courses = array_merge( $users_who_can_edit_courses, $role_users_who_can_edit_courses );
-
+        $edit_courses_roles = array_filter(
+            $roles,
+            function ( $role_item ) {
+                $role = get_role( strtolower( $role_item['name'] ) );
+                return is_a( $role, 'WP_Role' ) && $role->has_cap('edit_courses');
             }
+        );
 
-        }
+        $edit_courses_roles = array_map(
+            function ( $role ) { return $role['name']; },
+            $edit_courses_roles
+        );
+
+        $user_query_args = array(
+            'role__in'  =>  $edit_courses_roles,
+            'fields'    =>  array(
+                'ID',
+                'display_name',
+            ),
+        );
+
+        $users_who_can_edit_courses = get_users( $user_query_args );
+
 
         // Create the select element with the given users who can edit course
         $selected = isset( $_GET['course_teacher'] ) ? $_GET['course_teacher'] : '';

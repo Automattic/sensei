@@ -359,7 +359,7 @@ class Sensei_Question {
         }
 
         $question_type = 'multiple-choice';
-        $question_types = wp_get_post_terms( $question_id, 'question-type' );
+        $question_types = get_the_terms( $question_id, 'question-type' );
         foreach( $question_types as $type ) {
             $question_type = $type->slug;
         }

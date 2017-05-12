@@ -207,7 +207,9 @@ class Sensei_Course {
 
 		$select_course_woocommerce_product = get_post_meta( $post->ID, '_course_woocommerce_product', true );
 
-		$post_args = array(	'post_type' 		=> array( 'product', 'product_variation' ),
+		// Don't get product variations. Allows us to skip the dangerously non-performant `get_product` loop on line
+		// 227. Explicitly do not update the caches either.
+		$post_args = array(	'post_type' 		=> array( 'product' ),
 							'posts_per_page' 		=> -1,
 							'orderby'         	=> 'title',
     						'order'           	=> 'DESC',
@@ -221,7 +223,10 @@ class Sensei_Course {
 									'operator'	=> 'NOT IN'
 								)
 							),
-							'suppress_filters' 	=> 0
+							'suppress_filters' 	=> 0,
+							'cache_results'			 => false,
+							'update_post_meta_cache' => false,
+							'update_post_term_cache' => false,
 							);
 		$posts_array = get_posts( $post_args );
 
@@ -1846,42 +1851,64 @@ class Sensei_Course {
 
     }// end get_completed_lesson_ids
 
-    /**
-     * Calculate the perceantage completed in the course
-     *
-     * @since 1.8.0
-     *
-     * @param int $course_id
-     * @param int $user_id
-     * @return int $percentage
-     */
-    public function get_completion_percentage( $course_id, $user_id = 0 ){
+	/**
+	 * Calculate the perceantage completed in the course
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param int $course_id
+	 * @param int $user_id
+	 * @return int $percentage
+	 */
+	public function get_completion_percentage( $course_id, $user_id = 0 )
+	{
 
-        if( !( intval( $user_id ) ) > 0 ){
-            $user_id = get_current_user_id();
-        }
+		if ( !( intval( $user_id ) ) > 0 ) {
+			$user_id = get_current_user_id();
+		}
 
-        $completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
+		$course_comment = Sensei_Utils::user_course_status( $course_id, $user_id );
+		$percentage = get_comment_meta( $course_comment->comment_ID, '_completion_percentage', true );
+		if ( $percentage !== false && $percentage !== '' ) {
+			return $percentage;
+		} else {
+			return $this->sync_completion_percentage( $course_id, $user_id );
+		}
 
-        if( ! (  $completed  > 0 ) ){
-            return 0;
-        }
+	}
 
-        $total_lessons = count( $this->course_lessons( $course_id ) );
-        $percentage = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons, 2 );
+	public function sync_completion_percentage( $course_id, $user_id = 0 ) {
 
-        /**
-         *
-         * Filter the percentage returned for a users course.
-         *
-         * @param $percentage
-         * @param $course_id
-         * @param $user_id
-         * @since 1.8.0
-         */
-        return apply_filters( 'sensei_course_completion_percentage', $percentage, $course_id, $user_id );
+		if( !( intval( $user_id ) ) > 0 ){
+			$user_id = get_current_user_id();
+		}
 
-    }// end get_completed_lesson_ids
+		$percentage = 0;
+
+		$completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
+
+		if(  $completed  > 0 ) {
+			$total_lessons = count( $this->course_lessons( $course_id ) );
+			$percentage = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons, 2 );
+
+			/**
+			 *
+			 * Filter the percentage returned for a users course.
+			 *
+			 * @param $percentage
+			 * @param $course_id
+			 * @param $user_id
+			 * @since 1.8.0
+			 */
+			$percentage = apply_filters( 'sensei_course_completion_percentage', $percentage, $course_id, $user_id );
+		}
+
+		$course_comment = Sensei_Utils::user_course_status( $course_id, $user_id );
+		update_comment_meta( $course_comment->comment_ID, '_completion_percentage', $percentage );
+
+		return $percentage;
+
+	}
 
     /**
      * Block email notifications for the specific courses

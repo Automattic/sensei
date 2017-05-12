@@ -103,10 +103,10 @@ class Sensei_Core_Modules
         add_action( 'wp_ajax_sensei_add_new_module_term', array( 'Sensei_Core_Modules','add_new_module_term' ) );
 
         // for non admin users, only show taxonomies that belong to them
-        add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
+        //add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
         // add the teacher name next to the module term in for admin users
         add_filter('get_terms', array( $this, 'append_teacher_name_to_module' ), 70, 3 );
-        add_filter('get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
+        //add_filter('get_object_terms', array( $this, 'filter_course_selected_terms' ), 20, 3 );
 
         // remove the default modules  metabox
         add_action('admin_init',array( 'Sensei_Core_Modules' , 'remove_default_modules_box' ));
@@ -1913,20 +1913,9 @@ class Sensei_Core_Modules
             return $terms;
         }
 
-        $term_objects = $this->filter_terms_by_owner( $terms, get_current_user_id() );
+        $terms_filtered = $this->filter_terms_by_owner( $terms, get_current_user_id() );
 
-        // if term objects were passed in send back objects
-        // if term id were passed in send that back
-        if( is_object( $terms[0] ) ){
-            return $term_objects;
-        }
-
-        $terms = array();
-        foreach( $term_objects as $term_object ){
-            $terms[] = $term_object->term_id;
-        }
-
-        return $terms;
+        return $terms_filtered;
 
 
     }// end filter_course_selected_terms
@@ -1942,25 +1931,21 @@ class Sensei_Core_Modules
      */
     public function filter_terms_by_owner( $terms, $user_id ){
 
-        $users_terms = array();
+        return array_filter(
+            $terms,
+            function ( $term ) use ( $user_id ) {
 
-        foreach( $terms as $index => $term ){
+                if( is_numeric( $term ) ){
+                    // the term id was given, get the term object
+                    $term = get_term( $term, 'module' );
+                }
 
-            if( is_numeric( $term ) ){
-                // the term id was given, get the term object
-                $term = get_term( $term, 'module' );
+                $author = Sensei_Core_Modules::get_term_author( $term->slug );
+
+                return $user_id == $author->ID;
+
             }
-
-            $author = Sensei_Core_Modules::get_term_author( $term->slug );
-
-            if ( $user_id == $author->ID ) {
-                // add the term to the teachers terms
-                $users_terms[] = $term;
-            }
-
-        }
-
-        return $users_terms;
+        );
 
     } // end filter terms by owner
 
