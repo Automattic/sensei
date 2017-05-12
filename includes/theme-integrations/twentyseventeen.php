@@ -11,13 +11,13 @@
  *
  * @since 1.9.10
  */
-Class Sensei_Twentyseventeen extends Sensei__S{
+class Sensei_Twentyseventeen extends Sensei__S  {
 
 	/**
      * Output opening wrappers
      * @since 1.9.15
      */
-    public function wrapper_start(){
+    public function wrapper_start() {
     ?>
 
         <div class="wrap">
@@ -31,7 +31,7 @@ Class Sensei_Twentyseventeen extends Sensei__S{
      *
      * @since 1.9.15
      */
-    public function wrapper_end(){ ?>
+    public function wrapper_end() { ?>
 
 				</main><!-- #main -->
 			</div><!-- #primary -->
