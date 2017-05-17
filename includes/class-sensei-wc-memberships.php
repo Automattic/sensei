@@ -132,6 +132,9 @@ class Sensei_WC_Memberships {
 		}
 
 		$restricted_content = $membership_plan->get_restricted_content();
+		if ( empty( $restricted_content ) ) {
+			return;
+		}
 
 		foreach ( $restricted_content->get_posts() as $maybe_course ) {
 			if ( empty( $maybe_course ) || 'course' !== $maybe_course->post_type ) {
