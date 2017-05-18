@@ -1878,14 +1878,9 @@ class Sensei_Core_Modules
         remove_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
 
         // in certain cases the array is passed in as reference to the parent term_id => parent_id
-        if( isset( $args['fields'] ) ) {
-            if ( in_array( $args['fields'], array( 'tt_ids', 'ids' ) ) ) {
-                return $terms;
-            }
+        if( isset( $args['fields'] ) && 'id=>parent' == $args['fields'] ){
             // change only scrub the terms ids form the array keys
-            if ( 'id=>parent' == $args['fields'] ) {
-                $terms = array_keys( $terms );
-            }
+            $terms = array_keys( $terms );
         }
 
         $teachers_terms =  $this->filter_terms_by_owner( $terms, get_current_user_id() );

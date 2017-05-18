@@ -1468,7 +1468,6 @@ class Sensei_Admin {
                                 'twentyfourteen',
                                 'twentyfifteen',
                                 'twentysixteen',
-								'twentyseventeen',
                                 'storefront',
                                                 );
 

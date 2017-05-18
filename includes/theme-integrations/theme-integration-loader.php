@@ -49,7 +49,6 @@ class Sensei_Theme_Integration_Loader {
             'twentyfourteen',
             'twentyfifteen',
             'twentysixteen',
-            'twentyseventeen',
             'storefront',
         );
 
