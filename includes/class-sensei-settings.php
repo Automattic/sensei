@@ -608,6 +608,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 									'section' => 'woocommerce-settings'
 									);
 
+			$fields['woocommerce_enable_sensei_debugging'] = array(
+				'name' => __( 'Enable Sensei WooCommerce Integration Debugging', 'woothemes-sensei' ),
+				'description' => __( 'Advanced: Log Sensei/WooCommerce integration events (Uses WC_Logger, logs events at `notice` level)', 'woothemes-sensei' ),
+				'type' => 'checkbox',
+				'default' => false,
+				'section' => 'woocommerce-settings'
+			);
+
 		} // End If Statement
 
 		if ( Sensei_WC_Memberships::is_wc_memberships_active() ) {
