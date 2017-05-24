@@ -2,6 +2,13 @@
 
 class Sensei_WC_Utils {
 
+	/**
+	 * Logger.
+	 *
+	 * @var WC_Logger
+	 */
+	private static $logger = null;
+
     /**
      * @param $order WC_Order
      * @return string
@@ -155,4 +162,23 @@ class Sensei_WC_Utils {
 
         return self::is_product_variation( $product ) ? wc_get_product_variation_attributes( $product->get_id() ) : '';
     }
+
+	public static function get_logger() {
+		if ( null === self::$logger ) {
+			self::$logger = new WC_Logger();
+		}
+
+		return self::$logger;
+	}
+
+	public static function log( $message ) {
+		if ( false === Sensei_WC::is_woocommerce_active() ) {
+			return;
+		}
+		$debugging_enabled = (bool) Sensei()->settings->get( 'woocommerce_enable_sensei_debugging' );
+		if ( ! $debugging_enabled ) {
+			return;
+		}
+		self::get_logger()->log( 'notice', $message, array( 'source' => 'woothemes_sensei_core' ) );
+	}
 }
