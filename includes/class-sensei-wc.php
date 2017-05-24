@@ -1226,6 +1226,7 @@ class Sensei_WC {
 		if ( ! Sensei_WC::is_woocommerce_active() || empty( $order_id ) ) {
 			return;
 		}
+
 		// Get order object
 		$order = new WC_Order( $order_id );
 		$order_status = Sensei_WC_Utils::get_order_status( $order );
@@ -1243,6 +1244,8 @@ class Sensei_WC {
 		if ( 0 == sizeof( $order->get_items() ) ) {
 			return;
 		}
+
+		Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Enter ' . $order_id );
 
 		// Run through each product ordered
 		foreach( $order->get_items() as $item ) {
@@ -1264,10 +1267,11 @@ class Sensei_WC {
 
 			// Get courses that use the WC product
 			$courses = Sensei()->course->get_product_courses( $_product_id );
+			Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Got (' . count( $courses ) . ') course(s) on order_id ' . $order_id . ', product_id ' . $_product_id );
 
 			// Loop and update those courses
 			foreach ( $courses as $course_item ) {
-
+				Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Update Course ID ' . $course_item->ID . ' for user ' . $order_user['ID'] );
 				$update_course = self::course_update( $course_item->ID, $order_user );
 
 			} // End For Loop
@@ -1428,13 +1432,17 @@ class Sensei_WC {
 
 		}
 
+		Sensei_WC_Utils::log( 'Sensei_WC::course_update: course_id ' . $course_id . ', user_id ' . $user_id );
+
 		// Get the product ID
 		$wc_post_id = get_post_meta( intval( $course_id ), '_course_woocommerce_product', true );
+		Sensei_WC_Utils::log( 'Sensei_WC::course_update: product_id ' . $wc_post_id );
 
 		// This doesn't appear to be purely WooCommerce related. Should it be in a separate function?
 		$course_prerequisite_id = (int) get_post_meta( $course_id, '_course_prerequisite', true );
-		if( 0 < absint( $course_prerequisite_id ) ) {
 
+		if( 0 < absint( $course_prerequisite_id ) ) {
+			Sensei_WC_Utils::log( 'Sensei_WC::course_update: course_prerequisite_id ' . $course_prerequisite_id );
 			$prereq_course_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, intval( $user_id ) );
 			if ( ! $prereq_course_complete ) {
 
@@ -1446,13 +1454,17 @@ class Sensei_WC {
 
 		$is_user_taking_course = Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
 		$currently_purchasing_course = isset( $_POST['payment_method'] );
+		Sensei_WC_Utils::log( 'Sensei_WC::course_update: user_taking_course: ' . ( $is_user_taking_course ? 'yes' : 'no' ) );
+		if ( $currently_purchasing_course ) {
+			Sensei_WC_Utils::log( 'Sensei_WC::course_update: user purchasing course via ' . sanitize_text_field( $_POST['payment_method'] ) );
+		}
 
 		if ( ! $is_user_taking_course
 			&& 0 < $wc_post_id
 			&& ( Sensei_WC::has_customer_bought_product( $user_id, $wc_post_id ) || $currently_purchasing_course )  ) {
 
 				$activity_logged = Sensei_Utils::user_start_course( intval( $user_id ), intval( $course_id ) );
-
+				Sensei_WC_Utils::log( 'Sensei_WC::course_update: activity_logged: ' . $activity_logged );
 				if ( true == $activity_logged ) {
 
 					$is_user_taking_course = true;
@@ -1460,6 +1472,8 @@ class Sensei_WC {
 				} // End If Statement
 
 		}// end if is user taking course
+
+		Sensei_WC_Utils::log( 'Sensei_WC::course_update: user taking course after update: ' . ( $is_user_taking_course ? 'yes' : 'NO' ) );
 
 		return $is_user_taking_course;
 
@@ -1775,6 +1789,5 @@ class Sensei_WC {
 			}
 		}
 	}
-
 
 }// end Sensei_WC
