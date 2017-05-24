@@ -163,7 +163,7 @@ class Sensei_WC_Utils {
         return self::is_product_variation( $product ) ? wc_get_product_variation_attributes( $product->get_id() ) : '';
     }
 
-	public static function get_logger() {
+	private static function get_logger() {
 		if ( null === self::$logger ) {
 			self::$logger = new WC_Logger();
 		}
