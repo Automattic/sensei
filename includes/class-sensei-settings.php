@@ -611,6 +611,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 		} // End If Statement
 
 		if ( Sensei_WC_Memberships::is_wc_memberships_active() ) {
+			$fields['sensei_wc_memberships_restrict_course_video'] = array(
+				'name' => __( 'Restrict course video', 'woothemes-sensei' ),
+				'description' => __( 'Used when you don\'t want the course video to be viewable by non-members', 'woothemes-sensei' ),
+				'type' => 'checkbox',
+				'default' => false,
+				'section' => 'sensei-wc-memberships-settings'
+			);
 			$fields['sensei_wc_memberships_auto_start_courses'] = array(
 				'name' => __( 'Auto-start courses belonging to a membership', 'woothemes-sensei' ),
 				'description' => __( 'Automatically start courses belonging to a WC Membership when activated', 'woothemes-sensei' ),
