@@ -253,4 +253,16 @@ class Sensei_WC_Utils {
 
 		return $item->get_product();
 	}
+
+	/**
+	 * Get Checkout URL
+	 *
+	 * @return string
+	 */
+	public static function get_checkout_url() {
+		if ( self::wc_version_less_than( '2.5.0' ) ) {
+			return WC()->cart->get_checkout_url();
+		}
+		return wc_get_checkout_url();
+	}
 }
