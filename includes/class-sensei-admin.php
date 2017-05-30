@@ -1641,12 +1641,14 @@ class Sensei_Admin {
 		$maybe_admin = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
 		if ( false === $maybe_admin || false === user_can( $maybe_admin, 'manage_options' ) ) {
-			$general_settings_url = '<a href="' . esc_attr( esc_url( admin_url( 'options-general.php' ) ) ) . '">' . __( 'setting', 'woothemes-sensei' ) . '</a>';
+			$general_settings_url = '<a href="' . esc_attr( esc_url( admin_url( 'options-general.php' ) ) ) . '">' . __( 'Settings > General', 'woothemes-sensei' ) . '</a>';
+			$add_new_user_url = '<a href="' . esc_attr( esc_url( admin_url( 'user-new.php' ) ) ) . '">' . __( 'add a new Administrator', 'woothemes-sensei' ) . '</a>';
+			$existing_administrators_link = '<a href="' . esc_attr( esc_url( admin_url( 'users.php?role=administrator' ) ) ) . '">' . __( 'existing Administrator', 'woothemes-sensei' ) . '</a>';
 			$current_setting = esc_html__( get_bloginfo( 'admin_email' ) );
 			?><div id="message" class="error sensei-message sensei-connect">
 				<p>
 					<strong>
-						<?php printf( esc_html__( 'For Sensei to work correctly, your Email Address %s needs to belong to an existing Administrator email (currently set to: %s).', 'woothemes-sensei' ), $general_settings_url, $current_setting ); ?>
+						<?php printf( esc_html__( 'To prevent issues with Sensei module names, your Email Address in %s should also belong to an Administrator user. You can either %s with the email address %s, or change that email address to match the email of an %s.', 'woothemes-sensei' ), $general_settings_url, $add_new_user_url, $current_setting, $existing_administrators_link ); ?>
 					</strong>
 				</p>
 			</div><?php
