@@ -8,7 +8,7 @@
  * Author URI: https://woocommerce.com/
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Requires at least: 4.1
- * Tested up to: 4.7.4
+ * Tested up to: 4.8
  * Text Domain: woothemes-sensei
  * Domain path: /lang/
  *
