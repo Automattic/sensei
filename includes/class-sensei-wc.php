@@ -482,8 +482,8 @@ class Sensei_WC {
 
 			<div class="sensei-message info">
 				<?php
-
-				$cart_link = '<a class="cart-complete" href="' . WC()->cart->get_checkout_url()
+				$checkout_url = Sensei_WC_Utils::get_checkout_url();
+				$cart_link = '<a class="cart-complete" href="' . esc_url( $checkout_url )
 							  . '" title="' . __( 'complete purchase', 'woothemes-sensei' ) . '">'
 							  . __( 'complete the purchase', 'woothemes-sensei' ) . '</a>';
 
