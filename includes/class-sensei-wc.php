@@ -37,7 +37,7 @@ class Sensei_WC {
 
 	}
 	/**
-	 * check if WooCommerce plugin is loaded and allowed by Sensei
+	 * Check if WooCommerce plugin is loaded and allowed by Sensei.
 	 *
 	 * @since 1.9.0
 	 * @return bool
@@ -68,8 +68,10 @@ class Sensei_WC {
 	 *
 	 * If multiple exist we will return the latest order.
 	 *
-	 * @param $user_id
-	 * @param $course_id
+	 * @param int  $user_id User ID.
+	 * @param int  $course_id Course ID.
+	 * @param bool $check_parent_products Check Parent Products.
+	 *
 	 * @return array $user_course_orders
 	 */
 	public static function get_learner_course_active_order_id( $user_id, $course_id, $check_parent_products = false ) {
@@ -84,10 +86,8 @@ class Sensei_WC {
 			'meta_value' => $user_id,
 		) );
 
-		if ( $orders_query->post_count == 0 ) {
-
+		if ( 0 === $orders_query->post_count ) {
 			return false;
-
 		}
 
 		foreach ( $orders_query->get_posts() as $order ) {
@@ -527,8 +527,8 @@ class Sensei_WC {
 	 */
 	public static function is_product_in_cart( $product_id ) {
 		if ( false === Sensei_Utils::is_request( 'frontend' ) ) {
-			// WC Cart is not loaded when we are on Admin or doing a Cronjob
-			// see https://github.com/Automattic/sensei/issues/1622
+			// WC Cart is not loaded when we are on Admin or doing a Cronjob.
+			// see https://github.com/Automattic/sensei/issues/1622.
 			return false;
 		}
 
@@ -1236,7 +1236,7 @@ class Sensei_WC {
 			return;
 		}
 
-		Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Enter ' . $order_id );
+		Sensei_WC_Utils::log( 'Sensei_WC::complete_order: order_id = ' . $order_id );
 
 		// Run through each product ordered
 		foreach ( $order->get_items() as $item ) {
@@ -1258,13 +1258,15 @@ class Sensei_WC {
 
 			// Get courses that use the WC product
 			$courses = Sensei()->course->get_product_courses( $_product_id );
-			Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Got (' . count( $courses ) . ') course(s) on order_id ' . $order_id . ', product_id ' . $_product_id );
+			Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Got (' . count( $courses ) . ') course(s), order_id ' . $order_id . ', product_id ' . $_product_id );
 
 			// Loop and update those courses
 			foreach ( $courses as $course_item ) {
-				Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Update Course ID ' . $course_item->ID . ' for user ' . $order_user['ID'] );
-				$update_course = self::course_update( $course_item->ID, $order_user );
-
+				Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Update course_id ' . $course_item->ID . ' for user_id ' . $order_user['ID'] );
+				$update_course = self::course_update( $course_item->ID, $order_user, $order );
+				if ( false === $update_course ) {
+					Sensei_WC_Utils::log( 'Sensei_WC::complete_order: FAILED course_update course_id ' . $course_item->ID . ' for user_id ' . $order_user['ID'] );
+				}
 			}
 		} // End foreach().
 		// Add meta to indicate that payment has been completed successfully
@@ -1376,12 +1378,13 @@ class Sensei_WC {
 	 * @since  1.0.0
 	 * @since 1.9.0 move to class Sensei_WC
 	 *
-	 * @param  int 			$course_id  (default: 0)
-	 * @param  array/Object $order_user (default: array()) Specific user's data.
+	 * @param  int 			 $course_id  (default: 0)
+	 * @param  array/Object  $order_user (default: array()) Specific user's data.
+	 * @param  WC_Order|null $order The Order.
 	 *
 	 * @return bool|int
 	 */
-	public static function course_update( $course_id = 0, $order_user = array() ) {
+	public static function course_update( $course_id = 0, $order_user = array(), $order = null ) {
 
 		global $current_user;
 		$has_valid_user_object = isset( $current_user->ID ) || isset( $order_user['ID'] );
@@ -1394,32 +1397,20 @@ class Sensei_WC {
 			return false;
 		}
 
-		// setup user data
+		// setup user data.
 		if ( is_admin() ) {
-
-			$user_login = $order_user['user_login'];
-			$user_email = $order_user['user_email'];
-			$user_url = $order_user['user_url'];
 			$user_id = $order_user['ID'];
-
 		} else {
-
 			$user_id = empty( $current_user->ID ) ? $order_user['ID'] : $current_user->ID;
 			$user = get_user_by( 'id', $user_id );
-
 			if ( ! $user ) {
 				return false;
 			}
-
-			$user_login = $user->user_login;
-			$user_email = $user->user_email;
-			$user_url   = $user->user_url;
-
 		}
 
 		Sensei_WC_Utils::log( 'Sensei_WC::course_update: course_id ' . $course_id . ', user_id ' . $user_id );
 
-		// Get the product ID
+		// Get the product ID.
 		$wc_post_id = get_post_meta( intval( $course_id ), '_course_woocommerce_product', true );
 		Sensei_WC_Utils::log( 'Sensei_WC::course_update: product_id ' . $wc_post_id );
 
@@ -1430,31 +1421,28 @@ class Sensei_WC {
 			Sensei_WC_Utils::log( 'Sensei_WC::course_update: course_prerequisite_id ' . $course_prerequisite_id );
 			$prereq_course_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, intval( $user_id ) );
 			if ( ! $prereq_course_complete ) {
-
-				// Remove all course user meta
+				// Remove all course user meta.
 				return Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
 
 			}
 		}
 
+		$has_payment_method = isset( $_POST['payment_method'] );
+		$payment_method = $has_payment_method ? sanitize_text_field( $_POST['payment_method'] ) : '';
 		$is_user_taking_course = Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
-		$currently_purchasing_course = isset( $_POST['payment_method'] );
+		$currently_purchasing_course = $has_payment_method || ( null !== $order && is_a( $order, 'WC_Order' ) );
 		Sensei_WC_Utils::log( 'Sensei_WC::course_update: user_taking_course: ' . ( $is_user_taking_course ? 'yes' : 'no' ) );
-		if ( $currently_purchasing_course ) {
-			Sensei_WC_Utils::log( 'Sensei_WC::course_update: user purchasing course via ' . sanitize_text_field( $_POST['payment_method'] ) );
+		if ( $has_payment_method ) {
+			Sensei_WC_Utils::log( 'Sensei_WC::course_update: user purchasing course via ' . $payment_method );
 		}
 
 		if ( ! $is_user_taking_course
 			&& 0 < $wc_post_id
-			&& ( Sensei_WC::has_customer_bought_product( $user_id, $wc_post_id ) || $currently_purchasing_course ) ) {
+			&& ( self::has_customer_bought_product( $user_id, $wc_post_id ) || $currently_purchasing_course ) ) {
 
-				$activity_logged = Sensei_Utils::user_start_course( intval( $user_id ), intval( $course_id ) );
-				Sensei_WC_Utils::log( 'Sensei_WC::course_update: activity_logged: ' . $activity_logged );
-			if ( true == $activity_logged ) {
-
-				$is_user_taking_course = true;
-
-			}
+			$activity_logged = Sensei_Utils::user_start_course( intval( $user_id ), intval( $course_id ) );
+			Sensei_WC_Utils::log( 'Sensei_WC::course_update: activity_logged: ' . $activity_logged );
+			$is_user_taking_course = ( false !== $activity_logged );
 		}// End if().
 
 		Sensei_WC_Utils::log( 'Sensei_WC::course_update: user taking course after update: ' . ( $is_user_taking_course ? 'yes' : 'NO' ) );
@@ -1469,7 +1457,7 @@ class Sensei_WC {
 	 * @since 1.1.0
 	 * @since 1.9.0 move to class Sensei_WC
 	 *
-	 * @param  boolean $guest_checkout Current guest checkout setting
+	 * @param  boolean $guest_checkout Current guest checkout setting.
 	 *
 	 * @return boolean                 Modified guest checkout setting
 	 */
@@ -1518,8 +1506,8 @@ class Sensei_WC {
 	 * @since  1.1.0
 	 * @since 1.9.0 move to class Sensei_WC
 	 *
-	 * @param string $order_status
-	 * @param int    $order_id
+	 * @param string $order_status Order Status.
+	 * @param int    $order_id Order ID.
 	 *
 	 * @return string
 	 **/
@@ -1527,30 +1515,30 @@ class Sensei_WC {
 
 		$order = new WC_Order( $order_id );
 
-		if ( ! isset( $order ) ) { return '';
+		if ( ! isset( $order ) ) {
+			return '';
 		}
 
-		if ( $order_status == 'wc-processing' && ( $order->post_status == 'wc-on-hold' || $order->post_status == 'wc-pending' || $order->post_status == 'wc-failed' ) ) {
+		if ( 'wc-processing' === $order_status  && in_array( $order->post_status, array( 'wc-on-hold', 'wc-pending', 'wc-failed' ), true ) ) {
 
 			$virtual_order = true;
 
 			if ( count( $order->get_items() ) > 0 ) {
 
 				foreach ( $order->get_items() as $item ) {
+					$_product = Sensei_WC_Utils::get_product_from_item( $item, $order );
+					if ( false === $_product ) {
+						continue;
+					}
 
-					if ( $item['product_id'] > 0 ) {
-						$_product = $order->get_product_from_item( $item );
-						if ( ! $_product->is_virtual() ) {
-
-							$virtual_order = false;
-							break;
-
-						}
+					if ( ! $_product->is_virtual() ) {
+						$virtual_order = false;
+						break;
 					}
 				}
 			} // End if().
 
-			// virtual order, mark as completed
+			// virtual order, mark as completed.
 			if ( $virtual_order ) {
 
 				return 'completed';
@@ -1560,8 +1548,7 @@ class Sensei_WC {
 
 		return $order_status;
 
-	}//end virtual_order_payment_complete()
-
+	}
 
 	/**
 	 * Determine if the user has and active subscription to give them access
@@ -1569,29 +1556,31 @@ class Sensei_WC {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param  boolean $user_access_permission
-	 * @param  integer $user_id
-	 * @return boolean $user_access_permission
+	 * @param  bool $user_access_permission Access Permission.
+	 * @param  int  $user_id User ID.
+	 *
+	 * @return bool $user_access_permission
 	 */
 	public static function get_subscription_permission( $user_access_permission, $user_id ) {
-		_deprecated_function( __FUNCTION__, Sensei()->version, 'Sensei_WC_Subscriptions::get_subscription_permission' );
+		_deprecated_function( __FUNCTION__, esc_html( Sensei()->version ), 'Sensei_WC_Subscriptions::get_subscription_permission' );
 		return Sensei_WC_Subscriptions::get_subscription_permission( $user_access_permission , $user_id );
-	} // end get_subscription_permission
+	}
 
 	/**
+	 * Get_subscription_user_started_course
+	 *
 	 * @since 1.9.0
 	 *
-	 * @param $has_user_started_course
-	 * @param $course_id
-	 * @param $user_id
+	 * @param bool $has_user_started_course Has Started.
+	 * @param int  $course_id Course ID.
+	 * @param int  $user_id User ID.
 	 *
 	 * @return bool $has_user_started_course
 	 */
 	public static function get_subscription_user_started_course( $has_user_started_course, $course_id, $user_id ) {
-		_deprecated_function( __FUNCTION__, Sensei()->version, 'Sensei_WC_Subscriptions::get_subscription_user_started_course' );
+		_deprecated_function( __FUNCTION__, esc_html( Sensei()->version ), 'Sensei_WC_Subscriptions::get_subscription_user_started_course' );
 		return Sensei_WC_Subscriptions::get_subscription_user_started_course( $has_user_started_course, $course_id, $user_id );
 	}
-
 
 	/**
 	 * Compare the user's subscriptions end date with the date
@@ -1604,9 +1593,9 @@ class Sensei_WC {
 	 * @deprecated 1.9.12
 	 * @since 1.9.0
 	 *
-	 * @param $user_id
-	 * @param $product_id
-	 * @param $course_id
+	 * @param int $user_id User ID.
+	 * @param int $product_id Product ID.
+	 * @param int $course_id Course ID.
 	 *
 	 * @return bool
 	 */
@@ -1618,8 +1607,8 @@ class Sensei_WC {
 	/**
 	 * Get all the orders for a specific user and product combination
 	 *
-	 * @param int        $user_id
-	 * @param $product_id
+	 * @param int $user_id The user id.
+	 * @param int $product_id The product id.
 	 *
 	 * @return array $orders
 	 */
@@ -1648,7 +1637,7 @@ class Sensei_WC {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param int $course_id
+	 * @param int $course_id The course id.
 	 *
 	 * @return bool
 	 */
@@ -1671,7 +1660,9 @@ class Sensei_WC {
 	}
 
 	/**
-	 * @param $item_id
+	 * Get_courses_from_product_id
+	 *
+	 * @param int $item_id Item id.
 	 * @return array
 	 */
 	private static function get_courses_from_product_id( $item_id ) {
@@ -1687,10 +1678,10 @@ class Sensei_WC {
 	/**
 	 * WC start_purchased_courses_for_user
 	 *
-	 * @param $user_id
+	 * @param int $user_id The user ID.
 	 */
 	private static function start_purchased_courses_for_user( $user_id ) {
-		// get current user's active courses
+		// get current user's active courses.
 		$active_courses = Sensei_Utils::sensei_check_for_activity( array(
 			'user_id' => $user_id,
 			'type' => 'sensei_course_status',
