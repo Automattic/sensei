@@ -237,4 +237,20 @@ class Sensei_WC_Utils {
 			'source' => 'woothemes_sensei_core',
 		) );
 	}
+
+	/**
+	 * Get Product From item.
+	 *
+	 * @param array|WC_Order_Item_Product $item The item.
+	 * @param WC_Order                    $order The order.
+	 *
+	 * @return bool|WC_Product
+	 */
+	public static function get_product_from_item( $item, $order ) {
+		if ( self::wc_version_less_than( '3.0.0' ) ) {
+			return ( $item['product_id'] > 0 ) ? $order->get_product_from_item( $item ) : false;
+		}
+
+		return $item->get_product();
+	}
 }
