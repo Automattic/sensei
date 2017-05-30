@@ -236,7 +236,7 @@ class Sensei_WC_Memberships {
 	 *
 	 * This will also remove the "complete lesson" button until the lesson is available.
 	 */
-	function restrict_lesson_details() {
+	static function restrict_lesson_details() {
 		global $post;
 
 		// sanity checks.
@@ -266,7 +266,7 @@ class Sensei_WC_Memberships {
 	 * Optional: Restrict course videos unless the member has access.
 	 * Used if you don't want to show course previews to non-members.
 	 */
-	function restrict_course_videos() {
+	static function restrict_course_videos() {
 		global $post;
 
 		// sanity checks.
