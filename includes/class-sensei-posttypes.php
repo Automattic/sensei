@@ -127,7 +127,10 @@ class Sensei_PostTypes {
             'has_archive'         => $this->get_course_post_type_archive_slug(),
 		    'hierarchical'        => false,
 		    'menu_position'       => 51,
-		    'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail' )
+		    'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail' ),
+			'show_in_rest' => true,
+			'rest_base' => 'courses',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
 		);
 
         /**
@@ -228,7 +231,10 @@ class Sensei_PostTypes {
 		    'has_archive' => true,
 		    'hierarchical' => false,
 		    'menu_position' => 52,
-		    'supports' => $supports_array
+		    'supports' => $supports_array,
+			'show_in_rest' => true,
+			'rest_base' => 'lessons',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
 		);
 
         /**
