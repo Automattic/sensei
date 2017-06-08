@@ -59,6 +59,8 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
      */
     protected $exclude;
 
+	private $global_product = null;
+
     /**
      * Setup the shortcode object
      *
@@ -199,6 +201,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
     public function render(){
 
         global $wp_query;
+		$this->maybe_store_global_product();
 
         // keep a reference to old query
         $current_global_query = $wp_query;
@@ -213,8 +216,32 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
         //restore old query
         $wp_query = $current_global_query;
 
+		$this->restore_global_product();
+
         return $shortcode_output;
 
     }// end render
+
+	private function maybe_store_global_product() {
+		global $product;
+		if ( ! Sensei_WC::is_woocommerce_active() ) {
+			return;
+		}
+		if ( isset( $product ) && $product ) {
+			$this->global_product = $product;
+		} else {
+			$this->global_product = null;
+		}
+	}
+
+	private function restore_global_product() {
+		global $product;
+		if ( ! Sensei_WC::is_woocommerce_active() ) {
+			return;
+		}
+		if ( isset( $this->global_product ) && $this->global_product ) {
+			$product = $this->global_product;
+		}
+	}
 
 }
