@@ -1,10 +1,10 @@
 *** Sensei Changelog ***
 
-2017.05.21 - version 1.9.15
+2017.05.20 - version 1.9.15
 
 * Improve handling of get_bloginfo( ‘admin_email’ ) #1809
 * Fix With [sensei_courses] short code on product page, up-sells disappear #1800
-# Fix Users not being added to purchased courses again #1808 1810
+* Fix Users not being added to purchased courses again #1808 1810
 * Fix Select2 (Can’t add course when editing Module)
 * Better 2017 Theme Support
 * Even Better Memberships Integration
