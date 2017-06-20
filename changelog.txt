@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2017.05.20 - version 1.9.15
+2017.06.20 - version 1.9.15
 
 * Improve handling of get_bloginfo( ‘admin_email’ ) #1809
 * Fix With [sensei_courses] short code on product page, up-sells disappear #1800
