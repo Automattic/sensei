@@ -300,8 +300,8 @@ class Sensei_Settings_API {
         <h2><?php echo esc_html($this->name); ?><?php if ('' != $this->settings_version) {
                 echo ' <span class="version">' . $this->settings_version . '</span>';
             } ?></h2>
-        <p class="powered-by-woo"><?php _e('Powered by', 'woothemes-sensei'); ?><a href="http://www.woothemes.com/"
-                                                                                   title="WooThemes"><img
+        <p class="powered-by-woo"><?php _e('Powered by', 'woothemes-sensei'); ?><a href="https://woocommerce.com/"
+                                                                                   title="WooCommerce"><img
                     src="<?php echo Sensei()->plugin_url; ?>assets/images/woothemes.png" alt="WooThemes"/></a></p>
         <?php do_action('settings_before_form'); ?>
         <form action="options.php" method="post">
