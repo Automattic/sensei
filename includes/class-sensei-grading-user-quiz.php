@@ -211,7 +211,19 @@ class Sensei_Grading_User_Quiz {
 										'href' => array(),
 										'title' => array(),
 										'target' => array(),
-									)
+									),
+									'br' => array(),
+									'pre' => array(),
+									'code' => array(),
+									'p' => array(),
+									'h1' => array(),
+									'h2' => array(),
+									'h3' => array(),
+									'h4' => array(),
+									'h5' => array(),
+									'h6' => array(),
+									'strong' => array(),
+									'em' => array(),
 								) );
 
 								echo $_user_answer . "<br>";
@@ -221,6 +233,10 @@ class Sensei_Grading_User_Quiz {
 							<h5><?php _e( 'Correct answer', 'woothemes-sensei' ) ?></h5>
 							<span class="correct-answer"><?php
 								foreach ( $right_answer as $_right_answer ) {
+
+									if( 'multi-line' == Sensei()->question->get_question_type( $question->ID ) ){
+										$_right_answer = htmlspecialchars_decode( nl2br( $_right_answer ) );
+									}
 
 									echo apply_filters( 'sensei_answer_text', $_right_answer ) . "<br>";
 
