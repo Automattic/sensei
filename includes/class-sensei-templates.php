@@ -373,7 +373,15 @@ class Sensei_Templates {
         $html= '';
         $html .= '<'. $title_html_tag .' class="'. $title_classes .'" >';
         $html .= '<a href="' . get_permalink( $post->ID ) . '" >';
-        $html .= $post->post_title ;
+		/**
+		 * Alters the course title
+		 *
+		 * @since 1.9.16
+		 *
+		 * @param string $course_title The Course Title.
+		 */
+		$course_title = (string) apply_filters( 'sensei_course_the_title', $post->post_title );
+        $html .= $course_title;
         $html .= '</a>';
         $html .= '</'. $title_html_tag. '>';
         echo $html;
