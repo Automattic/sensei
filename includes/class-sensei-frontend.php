@@ -1732,7 +1732,7 @@ class Sensei_Frontend {
 		}
 
 		// notify the user
-		wp_new_user_notification( $user_id, $new_user_password );
+		wp_new_user_notification( $user_id, null, 'user' );
 
 		// set global current user aka log the user in
 		$current_user = get_user_by( 'id', $user_id );
