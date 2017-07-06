@@ -88,3 +88,11 @@ add_action( 'woocommerce_order_status_cancelled',     array( 'Sensei_WC', 'cance
 add_filter( 'pre_option_woocommerce_enable_guest_checkout', array( 'Sensei_WC', 'disable_guest_checkout' ) );
 // Mark orders with virtual products as complete rather then stay processing
 add_filter( 'woocommerce_payment_complete_order_status',    array( 'Sensei_WC', 'virtual_order_payment_complete' ), 10, 2 );
+
+/************************************
+ *
+ * Add To Cart
+ *
+ ************************************/
+// fail to add to cart if user already taking course. 
+add_action( 'woocommerce_add_to_cart', array( 'Sensei_WC', 'do_not_add_course_to_cart_if_user_taking_course' ), 10, 6 );
