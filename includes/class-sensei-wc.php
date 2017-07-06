@@ -1317,7 +1317,6 @@ class Sensei_WC {
 
 					// Loop and update those courses
 					foreach ( $courses as $course_item ) {
-
 						// Check and Remove course from courses user meta
 						Sensei_Utils::sensei_remove_user_from_course( $course_item->ID, $user_id );
 
@@ -1656,6 +1655,45 @@ class Sensei_WC {
 		$course_product = wc_get_product( $course_product_id );
 
 		return $course_product->is_purchasable();
+
+	}
+
+	/**
+	 * Do not add course to cart if Learner is already taking it
+	 *
+	 * @since 1.9.16
+	 *
+	 * @hooked into woocommerce_add_to_cart
+	 *
+	 * @param mixed $cart_item_key Cart Item Key.
+	 * @param int $product_id Product ID.
+	 * @param mixed $quantity Quantity.
+	 * @param int $variation_id Variation ID.
+	 * @param mixed $variation Variation.
+	 * @param mixed $cart_item_data Cart Item Data.
+	 *
+	 * @throws Exception When learner already taking course
+	 */
+	public static function do_not_add_course_to_cart_if_user_taking_course( $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data ) {
+		if ( ! self::is_woocommerce_active() ) {
+			return;
+		}
+
+		$user_id = get_current_user_id();
+
+		$product = self::get_product_object( absint( $product_id ) );
+
+		if ( empty( $product ) ) {
+			return;
+		}
+
+		$courses = self::get_courses_from_product_id( $product_id );
+		foreach ( $courses as $course ) {
+			$course_id = $course->ID;
+			if ( Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+				throw new Exception( __( 'The product you are buying contains a course you are already taking', 'woothemes-sensei' ) );
+			}
+		}
 
 	}
 
