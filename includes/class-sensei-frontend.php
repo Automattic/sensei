@@ -1731,8 +1731,13 @@ class Sensei_Frontend {
 			Sensei()->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert');
 		}
 
-		// notify the user
-		wp_new_user_notification( $user_id, $new_user_password );
+		// Notify the Admin and not the user. See https://github.com/Automattic/sensei/issues/1761.
+		global $wp_version;
+		if ( version_compare( $wp_version, '4.3.1', '>=' ) ) {
+			wp_new_user_notification( $user_id, null, 'admin' );
+		} else {
+			wp_new_user_notification( $user_id, $new_user_password );
+		}
 
 		// set global current user aka log the user in
 		$current_user = get_user_by( 'id', $user_id );
