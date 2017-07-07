@@ -11,7 +11,11 @@ jQuery(document).ready( function($) {
      */
     jQuery.fn.exists = function() {
         return this.length>0;
-    }
+    };
+
+    jQuery('.edit-start-date-date-picker').datepicker({
+        dateFormat: "yy-mm-dd"
+    });
 
     /***************************************************************************************************
      * 	2 - Learner Management Overview Functions.
@@ -41,6 +45,38 @@ jQuery(document).ready( function($) {
             }
         );
     });
+    
+    jQuery('.edit-start-date-submit').click(function (evt) {
+        var new_date =  jQuery('.edit-start-date-date-picker').val();
+        var user_id = jQuery( this ).attr( 'data-user_id' );
+        var post_id = jQuery( this ).attr( 'data-post_id' );
+        var post_type = jQuery( this ).attr( 'data-post_type' );
+        var comment_id = jQuery( this ).attr( 'data-comment_id' );
+        var dataToPost = '';
+        if (!user_id || !post_id || !post_type || !new_date || !comment_id) {
+            return;
+        }
+        dataToPost += 'user_id=' + user_id;
+        dataToPost += '&post_id=' + post_id;
+        dataToPost += '&post_type=' + post_type;
+        dataToPost += '&new_date=' + new_date;
+        dataToPost += '&comment_id=' + comment_id;
+        console.log(dataToPost);
+        jQuery.post(
+            ajaxurl,
+            {
+                action : 'edit_date_started',
+                edit_date_nonce : woo_learners_general_data.edit_date_nonce,
+                data : dataToPost
+            },
+            function( response ) {
+                console.log(response);
+                if (response) {
+                    location.reload();
+                }
+            }
+        );
+    });
 
     jQuery( '.remove-learner, .reset-learner' ).click( function( event ) {
         var dataToPost = '';
@@ -61,6 +97,9 @@ jQuery(document).ready( function($) {
                 lesson : woo_learners_general_data.remove_from_lesson_confirm,
                 course : woo_learners_general_data.remove_from_course_confirm,
                 action : 'remove_user_from_post'
+            },
+            edit_date: {
+                action: 'edit_date_started'
             }
         };
 

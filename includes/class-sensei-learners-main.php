@@ -265,6 +265,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
                 $title = Sensei_Learner::get_full_name( $user_activity->user_id );
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
+				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
 
                 /**
                  * sensei_learners_main_column_data filter
@@ -284,7 +285,8 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						'date_started' => get_comment_meta( $user_activity->comment_ID, 'start', true),
 						'user_status' => $status_html,
 						'actions' => '<a class="remove-learner button" data-user_id="' . $user_activity->user_id . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>'
-							. '<a class="reset-learner button" data-user_id="' . $user_activity->user_id . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Reset progress', 'woothemes-sensei' ), $object_type ) . '</a>',
+							. '<a class="reset-learner button" data-user_id="' . $user_activity->user_id . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Reset progress', 'woothemes-sensei' ), $object_type ) . '</a>'
+					. $edit_start_date_form,
 					), $item, $post_id, $post_type );
 
 				break;
@@ -329,6 +331,16 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		} // switch
 
 		return $column_data;
+	}
+
+	private function get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type ) {
+		$comment_id = $user_activity->comment_ID;
+		$date_started = get_comment_meta( $comment_id, 'start', true);
+		$form = '<form class="edit-start-date">';
+		$form .= '<input class="edit-start-date-date-picker" type="text" value="'. $date_started . '">';
+		$form .= '<a class="edit-start-date-submit button" data-user_id="' . $user_activity->user_id . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '" data-comment_id="' . $comment_id . '">' . sprintf( __( 'Edit Start Date', 'woothemes-sensei' ), $object_type ) . '</a>';
+		$form .= '</form>';
+		return $form;
 	}
 
 	/**

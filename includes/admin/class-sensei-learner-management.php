@@ -49,6 +49,7 @@ class Sensei_Learner_Management {
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 			add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
+			add_action( 'wp_ajax_edit_date_started', array( $this, 'edit_date_started' ) );
 			add_action( 'wp_ajax_reset_user_post', array( $this, 'reset_user_post' ) );
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
 		}
@@ -104,7 +105,7 @@ class Sensei_Learner_Management {
 		// Load Learners JS
 		wp_enqueue_script( 'sensei-learners-general',
             Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
-                            array('jquery','sensei-core-select2','sensei-chosen-ajax' ), Sensei()->version, true );
+                            array('jquery','sensei-core-select2','sensei-chosen-ajax', 'jquery-ui-core', 'jquery-ui-datepicker' ), Sensei()->version, true );
 
 
 		wp_localize_script( 'sensei-learners-general', 'slgL10n', array(
@@ -119,7 +120,8 @@ class Sensei_Learner_Management {
 			'reset_course_confirm' => __( 'Are you sure you want to reset the progress of this user for this course?', 'woothemes-sensei' ),
 			'modify_user_post_nonce' => wp_create_nonce( 'modify_user_post_nonce' ),
             'search_users_nonce' => wp_create_nonce( 'search-users' ),
-            'selectplaceholder'=> __( 'Select Learner', 'woothemes-sensei' )
+			'edit_date_nonce' => wp_create_nonce( 'edit_date_nonce' ),
+            'selectplaceholder'=> __( 'Select Learner', 'woothemes-sensei' ),
 		);
 
 		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
@@ -136,6 +138,7 @@ class Sensei_Learner_Management {
 	public function enqueue_styles () {
 
 		wp_enqueue_style( 'woothemes-sensei-admin' );
+		wp_enqueue_style( 'woothemes-sensei-jquery-ui', Sensei()->plugin_url . 'assets/css/jquery-ui.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
 
@@ -280,6 +283,69 @@ class Sensei_Learner_Management {
 
 		echo esc_url_raw( $redirect_url );
 		die();
+	}
+	
+	public function edit_date_started() {
+		// check the nonce, valid post
+		$nonce = '';
+		if ( isset( $_POST[ 'edit_date_nonce' ] ) ) {
+			$nonce = esc_html( $_POST[ 'edit_date_nonce' ] );
+		}
+
+		if ( ! wp_verify_nonce( $nonce, 'edit_date_nonce' ) ) {
+			exit('');
+		}
+
+		$data = sanitize_text_field( $_POST[ 'data' ] );
+		$action_data = array();
+		parse_str( $data, $action_data );
+
+		$post = get_post( intval( $action_data[ 'post_id' ] ) );
+
+		if ( empty($post) || ! is_a( $post, 'WP_Post' ) ) {
+			exit('');
+		}
+
+		$comment_id = isset( $action_data[ 'comment_id' ] ) ? absint( $action_data[ 'comment_id' ] ) : 0;
+		$comment = get_comment( intval( $action_data[ 'comment_id' ] ) );
+		if ( empty( $comment ) ) {
+			exit('');
+		}
+
+
+//		if ( update_comment_meta() )
+		// validate we can edit date
+		$may_edit_date = false;
+		if ( current_user_can('manage_sensei') || $post->post_author == get_current_user_id() ) {
+			$may_edit_date = true;
+		}
+
+		if ( ! $may_edit_date ) {
+			exit('');
+		}
+
+		$date_started = get_comment_meta( $comment_id, 'start', true);
+		$expected_date_format = 'Y-m-d';
+		$date_string = esc_html( $action_data['new_date'] );
+		if (empty($date_string)) {
+			exit( '' );
+		}
+		$date = DateTime::createFromFormat( $expected_date_format, $date_string );
+		if (false === $date) {
+			exit( '' );
+		}
+		$mysql_date = date( 'Y-m-d H:i:s', $date->getTimestamp() );
+		if ( false === $mysql_date ) {
+			exit( '' );
+		}
+
+		$updated = update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
+
+		if ( false === $updated ) {
+			exit( '' );
+		}
+
+		exit( $mysql_date );
 	}
 
 	public function handle_reset_remove_user_post( $action ) {
