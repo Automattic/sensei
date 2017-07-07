@@ -1,5 +1,15 @@
 *** Sensei Changelog ***
 
+_._._ - version 1.9.16
+
+* Fix - Prevent multiple emails being sent to learners already started on a course.
+* Fix - Course content disappears
+* Fix - Prevent certain scenarios where course start date was resetting when visiting my-courses
+* Fix - Don't send confusing registration emails to users
+* Fix - Learner Profile White screen
+* Fix - Prevent users from buying duplicate courses
+* Admins can now edit learner course start dates
+
 2017.06.20 - version 1.9.15
 
 * Improve handling of get_bloginfo( ‘admin_email’ ) #1809
