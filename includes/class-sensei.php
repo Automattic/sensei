@@ -62,6 +62,7 @@ class Sensei_Main {
 	 * @var Sensei_Updates
 	 */
 	public $updates;
+	
 	/**
 	 * @var WooThemes_Sensei_Course
 	 */
