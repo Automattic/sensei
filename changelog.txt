@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-_._._ - version 1.9.16
+2017.07.10 - version 1.9.16
 
 * Fix - Prevent multiple emails being sent to learners already started on a course.
 * Fix - Course content disappears
