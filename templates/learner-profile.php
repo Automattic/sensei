@@ -40,7 +40,7 @@ do_action( 'sensei_learner_profile_content_before' );
         do_action( 'sensei_learner_profile_inside_content_before' );
         ?>
 
-        <?php  $learner_user = get_user_by( 'slug', get_query_var('learner_profile') );  // get requested learner object ?>
+        <?php  $learner_user = get_user_by( 'login', get_query_var('learner_profile') );  // get requested learner object ?>
 
         <?php if(  is_a( $learner_user, 'WP_User' ) ){ ?>
 
