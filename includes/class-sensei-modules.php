@@ -1889,27 +1889,38 @@ class Sensei_Core_Modules
             return $terms;
         }
 
-        // avoid infinite call loop
-        remove_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
-
         // in certain cases the array is passed in as reference to the parent term_id => parent_id
         if( isset( $args['fields'] ) ) {
-            if ( in_array( $args['fields'], array( 'tt_ids', 'ids' ) ) ) {
-                return $terms;
-            }
+			if ( in_array( $args['fields'], array( 'ids', 'tt_ids' ), true ) ) {
+				return $terms;
+			}
+
             // change only scrub the terms ids form the array keys
             if ( 'id=>parent' == $args['fields'] ) {
                 $terms = array_keys( $terms );
             }
         }
 
-        $teachers_terms =  $this->filter_terms_by_owner( $terms, get_current_user_id() );
-
-        // add filter again as removed above
-        add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
+        $teachers_terms =  $this->filter_terms_by_owner_no_infinite_loop( $terms, get_current_user_id() );
 
         return $teachers_terms;
     }// end filter_module_terms
+
+	/**
+	 * Call filter_terms_by_owner without infinite loops
+	 *
+	 * @param array $terms Terms.
+	 * @param int $user_id User Id.
+	 * @return array
+	 */
+	private function filter_terms_by_owner_no_infinite_loop( $terms, $user_id ) {
+		// avoid infinite call loop.
+		remove_filter('get_terms', array( $this, 'filter_module_terms' ), 20 );
+		$teachers_terms =  $this->filter_terms_by_owner( $terms, $user_id );
+		// add filter again as removed above.
+		add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
+		return $teachers_terms;
+	}
 
     /**
      * For the selected items on a course module only return those
