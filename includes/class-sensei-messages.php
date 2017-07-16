@@ -160,7 +160,7 @@ class Sensei_Messages {
         /**
          * Filter the send message link
          *
-         * @since 1.9.16
+         * @since 1.9.17
          *
          * @param string  	$html
          * @param array 	$this->message_notice
