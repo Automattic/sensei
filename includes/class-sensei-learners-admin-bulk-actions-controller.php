@@ -13,6 +13,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
     const REMOVE_FROM_COURSE = 'remove_from_course';
     const RESET_COURSE = 'reset_course';
 	const COMPLETE_COURSE = 'complete_course';
+	const RECALCULATE_COURSE_COMPLETION = 'recalculate_course_completion';
 	/**
      * @var array|null we only do these actions
      */
@@ -99,7 +100,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
                 self::ADD_TO_COURSE => __( 'Assign to Course(s)', 'woothemes-sensei' ),
                 self::REMOVE_FROM_COURSE => __( 'Unassign from Course(s)', 'woothemes-sensei' ),
                 self::RESET_COURSE => __( 'Reset Course(s)', 'woothemes-sensei' ),
-				self::COMPLETE_COURSE => __( 'Complete Course(s)', 'woothemes-sensei' ),
+				self::COMPLETE_COURSE => __( 'Recalculate Course(s) Completion (notify on complete)', 'woothemes-sensei' ),
+				self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'woothemes-sensei' ),
             );
         }
         return (array)apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $this->known_bulk_actions );
@@ -165,6 +167,14 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 						continue;
 					}
 					Sensei_Utils::user_complete_course( $course_id, $user_id );
+				}
+
+				if ( self::RECALCULATE_COURSE_COMPLETION === $sensei_bulk_action ) {
+					if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) || Sensei_Utils::user_completed_course( $course_id, $user_id )  ) {
+						continue;
+					}
+					$trigger_completion = false;
+					Sensei_Utils::user_complete_course( $course_id, $user_id, $trigger_completion );
 				}
             }
         }
