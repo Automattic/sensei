@@ -1452,7 +1452,7 @@ class Sensei_Utils {
 	 * @param  integer $user_id   User ID
 	 * @return mixed boolean or comment_ID
 	 */
-	public static function user_complete_course( $course_id = 0, $user_id = 0 ) {
+	public static function user_complete_course( $course_id = 0, $user_id = 0, $trigger_completion_action = true ) {
 		global  $wp_version;
 
 		if( $course_id ) {
@@ -1507,29 +1507,18 @@ class Sensei_Utils {
 			foreach( $all_lesson_statuses as $lesson_status ) {
 				// If lessons are complete without needing quizzes to be passed
 				if ( 'passed' != $course_completion ) {
-					switch ( $lesson_status->comment_approved ) {
-						// A user cannot 'complete' a course if a lesson...
-						case 'in-progress': // ...is still in progress
-						case 'ungraded': // ...hasn't yet been graded
-							break;
-
-						default:
-							$lessons_completed++;
-							break;
+					// A user cannot 'complete' a course if a lesson...
+					// ...is still in progress
+					// ...hasn't yet been graded
+					$lesson_not_complete_stati = array( 'in-progress', 'ungraded' );
+					if ( ! in_array( $lesson_status->comment_approved, $lesson_not_complete_stati, true ) ) {
+						$lessons_completed++;
 					}
 				}
 				else {
-					switch ( $lesson_status->comment_approved ) {
-						case 'complete': // Lesson has no quiz/questions
-						case 'graded': // Lesson has quiz, but it's not important what the grade was
-						case 'passed': // Lesson has quiz and the user passed
-							$lessons_completed++;
-							break;
-
-						// A user cannot 'complete' a course if on a lesson...
-						case 'failed': // ...a user failed the passmark on a quiz
-						default:
-							break;
+					$lesson_complete_stati = array( 'complete', 'graded', 'passed' );
+					if ( in_array( $lesson_status->comment_approved, $lesson_complete_stati, true ) ) {
+						$lessons_completed++;
 					}
 				}
 			} // Each lesson
@@ -1545,7 +1534,7 @@ class Sensei_Utils {
 			$activity_logged = Sensei_Utils::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
 
 			// Allow further actions
-			if ( 'complete' == $course_status ) {
+			if ( 'complete' == $course_status && true === $trigger_completion_action ) {
 				do_action( 'sensei_user_course_end', $user_id, $course_id );
 			}
 			return $activity_logged;
