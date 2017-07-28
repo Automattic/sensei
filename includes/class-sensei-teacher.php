@@ -369,6 +369,12 @@ class Sensei_Teacher {
             return;
         }
 
+		if ( ! taxonomy_exists( 'module' ) ) {
+			// If for some reason the `module` taxonomy is not present (normally it is), register it now.
+			// This mitigates a Jetpack-introduced bug.
+			Sensei()->modules->setup_modules_taxonomy();
+		}
+
         $terms_selected_on_course = wp_get_object_terms( $course_id, 'module' );
 
         if( empty( $terms_selected_on_course ) ){
