@@ -377,7 +377,21 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
     /**
      * Output the course toggle functionality
      */
-    public function course_toggle_actions(){ ?>
+    public function course_toggle_actions() {
+		/**
+		 * Determine if we should display course toggles on User Courses Shortcode.
+		 *
+		 * @param bool $should_display_course_toggles Should we Display the course toggles.
+		 *
+		 * @since 1.9.18
+		 *
+		 * @return bool
+		 */
+		$should_display_course_toggles = (bool) apply_filters( 'sensei_shortcode_user_courses_display_course_toggle_actions', true );
+		if ( false === $should_display_course_toggles ) {
+			return;
+		}
+		?>
 
         <section id="user-course-status-toggle">
 			<a id="sensei-user-courses-active-action" href=""><?php _e( 'Active Courses', 'woothemes-sensei' ); ?></a>
