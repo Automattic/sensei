@@ -1319,7 +1319,7 @@ class Sensei_Lesson {
 
 	public function quiz_panel_filter_existing_questions() {
 
-		$return = '';
+		$return = array();
 
 		//Add nonce security to the request
 		$nonce = '';
