@@ -2930,7 +2930,7 @@ class Sensei_Lesson {
 		// Get Width and Height settings
 		if ( ( $width == '100' ) && ( $height == '100' ) ) {
 
-			if ( is_singular( 'lesson' ) || !empty( $lesson_id  ) ) {
+			if ( is_singular( 'lesson' ) ) {
 
 				if ( ! $widget && ! Sensei()->settings->settings[ 'lesson_single_image_enable' ] ) {
 
