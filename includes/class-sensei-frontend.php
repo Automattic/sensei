@@ -48,12 +48,9 @@ class Sensei_Frontend {
 		add_action( 'sensei_complete_lesson_button', array( $this, 'sensei_complete_lesson_button' ) );
 		add_action( 'sensei_reset_lesson_button', array( $this, 'sensei_reset_lesson_button' ) );
 
-		add_action( 'sensei_course_archive_meta', array( $this, 'sensei_course_archive_meta' ) );
-
 		add_action( 'sensei_lesson_tag_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
 
-		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_start' ), 10 );
 
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 );
@@ -969,34 +966,6 @@ class Sensei_Frontend {
 
 	} // End sensei_lesson_quiz_meta()
 
-	public function sensei_course_archive_meta() {
-		global  $post;
-		// Meta data
-		$post_id = get_the_ID();
-		$post_title = get_the_title();
-		$author_display_name = get_the_author();
-		$author_id = get_the_author_meta('ID');
-		$category_output = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
-		$free_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $post_id ) );
-		?><section class="entry">
-        	<p class="sensei-course-meta">
-           	<?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
-		   	<span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
-		   	<?php } // End If Statement ?>
-		   	<span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' . __( 'Lessons', 'woothemes-sensei' ); ?></span>
-		   	<?php if ( '' != $category_output ) { ?>
-		   	<span class="course-category"><?php echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ); ?></span>
-		   	<?php } // End If Statement ?>
-		   	<?php sensei_simple_course_price( $post_id ); ?>
-        	</p>
-        	<p class="course-excerpt"><?php the_excerpt(); ?></p>
-        	<?php if ( 0 < $free_lesson_count ) {
-                $free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes-sensei' ), $free_lesson_count ); ?>
-                <p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?></a> - <?php echo $free_lessons; ?></p>
-            <?php } ?>
-		</section><?php
-	} // End sensei_course_archive_meta()
-
     /**
      * @deprecated since 1.9.0
      */
@@ -1024,42 +993,6 @@ class Sensei_Frontend {
 	public function sensei_no_permissions_main_content() {
         _deprecated_function( 'Sensei_Frontend::sensei_no_permissions_main_content', 'This method is no longer needed' );
 	} // End sensei_no_permissions_main_content()
-
-	public function sensei_course_category_main_content() {
-		global $post;
-		if ( have_posts() ) { ?>
-
-			<section id="main-course" class="course-container">
-
-                <?php do_action( 'sensei_course_archive_header' ); ?>
-
-                <?php while ( have_posts() ) { the_post(); ?>
-
-                    <article class="<?php echo join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ); ?>">
-
-	    			    <?php sensei_do_deprecated_action('sensei_course_image','1.9.0', 'sensei_single_course_content_inside_before', get_the_ID() ); ?>
-
-	    			    <?php sensei_do_deprecated_action( 'sensei_course_archive_course_title','1.9.0','sensei_course_content_inside_before', $post ); ?>
-
-	    			    <?php do_action( 'sensei_course_archive_meta' ); ?>
-
-	    		    </article>
-
-                <?php } // End While Loop ?>
-
-	    	</section>
-
-		<?php } else { ?>
-
-			<p>
-
-                <?php _e( 'No courses found that match your selection.', 'woothemes-sensei' ); ?>
-
-            </p>
-
-		<?php } // End If Statement
-
-	} // End sensei_course_category_main_content()
 
 	public function sensei_login_form() {
 		?>
@@ -1126,24 +1059,6 @@ class Sensei_Frontend {
 
 		<?php
 	} // End sensei_login_form()
-
-	public function sensei_lesson_meta( $post_id = 0 ) {
-		global $post;
-		if ( 0 < intval( $post_id ) ) {
-		$lesson_course_id = absint( get_post_meta( $post_id, '_lesson_course', true ) );
-		?><section class="entry">
-            <p class="sensei-course-meta">
-			    <?php if ( isset( Sensei()->settings->settings[ 'lesson_author' ] ) && ( Sensei()->settings->settings[ 'lesson_author' ] ) ) { ?>
-			    <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
-			    <?php } ?>
-                <?php if ( 0 < intval( $lesson_course_id ) ) { ?>
-                <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . __( 'View course', 'woothemes-sensei' ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
-                <?php } ?>
-            </p>
-            <p class="lesson-excerpt"><?php the_excerpt( ); ?></p>
-		</section><?php
-		} // End If Statement
-	} // sensei_lesson_meta()
 
 	public function sensei_lesson_preview_title_text( $course_id ) {
 
