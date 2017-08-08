@@ -292,7 +292,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 					<?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
 						<span class="course-author">
-							<?php _e( 'by ', 'woothemes-sensei' ); ?>
+							<?php _e( 'by', 'woothemes-sensei' ); ?>
 							<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
 								<?php echo esc_html( $author_display_name ); ?>
 							</a>
