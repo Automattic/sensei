@@ -1342,7 +1342,7 @@ class Sensei_Course {
                     && ( Sensei()->settings->settings[ 'course_author' ] ) ) {
 
                     $active_html .= '<span class="course-author">'
-                        . __( 'by ', 'woothemes-sensei' )
+                        . __( 'by', 'woothemes-sensei' )
                         . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) )
                         . '" title="' . esc_attr( $user_info->display_name ) . '">'
                         . esc_html( $user_info->display_name )
@@ -1489,7 +1489,7 @@ class Sensei_Course {
 		    		    	// Author
 		    		    	$user_info = get_userdata( absint( $course_item->post_author ) );
 		    		    	if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) {
-		    		    		$complete_html .= '<span class="course-author">' . __( 'by ', 'woothemes-sensei' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+		    		    		$complete_html .= '<span class="course-author">' . __( 'by', 'woothemes-sensei' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
 		    		    	} // End If Statement
 
 		    		    	// Lesson count for this author
@@ -2050,7 +2050,7 @@ class Sensei_Course {
 
         if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) {?>
 
-            <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?>
+            <span class="course-author"><?php _e( 'by', 'woothemes-sensei' ); ?>
 
                 <a href="<?php echo esc_attr( get_author_posts_url( $course->post_author ) ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_attr( $author_display_name ); ?></a>
 
