@@ -187,7 +187,12 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 		    		<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a>
 		    		<br />
 		    		<?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
-    					<span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_html( $author_display_name ); ?></a></span>
+    					<span class="course-author">
+    						<?php _e( 'by', 'woothemes-sensei' ); ?>
+    						<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
+    							<?php echo esc_html( $author_display_name ); ?>
+    						</a>
+    					</span>
     					<br />
     				<?php } // End If Statement ?>
     				<span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' .  __( 'Lessons', 'woothemes-sensei' ); ?></span>
