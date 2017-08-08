@@ -3424,18 +3424,18 @@ class Sensei_Lesson {
 				$lesson_length = get_post_meta( $lesson_id, '_lesson_length', true );
 				if ( '' != $lesson_length ) {
 
-					$meta_html .= '<span class="lesson-length">' .  esc_html__( 'Length: ', 'woothemes-sensei' ) . esc_html( $lesson_length ) . esc_html__( ' minutes', 'woothemes-sensei' ) . '</span>';
+					$meta_html .= '<span class="lesson-length">' .  esc_html__( 'Length:', 'woothemes-sensei' ) . ' ' . esc_html( $lesson_length ) . ' ' . esc_html__( 'minutes', 'woothemes-sensei' ) . '</span>';
 
 				}
 
 				if ( Sensei()->settings->get( 'lesson_author' ) ) {
 
-					$meta_html .= '<span class="lesson-author">' .  esc_html__( 'Author: ', 'woothemes-sensei' ) . '<a href="' . get_author_posts_url( absint( get_post()->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+					$meta_html .= '<span class="lesson-author">' . esc_html__( 'Author:', 'woothemes-sensei' ) . ' ' . '<a href="' . get_author_posts_url( absint( get_post()->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
 
 				} // End If Statement
 				if ( '' != $lesson_complexity ) {
 
-					$meta_html .= '<span class="lesson-complexity">' .  esc_html__( 'Complexity: ', 'woothemes-sensei' ) . $lesson_complexity .'</span>';
+					$meta_html .= '<span class="lesson-complexity">' .  esc_html__( 'Complexity:', 'woothemes-sensei' ) . ' ' . $lesson_complexity .'</span>';
 
 				}
 
