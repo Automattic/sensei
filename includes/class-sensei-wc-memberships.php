@@ -256,6 +256,7 @@ class Sensei_WC_Memberships {
 			remove_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'user_lesson_quiz_status_message' ), 20 );
 
 			remove_action( 'sensei_lesson_video',           array( Sensei()->frontend, 'sensei_lesson_video' ), 10, 1 );
+			remove_action( 'sensei_lesson_meta',            array( Sensei()->frontend, 'sensei_lesson_meta' ), 10 );
 			remove_action( 'sensei_complete_lesson_button', array( Sensei()->frontend, 'sensei_complete_lesson_button' ) );
 		}
 	}
