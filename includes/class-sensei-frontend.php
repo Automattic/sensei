@@ -981,7 +981,7 @@ class Sensei_Frontend {
 		?><section class="entry">
         	<p class="sensei-course-meta">
            	<?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
-		   	<span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
+		   	<span class="course-author"><?php _e( 'by', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
 		   	<?php } // End If Statement ?>
 		   	<span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' . __( 'Lessons', 'woothemes-sensei' ); ?></span>
 		   	<?php if ( '' != $category_output ) { ?>
@@ -1134,7 +1134,7 @@ class Sensei_Frontend {
 		?><section class="entry">
             <p class="sensei-course-meta">
 			    <?php if ( isset( Sensei()->settings->settings[ 'lesson_author' ] ) && ( Sensei()->settings->settings[ 'lesson_author' ] ) ) { ?>
-			    <span class="course-author"><?php _e( 'by ', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
+			    <span class="course-author"><?php _e( 'by', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
 			    <?php } ?>
                 <?php if ( 0 < intval( $lesson_course_id ) ) { ?>
                 <span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . __( 'View course', 'woothemes-sensei' ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
