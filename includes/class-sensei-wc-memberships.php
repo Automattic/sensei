@@ -170,7 +170,7 @@ class Sensei_WC_Memberships {
 			return;
 		}
 
-		$restricted_content = $membership_plan->get_restricted_content();
+		$restricted_content = $membership_plan->get_restricted_content( 0 );
 		if ( empty( $restricted_content ) ) {
 			return;
 		}
