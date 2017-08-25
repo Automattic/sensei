@@ -500,16 +500,13 @@ class Sensei_Learner_Management {
 				$result = Sensei_Utils::user_start_course( $user_id, $course_id );
 
 				// Complete each lesson if course is set to be completed
-				if( isset( $_POST['add_complete_course'] ) && 'yes' == $_POST['add_complete_course'] ) {
+				if ( isset( $_POST['add_complete_course'] ) && 'yes' == $_POST['add_complete_course'] ) {
 
 					$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
 					foreach( $lesson_ids as $id ) {
 						Sensei_Utils::sensei_start_lesson( $id, $user_id, true );
 					}
-
-					// Updates the Course status and it's meta data
-					Sensei_Utils::user_complete_course( $course_id, $user_id );
 				}
 
 			break;
@@ -522,9 +519,6 @@ class Sensei_Learner_Management {
 				}
 
 				$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $complete );
-
-				// Updates the Course status and it's meta data
-				Sensei_Utils::user_complete_course( $course_id, $user_id );
 
 			break;
 		}
