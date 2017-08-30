@@ -1,5 +1,22 @@
 *** Sensei Changelog ***
 
+2017.09.? - version 1.9.17
+
+* Fix Add learner to course and complete course sends two duplicate emails
+* Fix Modules: WooCommerce 2.6.x Select2 compatibility fix
+* Fix Incorrect heading structure: Use proper headings hierarchy for settings and data updates
+* Fix Usernames with a . or @ don't work for loading user profiles (Get learner profiles by login, not slug)
+* Fix Fatal Jetpack removing module taxonomy
+* Add bulk recalculate completion
+* Fix Modules: Teachers should only view their own modules
+* Fix: Lesson image does not display on single course page [Pri] Low [Type] Bug
+* Add User Courses Shortcode: Filter for conditionally displaying toggles
+* Fix Memberships: Query all restricted content
+* Fix Lesson image does not respect size setting
+* Fix Remove trailing whitespaces from translatable strings [Pri] Low [Type] Bug
+* Fix Unable to add Existing Questions to Quiz with Search Filter (PHP 7.1.4)
+
+
 2017.07.10 - version 1.9.16
 
 * Fix - Prevent multiple emails being sent to learners already started on a course.
