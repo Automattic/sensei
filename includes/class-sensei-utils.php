@@ -1021,6 +1021,24 @@ class Sensei_Utils {
 	} // End lesson_quiz_questions()
 
 	/**
+	 * Complete this course forcefully for this user by passing all the lessons.
+	 *
+	 * @param int $user_id User ID.
+	 * @param int $course_id Course ID
+	 */
+	public static function force_complete_user_course( $user_id, $course_id ) {
+		$user = get_user_by( 'id', $user_id );
+		if ( false === $user ) {
+			return;
+		}
+		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+
+		foreach( $lesson_ids as $id ) {
+			Sensei_Utils::sensei_start_lesson( $id, $user_id, true );
+		}
+	}
+
+	/**
 	 * Get pass mark for course
 	 * @param  integer $course_id ID of course
 	 * @return integer            Pass mark for course

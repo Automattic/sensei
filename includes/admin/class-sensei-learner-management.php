@@ -501,12 +501,7 @@ class Sensei_Learner_Management {
 
 				// Complete each lesson if course is set to be completed
 				if ( isset( $_POST['add_complete_course'] ) && 'yes' == $_POST['add_complete_course'] ) {
-
-					$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
-
-					foreach( $lesson_ids as $id ) {
-						Sensei_Utils::sensei_start_lesson( $id, $user_id, true );
-					}
+					Sensei_Utils::force_complete_user_course( $user_id, $course_id );
 				}
 
 			break;
