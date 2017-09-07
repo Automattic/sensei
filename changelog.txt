@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2017.09.? - version 1.9.17
+2017.09.07 - version 1.9.17
 
 * Fix Add learner to course and complete course sends two duplicate emails
 * Fix Modules: WooCommerce 2.6.x Select2 compatibility fix
