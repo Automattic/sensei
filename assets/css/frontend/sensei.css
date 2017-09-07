@@ -309,11 +309,9 @@ a.sensei-certificate-link {
         .quiz form ol#sensei-quiz-list li ul li label {
           vertical-align: middle; }
     .quiz form ol#sensei-quiz-list li .answer_message {
-      position: absolute;
+      position: relative;
       right: 0;
-      top: 50%;
-      width: 50%;
-      z-index: 2;
+      width: 100%;
       text-align: right; }
       .quiz form ol#sensei-quiz-list li .answer_message span {
         text-align: right; }
@@ -341,13 +339,6 @@ a.sensei-certificate-link {
         padding: 10px;
         font-size: 85%;
         text-align: left; }
-    .quiz form ol#sensei-quiz-list li.essay-paste .answer_message, .quiz form ol#sensei-quiz-list li.gap-fill .answer_message, .quiz form ol#sensei-quiz-list li.multi-line .answer_message, .quiz form ol#sensei-quiz-list li.single-line .answer_message {
-      position: relative;
-      width: 100%;
-      margin: 10px 0;
-      text-align: right; }
-      .quiz form ol#sensei-quiz-list li.essay-paste .answer_message .notes, .quiz form ol#sensei-quiz-list li.gap-fill .answer_message .notes, .quiz form ol#sensei-quiz-list li.multi-line .answer_message .notes, .quiz form ol#sensei-quiz-list li.single-line .answer_message .notes {
-        width: 50%; }
 
 .quiz form input.quiz-submit {
   margin-right: 10px; }
