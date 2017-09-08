@@ -813,6 +813,22 @@ class Sensei_WC {
 		return get_posts( $paid_course_query_args );
 	}
 
+	public static function purchase_course_default_button_text( $product ) {
+
+		$price = $product->get_price();
+
+		$product_is_free = wc_price( $price ) == wc_price( 0 );
+
+		if ( $product_is_free ) {
+			$button_text = __( 'Register for this Course', 'woothemes-sensei' );
+		} else {
+			$button_text = __( 'Purchase this Course', 'woothemes-sensei' );
+		}
+
+		return $product->get_price_html() . ' - ' . $button_text;
+
+	}
+
 	/**
 	 * Show the WooCommerce add to cart button for the  current course
 	 *
@@ -889,7 +905,8 @@ class Sensei_WC {
 			<?php } ?>
 
 			<button type="submit" class="single_add_to_cart_button button alt">
-				<?php $button_text = $product->get_price_html() . ' - ' . __( 'Purchase this Course', 'woothemes-sensei' ); ?>
+				<?php $button_text = Sensei_WC::purchase_course_default_button_text( $product ); ?>
+
 				<?php
 				/**
 				 * Filter Add to Cart button text
