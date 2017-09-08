@@ -14,6 +14,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: includes/admin/class-sensei-learner-management.php:28
 msgid "Learner Management"
 msgstr ""
@@ -703,11 +704,11 @@ msgstr ""
 msgid "Paid Courses"
 msgstr ""
 
-#: includes/class-sensei-course.php:2878, includes/class-sensei-wc.php:953
+#: includes/class-sensei-course.php:2878, includes/class-sensei-wc.php:968
 msgid "log in"
 msgstr ""
 
-#: includes/class-sensei-course.php:2879, includes/class-sensei-wc.php:980
+#: includes/class-sensei-course.php:2879, includes/class-sensei-wc.php:995
 msgid "Or %1$s to access your purchased courses"
 msgstr ""
 
@@ -3231,23 +3232,27 @@ msgstr[1] ""
 msgid "complete purchase"
 msgstr ""
 
-#: includes/class-sensei-wc.php:892
+#: includes/class-sensei-wc.php:821
+msgid "Register for this Course"
+msgstr ""
+
+#: includes/class-sensei-wc.php:823
 msgid "Purchase this Course"
 msgstr ""
 
-#: includes/class-sensei-wc.php:960
+#: includes/class-sensei-wc.php:975
 msgid "This course is already in your cart, please proceed to %1$s, to gain access."
 msgstr ""
 
-#: includes/class-sensei-wc.php:1156
+#: includes/class-sensei-wc.php:1171
 msgid "Course details"
 msgstr ""
 
-#: includes/class-sensei-wc.php:1188
+#: includes/class-sensei-wc.php:1203
 msgid "View course: %1$s"
 msgstr ""
 
-#: includes/class-sensei-wc.php:1694
+#: includes/class-sensei-wc.php:1709
 msgid "The product you are buying contains a course you are already taking"
 msgstr ""
 
