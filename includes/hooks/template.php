@@ -199,8 +199,8 @@ add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question','the_
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question','the_question_hidden_fields' ), 40 );
 
 //@since 1.9.0
-// hook in incorrect / correct message above questions if the quiz has been graded
-add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_answer_result_indication' ), 50 );
+// hook in incorrect / correct message below questions if the quiz has been graded
+add_action( 'sensei_quiz_question_inside_after', array( 'Sensei_Question', 'the_answer_result_indication' ) );
 
 //@since 1.9.0
 // add answer grading feedback at the bottom of the question
