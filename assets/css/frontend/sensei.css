@@ -310,9 +310,7 @@ a.sensei-certificate-link {
           vertical-align: middle; }
     .quiz form ol#sensei-quiz-list li .answer_message {
       position: relative;
-      right: 0;
-      width: 100%;
-      text-align: right; }
+      width: 100%; }
       .quiz form ol#sensei-quiz-list li .answer_message span {
         text-align: right; }
       .quiz form ol#sensei-quiz-list li .answer_message.user_right {
