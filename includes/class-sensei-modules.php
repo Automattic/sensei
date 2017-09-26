@@ -1450,16 +1450,18 @@ class Sensei_Core_Modules
      * @return WP_Query $lessons_query
      */
     public function get_lessons_query( $course_id , $term_id ){
-
+        global $wp_query;
         if( empty( $term_id ) || empty( $course_id ) ){
 
             return array();
 
         }
 
+        $course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' :'publish';
+
         $args = array(
             'post_type' => 'lesson',
-            'post_status' => 'publish',
+            'post_status' => $course_lessons_post_status,
             'posts_per_page' => -1,
             'meta_query' => array(
                 array(
