@@ -101,6 +101,7 @@ class Sensei_Core_Modules
 
         //store new modules created on the course edit screen
         add_action( 'wp_ajax_sensei_add_new_module_term', array( 'Sensei_Core_Modules','add_new_module_term' ) );
+        add_action( 'wp_ajax_sensei_get_course_modules', array( $this, 'ajax_get_course_modules' ) );
 
         // for non admin users, only show taxonomies that belong to them
         add_filter('get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
@@ -151,6 +152,7 @@ class Sensei_Core_Modules
 
             // Add custom meta box to limit module selection to one per lesson
             add_meta_box($this->taxonomy . '_select', __('Lesson Module', 'woothemes-sensei'), array($this, 'lesson_module_metabox'), 'lesson', 'side', 'default');
+
         }
 
         if( 'course' == $post_type ){
@@ -166,50 +168,67 @@ class Sensei_Core_Modules
      * @param  object $post Current post object
      * @return void
      */
-    public function lesson_module_metabox($post)
-    {
-
+    public function lesson_module_metabox( $post ) {
         // Get lesson course
         $lesson_course = get_post_meta($post->ID, '_lesson_course', true);
 
-        $html = '';
+        $html = '<div id="lesson-module-metabox-select">';
 
         // Only show module selection if this lesson is part of a course
-        if ($lesson_course && $lesson_course > 0) {
+        if ( $lesson_course && $lesson_course > 0 ) {
 
             // Get existing lesson module
-            $lesson_module = 0;
-            $lesson_module_list = wp_get_post_terms($post->ID, $this->taxonomy);
-            if (is_array($lesson_module_list) && count($lesson_module_list) > 0) {
-                foreach ($lesson_module_list as $single_module) {
-                    $lesson_module = $single_module->term_id;
-                    break;
-                }
-            }
+            $lesson_module = $this->get_lesson_module_if_exists( $post );
 
-            // Get the available modules for this lesson's course
-            $modules = $this->get_course_modules($lesson_course);
-
-            // Build the HTML to output
-            $html .= '<input type="hidden" name="' . esc_attr('woo_lesson_' . $this->taxonomy . '_nonce') . '" id="' . esc_attr('woo_lesson_' . $this->taxonomy . '_nonce') . '" value="' . esc_attr(wp_create_nonce(plugin_basename($this->file))) . '" />';
-            if (is_array($modules) && count($modules) > 0) {
-                $html .= '<select id="lesson-module-options" name="lesson_module" class="widefat">' . "\n";
-                $html .= '<option value="">' . __('None', 'woothemes-sensei') . '</option>';
-                foreach ($modules as $module) {
-                    $html .= '<option value="' . esc_attr(absint($module->term_id)) . '"' . selected($module->term_id, $lesson_module, false) . '>' . esc_html($module->name) . '</option>' . "\n";
-                }
-                $html .= '</select>' . "\n";
-            } else {
-                $course_url = admin_url('post.php?post=' . urlencode($lesson_course) . '&action=edit');
-                $html .= '<p>' . sprintf(__('No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'woothemes-sensei'), '<em>', '</em>', '<a href="' . esc_url($course_url) . '">', '</a>') . '</p>';
-            } // End If Statement
+            $html .= $this->render_module_select_for_course( $lesson_course, $lesson_module );
 
         } else {
             $html .= '<p>' . sprintf(__('No modules are available for this lesson yet. %1$sPlease select a course first.%2$s', 'woothemes-sensei'), '<em>', '</em>') . '</p>';
         } // End If Statement
-
+		$html .= '</div>';
         // Output the HTML
         echo $html;
+    }
+
+	/**
+     * Get the lesson module if it Exists. Defaults to 0 if none found.
+     *
+	 * @param WP_Post $post The post.
+	 * @return int
+	 */
+    private function get_lesson_module_if_exists( $post ) {
+		// Get existing lesson module
+		$lesson_module = 0;
+		$lesson_module_list = wp_get_post_terms( $post->ID, $this->taxonomy );
+		if ( is_array( $lesson_module_list) && count( $lesson_module_list ) > 0 ) {
+			foreach ( $lesson_module_list as $single_module ) {
+				$lesson_module = $single_module->term_id;
+				break;
+			}
+		}
+		return $lesson_module;
+    }
+
+    private function render_module_select_for_course( $lesson_course, $lesson_module = 0 ) {
+		// Get the available modules for this lesson's course
+		$modules = $this->get_course_modules( $lesson_course );
+
+		$html = '';
+		$html .= '<input type="hidden" name="' . esc_attr('woo_lesson_' . $this->taxonomy . '_nonce') . '" id="' . esc_attr('woo_lesson_' . $this->taxonomy . '_nonce') . '" value="' . esc_attr( wp_create_nonce( plugin_basename( $this->file ) ) ) . '" />';
+
+		// Build the HTML to output
+		if ( is_array( $modules ) && count( $modules ) > 0) {
+			$html .= '<select id="lesson-module-options" name="lesson_module" class="widefat">' . "\n";
+			$html .= '<option value="">' . __('None', 'woothemes-sensei') . '</option>';
+			foreach ($modules as $module) {
+				$html .= '<option value="' . esc_attr(absint($module->term_id)) . '"' . selected($module->term_id, $lesson_module, false) . '>' . esc_html( $module->name ) . '</option>' . "\n";
+			}
+			$html .= '</select>' . "\n";
+		} else {
+			$course_url = admin_url('post.php?post=' . urlencode($lesson_course) . '&action=edit');
+			$html .= '<p>' . sprintf(__('No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'woothemes-sensei'), '<em>', '</em>', '<a href="' . esc_url($course_url) . '">', '</a>') . '</p>';
+		} // End If Statement
+        return $html;
     }
 
     /**
@@ -219,8 +238,7 @@ class Sensei_Core_Modules
      * @param  integer $post_id ID of post
      * @return mixed            Post ID on permissions failure, boolean true on success
      */
-    public function save_lesson_module($post_id)
-    {
+    public function save_lesson_module( $post_id ) {
         global $post;
 
         // Verify post type and nonce
@@ -240,23 +258,32 @@ class Sensei_Core_Modules
             return $post_id;
         }
 
-        // Cast module ID as an integer if selected, otherwise leave as empty string
-        if ( isset( $_POST['lesson_module'] ) ) {
+        $lesson_module_id_key = 'lesson_module';
 
-            if( empty ( $_POST['lesson_module'] ) ){
-                wp_delete_object_term_relationships($post_id, $this->taxonomy  );
-                return true;
-            }
+		// Check if the lesson is already assigned to a module.
+        // Modules and lessons have 1 -> 1 relationship.
+        // We delete existing module term relationships for this lesson if no module is selected ( or is an empty string)
+        if ( ! isset( $_POST[ $lesson_module_id_key ] ) || empty ( $_POST[ $lesson_module_id_key ] ) ) {
+			wp_delete_object_term_relationships( $post_id, $this->taxonomy  );
+		    return true;
+        }
 
-            $module_id = intval( $_POST['lesson_module'] );
+        // Cast module ID as an integer if selected
+        $module_id = intval( $_POST[ $lesson_module_id_key ] );
 
-            // Assign lesson to selected module
-            wp_set_object_terms($post_id, $module_id, $this->taxonomy, false);
+		$module_exists = get_term( $module_id );
+		// Check the module exists before saving it.
+		if ( is_wp_error( $module_exists ) || empty( $module_exists ) ) {
+		    return true;
+        }
 
-            // Set default order for lesson inside module
-            if (!get_post_meta($post_id, '_order_module_' . $module_id, true)) {
-                update_post_meta($post_id, '_order_module_' . $module_id, 0);
-            }
+        // Assign lesson to selected module
+        wp_set_object_terms( $post_id, $module_id, $this->taxonomy, false );
+
+        // Set default order for lesson inside module
+        $order_module_key = '_order_module_' . $module_id;
+        if ( ! get_post_meta( $post_id, $order_module_key, true ) ) {
+            update_post_meta($post_id, $order_module_key, 0);
         }
 
         return true;
@@ -1344,6 +1371,7 @@ class Sensei_Core_Modules
         // localized module data
         $localize_modulesAdmin = array(
             'search_courses_nonce' => wp_create_nonce( 'search-courses' ),
+			'get_course_modules_nonce' => wp_create_nonce( 'get-course-modules' ),
             'selectPlaceholder'    => __( 'Search for courses', 'woothemes-sensei' )
         );
 
@@ -1888,6 +1916,23 @@ class Sensei_Core_Modules
         // Handle request then generate response using WP_Ajax_Response
         wp_send_json_success( array( 'termId' => $slug['term_id'], 'termName' => $term_name ) );
 
+    }
+
+	/**
+	 * Get course modules
+	 */
+    public function ajax_get_course_modules() {
+		// Security check
+		check_ajax_referer('get-course-modules', 'security');
+
+		$course_id = isset( $_POST[ 'course_id' ] ) ? absint( $_POST[ 'course_id' ] ) : null;
+		if ( null === $course_id ) {
+			wp_send_json_error( array('error'=> 'invalid course id') );
+        }
+
+        $html_content = $this->render_module_select_for_course( $course_id );
+
+		wp_send_json_success( array( 'content' => $html_content ) );
     }
 
     /**
