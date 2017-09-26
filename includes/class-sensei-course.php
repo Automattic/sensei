@@ -2707,8 +2707,10 @@ class Sensei_Course {
             return;
         }
 
+		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+
         $course_lesson_query_args = array(
-	        'post_status'       => 'publish',
+	        'post_status'       => $course_lessons_post_status,
             'post_type'         => 'lesson',
             'posts_per_page'    => 500,
             'orderby'           => 'date',
