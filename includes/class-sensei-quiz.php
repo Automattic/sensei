@@ -381,6 +381,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             $reset_allowed = 1;
         }
 
+        //Logging lesson end time
+        $metadata = array();
+        $metadata['lesson_end'] =  get_comment_meta( $user_lesson_status->comment_ID, 'lesson_end', true );
+        $metadata['quiz_start'] =  get_comment_meta( $user_lesson_status->comment_ID, 'quiz_start', true );
+        if($metadata['lesson_end']==0){
+            $metadata['lesson_end'] = current_time('mysql');
+        }
+        if($metadata['quiz_start']==0){
+            $metadata['quiz_start'] = current_time('mysql');
+        }
+
+        $activity_logged = Sensei_Utils::update_lesson_status( $current_user->ID, $lesson_id, $user_lesson_status->comment_approved, $metadata );
+
         // Build frontend data object for backwards compatibility
         // using this is no longer recommended
         $this->data->user_quiz_grade = $user_quiz_grade;
@@ -621,9 +634,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                  $lesson_status = 'graded';
 
              }
-
              $lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz_auto()" above
 
+             // Log quiz end
+             $lesson_metadata['quiz_end'] =  get_comment_meta( $user_lesson_status->comment_ID, 'quiz_end', true );
+             $lesson_metadata['num_quiz_attempts'] =  get_comment_meta( $user_lesson_status->comment_ID, 'num_quiz_attempts', true ) + 1;
+             if($lesson_metadata['quiz_end']==0){
+                 $lesson_metadata['quiz_end'] = current_time('mysql');
+             }
          } // end if ! is_wp_error( $grade ...
 
          Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $lesson_status, $lesson_metadata );

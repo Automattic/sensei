@@ -683,8 +683,8 @@ class Sensei_Utils {
 			// Note: When this action runs the lesson status may not yet exist
 			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
 
-			if( $complete ) {
 
+			if( $complete ) {
 				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
 				if ( $has_questions ) {
 					$status = 'passed'; // Force a pass
@@ -698,8 +698,15 @@ class Sensei_Utils {
 			// Check if user is already taking the lesson
 			$activity_logged = Sensei_Utils::user_started_lesson( $lesson_id, $user_id );
 			if( ! $activity_logged ) {
-
+				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
 				$metadata['start'] = current_time('mysql');
+				$metadata['lesson_end'] = 0;
+				$metadata['num_lesson_viewed'] = 0;
+				if( $has_questions ){
+					$metadata['quiz_start'] = 0;
+					$metadata['quiz_end'] = 0;
+					$metadata['num_quiz_attempts'] = 0;
+				}
 				$activity_logged = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $status, $metadata );
 
             } else {
@@ -713,9 +720,16 @@ class Sensei_Utils {
                     $comment['comment_ID'] = $activity_logged;
                     $comment['comment_approved'] = $status;
                     wp_update_comment( $comment );
-
                 }
+				if($status == 'complete'){
+					$metadata = array();
+					$metadata['lesson_end'] =  get_comment_meta( $current_user_activity->comment_ID, 'lesson_end', true );
 
+					if($metadata['lesson_end'] == 0){
+						$metadata['lesson_end'] = current_time('mysql');
+						$activity_logged = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, $status, $metadata );
+					}
+				}
             }
 
 			if ( $complete ) {

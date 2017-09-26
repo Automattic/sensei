@@ -931,6 +931,10 @@ function sensei_the_single_lesson_meta(){
         || Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id())
         || $is_preview ) {
         ?>
+		<?php if(!$is_preview){
+			do_action( 'lesson_start_status');
+		}
+		?>
         <section class="lesson-meta">
             <?php
             if( apply_filters( 'sensei_video_position', 'top', get_the_ID() ) == 'bottom' ) {
@@ -945,8 +949,8 @@ function sensei_the_single_lesson_meta(){
                 || Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id()) ) {
 
                 sensei_do_deprecated_action( 'sensei_lesson_quiz_meta','1.9.0', 'sensei_single_lesson_content_inside_before' ,array( get_the_ID(), get_current_user_id() )  );
-
             } ?>
+
         </section>
 
         <?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
