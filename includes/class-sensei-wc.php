@@ -91,7 +91,10 @@ class Sensei_WC {
 		}
 
 		foreach ( $orders_query->get_posts() as $order ) {
-			$order = new WC_Order( $order->ID );
+			$order = wc_get_order( $order->ID );
+			if ( false === $order ) {
+			    continue;
+            }
 			$items = $order->get_items();
 
 			foreach ( $items as $item ) {
@@ -402,7 +405,10 @@ class Sensei_WC {
 		}
 
 		$order_id = get_query_var( 'order-received' );
-		$order = new WC_Order( $order_id );
+		$order = wc_get_order( $order_id );
+		if ( false === $order ) {
+		    return;
+        }
 		$status = Sensei_WC_Utils::get_order_status( $order );
 
 		// exit early if not wc-completed or wc-processing
@@ -1031,7 +1037,10 @@ class Sensei_WC {
 
 		foreach ( $orders as $order_id ) {
 
-			$order = new WC_Order( $order_id->ID );
+			$order = wc_get_order( $order_id->ID );
+			if ( false === $order ) {
+			    continue;
+            }
 
 			// wc-active is the subscriptions complete status
 			$status = 'wc-' . $order->get_status();
@@ -1231,12 +1240,15 @@ class Sensei_WC {
 		$order_user = array();
 
 		// Check for WooCommerce
-		if ( ! Sensei_WC::is_woocommerce_active() || empty( $order_id ) ) {
+		if ( ! Sensei_WC::is_woocommerce_active() || empty( $order_id ) || ! is_numeric( $order_id ) ) {
 			return;
 		}
 
 		// Get order object
-		$order = new WC_Order( $order_id );
+		$order = wc_get_order( $order_id );
+		if ( false === $order ) {
+		    return;
+        }
 		$order_status = Sensei_WC_Utils::get_order_status( $order );
 
 		if ( ! in_array( $order_status, array( 'wc-completed', 'wc-processing' ) ) ) {
@@ -1308,7 +1320,10 @@ class Sensei_WC {
 
 		} else {
 
-			$order = new WC_Order( $order_id );
+			$order = wc_get_order( $order_id );
+			if ( false === $order ) {
+				return;
+			}
 		}
 
 		if ( ! in_array( $order->get_status(), array( 'cancelled', 'refunded' ) ) ) {
@@ -1529,9 +1544,9 @@ class Sensei_WC {
 	 **/
 	public static function virtual_order_payment_complete( $order_status, $order_id ) {
 
-		$order = new WC_Order( $order_id );
+		$order = wc_get_order( $order_id );
 
-		if ( ! isset( $order ) ) {
+		if ( ! isset( $order ) || false === $order ) {
 			return '';
 		}
 
@@ -1779,7 +1794,11 @@ class Sensei_WC {
 		$user_orders = array();
 
 		foreach ( $user_order_ids as $order_data ) {
-			$user_orders[] = new WC_Order( $order_data );
+		    $user_order = wc_get_order( $order_data );
+		    if ( false === $user_order ) {
+		        continue;
+            }
+			$user_orders[] = $user_order;
 		}
 
 		foreach ( $user_orders as $user_order ) {
