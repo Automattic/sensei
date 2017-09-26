@@ -1054,7 +1054,7 @@ class Sensei_Admin {
 		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?><div id="course-order" class="wrap course-order">
-		<h2><?php esc_html_e( 'Order Courses', 'woothemes-sensei' ); ?></h2><?php
+		<h1><?php esc_html_e( 'Order Courses', 'woothemes-sensei' ); ?></h1><?php
 
 		$html = '';
 
@@ -1166,7 +1166,7 @@ class Sensei_Admin {
 		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?><div id="lesson-order" class="wrap lesson-order">
-		<h2><?php _e( 'Order Lessons', 'woothemes-sensei' ); ?></h2><?php
+		<h1><?php _e( 'Order Lessons', 'woothemes-sensei' ); ?></h1><?php
 
 		$html = '';
 

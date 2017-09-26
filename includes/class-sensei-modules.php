@@ -855,7 +855,7 @@ class Sensei_Core_Modules
         ?>
         <div id="<?php echo esc_attr($this->order_page_slug); ?>"
              class="wrap <?php echo esc_attr($this->order_page_slug); ?>">
-        <h2><?php _e('Order Modules', 'woothemes-sensei'); ?></h2><?php
+        <h1><?php _e('Order Modules', 'woothemes-sensei'); ?></h1><?php
 
         $html = '';
 
