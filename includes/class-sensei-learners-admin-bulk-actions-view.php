@@ -77,20 +77,31 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
 
     protected function get_row_data( $item ) {
         if( ! $item ) {
-            return array(
+			$row_data = array(
                 'cb' => '',
                 'learner' => __( 'No results found', 'woothemes-sensei' ),
                 'overview' => ''
             );
+        } else {
+			$learner = $item;
+			$courses = $this->get_learner_courses_html( $item->course_statuses );
+			$row_data = array(
+				'cb' => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label>' . '<input type="checkbox" name="user_id" value="' . $learner->user_id . '" class="sensei_user_select_id">',
+				'learner' =>  $this->get_learner_html( $learner ),
+				'overview' => $courses
+			);
         }
-        $learner = $item;
-        $courses = $this->get_learner_courses_html( $item->course_statuses );
-        $column_data = array(
-            'cb' => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label>' . '<input type="checkbox" name="user_id" value="' . $learner->user_id . '" class="sensei_user_select_id">',
-            'learner' =>  $this->get_learner_html( $learner ),
-            'overview' => $courses
-        );
-        return $column_data;
+
+		/**
+		 * sensei_learner_admin_get_row_data Filter, for adding/removing row data.
+         *
+         * @param array                                   $row_data The Row Data.
+         * @param mixed|object                            $item The Item (learner query row).
+         * @param Sensei_Learners_Admin_Bulk_Actions_View $view The View.
+         *
+         * @return array
+		 */
+        return apply_filters( 'sensei_learner_admin_get_row_data', $row_data, $item, $this );
     }
 
     private function get_learner_html( $learner ) {
