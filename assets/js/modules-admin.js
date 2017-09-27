@@ -191,4 +191,33 @@ jQuery( document ).ready( function ( e ) {
             }
         });
     });
+
+    // Get Course modules (if any) on course select change
+    var $courseSelect = jQuery( '#lesson-course-options' ),
+        $lessonModuleMetaboxSelectContainer = jQuery( 'div#lesson-module-metabox-select' );
+
+    $courseSelect.on('change', function ( e ) {
+        if ( ! modulesAdmin.getCourseModulesNonce ) {
+            console.log( 'missing modulesAdmin.getCourseModulesNonce' )
+            return;
+        }
+        var courseId = $courseSelect.val(),
+            data = {
+                security: modulesAdmin.getCourseModulesNonce,
+                action: 'sensei_get_course_modules',
+                course_id: courseId
+            };
+        if ( ! data.course_id ) {
+            console.log( 'missing data.course_id' );
+            return;
+        }
+
+        jQuery.post( ajaxurl, data, function( response ) {
+            if ( true === response.success ) {
+                var content = response.data.content;
+                $lessonModuleMetaboxSelectContainer.html( content );
+                jQuery( 'select#lesson-module-options' ).select2( { width: 'resolve' } );
+            }
+        });
+    });
 });
