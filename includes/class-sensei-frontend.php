@@ -894,21 +894,15 @@ class Sensei_Frontend {
 		global  $post;
 
 		$quiz_id = 0;
+		$lesson_id = $post->ID;
 
 		//make sure user is taking course
-		$course_id = Sensei()->lesson->get_course_id( $post->ID );
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 		if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ){
 			return;
 		}
 
-		// Lesson quizzes
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $post->ID );
-		$pass_required = true;
-		if( $quiz_id ) {
-			// Get quiz pass setting
-	    	$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
-	    }
-		if( ! $quiz_id || ( $quiz_id && ! $pass_required ) ) {
+		if( false === Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ) {
 			?>
 			<form class="lesson_button_form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
 	            <input type="hidden"
