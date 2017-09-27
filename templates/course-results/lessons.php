@@ -58,7 +58,7 @@ global $course;
                 foreach( $lessons as $lesson ) {
 
                     $lesson_grade = 'n/a';
-                    $has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
+                    $has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson->ID );
                     if ( $has_questions ) {
                         $lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, get_current_user_id() );
                         // Get user quiz grade
@@ -112,7 +112,7 @@ global $course;
 
                 <?php
                 $lesson_grade = 'n/a';
-                $has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
+                $has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson->ID );
                 if ( $has_questions ) {
                     $lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, get_current_user_id());
                     // Get user quiz grade

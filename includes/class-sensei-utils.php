@@ -685,7 +685,7 @@ class Sensei_Utils {
 
 			if( $complete ) {
 
-				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+				$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 				if ( $has_questions ) {
 					$status = 'passed'; // Force a pass
 					$metadata['grade'] = 0;
@@ -1108,7 +1108,7 @@ class Sensei_Utils {
 			foreach( $lessons as $lesson ) {
 
 				// Check for lesson having questions, thus a quiz, thus having a grade
-				$has_questions = get_post_meta( $lesson->ID, '_quiz_has_questions', true );
+				$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson->ID );
 				if ( $has_questions ) {
 					$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
 
@@ -1266,7 +1266,7 @@ class Sensei_Utils {
 			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
 
 			// Quiz questions
-			$has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+			$has_quiz_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 
 			if ( ! $started_course ) {
 

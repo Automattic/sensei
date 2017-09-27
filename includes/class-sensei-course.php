@@ -1031,7 +1031,7 @@ class Sensei_Course {
 			$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
 			foreach( $lesson_ids as $lesson_id ) {
-				$has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+				$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 				if ( $has_questions && $boolean_check ) {
 					return true;
 				}

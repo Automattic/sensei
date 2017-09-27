@@ -423,7 +423,8 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
 
 					$lesson_average_grade = __('n/a', 'woothemes-sensei');
-					if ( false != get_post_meta($item->ID, '_quiz_has_questions', true) ) {
+
+					if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
 						// Get Percent Complete
 						$grade_args = array(
 								'post_id' => $item->ID,

@@ -3846,8 +3846,7 @@ class Sensei_Lesson {
 			<?php
 			if( $show_actions && $quiz_id && Sensei()->access_settings() ) {
 
-				$has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
-				if( $has_quiz_questions ) {
+				if( self::lesson_quiz_has_questions( $lesson_id ) ) {
 					?>
 
 					<p>
@@ -3923,7 +3922,7 @@ class Sensei_Lesson {
 
 		if ( $quiz_id && is_user_logged_in()
 			&& Sensei_Utils::user_started_course( $lesson_course_id, $user_id ) ) {
-			$has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+			$has_quiz_questions = self::lesson_quiz_has_questions( $lesson_id );
 
 			// Display lesson quiz status message
 			if ( $has_user_completed_lesson || $has_quiz_questions ) {
@@ -3991,7 +3990,7 @@ class Sensei_Lesson {
 		    return false;
         }
 
-		$has_quiz_questions = (bool)get_post_meta( $lesson_id, '_quiz_has_questions', true );
+		$has_quiz_questions = self::lesson_quiz_has_questions( $lesson_id );
 		if ( false === $has_quiz_questions ) {
 		    return false;
         }
@@ -3999,6 +3998,16 @@ class Sensei_Lesson {
 		$pass_required = (bool) get_post_meta( $quiz_id, '_pass_required', true );
 
 		return $pass_required;
+    }
+
+	/**
+     * Lesson Quiz Has Questions
+     *
+	 * @param int $lesson_id Lesson.
+	 * @return bool
+	 */
+    public static function lesson_quiz_has_questions( $lesson_id ) {
+		return (bool) get_post_meta( $lesson_id, '_quiz_has_questions', true );
     }
 
 } // End Class

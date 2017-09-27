@@ -1074,7 +1074,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
          $lesson_id = $this->get_lesson_id($post->ID);
 
-         $has_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
+         $has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 
          $lesson = get_post($lesson_id);
 

@@ -297,7 +297,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
 				$grading_action = '';
-				if ( get_post_meta( $item->ID, '_quiz_has_questions', true ) ) {
+				if ( Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
 					$grading_action = ' <a class="button" href="' . esc_url( add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => $item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) ) . '">' . __( 'Grading', 'woothemes-sensei' ) . '</a>';
 				}
 
