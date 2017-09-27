@@ -343,7 +343,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 				$course_title = $course_id ? get_the_title( $course_id ) : '';
 
 				$lesson_average_grade = __('n/a', 'woothemes-sensei');
-				if ( false != get_post_meta($item->ID, '_quiz_has_questions', true) ) {
+				if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
 					// Get Percent Complete
 					$grade_args = array( 
 							'post_id' => $item->ID,
