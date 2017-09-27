@@ -3923,8 +3923,6 @@ class Sensei_Lesson {
 
 		if ( $quiz_id && is_user_logged_in()
 			&& Sensei_Utils::user_started_course( $lesson_course_id, $user_id ) ) {
-
-			$no_quiz_count = 0;
 			$has_quiz_questions = get_post_meta( $lesson_id, '_quiz_has_questions', true );
 
 			// Display lesson quiz status message
@@ -3978,6 +3976,30 @@ class Sensei_Lesson {
 		));
 
 	}
+
+	/**
+     * Checks if a lesson has a "Complete" quiz that requires the passmark to be achieved
+     * before progressing. A complete quiz has at least one question.
+     *
+	 * @param int $lesson_id The Lesson.
+	 * @return bool
+	 */
+    public function lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) {
+		// Lesson quizzes
+		$quiz_id = $this->lesson_quizzes( $lesson_id );
+		if ( empty( $quiz_id ) ) {
+		    return false;
+        }
+
+		$has_quiz_questions = (bool)get_post_meta( $lesson_id, '_quiz_has_questions', true );
+		if ( false === $has_quiz_questions ) {
+		    return false;
+        }
+
+		$pass_required = (bool) get_post_meta( $quiz_id, '_pass_required', true );
+
+		return $pass_required;
+    }
 
 } // End Class
 
