@@ -1371,7 +1371,7 @@ class Sensei_Core_Modules
         // localized module data
         $localize_modulesAdmin = array(
             'search_courses_nonce' => wp_create_nonce( 'search-courses' ),
-			'get_course_modules_nonce' => wp_create_nonce( 'get-course-modules' ),
+			'getCourseModulesNonce' => wp_create_nonce( 'get-course-modules' ),
             'selectPlaceholder'    => __( 'Search for courses', 'woothemes-sensei' )
         );
 

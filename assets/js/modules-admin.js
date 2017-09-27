@@ -193,30 +193,30 @@ jQuery( document ).ready( function ( e ) {
     });
 
     // Get Course modules (if any) on course select change
-    var $course_select = jQuery('#lesson-course-options'),
-        $lessonModuleMetaboxSelectContainer = jQuery('div#lesson-module-metabox-select');
+    var $courseSelect = jQuery( '#lesson-course-options' ),
+        $lessonModuleMetaboxSelectContainer = jQuery( 'div#lesson-module-metabox-select' );
 
-    $course_select.on('change', function ( e ) {
-        if ( !modulesAdmin.get_course_modules_nonce) {
-            console.log('modulesAdmin.get_course_modules_nonce')
+    $courseSelect.on('change', function ( e ) {
+        if ( ! modulesAdmin.getCourseModulesNonce ) {
+            console.log( 'missing modulesAdmin.getCourseModulesNonce' )
             return;
         }
-        var courseId = $course_select.val(),
+        var courseId = $courseSelect.val(),
             data = {
-                security: modulesAdmin.get_course_modules_nonce,
+                security: modulesAdmin.getCourseModulesNonce,
                 action: 'sensei_get_course_modules',
                 course_id: courseId
             };
-        if (!data.course_id) {
-            console.log('data.course_id')
+        if ( ! data.course_id ) {
+            console.log( 'missing data.course_id' );
             return;
         }
 
-        jQuery.post( ajaxurl, data, function(response) {
-            if (true === response.success) {
+        jQuery.post( ajaxurl, data, function( response ) {
+            if ( true === response.success ) {
                 var content = response.data.content;
-                $lessonModuleMetaboxSelectContainer.html(content);
-                jQuery( 'select#lesson-module-options' ).select2({width:"resolve"});
+                $lessonModuleMetaboxSelectContainer.html( content );
+                jQuery( 'select#lesson-module-options' ).select2( { width: 'resolve' } );
             }
         });
     });
