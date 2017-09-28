@@ -157,7 +157,15 @@ class Sensei_Messages {
 
 		}
 
-		echo $html;
+        /**
+         * Filter the send message link
+         *
+         * @since 1.9.17
+         *
+         * @param string  	$html
+         * @param array 	$this->message_notice
+         */
+        echo apply_filters( 'sensei_send_message_link', $html, $this->message_notice );
 	}
 
 	public function teacher_contact_form( $post ) {
