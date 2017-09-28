@@ -40,7 +40,7 @@ do_action( 'sensei_learner_profile_content_before' );
         do_action( 'sensei_learner_profile_inside_content_before' );
         ?>
 
-        <?php  $learner_user = get_user_by( 'login', get_query_var('learner_profile') );  // get requested learner object ?>
+        <?php  $learner_user = Sensei_Learner::find_by_query_var( get_query_var('learner_profile') ); ?>
 
         <?php if(  is_a( $learner_user, 'WP_User' ) ){ ?>
 
@@ -58,7 +58,7 @@ do_action( 'sensei_learner_profile_content_before' );
 
             ?>
 
-        <?php }else{  ?>
+        <?php } else {  ?>
 
             <p class="sensei-message">
 
