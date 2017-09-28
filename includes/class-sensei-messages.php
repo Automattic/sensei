@@ -160,12 +160,16 @@ class Sensei_Messages {
         /**
          * Filter the send message link
          *
-         * @since 1.9.17
+         * @since 1.9.18
          *
          * @param string  	$html
          * @param array 	$this->message_notice
+         * @param int       $post_id
+         * @param int       $user_id
+         *
+         * @return string
          */
-        echo apply_filters( 'sensei_send_message_link', $html, $this->message_notice );
+        echo apply_filters( 'sensei_messages_send_message_link', $html, $this->message_notice, $post_id, $user_id );
 	}
 
 	public function teacher_contact_form( $post ) {
