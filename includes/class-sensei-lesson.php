@@ -39,6 +39,7 @@ class Sensei_Lesson {
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
+			add_action( 'transition_post_status', array( $this, 'on_lesson_published' ), 10, 3 );
 
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 10, 1 );
@@ -313,7 +314,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		if ( get_post_status( $lesson_id ) !== 'publish' ) {
+		if ( ! in_array( get_post_status( $lesson_id ), array( 'publish', 'future', 'pending' ), true ) ) {
 			return;
 		}
 
@@ -332,6 +333,27 @@ class Sensei_Lesson {
 				Sensei()->admin->save_lesson_order( implode( ',', $order_ids ), $course_id );
 		}
 	}
+
+	/**
+     * to actions when the status of the lesson changes to publish
+     *
+	 * @param string $new_status
+	 * @param string $old_status
+	 * @param WP_Post $post
+	 */
+	public function on_lesson_published( $new_status, $old_status, $post ) {
+		if ( 'lesson' != get_post_type( $post ) ) {
+			return;
+		}
+
+		$lesson_id = absint( $post->ID );
+
+		if ( $new_status !== 'publish' ) {
+			return;
+		}
+
+		$this->add_lesson_to_course_order( $lesson_id );
+    }
 
 
 	/**
