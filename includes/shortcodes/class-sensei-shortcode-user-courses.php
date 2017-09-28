@@ -280,6 +280,8 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         //restore old query
         $wp_query = $current_global_query;
 
+        wp_reset_postdata();
+
         return $shortcode_output;
 
     }// end render
