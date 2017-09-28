@@ -3626,7 +3626,7 @@ class Sensei_Lesson {
 
 						if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
 
-							$message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
+							$message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $a_element );
 
 						}else{
 
@@ -3646,7 +3646,7 @@ class Sensei_Lesson {
 
 					if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
 
-						$message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
+						$message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $a_element );
 
 					}else{
 
