@@ -169,7 +169,7 @@ class Sensei_Messages {
          *
          * @return string
          */
-        echo apply_filters( 'sensei_messages_send_message_link', $html, $this->message_notice, $post_id, $user_id );
+        echo apply_filters( 'sensei_messages_send_message_link', $html, isset( $this->message_notice ) ? $this->message_notice : '', $post_id, $user_id );
 	}
 
 	public function teacher_contact_form( $post ) {
