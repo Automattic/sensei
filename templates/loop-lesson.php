@@ -46,6 +46,8 @@ do_action( 'sensei_loop_lesson_before' );
     ?>
 
     <?php
+    wp_reset_query();
+
     /**
      * This runs inside the <ul> after the lesson items in the loop-lesson.php template.
      *
