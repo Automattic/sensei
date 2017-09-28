@@ -137,4 +137,30 @@ class Sensei_Learner{
 
         return $learners;
     } // End get_learners()
+
+	/**
+	 * Get learner from Query Var
+	 *
+	 * @param string $query_var The Query var.
+	 * @return WP_User|false
+	 */
+	public static function find_by_query_var( $query_var ) {
+		if ( empty( $query_var ) ) {
+			return false;
+		}
+		if ( false !== filter_var( $query_var, FILTER_VALIDATE_INT) ) {
+			return get_user_by( 'id', $query_var ); // get requested learner object by id
+		}
+
+		if ( false !== filter_var($query_var, FILTER_VALIDATE_EMAIL ) ) {
+			return get_user_by( 'email', $query_var ); // get requested learner object by email
+		}
+
+		$by_slug = get_user_by( 'slug', $query_var );
+		if ( false !== $by_slug ) {
+			return $by_slug;
+		}
+
+		return get_user_by( 'login', $query_var );
+	}
 }
