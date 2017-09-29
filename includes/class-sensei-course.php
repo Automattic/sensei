@@ -106,20 +106,20 @@ class Sensei_Course {
         add_action ( 'sensei_archive_before_course_loop' , array( 'Sensei_Course', 'course_archive_filters' ) );
 
         //filter the course query when featured filter is applied
-        add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_featured_filter'));
+        add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_featured_filter'), 10, 1 );
 
         // handle the order by title post submission
-        add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_order_by_title'));
+        add_filter( 'pre_get_posts',  array( __CLASS__, 'course_archive_order_by_title'), 10, 1 );
 
         // ensure the course category page respects the manual order set for courses
-        add_filter( 'pre_get_posts',  array( __CLASS__, 'alter_course_category_order'));
+        add_filter( 'pre_get_posts',  array( __CLASS__, 'alter_course_category_order'), 10, 1 );
 
         // flush rewrite rules when saving a course
         add_action('save_post', array( 'Sensei_Course', 'flush_rewrite_rules' ) );
 
 		// Allow course archive to be setup as the home page
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
-			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ), 9, 1 );
 		}
 	}
 
