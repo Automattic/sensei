@@ -1968,7 +1968,7 @@ class Sensei_Lesson {
 	 * @access public
 	 * @return void
 	 */
-	public function lesson_update_question () {
+	public function lesson_update_question() {
 		global $current_user;
 		//Add nonce security to the request
 		if ( isset($_POST['lesson_update_question_nonce']) ) {
@@ -2508,15 +2508,11 @@ class Sensei_Lesson {
 				update_post_meta( $question_id, '_question_media', $question_media );
 				update_post_meta( $question_id, '_answer_order', $answer_order );
 				update_post_meta( $question_id, '_random_order', $random_order );
+				update_post_meta( $question_id, '_answer_feedback', $answer_feedback );
 
 				if( 'quiz' != $context ) {
 					wp_set_post_terms( $question_id, array( $question_type ), 'question-type', false );
 				}
-				// Don't store empty value, no point
-				if ( !empty($answer_feedback) ) {
-					update_post_meta( $question_id, '_answer_feedback', $answer_feedback );
-				}
-
 			} else {
 				$question_id = wp_insert_post( $post_type_args );
 				$question_count = intval( $data['question_count'] );
