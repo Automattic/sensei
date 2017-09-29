@@ -1552,7 +1552,7 @@ class Sensei_WC {
 			return '';
 		}
 
-		if ( 'wc-processing' === $order_status  && in_array( $order->post_status, array( 'wc-on-hold', 'wc-pending', 'wc-failed' ), true ) ) {
+		if (  in_array( $order_status, array( 'wc-processing', 'processing' ), true )  && in_array( $order->post_status, array( 'wc-on-hold', 'wc-pending', 'wc-failed' ), true ) ) {
 
 			$virtual_order = true;
 
