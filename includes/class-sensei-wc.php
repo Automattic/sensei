@@ -1266,6 +1266,7 @@ class Sensei_WC {
 		}
 
 		Sensei_WC_Utils::log( 'Sensei_WC::complete_order: order_id = ' . $order_id );
+		$order_contains_courses = false;
 
 		// Run through each product ordered
 		foreach ( $order->get_items() as $item ) {
@@ -1283,7 +1284,9 @@ class Sensei_WC {
 				continue;
 			}
 
-			$_product_id = Sensei_WC_Utils::get_product_id( $_product );
+			$_product_id = Sensei_WC_Utils::is_product_variation( $_product ) ?
+                Sensei_WC_Utils::get_product_variation_id( $_product ) :
+                Sensei_WC_Utils::get_product_id( $_product );
 
 			// Get courses that use the WC product
 			$courses = Sensei()->course->get_product_courses( $_product_id );
@@ -1297,9 +1300,15 @@ class Sensei_WC {
 					Sensei_WC_Utils::log( 'Sensei_WC::complete_order: FAILED course_update course_id ' . $course_item->ID . ' for user_id ' . $order_user['ID'] );
 				}
 			}
+			if ( count( $courses ) > 0 ) {
+				$order_contains_courses = true;
+            }
 		} // End foreach().
-		// Add meta to indicate that payment has been completed successfully
-		update_post_meta( $order_id, 'sensei_payment_complete', '1' );
+
+        if ( $order_contains_courses ) {
+			// Add meta to indicate that payment has been completed successfully
+			update_post_meta( $order_id, 'sensei_payment_complete', '1' );
+        }
 
 	} // End sensei_woocommerce_complete_order()
 
@@ -1378,7 +1387,7 @@ class Sensei_WC {
 			// Get the product
 			if ( function_exists( 'wc_get_product' ) ) {
 
-				$wc_product_object = wc_get_product( $wc_product_id ); // Post WC 2.3
+				$wc_product_object = wc_get_product( $wc_product_id ); // Post WC 2.3x
 
 			} elseif ( function_exists( 'get_product' ) ) {
 
