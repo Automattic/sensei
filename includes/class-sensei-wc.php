@@ -646,17 +646,7 @@ class Sensei_WC {
 	 * @return array $product_query_args
 	 */
 	public static function get_paid_products_on_sale_query_args() {
-
-		$args = array(
-				   'post_type' 		=> 'product',
-				   'posts_per_page' 		=> 1000,
-				   'orderby'         	=> 'date',
-				   'order'           	=> 'DESC',
-				   'suppress_filters' 	=> 0,
-		);
-
-		$args['fields']     = 'ids';
-
+		$args = self::get_paid_products_base_query_args();
 		$args['meta_query'] = array(
 			'relation' => 'AND',
 			array(
@@ -685,16 +675,7 @@ class Sensei_WC {
 	 * @return array
 	 */
 	public static function get_paid_products_not_on_sale_query_args() {
-
-		$args = array(
-			'post_type' 		=> 'product',
-			'posts_per_page' 	=> 1000,
-			'orderby'         	=> 'date',
-			'order'           	=> 'DESC',
-			'suppress_filters' 	=> 0,
-		);
-
-		$args['fields']     = 'ids';
+		$args = self::get_paid_products_base_query_args();
 		$args['meta_query'] = array(
 			'relation' => 'AND',
 			array(
@@ -713,6 +694,18 @@ class Sensei_WC {
 
 	} // get_paid_courses_meta_query
 
+    private static function get_paid_products_base_query_args() {
+		$args = array(
+			'post_type' 		=> array( 'product', 'product_variation' ),
+			'posts_per_page' 	=> 1000,
+			'orderby'         	=> 'date',
+			'order'           	=> 'DESC',
+			'suppress_filters' 	=> 0,
+		);
+
+		$args['fields']     = 'ids';
+		return $args;
+    }
 	/**
 	 * Get all WooCommerce non-free product id's
 	 *
