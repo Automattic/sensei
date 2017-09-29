@@ -202,29 +202,16 @@ class Sensei_Grading_User_Quiz {
 						<p class="user-answer"><?php
 							foreach ( $user_answer_content as $_user_answer ) {
 
-                                if( 'multi-line' == Sensei()->question->get_question_type( $question->ID ) ){
-                                    $_user_answer = htmlspecialchars_decode( nl2br( $_user_answer ) );
+                                if ( 'multi-line' === Sensei()->question->get_question_type( $question->ID ) ) {
+									$is_plaintext = sanitize_text_field( $_user_answer ) == $_user_answer;
+									if ( $is_plaintext ) {
+										$_user_answer = nl2br( $_user_answer );
+                                    }
+
+									$_user_answer = htmlspecialchars_decode( $_user_answer );
                                 }
 
-								$_user_answer = wp_kses( apply_filters( 'sensei_answer_text', $_user_answer ), array(
-									'a' => array(
-										'href' => array(),
-										'title' => array(),
-										'target' => array(),
-									),
-									'br' => array(),
-									'pre' => array(),
-									'code' => array(),
-									'p' => array(),
-									'h1' => array(),
-									'h2' => array(),
-									'h3' => array(),
-									'h4' => array(),
-									'h5' => array(),
-									'h6' => array(),
-									'strong' => array(),
-									'em' => array(),
-								) );
+								$_user_answer = wp_kses( apply_filters( 'sensei_answer_text', $_user_answer ), wp_kses_allowed_html( 'post' ) );
 
 								echo $_user_answer . "<br>";
 							}

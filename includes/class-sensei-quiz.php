@@ -431,7 +431,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
             // compress the answer for saving
 			if( 'multi-line' == $question_type ) {
-                $answer = esc_html( $answer );
+                $answer = wp_kses( $answer, wp_kses_allowed_html( 'post' ) );
             }elseif( 'file-upload' == $question_type  ){
                 $file_key = 'file_upload_' . $question_id;
                 if( isset( $files[ $file_key ] ) ) {
