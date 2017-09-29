@@ -2238,6 +2238,9 @@ class Sensei_Course {
              * @param integer $posts_per_page defaults to the value of get_option( 'posts_per_page' )
              */
             $query->set( 'posts_per_page', apply_filters( 'sensei_archive_courses_per_page', get_option( 'posts_per_page' ) ) );
+            if ( isset( $query->query ) && isset( $query->query['paged'] ) && false === $query->get( 'paged', false ) ) {
+				$query->set( 'paged', $query->query['paged'] );
+            }
 
         }
         // for the my courses page
@@ -2371,7 +2374,7 @@ class Sensei_Course {
 
         ?>
 
-        <form class="sensei-ordering" name="sensei-course-order" action="<?php echo esc_attr( Sensei_Utils::get_current_url() ) ; ?>" method="POST">
+        <form class="sensei-ordering" name="sensei-course-order" action="<?php echo esc_attr( Sensei_Utils::get_current_url() ) ; ?>" method="get">
             <select name="course-orderby" class="orderby">
                 <?php
                 foreach( $course_order_by_options as $value => $text ){
@@ -2420,12 +2423,11 @@ class Sensei_Course {
         <ul class="sensei-course-filters clearfix" >
             <?php
 
-            //determine the current active url
-            $current_url = Sensei_Utils::get_current_url();
+            $active_course_filter = isset ( $_GET[ 'course_filter' ] ) ? sanitize_text_field( $_GET[ 'course_filter' ] ) :  'all';
 
             foreach( $filters as $filter ) {
 
-                $active_class =  $current_url == $filter['url'] ? ' class="active" ' : '';
+                $active_class =  $active_course_filter == $filter['id'] ? ' class="active" ' : '';
 
                 echo '<li><a '. $active_class .' id="'. $filter['id'] .'" href="'. esc_url( $filter['url'] ).'" >'. $filter['title']  .'</a></li>';
 
