@@ -310,6 +310,8 @@ class Sensei_Admin {
 
         }
 
+
+		wp_enqueue_script( 'sensei-message-menu-fix', Sensei()->plugin_url . 'assets/js/admin/message-menu-fix.js', array( 'jquery' ), Sensei()->version, true );
     }
 
 
