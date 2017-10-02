@@ -262,18 +262,18 @@ class Sensei_Grading {
 		global  $wp_version;
 
 		$title = $this->name;
-		if ( isset( $_GET['course_id'] ) ) { 
+		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 			if ( version_compare($wp_version, '4.1', '>=') ) {
 				$title .= '<span class="course-title">&gt;&nbsp;&nbsp;'.get_the_title( $course_id ).'</span>';
 			}
 			else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', get_the_title( $course_id ) ); 
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', get_the_title( $course_id ) );
 			}
 		}
-		if ( isset( $_GET['lesson_id'] ) ) { 
+		if ( isset( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
-			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>'; 
+			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>';
 		}
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
 
@@ -295,7 +295,7 @@ class Sensei_Grading {
 		global  $wp_version;
 
 		$title =  $this->name;
-		if ( isset( $_GET['quiz_id'] ) ) { 
+		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id = intval( $_GET['quiz_id'] );
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
@@ -304,7 +304,7 @@ class Sensei_Grading {
 				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 			}
 			else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', get_the_title( $course_id ) ); 
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', get_the_title( $course_id ) );
 			}
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id ), admin_url( 'admin.php' ) );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $lesson_id ) );
@@ -913,59 +913,25 @@ class Sensei_Grading {
          */
         $do_case_sensitive_comparison = apply_filters('sensei_gap_fill_case_sensitive_grading', false );
 
-        if( $do_case_sensitive_comparison ){
+		$regex_modifier = '';
+		if ( $do_case_sensitive_comparison ) {
+			$is_exact_answer_match = trim( $user_answer ) === trim( $gapfill_array[1] );
+		} else {
+			$is_exact_answer_match = trim( strtolower( $user_answer ) ) === trim( strtolower( $gapfill_array[1] ) );
+			$regex_modifier = 'i';
+		}
 
-            // Case Sensitive Check that the 'gap' is "exactly" equal to the given answer
-            if ( trim(($gapfill_array[1])) == trim( $user_answer ) ) {
+		$regex_answer_check = '/' . addcslashes( $gapfill_array[1], '/' ) . '/' . $regex_modifier;
 
-                return Sensei()->question->get_question_grade( $question_id );
+		if (
+			$is_exact_answer_match
+			|| 1 === @preg_match( $regex_answer_check, $user_answer )
+		) {
+			return Sensei()->question->get_question_grade( $question_id );
+		}
 
-            } else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
-
-                if (preg_match('/' . $gapfill_array[1] . '/i', $user_answer)) {
-
-                    return Sensei()->question->get_question_grade($question_id);
-
-                }else{
-
-                    return false;
-
-                }
-
-            }else{
-
-                return false;
-
-            }
-
-        }else{
-
-            // Case Sensitive Check that the 'gap' is "exactly" equal to the given answer
-            if ( trim(strtolower($gapfill_array[1])) == trim(strtolower( $user_answer )) ) {
-
-               return Sensei()->question->get_question_grade( $question_id );
-
-            } else if (@preg_match('/' . $gapfill_array[1] . '/i', null) !== FALSE) {
-
-                if (preg_match('/' . $gapfill_array[1] . '/i', $user_answer)) {
-
-                    return  Sensei()->question->get_question_grade( $question_id );
-
-                }else{
-
-                    return false;
-
-                }
-
-            }else{
-
-                return false;
-
-            }
-
-        }
-
-    }
+		return false;
+	}
 
     /**
      * Counts the lessons that have been graded manually and automatically
