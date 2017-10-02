@@ -26,6 +26,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
+	/**
+	 * The name of the status filter HTTP query param.
+	 *
+	 * @var string
+	 */
+	const MY_COURSES_STATUS_FILTER = 'my_courses_status';
 
 	/**
 	 * @var WP_Query to help setup the query needed by the render method.
@@ -56,6 +62,20 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	protected $status;
 
 	/**
+     * Are we in my-courses?
+     *
+	 * @var bool
+	 */
+	private $in_my_courses_page = false;
+
+	/**
+     * Current Page ID
+     *
+	 * @var int
+	 */
+	private $page_id = 0;
+
+	/**
 	 * Setup the shortcode object
 	 *
 	 * @since 1.9.0
@@ -64,7 +84,18 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 * @param string $shortcode  the shortcode that was called for this instance
 	 */
 	public function __construct( $attributes, $content, $shortcode ) {
-
+		global $wp_query;
+		$this->page_id = $wp_query->get_queried_object_id();
+		if ( ! isset( $attributes['status'] ) && $this->is_my_courses() ) {
+			$this->in_my_courses_page = true;
+			// In My Courses page, let's overrride the setting.
+			if ( isset( $_GET[ self::MY_COURSES_STATUS_FILTER ] ) ) {
+				$course_filter_by_status = sanitize_text_field( $_GET[ self::MY_COURSES_STATUS_FILTER ] );
+				if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array( 'all', 'active', 'complete' ), true ) ) {
+					$attributes['status'] = $course_filter_by_status;
+				}
+			}
+		}
 		// set up all argument need for constructing the course query
 		$this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
 		$this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
@@ -82,6 +113,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		}
 
+	}
+
+	private function is_my_courses() {
+			  global $wp_query;
+		return $wp_query->is_page() && $wp_query->queried_object_id === absint( Sensei()->settings->get( 'my_course_page' ) );
 	}
 
 	private function should_filter_course_by_status( $course_status, $user_id ) {
@@ -112,7 +148,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		);
 		$user_courses_logs = Sensei_Utils::sensei_check_for_activity( $status_query, true );
 		if ( ! is_array( $user_courses_logs ) ) {
-			87;
 
 			$user_courses_logs = array( $user_courses_logs );
 
@@ -164,14 +199,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			}
 		}
 
-		// temporary work around to hide pagination on the courses page
-		// this is in place until we can load the course for each tab via ajax
-		// if the shortcode is not active or in active and the active and completed
-		// tabs show up.
 		$number_of_posts = $this->number;
-		if ( 'active' != $this->status && 'complete' != $this->status ) {
-			$number_of_posts = 1000;
-		}
 
 		// course query parameters
 		$query_var_paged = get_query_var( 'paged' );
@@ -296,7 +324,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		// attach the toggle functionality
 		// don't show the toggle action if the user specified complete or active for this shortcode
-		if ( ! in_array( $this->status, array( 'active', 'complete' ) ) ) {
+		if ( $this->in_my_courses_page || ! in_array( $this->status, array( 'active', 'complete' ) ) ) {
 
 			add_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
 			add_action( 'wp_footer', array( $this, 'print_course_toggle_actions_inline_script' ), 90 );
@@ -394,13 +422,25 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		if ( false === $should_display_course_toggles ) {
 			   return;
 		}
-	?>
+
+		$active_filter_options = array(
+			'all'      => __( 'All Courses', 'woothemes-sensei' ),
+			'active'   => __( 'Active Courses', 'woothemes-sensei' ),
+			'complete' => __( 'Completed Courses', 'woothemes-sensei' ),
+		);
+
+		$base_url = get_page_link( $this->page_id );
+		?>
 
 		<section id="user-course-status-toggle">
-			<a id="sensei-user-courses-active-action" href=""><?php _e( 'Active Courses', 'woothemes-sensei' ); ?></a>
-			<a id="sensei-user-courses-complete-action" href=""><?php _e( 'Completed Courses', 'woothemes-sensei' ); ?></a>
+			<?php
+			foreach ( $active_filter_options as $key => $option ) {
+				$css_class = $key === $this->status ? 'active' : 'inactive';
+				$url = add_query_arg( self::MY_COURSES_STATUS_FILTER, $key, $base_url );
+				?>
+				<a id="sensei-user-courses-all-action" href="<?php echo esc_url( $url ); ?>" class="<?php echo esc_attr( $css_class ); ?>"><?php echo esc_html( $option ); ?></a>
+			<?php } ?>
 		</section>
-
 
 	<?php
 	}
