@@ -1,5 +1,6 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if (! defined('ABSPATH') ) { exit; // Exit if accessed directly
+}
 /**
  * This class is loaded int WP by the shortcode loader class.
  *
@@ -14,16 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * If all courses for a given user is shown, there will also be a toggle link between active and complete. Please note
  * that the number you specify will be respected.
  *
- *
  * @class Sensei_Shortcode_User_Courses
  *
- * @package Content
+ * @package    Content
  * @subpackage Shortcode
- * @author Automattic
+ * @author     Automattic
  *
  * @since 1.9.0
  */
-class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
+class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface
+{
 
     /**
      * @var WP_Query to help setup the query needed by the render method.
@@ -57,33 +58,35 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      * Setup the shortcode object
      *
      * @since 1.9.0
-     * @param array $attributes
+     * @param array  $attributes
      * @param string $content
-     * @param string $shortcode the shortcode that was called for this instance
+     * @param string $shortcode  the shortcode that was called for this instance
      */
-    public function __construct( $attributes, $content, $shortcode ){
+    public function __construct( $attributes, $content, $shortcode )
+    {
 
         // set up all argument need for constructing the course query
-        $this->number = isset( $attributes['number'] ) ? $attributes['number'] : '10';
-        $this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
-        $this->status = isset( $attributes['status'] ) ? $attributes['status'] : 'all';
+        $this->number = isset($attributes['number']) ? $attributes['number'] : '10';
+        $this->orderby = isset($attributes['orderby']) ? $attributes['orderby'] : 'title';
+        $this->status = isset($attributes['status']) ? $attributes['status'] : 'all';
 
         // set the default for menu_order to be ASC
-        if( 'menu_order' == $this->orderby && !isset( $attributes['order']  ) ){
+        if('menu_order' == $this->orderby && !isset($attributes['order']) ) {
 
             $this->order =  'ASC';
 
         }else{
 
             // for everything else use the value passed or the default DESC
-            $this->order = isset( $attributes['order']  ) ? $attributes['order'] : 'ASC';
+            $this->order = isset($attributes['order']) ? $attributes['order'] : 'ASC';
 
         }
 
 
     }
 
-    private function should_filter_course_by_status($course_status, $user_id) {
+    private function should_filter_course_by_status($course_status, $user_id) 
+    {
         $should_filter = Sensei_WC_Subscriptions::has_user_bought_subscription_but_cancelled(
             $course_status->comment_post_ID,
             $user_id
@@ -103,11 +106,12 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @since 1.9.0
      */
-    protected function setup_course_query(){
+    protected function setup_course_query()
+    {
         $user_id = get_current_user_id();
         $status_query = array( 'user_id' => $user_id, 'type' => 'sensei_course_status' );
-        $user_courses_logs = Sensei_Utils::sensei_check_for_activity( $status_query , true );
-        if ( !is_array($user_courses_logs) ) {
+        $user_courses_logs = Sensei_Utils::sensei_check_for_activity($status_query, true);
+        if (!is_array($user_courses_logs) ) {
             87;
 
             $user_courses_logs = array( $user_courses_logs );
@@ -119,7 +123,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
             if (true === $this->should_filter_course_by_status($course_status, $user_id) ) {
                 continue;
             }
-            if ( Sensei_Utils::user_completed_course( $course_status, get_current_user_id() ) ) {
+            if (Sensei_Utils::user_completed_course($course_status, get_current_user_id()) ) {
 
                 $completed_ids[] = $course_status->comment_post_ID;
 
@@ -130,34 +134,34 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
             }
         }
 
-        if( 'completed' == $this->status ){
+        if('completed' == $this->status ) {
 
             $included_courses =  $completed_ids;
 
 
-        } elseif( 'active' == $this->status ) {
+        } elseif('active' == $this->status ) {
 
             $included_courses =  $active_ids;
 
         } else { // all courses
 
-            if( empty( $completed_ids ) ){
+            if(empty($completed_ids) ) {
 
-                add_action( 'sensei_loop_course_inside_before', array( $this, 'completed_no_course_message_output' ) );
+                add_action('sensei_loop_course_inside_before', array( $this, 'completed_no_course_message_output' ));
             }
 
-            if( empty( $active_ids ) ){
+            if(empty($active_ids) ) {
 
-                add_action( 'sensei_loop_course_inside_before', array( $this, 'active_no_course_message_output' ) );
+                add_action('sensei_loop_course_inside_before', array( $this, 'active_no_course_message_output' ));
 
             }
 
-            if( empty( $completed_ids ) &&  empty( $active_ids )  ){
+            if(empty($completed_ids) &&  empty($active_ids)  ) {
 
                 $included_courses = array('-1000'); // don't show any courses
 
             }else{
-                $included_courses = Sensei_Utils::array_zip_merge( (array)$active_ids, (array)$completed_ids );
+                $included_courses = Sensei_Utils::array_zip_merge((array)$active_ids, (array)$completed_ids);
             }
 
 
@@ -168,7 +172,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
         // if the shortcode is not active or in active and the active and completed
         // tabs show up.
         $number_of_posts = $this->number;
-        if( 'active' != $this->status && 'complete' != $this->status  ){
+        if('active' != $this->status && 'complete' != $this->status  ) {
             $number_of_posts = 1000;
         }
 
@@ -179,12 +183,12 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
             'post_status'      => 'publish',
             'orderby'          => $this->orderby,
             'order'            => $this->order,
-            'paged' => empty( $query_var_paged )? 1 : $query_var_paged,
+            'paged' => empty($query_var_paged)? 1 : $query_var_paged,
             'posts_per_page'   => $number_of_posts,
             'post__in'         => $included_courses,
         );
 
-        $this->query = new WP_Query( $query_args );
+        $this->query = new WP_Query($query_args);
 
     }// end setup _course_query
 
@@ -194,12 +198,13 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @since 1.9.0
      */
-    public function completed_no_course_message_output(){
+    public function completed_no_course_message_output()
+    {
         ?>
         <li class="user-completed">
             <div class="sensei-message info">
 
-                <?php _e( 'You have not completed any courses yet.', 'woothemes-sensei' ); ?>
+                <?php _e('You have not completed any courses yet.', 'woothemes-sensei'); ?>
 
             </div>
         </li>
@@ -212,17 +217,18 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @since 1.9.0
      */
-    public function active_no_course_message_output(){
+    public function active_no_course_message_output()
+    {
         ?>
 
         <li class="user-active">
             <div class="sensei-message info">
 
-                <?php _e( 'You have no active courses.', 'woothemes-sensei' ); ?>
+                <?php _e('You have no active courses.', 'woothemes-sensei'); ?>
 
-                <a href="<?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
+                <a href="<?php echo esc_attr(Sensei_Course::get_courses_page_url()); ?>">
 
-                    <?php  _e( 'Start a Course!', 'woothemes-sensei' ); ?>
+                    <?php  _e('Start a Course!', 'woothemes-sensei'); ?>
 
                 </a>
 
@@ -236,11 +242,12 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @return string $content
      */
-    public function render() {
+    public function render() 
+    {
 
         global $wp_query;
 
-        if( false === is_user_logged_in() ) {
+        if(false === is_user_logged_in() ) {
             // show the login form
             return $this->render_login_form();
         }
@@ -255,23 +262,23 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
         $this->attach_shortcode_hooks();
 
-	    // mostly hooks added for legacy and backwards compatiblity sake
-	    do_action( 'sensei_my_courses_before' );
-	    do_action( 'sensei_before_user_course_content', get_current_user() );
+        // mostly hooks added for legacy and backwards compatiblity sake
+        do_action('sensei_my_courses_before');
+        do_action('sensei_before_user_course_content', get_current_user());
 
         ob_start();
         echo '<section id="sensei-user-courses">';
 
         Sensei_Messages::the_my_messages_link();
-	    do_action( 'sensei_my_courses_content_inside_before' );
+        do_action('sensei_my_courses_content_inside_before');
         Sensei_Templates::get_template('loop-course.php');
-	    do_action( 'sensei_my_courses_content_inside_after' );
+        do_action('sensei_my_courses_content_inside_after');
         Sensei_Templates::get_template('globals/pagination.php');
         echo '</section>';
 
-	    // mostly hooks added for legacy and backwards compatiblity sake
-	    do_action( 'sensei_after_user_course_content', get_current_user() );
-	    do_action( 'sensei_my_courses_after' );
+        // mostly hooks added for legacy and backwards compatiblity sake
+        do_action('sensei_after_user_course_content', get_current_user());
+        do_action('sensei_my_courses_after');
 
         $shortcode_output =  ob_get_clean();
 
@@ -291,23 +298,24 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @since 1.9.0
      */
-    public function attach_shortcode_hooks(){
+    public function attach_shortcode_hooks()
+    {
 
         // attach the toggle functionality
         // don't show the toggle action if the user specified complete or active for this shortcode
-        if( ! in_array( $this->status, array( 'active', 'complete' ) ) ){
+        if(! in_array($this->status, array( 'active', 'complete' )) ) {
 
-            add_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
-            add_action( 'wp_footer', array( $this, 'print_course_toggle_actions_inline_script' ), 90 );
+            add_action('sensei_loop_course_before', array( $this, 'course_toggle_actions' ));
+            add_action('wp_footer', array( $this, 'print_course_toggle_actions_inline_script' ), 90);
 
         }
 
         // add extra classes to distinguish the course based on user completed or active
-        add_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2 );
+        add_filter('sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2);
 
         // attach progress meter below course
-        add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
-        add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
+        add_action('sensei_course_content_inside_after', array( $this, 'attach_course_progress' ));
+        add_action('sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ));
 
     }
 
@@ -316,13 +324,14 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @since 1.9.0
      */
-    public function detach_shortcode_hooks(){
+    public function detach_shortcode_hooks()
+    {
 
         //remove all hooks after the output is generated
-        remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
-        remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
-        remove_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2 );
-        remove_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
+        remove_action('sensei_course_content_inside_after', array( $this, 'attach_course_progress' ));
+        remove_action('sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ));
+        remove_filter('sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2);
+        remove_action('sensei_loop_course_before', array( $this, 'course_toggle_actions' ));
     }
 
     /**
@@ -330,10 +339,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @param $course
      */
-    public function attach_course_progress( $course_id ){
+    public function attach_course_progress( $course_id )
+    {
 
-        $percentage = Sensei()->course->get_completion_percentage( $course_id, get_current_user_id() );
-        echo Sensei()->course->get_progress_meter( $percentage );
+        $percentage = Sensei()->course->get_completion_percentage($course_id, get_current_user_id());
+        echo Sensei()->course->get_progress_meter($percentage);
 
     }// attach_course_progress
 
@@ -345,9 +355,10 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @param integer $course_id
      */
-    public function attach_course_buttons( $course_id ){
+    public function attach_course_buttons( $course_id )
+    {
 
-        Sensei()->course->the_course_action_buttons( get_post( $course_id ) );
+        Sensei()->course->the_course_action_buttons(get_post($course_id));
 
     }// attach_course_buttons
 
@@ -356,13 +367,14 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @since 1.9
      *
-     * @param array $classes
-     * @param WP_Post $course
+     * @param  array   $classes
+     * @param  WP_Post $course
      * @return array $classes
      */
-    public function course_status_class_tagging($classes, $course){
+    public function course_status_class_tagging($classes, $course)
+    {
 
-        if ( Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
+        if (Sensei_Utils::user_completed_course($course, get_current_user_id()) ) {
 
             $classes[] = 'user-completed';
 
@@ -379,25 +391,26 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
     /**
      * Output the course toggle functionality
      */
-    public function course_toggle_actions() {
-		/**
-		 * Determine if we should display course toggles on User Courses Shortcode.
-		 *
-		 * @param bool $should_display_course_toggles Should we Display the course toggles.
-		 *
-		 * @since 1.9.18
-		 *
-		 * @return bool
-		 */
-		$should_display_course_toggles = (bool) apply_filters( 'sensei_shortcode_user_courses_display_course_toggle_actions', true );
-		if ( false === $should_display_course_toggles ) {
-			return;
-		}
-		?>
+    public function course_toggle_actions() 
+    {
+        /**
+         * Determine if we should display course toggles on User Courses Shortcode.
+         *
+         * @param bool $should_display_course_toggles Should we Display the course toggles.
+         *
+         * @since 1.9.18
+         *
+         * @return bool
+         */
+        $should_display_course_toggles = (bool) apply_filters('sensei_shortcode_user_courses_display_course_toggle_actions', true);
+        if (false === $should_display_course_toggles ) {
+               return;
+        }
+    ?>
 
         <section id="user-course-status-toggle">
-			<a id="sensei-user-courses-active-action" href=""><?php _e( 'Active Courses', 'woothemes-sensei' ); ?></a>
-			<a id="sensei-user-courses-complete-action" href=""><?php _e( 'Completed Courses', 'woothemes-sensei' ); ?></a>
+            <a id="sensei-user-courses-active-action" href=""><?php _e('Active Courses', 'woothemes-sensei'); ?></a>
+            <a id="sensei-user-courses-complete-action" href=""><?php _e('Completed Courses', 'woothemes-sensei'); ?></a>
         </section>
 
 
@@ -408,7 +421,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
      *
      * @since 1.9.0
      */
-    function print_course_toggle_actions_inline_script() { ?>
+    function print_course_toggle_actions_inline_script() 
+    {
+    ?>
 
         <script type="text/javascript">
             var buttonContainer = jQuery('#user-course-status-toggle');
