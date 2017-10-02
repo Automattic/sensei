@@ -394,7 +394,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
         foreach( range( 0, ( $number - 1 ) )  as $count ) {
 
             //make sure that at least on question from each type is included
-            if( $count < ( count( $question_types ) )  ){
+            if( $count < count( $question_types ) ){
 
                 //setup the question type at the current index
                 $type =  $question_type_slugs[ $count ];
@@ -407,52 +407,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
             }
 
-            $test_question_data = array(
-                'question_type' => $type ,
-                'question_category' => 'undefined' ,
-                'action' => 'add',
-                'question' => 'Is this a sample' . $type  . ' question ? _ ' . rand() ,
-                'question_grade' => '1' ,
-                'answer_feedback' => 'Answer Feedback sample ' . rand() ,
-                'question_description' => ' Basic description for the question' ,
-                'question_media' => '' ,
-                'answer_order' => '' ,
-                'random_order' => 'yes' ,
-                'question_count' => $number
-            );
-
-            // setup the right / wrong answers base on the question type
-            if ('multiple-choice' == $type ) {
-
-                $test_question_data['question_right_answers'] = array( 'right' ) ;
-                $test_question_data['question_wrong_answers'] = array( 'wrong1', 'wrong2',  'wrong3' )  ;
-
-            } elseif ('boolean' == $type ) {
-
-                $test_question_data[ 'question_right_answer_boolean' ] = true;
-
-            } elseif ( 'single-line' == $type  ) {
-
-                $test_question_data[ 'add_question_right_answer_singleline' ] = '';
-
-            } elseif ( 'gap-fill' == $type ) {
-
-                $test_question_data[ 'add_question_right_answer_gapfill_pre' ] = '';
-                $test_question_data[ 'add_question_right_answer_gapfill_gap' ] = '';
-                $test_question_data[ 'add_question_right_answer_gapfill_post'] = '';
-
-            } elseif ( 'multi-line' == $type  ) {
-
-                $test_question_data [ 'add_question_right_answer_multiline' ] = '';
-
-            } elseif ( 'file-upload' == $type ) {
-
-                $test_question_data [ 'add_question_right_answer_fileupload'] = '';
-                $test_question_data [ 'add_question_wrong_answer_fileupload' ] = '';
-
-            }
-
-            $sample_questions[] = $test_question_data;
+            $sample_questions[] = $this->get_sample_question_data( $type, $number );
         }
 
         // create the requested number tests from the sample questions
@@ -473,6 +428,54 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
         return $chosen_questions;
 
     }// end generate_and_attach_questions
+
+	public function get_sample_question_data( $type, $number = 0 ) {
+		$test_question_data = array(
+			'question_type' => $type ,
+			'question_category' => 'undefined' ,
+			'action' => 'add',
+			'question' => 'Is this a sample' . $type  . ' question ? _ ' . rand() ,
+			'question_grade' => '1' ,
+			'answer_feedback' => 'Answer Feedback sample ' . rand() ,
+			'question_description' => ' Basic description for the question' ,
+			'question_media' => '' ,
+			'answer_order' => '' ,
+			'random_order' => 'yes' ,
+			'question_count' => $number
+		);
+
+		// setup the right / wrong answers base on the question type
+		if ('multiple-choice' == $type ) {
+
+			$test_question_data['question_right_answers'] = array( 'right' ) ;
+			$test_question_data['question_wrong_answers'] = array( 'wrong1', 'wrong2',  'wrong3' )  ;
+
+		} elseif ('boolean' == $type ) {
+
+			$test_question_data[ 'question_right_answer_boolean' ] = true;
+
+		} elseif ( 'single-line' == $type  ) {
+
+			$test_question_data[ 'add_question_right_answer_singleline' ] = '';
+
+		} elseif ( 'gap-fill' == $type ) {
+
+			$test_question_data[ 'add_question_right_answer_gapfill_pre' ] = '';
+			$test_question_data[ 'add_question_right_answer_gapfill_gap' ] = '';
+			$test_question_data[ 'add_question_right_answer_gapfill_post'] = '';
+
+		} elseif ( 'multi-line' == $type  ) {
+
+			$test_question_data [ 'add_question_right_answer_multiline' ] = '';
+
+		} elseif ( 'file-upload' == $type ) {
+
+			$test_question_data [ 'add_question_right_answer_fileupload'] = '';
+			$test_question_data [ 'add_question_wrong_answer_fileupload' ] = '';
+
+		}
+		return $test_question_data;
+	}
 
     /**
      * This functions take answers submitted by a user, extracts ones that is of type file-upload
