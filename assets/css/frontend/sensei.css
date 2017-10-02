@@ -806,6 +806,7 @@ section.entry span.course-price {
   .quiz input.button:hover,
   .quiz button.button:hover {
     text-decoration: none;
+    color: #fff;
     background: #3b9de5; }
   .course-container a.button:active, .course-container a.button:visited:active,
   .course-container a.comment-reply-link:active,

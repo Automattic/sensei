@@ -834,7 +834,12 @@ section.entry span.course-price { padding-left: 10px; }
     -moz-box-shadow: none;
     box-shadow: none;
 
-    &:hover { text-decoration: none; background: darken($color_links, 5%); }
+    &:hover {
+      text-decoration: none;
+      color: #fff;
+      background: darken($color_links, 5%);
+    }
+
     &:active {
       border-color: $color_links - #555;
       -webkit-box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
