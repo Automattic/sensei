@@ -8,16 +8,17 @@ jQuery(document).ready(function($) {
         jQuery( 'h3:contains("' + jQuery( this ).text() + '")' ).attr( 'id', id_value ).addClass( 'section-heading' );
     });
 
+    // Only show the General settings.
+    $( '#woothemes-sensei section' ).each( function () {
+      if ( this.id !== 'default-settings' ) {
+        $( this ).hide();
+      }
+    } );
+
     jQuery( '#woothemes-sensei .subsubsub a.tab' ).click( function ( e ) {
         // Move the "current" CSS class.
         jQuery( this ).parents( '.subsubsub' ).find( '.current' ).removeClass( 'current' );
         jQuery( this ).addClass( 'current' );
-
-        // If "All" is clicked, show all.
-        if ( jQuery( this ).hasClass( 'all' ) ) {
-            jQuery( '#woothemes-sensei section' ).show();
-            return false;
-        }
 
         // Hide all sections.
         jQuery( '#woothemes-sensei section' ).hide();
