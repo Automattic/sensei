@@ -115,12 +115,16 @@ class Sensei_Settings_API {
 
 			$html .= '<ul id="settings-sections" class="subsubsub hide-if-no-js">' . "\n";
 
-			$sections = array(
-						'all' => array( 'href' => '#all', 'name' => __( 'All', 'woothemes-sensei' ), 'class' => 'current all tab' )
-					);
+			$sections = array();
 
 			foreach ( $this->tabs as $k => $v ) {
-				$sections[$k] = array( 'href' => '#' . esc_attr( $k ), 'name' => esc_attr( $v['name'] ), 'class' => 'tab' );
+				$classes = 'tab';
+
+				if ( 'default-settings' === $k ) {
+					$classes .= ' current';
+				}
+
+				$sections[$k] = array( 'href' => '#' . esc_attr( $k ), 'name' => esc_attr( $v['name'] ), 'class' => esc_attr( $classes ) );
 			}
 
 			$count = 1;
