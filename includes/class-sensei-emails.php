@@ -407,6 +407,9 @@ class Sensei_Emails {
 		if( $send ) {
 			$email = $this->emails['teacher-new-message'];
 			$email->trigger( $message_id );
+		} else {
+			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) ) );
+			exit;
 		}
 	}
 
