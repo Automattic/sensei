@@ -506,6 +506,9 @@ class Sensei_Course {
                  . esc_attr( 'woo_' . $this->token . '_noonce' )
                  . '" value="' . esc_attr( wp_create_nonce( plugin_basename(__FILE__) ) ) . '" />';
 
+		$course_id = ( 0 < $post->ID ) ? '&course_id=' . $post->ID : '';
+		$add_lesson_admin_url = admin_url( 'post-new.php?post_type=lesson' . $course_id );
+
 		if ( count( $posts_array ) > 0 ) {
 
 			foreach ($posts_array as $post_item){
@@ -519,17 +522,26 @@ class Sensei_Course {
 
 			} // End For Loop
 
+
+		}
+		$html .= '<p>';
+		if ( count( $posts_array ) == 0 ) {
+		    $html .= esc_html__( 'No lessons exist yet for this course.', 'woothemes-sensei' ) . "\n";
 		} else {
-			$course_id = '';
-			if ( 0 < $post->ID ) { $course_id = '&course_id=' . $post->ID; }
-			$html .= '<p>' . esc_html( __( 'No lessons exist yet for this course.', 'woothemes-sensei' ) ) . "\n";
+			$html .= '<hr />';
+        }
+        $html .= '<a href="' . $add_lesson_admin_url
+            . '" title="' . esc_attr( __( 'Add a Lesson', 'woothemes-sensei' ) ) . '">';
+		if ( count( $posts_array ) < 1 ) {
+			$html .= esc_html__( 'Please add some.', 'woothemes-sensei' );
+		} else {
 
-				$html .= '<a href="' . admin_url( 'post-new.php?post_type=lesson' . $course_id )
-                         . '" title="' . esc_attr( __( 'Add a Lesson', 'woothemes-sensei' ) ) . '">'
-                         . __( 'Please add some.', 'woothemes-sensei' ) . '</a>' . "\n";
+			$html .=  esc_html__( '+ Add Another Lesson', 'woothemes-sensei' );
+        }
 
-			$html .= '</p>'."\n";
-		} // End If Statement
+
+        $html .= '</a></p>';
+
 
 		echo $html;
 
