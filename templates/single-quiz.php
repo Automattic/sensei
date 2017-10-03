@@ -37,7 +37,7 @@
 
 	        <?php if ( sensei_quiz_has_questions() ): ?>
 
-	            <form method="POST" action="<?php echo esc_url_raw( get_permalink() ); ?>" enctype="multipart/form-data">
+	            <form method="POST" action="<?php echo esc_url_raw( get_permalink() ); ?>" enctype="multipart/form-data" onkeypress="return event.keyCode !== 13;">
 
 	                <?php
 
