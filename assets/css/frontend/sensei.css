@@ -341,9 +341,6 @@ a.sensei-certificate-link {
 .quiz form input.quiz-submit {
   margin-right: 10px; }
 
-.quiz input.quiz-submit.complete, .lesson input.quiz-submit.complete {
-  background: #63a95f; }
-
 .quiz input.quiz-submit.reset, .lesson input.quiz-submit.reset {
   background: #ed6c6c; }
 
@@ -746,8 +743,6 @@ section.entry span.course-price {
 .quiz button.button {
   display: inline-block;
   padding: 5px 20px 4px;
-  border: none;
-  color: #fff;
   text-align: center;
   text-shadow: none;
   text-decoration: none;
@@ -776,7 +771,6 @@ section.entry span.course-price {
   -moz-background-clip: padding;
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
-  background: #52a8e8;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none; }
@@ -805,9 +799,7 @@ section.entry span.course-price {
   .quiz input[type=submit]:hover,
   .quiz input.button:hover,
   .quiz button.button:hover {
-    text-decoration: none;
-    color: #fff;
-    background: #3b9de5; }
+    text-decoration: none; }
   .course-container a.button:active, .course-container a.button:visited:active,
   .course-container a.comment-reply-link:active,
   .course-container #commentform #submit:active,
@@ -833,7 +825,6 @@ section.entry span.course-price {
   .quiz input[type=submit]:active,
   .quiz input.button:active,
   .quiz button.button:active {
-    border-color: #005393;
     -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
     -moz-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white;
     box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3), 0 1px 0 white; }
