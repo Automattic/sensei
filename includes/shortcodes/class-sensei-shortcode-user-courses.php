@@ -62,15 +62,15 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	protected $status;
 
 	/**
-     * Are we in my-courses?
-     *
+	 * Are we in my-courses?
+	 *
 	 * @var bool
 	 */
 	private $in_my_courses_page = false;
 
 	/**
-     * Current Page ID
-     *
+	 * Current Page ID
+	 *
 	 * @var int
 	 */
 	private $page_id = 0;
@@ -85,6 +85,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 */
 	public function __construct( $attributes, $content, $shortcode ) {
 		global $wp_query;
+		$attributes = shortcode_atts( array(), $attributes, $shortcode );
 		$this->page_id = $wp_query->get_queried_object_id();
 		if ( ! isset( $attributes['status'] ) && $this->is_my_courses() ) {
 			$this->in_my_courses_page = true;
