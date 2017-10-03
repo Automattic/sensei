@@ -442,7 +442,15 @@ class Sensei_Teacher {
                         // add the new term, the false at the end says to replace all terms on this module
                         // with the new term.
                         wp_set_object_terms( $lesson->ID, $term_id , 'module', false );
-                        update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), 0 );
+                        $order_module = 0;
+                        $old_order_module = get_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ), true );
+                        if ( $old_order_module ) {
+                            $order_module = $old_order_module;
+                            if ( $term->term_id !== $term_id ) {
+                                delete_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ) );
+                            }
+                        }
+                        update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), $order_module );
                     }
 
                 }// end for each
