@@ -86,7 +86,7 @@ class Sensei_Teacher {
 		add_filter( 'ajax_query_attachments_args', array( $this, 'restrict_media_library_modal' ), 10, 1 );
 
 		// update lesson owner to course teacher before insert
-		add_filter( 'wp_insert_post_data',  array( $this, 'update_lesson_teacher' ), '99', 2 );
+		add_filter( 'wp_insert_post_data',  array( $this, 'update_lesson_teacher' ), 99, 2 );
 
 		// If a Teacher logs in, redirect to /wp-admin/
 		add_filter( 'wp_login', array( $this, 'teacher_login_redirect' ) , 10, 2 );
@@ -485,6 +485,9 @@ class Sensei_Teacher {
 			return false;
 		}
 
+		// Temporarily remove the author match filter
+		remove_filter( 'wp_insert_post_data',  array( $this, 'update_lesson_teacher' ), 99 );
+
 		// update each lesson and quiz author
 		foreach ( $lessons as $lesson ) {
 
@@ -517,6 +520,9 @@ class Sensei_Teacher {
 				) );
 			}
 		} // End foreach().
+
+		// Reinstate the author match filter
+		add_filter( 'wp_insert_post_data',  array( $this, 'update_lesson_teacher' ), 99, 2 );
 
 		return true;
 
