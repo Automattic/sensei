@@ -232,7 +232,8 @@ class Sensei_Core_Modules
     }
 
     /**
-     * Save module to lesson
+     * Save module to lesson. This method checks for authorization, and checks
+     * the incoming nonce.
      *
      * @since 1.8.0
      * @param  integer $post_id ID of post
@@ -258,33 +259,15 @@ class Sensei_Core_Modules
             return $post_id;
         }
 
-        $lesson_module_id_key = 'lesson_module';
+		// Get module and course IDs
+		$lesson_module_id_key = 'lesson_module';
+		$lesson_course_id_key = 'lesson_course';
+		$module_id = isset( $_POST[ $lesson_module_id_key ] ) ? $_POST[ $lesson_module_id_key ] : NULL;
+		$course_id = isset( $_POST[ $lesson_course_id_key ] ) ? $_POST[ $lesson_course_id_key ] : NULL;
 
-		// Check if the lesson is already assigned to a module.
-        // Modules and lessons have 1 -> 1 relationship.
-        // We delete existing module term relationships for this lesson if no module is selected ( or is an empty string)
-        if ( ! isset( $_POST[ $lesson_module_id_key ] ) || empty ( $_POST[ $lesson_module_id_key ] ) ) {
-			wp_delete_object_term_relationships( $post_id, $this->taxonomy  );
-		    return true;
-        }
-
-        // Cast module ID as an integer if selected
-        $module_id = intval( $_POST[ $lesson_module_id_key ] );
-
-		$module_exists = get_term( $module_id );
-		// Check the module exists before saving it.
-		if ( is_wp_error( $module_exists ) || empty( $module_exists ) ) {
-		    return true;
-        }
-
-        // Assign lesson to selected module
-        wp_set_object_terms( $post_id, $module_id, $this->taxonomy, false );
-
-        // Set default order for lesson inside module
-        $order_module_key = '_order_module_' . $module_id;
-        if ( ! get_post_meta( $post_id, $order_module_key, true ) ) {
-            update_post_meta($post_id, $order_module_key, 0);
-        }
+		// Set the module on the lesson
+        $lesson_modules = new Sensei_Core_Lesson_Modules( $post_id );
+        $lesson_modules->set_module( $module_id, $course_id );
 
         return true;
     }
@@ -388,9 +371,9 @@ class Sensei_Core_Modules
     public function save_module_course( $module_id )
     {
 
-	    if( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) {
-		    return;
-	    }
+		if( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) {
+			return;
+		}
         // Get module's existing courses
         $args = array(
             'post_type' => 'course',
@@ -629,8 +612,8 @@ class Sensei_Core_Modules
      */
     public function module_archive_description()
     {
-	    //ensure this only shows once on the archive.
-	    remove_action( 'sensei_loop_lesson_before', array( $this,'module_archive_description' ), 30 );
+		//ensure this only shows once on the archive.
+		remove_action( 'sensei_loop_lesson_before', array( $this,'module_archive_description' ), 30 );
 
         if (is_tax($this->taxonomy)) {
 
@@ -1314,18 +1297,18 @@ class Sensei_Core_Modules
      * @return void
      */
     public function enqueue_styles() {
-    	
-    	$disable_styles = false;
+
+		$disable_styles = false;
 		if ( isset( Sensei()->settings->settings[ 'styles_disable' ] ) ) {
 			$disable_styles = Sensei()->settings->settings[ 'styles_disable' ];
 		} // End If Statement
-		
+
 		// Add filter for theme overrides
 		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
-		
+
 		if ( ! $disable_styles ) {
-	        wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', Sensei()->version );
-    	    wp_enqueue_style($this->taxonomy . '-frontend');
+			wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', Sensei()->version );
+			wp_enqueue_style($this->taxonomy . '-frontend');
 		}
 
     }
@@ -1349,7 +1332,7 @@ class Sensei_Core_Modules
             'course_page_module-order',
             'post-new.php',
             'post.php',
-	        'term.php',
+			'term.php',
 
         ) );
 
