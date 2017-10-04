@@ -525,13 +525,13 @@ class Sensei_Course {
 
 		}
 		$html .= '<p>';
-		if ( count( $posts_array ) == 0 ) {
+		if ( 0 === count( $posts_array ) ) {
 		    $html .= esc_html__( 'No lessons exist yet for this course.', 'woothemes-sensei' ) . "\n";
 		} else {
 			$html .= '<hr />';
         }
         $html .= '<a href="' . $add_lesson_admin_url
-            . '" title="' . esc_attr( __( 'Add a Lesson', 'woothemes-sensei' ) ) . '">';
+            . '" title="' . esc_attr__( 'Add a Lesson', 'woothemes-sensei' ) . '">';
 		if ( count( $posts_array ) < 1 ) {
 			$html .= esc_html__( 'Please add some.', 'woothemes-sensei' );
 		} else {
