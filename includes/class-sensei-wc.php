@@ -1688,6 +1688,10 @@ class Sensei_WC {
 
 		$course_product = wc_get_product( $course_product_id );
 
+		if ( 'publish' !== $course_product->get_status() ) {
+			return false;
+		}
+
 		return $course_product->is_purchasable();
 
 	}
