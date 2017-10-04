@@ -479,7 +479,7 @@ class Sensei_Teacher {
 		}
 
 		// get a list of course lessons
-		$lessons = Sensei()->course->course_lessons( $course_id );
+		$lessons = Sensei()->course->course_lessons( $course_id, null );
 
 		if ( empty( $lessons )  || ! is_array( $lessons ) ) {
 			return false;
