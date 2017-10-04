@@ -60,13 +60,13 @@ if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_upda
 		$install_url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug ), 'install-plugin_' . $slug );
 		$activate_url = 'plugins.php?action=activate&plugin=' . urlencode( 'woothemes-updater/woothemes-updater.php' ) . '&plugin_status=all&paged=1&s&_wpnonce=' . urlencode( wp_create_nonce( 'activate-plugin_woothemes-updater/woothemes-updater.php' ) );
 
-		$message = '<a href="' . esc_url( $install_url ) . '">Install the WooThemes Updater plugin</a> to get updates for your WooThemes plugins.';
+		$message = '<a href="' . esc_url( $install_url ) . '">Install the WooCommerce Helper plugin</a> to get updates for Sensei and your other WooCommerce plugins.';
 		$is_downloaded = false;
 		$plugins = array_keys( get_plugins() );
 		foreach ( $plugins as $plugin ) {
 			if ( strpos( $plugin, 'woothemes-updater.php' ) !== false ) {
 				$is_downloaded = true;
-				$message = '<a href="' . esc_url( admin_url( $activate_url ) ) . '">Activate the WooThemes Updater plugin</a> to get updates for your WooThemes plugins.';
+				$message = '<a href="' . esc_url( admin_url( $activate_url ) ) . '">Activate the WooCommerce Helper plugin</a> to get updates for Sensei and your other WooCommerce plugins.';
 			}
 		}
 		echo '<div class="updated fade"><p>' . $message . '</p></div>' . "\n";
