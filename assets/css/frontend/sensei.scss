@@ -809,6 +809,10 @@ section.entry span.course-price { padding-left: 10px; }
     color: #fff;
     background: darken($color_links, 5%);
   }
+
+  &:visited {
+    color: #fff;
+  }
 }
 
 .course-container, .course, .lesson, .quiz  {
