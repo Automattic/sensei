@@ -19,12 +19,29 @@ var sass            = require( 'gulp-sass' );
 var wpPot           = require( 'gulp-wp-pot' );
 var sort            = require( 'gulp-sort' );
 var checktextdomain = require( 'gulp-checktextdomain' );
+var babel           = require( 'gulp-babel' );
 
 var paths = {
 	scripts: ['assets/js/*.js' ],
 	adminScripts: ['assets/js/admin/*.js'],
 	css: ['assets/css/*.scss'],
     frontedCss: ['assets/css/frontend/*.scss']
+};
+
+var babelOptions = {
+	'presets': [
+		[ 'env', {
+			'targets': {
+				'browsers': [
+					"last 2 versions",
+					"Safari >= 9",
+					"iOS >= 9",
+					"not ie <= 10"
+				]
+			}
+		} ],
+		'stage-3'
+	],
 };
 
 gulp.task( 'clean', function( cb ) {
@@ -48,6 +65,7 @@ gulp.task( 'FrontendCSS', function() {
 
 gulp.task( 'JS', ['clean'], function() {
 	return gulp.src( paths.scripts )
+		.pipe( babel( babelOptions ) )
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
 		.pipe( rename({ extname: '.min.js' }) )
@@ -57,6 +75,7 @@ gulp.task( 'JS', ['clean'], function() {
 
 gulp.task( 'adminJS', ['clean'], function() {
 	return gulp.src( paths.adminScripts )
+		.pipe( babel( babelOptions ) )
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
 		.pipe( rename({ extname: '.min.js' }) )
