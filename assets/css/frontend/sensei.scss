@@ -57,12 +57,10 @@ a.view-results-link,
 a.sensei-certificate-link {
   display: inline-block;
   padding: .236em .857em;
-  background: $border_main;
   float: right;
   margin-left: .236em;
   padding: .382em 1em;
   @include border_radius(5px);
-  color: #fff;
   font-weight: bold;
   text-decoration: none;
 }
@@ -86,6 +84,11 @@ a.sensei-certificate-link {
       position: relative;
       top: .2em;
       margin-bottom: 0.618em;
+    }
+
+    .view-results {
+      background: $border_main;
+      color: #fff;
     }
   }
   .sensei-course-meta  {
