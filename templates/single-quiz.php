@@ -37,7 +37,11 @@
 
 	        <?php if ( sensei_quiz_has_questions() ): ?>
 
-	            <form method="POST" action="<?php echo esc_url_raw( get_permalink() ); ?>" enctype="multipart/form-data">
+				<form method="POST"
+				      action="<?php echo esc_url_raw( get_permalink() ); ?>"
+				      enctype="multipart/form-data"
+				      data-action-on-empty-response="<?php echo sensei_quiz_action_on_empty_response() ?>"
+				>
 
 	                <?php
 
