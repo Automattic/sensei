@@ -23,15 +23,16 @@ var checktextdomain = require( 'gulp-checktextdomain' );
 var paths = {
 	scripts: ['assets/js/*.js' ],
 	adminScripts: ['assets/js/admin/*.js'],
+	frontendScripts: ['assets/js/frontend/*.js'],
 	css: ['assets/css/*.scss'],
     frontedCss: ['assets/css/frontend/*.scss']
 };
 
 gulp.task( 'clean', function( cb ) {
-	return del( ['assets/js/*.min.js','assets/js/admin/*.min.js', 'assets/css/*.min.css'], cb );
+	return del( ['assets/js/*.min.js','assets/js/admin/*.min.js','assets/js/frontend/*.min.js', 'assets/css/*.min.css'], cb );
 });
 
-gulp.task( 'default', [ 'CSS','FrontendCSS','JS','adminJS' ] );
+gulp.task( 'default', [ 'CSS','FrontendCSS','JS','adminJS', 'frontendJS' ] );
 
 gulp.task( 'CSS', ['clean'], function() {
 	return gulp.src( paths.css )
@@ -62,6 +63,15 @@ gulp.task( 'adminJS', ['clean'], function() {
 		.pipe( rename({ extname: '.min.js' }) )
 		.pipe( chmod( 644 ) )
 		.pipe( gulp.dest( 'assets/js/admin' ) );
+});
+
+gulp.task( 'frontendJS', ['clean'], function() {
+	return gulp.src( paths.frontendScripts )
+		// This will minify and rename to *.min.js
+		.pipe( uglify() )
+		.pipe( rename({ extname: '.min.js' }) )
+		.pipe( chmod( 644 ) )
+		.pipe( gulp.dest( 'assets/js/frontend' ) );
 });
 
 gulp.task( 'pot', function() {
