@@ -89,7 +89,6 @@ a.view-results-link,
 a.sensei-certificate-link {
   display: inline-block;
   padding: .236em .857em;
-  background: #e6e6e6;
   float: right;
   margin-left: .236em;
   padding: .382em 1em;
@@ -98,7 +97,6 @@ a.sensei-certificate-link {
   -moz-background-clip: padding;
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
-  color: #fff;
   font-weight: bold;
   text-decoration: none; }
 
@@ -125,6 +123,9 @@ a.sensei-certificate-link {
       position: relative;
       top: .2em;
       margin-bottom: 0.618em; }
+    #main .course .course-meta .view-results, #main .course-container .course-meta .view-results {
+      background: #e6e6e6;
+      color: #fff; }
   #main .course .sensei-course-meta, #main .course-container .sensei-course-meta {
     font-style: italic;
     font-size: .9em;
@@ -715,6 +716,15 @@ section.entry span.course-price {
     .sensei p.sensei-message a.next-lesson:hover, .sensei div.sensei-message a.next-lesson:hover, .course-container p.sensei-message a.next-lesson:hover, .course-container div.sensei-message a.next-lesson:hover, .course p.sensei-message a.next-lesson:hover, .course div.sensei-message a.next-lesson:hover, .lesson p.sensei-message a.next-lesson:hover, .lesson div.sensei-message a.next-lesson:hover, .quiz p.sensei-message a.next-lesson:hover, .quiz div.sensei-message a.next-lesson:hover, .learner-info p.sensei-message a.next-lesson:hover, .learner-info div.sensei-message a.next-lesson:hover {
       background: #63a95f;
       color: #fff; }
+
+.button {
+  color: #fff;
+  background: #52a8e8; }
+  .button:hover {
+    color: #fff;
+    background: #3b9de5; }
+  .button:visited {
+    color: #fff; }
 
 .course-container a.button, .course-container a.button:visited,
 .course-container a.comment-reply-link,
