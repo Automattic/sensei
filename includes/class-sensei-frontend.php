@@ -150,6 +150,14 @@ class Sensei_Frontend {
 
             }
 
+			// Quiz javascript
+			if ( is_singular( 'quiz' ) ) {
+				wp_register_script( 'sensei-quiz-js', esc_url( Sensei()->plugin_url . 'assets/js/frontend/quiz' . $suffix . '.js' ), array( 'jquery' ), '1', true );
+				wp_enqueue_script( 'sensei-quiz-js' );
+				wp_localize_script( 'sensei-quiz-js', 'quizL10n', array(
+					'empty_response_warn' => __( 'Some responses are empty! Are you sure you want to submit?' )
+				) );
+			}
 
 			// Allow additional scripts to be loaded
 			do_action( 'sensei_additional_scripts' );
