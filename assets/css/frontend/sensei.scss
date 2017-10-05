@@ -801,6 +801,16 @@ section.entry span.course-price { padding-left: 10px; }
   }
 }
 
+.button {
+  color: #fff;
+  background: $color_links;
+
+  &:hover {
+    color: #fff;
+    background: darken($color_links, 5%);
+  }
+}
+
 .course-container, .course, .lesson, .quiz  {
   a.button, a.button:visited,
   a.comment-reply-link,
