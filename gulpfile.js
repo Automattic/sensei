@@ -69,10 +69,10 @@ gulp.task( 'frontendJS', ['clean'], function() {
 	return gulp.src( paths.frontendScripts )
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
-		.pipe( rename({ extname: '.min.js' }) )
+		.pipe( rename( { extname: '.min.js' } ) )
 		.pipe( chmod( 644 ) )
 		.pipe( gulp.dest( 'assets/js/frontend' ) );
-});
+} );
 
 gulp.task( 'pot', function() {
 	return gulp.src( [ '**/**.php', '!node_modules/**'] )
