@@ -825,10 +825,7 @@ function sensei_quiz_action_on_empty_response() {
 
 	$warn = get_post_meta( $sensei_question_loop[ 'quiz_id' ], '_warn_on_empty_response', true );
 
-	if ( ! empty( $warn ) )
-		return 'warn';
-	else
-		return 'none';
+	return empty( $warn ) ? 'none' : 'warn';
 }
 
 /************************
