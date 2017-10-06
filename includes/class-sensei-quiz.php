@@ -1297,6 +1297,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                     value="<?php echo esc_attr(  wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
              <!--#end Action Nonce's -->
 
+             <div id="sensei-quiz-submit-buttons">
+
              <?php if ( '' == $user_quiz_grade && ( ! $user_lesson_status || 'ungraded' !== $user_lesson_status->comment_approved ) ) { ?>
 
                  <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php  _e( 'Complete Quiz', 'woothemes-sensei' ); ?>"/></span>
@@ -1310,6 +1312,23 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                  <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php _e( 'Reset Quiz', 'woothemes-sensei' ); ?>"/></span>
 
              <?php } ?>
+
+             </div>
+
+             <div id="sensei-empty-response-warning" class="sensei-message warn">
+                 <?php _e( 'Some responses are empty! Are you sure you want to submit the quiz?', 'woothemes-sensei' ) ?>
+                 <input type="submit"
+                        name="quiz_complete"
+                        class="quiz-submit"
+                        data-no-warn
+                        value="<?php _e( 'Submit', 'woothemes-sensei' ) ?>"
+                 />
+                 <input type="submit"
+                        class="quiz-submit cancel"
+                        data-cancel
+                        value="<?php _e( 'Cancel', 'woothemes-sensei' ) ?>"
+                 />
+             </div>
 
          <?php }
 

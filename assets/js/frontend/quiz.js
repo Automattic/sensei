@@ -20,8 +20,8 @@ jQuery( function() {
 		var button = form.find( '[clicked=true]' );
 		button.removeAttr( 'clicked' );
 
-		// Only continue for the "Complete Quiz" button
-		if ( button.attr( 'name' ) != 'quiz_complete' ) {
+		// Only warn for the initial "Complete Quiz" button
+		if ( button.attr( 'name' ) != 'quiz_complete' || button[0].hasAttribute( 'data-no-warn' ) ) {
 			return;
 		}
 
@@ -30,10 +30,18 @@ jQuery( function() {
 		// Count how many questions are empty
 		var emptyQuestions = countEmptyQuestions( inputs );
 
-		if ( emptyQuestions > 0 && ! confirm( quizL10n.empty_response_warn ) ) {
+		if ( emptyQuestions > 0 ) {
+			// Show the warning dialog
 			event.preventDefault();
+			showWarningDialog( true );
 		}
 	} );
+
+	// Hide the warning dialog when user clicks cancel
+	jQuery( '#sensei-empty-response-warning [data-cancel]' ).on( 'click', function (event) {
+		event.preventDefault();
+		showWarningDialog( false );
+	} )
 
 
 	// Helper functions
@@ -72,6 +80,17 @@ jQuery( function() {
 		}
 
 		return val && val.length > 0;
+	}
+
+	// Show or hide the warning dialog
+	function showWarningDialog( showDialog ) {
+		if ( showDialog ) {
+			jQuery( '#sensei-empty-response-warning' ).show();
+			jQuery( '#sensei-quiz-submit-buttons' ).hide();
+		} else {
+			jQuery( '#sensei-empty-response-warning' ).hide();
+			jQuery( '#sensei-quiz-submit-buttons' ).show();
+		}
 	}
 
 } );
