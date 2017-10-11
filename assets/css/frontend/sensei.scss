@@ -337,6 +337,10 @@ a.sensei-certificate-link {
     input.quiz-submit  {
       margin-right: 10px;
     }
+
+    #sensei-empty-response-warning {
+      display: none;
+    }
   }
 }
 
@@ -348,7 +352,16 @@ a.sensei-certificate-link {
     &.reset  {
       background: $error;
     }
+    &.cancel {
+      background: $bg-dark;
+      color: black;
+    }
   }
+}
+
+.quiz form .sensei-message input.quiz-submit {
+	margin-right: 0;
+	margin-left: 10px;
 }
 
 .lesson  {
@@ -733,6 +746,12 @@ section.entry span.course-price { padding-left: 10px; }
         &:hover  {
           color: darken($error, 15%);
         }
+      }
+    }
+    &.warn {
+      background:#fef6d2;
+      &:before  {
+        content: '\f071';
       }
     }
     &.download, &.tick {

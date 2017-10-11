@@ -341,11 +341,22 @@ a.sensei-certificate-link {
 .quiz form input.quiz-submit {
   margin-right: 10px; }
 
+.quiz form #sensei-empty-response-warning {
+  display: none; }
+
 .quiz input.quiz-submit.complete, .lesson input.quiz-submit.complete {
   background: #63a95f; }
 
 .quiz input.quiz-submit.reset, .lesson input.quiz-submit.reset {
   background: #ed6c6c; }
+
+.quiz input.quiz-submit.cancel, .lesson input.quiz-submit.cancel {
+  background: #d3d3d3;
+  color: black; }
+
+.quiz form .sensei-message input.quiz-submit {
+  margin-right: 0;
+  margin-left: 10px; }
 
 .lesson input.quiz-submit {
   margin-top: 1em; }
@@ -668,6 +679,10 @@ section.entry span.course-price {
       color: #e73f3f; }
       .sensei p.sensei-message.alert a:hover, .sensei div.sensei-message.alert a:hover, .course-container p.sensei-message.alert a:hover, .course-container div.sensei-message.alert a:hover, .course p.sensei-message.alert a:hover, .course div.sensei-message.alert a:hover, .lesson p.sensei-message.alert a:hover, .lesson div.sensei-message.alert a:hover, .quiz p.sensei-message.alert a:hover, .quiz div.sensei-message.alert a:hover, .learner-info p.sensei-message.alert a:hover, .learner-info div.sensei-message.alert a:hover {
         color: #e52828; }
+  .sensei p.sensei-message.warn, .sensei div.sensei-message.warn, .course-container p.sensei-message.warn, .course-container div.sensei-message.warn, .course p.sensei-message.warn, .course div.sensei-message.warn, .lesson p.sensei-message.warn, .lesson div.sensei-message.warn, .quiz p.sensei-message.warn, .quiz div.sensei-message.warn, .learner-info p.sensei-message.warn, .learner-info div.sensei-message.warn {
+    background: #fef6d2; }
+    .sensei p.sensei-message.warn:before, .sensei div.sensei-message.warn:before, .course-container p.sensei-message.warn:before, .course-container div.sensei-message.warn:before, .course p.sensei-message.warn:before, .course div.sensei-message.warn:before, .lesson p.sensei-message.warn:before, .lesson div.sensei-message.warn:before, .quiz p.sensei-message.warn:before, .quiz div.sensei-message.warn:before, .learner-info p.sensei-message.warn:before, .learner-info div.sensei-message.warn:before {
+      content: '\f071'; }
   .sensei p.sensei-message.download, .sensei p.sensei-message.tick, .sensei div.sensei-message.download, .sensei div.sensei-message.tick, .course-container p.sensei-message.download, .course-container p.sensei-message.tick, .course-container div.sensei-message.download, .course-container div.sensei-message.tick, .course p.sensei-message.download, .course p.sensei-message.tick, .course div.sensei-message.download, .course div.sensei-message.tick, .lesson p.sensei-message.download, .lesson p.sensei-message.tick, .lesson div.sensei-message.download, .lesson div.sensei-message.tick, .quiz p.sensei-message.download, .quiz p.sensei-message.tick, .quiz div.sensei-message.download, .quiz div.sensei-message.tick, .learner-info p.sensei-message.download, .learner-info p.sensei-message.tick, .learner-info div.sensei-message.download, .learner-info div.sensei-message.tick {
     background: #edfcd5; }
     .sensei p.sensei-message.download:before, .sensei p.sensei-message.tick:before, .sensei div.sensei-message.download:before, .sensei div.sensei-message.tick:before, .course-container p.sensei-message.download:before, .course-container p.sensei-message.tick:before, .course-container div.sensei-message.download:before, .course-container div.sensei-message.tick:before, .course p.sensei-message.download:before, .course p.sensei-message.tick:before, .course div.sensei-message.download:before, .course div.sensei-message.tick:before, .lesson p.sensei-message.download:before, .lesson p.sensei-message.tick:before, .lesson div.sensei-message.download:before, .lesson div.sensei-message.tick:before, .quiz p.sensei-message.download:before, .quiz p.sensei-message.tick:before, .quiz div.sensei-message.download:before, .quiz div.sensei-message.tick:before, .learner-info p.sensei-message.download:before, .learner-info p.sensei-message.tick:before, .learner-info div.sensei-message.download:before, .learner-info div.sensei-message.tick:before {

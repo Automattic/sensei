@@ -814,6 +814,20 @@ function sensei_get_the_question_id( ){
 
 }// end sensei_the_question_id
 
+/**
+ * Return the action to take if the response is empty.
+ *
+ * @since 1.9.18
+ * @return "warn" or "none"
+ */
+function sensei_quiz_action_on_empty_response() {
+	global $sensei_question_loop;
+
+	$warn = get_post_meta( $sensei_question_loop[ 'quiz_id' ], '_warn_on_empty_response', true );
+
+	return empty( $warn ) ? 'none' : 'warn';
+}
+
 /************************
  *
  * Single Lesson Functions

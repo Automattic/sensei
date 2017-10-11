@@ -1795,6 +1795,13 @@ class Sensei_Lesson {
 				'default'		=> '',
 				'checked'		=> 'on',
 			),
+			array(
+				'id'			=> 'warn_on_empty_response',
+				'label'			=> esc_html__( 'Warn user on empty response', 'woothemes-sensei' ),
+				'description'	=> esc_html__( 'Displays a warning dialog when the user attempts to submit a quiz with one or more empty responses.', 'woothemes-sensei' ),
+				'type'			=> 'checkbox',
+				'default'		=> '',
+			),
 		);
 
 		return apply_filters( 'sensei_quiz_settings', $settings );

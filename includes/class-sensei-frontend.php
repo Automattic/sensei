@@ -150,6 +150,11 @@ class Sensei_Frontend {
 
             }
 
+			// Quiz javascript
+			if ( is_singular( 'quiz' ) ) {
+				wp_register_script( 'sensei-quiz-js', esc_url( Sensei()->plugin_url . 'assets/js/frontend/quiz' . $suffix . '.js' ), array( 'jquery' ), '1', true );
+				wp_enqueue_script( 'sensei-quiz-js' );
+			}
 
 			// Allow additional scripts to be loaded
 			do_action( 'sensei_additional_scripts' );
