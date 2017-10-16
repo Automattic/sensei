@@ -484,6 +484,24 @@ class Sensei_Course {
 	} // End save_post_meta()
 
 	/**
+	 * Calculate the length of all lessons for a given course ID.
+	 *
+	 * @param  int $course_id Course ID.
+	 * @access public
+	 * @return int
+	 */
+	public function course_lessons_length( $course_id ) {
+		$lessons = $this->course_lessons( $course_id );
+		$total = 0;
+
+		foreach ( $lessons as $lesson ) {
+			$total += get_post_meta( $lesson->ID, '_lesson_length', true );
+		}
+
+		return $total;
+	}
+
+	/**
 	 * course_lessons_meta_box_content function.
 	 *
 	 * @access public
@@ -589,6 +607,7 @@ class Sensei_Course {
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
+		$new_columns[ 'lessons-length' ] = _x( 'Lessons length', 'column name', 'woothemes-sensei' );
 
 		return $new_columns;
 	} // End add_column_headings()
@@ -640,6 +659,14 @@ class Sensei_Course {
 			case 'course-category':
 				$output = get_the_term_list( $id, 'course-category', '', ', ', '' );
 				if ( '' == $output ) {
+					$output = __( 'None', 'woothemes-sensei' );
+				} // End If Statement
+				echo $output;
+			break;
+
+			case 'lessons-length':
+				$output = $this->course_lessons_length( $id );
+				if ( 0 == $output ) {
 					$output = __( 'None', 'woothemes-sensei' );
 				} // End If Statement
 				echo $output;
