@@ -618,17 +618,17 @@ section.entry span.course-price {
   text-align: center;
   margin: 0 auto 1.618em; }
 
-.nav-next, .nav-prev {
+.sensei-nav-next, .sensei-nav-prev {
   width: auto !important; }
 
-.nav-next {
+.sensei-nav-next {
   float: right; }
-  .nav-next .meta-nav:before {
+  .sensei-nav-next .meta-nav:before {
     content: "\2192"; }
 
-.nav-prev {
+.sensei-nav-prev {
   float: left; }
-  .nav-prev .meta-nav:before {
+  .sensei-nav-prev .meta-nav:before {
     content: "\2190"; }
 
 /*-------------------------------------------------------------------------------------------*/
