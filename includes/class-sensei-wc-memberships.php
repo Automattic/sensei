@@ -248,9 +248,9 @@ class Sensei_WC_Memberships {
 		if ( ! wc_memberships_get_user_access_start_time( get_current_user_id(), 'view', array(
 			'lesson' => $post->ID,
 		) )
-			|| current_time( 'timestamp' ) < wc_memberships_get_user_access_start_time( get_current_user_id(), 'view', array(
+			|| current_time( 'timestamp', true ) < wc_memberships_get_user_access_start_time( get_current_user_id(), 'view', array(
 				'lesson' => $post->ID,
-			) ) ) {
+			) ), true ) {
 
 			remove_action( 'sensei_single_lesson_content_inside_after',  array( 'Sensei_Lesson', 'footer_quiz_call_to_action' ) );
 			remove_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'user_lesson_quiz_status_message' ), 20 );
@@ -284,9 +284,9 @@ class Sensei_WC_Memberships {
 		if ( ! wc_memberships_get_user_access_start_time( get_current_user_id(), 'view', array(
 			'course' => $post->ID,
 		) )
-			|| current_time( 'timestamp' ) < wc_memberships_get_user_access_start_time( get_current_user_id(), 'view', array(
+			|| current_time( 'timestamp', true ) < wc_memberships_get_user_access_start_time( get_current_user_id(), 'view', array(
 				'course' => $post->ID,
-			) ) ) {
+			) ), true ) {
 
 			remove_action( 'sensei_single_course_content_inside_before',  array( 'Sensei_Course', 'the_course_video' ), 40 );
 			remove_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_course_video' ), 40 );
