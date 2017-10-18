@@ -85,7 +85,12 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 */
 	public function __construct( $attributes, $content, $shortcode ) {
 		global $wp_query;
-		$attributes = shortcode_atts( array(), $attributes, $shortcode );
+		$attributes = shortcode_atts( array(
+            'number' => '10',
+            'status' => 'all',
+            'orderby' => 'title',
+            'order' => 'ASC'
+        ), $attributes, $shortcode );
 		$this->page_id = $wp_query->get_queried_object_id();
 		if ( ! isset( $attributes['status'] ) && $this->is_my_courses() ) {
 			$this->in_my_courses_page = true;
@@ -170,7 +175,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			}
 		}
 
-		if ( 'completed' == $this->status ) {
+		if ( 'complete' == $this->status ) {
 
 			$included_courses = $completed_ids;
 
