@@ -300,7 +300,6 @@ class Sensei_Settings_API {
 
         ?>
         <div id="woothemes-sensei" class="wrap <?php echo esc_attr($this->token); ?>">
-        <?php screen_icon('woothemes-sensei'); ?>
         <h1><?php echo esc_html($this->name); ?><?php if ('' != $this->settings_version) {
                 echo ' <span class="version">' . $this->settings_version . '</span>';
             } ?></h1>
