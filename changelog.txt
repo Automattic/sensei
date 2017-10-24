@@ -1,5 +1,57 @@
 *** Sensei Changelog ***
 
+2017.10.? - version 1.9.18
+
+* Fix: Can't preview draft lessons in draft course
+* Fix: Show Draft Lessons when Previewing course draft
+* Fix: Issue with lesson excerpts
+* Fix: Incorrect heading structure, Use h1s for headings on Module, Course and Lesson Order
+- Add: sensei_learner_admin_get_row_data Filter. Managing table columns on Managing learners
+* Fix: Learner Profiles: display correct url pattern when wp in custom folder. Learner Profiles Settings showing wrong learner URL Pattern when WP installation in custom location
+* Fix: Ordering courses using "menu_order" and Courses > Order Courses doesn't work. WC: Don't construct WC_Orders
+* Fix: Replace 'new WC_Order' with wc_get_order() function.
+* Fix: Course not showing in My Courses if order is manually Completed 
+* Fix: Simplify CSS for displaying answer feedback
+- Change purchase button text when a course is free. Change "purchase this course" for free products. Change "purchase this course" for free products
+* Fix: Link course to a single variation of a variable WooCommerce product.
+* Fix: Removed learner from Course comeback if see course single page
+* Fix: Scheduled lessons not added to course page. Scheduled lessons should be added to course page
+* Fix: Always show answers filter doesn't work for zero grade questions 
+* Fix: Single quotes in video embed HTML breaks on save
+* Fix: WP_Query not getting reset on My Courses page. Reset postdata after resetting $wp_query
+* Fix: Messaging issue on preview lessons. Correct the phrasing for lesson previews on Purchasable courses.
+- Add: Learner Bulk Actions: Make Learner search more flexible.
+- Add: filter sensei_send_message_link 
+* Fix: Learner Profiles can handle email-like usernames. 
+* Fix: Lesson: Allow Completing if Quiz has no questions
+* Fix: "Complete Lesson" button missing
+* Fix: Videos visible when prerequisites have not been completed  
+* Fix: Modification to users displayed in Analysis?
+* Fix: some of the columns to be sortable for Learners in Analysis overview
+* Fix: Weird html in shortcodes. Fixes excerpts in template to properly nest within paragraphs. 
+* Fix: New lesson: cannot assign to a module unless a draft is saved first. Lesson Admin: Populate modules on course change
+* Fix: Pagination not working on course archive front page
+* Fix: Featured course filter gives 404 on home page 
+* Fix: Multi Line Quiz responses displayed as HTML if saved and resumed
+* Fix: Can't delete answer feedback
+* Fix: Courses page sorting dropdown problems
+* Fix: Autocomplete processing virtual orders not working
+* Fix: "Free" Course filter displays courses linked to product variations  
+* Fix: Menu should not collapse when navigated to Messages
+* Fix: Quiz Multiline as HTML is saved for teacher as plaintext- 
+* Fix: Sensei/WC Variable product: Start courses only when their variation is purchased
+* Fix: issue preventing course author from syncing with lesson author
+* Fix: Update name of WooThemes Updater plugin in notices
+* Fix: Course Admin: Show the add lesson link even when the course has lessons
+* Fix: Unpublished products should never be purchasable1
+* Fix: issue with slashes in gap fill question answers
+* Fix: Lock down wp-admin access when editing post_type quiz.
+- Add: My Courses: Convert Tabs to filters
+* Fix: My Courses Pagination broken
+* Fix: Remove "All" filtering from settings
+* Fix: Preserve lesson order w/ modules when changing course author
+* And many more fixes and improvements
+
 2017.09.07 - version 1.9.17
 
 * Fix Add learner to course and complete course sends two duplicate emails
