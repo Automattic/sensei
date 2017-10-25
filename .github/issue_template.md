@@ -11,6 +11,9 @@
 #### What Happened Instead
 
 
+#### WordPress / Sensei version
+
+
 #### Browser / OS version
 
 
