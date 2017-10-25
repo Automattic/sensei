@@ -66,7 +66,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @var bool
 	 */
-	private $in_my_courses_page = false;
+	private $is_shortcode_initial_status_all = false;
 
 	/**
 	 * Current Page ID
@@ -85,9 +85,10 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 */
 	public function __construct( $attributes, $content, $shortcode ) {
 		global $wp_query;
-        if ( ! isset( $attributes['status'] ) && $this->is_my_courses() ) {
-            $this->in_my_courses_page = true;
-            // In My Courses page, let's overrride the setting.
+        $this->is_shortcode_initial_status_all = ! isset( $attributes['status'] ) || 'all' === $attributes['status'];
+        if ( $this->is_shortcode_initial_status_all && $wp_query->is_main_query() ) {
+            // Status all: We displayed tabs in the frontend, we might need to override the setting, as a user could
+            // have pressed a tab.
             if ( isset( $_GET[ self::MY_COURSES_STATUS_FILTER ] ) ) {
                 $course_filter_by_status = sanitize_text_field( $_GET[ self::MY_COURSES_STATUS_FILTER ] );
                 if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array( 'all', 'active', 'complete' ), true ) ) {
@@ -125,6 +126,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 	private function is_my_courses() {
         global $wp_query;
+
 		return $wp_query->is_page() && $wp_query->get_queried_object_id() === absint( Sensei()->settings->get( 'my_course_page' ) );
 	}
 
@@ -328,7 +330,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		// attach the toggle functionality
 		// don't show the toggle action if the user specified complete or active for this shortcode
-		if ( $this->in_my_courses_page || ! in_array( $this->status, array( 'active', 'complete' ) ) ) {
+		if ( $this->is_shortcode_initial_status_all ) {
 
 			add_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
 			add_action( 'wp_footer', array( $this, 'print_course_toggle_actions_inline_script' ), 90 );
