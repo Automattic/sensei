@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2017.10.? - version 1.9.18
+2017.11.01 - version 1.9.18
 
 * Fix: Can't preview draft lessons in draft course
 * Fix: Show Draft Lessons when Previewing course draft
