@@ -424,11 +424,11 @@ msgstr ""
 msgid "Date Registered"
 msgstr ""
 
-#: includes/class-sensei-analysis-overview-list-table.php:67, includes/class-sensei-course.php:1620, includes/shortcodes/class-sensei-shortcode-user-courses.php:432
+#: includes/class-sensei-analysis-overview-list-table.php:67, includes/class-sensei-course.php:1620, includes/shortcodes/class-sensei-shortcode-user-courses.php:434
 msgid "Active Courses"
 msgstr ""
 
-#: includes/class-sensei-analysis-overview-list-table.php:68, includes/class-sensei-course.php:1621, includes/shortcodes/class-sensei-shortcode-user-courses.php:433
+#: includes/class-sensei-analysis-overview-list-table.php:68, includes/class-sensei-course.php:1621, includes/shortcodes/class-sensei-shortcode-user-courses.php:435
 msgid "Completed Courses"
 msgstr ""
 
@@ -629,11 +629,11 @@ msgstr ""
 msgid "View results"
 msgstr ""
 
-#: includes/class-sensei-course.php:1593, includes/shortcodes/class-sensei-shortcode-user-courses.php:254, widgets/widget-woothemes-sensei-course-component.php:248
+#: includes/class-sensei-course.php:1593, includes/shortcodes/class-sensei-shortcode-user-courses.php:256, widgets/widget-woothemes-sensei-course-component.php:248
 msgid "You have no active courses."
 msgstr ""
 
-#: includes/class-sensei-course.php:1594, includes/shortcodes/class-sensei-shortcode-user-courses.php:235
+#: includes/class-sensei-course.php:1594, includes/shortcodes/class-sensei-shortcode-user-courses.php:237
 msgid "You have not completed any courses yet."
 msgstr ""
 
@@ -649,7 +649,7 @@ msgstr ""
 msgid "View & reply to private messages sent to your course & lesson teachers."
 msgstr ""
 
-#: includes/class-sensei-course.php:1644, includes/shortcodes/class-sensei-shortcode-user-courses.php:258
+#: includes/class-sensei-course.php:1644, includes/shortcodes/class-sensei-shortcode-user-courses.php:260
 msgid "Start a Course!"
 msgstr ""
 
@@ -3501,7 +3501,7 @@ msgstr ""
 msgid "You must be logged in to view the non-purchased courses. Click here to %slogin%s."
 msgstr ""
 
-#: includes/shortcodes/class-sensei-shortcode-user-courses.php:431
+#: includes/shortcodes/class-sensei-shortcode-user-courses.php:433
 msgid "All Courses"
 msgstr ""
 
