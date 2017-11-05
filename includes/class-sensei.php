@@ -313,7 +313,7 @@ class Sensei_Main {
 		// Setup post types.
 		$this->post_types = new Sensei_PostTypes();
 
-		// Lad the updates class
+		// Load the updates class
 		$this->updates = new Sensei_Updates( $this );
 
 		// Load Course Results Class
