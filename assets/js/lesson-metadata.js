@@ -1,4 +1,4 @@
-jQuery(document).ready( function($) {
+jQuery(document).ready( function() {
 
 	var file_frame;
 
@@ -13,7 +13,7 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery.fn.exists = function() {
 		return this.length>0;
-	}
+	};
 
 	/**
 	 * Validation of input fields - Add Course.
@@ -21,14 +21,14 @@ jQuery(document).ready( function($) {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	jQuery.fn.validateCourseInput = function( action ) {
- 		// Check for empty course titles
- 	    if ( jQuery( '#course-title' ).val().replace(/^\s+|\s+$/g, "").length != 0 ) {
- 	    	return true;
- 	    } else {
- 	    	return false;
- 	    }
- 	}
+	jQuery.fn.validateCourseInput = function() {
+		// Check for empty course titles
+		if ( jQuery( '#course-title' ).val().replace(/^\s+|\s+$/g, '').length != 0 ) {
+			return true;
+		} else {
+			return false;
+		}
+	};
 
 	/**
 	 * Validation of input fields - Add, Edit Question.
@@ -37,27 +37,27 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery.fn.validateQuestionInput = function( action, jqueryObject ) {
- 		// Validate Actions
- 		if ( 'add' == action ) {
- 			// Check for empty questions
- 	    	if ( jQuery( '#add_question' ).val().replace(/^\s+|\s+$/g, "").length != 0 ) {
- 	    		return true;
- 	    	} else {
- 	    		return false;
- 	    	}
- 	    } else if ( 'edit' == action ) {
- 			// Check for empty questions
- 			var tableRowId = jqueryObject.closest('tr').prev('tr').find('td:first').text();
- 			if ( jQuery( '#question_' + tableRowId ).val().replace(/^\s+|\s+$/g, "").length != 0 ) {
- 	    		return true;
- 	    	} else {
- 	    		return false;
- 	    	}
- 	    } else {
- 			// Default
- 			return false
- 		}
- 	}
+		// Validate Actions
+		if ( 'add' == action ) {
+			// Check for empty questions
+			if ( jQuery( '#add_question' ).val().replace(/^\s+|\s+$/g, '').length != 0 ) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if ( 'edit' == action ) {
+			// Check for empty questions
+			var tableRowId = jqueryObject.closest('tr').prev('tr').find('td:first').text();
+			if ( jQuery( '#question_' + tableRowId ).val().replace(/^\s+|\s+$/g, '').length != 0 ) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			// Default
+			return false;
+		}
+	};
 
 	/**
 	 * Sets all Edit Question areas in the Questions table to hidden.
@@ -66,21 +66,21 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery.fn.resetQuestionTable = function() {
- 	    jQuery( 'tr.question-quick-edit' ).each( function() {
+		jQuery( 'tr.question-quick-edit' ).each( function() {
 			if ( !jQuery(this).hasClass( 'hidden' ) ) {
 				jQuery(this).addClass('hidden');
 			}
 		});
- 	}
+	};
 
- 	/**
+	/**
 	 * Resets the values of the Add Question form to nothing.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
- 	jQuery.fn.resetAddQuestionForm = function() {
- 	    jQuery( '#add-new-question' ).find('div').find('input').each( function() {
+	jQuery.fn.resetAddQuestionForm = function() {
+		jQuery( '#add-new-question' ).find('div').find('input').each( function() {
 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
 				jQuery(this).attr( 'value', '' );
 			} // End If Statement
@@ -88,20 +88,20 @@ jQuery(document).ready( function($) {
 		jQuery( '#add-new-question' ).find('div').find('textarea').each( function() {
 			jQuery(this).attr( 'value', '' );
 		});
- 	}
+	};
 
- 	/**
+	/**
 	 * Checks if the quiz can be automatically graded
 	 *
 	 * @since 1.3.0
 	 * @access public
 	 */
- 	jQuery.fn.checkQuizGradeType = function( latest_questionType ) {
+	jQuery.fn.checkQuizGradeType = function( latest_questionType ) {
 
- 		// Fetch all current question types
- 		var questionType;
- 		var types = []
- 		jQuery( '#add-question-metadata > table > tbody > tr input.question_type' ).each( function() {
+		// Fetch all current question types
+		var questionType;
+		var types = [];
+		jQuery( '#add-question-metadata > table > tbody > tr input.question_type' ).each( function() {
 			questionType = jQuery( this ).val();
 			types.push( questionType );
 		});
@@ -114,30 +114,30 @@ jQuery(document).ready( function($) {
 		var currentType;
 		var disableAuto = false;
 		for( var i = 0; i < types.length; i++ ) {
-		    currentType = types[i];
+			currentType = types[i];
 
-		    if( ! disableAuto ) {
-			    switch ( currentType ) {
-					case 'multiple-choice':
-						disableAuto = false;
+			if( ! disableAuto ) {
+				switch ( currentType ) {
+				case 'multiple-choice':
+					disableAuto = false;
 					break;
-					case 'boolean':
-						disableAuto = false;
+				case 'boolean':
+					disableAuto = false;
 					break;
-					case 'gap-fill':
-						disableAuto = false;
+				case 'gap-fill':
+					disableAuto = false;
 					break;
-					case 'multi-line':
-						disableAuto = true;
+				case 'multi-line':
+					disableAuto = true;
 					break;
-					case 'single-line':
-						disableAuto = true;
+				case 'single-line':
+					disableAuto = true;
 					break;
-					case 'file-upload':
-						disableAuto = true;
+				case 'file-upload':
+					disableAuto = true;
 					break;
-					default :
-						disableAuto = false;
+				default :
+					disableAuto = false;
 					break;
 				} // End Switch Statement
 			}
@@ -146,112 +146,112 @@ jQuery(document).ready( function($) {
 
 		// Save quiz grade type
 		jQuery.fn.saveQuizGradeType();
- 	}
+	};
 
- 	/**
+	/**
 	 * Updates the Number of Questions counter.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
- 	jQuery.fn.updateQuestionCount = function( increment, operator ) {
- 		// Get current value
- 		var currentValue = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
- 		var newValue = currentValue;
- 		increment = parseInt( increment );
- 		// Increment or Decrement
- 		if ( operator == '-' ) {
- 			newValue = currentValue - increment;
- 		} else {
- 			newValue = currentValue + increment;
- 		}
- 		// Set new value
- 	    jQuery( '#question_counter' ).attr( 'value', newValue );
- 	    if ( newValue > 0 ) {
- 	    	if ( !jQuery( '#no-questions-message' ).hasClass( 'hidden' ) ) {
- 	    		jQuery( '#no-questions-message' ).addClass( 'hidden' );
- 	    	}
- 	    } else {
- 	    	jQuery( '#no-questions-message' ).removeClass( 'hidden' );
- 	    }
+	jQuery.fn.updateQuestionCount = function( increment, operator ) {
+		// Get current value
+		var currentValue = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+		var newValue = currentValue;
+		increment = parseInt( increment );
+		// Increment or Decrement
+		if ( operator == '-' ) {
+			newValue = currentValue - increment;
+		} else {
+			newValue = currentValue + increment;
+		}
+		// Set new value
+		jQuery( '#question_counter' ).attr( 'value', newValue );
+		if ( newValue > 0 ) {
+			if ( !jQuery( '#no-questions-message' ).hasClass( 'hidden' ) ) {
+				jQuery( '#no-questions-message' ).addClass( 'hidden' );
+			}
+		} else {
+			jQuery( '#no-questions-message' ).removeClass( 'hidden' );
+		}
 
- 	    jQuery.fn.updateQuestionRows();
- 	}
+		jQuery.fn.updateQuestionRows();
+	};
 
- 	/**
- 	 * Save quiz grade type
- 	 *
- 	 * @since 1.3.0
- 	 * access public
- 	 */
- 	jQuery.fn.saveQuizGradeType = function() {
+	/**
+	 * Save quiz grade type
+	 *
+	 * @since 1.3.0
+	 * access public
+	 */
+	jQuery.fn.saveQuizGradeType = function() {
 
- 		var quiz_grade_type = jQuery( 'input#quiz_grade_type' ).is( ':checked' ) ? 'auto' : 'manual';
+		var quiz_grade_type = jQuery( 'input#quiz_grade_type' ).is( ':checked' ) ? 'auto' : 'manual';
 
- 		var dataToPost = 'quiz_grade_type' + '=' + quiz_grade_type;
- 		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+		var dataToPost = 'quiz_grade_type' + '=' + quiz_grade_type;
+		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
- 		jQuery.post(
+		jQuery.post(
 			ajaxurl,
 			{
 				action : 'lesson_update_grade_type',
 				lesson_update_grade_type_nonce : woo_localized_data.lesson_update_grade_type_nonce,
 				data : dataToPost
 			},
-			function( response ) {}
+			function () {}
 		);
 		return false;
- 	}
+	};
 
- 	/**
- 	 * Save quiz question order
- 	 *
- 	 * @since 1.5.0
- 	 * access public
- 	 */
- 	jQuery.fn.saveQuestionOrder = function( question_order ) {
+	/**
+	 * Save quiz question order
+	 *
+	 * @since 1.5.0
+	 * access public
+	 */
+	jQuery.fn.saveQuestionOrder = function( question_order ) {
 
- 		var dataToPost = 'question_order' + '=' + question_order;
- 		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+		var dataToPost = 'question_order' + '=' + question_order;
+		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
- 		jQuery.post(
+		jQuery.post(
 			ajaxurl,
 			{
 				action : 'lesson_update_question_order',
 				lesson_update_question_order_nonce : woo_localized_data.lesson_update_question_order_nonce,
 				data : dataToPost
 			},
-			function( response ) {}
+			function() {}
 		);
 		return false;
- 	}
+	};
 
- 	/**
- 	 * Save random question order for quiz
- 	 *
- 	 * @since 1.5.0
- 	 * access public
- 	 */
- 	jQuery.fn.saveQuestionOrderRandom = function() {
+	/**
+	 * Save random question order for quiz
+	 *
+	 * @since 1.5.0
+	 * access public
+	 */
+	jQuery.fn.saveQuestionOrderRandom = function() {
 
- 		var random_question_order = jQuery( 'input#random_question_order' ).is( ':checked' ) ? 'yes' : 'no';
+		var random_question_order = jQuery( 'input#random_question_order' ).is( ':checked' ) ? 'yes' : 'no';
 
- 		var dataToPost = 'random_question_order' + '=' + random_question_order;
- 		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+		var dataToPost = 'random_question_order' + '=' + random_question_order;
+		dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
- 		jQuery.post(
+		jQuery.post(
 			ajaxurl,
 			{
 				action : 'lesson_update_question_order_random',
 				lesson_update_question_order_random_nonce : woo_localized_data.lesson_update_question_order_random_nonce,
 				data : dataToPost
 			},
-			function( response ) {}
+			function() {}
 		);
 		return false;
- 	}
+	};
 
- 	/**
+	/**
 	 * Reset question numbers and row highlighting
 	 *
 	 * @since 1.5.0
@@ -288,7 +288,7 @@ jQuery(document).ready( function($) {
 			}
 
 		});
-	}
+	};
 
 	/**
 	 * Update question order input field
@@ -298,7 +298,7 @@ jQuery(document).ready( function($) {
 	jQuery.fn.updateQuestionOrder = function() {
 		var orderString = '';
 
-		jQuery( '#sortable-questions' ).find( 'input.row_question_id' ).each( function ( i, e ) {
+		jQuery( '#sortable-questions' ).find( 'input.row_question_id' ).each( function ( i ) {
 			if ( i > 0 ) { orderString += ','; }
 			orderString += jQuery( this ).val();
 		});
@@ -306,7 +306,7 @@ jQuery(document).ready( function($) {
 		jQuery( 'input#question-order' ).attr( 'value', orderString );
 
 		jQuery.fn.saveQuestionOrder( orderString );
-	}
+	};
 
 	/**
 	 * Upload media file to questions
@@ -332,7 +332,7 @@ jQuery(document).ready( function($) {
 
 		// When a file is selected, run a callback.
 		file_frame.on( 'select', function() {
-			attachment = file_frame.state().get('selection').first().toJSON();
+			var attachment = file_frame.state().get('selection').first().toJSON();
 			jQuery( '#' + field_id ).val( attachment.id );
 
 			var filetype = attachment.type;
@@ -365,7 +365,7 @@ jQuery(document).ready( function($) {
 
 		// Open the modal
 		file_frame.open();
-	}
+	};
 
 	jQuery.fn.deleteQuestionMedia = function( button ) {
 		var button_id = button.attr('id');
@@ -382,7 +382,7 @@ jQuery(document).ready( function($) {
 
 		jQuery( '#' + add_button_id ).text( woo_localized_data.add_file );
 		button.addClass( 'hidden' );
-	}
+	};
 
 	/**
 	 * Update answer order input field
@@ -393,7 +393,7 @@ jQuery(document).ready( function($) {
 		var answer_id = '';
 		var orderString = '';
 
-		answer_parent.find( 'input.question_answer' ).each( function ( i, e ) {
+		answer_parent.find( 'input.question_answer' ).each( function ( i ) {
 			answer_id = jQuery( this ).attr( 'rel' );
 			if( '' != answer_id ) {
 				if ( i > 0 ) { orderString += ','; }
@@ -402,27 +402,27 @@ jQuery(document).ready( function($) {
 		});
 
 		answer_parent.find( 'input.answer_order' ).attr( 'value', orderString );
-	}
+	};
 
- 	/**
+	/**
 	 * JS version of PHP htmlentities.
 	 *
 	 * @since 1.0.8
 	 * @access public
 	 */
- 	jQuery.fn.htmlentities = function( str ) {
- 		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-	}
+	jQuery.fn.htmlentities = function( str ) {
+		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	};
 
 	jQuery.fn.ucwords = function( str ) {
 		str = str.toLowerCase();
 		str = str.replace( '-', ' ' );
 		str = str.replace( 'boolean', 'True/False' );
-	    return str.replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
-	        function($1){
-	            return $1.toUpperCase();
-	        });
-	}
+		return str.replace(/(^([a-zA-Z{M}]))|([ -][a-zA-Z{M}])/g,
+			function($1){
+				return $1.toUpperCase();
+			});
+	};
 
 	jQuery.fn.filterExistingQuestions = function( page ) {
 		var dataToPost = '';
@@ -493,15 +493,15 @@ jQuery(document).ready( function($) {
 			}
 		);
 		return false;
-	}
+	};
 
 	jQuery.fn.scrollToElement = function( target ) {
-	    var topoffset = 30;
-	    var speed = 800;
-	    var destination = jQuery( target ).offset().top - topoffset;
-	    jQuery( 'html:not(:animated),body:not(:animated)' ).animate( { scrollTop: destination}, speed );
-	    return false;
-	}
+		var topoffset = 30;
+		var speed = 800;
+		var destination = jQuery( target ).offset().top - topoffset;
+		jQuery( 'html:not(:animated),body:not(:animated)' ).animate( { scrollTop: destination}, speed );
+		return false;
+	};
 
 	/***************************************************************************************************
 	 * 	2 - Lesson Quiz Functions.
@@ -545,26 +545,26 @@ jQuery(document).ready( function($) {
 	 ***************************************************************************************************/
 
 	// Lessons Write Panel
-	if ( jQuery( '#lesson-complexity-options' ).exists() ) { jQuery( '#lesson-complexity-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) { jQuery( '#lesson-prerequisite-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).select2({width:"resolve"}); }
-    if ( jQuery( 'select#course-woocommerce-product-options' ).exists() ) { jQuery( 'select#course-woocommerce-product-options' ).select2({width:"resolve"}); }
+	if ( jQuery( '#lesson-complexity-options' ).exists() ) { jQuery( '#lesson-complexity-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) { jQuery( '#lesson-prerequisite-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).select2({width:'resolve'}); }
+	if ( jQuery( 'select#course-woocommerce-product-options' ).exists() ) { jQuery( 'select#course-woocommerce-product-options' ).select2({width:'resolve'}); }
 
 	// Quiz edit panel
-	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#add-question-category-options' ).exists() ) { jQuery( '#add-question-category-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).select2({width:"resolve"}); }
+	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#add-question-category-options' ).exists() ) { jQuery( '#add-question-category-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).select2({width:'resolve'}); }
 
 	// Courses Write Panel
-	if ( jQuery( '#course-wc-product #course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) { jQuery( '#add-multiple-question-category-options' ).select2({width:"resolve"}); }
+	if ( jQuery( '#course-wc-product #course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) { jQuery( '#add-multiple-question-category-options' ).select2({width:'resolve'}); }
 
 	// Sensei Settings Panel
 	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {
 		if ( !jQuery( this ).hasClass( 'range-input' ) ) {
-			jQuery( this ).select2({width:"resolve"});
+			jQuery( this ).select2({width:'resolve'});
 		} // End If Statement
 	});
 
@@ -606,41 +606,41 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery( '#lesson-course-details p' ).on( 'click', 'a.lesson_course_save', function() {
-	 	// Validate Inputs
-	 	var validInput = jQuery.fn.validateCourseInput();
+		// Validate Inputs
+		var validInput = jQuery.fn.validateCourseInput();
 		if ( validInput ) {
 
-	 			// Setup data
-	 			var dataToPost = '';
-	 			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
-	 			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
-	 			dataToPost += '&course_category' + '=' + jQuery( '#course-category-options' ).val();
-	 			dataToPost += '&course_title' + '=' + encodeURIComponent( jQuery( '#course-title' ).attr( 'value' ) );
-	 			dataToPost += '&course_content' + '=' + encodeURIComponent( jQuery( '#course-content' ).attr( 'value' ) );
-	 			dataToPost += '&action=add';
-	 			// Perform the AJAX call.
-	 			jQuery.post(
-	 				ajaxurl,
-	 				{
-	 					action : 'lesson_add_course',
-	 					lesson_add_course_nonce : woo_localized_data.lesson_add_course_nonce,
-	 					data : dataToPost
-	 				},
-	 				function( response ) {
+			// Setup data
+			var dataToPost = '';
+			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
+			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
+			dataToPost += '&course_category' + '=' + jQuery( '#course-category-options' ).val();
+			dataToPost += '&course_title' + '=' + encodeURIComponent( jQuery( '#course-title' ).attr( 'value' ) );
+			dataToPost += '&course_content' + '=' + encodeURIComponent( jQuery( '#course-content' ).attr( 'value' ) );
+			dataToPost += '&action=add';
+			// Perform the AJAX call.
+			jQuery.post(
+				ajaxurl,
+				{
+					action : 'lesson_add_course',
+					lesson_add_course_nonce : woo_localized_data.lesson_add_course_nonce,
+					data : dataToPost
+				},
+				function( response ) {
 
-	 					// Check for a course id
-	 					if ( 0 < response ) {
-	 						jQuery( '#lesson-course-actions' ).show();
-							jQuery( '#lesson-course-details' ).addClass( 'hidden' );
-							jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(  jQuery( '#course-title' ).attr( 'value' ) ) );
-							jQuery( '#lesson-course-options' ).val( response).trigger("change");;
-	 					} else {
-	 						// TODO - course creation fail message
-	 					}
-	 				}
-	 			);
-	 			return false; // TODO - move this below the next bracket when doing the ajax loader
-	 	//});
+					// Check for a course id
+					if ( 0 < response ) {
+						jQuery( '#lesson-course-actions' ).show();
+						jQuery( '#lesson-course-details' ).addClass( 'hidden' );
+						jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(  jQuery( '#course-title' ).attr( 'value' ) ) );
+						jQuery( '#lesson-course-options' ).val( response).trigger('change');
+					} else {
+						// TODO - course creation fail message
+					}
+				}
+			);
+			return false; // TODO - move this below the next bracket when doing the ajax loader
+		//});
 		} else {
 			jQuery( '#course-title' ).focus();
 			// TODO - add error message
@@ -671,24 +671,24 @@ jQuery(document).ready( function($) {
 		jQuery( '.add_question_random_order' ).hide();
 
 		switch ( questionType ) {
-			case 'multiple-choice':
-				jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
-				jQuery( '.add_question_random_order' ).show();
+		case 'multiple-choice':
+			jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).show();
+			jQuery( '.add_question_random_order' ).show();
 			break;
-			case 'boolean':
-				jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).show();
+		case 'boolean':
+			jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).show();
 			break;
-			case 'gap-fill':
-				jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).show();
+		case 'gap-fill':
+			jQuery( '#add-new-question' ).find( 'div.question_gapfill_fields' ).show();
 			break;
-			case 'multi-line':
-				jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).show();
+		case 'multi-line':
+			jQuery( '#add-new-question' ).find( 'div.question_multiline_fields' ).show();
 			break;
-			case 'single-line':
-				jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).show();
+		case 'single-line':
+			jQuery( '#add-new-question' ).find( 'div.question_singleline_fields' ).show();
 			break;
-			case 'file-upload':
-				jQuery( '#add-new-question' ).find( 'div.question_fileupload_fields' ).show();
+		case 'file-upload':
+			jQuery( '#add-new-question' ).find( 'div.question_fileupload_fields' ).show();
 			break;
 		} // End Switch Statement
 	});
@@ -704,8 +704,8 @@ jQuery(document).ready( function($) {
 		var questionId = jQuery(this).closest('tr').next('tr').find('.question_original_counter').text();
 		jQuery( '#add-question-actions button.add_question_answer' ).removeClass('hidden');
 
-	 	jQuery.fn.resetAddQuestionForm();
-	 	jQuery.fn.resetQuestionTable();
+		jQuery.fn.resetAddQuestionForm();
+		jQuery.fn.resetQuestionTable();
 
 		jQuery(this).closest('tr').next('tr').removeClass('hidden');
 		jQuery( '#question_' + questionId ).focus();
@@ -730,129 +730,130 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-new-question' ).on( 'click', 'a.add_question_save', function() {
 		var dataToPost = '';
+		var questionGrade = '';
 		var questionType = 'multiple-choice';
 		var questionCategory = '';
 		var radioValue = 'true';
-	 	// Validate Inputs
+		// Validate Inputs
 		var validInput = jQuery.fn.validateQuestionInput( 'add', jQuery(this) );
 		if ( validInput ) {
 			// Setup data to post
-	 		dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
-	 		dataToPost += '&action=add';
+			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+			dataToPost += '&action=add';
 			if ( jQuery( '#add-question-type-options' ).val() != '' ) {
-	 			questionType = jQuery( '#add-question-type-options' ).val();
-	 		} // End If Statement
+				questionType = jQuery( '#add-question-type-options' ).val();
+			} // End If Statement
 
-	 		if ( jQuery( '#add-question-category-options' ).val() != '' ) {
-	 			questionCategory = jQuery( '#add-question-category-options' ).val();
-	 		} // End If Statement
+			if ( jQuery( '#add-question-category-options' ).val() != '' ) {
+				questionCategory = jQuery( '#add-question-category-options' ).val();
+			} // End If Statement
 
-	 		var divFieldsClass = 'question_default_fields';
-	 		switch ( questionType ) {
-				case 'multiple-choice':
-					divFieldsClass = 'question_default_fields';
+			var divFieldsClass = 'question_default_fields';
+			switch ( questionType ) {
+			case 'multiple-choice':
+				divFieldsClass = 'question_default_fields';
 				break;
-				case 'boolean':
-					divFieldsClass = 'question_boolean_fields';
+			case 'boolean':
+				divFieldsClass = 'question_boolean_fields';
 				break;
-				case 'gap-fill':
-					divFieldsClass = 'question_gapfill_fields';
+			case 'gap-fill':
+				divFieldsClass = 'question_gapfill_fields';
 				break;
-				case 'multi-line':
-					divFieldsClass = 'question_multiline_fields';
+			case 'multi-line':
+				divFieldsClass = 'question_multiline_fields';
 				break;
-				case 'single-line':
-					divFieldsClass = 'question_singleline_fields';
+			case 'single-line':
+				divFieldsClass = 'question_singleline_fields';
 				break;
-				case 'file-upload':
-					divFieldsClass = 'question_fileupload_fields';
+			case 'file-upload':
+				divFieldsClass = 'question_fileupload_fields';
 				break;
 			} // End Switch Statement
 
 			// Handle Required Fields
 			jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'input' ).each( function() {
-	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
-	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
-	 			} // End If Statement
- 			});
+				if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
+					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+				} // End If Statement
+			});
 
 			// Handle textarea required field
 			if ( jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).val() != '' ) {
-	 			dataToPost += '&' + jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).val() );
-	 		} // End If Statement
+				dataToPost += '&' + jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add-new-question' ).find( 'div.question_required_fields' ).find( 'textarea' ).val() );
+			} // End If Statement
 
-	 		// Handle Question Input Fields
-	 		var radioCount = 0;
-	 		jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).find( 'input' ).each( function() {
-	 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
-	 				// Only get the selected radio button
-	 				if ( radioCount == 0 ) {
-	 					radioValue = jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
-	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( radioValue );
-	 					radioCount++;
-	 				} // End If Statement
- 				} else {
- 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
- 				} // End If Statement
-	 		});
-	 		// Handle Question Textarea Fields
-	 		if ( jQuery( '#add_question_right_answer_essay' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
-	 			dataToPost += '&' + jQuery( '#add_question_right_answer_essay' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_essay' ).val() );
-	 		} // End If Statement
- 			if ( jQuery( '#add_question_right_answer_multiline' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
- 				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_multiline' ).val() );
-	 		} // End If Statement
-	 		dataToPost += '&' + 'question_type' + '=' + questionType;
-	 		dataToPost += '&' + 'question_category' + '=' + questionCategory;
-	 		questionGrade = jQuery( '#add-question-grade' ).val();
-	 		dataToPost += '&' + 'question_grade' + '=' + questionGrade;
+			// Handle Question Input Fields
+			var radioCount = 0;
+			jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).find( 'input' ).each( function() {
+				if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
+					// Only get the selected radio button
+					if ( radioCount == 0 ) {
+						radioValue = jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' );
+						dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( radioValue );
+						radioCount++;
+					} // End If Statement
+				} else {
+					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+				} // End If Statement
+			});
+			// Handle Question Textarea Fields
+			if ( jQuery( '#add_question_right_answer_essay' ).val() != '' && divFieldsClass == 'question_essay_fields' ) {
+				dataToPost += '&' + jQuery( '#add_question_right_answer_essay' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_essay' ).val() );
+			} // End If Statement
+			if ( jQuery( '#add_question_right_answer_multiline' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
+				dataToPost += '&' + jQuery( '#add_question_right_answer_multiline' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( '#add_question_right_answer_multiline' ).val() );
+			} // End If Statement
+			dataToPost += '&' + 'question_type' + '=' + questionType;
+			dataToPost += '&' + 'question_category' + '=' + questionCategory;
+			questionGrade = jQuery( '#add-question-grade' ).val();
+			dataToPost += '&' + 'question_grade' + '=' + questionGrade;
 
-	 		var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
-	 		dataToPost += '&' + 'question_count' + '=' + questionCount;
+			var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+			dataToPost += '&' + 'question_count' + '=' + questionCount;
 
-	 		var answer_order = jQuery( '#add-new-question' ).find( '.answer_order' ).attr( 'value' );
- 			dataToPost += '&' + 'answer_order' + '=' + answer_order;
+			var answer_order = jQuery( '#add-new-question' ).find( '.answer_order' ).attr( 'value' );
+			dataToPost += '&' + 'answer_order' + '=' + answer_order;
 
- 			var question_media = jQuery( '#add-new-question' ).find( '.question_media' ).attr( 'value' );
- 			dataToPost += '&' + 'question_media' + '=' + question_media;
+			var question_media = jQuery( '#add-new-question' ).find( '.question_media' ).attr( 'value' );
+			dataToPost += '&' + 'question_media' + '=' + question_media;
 
- 			if ( '' != jQuery( 'div#add-new-question' ).find( 'div.' + divFieldsClass ).find( '.answer_feedback' ).exists() ) {
-	 			var answer_feedback = jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).find( '.answer_feedback' ).attr( 'value' );
-	 			dataToPost += '&' + 'answer_feedback' + '=' + encodeURIComponent( answer_feedback );
-	 		}
+			if ( '' != jQuery( 'div#add-new-question' ).find( 'div.' + divFieldsClass ).find( '.answer_feedback' ).exists() ) {
+				var answer_feedback = jQuery( '#add-new-question' ).find( 'div.' + divFieldsClass ).find( '.answer_feedback' ).attr( 'value' );
+				dataToPost += '&' + 'answer_feedback' + '=' + encodeURIComponent( answer_feedback );
+			}
 
- 			var random_order = 'no';
- 			if ( jQuery( 'div#add-new-question' ).find( '.random_order' ).is(':checked') ) {
- 				random_order = 'yes'
- 			}
- 			dataToPost += '&' + 'random_order' + '=' + random_order;
+			var random_order = 'no';
+			if ( jQuery( 'div#add-new-question' ).find( '.random_order' ).is(':checked') ) {
+				random_order = 'yes';
+			}
+			dataToPost += '&' + 'random_order' + '=' + random_order;
 
-	 		// Perform the AJAX call.
-	 		jQuery.post(
-	 		    ajaxurl,
-	 		    {
-	 		    	action : 'lesson_update_question',
-	 		    	lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
-	 		    	data : dataToPost
-	 		    },
-	 		    function( response ) {
-	 		    	// Check for a valid response
-	 		    	if ( response ) {
-	 		    		jQuery.fn.updateQuestionCount( 1, '+' );
-	 		    		jQuery( '#add-question-metadata table' ).append( response );
-			    		jQuery.fn.resetAddQuestionForm();
-			 			jQuery.fn.checkQuizGradeType( questionType );
+			// Perform the AJAX call.
+			jQuery.post(
+				ajaxurl,
+				{
+					action : 'lesson_update_question',
+					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
+					data : dataToPost
+				},
+				function( response ) {
+					// Check for a valid response
+					if ( response ) {
+						jQuery.fn.updateQuestionCount( 1, '+' );
+						jQuery( '#add-question-metadata table' ).append( response );
+						jQuery.fn.resetAddQuestionForm();
+						jQuery.fn.checkQuizGradeType( questionType );
 
-			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
-			 			max_questions++;
-			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+						var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+						max_questions++;
+						jQuery( '#show_questions' ).attr( 'max', max_questions );
 
-			 			jQuery.fn.scrollToElement( '#lesson-quiz' );
-	 		    	}
-	 		    }
-	 		);
-	 		return false;
-	 	} else {
+						jQuery.fn.scrollToElement( '#lesson-quiz' );
+					}
+				}
+			);
+			return false;
+		} else {
 			jQuery( '#add_question' ).focus();
 		}
 	});
@@ -865,65 +866,65 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery( '#add-new-question' ).on( 'click', 'a.add_multiple_save', function() {
 		var dataToPost = '';
-	 	var questionCategory = '';
-	 	var questionNumber = 0;
+		var questionCategory = '';
+		var questionNumber = 0;
 
-	 	dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+		dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
-	 	if ( jQuery( '#add-multiple-question-count' ).val() != '' ) {
- 			questionNumber = parseInt( jQuery( '#add-multiple-question-count' ).val() );
- 		} // End If Statement
- 		dataToPost += '&' + 'question_number' + '=' + questionNumber;
+		if ( jQuery( '#add-multiple-question-count' ).val() != '' ) {
+			questionNumber = parseInt( jQuery( '#add-multiple-question-count' ).val() );
+		} // End If Statement
+		dataToPost += '&' + 'question_number' + '=' + questionNumber;
 
-	 	var maxAllowed = parseInt( jQuery( '#add-multiple-question-count' ).attr( 'max' ) );
+		var maxAllowed = parseInt( jQuery( '#add-multiple-question-count' ).attr( 'max' ) );
 
-	 	// Only allow submission if selected number is not greater than the amount of questions in the category
-	 	if( questionNumber > maxAllowed ) {
-	 		alert( woo_localized_data.too_many_for_cat );
-	 		jQuery( '#add-multiple-question-count' ).focus();
-	 		return false;
-	 	}
+		// Only allow submission if selected number is not greater than the amount of questions in the category
+		if( questionNumber > maxAllowed ) {
+			alert( woo_localized_data.too_many_for_cat );
+			jQuery( '#add-multiple-question-count' ).focus();
+			return false;
+		}
 
 		if ( jQuery( '#add-multiple-question-category-options' ).val() != '' ) {
- 			questionCategory = jQuery( '#add-multiple-question-category-options' ).val();
- 		} // End If Statement
- 		dataToPost += '&' + 'question_category' + '=' + questionCategory;
+			questionCategory = jQuery( '#add-multiple-question-category-options' ).val();
+		} // End If Statement
+		dataToPost += '&' + 'question_category' + '=' + questionCategory;
 
- 		var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
- 		dataToPost += '&' + 'question_count' + '=' + questionCount;
+		var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+		dataToPost += '&' + 'question_count' + '=' + questionCount;
 
- 		if( questionCategory && questionNumber ) {
-	 		// Perform the AJAX call.
-	 		jQuery.post(
-	 		    ajaxurl,
-	 		    {
-	 		    	action : 'lesson_add_multiple_questions',
-	 		    	lesson_add_multiple_questions_nonce : woo_localized_data.lesson_add_multiple_questions_nonce,
-	 		    	data : dataToPost
-	 		    },
-	 		    function( response ) {
-	 		    	// Check for a valid response
-	 		    	if ( response ) {
+		if( questionCategory && questionNumber ) {
+			// Perform the AJAX call.
+			jQuery.post(
+				ajaxurl,
+				{
+					action : 'lesson_add_multiple_questions',
+					lesson_add_multiple_questions_nonce : woo_localized_data.lesson_add_multiple_questions_nonce,
+					data : dataToPost
+				},
+				function( response ) {
+					// Check for a valid response
+					if ( response ) {
 						jQuery( '#add-multiple-question-category-options' ).val('');
 						jQuery( '#add-multiple-question-count' ).val('1');
 
-	 		    		jQuery.fn.updateQuestionCount( questionNumber, '+' );
-	 		    		jQuery( '#add-question-metadata table' ).append( response );
+						jQuery.fn.updateQuestionCount( questionNumber, '+' );
+						jQuery( '#add-question-metadata table' ).append( response );
 
-			    		jQuery.fn.updateQuestionOrder();
+						jQuery.fn.updateQuestionOrder();
 
-			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
-			 			max_questions += questionNumber;
-			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+						var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+						max_questions += questionNumber;
+						jQuery( '#show_questions' ).attr( 'max', max_questions );
 
-			 			jQuery.fn.scrollToElement( '#lesson-quiz' );
-	 		    	}
-	 		    }
-	 		);
-	 		return false;
-	 	} else {
-	 		jQuery( '#add-multiple-question-category-options' ).focus();
-	 	}
+						jQuery.fn.scrollToElement( '#lesson-quiz' );
+					}
+				}
+			);
+			return false;
+		} else {
+			jQuery( '#add-multiple-question-category-options' ).focus();
+		}
 
 	});
 
@@ -934,132 +935,134 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_table_save', function() {
-	 	var dataToPost = '';
-	 	var tableRowId = '';
-	 	var validInput = jQuery.fn.validateQuestionInput( 'edit', jQuery(this) );
+		var dataToPost = '';
+		var tableRowId = '';
+		var questionType;
+		var questionGrade;
+		var validInput = jQuery.fn.validateQuestionInput( 'edit', jQuery(this) );
 		if ( validInput ) {
- 			// Setup the data to post
- 			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
- 			dataToPost += '&action=save';
- 			jQuery( this ).closest( 'td' ).children( 'input' ).each( function() {
- 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
- 			});
- 			tableRowId = jQuery( this ).closest('td').find('span.question_original_counter').text();
- 			if ( jQuery( this ).closest('td').find( 'input.question_type' ).val() != '' ) {
-	 			questionType = jQuery( this ).closest('td').find( 'input.question_type' ).val();
-	 		} // End If Statement
-	 		var divFieldsClass = 'question_default_fields';
-	 		switch ( questionType ) {
-				case 'multiple-choice':
-					divFieldsClass = 'question_default_fields';
+			// Setup the data to post
+			dataToPost += 'quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
+			dataToPost += '&action=save';
+			jQuery( this ).closest( 'td' ).children( 'input' ).each( function() {
+				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+			});
+			tableRowId = jQuery( this ).closest('td').find('span.question_original_counter').text();
+			if ( jQuery( this ).closest('td').find( 'input.question_type' ).val() != '' ) {
+				questionType = jQuery( this ).closest('td').find( 'input.question_type' ).val();
+			} // End If Statement
+			var divFieldsClass = 'question_default_fields';
+			switch ( questionType ) {
+			case 'multiple-choice':
+				divFieldsClass = 'question_default_fields';
 				break;
-				case 'boolean':
-					divFieldsClass = 'question_boolean_fields';
+			case 'boolean':
+				divFieldsClass = 'question_boolean_fields';
 				break;
-				case 'gap-fill':
-					divFieldsClass = 'question_gapfill_fields';
+			case 'gap-fill':
+				divFieldsClass = 'question_gapfill_fields';
 				break;
-				case 'essay-paste':
-					divFieldsClass = 'question_essay_fields';
+			case 'essay-paste':
+				divFieldsClass = 'question_essay_fields';
 				break;
-				case 'multi-line':
-					divFieldsClass = 'question_multiline_fields';
+			case 'multi-line':
+				divFieldsClass = 'question_multiline_fields';
 				break;
-				case 'single-line':
-					divFieldsClass = 'question_singleline_fields';
+			case 'single-line':
+				divFieldsClass = 'question_singleline_fields';
 				break;
-				case 'file-upload':
-					divFieldsClass = 'question_fileupload_fields';
+			case 'file-upload':
+				divFieldsClass = 'question_fileupload_fields';
 				break;
 			} // End Switch Statement
 			// Handle Required Fields
 			jQuery( this ).closest('td').find( 'div.question_required_fields' ).find( 'input' ).each( function() {
-	 			if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
-	 				dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
-	 			} // End If Statement
- 			});
+				if ( jQuery( this ).attr( 'type' ) != 'radio' ) {
+					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+				} // End If Statement
+			});
 
 			// Handle textarea required field
 			if ( jQuery( this ).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).val() != '' ) {
-	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).val() );
-	 		} // End If Statement
+				dataToPost += '&' +  jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery(this).closest('td').find( 'div.question_required_fields' ).find( 'textarea' ).val() );
+			} // End If Statement
 
-	 		// Handle Question Input Fields
-	 		var radioCount = 0;
-	 		jQuery( this ).closest('td').find( 'div.' + divFieldsClass ).find( 'input' ).each( function() {
-	 			if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
-	 				// Only get the selected radio button
-	 				if ( radioCount == 0 ) {
-	 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' ) );
-	 					radioCount++;
-	 				} // End If Statement
- 				} else {
- 					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
- 				} // End If Statement
-	 		});
+			// Handle Question Input Fields
+			var radioCount = 0;
+			jQuery( this ).closest('td').find( 'div.' + divFieldsClass ).find( 'input' ).each( function() {
+				if ( jQuery( this ).attr( 'type' ) == 'radio' ) {
+					// Only get the selected radio button
+					if ( radioCount == 0 ) {
+						dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( 'input[name=' + jQuery( this ).attr( 'name' ) + ']:checked' ).attr( 'value' ) );
+						radioCount++;
+					} // End If Statement
+				} else {
+					dataToPost += '&' + jQuery( this ).attr( 'name' ) + '=' + encodeURIComponent( jQuery( this ).attr( 'value' ) );
+				} // End If Statement
+			});
 
-	 		// Handle Question Textarea Fields
-	 		if ( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
-	 			dataToPost += '&' +  jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
-	 		} // End If Statement
-	 		if ( divFieldsClass == 'question_fileupload_fields' ) {
-	 			jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).each( function() {
-	 				dataToPost += '&' +  jQuery(this).attr( 'name' ) + '=' + encodeURIComponent( jQuery(this).val() );
-	 			});
-	 		} // End If Statement
+			// Handle Question Textarea Fields
+			if ( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() != '' && divFieldsClass == 'question_multiline_fields' ) {
+				dataToPost += '&' +  jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).attr( 'name' ) + '=' + encodeURIComponent( jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).val() );
+			} // End If Statement
+			if ( divFieldsClass == 'question_fileupload_fields' ) {
+				jQuery(this).closest('td').find( 'div.' + divFieldsClass ).find( 'textarea' ).each( function() {
+					dataToPost += '&' +  jQuery(this).attr( 'name' ) + '=' + encodeURIComponent( jQuery(this).val() );
+				});
+			} // End If Statement
 
 			dataToPost += '&' + 'question_type' + '=' + questionType;
 			questionGrade = jQuery( this ).closest('td').find( 'input.question_grade' ).val();
- 			dataToPost += '&' + 'question_grade' + '=' + questionGrade;
+			dataToPost += '&' + 'question_grade' + '=' + questionGrade;
 
- 			var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
- 			dataToPost += '&' + 'question_count' + '=' + questionCount;
+			var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
+			dataToPost += '&' + 'question_count' + '=' + questionCount;
 
- 			var answer_order = jQuery( this ).closest('td').find( '.answer_order' ).attr( 'value' );
- 			dataToPost += '&' + 'answer_order' + '=' + answer_order;
+			var answer_order = jQuery( this ).closest('td').find( '.answer_order' ).attr( 'value' );
+			dataToPost += '&' + 'answer_order' + '=' + answer_order;
 
- 			var question_media = jQuery( this ).closest('td').find( '.question_media' ).attr( 'value' );
- 			dataToPost += '&' + 'question_media' + '=' + question_media;
+			var question_media = jQuery( this ).closest('td').find( '.question_media' ).attr( 'value' );
+			dataToPost += '&' + 'question_media' + '=' + question_media;
 
- 			if ( '' != jQuery( this ).closest('td').find( '.answer_feedback' ).exists() ) {
-	 			var answer_feedback = jQuery( this ).closest('td').find( '.answer_feedback' ).attr( 'value' );
-	 			dataToPost += '&' + 'answer_feedback' + '=' + encodeURIComponent( answer_feedback );
-	 		}
+			if ( '' != jQuery( this ).closest('td').find( '.answer_feedback' ).exists() ) {
+				var answer_feedback = jQuery( this ).closest('td').find( '.answer_feedback' ).attr( 'value' );
+				dataToPost += '&' + 'answer_feedback' + '=' + encodeURIComponent( answer_feedback );
+			}
 
- 			var random_order = 'no';
- 			if ( jQuery( this ).closest('td').find( '.random_order' ).is(':checked') ) {
- 				random_order = 'yes'
- 			}
- 			dataToPost += '&' + 'random_order' + '=' + random_order;
+			var random_order = 'no';
+			if ( jQuery( this ).closest('td').find( '.random_order' ).is(':checked') ) {
+				random_order = 'yes';
+			}
+			dataToPost += '&' + 'random_order' + '=' + random_order;
 
- 			// Perform the AJAX call.
+			// Perform the AJAX call.
 			jQuery.post(
- 				ajaxurl,
- 				{
- 					action : 'lesson_update_question',
- 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
- 					data : dataToPost
- 				},
- 				function( response ) {
- 					if ( response ) {
+				ajaxurl,
+				{
+					action : 'lesson_update_question',
+					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
+					data : dataToPost
+				},
+				function( response ) {
+					if ( response ) {
 
- 						// show the user the of the succesful update:
- 						var newQuestionTitle , newGradeTotal;
+						// show the user the of the succesful update:
+						var newQuestionTitle , newGradeTotal;
 
-	 					// update the question title :
- 						newQuestionTitle = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question] ').val();
- 						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-title-column').html( newQuestionTitle );
+						// update the question title :
+						newQuestionTitle = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question] ').val();
+						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-title-column').html( newQuestionTitle );
 
- 						// update the grade total
+						// update the grade total
 						newGradeTotal = jQuery( '#question_' + tableRowId ).closest('tr').find('.question_required_fields input[name=question_grade] ').val();
- 						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-grade-column').html( newGradeTotal );
+						jQuery( '#question_' + tableRowId ).closest('tr').prev().find('.question-grade-column').html( newGradeTotal );
 
- 						// hide the update field
- 						jQuery( '#question_' + tableRowId ).closest('tr').addClass( 'hidden' );
- 					}
- 				}
- 			);
- 			return false;
+						// hide the update field
+						jQuery( '#question_' + tableRowId ).closest('tr').addClass( 'hidden' );
+					}
+				}
+			);
+			return false;
 		}
 	});
 
@@ -1070,63 +1073,60 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_table_delete', function() {
-	 	var dataToPost = '';
-	 	var questionId = '';
-	 	var quizId = '';
-	 	var tableRowId = '';
+		var dataToPost = '';
+		var tableRowId = '';
 
-	 	var confirmDelete = confirm( woo_localized_data.confirm_remove );
+		var confirmDelete = confirm( woo_localized_data.confirm_remove );
 
-	 	if ( confirmDelete ) {
- 			// Setup data to post
- 			dataToPost += '&action=delete';
- 			jQuery( this ).closest('tr').next('tr').find('td').find( 'input' ).each( function() {
- 				if ( jQuery( this ).attr( 'name' ) == 'question_id' ) {
- 					questionId = jQuery( this ).attr( 'value' );
- 					dataToPost += '&question_id' + '=' + jQuery( this ).attr( 'value' );
- 				} // End If Statement
- 			});
+		if ( confirmDelete ) {
+			// Setup data to post
+			dataToPost += '&action=delete';
+			jQuery( this ).closest('tr').next('tr').find('td').find( 'input' ).each( function() {
+				if ( jQuery( this ).attr( 'name' ) == 'question_id' ) {
+					dataToPost += '&question_id' + '=' + jQuery( this ).attr( 'value' );
+				} // End If Statement
+			});
 
 			dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
- 			tableRowId = jQuery( this ).closest('tr').find('td.question-number span.number').text();
- 			var row_parent = jQuery( this ).closest( 'tbody' );
+			tableRowId = jQuery( this ).closest('tr').find('td.question-number span.number').text();
+			var row_parent = jQuery( this ).closest( 'tbody' );
 
- 			// Perform the AJAX call.
- 			jQuery.post(
- 				ajaxurl,
- 				{
- 					action : 'lesson_update_question',
- 					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
- 					data : dataToPost
- 				},
- 				function( response ) {
- 					if ( response ) {
- 						// Remove the html element for the deleted question
- 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
- 							if ( jQuery(this).find('span.number').text() == tableRowId ) {
- 								jQuery(this).closest('tr').next('tr').remove();
- 								jQuery(this).closest('tr').remove();
- 								// Exit each() to prevent multiple row deletions
- 								return false;
+			// Perform the AJAX call.
+			jQuery.post(
+				ajaxurl,
+				{
+					action : 'lesson_update_question',
+					lesson_update_question_nonce : woo_localized_data.lesson_update_question_nonce,
+					data : dataToPost
+				},
+				function( response ) {
+					if ( response ) {
+						// Remove the html element for the deleted question
+						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
+							if ( jQuery(this).find('span.number').text() == tableRowId ) {
+								jQuery(this).closest('tr').next('tr').remove();
+								jQuery(this).closest('tr').remove();
+								// Exit each() to prevent multiple row deletions
+								return false;
 							}
- 						});
- 						jQuery.fn.updateQuestionCount( 1, '-' );
- 						jQuery.fn.checkQuizGradeType( false );
- 						jQuery.fn.updateAnswerOrder( row_parent );
+						});
+						jQuery.fn.updateQuestionCount( 1, '-' );
+						jQuery.fn.checkQuizGradeType( false );
+						jQuery.fn.updateAnswerOrder( row_parent );
 
- 						var max_questions = parseInt( jQuery( '#show_questions' ).attr( 'max' ) );
-			 			max_questions--;
-			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+						var max_questions = parseInt( jQuery( '#show_questions' ).attr( 'max' ) );
+						max_questions--;
+						jQuery( '#show_questions' ).attr( 'max', max_questions );
 
-			 			var show_questions_field = parseInt( jQuery( '#show_questions' ).val() );
-			 			if( show_questions_field > max_questions ) {
-			 				jQuery( '#show_questions' ).val( max_questions );
-			 			}
- 					}
- 				}
- 			);
- 			return false;
+						var show_questions_field = parseInt( jQuery( '#show_questions' ).val() );
+						if( show_questions_field > max_questions ) {
+							jQuery( '#show_questions' ).val( max_questions );
+						}
+					}
+				}
+			);
+			return false;
 		}
 	});
 
@@ -1137,52 +1137,51 @@ jQuery(document).ready( function($) {
 	 * @access public
 	 */
 	jQuery( '#add-question-metadata' ).on( 'click', 'a.question_multiple_delete', function() {
-	 	var dataToPost = '';
+		var dataToPost = '';
 
-	 	var confirmDelete = confirm( woo_localized_data.confirm_remove_multiple );
+		var confirmDelete = confirm( woo_localized_data.confirm_remove_multiple );
 
-	 	if ( confirmDelete ) {
+		if ( confirmDelete ) {
 
-	 		dataToPost += 'question_id' + '=' + jQuery( this ).attr( 'rel' );
+			dataToPost += 'question_id' + '=' + jQuery( this ).attr( 'rel' );
 			dataToPost += '&quiz_id' + '=' + jQuery( '#quiz_id' ).attr( 'value' );
 
- 			var tableRowId = jQuery( this ).closest('tr').find('td.question-number span.number').text();
- 			var total_number = jQuery( this ).closest('tr').find('td.question-number span.total-number').text();
- 			var row_parent = jQuery( this ).closest( 'tbody' );
+			var tableRowId = jQuery( this ).closest('tr').find('td.question-number span.number').text();
+			var total_number = jQuery( this ).closest('tr').find('td.question-number span.total-number').text();
 
- 			// Perform the AJAX call.
- 			jQuery.post(
- 				ajaxurl,
- 				{
- 					action : 'lesson_remove_multiple_questions',
- 					lesson_remove_multiple_questions_nonce : woo_localized_data.lesson_remove_multiple_questions_nonce,
- 					data : dataToPost
- 				},
- 				function( response ) {
- 					if ( response ) {
+			// Perform the AJAX call.
+			jQuery.post(
+				ajaxurl,
+				{
+					action : 'lesson_remove_multiple_questions',
+					lesson_remove_multiple_questions_nonce : woo_localized_data.lesson_remove_multiple_questions_nonce,
+					data : dataToPost
+				},
+				function( response ) {
+					if ( response ) {
 
- 						// Remove the html element for the deleted question
- 						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
- 							if ( jQuery(this).find('span.number').text() == tableRowId ) {
- 								jQuery(this).closest('tr').remove();
- 								// Exit each() to prevent multiple row deletions
- 								return false;
+						// Remove the html element for the deleted question
+						jQuery( '#add-question-metadata > table > tbody > tr' ).children('td').each( function() {
+							if ( jQuery(this).find('span.number').text() == tableRowId ) {
+								jQuery(this).closest('tr').remove();
+								// Exit each() to prevent multiple row deletions
+								return false;
 							}
- 						});
- 						jQuery.fn.updateQuestionCount( total_number, '-' );
+						});
+						jQuery.fn.updateQuestionCount( total_number, '-' );
 
- 						var max_questions = parseInt( jQuery( '#show_questions' ).attr( 'max' ) );
-			 			max_questions -= total_number;
-			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+						var max_questions = parseInt( jQuery( '#show_questions' ).attr( 'max' ) );
+						max_questions -= total_number;
+						jQuery( '#show_questions' ).attr( 'max', max_questions );
 
-			 			var show_questions_field = parseInt( jQuery( '#show_questions' ).val() );
-			 			if( show_questions_field > max_questions ) {
-			 				jQuery( '#show_questions' ).val( max_questions );
-			 			}
- 					}
- 				}
- 			);
- 			return false;
+						var show_questions_field = parseInt( jQuery( '#show_questions' ).val() );
+						if( show_questions_field > max_questions ) {
+							jQuery( '#show_questions' ).val( max_questions );
+						}
+					}
+				}
+			);
+			return false;
 		}
 	});
 
@@ -1210,37 +1209,37 @@ jQuery(document).ready( function($) {
 			dataToPost += '&quiz_id=' + jQuery( '#quiz_id' ).attr( 'value' );
 
 			var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
-	 		dataToPost += '&question_count=' + questionCount;
+			dataToPost += '&question_count=' + questionCount;
 
 			// Perform the AJAX call.
- 			jQuery.post(
- 				ajaxurl,
- 				{
- 					action : 'lesson_add_existing_questions',
- 					lesson_add_existing_questions_nonce : woo_localized_data.lesson_add_existing_questions_nonce,
- 					data : dataToPost
- 				},
- 				function( response ) {
- 					if ( response ) {
+			jQuery.post(
+				ajaxurl,
+				{
+					action : 'lesson_add_existing_questions',
+					lesson_add_existing_questions_nonce : woo_localized_data.lesson_add_existing_questions_nonce,
+					data : dataToPost
+				},
+				function( response ) {
+					if ( response ) {
 
- 						jQuery.fn.updateQuestionCount( i, '+' );
-	 		    		jQuery( '#add-question-metadata table' ).append( response );
+						jQuery.fn.updateQuestionCount( i, '+' );
+						jQuery( '#add-question-metadata table' ).append( response );
 
-			 			jQuery.fn.checkQuizGradeType();
+						jQuery.fn.checkQuizGradeType();
 
-			 			var max_questions = jQuery( '#show_questions' ).attr( 'max' );
-			 			max_questions += i;
-			 			jQuery( '#show_questions' ).attr( 'max', max_questions );
+						var max_questions = jQuery( '#show_questions' ).attr( 'max' );
+						max_questions += i;
+						jQuery( '#show_questions' ).attr( 'max', max_questions );
 
-			 			jQuery.fn.scrollToElement( '#lesson-quiz' );
+						jQuery.fn.scrollToElement( '#lesson-quiz' );
 
-			 			jQuery( '#existing-questions' ).find( 'input.existing-item' ).each( function() {
-			 				jQuery( this ).removeAttr( 'checked' );
-			 			});
- 					}
- 				}
- 			);
- 			return false;
+						jQuery( '#existing-questions' ).find( 'input.existing-item' ).each( function() {
+							jQuery( this ).removeAttr( 'checked' );
+						});
+					}
+				}
+			);
+			return false;
 		}
 	});
 
@@ -1278,7 +1277,7 @@ jQuery(document).ready( function($) {
 		var answer_value = jQuery( this ).val();
 		var answer_field = jQuery( this );
 
-		dataToPost = '&answer_value=' + answer_value;
+		var dataToPost = '&answer_value=' + answer_value;
 		jQuery.post(
 			ajaxurl,
 			{
@@ -1317,21 +1316,21 @@ jQuery(document).ready( function($) {
 	});
 
 	jQuery( '.multiple-choice-answers' ).sortable( {
-		items: "label.answer"
+		items: 'label.answer'
 	});
 
-	jQuery( '.multiple-choice-answers' ).bind( 'sortstop', function ( e, ui ) {
+	jQuery( '.multiple-choice-answers' ).bind( 'sortstop', function () {
 		jQuery.fn.updateAnswerOrder( jQuery( this ) );
 	});
 
 	jQuery( '#sortable-questions' ).sortable( {
-		items: "tbody",
+		items: 'tbody',
 		'start': function (event, ui) {
-	        ui.placeholder.html("<tr><td colspan='5'>&nbsp;</td></tr>")
-	    }
+			ui.placeholder.html('<tr><td colspan=\'5\'>&nbsp;</td></tr>');
+		}
 	});
 
-	jQuery( '#sortable-questions' ).bind( 'sortstop', function ( e, ui ) {
+	jQuery( '#sortable-questions' ).bind( 'sortstop', function () {
 		jQuery.fn.updateQuestionOrder();
 		jQuery.fn.updateQuestionRows();
 	});
@@ -1386,7 +1385,7 @@ jQuery(document).ready( function($) {
 	});
 
 	jQuery( '#existing-table th.check-column input' ).click( function () {
-	    jQuery( '#existing-questions' ).find( ':checkbox' ).attr( 'checked' , this.checked );
+		jQuery( '#existing-questions' ).find( ':checkbox' ).attr( 'checked' , this.checked );
 	});
 
 	jQuery( 'tbody#existing-questions' ).on( 'click', 'tr td:not(.cb)', function() {
@@ -1400,26 +1399,26 @@ jQuery(document).ready( function($) {
 	 ***************************************************************************************************/
 
 	// Lessons Write Panel
-	if ( jQuery( '#lesson-complexity-options' ).exists() ) { jQuery( '#lesson-complexity-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) { jQuery( '#lesson-prerequisite-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#course-woocommerce-product-options' ).exists() && '-' != jQuery( '#course-woocommerce-product-options' ).val() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:"resolve"}); }
+	if ( jQuery( '#lesson-complexity-options' ).exists() ) { jQuery( '#lesson-complexity-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) { jQuery( '#lesson-prerequisite-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#course-woocommerce-product-options' ).exists() && '-' != jQuery( '#course-woocommerce-product-options' ).val() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:'resolve'}); }
 
 	// Quiz edit panel
-	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#add-question-category-options' ).exists() ) { jQuery( '#add-question-category-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).select2({width:"resolve"}); }
+	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#add-question-category-options' ).exists() ) { jQuery( '#add-question-category-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).select2({width:'resolve'}); }
 
 	// Courses Write Panel
-	if ( jQuery( 'select#course-woocommerce-product-options' ).exists() ) { jQuery( 'select#course-woocommerce-product-options' ).select2({width:"resolve"}); }
-	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) { jQuery( '#add-multiple-question-category-options' ).select2({width:"resolve"}); }
+	if ( jQuery( 'select#course-woocommerce-product-options' ).exists() ) { jQuery( 'select#course-woocommerce-product-options' ).select2({width:'resolve'}); }
+	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) { jQuery( '#add-multiple-question-category-options' ).select2({width:'resolve'}); }
 
 	// Sensei Settings Panel
 	jQuery( 'div.woothemes-sensei-settings form select' ).each( function() {
 		if ( !jQuery( this ).hasClass( 'range-input' ) ) {
-			jQuery( this).select2({width:"resolve"});;
+			jQuery( this).select2({width:'resolve'});
 		} // End If Statement
 	});
 
