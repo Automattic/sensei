@@ -1,4 +1,4 @@
-jQuery(document).ready( function($) {
+jQuery(document).ready( function() {
 	jQuery( 'select.range-input' ).each( function () {
 		// Get the range field's ID value.
 		var idValue = jQuery( this ).attr( 'id' );
