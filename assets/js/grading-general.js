@@ -1,17 +1,17 @@
-jQuery(document).ready( function($) {
+jQuery(document).ready( function() {
 
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
 	 ***************************************************************************************************/
 
-	 /**
+	/**
 	 * exists checks if selector exists
 	 * @since  1.2.0
 	 * @return boolean
 	 */
 	jQuery.fn.exists = function() {
 		return this.length>0;
-	}
+	};
 
 	/**
 	 * Calculates the total grade based on the questions already graded
@@ -19,45 +19,44 @@ jQuery(document).ready( function($) {
 	 */
 	jQuery.fn.calculateTotalGrade = function() {
 		var question_id;
-	 	var question_grade;
-	 	var total_grade = 0;
-	 	var total_graded_questions = 0;
-	 	jQuery( '.question_box.user_right' ).each( function() {
-	 		question_id = jQuery( this ).find( '.question_id' ).val();
-	 		question_grade = parseInt( jQuery( this ).find( '#question_' + question_id + '_grade' ).val() );
-	 		total_grade += question_grade
-	 		total_graded_questions++;
-	 	});
-	 	jQuery( '.question_box.user_wrong' ).each( function() {
-	 		total_graded_questions++;
-	 	});
+		var question_grade;
+		var total_grade = 0;
+		var total_graded_questions = 0;
+		jQuery( '.question_box.user_right' ).each( function() {
+			question_id = jQuery( this ).find( '.question_id' ).val();
+			question_grade = parseInt( jQuery( this ).find( '#question_' + question_id + '_grade' ).val() );
+			total_grade += question_grade;
+			total_graded_questions++;
+		});
+		jQuery( '.question_box.user_wrong' ).each( function() {
+			total_graded_questions++;
+		});
 
-	 	jQuery( '#total_graded_questions' ).val( total_graded_questions );
+		jQuery( '#total_graded_questions' ).val( total_graded_questions );
 
-	 	var total_questions = parseInt( jQuery( '#total_questions' ).val() );
-	 	var quiz_grade_total = parseInt( jQuery( '#quiz_grade_total' ).val() );
+		var total_questions = parseInt( jQuery( '#total_questions' ).val() );
+		var quiz_grade_total = parseInt( jQuery( '#quiz_grade_total' ).val() );
+		var percent = 0;
 		if ( 0 < quiz_grade_total ) {
-			var percent = parseFloat( total_grade * 100 / quiz_grade_total ).toFixed(2);
+			percent = parseFloat( total_grade * 100 / quiz_grade_total ).toFixed(2);
 		}
-		else {
-			var percent = 0;
-		}
-	 	percent = percent.replace( '.00', '' );
 
-	 	jQuery( '#total_grade' ).val( total_grade );
-	 	jQuery( '.total_grade_total' ).html( total_grade );
-	 	jQuery( '.total_grade_percent' ).html( percent );
-	 	jQuery( '.quiz_grade_total' ).html( quiz_grade_total );
+		percent = percent.replace( '.00', '' );
 
-	 	if( total_questions == total_graded_questions ) {
+		jQuery( '#total_grade' ).val( total_grade );
+		jQuery( '.total_grade_total' ).html( total_grade );
+		jQuery( '.total_grade_percent' ).html( percent );
+		jQuery( '.quiz_grade_total' ).html( quiz_grade_total );
+
+		if( total_questions == total_graded_questions ) {
 			jQuery( '#all_questions_graded' ).val( 'yes' );
 			jQuery( '.grade-button' ).val( 'Grade' );
-	 	} else {
-	 		jQuery( '#all_questions_graded' ).val( 'no' );
-	 		jQuery( '.grade-button' ).val( 'Save' );
-	 	}
+		} else {
+			jQuery( '#all_questions_graded' ).val( 'no' );
+			jQuery( '.grade-button' ).val( 'Save' );
+		}
 
-	}
+	};
 
 	/**
 	 * Automatically grades questions where possible
@@ -67,40 +66,41 @@ jQuery(document).ready( function($) {
 		jQuery( '.question_box' ).each( function() {
 			if( ! jQuery( this ).hasClass( 'user_right' ) && ! jQuery( this ).hasClass( 'user_wrong' ) && ! jQuery( this ).hasClass( 'zero-graded' ) ) {
 				jQuery( this ).addClass( 'ungraded' );
-		 		if( jQuery( this ).hasClass( 'gap-fill' ) ) {
-		 			var user_answer = jQuery( this ).find( '.user-answer .highlight' ).html();
-			 		var correct_answer = jQuery( this ).find( '.correct-answer .highlight' ).html();
-		 		} else {
-			 		var user_answer = jQuery( this ).find( '.user-answer' ).html();
-			 		var correct_answer = jQuery( this ).find( '.correct-answer' ).html();
-		 		}
+				var user_answer, correct_answer;
+				if( jQuery( this ).hasClass( 'gap-fill' ) ) {
+					user_answer = jQuery( this ).find( '.user-answer .highlight' ).html();
+					correct_answer = jQuery( this ).find( '.correct-answer .highlight' ).html();
+				} else {
+					user_answer = jQuery( this ).find( '.user-answer' ).html();
+					correct_answer = jQuery( this ).find( '.correct-answer' ).html();
+				}
 
-		 		if( user_answer == correct_answer ) {
-		 			jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
-		 			jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
-		 			jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-		 			jQuery( this ).find( 'input.question-grade' ).val( jQuery( this ).find( 'input.question_total_grade' ).val() );
-		 		} else {
-		 			if( jQuery( this ).hasClass( 'auto-grade' ) ) {
-		 				jQuery( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
-		 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
-		 				jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-		 				jQuery( this ).find( '.input.question-grade' ).val( 0 );
-		 			} else {
-		 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+				if( user_answer == correct_answer ) {
+					jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
+					jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
+					jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+					jQuery( this ).find( 'input.question-grade' ).val( jQuery( this ).find( 'input.question_total_grade' ).val() );
+				} else {
+					if( jQuery( this ).hasClass( 'auto-grade' ) ) {
+						jQuery( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
+						jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
+						jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+						jQuery( this ).find( '.input.question-grade' ).val( 0 );
+					} else {
+						jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
 						jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
 						jQuery( this ).removeClass( 'user_wrong' ).removeClass( 'user_right' );
-		 			}
-		 		}
+					}
+				}
 			} else if ( jQuery( this ).hasClass( 'zero-graded' ) ) {
 				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
 				jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
 				jQuery( this ).find( '.input.question-grade' ).val( 0 );
 			}
-	 	});
+		});
 
-	 	jQuery.fn.calculateTotalGrade();
-	}
+		jQuery.fn.calculateTotalGrade();
+	};
 
 	/**
 	 * Resets all graded questions
@@ -113,23 +113,25 @@ jQuery(document).ready( function($) {
 		jQuery( '.question_box' ).removeClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
 		jQuery( '.question-grade' ).val( '0' );
 		jQuery.fn.calculateTotalGrade();
-	}
+	};
 
 	jQuery.fn.getQueryVariable = function(variable) {
-	       var query = window.location.search.substring(1);
-	       var vars = query.split("&");
-	       for (var i=0;i<vars.length;i++) {
-               var pair = vars[i].split("=");
-               if(pair[0] == variable){return pair[1];}
-	       }
-	       return(false);
-	}
+		var query = window.location.search.substring(1);
+		var vars = query.split('&');
+		for (var i=0;i<vars.length;i++) {
+			var pair = vars[i].split('=');
+			if(pair[0] == variable){
+				return pair[1];
+			}
+		}
+		return false;
+	};
 
 	/***************************************************************************************************
 	 * 	2 - Grading Overview Functions.
 	 ***************************************************************************************************/
 
-	 /**
+	/**
 	 * Course Change Event.
 	 *
 	 * @since 1.3.0
@@ -139,7 +141,7 @@ jQuery(document).ready( function($) {
 		// Populate the Lessons select box
 		var courseId = jQuery(this).val();
 		var dataToPost = '';
-	 	dataToPost += 'course_id' + '=' + courseId;
+		dataToPost += 'course_id' + '=' + courseId;
 		// Perform the AJAX call to get the select box.
 		jQuery.post(
 			ajaxurl,
@@ -160,7 +162,7 @@ jQuery(document).ready( function($) {
 					if ( jQuery( '#grading-lesson-options' ).exists() ) {
 						// Show the Lessons label
 						jQuery( '#grading-lesson-options-label' ).show();
-						jQuery( '#grading-lesson-options' ).trigger("change");
+						jQuery( '#grading-lesson-options' ).trigger('change');
 					} // End If Statement
 				} else {
 					// Failed
@@ -181,15 +183,15 @@ jQuery(document).ready( function($) {
 		var lessonId = jQuery(this).val();
 		var courseId = jQuery( '#grading-course-options' ).val();
 		var dataToPost = '';
-	 	dataToPost += 'lesson_id' + '=' + lessonId;
-	 	dataToPost += '&course_id' + '=' + courseId;
+		dataToPost += 'lesson_id' + '=' + lessonId;
+		dataToPost += '&course_id' + '=' + courseId;
 
-	 	var gradingView = jQuery.fn.getQueryVariable( 'view' );
-	 	if( gradingView ) {
-	 		dataToPost += '&view' + '=' + gradingView;
-	 	} else {
-	 		dataToPost += '&view' + '=ungraded';
-	 	}
+		var gradingView = jQuery.fn.getQueryVariable( 'view' );
+		if( gradingView ) {
+			dataToPost += '&view' + '=' + gradingView;
+		} else {
+			dataToPost += '&view' + '=ungraded';
+		}
 
 		// Perform the AJAX call to get the select box.
 		jQuery.post(
@@ -201,7 +203,6 @@ jQuery(document).ready( function($) {
 			},
 			function( response ) {
 				// Check for a response
-				console.log(response);
 				if ( '' != response ) {
 					window.location = response;
 				} else {
