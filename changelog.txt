@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2017.11.07 - version 1.9.19
+
+* Fix: Fix JS bugs introduced by minification process
+* Add: ESLint support
+
 2017.11.01 - version 1.9.18
 
 * Fix: Can't preview draft lessons in draft course
