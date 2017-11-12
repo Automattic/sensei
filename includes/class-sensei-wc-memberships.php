@@ -50,10 +50,6 @@ class Sensei_WC_Memberships {
 	 * @return bool
 	 */
 	public static function is_course_access_restricted( $access_restricted, $course_id ) {
-		if ( false === self::is_wc_memberships_active() ) {
-			return $access_restricted;
-		}
-
 		return self::is_content_restricted( $course_id );
 	}
 
@@ -80,9 +76,6 @@ class Sensei_WC_Memberships {
 	 */
 	public static function add_wc_memberships_notice( $content = '' ) {
 		global $post;
-		if ( false === self::is_wc_memberships_active() ) {
-			return $content;
-		}
 
 		if ( isset( $post->ID ) && ! in_array( get_post_type( $post->ID ), array( 'course', 'lesson', 'quiz' ), true ) ||
 			 ! self::is_content_restricted( $post->ID ) ) {
@@ -150,11 +143,6 @@ class Sensei_WC_Memberships {
 	 * @param WC_Memberships_User_Membership $user_membership The user membership.
 	 */
 	public static function start_courses_associated_with_membership( $user_membership ) {
-
-		if ( false === self::is_wc_memberships_active() ) {
-			return;
-		}
-
 		if ( ! $user_membership ) {
 			return;
 		}
