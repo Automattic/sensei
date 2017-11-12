@@ -81,8 +81,14 @@ class Sensei_WC_Memberships {
 			 ! self::is_content_restricted( $post->ID ) ) {
 			return $content;
 		}
-		$message = wc_memberships()->get_frontend_instance()->get_content_restricted_message( $post->ID );
-		return $message;
+
+		if ( version_compare( WC_Memberships::VERSION, '1.9.0', '>=' ) ) {
+			$content = WC_Memberships_User_Messages::get_message_html( 'content_restricted', array( 'post_id' => $post->ID ) );
+		} else {
+			$content = wc_memberships()->get_frontend_instance()->get_content_restricted_message( $post->ID );
+		}
+
+		return $content;
 	}
 
 	/**
