@@ -1,5 +1,7 @@
 ## Customize the test machine
 machine:
+  node:
+    version: 6.11.5
 
   timezone:
     America/Los_Angeles # Set the timezone
