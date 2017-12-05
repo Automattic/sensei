@@ -471,7 +471,10 @@ class Sensei_Admin {
 			$action .= '_with_lessons';
 		}
 
-		return apply_filters( $action . '_link', admin_url( 'admin.php?action=' . $action . '&post=' . $post_id ), $post_id );
+		$bare_url = admin_url( 'admin.php?action=' . $action . '&post=' . $post_id );
+		$url = wp_nonce_url( $bare_url, $action . '_' . $post_id );
+
+		return apply_filters( $action . '_link', $url, $post_id );
 	}
 
 	/**
@@ -511,6 +514,18 @@ class Sensei_Admin {
 
 		$post_id = $_GET['post'];
 		$post = get_post( $post_id );
+		if ( ! in_array( get_post_type( $post_id ), array( 'lesson', 'course' ), true ) ) {
+			wp_die( __( 'Invalid post type. Can duplicate only lessons and courses', 'woothemes-sensei' ) );
+		}
+
+		$action = 'duplicate_'. $post_type;
+		if ( $with_lessons ) {
+			$action .= '_with_lessons';
+		}
+		check_admin_referer( $action . '_' . $post_id );
+		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
+			wp_die( __( 'Insufficient permissions', 'woothemes-sensei' ) );
+		}
 
 		if( ! is_wp_error( $post ) ) {
 
