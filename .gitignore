@@ -4,3 +4,4 @@ node_modules/*
 vendor/*
 docs.woothemes.com/*
 tests/images/test-*
+includes/blocks/**/build
