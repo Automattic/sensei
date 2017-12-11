@@ -62,7 +62,7 @@ class Sensei_Main {
 	 * @var Sensei_Updates
 	 */
 	public $updates;
-	
+
 	/**
 	 * @var WooThemes_Sensei_Course
 	 */
@@ -146,6 +146,11 @@ class Sensei_Main {
 	public $rest_api;
 
 	/**
+	 * @var Sensei_Usage_Tracking
+	 */
+	private $usage_tracking;
+
+	/**
 	 * @var $id
 	 */
 	private $id;
@@ -195,6 +200,8 @@ class Sensei_Main {
 
 		// Run this on activation.
 		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activation' ) );
+		// Run this on deactivation.
+		register_deactivation_hook( $this->main_plugin_file_name, array( $this, 'deactivation' ) );
 
 		// Image Sizes
 		$this->init_image_sizes();
@@ -357,6 +364,9 @@ class Sensei_Main {
 			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
 				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
 			}
+
+			$this->usage_tracking = new Sensei_Usage_Tracking();
+			$this->usage_tracking->hook();
 		} else {
 
 			// Load Frontend Class
@@ -515,6 +525,10 @@ class Sensei_Main {
 		$this->register_plugin_version();
 
 	} // End activation()
+
+	public function deactivation() {
+		Sensei_Usage_Tracking::maybe_unschedule_tracking_task();
+	}
 
 
 	/**
