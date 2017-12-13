@@ -42,10 +42,12 @@ class Sensei_Usage_Tracking {
 			$event_timestamp = time();
 		}
 
-		$properties['ae']  = get_option( 'admin_email' );
-		$properties['su']  = site_url();
+		$properties['admin_email'] = get_option( 'admin_email' );
 		$properties['_ut'] = 'sensei:user_id';
-		$properties['_ui'] = md5( site_url() . $user->ID );
+		// Use site URL as the userid to enable usage tracking at the site level.
+		// Note that we would likely want to use site URL + user ID for userid if we were
+		// to ever add event tracking at the user level.
+		$properties['_ui'] = site_url();
 		$properties['_ul'] = $user->user_login;
 		$properties['_en'] = $event_name;
 		$properties['_ts'] = (int) $event_timestamp . '000';
@@ -118,7 +120,6 @@ class Sensei_Usage_Tracking {
 		// Cron
 		add_filter( 'cron_schedules', array( $this, 'add_two_weeks' ) );
 		add_action( self::$job_name, array( $this, 'maybe_send_usage_data' ) );
-		// add_action( self::$job_name, array( $this, 'maybe_send_usage_data' ) );
 	}
 
 	function add_two_weeks( $schedules ) {
@@ -262,7 +263,7 @@ class Sensei_Usage_Tracking {
 				var props = event_properties || {};
 
 				window._tkq = window._tkq || [];
-				window._tkq.push( [ 'identifyUser', <?php echo (int) $user->ID; ?>, '<?php echo esc_js( $user->user_login ); ?>' ] );
+				window._tkq.push( [ 'identifyUser', <?php echo site_url(); ?>, '<?php echo esc_js( $user->user_login ); ?>' ] );
 				window._tkq.push( [ 'recordEvent', event_name, props ] );
 			};
 		</script>
