@@ -174,6 +174,7 @@ class Sensei_Usage_Tracking {
 			'lesson_count' => wp_count_posts( 'lesson' )->publish,
 			'message_count' => wp_count_posts( 'sensei_message' )->publish,
 			'question_count' => wp_count_posts( 'question' )->publish,
+			'teacher_count' => self::get_teacher_count(),
 		) );
 
 		$resp = self::send_event( 'stats_log', $usage_data );
@@ -183,6 +184,17 @@ class Sensei_Usage_Tracking {
 		$resp = self::send_event( 'sensei_dummy_stats_log' );
 
 		return $resp;
+	}
+
+	/**
+	 * Get the number of teachers.
+	 *
+	 * @return int Number of teachers.
+	 **/
+	public static function get_teacher_count() {
+		$teacher_query = new WP_User_Query( array( 'role' => 'teacher' ) );
+
+		return $teacher_query->total_users;
 	}
 
 	/**
