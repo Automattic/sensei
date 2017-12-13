@@ -171,7 +171,12 @@ class Sensei_Usage_Tracking {
 		$usage_data = (array) apply_filters( 'sensei_usage_tracking_usage_data', array(
 			'course_count' => wp_count_posts( 'course' )->publish,
 		) );
+
 		$resp = self::send_event( 'stats_log', $usage_data );
+
+		// Send a dummy event at the same time to enable using Tracks funnels,
+		// which requires a minimum of two event steps.
+		$resp = self::send_event( 'sensei_dummy_stats_log' );
 
 		return $resp;
 	}
