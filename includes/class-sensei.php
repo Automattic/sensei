@@ -62,7 +62,7 @@ class Sensei_Main {
 	 * @var Sensei_Updates
 	 */
 	public $updates;
-	
+
 	/**
 	 * @var WooThemes_Sensei_Course
 	 */
@@ -341,6 +341,8 @@ class Sensei_Main {
 		$this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name );
 
 		$this->view_helper = new Sensei_View_Helper();
+
+		new Sensei_Block_Module();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
