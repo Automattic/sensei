@@ -170,6 +170,9 @@ class Sensei_Usage_Tracking {
 		 **/
 		$usage_data = (array) apply_filters( 'sensei_usage_tracking_usage_data', array(
 			'course_count' => wp_count_posts( 'course' )->publish,
+			'lesson_count' => wp_count_posts( 'lesson' )->publish,
+			'message_count' => wp_count_posts( 'sensei_message' )->publish,
+			'question_count' => wp_count_posts( 'question' )->publish,
 		) );
 
 		$resp = self::send_event( 'stats_log', $usage_data );
