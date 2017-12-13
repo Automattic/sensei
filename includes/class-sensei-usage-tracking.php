@@ -170,6 +170,7 @@ class Sensei_Usage_Tracking {
 		 **/
 		$usage_data = (array) apply_filters( 'sensei_usage_tracking_usage_data', array(
 			'course_count' => wp_count_posts( 'course' )->publish,
+			'learner_count' => self::get_learner_count(),
 			'lesson_count' => wp_count_posts( 'lesson' )->publish,
 			'message_count' => wp_count_posts( 'sensei_message' )->publish,
 			'question_count' => wp_count_posts( 'question' )->publish,
@@ -182,6 +183,34 @@ class Sensei_Usage_Tracking {
 		$resp = self::send_event( 'sensei_dummy_stats_log' );
 
 		return $resp;
+	}
+
+	/**
+	 * Get the total number of learners enrolled in at least one course.
+	 *
+	 * @return int Number of learners.
+	 **/
+	public static function get_learner_count() {
+		$learner_count = 0;
+		$args['fields'] = array( 'ID' );
+		$user_query = new WP_User_Query( $args );
+		$learners = $user_query->get_results();
+
+		foreach( $learners as $learner ) {
+			$course_args = array(
+				'user_id' => $learner->ID,
+				'type' => 'sensei_course_status',
+				'status' => 'any',
+			);
+
+			$course_count = Sensei_Utils::sensei_check_for_activity( $course_args );
+
+			if ( $course_count > 0 ) {
+				$learner_count++;
+			}
+		}
+
+		return $learner_count;
 	}
 
 	/**
