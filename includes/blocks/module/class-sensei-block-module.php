@@ -16,11 +16,13 @@ class Sensei_Block_Module {
 	public function __construct() {
 		if ( is_admin() ) {
 			add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
+		} else {
+			if ( function_exists( 'register_block_type' ) ) {
+				register_block_type( 'sensei/module', array(
+					'render_callback' => array( $this, 'render_module' ),
+				) );
+			}
 		}
-
-		register_block_type( 'sensei/module', array(
-			'render_callback' => array( $this, 'render_module' ),
-		) );
 	}
 
 	public function enqueue_block_editor_assets() {
