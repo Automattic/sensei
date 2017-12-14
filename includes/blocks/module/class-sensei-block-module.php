@@ -11,6 +11,8 @@
  */
 
 class Sensei_Block_Module {
+	private $module;
+
 	public function __construct() {
 		if ( is_admin() ) {
 			add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
@@ -52,6 +54,68 @@ class Sensei_Block_Module {
 	}
 
 	public function render_module( $attributes ) {
-		return Sensei_Templates::get_template( 'single-course/modules.php' );
+		$this->module = get_term_by( 'id', $attributes['moduleId'], 'module' );
+
+		include( 'templates/block-module.php' );
+	}
+
+	public function get_module_id() {
+		/**
+		 * Filter the module ID.
+		 *
+		 * This fires within the get_module_id function.
+		 *
+		 * @since 1.9.7
+		 *
+		 * @param int $this->module->term_id Module ID.
+		 */
+		return apply_filters( 'sensei_the_module_id', $this->module->term_id );
+	}
+
+	public function get_module_title() {
+		global $post;
+
+		/**
+		 * Filter the module title.
+		 *
+		 * This fires within the get_module_title function.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param string $this->module->name Module title.
+		 * @param int $this->module->term_id Module ID.
+		 * @param string $course_id Course ID.
+		 */
+		return apply_filters( 'sensei_the_module_title', $this->module->name, $this->module->term_id, $post->ID );
+	}
+
+	public function get_module_description() {
+		/**
+		 * Filter the module description.
+		 *
+		 * This fires within the get_module_description function.
+		 *
+		 * @param string $this->module->description Module Description.
+		 */
+		return apply_filters( 'sensei_the_module_description', $this->module->description );
+	}
+
+	public function get_module_url() {
+		global $post;
+
+		$module_url = get_term_link( $this->module, 'module' );
+
+		/**
+		 * Filter the module permalink url.
+		 *
+		 * This fires within the get_module_url function.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param string $module_url Module URL.
+		 * @param int $this->module->term_id Module ID.
+		 * @param string $post->ID Course ID.
+		 */
+		return apply_filters( 'sensei_the_module_permalink', $module_url, $this->module->term_id, $post->ID );
 	}
 }
