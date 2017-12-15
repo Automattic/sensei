@@ -50,7 +50,7 @@ class Sensei_Usage_Tracking {
 		$properties['_ui'] = site_url();
 		$properties['_ul'] = $user->user_login;
 		$properties['_en'] = $event_name;
-		$properties['_ts'] = (int) $event_timestamp . '000';
+		$properties['_ts'] = $event_timestamp . '000';
 		$properties['_rt'] = round( microtime( true ) * 1000 );  // log time
 		$p = array();
 
