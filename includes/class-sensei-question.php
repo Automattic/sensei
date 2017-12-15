@@ -370,7 +370,7 @@ class Sensei_Question {
 
 	/**
 	 * Given a question ID, return the grade that can be achieved.
-	 * 
+	 *
 	 * @since 1.9
 	 *
 	 * @param int $question_id
@@ -451,7 +451,7 @@ class Sensei_Question {
          * hook document in class-woothemes-sensei-message.php the_title()
          */
         $title = apply_filters( 'sensei_single_title', $title, 'question');
-		
+
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
         $title_html  = '<span class="question question-title">';
@@ -631,7 +631,7 @@ class Sensei_Question {
          * Allow dynamic overriding of whether to show question answers or not
          *
          * @since 1.9.7
-         * 
+         *
          * @param boolean $show_answers
          * @param integer $question_id
          * @param integer $quiz_id
@@ -730,9 +730,7 @@ class Sensei_Question {
 		$user_question_grade  = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 
 		// Defaults
-		$user_correct         = false;
-		$answer_message_class = 'user_wrong';
-		$answer_message       = __( 'Incorrect - Right Answer:','woothemes-sensei') . ' ' . self::get_correct_answer( $question_id );
+        $answer_message       = __( 'Incorrect - Right Answer:','woothemes-sensei') . ' ' . self::get_correct_answer( $question_id );
 
 		// For zero grade mark as 'correct' but add no classes
 		if ( 0 == $question_grade   ) {
@@ -743,7 +741,10 @@ class Sensei_Question {
 			$user_correct         = true;
 			$answer_message_class = 'user_right';
 			$answer_message       = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
-		}
+		} else {
+            $user_correct          = false;
+            $answer_message_class  = 'user_wrong';
+        }
 
 		// setup answer feedback class
 		$answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
@@ -751,10 +752,35 @@ class Sensei_Question {
 			$answer_message_class .= ' has_notes';
 		}
 
-		?>
-		<div class="answer_message <?php echo esc_attr( $answer_message_class ); ?>">
+        /**
+         * Filter what the final answer message CSS classes will be
+         *
+         * @param string $answer_message The Answer message.
+         * @param int    $lesson_id The Lesson ID.
+         * @param int    $question_id The question ID.
+         * @param int    $user_id The user ID.
+         * @param bool   $user_correct Is this a correct answer?.
+         *
+         * @return string A space separated string of css class names.
+         */
+		$final_css_classes = apply_filters( 'sensei_question_answer_message_css_class', $answer_message_class, $lesson_id, $question_id, get_current_user_id(), $user_correct );
 
-			<span><?php echo $answer_message; ?></span>
+		/**
+         * Filter what the final answer text will look like.
+         *
+         * @param string $answer_message The Answer message.
+         * @param int    $lesson_id The Lesson ID.
+         * @param int    $question_id The question ID.
+         * @param int    $user_id The user ID.
+         * @param bool   $user_correct Is this a correct answer?.
+         *
+         * @return string
+         */
+		$final_message = apply_filters( 'sensei_question_answer_message_text', $answer_message, $lesson_id, $question_id, get_current_user_id(), $user_correct );
+		?>
+		<div class="answer_message <?php echo esc_attr( $final_css_classes ); ?>">
+
+			<span><?php echo esc_html( $final_message ) ?></span>
 
 		</div>
 		<?php
