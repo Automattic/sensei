@@ -1894,7 +1894,6 @@ class Sensei_Lesson {
 		$new_columns['cb'] = '<input type="checkbox" />';
 		$new_columns['title'] = _x( 'Lesson Title', 'column name', 'woothemes-sensei' );
 		$new_columns['lesson-course'] = _x( 'Course', 'column name', 'woothemes-sensei' );
-		$new_columns['lesson-module'] = _x( 'Module', 'column name', 'woothemes-sensei' );
 		$new_columns['lesson-prerequisite'] = _x( 'Pre-requisite Lesson', 'column name', 'woothemes-sensei' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
@@ -1923,16 +1922,6 @@ class Sensei_Lesson {
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . sprintf( esc_attr__( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_course_id ) ) ) . '">' . get_the_title( absint( $lesson_course_id ) ) . '</a>';
 				} // End If Statement
 			break;
-			case 'lesson-module':
-				$module = Sensei()->modules->get_lesson_module( $post->ID );
-
-				if ( $module ) {
-					echo '<a href="' . esc_url( get_edit_term_link( $module->term_id, $module->taxonomy, 'post' ) ) .
-						'" title="' . sprintf( esc_attr__( 'Edit %s', 'woothemes-sensei' ), $module->name ) . '">' .
-						esc_html( $module->name ) . '</a>';
-				}
-
-				break;
 			case 'lesson-prerequisite':
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true);
 				if ( 0 < absint( $lesson_prerequisite_id ) ) {
