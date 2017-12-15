@@ -755,7 +755,7 @@ class Sensei_Question {
         /**
          * Filter what the final answer message CSS classes will be
          *
-         * @param string $answer_message The Answer message.
+         * @param string $answer_message_class The Answer message css classes, space separated.
          * @param int    $lesson_id The Lesson ID.
          * @param int    $question_id The question ID.
          * @param int    $user_id The user ID.
