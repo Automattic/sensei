@@ -1,7 +1,5 @@
 ## Customize the test machine
 machine:
-  node:
-    version: 8.9.1
 
   timezone:
     America/Los_Angeles # Set the timezone
