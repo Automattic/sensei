@@ -43,7 +43,7 @@ class Sensei_Usage_Tracking {
 		}
 
 		$properties['admin_email'] = get_option( 'admin_email' );
-		$properties['_ut'] = 'sensei:user_id';
+		$properties['_ut'] = 'sensei:site_url';
 		// Use site URL as the userid to enable usage tracking at the site level.
 		// Note that we would likely want to use site URL + user ID for userid if we were
 		// to ever add event tracking at the user level.
