@@ -291,31 +291,4 @@ class Sensei_Usage_Tracking {
 		<?php
 		}
 	}
-
-	/**
-	 * Output Tracks script.
-	 */
-	function load_tracking_async_defer() {
-		$protocol = is_ssl() ? 'https://' : 'http://';
-	?>
-		<script type="text/javascript" src="<?php echo $protocol; ?>stats.wp.com/w.js?56" async defer></script>
-	<?php
-	}
-
-	function add_sensei_tracking_script() {
-		$user = wp_get_current_user();
-	?>
-		<script>
-			window.Sensei = window.Sensei || {};
-
-			Sensei.record_event = function( event_name, event_properties ) {
-				var props = event_properties || {};
-
-				window._tkq = window._tkq || [];
-				window._tkq.push( [ 'identifyUser', <?php echo site_url(); ?>, '<?php echo esc_js( $user->user_login ); ?>' ] );
-				window._tkq.push( [ 'recordEvent', event_name, props ] );
-			};
-		</script>
-	<?php
-	}
 }
