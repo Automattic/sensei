@@ -274,15 +274,19 @@ class Sensei_Usage_Tracking {
 		$opt_in_displayed = (bool) get_option( 'sensei_usage_tracking_opt_in_display' );
 		$user_tracking_enabled = (bool) get_option( self::$usage_tracking_setting_name );
 
-		if ( false && ! $user_tracking_enabled && ! $opt_in_displayed ) { ?>
-			<div class="notice">
-				<p><?php echo esc_html__( 'Help us make Sensei better! Allow Sensei to anonymously track plugin usage. No sensitive data is tracked.', 'woothemes-sensei' ); ?></p>
-				<form>
-					<input class="button button-primary" type="submit" value="Yes">
-				</form>
-				<form>
-					<input class="button" type="submit" value="No">
-				</form>
+		if ( ! $user_tracking_enabled && ! $opt_in_displayed ) { ?>
+			<div class="notice notice-info is-dismissible">
+				<p>
+					<!-- TODO: Final URL TBD. -->
+					<?php echo sprintf( __( 'Help us make Sensei better by allowing us to collect
+						%1$susage tracking data%2$s. No sensitive information is tracked.',
+						'woothemes-sensei' ),
+						'<a href="#">', '</a>' ); ?>
+				</p>
+				<p>
+					<input class="button button-primary" type="submit" value="Enable Usage Tracking">
+					<input class="button" type="submit" value="Disable Usage Tracking">
+				</p>
 			</div>
 		<?php
 		}
