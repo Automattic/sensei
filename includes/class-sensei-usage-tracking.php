@@ -169,12 +169,12 @@ class Sensei_Usage_Tracking {
 		 * @return array The array should be key/value. All values will be urlencoded
 		 **/
 		$usage_data = (array) apply_filters( 'sensei_usage_tracking_usage_data', array(
-			'course_count' => wp_count_posts( 'course' )->publish,
-			'learner_count' => self::get_learner_count(),
-			'lesson_count' => wp_count_posts( 'lesson' )->publish,
-			'message_count' => wp_count_posts( 'sensei_message' )->publish,
-			'question_count' => wp_count_posts( 'question' )->publish,
-			'teacher_count' => self::get_teacher_count(),
+			'courses' => wp_count_posts( 'course' )->publish,
+			'learners' => self::get_learner_count(),
+			'lessons' => wp_count_posts( 'lesson' )->publish,
+			'messages' => wp_count_posts( 'sensei_message' )->publish,
+			'questions' => wp_count_posts( 'question' )->publish,
+			'teachers' => self::get_teacher_count(),
 		) );
 
 		$resp = self::send_event( 'stats_log', $usage_data );
