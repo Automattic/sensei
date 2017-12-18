@@ -179,10 +179,6 @@ class Sensei_Usage_Tracking {
 
 		$resp = self::send_event( 'stats_log', $usage_data );
 
-		// Send a dummy event at the same time to enable using Tracks funnels,
-		// which requires a minimum of two event steps.
-		$resp = self::send_event( 'sensei_dummy_stats_log' );
-
 		return $resp;
 	}
 
