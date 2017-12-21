@@ -127,8 +127,13 @@ class Sensei_Autoloader {
             /**
              * Admin
              */
-            'Sensei_Welcome'            => 'admin/class-sensei-welcome.php' ,
-            'Sensei_Learner_Management' => 'admin/class-sensei-learner-management.php' ,
+            'Sensei_Welcome'            => 'admin/class-sensei-welcome.php',
+            'Sensei_Learner_Management' => 'admin/class-sensei-learner-management.php',
+
+			/**
+			 * Blocks
+			 */
+			'Sensei_Block_Module' => 'blocks/module/class-sensei-block-module.php',
 
             /**
              * Shortcodes
