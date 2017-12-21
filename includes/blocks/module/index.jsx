@@ -3,7 +3,7 @@ const { registerBlockType } = wp.blocks;
 const { withAPIData } = wp.components;
 
 import './style.scss';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 
 registerBlockType( 'sensei/module', {
 	title: 'Module',
