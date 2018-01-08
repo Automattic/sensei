@@ -62,7 +62,7 @@ class Sensei_Main {
 	 * @var Sensei_Updates
 	 */
 	public $updates;
-	
+
 	/**
 	 * @var WooThemes_Sensei_Course
 	 */
@@ -344,10 +344,6 @@ class Sensei_Main {
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
-
-			// Load Admin Welcome class
-			new Sensei_Welcome();
-
 			// Load Admin Class
 			$this->admin = new Sensei_Admin( $this->main_plugin_file_name );
 
@@ -1381,9 +1377,6 @@ class Sensei_Main {
 
 		// Flush rules.
 		add_action( 'activated_plugin' , array( __CLASS__, 'activation_flush_rules' ), 10 );
-
-		// Load the Welcome Screen.
-		add_action( 'activated_plugin' , array( 'Sensei_Welcome', 'redirect' ), 20 );
 	}
 
 	/**
