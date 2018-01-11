@@ -349,6 +349,13 @@ class Sensei_Main {
 
 		$this->view_helper = new Sensei_View_Helper();
 
+		$this->usage_tracking = new Sensei_Usage_Tracking();
+		$this->usage_tracking->hook();
+
+		// Ensure tracking job is scheduled. If the user does not opt in, no
+		// data will be sent.
+		Sensei_Usage_Tracking::maybe_schedule_tracking_task();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 
@@ -364,9 +371,6 @@ class Sensei_Main {
 			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
 				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
 			}
-
-			$this->usage_tracking = new Sensei_Usage_Tracking();
-			$this->usage_tracking->hook();
 		} else {
 
 			// Load Frontend Class
