@@ -21,6 +21,8 @@ class Sensei_Usage_Tracking {
 	 **/
 	private static $usage_tracking_setting_name = 'sensei_usage_tracking_enabled';
 
+	private static $hide_tracking_opt_in_option_name = 'sensei_usage_tracking_opt_in_hide';
+
 	private static $job_name = 'sensei_core_jobs_usage_tracking_send_data';
 
 	/**
@@ -117,6 +119,7 @@ class Sensei_Usage_Tracking {
 		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
 		add_action( 'admin_menu', array( $this, 'register_usage_submenu_page' ) );
 		add_action( 'admin_init', array( $this, 'handle_request' ) );
+		add_action( 'admin_init', array( $this, 'handle_tracking_opt_in' ) );
 		// Cron
 		add_filter( 'cron_schedules', array( $this, 'add_two_weeks' ) );
 		add_action( self::$job_name, array( $this, 'maybe_send_usage_data' ) );
@@ -261,7 +264,7 @@ class Sensei_Usage_Tracking {
 		// default-settings
 		$fields[ self::$usage_tracking_setting_name ] = array(
 			'name' => __( 'Enable usage tracking', 'woothemes-sensei' ),
-			'description' => __( 'Allow Sensei to anonymously track plugin usage**. No sensitive data is tracked.', 'woothemes-sensei' ),
+			'description' => __( 'Allow Sensei to anonymously track plugin usage. No sensitive data is tracked.', 'woothemes-sensei' ),
 			'type' => 'checkbox',
 			'default' => false,
 			'section' => 'default-settings'
@@ -271,11 +274,11 @@ class Sensei_Usage_Tracking {
 	}
 
 	function maybe_display_tracking_opt_in() {
-		$opt_in_displayed = (bool) get_option( 'sensei_usage_tracking_opt_in_display' );
-		$user_tracking_enabled = (bool) get_option( self::$usage_tracking_setting_name );
+		$opt_in_hidden = (bool) get_option( self::$hide_tracking_opt_in_option_name );
+		$user_tracking_enabled = Sensei()->settings->get( self::$usage_tracking_setting_name );
 
-		if ( ! $user_tracking_enabled && ! $opt_in_displayed ) { ?>
-			<div class="notice notice-info is-dismissible">
+		if ( ! $user_tracking_enabled && ! $opt_in_hidden ) { ?>
+			<div class="notice notice-info">
 				<p>
 					<!-- TODO: Final URL TBD. -->
 					<?php echo sprintf( __( 'Help us make Sensei better by allowing us to collect
@@ -283,12 +286,35 @@ class Sensei_Usage_Tracking {
 						'woothemes-sensei' ),
 						'<a href="#">', '</a>' ); ?>
 				</p>
-				<p>
-					<input class="button button-primary" type="submit" value="Enable Usage Tracking">
-					<input class="button" type="submit" value="Disable Usage Tracking">
-				</p>
+				<form action="/wp-admin/admin.php?page=woothemes-sensei-settings" method="post">
+					<p>
+						<input class="button button-primary" type="submit" name="enable_tracking" value="Enable Usage Tracking">
+						<input class="button" type="submit" name="disable_tracking" value="Disable Usage Tracking">
+					</p>
+				</form>
 			</div>
 		<?php
 		}
+	}
+
+	function handle_tracking_opt_in() {
+		var_error_log( $_GET );
+		var_error_log( $_POST );
+
+		// Only handle POST requests for the Settings page
+		if ( ! ( isset( $_GET['page'] )
+			&& $_GET['page'] == 'woothemes-sensei-settings'
+			&& $_SERVER['REQUEST_METHOD'] === 'POST'
+		) ) {
+			return;
+		}
+
+		$enable_tracking = isset( $_POST['enable_tracking'] );
+		Sensei()->settings->set( self::$usage_tracking_setting_name, $enable_tracking );
+		$this->hide_tracking_opt_in();
+	}
+
+	function hide_tracking_opt_in() {
+		update_option( self::$hide_tracking_opt_in_option_name, true );
 	}
 }
