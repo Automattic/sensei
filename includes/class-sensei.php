@@ -228,7 +228,7 @@ class Sensei_Main {
 		add_action( 'init', array( 'Sensei_WC_Memberships', 'load_wc_memberships_integration_hooks' ) );
 
 		/**
-		 * Hook in WooCommerce Memberships functionality
+		 * Hook in WooCommerce Subscriptions functionality
 		 */
 		add_action( 'init', array( 'Sensei_WC_Subscriptions', 'load_wc_subscriptions_integration_hooks' ) );
 	}
