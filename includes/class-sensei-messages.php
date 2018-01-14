@@ -60,7 +60,51 @@ class Sensei_Messages {
         add_filter( 'comments_array', array( $this, 'message_replies' ), 100, 1 );
         add_filter( 'get_comments_number', array( $this, 'message_reply_count' ), 100, 2 );
         add_filter( 'comments_open', array( $this, 'message_replies_open' ), 100, 2 );
+		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
 	} // End __construct()
+
+	public function only_show_messages_to_owner( $query ) {
+		if ( is_admin() ) {
+			return;
+		}
+
+		if ( ! $query->is_main_query() ) {
+			return;
+		}
+
+		if ( $this->post_type !== $query->get( 'post_type' ) ) {
+			return;
+		}
+
+		if ( current_user_can( 'manage_sensei_grades' ) ) {
+			return;
+		}
+
+		if ( ! is_user_logged_in() ) {
+			// Handled further down the hook chain.
+			return;
+		}
+
+		$username = wp_get_current_user()->user_login;
+
+		$meta_query = array(
+			'relation' => 'OR',
+		);
+
+		$meta_query[] = array(
+			'key' => '_sender',
+			'value' => $username,
+			'compare' => '='
+		);
+
+		$meta_query[] = array(
+			'key' => '_receiver',
+			'value' => $username,
+			'compare' => '='
+		);
+
+		$query->set( 'meta_query', $meta_query );
+	}
 
 	public function add_menu_item() {
 
