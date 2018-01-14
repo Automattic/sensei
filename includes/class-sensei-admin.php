@@ -56,10 +56,6 @@ class Sensei_Admin {
 		// warn users in case admin_email is not a real WP_User
 		add_action( 'admin_notices', array( $this, 'notify_if_admin_email_not_real_admin_user' ) );
 
-
-		// Reset theme notices when switching themes
-		add_action( 'switch_theme', array( $this, 'reset_theme_check_notices' ) );
-
 		// Allow Teacher access the admin area
 		add_filter( 'woocommerce_prevent_admin_access', array( $this, 'admin_access' ) );
 
@@ -1463,76 +1459,8 @@ class Sensei_Admin {
         if( isset( $_GET['sensei_hide_notice'] ) ) {
         	switch( esc_attr( $_GET['sensei_hide_notice'] ) ) {
 				case 'menu_settings': add_user_meta( get_current_user_id(), 'sensei_hide_menu_settings_notice', true ); break;
-				case 'theme_check': add_user_meta( get_current_user_id(), 'sensei_hide_theme_check_notice', true ); break;
 			}
         }
-
-        // white list templates that are already support by default and do not show notice for them
-        $template = get_option( 'template' );
-
-        $white_list = array(    'twentyeleven',
-                                'twentytwelve',
-                                'twentyfourteen',
-                                'twentyfifteen',
-                                'twentysixteen',
-								'twentyseventeen',
-                                'storefront',
-                                                );
-
-        if ( in_array( $template, $white_list ) ) {
-
-            return;
-
-        }
-
-        // don't show the notice if the user chose to hide it
-        $hide_theme_check_notice = get_user_meta( get_current_user_id(), 'sensei_hide_theme_check_notice', true );
-        if(  $hide_theme_check_notice ) {
-
-            return;
-
-        }
-
-        // show the notice for themes not supporting sensei
-	    if ( ! current_theme_supports( 'sensei' ) ) {
-            ?>
-
-            <div id="message" class="error sensei-message sensei-connect">
-                    <p>
-                        <strong>
-
-                            <?php esc_html_e( 'Your theme does not declare Sensei support', 'woothemes-sensei' ); ?>
-
-                        </strong> &#8211;
-
-                        <?php printf( /* translator: %s theme name */
-                            esc_html__( 'if you encounter layout issues please read our integration guide or choose a %s :)', 'woothemes-sensei' ),
-                            '<a href="http://www.woothemes.com/product-category/themes/sensei-themes/">'. esc_html__( 'Sensei theme', 'woothemes-sensei' ) . '</a>'
-                        ); ?>
-
-                    </p>
-                    <p class="submit">
-                        <a href="<?php echo esc_url( apply_filters( 'sensei_docs_url', 'http://docs.woothemes.com/document/sensei-and-theme-compatibility/', 'theme-compatibility' ) ); ?>" class="button-primary">
-
-                            <?php esc_html_e( 'Theme Integration Guide', 'woothemes-sensei' ); ?></a> <a class="skip button" href="<?php echo esc_url( add_query_arg( 'sensei_hide_notice', 'theme_check' ) ); ?>"><?php esc_html_e( 'Hide this notice', 'woothemes-sensei' ); ?>
-
-                        </a>
-                    </p>
-            </div>
-            <?php
-		}
-	}
-
-	/**
-	 * Reset theme check notice
-	 * @return void
-	 */
-	public function reset_theme_check_notices() {
-		global $current_user;
-		wp_get_current_user();
-        $user_id = $current_user->ID;
-
-		delete_user_meta( $user_id, 'sensei_hide_theme_check_notice' );
 	}
 
 	/**
