@@ -298,9 +298,6 @@ class Sensei_Usage_Tracking {
 	}
 
 	function handle_tracking_opt_in() {
-		var_error_log( $_GET );
-		var_error_log( $_POST );
-
 		// Only handle POST requests for the Settings page
 		if ( ! ( isset( $_GET['page'] )
 			&& $_GET['page'] == 'woothemes-sensei-settings'
