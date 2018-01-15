@@ -86,16 +86,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	public function __construct( $attributes, $content, $shortcode ) {
 		global $wp_query;
         $this->is_shortcode_initial_status_all = ! isset( $attributes['status'] ) || 'all' === $attributes['status'];
-        if ( $this->is_shortcode_initial_status_all && $wp_query->is_main_query() ) {
-            // Status all: We displayed tabs in the frontend, we might need to override the setting, as a user could
-            // have pressed a tab.
-            if ( isset( $_GET[ self::MY_COURSES_STATUS_FILTER ] ) ) {
-                $course_filter_by_status = sanitize_text_field( $_GET[ self::MY_COURSES_STATUS_FILTER ] );
-                if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array( 'all', 'active', 'complete' ), true ) ) {
-                    $attributes['status'] = $course_filter_by_status;
-                }
-            }
-        }
 
 		$attributes = shortcode_atts( array(
             'number' => '10',
@@ -103,6 +93,18 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
             'orderby' => 'title',
             'order' => 'ASC'
         ), $attributes, $shortcode );
+
+        if ( $this->is_shortcode_initial_status_all && $wp_query->is_main_query() ) {
+            // Check if we should filter the courses.
+            if ( isset( $_GET[ self::MY_COURSES_STATUS_FILTER ] ) ) {
+                $course_filter_by_status = sanitize_text_field( $_GET[ self::MY_COURSES_STATUS_FILTER ] );
+
+                if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array( 'all', 'active', 'complete' ), true ) ) {
+                    $attributes['status'] = $course_filter_by_status;
+                }
+            }
+        }
+
 		$this->page_id = $wp_query->get_queried_object_id();
 
 		// set up all argument need for constructing the course query
