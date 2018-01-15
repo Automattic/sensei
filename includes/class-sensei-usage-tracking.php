@@ -264,7 +264,10 @@ class Sensei_Usage_Tracking {
 		// default-settings
 		$fields[ self::$usage_tracking_setting_name ] = array(
 			'name' => __( 'Enable usage tracking', 'woothemes-sensei' ),
-			'description' => __( 'Allow Sensei to anonymously track plugin usage. No sensitive data is tracked.', 'woothemes-sensei' ),
+			'description' => __(
+				'Help us make Sensei better by allowing us to collect
+				<a href="https://docs.woocommerce.com/document/what-data-does-sensei-track">usage tracking data</a>.
+				No sensitive information is collected.', 'woothemes-sensei' ),
 			'type' => 'checkbox',
 			'default' => false,
 			'section' => 'default-settings'
@@ -280,11 +283,10 @@ class Sensei_Usage_Tracking {
 		if ( ! $user_tracking_enabled && ! $opt_in_hidden ) { ?>
 			<div class="notice notice-info">
 				<p>
-					<!-- TODO: Final URL TBD. -->
-					<?php echo sprintf( __( 'Help us make Sensei better by allowing us to collect
-						%1$susage tracking data%2$s. No sensitive information is tracked.',
-						'woothemes-sensei' ),
-						'<a href="#">', '</a>' ); ?>
+					<?php echo __( "We'd love if you helped us make Sensei better by allowing us to collect
+						<a href=\"https://docs.woocommerce.com/document/what-data-does-sensei-track\">usage tracking data</a>.
+						No sensitive information is collected, and you can opt out at any time.",
+						'woothemes-sensei' ) ?>
 				</p>
 				<form action="/wp-admin/admin.php?page=woothemes-sensei-settings" method="post">
 					<p>
