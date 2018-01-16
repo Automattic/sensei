@@ -118,8 +118,6 @@ class Sensei_Usage_Tracking {
 		// Admin
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
-		add_action( 'admin_menu', array( $this, 'register_usage_submenu_page' ) );
-		add_action( 'admin_init', array( $this, 'handle_request' ) );
 		// Ajax
 		add_action( 'wp_ajax_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
 		// Cron
@@ -142,28 +140,6 @@ class Sensei_Usage_Tracking {
 		);
 
 		return $schedules;
-	}
-
-	function handle_request() {
-		if ( ! isset( $_GET['page'] ) ) {
-			return;
-		}
-
-		if ( $_GET['page'] !== 'sensei_usage_tracking' ) {
-			return;
-		}
-
-		if ( isset( $_POST['usage_tracking_action'] ) && $_POST['usage_tracking_action'] === 'send_data' ) {
-			check_admin_referer( 'send_data_nonce' );
-			$result = self::maybe_send_usage_data();
-
-			if ( is_wp_error( $result ) ) {
-				wp_redirect( 'admin.php?page=sensei_usage_tracking&msg=data_send_error' );
-			}
-
-			wp_redirect( 'admin.php?page=sensei_usage_tracking&msg=data_send_success' );
-			exit;
-		}
 	}
 
 	/**
@@ -232,25 +208,6 @@ class Sensei_Usage_Tracking {
 		}
 
 		return $learner_count;
-	}
-
-	/**
-	 *
-	 * Register usage submenu page.
-	 **/
-	function register_usage_submenu_page() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		add_submenu_page(
-			'sensei',
-			__( 'Usage Tracking', 'woothemes-sensei' ),
-			__( 'Usage Tracking', 'woothemes-sensei' ),
-			'manage_options',
-			'sensei_usage_tracking',
-			array( $this, 'render_usage_tracking_page' )
-		);
 	}
 
 	function render_usage_tracking_page() {
