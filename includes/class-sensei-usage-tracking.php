@@ -116,13 +116,23 @@ class Sensei_Usage_Tracking {
 		// Setting
 		add_filter( 'sensei_settings_fields', array( $this, 'add_setting_field' ) );
 		// Admin
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
 		add_action( 'admin_menu', array( $this, 'register_usage_submenu_page' ) );
 		add_action( 'admin_init', array( $this, 'handle_request' ) );
-		add_action( 'admin_init', array( $this, 'handle_tracking_opt_in' ) );
+		// Ajax
+		add_action( 'wp_ajax_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
 		// Cron
 		add_filter( 'cron_schedules', array( $this, 'add_two_weeks' ) );
 		add_action( self::$job_name, array( $this, 'maybe_send_usage_data' ) );
+	}
+
+	function admin_enqueue_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script( 'sensei-usage-tracking-notice',
+			Sensei()->plugin_url . 'assets/js/admin/usage-tracking-notice' . $suffix . '.js',
+			array( 'jquery' ), Sensei()->version, true );
 	}
 
 	function add_two_weeks( $schedules ) {
@@ -281,36 +291,43 @@ class Sensei_Usage_Tracking {
 		$user_tracking_enabled = Sensei()->settings->get( self::$usage_tracking_setting_name );
 
 		if ( ! $user_tracking_enabled && ! $opt_in_hidden ) { ?>
-			<div class="notice notice-info">
+			<div id="sensei-usage-tracking-notice" class="notice notice-info"
+				data-nonce="<?php echo wp_create_nonce( 'tracking-opt-in' ) ?>">
 				<p>
-					<?php echo __( "We'd love if you helped us make Sensei better by allowing us to collect
+					<?php _e( "We'd love if you helped us make Sensei better by allowing us to collect
 						<a href=\"https://docs.woocommerce.com/document/what-data-does-sensei-track\">usage tracking data</a>.
 						No sensitive information is collected, and you can opt out at any time.",
 						'woothemes-sensei' ) ?>
 				</p>
-				<form action="/wp-admin/admin.php?page=woothemes-sensei-settings" method="post">
-					<p>
-						<input class="button button-primary" type="submit" name="enable_tracking" value="Enable Usage Tracking">
-						<input class="button" type="submit" name="disable_tracking" value="Disable Usage Tracking">
-					</p>
-				</form>
+				<p>
+					<button class="button button-primary" data-enable-tracking="yes">
+						<?php _e( 'Enable Usage Tracking', 'woothemes-sensei' ) ?>
+					</button>
+					<button class="button" data-enable-tracking="no">
+						<?php _e( 'Disable Usage Tracking', 'woothemes-sensei' ) ?>
+					</button>
+					<span id="progress" class="spinner alignleft"></span>
+				</p>
+			</div>
+			<div id="sensei-usage-tracking-enable-success" class="notice notice-success hidden">
+				<p><?php _e( 'Usage data enabled. Thank you!', 'woothemes-sensei' ) ?></p>
+			</div>
+			<div id="sensei-usage-tracking-disable-success" class="notice notice-success hidden">
+				<p><?php _e( 'Disabled usage tracking.', 'woothemes-sensei' ) ?></p>
+			</div>
+			<div id="sensei-usage-tracking-failure" class="notice notice-error hidden">
+				<p><?php _e( 'Something went wrong. Please try again later.', 'woothemes-sensei' ) ?></p>
 			</div>
 		<?php
 		}
 	}
 
 	function handle_tracking_opt_in() {
-		// Only handle POST requests for the Settings page
-		if ( ! ( isset( $_GET['page'] )
-			&& $_GET['page'] == 'woothemes-sensei-settings'
-			&& $_SERVER['REQUEST_METHOD'] === 'POST'
-		) ) {
-			return;
-		}
-
-		$enable_tracking = isset( $_POST['enable_tracking'] );
+		check_ajax_referer( 'tracking-opt-in', 'nonce' );
+		$enable_tracking = isset( $_POST['enable_tracking'] ) && $_POST['enable_tracking'] === '1';
 		Sensei()->settings->set( self::$usage_tracking_setting_name, $enable_tracking );
 		$this->hide_tracking_opt_in();
+		wp_die();
 	}
 
 	function hide_tracking_opt_in() {
