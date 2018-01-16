@@ -85,25 +85,25 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 */
 	public function __construct( $attributes, $content, $shortcode ) {
 		global $wp_query;
-        $this->is_shortcode_initial_status_all = ! isset( $attributes['status'] ) || 'all' === $attributes['status'];
+		$this->is_shortcode_initial_status_all = ! isset( $attributes['status'] ) || 'all' === $attributes['status'];
 
 		$attributes = shortcode_atts( array(
-            'number' => '10',
-            'status' => 'all',
-            'orderby' => 'title',
-            'order' => 'ASC'
-        ), $attributes, $shortcode );
+			'number' => '10',
+			'status' => 'all',
+			'orderby' => 'title',
+			'order' => 'ASC'
+		), $attributes, $shortcode );
 
-        if ( $this->is_shortcode_initial_status_all && $wp_query->is_main_query() ) {
-            // Check if we should filter the courses.
-            if ( isset( $_GET[ self::MY_COURSES_STATUS_FILTER ] ) ) {
-                $course_filter_by_status = sanitize_text_field( $_GET[ self::MY_COURSES_STATUS_FILTER ] );
+		if ( $this->is_shortcode_initial_status_all && $wp_query->is_main_query() ) {
+			// Check if we should filter the courses.
+			if ( isset( $_GET[ self::MY_COURSES_STATUS_FILTER ] ) ) {
+				$course_filter_by_status = sanitize_text_field( $_GET[ self::MY_COURSES_STATUS_FILTER ] );
 
-                if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array( 'all', 'active', 'complete' ), true ) ) {
-                    $attributes['status'] = $course_filter_by_status;
-                }
-            }
-        }
+				if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array( 'all', 'active', 'complete' ), true ) ) {
+					$attributes['status'] = $course_filter_by_status;
+				}
+			}
+		}
 
 		$this->page_id = $wp_query->get_queried_object_id();
 
@@ -127,7 +127,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	}
 
 	private function is_my_courses() {
-        global $wp_query;
+		global $wp_query;
 
 		return $wp_query->is_page() && $wp_query->get_queried_object_id() === absint( Sensei()->settings->get( 'my_course_page' ) );
 	}
@@ -185,16 +185,16 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		if ( 'complete' == $this->status ) {
 
 			$included_courses = empty( $completed_ids ) ? array( '-1000' ) : $completed_ids;
-            if ( empty( $completed_ids ) ) {
-                add_action( 'sensei_loop_course_inside_before', array( $this, 'completed_no_course_message_output' ) );
-            }
+			if ( empty( $completed_ids ) ) {
+				add_action( 'sensei_loop_course_inside_before', array( $this, 'completed_no_course_message_output' ) );
+			}
 
 		} elseif ( 'active' == $this->status ) {
 
 			$included_courses = empty( $active_ids ) ? array( '-1000' ) : $active_ids;
-            if ( empty( $active_ids ) ) {
-                add_action( 'sensei_loop_course_inside_before', array( $this, 'active_no_course_message_output' ) );
-            }
+			if ( empty( $active_ids ) ) {
+				add_action( 'sensei_loop_course_inside_before', array( $this, 'active_no_course_message_output' ) );
+			}
 
 		} else { // all courses
 
