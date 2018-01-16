@@ -317,6 +317,13 @@ class Sensei_Usage_Tracking {
 					</button>
 					<span id="progress" class="spinner alignleft"></span>
 				</p>
+				<p>
+					<noscript>
+						<?php _e( "Looks like you don't have Javascript enabled! Please go to the
+							<a href=\"/wp-admin/admin.php?page=woothemes-sensei-settings\">Settings page</a>
+							to enable usage tracking.", 'woothemes-sensei' ); ?>
+					</noscript>
+				</p>
 			</div>
 			<div id="sensei-usage-tracking-enable-success" class="notice notice-success hidden">
 				<p><?php _e( 'Usage data enabled. Thank you!', 'woothemes-sensei' ) ?></p>
