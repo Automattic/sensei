@@ -25,6 +25,8 @@ class Sensei_Usage_Tracking {
 
 	private static $job_name = 'sensei_core_jobs_usage_tracking_send_data';
 
+	private static $usage_tracking_capability = 'sensei_manage_usage_tracking';
+
 	/**
 	 * Send an event or stat.
 	 *
@@ -113,6 +115,8 @@ class Sensei_Usage_Tracking {
 	 * Attach hooks.
 	 **/
 	function hook() {
+		// Capabilities
+		add_action( 'init', array( $this, 'add_capabilities' ) );
 		// Setting
 		add_filter( 'sensei_settings_fields', array( $this, 'add_setting_field' ) );
 		// Admin
@@ -125,6 +129,11 @@ class Sensei_Usage_Tracking {
 		// Cron
 		add_filter( 'cron_schedules', array( $this, 'add_two_weeks' ) );
 		add_action( self::$job_name, array( $this, 'maybe_send_usage_data' ) );
+	}
+
+	function add_capabilities() {
+		$role = get_role( 'administrator' );
+		$role->add_cap( self::$usage_tracking_capability );
 	}
 
 	function admin_enqueue_scripts() {
@@ -290,7 +299,7 @@ class Sensei_Usage_Tracking {
 		$opt_in_hidden = (bool) get_option( self::$hide_tracking_opt_in_option_name );
 		$user_tracking_enabled = Sensei()->settings->get( self::$usage_tracking_setting_name );
 
-		if ( ! $user_tracking_enabled && ! $opt_in_hidden ) { ?>
+		if ( ! $user_tracking_enabled && ! $opt_in_hidden && current_user_can( self::$usage_tracking_capability ) ) { ?>
 			<div id="sensei-usage-tracking-notice" class="notice notice-info"
 				data-nonce="<?php echo wp_create_nonce( 'tracking-opt-in' ) ?>">
 				<p>
@@ -324,6 +333,11 @@ class Sensei_Usage_Tracking {
 
 	function handle_tracking_opt_in() {
 		check_ajax_referer( 'tracking-opt-in', 'nonce' );
+
+		if ( ! current_user_can( self::$usage_tracking_capability ) ) {
+			wp_die( '', '', 403 );
+		}
+
 		$enable_tracking = isset( $_POST['enable_tracking'] ) && $_POST['enable_tracking'] === '1';
 		Sensei()->settings->set( self::$usage_tracking_setting_name, $enable_tracking );
 		$this->hide_tracking_opt_in();
