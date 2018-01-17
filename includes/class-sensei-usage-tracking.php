@@ -233,7 +233,7 @@ class Sensei_Usage_Tracking {
 			'name' => __( 'Enable usage tracking', 'woothemes-sensei' ),
 			'description' => __(
 				'Help us make Sensei better by allowing us to collect
-				<a href="https://docs.woocommerce.com/document/what-data-does-sensei-track">usage tracking data</a>.
+				<a href="https://docs.woocommerce.com/document/what-data-does-sensei-track" target="_blank">usage tracking data</a>.
 				No sensitive information is collected.', 'woothemes-sensei' ),
 			'type' => 'checkbox',
 			'default' => false,
@@ -252,7 +252,7 @@ class Sensei_Usage_Tracking {
 				data-nonce="<?php echo wp_create_nonce( 'tracking-opt-in' ) ?>">
 				<p>
 					<?php _e( "We'd love if you helped us make Sensei better by allowing us to collect
-						<a href=\"https://docs.woocommerce.com/document/what-data-does-sensei-track\">usage tracking data</a>.
+						<a href=\"https://docs.woocommerce.com/document/what-data-does-sensei-track\" target=\"_blank\">usage tracking data</a>.
 						No sensitive information is collected, and you can opt out at any time.",
 						'woothemes-sensei' ) ?>
 				</p>
