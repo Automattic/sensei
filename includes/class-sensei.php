@@ -146,6 +146,11 @@ class Sensei_Main {
 	public $rest_api;
 
 	/**
+	 * @var Sensei_Usage_Tracking
+	 */
+	private $usage_tracking;
+
+	/**
 	 * @var $id
 	 */
 	private $id;
@@ -195,6 +200,8 @@ class Sensei_Main {
 
 		// Run this on activation.
 		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activation' ) );
+		// Run this on deactivation.
+		register_deactivation_hook( $this->main_plugin_file_name, array( $this, 'deactivation' ) );
 
 		// Image Sizes
 		$this->init_image_sizes();
@@ -341,6 +348,13 @@ class Sensei_Main {
 		$this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name );
 
 		$this->view_helper = new Sensei_View_Helper();
+
+		$this->usage_tracking = new Sensei_Usage_Tracking();
+		$this->usage_tracking->hook();
+
+		// Ensure tracking job is scheduled. If the user does not opt in, no
+		// data will be sent.
+		Sensei_Usage_Tracking::maybe_schedule_tracking_task();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
@@ -511,6 +525,10 @@ class Sensei_Main {
 		$this->register_plugin_version();
 
 	} // End activation()
+
+	public function deactivation() {
+		Sensei_Usage_Tracking::maybe_unschedule_tracking_task();
+	}
 
 
 	/**

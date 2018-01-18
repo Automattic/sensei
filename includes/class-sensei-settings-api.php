@@ -444,7 +444,8 @@ class Sensei_Settings_API {
 		if ( $has_description ) {
 			echo wp_kses( $args['data']['description'], array( 'a' => array(
 																	        'href' => array(),
-																	        'title' => array()
+																	        'title' => array(),
+																			'target' => array(),
 																	    )
 															)
 						) . '</label>' . "\n";
