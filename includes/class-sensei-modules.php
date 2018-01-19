@@ -77,6 +77,8 @@ class Sensei_Core_Modules
 		add_filter('sensei_lessons_archive_text', array($this, 'module_archive_title') );
 		add_action('sensei_loop_lesson_inside_before', array($this, 'module_archive_description'), 30 );
 		add_action('sensei_pagination', array($this, 'module_navigation_links'), 11);
+		add_action( 'sensei_taxonomy_module_content_inside_before', array( $this, 'module_archive_description' ), 30 );
+
 		add_filter('body_class', array($this, 'module_archive_body_class'));
 
 		// add modules to the single course template
@@ -536,7 +538,7 @@ class Sensei_Core_Modules
 			return $template;
 		}
 
-		$file = 'archive-lesson.php';
+		$file = 'taxonomy-module.php';
 		$find = array( $file, Sensei()->template_url . $file );
 
 		// locate the template file

@@ -323,6 +323,10 @@ add_action( 'sensei_loop_lesson_inside_before', array( 'Sensei_Lesson', 'depreca
 //The archive title header on the lesson archive loop
 add_action( 'sensei_loop_lesson_inside_before', array( $this->lesson, 'the_archive_header' ), 20 );
 
+// @1.9.20
+//The archive title header on the module taxonomy page.
+add_action( 'sensei_taxonomy_module_content_inside_before', array( $this->lesson, 'the_archive_header' ), 20 );
+
 // @since 1.9.0
 //Output the lesson header on the content-lesson.php which runs inside the lessons loop
 add_action( 'sensei_content_lesson_inside_before', array( 'Sensei_Lesson', 'the_lesson_meta' ), 20 );
