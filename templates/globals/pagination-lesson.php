@@ -10,13 +10,28 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 
 global $post;
-$nav_id_array = sensei_get_prev_next_lessons( $post->ID );
-$previous_lesson_id = absint( $nav_id_array['prev_lesson'] );
-$next_lesson_id = absint( $nav_id_array['next_lesson'] );
+
+$nav_links = sensei_get_prev_next_lessons( $post->ID );
+
 // Output HTML
-if ( ( 0 < $previous_lesson_id ) || ( 0 < $next_lesson_id ) ) { ?>
+if ( isset( $nav_links['previous'] ) || isset( $nav_links['next'] ) ) { ?>
 	<nav id="post-entries" class="post-entries fix">
-        <?php if ( 0 < $previous_lesson_id ) { ?><div class="nav-prev fl"><a href="<?php echo esc_url( get_permalink( $previous_lesson_id ) ); ?>" rel="prev"><span class="meta-nav"></span> <?php echo get_the_title( $previous_lesson_id ); ?></a></div><?php } ?>
-		<?php if ( 0 < $next_lesson_id ) { ?><div class="nav-next fr"><a href="<?php echo esc_url( get_permalink( $next_lesson_id ) ); ?>" rel="prev"><?php echo get_the_title( $next_lesson_id ); ?> <span class="meta-nav"></span></a></div><?php } ?>
+        <?php if ( isset( $nav_links['previous'] ) ) { ?>
+	        <div class="nav-prev fl">
+	        	<a href="<?php echo esc_url( $nav_links['previous']['url'] ); ?>" rel="prev">
+	        		<span class="meta-nav"></span>
+	        		<?php echo esc_html( $nav_links['previous']['name'] ); ?>
+	        	</a>
+	        </div>
+        <?php } ?>
+
+		<?php if ( isset( $nav_links['next'] ) ) { ?>
+			<div class="nav-next fr">
+				<a href="<?php echo esc_url( $nav_links['next']['url'] ); ?>" rel="next">
+					<?php echo esc_html( $nav_links['next']['name'] ); ?>
+					<span class="meta-nav"></span>
+				</a>
+			</div>
+		<?php } ?>
     </nav><!-- #post-entries -->
 <?php } ?>
