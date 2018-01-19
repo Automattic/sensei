@@ -1304,12 +1304,11 @@ class Sensei_Utils {
 				}
 
                 // add next lesson button
-                $nav_id_array = sensei_get_prev_next_lessons( $lesson_id );
-                $next_lesson_id = absint( $nav_id_array['next_lesson'] );
+                $nav_links = sensei_get_prev_next_lessons( $lesson_id );
 
                 // Output HTML
-                if ( ( 0 < $next_lesson_id ) ) {
-                    $message .= ' ' . '<a class="next-lesson" href="' . esc_url( get_permalink( $next_lesson_id ) )
+                if ( isset( $nav_links['next'] ) ) {
+                    $message .= ' ' . '<a class="next-lesson" href="' . esc_url( $nav_links['next']['url'] )
                                 . '" rel="next"><span class="meta-nav"></span>'. __( 'Next Lesson' ,'woothemes-sensei')
                                 .'</a>';
 
@@ -1703,7 +1702,7 @@ class Sensei_Utils {
 
 				$lesson_id = $lesson;
 			}
-			
+
 			/**
 			 * Filter the user lesson status
 			 *
@@ -1714,7 +1713,7 @@ class Sensei_Utils {
 			 * @param int	  	$user_id			ID of user
 			 */
 			$user_lesson_status = apply_filters( 'sensei_user_completed_lesson', $user_lesson_status, $lesson_id, $user_id );
-			
+
 			if ( 'in-progress' != $user_lesson_status ) {
 				// Check for Passed or Completed Setting
 				// Should we be checking for the Course completion setting? Surely that should only affect the Course completion, not bypass each Lesson setting
