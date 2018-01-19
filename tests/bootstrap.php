@@ -50,7 +50,7 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public function install_sensei() {
 		// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
-		$GLOBALS['wp_roles']->reinit();
+		$GLOBALS['wp_roles']->for_site();
 		echo "Installing Sensei..." . PHP_EOL;
 	}
 	/**
