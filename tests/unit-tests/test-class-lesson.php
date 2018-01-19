@@ -16,9 +16,15 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
      * every single test in this class
      */
     public function setup(){
-        // load the factory class
+		parent::setup();
+
         $this->factory = new Sensei_Factory();
     }// end function setup()
+
+    public function tearDown() {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
 
     /**
      * Testing the quiz class to make sure it is loaded

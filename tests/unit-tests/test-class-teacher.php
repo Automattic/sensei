@@ -16,7 +16,8 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
      * every single test in this class
      */
     public function setup(){
-        // load the factory class
+		parent::setUp();
+
         $this->factory = new Sensei_Factory();
     }// end function setup()
 
@@ -24,6 +25,8 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
      *
      */
     public function tearDown(){
+		parent::tearDown();
+		$this->factory->tearDown();
 
         // remove all courses
         $lessons = get_posts( 'post_type=course' );

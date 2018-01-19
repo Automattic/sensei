@@ -49,6 +49,22 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
     }// end construct
 
+	/**
+	 * Teardown content that the factory creates.
+	 *
+	*/
+	public function tearDown() {
+		// Courses
+		foreach( $this->course_ids as $course_id ) {
+			wp_delete_post( $course_id, true );
+		}
+
+		// Lessons
+		foreach( $this->lesson_ids as $lesson_id ) {
+			wp_delete_post( $lesson_id, true );
+		}
+	}
+
     /**
      * Accesses the test_data lesson_id's and return any one of them
      *

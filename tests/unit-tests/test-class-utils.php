@@ -17,13 +17,19 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
      * every single test in this class
      */
     public function setup(){
-        // load the factory class
+		parent::setup();
+
         $this->factory = new Sensei_Factory();
 
         //remove this action so that no emails are sent during this test
         remove_all_actions( 'sensei_user_course_start' );
 
     }// end function setup()
+
+    public function tearDown() {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
 
     /**
      * Testing the quiz class to make sure it is loaded

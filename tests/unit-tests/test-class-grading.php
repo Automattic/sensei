@@ -8,11 +8,16 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
      * every single test in this class
      */
     public function setUp() {
-        // load the factory class
+		parent::setup();
 
         Sensei()->grading = new WooThemes_Sensei_Grading( '' );
         $this->factory = new Sensei_Factory();
     }// end function setup()
+
+    public function tearDown() {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
 
     /**
      * Testing the quiz class to make sure it is loaded

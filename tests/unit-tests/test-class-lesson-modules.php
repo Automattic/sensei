@@ -17,6 +17,8 @@ class Sensei_Class_Lesson_Modules_Test extends WP_UnitTestCase {
 	}
 
 	public function setup(){
+		parent::setup();
+
 		$this->factory = new Sensei_Factory();
 
 		// Use the taxonomy for Modules
@@ -37,6 +39,8 @@ class Sensei_Class_Lesson_Modules_Test extends WP_UnitTestCase {
 	}
 
 	public function teardown() {
+		parent::tearDown();
+		$this->factory->tearDown();
 		wp_delete_term( $this->module_id, $this->module_taxonomy );
 	}
 

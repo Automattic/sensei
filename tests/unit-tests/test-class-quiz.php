@@ -20,7 +20,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
      * every single test in this class
      */
     public function setup(){
-        // load the factory class
+		parent::setup();
+
         $this->factory = new Sensei_Factory();
 
         // override the default upload to ensure file upload tests pass
@@ -38,6 +39,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
      *
      */
     public function tearDown(){
+		parent::tearDown();
+		$this->factory->tearDown();
 
         // remove all lessons
         $lessons = get_posts( 'post_type=lesson' );
