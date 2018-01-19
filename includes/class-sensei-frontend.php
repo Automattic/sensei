@@ -307,9 +307,8 @@ class Sensei_Frontend {
 
 			Sensei_Templates::get_template( 'globals/pagination-posts.php' );
 
-		} elseif( is_singular('lesson') ) {
-
-		    // backwards compatibility check for old location under the wrappers directory of the active theme
+		} elseif( is_tax( 'module' ) || is_singular( 'lesson' ) ) {
+		    // Backwards compatibility check for old location under the wrappers directory of the active theme.
 		    $template = locate_template( array( Sensei()->template_url . 'wrappers/pagination-lesson.php' ) );
             if( !empty( $template ) ){
 

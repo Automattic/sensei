@@ -245,102 +245,166 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	} // End sensei_reset_lesson_button()
 
 	/**
-	 * sensei_get_prev_next_lessons Returns the next and previous Lessons in the Course
-	 * since 1.0.9
-	 * @param  integer $lesson_id
-	 * @return array $return_values
+	 * Returns all of the modules and lessons in a course, in order.
+	 *
+	 * @since  1.9.20
+	 * @param  string|bool $course_id Course ID
+	 * @return array Course modules and lessons
+	 */
+	function sensei_get_modules_and_lessons( $course_id ) {
+		$lesson_ids = array();
+		$modules_and_lessons = array();
+		$course_modules = Sensei()->modules->get_course_modules( $course_id );
+
+		// Add all modules and lessons for the current course to an array.
+		if ( ! empty( $course_modules ) ) {
+			foreach( (array) $course_modules as $module ) {
+				$modules_and_lessons[] = $module;
+				$module_lessons = Sensei()->modules->get_lessons( $course_id, $module->term_id );
+
+				if ( count( $module_lessons ) > 0 ) {
+					foreach ( $module_lessons as $lesson_item ) {
+						$modules_and_lessons[] = $lesson_item;
+						$lesson_ids[] = $lesson_item->ID;
+					}
+				}
+			}
+		}
+
+		// Append all lessons not associated with a particular module to the array.
+		$other_lessons = sensei_get_other_lessons( $course_id, $lesson_ids );
+
+		if ( count( $other_lessons ) > 0 ) {
+			foreach ( $other_lessons as $other_lesson ) {
+				$modules_and_lessons[] = $other_lesson;
+			}
+		}
+
+		return $modules_and_lessons;
+	}
+
+	/**
+	 * Returns the lessons in a course that are not associated with a module.
+	 *
+	 * @since  1.9.20
+	 * @param  string|bool $course_id Course ID
+	 * @param  array       $lesson_ids Lesson IDs to exclude
+	 * @return array Other lessons not part of a module
+	 */
+	function sensei_get_other_lessons( $course_id, $lesson_ids ) {
+		$args = array(
+			'post_type' => 'lesson',
+			'posts_per_page' => -1,
+			'suppress_filters' => 0,
+			'meta_key' => '_order_' . $course_id,
+			'orderby' => 'meta_value_num date',
+			'order' => 'ASC',
+			'meta_query' => array(
+				array(
+					'key' => '_lesson_course',
+					'value' => intval( $course_id ),
+				),
+			),
+			'post__not_in' => $lesson_ids,
+		);
+
+		return get_posts( $args );
+	}
+
+	/**
+	 * Returns the URL for a navigation link.
+	 *
+	 * @since  1.9.20
+	 * @param  string|bool     $course_id Course ID
+	 * @param  WP_Post|WP_Term $item      WP_Post (lesson/quiz) or WP_Term (module)
+	 * @return string URL or empty string
+	 */
+	function sensei_get_navigation_url( $course_id, $item ) {
+		if ( ! $item || empty( $course_id ) ) {
+			return '';
+		}
+
+		if ( $item->term_id ) {	// Module
+			return add_query_arg(
+				'course_id',
+				intval( $course_id ),
+				get_term_link( $item, Sensei()->modules->taxonomy )
+			);
+		} else {	// Lesson
+			return get_permalink( $item->ID );
+		}
+	}
+
+	/**
+	 * Returns the text for a navigation link.
+	 *
+	 * @since  1.9.20
+	 * @param  WP_Post|WP_Term $item WP_Post for a lesson/quiz or WP_Term for a module
+	 * @return string Link text or empty string
+	 */
+	function sensei_get_navigation_link_text( $item ) {
+		if ( ! $item ) {
+			return '';
+		}
+
+		if ( $item->term_id ) {	// Module
+			return $item->name;
+		} else {	// Lesson
+			return $item->post_title;
+		}
+	}
+
+	/**
+	 * Returns navigation links for the modules and lessons in a course.
+	 *
+	 * @since  1.0.9
+	 * @param  integer $lesson_id Lesson ID
+	 * @return array Multi-dimensional array of previous and next links
 	 */
 	function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
+		// For modules, $lesson_id is the first lesson in the module.
+		$links = array();
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+		$modules_and_lessons = sensei_get_modules_and_lessons( $course_id );
 
-		$return_values = array();
-		$return_values['prev_lesson'] = 0;
-		$return_values['next_lesson'] = 0;
-		if ( 0 < $lesson_id ) {
-			// Get the List of Lessons in the Course
-			$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			$all_lessons = array();
+		if ( count( $modules_and_lessons > 0 ) ) {
+			$found = false;
 
-            $modules = Sensei()->modules->get_course_modules( intval( $lesson_course_id ) );
+			foreach ( $modules_and_lessons as $item ) {
+				if ( $found ) {
+					$next = $item;
+					break;
+				}
 
-            if( !empty( $modules )  ){
-                foreach( (array) $modules as $module ) {
+				if ( is_tax( Sensei()->modules->taxonomy ) ) {	// Module
+					if ( $item->term_id == get_queried_object()->term_id ) {
+						$found = true;
+					} else {
+						$previous = $item;
+					}
+				} else if ( $item->ID == $lesson_id ) {	// Lesson or quiz
+					$found = true;
+				} else {
+					$previous = $item;
+				}
+			}
+		}
 
-                    $args = array(
-                        'post_type' => 'lesson',
-                        'post_status' => 'publish',
-                        'posts_per_page' => -1,
-                        'meta_query' => array(
-                            array(
-                                'key' => '_lesson_course',
-                                'value' => intval( $lesson_course_id ),
-                                'compare' => '='
-                            )
-                        ),
-                        'tax_query' => array(
-                            array(
-                                'taxonomy' => Sensei()->modules->taxonomy,
-                                'field' => 'id',
-                                'terms' => intval( $module->term_id )
-                            )
-                        ),
-                        'meta_key' => '_order_module_' . $module->term_id,
-                        'orderby' => 'meta_value_num date',
-                        'order' => 'ASC',
-                        'suppress_filters' => 0
-                    );
+		if ( isset( $previous ) ) {
+			$links['previous'] = array(
+				'url' => sensei_get_navigation_url( $course_id, $previous ),
+				'name' => sensei_get_navigation_link_text( $previous )
+			);
+		}
 
-                    $lessons = get_posts( $args );
-                    if ( 0 < count( $lessons ) ) {
-                        foreach ($lessons as $lesson_item){
-                            $all_lessons[] = $lesson_item->ID;
-                        } // End For Loop
-                    } // End If Statement
+		if ( isset( $next ) ) {
+			$links['next'] = array(
+				'url' => sensei_get_navigation_url( $course_id, $next ),
+				'name' => sensei_get_navigation_link_text( $next )
+			);
+		}
 
-                }//end for each
-
-            }// end if empty modules
-
-            $args = array(
-                'post_type' => 'lesson',
-                'posts_per_page' => -1,
-                'suppress_filters' => 0,
-                'meta_key' => '_order_' . $lesson_course_id,
-                'orderby' => 'meta_value_num date',
-                'order' => 'ASC',
-                'meta_query' => array(
-                    array(
-                        'key' => '_lesson_course',
-                        'value' => intval( $lesson_course_id ),
-                    ),
-                ),
-                'post__not_in' => $all_lessons,
-            );
-
-            $other_lessons = get_posts( $args );
-            if ( 0 < count( $other_lessons ) ) {
-				foreach ($other_lessons as $lesson_item){
-					$all_lessons[] = $lesson_item->ID;
-				} // End For Loop
-			} // End If Statement
-
-            if ( 0 < count( $all_lessons ) ) {
-				$found_index = false;
-				foreach ( $all_lessons as $lesson ){
-					if ( $found_index && $return_values['next_lesson'] == 0 ) {
-						$return_values['next_lesson'] = $lesson;
-					} // End If Statement
-					if ( $lesson == $lesson_id ) {
-						// Is the current post
-						$found_index = true;
-					} // End If Statement
-					if ( !$found_index ) {
-						$return_values['prev_lesson'] = $lesson;
-					} // End If Statement
-				} // End For Loop
-			} // End If Statement
-
-		} // End If Statement
-		return $return_values;
+		return $links;
 	} // End sensei_get_prev_next_lessons()
 
   /**

@@ -76,7 +76,6 @@ class Sensei_Core_Modules
 		add_action('pre_get_posts', array($this, 'module_archive_filter'), 10, 1);
 		add_filter('sensei_lessons_archive_text', array($this, 'module_archive_title') );
 		add_action('sensei_loop_lesson_inside_before', array($this, 'module_archive_description'), 30 );
-		add_action('sensei_pagination', array($this, 'module_navigation_links'), 11);
 		add_action( 'sensei_taxonomy_module_content_inside_before', array( $this, 'module_archive_description' ), 30 );
 
 		add_filter('body_class', array($this, 'module_archive_body_class'));
@@ -648,56 +647,6 @@ class Sensei_Core_Modules
 			$classes[] = 'module-archive';
 		}
 		return $classes;
-	}
-
-	/**
-	 * Display module navigation links on module taxonomy archive page
-	 *
-	 * @since 1.8.0
-	 * @return void
-	 */
-	public function module_navigation_links()
-	{
-		if (is_tax($this->taxonomy) && isset($_GET['course_id'])) {
-
-			$queried_module = get_queried_object();
-			$course_modules = $this->get_course_modules($_GET['course_id']);
-
-			$prev_module = false;
-			$next_module = false;
-			$on_current = false;
-			foreach ($course_modules as $module) {
-				$this_module = $module;
-				if ($on_current) {
-					$next_module = $this_module;
-					break;
-				}
-				if ($this_module == $queried_module) {
-					$on_current = true;
-				} else {
-					$prev_module = $module;
-				}
-			}
-
-			?>
-			<div id="post-entries" class="post-entries module-navigation fix">
-				<?php if ($next_module) {
-					$module_link = add_query_arg('course_id', intval($_GET['course_id']), get_term_link($next_module, $this->taxonomy));
-					?>
-					<div class="nav-next fr"><a href="<?php echo esc_url($module_link); ?>"
-												title="<?php esc_attr_e('Next module', 'woothemes-sensei'); ?>"><?php echo $next_module->name; ?>
-							<span class="meta-nav"></span></a></div>
-				<?php } ?>
-				<?php if ($prev_module) {
-					$module_link = add_query_arg('course_id', intval($_GET['course_id']), get_term_link($prev_module, $this->taxonomy));
-					?>
-					<div class="nav-prev fl"><a href="<?php echo esc_url($module_link); ?>"
-												title="<?php _e('Previous module', 'woothemes-sensei'); ?>"><span
-								class="meta-nav"></span> <?php echo $prev_module->name; ?></a></div>
-				<?php } ?>
-			</div>
-		<?php
-		}
 	}
 
 	/**
