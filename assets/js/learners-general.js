@@ -1,4 +1,4 @@
-jQuery(document).ready( function() {
+jQuery(document).ready( function( $ ) {
 
 	/***************************************************************************************************
      * 	1 - Helper Functions.
@@ -46,23 +46,26 @@ jQuery(document).ready( function() {
 		);
 	});
 
-	jQuery('.edit-start-date-submit').click(function () {
-		var new_date = jQuery( this ).prev( '.edit-start-date-date-picker' ).val();
-		var user_id = jQuery( this ).attr( 'data-user_id' );
-		var post_id = jQuery( this ).attr( 'data-post_id' );
-		var post_type = jQuery( this ).attr( 'data-post_type' );
-		var comment_id = jQuery( this ).attr( 'data-comment_id' );
+	$('.edit-start-date-submit').click(function() {
+		var $this = $( this );
+		var new_date = $this.prev( '.edit-start-date-date-picker' ).val();
+		var user_id = $this.attr( 'data-user_id' );
+		var post_id = $this.attr( 'data-post_id' );
+		var post_type = $this.attr( 'data-post_type' );
+		var comment_id = $this.attr( 'data-comment_id' );
 		var dataToPost = '';
-		if (!user_id || !post_id || !post_type || !new_date || !comment_id) {
+
+		if ( ! user_id || ! post_id || ! post_type || ! new_date || ! comment_id ) {
 			return;
 		}
+
 		dataToPost += 'user_id=' + user_id;
 		dataToPost += '&post_id=' + post_id;
 		dataToPost += '&post_type=' + post_type;
 		dataToPost += '&new_date=' + new_date;
 		dataToPost += '&comment_id=' + comment_id;
 
-		jQuery.post(
+		$.post(
 			ajaxurl,
 			{
 				action : 'edit_date_started',
@@ -70,8 +73,7 @@ jQuery(document).ready( function() {
 				data : dataToPost
 			},
 			function( response ) {
-				// console.log(response);
-				if (response) {
+				if ( response ) {
 					location.reload();
 				}
 			}
