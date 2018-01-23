@@ -349,7 +349,7 @@ class Sensei_Main {
 
 		$this->view_helper = new Sensei_View_Helper();
 
-		$this->usage_tracking = new Sensei_Usage_Tracking();
+		$this->usage_tracking = new Sensei_Usage_Tracking( 'Sensei_Usage_Tracking_Data', 'get_usage_data' );
 		$this->usage_tracking->hook();
 
 		// Ensure tracking job is scheduled. If the user does not opt in, no

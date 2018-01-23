@@ -10,6 +10,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Usage Tracking
  */
 class Sensei_Usage_Tracking {
+	/**
+	 * @var string $callback_class Name of the class that contains the callback function for the
+	 *                             usage tracking job.
+	 **/
+	private $callback_class;
+
+	/**
+	 * @var string $callback_method Name of the method that serves as the callback function for the
+	 *                              usage tracking job.
+	 **/
+	private $callback_method;
 
 	/**
 	 * @var string
@@ -24,6 +35,18 @@ class Sensei_Usage_Tracking {
 	private static $hide_tracking_opt_in_option_name = 'sensei_usage_tracking_opt_in_hide';
 
 	private static $job_name = 'sensei_core_jobs_usage_tracking_send_data';
+
+	/**
+	 * Initialize the class and set its properties.
+	 *
+	 * @since 1.9.20
+	 * @param string $callback_class  Callback class name
+	 * @param string $callback_method Callback method name
+	 **/
+	function __construct( $callback_class, $callback_method ) {
+		$this->callback_class = $callback_class;
+		$this->callback_method = $callback_method;
+	}
 
 	/**
 	 * Send an event or stat.
@@ -150,64 +173,13 @@ class Sensei_Usage_Tracking {
 			return;
 		}
 
-		/**
-		 * Define data to send. Add or remove array keys and values.
-		 *
-		 * @param array $usage_data The data to send.
-		 *
-		 * @return array The array should be key/value. All values will be urlencoded
-		 **/
-		$usage_data = (array) apply_filters( 'sensei_usage_tracking_usage_data', array(
-			'courses' => wp_count_posts( 'course' )->publish,
-			'learners' => self::get_learner_count(),
-			'lessons' => wp_count_posts( 'lesson' )->publish,
-			'messages' => wp_count_posts( 'sensei_message' )->publish,
-			'questions' => wp_count_posts( 'question' )->publish,
-			'teachers' => self::get_teacher_count(),
-		) );
+		$class = new $this->callback_class();
+		$method = $this->callback_method;
+		$usage_data = $class->$method();
 
-		$resp = self::send_event( 'stats_log', $usage_data );
-
-		return $resp;
-	}
-
-	/**
-	 * Get the number of teachers.
-	 *
-	 * @return int Number of teachers.
-	 **/
-	public static function get_teacher_count() {
-		$teacher_query = new WP_User_Query( array( 'role' => 'teacher' ) );
-
-		return $teacher_query->total_users;
-	}
-
-	/**
-	 * Get the total number of learners enrolled in at least one course.
-	 *
-	 * @return int Number of learners.
-	 **/
-	public static function get_learner_count() {
-		$learner_count = 0;
-		$args['fields'] = array( 'ID' );
-		$user_query = new WP_User_Query( $args );
-		$learners = $user_query->get_results();
-
-		foreach( $learners as $learner ) {
-			$course_args = array(
-				'user_id' => $learner->ID,
-				'type' => 'sensei_course_status',
-				'status' => 'any',
-			);
-
-			$course_count = Sensei_Utils::sensei_check_for_activity( $course_args );
-
-			if ( $course_count > 0 ) {
-				$learner_count++;
-			}
+		if ( is_array( $usage_data ) ) {
+			return self::send_event( 'stats_log', $usage_data );
 		}
-
-		return $learner_count;
 	}
 
 	function render_usage_tracking_page() {
