@@ -45,9 +45,9 @@ jQuery(document).ready( function() {
 			}
 		);
 	});
-    
+
 	jQuery('.edit-start-date-submit').click(function () {
-		var new_date =  jQuery('.edit-start-date-date-picker').val();
+		var new_date = jQuery( this ).prev( '.edit-start-date-date-picker' ).val();
 		var user_id = jQuery( this ).attr( 'data-user_id' );
 		var post_id = jQuery( this ).attr( 'data-post_id' );
 		var post_type = jQuery( this ).attr( 'data-post_type' );
