@@ -39,14 +39,14 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		} );
 
 		// Should successfully schedule the task
-		$this->assertFalse( wp_get_schedule( 'sensei_core_jobs_usage_tracking_send_data' ) );
+		$this->assertFalse( wp_get_schedule( 'sensei_core_jobs_usage_tracking_send_data' ), 'Not scheduled initial' );
 		$this->usage_tracking->maybe_schedule_tracking_task();
-		$this->assertNotFalse( wp_get_schedule( 'sensei_core_jobs_usage_tracking_send_data' ) );
-		$this->assertEquals( 1, $event_count );
+		$this->assertNotFalse( wp_get_schedule( 'sensei_core_jobs_usage_tracking_send_data' ), 'Schedules a job' );
+		$this->assertEquals( 1, $event_count, 'Schedules only one job' );
 
 		// Should not duplicate when called again
 		$this->usage_tracking->maybe_schedule_tracking_task();
-		$this->assertEquals( 1, $event_count );
+		$this->assertEquals( 1, $event_count, 'Does not schedule an additional job' );
 	}
 
 	/* Test ajax request cases */
@@ -70,21 +70,21 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '1';
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ) );
+		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
-			$this->assertEquals( array(), $wp_die_args['args'] );
+			$this->assertEquals( array(), $wp_die_args['args'], 'wp_die call has no non-success status' );
 		}
 
 		// Refresh settings
 		Sensei()->settings->get_settings();
 
-		$this->assertTrue( Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
-		$this->assertTrue( get_option( 'sensei_usage_tracking_opt_in_hide' ) );
+		$this->assertTrue( Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking enabled' );
+		$this->assertTrue( get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog hidden' );
 	}
 
 	/**
@@ -96,21 +96,21 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '0';
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ) );
+		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
-			$this->assertEquals( array(), $wp_die_args['args'] );
+			$this->assertEquals( array(), $wp_die_args['args'], 'wp_die call has no non-success status' );
 		}
 
 		// Refresh settings
 		Sensei()->settings->get_settings();
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
-		$this->assertTrue( get_option( 'sensei_usage_tracking_opt_in_hide' ) );
+		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking disabled' );
+		$this->assertTrue( get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog hidden' );
 	}
 
 	/**
@@ -122,21 +122,21 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupAjaxRequest();
 		$_REQUEST['nonce'] = 'invalid_nonce_1234';
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ) );
+		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
-			$this->assertEquals( 403, $wp_die_args['args']['response'] );
+			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
 		}
 
 		// Refresh settings
 		Sensei()->settings->get_settings();
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ) );
+		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking disabled' );
+		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
 	}
 
 	/**
@@ -150,21 +150,21 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$user = wp_get_current_user();
 		$user->remove_cap( 'manage_sensei' );
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ) );
+		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
-			$this->assertEquals( 403, $wp_die_args['args']['response'] );
+			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
 		}
 
 		// Refresh settings
 		Sensei()->settings->get_settings();
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ) );
+		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking disabled' );
+		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
 	}
 
 	/* END test ajax request cases */
@@ -196,8 +196,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 
 		$parsed_url = parse_url( $request_url );
 
-		$this->assertEquals( 'pixel.wp.com', $parsed_url['host'] );
-		$this->assertEquals( '/t.gif', $parsed_url['path'] );
+		$this->assertEquals( 'pixel.wp.com', $parsed_url['host'], 'Host' );
+		$this->assertEquals( '/t.gif', $parsed_url['path'], 'Path' );
 
 		$query = array();
 		parse_str( $parsed_url['query'], $query );
@@ -210,7 +210,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			'_en'            => 'sensei_my_event',
 			'_ts'            => '1234000',
 			'_'              => '_',
-		), $query );
+		), $query, 'Query parameters' );
 	}
 
 	/**
@@ -229,14 +229,14 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 
 		// Setting is not set, ensure the request is not sent.
 		Sensei_Usage_Tracking::maybe_send_usage_data();
-		$this->assertEquals( 0, $count );
+		$this->assertEquals( 0, $count, 'Request not sent when Usage Tracking disabled' );
 
 		// Set the setting and ensure request is sent.
 		Sensei()->settings->set( 'sensei_usage_tracking_enabled', true );
 		Sensei()->settings->get_settings();
 
 		Sensei_Usage_Tracking::maybe_send_usage_data();
-		$this->assertEquals( 1, $count );
+		$this->assertEquals( 1, $count, 'Request sent when Usage Tracking enabled' );
 	}
 
 	/* Tests for tracking opt in dialog */
