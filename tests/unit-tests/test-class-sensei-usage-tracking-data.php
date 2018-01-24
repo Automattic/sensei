@@ -1,6 +1,46 @@
 <?php
 
 class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
+	private $course_ids;
+	private $modules;
+
+	private function setupCoursesAndModules() {
+		$this->course_ids = $this->factory->post->create_many( 3, array(
+			'post_status' => 'publish',
+			'post_type' => 'course',
+		) );
+
+		$this->modules = array();
+
+		for ( $i = 1; $i <= 3; $i++ ) {
+			$this->modules[] = wp_insert_term( 'Module ' . $i, 'module' );
+		}
+
+		// Add modules to courses.
+		wp_set_object_terms( $this->course_ids[0],
+			array(
+				$this->modules[0]['term_id'],
+				$this->modules[1]['term_id'],
+			),
+			'module'
+		);
+		wp_set_object_terms( $this->course_ids[1],
+			array(
+				$this->modules[1]['term_id'],
+				$this->modules[2]['term_id'],
+			),
+			'module'
+		);
+		wp_set_object_terms( $this->course_ids[2],
+			array(
+				$this->modules[0]['term_id'],
+				$this->modules[1]['term_id'],
+				$this->modules[2]['term_id'],
+			),
+			'module'
+		);
+	}
+
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */
@@ -32,23 +72,17 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$subscribers = $this->factory->user->create_many( 8, array( 'role' => 'subscriber' ) );
 		$editors = $this->factory->user->create_many( 3, array( 'role' => 'editor' ) );
 
-		// Create some courses.
-		$course_ids = $this->factory->post->create_many( 2, array(
-			'post_status' => 'publish',
-			'post_type' => 'course',
-		) );
-
-		// Enroll some users in both courses.
+		// Enroll some users in multiple courses.
 		foreach( $subscribers as $subscriber ) {
 			$this->factory->comment->create( array(
 				'user_id' => $subscriber,
-				'comment_post_ID' => $course_ids[0],
+				'comment_post_ID' => $this->course_ids[0],
 				'comment_type' => 'sensei_course_status',
 			) );
 
 			$this->factory->comment->create( array(
 				'user_id' => $subscriber,
-				'comment_post_ID' => $course_ids[1],
+				'comment_post_ID' => $this->course_ids[1],
 				'comment_type' => 'sensei_course_status',
 			) );
 		}
@@ -102,6 +136,42 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'messages', $usage_data, 'Key' );
 		$this->assertEquals( $published, $usage_data['messages'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 */
+	public function testGetUsageDataModules() {
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'modules', $usage_data, 'Key' );
+		$this->assertEquals( count( $this->modules ), $usage_data['modules'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_max_module_count
+	 */
+	public function testGetUsageDataMaxModules() {
+		$this->setupCoursesAndModules();
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'modules_max', $usage_data, 'Key' );
+		$this->assertEquals( 3, $usage_data['modules_max'], 'Count' ); // Course 2 has 3 modules.
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_min_module_count
+	 */
+	public function testGetUsageDataMinModules() {
+		$this->setupCoursesAndModules();
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'modules_min', $usage_data, 'Key' );
+		$this->assertEquals( 2, $usage_data['modules_min'], 'Count' ); // Courses 1 and 2 have 2 modules.
 	}
 
 	/**
