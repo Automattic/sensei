@@ -21,11 +21,14 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array Usage data.
 	 **/
 	public static function get_usage_data() {
- 		return array(
+		return array(
 			'courses' => wp_count_posts( 'course' )->publish,
 			'learners' => self::get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
 			'messages' => wp_count_posts( 'sensei_message' )->publish,
+			'modules' => wp_count_terms( 'module' ),
+			'modules_max' => self::get_max_module_count(),
+			'modules_min' => self::get_min_module_count(),
 			'questions' => wp_count_posts( 'question' )->publish,
 			'teachers' => self::get_teacher_count(),
 		);
@@ -72,5 +75,70 @@ class Sensei_Usage_Tracking_Data {
 		}
 
 		return $learner_count;
+	}
+
+	/**
+	 * Get the total number of modules for the published course that has the greatest
+	 * number of modules.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Maximum modules count.
+	 **/
+	private static function get_max_module_count() {
+		$max_modules = 0;
+		$courses = get_posts( array(
+			'post_type' => 'course',
+			'fields' => 'ids',
+		) );
+
+		foreach( $courses as $course ) {
+			// Get modules for this course.
+			$module_count = wp_count_terms( 'module', array(
+				'object_ids' => $course,
+			) );
+
+			if ( $max_modules < $module_count ) {
+				$max_modules = $module_count;
+			}
+		}
+
+		return $max_modules;
+	}
+
+	/**
+	 * Get the total number of modules for the published course that has the fewest
+	 * number of modules.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Minimum modules count.
+	 **/
+	private static function get_min_module_count() {
+		$min_modules = 0;
+
+		$courses = get_posts( array(
+			'post_type' => 'course',
+			'fields' => 'ids',
+		) );
+
+		for( $i = 0; $i < count( $courses ); $i++ ) {
+			// Get modules for this course.
+			$module_count = wp_count_terms( 'module', array(
+				'object_ids' => $courses[$i],
+			) );
+
+			// Set the starting count.
+			if ( $i === 0 ) {
+				$min_modules = $module_count;
+				continue;
+			}
+
+			if ( $min_modules > $module_count ) {
+				$min_modules = $module_count;
+			}
+		}
+
+		return $min_modules;
 	}
 }
