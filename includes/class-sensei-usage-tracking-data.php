@@ -21,14 +21,14 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array Usage data.
 	 **/
 	public function get_usage_data() {
-		return (array) apply_filters( 'sensei_usage_tracking_data', array(
+		return array(
 			'courses' => wp_count_posts( 'course' )->publish,
 			'learners' => $this->get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
 			'messages' => wp_count_posts( 'sensei_message' )->publish,
 			'questions' => wp_count_posts( 'question' )->publish,
 			'teachers' => $this->get_teacher_count(),
-		) );
+		);
 	}
 
 	/**
