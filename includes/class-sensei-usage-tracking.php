@@ -11,16 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Usage_Tracking {
 	/**
-	 * @var string $callback_class Name of the class that contains the callback function for the
-	 *                             usage tracking job.
+	 * @var array $callback Callback function for the usage tracking job.
 	 **/
-	private $callback_class;
-
-	/**
-	 * @var string $callback_method Name of the method that serves as the callback function for the
-	 *                              usage tracking job.
-	 **/
-	private $callback_method;
+	private $callback;
 
 	/**
 	 * @var string
@@ -40,12 +33,10 @@ class Sensei_Usage_Tracking {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since 1.9.20
-	 * @param string $callback_class  Callback class name
-	 * @param string $callback_method Callback method name
+	 * @param array $callback  Callable usage tracking function
 	 **/
-	function __construct( $callback_class, $callback_method ) {
-		$this->callback_class = $callback_class;
-		$this->callback_method = $callback_method;
+	function __construct( $callback ) {
+		$this->callback = $callback;
 	}
 
 	/**
@@ -169,17 +160,17 @@ class Sensei_Usage_Tracking {
 	 * Send usage data.
 	 **/
 	public static function maybe_send_usage_data() {
-		if ( ! self::is_tracking_enabled() ) {
+		if ( ! self::is_tracking_enabled() || ! is_callable( $this->callback ) ) {
 			return;
 		}
 
-		$class = new $this->callback_class();
-		$method = $this->callback_method;
-		$usage_data = $class->$method();
+		$usage_data = call_user_func( $this->callback );
 
-		if ( is_array( $usage_data ) ) {
-			return self::send_event( 'stats_log', $usage_data );
+		if ( ! is_array( $usage_data ) ) {
+			return;
 		}
+
+		return self::send_event( 'stats_log', $usage_data );
 	}
 
 	function render_usage_tracking_page() {
