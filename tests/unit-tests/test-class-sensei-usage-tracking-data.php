@@ -1,12 +1,6 @@
 <?php
 
 class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
-	public function setup() {
-		parent::setUp();
-
-		$this->usage_tracking_data = new Sensei_Usage_Tracking_Data();
-	}
-
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */
@@ -23,7 +17,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			'post_type' => 'course',
 		) );
 
-		$usage_data = $this->usage_tracking_data->get_usage_data();
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'courses', $usage_data, 'Key' );
 		$this->assertEquals( $published, $usage_data['courses'], 'Count' );
@@ -59,7 +53,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			) );
 		}
 
-		$usage_data = $this->usage_tracking_data->get_usage_data();
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		// Despite being enrolled in multiple courses, a learner is only counted once.
 		$this->assertArrayHasKey( 'learners', $usage_data, 'Key' );
@@ -82,7 +76,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			'post_type' => 'lesson',
 		) );
 
-		$usage_data = $this->usage_tracking_data->get_usage_data();
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'lessons', $usage_data, 'Key' );
 		$this->assertEquals( $published, $usage_data['lessons'], 'Count' );
@@ -104,7 +98,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			'post_type' => 'sensei_message',
 		) );
 
-		$usage_data = $this->usage_tracking_data->get_usage_data();
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'messages', $usage_data, 'Key' );
 		$this->assertEquals( $published, $usage_data['messages'], 'Count' );
@@ -126,7 +120,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			'post_type' => 'question',
 		) );
 
-		$usage_data = $this->usage_tracking_data->get_usage_data();
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'questions', $usage_data, 'Key' );
 		$this->assertEquals( $published, $usage_data['questions'], 'Count' );
@@ -143,7 +137,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->factory->user->create_many( 10, array( 'role' => 'subscriber' ) );
 		$this->factory->user->create_many( $teachers, array( 'role' => 'teacher' ) );
 
-		$usage_data = $this->usage_tracking_data->get_usage_data();
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'teachers', $usage_data, 'Key' );
 		$this->assertEquals( $teachers, $usage_data['teachers'], 'Count' );

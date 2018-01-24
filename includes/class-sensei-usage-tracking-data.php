@@ -20,14 +20,14 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return array Usage data.
 	 **/
-	public function get_usage_data() {
-		return array(
+	public static function get_usage_data() {
+ 		return array(
 			'courses' => wp_count_posts( 'course' )->publish,
-			'learners' => $this->get_learner_count(),
+			'learners' => self::get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
 			'messages' => wp_count_posts( 'sensei_message' )->publish,
 			'questions' => wp_count_posts( 'question' )->publish,
-			'teachers' => $this->get_teacher_count(),
+			'teachers' => self::get_teacher_count(),
 		);
 	}
 
@@ -38,7 +38,7 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return int Number of teachers.
 	 **/
-	private function get_teacher_count() {
+	private static function get_teacher_count() {
 		$teacher_query = new WP_User_Query( array( 'role' => 'teacher' ) );
 
 		return $teacher_query->total_users;
@@ -51,7 +51,7 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return int Number of learners.
 	 **/
-	private function get_learner_count() {
+	private static function get_learner_count() {
 		$learner_count = 0;
 		$args['fields'] = array( 'ID' );
 		$user_query = new WP_User_Query( $args );
