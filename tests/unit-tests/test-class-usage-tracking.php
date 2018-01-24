@@ -1,20 +1,19 @@
 <?php
 
 class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
-	public function setup() {
-		parent::setup();
-		$this->factory = new Sensei_Factory();
+	public function setUp() {
+		parent::setUp();
 		$this->usage_tracking = new Sensei_Usage_Tracking();
 	}
 
-	public function teardown() {
-		parent::teardown();
+	public function tearDown() {
+		parent::tearDown();
 	}
 
 	/**
 	 * Ensure cron job action is set up.
 	 */
-	public function test_cron_job_action_added() {
+	public function testCronJobActionAdded() {
 		$this->usage_tracking->hook();
 		$this->assertTrue( !! has_action( 'sensei_core_jobs_usage_tracking_send_data', array( $this->usage_tracking, 'maybe_send_usage_data' ) ) );
 	}
@@ -22,7 +21,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure scheduling function works properly.
 	 */
-	public function test_maybe_schedule_tracking_task() {
+	public function testMaybeScheduleTrackingTask() {
 		// Make sure it's cleared initially
 		wp_clear_scheduled_hook( 'sensei_core_jobs_usage_tracking_send_data' );
 
@@ -51,7 +50,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure ajax hook is set up properly.
 	 */
-	public function test_ajax_request_setup() {
+	public function testAjaxRequestSetup() {
 		$this->usage_tracking->hook();
 		$this->assertTrue( !! has_action( 'wp_ajax_handle_tracking_opt_in', array( $this->usage_tracking, 'handle_tracking_opt_in' ) ) );
 	}
@@ -59,8 +58,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure tracking is enabled through ajax request.
 	 */
-	public function test_ajax_request_enable_tracking() {
-		$this->setup_ajax_request();
+	public function testAjaxRequestEnableTracking() {
+		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '1';
 
 		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
@@ -83,8 +82,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure tracking is disabled through ajax request.
 	 */
-	public function test_ajax_request_disable_tracking() {
-		$this->setup_ajax_request();
+	public function testAjaxRequestDisableTracking() {
+		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '0';
 
 		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
@@ -107,8 +106,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure ajax request fails on nonce failure and does not update option.
 	 */
-	public function test_ajax_request_failed_nonce() {
-		$this->setup_ajax_request();
+	public function testAjaxRequestFailedNonce() {
+		$this->setupAjaxRequest();
 		$_REQUEST['nonce'] = 'invalid_nonce_1234';
 
 		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ) );
@@ -131,8 +130,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure ajax request fails on authorization failure and does not update option.
 	 */
-	public function test_ajax_request_failed_auth() {
-		$this->setup_ajax_request();
+	public function testAjaxRequestFailedAuth() {
+		$this->setupAjaxRequest();
 
 		$user = wp_get_current_user();
 		$user->remove_cap( 'manage_sensei' );
@@ -154,41 +153,13 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ) );
 	}
 
-	/**
-	 * Helpers for ajax request.
-	 */
-	private function setup_ajax_request() {
-		// Simulate an ajax request
-		add_filter( 'wp_doing_ajax', function() { return true; } );
-
-		// Set up nonce
-		$_REQUEST['nonce'] = wp_create_nonce( 'tracking-opt-in' );
-
-		// Set manage_sensei cap on current user
-		$user = wp_get_current_user();
-		$user->add_cap( 'manage_sensei' );
-
-		// Reset the in-memory settings
-		Sensei()->settings->get_settings();
-
-		// When wp_die is called, save the args and throw an exception to stop
-		// execution.
-		add_filter( 'wp_die_ajax_handler', function() {
-			return function( $message, $title, $args ) {
-				$e = new WP_Die_Exception( 'wp_die called' );
-				$e->set_wp_die_args( $message, $title, $args );
-				throw $e;
-			};
-		} );
-	}
-
 	/* END test ajax request cases */
 
 	/**
 	 * Ensure that a request is made to the correct URL with the given
 	 * properties and the default properties.
 	 */
-	public function test_send_event() {
+	public function testSendEvent() {
 		$event      = 'my_event';
 		$properties = array(
 			'button_clicked' => 'my_button'
@@ -229,7 +200,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure that the request is only sent when the setting is enabled.
 	 */
-	public function test_maybe_send_usage_data() {
+	public function testMaybeSendUsageData() {
 		$count = 0;
 
 		// Count the number of network requests
@@ -256,8 +227,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * When setting is not set, dialog is not hidden, and user has capability,
 	 * we should see the dialog and Enable Usage Tracking button.
 	 */
-	public function test_display_tracking_opt_in() {
-		$this->setup_opt_in_dialog();
+	public function testDisplayTrackingOptIn() {
+		$this->setupOptInDialog();
 
 		$this->expectOutputRegex( '/Enable Usage Tracking/' );
 		$this->usage_tracking->maybe_display_tracking_opt_in();
@@ -266,8 +237,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * When setting is already set, dialog should not appear.
 	 */
-	public function test_do_not_display_tracking_opt_in_when_setting_enabled() {
-		$this->setup_opt_in_dialog();
+	public function testDoNotDisplayTrackingOptInWhenSettingEnabled() {
+		$this->setupOptInDialog();
 		Sensei()->settings->set( 'sensei_usage_tracking_enabled', true );
 		Sensei()->settings->get_settings();
 
@@ -278,8 +249,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * When option is set to hide the dialog, it should not appear.
 	 */
-	public function test_do_not_display_tracking_opt_in_when_dialog_hidden() {
-		$this->setup_opt_in_dialog();
+	public function testDoNotDisplayTrackingOptInWhenDialogHidden() {
+		$this->setupOptInDialog();
 		update_option( 'sensei_usage_tracking_opt_in_hide', true );
 
 		$this->expectOutputString( '' );
@@ -290,8 +261,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * When user does not have permission to manage usage tracking, dialog
 	 * should not appear.
 	 */
-	public function test_do_not_display_tracking_opt_in_when_user_not_authorized() {
-		$this->setup_opt_in_dialog();
+	public function testDoNotDisplayTrackingOptInWhenUserNotAuthorized() {
+		$this->setupOptInDialog();
 		$user = wp_get_current_user();
 		$user->remove_cap( 'manage_sensei' );
 
@@ -299,10 +270,42 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->usage_tracking->maybe_display_tracking_opt_in();
 	}
 
+	/* END tests for tracking opt in dialog */
+
+	/* Helper methods */
+
+	/**
+	 * Helper method for ajax request.
+	 */
+	private function setupAjaxRequest() {
+		// Simulate an ajax request
+		add_filter( 'wp_doing_ajax', function() { return true; } );
+
+		// Set up nonce
+		$_REQUEST['nonce'] = wp_create_nonce( 'tracking-opt-in' );
+
+		// Set manage_sensei cap on current user
+		$user = wp_get_current_user();
+		$user->add_cap( 'manage_sensei' );
+
+		// Reset the in-memory settings
+		Sensei()->settings->get_settings();
+
+		// When wp_die is called, save the args and throw an exception to stop
+		// execution.
+		add_filter( 'wp_die_ajax_handler', function() {
+			return function( $message, $title, $args ) {
+				$e = new WP_Die_Exception( 'wp_die called' );
+				$e->set_wp_die_args( $message, $title, $args );
+				throw $e;
+			};
+		} );
+	}
+
 	/**
 	 * Helper method to set up tracking opt-in dialog.
 	 */
-	private function setup_opt_in_dialog() {
+	private function setupOptInDialog() {
 		// Set manage_sensei cap on current user
 		$user = wp_get_current_user();
 		$user->add_cap( 'manage_sensei' );
@@ -313,6 +316,4 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		// Reset the in-memory settings
 		Sensei()->settings->get_settings();
 	}
-
-	/* END tests for tracking opt in dialog */
 }
