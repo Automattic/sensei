@@ -230,14 +230,14 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		} );
 
 		// Setting is not set, ensure the request is not sent.
-		Sensei_Usage_Tracking::maybe_send_usage_data();
+		$this->usage_tracking->maybe_send_usage_data();
 		$this->assertEquals( 0, $count, 'Request not sent when Usage Tracking disabled' );
 
 		// Set the setting and ensure request is sent.
 		Sensei()->settings->set( 'sensei_usage_tracking_enabled', true );
 		Sensei()->settings->get_settings();
 
-		Sensei_Usage_Tracking::maybe_send_usage_data();
+		$this->usage_tracking->maybe_send_usage_data();
 		$this->assertEquals( 1, $count, 'Request sent when Usage Tracking enabled' );
 	}
 
