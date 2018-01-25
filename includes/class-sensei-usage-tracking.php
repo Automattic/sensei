@@ -159,7 +159,7 @@ class Sensei_Usage_Tracking {
 	/**
 	 * Send usage data.
 	 **/
-	public static function maybe_send_usage_data() {
+	public function maybe_send_usage_data() {
 		if ( ! self::is_tracking_enabled() || ! is_callable( $this->callback ) ) {
 			return;
 		}
