@@ -41,7 +41,8 @@ class Sensei_Template_Functions_Test extends WP_UnitTestCase {
 	 */
 	public function testGetNavigationModuleURL() {
 		$course_id = $this->factory->get_course_with_modules();
-		$module = wp_get_post_terms( $course_id, 'module' )[0];
+		$modules = wp_get_post_terms( $course_id, 'module' );
+		$module = $modules[0];
 		$url = sensei_get_navigation_url( $course_id, $module );
 
 		$this->assertEquals( get_term_link( $module, 'module' ) . '&course_id=' . $course_id, $url );
@@ -64,7 +65,8 @@ class Sensei_Template_Functions_Test extends WP_UnitTestCase {
 	 */
 	public function testGetNavigationModuleText() {
 		$course_id = $this->factory->get_course_with_modules();
-		$module = wp_get_post_terms( $course_id, 'module' )[0];
+		$modules = wp_get_post_terms( $course_id, 'module' );
+		$module = $modules[0];
 		$text = sensei_get_navigation_link_text( $module );
 
 		$this->assertEquals( $module->name, $text );
@@ -88,7 +90,8 @@ class Sensei_Template_Functions_Test extends WP_UnitTestCase {
 	public function testGetPrevNextLessons() {
 		$course_id = $this->factory->get_course_with_modules();
 		$lessons = $this->factory->get_lessons();
-		$previous = wp_get_post_terms( $course_id, 'module' )[0];
+		$modules = wp_get_post_terms( $course_id, 'module' );
+		$previous = $modules[0];
 		$current = get_post( $lessons[0] );
 		$next = get_post( $lessons[1] );
 		$nav_links = sensei_get_prev_next_lessons( $current->ID );
@@ -116,7 +119,8 @@ class Sensei_Template_Functions_Test extends WP_UnitTestCase {
 
 		$course_id = $this->factory->get_course_with_modules();
 		$lessons = $this->factory->get_lessons();
-		$current = wp_get_post_terms( $course_id, 'module' )[0];
+		$modules = wp_get_post_terms( $course_id, 'module' );
+		$current = $modules[0];
 		$next = get_post( $lessons[0] );
 
 		// Set test up so that it thinks we're on the module page.
