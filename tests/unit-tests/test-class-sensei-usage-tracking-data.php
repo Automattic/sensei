@@ -198,6 +198,66 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_question_type_count
+	 * @covers Sensei_Usage_Tracking_Data::get_question_type_key
+	 */
+	public function testGetUsageDataQuestionTypes() {
+		// Create some questions.
+		$questions = $this->factory->post->create_many( 10, array(
+			'post_type' => 'question',
+			'post_status' => 'publish',
+		) );
+
+		// Set the type of each question.
+		wp_set_post_terms( $questions[0], array( 'multiple-choice' ), 'question-type' );
+		wp_set_post_terms( $questions[1], array( 'multi-line' ), 'question-type' );
+		wp_set_post_terms( $questions[2], array( 'multiple-choice' ), 'question-type' );
+		wp_set_post_terms( $questions[3], array( 'multi-line' ), 'question-type' );
+		wp_set_post_terms( $questions[4], array( 'multiple-choice' ), 'question-type' );
+		wp_set_post_terms( $questions[5], array( 'gap-fill' ), 'question-type' );
+		wp_set_post_terms( $questions[6], array( 'single-line' ), 'question-type' );
+		wp_set_post_terms( $questions[7], array( 'boolean' ), 'question-type' );
+		wp_set_post_terms( $questions[8], array( 'multi-line' ), 'question-type' );
+		wp_set_post_terms( $questions[9], array( 'boolean' ), 'question-type' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'question_multiple_choice', $usage_data, 'Multiple choice key' );
+		$this->assertArrayHasKey( 'question_gap_fill', $usage_data, 'Gap fill key' );
+		$this->assertArrayHasKey( 'question_boolean', $usage_data, 'Boolean key' );
+		$this->assertArrayHasKey( 'question_single_line', $usage_data, 'Single line key' );
+		$this->assertArrayHasKey( 'question_multi_line', $usage_data, 'Multi line key' );
+		$this->assertArrayHasKey( 'question_file_upload', $usage_data, 'File upload key' );
+
+		$this->assertEquals( 3, $usage_data['question_multiple_choice'], 'Multiple choice count' );
+		$this->assertEquals( 1, $usage_data['question_gap_fill'], 'Gap fill count' );
+		$this->assertEquals( 2, $usage_data['question_boolean'], 'Boolean count' );
+		$this->assertEquals( 1, $usage_data['question_single_line'], 'Single line count' );
+		$this->assertEquals( 3, $usage_data['question_multi_line'], 'Multi line count' );
+		$this->assertEquals( 0, $usage_data['question_file_upload'], 'File upload count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_question_type_count
+	 */
+	public function testGetUsageDataQuestionTypesInvalidType() {
+		// Create a question.
+		$questions = $this->factory->post->create( array(
+			'post_type' => 'question',
+			'post_status' => 'publish',
+		) );
+
+		// Set the question to use an invalid type.
+		wp_set_post_terms( $questions[0], array( 'automattic' ), 'question-type' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayNotHasKey( 'question_automattic', $usage_data, 'Multiple choice key' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_teacher_count
 	 */
 	public function testGetUsageDataTeachers() {

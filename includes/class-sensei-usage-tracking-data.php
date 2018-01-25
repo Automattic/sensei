@@ -21,7 +21,8 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array Usage data.
 	 **/
 	public static function get_usage_data() {
-		return array(
+		$question_type_count = self::get_question_type_count();
+		$usage_data = array(
 			'courses' => wp_count_posts( 'course' )->publish,
 			'learners' => self::get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
@@ -32,6 +33,8 @@ class Sensei_Usage_Tracking_Data {
 			'questions' => wp_count_posts( 'question' )->publish,
 			'teachers' => self::get_teacher_count(),
 		);
+
+		return array_merge( $question_type_count, $usage_data );
 	}
 
 	/**
@@ -140,5 +143,50 @@ class Sensei_Usage_Tracking_Data {
 		}
 
 		return $min_modules;
+	}
+
+	/**
+	 * Get the total number of published questions of each type.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return array Number of published questions of each type.
+	 **/
+	private static function get_question_type_count() {
+		$count = array();
+		$question_types = Sensei()->question->question_types();
+
+		foreach ( $question_types as $key=>$value ) {
+			$count[self::get_question_type_key( $key )] = 0;
+		}
+
+		$query = new WP_Query( array(
+			'post_type' => 'question',
+			'fields' => 'ids'
+		) );
+		$questions = $query->posts;
+
+		foreach ( $questions as $question ) {
+			$question_type = Sensei()->question->get_question_type( $question );
+			$key = self::get_question_type_key( $question_type );
+
+			if ( array_key_exists( $key, $count ) ) {
+				$count[$key]++;
+			}
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Get the question type key. Replaces dashes with underscores in order to conform to
+	 * Tracks naming conventions.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return array Question type key.
+	 **/
+	private static function get_question_type_key( $key ) {
+		return str_replace( '-', '_', 'question_' . $key );
 	}
 }
