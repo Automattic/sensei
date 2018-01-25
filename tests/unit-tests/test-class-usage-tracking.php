@@ -3,7 +3,9 @@
 class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
-		$this->usage_tracking = new Sensei_Usage_Tracking();
+		$this->usage_tracking = new Sensei_Usage_Tracking( function() {
+			return array( 'testing' => true );
+		} );
 	}
 
 	public function tearDown() {
