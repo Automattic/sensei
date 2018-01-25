@@ -15,45 +15,38 @@
 
 	<?php
 		/**
-		 * Action before lesson archive loop. This action runs within the archive-lesson.php.
+		 * Fires before rendering any markup on the module page.
 		 *
-		 * It will be executed even if there are no posts on the archive page.
+		 * @since 1.9.20
 		 */
 		do_action( 'sensei_taxonomy_module_content_before' );
 	?>
 
 	<?php if ( have_posts() ): ?>
-			<section class="lesson-container" >
+			<section class="module-container" >
 				<?php
 					/**
-					 * This runs before the lesson items in the loop-lesson.php template.
+					 * Fires before rendering the module content.
 					 *
 					 * @since 1.9.20
-					 *
-					 * @hooked Sensei()->lesson->lesson_tag_archive_description - 11
-					 * @hooked Sensei()->lesson->the_archive_header - 20
 					 */
-					// Prints module title, description and progress indicator.
 					do_action( 'sensei_taxonomy_module_content_inside_before' );
 				?>
 
 				<?php
 					/**
-					 * This runs inside the <ul> after the lesson items in the loop-lesson.php template.
+					 * Fires after rendering the module content.
 					 *
 					 * @since 1.9.20
 					 */
 					do_action( 'sensei_taxonomy_module_content_inside_after' );
-					?>
+				?>
 			</section>
-
-	<?php endif; // End If Statement ?>
+	<?php endif; ?>
 
 	<?php
-
 		/**
-		 * Action after lesson archive  loop on the archive-lesson.php template file
-		 * It will be executed even if there are no posts on the archive page.
+		 * Fires after rendering all markup on the module page.
 		 *
 		 * @since 1.9.20
 		 */
