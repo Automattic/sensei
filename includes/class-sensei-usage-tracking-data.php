@@ -29,6 +29,7 @@ class Sensei_Usage_Tracking_Data {
 			'featured_courses' => self::get_featured_courses_count(),
 			'learners' => self::get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
+			'lesson_prereqs' => self::get_lesson_prerequisite_count(),
 			'messages' => wp_count_posts( 'sensei_message' )->publish,
 			'modules' => wp_count_terms( 'module' ),
 			'modules_max' => self::get_max_module_count(),
@@ -174,6 +175,29 @@ class Sensei_Usage_Tracking_Data {
 		}
 
 		return $learner_count;
+	}
+
+	/**
+	 * Get the total number of published lessons that have a prerequisite set.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return array Number of published lessons with a prerequisite.
+	 **/
+	private static function get_lesson_prerequisite_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'lesson',
+			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => '_lesson_prerequisite',
+					'value' => 0,
+					'compare' => '>',
+				)
+			)
+		) );
+
+		return $query->found_posts;
 	}
 
 	/**
