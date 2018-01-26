@@ -24,6 +24,7 @@ class Sensei_Usage_Tracking_Data {
 		return array(
 			'courses' => wp_count_posts( 'course' )->publish,
 			'courses_with_video' => self::get_courses_with_video_count(),
+			'courses_with_disabled_notification' => self::get_courses_with_disabled_notification_count(),
 			'learners' => self::get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
 			'messages' => wp_count_posts( 'sensei_message' )->publish,
@@ -52,6 +53,27 @@ class Sensei_Usage_Tracking_Data {
 					'compare' => '!=',
 				)
 			)
+		) );
+
+		return $query->post_count;
+	}
+
+	/**
+	 * Get the number of courses that have disabled notifications.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Number of courses.
+	 */
+	private static function get_courses_with_disabled_notification_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'course',
+			'meta_query' => array(
+				array(
+					'key' => 'disable_notification',
+					'value' => true,
+				)
+			),
 		) );
 
 		return $query->post_count;

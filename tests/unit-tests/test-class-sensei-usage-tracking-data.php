@@ -242,4 +242,30 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'courses_with_video', $usage_data, 'Key' );
 		$this->assertEquals( $with_video, $usage_data['courses_with_video'], 'Count' );
 	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_courses_with_disabled_notification_count
+	 */
+	public function testGetCoursesWithDisabledNotificationCount() {
+		$with_disabled_notification = 2;
+
+		// Create some published and unpublished courses.
+		$course_ids_without_disabled = $this->factory->post->create_many( 3, array(
+			'post_type' => 'course',
+		) );
+		$course_ids_with_disabled = $this->factory->post->create_many( $with_disabled_notification, array(
+			'post_type' => 'course',
+		) );
+
+		// Set video on courses
+		foreach ( $course_ids_with_disabled as $course_id ) {
+			update_post_meta( $course_id, 'disable_notification', true );
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'courses_with_disabled_notification', $usage_data, 'Key' );
+		$this->assertEquals( $with_disabled_notification, $usage_data['courses_with_disabled_notification'], 'Count' );
+	}
 }
