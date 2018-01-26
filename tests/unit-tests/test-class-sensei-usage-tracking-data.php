@@ -220,7 +220,6 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetCoursesWithVideoCount() {
 		$with_video = 2;
 
-		// Create some published and unpublished courses.
 		$course_ids_without_video = $this->factory->post->create_many( 3, array(
 			'post_type' => 'course',
 		) );
@@ -250,7 +249,6 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetCoursesWithDisabledNotificationCount() {
 		$with_disabled_notification = 2;
 
-		// Create some published and unpublished courses.
 		$course_ids_without_disabled = $this->factory->post->create_many( 3, array(
 			'post_type' => 'course',
 		) );
@@ -258,7 +256,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			'post_type' => 'course',
 		) );
 
-		// Set video on courses
+		// Disable notifications
 		foreach ( $course_ids_with_disabled as $course_id ) {
 			update_post_meta( $course_id, 'disable_notification', true );
 		}
@@ -276,7 +274,6 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetCoursesWithPrerequisiteCount() {
 		$with_prereq = 2;
 
-		// Create some published and unpublished courses.
 		$course_ids_without_prereq = $this->factory->post->create_many( 3, array(
 			'post_type' => 'course',
 		) );
@@ -284,7 +281,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			'post_type' => 'course',
 		) );
 
-		// Set video on courses
+		// Set prerequisite on courses
 		foreach ( $course_ids_with_prereq as $course_id ) {
 			update_post_meta( $course_id, '_course_prerequisite', $course_ids_without_prereq[0] );
 		}
@@ -293,5 +290,30 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'courses_with_prerequisite', $usage_data, 'Key' );
 		$this->assertEquals( $with_prereq, $usage_data['courses_with_prerequisite'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_featured_courses_count
+	 */
+	public function testGetFeaturedCoursesCount() {
+		$featured = 2;
+
+		$non_featured_course_ids = $this->factory->post->create_many( 3, array(
+			'post_type' => 'course',
+		) );
+		$featured_course_ids = $this->factory->post->create_many( $featured, array(
+			'post_type' => 'course',
+		) );
+
+		// Set courses to featured
+		foreach ( $featured_course_ids as $course_id ) {
+			update_post_meta( $course_id, '_course_featured', 'featured' );
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'featured_courses', $usage_data, 'Key' );
+		$this->assertEquals( $featured, $usage_data['featured_courses'], 'Count' );
 	}
 }
