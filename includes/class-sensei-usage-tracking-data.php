@@ -57,7 +57,7 @@ class Sensei_Usage_Tracking_Data {
 			)
 		) );
 
-		return $query->post_count;
+		return $query->found_posts;
 	}
 
 	/**
@@ -78,7 +78,7 @@ class Sensei_Usage_Tracking_Data {
 			),
 		) );
 
-		return $query->post_count;
+		return $query->found_posts;
 	}
 
 	/**
@@ -105,7 +105,7 @@ class Sensei_Usage_Tracking_Data {
 			),
 		) );
 
-		return $query->post_count;
+		return $query->found_posts;
 	}
 
 	/**
@@ -126,7 +126,7 @@ class Sensei_Usage_Tracking_Data {
 			),
 		) );
 
-		return $query->post_count;
+		return $query->found_posts;
 	}
 
 	/**
