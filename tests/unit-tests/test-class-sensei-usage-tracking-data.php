@@ -153,6 +153,37 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_lesson_preview_count
+	 */
+	public function testGetLessonPreviewCount() {
+		$lessons = $this->createLessons();
+
+		// Turn on previews for some lessons.
+		add_post_meta( $lessons[0], '_lesson_preview', 'preview' ); // Draft
+		add_post_meta( $lessons[2], '_lesson_preview', 'preview' ); // Published
+		add_post_meta( $lessons[3], '_lesson_preview', 'preview' ); // Published
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'lesson_previews', $usage_data, 'Key' );
+		$this->assertEquals( 2, $usage_data['lesson_previews'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_lesson_preview_count
+	 */
+	public function testGetLessonPreviewCountNoPreviews() {
+		$lessons = $this->createLessons();
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'lesson_previews', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['lesson_previews'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */
 	public function testGetUsageDataMessages() {
 		$published = 10;
