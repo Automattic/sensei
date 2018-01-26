@@ -212,4 +212,34 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'teachers', $usage_data, 'Key' );
 		$this->assertEquals( $teachers, $usage_data['teachers'], 'Count' );
 	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_courses_with_video_count
+	 */
+	public function testGetCoursesWithVideoCount() {
+		$with_video = 2;
+
+		// Create some published and unpublished courses.
+		$course_ids_without_video = $this->factory->post->create_many( 3, array(
+			'post_type' => 'course',
+		) );
+		$course_ids_with_video = $this->factory->post->create_many( $with_video, array(
+			'post_type' => 'course',
+		) );
+
+		// Set video on courses
+		foreach ( $course_ids_with_video as $course_id ) {
+			update_post_meta( $course_id, '_course_video_embed', '<iframe src="video.com"></iframe' );
+		}
+
+		// Set some non-null values on the others
+		update_post_meta( $course_ids_without_video[0], '_course_video_embed', '' );
+		update_post_meta( $course_ids_without_video[1], '_course_video_embed', '   ' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'courses_with_video', $usage_data, 'Key' );
+		$this->assertEquals( $with_video, $usage_data['courses_with_video'], 'Count' );
+	}
 }
