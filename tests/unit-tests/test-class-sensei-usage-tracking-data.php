@@ -404,25 +404,25 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetRandomOrderCount() {
 		// Create some questions.
-		$questions[] = $this->factory->post->create_many( 3, array(
+		$questions = $this->factory->post->create_many( 3, array(
 			'post_type' => 'question',
 			'post_status' => 'publish',
 		) );
 
 		// Set the type of each question to be multiple choice.
-		wp_set_post_terms( $questions[0][0], array( 'multiple-choice' ), 'question-type' );
-		wp_set_post_terms( $questions[0][1], array( 'multiple-choice' ), 'question-type' );
-		wp_set_post_terms( $questions[0][2], array( 'multiple-choice' ), 'question-type' );
+		wp_set_post_terms( $questions[0], array( 'multiple-choice' ), 'question-type' );
+		wp_set_post_terms( $questions[1], array( 'multiple-choice' ), 'question-type' );
+		wp_set_post_terms( $questions[2], array( 'multiple-choice' ), 'question-type' );
 
 		// Set the random answer order.
-		add_post_meta( $questions[0][0], '_random_order', 'yes' );
-		add_post_meta( $questions[0][1], '_random_order', 'no' );
-		add_post_meta( $questions[0][2], '_random_order', 'yes' );
+		add_post_meta( $questions[0], '_random_order', 'yes' );
+		add_post_meta( $questions[1], '_random_order', 'no' );
+		add_post_meta( $questions[2], '_random_order', 'yes' );
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'random_order', $usage_data, 'Key' );
-		$this->assertEquals( 2, $usage_data['random_order'], 'Count' );
+		$this->assertArrayHasKey( 'question_random_order', $usage_data, 'Key' );
+		$this->assertEquals( 2, $usage_data['question_random_order'], 'Count' );
 	}
 
 	/**
@@ -431,32 +431,31 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetRandomOrderCountMultipleChoiceOnly() {
 		// Create some questions.
-		$questions[] = $this->factory->post->create_many( 6, array(
+		$questions = $this->factory->post->create_many( 6, array(
 			'post_type' => 'question',
 			'post_status' => 'publish',
 		) );
 
 		// Create a question of each type.
-		wp_set_post_terms( $questions[0][0], array( 'multiple-choice' ), 'question-type' );
-		wp_set_post_terms( $questions[0][1], array( 'multi-line' ), 'question-type' );
-		wp_set_post_terms( $questions[0][2], array( 'single-line' ), 'question-type' );
-		wp_set_post_terms( $questions[0][3], array( 'boolean' ), 'question-type' );
-		wp_set_post_terms( $questions[0][4], array( 'file-upload' ), 'question-type' );
-		wp_set_post_terms( $questions[0][5], array( 'gap-fill' ), 'question-type' );
-
+		wp_set_post_terms( $questions[0], array( 'multiple-choice' ), 'question-type' );
+		wp_set_post_terms( $questions[1], array( 'multi-line' ), 'question-type' );
+		wp_set_post_terms( $questions[2], array( 'single-line' ), 'question-type' );
+		wp_set_post_terms( $questions[3], array( 'boolean' ), 'question-type' );
+		wp_set_post_terms( $questions[4], array( 'file-upload' ), 'question-type' );
+		wp_set_post_terms( $questions[5], array( 'gap-fill' ), 'question-type' );
 
 		// Turn on random answer order for non-multiple choice questions.
-		add_post_meta( $questions[0][0], '_random_order', 'no' );
-		add_post_meta( $questions[0][1], '_random_order', 'yes' );
-		add_post_meta( $questions[0][2], '_random_order', 'yes' );
-		add_post_meta( $questions[0][3], '_random_order', 'yes' );
-		add_post_meta( $questions[0][4], '_random_order', 'yes' );
-		add_post_meta( $questions[0][5], '_random_order', 'yes' );
+		add_post_meta( $questions[0], '_random_order', 'no' );
+		add_post_meta( $questions[1], '_random_order', 'yes' );
+		add_post_meta( $questions[2], '_random_order', 'yes' );
+		add_post_meta( $questions[3], '_random_order', 'yes' );
+		add_post_meta( $questions[4], '_random_order', 'yes' );
+		add_post_meta( $questions[5], '_random_order', 'yes' );
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'random_order', $usage_data, 'Key' );
-		$this->assertEquals( 0, $usage_data['random_order'], 'Count' );
+		$this->assertArrayHasKey( 'question_random_order', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['question_random_order'], 'Count' );
 	}
 
 	/**
