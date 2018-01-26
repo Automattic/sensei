@@ -258,6 +258,50 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_question_media_count
+	 */
+	public function testGetUsageDataQuestionMediaCount() {
+		// Create some questions.
+		$questions = $this->factory->post->create_many( 5, array(
+			'post_type' => 'question',
+			'post_status' => 'publish',
+		) );
+		// Create some media.
+		$media = $this->factory->attachment->create_many( 3, array(
+			'post_type' => 'question',
+			'post_status' => 'publish',
+		) );
+
+		// Attach media to some questions.
+		add_post_meta( $questions[0], '_question_media', $media[0] );
+		add_post_meta( $questions[1], '_question_media', $media[1] );
+		add_post_meta( $questions[2], '_question_media', $media[2] );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'question_media', $usage_data, 'Key' );
+		$this->assertEquals( 3, $usage_data['question_media'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_question_media_count
+	 */
+	public function testGetUsageDataQuestionMediaCountNoMedia() {
+		// Create some questions, but don't attach any media.
+		$questions = $this->factory->post->create_many( 5, array(
+			'post_type' => 'question',
+			'post_status' => 'publish',
+		) );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'question_media', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['question_media'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_random_order_count
 	 */
 	public function testGetRandomOrderCount() {

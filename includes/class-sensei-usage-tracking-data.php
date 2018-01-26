@@ -32,6 +32,7 @@ class Sensei_Usage_Tracking_Data {
 			'modules_min' => self::get_min_module_count(),
 			'questions' => wp_count_posts( 'question' )->publish,
 			'random_order' => self::get_random_order_count(),
+			'question_media' => self::get_question_media_count(),
 			'teachers' => self::get_teacher_count(),
 		);
 
@@ -173,6 +174,33 @@ class Sensei_Usage_Tracking_Data {
 
 			if ( array_key_exists( $key, $count ) ) {
 				$count[$key]++;
+			}
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Get the total number of published questions that have media.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return array Number of published questions with media.
+	 **/
+	private static function get_question_media_count() {
+		$count = 0;
+
+		$query = new WP_Query( array(
+			'post_type' => 'question',
+			'fields' => 'ids'
+		) );
+		$questions = $query->posts;
+
+		foreach ( $questions as $question ) {
+			$question_media = get_post_meta( $question, '_question_media', true );
+
+			if ( intval( $question_media ) > 0 ) {
+				$count++;
 			}
 		}
 
