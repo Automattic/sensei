@@ -41,6 +41,20 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		);
 	}
 
+	// Create some published and unpublished lessons.
+	private function createLessons() {
+		$drafts = $this->factory->post->create_many( 2, array(
+			'post_status' => 'draft',
+			'post_type' => 'lesson',
+		) );
+		$published = $this->factory->post->create_many( 3, array(
+			'post_status' => 'publish',
+			'post_type' => 'lesson',
+		) );
+
+		return array_merge( $drafts, $published );
+	}
+
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */
@@ -98,44 +112,30 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */
 	public function testGetUsageDataLessons() {
-		$published = 3;
-
-		// Create some published and unpublished lessons.
-		$this->factory->post->create_many( 2, array(
-			'post_status' => 'draft',
-			'post_type' => 'lesson',
-		) );
-		$this->factory->post->create_many( $published, array(
-			'post_status' => 'publish',
-			'post_type' => 'lesson',
-		) );
+		$this->createLessons();
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'lessons', $usage_data, 'Key' );
-		$this->assertEquals( $published, $usage_data['lessons'], 'Count' );
+		$this->assertEquals( 3, $usage_data['lessons'], 'Count' );
 	}
 
-		/**
+	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_prerequisite_count
 	 */
 	public function testGetLessonPrerequisiteCount() {
-		// Create some lessons.
-		$lessons = $this->factory->post->create_many( 5, array(
-			'post_status' => 'publish',
-			'post_type' => 'lesson',
-		) );
+		$lessons = $this->createLessons();
 
 		// Make some lessons prerequisites of others.
-		add_post_meta( $lessons[1], '_lesson_prerequisite', $lessons[0] );
-		add_post_meta( $lessons[2], '_lesson_prerequisite', $lessons[1] );
-		add_post_meta( $lessons[3], '_lesson_prerequisite', $lessons[2] );
+		add_post_meta( $lessons[1], '_lesson_prerequisite', $lessons[0] );	// Draft
+		add_post_meta( $lessons[2], '_lesson_prerequisite', $lessons[1] );	// Published
+		add_post_meta( $lessons[3], '_lesson_prerequisite', $lessons[2] );	// Published
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_prereqs', $usage_data, 'Key' );
-		$this->assertEquals( 3, $usage_data['lesson_prereqs'], 'Count' );
+		$this->assertEquals( 2, $usage_data['lesson_prereqs'], 'Count' );
 	}
 
 	/**
@@ -143,11 +143,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_prerequisite_count
 	 */
 	public function testGetLessonPrerequisiteCountNoPrerequisites() {
-		// Create some lessons, but don't add any prerequisites.
-		$lessons = $this->factory->post->create_many( 5, array(
-			'post_status' => 'publish',
-			'post_type' => 'lesson',
-		) );
+		$lessons = $this->createLessons();
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
