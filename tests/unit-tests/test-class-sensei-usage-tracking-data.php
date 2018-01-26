@@ -182,6 +182,38 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, $usage_data['lesson_previews'], 'Count' );
 	}
 
+		/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_lesson_module_count
+	 */
+	public function testGetLessonModuleCount() {
+		$lessons = $this->createLessons();
+		$terms = $this->factory->term->create_many( 3, array( 'taxonomy' => 'module' ) );
+
+		// Assign modules to some lessons.
+		wp_set_object_terms( $lessons[0], $terms[0], 'module', false ); // Draft
+		wp_set_object_terms( $lessons[2], $terms[1], 'module', false ); // Published
+		wp_set_object_terms( $lessons[4], $terms[2], 'module', false ); // Published
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'lesson_modules', $usage_data, 'Key' );
+		$this->assertEquals( 2, $usage_data['lesson_modules'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_lesson_module_count
+	 */
+	public function testGetLessonModuleCountNoModules() {
+		$lessons = $this->createLessons();
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'lesson_modules', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['lesson_modules'], 'Count' );
+	}
+
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */

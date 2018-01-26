@@ -25,6 +25,7 @@ class Sensei_Usage_Tracking_Data {
 			'courses' => wp_count_posts( 'course' )->publish,
 			'learners' => self::get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
+			'lesson_modules' => self::get_lesson_module_count(),
 			'lesson_prereqs' => self::get_lesson_prerequisite_count(),
 			'lesson_previews' => self::get_lesson_preview_count(),
 			'messages' => wp_count_posts( 'sensei_message' )->publish,
@@ -124,6 +125,29 @@ class Sensei_Usage_Tracking_Data {
 
 		return $query->found_posts;
 	}
+
+	/**
+	 * Get the total number of published lessons that are associated with a module.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return array Number of published lessons associated with a module.
+	 **/
+	private static function get_lesson_module_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'lesson',
+			'fields' => 'ids',
+			'tax_query' => array(
+				array(
+					'taxonomy' => 'module',
+					'operator' => 'EXISTS'
+				)
+			)
+		) );
+
+		return $query->found_posts;
+	}
+
 
 	/**
 	 * Get the total number of modules for the published course that has the greatest
