@@ -48,6 +48,7 @@ class Sensei_Usage_Tracking_Data {
 	private static function get_courses_with_video_count() {
 		$query = new WP_Query( array(
 			'post_type' => 'course',
+			'fields' => 'ids',
 			'meta_query' => array(
 				array(
 					'key' => '_course_video_embed',
@@ -70,6 +71,7 @@ class Sensei_Usage_Tracking_Data {
 	private static function get_courses_with_disabled_notification_count() {
 		$query = new WP_Query( array(
 			'post_type' => 'course',
+			'fields' => 'ids',
 			'meta_query' => array(
 				array(
 					'key' => 'disable_notification',
@@ -91,6 +93,7 @@ class Sensei_Usage_Tracking_Data {
 	private static function get_courses_with_prerequisite_count() {
 		$query = new WP_Query( array(
 			'post_type' => 'course',
+			'fields' => 'ids',
 			'meta_query' => array(
 				array(
 					'key' => '_course_prerequisite',
@@ -118,6 +121,7 @@ class Sensei_Usage_Tracking_Data {
 	private static function get_featured_courses_count() {
 		$query = new WP_Query( array(
 			'post_type' => 'course',
+			'fields' => 'ids',
 			'meta_query' => array(
 				array(
 					'key' => '_course_featured',
