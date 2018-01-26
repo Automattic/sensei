@@ -159,7 +159,7 @@ class Sensei_Usage_Tracking_Data {
 		$question_types = Sensei()->question->question_types();
 
 		foreach ( $question_types as $key=>$value ) {
-			$count[self::get_question_type_key( $key )] = 0;
+			$count[ self::get_question_type_key( $key ) ] = 0;
 		}
 
 		$query = new WP_Query( array(
@@ -174,7 +174,7 @@ class Sensei_Usage_Tracking_Data {
 			$key = self::get_question_type_key( $question_type );
 
 			if ( array_key_exists( $key, $count ) ) {
-				$count[$key]++;
+				$count[ $key ]++;
 			}
 		}
 
