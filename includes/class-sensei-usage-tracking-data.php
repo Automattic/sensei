@@ -215,6 +215,7 @@ class Sensei_Usage_Tracking_Data {
 		$count = 0;
 		$query = new WP_Query( array(
 			'post_type' => 'question',
+			'posts_per_page' => -1,
 			'fields' => 'ids',
 			'meta_query' => array(
 				array(
