@@ -238,8 +238,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'courses_with_video', $usage_data, 'Key' );
-		$this->assertEquals( $with_video, $usage_data['courses_with_video'], 'Count' );
+		$this->assertArrayHasKey( 'course_videos', $usage_data, 'Key' );
+		$this->assertEquals( $with_video, $usage_data['course_videos'], 'Count' );
 	}
 
 	/**
@@ -263,8 +263,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'courses_with_disabled_notification', $usage_data, 'Key' );
-		$this->assertEquals( $with_disabled_notification, $usage_data['courses_with_disabled_notification'], 'Count' );
+		$this->assertArrayHasKey( 'course_no_notifications', $usage_data, 'Key' );
+		$this->assertEquals( $with_disabled_notification, $usage_data['course_no_notifications'], 'Count' );
 	}
 
 	/**
@@ -291,8 +291,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'courses_with_prerequisite', $usage_data, 'Key' );
-		$this->assertEquals( $with_prereq, $usage_data['courses_with_prerequisite'], 'Count' );
+		$this->assertArrayHasKey( 'course_prereqs', $usage_data, 'Key' );
+		$this->assertEquals( $with_prereq, $usage_data['course_prereqs'], 'Count' );
 	}
 
 	/**

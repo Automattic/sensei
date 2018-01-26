@@ -23,9 +23,9 @@ class Sensei_Usage_Tracking_Data {
 	public static function get_usage_data() {
 		return array(
 			'courses' => wp_count_posts( 'course' )->publish,
-			'courses_with_video' => self::get_courses_with_video_count(),
-			'courses_with_disabled_notification' => self::get_courses_with_disabled_notification_count(),
-			'courses_with_prerequisite' => self::get_courses_with_prerequisite_count(),
+			'course_videos' => self::get_course_videos_count(),
+			'course_no_notifications' => self::get_course_no_notifications_count(),
+			'course_prereqs' => self::get_course_prereqs_count(),
 			'featured_courses' => self::get_featured_courses_count(),
 			'learners' => self::get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
@@ -45,7 +45,7 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return int Number of courses.
 	 */
-	private static function get_courses_with_video_count() {
+	private static function get_course_videos_count() {
 		$query = new WP_Query( array(
 			'post_type' => 'course',
 			'fields' => 'ids',
@@ -68,7 +68,7 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return int Number of courses.
 	 */
-	private static function get_courses_with_disabled_notification_count() {
+	private static function get_course_no_notifications_count() {
 		$query = new WP_Query( array(
 			'post_type' => 'course',
 			'fields' => 'ids',
@@ -90,7 +90,7 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return int Number of courses.
 	 */
-	private static function get_courses_with_prerequisite_count() {
+	private static function get_course_prereqs_count() {
 		$query = new WP_Query( array(
 			'post_type' => 'course',
 			'fields' => 'ids',
