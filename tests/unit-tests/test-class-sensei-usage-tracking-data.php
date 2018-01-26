@@ -286,6 +286,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			update_post_meta( $course_id, '_course_prerequisite', $course_ids_without_prereq[0] );
 		}
 
+		// Another value for no prereq
+		update_post_meta( $course_ids_without_prereq[1], '_course_prerequisite', '0' );
+
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'courses_with_prerequisite', $usage_data, 'Key' );

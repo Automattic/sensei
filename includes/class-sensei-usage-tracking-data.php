@@ -96,7 +96,12 @@ class Sensei_Usage_Tracking_Data {
 					'key' => '_course_prerequisite',
 					'value' => '',
 					'compare' => '!=',
-				)
+				),
+				array(
+					'key' => '_course_prerequisite',
+					'value' => '0',
+					'compare' => '!=',
+				),
 			),
 		) );
 
