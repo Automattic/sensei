@@ -583,4 +583,86 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'featured_courses', $usage_data, 'Key' );
 		$this->assertEquals( $featured, $usage_data['featured_courses'], 'Count' );
 	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_lesson_has_length_count
+	 */
+	public function testGetLessonHasLengthCount() {
+		$lessons_with_length = 3;
+
+		// Create some lessons
+		$lesson_without_length_ids = $this->factory->post->create_many( 2, array(
+			'post_type' => 'lesson',
+		) );
+		$lesson_with_length_ids = $this->factory->post->create_many( $lessons_with_length, array(
+			'post_type' => 'lesson',
+		) );
+
+		// Set lesson length
+		foreach ( $lesson_with_length_ids as $lesson_id ) {
+			update_post_meta( $lesson_id, '_lesson_length', '15' );
+		}
+		update_post_meta( $lesson_without_length_ids[0], '_lesson_length', '' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'lesson_length', $usage_data, 'Key' );
+		$this->assertEquals( $lessons_with_length, $usage_data['lesson_length'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_lesson_with_complexity_count
+	 */
+	public function testGetLessonWithComplexityCount() {
+		$lessons_with_complexity = 3;
+
+		// Create some lessons
+		$lesson_without_complexity_ids = $this->factory->post->create_many( 2, array(
+			'post_type' => 'lesson',
+		) );
+		$lesson_with_complexity_ids = $this->factory->post->create_many( $lessons_with_complexity, array(
+			'post_type' => 'lesson',
+		) );
+
+		// Set lesson complexity
+		foreach ( $lesson_with_complexity_ids as $lesson_id ) {
+			update_post_meta( $lesson_id, '_lesson_complexity', '15' );
+		}
+		update_post_meta( $lesson_without_complexity_ids[0], '_lesson_complexity', '' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'lesson_complexity', $usage_data, 'Key' );
+		$this->assertEquals( $lessons_with_complexity, $usage_data['lesson_complexity'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_lesson_with_video_count
+	 */
+	public function testGetLessonWithVideoCount() {
+		$lessons_with_video = 3;
+
+		// Create some lessons
+		$lesson_without_video_ids = $this->factory->post->create_many( 2, array(
+			'post_type' => 'lesson',
+		) );
+		$lesson_with_video_ids = $this->factory->post->create_many( $lessons_with_video, array(
+			'post_type' => 'lesson',
+		) );
+
+		// Set lesson complexity
+		foreach ( $lesson_with_video_ids as $lesson_id ) {
+			update_post_meta( $lesson_id, '_lesson_video_embed', '<iframe src="http://example.com/video"></iframe>' );
+		}
+		update_post_meta( $lesson_without_video_ids[0], '_lesson_video_embed', '' );
+		update_post_meta( $lesson_without_video_ids[1], '_lesson_video_embed', '    ' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'lesson_videos', $usage_data, 'Key' );
+		$this->assertEquals( $lessons_with_video, $usage_data['lesson_videos'], 'Count' );
+	}
 }
