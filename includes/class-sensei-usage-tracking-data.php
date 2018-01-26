@@ -38,6 +38,7 @@ class Sensei_Usage_Tracking_Data {
 			'modules_max' => self::get_max_module_count(),
 			'modules_min' => self::get_min_module_count(),
 			'questions' => wp_count_posts( 'question' )->publish,
+			'random_order' => self::get_random_order_count(),
 			'teachers' => self::get_teacher_count(),
 		);
 
@@ -343,6 +344,41 @@ class Sensei_Usage_Tracking_Data {
 
 			if ( array_key_exists( $key, $count ) ) {
 				$count[$key]++;
+			}
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Get the total number of multiple choice questions where "Randomise answer order" is checked.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Number of multiple choice questions with randomized answers.
+	 **/
+	private static function get_random_order_count() {
+		$count = 0;
+		$query = new WP_Query( array(
+			'post_type' => 'question',
+			'fields' => 'ids',
+		) );
+		$questions = $query->posts;
+
+		foreach ( $questions as $question ) {
+			$question_type = Sensei()->question->get_question_type( $question );
+
+			/*
+			 * Random answer order is only applicable for multiple choice questions.
+			 * Since it's possible that other question types could have a random answer order set,
+			 * let's explicitly handle multiple choice.
+			 */
+			if ( $question_type === 'multiple-choice' ) {
+				$random_order = get_post_meta( $question, '_random_order', true );
+
+				if ( $random_order === 'yes' ) {
+					$count++;
+				}
 			}
 		}
 
