@@ -360,24 +360,19 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array Number of published questions with media.
 	 **/
 	private static function get_question_media_count() {
-		$count = 0;
-
 		$query = new WP_Query( array(
 			'post_type' => 'question',
-			'posts_per_page' => -1,
-			'fields' => 'ids'
+			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => '_question_media',
+					'value' => 0,
+					'compare' => '>',
+				)
+			)
 		) );
-		$questions = $query->posts;
 
-		foreach ( $questions as $question ) {
-			$question_media = get_post_meta( $question, '_question_media', true );
-
-			if ( intval( $question_media ) > 0 ) {
-				$count++;
-			}
-		}
-
-		return $count;
+		return $query->found_posts;
 	}
 
 	/**
@@ -391,8 +386,14 @@ class Sensei_Usage_Tracking_Data {
 		$count = 0;
 		$query = new WP_Query( array(
 			'post_type' => 'question',
-			'posts_per_page' => -1,
 			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => '_random_order',
+					'value' => 'yes',
+					'compare' => '=',
+				)
+			)
 		) );
 		$questions = $query->posts;
 
@@ -405,11 +406,7 @@ class Sensei_Usage_Tracking_Data {
 			 * let's explicitly handle multiple choice.
 			 */
 			if ( $question_type === 'multiple-choice' ) {
-				$random_order = get_post_meta( $question, '_random_order', true );
-
-				if ( $random_order === 'yes' ) {
-					$count++;
-				}
+				$count++;
 			}
 		}
 
