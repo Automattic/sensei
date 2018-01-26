@@ -31,8 +31,8 @@ class Sensei_Usage_Tracking_Data {
 			'modules_max' => self::get_max_module_count(),
 			'modules_min' => self::get_min_module_count(),
 			'questions' => wp_count_posts( 'question' )->publish,
-			'random_order' => self::get_random_order_count(),
 			'question_media' => self::get_question_media_count(),
+			'question_random_order' => self::get_question_random_order_count(),
 			'teachers' => self::get_teacher_count(),
 		);
 
@@ -214,7 +214,7 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return int Number of multiple choice questions with randomized answers.
 	 **/
-	private static function get_random_order_count() {
+	private static function get_question_random_order_count() {
 		$count = 0;
 		$query = new WP_Query( array(
 			'post_type' => 'question',
