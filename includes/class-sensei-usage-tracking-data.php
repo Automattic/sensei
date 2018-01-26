@@ -23,6 +23,10 @@ class Sensei_Usage_Tracking_Data {
 	public static function get_usage_data() {
 		return array(
 			'courses' => wp_count_posts( 'course' )->publish,
+			'course_videos' => self::get_course_videos_count(),
+			'course_no_notifications' => self::get_course_no_notifications_count(),
+			'course_prereqs' => self::get_course_prereqs_count(),
+			'featured_courses' => self::get_featured_courses_count(),
 			'learners' => self::get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
 			'messages' => wp_count_posts( 'sensei_message' )->publish,
@@ -32,6 +36,101 @@ class Sensei_Usage_Tracking_Data {
 			'questions' => wp_count_posts( 'question' )->publish,
 			'teachers' => self::get_teacher_count(),
 		);
+	}
+
+	/**
+	 * Get the number of courses that have a video set.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Number of courses.
+	 */
+	private static function get_course_videos_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'course',
+			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => '_course_video_embed',
+					'value' => '',
+					'compare' => '!=',
+				)
+			)
+		) );
+
+		return $query->found_posts;
+	}
+
+	/**
+	 * Get the number of courses that have disabled notifications.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Number of courses.
+	 */
+	private static function get_course_no_notifications_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'course',
+			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => 'disable_notification',
+					'value' => true,
+				)
+			),
+		) );
+
+		return $query->found_posts;
+	}
+
+	/**
+	 * Get the number of courses that have a prerequisite.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Number of courses.
+	 */
+	private static function get_course_prereqs_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'course',
+			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => '_course_prerequisite',
+					'value' => '',
+					'compare' => '!=',
+				),
+				array(
+					'key' => '_course_prerequisite',
+					'value' => '0',
+					'compare' => '!=',
+				),
+			),
+		) );
+
+		return $query->found_posts;
+	}
+
+	/**
+	 * Get the number of courses that are featured.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Number of courses.
+	 */
+	private static function get_featured_courses_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'course',
+			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => '_course_featured',
+					'value' => 'featured',
+				)
+			),
+		) );
+
+		return $query->found_posts;
 	}
 
 	/**

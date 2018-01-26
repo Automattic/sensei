@@ -212,4 +212,111 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'teachers', $usage_data, 'Key' );
 		$this->assertEquals( $teachers, $usage_data['teachers'], 'Count' );
 	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_courses_with_video_count
+	 */
+	public function testGetCoursesWithVideoCount() {
+		$with_video = 2;
+
+		$course_ids_without_video = $this->factory->post->create_many( 3, array(
+			'post_type' => 'course',
+		) );
+		$course_ids_with_video = $this->factory->post->create_many( $with_video, array(
+			'post_type' => 'course',
+		) );
+
+		// Set video on courses
+		foreach ( $course_ids_with_video as $course_id ) {
+			update_post_meta( $course_id, '_course_video_embed', '<iframe src="video.com"></iframe' );
+		}
+
+		// Set some non-null values on the others
+		update_post_meta( $course_ids_without_video[0], '_course_video_embed', '' );
+		update_post_meta( $course_ids_without_video[1], '_course_video_embed', '   ' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_videos', $usage_data, 'Key' );
+		$this->assertEquals( $with_video, $usage_data['course_videos'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_courses_with_disabled_notification_count
+	 */
+	public function testGetCoursesWithDisabledNotificationCount() {
+		$with_disabled_notification = 2;
+
+		$course_ids_without_disabled = $this->factory->post->create_many( 3, array(
+			'post_type' => 'course',
+		) );
+		$course_ids_with_disabled = $this->factory->post->create_many( $with_disabled_notification, array(
+			'post_type' => 'course',
+		) );
+
+		// Disable notifications
+		foreach ( $course_ids_with_disabled as $course_id ) {
+			update_post_meta( $course_id, 'disable_notification', true );
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_no_notifications', $usage_data, 'Key' );
+		$this->assertEquals( $with_disabled_notification, $usage_data['course_no_notifications'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_courses_with_prerequisite count
+	 */
+	public function testGetCoursesWithPrerequisiteCount() {
+		$with_prereq = 2;
+
+		$course_ids_without_prereq = $this->factory->post->create_many( 3, array(
+			'post_type' => 'course',
+		) );
+		$course_ids_with_prereq = $this->factory->post->create_many( $with_prereq, array(
+			'post_type' => 'course',
+		) );
+
+		// Set prerequisite on courses
+		foreach ( $course_ids_with_prereq as $course_id ) {
+			update_post_meta( $course_id, '_course_prerequisite', $course_ids_without_prereq[0] );
+		}
+
+		// Another value for no prereq
+		update_post_meta( $course_ids_without_prereq[1], '_course_prerequisite', '0' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_prereqs', $usage_data, 'Key' );
+		$this->assertEquals( $with_prereq, $usage_data['course_prereqs'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_featured_courses_count
+	 */
+	public function testGetFeaturedCoursesCount() {
+		$featured = 2;
+
+		$non_featured_course_ids = $this->factory->post->create_many( 3, array(
+			'post_type' => 'course',
+		) );
+		$featured_course_ids = $this->factory->post->create_many( $featured, array(
+			'post_type' => 'course',
+		) );
+
+		// Set courses to featured
+		foreach ( $featured_course_ids as $course_id ) {
+			update_post_meta( $course_id, '_course_featured', 'featured' );
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'featured_courses', $usage_data, 'Key' );
+		$this->assertEquals( $featured, $usage_data['featured_courses'], 'Count' );
+	}
 }
