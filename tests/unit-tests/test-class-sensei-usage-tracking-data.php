@@ -480,7 +480,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_courses_with_video_count
 	 */
 	public function testGetCoursesWithVideoCount() {
-		$with_video = 2;
+		$with_video = 4;
 
 		$course_ids_without_video = $this->factory->post->create_many( 3, array(
 			'post_type' => 'course',
@@ -490,13 +490,15 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		) );
 
 		// Set video on courses
-		foreach ( $course_ids_with_video as $course_id ) {
-			update_post_meta( $course_id, '_course_video_embed', '<iframe src="video.com"></iframe' );
-		}
+		update_post_meta( $course_ids_with_video[0], '_course_video_embed', '<iframe src="video.com"></iframe>' );
+		update_post_meta( $course_ids_with_video[1], '_course_video_embed', '<iframe></iframe>' );
+		update_post_meta( $course_ids_with_video[2], '_course_video_embed', 'blah' );
+		update_post_meta( $course_ids_with_video[3], '_course_video_embed', 'blah with spaces' );
 
 		// Set some non-null values on the others
 		update_post_meta( $course_ids_without_video[0], '_course_video_embed', '' );
 		update_post_meta( $course_ids_without_video[1], '_course_video_embed', '   ' );
+		update_post_meta( $course_ids_without_video[2], '_course_video_embed', "\t\n" );
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
