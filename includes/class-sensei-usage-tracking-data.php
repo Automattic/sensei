@@ -61,7 +61,7 @@ class Sensei_Usage_Tracking_Data {
 			'meta_query' => array(
 				array(
 					'key' => '_course_video_embed',
-					'value' => '[\S]',
+					'value' => '\S',
 					'compare' => 'REGEXP',
 				)
 			)
