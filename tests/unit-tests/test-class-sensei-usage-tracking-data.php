@@ -628,7 +628,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		// Set lesson complexity
 		foreach ( $lesson_with_complexity_ids as $lesson_id ) {
-			update_post_meta( $lesson_id, '_lesson_complexity', '15' );
+			update_post_meta( $lesson_id, '_lesson_complexity', 'Hard' );
 		}
 		update_post_meta( $lesson_without_complexity_ids[0], '_lesson_complexity', '' );
 
