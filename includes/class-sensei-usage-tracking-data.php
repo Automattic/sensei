@@ -33,6 +33,9 @@ class Sensei_Usage_Tracking_Data {
 			'lesson_modules' => self::get_lesson_module_count(),
 			'lesson_prereqs' => self::get_lesson_prerequisite_count(),
 			'lesson_previews' => self::get_lesson_preview_count(),
+			'lesson_length' => self::get_lesson_has_length_count(),
+			'lesson_complexity' => self::get_lesson_with_complexity_count(),
+			'lesson_videos' => self::get_lesson_with_video_count(),
 			'messages' => wp_count_posts( 'sensei_message' )->publish,
 			'modules' => wp_count_terms( 'module' ),
 			'modules_max' => self::get_max_module_count(),
@@ -248,6 +251,75 @@ class Sensei_Usage_Tracking_Data {
 				array(
 					'taxonomy' => 'module',
 					'operator' => 'EXISTS'
+				)
+			)
+		) );
+
+		return $query->found_posts;
+	}
+
+	/**
+	 * Get the number of lessons for which the "lesson length" has been set.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Number of lessons.
+	 **/
+	private static function get_lesson_has_length_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'lesson',
+			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => '_lesson_length',
+					'value' => '',
+					'compare' => '!=',
+				)
+			)
+		) );
+
+		return $query->found_posts;
+	}
+
+	/**
+	 * Get the number of lessons for which the "lesson complexity" has been set.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Number of lessons.
+	 **/
+	private static function get_lesson_with_complexity_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'lesson',
+			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => '_lesson_complexity',
+					'value' => '',
+					'compare' => '!=',
+				)
+			)
+		) );
+
+		return $query->found_posts;
+	}
+
+	/**
+	 * Get the number of lessons that have a video.
+	 *
+	 * @since 1.9.20
+	 *
+	 * @return int Number of lessons.
+	 **/
+	private static function get_lesson_with_video_count() {
+		$query = new WP_Query( array(
+			'post_type' => 'lesson',
+			'fields' => 'ids',
+			'meta_query' => array(
+				array(
+					'key' => '_lesson_video_embed',
+					'value' => '[^[:space:]]',
+					'compare' => 'REGEXP',
 				)
 			)
 		) );
