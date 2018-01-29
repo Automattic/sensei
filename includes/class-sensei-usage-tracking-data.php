@@ -318,8 +318,8 @@ class Sensei_Usage_Tracking_Data {
 			'meta_query' => array(
 				array(
 					'key' => '_lesson_video_embed',
-					'value' => '',
-					'compare' => '!=',
+					'value' => '[^[:space:]]',
+					'compare' => 'REGEXP',
 				)
 			)
 		) );

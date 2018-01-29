@@ -643,22 +643,24 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_with_video_count
 	 */
 	public function testGetLessonWithVideoCount() {
-		$lessons_with_video = 3;
+		$lessons_with_video = 4;
 
 		// Create some lessons
-		$lesson_without_video_ids = $this->factory->post->create_many( 2, array(
+		$lesson_without_video_ids = $this->factory->post->create_many( 4, array(
 			'post_type' => 'lesson',
 		) );
 		$lesson_with_video_ids = $this->factory->post->create_many( $lessons_with_video, array(
 			'post_type' => 'lesson',
 		) );
 
-		// Set lesson complexity
-		foreach ( $lesson_with_video_ids as $lesson_id ) {
-			update_post_meta( $lesson_id, '_lesson_video_embed', '<iframe src="http://example.com/video"></iframe>' );
-		}
+		// Set lesson videos
+		update_post_meta( $lesson_with_video_ids[0], '_lesson_video_embed', '<iframe src="http://example.com/video"></iframe>' );
+		update_post_meta( $lesson_with_video_ids[1], '_lesson_video_embed', '<iframe> </iframe>' );
+		update_post_meta( $lesson_with_video_ids[2], '_lesson_video_embed', 'blah' );
+		update_post_meta( $lesson_with_video_ids[3], '_lesson_video_embed', 'blah with spaces' );
 		update_post_meta( $lesson_without_video_ids[0], '_lesson_video_embed', '' );
 		update_post_meta( $lesson_without_video_ids[1], '_lesson_video_embed', '    ' );
+		update_post_meta( $lesson_without_video_ids[2], '_lesson_video_embed', "\t\n" );
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
