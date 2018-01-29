@@ -490,9 +490,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		) );
 
 		// Set video on courses
-		foreach ( $course_ids_with_video as $course_id ) {
-			update_post_meta( $course_id, '_course_video_embed', '<iframe src="video.com"></iframe>' );
-		}
+		update_post_meta( $course_ids_with_video[0], '_course_video_embed', '<iframe src="video.com"></iframe>' );
+		update_post_meta( $course_ids_with_video[1], '_course_video_embed', 'blah' );
 
 		// Set some non-null values on the others
 		update_post_meta( $course_ids_without_video[0], '_course_video_embed', '' );
