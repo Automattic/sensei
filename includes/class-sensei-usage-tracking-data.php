@@ -149,7 +149,10 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of teachers.
 	 **/
 	private static function get_teacher_count() {
-		$teacher_query = new WP_User_Query( array( 'role' => 'teacher' ) );
+		$teacher_query = new WP_User_Query( array(
+			'fields' => 'ID',
+			'role' => 'teacher',
+		) );
 
 		return $teacher_query->total_users;
 	}
@@ -163,13 +166,12 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	private static function get_learner_count() {
 		$learner_count = 0;
-		$args['fields'] = array( 'ID' );
-		$user_query = new WP_User_Query( $args );
+		$user_query = new WP_User_Query( array( 'fields' => 'ID' ) );
 		$learners = $user_query->get_results();
 
 		foreach( $learners as $learner ) {
 			$course_args = array(
-				'user_id' => $learner->ID,
+				'user_id' => $learner,
 				'type' => 'sensei_course_status',
 				'status' => 'any',
 			);
@@ -252,7 +254,6 @@ class Sensei_Usage_Tracking_Data {
 		return $query->found_posts;
 	}
 
-
 	/**
 	 * Get the total number of modules for the published course that has the greatest
 	 * number of modules.
@@ -263,10 +264,12 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	private static function get_max_module_count() {
 		$max_modules = 0;
-		$courses = get_posts( array(
+		$query = new WP_Query( array(
 			'post_type' => 'course',
+			'posts_per_page' => -1,
 			'fields' => 'ids',
 		) );
+		$courses = $query->posts;
 
 		foreach( $courses as $course ) {
 			// Get modules for this course.
@@ -292,11 +295,12 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	private static function get_min_module_count() {
 		$min_modules = 0;
-
-		$courses = get_posts( array(
+		$query = new WP_Query( array(
 			'post_type' => 'course',
+			'posts_per_page' => -1,
 			'fields' => 'ids',
 		) );
+		$courses = $query->posts;
 
 		for( $i = 0; $i < count( $courses ); $i++ ) {
 			// Get modules for this course.
