@@ -54,14 +54,15 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of courses.
 	 */
 	private static function get_course_videos_count() {
+		// Match video strings with at least one non-space character
 		$query = new WP_Query( array(
 			'post_type' => 'course',
 			'fields' => 'ids',
 			'meta_query' => array(
 				array(
 					'key' => '_course_video_embed',
-					'value' => '',
-					'compare' => '!=',
+					'value' => '[\S]',
+					'compare' => 'REGEXP',
 				)
 			)
 		) );
