@@ -1258,7 +1258,7 @@ class Sensei_Core_Modules
 		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
 
 		if ( ! $disable_styles ) {
-			wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', Sensei()->version );
+			wp_register_style($this->taxonomy . '-frontend', esc_url($this->assets_url) . 'css/modules-frontend.css', false, Sensei()->version );
 			wp_enqueue_style($this->taxonomy . '-frontend');
 		}
 
