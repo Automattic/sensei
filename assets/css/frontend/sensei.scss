@@ -57,12 +57,10 @@ a.view-results-link,
 a.sensei-certificate-link {
   display: inline-block;
   padding: .236em .857em;
-  background: $border_main;
   float: right;
   margin-left: .236em;
   padding: .382em 1em;
   @include border_radius(5px);
-  color: #fff;
   font-weight: bold;
   text-decoration: none;
 }
@@ -86,6 +84,11 @@ a.sensei-certificate-link {
       position: relative;
       top: .2em;
       margin-bottom: 0.618em;
+    }
+
+    .view-results {
+      background: $border_main;
+      color: #fff;
     }
   }
   .sensei-course-meta  {
@@ -342,9 +345,6 @@ a.sensei-certificate-link {
 
 .quiz, .lesson  {
   input.quiz-submit  {
-    &.complete  {
-      background: $success;
-    }
     &.reset  {
       background: $error;
     }
@@ -801,6 +801,20 @@ section.entry span.course-price { padding-left: 10px; }
   }
 }
 
+.button {
+  color: #fff;
+  background: $color_links;
+
+  &:hover {
+    color: #fff;
+    background: darken($color_links, 5%);
+  }
+
+  &:visited {
+    color: #fff;
+  }
+}
+
 .course-container, .course, .lesson, .quiz  {
   a.button, a.button:visited,
   a.comment-reply-link,
@@ -811,8 +825,6 @@ section.entry span.course-price { padding-left: 10px; }
   button.button {
     display: inline-block;
     padding: 5px 20px 4px;
-    border: none;
-    color: #fff;
     text-align: center;
     text-shadow: none;
     text-decoration: none;
@@ -829,19 +841,15 @@ section.entry span.course-price { padding-left: 10px; }
     -webkit-appearance: none;
 
     @include border_radius(5px);
-    background: $color_links;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
 
     &:hover {
       text-decoration: none;
-      color: #fff;
-      background: darken($color_links, 5%);
     }
 
     &:active {
-      border-color: $color_links - #555;
       -webkit-box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
       0 1px 0 hsla(0, 100%, 100%, 1);
       -moz-box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
