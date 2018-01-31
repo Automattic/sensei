@@ -24,6 +24,47 @@ class Sensei_Template_Functions_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @covers sensei_get_modules_and_lessons
+	 */
+	public function testGetModulesAndLessonsEmptyModule() {
+		// Create a course.
+		$course_id = $this->factory->post->create( array(
+			'post_status' => 'publish',
+			'post_type' => 'course',
+		) );
+
+		// Create some modules.
+		$modules = array();
+		$modules[] = $this->factory->term->create_and_get( array( 'taxonomy' => 'module' ) );
+		$modules[] = $this->factory->term->create_and_get( array( 'taxonomy' => 'module' ) );
+
+		// Add modules to course.
+		foreach ( $modules as $module ) {
+			wp_set_object_terms( $course_id, array( $module->term_id ), 'module', true );
+		}
+
+		// Create some lessons.
+		$lesson_ids = $this->factory->post->create_many( 3, array(
+			'post_status' => 'publish',
+			'post_type' => 'lesson',
+		) );
+
+		foreach ( $lesson_ids as $lesson_id ) {
+			// Add lesson to course.
+			add_post_meta( $lesson_id, '_lesson_course', $course_id );
+
+			// Add lesson to first module.
+			wp_set_object_terms( $lesson_id, $modules[0]->term_id, 'module' );
+			add_post_meta( $lesson_id, '_order_module_' . $modules[0]->term_id, 0 );
+		}
+
+		$modules_and_lessons = sensei_get_modules_and_lessons( $course_id );
+
+		// 3 module lessons + 1 non-empty module = 4
+		$this->assertEquals( 4, count( $modules_and_lessons ) );
+	}
+
+	/**
 	 * @covers sensei_get_other_lessons
 	 */
 	public function testGetOtherLessons() {
