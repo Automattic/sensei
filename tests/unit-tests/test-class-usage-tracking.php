@@ -1,11 +1,16 @@
 <?php
 
 class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
+	const PREFIX = 'sensei';
+
 	public function setUp() {
 		parent::setUp();
-		$this->usage_tracking = new Sensei_Usage_Tracking( function() {
-			return array( 'testing' => true );
-		} );
+		$this->usage_tracking = Sensei_Usage_Tracking::instance();
+		$this->usage_tracking->configure( array(
+			'usage_data_callback' => function() {
+				return array( 'testing' => true );
+			},
+		) );
 	}
 
 	public function tearDown() {
@@ -194,7 +199,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			return new WP_Error();
 		}, 10, 3 );
 
-		Sensei_Usage_Tracking::send_event( 'my_event', $properties, $timestamp );
+		$this->usage_tracking->send_event( 'my_event', $properties, $timestamp );
 
 		$parsed_url = parse_url( $request_url );
 

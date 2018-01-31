@@ -11,36 +11,69 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Usage_Tracking {
 
-
-	/* Change prefix START */
-
+	/**
+	 * Prefix for actions and strings. If reusing this class, please set this
+	 * prefix to something specific to your plugin.
+	 **/
 	const PREFIX = 'sensei';
 
 	/**
-	 * @var string
+	 * @var string $usage_tracking_setting_name the name of the Setting for
+	 * enabling Usage Tracking.
 	 **/
-	private static $usage_tracking_setting_name = 'sensei_usage_tracking_enabled';
+	private $usage_tracking_setting_name;
 
-	private static $hide_tracking_opt_in_option_name = 'sensei_usage_tracking_opt_in_hide';
+	/**
+	 * @var string $hide_tracking_opt_in the name of the Option for
+	 * hiding the Usage Tracking opt-in dialog.
+	 **/
+	private $hide_tracking_opt_in_option_name;
 
-	private static $job_name = 'sensei_usage_tracking_send_usage_data';
+	/**
+	 * @var string $job_name the name of the cron job action for regularly
+	 * logging usage data.
+	 **/
+	private $job_name;
 
-	/* Change prefix END */
-
+	/**
+	 * @var Sensei_Usage_Tracking $instance singleton instance
+	 **/
+	private static $instance;
 
 	/**
 	 * @var array $callback Callback function for the usage tracking job.
 	 **/
 	private $callback;
 
+
+	private function __construct() {
+		// Init instance vars
+		$this->usage_tracking_setting_name = self::PREFIX . '_usage_tracking_enabled';
+		$this->hide_tracking_opt_in_option_name = self::PREFIX . '_usage_tracking_opt_in_hide';
+		$this->job_name = self::PREFIX . '_usage_tracking_send_usage_data';
+	}
+
 	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since 1.9.20
-	 * @param array $callback  Callable usage tracking function
+	 * Get the singleton instance.
 	 **/
-	function __construct( $callback ) {
-		$this->callback = $callback;
+	public static function instance() {
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Configure the Usage Tracking instance. Acceptable keys are:
+	 *
+	 * - usage_data_callback: the callback returning the usage data to be logged.
+	 *
+	 * @param array $config the configuration array.
+	 **/
+	public function configure( $config ) {
+		if ( isset( $config['usage_data_callback'] ) ) {
+			$this->callback = $config['usage_data_callback'];
+		}
 	}
 
 	/**
@@ -52,7 +85,7 @@ class Sensei_Usage_Tracking {
 	 *
 	 * @return null|WP_Error
 	 **/
-	public static function send_event( $event, $properties = array(), $event_timestamp = null ) {
+	public function send_event( $event, $properties = array(), $event_timestamp = null ) {
 		$pixel = 'http://pixel.wp.com/t.gif';
 		$event_prefix = self::PREFIX . '_';
 		$event_name = $event_prefix . str_replace( $event_prefix, '', $event );
@@ -100,15 +133,15 @@ class Sensei_Usage_Tracking {
 		return true;
 	}
 
-	public static function maybe_schedule_tracking_task() {
-		if ( ! wp_next_scheduled( self::$job_name ) ) {
-			wp_schedule_event( time(), self::PREFIX . '_usage_tracking_two_weeks', self::$job_name );
+	public function maybe_schedule_tracking_task() {
+		if ( ! wp_next_scheduled( $this->job_name ) ) {
+			wp_schedule_event( time(), self::PREFIX . '_usage_tracking_two_weeks', $this->job_name );
 		}
 	}
 
-	public static function maybe_unschedule_tracking_task() {
-		if ( wp_next_scheduled( self::$job_name ) ) {
-			wp_clear_scheduled_hook( self::$job_name );
+	public function maybe_unschedule_tracking_task() {
+		if ( wp_next_scheduled( $this->job_name ) ) {
+			wp_clear_scheduled_hook( $this->job_name );
 		}
 	}
 
@@ -116,7 +149,7 @@ class Sensei_Usage_Tracking {
 	 * Check if tracking is enabled.
 	 * @return bool
 	 **/
-	public static function is_tracking_enabled() {
+	public function is_tracking_enabled() {
 		return Sensei()->settings->get( self::$usage_tracking_setting_name ) || false;
 	}
 
@@ -133,7 +166,7 @@ class Sensei_Usage_Tracking {
 		add_action( 'wp_ajax_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
 		// Cron
 		add_filter( 'cron_schedules', array( $this, 'add_two_weeks' ) );
-		add_action( self::$job_name, array( $this, 'maybe_send_usage_data' ) );
+		add_action( $this->job_name, array( $this, 'maybe_send_usage_data' ) );
 	}
 
 	function admin_enqueue_scripts() {
@@ -172,7 +205,7 @@ class Sensei_Usage_Tracking {
 
 	function add_setting_field( $fields ) {
 		// default-settings
-		$fields[ self::$usage_tracking_setting_name ] = array(
+		$fields[ $this->usage_tracking_setting_name ] = array(
 			'name' => __( 'Enable usage tracking', 'woothemes-sensei' ),
 			'description' => __(
 				'Help us make Sensei better by allowing us to collect
@@ -187,8 +220,8 @@ class Sensei_Usage_Tracking {
 	}
 
 	function maybe_display_tracking_opt_in() {
-		$opt_in_hidden = (bool) get_option( self::$hide_tracking_opt_in_option_name );
-		$user_tracking_enabled = Sensei()->settings->get( self::$usage_tracking_setting_name );
+		$opt_in_hidden = (bool) get_option( $this->hide_tracking_opt_in_option_name );
+		$user_tracking_enabled = Sensei()->settings->get( $this->usage_tracking_setting_name );
 
 		if ( ! $user_tracking_enabled && ! $opt_in_hidden && current_user_can( 'manage_sensei' ) ) { ?>
 			<div id="sensei-usage-tracking-notice" class="notice notice-info"
@@ -237,12 +270,12 @@ class Sensei_Usage_Tracking {
 		}
 
 		$enable_tracking = isset( $_POST['enable_tracking'] ) && $_POST['enable_tracking'] === '1';
-		Sensei()->settings->set( self::$usage_tracking_setting_name, $enable_tracking );
+		Sensei()->settings->set( $this->usage_tracking_setting_name, $enable_tracking );
 		$this->hide_tracking_opt_in();
 		wp_die();
 	}
 
 	function hide_tracking_opt_in() {
-		update_option( self::$hide_tracking_opt_in_option_name, true );
+		update_option( $this->hide_tracking_opt_in_option_name, true );
 	}
 }
