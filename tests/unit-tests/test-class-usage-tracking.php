@@ -1,6 +1,12 @@
 <?php
 
 class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
+
+	/**
+	 * Prefix for actions and strings. If reusing this test suite, please set
+	 * this prefix to the same value as the PREFIX constant in the
+	 * {Prefix}_Usage_Tracking class.
+	 **/
 	const PREFIX = 'sensei';
 
 	public function setUp() {
@@ -20,35 +26,36 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure cron job action is set up.
 	 *
-	 * @covers Sensei_Usage_Tracking::hook
+	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testCronJobActionAdded() {
 		$this->usage_tracking->hook();
-		$this->assertTrue( !! has_action( 'sensei_usage_tracking_send_usage_data', array( $this->usage_tracking, 'maybe_send_usage_data' ) ) );
+		$this->assertTrue( !! has_action( self::PREFIX . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'maybe_send_usage_data' ) ) );
 	}
 
 	/**
 	 * Ensure scheduling function works properly.
 	 *
-	 * @covers Sensei_Usage_Tracking::maybe_schedule_tracking_task
+	 * @covers {Prefix}_Usage_Tracking::maybe_schedule_tracking_task
 	 */
 	public function testMaybeScheduleTrackingTask() {
 		// Make sure it's cleared initially
-		wp_clear_scheduled_hook( 'sensei_usage_tracking_send_usage_data' );
+		wp_clear_scheduled_hook( self::PREFIX . '_usage_tracking_send_usage_data' );
 
 		// Record how many times the event is scheduled
+		$prefix = self::PREFIX;
 		$event_count = 0;
-		add_filter( 'schedule_event', function( $event ) use ( &$event_count ) {
-			if ( $event->hook === 'sensei_usage_tracking_send_usage_data' ) {
+		add_filter( 'schedule_event', function( $event ) use ( &$event_count, $prefix ) {
+			if ( $event->hook === $prefix . '_usage_tracking_send_usage_data' ) {
 				$event_count++;
 			}
 			return $event;
 		} );
 
 		// Should successfully schedule the task
-		$this->assertFalse( wp_get_schedule( 'sensei_usage_tracking_send_usage_data' ), 'Not scheduled initial' );
+		$this->assertFalse( wp_get_schedule( self::PREFIX . '_usage_tracking_send_usage_data' ), 'Not scheduled initial' );
 		$this->usage_tracking->maybe_schedule_tracking_task();
-		$this->assertNotFalse( wp_get_schedule( 'sensei_usage_tracking_send_usage_data' ), 'Schedules a job' );
+		$this->assertNotFalse( wp_get_schedule( self::PREFIX . '_usage_tracking_send_usage_data' ), 'Schedules a job' );
 		$this->assertEquals( 1, $event_count, 'Schedules only one job' );
 
 		// Should not duplicate when called again
@@ -61,7 +68,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure ajax hook is set up properly.
 	 *
-	 * @covers Sensei_Usage_Tracking::hook
+	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testAjaxRequestSetup() {
 		$this->usage_tracking->hook();
@@ -71,14 +78,14 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure tracking is enabled through ajax request.
 	 *
-	 * @covers Sensei_Usage_Tracking::handle_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::handle_tracking_opt_in
 	 */
 	public function testAjaxRequestEnableTracking() {
 		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '1';
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
+		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
@@ -90,21 +97,21 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		// Refresh settings
 		Sensei()->settings->get_settings();
 
-		$this->assertTrue( Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking enabled' );
-		$this->assertTrue( get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog hidden' );
+		$this->assertTrue( Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking enabled' );
+		$this->assertTrue( get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog hidden' );
 	}
 
 	/**
 	 * Ensure tracking is disabled through ajax request.
 	 *
-	 * @covers Sensei_Usage_Tracking::handle_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::handle_tracking_opt_in
 	 */
 	public function testAjaxRequestDisableTracking() {
 		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '0';
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
+		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
@@ -116,21 +123,21 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		// Refresh settings
 		Sensei()->settings->get_settings();
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking disabled' );
-		$this->assertTrue( get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog hidden' );
+		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking disabled' );
+		$this->assertTrue( get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog hidden' );
 	}
 
 	/**
 	 * Ensure ajax request fails on nonce failure and does not update option.
 	 *
-	 * @covers Sensei_Usage_Tracking::handle_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::handle_tracking_opt_in
 	 */
 	public function testAjaxRequestFailedNonce() {
 		$this->setupAjaxRequest();
 		$_REQUEST['nonce'] = 'invalid_nonce_1234';
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
+		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
@@ -142,14 +149,14 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		// Refresh settings
 		Sensei()->settings->get_settings();
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking disabled' );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
+		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking disabled' );
+		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
 	}
 
 	/**
 	 * Ensure ajax request fails on authorization failure and does not update option.
 	 *
-	 * @covers Sensei_Usage_Tracking::handle_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::handle_tracking_opt_in
 	 */
 	public function testAjaxRequestFailedAuth() {
 		$this->setupAjaxRequest();
@@ -157,8 +164,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$user = wp_get_current_user();
 		$user->remove_cap( 'manage_sensei' );
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
+		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
@@ -170,8 +177,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		// Refresh settings
 		Sensei()->settings->get_settings();
 
-		$this->assertFalse( !! Sensei()->settings->get( 'sensei_usage_tracking_enabled' ), 'Usage tracking disabled' );
-		$this->assertFalse( !! get_option( 'sensei_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
+		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking disabled' );
+		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
 	}
 
 	/* END test ajax request cases */
@@ -180,7 +187,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * Ensure that a request is made to the correct URL with the given
 	 * properties and the default properties.
 	 *
-	 * @covers Sensei_Usage_Tracking::send_event
+	 * @covers {Prefix}_Usage_Tracking::send_event
 	 */
 	public function testSendEvent() {
 		$event      = 'my_event';
@@ -211,10 +218,10 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertArraySubset( array(
 			'button_clicked' => 'my_button',
 			'admin_email'    => 'admin@example.org',
-			'_ut'            => 'sensei:site_url',
+			'_ut'            => self::PREFIX . ':site_url',
 			'_ui'            => 'http://example.org',
 			'_ul'            => '',
-			'_en'            => 'sensei_my_event',
+			'_en'            => self::PREFIX . '_my_event',
 			'_ts'            => '1234000',
 			'_'              => '_',
 		), $query, 'Query parameters' );
@@ -223,7 +230,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure that the request is only sent when the setting is enabled.
 	 *
-	 * @covers Sensei_Usage_Tracking::maybe_send_usage_data
+	 * @covers {Prefix}_Usage_Tracking::maybe_send_usage_data
 	 */
 	public function testMaybeSendUsageData() {
 		$count = 0;
@@ -239,7 +246,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, $count, 'Request not sent when Usage Tracking disabled' );
 
 		// Set the setting and ensure request is sent.
-		Sensei()->settings->set( 'sensei_usage_tracking_enabled', true );
+		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', true );
 		Sensei()->settings->get_settings();
 
 		$this->usage_tracking->maybe_send_usage_data();
@@ -252,7 +259,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * When setting is not set, dialog is not hidden, and user has capability,
 	 * we should see the dialog and Enable Usage Tracking button.
 	 *
-	 * @covers Sensei_Usage_Tracking::maybe_display_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::maybe_display_tracking_opt_in
 	 */
 	public function testDisplayTrackingOptIn() {
 		$this->setupOptInDialog();
@@ -264,11 +271,11 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * When setting is already set, dialog should not appear.
 	 *
-	 * @covers Sensei_Usage_Tracking::maybe_display_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::maybe_display_tracking_opt_in
 	 */
 	public function testDoNotDisplayTrackingOptInWhenSettingEnabled() {
 		$this->setupOptInDialog();
-		Sensei()->settings->set( 'sensei_usage_tracking_enabled', true );
+		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', true );
 		Sensei()->settings->get_settings();
 
 		$this->expectOutputString( '' );
@@ -278,11 +285,11 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * When option is set to hide the dialog, it should not appear.
 	 *
-	 * @covers Sensei_Usage_Tracking::maybe_display_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::maybe_display_tracking_opt_in
 	 */
 	public function testDoNotDisplayTrackingOptInWhenDialogHidden() {
 		$this->setupOptInDialog();
-		update_option( 'sensei_usage_tracking_opt_in_hide', true );
+		update_option( self::PREFIX . '_usage_tracking_opt_in_hide', true );
 
 		$this->expectOutputString( '' );
 		$this->usage_tracking->maybe_display_tracking_opt_in();
@@ -292,7 +299,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * When user does not have permission to manage usage tracking, dialog
 	 * should not appear.
 	 *
-	 * @covers Sensei_Usage_Tracking::maybe_display_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::maybe_display_tracking_opt_in
 	 */
 	public function testDoNotDisplayTrackingOptInWhenUserNotAuthorized() {
 		$this->setupOptInDialog();
@@ -344,7 +351,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$user->add_cap( 'manage_sensei' );
 
 		// Ensure setting is not set
-		Sensei()->settings->set( 'sensei_usage_tracking_enabled', false );
+		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', false );
 
 		// Reset the in-memory settings
 		Sensei()->settings->get_settings();
