@@ -10,15 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Usage Tracking
  */
 class Sensei_Usage_Tracking {
-	/**
-	 * @var array $callback Callback function for the usage tracking job.
-	 **/
-	private $callback;
 
-	/**
-	 * @var string
-	 **/
-	private static $prefix = 'sensei_';
+
+	/* Change prefix START */
+
+	const PREFIX = 'sensei';
 
 	/**
 	 * @var string
@@ -28,6 +24,14 @@ class Sensei_Usage_Tracking {
 	private static $hide_tracking_opt_in_option_name = 'sensei_usage_tracking_opt_in_hide';
 
 	private static $job_name = 'sensei_usage_tracking_send_usage_data';
+
+	/* Change prefix END */
+
+
+	/**
+	 * @var array $callback Callback function for the usage tracking job.
+	 **/
+	private $callback;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -50,7 +54,8 @@ class Sensei_Usage_Tracking {
 	 **/
 	public static function send_event( $event, $properties = array(), $event_timestamp = null ) {
 		$pixel = 'http://pixel.wp.com/t.gif';
-		$event_name = self::$prefix . str_replace( self::$prefix, '', $event );
+		$event_prefix = self::PREFIX . '_';
+		$event_name = $event_prefix . str_replace( $event_prefix, '', $event );
 		$user = wp_get_current_user();
 
 		if ( null === $event_timestamp ) {
@@ -58,7 +63,7 @@ class Sensei_Usage_Tracking {
 		}
 
 		$properties['admin_email'] = get_option( 'admin_email' );
-		$properties['_ut'] = 'sensei:site_url';
+		$properties['_ut'] = self::PREFIX . ':site_url';
 		// Use site URL as the userid to enable usage tracking at the site level.
 		// Note that we would likely want to use site URL + user ID for userid if we were
 		// to ever add event tracking at the user level.
@@ -79,7 +84,7 @@ class Sensei_Usage_Tracking {
 			'timeout'     => 1,
 			'redirection' => 2,
 			'httpversion' => '1.1',
-			'user-agent'  => 'sensei_usage_tracking',
+			'user-agent'  => self::PREFIX . '_usage_tracking',
 		) );
 
 		if ( is_wp_error( $response ) ) {
@@ -97,7 +102,7 @@ class Sensei_Usage_Tracking {
 
 	public static function maybe_schedule_tracking_task() {
 		if ( ! wp_next_scheduled( self::$job_name ) ) {
-			wp_schedule_event( time(), 'sensei_usage_tracking_two_weeks', self::$job_name );
+			wp_schedule_event( time(), self::PREFIX . '_usage_tracking_two_weeks', self::$job_name );
 		}
 	}
 
@@ -140,7 +145,7 @@ class Sensei_Usage_Tracking {
 	}
 
 	function add_two_weeks( $schedules ) {
-		$schedules['sensei_usage_tracking_two_weeks'] = array(
+		$schedules[ self::PREFIX . '_usage_tracking_two_weeks' ] = array(
 			'interval' => 15 * DAY_IN_SECONDS,
 			'display'  => esc_html__( 'Every Two Weeks', 'woothemes-sensei' ),
 		);
@@ -163,23 +168,6 @@ class Sensei_Usage_Tracking {
 		}
 
 		return self::send_event( 'stats_log', $usage_data );
-	}
-
-	function render_usage_tracking_page() {
-		?>
-		<div class="wrap">
-
-			<div id="icon-woothemes-sensei" class="icon32"><br></div>
-			<h1><?php _e('Sensei Usage Tracking', 'woothemes-sensei'); ?></h1>
-			<form method="post" action="" name="update-sensei" class="upgrade">
-				<p>
-					<input id="update-sensei" type="hidden" value="send_data" name="usage_tracking_action">
-					<input id="send-data" class="button button-primary" type="submit" value="Send Data Now">
-					<?php wp_nonce_field( 'send_data_nonce' ); ?>
-				</p>
-			</form>
-		</div>
-		<?php
 	}
 
 	function add_setting_field( $fields ) {
