@@ -259,14 +259,17 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 		// Add all modules and lessons for the current course to an array.
 		if ( ! empty( $course_modules ) ) {
 			foreach( (array) $course_modules as $module ) {
-				$modules_and_lessons[] = $module;
 				$module_lessons = Sensei()->modules->get_lessons( $course_id, $module->term_id );
 
-				if ( count( $module_lessons ) > 0 ) {
-					foreach ( $module_lessons as $lesson_item ) {
-						$modules_and_lessons[] = $lesson_item;
-						$lesson_ids[] = $lesson_item->ID;
-					}
+				if ( count( $module_lessons ) === 0 ) {
+					continue;
+				}
+
+				$modules_and_lessons[] = $module;
+
+				foreach ( $module_lessons as $lesson_item ) {
+					$modules_and_lessons[] = $lesson_item;
+					$lesson_ids[] = $lesson_item->ID;
 				}
 			}
 		}
