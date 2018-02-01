@@ -27,7 +27,7 @@ class Sensei_Usage_Tracking {
 
 	private static $hide_tracking_opt_in_option_name = 'sensei_usage_tracking_opt_in_hide';
 
-	private static $job_name = 'sensei_core_jobs_usage_tracking_send_data';
+	private static $job_name = 'sensei_usage_tracking_send_usage_data';
 
 	/**
 	 * Initialize the class and set its properties.
@@ -50,7 +50,7 @@ class Sensei_Usage_Tracking {
 	 **/
 	public static function send_event( $event, $properties = array(), $event_timestamp = null ) {
 		$pixel = 'http://pixel.wp.com/t.gif';
-		$prefix = apply_filters( 'sensei_usage_tracking_prefix', self::$prefix );
+		$prefix = apply_filters( 'sensei_usage_tracking_event_name_prefix', self::$prefix );
 		$event_name = $prefix . str_replace( $prefix, '', $event );
 		$user = wp_get_current_user();
 
@@ -80,7 +80,7 @@ class Sensei_Usage_Tracking {
 			'timeout'     => 1,
 			'redirection' => 2,
 			'httpversion' => '1.1',
-			'user-agent'  => 'sensei_plugin_usage_1',
+			'user-agent'  => 'sensei_usage_tracking',
 		) );
 
 		if ( is_wp_error( $response ) ) {
@@ -98,7 +98,7 @@ class Sensei_Usage_Tracking {
 
 	public static function maybe_schedule_tracking_task() {
 		if ( ! wp_next_scheduled( self::$job_name ) ) {
-			wp_schedule_event( time(), 'sensei_two_weeks', self::$job_name );
+			wp_schedule_event( time(), 'sensei_usage_tracking_two_weeks', self::$job_name );
 		}
 	}
 
@@ -148,7 +148,7 @@ class Sensei_Usage_Tracking {
 	}
 
 	function add_two_weeks( $schedules ) {
-		$schedules['sensei_two_weeks'] = array(
+		$schedules['sensei_usage_tracking_two_weeks'] = array(
 			'interval' => 15 * DAY_IN_SECONDS,
 			'display'  => esc_html__( 'Every Two Weeks', 'woothemes-sensei' ),
 		);

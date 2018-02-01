@@ -19,7 +19,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 */
 	public function testCronJobActionAdded() {
 		$this->usage_tracking->hook();
-		$this->assertTrue( !! has_action( 'sensei_core_jobs_usage_tracking_send_data', array( $this->usage_tracking, 'maybe_send_usage_data' ) ) );
+		$this->assertTrue( !! has_action( 'sensei_usage_tracking_send_usage_data', array( $this->usage_tracking, 'maybe_send_usage_data' ) ) );
 	}
 
 	/**
@@ -29,21 +29,21 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 */
 	public function testMaybeScheduleTrackingTask() {
 		// Make sure it's cleared initially
-		wp_clear_scheduled_hook( 'sensei_core_jobs_usage_tracking_send_data' );
+		wp_clear_scheduled_hook( 'sensei_usage_tracking_send_usage_data' );
 
 		// Record how many times the event is scheduled
 		$event_count = 0;
 		add_filter( 'schedule_event', function( $event ) use ( &$event_count ) {
-			if ( $event->hook === 'sensei_core_jobs_usage_tracking_send_data' ) {
+			if ( $event->hook === 'sensei_usage_tracking_send_usage_data' ) {
 				$event_count++;
 			}
 			return $event;
 		} );
 
 		// Should successfully schedule the task
-		$this->assertFalse( wp_get_schedule( 'sensei_core_jobs_usage_tracking_send_data' ), 'Not scheduled initial' );
+		$this->assertFalse( wp_get_schedule( 'sensei_usage_tracking_send_usage_data' ), 'Not scheduled initial' );
 		$this->usage_tracking->maybe_schedule_tracking_task();
-		$this->assertNotFalse( wp_get_schedule( 'sensei_core_jobs_usage_tracking_send_data' ), 'Schedules a job' );
+		$this->assertNotFalse( wp_get_schedule( 'sensei_usage_tracking_send_usage_data' ), 'Schedules a job' );
 		$this->assertEquals( 1, $event_count, 'Schedules only one job' );
 
 		// Should not duplicate when called again
