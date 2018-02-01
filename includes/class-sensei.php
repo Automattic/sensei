@@ -357,7 +357,7 @@ class Sensei_Main {
 
 		// Ensure tracking job is scheduled. If the user does not opt in, no
 		// data will be sent.
-		$this->usage_tracking->maybe_schedule_tracking_task();
+		$this->usage_tracking->schedule_tracking_task();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {

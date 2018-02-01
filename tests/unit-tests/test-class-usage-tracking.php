@@ -36,9 +36,9 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure scheduling function works properly.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::maybe_schedule_tracking_task
+	 * @covers {Prefix}_Usage_Tracking::schedule_tracking_task
 	 */
-	public function testMaybeScheduleTrackingTask() {
+	public function testScheduleTrackingTask() {
 		// Make sure it's cleared initially
 		wp_clear_scheduled_hook( self::PREFIX . '_usage_tracking_send_usage_data' );
 
@@ -54,12 +54,12 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 
 		// Should successfully schedule the task
 		$this->assertFalse( wp_get_schedule( self::PREFIX . '_usage_tracking_send_usage_data' ), 'Not scheduled initial' );
-		$this->usage_tracking->maybe_schedule_tracking_task();
+		$this->usage_tracking->schedule_tracking_task();
 		$this->assertNotFalse( wp_get_schedule( self::PREFIX . '_usage_tracking_send_usage_data' ), 'Schedules a job' );
 		$this->assertEquals( 1, $event_count, 'Schedules only one job' );
 
 		// Should not duplicate when called again
-		$this->usage_tracking->maybe_schedule_tracking_task();
+		$this->usage_tracking->schedule_tracking_task();
 		$this->assertEquals( 1, $event_count, 'Does not schedule an additional job' );
 	}
 

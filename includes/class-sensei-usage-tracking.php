@@ -140,13 +140,22 @@ class Sensei_Usage_Tracking {
 		return true;
 	}
 
-	public function maybe_schedule_tracking_task() {
+	/**
+	 * Set up a regular cron job to send usage data. The job will only send
+	 * the data if tracking is enabled, so it is safe to call this function,
+	 * and schedule the job, before the user opts into tracking.
+	 **/
+	public function schedule_tracking_task() {
 		if ( ! wp_next_scheduled( $this->job_name ) ) {
 			wp_schedule_event( time(), self::PREFIX . '_usage_tracking_two_weeks', $this->job_name );
 		}
 	}
 
-	public function maybe_unschedule_tracking_task() {
+	/**
+	 * Unschedule the job scheduled by schedule_tracking_task if any is
+	 * scheduled. This should be called on plugin deactivation.
+	 **/
+	public function unschedule_tracking_task() {
 		if ( wp_next_scheduled( $this->job_name ) ) {
 			wp_clear_scheduled_hook( $this->job_name );
 		}
