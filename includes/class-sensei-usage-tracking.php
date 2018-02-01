@@ -77,15 +77,22 @@ class Sensei_Usage_Tracking {
 	}
 
 	/**
-	 * Send an event or stat.
+	 * Send an event to Tracks if tracking is enabled.
 	 *
 	 * @param string $event The event name.
 	 * @param array $properties Event Properties.
 	 * @param null|int $event_timestamp When the event occurred.
+	 * @param bool $force if true, send the event even if tracking is disabled.
 	 *
 	 * @return null|WP_Error
 	 **/
-	public function send_event( $event, $properties = array(), $event_timestamp = null ) {
+	public function send_event( $event, $properties = array(), $event_timestamp = null, $force = false ) {
+
+		// Only continue if tracking is enabled, or send_event is forced
+		if ( ! $this->is_tracking_enabled() && ! $force ) {
+			return false;
+		}
+
 		$pixel = 'http://pixel.wp.com/t.gif';
 		$event_prefix = self::PREFIX . '_';
 		$event_name = $event_prefix . str_replace( $event_prefix, '', $event );

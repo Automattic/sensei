@@ -196,6 +196,10 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		);
 		$timestamp  = '1234';
 
+		// Enable tracking
+		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', true );
+		Sensei()->settings->get_settings();
+
 		// Capture the network request, save the request URL and arguments, and
 		// simulate a WP_Error
 		$request_params = null;
@@ -225,6 +229,37 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			'_ts'            => '1234000',
 			'_'              => '_',
 		), $query, 'Query parameters' );
+	}
+
+	/**
+	 * Ensure that the request is not made if tracking is not enabled, unless
+	 * $force is true.
+	 *
+	 * @covers {Prefix}_Usage_Tracking::send_event
+	 */
+	public function testSendEventWithTrackingDisabled() {
+		$event      = 'my_event';
+		$properties = array(
+			'button_clicked' => 'my_button'
+		);
+		$timestamp  = '1234';
+
+		// Disable tracking
+		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', false );
+		Sensei()->settings->get_settings();
+
+		// Count network requests
+		$count = 0;
+		add_filter( 'pre_http_request', function() use ( &$count ) {
+			$count++;
+			return new WP_Error();
+		} );
+
+		$this->usage_tracking->send_event( 'my_event', $properties, $timestamp );
+		$this->assertEquals( 0, $count, 'No request when disabled' );
+
+		$this->usage_tracking->send_event( 'my_event', $properties, $timestamp, true );
+		$this->assertEquals( 1, $count, 'Request when disabled can be forced' );
 	}
 
 	/**
