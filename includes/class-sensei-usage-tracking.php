@@ -50,8 +50,7 @@ class Sensei_Usage_Tracking {
 	 **/
 	public static function send_event( $event, $properties = array(), $event_timestamp = null ) {
 		$pixel = 'http://pixel.wp.com/t.gif';
-		$prefix = apply_filters( 'sensei_usage_tracking_event_name_prefix', self::$prefix );
-		$event_name = $prefix . str_replace( $prefix, '', $event );
+		$event_name = self::$prefix . str_replace( self::$prefix, '', $event );
 		$user = wp_get_current_user();
 
 		if ( null === $event_timestamp ) {
@@ -113,12 +112,7 @@ class Sensei_Usage_Tracking {
 	 * @return bool
 	 **/
 	public static function is_tracking_enabled() {
-		$setting = Sensei()->settings->get( self::$usage_tracking_setting_name ) || false;
-		/**
-		 * Filter
-		 * @return bool
-		 **/
-		$enabled = (bool) apply_filters( 'sensei_usage_tracking_enabled', (bool)$setting );
+		$enabled = Sensei()->settings->get( self::$usage_tracking_setting_name ) || false;
 
 		return $enabled;
 	}
