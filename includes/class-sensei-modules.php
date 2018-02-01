@@ -156,7 +156,7 @@ class Sensei_Core_Modules
 
 		}
 
-		if( 'course' == $post_type ) {
+		if ( 'course' == $post_type ) {
 			// Course modules selection metabox
 			add_meta_box( $this->taxonomy . '_course_mb', __( 'Course Modules', 'woothemes-sensei' ), array( $this, 'course_module_metabox' ), 'course', 'side', 'core' );
 		}
@@ -289,7 +289,7 @@ class Sensei_Core_Modules
 	}
 
 	/**
-	 * Render the Course Multi-Select ( used by select2 )
+	 * Render the Course Multi-Select (used by select2)
 	 *
 	 * @param array $module_courses The Module courses.
 	 * @since 1.9.15
@@ -297,7 +297,7 @@ class Sensei_Core_Modules
 	 */
 	private function render_module_course_multi_select( $module_courses = array() ) {
 		?>
-		<label for="module_courses"><?php echo esc_html__( 'Course( s )', 'woothemes-sensei' ); ?></label>
+		<label for="module_courses"><?php echo esc_html__( 'Course(s)', 'woothemes-sensei' ); ?></label>
 		<select name="module_courses[]"
 				id="module_courses"
 				class="ajax_chosen_select_courses"
@@ -372,7 +372,7 @@ class Sensei_Core_Modules
 	public function save_module_course( $module_id )
 	{
 
-		if( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) {
+		if ( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) {
 			return;
 		}
 		// Get module's existing courses
@@ -470,7 +470,7 @@ class Sensei_Core_Modules
 
 		_deprecated_function( 'Sensei_Modules->single_course_modules', 'Sensei 1.9.0', 'Sensei()->modules->load_course_module_content_template' );
 		// only show modules on the course that has modules
-		if( is_singular( 'course' ) && has_term( '', 'module' ) )	{
+		if ( is_singular( 'course' ) && has_term( '', 'module' ) )	{
 
 			$this->load_course_module_content_template();
 
@@ -487,7 +487,7 @@ class Sensei_Core_Modules
 
 		if ( method_exists( 'Sensei_Utils', 'is_preview_lesson' ) && Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 			$is_user_taking_course = Sensei_Utils::sensei_check_for_activity( array( 'post_id' => $course_id, 'user_id' => $current_user->ID, 'type' => 'sensei_course_status' ) );
-			if ( !$is_user_taking_course ) {
+			if ( ! $is_user_taking_course ) {
 				if ( method_exists( 'WooThemes_Sensei_Frontend', 'sensei_lesson_preview_title_text' ) ) {
 					$title_text = Sensei()->frontend->sensei_lesson_preview_title_text( $course_id );
 					// Remove brackets for display here
@@ -509,7 +509,7 @@ class Sensei_Core_Modules
 		if ( is_singular( 'lesson' ) ) {
 			if ( has_term( '', $this->taxonomy, $post->ID ) ) {
 				$module = $this->get_lesson_module( $post->ID );
-				if( $module ) {
+				if ( $module ) {
 					$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . __( 'Back to the module', 'woothemes-sensei' ) . '">' . $module->name . '</a>';
 				}
 			}
@@ -542,7 +542,7 @@ class Sensei_Core_Modules
 
 		// locate the template file
 		$template = locate_template( $find );
-		if ( !$template ) {
+		if ( ! $template ) {
 
 			$template = Sensei()->plugin_path() . 'templates/' . $file;
 
@@ -731,7 +731,7 @@ class Sensei_Core_Modules
 	{
 		$module_progress = get_user_meta( intval( $user_id ), '_module_progress_' . intval( $course_id ) . '_' . intval( $module_id ), true );
 		if ( $module_progress ) {
-			return (float)$module_progress;
+			return (float) $module_progress;
 		}
 		return false;
 	}
@@ -784,7 +784,7 @@ class Sensei_Core_Modules
 		}
 		$module_progress = ( $completed_count / $lesson_count ) * 100;
 
-		return (float)$module_progress;
+		return (float) $module_progress;
 	}
 
 	/**
@@ -1150,7 +1150,7 @@ class Sensei_Core_Modules
 		$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
 
 		//check if error returned
-		if(  empty( $modules )
+		if ( empty( $modules )
 			|| is_wp_error( $modules )
 			|| isset( $modules['errors'] ) ) {
 
@@ -1160,7 +1160,7 @@ class Sensei_Core_Modules
 
 	  // get the last item in the array there should be only be 1 really.
 	  // this method works for all php versions.
-	  foreach( $modules as $module ) {
+	  foreach ( $modules as $module ) {
 		  break;
 	  }
 
@@ -1173,7 +1173,7 @@ class Sensei_Core_Modules
 		if ( isset( $course_id ) && 0 < $course_id ) {
 
 			// the course should contain the same module taxonomy term for this to be valid
-			if( ! has_term( $module, $this->taxonomy, $course_id ) ) {
+			if ( ! has_term( $module, $this->taxonomy, $course_id ) ) {
 				return false;
 			}
 
@@ -1347,7 +1347,7 @@ class Sensei_Core_Modules
 	 */
 	public function course_modules_title() {
 
-	  if( sensei_module_has_lessons() ) {
+	  if ( sensei_module_has_lessons() ) {
 
 			echo '<header><h2>' . __( 'Modules', 'woothemes-sensei' ) . '</h2></header>';
 
@@ -1366,7 +1366,7 @@ class Sensei_Core_Modules
 
 		// load backwards compatible template name if it exists in the users theme
 		$located_template= locate_template( Sensei()->template_url . 'single-course/course-modules.php' );
-		if( $located_template ) {
+		if ( $located_template ) {
 
 			Sensei_Templates::get_template( 'single-course/course-modules.php' );
 			return;
@@ -1390,7 +1390,7 @@ class Sensei_Core_Modules
 
 		$lesson_query = $this->get_lessons_query( $course_id, $term_id );
 
-		if( isset( $lesson_query->posts ) ) {
+		if ( isset( $lesson_query->posts ) ) {
 
 			return $lesson_query->posts;
 
@@ -1413,7 +1413,7 @@ class Sensei_Core_Modules
 	 */
 	public function get_lessons_query( $course_id, $term_id ) {
 		global $wp_query;
-		if( empty( $term_id ) || empty( $course_id ) ) {
+		if ( empty( $term_id ) || empty( $course_id ) ) {
 
 			return array();
 
@@ -1469,13 +1469,13 @@ class Sensei_Core_Modules
 		$non_module_lessons = array();
 
 		//exit if there is no course id passed in
-		if( empty( $course_id ) || 'course' != get_post_type( $course_id ) ) {
+		if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) ) {
 
 			return $non_module_lessons;
 		}
 
 		//save some time and check if we already have the saved
-		if( get_transient( 'sensei_'. $course_id .'_none_module_lessons' ) ) {
+		if ( get_transient( 'sensei_'. $course_id .'_none_module_lessons' ) ) {
 
 			return get_transient( 'sensei_'. $course_id .'_none_module_lessons' );
 
@@ -1485,14 +1485,14 @@ class Sensei_Core_Modules
 		$course_modules = $this->get_course_modules( $course_id );
 
 		//exit if there are no module on this course
-		if( empty( $course_modules ) || ! is_array( $course_modules ) ) {
+		if ( empty( $course_modules ) || ! is_array( $course_modules ) ) {
 
 			return	Sensei()->course->course_lessons( $course_id );
 
 		}
 
 		$terms = array();
-		foreach( $course_modules as $module ) {
+		foreach ( $course_modules as $module ) {
 
 			array_push( $terms, $module->term_id );
 
@@ -1524,7 +1524,7 @@ class Sensei_Core_Modules
 
 		$wp_lessons_query = new WP_Query( $args );
 
-		if( isset( $wp_lessons_query->posts ) && count( $wp_lessons_query->posts ) > 0 ) {
+		if ( isset( $wp_lessons_query->posts ) && count( $wp_lessons_query->posts ) > 0 ) {
 			$non_module_lessons = $wp_lessons_query->get_posts();
 			set_transient( 'sensei_'. $course_id .'_none_module_lessons', $non_module_lessons, 10 * DAY_IN_SECONDS );
 		}
@@ -1596,7 +1596,7 @@ class Sensei_Core_Modules
 
 		global $typenow, $taxnow;
 
-		if( 'lesson'== $typenow && 'module'==$taxnow ) {
+		if ( 'lesson'== $typenow && 'module'==$taxnow ) {
 			wp_safe_redirect( esc_url_raw( 'edit-tags.php?taxonomy=module&post_type=course' ) );
 		}
 
@@ -1613,14 +1613,14 @@ class Sensei_Core_Modules
 	public function remove_lessons_menu_model_taxonomy() {
 		global $submenu;
 
-		if( ! isset( $submenu['edit.php?post_type=lesson'] ) || !is_array( $submenu['edit.php?post_type=lesson'] ) ) {
+		if ( ! isset( $submenu['edit.php?post_type=lesson'] ) || !is_array( $submenu['edit.php?post_type=lesson'] ) ) {
 			return; // exit
 		}
 
 		$lesson_main_menu = $submenu['edit.php?post_type=lesson'];
-		foreach( $lesson_main_menu as $index => $sub_item ) {
+		foreach ( $lesson_main_menu as $index => $sub_item ) {
 
-			if( 'edit-tags.php?taxonomy=module&amp;post_type=lesson' == $sub_item[2] ) {
+			if ( 'edit-tags.php?taxonomy=module&amp;post_type=lesson' == $sub_item[2] ) {
 				unset( $submenu['edit.php?post_type=lesson'][ $index ] );
 			}
 		}
@@ -1638,14 +1638,14 @@ class Sensei_Core_Modules
 	public function remove_courses_menu_model_taxonomy() {
 		global $submenu;
 
-		if( ! isset( $submenu['edit.php?post_type=course'] ) || ! is_array( $submenu['edit.php?post_type=course'] ) ) {
+		if ( ! isset( $submenu['edit.php?post_type=course'] ) || ! is_array( $submenu['edit.php?post_type=course'] ) ) {
 			return; // exit
 		}
 
 		$course_main_menu = $submenu['edit.php?post_type=course'];
-		foreach( $course_main_menu as $index => $sub_item ) {
+		foreach ( $course_main_menu as $index => $sub_item ) {
 
-			if( 'edit-tags.php?taxonomy=module&amp;post_type=course' == $sub_item[2] ) {
+			if ( 'edit-tags.php?taxonomy=module&amp;post_type=course' == $sub_item[2] ) {
 				unset( $submenu['edit.php?post_type=course'][ $index ] );
 			}
 		}
@@ -1667,7 +1667,7 @@ class Sensei_Core_Modules
 		$terms = get_terms( array( 'module' ), array( 'name__like'=>$term_name, 'hide_empty' => false ) );
 
 		$owners = array();
-		if( empty( $terms ) ) {
+		if ( empty( $terms ) ) {
 
 			return $owners;
 
@@ -1677,8 +1677,8 @@ class Sensei_Core_Modules
 
 
 		//if there are more handle them appropriately and get the ones we really need that matches the desired name exactly
-		foreach( $terms as $term ) {
-			if( $term->name == $term_name ) {
+		foreach ( $terms as $term ) {
+			if ( $term->name == $term_name ) {
 
 				// look for the author in the slug
 				$owners[] = Sensei_Core_Modules::get_term_author( $term->slug );
@@ -1706,7 +1706,7 @@ class Sensei_Core_Modules
 
 		$term_owner = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
-		if( empty( $slug ) ) {
+		if ( empty( $slug ) ) {
 
 			return $term_owner;
 
@@ -1715,7 +1715,7 @@ class Sensei_Core_Modules
 		// look for the author in the slug
 		$slug_parts = explode( '-', $slug );
 
-		if( count( $slug_parts ) > 1 ) {
+		if ( count( $slug_parts ) > 1 ) {
 
 			// get the user data
 			$possible_user_id = $slug_parts[0];
@@ -1723,7 +1723,7 @@ class Sensei_Core_Modules
 
 			// if the user doesnt exist for the first part of the slug
 			// then this slug was also created by admin
-			if( is_a( $author, 'WP_User' ) ) {
+			if ( is_a( $author, 'WP_User' ) ) {
 
 				$term_owner = $author;
 
@@ -1802,14 +1802,14 @@ class Sensei_Core_Modules
 	public static function add_new_module_term() {
 
 
-		if( ! isset( $_POST[ 'security' ] ) || ! wp_verify_nonce( $_POST[ 'security' ], '_ajax_nonce-add-module' ) ) {
+		if ( ! isset( $_POST[ 'security' ] ) || ! wp_verify_nonce( $_POST[ 'security' ], '_ajax_nonce-add-module' ) ) {
 			wp_send_json_error( array( 'error'=> 'wrong security nonce' ) );
 		}
 
 		// get the term an create the new term storing infomration
 		$term_name = sanitize_text_field( $_POST['newTerm'] );
 
-		if( current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'manage_options' ) ) {
 
 			$term_slug = str_ireplace( ' ', '-', trim( $term_name ) );
 
@@ -1825,13 +1825,13 @@ class Sensei_Core_Modules
 		$slug = wp_insert_term( $term_name, 'module', array( 'slug'=> $term_slug ) );
 
 		// send error for all errors except term exits
-		if( is_wp_error( $slug ) ) {
+		if ( is_wp_error( $slug ) ) {
 
 			// prepare for possible term name and id to be passed down if term exists
 			$term_data = array();
 
 			// if term exists also send back the term name and id
-			if( isset( $slug->errors['term_exists'] ) ) {
+			if ( isset( $slug->errors['term_exists'] ) ) {
 
 				$term = get_term_by( 'slug', $term_slug, 'module' );
 				$term_data['name'] = $term_name;
@@ -1882,12 +1882,12 @@ class Sensei_Core_Modules
 	public function filter_module_terms( $terms, $taxonomies, $args ) {
 
 		//dont limit for admins and other taxonomies. This should also only apply to admin
-		if( current_user_can( 'manage_options' ) || !in_array( 'module', $taxonomies ) || ! is_admin()	 ) {
+		if ( current_user_can( 'manage_options' ) || !in_array( 'module', $taxonomies ) || ! is_admin()	 ) {
 			return $terms;
 		}
 
 		// in certain cases the array is passed in as reference to the parent term_id => parent_id
-		if( isset( $args['fields'] ) ) {
+		if ( isset( $args['fields'] ) ) {
 			if ( in_array( $args['fields'], array( 'ids', 'tt_ids' ), true ) ) {
 				return $terms;
 			}
@@ -1930,7 +1930,7 @@ class Sensei_Core_Modules
 	public function filter_course_selected_terms( $terms, $course_ids_array, $taxonomies ) {
 
 		//dont limit for admins and other taxonomies. This should also only apply to admin
-		if( current_user_can( 'manage_options' ) || ! is_admin() || empty( $terms )
+		if ( current_user_can( 'manage_options' ) || ! is_admin() || empty( $terms )
 			// only apply this to module only taxonomy queries so 1 taxonomy only:
 			||	count( $taxonomies ) > 1 || !in_array( 'module', $taxonomies )	 ) {
 			return $terms;
@@ -1940,12 +1940,12 @@ class Sensei_Core_Modules
 
 		// if term objects were passed in send back objects
 		// if term id were passed in send that back
-		if( is_object( $terms[0] ) ) {
+		if ( is_object( $terms[0] ) ) {
 			return $term_objects;
 		}
 
 		$terms = array();
-		foreach( $term_objects as $term_object ) {
+		foreach ( $term_objects as $term_object ) {
 			$terms[] = $term_object->term_id;
 		}
 
@@ -1967,9 +1967,9 @@ class Sensei_Core_Modules
 
 		$users_terms = array();
 
-		foreach( $terms as $index => $term ) {
+		foreach ( $terms as $index => $term ) {
 
-			if( is_numeric( $term ) ) {
+			if ( is_numeric( $term ) ) {
 				// the term id was given, get the term object
 				$term = get_term( $term, 'module' );
 			}
@@ -2013,16 +2013,16 @@ class Sensei_Core_Modules
 		}
 
 		// loop through and update all terms adding the author name
-		foreach( $terms as $index => $term ) {
+		foreach ( $terms as $index => $term ) {
 
-			if( is_numeric( $term ) ) {
+			if ( is_numeric( $term ) ) {
 				// the term id was given, get the term object
 				$term = get_term( $term, 'module' );
 			}
 
 			$author = Sensei_Core_Modules::get_term_author( $term->slug );
 
-			if( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
+			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
 				$term->name = $term->name . ' ( ' . $author->display_name . ' ) ';
 			}
 
@@ -2055,18 +2055,18 @@ class Sensei_Core_Modules
 	public static function reset_none_modules_transient ( $post_id ) {
 
 		// this should only apply to course and lesson post types
-		if( in_array( get_post_type( $post_id ), array( 'course', 'lesson' ) ) ) {
+		if ( in_array( get_post_type( $post_id ), array( 'course', 'lesson' ) ) ) {
 
 			$course_id = '';
 
-			if( 'lesson' == get_post_type( $post_id ) ) {
+			if ( 'lesson' == get_post_type( $post_id ) ) {
 
 				$course_id = Sensei()->lesson->get_course_id( $post_id );
 
 			}
 
 
-			if( !empty( $course_id ) ) {
+			if ( !empty( $course_id ) ) {
 
 				delete_transient( 'sensei_'. $course_id .'_none_module_lessons' );
 
@@ -2109,13 +2109,13 @@ class Sensei_Core_Modules
 		$sensei_modules_loop['current'] = -1;
 
 		// exit if this course doesn't have modules
-		if( !$modules || empty( $modules ) ) {
+		if ( ! $modules || empty( $modules ) ) {
 			return;
 		}
 
 
 		$lessons_in_all_modules = array();
-		foreach( $modules as $term ) {
+		foreach ( $modules as $term ) {
 
 			$lessons_in_this_module = Sensei()->modules->get_lessons( $course_id, $term->term_id );
 			$lessons_in_all_modules = array_merge( $lessons_in_all_modules, $lessons_in_this_module );
