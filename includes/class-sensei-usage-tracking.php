@@ -150,7 +150,7 @@ class Sensei_Usage_Tracking {
 	function add_two_weeks( $schedules ) {
 		$schedules['sensei_usage_tracking_two_weeks'] = array(
 			'interval' => 15 * DAY_IN_SECONDS,
-			'display'  => esc_html__( 'Every Two Weeks', 'usage-tracking' ),
+			'display'  => esc_html__( 'Every Two Weeks', 'woothemes-sensei' ),
 		);
 
 		return $schedules;
@@ -221,10 +221,10 @@ class Sensei_Usage_Tracking {
 				</p>
 				<p>
 					<button class="button button-primary" data-enable-tracking="yes">
-						<?php _e( 'Enable Usage Tracking', 'usage-tracking' ) ?>
+						<?php _e( 'Enable Usage Tracking', 'woothemes-sensei' ) ?>
 					</button>
 					<button class="button" data-enable-tracking="no">
-						<?php _e( 'Disable Usage Tracking', 'usage-tracking' ) ?>
+						<?php _e( 'Disable Usage Tracking', 'woothemes-sensei' ) ?>
 					</button>
 					<span id="progress" class="spinner alignleft"></span>
 				</p>
@@ -237,13 +237,13 @@ class Sensei_Usage_Tracking {
 				</p>
 			</div>
 			<div id="sensei-usage-tracking-enable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Usage data enabled. Thank you!', 'usage-tracking' ) ?></p>
+				<p><?php _e( 'Usage data enabled. Thank you!', 'woothemes-sensei' ) ?></p>
 			</div>
 			<div id="sensei-usage-tracking-disable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Disabled usage tracking.', 'usage-tracking' ) ?></p>
+				<p><?php _e( 'Disabled usage tracking.', 'woothemes-sensei' ) ?></p>
 			</div>
 			<div id="sensei-usage-tracking-failure" class="notice notice-error hidden">
-				<p><?php _e( 'Something went wrong. Please try again later.', 'usage-tracking' ) ?></p>
+				<p><?php _e( 'Something went wrong. Please try again later.', 'woothemes-sensei' ) ?></p>
 			</div>
 		<?php
 		}
