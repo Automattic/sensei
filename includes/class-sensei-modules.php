@@ -354,7 +354,7 @@ class Sensei_Core_Modules
 		?>
 		<tr class="form-field">
 			<th scope="row" valign="top"><label
-					for="module_courses"><?php _e( 'Course( s )', 'woothemes-sensei' ); ?></label></th>
+					for="module_courses"><?php _e( 'Course(s)', 'woothemes-sensei' ); ?></label></th>
 			<td>
 				<?php $this->render_module_course_multi_select( $module_courses ); ?>
 			</td>
@@ -400,7 +400,7 @@ class Sensei_Core_Modules
 		// Add module to selected courses
 		if ( isset( $_POST['module_courses'] ) && ! empty( $_POST['module_courses'] ) ) {
 
-			$course_ids = is_array( $_POST['module_courses'] ) ? $_POST['module_courses'] : explode( ", ", $_POST['module_courses'] );
+			$course_ids = is_array( $_POST['module_courses'] ) ? $_POST['module_courses'] : explode( ",", $_POST['module_courses'] );
 
 			foreach ( $course_ids as $course_id ) {
 
@@ -491,8 +491,8 @@ class Sensei_Core_Modules
 				if ( method_exists( 'WooThemes_Sensei_Frontend', 'sensei_lesson_preview_title_text' ) ) {
 					$title_text = Sensei()->frontend->sensei_lesson_preview_title_text( $course_id );
 					// Remove brackets for display here
-					$title_text = str_replace( '( ', '', $title_text );
-					$title_text = str_replace( ' )', '', $title_text );
+					$title_text = str_replace( '(', '', $title_text );
+					$title_text = str_replace( ')', '', $title_text );
 					$title_text = '<span class="preview-label">' . $title_text . '</span>';
 				}
 				$title .= ' ' . $title_text;
@@ -731,7 +731,7 @@ class Sensei_Core_Modules
 	{
 		$module_progress = get_user_meta( intval( $user_id ), '_module_progress_' . intval( $course_id ) . '_' . intval( $module_id ), true );
 		if ( $module_progress ) {
-			return ( float )$module_progress;
+			return (float)$module_progress;
 		}
 		return false;
 	}
@@ -784,7 +784,7 @@ class Sensei_Core_Modules
 		}
 		$module_progress = ( $completed_count / $lesson_count ) * 100;
 
-		return ( float )$module_progress;
+		return (float)$module_progress;
 	}
 
 	/**
@@ -863,7 +863,7 @@ class Sensei_Core_Modules
 
 					$order_string='';
 					if ( $order ) {
-						$order_string = implode( ', ', $order );
+						$order_string = implode( ',', $order );
 					}
 
 					$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
@@ -942,7 +942,7 @@ class Sensei_Core_Modules
 	private function save_course_module_order( $order_string = '', $course_id = 0 )
 	{
 		if ( $order_string && $course_id ) {
-			$order = explode( ', ', $order_string );
+			$order = explode( ',', $order_string );
 			update_post_meta( intval( $course_id ), '_module_order', $order );
 			return true;
 		}
@@ -1541,17 +1541,17 @@ class Sensei_Core_Modules
 	public function setup_modules_taxonomy() {
 
 		$labels = array( 
-			'name'				=> __( 'Modules', 		'woothemes-sensei' ), 
-			'singular_name'		=> __( 'Module', 		'woothemes-sensei' ), 
+			'name'				=> __( 'Modules', 'woothemes-sensei' ), 
+			'singular_name'		=> __( 'Module', 'woothemes-sensei' ), 
 			'search_items'		=> __( 'Search Modules', 'woothemes-sensei' ), 
-			'all_items'			=> __( 'All Modules', 	'woothemes-sensei' ), 
-			'parent_item'		=> __( 'Parent Module', 	'woothemes-sensei' ), 
+			'all_items'			=> __( 'All Modules', 'woothemes-sensei' ), 
+			'parent_item'		=> __( 'Parent Module', 'woothemes-sensei' ), 
 			'parent_item_colon' => __( 'Parent Module:', 'woothemes-sensei' ), 
-			'edit_item'			=> __( 'Edit Module', 	'woothemes-sensei' ), 
-			'update_item'		=> __( 'Update Module', 	'woothemes-sensei' ), 
+			'edit_item'			=> __( 'Edit Module', 'woothemes-sensei' ), 
+			'update_item'		=> __( 'Update Module', 'woothemes-sensei' ), 
 			'add_new_item'		=> __( 'Add New Module', 'woothemes-sensei' ), 
 			'new_item_name'		=> __( 'New Module Name', 'woothemes-sensei' ), 
-			'menu_name'			=> __( 'Modules', 		'woothemes-sensei' ), 
+			'menu_name'			=> __( 'Modules', 'woothemes-sensei' ), 
 			'not_found'			=> __( 'No modules found.', 'woothemes-sensei' ), 
 		 );
 
