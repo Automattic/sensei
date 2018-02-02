@@ -114,7 +114,7 @@ class Sensei_Usage_Tracking {
 		add_action( 'wp_ajax_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
 
 		// Set up schedule and action needed for cron job
-		add_filter( 'cron_schedules', array( $this, 'add_two_weeks' ) );
+		add_filter( 'cron_schedules', array( $this, 'add_usage_tracking_two_week_schedule' ) );
 		add_action( $this->job_name, array( $this, 'send_usage_data' ) );
 
 		// Call plugin-specific initialization method
@@ -261,21 +261,26 @@ class Sensei_Usage_Tracking {
 	// Private functions
 	//
 
+	/**
+	 * Add two week schedule to use for cron job.
+	 *
+	 * @access private
+	 **/
+	function add_usage_tracking_two_week_schedule( $schedules ) {
+		$schedules[ self::PREFIX . '_usage_tracking_two_weeks' ] = array(
+			'interval' => 15 * DAY_IN_SECONDS,
+			'display'  => esc_html__( 'Every Two Weeks', 'wp-plugin-usage-tracking' ),
+		);
+
+		return $schedules;
+	}
+
 	function admin_enqueue_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script( 'sensei-usage-tracking-notice',
 			Sensei()->plugin_url . 'assets/js/admin/usage-tracking-notice' . $suffix . '.js',
 			array( 'jquery' ), Sensei()->version, true );
-	}
-
-	function add_two_weeks( $schedules ) {
-		$schedules[ self::PREFIX . '_usage_tracking_two_weeks' ] = array(
-			'interval' => 15 * DAY_IN_SECONDS,
-			'display'  => esc_html__( 'Every Two Weeks', 'woothemes-sensei' ),
-		);
-
-		return $schedules;
 	}
 
 	function maybe_display_tracking_opt_in() {
