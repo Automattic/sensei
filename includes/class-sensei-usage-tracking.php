@@ -11,17 +11,49 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Usage_Tracking {
 
+	/****** Plugin-specific section ******/
+
+	/*
+	 * This section needs to modified in order to use this within another
+	 * plugin.
+	 */
+
 	/**
-	 * Prefix for actions and strings. If reusing this class, please set this
-	 * prefix to something specific to your plugin.
+	 * Prefix for actions and strings. Please set this to something unique to
+	 * your plugin.
 	 **/
 	const PREFIX = 'sensei';
 
 	/**
-	 * @var string $usage_tracking_setting_name the name of the Setting for
-	 * enabling Usage Tracking.
+	 * Determine whether usage tracking is enabled. Please override this
+	 * function based on how your plugin stores this flag.
+	 *
+	 * @return bool true if usage tracking is enabled, false otherwise.
 	 **/
-	private $usage_tracking_setting_name;
+	private function get_tracking_enabled() {
+		return Sensei()->settings->get( self::SENSEI_SETTING_NAME ) || false;
+	}
+
+	/**
+	 * Set whether usage tracking is enabled. Please override this function
+	 * based on how your plugin stores this flag.
+	 *
+	 * @param bool $enable true if usage tracking should be enabled, false if
+	 * it should be disabled.
+	 **/
+	private function set_tracking_enabled( $enable ) {
+		Sensei()->settings->set( self::SENSEI_SETTING_NAME, $enable );
+	}
+
+	/*
+	 * Any other plugin-specific constants, variables, and functions can go
+	 * here.
+	 */
+
+	const SENSEI_SETTING_NAME = 'sensei_usage_tracking_enabled';
+
+	/****** END Plugin-specific section ******/
+
 
 	/**
 	 * @var string $hide_tracking_opt_in the name of the Option for
@@ -36,7 +68,7 @@ class Sensei_Usage_Tracking {
 	private $job_name;
 
 	/**
-	 * @var Sensei_Usage_Tracking $instance singleton instance
+	 * @var {Prefix}_Usage_Tracking $instance singleton instance
 	 **/
 	private static $instance;
 
@@ -48,7 +80,6 @@ class Sensei_Usage_Tracking {
 
 	private function __construct() {
 		// Init instance vars
-		$this->usage_tracking_setting_name = self::PREFIX . '_usage_tracking_enabled';
 		$this->hide_tracking_opt_in_option_name = self::PREFIX . '_usage_tracking_opt_in_hide';
 		$this->job_name = self::PREFIX . '_usage_tracking_send_usage_data';
 	}
@@ -163,10 +194,12 @@ class Sensei_Usage_Tracking {
 
 	/**
 	 * Check if tracking is enabled.
-	 * @return bool
+	 *
+	 * @return bool true if tracking is enabled, false otherwise
 	 **/
 	public function is_tracking_enabled() {
-		return Sensei()->settings->get( self::$usage_tracking_setting_name ) || false;
+		// Defer to the plugin-specific function
+		return $this->get_tracking_enabled();
 	}
 
 	/**
@@ -237,7 +270,7 @@ class Sensei_Usage_Tracking {
 
 	function maybe_display_tracking_opt_in() {
 		$opt_in_hidden = (bool) get_option( $this->hide_tracking_opt_in_option_name );
-		$user_tracking_enabled = Sensei()->settings->get( $this->usage_tracking_setting_name );
+		$user_tracking_enabled = $this->is_tracking_enabled();
 
 		if ( ! $user_tracking_enabled && ! $opt_in_hidden && current_user_can( 'manage_sensei' ) ) { ?>
 			<div id="sensei-usage-tracking-notice" class="notice notice-info"
@@ -286,7 +319,7 @@ class Sensei_Usage_Tracking {
 		}
 
 		$enable_tracking = isset( $_POST['enable_tracking'] ) && $_POST['enable_tracking'] === '1';
-		Sensei()->settings->set( $this->usage_tracking_setting_name, $enable_tracking );
+		$this->set_tracking_enabled( $enable_tracking );
 		$this->hide_tracking_opt_in();
 		wp_die();
 	}
