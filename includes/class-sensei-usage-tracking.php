@@ -109,9 +109,10 @@ class Sensei_Usage_Tracking {
 		$this->job_name = self::PREFIX . '_usage_tracking_send_usage_data';
 
 		// Set up the opt-in dialog
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script_deps' ) );
+		add_action( 'admin_footer', array( $this, 'output_opt_in_js' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
-		add_action( 'wp_ajax_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
+		add_action( 'wp_ajax_' . self::PREFIX . '_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
 
 		// Set up schedule and action needed for cron job
 		add_filter( 'cron_schedules', array( $this, 'add_usage_tracking_two_week_schedule' ) );
@@ -275,14 +276,6 @@ class Sensei_Usage_Tracking {
 		return $schedules;
 	}
 
-	function admin_enqueue_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		wp_enqueue_script( 'sensei-usage-tracking-notice',
-			Sensei()->plugin_url . 'assets/js/admin/usage-tracking-notice' . $suffix . '.js',
-			array( 'jquery' ), Sensei()->version, true );
-	}
-
 	function maybe_display_tracking_opt_in() {
 		$opt_in_hidden = (bool) get_option( $this->hide_tracking_opt_in_option_name );
 		$user_tracking_enabled = $this->is_tracking_enabled();
@@ -341,5 +334,75 @@ class Sensei_Usage_Tracking {
 
 	function hide_tracking_opt_in() {
 		update_option( $this->hide_tracking_opt_in_option_name, true );
+	}
+
+	/**
+	 * Ensure that jQuery has been enqueued since the opt-in dialog JS depends
+	 * on it.
+	 *
+	 * @access private
+	 **/
+	function enqueue_script_deps() {
+		// Ensure jQuery is loaded
+		wp_enqueue_script( self::PREFIX . '_usage-tracking-notice', '',
+			array( 'jquery' ), null, true );
+	}
+
+	/**
+	 * Output the JS code to handle the opt-in dialog.
+	 *
+	 * @access private
+	 **/
+	function output_opt_in_js() {
+?>
+<script type="text/javascript">
+	(function( prefix ) {
+		jQuery( document ).ready( function() {
+			function displayProgressIndicator() {
+				jQuery( '#' + prefix + '-usage-tracking-notice #progress' ).addClass( 'is-active' );
+			}
+
+			function displaySuccess( enabledTracking ) {
+				if ( enabledTracking ) {
+					jQuery( '#' + prefix + '-usage-tracking-enable-success' ).show();
+				} else {
+					jQuery( '#' + prefix + '-usage-tracking-disable-success' ).show();
+				}
+				jQuery( '#' + prefix + '-usage-tracking-notice' ).hide();
+			}
+
+			function displayError() {
+				jQuery( '#' + prefix + '-usage-tracking-failure' ).show();
+				jQuery( '#' + prefix + '-usage-tracking-notice' ).hide();
+			}
+
+			// Handle button clicks
+			jQuery( '#' + prefix + '-usage-tracking-notice button' ).click( function( event ) {
+				event.preventDefault();
+
+				const button         = jQuery( this );
+				const enableTracking = jQuery( this ).data( 'enable-tracking' ) == 'yes';
+				const nonce          = jQuery( '#' + prefix + '-usage-tracking-notice' ).data( 'nonce' );
+
+				displayProgressIndicator();
+
+				jQuery.ajax( {
+					type: 'POST',
+					url: ajaxurl,
+					data: {
+						action: prefix + '_handle_tracking_opt_in',
+						enable_tracking: enableTracking ? 1 : 0,
+						nonce: nonce,
+					},
+					success: () => {
+						displaySuccess( enableTracking );
+					},
+					error: displayError,
+				} );
+			});
+		});
+	})( "<?php echo self::PREFIX; ?>" );
+</script>
+<?php
 	}
 }

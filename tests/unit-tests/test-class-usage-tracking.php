@@ -70,7 +70,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testAjaxRequestSetup() {
-		$this->assertTrue( !! has_action( 'wp_ajax_handle_tracking_opt_in', array( $this->usage_tracking, 'handle_tracking_opt_in' ) ) );
+		$this->assertTrue( !! has_action( 'wp_ajax_' . self::PREFIX . '_handle_tracking_opt_in', array( $this->usage_tracking, 'handle_tracking_opt_in' ) ) );
 	}
 
 	/**
