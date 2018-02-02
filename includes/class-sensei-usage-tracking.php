@@ -112,9 +112,7 @@ class Sensei_Usage_Tracking {
 	 * @return bool
 	 **/
 	public static function is_tracking_enabled() {
-		$enabled = Sensei()->settings->get( self::$usage_tracking_setting_name ) || false;
-
-		return $enabled;
+		return Sensei()->settings->get( self::$usage_tracking_setting_name ) || false;
 	}
 
 	/**
