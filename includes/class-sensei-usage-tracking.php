@@ -276,8 +276,28 @@ class Sensei_Usage_Tracking {
 		return $schedules;
 	}
 
+	/**
+	 * Hide the opt-in for enabling usage tracking.
+	 *
+	 * @access private
+	 **/
+	private function hide_tracking_opt_in() {
+		update_option( $this->hide_tracking_opt_in_option_name, true );
+	}
+
+	/**
+	 * Determine whether the opt-in for enabling usage tracking is hidden.
+	 *
+	 * @access private
+	 *
+	 * @return bool true if the opt-in is hidden, false otherwise.
+	 **/
+	private function is_opt_in_hidden() {
+		return (bool) get_option( $this->hide_tracking_opt_in_option_name );
+	}
+
 	function maybe_display_tracking_opt_in() {
-		$opt_in_hidden = (bool) get_option( $this->hide_tracking_opt_in_option_name );
+		$opt_in_hidden = $this->is_opt_in_hidden();
 		$user_tracking_enabled = $this->is_tracking_enabled();
 
 		if ( ! $user_tracking_enabled && ! $opt_in_hidden && current_user_can( 'manage_sensei' ) ) { ?>
@@ -330,10 +350,6 @@ class Sensei_Usage_Tracking {
 		$this->set_tracking_enabled( $enable_tracking );
 		$this->hide_tracking_opt_in();
 		wp_die();
-	}
-
-	function hide_tracking_opt_in() {
-		update_option( $this->hide_tracking_opt_in_option_name, true );
 	}
 
 	/**
