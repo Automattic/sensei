@@ -63,7 +63,7 @@ class Sensei_Usage_Tracking {
 
 	function add_setting_field( $fields ) {
 		// default-settings
-		$fields[ $this->usage_tracking_setting_name ] = array(
+		$fields[ self::SENSEI_SETTING_NAME ] = array(
 			'name' => __( 'Enable usage tracking', 'woothemes-sensei' ),
 			'description' => __(
 				'Help us make Sensei better by allowing us to collect
