@@ -56,6 +56,20 @@ class Sensei_Usage_Tracking {
 	}
 
 	/**
+	 * Get the text to display in the opt-in dialog for users to enable
+	 * tracking. This text should include a link to a page indicating what data
+	 * is being tracked.
+	 *
+	 * @return string the text to display in the opt-in dialog.
+	 **/
+	private function opt_in_dialog_text() {
+		return _e( "We'd love if you helped us make Sensei better by allowing us to collect
+			<a href=\"https://docs.woocommerce.com/document/what-data-does-sensei-track\" target=\"_blank\">usage tracking data</a>.
+			No sensitive information is collected, and you can opt out at any time.",
+			'woothemes-sensei' );
+	}
+
+	/**
 	 * Add plugin-specific initialization code to this method. It will be
 	 * called when the singleton instance is constructed.
 	 **/
@@ -306,45 +320,40 @@ class Sensei_Usage_Tracking {
 		return (bool) get_option( $this->hide_tracking_opt_in_option_name );
 	}
 
+	/**
+	 * If needed, display opt-in dialog to enable tracking.
+	 *
+	 * @access private
+	 **/
 	function maybe_display_tracking_opt_in() {
 		$opt_in_hidden = $this->is_opt_in_hidden();
 		$user_tracking_enabled = $this->is_tracking_enabled();
 		$can_manage_tracking = $this->current_user_can_manage_tracking();
 
 		if ( ! $user_tracking_enabled && ! $opt_in_hidden && $can_manage_tracking ) { ?>
-			<div id="sensei-usage-tracking-notice" class="notice notice-info"
+			<div id="<?php echo self::PREFIX; ?>-usage-tracking-notice" class="notice notice-info"
 				data-nonce="<?php echo wp_create_nonce( 'tracking-opt-in' ) ?>">
 				<p>
-					<?php _e( "We'd love if you helped us make Sensei better by allowing us to collect
-						<a href=\"https://docs.woocommerce.com/document/what-data-does-sensei-track\" target=\"_blank\">usage tracking data</a>.
-						No sensitive information is collected, and you can opt out at any time.",
-						'woothemes-sensei' ) ?>
+					<?php echo $this->opt_in_dialog_text(); ?>
 				</p>
 				<p>
 					<button class="button button-primary" data-enable-tracking="yes">
-						<?php _e( 'Enable Usage Tracking', 'woothemes-sensei' ) ?>
+						<?php _e( 'Enable Usage Tracking', 'wp-plugin-usage-tracking' ) ?>
 					</button>
 					<button class="button" data-enable-tracking="no">
-						<?php _e( 'Disable Usage Tracking', 'woothemes-sensei' ) ?>
+						<?php _e( 'Disable Usage Tracking', 'wp-plugin-usage-tracking' ) ?>
 					</button>
 					<span id="progress" class="spinner alignleft"></span>
 				</p>
-				<p>
-					<noscript>
-						<?php _e( "Looks like you don't have Javascript enabled! Please go to the
-							<a href=\"/wp-admin/admin.php?page=woothemes-sensei-settings\">Settings page</a>
-							to enable usage tracking.", 'woothemes-sensei' ); ?>
-					</noscript>
-				</p>
 			</div>
-			<div id="sensei-usage-tracking-enable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Usage data enabled. Thank you!', 'woothemes-sensei' ) ?></p>
+			<div id="<?php echo self::PREFIX; ?>-usage-tracking-enable-success" class="notice notice-success hidden">
+				<p><?php _e( 'Usage data enabled. Thank you!', 'wp-plugin-usage-tracking' ) ?></p>
 			</div>
-			<div id="sensei-usage-tracking-disable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Disabled usage tracking.', 'woothemes-sensei' ) ?></p>
+			<div id="<?php echo self::PREFIX; ?>-usage-tracking-disable-success" class="notice notice-success hidden">
+				<p><?php _e( 'Disabled usage tracking.', 'wp-plugin-usage-tracking' ) ?></p>
 			</div>
-			<div id="sensei-usage-tracking-failure" class="notice notice-error hidden">
-				<p><?php _e( 'Something went wrong. Please try again later.', 'woothemes-sensei' ) ?></p>
+			<div id="<?php echo self::PREFIX; ?>-usage-tracking-failure" class="notice notice-error hidden">
+				<p><?php _e( 'Something went wrong. Please try again later.', 'wp-plugin-usage-tracking' ) ?></p>
 			</div>
 		<?php
 		}
