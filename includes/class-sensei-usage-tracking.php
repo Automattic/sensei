@@ -115,7 +115,7 @@ class Sensei_Usage_Tracking {
 
 		// Set up schedule and action needed for cron job
 		add_filter( 'cron_schedules', array( $this, 'add_two_weeks' ) );
-		add_action( $this->job_name, array( $this, 'maybe_send_usage_data' ) );
+		add_action( $this->job_name, array( $this, 'send_usage_data' ) );
 
 		// Call plugin-specific initialization method
 		$this->custom_init();
@@ -239,6 +239,28 @@ class Sensei_Usage_Tracking {
 		return $this->get_tracking_enabled();
 	}
 
+	/**
+	 * Call the usage data callback and send the usage data to Tracks. Only
+	 * sends data if tracking is enabled.
+	 **/
+	public function send_usage_data() {
+		if ( ! self::is_tracking_enabled() || ! is_callable( $this->callback ) ) {
+			return;
+		}
+
+		$usage_data = call_user_func( $this->callback );
+
+		if ( ! is_array( $usage_data ) ) {
+			return;
+		}
+
+		return self::send_event( 'stats_log', $usage_data );
+	}
+
+	//
+	// Private functions
+	//
+
 	function admin_enqueue_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -254,23 +276,6 @@ class Sensei_Usage_Tracking {
 		);
 
 		return $schedules;
-	}
-
-	/**
-	 * Send usage data.
-	 **/
-	public function maybe_send_usage_data() {
-		if ( ! self::is_tracking_enabled() || ! is_callable( $this->callback ) ) {
-			return;
-		}
-
-		$usage_data = call_user_func( $this->callback );
-
-		if ( ! is_array( $usage_data ) ) {
-			return;
-		}
-
-		return self::send_event( 'stats_log', $usage_data );
 	}
 
 	function maybe_display_tracking_opt_in() {

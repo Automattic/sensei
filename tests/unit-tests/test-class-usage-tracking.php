@@ -29,7 +29,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testCronJobActionAdded() {
-		$this->assertTrue( !! has_action( self::PREFIX . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'maybe_send_usage_data' ) ) );
+		$this->assertTrue( !! has_action( self::PREFIX . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'send_usage_data' ) ) );
 	}
 
 	/**
@@ -265,7 +265,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 *
 	 * @covers {Prefix}_Usage_Tracking::maybe_send_usage_data
 	 */
-	public function testMaybeSendUsageData() {
+	public function testSendUsageData() {
 		$count = 0;
 
 		// Count the number of network requests
@@ -275,14 +275,14 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		} );
 
 		// Setting is not set, ensure the request is not sent.
-		$this->usage_tracking->maybe_send_usage_data();
+		$this->usage_tracking->send_usage_data();
 		$this->assertEquals( 0, $count, 'Request not sent when Usage Tracking disabled' );
 
 		// Set the setting and ensure request is sent.
 		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', true );
 		Sensei()->settings->get_settings();
 
-		$this->usage_tracking->maybe_send_usage_data();
+		$this->usage_tracking->send_usage_data();
 		$this->assertEquals( 1, $count, 'Request sent when Usage Tracking enabled' );
 	}
 
