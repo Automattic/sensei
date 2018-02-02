@@ -133,13 +133,13 @@ class Sensei_Usage_Tracking {
 		$this->job_name = self::PREFIX . '_usage_tracking_send_usage_data';
 
 		// Set up the opt-in dialog
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script_deps' ) );
-		add_action( 'admin_footer', array( $this, 'output_opt_in_js' ) );
-		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
-		add_action( 'wp_ajax_' . self::PREFIX . '_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, '_enqueue_script_deps' ) );
+		add_action( 'admin_footer', array( $this, '_output_opt_in_js' ) );
+		add_action( 'admin_notices', array( $this, '_maybe_display_tracking_opt_in' ) );
+		add_action( 'wp_ajax_' . self::PREFIX . '_handle_tracking_opt_in', array( $this, '_handle_tracking_opt_in' ) );
 
 		// Set up schedule and action needed for cron job
-		add_filter( 'cron_schedules', array( $this, 'add_usage_tracking_two_week_schedule' ) );
+		add_filter( 'cron_schedules', array( $this, '_add_usage_tracking_two_week_schedule' ) );
 		add_action( $this->job_name, array( $this, 'send_usage_data' ) );
 
 		// Call plugin-specific initialization method
@@ -291,7 +291,7 @@ class Sensei_Usage_Tracking {
 	 *
 	 * @access private
 	 **/
-	function add_usage_tracking_two_week_schedule( $schedules ) {
+	function _add_usage_tracking_two_week_schedule( $schedules ) {
 		$schedules[ self::PREFIX . '_usage_tracking_two_weeks' ] = array(
 			'interval' => 15 * DAY_IN_SECONDS,
 			'display'  => esc_html__( 'Every Two Weeks', 'wp-plugin-usage-tracking' ),
@@ -305,7 +305,7 @@ class Sensei_Usage_Tracking {
 	 *
 	 * @access private
 	 **/
-	private function hide_tracking_opt_in() {
+	private function _hide_tracking_opt_in() {
 		update_option( $this->hide_tracking_opt_in_option_name, true );
 	}
 
@@ -316,7 +316,7 @@ class Sensei_Usage_Tracking {
 	 *
 	 * @return bool true if the opt-in is hidden, false otherwise.
 	 **/
-	private function is_opt_in_hidden() {
+	private function _is_opt_in_hidden() {
 		return (bool) get_option( $this->hide_tracking_opt_in_option_name );
 	}
 
@@ -325,8 +325,8 @@ class Sensei_Usage_Tracking {
 	 *
 	 * @access private
 	 **/
-	function maybe_display_tracking_opt_in() {
-		$opt_in_hidden = $this->is_opt_in_hidden();
+	function _maybe_display_tracking_opt_in() {
+		$opt_in_hidden = $this->_is_opt_in_hidden();
 		$user_tracking_enabled = $this->is_tracking_enabled();
 		$can_manage_tracking = $this->current_user_can_manage_tracking();
 
@@ -364,7 +364,7 @@ class Sensei_Usage_Tracking {
 	 *
 	 * @access private
 	 **/
-	function handle_tracking_opt_in() {
+	function _handle_tracking_opt_in() {
 		check_ajax_referer( 'tracking-opt-in', 'nonce' );
 
 		if ( ! $this->current_user_can_manage_tracking() ) {
@@ -373,7 +373,7 @@ class Sensei_Usage_Tracking {
 
 		$enable_tracking = isset( $_POST['enable_tracking'] ) && $_POST['enable_tracking'] === '1';
 		$this->set_tracking_enabled( $enable_tracking );
-		$this->hide_tracking_opt_in();
+		$this->_hide_tracking_opt_in();
 		wp_die();
 	}
 
@@ -383,7 +383,7 @@ class Sensei_Usage_Tracking {
 	 *
 	 * @access private
 	 **/
-	function enqueue_script_deps() {
+	function _enqueue_script_deps() {
 		// Ensure jQuery is loaded
 		wp_enqueue_script( self::PREFIX . '_usage-tracking-notice', '',
 			array( 'jquery' ), null, true );
@@ -394,7 +394,7 @@ class Sensei_Usage_Tracking {
 	 *
 	 * @access private
 	 **/
-	function output_opt_in_js() {
+	function _output_opt_in_js() {
 ?>
 <script type="text/javascript">
 	(function( prefix ) {

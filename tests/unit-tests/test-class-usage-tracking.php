@@ -70,13 +70,13 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testAjaxRequestSetup() {
-		$this->assertTrue( !! has_action( 'wp_ajax_' . self::PREFIX . '_handle_tracking_opt_in', array( $this->usage_tracking, 'handle_tracking_opt_in' ) ) );
+		$this->assertTrue( !! has_action( 'wp_ajax_' . self::PREFIX . '_handle_tracking_opt_in', array( $this->usage_tracking, '_handle_tracking_opt_in' ) ) );
 	}
 
 	/**
 	 * Ensure tracking is enabled through ajax request.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::handle_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::_handle_tracking_opt_in
 	 */
 	public function testAjaxRequestEnableTracking() {
 		$this->setupAjaxRequest();
@@ -86,7 +86,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
-			$this->usage_tracking->handle_tracking_opt_in();
+			$this->usage_tracking->_handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
 			$this->assertEquals( array(), $wp_die_args['args'], 'wp_die call has no non-success status' );
@@ -102,7 +102,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure tracking is disabled through ajax request.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::handle_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::_handle_tracking_opt_in
 	 */
 	public function testAjaxRequestDisableTracking() {
 		$this->setupAjaxRequest();
@@ -112,7 +112,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
-			$this->usage_tracking->handle_tracking_opt_in();
+			$this->usage_tracking->_handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
 			$this->assertEquals( array(), $wp_die_args['args'], 'wp_die call has no non-success status' );
@@ -128,7 +128,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure ajax request fails on nonce failure and does not update option.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::handle_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::_handle_tracking_opt_in
 	 */
 	public function testAjaxRequestFailedNonce() {
 		$this->setupAjaxRequest();
@@ -138,7 +138,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
-			$this->usage_tracking->handle_tracking_opt_in();
+			$this->usage_tracking->_handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
 			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
@@ -154,7 +154,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	/**
 	 * Ensure ajax request fails on authorization failure and does not update option.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::handle_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::_handle_tracking_opt_in
 	 */
 	public function testAjaxRequestFailedAuth() {
 		$this->setupAjaxRequest();
@@ -166,7 +166,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
-			$this->usage_tracking->handle_tracking_opt_in();
+			$this->usage_tracking->_handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
 			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
@@ -292,19 +292,19 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * When setting is not set, dialog is not hidden, and user has capability,
 	 * we should see the dialog and Enable Usage Tracking button.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::maybe_display_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::_maybe_display_tracking_opt_in
 	 */
 	public function testDisplayTrackingOptIn() {
 		$this->setupOptInDialog();
 
 		$this->expectOutputRegex( '/Enable Usage Tracking/' );
-		$this->usage_tracking->maybe_display_tracking_opt_in();
+		$this->usage_tracking->_maybe_display_tracking_opt_in();
 	}
 
 	/**
 	 * When setting is already set, dialog should not appear.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::maybe_display_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::_maybe_display_tracking_opt_in
 	 */
 	public function testDoNotDisplayTrackingOptInWhenSettingEnabled() {
 		$this->setupOptInDialog();
@@ -312,27 +312,27 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		Sensei()->settings->get_settings();
 
 		$this->expectOutputString( '' );
-		$this->usage_tracking->maybe_display_tracking_opt_in();
+		$this->usage_tracking->_maybe_display_tracking_opt_in();
 	}
 
 	/**
 	 * When option is set to hide the dialog, it should not appear.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::maybe_display_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::_maybe_display_tracking_opt_in
 	 */
 	public function testDoNotDisplayTrackingOptInWhenDialogHidden() {
 		$this->setupOptInDialog();
 		update_option( self::PREFIX . '_usage_tracking_opt_in_hide', true );
 
 		$this->expectOutputString( '' );
-		$this->usage_tracking->maybe_display_tracking_opt_in();
+		$this->usage_tracking->_maybe_display_tracking_opt_in();
 	}
 
 	/**
 	 * When user does not have permission to manage usage tracking, dialog
 	 * should not appear.
 	 *
-	 * @covers {Prefix}_Usage_Tracking::maybe_display_tracking_opt_in
+	 * @covers {Prefix}_Usage_Tracking::_maybe_display_tracking_opt_in
 	 */
 	public function testDoNotDisplayTrackingOptInWhenUserNotAuthorized() {
 		$this->setupOptInDialog();
@@ -340,7 +340,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$user->remove_cap( 'manage_sensei' );
 
 		$this->expectOutputString( '' );
-		$this->usage_tracking->maybe_display_tracking_opt_in();
+		$this->usage_tracking->_maybe_display_tracking_opt_in();
 	}
 
 	/* END tests for tracking opt in dialog */
