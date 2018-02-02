@@ -46,6 +46,16 @@ class Sensei_Usage_Tracking {
 	}
 
 	/**
+	 * Determine whether current user can manage the tracking options.
+	 *
+	 * @return bool true if the current user is allowed to manage the tracking
+	 * options, false otherwise.
+	 **/
+	private function current_user_can_manage_tracking() {
+		return current_user_can( 'manage_sensei' );
+	}
+
+	/**
 	 * Add plugin-specific initialization code to this method. It will be
 	 * called when the singleton instance is constructed.
 	 **/
@@ -299,8 +309,9 @@ class Sensei_Usage_Tracking {
 	function maybe_display_tracking_opt_in() {
 		$opt_in_hidden = $this->is_opt_in_hidden();
 		$user_tracking_enabled = $this->is_tracking_enabled();
+		$can_manage_tracking = $this->current_user_can_manage_tracking();
 
-		if ( ! $user_tracking_enabled && ! $opt_in_hidden && current_user_can( 'manage_sensei' ) ) { ?>
+		if ( ! $user_tracking_enabled && ! $opt_in_hidden && $can_manage_tracking ) { ?>
 			<div id="sensei-usage-tracking-notice" class="notice notice-info"
 				data-nonce="<?php echo wp_create_nonce( 'tracking-opt-in' ) ?>">
 				<p>
@@ -342,7 +353,7 @@ class Sensei_Usage_Tracking {
 	function handle_tracking_opt_in() {
 		check_ajax_referer( 'tracking-opt-in', 'nonce' );
 
-		if ( ! current_user_can( 'manage_sensei' ) ) {
+		if ( ! $this->current_user_can_manage_tracking() ) {
 			wp_die( '', '', 403 );
 		}
 
