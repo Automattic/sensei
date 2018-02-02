@@ -157,16 +157,13 @@ class Sensei_Usage_Tracking {
 	}
 
 	/**
-	 * Configure the Usage Tracking instance. Acceptable keys are:
+	 * Set the Usage Data Callback. This callback should return an array of
+	 * data to be logged periodically to Tracks.
 	 *
-	 * - usage_data_callback: the callback returning the usage data to be logged.
-	 *
-	 * @param array $config the configuration array.
+	 * @param callable the callback returning the usage data to be logged.
 	 **/
-	public function configure( $config ) {
-		if ( isset( $config['usage_data_callback'] ) ) {
-			$this->callback = $config['usage_data_callback'];
-		}
+	public function set_callback( $callback ) {
+		$this->callback = $callback;
 	}
 
 	/**

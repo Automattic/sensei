@@ -350,9 +350,9 @@ class Sensei_Main {
 		$this->view_helper = new Sensei_View_Helper();
 
 		$this->usage_tracking = Sensei_Usage_Tracking::instance();
-		$this->usage_tracking->configure( array(
-			'usage_data_callback' => array( 'Sensei_Usage_Tracking_Data', 'get_usage_data' )
-		) );
+		$this->usage_tracking->set_callback(
+			array( 'Sensei_Usage_Tracking_Data', 'get_usage_data' )
+		);
 
 		// Ensure tracking job is scheduled. If the user does not opt in, no
 		// data will be sent.

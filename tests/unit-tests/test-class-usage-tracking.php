@@ -12,11 +12,9 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->usage_tracking = Sensei_Usage_Tracking::instance();
-		$this->usage_tracking->configure( array(
-			'usage_data_callback' => function() {
-				return array( 'testing' => true );
-			},
-		) );
+		$this->usage_tracking->set_callback( function() {
+			return array( 'testing' => true );
+		} );
 	}
 
 	public function tearDown() {
