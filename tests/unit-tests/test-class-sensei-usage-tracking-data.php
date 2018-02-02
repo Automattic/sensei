@@ -561,7 +561,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
-	 * @covers Sensei_Usage_Tracking_Data::get_featured_courses_count
+	 * @covers Sensei_Usage_Tracking_Data::get_course_featured_count
 	 */
 	public function testGetFeaturedCoursesCount() {
 		$featured = 2;
@@ -580,8 +580,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'featured_courses', $usage_data, 'Key' );
-		$this->assertEquals( $featured, $usage_data['featured_courses'], 'Count' );
+		$this->assertArrayHasKey( 'course_featured', $usage_data, 'Key' );
+		$this->assertEquals( $featured, $usage_data['course_featured'], 'Count' );
 	}
 
 	/**
