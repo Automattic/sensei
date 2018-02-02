@@ -359,6 +359,11 @@ class Sensei_Usage_Tracking {
 		}
 	}
 
+	/**
+	 * Handle ajax request from the opt-in dialog.
+	 *
+	 * @access private
+	 **/
 	function handle_tracking_opt_in() {
 		check_ajax_referer( 'tracking-opt-in', 'nonce' );
 
