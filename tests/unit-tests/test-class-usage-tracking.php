@@ -29,7 +29,6 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testCronJobActionAdded() {
-		$this->usage_tracking->hook();
 		$this->assertTrue( !! has_action( self::PREFIX . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'maybe_send_usage_data' ) ) );
 	}
 
@@ -71,7 +70,6 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testAjaxRequestSetup() {
-		$this->usage_tracking->hook();
 		$this->assertTrue( !! has_action( 'wp_ajax_handle_tracking_opt_in', array( $this->usage_tracking, 'handle_tracking_opt_in' ) ) );
 	}
 

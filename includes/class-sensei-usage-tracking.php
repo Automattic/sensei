@@ -45,12 +45,37 @@ class Sensei_Usage_Tracking {
 		Sensei()->settings->set( self::SENSEI_SETTING_NAME, $enable );
 	}
 
+	/**
+	 * Add plugin-specific initialization code to this method. It will be
+	 * called when the singleton instance is constructed.
+	 **/
+	private function custom_init() {
+		// Add filter for settings
+		add_filter( 'sensei_settings_fields', array( $this, 'add_setting_field' ) );
+	}
+
 	/*
 	 * Any other plugin-specific constants, variables, and functions can go
 	 * here.
 	 */
 
 	const SENSEI_SETTING_NAME = 'sensei_usage_tracking_enabled';
+
+	function add_setting_field( $fields ) {
+		// default-settings
+		$fields[ $this->usage_tracking_setting_name ] = array(
+			'name' => __( 'Enable usage tracking', 'woothemes-sensei' ),
+			'description' => __(
+				'Help us make Sensei better by allowing us to collect
+				<a href="https://docs.woocommerce.com/document/what-data-does-sensei-track" target="_blank">usage tracking data</a>.
+				No sensitive information is collected.', 'woothemes-sensei' ),
+			'type' => 'checkbox',
+			'default' => false,
+			'section' => 'default-settings'
+		);
+
+		return $fields;
+	}
 
 	/****** END Plugin-specific section ******/
 
@@ -82,6 +107,18 @@ class Sensei_Usage_Tracking {
 		// Init instance vars
 		$this->hide_tracking_opt_in_option_name = self::PREFIX . '_usage_tracking_opt_in_hide';
 		$this->job_name = self::PREFIX . '_usage_tracking_send_usage_data';
+
+		// Set up the opt-in dialog
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
+		add_action( 'wp_ajax_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
+
+		// Set up schedule and action needed for cron job
+		add_filter( 'cron_schedules', array( $this, 'add_two_weeks' ) );
+		add_action( $this->job_name, array( $this, 'maybe_send_usage_data' ) );
+
+		// Call plugin-specific initialization method
+		$this->custom_init();
 	}
 
 	/**
@@ -202,22 +239,6 @@ class Sensei_Usage_Tracking {
 		return $this->get_tracking_enabled();
 	}
 
-	/**
-	 * Attach hooks.
-	 **/
-	function hook() {
-		// Setting
-		add_filter( 'sensei_settings_fields', array( $this, 'add_setting_field' ) );
-		// Admin
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
-		// Ajax
-		add_action( 'wp_ajax_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
-		// Cron
-		add_filter( 'cron_schedules', array( $this, 'add_two_weeks' ) );
-		add_action( $this->job_name, array( $this, 'maybe_send_usage_data' ) );
-	}
-
 	function admin_enqueue_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -250,22 +271,6 @@ class Sensei_Usage_Tracking {
 		}
 
 		return self::send_event( 'stats_log', $usage_data );
-	}
-
-	function add_setting_field( $fields ) {
-		// default-settings
-		$fields[ $this->usage_tracking_setting_name ] = array(
-			'name' => __( 'Enable usage tracking', 'woothemes-sensei' ),
-			'description' => __(
-				'Help us make Sensei better by allowing us to collect
-				<a href="https://docs.woocommerce.com/document/what-data-does-sensei-track" target="_blank">usage tracking data</a>.
-				No sensitive information is collected.', 'woothemes-sensei' ),
-			'type' => 'checkbox',
-			'default' => false,
-			'section' => 'default-settings'
-		);
-
-		return $fields;
 	}
 
 	function maybe_display_tracking_opt_in() {
