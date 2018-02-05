@@ -1,21 +1,20 @@
 <?php
-/**
- * Opt-in Usage tracking.
- **/
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Usage Tracking
+ * Usage Tracking class. Please update the prefix to something unique to your
+ * plugin.
  */
 class Sensei_Usage_Tracking {
 
 	/****** Plugin-specific section ******/
 
 	/*
-	 * This section needs to modified in order to use this within another
-	 * plugin.
+	 * This section needs to modified in order to use this class within
+	 * another plugin.
 	 */
 
 	/**
