@@ -1,5 +1,18 @@
 *** Sensei Changelog ***
 
+2018.02.06 - version 1.9.20
+
+* New: Course navigation moves between both lessons and modules
+* New: Page template for modules
+* New: Filters for customizing quiz answer text and CSS class names
+* New: Usage tracking
+* Tweak: Remove Sensei Welcome screen
+* Tweak: Remove theme check notice
+* Fix: Tabbed navigation for `sensei_user_courses` shortcode
+* Fix: Setting course start date for all students
+* Fix: Only authorized users can view messages
+* Fix: Only users with appropriate permissions can duplicate courses and lessons
+
 2017.11.07 - version 1.9.19
 
 * Fix: Fix JS bugs introduced by minification process
