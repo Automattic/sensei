@@ -27,7 +27,7 @@ class Sensei_Usage_Tracking_Data {
 			'course_videos' => self::get_course_videos_count(),
 			'course_no_notifications' => self::get_course_no_notifications_count(),
 			'course_prereqs' => self::get_course_prereqs_count(),
-			'featured_courses' => self::get_featured_courses_count(),
+			'course_featured' => self::get_course_featured_count(),
 			'learners' => self::get_learner_count(),
 			'lessons' => wp_count_posts( 'lesson' )->publish,
 			'lesson_modules' => self::get_lesson_module_count(),
@@ -130,7 +130,7 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return int Number of courses.
 	 */
-	private static function get_featured_courses_count() {
+	private static function get_course_featured_count() {
 		$query = new WP_Query( array(
 			'post_type' => 'course',
 			'fields' => 'ids',
