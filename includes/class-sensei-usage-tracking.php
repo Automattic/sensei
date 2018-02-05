@@ -28,6 +28,8 @@ class Sensei_Usage_Tracking {
 	 * Determine whether usage tracking is enabled. Please override this
 	 * function based on how your plugin stores this flag.
 	 *
+	 * @access private
+	 *
 	 * @return bool true if usage tracking is enabled, false otherwise.
 	 **/
 	private function get_tracking_enabled() {
@@ -38,6 +40,8 @@ class Sensei_Usage_Tracking {
 	 * Set whether usage tracking is enabled. Please override this function
 	 * based on how your plugin stores this flag.
 	 *
+	 * @access private
+	 *
 	 * @param bool $enable true if usage tracking should be enabled, false if
 	 * it should be disabled.
 	 **/
@@ -47,6 +51,8 @@ class Sensei_Usage_Tracking {
 
 	/**
 	 * Determine whether current user can manage the tracking options.
+	 *
+	 * @access private
 	 *
 	 * @return bool true if the current user is allowed to manage the tracking
 	 * options, false otherwise.
@@ -60,6 +66,8 @@ class Sensei_Usage_Tracking {
 	 * tracking. This text should include a link to a page indicating what data
 	 * is being tracked.
 	 *
+	 * @access private
+	 *
 	 * @return string the text to display in the opt-in dialog.
 	 **/
 	private function opt_in_dialog_text() {
@@ -72,6 +80,8 @@ class Sensei_Usage_Tracking {
 	/**
 	 * Add plugin-specific initialization code to this method. It will be
 	 * called when the singleton instance is constructed.
+	 *
+	 * @access private
 	 **/
 	private function custom_init() {
 		// Add filter for settings

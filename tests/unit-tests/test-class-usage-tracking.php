@@ -2,6 +2,8 @@
 
 class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 
+	/****** Plugin-specific section ******/
+
 	/**
 	 * Prefix for actions and strings. If reusing this test suite, please set
 	 * this prefix to the same value as the PREFIX constant in the
@@ -9,17 +11,43 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 **/
 	const PREFIX = 'sensei';
 
+	/**
+	 * Refreshes the in-memory flag determining whether tracking is enabled.
+	 * Please override this function if applicable, based on how your plugin
+	 * stores this flag.
+	 **/
+	private function refreshTrackingEnabledFlag() {
+		Sensei()->settings->get_settings();
+	}
+
+	/**
+	 * Update the capaility for the current user to be able to enable or
+	 * disable tracking. Please override this function based on how your plugin
+	 * determines whether the current user has this ability.
+	 *
+	 * @param bool $allow true if the current user should be allowed to update
+	 * the tracking setting, false otherwise. Default: true
+	 **/
+	private function allowCurrentUserToEnableTracking( $allow = true ) {
+		$user = wp_get_current_user();
+
+		if ( $allow ) {
+			$user->add_cap( 'manage_sensei' );
+		} else {
+			$user->remove_cap( 'manage_sensei' );
+		}
+	}
+
 	public function setUp() {
 		parent::setUp();
+		// Update the class name here to match the Usage Tracking class.
 		$this->usage_tracking = Sensei_Usage_Tracking::instance();
 		$this->usage_tracking->set_callback( function() {
 			return array( 'testing' => true );
 		} );
 	}
 
-	public function tearDown() {
-		parent::tearDown();
-	}
+	/****** END Plugin-specific section ******/
 
 	/**
 	 * Ensure cron job action is set up.
@@ -80,7 +108,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '1';
 
-		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
@@ -90,10 +118,10 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			$this->assertEquals( array(), $wp_die_args['args'], 'wp_die call has no non-success status' );
 		}
 
-		// Refresh settings
-		Sensei()->settings->get_settings();
+		// Refresh flag
+		$this->refreshTrackingEnabledFlag();
 
-		$this->assertTrue( Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking enabled' );
+		$this->assertTrue( $this->usage_tracking->is_tracking_enabled(), 'Usage tracking enabled' );
 		$this->assertTrue( get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog hidden' );
 	}
 
@@ -106,7 +134,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '0';
 
-		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
@@ -116,10 +144,10 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			$this->assertEquals( array(), $wp_die_args['args'], 'wp_die call has no non-success status' );
 		}
 
-		// Refresh settings
-		Sensei()->settings->get_settings();
+		// Refresh flag
+		$this->refreshTrackingEnabledFlag();
 
-		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking disabled' );
+		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking disabled' );
 		$this->assertTrue( get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog hidden' );
 	}
 
@@ -132,7 +160,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupAjaxRequest();
 		$_REQUEST['nonce'] = 'invalid_nonce_1234';
 
-		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
@@ -142,10 +170,10 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
 		}
 
-		// Refresh settings
-		Sensei()->settings->get_settings();
+		// Refresh flag
+		$this->refreshTrackingEnabledFlag();
 
-		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking disabled' );
+		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking disabled' );
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
 	}
 
@@ -157,10 +185,10 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	public function testAjaxRequestFailedAuth() {
 		$this->setupAjaxRequest();
 
-		$user = wp_get_current_user();
-		$user->remove_cap( 'manage_sensei' );
+		// Current user cannot enable tracking
+		$this->allowCurrentUserToEnableTracking( false );
 
-		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking initially disabled' );
+		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
@@ -170,10 +198,10 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
 		}
 
-		// Refresh settings
-		Sensei()->settings->get_settings();
+		// Refresh flag
+		$this->refreshTrackingEnabledFlag();
 
-		$this->assertFalse( !! Sensei()->settings->get( self::PREFIX . '_usage_tracking_enabled' ), 'Usage tracking disabled' );
+		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking disabled' );
 		$this->assertFalse( !! get_option( self::PREFIX . '_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
 	}
 
@@ -193,8 +221,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$timestamp  = '1234';
 
 		// Enable tracking
-		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', true );
-		Sensei()->settings->get_settings();
+		$this->setTrackingEnabled();
+		$this->refreshTrackingEnabledFlag();
 
 		// Capture the network request, save the request URL and arguments, and
 		// simulate a WP_Error
@@ -241,8 +269,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$timestamp  = '1234';
 
 		// Disable tracking
-		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', false );
-		Sensei()->settings->get_settings();
+		$this->setTrackingEnabled( false );
+		$this->refreshTrackingEnabledFlag();
 
 		// Count network requests
 		$count = 0;
@@ -277,8 +305,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, $count, 'Request not sent when Usage Tracking disabled' );
 
 		// Set the setting and ensure request is sent.
-		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', true );
-		Sensei()->settings->get_settings();
+		$this->setTrackingEnabled();
+		$this->refreshTrackingEnabledFlag();
 
 		$this->usage_tracking->send_usage_data();
 		$this->assertEquals( 1, $count, 'Request sent when Usage Tracking enabled' );
@@ -306,8 +334,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 */
 	public function testDoNotDisplayTrackingOptInWhenSettingEnabled() {
 		$this->setupOptInDialog();
-		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', true );
-		Sensei()->settings->get_settings();
+		$this->setTrackingEnabled();
+		$this->refreshTrackingEnabledFlag();
 
 		$this->expectOutputString( '' );
 		$this->usage_tracking->_maybe_display_tracking_opt_in();
@@ -334,8 +362,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 */
 	public function testDoNotDisplayTrackingOptInWhenUserNotAuthorized() {
 		$this->setupOptInDialog();
-		$user = wp_get_current_user();
-		$user->remove_cap( 'manage_sensei' );
+		$this->allowCurrentUserToEnableTracking( false );
 
 		$this->expectOutputString( '' );
 		$this->usage_tracking->_maybe_display_tracking_opt_in();
@@ -343,7 +370,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 
 	/* END tests for tracking opt in dialog */
 
-	/* Helper methods */
+
+	/****** Helper methods ******/
 
 	/**
 	 * Helper method for ajax request.
@@ -355,12 +383,11 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		// Set up nonce
 		$_REQUEST['nonce'] = wp_create_nonce( 'tracking-opt-in' );
 
-		// Set manage_sensei cap on current user
-		$user = wp_get_current_user();
-		$user->add_cap( 'manage_sensei' );
+		// Ensure current user can enable tracking
+		$this->allowCurrentUserToEnableTracking();
 
-		// Reset the in-memory settings
-		Sensei()->settings->get_settings();
+		// Reset flag
+		$this->refreshTrackingEnabledFlag();
 
 		// When wp_die is called, save the args and throw an exception to stop
 		// execution.
@@ -377,14 +404,27 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * Helper method to set up tracking opt-in dialog.
 	 */
 	private function setupOptInDialog() {
-		// Set manage_sensei cap on current user
-		$user = wp_get_current_user();
-		$user->add_cap( 'manage_sensei' );
+		// Ensure current user can enable tracking
+		$this->allowCurrentUserToEnableTracking();
 
 		// Ensure setting is not set
-		Sensei()->settings->set( self::PREFIX . '_usage_tracking_enabled', false );
+		$this->setTrackingEnabled( false );
 
-		// Reset the in-memory settings
-		Sensei()->settings->get_settings();
+		// Refresh flag
+		$this->refreshTrackingEnabledFlag();
+	}
+
+	/**
+	 * Helper method to set tracking enabled or disabled. Note: this calls the
+	 * private `set_tracking_enabled` on the {Prefix}_Usage_Tracking class.
+	 *
+	 * @param bool $enable true if tracking should be enabled, false otherwise.
+	 * Default: true.
+	 **/
+	private function setTrackingEnabled( $enable = true ) {
+		$reflection = new \ReflectionClass( get_class( $this->usage_tracking ) );
+		$method = $reflection->getMethod( 'set_tracking_enabled' );
+		$method->setAccessible(true);
+		return $method->invokeArgs( $this->usage_tracking, array( $enable ) );
 	}
 }
