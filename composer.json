@@ -1,5 +1,7 @@
 {
-    "require-dev": {
-        "apigen/apigen": "*"
-    }
+	"require-dev": {
+		"apigen/apigen": "*",
+		"wp-coding-standards/wpcs": "^0.14.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.4.4"
+	}
 }
