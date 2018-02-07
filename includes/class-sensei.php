@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // End if().
 
 // Load Usage Tracking
-require_once( dirname( __FILE__ ) . '/../lib/usage_tracking/class-usage-tracking.php' );
+require_once( dirname( __FILE__ ) . '/../lib/usage-tracking/class-usage-tracking.php' );
 
 /**
  * Responsible for loading Sensei and setting up the Main WordPress hooks.
