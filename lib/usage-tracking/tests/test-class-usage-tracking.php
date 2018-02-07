@@ -1,5 +1,25 @@
 <?php
 
+class WP_Die_Exception extends Exception {
+	private $wp_die_args = null;
+
+	public function set_wp_die_args( $message, $title, $args ) {
+		$this->wp_die_args = array(
+			'message' => $message,
+			'title'   => $title,
+			'args'    => $args,
+		);
+	}
+
+	public function get_wp_die_args() {
+		return $this->wp_die_args;
+	}
+}
+
+// Ensure instance is set up before PHPUnit starts removing hooks. Please
+// update the class name here to match the Usage Tracking class.
+Sensei_Usage_Tracking::instance();
+
 class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 
 	/****** Plugin-specific section ******/
