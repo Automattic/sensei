@@ -427,9 +427,8 @@ class Sensei_Usage_Tracking {
 			jQuery( '#' + prefix + '-usage-tracking-notice button' ).click( function( event ) {
 				event.preventDefault();
 
-				const button         = jQuery( this );
-				const enableTracking = jQuery( this ).data( 'enable-tracking' ) == 'yes';
-				const nonce          = jQuery( '#' + prefix + '-usage-tracking-notice' ).data( 'nonce' );
+				var enableTracking = jQuery( this ).data( 'enable-tracking' ) == 'yes';
+				var nonce          = jQuery( '#' + prefix + '-usage-tracking-notice' ).data( 'nonce' );
 
 				displayProgressIndicator();
 
@@ -441,7 +440,7 @@ class Sensei_Usage_Tracking {
 						enable_tracking: enableTracking ? 1 : 0,
 						nonce: nonce,
 					},
-					success: () => {
+					success: function() {
 						displaySuccess( enableTracking );
 					},
 					error: displayError,
