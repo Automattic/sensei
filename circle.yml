@@ -21,7 +21,6 @@ machine:
 dependencies:
   cache_directories:
     - "node_modules"
-    - "~/.npm/_git-remotes/"
   pre:
       #enable xdebug. LINE 1/2 to uncomment if you want to run a code coverage report.
       - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
