@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-include dirname( __FILE__ ) . '/../lib/usage-tracking/class-usage-tracking-base.php';
+include dirname( __FILE__ ) . '/lib/usage-tracking/class-usage-tracking-base.php';
 
 /**
  * Sensei Usage Tracking subclass.
