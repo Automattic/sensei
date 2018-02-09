@@ -68,7 +68,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testAjaxRequestSetup() {
-		$this->assertTrue( !! has_action( 'wp_ajax_' . $this->usage_tracking->get_prefix() . '_handle_tracking_opt_in', array( $this->usage_tracking, '_handle_tracking_opt_in' ) ) );
+		$this->assertTrue( !! has_action( 'wp_ajax_' . $this->usage_tracking->get_prefix() . '_handle_tracking_opt_in', array( $this->usage_tracking, 'handle_tracking_opt_in' ) ) );
 	}
 
 	/**
@@ -84,7 +84,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
-			$this->usage_tracking->_handle_tracking_opt_in();
+			$this->usage_tracking->handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
 			$this->assertEquals( array(), $wp_die_args['args'], 'wp_die call has no non-success status' );
@@ -107,7 +107,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
-			$this->usage_tracking->_handle_tracking_opt_in();
+			$this->usage_tracking->handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
 			$this->assertEquals( array(), $wp_die_args['args'], 'wp_die call has no non-success status' );
@@ -130,7 +130,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
-			$this->usage_tracking->_handle_tracking_opt_in();
+			$this->usage_tracking->handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
 			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
@@ -155,7 +155,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
-			$this->usage_tracking->_handle_tracking_opt_in();
+			$this->usage_tracking->handle_tracking_opt_in();
 		} catch ( WP_Die_Exception $e ) {
 			$wp_die_args = $e->get_wp_die_args();
 			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
@@ -278,7 +278,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupOptInDialog();
 
 		$this->expectOutputRegex( '/Enable Usage Tracking/' );
-		$this->usage_tracking->_maybe_display_tracking_opt_in();
+		$this->usage_tracking->maybe_display_tracking_opt_in();
 	}
 
 	/**
@@ -291,7 +291,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->usage_tracking->set_tracking_enabled( true );
 
 		$this->expectOutputString( '' );
-		$this->usage_tracking->_maybe_display_tracking_opt_in();
+		$this->usage_tracking->maybe_display_tracking_opt_in();
 	}
 
 	/**
@@ -304,7 +304,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		update_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide', true );
 
 		$this->expectOutputString( '' );
-		$this->usage_tracking->_maybe_display_tracking_opt_in();
+		$this->usage_tracking->maybe_display_tracking_opt_in();
 	}
 
 	/**
@@ -318,7 +318,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->allowCurrentUserToEnableTracking( false );
 
 		$this->expectOutputString( '' );
-		$this->usage_tracking->_maybe_display_tracking_opt_in();
+		$this->usage_tracking->maybe_display_tracking_opt_in();
 	}
 
 	/* END tests for tracking opt in dialog */

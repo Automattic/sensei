@@ -115,13 +115,13 @@ abstract class Sensei_Usage_Tracking_Base {
 		$this->job_name = $this->get_prefix() . '_usage_tracking_send_usage_data';
 
 		// Set up the opt-in dialog
-		add_action( 'admin_enqueue_scripts', array( $this, '_enqueue_script_deps' ) );
-		add_action( 'admin_footer', array( $this, '_output_opt_in_js' ) );
-		add_action( 'admin_notices', array( $this, '_maybe_display_tracking_opt_in' ) );
-		add_action( 'wp_ajax_' . $this->get_prefix() . '_handle_tracking_opt_in', array( $this, '_handle_tracking_opt_in' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script_deps' ) );
+		add_action( 'admin_footer', array( $this, 'output_opt_in_js' ) );
+		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
+		add_action( 'wp_ajax_' . $this->get_prefix() . '_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
 
 		// Set up schedule and action needed for cron job
-		add_filter( 'cron_schedules', array( $this, '_add_usage_tracking_two_week_schedule' ) );
+		add_filter( 'cron_schedules', array( $this, 'add_usage_tracking_two_week_schedule' ) );
 		add_action( $this->job_name, array( $this, 'send_usage_data' ) );
 	}
 
@@ -273,7 +273,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Add two week schedule to use for cron job. Should not be called
 	 * externally.
 	 **/
-	public function _add_usage_tracking_two_week_schedule( $schedules ) {
+	public function add_usage_tracking_two_week_schedule( $schedules ) {
 		$schedules[ $this->get_prefix() . '_usage_tracking_two_weeks' ] = array(
 			'interval' => 15 * DAY_IN_SECONDS,
 			'display'  => esc_html__( 'Every Two Weeks', 'a8c-usage-tracking' ),
@@ -285,7 +285,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Hide the opt-in for enabling usage tracking.
 	 **/
-	private function _hide_tracking_opt_in() {
+	private function hide_tracking_opt_in() {
 		update_option( $this->hide_tracking_opt_in_option_name, true );
 	}
 
@@ -294,7 +294,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @return bool true if the opt-in is hidden, false otherwise.
 	 **/
-	private function _is_opt_in_hidden() {
+	private function is_opt_in_hidden() {
 		return (bool) get_option( $this->hide_tracking_opt_in_option_name );
 	}
 
@@ -302,8 +302,8 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * If needed, display opt-in dialog to enable tracking. Should not be
 	 * called externally.
 	 **/
-	public function _maybe_display_tracking_opt_in() {
-		$opt_in_hidden = $this->_is_opt_in_hidden();
+	public function maybe_display_tracking_opt_in() {
+		$opt_in_hidden = $this->is_opt_in_hidden();
 		$user_tracking_enabled = $this->is_tracking_enabled();
 		$can_manage_tracking = $this->current_user_can_manage_tracking();
 
@@ -340,7 +340,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Handle ajax request from the opt-in dialog. Should not be called
 	 * externally.
 	 **/
-	public function _handle_tracking_opt_in() {
+	public function handle_tracking_opt_in() {
 		check_ajax_referer( 'tracking-opt-in', 'nonce' );
 
 		if ( ! $this->current_user_can_manage_tracking() ) {
@@ -349,7 +349,7 @@ abstract class Sensei_Usage_Tracking_Base {
 
 		$enable_tracking = isset( $_POST['enable_tracking'] ) && $_POST['enable_tracking'] === '1';
 		$this->set_tracking_enabled( $enable_tracking );
-		$this->_hide_tracking_opt_in();
+		$this->hide_tracking_opt_in();
 		wp_die();
 	}
 
@@ -357,7 +357,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Ensure that jQuery has been enqueued since the opt-in dialog JS depends
 	 * on it. Should not be called externally.
 	 **/
-	public function _enqueue_script_deps() {
+	public function enqueue_script_deps() {
 		// Ensure jQuery is loaded
 		wp_enqueue_script( $this->get_prefix() . '_usage-tracking-notice', '',
 			array( 'jquery' ), null, true );
@@ -367,7 +367,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Output the JS code to handle the opt-in dialog. Should not be called
 	 * externally.
 	 **/
-	public function _output_opt_in_js() {
+	public function output_opt_in_js() {
 ?>
 <script type="text/javascript">
 	(function( prefix ) {
