@@ -70,10 +70,10 @@ class Sensei_Usage_Tracking {
 	 * @return string the text to display in the opt-in dialog.
 	 **/
 	private function opt_in_dialog_text() {
-		return _e( "We'd love if you helped us make Sensei better by allowing us to collect
-			<a href=\"https://docs.woocommerce.com/document/what-data-does-sensei-track\" target=\"_blank\">usage tracking data</a>.
+		return sprintf( __( "We'd love if you helped us make Sensei better by allowing us to collect
+			<a href=\"%s\" target=\"_blank\">usage tracking data</a>.
 			No sensitive information is collected, and you can opt out at any time.",
-			'woothemes-sensei' );
+			'woothemes-sensei' ), 'https://docs.woocommerce.com/document/what-data-does-sensei-track' );
 	}
 
 	/**
@@ -300,7 +300,7 @@ class Sensei_Usage_Tracking {
 	function _add_usage_tracking_two_week_schedule( $schedules ) {
 		$schedules[ self::PREFIX . '_usage_tracking_two_weeks' ] = array(
 			'interval' => 15 * DAY_IN_SECONDS,
-			'display'  => esc_html__( 'Every Two Weeks', 'wp-plugin-usage-tracking' ),
+			'display'  => esc_html__( 'Every Two Weeks', 'a8c-usage-tracking' ),
 		);
 
 		return $schedules;
@@ -344,22 +344,22 @@ class Sensei_Usage_Tracking {
 				</p>
 				<p>
 					<button class="button button-primary" data-enable-tracking="yes">
-						<?php _e( 'Enable Usage Tracking', 'wp-plugin-usage-tracking' ) ?>
+						<?php _e( 'Enable Usage Tracking', 'a8c-usage-tracking' ) ?>
 					</button>
 					<button class="button" data-enable-tracking="no">
-						<?php _e( 'Disable Usage Tracking', 'wp-plugin-usage-tracking' ) ?>
+						<?php _e( 'Disable Usage Tracking', 'a8c-usage-tracking' ) ?>
 					</button>
 					<span id="progress" class="spinner alignleft"></span>
 				</p>
 			</div>
 			<div id="<?php echo esc_attr( self::PREFIX ); ?>-usage-tracking-enable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Usage data enabled. Thank you!', 'wp-plugin-usage-tracking' ) ?></p>
+				<p><?php _e( 'Usage data enabled. Thank you!', 'a8c-usage-tracking' ) ?></p>
 			</div>
 			<div id="<?php echo esc_attr( self::PREFIX ); ?>-usage-tracking-disable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Disabled usage tracking.', 'wp-plugin-usage-tracking' ) ?></p>
+				<p><?php _e( 'Disabled usage tracking.', 'a8c-usage-tracking' ) ?></p>
 			</div>
 			<div id="<?php echo esc_attr( self::PREFIX ); ?>-usage-tracking-failure" class="notice notice-error hidden">
-				<p><?php _e( 'Something went wrong. Please try again later.', 'wp-plugin-usage-tracking' ) ?></p>
+				<p><?php _e( 'Something went wrong. Please try again later.', 'a8c-usage-tracking' ) ?></p>
 			</div>
 		<?php
 		}
