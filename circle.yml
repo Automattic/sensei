@@ -2,7 +2,7 @@
 machine:
 
   node:
-    version: 8.9.1
+    version: 8.9.3
   timezone:
     America/Los_Angeles # Set the timezone
 
