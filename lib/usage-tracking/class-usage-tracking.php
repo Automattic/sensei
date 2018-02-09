@@ -178,7 +178,9 @@ class Sensei_Usage_Tracking {
 	/**
 	 * Send an event to Tracks if tracking is enabled.
 	 *
-	 * @param string $event The event name.
+	 * @param string $event The event name. The prefix string will be
+	 * automatically prepended to this, so please supply this string without a
+	 * prefix.
 	 * @param array $properties Event Properties.
 	 * @param null|int $event_timestamp When the event occurred.
 	 * @param bool $force if true, send the event even if tracking is disabled.
@@ -193,8 +195,7 @@ class Sensei_Usage_Tracking {
 		}
 
 		$pixel = 'http://pixel.wp.com/t.gif';
-		$event_prefix = self::PREFIX . '_';
-		$event_name = $event_prefix . str_replace( $event_prefix, '', $event );
+		$event_name = self::PREFIX . '_' . $event;
 		$user = wp_get_current_user();
 
 		if ( null === $event_timestamp ) {
