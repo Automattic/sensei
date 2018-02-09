@@ -301,9 +301,6 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 
 		$this->usage_tracking->send_event( 'my_event', $properties, $timestamp );
 		$this->assertEquals( 0, $count, 'No request when disabled' );
-
-		$this->usage_tracking->send_event( 'my_event', $properties, $timestamp, true );
-		$this->assertEquals( 1, $count, 'Request when disabled can be forced' );
 	}
 
 	/**

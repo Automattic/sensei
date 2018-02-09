@@ -183,14 +183,13 @@ class Sensei_Usage_Tracking {
 	 * prefix.
 	 * @param array $properties Event Properties.
 	 * @param null|int $event_timestamp When the event occurred.
-	 * @param bool $force if true, send the event even if tracking is disabled.
 	 *
 	 * @return null|WP_Error
 	 **/
-	public function send_event( $event, $properties = array(), $event_timestamp = null, $force = false ) {
+	public function send_event( $event, $properties = array(), $event_timestamp = null ) {
 
-		// Only continue if tracking is enabled, or send_event is forced
-		if ( ! $this->is_tracking_enabled() && ! $force ) {
+		// Only continue if tracking is enabled
+		if ( ! $this->is_tracking_enabled() ) {
 			return false;
 		}
 
