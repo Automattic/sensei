@@ -61,8 +61,6 @@ class Sensei_Unit_Tests_Bootstrap {
 	public function includes() {
 		// factories
 		require_once( $this->tests_dir . '/framework/factories/Sensei-Factory.php' );
-		// support files
-		require_once( $this->tests_dir . '/framework/support/wp-die-exception.php' );
 	}
 	/**
 	 * Get the single class instance.
