@@ -1,13 +1,9 @@
 ## Customize the test machine
 machine:
-
   node:
-    version: 8.9.1
+    version: 8.9.4
   timezone:
     America/Los_Angeles # Set the timezone
-
-  php:
-    version: 5.4.21
 
   # Add some environment variables
   environment:
