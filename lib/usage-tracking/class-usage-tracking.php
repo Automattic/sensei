@@ -337,7 +337,7 @@ class Sensei_Usage_Tracking {
 		$can_manage_tracking = $this->current_user_can_manage_tracking();
 
 		if ( ! $user_tracking_enabled && ! $opt_in_hidden && $can_manage_tracking ) { ?>
-			<div id="<?php echo self::PREFIX; ?>-usage-tracking-notice" class="notice notice-info"
+			<div id="<?php echo esc_attr( self::PREFIX ); ?>-usage-tracking-notice" class="notice notice-info"
 				data-nonce="<?php echo wp_create_nonce( 'tracking-opt-in' ) ?>">
 				<p>
 					<?php echo $this->opt_in_dialog_text(); ?>
@@ -352,13 +352,13 @@ class Sensei_Usage_Tracking {
 					<span id="progress" class="spinner alignleft"></span>
 				</p>
 			</div>
-			<div id="<?php echo self::PREFIX; ?>-usage-tracking-enable-success" class="notice notice-success hidden">
+			<div id="<?php echo esc_attr( self::PREFIX ); ?>-usage-tracking-enable-success" class="notice notice-success hidden">
 				<p><?php _e( 'Usage data enabled. Thank you!', 'wp-plugin-usage-tracking' ) ?></p>
 			</div>
-			<div id="<?php echo self::PREFIX; ?>-usage-tracking-disable-success" class="notice notice-success hidden">
+			<div id="<?php echo esc_attr( self::PREFIX ); ?>-usage-tracking-disable-success" class="notice notice-success hidden">
 				<p><?php _e( 'Disabled usage tracking.', 'wp-plugin-usage-tracking' ) ?></p>
 			</div>
-			<div id="<?php echo self::PREFIX; ?>-usage-tracking-failure" class="notice notice-error hidden">
+			<div id="<?php echo esc_attr( self::PREFIX ); ?>-usage-tracking-failure" class="notice notice-error hidden">
 				<p><?php _e( 'Something went wrong. Please try again later.', 'wp-plugin-usage-tracking' ) ?></p>
 			</div>
 		<?php
@@ -447,7 +447,7 @@ class Sensei_Usage_Tracking {
 				} );
 			});
 		});
-	})( "<?php echo self::PREFIX; ?>" );
+	})( "<?php echo esc_js( self::PREFIX ); ?>" );
 </script>
 <?php
 	}
