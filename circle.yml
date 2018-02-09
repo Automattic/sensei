@@ -3,6 +3,8 @@ machine:
 
   node:
     version: 8.9.3
+  npm:
+    version: 5.6.0
   timezone:
     America/Los_Angeles # Set the timezone
 
