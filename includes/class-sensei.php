@@ -532,7 +532,7 @@ class Sensei_Main {
 	} // End activation()
 
 	public function deactivation() {
-		Sensei_Usage_Tracking::maybe_unschedule_tracking_task();
+		$this->usage_tracking->schedule_tracking_task();
 	}
 
 
