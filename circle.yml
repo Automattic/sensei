@@ -27,9 +27,6 @@ dependencies:
       - cd $WP_CORE_DIR && cp wp-tests-config-sample.php wp-tests-config.php && sed -i "s/youremptytestdbnamehere/wordpress_test/" wp-tests-config.php && sed -i "s/yourusernamehere/root/" wp-tests-config.php && sed -i "s/yourpasswordhere//" wp-tests-config.php;
       # set up database
       - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
-      # setup phpunit
-      - wget https://phar.phpunit.de/phpunit-old.phar && chmod +x phpunit-old.phar && mv phpunit-old.phar /home/ubuntu/.phpenv/shims/phpunit
-      #Sensei Specific remove npm file as it is not needed
       # Clone sensei-coding-standard
       - git clone https://github.com/Automattic/sensei-coding-standard.git $SENSEI_CODING_STANDARD_DIR;
 
@@ -38,4 +35,3 @@ test:
   override:
   #run tests with coverage
   - cd $SENSEI_CODING_STANDARD_DIR; php bin/phpcs.phar --report-full --report-summary --standard=Sensei $plugin_loc
-  - cd $plugin_loc; phpunit #ignoring coverage for speed reasons: --coverage-html $CIRCLE_ARTIFACTS
