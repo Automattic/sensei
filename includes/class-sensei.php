@@ -352,7 +352,7 @@ class Sensei_Main {
 
 		$this->view_helper = new Sensei_View_Helper();
 
-		$this->usage_tracking = Sensei_Usage_Tracking::instance();
+		$this->usage_tracking = Sensei_Usage_Tracking::get_instance();
 		$this->usage_tracking->set_callback(
 			array( 'Sensei_Usage_Tracking_Data', 'get_usage_data' )
 		);

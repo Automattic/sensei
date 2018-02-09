@@ -18,7 +18,7 @@ class WP_Die_Exception extends Exception {
 
 // Ensure instance is set up before PHPUnit starts removing hooks. Please
 // update the class name here to match the Usage Tracking class.
-Sensei_Usage_Tracking::instance();
+Sensei_Usage_Tracking::get_instance();
 
 class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 
@@ -61,7 +61,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 		// Update the class name here to match the Usage Tracking class.
-		$this->usage_tracking = Sensei_Usage_Tracking::instance();
+		$this->usage_tracking = Sensei_Usage_Tracking::get_instance();
 		$this->usage_tracking->set_callback( function() {
 			return array( 'testing' => true );
 		} );
