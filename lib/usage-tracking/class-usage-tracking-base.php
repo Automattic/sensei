@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Usage Tracking class. Please update the prefix to something unique to your
  * plugin.
  */
-class Sensei_Usage_Tracking {
+class Sensei_Usage_Tracking_Base {
 
 	/****** Plugin-specific section ******/
 
