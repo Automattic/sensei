@@ -13,7 +13,7 @@ class Sensei_Usage_Tracking {
 	/****** Plugin-specific section ******/
 
 	/*
-	 * This section needs to modified in order to use this class within
+	 * This section needs to be modified in order to use this class within
 	 * another plugin.
 	 */
 
@@ -288,9 +288,9 @@ class Sensei_Usage_Tracking {
 		return self::send_event( 'stats_log', $usage_data );
 	}
 
-	//
-	// Private functions
-	//
+	/*
+	 * Private functions
+	 */
 
 	/**
 	 * Add two week schedule to use for cron job.
