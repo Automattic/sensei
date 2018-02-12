@@ -146,6 +146,8 @@ class Sensei_Main {
 	public $rest_api;
 
 	/**
+	 * Global Usage Tracking object.
+	 *
 	 * @var Sensei_Usage_Tracking
 	 */
 	private $usage_tracking;
@@ -528,6 +530,13 @@ class Sensei_Main {
 
 	} // End activation()
 
+	/**
+	 * Run on activation.
+	 *
+	 * @access public
+	 * @since  1.9.21
+	 * @return void
+	 */
 	public function deactivation() {
 		$this->usage_tracking->unschedule_tracking_task();
 	}

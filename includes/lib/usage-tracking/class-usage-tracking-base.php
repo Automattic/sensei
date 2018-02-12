@@ -1,4 +1,8 @@
 <?php
+/**
+ * Reusable Usage Tracking library. For sending plugin usage data and events to
+ * Tracks.
+ **/
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -9,25 +13,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  * plugin.
  */
 abstract class Sensei_Usage_Tracking_Base {
-
 	/*
 	 * Instance variables.
 	 */
 
 	/**
-	 * @var string $hide_tracking_opt_in the name of the Option for
-	 * hiding the Usage Tracking opt-in dialog.
+	 * The name of the option for hiding the Usage Tracking opt-in dialog.
+	 *
+	 * @var string
 	 **/
 	private $hide_tracking_opt_in_option_name;
 
 	/**
-	 * @var string $job_name the name of the cron job action for regularly
-	 * logging usage data.
+	 * The name of the cron job action for regularly logging usage data.
+	 *
+	 * @var string
 	 **/
 	private $job_name;
 
 	/**
-	 * @var array $callback Callback function for the usage tracking job.
+	 * Callback function for the usage tracking job.
+	 *
+	 * @var array
 	 **/
 	private $callback;
 
@@ -38,6 +45,8 @@ abstract class Sensei_Usage_Tracking_Base {
 
 	/**
 	 * Subclass instances.
+	 *
+	 * @var array
 	 **/
 	private static $instances = array();
 
@@ -50,9 +59,11 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Gets the singleton instance of this class. Subclasses should implement
 	 * this as follows:
 	 *
+	 * ```
 	 * public static function get_instance() {
 	 *   return self::get_instance_for_subclass( get_class() );
 	 * }
+	 * ```
 	 */
 	abstract public static function get_instance();
 
@@ -110,17 +121,17 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * are undefined.
 	 **/
 	protected function __construct() {
-		// Init instance vars
+		// Init instance vars.
 		$this->hide_tracking_opt_in_option_name = $this->get_prefix() . '_usage_tracking_opt_in_hide';
 		$this->job_name                         = $this->get_prefix() . '_usage_tracking_send_usage_data';
 
-		// Set up the opt-in dialog
+		// Set up the opt-in dialog.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script_deps' ) );
 		add_action( 'admin_footer', array( $this, 'output_opt_in_js' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
 		add_action( 'wp_ajax_' . $this->get_prefix() . '_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
 
-		// Set up schedule and action needed for cron job
+		// Set up schedule and action needed for cron job.
 		add_filter( 'cron_schedules', array( $this, 'add_usage_tracking_two_week_schedule' ) );
 		add_action( $this->job_name, array( $this, 'send_usage_data' ) );
 	}
@@ -128,6 +139,8 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Create (if necessary) and return the singleton instance for the given
 	 * subclass.
+	 *
+	 * @param string $subclass the name of the subclass.
 	 */
 	protected static function get_instance_for_subclass( $subclass ) {
 		if ( ! isset( self::$instances[ $subclass ] ) ) {
@@ -145,7 +158,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Set the Usage Data Callback. This callback should return an array of
 	 * data to be logged periodically to Tracks.
 	 *
-	 * @param callable the callback returning the usage data to be logged.
+	 * @param callable $callback the callback returning the usage data to be logged.
 	 **/
 	public function set_callback( $callback ) {
 		$this->callback = $callback;
@@ -164,7 +177,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 **/
 	public function send_event( $event, $properties = array(), $event_timestamp = null ) {
 
-		// Only continue if tracking is enabled
+		// Only continue if tracking is enabled.
 		if ( ! $this->is_tracking_enabled() ) {
 			return false;
 		}
@@ -186,14 +199,14 @@ abstract class Sensei_Usage_Tracking_Base {
 		$properties['_ul'] = $user->user_login;
 		$properties['_en'] = $event_name;
 		$properties['_ts'] = $event_timestamp . '000';
-		$properties['_rt'] = round( microtime( true ) * 1000 );  // log time
+		$properties['_rt'] = round( microtime( true ) * 1000 );  // log time.
 		$p                 = array();
 
 		foreach ( $properties as $key => $value ) {
-			$p[] = urlencode( $key ) . '=' . urlencode( $value );
+			$p[] = rawurlencode( $key ) . '=' . rawurlencode( $value );
 		}
 
-		$pixel   .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker
+		$pixel   .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker.
 		$response = wp_remote_get(
 			$pixel, array(
 				'blocking'    => true,
@@ -210,7 +223,7 @@ abstract class Sensei_Usage_Tracking_Base {
 
 		$code = isset( $response['response']['code'] ) ? $response['response']['code'] : 0;
 
-		if ( $code !== 200 ) {
+		if ( 200 !== $code ) {
 			return new WP_Error( 'request_failed', 'HTTP Request failed', $code );
 		}
 
@@ -244,7 +257,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @return bool true if tracking is enabled, false otherwise
 	 **/
 	public function is_tracking_enabled() {
-		// Defer to the plugin-specific function
+		// Defer to the plugin-specific function.
 		return $this->get_tracking_enabled();
 	}
 
@@ -274,6 +287,8 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Add two week schedule to use for cron job. Should not be called
 	 * externally.
+	 *
+	 * @param array $schedules the existing cron schedules.
 	 **/
 	public function add_usage_tracking_two_week_schedule( $schedules ) {
 		$schedules[ $this->get_prefix() . '_usage_tracking_two_weeks' ] = array(
@@ -311,28 +326,28 @@ abstract class Sensei_Usage_Tracking_Base {
 
 		if ( ! $user_tracking_enabled && ! $opt_in_hidden && $can_manage_tracking ) { ?>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-notice" class="notice notice-info"
-				data-nonce="<?php echo wp_create_nonce( 'tracking-opt-in' ); ?>">
+				data-nonce="<?php echo esc_attr( wp_create_nonce( 'tracking-opt-in' ) ); ?>">
 				<p>
 					<?php echo $this->opt_in_dialog_text(); ?>
 				</p>
 				<p>
 					<button class="button button-primary" data-enable-tracking="yes">
-						<?php _e( 'Enable Usage Tracking', 'a8c-usage-tracking' ); ?>
+						<?php esc_html_e( 'Enable Usage Tracking', 'a8c-usage-tracking' ); ?>
 					</button>
 					<button class="button" data-enable-tracking="no">
-						<?php _e( 'Disable Usage Tracking', 'a8c-usage-tracking' ); ?>
+						<?php esc_html_e( 'Disable Usage Tracking', 'a8c-usage-tracking' ); ?>
 					</button>
 					<span id="progress" class="spinner alignleft"></span>
 				</p>
 			</div>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-enable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Usage data enabled. Thank you!', 'a8c-usage-tracking' ); ?></p>
+				<p><?php esc_html_e( 'Usage data enabled. Thank you!', 'a8c-usage-tracking' ); ?></p>
 			</div>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-disable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Disabled usage tracking.', 'a8c-usage-tracking' ); ?></p>
+				<p><?php esc_html_e( 'Disabled usage tracking.', 'a8c-usage-tracking' ); ?></p>
 			</div>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-failure" class="notice notice-error hidden">
-				<p><?php _e( 'Something went wrong. Please try again later.', 'a8c-usage-tracking' ); ?></p>
+				<p><?php esc_html_e( 'Something went wrong. Please try again later.', 'a8c-usage-tracking' ); ?></p>
 			</div>
 		<?php
 		}
@@ -349,7 +364,7 @@ abstract class Sensei_Usage_Tracking_Base {
 			wp_die( '', '', 403 );
 		}
 
-		$enable_tracking = isset( $_POST['enable_tracking'] ) && $_POST['enable_tracking'] === '1';
+		$enable_tracking = isset( $_POST['enable_tracking'] ) && '1' === $_POST['enable_tracking'];
 		$this->set_tracking_enabled( $enable_tracking );
 		$this->hide_tracking_opt_in();
 		wp_die();
@@ -360,7 +375,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * on it. Should not be called externally.
 	 **/
 	public function enqueue_script_deps() {
-		// Ensure jQuery is loaded
+		// Ensure jQuery is loaded.
 		wp_enqueue_script(
 			$this->get_prefix() . '_usage-tracking-notice', '',
 			array( 'jquery' ), null, true
