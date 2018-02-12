@@ -1,10 +1,13 @@
 <?php
+/**
+ * Usage Tracking subclass for Sensei.
+ **/
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-include dirname( __FILE__ ) . '/lib/usage-tracking/class-usage-tracking-base.php';
+require dirname( __FILE__ ) . '/lib/usage-tracking/class-usage-tracking-base.php';
 
 /**
  * Sensei Usage Tracking subclass.
@@ -16,7 +19,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	protected function __construct() {
 		parent::__construct();
 
-		// Add filter for settings
+		// Add filter for settings.
 		add_filter( 'sensei_settings_fields', array( $this, 'add_setting_field' ) );
 	}
 
@@ -46,10 +49,19 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	}
 
 	protected function opt_in_dialog_text() {
-		return sprintf( __( "We'd love if you helped us make Sensei better by allowing us to collect
-			<a href=\"%s\" target=\"_blank\">usage tracking data</a>.
-			No sensitive information is collected, and you can opt out at any time.",
-			'woothemes-sensei' ), 'https://docs.woocommerce.com/document/what-data-does-sensei-track' );
+		return sprintf(
+
+			/*
+			 * translators: the href tag contains the URL for the page telling
+			 * users what data Sensei tracks.
+			 */
+			__(
+				"We'd love if you helped us make Sensei better by allowing us to collect
+				<a href=\"%s\" target=\"_blank\">usage tracking data</a>.
+				No sensitive information is collected, and you can opt out at any time.",
+				'woothemes-sensei'
+			), 'https://docs.woocommerce.com/document/what-data-does-sensei-track'
+		);
 	}
 
 
@@ -58,16 +70,16 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 */
 
 	public function add_setting_field( $fields ) {
-		// default-settings
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
-			'name' => __( 'Enable usage tracking', 'woothemes-sensei' ),
+			'name'        => __( 'Enable usage tracking', 'woothemes-sensei' ),
 			'description' => __(
 				'Help us make Sensei better by allowing us to collect
 				<a href="https://docs.woocommerce.com/document/what-data-does-sensei-track" target="_blank">usage tracking data</a>.
-				No sensitive information is collected.', 'woothemes-sensei' ),
-			'type' => 'checkbox',
-			'default' => false,
-			'section' => 'default-settings'
+				No sensitive information is collected.', 'woothemes-sensei'
+			),
+			'type'        => 'checkbox',
+			'default'     => false,
+			'section'     => 'default-settings',
 		);
 
 		return $fields;
