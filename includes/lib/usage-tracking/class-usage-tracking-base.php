@@ -112,7 +112,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	protected function __construct() {
 		// Init instance vars
 		$this->hide_tracking_opt_in_option_name = $this->get_prefix() . '_usage_tracking_opt_in_hide';
-		$this->job_name = $this->get_prefix() . '_usage_tracking_send_usage_data';
+		$this->job_name                         = $this->get_prefix() . '_usage_tracking_send_usage_data';
 
 		// Set up the opt-in dialog
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script_deps' ) );
@@ -154,10 +154,10 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Send an event to Tracks if tracking is enabled.
 	 *
-	 * @param string $event The event name. The prefix string will be
-	 * automatically prepended to this, so please supply this string without a
-	 * prefix.
-	 * @param array $properties Event Properties.
+	 * @param string   $event The event name. The prefix string will be
+	 *   automatically prepended to this, so please supply this string without a
+	 *   prefix.
+	 * @param array    $properties Event Properties.
 	 * @param null|int $event_timestamp When the event occurred.
 	 *
 	 * @return null|WP_Error
@@ -169,16 +169,16 @@ abstract class Sensei_Usage_Tracking_Base {
 			return false;
 		}
 
-		$pixel = 'http://pixel.wp.com/t.gif';
+		$pixel      = 'http://pixel.wp.com/t.gif';
 		$event_name = $this->get_prefix() . '_' . $event;
-		$user = wp_get_current_user();
+		$user       = wp_get_current_user();
 
 		if ( null === $event_timestamp ) {
 			$event_timestamp = time();
 		}
 
 		$properties['admin_email'] = get_option( 'admin_email' );
-		$properties['_ut'] = $this->get_prefix() . ':site_url';
+		$properties['_ut']         = $this->get_prefix() . ':site_url';
 		// Use site URL as the userid to enable usage tracking at the site level.
 		// Note that we would likely want to use site URL + user ID for userid if we were
 		// to ever add event tracking at the user level.
@@ -187,20 +187,22 @@ abstract class Sensei_Usage_Tracking_Base {
 		$properties['_en'] = $event_name;
 		$properties['_ts'] = $event_timestamp . '000';
 		$properties['_rt'] = round( microtime( true ) * 1000 );  // log time
-		$p = array();
+		$p                 = array();
 
-		foreach( $properties as $key => $value ) {
-			$p[]= urlencode( $key ) . '=' . urlencode( $value );
+		foreach ( $properties as $key => $value ) {
+			$p[] = urlencode( $key ) . '=' . urlencode( $value );
 		}
 
-		$pixel .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker
-		$response = wp_remote_get( $pixel, array(
-			'blocking'    => true,
-			'timeout'     => 1,
-			'redirection' => 2,
-			'httpversion' => '1.1',
-			'user-agent'  => $this->get_prefix() . '_usage_tracking',
-		) );
+		$pixel   .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker
+		$response = wp_remote_get(
+			$pixel, array(
+				'blocking'    => true,
+				'timeout'     => 1,
+				'redirection' => 2,
+				'httpversion' => '1.1',
+				'user-agent'  => $this->get_prefix() . '_usage_tracking',
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -303,34 +305,34 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * called externally.
 	 **/
 	public function maybe_display_tracking_opt_in() {
-		$opt_in_hidden = $this->is_opt_in_hidden();
+		$opt_in_hidden         = $this->is_opt_in_hidden();
 		$user_tracking_enabled = $this->is_tracking_enabled();
-		$can_manage_tracking = $this->current_user_can_manage_tracking();
+		$can_manage_tracking   = $this->current_user_can_manage_tracking();
 
 		if ( ! $user_tracking_enabled && ! $opt_in_hidden && $can_manage_tracking ) { ?>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-notice" class="notice notice-info"
-				data-nonce="<?php echo wp_create_nonce( 'tracking-opt-in' ) ?>">
+				data-nonce="<?php echo wp_create_nonce( 'tracking-opt-in' ); ?>">
 				<p>
 					<?php echo $this->opt_in_dialog_text(); ?>
 				</p>
 				<p>
 					<button class="button button-primary" data-enable-tracking="yes">
-						<?php _e( 'Enable Usage Tracking', 'a8c-usage-tracking' ) ?>
+						<?php _e( 'Enable Usage Tracking', 'a8c-usage-tracking' ); ?>
 					</button>
 					<button class="button" data-enable-tracking="no">
-						<?php _e( 'Disable Usage Tracking', 'a8c-usage-tracking' ) ?>
+						<?php _e( 'Disable Usage Tracking', 'a8c-usage-tracking' ); ?>
 					</button>
 					<span id="progress" class="spinner alignleft"></span>
 				</p>
 			</div>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-enable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Usage data enabled. Thank you!', 'a8c-usage-tracking' ) ?></p>
+				<p><?php _e( 'Usage data enabled. Thank you!', 'a8c-usage-tracking' ); ?></p>
 			</div>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-disable-success" class="notice notice-success hidden">
-				<p><?php _e( 'Disabled usage tracking.', 'a8c-usage-tracking' ) ?></p>
+				<p><?php _e( 'Disabled usage tracking.', 'a8c-usage-tracking' ); ?></p>
 			</div>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-failure" class="notice notice-error hidden">
-				<p><?php _e( 'Something went wrong. Please try again later.', 'a8c-usage-tracking' ) ?></p>
+				<p><?php _e( 'Something went wrong. Please try again later.', 'a8c-usage-tracking' ); ?></p>
 			</div>
 		<?php
 		}
@@ -359,8 +361,10 @@ abstract class Sensei_Usage_Tracking_Base {
 	 **/
 	public function enqueue_script_deps() {
 		// Ensure jQuery is loaded
-		wp_enqueue_script( $this->get_prefix() . '_usage-tracking-notice', '',
-			array( 'jquery' ), null, true );
+		wp_enqueue_script(
+			$this->get_prefix() . '_usage-tracking-notice', '',
+			array( 'jquery' ), null, true
+		);
 	}
 
 	/**
