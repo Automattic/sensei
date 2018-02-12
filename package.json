@@ -1,7 +1,7 @@
 {
   "name": "woothemes-sensei",
   "title": "Sensei",
-  "version": "1.9.0",
+  "version": "1.9.20",
   "homepage": "http://www.woothemes.com/products/sensei/",
   "repository": {
     "type": "git",
@@ -26,9 +26,5 @@
     "gulp-uglify": "^1.5.1",
     "gulp-wp-pot": "^1.1.1",
     "orchestrator": "^0.3.7"
-  },
-  "engines": {
-    "node": "8.9.1",
-    "npm": "5.5.1"
   }
 }
