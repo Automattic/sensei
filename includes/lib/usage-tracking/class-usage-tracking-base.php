@@ -384,6 +384,7 @@ abstract class Sensei_Usage_Tracking_Base {
 		$enable_tracking = isset( $_POST['enable_tracking'] ) && '1' === $_POST['enable_tracking'];
 		$this->set_tracking_enabled( $enable_tracking );
 		$this->hide_tracking_opt_in();
+		$this->send_usage_data();
 		wp_die();
 	}
 
