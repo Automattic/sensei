@@ -146,6 +146,8 @@ class Sensei_Main {
 	public $rest_api;
 
 	/**
+	 * Global Usage Tracking object.
+	 *
 	 * @var Sensei_Usage_Tracking
 	 */
 	private $usage_tracking;
@@ -349,12 +351,14 @@ class Sensei_Main {
 
 		$this->view_helper = new Sensei_View_Helper();
 
-		$this->usage_tracking = new Sensei_Usage_Tracking( array( 'Sensei_Usage_Tracking_Data', 'get_usage_data' ) );
-		$this->usage_tracking->hook();
+		$this->usage_tracking = Sensei_Usage_Tracking::get_instance();
+		$this->usage_tracking->set_callback(
+			array( 'Sensei_Usage_Tracking_Data', 'get_usage_data' )
+		);
 
 		// Ensure tracking job is scheduled. If the user does not opt in, no
 		// data will be sent.
-		Sensei_Usage_Tracking::maybe_schedule_tracking_task();
+		$this->usage_tracking->schedule_tracking_task();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
@@ -526,8 +530,15 @@ class Sensei_Main {
 
 	} // End activation()
 
+	/**
+	 * Run on activation.
+	 *
+	 * @access public
+	 * @since  1.9.21
+	 * @return void
+	 */
 	public function deactivation() {
-		Sensei_Usage_Tracking::maybe_unschedule_tracking_task();
+		$this->usage_tracking->unschedule_tracking_task();
 	}
 
 

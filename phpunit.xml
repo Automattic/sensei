@@ -19,6 +19,9 @@
         <testsuite name="Sensei Test Suite">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
+        <testsuite name="Usage Tracking Test Suite">
+            <directory suffix=".php">./lib/usage_tracking/tests/</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <blacklist>
