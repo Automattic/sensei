@@ -316,6 +316,23 @@ abstract class Sensei_Usage_Tracking_Base {
 	}
 
 	/**
+	 * Allowed html tags, used by wp_kses, for the translated opt-in dialog
+	 * text.
+	 *
+	 * @return array the html tags.
+	 **/
+	private function opt_in_dialog_text_allowed_html() {
+		return array(
+			'a'      => array(
+				'href'  => array(),
+				'title' => array(),
+			),
+			'em'     => array(),
+			'strong' => array(),
+		);
+	}
+
+	/**
 	 * If needed, display opt-in dialog to enable tracking. Should not be
 	 * called externally.
 	 **/
@@ -328,7 +345,7 @@ abstract class Sensei_Usage_Tracking_Base {
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-notice" class="notice notice-info"
 				data-nonce="<?php echo esc_attr( wp_create_nonce( 'tracking-opt-in' ) ); ?>">
 				<p>
-					<?php echo $this->opt_in_dialog_text(); ?>
+					<?php echo wp_kses( $this->opt_in_dialog_text(), $this->opt_in_dialog_text_allowed_html() ); ?>
 				</p>
 				<p>
 					<button class="button button-primary" data-enable-tracking="yes">
