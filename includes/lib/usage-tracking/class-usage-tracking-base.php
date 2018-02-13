@@ -291,8 +291,9 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @param array $schedules the existing cron schedules.
 	 **/
 	public function add_usage_tracking_two_week_schedule( $schedules ) {
+		$day_in_seconds = 86400;
 		$schedules[ $this->get_prefix() . '_usage_tracking_two_weeks' ] = array(
-			'interval' => 15 * DAY_IN_SECONDS,
+			'interval' => 15 * $day_in_seconds,
 			'display'  => esc_html__( 'Every Two Weeks', 'a8c-usage-tracking' ),
 		);
 
