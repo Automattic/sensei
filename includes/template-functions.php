@@ -683,14 +683,17 @@ function sensei_get_the_module_status(){
     $module_progress = Sensei()->modules->get_user_module_progress( $module_term_id, $course_id, get_current_user_id() );
 
     $module_status =  '';
+	$status_class  = '';
     if ( $module_progress && $module_progress > 0) {
 
         $module_status = __('Completed', 'woothemes-sensei');
-
+		$status_class  = 'completed';
+		
         if ($module_progress < 100) {
 
             $module_status = __('In progress', 'woothemes-sensei');
-
+			$status_class  = 'in-progress';
+			
         }
 
     }
@@ -698,8 +701,7 @@ function sensei_get_the_module_status(){
 	if ( empty( $module_status ) ){
 		return '';
 	}
-
-	$status_class = strtolower( str_replace( ' ', '-', $module_status  ) );
+	
     $module_status_html = '<p class="status module-status ' . $status_class . '">'
                             . $module_status
                             . '</p>';
