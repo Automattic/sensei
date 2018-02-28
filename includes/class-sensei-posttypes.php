@@ -588,6 +588,7 @@ class Sensei_PostTypes {
 		$args = array(
 			'hierarchical' => false,
 			'labels' => $labels,
+			'show_in_rest' => true,
 			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => true,
@@ -783,7 +784,7 @@ class Sensei_PostTypes {
 
 	/**
 	 * Adds a 'Edit Quiz' link to the admin bar when viewing a Quiz linked to a corresponding Lesson
-	 * 
+	 *
 	 * @since  1.7.0
      * @param WP_Admin_Bar $bar
 	 * @return void
