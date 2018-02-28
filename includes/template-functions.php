@@ -123,6 +123,22 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
     	} // End If Statement
 	} // End sensei_start_course_form()
 
+	/**
+	 * sensei_start_lesson_form function.
+	 *
+	 * @access public
+	 * @param mixed $lesson_id
+	 * @return void
+	 */
+	function sensei_start_lesson_form( $lesson_id ) {
+		?>
+		<form method="POST" action="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>">
+				<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_start_lesson_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_start_lesson_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_start_lesson_noonce' ) ); ?>" />
+		<span><input name="lesson_start" type="submit" class="lesson-start" value="<?php _e( 'Start taking this Lesson', 'woothemes-sensei' ); ?>"/></span>
+
+		</form>
+		<?php
+	} // End sensei_start_lesson_form()
 
 	/**
 	 * sensei_wc_add_to_cart function.
@@ -946,7 +962,6 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = ''  ){
 
     }
 
-
     $access_permission = false;
 
     if ( ! Sensei()->settings->get('access_permission')  || sensei_all_access() ) {
@@ -955,7 +970,10 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = ''  ){
 
     }
 
-    $can_user_view_lesson = $access_permission || ( $user_can_access_lesson && $pre_requisite_complete ) || $is_preview;
+	$is_user_taking_lesson = Sensei_Utils::user_started_lesson( $lesson_id, $user_id );
+
+	$can_user_view_lesson = $is_user_taking_lesson
+		|| $access_permission || ( $user_can_access_lesson && $pre_requisite_complete ) || $is_preview;
 
     /**
      * Filter the can user view lesson function

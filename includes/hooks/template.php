@@ -231,6 +231,7 @@ add_action( 'sensei_quiz_question_inside_after', array( 'Sensei_Templates', 'dep
  *
  *
  ***************************/
+add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'the_lesson_enrolment_actions' ), 30 );
 //@since 1.9.0
 // deprecate the main content hook on the single lesson page
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Templates', 'deprecate_lesson_single_main_content_hook' ), 20);

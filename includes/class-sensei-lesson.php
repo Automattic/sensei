@@ -3862,7 +3862,9 @@ class Sensei_Lesson {
 		<footer>
 
 			<?php
-			if( $show_actions && $quiz_id && Sensei()->access_settings() ) {
+			$user_started_lesson = Sensei_Utils::user_started_lesson( $lesson_id, $user_id );
+
+			if ( $user_started_lesson && $show_actions && $quiz_id && Sensei()->access_settings() ) {
 
 				if( self::lesson_quiz_has_questions( $lesson_id ) ) {
 					?>
@@ -4027,6 +4029,136 @@ class Sensei_Lesson {
     public static function lesson_quiz_has_questions( $lesson_id ) {
 		return (bool) get_post_meta( $lesson_id, '_quiz_has_questions', true );
     }
+
+	/**
+	 * @param $message
+	 */
+	private static function add_lesson_access_permission_message( $message ) {
+		global $post;
+
+		if ( Sensei()->settings->get( 'access_permission' ) ) {
+			$message = apply_filters( 'sensei_couse_access_permission_message', $message, $post->ID );
+			if ( ! empty( $message ) ) {
+				Sensei()->notices->add_notice( $message, 'info' );
+			}
+		}
+	}
+
+	protected static function wrap_lesson_enrolment( $data ) {
+		?>
+		<section class="lesson-meta lesson-enrolment">
+		<?php
+		echo $data;
+		?>
+		</section>
+		<?php
+	}
+
+	/**
+	 * Output the lesson actions like start taking lesson, register, add to cart etc.
+	 */
+	public static function the_lesson_enrolment_actions() {
+		global $post, $current_user;
+
+		if ( 'lesson' != $post->post_type ) {
+			return;
+		}
+
+		$is_user_taking_lesson        = Sensei_Utils::user_started_lesson( $post->ID, $current_user->ID );
+		$is_lesson_content_restricted = (bool) apply_filters( 'sensei_is_lesson_content_restricted', false, $post->ID );
+		$course_id = Sensei()->lesson->get_course_id( $post->ID );
+		ob_start();
+
+		if ( is_user_logged_in() && ! $is_user_taking_lesson ) {
+			// Check for woocommerce
+			if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $course_id ) ) {
+				// Get the product ID
+				Sensei_WC::the_add_to_cart_button_html( $post->ID );
+
+				return self::wrap_lesson_enrolment( ob_get_clean() );
+			}
+
+			$should_display_start_lesson_form = (bool) apply_filters( 'sensei_display_start_lesson_form', true, $post->ID );
+
+			if ( $is_lesson_content_restricted && false == $should_display_start_lesson_form ) {
+				self::add_lesson_access_permission_message( '' );
+			}
+
+			if ( $should_display_start_lesson_form ) {
+				sensei_start_lesson_form( $post->ID );
+			}
+
+			return self::wrap_lesson_enrolment( ob_get_clean() );
+		}
+
+		if ( is_user_logged_in() ) {
+			// Check if lesson is completed
+			$user_lesson_status = Sensei_Utils::user_lesson_status( $post->ID, $current_user->ID );
+			$completed_lesson = Sensei_Utils::user_completed_lesson( $user_lesson_status );
+			// Success message
+			if ( $completed_lesson ) {
+			?>
+				<div class="status completed"><?php _e( 'Completed', 'woothemes-sensei' ); ?></div>
+			<?php
+			}
+
+			return self::wrap_lesson_enrolment( ob_get_clean() );
+		}
+
+		// Check for woocommerce
+		if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $course_id ) ) {
+			$login_link = '<a href="' . sensei_user_login_url() . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
+			$message = sprintf( __( 'Or %1$s to access your purchased lessons', 'woothemes-sensei' ), $login_link );
+			Sensei()->notices->add_notice( $message, 'info' );
+			Sensei_WC::the_add_to_cart_button_html( $post->ID );
+
+			return self::wrap_lesson_enrolment( ob_get_clean() );
+		}
+
+		if ( get_option( 'users_can_register' ) ) {
+			// set the permissions message
+			$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
+			$anchor_after = '</a>';
+			$notice = sprintf(
+				__( 'or %1$slog in%2$s to view this lesson.', 'woothemes-sensei' ),
+				$anchor_before,
+				$anchor_after
+			);
+
+			self::add_lesson_access_permission_message( $notice );
+
+			$my_lessons_page_id = '';
+
+			/**
+			 * Filter to force Sensei to output the default WordPress user
+			 * registration link.
+			 *
+			 * @since 1.9.0
+			 * @param bool $wp_register_link default false
+			 */
+			$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
+
+			$settings = Sensei()->settings->get_settings();
+
+			if ( isset( $settings['my_course_page'] )
+				&& 0 < intval( $settings['my_course_page'] ) ) {
+				$my_courses_page_id = $settings['my_course_page'];
+			}
+
+			// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
+			// is false, link to My Courses. If not, link to default WordPress registration page.
+			if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
+				if ( apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+					$my_courses_url = get_permalink( $my_courses_page_id );
+					$register_link = '<a href="' . $my_courses_url . '">' . __( 'Register', 'woothemes-sensei' ) . '</a>';
+					echo '<div class="status register">' . $register_link . '</div>';
+				}
+			} else {
+				wp_register( '<div class="status register">', '</div>' );
+			}
+			return self::wrap_lesson_enrolment( ob_get_clean() );
+		}
+	}
 
 } // End Class
 
