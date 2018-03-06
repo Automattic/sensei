@@ -38,6 +38,10 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		return 'sensei';
 	}
 
+	protected function get_text_domain() {
+		return 'woothemes-sensei';
+	}
+
 	protected function get_tracking_enabled() {
 		return Sensei()->settings->get( self::SENSEI_SETTING_NAME ) || false;
 	}
