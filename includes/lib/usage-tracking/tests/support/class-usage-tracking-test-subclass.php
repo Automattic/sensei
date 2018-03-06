@@ -18,6 +18,10 @@ class Usage_Tracking_Test_Subclass extends Sensei_Usage_Tracking_Base {
 		return 'testing';
 	}
 
+	public function get_text_domain() {
+		return 'text-domain';
+	}
+
 	public function get_tracking_enabled() {
 		return get_option( self::TRACKING_ENABLED_OPTION_NAME ) || false;
 	}
@@ -32,5 +36,32 @@ class Usage_Tracking_Test_Subclass extends Sensei_Usage_Tracking_Base {
 
 	public function opt_in_dialog_text() {
 		return 'Please enable Usage Tracking!';
+	}
+
+	public function do_track_plugin( $plugin_slug ) {
+		if ( in_array( $plugin_slug, array( 'hello', 'test', 'my-favorite-plugin' ), true ) ) {
+			return true;
+		}
+		return false;
+	}
+
+	protected function get_plugins() {
+		return array(
+			'Hello.php'                                 => array(
+				'Version' => '1.0.0',
+			),
+			'jetpack/jetpack.php'                       => array(
+				'Version' => '1.1.1',
+			),
+			'test-dev/test.php'                         => array(
+				'Version' => '1.1.1',
+			),
+			'test/test.php'                             => array(
+				'Version' => '1.0.0',
+			),
+			'my-favorite-plugin/my-favorite-plugin.php' => array(
+				'Version' => '1.0.0',
+			),
+		);
 	}
 }

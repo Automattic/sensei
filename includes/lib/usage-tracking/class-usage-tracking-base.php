@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * plugin.
  */
 abstract class Sensei_Usage_Tracking_Base {
+	const PLUGIN_PREFIX = 'plugin_';
+
 	/*
 	 * Instance variables.
 	 */
@@ -22,7 +24,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @var string
 	 **/
-	private $hide_tracking_opt_in_option_name;
+	protected $hide_tracking_opt_in_option_name;
 
 	/**
 	 * The name of the cron job action for regularly logging usage data.
@@ -50,11 +52,6 @@ abstract class Sensei_Usage_Tracking_Base {
 	 **/
 	private static $instances = array();
 
-
-	/*
-	 * Abstract methods.
-	 */
-
 	/**
 	 * Gets the singleton instance of this class. Subclasses should implement
 	 * this as follows:
@@ -64,8 +61,19 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *   return self::get_instance_for_subclass( get_class() );
 	 * }
 	 * ```
+	 *
+	 * This function cannot be abstract (because it is static) but it *must* be
+	 * implemented by subclasses.
 	 */
-	abstract public static function get_instance();
+	public static function get_instance() {
+		throw new Exception( 'Usage Tracking subclasses must implement get_instance. See class-usage-tracking-base.php' );
+	}
+
+
+	/*
+	 * Abstract methods.
+	 */
+
 
 	/**
 	 * Get prefix for actions and strings. Should be unique to this plugin.
@@ -73,6 +81,14 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @return string The prefix string
 	 **/
 	abstract protected function get_prefix();
+
+	/**
+	 * Get the text domain used by this plugin. This class will add some
+	 * strings to be translated.
+	 *
+	 * @return string The text domain string
+	 **/
+	abstract protected function get_text_domain();
 
 	/**
 	 * Determine whether usage tracking is enabled.
@@ -105,6 +121,16 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @return string the text to display in the opt-in dialog.
 	 **/
 	abstract protected function opt_in_dialog_text();
+
+	/**
+	 * Checks if we should send an activated plugin's installed version in the
+	 * `system_log` event.
+	 *
+	 * @param string $plugin_slug the plugin slug to check.
+	 *
+	 * @return bool true if we send the version, false if not.
+	 */
+	abstract protected function do_track_plugin( $plugin_slug );
 
 
 	/*
@@ -183,7 +209,7 @@ abstract class Sensei_Usage_Tracking_Base {
 		}
 
 		$pixel      = 'http://pixel.wp.com/t.gif';
-		$event_name = $this->get_prefix() . '_' . $event;
+		$event_name = $this->get_event_prefix() . '_' . $event;
 		$user       = wp_get_current_user();
 
 		if ( null === $event_timestamp ) {
@@ -191,7 +217,7 @@ abstract class Sensei_Usage_Tracking_Base {
 		}
 
 		$properties['admin_email'] = get_option( 'admin_email' );
-		$properties['_ut']         = $this->get_prefix() . ':site_url';
+		$properties['_ut']         = $this->get_event_prefix() . ':site_url';
 		// Use site URL as the userid to enable usage tracking at the site level.
 		// Note that we would likely want to use site URL + user ID for userid if we were
 		// to ever add event tracking at the user level.
@@ -213,7 +239,7 @@ abstract class Sensei_Usage_Tracking_Base {
 				'timeout'     => 1,
 				'redirection' => 2,
 				'httpversion' => '1.1',
-				'user-agent'  => $this->get_prefix() . '_usage_tracking',
+				'user-agent'  => $this->get_event_prefix() . '_usage_tracking',
 			)
 		);
 
@@ -276,13 +302,23 @@ abstract class Sensei_Usage_Tracking_Base {
 			return;
 		}
 
-		return self::send_event( 'stats_log', $usage_data );
+		self::send_event( 'system_log', $this->get_system_data() );
+		self::send_event( 'stats_log', $usage_data );
 	}
 
 
-	/*
+	/**
 	 * Internal methods.
 	 */
+
+	/**
+	 * Get the prefix for the event-related values. By default, this is the
+	 * same prefix used everywhere else, but plugins may override this if
+	 * needed.
+	 */
+	protected function get_event_prefix() {
+		return $this->get_prefix();
+	}
 
 	/**
 	 * Add two week schedule to use for cron job. Should not be called
@@ -294,16 +330,98 @@ abstract class Sensei_Usage_Tracking_Base {
 		$day_in_seconds = 86400;
 		$schedules[ $this->get_prefix() . '_usage_tracking_two_weeks' ] = array(
 			'interval' => 15 * $day_in_seconds,
-			'display'  => esc_html__( 'Every Two Weeks', 'a8c-usage-tracking' ),
+			'display'  => esc_html__( 'Every Two Weeks', $this->get_text_domain() ),
 		);
 
 		return $schedules;
 	}
 
 	/**
+	 * Collect system data to track.
+	 *
+	 * @return array
+	 */
+	public function get_system_data() {
+		global $wp_version;
+
+		/**
+		 * Current active theme.
+		 *
+		 * @var WP_Theme $theme
+		 */
+		$theme = wp_get_theme();
+
+		$system_data                         = array();
+		$system_data['wp_version']           = $wp_version;
+		$system_data['php_version']          = PHP_VERSION;
+		$system_data['locale']               = get_locale();
+		$system_data['multisite']            = is_multisite() ? 1 : 0;
+		$system_data['active_theme']         = $theme['Name'];
+		$system_data['active_theme_version'] = $theme['Version'];
+
+		$plugin_data = $this->get_plugin_data();
+		foreach ( $plugin_data as $plugin_name => $plugin_version ) {
+			if ( $this->do_track_plugin( $plugin_name ) ) {
+				$plugin_friendly_name       = preg_replace( '/[^a-z0-9]/', '_', $plugin_name );
+				$plugin_key                 = self::PLUGIN_PREFIX . $plugin_friendly_name;
+				$system_data[ $plugin_key ] = $plugin_version;
+			}
+		}
+
+		return $system_data;
+	}
+
+	/**
+	 * Gets a list of activated plugins.
+	 *
+	 * @return array List of plugins. Index is friendly name, value is version.
+	 */
+	protected function get_plugin_data() {
+		$plugins = array();
+		foreach ( $this->get_plugins() as $plugin_basename => $plugin ) {
+			$plugin_name             = $this->get_plugin_name( $plugin_basename );
+			$plugins[ $plugin_name ] = $plugin['Version'];
+		}
+		return $plugins;
+	}
+
+	/**
+	 * Partial wrapper for for `get_plugins()` function. Filters out non-active plugins.
+	 *
+	 * @return array Key is the plugin file path and the value is an array of the plugin data.
+	 */
+	protected function get_plugins() {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		$plugins = get_plugins();
+		foreach ( $plugins as $plugin_basename => $plugin_data ) {
+			if ( ! is_plugin_active( $plugin_basename ) ) {
+				unset( $plugins[ $plugin_basename ] );
+			}
+		}
+		return $plugins;
+	}
+
+	/**
+	 * Returns a friendly slug for a plugin.
+	 *
+	 * @param string $basename Plugin basename.
+	 *
+	 * @return string
+	 */
+	private function get_plugin_name( $basename ) {
+		$basename = strtolower( $basename );
+		if ( false === strpos( $basename, '/' ) ) {
+			return basename( $basename, '.php' );
+		}
+		return dirname( $basename );
+	}
+
+	/**
 	 * Hide the opt-in for enabling usage tracking.
 	 **/
-	private function hide_tracking_opt_in() {
+	protected function hide_tracking_opt_in() {
 		update_option( $this->hide_tracking_opt_in_option_name, true );
 	}
 
@@ -312,7 +430,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @return bool true if the opt-in is hidden, false otherwise.
 	 **/
-	private function is_opt_in_hidden() {
+	protected function is_opt_in_hidden() {
 		return (bool) get_option( $this->hide_tracking_opt_in_option_name );
 	}
 
@@ -322,11 +440,12 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @return array the html tags.
 	 **/
-	private function opt_in_dialog_text_allowed_html() {
+	protected function opt_in_dialog_text_allowed_html() {
 		return array(
 			'a'      => array(
-				'href'  => array(),
-				'title' => array(),
+				'href'   => array(),
+				'title'  => array(),
+				'target' => array(),
 			),
 			'em'     => array(),
 			'strong' => array(),
@@ -350,22 +469,22 @@ abstract class Sensei_Usage_Tracking_Base {
 				</p>
 				<p>
 					<button class="button button-primary" data-enable-tracking="yes">
-						<?php esc_html_e( 'Enable Usage Tracking', 'a8c-usage-tracking' ); ?>
+						<?php esc_html_e( 'Enable Usage Tracking', $this->get_text_domain() ); ?>
 					</button>
 					<button class="button" data-enable-tracking="no">
-						<?php esc_html_e( 'Disable Usage Tracking', 'a8c-usage-tracking' ); ?>
+						<?php esc_html_e( 'Disable Usage Tracking', $this->get_text_domain() ); ?>
 					</button>
 					<span id="progress" class="spinner alignleft"></span>
 				</p>
 			</div>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-enable-success" class="notice notice-success hidden">
-				<p><?php esc_html_e( 'Usage data enabled. Thank you!', 'a8c-usage-tracking' ); ?></p>
+				<p><?php esc_html_e( 'Usage data enabled. Thank you!', $this->get_text_domain() ); ?></p>
 			</div>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-disable-success" class="notice notice-success hidden">
-				<p><?php esc_html_e( 'Disabled usage tracking.', 'a8c-usage-tracking' ); ?></p>
+				<p><?php esc_html_e( 'Disabled usage tracking.', $this->get_text_domain() ); ?></p>
 			</div>
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-failure" class="notice notice-error hidden">
-				<p><?php esc_html_e( 'Something went wrong. Please try again later.', 'a8c-usage-tracking' ); ?></p>
+				<p><?php esc_html_e( 'Something went wrong. Please try again later.', $this->get_text_domain() ); ?></p>
 			</div>
 		<?php
 		}
