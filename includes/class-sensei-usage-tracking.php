@@ -78,12 +78,15 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 			return true;
 		}
 		$third_party_plugins = array(
-			'all-in-one-seo-pack',
+			'woocommerce',
+			'woothemes-updater',
+			'woocommerce-subscriptions',
+			'woocommerce-memberships',
+			'woocommerce-product-vendors',
 			'polylang',
 			'jetpack',
-			'wordpress-seo', // Yoast.
-			'sitepress-multilingual-cms', // WPML.
-			'bibblio-related-posts', // Related Posts for WordPress.
+			'sitepress-multilingual-cms',
+			'wp-quicklatex',
 		);
 		if ( in_array( $plugin_slug, $third_party_plugins, true ) ) {
 			return true;
