@@ -1,7 +1,7 @@
 <?php
 
-include dirname( __FILE__ ) . '/support/class-usage-tracking-test-subclass.php';
-include dirname( __FILE__ ) . '/support/wp-die-exception.php';
+require_once dirname( __FILE__ ) . '/support/class-usage-tracking-test-subclass.php';
+require_once dirname( __FILE__ ) . '/support/wp-die-exception.php';
 
 // Ensure instance is set up before PHPUnit starts removing hooks.
 Usage_Tracking_Test_Subclass::get_instance();
