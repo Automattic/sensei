@@ -124,8 +124,16 @@ class Sensei_Lesson {
 		// Add Meta Box for Lesson Preview
 		add_meta_box( 'lesson-preview', esc_html__( 'Lesson Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'default' );
 
-		// Add Meta Box for Lesson Information
-		add_meta_box( 'lesson-info', esc_html__( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
+		// Add Classic Editor Meta Box for Lesson Information
+		add_meta_box( 'lesson-info', esc_html__( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default', array(
+			'__back_compat_meta_box' => true,
+		) );
+
+		// Add Gutenberg-specific Meta Box for Lesson Information
+		add_filter( 'filter_gutenberg_meta_boxes', function( $boxes ) {
+			add_meta_box( 'lesson-info-gt', esc_html__( 'Lesson Information for Gutenberg', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content_gutenberg' ), $this->token, 'side', 'high' );
+			return $boxes;
+		} );
 
 		// Add Meta Box for Quiz Settings
 		add_meta_box( 'lesson-quiz-settings', esc_html__( 'Quiz Settings', 'woothemes-sensei' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
@@ -149,9 +157,11 @@ class Sensei_Lesson {
 	 * lesson_info_meta_box_content function.
 	 *
 	 * @access public
+	 *
+	 * @param bool $show_empty_video_embeds whether to show the video embed field if it is empty.
 	 * @return void
 	 */
-	public function lesson_info_meta_box_content () {
+	public function lesson_info_meta_box_content( $show_empty_video_embeds = true ) {
 		global $post;
 
 		$lesson_length      = get_post_meta( $post->ID, '_lesson_length', true );
@@ -174,16 +184,28 @@ class Sensei_Lesson {
 			} // End For Loop
 		$html .= '</select></p>' . "\n";
 
-		$html .= '<p><label for="lesson_video_embed">' . esc_html__( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
-		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">';
+		if ( $show_empty_video_embeds || $lesson_video_embed ) {
+			$html .= '<p><label for="lesson_video_embed">' . esc_html__( 'Video Embed Code', 'woothemes-sensei' ) . ':</label><br/>' . "\n";
+			$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">';
 
-		$html .= $lesson_video_embed . '</textarea></p>' . "\n";
+			$html .= $lesson_video_embed . '</textarea></p>' . "\n";
 
-		$html .= '<p>' .  esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
+			$html .= '<p>' .  esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
+		}
 
 		echo $html;
 
 	} // End lesson_info_meta_box_content()
+
+	/**
+	 * Lesson metabox for Gutenberg.
+	 *
+	 * @return void
+	 */
+	public function lesson_info_meta_box_content_gutenberg() {
+		// Use the same meta box but do not display the video embed unless it has content.
+		$this->lesson_info_meta_box_content( false );
+	}
 
 	/**
 	 * lesson_prerequisite_meta_box_content function.
