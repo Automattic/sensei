@@ -74,7 +74,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	}
 
 	protected function do_track_plugin( $plugin_slug ) {
-		if ( 1 === preg_match( '/^sensei/', $plugin_slug ) ) {
+		if ( 1 === preg_match( '/(^sensei|\-sensei$)/', $plugin_slug ) ) {
 			return true;
 		}
 		$third_party_plugins = array(
