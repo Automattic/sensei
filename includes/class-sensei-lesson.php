@@ -130,10 +130,7 @@ class Sensei_Lesson {
 		) );
 
 		// Add Gutenberg-specific Meta Box for Lesson Information
-		add_filter( 'filter_gutenberg_meta_boxes', function( $boxes ) {
-			add_meta_box( 'lesson-info-gt', esc_html__( 'Lesson Information for Gutenberg', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content_gutenberg' ), $this->token, 'side', 'high' );
-			return $boxes;
-		} );
+		add_filter( 'filter_gutenberg_meta_boxes', array( $this, 'add_gutenberg_meta_boxes' ) );
 
 		// Add Meta Box for Quiz Settings
 		add_meta_box( 'lesson-quiz-settings', esc_html__( 'Quiz Settings', 'woothemes-sensei' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
@@ -152,6 +149,18 @@ class Sensei_Lesson {
 
 	} // End meta_box_setup()
 
+
+	/**
+	 * Add metaboxes specific to Gutenberg. Used with the
+	 * filter_gutenberg_meta_boxes filter.
+	 *
+	 * @param array $boxes the existing metaboxes.
+	 * @return the existing metaboxes.
+	 */
+	public function add_gutenberg_meta_boxes( $boxes ) {
+		add_meta_box( 'lesson-info-gt', esc_html__( 'Lesson Information for Gutenberg', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content_gutenberg' ), $this->token, 'side', 'high' );
+		return $boxes;
+	}
 
 	/**
 	 * lesson_info_meta_box_content function.
@@ -173,10 +182,10 @@ class Sensei_Lesson {
 
 		$html = '';
 		// Lesson Length
-		$html .= '<p><label for="lesson_length">' . esc_html__( 'Lesson Length in minutes', 'woothemes-sensei' ) . ': </label>';
+		$html .= '<p><label for="lesson_length">' . esc_html__( 'Length (minutes)', 'woothemes-sensei' ) . ': </label>';
 		$html .= '<input type="number" id="lesson-length" name="lesson_length" class="small-text" value="' . esc_attr( $lesson_length ) . '" /></p>' . "\n";
 		// Lesson Complexity
-		$html .= '<p><label for="lesson_complexity">' . esc_html__( 'Lesson Complexity', 'woothemes-sensei' ) . ': </label>';
+		$html .= '<p><label for="lesson_complexity">' . esc_html__( 'Complexity', 'woothemes-sensei' ) . ': </label>';
 		$html .= '<select id="lesson-complexity-options" name="lesson_complexity" class="chosen_select lesson-complexity-select">';
 			$html .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
 			foreach ( $complexity_array as $key => $value ){
