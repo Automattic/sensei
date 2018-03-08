@@ -38,6 +38,10 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		return 'sensei';
 	}
 
+	protected function get_text_domain() {
+		return 'woothemes-sensei';
+	}
+
 	protected function get_tracking_enabled() {
 		return Sensei()->settings->get( self::SENSEI_SETTING_NAME ) || false;
 	}
@@ -67,6 +71,27 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 				'woothemes-sensei'
 			), self::SENSEI_TRACKING_INFO_URL
 		);
+	}
+
+	protected function do_track_plugin( $plugin_slug ) {
+		if ( 1 === preg_match( '/(^sensei|\-sensei$)/', $plugin_slug ) ) {
+			return true;
+		}
+		$third_party_plugins = array(
+			'woocommerce',
+			'woothemes-updater',
+			'woocommerce-subscriptions',
+			'woocommerce-memberships',
+			'woocommerce-product-vendors',
+			'polylang',
+			'jetpack',
+			'sitepress-multilingual-cms',
+			'wp-quicklatex',
+		);
+		if ( in_array( $plugin_slug, $third_party_plugins, true ) ) {
+			return true;
+		}
+		return false;
 	}
 
 
