@@ -35,3 +35,4 @@ test:
   override:
   #run tests with coverage
   - cd $SENSEI_CODING_STANDARD_DIR; php bin/phpcs.phar --report-full --report-summary --standard=Sensei $plugin_loc
+  - cd $plugin_loc; phpunit
