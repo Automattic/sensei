@@ -152,7 +152,7 @@ class Sensei_Core_Modules
 			remove_meta_box($this->taxonomy . 'div', 'lesson', 'side');
 
 			// Add custom meta box to limit module selection to one per lesson
-			add_meta_box($this->taxonomy . '_select', __('Lesson Module', 'woothemes-sensei'), array($this, 'lesson_module_metabox'), 'lesson', 'side', 'default');
+			add_meta_box($this->taxonomy . '_select', __('Module', 'woothemes-sensei'), array($this, 'lesson_module_metabox'), 'lesson', 'side', 'default');
 
 		}
 
