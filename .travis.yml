@@ -6,7 +6,10 @@ notifications:
     on_success: never
     on_failure: never
   slack:
-    secure: DOpF7wER9onzQOw2nAU0jgsmfHmS7UhbMnvvzcMYD+wzWTVT6ccTG9yc93jzUZFlUeVTuDAMa/ws04qwc/an4bIU5Baxg+Hajj9iMMO3Rwft4jgGEgqUgSGmxYt/QYyv5ujV/3H2Yb/SLqa9d9ryGob3Kh263WG6/7jTuIzz5T8=
+    rooms:
+      - secure: DOpF7wER9onzQOw2nAU0jgsmfHmS7UhbMnvvzcMYD+wzWTVT6ccTG9yc93jzUZFlUeVTuDAMa/ws04qwc/an4bIU5Baxg+Hajj9iMMO3Rwft4jgGEgqUgSGmxYt/QYyv5ujV/3H2Yb/SLqa9d9ryGob3Kh263WG6/7jTuIzz5T8=
+    on_success: change
+    on_failure: always
 branches:
   only:
   - master
