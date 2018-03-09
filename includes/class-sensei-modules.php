@@ -219,7 +219,7 @@ class Sensei_Core_Modules
 
 		// Build the HTML to output
 		if ( is_array( $modules ) && count( $modules ) > 0) {
-			$html .= '<select id="lesson-module-options" name="lesson_module" class="widefat">' . "\n";
+			$html .= '<select id="lesson-module-options" name="lesson_module" class="widefat" style="width: 100%">' . "\n";
 			$html .= '<option value="">' . __('None', 'woothemes-sensei') . '</option>';
 			foreach ($modules as $module) {
 				$html .= '<option value="' . esc_attr(absint($module->term_id)) . '"' . selected($module->term_id, $lesson_module, false) . '>' . esc_html( $module->name ) . '</option>' . "\n";
