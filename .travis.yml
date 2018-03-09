@@ -45,7 +45,7 @@ before_script:
     fi
   - |
     if [[ ! -z "$WP_VERSION" ]] ; then
-      bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+      bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
       composer global require "phpunit/phpunit=4.8.*|5.7.*"
     fi
   - |
