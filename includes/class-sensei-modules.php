@@ -525,6 +525,57 @@ class Sensei_Core_Modules
 	}
 
 	/**
+	 * Check if we should link to a module in the course outline.
+	 *
+	 * True if there is a module description or if the `taxonomy-module.php` template has been overridden.
+	 *
+	 * @since 1.10.0
+	 *
+	 * @param WP_Term $module
+	 * @param bool    $link_to_current Set to true to disable checks for currently displayed module. Default false.
+	 * @return bool
+	 */
+	public function do_link_to_module( WP_Term $module, $link_to_current = false ) {
+		// Perhaps don't link to module when on the module page already.
+		if ( ! $link_to_current && is_tax( 'module', $module->term_id ) ) {
+			$do_link_to_module = false;
+		} else {
+			$description = trim( $module->description );
+			if ( ! empty( $description ) ) {
+				$do_link_to_module = true;
+			} else {
+				$do_link_to_module = $this->is_module_tax_template_overriden();
+			}
+		}
+
+		/**
+		 * Determine if a particular module should be linked to.
+		 *
+		 * @since 1.10.0
+		 *
+		 * @param bool    $do_link_to_module  True if module should be linked to.
+		 * @param WP_Term $module             Module to check if it should be linked to.
+		 * @param bool    $link_to_current    Allow for linking to the currently displayed module.
+		 */
+		return apply_filters( 'sensei_do_link_to_module', $do_link_to_module, $module, $link_to_current );
+	} // End do_link_to_module()
+
+	/**
+	 * Checks if a module taxonomy template file has been overridden.
+	 *
+	 * @since 1.10.0
+	 *
+	 * @return bool True if taxonomy template has been overridden.
+	 */
+	public function is_module_tax_template_overriden() {
+		$file = 'taxonomy-module.php';
+		$find = array( $file, Sensei()->template_url . $file );
+		$template = locate_template( $find );
+
+		return (bool) $template;
+	} // End is_module_tax_template_overriden()
+
+	/**
 	 * Set lesson archive template to display on module taxonomy archive page
 	 *
 	 * @since 1.8.0
