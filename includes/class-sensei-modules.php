@@ -567,7 +567,7 @@ class Sensei_Core_Modules
 	 *
 	 * @return bool True if taxonomy template has been overridden.
 	 */
-	public function is_module_tax_template_overriden() {
+	protected function is_module_tax_template_overriden() {
 		$file = 'taxonomy-module.php';
 		$find = array( $file, Sensei()->template_url . $file );
 		$template = locate_template( $find );
