@@ -119,10 +119,10 @@ class Sensei_Lesson {
 		add_meta_box( 'lesson-course', esc_html__( 'Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
 
 		// Add Meta Box for Prerequisite Lesson
-		add_meta_box( 'lesson-prerequisite', esc_html__( 'Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-prerequisite', esc_html__( 'Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'low' );
 
 		// Add Meta Box for Lesson Preview
-		add_meta_box( 'lesson-preview', esc_html__( 'Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-preview', esc_html__( 'Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'low' );
 
 		// Add Meta Box for Lesson Information
 		add_meta_box( 'lesson-info', esc_html__( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
