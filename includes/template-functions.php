@@ -361,33 +361,42 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	 * Returns navigation links for the modules and lessons in a course.
 	 *
 	 * @since  1.0.9
-	 * @param  integer $lesson_id Lesson ID
-	 * @return array Multi-dimensional array of previous and next links
+	 * @param  integer $lesson_id Lesson ID.
+	 * @return array Multi-dimensional array of previous and next links.
 	 */
 	function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
 		// For modules, $lesson_id is the first lesson in the module.
-		$links = array();
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+		$links               = array();
+		$course_id           = Sensei()->lesson->get_course_id( $lesson_id );
 		$modules_and_lessons = sensei_get_modules_and_lessons( $course_id );
 
 		if ( count( $modules_and_lessons > 0 ) ) {
 			$found = false;
 
 			foreach ( $modules_and_lessons as $item ) {
-				if ( $found ) {
+				$item_is_linkable = true;
+
+				if ( $item instanceof WP_Term
+					 && 'module' === $item->taxonomy
+					 && ! Sensei()->modules->do_link_to_module( $item, true )
+				) {
+					$item_is_linkable = false;
+				}
+
+				if ( $found && $item_is_linkable ) {
 					$next = $item;
 					break;
 				}
 
-				if ( is_tax( Sensei()->modules->taxonomy ) ) {	// Module
-					if ( $item->term_id == get_queried_object()->term_id ) {
-						$found = true;
-					} else {
-						$previous = $item;
-					}
-				} else if ( $item->ID == $lesson_id ) {	// Lesson or quiz
+				if (
+					// Is it the current module?
+					( isset( $item->term_id ) && is_tax( Sensei()->modules->taxonomy, $item->term_id ) )
+
+					// Is it the current lesson?
+					|| ( isset( $item->ID ) && absint( $item->ID ) === absint( $lesson_id ) )
+				) {
 					$found = true;
-				} else {
+				} elseif ( $item_is_linkable ) {
 					$previous = $item;
 				}
 			}
@@ -395,15 +404,15 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 
 		if ( isset( $previous ) ) {
 			$links['previous'] = array(
-				'url' => sensei_get_navigation_url( $course_id, $previous ),
-				'name' => sensei_get_navigation_link_text( $previous )
+				'url'  => sensei_get_navigation_url( $course_id, $previous ),
+				'name' => sensei_get_navigation_link_text( $previous ),
 			);
 		}
 
 		if ( isset( $next ) ) {
 			$links['next'] = array(
-				'url' => sensei_get_navigation_url( $course_id, $next ),
-				'name' => sensei_get_navigation_link_text( $next )
+				'url'  => sensei_get_navigation_url( $course_id, $next ),
+				'name' => sensei_get_navigation_link_text( $next ),
 			);
 		}
 
@@ -688,12 +697,12 @@ function sensei_get_the_module_status(){
 
         $module_status = __('Completed', 'woothemes-sensei');
 		$status_class  = 'completed';
-		
+
         if ($module_progress < 100) {
 
             $module_status = __('In progress', 'woothemes-sensei');
 			$status_class  = 'in-progress';
-			
+
         }
 
     }
@@ -701,7 +710,7 @@ function sensei_get_the_module_status(){
 	if ( empty( $module_status ) ){
 		return '';
 	}
-	
+
     $module_status_html = '<p class="status module-status ' . $status_class . '">'
                             . $module_status
                             . '</p>';
