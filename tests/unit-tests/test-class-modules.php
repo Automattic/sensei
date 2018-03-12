@@ -15,9 +15,19 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
      * This function sets up the lessons, quizes and their questions. This function runs before
      * every single test in this class
      */
-    public function setup(){
+	public function setup() {
+		parent::setUp();
 
-    }// end function setup()
+		$this->factory = new Sensei_Factory();
+	}
+
+	/**
+	 * tearDown function
+	 */
+	public function tearDown() {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
 
     /**
      * Testing the quiz class to make sure it is loaded
@@ -28,6 +38,55 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
         $this->assertTrue( isset( Sensei()->modules ), 'Sensei Modules class is not loaded' );
 
     } // end testClassInstance
+
+	/**
+	 * @covers Sensei_Core_Modules::do_link_to_module
+	 */
+	public function testDoLinkToModuleEmptyDescription() {
+		$course_id = $this->factory->get_course_with_modules();
+		$modules = wp_get_post_terms( $course_id, 'module' );
+		$test_module = $modules[0];
+
+		// Module doesn't have description.
+		$this->assertFalse( Sensei()->modules->do_link_to_module( $test_module ) );
+	}
+
+	/**
+	 * @covers Sensei_Core_Modules::do_link_to_module
+	 */
+	public function testDoLinkToModuleWithDescription() {
+		$course_id = $this->factory->get_course_with_modules();
+		$modules = wp_get_post_terms( $course_id, 'module' );
+		$test_module = $modules[0];
+
+		wp_update_term( $test_module->term_id, $test_module->taxonomy, array( 'description' => 'A test description' ) );
+
+		$test_module = get_term( $test_module->term_id, 'module' );
+
+		// Module now has description.
+		$this->assertTrue( Sensei()->modules->do_link_to_module( $test_module ) );
+	}
+
+
+	/**
+	 * @covers Sensei_Core_Modules::do_link_to_module
+	 */
+	public function testDoLinkToModuleCurrentTax() {
+		global $wp_query;
+
+		$course_id = $this->factory->get_course_with_modules();
+		$modules = wp_get_post_terms( $course_id, 'module' );
+		$test_module = $modules[0];
+
+		wp_update_term( $test_module->term_id, $test_module->taxonomy, array( 'description' => 'A test description' ) );
+		$wp_query->is_tax = true;
+		$wp_query->queried_object = $test_module;
+
+		$test_module = get_term( $test_module->term_id, 'module' );
+
+		$this->assertTrue( Sensei()->modules->do_link_to_module( $test_module, true ) );
+		$this->assertFalse( Sensei()->modules->do_link_to_module( $test_module, false ) );
+	}
 
     /**
      * Testing Sensei_Core_Modules::get_term_author
