@@ -135,7 +135,10 @@ class Sensei_Template_Functions_Test extends WP_UnitTestCase {
 		$previous = $modules[0];
 		$current = get_post( $lessons[0] );
 		$next = get_post( $lessons[1] );
+
+		add_filter( 'sensei_do_link_to_module', '__return_true' );
 		$nav_links = sensei_get_prev_next_lessons( $current->ID );
+		remove_filter( 'sensei_do_link_to_module', '__return_true' );
 
 		// Previous - Module
 		$this->assertArrayHasKey( 'previous', $nav_links, 'Previous - Key' );
@@ -143,6 +146,30 @@ class Sensei_Template_Functions_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'name', $nav_links['previous'], 'Previous - Name key' );
 		$this->assertEquals( get_term_link( $previous, 'module' ) . '&course_id=' . $course_id, $nav_links['previous']['url'], 'Previous - URL' );
 		$this->assertEquals( $previous->name, $nav_links['previous']['name'], 'Previous - Name' );
+
+		// Next - Lesson
+		$this->assertArrayHasKey( 'next', $nav_links, 'Next - Key' );
+		$this->assertArrayHasKey( 'url', $nav_links['next'], 'Next - URL key' );
+		$this->assertArrayHasKey( 'name', $nav_links['next'], 'Next - Name key' );
+		$this->assertEquals( get_permalink( $next->ID ), $nav_links['next']['url'], 'Next - URL' );
+		$this->assertEquals( $next->post_title, $nav_links['next']['name'], 'Next - Name' );
+	}
+
+	/**
+	 * @covers sensei_get_prev_next_lessons
+	 */
+	public function testGetPrevNextLessonsNoModules() {
+		$course_id = $this->factory->get_course_with_modules();
+		$lessons = $this->factory->get_lessons();
+		$current = get_post( $lessons[0] );
+		$next = get_post( $lessons[1] );
+
+		add_filter( 'sensei_do_link_to_module', '__return_false' );
+		$nav_links = sensei_get_prev_next_lessons( $current->ID );
+		remove_filter( 'sensei_do_link_to_module', '__return_false' );
+
+		// Previous - Module
+		$this->assertArrayNotHasKey( 'previous', $nav_links, 'Previous - Key' );
 
 		// Next - Lesson
 		$this->assertArrayHasKey( 'next', $nav_links, 'Next - Key' );
