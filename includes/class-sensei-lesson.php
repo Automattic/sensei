@@ -115,14 +115,14 @@ class Sensei_Lesson {
 	 */
 	public function meta_box_setup () {
 
-		// Add Meta Box for Prerequisite Lesson
-		add_meta_box( 'lesson-prerequisite', esc_html__( 'Lesson Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
-
 		// Add Meta Box for Lesson Course
-		add_meta_box( 'lesson-course', esc_html__( 'Lesson Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-course', esc_html__( 'Course', 'woothemes-sensei' ), array( $this, 'lesson_course_meta_box_content' ), $this->token, 'side', 'default' );
+
+		// Add Meta Box for Prerequisite Lesson
+		add_meta_box( 'lesson-prerequisite', esc_html__( 'Prerequisite', 'woothemes-sensei' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'low' );
 
 		// Add Meta Box for Lesson Preview
-		add_meta_box( 'lesson-preview', esc_html__( 'Lesson Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'lesson-preview', esc_html__( 'Preview', 'woothemes-sensei' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'low' );
 
 		// Add Meta Box for Lesson Information
 		add_meta_box( 'lesson-info', esc_html__( 'Lesson Information', 'woothemes-sensei' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
@@ -208,7 +208,7 @@ class Sensei_Lesson {
 		$html = '';
 		$html .= wp_nonce_field( 'sensei-save-post-meta','woo_' . $this->token . '_nonce', true, false  );
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="chosen_select widefat">' . "\n";
+			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="chosen_select widefat" style="width: 100%">' . "\n";
 			$html .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
 				foreach ($posts_array as $post_item){
 					$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -577,8 +577,9 @@ class Sensei_Lesson {
 
 		// Select the course for the lesson
 		$drop_down_args = array(
-			'name'=>'lesson_course',
-			'id' => 'lesson-course-options'
+			'name'  => 'lesson_course',
+			'id'    => 'lesson-course-options',
+			'style' => 'width: 100%',
 		);
 
 		$courses = WooThemes_Sensei_Course::get_all_courses();
@@ -607,7 +608,7 @@ class Sensei_Lesson {
 						$html .= '<textarea rows="10" cols="40" id="course-content" name="course_content" value="" size="300" class="widefat"></textarea>';
 						// Course Prerequisite
 						$html .= '<label>' . esc_html__( 'Course Prerequisite' , 'woothemes-sensei' ) . '</label> ';
-						$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="chosen_select widefat">' . "\n";
+						$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="chosen_select widefat" style="width: 100%">' . "\n";
 							$html .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
 							foreach ($posts_array as $post_item){
 								$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
@@ -635,7 +636,7 @@ class Sensei_Lesson {
 													);
 							$products_array = get_posts( $product_args );
 							$html .= '<label>' . esc_html__( 'WooCommerce Product' , 'woothemes-sensei' ) . '</label> ';
-							$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
+							$html .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat" style="width: 100%">' . "\n";
 								$html .= '<option value="-">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
 								$prev_parent_id = 0;
 								foreach ($products_array as $products_item){
