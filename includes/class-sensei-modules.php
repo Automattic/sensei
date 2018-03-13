@@ -544,7 +544,7 @@ class Sensei_Core_Modules
 			if ( ! empty( $description ) ) {
 				$do_link_to_module = true;
 			} else {
-				$do_link_to_module = $this->is_module_tax_template_overriden();
+				$do_link_to_module = $this->is_module_tax_template_overridden();
 			}
 		}
 
@@ -567,13 +567,13 @@ class Sensei_Core_Modules
 	 *
 	 * @return bool True if taxonomy template has been overridden.
 	 */
-	protected function is_module_tax_template_overriden() {
+	protected function is_module_tax_template_overridden() {
 		$file = 'taxonomy-module.php';
 		$find = array( $file, Sensei()->template_url . $file );
 		$template = locate_template( $find );
 
 		return (bool) $template;
-	} // End is_module_tax_template_overriden()
+	} // End is_module_tax_template_overridden()
 
 	/**
 	 * Set lesson archive template to display on module taxonomy archive page
