@@ -19,7 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Data_Cleaner {
 
-	const CUSTOM_POST_TYPES = array(
+	/**
+	 * Custom post types to be deleted.
+	 *
+	 * @var $custom_post_types
+	 */
+	private static $custom_post_types = array(
 		'course',
 		'lesson',
 		'quiz',
@@ -43,7 +48,7 @@ class Sensei_Data_Cleaner {
 	 * @access private
 	 */
 	private static function cleanup_custom_post_types() {
-		foreach ( self::CUSTOM_POST_TYPES as $post_type ) {
+		foreach ( self::$custom_post_types as $post_type ) {
 			$items = get_posts( array(
 				'post_type'   => $post_type,
 				'post_status' => 'any',
