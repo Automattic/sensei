@@ -510,7 +510,11 @@ class Sensei_Core_Modules
 			if (has_term('', $this->taxonomy, $post->ID)) {
 				$module = $this->get_lesson_module($post->ID);
 				if( $module ) {
-					$html .= ' ' . $separator . ' <a href="' . esc_url($module->url) . '" title="' .  __('Back to the module', 'woothemes-sensei') . '">' . $module->name . '</a>';
+					if ( $this->do_link_to_module( $module ) ) {
+						$html .= ' ' . $separator . ' <a href="' . esc_url( $module->url ) . '" title="' . __( 'Back to the module', 'woothemes-sensei' ) . '">' . $module->name . '</a>';
+					} else {
+						$html .= ' ' . $separator . ' ' . $module->name;
+					}
 				}
 			}
 		}
