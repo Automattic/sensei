@@ -36,6 +36,15 @@ class Sensei_Data_Cleaner {
 		'sensei_message',
 	);
 
+	const TAXONOMIES = array(
+		'module',
+		'course-category',
+		'quiz-type',
+		'question-type',
+		'question-category',
+		'lesson-tag',
+	);
+
 	/**
 	 * Options to be deleted.
 	 *
@@ -65,6 +74,7 @@ class Sensei_Data_Cleaner {
 	public static function cleanup_all() {
 		self::cleanup_custom_post_types();
 		self::cleanup_pages();
+		self::cleanup_taxonomies();
 		self::cleanup_options();
 	}
 
@@ -117,6 +127,32 @@ class Sensei_Data_Cleaner {
 		$my_courses_page_id = $settings->get( 'my_course_page' );
 		if ( $my_courses_page_id ) {
 			wp_trash_post( $my_courses_page_id );
+		}
+	}
+
+	/**
+	 * Cleanup data for taxonomies.
+	 *
+	 * @access private
+	 */
+	private static function cleanup_taxonomies() {
+		global $wpdb;
+
+		foreach ( self::TAXONOMIES as $taxonomy ) {
+			$terms = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT term_id, term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = %s",
+					$taxonomy
+				)
+			);
+
+			// Delete all data for each term.
+			foreach ( $terms as $term ) {
+				$wpdb->delete( $wpdb->term_relationships, array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
+				$wpdb->delete( $wpdb->term_taxonomy, array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
+				$wpdb->delete( $wpdb->terms, array( 'term_id' => $term->term_id ) );
+				$wpdb->delete( $wpdb->termmeta, array( 'term_id' => $term->term_id ) );
+			}
 		}
 	}
 }
