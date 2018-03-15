@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @author 		Automattic
  * @package 	Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     1.10.0
  */
 ?>
 
@@ -59,6 +59,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 <header>
 
                     <h2>
+                        <?php
+                        $module = get_term( sensei_get_the_module_id(), Sensei()->modules->taxonomy );
+                        if ( $module && Sensei()->modules->do_link_to_module( $module, true ) ) { ?>
 
                         <a href="<?php sensei_the_module_permalink(); ?>" title="<?php sensei_the_module_title_attribute();?>">
 
@@ -66,6 +69,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                         </a>
 
+                        <?php } else { ?>
+
+                            <?php sensei_the_module_title(); ?>
+
+                        <?php } ?>
                     </h2>
 
                 </header>
