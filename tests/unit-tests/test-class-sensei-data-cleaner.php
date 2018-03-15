@@ -9,6 +9,11 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	private $course_ids;
 	private $lesson_ids;
 
+	// Pages.
+	private $regular_page_ids;
+	private $course_archive_page_id;
+	private $my_courses_page_id;
+
 	/**
 	 * Add some posts to run tests against. Any that are associated with Sensei
 	 * should be trashed on cleanup. The other should not be trashed.
@@ -44,12 +49,42 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Add some pages to run tests against. Any that are associated with Sensei
+	 * should be trashed on cleanup. The others should not be trashed.
+	 */
+	private function setupPages() {
+		// Create some regular pages.
+		$this->regular_page_ids = $this->factory->post->create_many( 2, array(
+			'post_type'  => 'page',
+			'post_title' => 'Normal page',
+		) );
+
+		// Create the Course Archive page.
+		$this->course_archive_page_id = $this->factory->post->create( array(
+			'post_type'  => 'page',
+			'post_title' => 'Course Archive Page',
+		) );
+		Sensei()->settings->set( 'course_page', $this->course_archive_page_id );
+
+		// Create the My Courses page.
+		$this->my_courses_page_id = $this->factory->post->create( array(
+			'post_type'  => 'page',
+			'post_title' => 'My Courses',
+		) );
+		Sensei()->settings->set( 'my_course_page', $this->my_courses_page_id );
+
+		// Refresh the Sensei settings in memory.
+		Sensei()->settings->get_settings();
+	}
+
+	/**
 	 * Set up for tests.
 	 */
 	public function setUp() {
 		parent::setUp();
 
 		$this->setupPosts();
+		$this->setupPages();
 	}
 
 	/**
@@ -108,5 +143,22 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		// Ensure the non-Sensei options are intact.
 		$this->assertEquals( 'Value 1', get_option( 'my_option_1' ) );
 		$this->assertEquals( 'Value 2', get_option( 'my_option_2' ) );
+	}
+
+	/**
+	 * Ensure the Sensei pages are trashed, and the other pages are not.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_pages
+	 */
+	public function testSenseiPagesTrashed() {
+		Sensei_Data_Cleaner::cleanup_all();
+
+		$this->assertEquals( 'trash', get_post_status( $this->course_archive_page_id ), 'Course Archive page should be trashed' );
+		$this->assertEquals( 'trash', get_post_status( $this->my_courses_page_id ), 'My Courses page should be trashed' );
+
+		foreach ( $this->regular_page_ids as $page_id ) {
+			$this->assertNotEquals( 'trash', get_post_status( $page_id ), 'Regular page should not be trashed' );
+		}
 	}
 }

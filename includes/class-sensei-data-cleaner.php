@@ -11,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once dirname( __FILE__ ) . '/class-sensei-settings-api.php';
+require_once dirname( __FILE__ ) . '/class-sensei-settings.php';
+
 /**
  * Methods for cleaning up all plugin data.
  *
@@ -61,6 +64,7 @@ class Sensei_Data_Cleaner {
 	 */
 	public static function cleanup_all() {
 		self::cleanup_custom_post_types();
+		self::cleanup_pages();
 		self::cleanup_options();
 	}
 
@@ -92,6 +96,27 @@ class Sensei_Data_Cleaner {
 	private static function cleanup_options() {
 		foreach ( self::$options as $option ) {
 			delete_option( $option );
+		}
+	}
+
+	/**
+	 * Cleanup data for pages.
+	 *
+	 * @access private
+	 */
+	private static function cleanup_pages() {
+		$settings = new Sensei_Settings();
+
+		// Trash the Course Archive page.
+		$course_archive_page_id = $settings->get( 'course_page' );
+		if ( $course_archive_page_id ) {
+			wp_trash_post( $course_archive_page_id );
+		}
+
+		// Trash the My Courses page.
+		$my_courses_page_id = $settings->get( 'my_course_page' );
+		if ( $my_courses_page_id ) {
+			wp_trash_post( $my_courses_page_id );
 		}
 	}
 }
