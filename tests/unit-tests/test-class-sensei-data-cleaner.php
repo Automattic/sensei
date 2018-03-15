@@ -21,7 +21,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 	/**
 	 * Add some posts to run tests against. Any that are associated with Sensei
-	 * should be trashed on cleanup. The other should not be trashed.
+	 * should be trashed on cleanup. The others should not be trashed.
 	 */
 	private function setupPosts() {
 		// Create some regular posts.
@@ -53,6 +53,10 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		) );
 	}
 
+	/**
+	 * Add some taxonomies to run tests against. Any that are associated with
+	 * Sensei should be deleted on cleanup. The others should not be deleted.
+	 */
 	private function setupTaxonomyTerms() {
 		// Setup some modules.
 		$this->modules = array();
@@ -342,7 +346,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		);
 	}
 
-	// Helpers
+	/* Helper functions. */
 
 	private function getPostIdsWithTerm( $term_id, $taxonomy ) {
 		return get_posts( array(
