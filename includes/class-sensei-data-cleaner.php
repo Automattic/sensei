@@ -36,7 +36,12 @@ class Sensei_Data_Cleaner {
 		'sensei_message',
 	);
 
-	const TAXONOMIES = array(
+	/**
+	 * Taxonomies to be deleted.
+	 *
+	 * @var $taxonomies
+	 */
+	private static $taxonomies = array(
 		'module',
 		'course-category',
 		'quiz-type',
@@ -138,7 +143,7 @@ class Sensei_Data_Cleaner {
 	private static function cleanup_taxonomies() {
 		global $wpdb;
 
-		foreach ( self::TAXONOMIES as $taxonomy ) {
+		foreach ( self::$taxonomies as $taxonomy ) {
 			$terms = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT term_id, term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = %s",
