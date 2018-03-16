@@ -55,6 +55,36 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		return array_merge( $drafts, $published );
 	}
 
+	// Enroll users in some courses.
+	private function enrollUsers() {
+		// Create some users.
+		$users = $this->factory->user->create_many( 5, array( 'role' => 'subscriber' ) );
+
+		// Enroll users in some courses.
+		foreach( $users as $user ) {
+			$this->factory->comment->create( array(
+				'user_id' => $user,
+				'comment_post_ID' => $this->course_ids[0],
+				'comment_type' => 'sensei_course_status',
+				'comment_approved' => 'in-progress',
+			) );
+
+			$this->factory->comment->create( array(
+				'user_id' => $user,
+				'comment_post_ID' => $this->course_ids[1],
+				'comment_type' => 'sensei_course_status',
+				'comment_approved' => 'complete',
+			) );
+
+			$this->factory->comment->create( array(
+				'user_id' => $user,
+				'comment_post_ID' => $this->course_ids[2],
+				'comment_type' => 'sensei_course_status',
+				'comment_approved' => 'in-progress',
+			) );
+		}
+	}
+
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */
@@ -473,6 +503,19 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'teachers', $usage_data, 'Key' );
 		$this->assertEquals( $teachers, $usage_data['teachers'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_course_completed_count
+	 */
+	public function testGetCourseCompletedCount() {
+		$this->enrollUsers();
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_completed', $usage_data, 'Key' );
+		$this->assertEquals( 5, $usage_data['course_completed'], 'Count' );
 	}
 
 	/**
