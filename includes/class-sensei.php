@@ -1052,9 +1052,9 @@ class Sensei_Main {
 	public function load_modules_class() {
 		global $sensei_modules;
 
-		if ( ! class_exists( 'Sensei_Modules' )
-			&&  'Sensei_Modules' !== get_class( $sensei_modules ) ) {
+		$class = is_null( $sensei_modules ) ? get_class() : get_class( $sensei_modules );
 
+		if ( ! class_exists( 'Sensei_Modules' ) && 'Sensei_Modules' !== $class ) {
 			// Load the modules class.
 			require_once( 'class-sensei-modules.php' );
 			$this->modules = new Sensei_Core_Modules( $this->main_plugin_file_name );
