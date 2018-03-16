@@ -24,6 +24,7 @@ class Sensei_Usage_Tracking_Data {
 		$question_type_count = self::get_question_type_count();
 		$usage_data = array(
 			'courses' => wp_count_posts( 'course' )->publish,
+			'course_completed' => self::get_course_completed_count(),
 			'course_videos' => self::get_course_videos_count(),
 			'course_no_notifications' => self::get_course_no_notifications_count(),
 			'course_prereqs' => self::get_course_prereqs_count(),
@@ -47,6 +48,22 @@ class Sensei_Usage_Tracking_Data {
 		);
 
 		return array_merge( $question_type_count, $usage_data );
+	}
+
+	/**
+	 * Get the total number of completed courses across all learners.
+	 *
+	 * @since 1.10.0
+	 *
+	 * @return int Number of completed courses.
+	 **/
+	private static function get_course_completed_count() {
+		$course_args = array(
+			'type'   => 'sensei_course_status',
+			'status' => 'complete',
+		);
+
+		return Sensei_Utils::sensei_check_for_activity( $course_args );
 	}
 
 	/**
