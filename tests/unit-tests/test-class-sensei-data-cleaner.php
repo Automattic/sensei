@@ -83,4 +83,30 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			$this->assertNotEquals( 'trash', $post->post_status, 'Non-Sensei post should not be trashed' );
 		}
 	}
+
+	/**
+	 * Ensure the Sensei options are deleted and the others aren't.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_options
+	 */
+	public function testSenseiOptionsDeleted() {
+		// Set a couple Sensei options.
+		update_option( 'sensei_usage_tracking_opt_in_hide', '1' );
+		update_option( 'woothemes-sensei-version', '1.10.0' );
+
+		// Set a couple other options.
+		update_option( 'my_option_1', 'Value 1' );
+		update_option( 'my_option_2', 'Value 2' );
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		// Ensure the Sensei options are deleted.
+		$this->assertFalse( get_option( 'sensei_usage_tracking_opt_in_hide' ) );
+		$this->assertFalse( get_option( 'woothemes-sensei-version' ) );
+
+		// Ensure the non-Sensei options are intact.
+		$this->assertEquals( 'Value 1', get_option( 'my_option_1' ) );
+		$this->assertEquals( 'Value 2', get_option( 'my_option_2' ) );
+	}
 }
