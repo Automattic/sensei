@@ -1353,7 +1353,7 @@ class Sensei_Core_Modules
 		wp_enqueue_script( $this->taxonomy . '-admin', esc_url( $this->assets_url ) . 'js/modules-admin' . $suffix . '.js', array( 'jquery', 'sensei-chosen', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'sensei-core-select2' ), Sensei()->version, true );
 
 		// WooCommerce 2.6.x Select2 compatibility
-		if ( version_compare( WC_VERSION, '3.0', '<' ) ) {
+		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '3.0', '<' ) ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_dequeue_scripts' ), 11 );
 		}
 
