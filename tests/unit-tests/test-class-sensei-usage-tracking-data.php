@@ -5,10 +5,12 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	private $modules;
 
 	private function setupCoursesAndModules() {
-		$this->course_ids = $this->factory->post->create_many( 3, array(
-			'post_status' => 'publish',
-			'post_type' => 'course',
-		) );
+		$this->course_ids = $this->factory->post->create_many(
+			3, array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
 
 		$this->modules = array();
 
@@ -17,21 +19,24 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		}
 
 		// Add modules to courses.
-		wp_set_object_terms( $this->course_ids[0],
+		wp_set_object_terms(
+			$this->course_ids[0],
 			array(
 				$this->modules[0]['term_id'],
 				$this->modules[1]['term_id'],
 			),
 			'module'
 		);
-		wp_set_object_terms( $this->course_ids[1],
+		wp_set_object_terms(
+			$this->course_ids[1],
 			array(
 				$this->modules[1]['term_id'],
 				$this->modules[2]['term_id'],
 			),
 			'module'
 		);
-		wp_set_object_terms( $this->course_ids[2],
+		wp_set_object_terms(
+			$this->course_ids[2],
 			array(
 				$this->modules[0]['term_id'],
 				$this->modules[1]['term_id'],
@@ -43,45 +48,57 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	// Create some published and unpublished lessons.
 	private function createLessons() {
-		$drafts = $this->factory->post->create_many( 2, array(
-			'post_status' => 'draft',
-			'post_type' => 'lesson',
-		) );
-		$published = $this->factory->post->create_many( 3, array(
-			'post_status' => 'publish',
-			'post_type' => 'lesson',
-		) );
+		$drafts    = $this->factory->post->create_many(
+			2, array(
+				'post_status' => 'draft',
+				'post_type'   => 'lesson',
+			)
+		);
+		$published = $this->factory->post->create_many(
+			3, array(
+				'post_status' => 'publish',
+				'post_type'   => 'lesson',
+			)
+		);
 
 		return array_merge( $drafts, $published );
 	}
 
-	// Enroll users in some courses.
+	/**
+	 * Enroll users in some courses.
+	 */
 	private function enrollUsers() {
 		// Create some users.
 		$users = $this->factory->user->create_many( 5, array( 'role' => 'subscriber' ) );
 
 		// Enroll users in some courses.
-		foreach( $users as $user ) {
-			$this->factory->comment->create( array(
-				'user_id' => $user,
-				'comment_post_ID' => $this->course_ids[0],
-				'comment_type' => 'sensei_course_status',
-				'comment_approved' => 'in-progress',
-			) );
+		foreach ( $users as $user ) {
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $user,
+					'comment_post_ID'  => $this->course_ids[0],
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'in-progress',
+				)
+			);
 
-			$this->factory->comment->create( array(
-				'user_id' => $user,
-				'comment_post_ID' => $this->course_ids[1],
-				'comment_type' => 'sensei_course_status',
-				'comment_approved' => 'complete',
-			) );
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $user,
+					'comment_post_ID'  => $this->course_ids[1],
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'complete',
+				)
+			);
 
-			$this->factory->comment->create( array(
-				'user_id' => $user,
-				'comment_post_ID' => $this->course_ids[2],
-				'comment_type' => 'sensei_course_status',
-				'comment_approved' => 'in-progress',
-			) );
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $user,
+					'comment_post_ID'  => $this->course_ids[2],
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'in-progress',
+				)
+			);
 		}
 	}
 
@@ -92,14 +109,18 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$published = 4;
 
 		// Create some published and unpublished courses.
-		$this->factory->post->create_many( 2, array(
-			'post_status' => 'draft',
-			'post_type' => 'course',
-		) );
-		$this->factory->post->create_many( $published, array(
-			'post_status' => 'publish',
-			'post_type' => 'course',
-		) );
+		$this->factory->post->create_many(
+			2, array(
+				'post_status' => 'draft',
+				'post_type'   => 'course',
+			)
+		);
+		$this->factory->post->create_many(
+			$published, array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
@@ -114,21 +135,25 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetUsageDataLearners() {
 		// Create some users.
 		$subscribers = $this->factory->user->create_many( 8, array( 'role' => 'subscriber' ) );
-		$editors = $this->factory->user->create_many( 3, array( 'role' => 'editor' ) );
+		$editors     = $this->factory->user->create_many( 3, array( 'role' => 'editor' ) );
 
 		// Enroll some users in multiple courses.
-		foreach( $subscribers as $subscriber ) {
-			$this->factory->comment->create( array(
-				'user_id' => $subscriber,
-				'comment_post_ID' => $this->course_ids[0],
-				'comment_type' => 'sensei_course_status',
-			) );
+		foreach ( $subscribers as $subscriber ) {
+			$this->factory->comment->create(
+				array(
+					'user_id'         => $subscriber,
+					'comment_post_ID' => $this->course_ids[0],
+					'comment_type'    => 'sensei_course_status',
+				)
+			);
 
-			$this->factory->comment->create( array(
-				'user_id' => $subscriber,
-				'comment_post_ID' => $this->course_ids[1],
-				'comment_type' => 'sensei_course_status',
-			) );
+			$this->factory->comment->create(
+				array(
+					'user_id'         => $subscriber,
+					'comment_post_ID' => $this->course_ids[1],
+					'comment_type'    => 'sensei_course_status',
+				)
+			);
 		}
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
@@ -158,9 +183,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$lessons = $this->createLessons();
 
 		// Make some lessons prerequisites of others.
-		add_post_meta( $lessons[1], '_lesson_prerequisite', $lessons[0] );	// Draft
-		add_post_meta( $lessons[2], '_lesson_prerequisite', $lessons[1] );	// Published
-		add_post_meta( $lessons[3], '_lesson_prerequisite', $lessons[2] );	// Published
+		add_post_meta( $lessons[1], '_lesson_prerequisite', $lessons[0] );  // Draft
+		add_post_meta( $lessons[2], '_lesson_prerequisite', $lessons[1] );  // Published
+		add_post_meta( $lessons[3], '_lesson_prerequisite', $lessons[2] );  // Published
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
@@ -213,12 +238,12 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 		/**
-	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
-	 * @covers Sensei_Usage_Tracking_Data::get_lesson_module_count
-	 */
+		 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+		 * @covers Sensei_Usage_Tracking_Data::get_lesson_module_count
+		 */
 	public function testGetLessonModuleCount() {
 		$lessons = $this->createLessons();
-		$terms = $this->factory->term->create_many( 3, array( 'taxonomy' => 'module' ) );
+		$terms   = $this->factory->term->create_many( 3, array( 'taxonomy' => 'module' ) );
 
 		// Assign modules to some lessons.
 		wp_set_object_terms( $lessons[0], $terms[0], 'module', false ); // Draft
@@ -251,14 +276,18 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$published = 10;
 
 		// Create some published and unpublished messages.
-		$this->factory->post->create_many( 5, array(
-			'post_status' => 'pending',
-			'post_type' => 'sensei_message',
-		) );
-		$this->factory->post->create_many( $published, array(
-			'post_status' => 'publish',
-			'post_type' => 'sensei_message',
-		) );
+		$this->factory->post->create_many(
+			5, array(
+				'post_status' => 'pending',
+				'post_type'   => 'sensei_message',
+			)
+		);
+		$this->factory->post->create_many(
+			$published, array(
+				'post_status' => 'publish',
+				'post_type'   => 'sensei_message',
+			)
+		);
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
@@ -309,14 +338,18 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$published = 15;
 
 		// Create some published and unpublished questions.
-		$this->factory->post->create_many( 12, array(
-			'post_status' => 'private',
-			'post_type' => 'question',
-		) );
-		$this->factory->post->create_many( $published, array(
-			'post_status' => 'publish',
-			'post_type' => 'question',
-		) );
+		$this->factory->post->create_many(
+			12, array(
+				'post_status' => 'private',
+				'post_type'   => 'question',
+			)
+		);
+		$this->factory->post->create_many(
+			$published, array(
+				'post_status' => 'publish',
+				'post_type'   => 'question',
+			)
+		);
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
@@ -331,10 +364,12 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetUsageDataQuestionTypes() {
 		// Create some questions.
-		$questions = $this->factory->post->create_many( 10, array(
-			'post_type' => 'question',
-			'post_status' => 'publish',
-		) );
+		$questions = $this->factory->post->create_many(
+			10, array(
+				'post_type'   => 'question',
+				'post_status' => 'publish',
+			)
+		);
 
 		// Set the type of each question.
 		wp_set_post_terms( $questions[0], array( 'multiple-choice' ), 'question-type' );
@@ -371,10 +406,12 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetUsageDataQuestionTypesInvalidType() {
 		// Create a question.
-		$questions = $this->factory->post->create( array(
-			'post_type' => 'question',
-			'post_status' => 'publish',
-		) );
+		$questions = $this->factory->post->create(
+			array(
+				'post_type'   => 'question',
+				'post_status' => 'publish',
+			)
+		);
 
 		// Set the question to use an invalid type.
 		wp_set_post_terms( $questions[0], array( 'automattic' ), 'question-type' );
@@ -390,15 +427,19 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetUsageDataQuestionMediaCount() {
 		// Create some questions.
-		$questions = $this->factory->post->create_many( 5, array(
-			'post_type' => 'question',
-			'post_status' => 'publish',
-		) );
+		$questions = $this->factory->post->create_many(
+			5, array(
+				'post_type'   => 'question',
+				'post_status' => 'publish',
+			)
+		);
 		// Create some media.
-		$media = $this->factory->attachment->create_many( 3, array(
-			'post_type' => 'question',
-			'post_status' => 'publish',
-		) );
+		$media = $this->factory->attachment->create_many(
+			3, array(
+				'post_type'   => 'question',
+				'post_status' => 'publish',
+			)
+		);
 
 		// Attach media to some questions.
 		add_post_meta( $questions[0], '_question_media', $media[0] );
@@ -417,10 +458,12 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetUsageDataQuestionMediaCountNoMedia() {
 		// Create some questions, but don't attach any media.
-		$questions = $this->factory->post->create_many( 5, array(
-			'post_type' => 'question',
-			'post_status' => 'publish',
-		) );
+		$questions = $this->factory->post->create_many(
+			5, array(
+				'post_type'   => 'question',
+				'post_status' => 'publish',
+			)
+		);
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
@@ -434,10 +477,12 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetRandomOrderCount() {
 		// Create some questions.
-		$questions = $this->factory->post->create_many( 3, array(
-			'post_type' => 'question',
-			'post_status' => 'publish',
-		) );
+		$questions = $this->factory->post->create_many(
+			3, array(
+				'post_type'   => 'question',
+				'post_status' => 'publish',
+			)
+		);
 
 		// Set the type of each question to be multiple choice.
 		wp_set_post_terms( $questions[0], array( 'multiple-choice' ), 'question-type' );
@@ -461,10 +506,12 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetRandomOrderCountMultipleChoiceOnly() {
 		// Create some questions.
-		$questions = $this->factory->post->create_many( 6, array(
-			'post_type' => 'question',
-			'post_status' => 'publish',
-		) );
+		$questions = $this->factory->post->create_many(
+			6, array(
+				'post_type'   => 'question',
+				'post_status' => 'publish',
+			)
+		);
 
 		// Create a question of each type.
 		wp_set_post_terms( $questions[0], array( 'multiple-choice' ), 'question-type' );
@@ -506,6 +553,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Count of active courses.
+	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_course_active_count
 	 */
@@ -519,6 +568,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Count of completed courses.
+	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_course_completed_count
 	 */
@@ -538,12 +589,16 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetCoursesWithVideoCount() {
 		$with_video = 4;
 
-		$course_ids_without_video = $this->factory->post->create_many( 3, array(
-			'post_type' => 'course',
-		) );
-		$course_ids_with_video = $this->factory->post->create_many( $with_video, array(
-			'post_type' => 'course',
-		) );
+		$course_ids_without_video = $this->factory->post->create_many(
+			3, array(
+				'post_type' => 'course',
+			)
+		);
+		$course_ids_with_video    = $this->factory->post->create_many(
+			$with_video, array(
+				'post_type' => 'course',
+			)
+		);
 
 		// Set video on courses
 		update_post_meta( $course_ids_with_video[0], '_course_video_embed', '<iframe src="video.com"></iframe>' );
@@ -569,12 +624,16 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetCoursesWithDisabledNotificationCount() {
 		$with_disabled_notification = 2;
 
-		$course_ids_without_disabled = $this->factory->post->create_many( 3, array(
-			'post_type' => 'course',
-		) );
-		$course_ids_with_disabled = $this->factory->post->create_many( $with_disabled_notification, array(
-			'post_type' => 'course',
-		) );
+		$course_ids_without_disabled = $this->factory->post->create_many(
+			3, array(
+				'post_type' => 'course',
+			)
+		);
+		$course_ids_with_disabled    = $this->factory->post->create_many(
+			$with_disabled_notification, array(
+				'post_type' => 'course',
+			)
+		);
 
 		// Disable notifications
 		foreach ( $course_ids_with_disabled as $course_id ) {
@@ -594,12 +653,16 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetCoursesWithPrerequisiteCount() {
 		$with_prereq = 2;
 
-		$course_ids_without_prereq = $this->factory->post->create_many( 3, array(
-			'post_type' => 'course',
-		) );
-		$course_ids_with_prereq = $this->factory->post->create_many( $with_prereq, array(
-			'post_type' => 'course',
-		) );
+		$course_ids_without_prereq = $this->factory->post->create_many(
+			3, array(
+				'post_type' => 'course',
+			)
+		);
+		$course_ids_with_prereq    = $this->factory->post->create_many(
+			$with_prereq, array(
+				'post_type' => 'course',
+			)
+		);
 
 		// Set prerequisite on courses
 		foreach ( $course_ids_with_prereq as $course_id ) {
@@ -622,12 +685,16 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetFeaturedCoursesCount() {
 		$featured = 2;
 
-		$non_featured_course_ids = $this->factory->post->create_many( 3, array(
-			'post_type' => 'course',
-		) );
-		$featured_course_ids = $this->factory->post->create_many( $featured, array(
-			'post_type' => 'course',
-		) );
+		$non_featured_course_ids = $this->factory->post->create_many(
+			3, array(
+				'post_type' => 'course',
+			)
+		);
+		$featured_course_ids     = $this->factory->post->create_many(
+			$featured, array(
+				'post_type' => 'course',
+			)
+		);
 
 		// Set courses to featured
 		foreach ( $featured_course_ids as $course_id ) {
@@ -648,12 +715,16 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$lessons_with_length = 3;
 
 		// Create some lessons
-		$lesson_without_length_ids = $this->factory->post->create_many( 2, array(
-			'post_type' => 'lesson',
-		) );
-		$lesson_with_length_ids = $this->factory->post->create_many( $lessons_with_length, array(
-			'post_type' => 'lesson',
-		) );
+		$lesson_without_length_ids = $this->factory->post->create_many(
+			2, array(
+				'post_type' => 'lesson',
+			)
+		);
+		$lesson_with_length_ids    = $this->factory->post->create_many(
+			$lessons_with_length, array(
+				'post_type' => 'lesson',
+			)
+		);
 
 		// Set lesson length
 		foreach ( $lesson_with_length_ids as $lesson_id ) {
@@ -675,12 +746,16 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$lessons_with_complexity = 3;
 
 		// Create some lessons
-		$lesson_without_complexity_ids = $this->factory->post->create_many( 2, array(
-			'post_type' => 'lesson',
-		) );
-		$lesson_with_complexity_ids = $this->factory->post->create_many( $lessons_with_complexity, array(
-			'post_type' => 'lesson',
-		) );
+		$lesson_without_complexity_ids = $this->factory->post->create_many(
+			2, array(
+				'post_type' => 'lesson',
+			)
+		);
+		$lesson_with_complexity_ids    = $this->factory->post->create_many(
+			$lessons_with_complexity, array(
+				'post_type' => 'lesson',
+			)
+		);
 
 		// Set lesson complexity
 		foreach ( $lesson_with_complexity_ids as $lesson_id ) {
@@ -702,12 +777,16 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$lessons_with_video = 4;
 
 		// Create some lessons
-		$lesson_without_video_ids = $this->factory->post->create_many( 4, array(
-			'post_type' => 'lesson',
-		) );
-		$lesson_with_video_ids = $this->factory->post->create_many( $lessons_with_video, array(
-			'post_type' => 'lesson',
-		) );
+		$lesson_without_video_ids = $this->factory->post->create_many(
+			4, array(
+				'post_type' => 'lesson',
+			)
+		);
+		$lesson_with_video_ids    = $this->factory->post->create_many(
+			$lessons_with_video, array(
+				'post_type' => 'lesson',
+			)
+		);
 
 		// Set lesson videos
 		update_post_meta( $lesson_with_video_ids[0], '_lesson_video_embed', '<iframe src="http://example.com/video"></iframe>' );

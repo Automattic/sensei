@@ -1,7 +1,10 @@
 <?php
 /**
  * Usage tracking data
+ *
+ * @package Usage Tracking
  **/
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -22,30 +25,30 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	public static function get_usage_data() {
 		$question_type_count = self::get_question_type_count();
-		$usage_data = array(
-			'courses' => wp_count_posts( 'course' )->publish,
-			'course_active' => self::get_course_active_count(),
-			'course_completed' => self::get_course_completed_count(),
-			'course_videos' => self::get_course_videos_count(),
+		$usage_data          = array(
+			'courses'                 => wp_count_posts( 'course' )->publish,
+			'course_active'           => self::get_course_active_count(),
+			'course_completed'        => self::get_course_completed_count(),
+			'course_videos'           => self::get_course_videos_count(),
 			'course_no_notifications' => self::get_course_no_notifications_count(),
-			'course_prereqs' => self::get_course_prereqs_count(),
-			'course_featured' => self::get_course_featured_count(),
-			'learners' => self::get_learner_count(),
-			'lessons' => wp_count_posts( 'lesson' )->publish,
-			'lesson_modules' => self::get_lesson_module_count(),
-			'lesson_prereqs' => self::get_lesson_prerequisite_count(),
-			'lesson_previews' => self::get_lesson_preview_count(),
-			'lesson_length' => self::get_lesson_has_length_count(),
-			'lesson_complexity' => self::get_lesson_with_complexity_count(),
-			'lesson_videos' => self::get_lesson_with_video_count(),
-			'messages' => wp_count_posts( 'sensei_message' )->publish,
-			'modules' => wp_count_terms( 'module' ),
-			'modules_max' => self::get_max_module_count(),
-			'modules_min' => self::get_min_module_count(),
-			'questions' => wp_count_posts( 'question' )->publish,
-			'question_media' => self::get_question_media_count(),
-			'question_random_order' => self::get_question_random_order_count(),
-			'teachers' => self::get_teacher_count(),
+			'course_prereqs'          => self::get_course_prereqs_count(),
+			'course_featured'         => self::get_course_featured_count(),
+			'learners'                => self::get_learner_count(),
+			'lessons'                 => wp_count_posts( 'lesson' )->publish,
+			'lesson_modules'          => self::get_lesson_module_count(),
+			'lesson_prereqs'          => self::get_lesson_prerequisite_count(),
+			'lesson_previews'         => self::get_lesson_preview_count(),
+			'lesson_length'           => self::get_lesson_has_length_count(),
+			'lesson_complexity'       => self::get_lesson_with_complexity_count(),
+			'lesson_videos'           => self::get_lesson_with_video_count(),
+			'messages'                => wp_count_posts( 'sensei_message' )->publish,
+			'modules'                 => wp_count_terms( 'module' ),
+			'modules_max'             => self::get_max_module_count(),
+			'modules_min'             => self::get_min_module_count(),
+			'questions'               => wp_count_posts( 'question' )->publish,
+			'question_media'          => self::get_question_media_count(),
+			'question_random_order'   => self::get_question_random_order_count(),
+			'teachers'                => self::get_teacher_count(),
 		);
 
 		return array_merge( $question_type_count, $usage_data );
@@ -59,7 +62,7 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of active courses.
 	 **/
 	private static function get_course_active_count() {
-		$course_args = array(
+		$course_args     = array(
 			'type'   => 'sensei_course_status',
 			'status' => 'any',
 		);
@@ -92,18 +95,20 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of courses.
 	 */
 	private static function get_course_videos_count() {
-		// Match video strings with at least one non-space character
-		$query = new WP_Query( array(
-			'post_type' => 'course',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_course_video_embed',
-					'value' => '[^[:space:]]',
-					'compare' => 'REGEXP',
-				)
+		// Match video strings with at least one non-space character.
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'course',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'     => '_course_video_embed',
+						'value'   => '[^[:space:]]',
+						'compare' => 'REGEXP',
+					),
+				),
 			)
-		) );
+		);
 
 		return $query->found_posts;
 	}
@@ -116,16 +121,18 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of courses.
 	 */
 	private static function get_course_no_notifications_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'course',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => 'disable_notification',
-					'value' => true,
-				)
-			),
-		) );
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'course',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'   => 'disable_notification',
+						'value' => true,
+					),
+				),
+			)
+		);
 
 		return $query->found_posts;
 	}
@@ -138,22 +145,24 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of courses.
 	 */
 	private static function get_course_prereqs_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'course',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_course_prerequisite',
-					'value' => '',
-					'compare' => '!=',
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'course',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'     => '_course_prerequisite',
+						'value'   => '',
+						'compare' => '!=',
+					),
+					array(
+						'key'     => '_course_prerequisite',
+						'value'   => '0',
+						'compare' => '!=',
+					),
 				),
-				array(
-					'key' => '_course_prerequisite',
-					'value' => '0',
-					'compare' => '!=',
-				),
-			),
-		) );
+			)
+		);
 
 		return $query->found_posts;
 	}
@@ -166,16 +175,18 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of courses.
 	 */
 	private static function get_course_featured_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'course',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_course_featured',
-					'value' => 'featured',
-				)
-			),
-		) );
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'course',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'   => '_course_featured',
+						'value' => 'featured',
+					),
+				),
+			)
+		);
 
 		return $query->found_posts;
 	}
@@ -188,10 +199,12 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of teachers.
 	 **/
 	private static function get_teacher_count() {
-		$teacher_query = new WP_User_Query( array(
-			'fields' => 'ID',
-			'role' => 'teacher',
-		) );
+		$teacher_query = new WP_User_Query(
+			array(
+				'fields' => 'ID',
+				'role'   => 'teacher',
+			)
+		);
 
 		return $teacher_query->total_users;
 	}
@@ -205,14 +218,14 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	private static function get_learner_count() {
 		$learner_count = 0;
-		$user_query = new WP_User_Query( array( 'fields' => 'ID' ) );
-		$learners = $user_query->get_results();
+		$user_query    = new WP_User_Query( array( 'fields' => 'ID' ) );
+		$learners      = $user_query->get_results();
 
-		foreach( $learners as $learner ) {
+		foreach ( $learners as $learner ) {
 			$course_args = array(
 				'user_id' => $learner,
-				'type' => 'sensei_course_status',
-				'status' => 'any',
+				'type'    => 'sensei_course_status',
+				'status'  => 'any',
 			);
 
 			$course_count = Sensei_Utils::sensei_check_for_activity( $course_args );
@@ -233,17 +246,19 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array Number of published lessons with a prerequisite.
 	 **/
 	private static function get_lesson_prerequisite_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'lesson',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_lesson_prerequisite',
-					'value' => 0,
-					'compare' => '>',
-				)
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'lesson',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'     => '_lesson_prerequisite',
+						'value'   => 0,
+						'compare' => '>',
+					),
+				),
 			)
-		) );
+		);
 
 		return $query->found_posts;
 	}
@@ -256,17 +271,19 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array Number of published lessons that enable previewing.
 	 **/
 	private static function get_lesson_preview_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'lesson',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_lesson_preview',
-					'value' => '',
-					'compare' => '!=',
-				)
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'lesson',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'     => '_lesson_preview',
+						'value'   => '',
+						'compare' => '!=',
+					),
+				),
 			)
-		) );
+		);
 
 		return $query->found_posts;
 	}
@@ -279,16 +296,18 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array Number of published lessons associated with a module.
 	 **/
 	private static function get_lesson_module_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'lesson',
-			'fields' => 'ids',
-			'tax_query' => array(
-				array(
-					'taxonomy' => 'module',
-					'operator' => 'EXISTS'
-				)
+		$query = new WP_Query(
+			array(
+				'post_type' => 'lesson',
+				'fields'    => 'ids',
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'module',
+						'operator' => 'EXISTS',
+					),
+				),
 			)
-		) );
+		);
 
 		return $query->found_posts;
 	}
@@ -301,17 +320,19 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of lessons.
 	 **/
 	private static function get_lesson_has_length_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'lesson',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_lesson_length',
-					'value' => '',
-					'compare' => '!=',
-				)
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'lesson',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'     => '_lesson_length',
+						'value'   => '',
+						'compare' => '!=',
+					),
+				),
 			)
-		) );
+		);
 
 		return $query->found_posts;
 	}
@@ -324,17 +345,19 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of lessons.
 	 **/
 	private static function get_lesson_with_complexity_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'lesson',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_lesson_complexity',
-					'value' => '',
-					'compare' => '!=',
-				)
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'lesson',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'     => '_lesson_complexity',
+						'value'   => '',
+						'compare' => '!=',
+					),
+				),
 			)
-		) );
+		);
 
 		return $query->found_posts;
 	}
@@ -347,17 +370,19 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of lessons.
 	 **/
 	private static function get_lesson_with_video_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'lesson',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_lesson_video_embed',
-					'value' => '[^[:space:]]',
-					'compare' => 'REGEXP',
-				)
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'lesson',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'     => '_lesson_video_embed',
+						'value'   => '[^[:space:]]',
+						'compare' => 'REGEXP',
+					),
+				),
 			)
-		) );
+		);
 
 		return $query->found_posts;
 	}
@@ -372,18 +397,22 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	private static function get_max_module_count() {
 		$max_modules = 0;
-		$query = new WP_Query( array(
-			'post_type' => 'course',
-			'posts_per_page' => -1,
-			'fields' => 'ids',
-		) );
-		$courses = $query->posts;
+		$query       = new WP_Query(
+			array(
+				'post_type'      => 'course',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+		$courses     = $query->posts;
 
-		foreach( $courses as $course ) {
+		foreach ( $courses as $course ) {
 			// Get modules for this course.
-			$module_count = wp_count_terms( 'module', array(
-				'object_ids' => $course,
-			) );
+			$module_count = wp_count_terms(
+				'module', array(
+					'object_ids' => $course,
+				)
+			);
 
 			if ( $max_modules < $module_count ) {
 				$max_modules = $module_count;
@@ -402,22 +431,27 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Minimum modules count.
 	 **/
 	private static function get_min_module_count() {
-		$min_modules = 0;
-		$query = new WP_Query( array(
-			'post_type' => 'course',
-			'posts_per_page' => -1,
-			'fields' => 'ids',
-		) );
-		$courses = $query->posts;
+		$min_modules   = 0;
+		$query         = new WP_Query(
+			array(
+				'post_type'      => 'course',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+		$courses       = $query->posts;
+		$total_courses = count( $courses );
 
-		for( $i = 0; $i < count( $courses ); $i++ ) {
+		for ( $i = 0; $i < $total_courses; $i++ ) {
 			// Get modules for this course.
-			$module_count = wp_count_terms( 'module', array(
-				'object_ids' => $courses[$i],
-			) );
+			$module_count = wp_count_terms(
+				'module', array(
+					'object_ids' => $courses[ $i ],
+				)
+			);
 
 			// Set the starting count.
-			if ( $i === 0 ) {
+			if ( 0 === $i ) {
 				$min_modules = $module_count;
 				continue;
 			}
@@ -438,23 +472,25 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array Number of published questions of each type.
 	 **/
 	private static function get_question_type_count() {
-		$count = array();
+		$count          = array();
 		$question_types = Sensei()->question->question_types();
 
-		foreach ( $question_types as $key=>$value ) {
+		foreach ( $question_types as $key => $value ) {
 			$count[ self::get_question_type_key( $key ) ] = 0;
 		}
 
-		$query = new WP_Query( array(
-			'post_type' => 'question',
-			'posts_per_page' => -1,
-			'fields' => 'ids'
-		) );
+		$query     = new WP_Query(
+			array(
+				'post_type'      => 'question',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
 		$questions = $query->posts;
 
 		foreach ( $questions as $question ) {
 			$question_type = Sensei()->question->get_question_type( $question );
-			$key = self::get_question_type_key( $question_type );
+			$key           = self::get_question_type_key( $question_type );
 
 			if ( array_key_exists( $key, $count ) ) {
 				$count[ $key ]++;
@@ -472,17 +508,19 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array Number of published questions with media.
 	 **/
 	private static function get_question_media_count() {
-		$query = new WP_Query( array(
-			'post_type' => 'question',
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_question_media',
-					'value' => 0,
-					'compare' => '>',
-				)
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'question',
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'     => '_question_media',
+						'value'   => 0,
+						'compare' => '>',
+					),
+				),
 			)
-		) );
+		);
 
 		return $query->found_posts;
 	}
@@ -495,19 +533,21 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of multiple choice questions with randomized answers.
 	 **/
 	private static function get_question_random_order_count() {
-		$count = 0;
-		$query = new WP_Query( array(
-			'post_type' => 'question',
-			'posts_per_page' => -1,
-			'fields' => 'ids',
-			'meta_query' => array(
-				array(
-					'key' => '_random_order',
-					'value' => 'yes',
-					'compare' => '=',
-				)
+		$count     = 0;
+		$query     = new WP_Query(
+			array(
+				'post_type'      => 'question',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					array(
+						'key'     => '_random_order',
+						'value'   => 'yes',
+						'compare' => '=',
+					),
+				),
 			)
-		) );
+		);
 		$questions = $query->posts;
 
 		foreach ( $questions as $question ) {
@@ -518,7 +558,7 @@ class Sensei_Usage_Tracking_Data {
 			 * Since it's possible that other question types could have a random answer order set,
 			 * let's explicitly handle multiple choice.
 			 */
-			if ( $question_type === 'multiple-choice' ) {
+			if ( 'multiple-choice' === $question_type ) {
 				$count++;
 			}
 		}
@@ -531,6 +571,8 @@ class Sensei_Usage_Tracking_Data {
 	 * Tracks naming conventions.
 	 *
 	 * @since 1.9.20
+	 *
+	 * @param string $key Question type.
 	 *
 	 * @return array Question type key.
 	 **/
