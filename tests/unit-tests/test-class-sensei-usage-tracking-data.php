@@ -507,6 +507,19 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_course_active_count
+	 */
+	public function testGetCourseActiveCount() {
+		$this->enrollUsers();
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_active', $usage_data, 'Key' );
+		$this->assertEquals( 10, $usage_data['course_active'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_course_completed_count
 	 */
 	public function testGetCourseCompletedCount() {
