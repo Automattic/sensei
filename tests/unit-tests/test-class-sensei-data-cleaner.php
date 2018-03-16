@@ -419,6 +419,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		$teacher_user = get_user_by( 'id', $this->teacher_user_id );
 		$this->assertFalse( in_array( 'teacher', $teacher_user->roles ), 'Teacher role should be removed from user' );
+		$this->assertFalse( array_key_exists( 'teacher', $teacher_user->caps ), 'Teacher role should be removed from user caps' );
 		$this->assertTrue( $teacher_user->has_cap( 'edit_others_posts' ), 'Non-Sensei cap should not be removed from teacher' );
 		$this->assertFalse( $teacher_user->has_cap( 'manage_sensei' ), 'Sensei cap should be removed from teacher' );
 

@@ -79,6 +79,14 @@ class Sensei_Data_Cleaner {
 	private static $role = 'teacher';
 
 	/**
+	 * Name of the role to be removed. This is used temporarily, and will never
+	 * be displayed, and so it doesn't need to be translated.
+	 *
+	 * @var $role_name
+	 */
+	private static $role_name = 'Teacher';
+
+	/**
 	 * Capbilities to be deleted.
 	 *
 	 * @var $caps
@@ -235,8 +243,8 @@ class Sensei_Data_Cleaner {
 	private static function cleanup_roles_and_caps() {
 		global $wp_roles;
 
-		// Remove role.
-		remove_role( self::$role );
+		// Ensure that the role exists so we can remove it successfully.
+		add_role( self::$role, self::$role_name );
 
 		// Remove caps from roles.
 		$role_names = array_keys( $wp_roles->roles );
@@ -251,6 +259,9 @@ class Sensei_Data_Cleaner {
 			self::remove_all_sensei_caps( $user );
 			$user->remove_role( self::$role );
 		}
+
+		// Remove role.
+		remove_role( self::$role );
 	}
 
 	/**
