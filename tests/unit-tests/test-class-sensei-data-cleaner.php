@@ -342,7 +342,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		$this->assertEquals(
 			array( $this->biography_ids[1] ),
 			$this->getPostIdsWithTerm( $this->ages[1]['term_id'], 'age' ),
-			'"Old" should not be deleted'
+			'"New" should not be deleted'
 		);
 	}
 
