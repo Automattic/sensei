@@ -19,6 +19,10 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	private $categories;
 	private $ages;
 
+	// Users.
+	private $regular_user_id;
+	private $teacher_user_id;
+
 	/**
 	 * Add some posts to run tests against. Any that are associated with Sensei
 	 * should be trashed on cleanup. The others should not be trashed.
@@ -168,6 +172,29 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Add some users to run tests against. The roles and capabilities
+	 * associated with Sensei should be deleted on cleanup. The others should
+	 * not be deleted.
+	 */
+	private function setupUsers() {
+		// Create a regular user and assign some caps.
+		$this->regular_user_id = $this->factory->user->create( array( 'role' => 'author' ) );
+		$regular_user = get_user_by( 'id', $this->regular_user_id );
+		$regular_user->add_cap( 'edit_others_posts' );
+		$regular_user->add_cap( 'manage_sensei' );
+
+		// Create a teacher user and assign some caps.
+		$this->teacher_user_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$teacher_user = get_user_by( 'id', $this->teacher_user_id );
+		$teacher_user->add_cap( 'edit_others_posts' );
+		$teacher_user->add_cap( 'manage_sensei' );
+
+		// Add a Sensei cap to an existing role.
+		$role = get_role( 'editor' );
+		$role->add_cap( 'manage_sensei_grades' );
+	}
+
+	/**
 	 * Set up for tests.
 	 */
 	public function setUp() {
@@ -176,6 +203,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		$this->setupPosts();
 		$this->setupPages();
 		$this->setupTaxonomyTerms();
+		$this->setupUsers();
 	}
 
 	/**
@@ -370,5 +398,34 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 				),
 			),
 		) );
+	}
+
+	/**
+	 * Ensure the Sensei roles and caps are deleted.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_roles_and_caps
+	 */
+	public function testSenseiRolesAndCapsDeleted() {
+		Sensei_Data_Cleaner::cleanup_all();
+
+		// Refresh user info.
+		wp_cache_flush();
+
+		$regular_user = get_user_by( 'id', $this->regular_user_id );
+		$this->assertTrue( in_array( 'author', $regular_user->roles ), 'Author role should not be removed' );
+		$this->assertTrue( $regular_user->has_cap( 'edit_others_posts' ), 'Non-Sensei cap should not be removed from user' );
+		$this->assertFalse( $regular_user->has_cap( 'manage_sensei' ), 'Sensei cap should be removed from user' );
+
+		$teacher_user = get_user_by( 'id', $this->teacher_user_id );
+		$this->assertFalse( in_array( 'teacher', $teacher_user->roles ), 'Teacher role should be removed from user' );
+		$this->assertTrue( $teacher_user->has_cap( 'edit_others_posts' ), 'Non-Sensei cap should not be removed from teacher' );
+		$this->assertFalse( $teacher_user->has_cap( 'manage_sensei' ), 'Sensei cap should be removed from teacher' );
+
+		$role = get_role( 'editor' );
+		$this->assertFalse( $role->has_cap( 'manage_sensei_grades' ), 'Sensei cap should be removed from role' );
+
+		$role = get_role( 'teacher' );
+		$this->assertNull( $role, 'Teacher role should be removed overall' );
 	}
 }
