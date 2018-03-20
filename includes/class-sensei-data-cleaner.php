@@ -11,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once dirname( __FILE__ ) . '/class-sensei-settings-api.php';
-require_once dirname( __FILE__ ) . '/class-sensei-settings.php';
-
 /**
  * Methods for cleaning up all plugin data.
  *
