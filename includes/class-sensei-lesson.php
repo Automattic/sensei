@@ -2450,7 +2450,8 @@ class Sensei_Lesson {
 				$question_right_answer = $question_right_answers;
 			}
 		} // End If Statement
-		$right_answer_count = count( $question_right_answer );
+
+		$right_answer_count = is_array( $question_right_answer ) ? count( $question_right_answer ) : 1;
 
 		// Remove empty values and reindex the array
 		if ( is_array( $question_wrong_answers ) ) {
