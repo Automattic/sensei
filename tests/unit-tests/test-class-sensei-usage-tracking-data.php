@@ -302,7 +302,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'modules', $usage_data, 'Key' );
-		$this->assertEquals( count( $this->modules ), $usage_data['modules'], 'Count' );
+		$this->assertEquals( 0, $usage_data['modules'], 'Count' );
 	}
 
 	/**
