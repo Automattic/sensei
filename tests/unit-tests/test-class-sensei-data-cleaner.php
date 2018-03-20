@@ -317,17 +317,27 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			'Category 1 should not be deleted'
 		);
 
-		// Check "Category 2".
+		// Check "Category 2". Sort the arrays because the ordering doesn't
+		// matter.
+		$expected = array( $this->post_ids[0], $this->biography_ids[2] );
+		$actual   = $this->getPostIdsWithTerm( $this->categories[1]['term_id'], 'category' );
+		sort( $expected );
+		sort( $actual );
 		$this->assertEquals(
-			array( $this->post_ids[0], $this->biography_ids[2] ),
-			$this->getPostIdsWithTerm( $this->categories[1]['term_id'], 'category' ),
+			$expected,
+			$actual,
 			'Category 2 should not be deleted'
 		);
 
-		// Check "Category 3".
+		// Check "Category 3". Sort the arrays because the ordering doesn't
+		// matter.
+		$expected = array( $this->post_ids[0], $this->biography_ids[2] );
+		$actual   = $this->getPostIdsWithTerm( $this->categories[2]['term_id'], 'category' );
+		sort( $expected );
+		sort( $actual );
 		$this->assertEquals(
-			array( $this->post_ids[0], $this->biography_ids[2] ),
-			$this->getPostIdsWithTerm( $this->categories[2]['term_id'], 'category' ),
+			$expected,
+			$actual,
 			'Category 3 should not be deleted'
 		);
 
