@@ -440,9 +440,9 @@ class Sensei_Usage_Tracking_Data {
 			)
 		);
 		$courses       = $query->posts;
-		$total_courses = count( $courses );
+		$total_courses = is_array( $courses ) ? count( $courses ) : 0;
 
-		for ( $i = 0; $i < $total_courses; $i++ ) {
+		for( $i = 0; $i < $total_courses; $i++ ) {
 			// Get modules for this course.
 			$module_count = wp_count_terms(
 				'module', array(
