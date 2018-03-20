@@ -240,9 +240,6 @@ class Sensei_Data_Cleaner {
 	private static function cleanup_roles_and_caps() {
 		global $wp_roles;
 
-		// Ensure that the role exists so we can remove it successfully.
-		add_role( self::$role, self::$role_name );
-
 		// Remove caps from roles.
 		$role_names = array_keys( $wp_roles->roles );
 		foreach ( $role_names as $role_name ) {

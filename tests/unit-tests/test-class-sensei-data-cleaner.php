@@ -177,6 +177,9 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	 * not be deleted.
 	 */
 	private function setupUsers() {
+		// Ensure the role is created.
+		Sensei()->teacher->create_role();
+
 		// Create a regular user and assign some caps.
 		$this->regular_user_id = $this->factory->user->create( array( 'role' => 'author' ) );
 		$regular_user = get_user_by( 'id', $this->regular_user_id );
