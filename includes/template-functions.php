@@ -370,7 +370,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 		$course_id           = Sensei()->lesson->get_course_id( $lesson_id );
 		$modules_and_lessons = sensei_get_modules_and_lessons( $course_id );
 
-		if ( count( $modules_and_lessons > 0 ) ) {
+		if ( is_array( $modules_and_lessons ) && count( $modules_and_lessons ) > 0 ) {
 			$found = false;
 
 			foreach ( $modules_and_lessons as $item ) {
