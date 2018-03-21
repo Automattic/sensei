@@ -14,9 +14,14 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	private $course_archive_page_id;
 	private $my_courses_page_id;
 
+	// Taxonomies.
+	private $modules;
+	private $categories;
+	private $ages;
+
 	/**
 	 * Add some posts to run tests against. Any that are associated with Sensei
-	 * should be trashed on cleanup. The other should not be trashed.
+	 * should be trashed on cleanup. The others should not be trashed.
 	 */
 	private function setupPosts() {
 		// Create some regular posts.
@@ -46,6 +51,91 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			'post_status' => 'publish',
 			'post_type'   => 'lesson',
 		) );
+	}
+
+	/**
+	 * Add some taxonomies to run tests against. Any that are associated with
+	 * Sensei should be deleted on cleanup. The others should not be deleted.
+	 */
+	private function setupTaxonomyTerms() {
+		// Setup some modules.
+		$this->modules = array();
+
+		for ( $i = 1; $i <= 3; $i++ ) {
+			$this->modules[] = wp_insert_term( 'Module ' . $i, 'module' );
+		}
+
+		wp_set_object_terms( $this->course_ids[0],
+			array(
+				$this->modules[0]['term_id'],
+				$this->modules[1]['term_id'],
+			),
+			'module'
+		);
+		wp_set_object_terms( $this->course_ids[1],
+			array(
+				$this->modules[1]['term_id'],
+				$this->modules[2]['term_id'],
+			),
+			'module'
+		);
+		wp_set_object_terms( $this->course_ids[2],
+			array(
+				$this->modules[0]['term_id'],
+				$this->modules[1]['term_id'],
+				$this->modules[2]['term_id'],
+			),
+			'module'
+		);
+
+		// Setup some categories.
+		$this->categories = array();
+
+		for ( $i = 1; $i <= 3; $i++ ) {
+			$this->categories[] = wp_insert_term( 'Category ' . $i, 'category' );
+		}
+
+		wp_set_object_terms( $this->course_ids[0],
+			array(
+				$this->categories[0]['term_id'],
+				$this->categories[1]['term_id'],
+			),
+			'category'
+		);
+		wp_set_object_terms( $this->post_ids[0],
+			array(
+				$this->categories[1]['term_id'],
+				$this->categories[2]['term_id'],
+			),
+			'category'
+		);
+		wp_set_object_terms( $this->biography_ids[2],
+			array(
+				$this->categories[0]['term_id'],
+				$this->categories[1]['term_id'],
+				$this->categories[2]['term_id'],
+			),
+			'category'
+		);
+
+		// Setup a custom taxonomy.
+		register_taxonomy( 'age', 'biography' );
+
+		$this->ages = array(
+			wp_insert_term( 'Old', 'age' ),
+			wp_insert_term( 'New', 'age' ),
+		);
+
+		wp_set_object_terms( $this->biography_ids[0], $this->ages[0]['term_id'], 'age' );
+		wp_set_object_terms( $this->biography_ids[1], $this->ages[1]['term_id'], 'age' );
+
+		// Add a piece of termmeta for every term.
+		$terms = array_merge( $this->modules, $this->categories, $this->ages );
+		foreach ( $terms as $term ) {
+			$key   = 'the_term_id';
+			$value = 'The ID is ' . $term['term_id'];
+			update_term_meta( $term['term_id'], $key, $value );
+		}
 	}
 
 	/**
@@ -85,6 +175,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		$this->setupPosts();
 		$this->setupPages();
+		$this->setupTaxonomyTerms();
 	}
 
 	/**
@@ -160,5 +251,124 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		foreach ( $this->regular_page_ids as $page_id ) {
 			$this->assertNotEquals( 'trash', get_post_status( $page_id ), 'Regular page should not be trashed' );
 		}
+	}
+
+	/**
+	 * Ensure the data for Sensei taxonomies and terms are deleted.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_taxonomies
+	 */
+	public function testSenseiTaxonomiesDeleted() {
+		global $wpdb;
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		foreach ( $this->modules as $module ) {
+			$term_id          = $module['term_id'];
+			$term_taxonomy_id = $module['term_taxonomy_id'];
+
+			// Ensure the data is deleted from all the relevant DB tables.
+			$this->assertEquals( array(), $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * from $wpdb->termmeta WHERE term_id = %s",
+					$term_id
+				)
+			), 'Sensei term meta should be deleted' );
+
+			$this->assertEquals( array(), $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * from $wpdb->terms WHERE term_id = %s",
+					$term_id
+				)
+			), 'Sensei term should be deleted' );
+
+			$this->assertEquals( array(), $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * from $wpdb->term_taxonomy WHERE term_taxonomy_id = %s",
+					$term_taxonomy_id
+				)
+			), 'Sensei term taxonomy should be deleted' );
+
+			$this->assertEquals( array(), $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * from $wpdb->term_relationships WHERE term_taxonomy_id = %s",
+					$term_taxonomy_id
+				)
+			), 'Sensei term relationships should be deleted' );
+		}
+	}
+
+	/**
+	 * Ensure the data for non-Sensei taxonomies and terms are not deleted.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_taxonomies
+	 */
+	public function testOtherTaxonomiesUntouched() {
+		global $wpdb;
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		// Check "Category 1".
+		$this->assertEquals(
+			array( $this->biography_ids[2] ),
+			$this->getPostIdsWithTerm( $this->categories[0]['term_id'], 'category' ),
+			'Category 1 should not be deleted'
+		);
+
+		// Check "Category 2". Sort the arrays because the ordering doesn't
+		// matter.
+		$expected = array( $this->post_ids[0], $this->biography_ids[2] );
+		$actual   = $this->getPostIdsWithTerm( $this->categories[1]['term_id'], 'category' );
+		sort( $expected );
+		sort( $actual );
+		$this->assertEquals(
+			$expected,
+			$actual,
+			'Category 2 should not be deleted'
+		);
+
+		// Check "Category 3". Sort the arrays because the ordering doesn't
+		// matter.
+		$expected = array( $this->post_ids[0], $this->biography_ids[2] );
+		$actual   = $this->getPostIdsWithTerm( $this->categories[2]['term_id'], 'category' );
+		sort( $expected );
+		sort( $actual );
+		$this->assertEquals(
+			$expected,
+			$actual,
+			'Category 3 should not be deleted'
+		);
+
+		// Check "Old" biographies.
+		$this->assertEquals(
+			array( $this->biography_ids[0] ),
+			$this->getPostIdsWithTerm( $this->ages[0]['term_id'], 'age' ),
+			'"Old" should not be deleted'
+		);
+
+		// Check "New" biographies.
+		$this->assertEquals(
+			array( $this->biography_ids[1] ),
+			$this->getPostIdsWithTerm( $this->ages[1]['term_id'], 'age' ),
+			'"New" should not be deleted'
+		);
+	}
+
+	/* Helper functions. */
+
+	private function getPostIdsWithTerm( $term_id, $taxonomy ) {
+		return get_posts( array(
+			'fields'    => 'ids',
+			'post_type' => 'any',
+			'tax_query' => array(
+				array(
+					'field'    => 'term_id',
+					'terms'    => $term_id,
+					'taxonomy' => $taxonomy,
+				),
+			),
+		) );
 	}
 }
