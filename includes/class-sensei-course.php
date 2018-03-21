@@ -2267,7 +2267,7 @@ class Sensei_Course {
              * @since 1.9.0
              * @param integer $posts_per_page default 10
              */
-            $query->set( 'posts_per_page', apply_filters( 'sensei_my_courses_per_page', 10 ) );
+            $query->set( 'posts_per_page', apply_filters( 'sensei_my_courses_per_page', $query->get( 'posts_per_page', 10 ) ) );
 
         }
 
