@@ -20,6 +20,7 @@ delete_option( 'skip_install_sensei_pages' );
 delete_option( 'sensei_installed' );
 
 // Cleanup all data.
+require 'woothemes-sensei.php';
 require 'includes/class-sensei-data-cleaner.php';
 
 if ( ! is_multisite() ) {

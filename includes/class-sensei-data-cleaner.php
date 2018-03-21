@@ -11,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once dirname( __FILE__ ) . '/class-sensei-settings-api.php';
-require_once dirname( __FILE__ ) . '/class-sensei-settings.php';
-
 /**
  * Methods for cleaning up all plugin data.
  *
@@ -72,6 +69,126 @@ class Sensei_Data_Cleaner {
 	);
 
 	/**
+	 * Role to be removed.
+	 *
+	 * @var $role
+	 */
+	private static $role = 'teacher';
+
+	/**
+	 * Name of the role to be removed. This is used temporarily, and will never
+	 * be displayed, and so it doesn't need to be translated.
+	 *
+	 * @var $role_name
+	 */
+	private static $role_name = 'Teacher';
+
+	/**
+	 * Capbilities to be deleted.
+	 *
+	 * @var $caps
+	 */
+	private static $caps = array(
+		// General.
+		'manage_sensei_grades',
+		'manage_sensei',
+
+		// Lessons.
+		'edit_lesson',
+		'read_lesson',
+		'delete_lesson',
+		'create_lessons',
+		'edit_lessons',
+		'edit_others_lessons',
+		'publish_lessons',
+		'read_private_lessons',
+		'delete_lessons',
+		'delete_private_lessons',
+		'delete_published_lessons',
+		'delete_others_lessons',
+		'edit_private_lessons',
+		'edit_published_lessons',
+
+		// Courses.
+		'edit_course',
+		'read_course',
+		'delete_course',
+		'create_courses',
+		'edit_courses',
+		'edit_others_courses',
+		'publish_courses',
+		'read_private_courses',
+		'delete_courses',
+		'delete_private_courses',
+		'delete_published_courses',
+		'delete_others_courses',
+		'edit_private_courses',
+		'edit_published_courses',
+
+		// Quizzes.
+		'edit_quiz',
+		'read_quiz',
+		'delete_quiz',
+		'create_quizs',
+		'edit_quizs',
+		'edit_others_quizs',
+		'publish_quizs',
+		'read_private_quizs',
+		'delete_quizs',
+		'delete_private_quizs',
+		'delete_published_quizs',
+		'delete_others_quizs',
+		'edit_private_quizs',
+		'edit_published_quizs',
+
+		// Questions.
+		'edit_question',
+		'read_question',
+		'delete_question',
+		'create_questions',
+		'edit_questions',
+		'edit_others_questions',
+		'publish_questions',
+		'read_private_questions',
+		'delete_questions',
+		'delete_private_questions',
+		'delete_published_questions',
+		'delete_others_questions',
+		'edit_private_questions',
+		'edit_published_questions',
+
+		// Messages.
+		'edit_messages',
+		'read_messages',
+		'delete_messages',
+		'create_messagess',
+		'edit_messagess',
+		'edit_others_messagess',
+		'publish_messagess',
+		'read_private_messagess',
+		'delete_messagess',
+		'delete_private_messagess',
+		'delete_published_messagess',
+		'delete_others_messagess',
+		'edit_private_messagess',
+		'edit_published_messagess',
+
+		// Teacher caps.
+		'manage_lesson_categories',
+		'manage_course_categories',
+		'publish_quizzes',
+		'edit_quizzes',
+		'edit_published_quizzes',
+		'edit_private_quizzes',
+		'read_private_quizzes',
+		'publish_sensei_messages',
+		'edit_sensei_messages',
+		'edit_published_sensei_messages',
+		'edit_private_sensei_messages',
+		'read_private_sensei_messages',
+	);
+
+	/**
 	 * Cleanup all data.
 	 *
 	 * @access public
@@ -80,6 +197,7 @@ class Sensei_Data_Cleaner {
 		self::cleanup_custom_post_types();
 		self::cleanup_pages();
 		self::cleanup_taxonomies();
+		self::cleanup_roles_and_caps();
 		self::cleanup_options();
 	}
 
@@ -111,6 +229,43 @@ class Sensei_Data_Cleaner {
 	private static function cleanup_options() {
 		foreach ( self::$options as $option ) {
 			delete_option( $option );
+		}
+	}
+
+	/**
+	 * Cleanup data for roles and caps.
+	 *
+	 * @access private
+	 */
+	private static function cleanup_roles_and_caps() {
+		global $wp_roles;
+
+		// Remove caps from roles.
+		$role_names = array_keys( $wp_roles->roles );
+		foreach ( $role_names as $role_name ) {
+			$role = get_role( $role_name );
+			self::remove_all_sensei_caps( $role );
+		}
+
+		// Remove caps and role from users.
+		$users = get_users( array() );
+		foreach ( $users as $user ) {
+			self::remove_all_sensei_caps( $user );
+			$user->remove_role( self::$role );
+		}
+
+		// Remove role.
+		remove_role( self::$role );
+	}
+
+	/**
+	 * Helper method to remove Sensei caps from a user or role object.
+	 *
+	 * @param (WP_User|WP_Role) $object the user or role object.
+	 */
+	private static function remove_all_sensei_caps( $object ) {
+		foreach ( self::$caps as $cap ) {
+			$object->remove_cap( $cap );
 		}
 	}
 
