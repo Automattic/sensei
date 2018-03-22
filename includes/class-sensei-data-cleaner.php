@@ -199,6 +199,7 @@ class Sensei_Data_Cleaner {
 		self::cleanup_taxonomies();
 		self::cleanup_roles_and_caps();
 		self::cleanup_options();
+		self::cleanup_comments();
 	}
 
 	/**
@@ -208,12 +209,14 @@ class Sensei_Data_Cleaner {
 	 */
 	private static function cleanup_custom_post_types() {
 		foreach ( self::$custom_post_types as $post_type ) {
-			$items = get_posts( array(
-				'post_type'   => $post_type,
-				'post_status' => 'any',
-				'numberposts' => -1,
-				'fields'      => 'ids',
-			) );
+			$items = get_posts(
+				array(
+					'post_type'   => $post_type,
+					'post_status' => 'any',
+					'numberposts' => -1,
+					'fields'      => 'ids',
+				)
+			);
 
 			foreach ( $items as $item ) {
 				wp_trash_post( $item );
@@ -313,6 +316,29 @@ class Sensei_Data_Cleaner {
 				$wpdb->delete( $wpdb->terms, array( 'term_id' => $term->term_id ) );
 				$wpdb->delete( $wpdb->termmeta, array( 'term_id' => $term->term_id ) );
 			}
+		}
+	}
+
+	/**
+	 * Cleanup data for comments.
+	 *
+	 * @access private
+	 */
+	private static function cleanup_comments() {
+		global $wpdb;
+
+		$comments = $wpdb->get_results(
+			"SELECT comment_id
+			 FROM $wpdb->comments
+			 WHERE comment_type IN ( 'sensei_answer_notes', 'sensei_course_end', 'sensei_course_start',
+				'sensei_course_status', 'sensei_lesson_end', 'sensei_lesson_start', 'sensei_lesson_status',
+				'sensei_quiz_answers', 'sensei_quiz_asked', 'sensei_quiz_grade', 'sensei_user_answer',
+				'sensei_user_grade' )"
+		);
+
+		// Delete all comments and comment meta.
+		foreach ( $comments as $comment ) {
+			wp_delete_comment( $comment->comment_id );
 		}
 	}
 }
