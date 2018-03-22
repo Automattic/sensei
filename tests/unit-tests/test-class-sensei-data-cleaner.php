@@ -182,13 +182,13 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		// Create a regular user and assign some caps.
 		$this->regular_user_id = $this->factory->user->create( array( 'role' => 'author' ) );
-		$regular_user = get_user_by( 'id', $this->regular_user_id );
+		$regular_user          = get_user_by( 'id', $this->regular_user_id );
 		$regular_user->add_cap( 'edit_others_posts' );
 		$regular_user->add_cap( 'manage_sensei' );
 
 		// Create a teacher user and assign some caps.
 		$this->teacher_user_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
-		$teacher_user = get_user_by( 'id', $this->teacher_user_id );
+		$teacher_user          = get_user_by( 'id', $this->teacher_user_id );
 		$teacher_user->add_cap( 'edit_others_posts' );
 		$teacher_user->add_cap( 'manage_sensei' );
 
@@ -387,22 +387,6 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		);
 	}
 
-	/* Helper functions. */
-
-	private function getPostIdsWithTerm( $term_id, $taxonomy ) {
-		return get_posts( array(
-			'fields'    => 'ids',
-			'post_type' => 'any',
-			'tax_query' => array(
-				array(
-					'field'    => 'term_id',
-					'terms'    => $term_id,
-					'taxonomy' => $taxonomy,
-				),
-			),
-		) );
-	}
-
 	/**
 	 * Ensure the Sensei roles and caps are deleted.
 	 *
@@ -416,12 +400,12 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		wp_cache_flush();
 
 		$regular_user = get_user_by( 'id', $this->regular_user_id );
-		$this->assertTrue( in_array( 'author', $regular_user->roles ), 'Author role should not be removed' );
+		$this->assertTrue( in_array( 'author', $regular_user->roles, true ), 'Author role should not be removed' );
 		$this->assertTrue( $regular_user->has_cap( 'edit_others_posts' ), 'Non-Sensei cap should not be removed from user' );
 		$this->assertFalse( $regular_user->has_cap( 'manage_sensei' ), 'Sensei cap should be removed from user' );
 
 		$teacher_user = get_user_by( 'id', $this->teacher_user_id );
-		$this->assertFalse( in_array( 'teacher', $teacher_user->roles ), 'Teacher role should be removed from user' );
+		$this->assertFalse( in_array( 'teacher', $teacher_user->roles, true ), 'Teacher role should be removed from user' );
 		$this->assertFalse( array_key_exists( 'teacher', $teacher_user->caps ), 'Teacher role should be removed from user caps' );
 		$this->assertTrue( $teacher_user->has_cap( 'edit_others_posts' ), 'Non-Sensei cap should not be removed from teacher' );
 		$this->assertFalse( $teacher_user->has_cap( 'manage_sensei' ), 'Sensei cap should be removed from teacher' );
@@ -466,5 +450,21 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		// Ensure the other transient and its timeout was not deleted.
 		$this->assertNotFalse( get_option( "{$prefix}other_transient" ), 'Non-Sensei transient' );
 		$this->assertNotFalse( get_option( "{$timeout_prefix}other_transient" ), 'Non-Sensei transient' );
+	}
+
+	/* Helper functions. */
+
+	private function getPostIdsWithTerm( $term_id, $taxonomy ) {
+		return get_posts( array(
+			'fields'    => 'ids',
+			'post_type' => 'any',
+			'tax_query' => array(
+				array(
+					'field'    => 'term_id',
+					'terms'    => $term_id,
+					'taxonomy' => $taxonomy,
+				),
+			),
+		) );
 	}
 }
