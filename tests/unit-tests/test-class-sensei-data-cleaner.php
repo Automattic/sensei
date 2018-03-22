@@ -432,4 +432,39 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		$role = get_role( 'teacher' );
 		$this->assertNull( $role, 'Teacher role should be removed overall' );
 	}
+
+	/**
+	 * Ensure the Sensei transients are deleted from the DB.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_transients
+	 */
+	public function testSenseiTransientsDeleted() {
+		set_transient( 'sensei_123_none_module_lessons', 'value', 0 );
+		set_transient( 'sensei_answers_123_456', 'value', 0 );
+		set_transient( 'sensei_answers_feedback_123_456', 'value', 0 );
+		set_transient( 'quiz_grades_123_456', 'value', 0 );
+		set_transient( 'other_transient', 'value', 0 );
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		// Flush transients from cache.
+		wp_cache_flush();
+
+		$prefix         = '_transient_';
+		$timeout_prefix = '_transient_timeout_';
+
+		// Ensure the transients and their timeouts were deleted.
+		$this->assertFalse( get_option( "{$prefix}sensei_123_none_module_lessons" ), 'Sensei none_module_lessons transient' );
+		$this->assertFalse( get_option( "{$timeout_prefix}sensei_123_none_module_lessons" ), 'Sensei none_module_lessons transient timeout' );
+		$this->assertFalse( get_option( "{$prefix}sensei_answers_123_456" ), 'Sensei sensei_answers transient' );
+		$this->assertFalse( get_option( "{$timeout_prefix}sensei_answers_123_456" ), 'Sensei sensei_answers transient timeout' );
+		$this->assertFalse( get_option( "{$prefix}sensei_answers_feedback_123_456" ), 'Sensei sensei_answers_feedback transient' );
+		$this->assertFalse( get_option( "{$timeout_prefix}sensei_answers_feedback_123_456" ), 'Sensei sensei_answers_feedback transient timeout' );
+		$this->assertFalse( get_option( "{$prefix}quiz_grades_123_456" ), 'Sensei quiz_grades transient' );
+
+		// Ensure the other transient and its timeout was not deleted.
+		$this->assertNotFalse( get_option( "{$prefix}other_transient" ), 'Non-Sensei transient' );
+		$this->assertNotFalse( get_option( "{$timeout_prefix}other_transient" ), 'Non-Sensei transient' );
+	}
 }
