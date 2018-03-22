@@ -23,38 +23,52 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	private $regular_user_id;
 	private $teacher_user_id;
 
+	// Comments.
+	private $comment_ids;
+	private $regular_comment_ids;
+
 	/**
 	 * Add some posts to run tests against. Any that are associated with Sensei
 	 * should be trashed on cleanup. The others should not be trashed.
 	 */
 	private function setupPosts() {
 		// Create some regular posts.
-		$this->post_ids = $this->factory->post->create_many( 2, array(
-			'post_status' => 'publish',
-			'post_type'   => 'post',
-		) );
+		$this->post_ids = $this->factory->post->create_many(
+			2, array(
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
 
 		// Create an unrelated CPT to ensure its posts do not get deleted.
-		register_post_type( 'biography', array(
-			'label'       => 'Biographies',
-			'description' => 'A biography of a famous person (for testing)',
-			'public'      => true,
-		) );
-		$this->biography_ids = $this->factory->post->create_many( 4, array(
-			'post_status' => 'publish',
-			'post_type'   => 'biography',
-		) );
+		register_post_type(
+			'biography', array(
+				'label'       => 'Biographies',
+				'description' => 'A biography of a famous person (for testing)',
+				'public'      => true,
+			)
+		);
+		$this->biography_ids = $this->factory->post->create_many(
+			4, array(
+				'post_status' => 'publish',
+				'post_type'   => 'biography',
+			)
+		);
 
 		// Create some Sensei posts.
-		$this->course_ids = $this->factory->post->create_many( 8, array(
-			'post_status' => 'publish',
-			'post_type'   => 'course',
-		) );
+		$this->course_ids = $this->factory->post->create_many(
+			8, array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
 
-		$this->lesson_ids = $this->factory->post->create_many( 16, array(
-			'post_status' => 'publish',
-			'post_type'   => 'lesson',
-		) );
+		$this->lesson_ids = $this->factory->post->create_many(
+			16, array(
+				'post_status' => 'publish',
+				'post_type'   => 'lesson',
+			)
+		);
 	}
 
 	/**
@@ -69,21 +83,24 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			$this->modules[] = wp_insert_term( 'Module ' . $i, 'module' );
 		}
 
-		wp_set_object_terms( $this->course_ids[0],
+		wp_set_object_terms(
+			$this->course_ids[0],
 			array(
 				$this->modules[0]['term_id'],
 				$this->modules[1]['term_id'],
 			),
 			'module'
 		);
-		wp_set_object_terms( $this->course_ids[1],
+		wp_set_object_terms(
+			$this->course_ids[1],
 			array(
 				$this->modules[1]['term_id'],
 				$this->modules[2]['term_id'],
 			),
 			'module'
 		);
-		wp_set_object_terms( $this->course_ids[2],
+		wp_set_object_terms(
+			$this->course_ids[2],
 			array(
 				$this->modules[0]['term_id'],
 				$this->modules[1]['term_id'],
@@ -99,21 +116,24 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			$this->categories[] = wp_insert_term( 'Category ' . $i, 'category' );
 		}
 
-		wp_set_object_terms( $this->course_ids[0],
+		wp_set_object_terms(
+			$this->course_ids[0],
 			array(
 				$this->categories[0]['term_id'],
 				$this->categories[1]['term_id'],
 			),
 			'category'
 		);
-		wp_set_object_terms( $this->post_ids[0],
+		wp_set_object_terms(
+			$this->post_ids[0],
 			array(
 				$this->categories[1]['term_id'],
 				$this->categories[2]['term_id'],
 			),
 			'category'
 		);
-		wp_set_object_terms( $this->biography_ids[2],
+		wp_set_object_terms(
+			$this->biography_ids[2],
 			array(
 				$this->categories[0]['term_id'],
 				$this->categories[1]['term_id'],
@@ -148,23 +168,29 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	 */
 	private function setupPages() {
 		// Create some regular pages.
-		$this->regular_page_ids = $this->factory->post->create_many( 2, array(
-			'post_type'  => 'page',
-			'post_title' => 'Normal page',
-		) );
+		$this->regular_page_ids = $this->factory->post->create_many(
+			2, array(
+				'post_type'  => 'page',
+				'post_title' => 'Normal page',
+			)
+		);
 
 		// Create the Course Archive page.
-		$this->course_archive_page_id = $this->factory->post->create( array(
-			'post_type'  => 'page',
-			'post_title' => 'Course Archive Page',
-		) );
+		$this->course_archive_page_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'Course Archive Page',
+			)
+		);
 		Sensei()->settings->set( 'course_page', $this->course_archive_page_id );
 
 		// Create the My Courses page.
-		$this->my_courses_page_id = $this->factory->post->create( array(
-			'post_type'  => 'page',
-			'post_title' => 'My Courses',
-		) );
+		$this->my_courses_page_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'My Courses',
+			)
+		);
 		Sensei()->settings->set( 'my_course_page', $this->my_courses_page_id );
 
 		// Refresh the Sensei settings in memory.
@@ -182,19 +208,45 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		// Create a regular user and assign some caps.
 		$this->regular_user_id = $this->factory->user->create( array( 'role' => 'author' ) );
-		$regular_user = get_user_by( 'id', $this->regular_user_id );
+		$regular_user          = get_user_by( 'id', $this->regular_user_id );
 		$regular_user->add_cap( 'edit_others_posts' );
 		$regular_user->add_cap( 'manage_sensei' );
 
 		// Create a teacher user and assign some caps.
 		$this->teacher_user_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
-		$teacher_user = get_user_by( 'id', $this->teacher_user_id );
+		$teacher_user          = get_user_by( 'id', $this->teacher_user_id );
 		$teacher_user->add_cap( 'edit_others_posts' );
 		$teacher_user->add_cap( 'manage_sensei' );
 
 		// Add a Sensei cap to an existing role.
 		$role = get_role( 'editor' );
 		$role->add_cap( 'manage_sensei_grades' );
+	}
+
+	/**
+	 * Add some comments to run tests against. Any that are associated with Sensei
+	 * should be trashed on cleanup. The others should not be trashed.
+	 */
+	private function setupComments() {
+		// Create some Sensei comments.
+		$answer_notes_ids  = $this->factory->comment->create_many(
+			2, array(
+				'comment_type' => 'sensei_answer_notes',
+			)
+		);
+		$lesson_start_ids  = $this->factory->comment->create_many(
+			3, array(
+				'comment_type' => 'sensei_lesson_start',
+			)
+		);
+		$this->comment_ids = array_merge( $answer_notes_ids, $lesson_start_ids );
+
+		// Create some non-Sensei comments.
+		$this->regular_comment_ids = $this->factory->comment->create_many(
+			5, array(
+				'comment_type' => 'order_note',
+			)
+		);
 	}
 
 	/**
@@ -300,33 +352,41 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			$term_taxonomy_id = $module['term_taxonomy_id'];
 
 			// Ensure the data is deleted from all the relevant DB tables.
-			$this->assertEquals( array(), $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * from $wpdb->termmeta WHERE term_id = %s",
-					$term_id
-				)
-			), 'Sensei term meta should be deleted' );
+			$this->assertEquals(
+				array(), $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT * from $wpdb->termmeta WHERE term_id = %s",
+						$term_id
+					)
+				), 'Sensei term meta should be deleted'
+			);
 
-			$this->assertEquals( array(), $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * from $wpdb->terms WHERE term_id = %s",
-					$term_id
-				)
-			), 'Sensei term should be deleted' );
+			$this->assertEquals(
+				array(), $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT * from $wpdb->terms WHERE term_id = %s",
+						$term_id
+					)
+				), 'Sensei term should be deleted'
+			);
 
-			$this->assertEquals( array(), $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * from $wpdb->term_taxonomy WHERE term_taxonomy_id = %s",
-					$term_taxonomy_id
-				)
-			), 'Sensei term taxonomy should be deleted' );
+			$this->assertEquals(
+				array(), $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT * from $wpdb->term_taxonomy WHERE term_taxonomy_id = %s",
+						$term_taxonomy_id
+					)
+				), 'Sensei term taxonomy should be deleted'
+			);
 
-			$this->assertEquals( array(), $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * from $wpdb->term_relationships WHERE term_taxonomy_id = %s",
-					$term_taxonomy_id
-				)
-			), 'Sensei term relationships should be deleted' );
+			$this->assertEquals(
+				array(), $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT * from $wpdb->term_relationships WHERE term_taxonomy_id = %s",
+						$term_taxonomy_id
+					)
+				), 'Sensei term relationships should be deleted'
+			);
 		}
 	}
 
@@ -390,17 +450,19 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	/* Helper functions. */
 
 	private function getPostIdsWithTerm( $term_id, $taxonomy ) {
-		return get_posts( array(
-			'fields'    => 'ids',
-			'post_type' => 'any',
-			'tax_query' => array(
-				array(
-					'field'    => 'term_id',
-					'terms'    => $term_id,
-					'taxonomy' => $taxonomy,
+		return get_posts(
+			array(
+				'fields'    => 'ids',
+				'post_type' => 'any',
+				'tax_query' => array(
+					array(
+						'field'    => 'term_id',
+						'terms'    => $term_id,
+						'taxonomy' => $taxonomy,
+					),
 				),
-			),
-		) );
+			)
+		);
 	}
 
 	/**
@@ -431,5 +493,37 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		$role = get_role( 'teacher' );
 		$this->assertNull( $role, 'Teacher role should be removed overall' );
+	}
+
+	/**
+	 * Ensure comments are trashed.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_comments
+	 */
+	public function testCleanupComments() {
+		$this->setupComments();
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		foreach ( $this->comment_ids as $comment_id ) {
+			$this->assertEquals( 'trash', get_comment( $comment_id )->comment_approved );
+		}
+	}
+
+	/**
+	 * Ensure non-Sensei comments are not trashed.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_comments
+	 */
+	public function testCleanupCommentsNonSensei() {
+		$this->setupComments();
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		foreach ( $this->regular_comment_ids as $comment_id ) {
+			$this->assertNotEquals( 'trash', get_comment( $comment_id )->comment_approved );
+		}
 	}
 }
