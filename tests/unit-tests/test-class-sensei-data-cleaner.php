@@ -23,6 +23,10 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	private $regular_user_id;
 	private $teacher_user_id;
 
+	// Comments.
+	private $comment_ids;
+	private $regular_comment_ids;
+
 	/**
 	 * Add some posts to run tests against. Any that are associated with Sensei
 	 * should be trashed on cleanup. The others should not be trashed.
@@ -195,6 +199,26 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		// Add a Sensei cap to an existing role.
 		$role = get_role( 'editor' );
 		$role->add_cap( 'manage_sensei_grades' );
+	}
+
+	/**
+	 * Add some comments to run tests against. Any that are associated with Sensei
+	 * should be trashed on cleanup. The others should not be trashed.
+	 */
+	private function setupComments() {
+		// Create some Sensei comments.
+		$answer_notes_ids = $this->factory->comment->create_many( 2, array(
+			'comment_type' => 'sensei_answer_notes',
+		) );
+		$lesson_start_ids = $this->factory->comment->create_many( 3, array(
+			'comment_type' => 'sensei_lesson_start',
+		) );
+		$this->comment_ids = array_merge( $answer_notes_ids, $lesson_start_ids );
+
+		// Create some non-Sensei comments.
+		$this->regular_comment_ids = $this->factory->comment->create_many( 5, array(
+			'comment_type' => 'order_note',
+		) );
 	}
 
 	/**
@@ -431,5 +455,37 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		$role = get_role( 'teacher' );
 		$this->assertNull( $role, 'Teacher role should be removed overall' );
+	}
+
+	/**
+	 * Ensure comments are trashed.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_comments
+	 */
+	public function testCleanupComments() {
+		$this->setupComments();
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		foreach ( $this->comment_ids as $comment_id ) {
+			$this->assertEquals( 'trash', get_comment( $comment_id )->comment_approved );
+		}
+	}
+
+	/**
+	 * Ensure non-Sensei comments are not trashed.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_comments
+	 */
+	public function testCleanupCommentsNonSensei() {
+		$this->setupComments();
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		foreach ( $this->regular_comment_ids as $comment_id ) {
+			$this->assertNotEquals( 'trash', get_comment( $comment_id )->comment_approved );
+		}
 	}
 }
