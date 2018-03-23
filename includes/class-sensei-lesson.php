@@ -616,9 +616,6 @@ class Sensei_Lesson {
 						$html .= '</select>' . "\n";
 						// Course Product
 						if ( Sensei_WC::is_woocommerce_active() ) {
-							// Get the Products
-							$select_course_woocommerce_product = get_post_meta( $post_item->ID, '_course_woocommerce_product', true );
-
 							$product_args = array(	'post_type' 		=> array( 'product', 'product_variation' ),
 													'posts_per_page' 		=> -1,
 													'orderby'         	=> 'title',
