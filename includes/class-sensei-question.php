@@ -780,7 +780,7 @@ class Sensei_Question {
 		?>
 		<div class="answer_message <?php echo esc_attr( $final_css_classes ); ?>">
 
-			<span><?php echo esc_html( $final_message ) ?></span>
+			<span><?php echo Sensei_Wp_Kses::wp_kses( $final_message ) ?></span>
 
 		</div>
 		<?php
