@@ -1237,12 +1237,14 @@ class Sensei_WC {
 		if ( ! in_array( $order_status, array( 'wc-completed', 'wc-processing' ) ) ) {
 			return;
 		}
-
 		$user = get_user_by( 'id', $order->get_user_id() );
-		$order_user['ID'] = $user->ID;
-		$order_user['user_login'] = $user->user_login;
-		$order_user['user_email'] = $user->user_email;
-		$order_user['user_url'] = $user->user_url;
+
+		if ( $user ) {
+			$order_user['ID'] = $user->ID;
+			$order_user['user_login'] = $user->user_login;
+			$order_user['user_email'] = $user->user_email;
+			$order_user['user_url'] = $user->user_url;
+		}
 
 		if ( 0 == sizeof( $order->get_items() ) ) {
 			return;
@@ -1275,14 +1277,17 @@ class Sensei_WC {
 			$courses = Sensei()->course->get_product_courses( $_product_id );
 			Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Got (' . count( $courses ) . ') course(s), order_id ' . $order_id . ', product_id ' . $_product_id );
 
-			// Loop and update those courses
-			foreach ( $courses as $course_item ) {
-				Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Update course_id ' . $course_item->ID . ' for user_id ' . $order_user['ID'] );
-				$update_course = self::course_update( $course_item->ID, $order_user, $order );
-				if ( false === $update_course ) {
-					Sensei_WC_Utils::log( 'Sensei_WC::complete_order: FAILED course_update course_id ' . $course_item->ID . ' for user_id ' . $order_user['ID'] );
+			if ( count( $order_user ) > 0 ) {
+				// Loop and update those courses.
+				foreach ( $courses as $course_item ) {
+					Sensei_WC_Utils::log( 'Sensei_WC::complete_order: Update course_id ' . $course_item->ID . ' for user_id ' . $order_user['ID'] );
+					$update_course = self::course_update( $course_item->ID, $order_user, $order );
+					if ( false === $update_course ) {
+						Sensei_WC_Utils::log( 'Sensei_WC::complete_order: FAILED course_update course_id ' . $course_item->ID . ' for user_id ' . $order_user['ID'] );
+					}
 				}
 			}
+
 			if ( count( $courses ) > 0 ) {
 				$order_contains_courses = true;
             }
