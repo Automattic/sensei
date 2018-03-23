@@ -85,17 +85,18 @@ class Sensei_WC_Subscriptions {
 
         foreach($order->get_items() as $item) {
 
-            $product_type = '';
-            if (Sensei_WC_Utils::is_wc_item_variation($item)) {
+            $item_id = Sensei_WC_Utils::get_item_id_from_item( $item );
+
+            $product_type = WC_Product_Factory::get_product_type( $item_id );
+
+            if ( Sensei_WC_Utils::is_wc_item_variation( $item ) ) {
                 $product_type = 'subscription_variation';
             }
-
-            $item_id = Sensei_WC_Utils::get_item_id_from_item($item);
 
             // Get courses that use the WC product
             $courses = array();
 
-            if ( ! in_array( $product_type, self::get_subscription_types() ) ) {
+            if ( in_array( $product_type, self::get_subscription_types() ) ) {
 
                 $courses = Sensei()->course->get_product_courses( $item_id );
 
