@@ -1167,43 +1167,41 @@ class Sensei_Course {
 	 */
 	public function get_product_courses( $product_id = 0 ) {
 
+		$courses    = array();
+
 		if ( ! Sensei_WC::is_woocommerce_active() || empty( $product_id ) ) {
-			return array();
+			return $courses;
 		}
 
-		//check for variation
 		$product = wc_get_product( $product_id );
 
 		if ( ! is_object( $product ) ) {
-			return array();
-		}
-
-		if ( in_array( $product->get_type(), array( 'variable-subscription', 'variable' ) ) ) {
-
-			$variations = $product->get_available_variations();
-			$courses    = array();
-
-			// possibly check if the course is not linked to the variation parent product
-			$variation_parent_courses = get_posts( self::get_product_courses_query_args( $product_id ) );
-
-			if ( ! empty( $variation_parent_courses ) ) {
-				$courses           = array_merge( $courses, $variation_parent_courses );
-			}
-
-			foreach ( $variations as $variation ) {
-
-				$variation_courses = get_posts( self::get_product_courses_query_args( $variation['variation_id'] ) );
-				$courses           = array_merge( $courses, $variation_courses );
-
-			}
-
 			return $courses;
-
-		} else {
-
-			return get_posts( self::get_product_courses_query_args( $product->get_id() ) );
-
 		}
+
+		$courses = get_posts( self::get_product_courses_query_args( $product_id ) );
+
+		switch( $product->get_type() ) {
+			case 'subscription_variation':
+			case 'variation':
+				$parent_product_courses = get_posts( self::get_product_courses_query_args( $product->get_parent_id() ) );
+				$courses                = array_merge( $courses, $parent_product_courses);
+				break;
+
+			case 'variable-subscription':
+			case 'variable':
+				$variations = $product->get_available_variations();
+
+				foreach ( $variations as $variation ) {
+
+					$variation_courses = get_posts( self::get_product_courses_query_args( $variation['variation_id'] ) );
+					$courses           = array_merge( $courses, $variation_courses );
+
+				}
+				break;
+		}
+
+		return $courses;
 
 	} // End get_product_courses()
 
