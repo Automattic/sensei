@@ -1192,11 +1192,24 @@ class Sensei_Frontend {
 				$this->data->is_user_taking_course = true;
 
 				// Refresh page to avoid re-posting
-				?>
 
-			    <script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
+				/**
+				 * Filter the URL that students are redirected to after starting a course.
+				 *
+				 * @since 1.10.0
+				 *
+				 * @param string|bool  $redirect_url URL to redirect students to after starting course. Return `false` to prevent redirect.
+				 * @param WP_Post      $post         Post object for course.
+				 */
+				$redirect_url = apply_filters( 'sensei_start_course_redirect_url', get_permalink( $post->ID ), $post );
 
-			    <?php
+				if ( false !== $redirect_url ) {
+					?>
+
+					<script type="text/javascript"> window.location = '<?php echo esc_url( $redirect_url ); ?>'; </script>
+
+					<?php
+				}
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_course_start()
