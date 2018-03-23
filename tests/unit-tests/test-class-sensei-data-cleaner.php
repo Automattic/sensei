@@ -452,6 +452,48 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		$this->assertNotFalse( get_option( "{$timeout_prefix}other_transient" ), 'Non-Sensei transient' );
 	}
 
+	/**
+	 * Ensure the Sensei user meta are deleted from the DB.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_user_meta
+	 */
+	public function testCleanupUserMeta() {
+		$student_id = $this->factory->user->create( array( 'role' => 'author' ) );
+
+		$keep_meta_keys = array(
+			'module_progress_1_1',
+			'_module_progress__1',
+			'_module_progress',
+			'_sensei_hide_menu_settings_notice',
+			'test_sensei_hide_menu_settings_notice',
+			'^sensei_hide_menu_settings_notice$',
+		);
+
+		$remove_meta_keys = array(
+			'_module_progress_1_1',
+			'_module_progress_10000_10',
+			'_module_progress_8_1',
+			'sensei_hide_menu_settings_notice',
+		);
+
+		foreach ( array_merge( $keep_meta_keys, $remove_meta_keys ) as $meta_key ) {
+			update_user_meta( $student_id, $meta_key, 'test_value' );
+			$this->assertTrue( 'test_value' === get_user_meta( $student_id, $meta_key, true) );
+		}
+
+		Sensei_Data_Cleaner::cleanup_all();
+		wp_cache_flush();
+
+		foreach ( $keep_meta_keys as $meta_key ) {
+			$this->assertTrue( 'test_value' === get_user_meta( $student_id, $meta_key, true ), sprintf( 'The user meta key "%s" was supposed to be preserved.', $meta_key ) );
+		}
+
+		foreach ( $remove_meta_keys as $meta_key ) {
+			$this->assertTrue( '' === get_user_meta( $student_id, $meta_key, true ), sprintf( 'The user meta key "%s" was supposed to be removed.', $meta_key ) );
+		}
+	}
+
 	/* Helper functions. */
 
 	private function getPostIdsWithTerm( $term_id, $taxonomy ) {
