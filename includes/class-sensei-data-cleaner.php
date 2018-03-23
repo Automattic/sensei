@@ -202,6 +202,16 @@ class Sensei_Data_Cleaner {
 	);
 
 	/**
+	 * User meta key names (as MySQL regexes) to be deleted.
+	 *
+	 * @var array $user_meta_keys
+	 */
+	private static $user_meta_keys = array(
+		'^sensei_hide_menu_settings_notice$',
+		'^_module_progress_[0-9]+_[0-9]+$',
+	);
+
+	/**
 	 * Cleanup all data.
 	 *
 	 * @access public
@@ -213,6 +223,7 @@ class Sensei_Data_Cleaner {
 		self::cleanup_roles_and_caps();
 		self::cleanup_transients();
 		self::cleanup_options();
+		self::cleanup_user_meta();
 	}
 
 	/**
@@ -349,4 +360,23 @@ class Sensei_Data_Cleaner {
 			}
 		}
 	}
+
+	/**
+	 * Cleanup Sensei user meta from the database.
+	 *
+	 * @access private
+	 */
+	private static function cleanup_user_meta() {
+		global $wpdb;
+
+		foreach ( self::$user_meta_keys as $meta_key ) {
+			$wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$wpdb->usermeta} WHERE meta_key RLIKE %s",
+					$meta_key
+				)
+			);
+		}
+	}
+
 }
