@@ -1135,11 +1135,13 @@ class Sensei_Question {
         $type_name = __( 'Multiple Choice', 'woothemes-sensei' );
         $grade_type = 'manual-grade';
 
-        if ('boolean'== $type ) {
-
-            $right_answer = ucfirst($right_answer);
-
-        }elseif( 'multiple-choice' == $type ) {
+        if ( 'boolean' == $type ) {
+			if( 'true' === $right_answer ) {
+				$right_answer = __( 'True', 'woothemes-sensei' );
+			} else {
+				$right_answer = __( 'False', 'woothemes-sensei' );
+			}
+        } elseif( 'multiple-choice' == $type ) {
 
             $right_answer = (array) $right_answer;
             $right_answer = implode( ', ', $right_answer );
