@@ -182,13 +182,13 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		// Create a regular user and assign some caps.
 		$this->regular_user_id = $this->factory->user->create( array( 'role' => 'author' ) );
-		$regular_user = get_user_by( 'id', $this->regular_user_id );
+		$regular_user          = get_user_by( 'id', $this->regular_user_id );
 		$regular_user->add_cap( 'edit_others_posts' );
 		$regular_user->add_cap( 'manage_sensei' );
 
 		// Create a teacher user and assign some caps.
 		$this->teacher_user_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
-		$teacher_user = get_user_by( 'id', $this->teacher_user_id );
+		$teacher_user          = get_user_by( 'id', $this->teacher_user_id );
 		$teacher_user->add_cap( 'edit_others_posts' );
 		$teacher_user->add_cap( 'manage_sensei' );
 
@@ -387,6 +387,71 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Ensure the Sensei roles and caps are deleted.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_roles_and_caps
+	 */
+	public function testSenseiRolesAndCapsDeleted() {
+		Sensei_Data_Cleaner::cleanup_all();
+
+		// Refresh user info.
+		wp_cache_flush();
+
+		$regular_user = get_user_by( 'id', $this->regular_user_id );
+		$this->assertTrue( in_array( 'author', $regular_user->roles, true ), 'Author role should not be removed' );
+		$this->assertTrue( $regular_user->has_cap( 'edit_others_posts' ), 'Non-Sensei cap should not be removed from user' );
+		$this->assertFalse( $regular_user->has_cap( 'manage_sensei' ), 'Sensei cap should be removed from user' );
+
+		$teacher_user = get_user_by( 'id', $this->teacher_user_id );
+		$this->assertFalse( in_array( 'teacher', $teacher_user->roles, true ), 'Teacher role should be removed from user' );
+		$this->assertFalse( array_key_exists( 'teacher', $teacher_user->caps ), 'Teacher role should be removed from user caps' );
+		$this->assertTrue( $teacher_user->has_cap( 'edit_others_posts' ), 'Non-Sensei cap should not be removed from teacher' );
+		$this->assertFalse( $teacher_user->has_cap( 'manage_sensei' ), 'Sensei cap should be removed from teacher' );
+
+		$role = get_role( 'editor' );
+		$this->assertFalse( $role->has_cap( 'manage_sensei_grades' ), 'Sensei cap should be removed from role' );
+
+		$role = get_role( 'teacher' );
+		$this->assertNull( $role, 'Teacher role should be removed overall' );
+	}
+
+	/**
+	 * Ensure the Sensei transients are deleted from the DB.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_transients
+	 */
+	public function testSenseiTransientsDeleted() {
+		set_transient( 'sensei_123_none_module_lessons', 'value', current_time( 'timestamp' ) + 3600 );
+		set_transient( 'sensei_answers_123_456', 'value', current_time( 'timestamp' ) + 3600 );
+		set_transient( 'sensei_answers_feedback_123_456', 'value', current_time( 'timestamp' ) + 3600 );
+		set_transient( 'quiz_grades_123_456', 'value', current_time( 'timestamp' ) + 3600 );
+		set_transient( 'other_transient', 'value', current_time( 'timestamp' ) + 3600 );
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		// Flush transients from cache.
+		wp_cache_flush();
+
+		$prefix         = '_transient_';
+		$timeout_prefix = '_transient_timeout_';
+
+		// Ensure the transients and their timeouts were deleted.
+		$this->assertFalse( get_option( "{$prefix}sensei_123_none_module_lessons" ), 'Sensei none_module_lessons transient' );
+		$this->assertFalse( get_option( "{$timeout_prefix}sensei_123_none_module_lessons" ), 'Sensei none_module_lessons transient timeout' );
+		$this->assertFalse( get_option( "{$prefix}sensei_answers_123_456" ), 'Sensei sensei_answers transient' );
+		$this->assertFalse( get_option( "{$timeout_prefix}sensei_answers_123_456" ), 'Sensei sensei_answers transient timeout' );
+		$this->assertFalse( get_option( "{$prefix}sensei_answers_feedback_123_456" ), 'Sensei sensei_answers_feedback transient' );
+		$this->assertFalse( get_option( "{$timeout_prefix}sensei_answers_feedback_123_456" ), 'Sensei sensei_answers_feedback transient timeout' );
+		$this->assertFalse( get_option( "{$prefix}quiz_grades_123_456" ), 'Sensei quiz_grades transient' );
+
+		// Ensure the other transient and its timeout was not deleted.
+		$this->assertNotFalse( get_option( "{$prefix}other_transient" ), 'Non-Sensei transient' );
+		$this->assertNotFalse( get_option( "{$timeout_prefix}other_transient" ), 'Non-Sensei transient' );
+	}
+
 	/* Helper functions. */
 
 	private function getPostIdsWithTerm( $term_id, $taxonomy ) {
@@ -401,35 +466,5 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 				),
 			),
 		) );
-	}
-
-	/**
-	 * Ensure the Sensei roles and caps are deleted.
-	 *
-	 * @covers Sensei_Data_Cleaner::cleanup_all
-	 * @covers Sensei_Data_Cleaner::cleanup_roles_and_caps
-	 */
-	public function testSenseiRolesAndCapsDeleted() {
-		Sensei_Data_Cleaner::cleanup_all();
-
-		// Refresh user info.
-		wp_cache_flush();
-
-		$regular_user = get_user_by( 'id', $this->regular_user_id );
-		$this->assertTrue( in_array( 'author', $regular_user->roles ), 'Author role should not be removed' );
-		$this->assertTrue( $regular_user->has_cap( 'edit_others_posts' ), 'Non-Sensei cap should not be removed from user' );
-		$this->assertFalse( $regular_user->has_cap( 'manage_sensei' ), 'Sensei cap should be removed from user' );
-
-		$teacher_user = get_user_by( 'id', $this->teacher_user_id );
-		$this->assertFalse( in_array( 'teacher', $teacher_user->roles ), 'Teacher role should be removed from user' );
-		$this->assertFalse( array_key_exists( 'teacher', $teacher_user->caps ), 'Teacher role should be removed from user caps' );
-		$this->assertTrue( $teacher_user->has_cap( 'edit_others_posts' ), 'Non-Sensei cap should not be removed from teacher' );
-		$this->assertFalse( $teacher_user->has_cap( 'manage_sensei' ), 'Sensei cap should be removed from teacher' );
-
-		$role = get_role( 'editor' );
-		$this->assertFalse( $role->has_cap( 'manage_sensei_grades' ), 'Sensei cap should be removed from role' );
-
-		$role = get_role( 'teacher' );
-		$this->assertNull( $role, 'Teacher role should be removed overall' );
 	}
 }

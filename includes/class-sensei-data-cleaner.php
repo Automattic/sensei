@@ -189,6 +189,19 @@ class Sensei_Data_Cleaner {
 	);
 
 	/**
+	 * Transient names (as MySQL regexes) to be deleted. The prefixes
+	 * "_transient_" and "_transient_timeout_" will be prepended.
+	 *
+	 * @var $transients
+	 */
+	private static $transients = array(
+		'sensei_[0-9]+_none_module_lessons',
+		'sensei_answers_[0-9]+_[0-9]+',
+		'sensei_answers_feedback_[0-9]+_[0-9]+',
+		'quiz_grades_[0-9]+_[0-9]+',
+	);
+
+	/**
 	 * Cleanup all data.
 	 *
 	 * @access public
@@ -198,6 +211,7 @@ class Sensei_Data_Cleaner {
 		self::cleanup_pages();
 		self::cleanup_taxonomies();
 		self::cleanup_roles_and_caps();
+		self::cleanup_transients();
 		self::cleanup_options();
 	}
 
@@ -312,6 +326,26 @@ class Sensei_Data_Cleaner {
 				$wpdb->delete( $wpdb->term_taxonomy, array( 'term_taxonomy_id' => $term->term_taxonomy_id ) );
 				$wpdb->delete( $wpdb->terms, array( 'term_id' => $term->term_id ) );
 				$wpdb->delete( $wpdb->termmeta, array( 'term_id' => $term->term_id ) );
+			}
+		}
+	}
+
+	/**
+	 * Cleanup transients from the database.
+	 *
+	 * @access private
+	 */
+	private static function cleanup_transients() {
+		global $wpdb;
+
+		foreach ( array( '_transient_', '_transient_timeout_' ) as $prefix ) {
+			foreach ( self::$transients as $transient ) {
+				$wpdb->query(
+					$wpdb->prepare(
+						"DELETE FROM $wpdb->options WHERE option_name RLIKE %s",
+						$prefix . $transient
+					)
+				);
 			}
 		}
 	}
