@@ -424,11 +424,11 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Data_Cleaner::cleanup_transients
 	 */
 	public function testSenseiTransientsDeleted() {
-		set_transient( 'sensei_123_none_module_lessons', 'value', 0 );
-		set_transient( 'sensei_answers_123_456', 'value', 0 );
-		set_transient( 'sensei_answers_feedback_123_456', 'value', 0 );
-		set_transient( 'quiz_grades_123_456', 'value', 0 );
-		set_transient( 'other_transient', 'value', 0 );
+		set_transient( 'sensei_123_none_module_lessons', 'value', current_time( 'timestamp' ) + 3600 );
+		set_transient( 'sensei_answers_123_456', 'value', current_time( 'timestamp' ) + 3600 );
+		set_transient( 'sensei_answers_feedback_123_456', 'value', current_time( 'timestamp' ) + 3600 );
+		set_transient( 'quiz_grades_123_456', 'value', current_time( 'timestamp' ) + 3600 );
+		set_transient( 'other_transient', 'value', current_time( 'timestamp' ) + 3600 );
 
 		Sensei_Data_Cleaner::cleanup_all();
 
