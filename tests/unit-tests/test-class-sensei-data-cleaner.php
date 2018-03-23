@@ -494,6 +494,42 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * Ensure the Sensei roles and caps are deleted.
+	 *
+	 * @covers Sensei_Data_Cleaner::cleanup_all
+	 * @covers Sensei_Data_Cleaner::cleanup_roles_and_caps
+	 */
+	public function testSenseiPostMetaDeleted() {
+		// Sensei post meta.
+		update_post_meta( $this->course_ids[0], '_course_prerequisite', $this->course_ids[1] );
+		update_post_meta( $this->lesson_ids[0], '_lesson_course', $this->course_ids[0] );
+
+		// Non-Sensei post meta.
+		update_post_meta( $this->post_ids[0], 'meta1', 'value1' );
+		update_post_meta( $this->post_ids[1], 'meta2', 'value2' );
+
+		// Sensei meta that needs to be deleted directly.
+		update_post_meta( $this->post_ids[0], 'sensei_payment_complete', true );
+		update_post_meta( $this->post_ids[1], 'sensei_products_processed', 3 );
+
+		Sensei_Data_Cleaner::cleanup_all();
+
+		$this->emptyTrash();
+
+		// Ensure Sensei post meta is deleted.
+		$this->assertEmpty( get_post_meta( $this->course_ids[0], '_course_prerequisite', true ), '_course_prerequisite should be deleted' );
+		$this->assertEmpty( get_post_meta( $this->lesson_ids[0], '_lesson_course', true ), '_lesson_course should be deleted' );
+
+		// Ensure non-Sensei post meta is not deleted.
+		$this->assertEquals( 'value1', get_post_meta( $this->post_ids[0], 'meta1', true ), 'meta1 should not be deleted' );
+		$this->assertEquals( 'value2', get_post_meta( $this->post_ids[1], 'meta2', true ), 'meta2 should not be deleted' );
+
+		// Ensure other Sensei meta is deleted.
+		$this->assertEmpty( get_post_meta( $this->post_ids[0], 'sensei_payment_complete', true ), 'sensei_payment_complete should be deleted' );
+		$this->assertEmpty( get_post_meta( $this->post_ids[1], 'sensei_products_processed', true ), 'sensei_products_processed should not be deleted' );
+	}
+
 	/* Helper functions. */
 
 	private function getPostIdsWithTerm( $term_id, $taxonomy ) {
@@ -508,5 +544,23 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 				),
 			),
 		) );
+	}
+
+	private function emptyTrash() {
+		$trashed_posts = get_posts(
+			array(
+				'post_type'   => 'any',
+				'post_status' => 'trash',
+				'numberposts' => -1,
+			)
+		);
+
+		// Set the trash time to be a very long time ago.
+		foreach ( $trashed_posts as $post ) {
+			update_post_meta( $post->ID, '_wp_trash_meta_time', 0 );
+		}
+
+		// Run a scheduled trash cleanup.
+		wp_scheduled_delete();
 	}
 }

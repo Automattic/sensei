@@ -212,12 +212,23 @@ class Sensei_Data_Cleaner {
 	);
 
 	/**
+	 * Post meta to be deleted.
+	 *
+	 * @var $post_meta
+	 */
+	private static $post_meta = array(
+		'sensei_payment_complete',
+		'sensei_products_processed',
+	);
+
+	/**
 	 * Cleanup all data.
 	 *
 	 * @access public
 	 */
 	public static function cleanup_all() {
 		self::cleanup_custom_post_types();
+		self::cleanup_post_meta();
 		self::cleanup_pages();
 		self::cleanup_taxonomies();
 		self::cleanup_roles_and_caps();
@@ -379,4 +390,16 @@ class Sensei_Data_Cleaner {
 		}
 	}
 
+	/**
+	 * Cleanup post meta that doesn't get deleted automatically.
+	 *
+	 * @access private
+	 */
+	private static function cleanup_post_meta() {
+		global $wpdb;
+
+		foreach ( self::$post_meta as $post_meta ) {
+			$wpdb->delete( $wpdb->postmeta, array( 'meta_key' => $post_meta ) );
+		}
+	}
 }
