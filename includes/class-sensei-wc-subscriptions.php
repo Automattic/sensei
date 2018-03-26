@@ -57,61 +57,63 @@ class Sensei_WC_Subscriptions {
         return true;
     }
 
-    /**
-     * Responds to when a subscription product is purchased
-     *
-     * @since  1.2.0
-     * @since  1.9.0 move to class Sensei_WC
-     * @since  1.9.12 move to class Sensei_WC_Subscriptions
-     *
-     * @param   WC_Order $order
-     *
-     * @return  void
-     */
-    public static function activate_subscription(  $order ) {
+	/**
+	 * Responds to when a subscription product is purchased
+	 *
+	 * @since  1.2.0
+	 * @since  1.9.0 move to class Sensei_WC
+	 * @since  1.9.12 move to class Sensei_WC_Subscriptions
+	 *
+	 * @param   WC_Order $order
+	 *
+	 * @return  void
+	 */
+	public static function activate_subscription(  $order ) {
 
-        $order_user = get_user_by('id', $order->user_id);
-        $user['ID'] = $order_user->ID;
-        $user['user_login'] = $order_user->user_login;
-        $user['user_email'] = $order_user->user_email;
-        $user['user_url'] = $order_user->user_url;
+		$order_user = get_user_by('id', $order->user_id);
+		$user['ID'] = $order_user->ID;
+		$user['user_login'] = $order_user->user_login;
+		$user['user_email'] = $order_user->user_email;
+		$user['user_url'] = $order_user->user_url;
 
-        // Run through each product ordered
-        if ( ! sizeof($order->get_items() )>0 ) {
+		// Run through each product ordered
+		if ( ! sizeof($order->get_items() )>0 ) {
 
-            return;
+			return;
 
-        }
+		}
 
-        foreach($order->get_items() as $item) {
+		foreach($order->get_items() as $item) {
 
-            $item_id = Sensei_WC_Utils::get_item_id_from_item( $item );
+			$item_id = Sensei_WC_Utils::get_item_id_from_item( $item );
 
-            $product_type = WC_Product_Factory::get_product_type( $item_id );
+			$product_type = WC_Product_Factory::get_product_type( $item_id );
 
-            if ( Sensei_WC_Utils::is_wc_item_variation( $item ) ) {
-                $product_type = 'subscription_variation';
-            }
+			if ( Sensei_WC_Utils::is_wc_item_variation( $item ) ) {
 
-            // Get courses that use the WC product
-            $courses = array();
+				$product_type = 'subscription_variation';
 
-            if ( in_array( $product_type, self::get_subscription_types() ) ) {
+			}
 
-                $courses = Sensei()->course->get_product_courses( $item_id );
+			// Get courses that use the WC product
+			$courses = array();
 
-            } // End If Statement
+			if ( in_array( $product_type, self::get_subscription_types() ) ) {
 
-            // Loop and add the user to the course.
-            foreach ( $courses as $course_item ){
+				$courses = Sensei()->course->get_product_courses( $item_id );
 
-                Sensei_Utils::user_start_course( intval( $user['ID'] ), $course_item->ID  );
+			} // End If Statement
 
-            } // End For Loop
+			// Loop and add the user to the course.
+			foreach ( $courses as $course_item ){
 
-        } // End For Loop
+				Sensei_Utils::user_start_course( intval( $user['ID'] ), $course_item->ID  );
 
-    }
+			} // End For Loop
+
+		} // End For Loop
+
+	}
 
     /**
      * Determine if the user has and active subscription to give them access
