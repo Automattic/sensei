@@ -425,17 +425,7 @@ class Sensei_WC {
 			if ( $user_id ) {
 
 				// Get all courses for product
-				$args = Sensei_Course::get_default_query_args();
-				$args['meta_query'] = array( array(
-							'key' => '_course_woocommerce_product',
-							'value' => $item_id,
-						),
-				);
-				$args['orderby'] = 'menu_order date';
-				$args['order'] = 'ASC';
-
-				// loop through courses
-				$courses = get_posts( $args );
+				$courses = Sensei()->course->get_product_courses( $item_id );
 				if ( $courses && count( $courses ) > 0 ) {
 
 					foreach ( $courses as $course ) {
