@@ -55,6 +55,7 @@ class Sensei_Frontend {
 
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_start' ), 10 );
+		add_action( 'sensei_single_lesson_content_inside_before', array( $this, 'sensei_lesson_start' ), 10 );
 
 		add_filter( 'the_title', array( $this, 'sensei_lesson_preview_title' ), 10, 2 );
 
@@ -901,6 +902,10 @@ class Sensei_Frontend {
 			return;
 		}
 
+		if ( ! Sensei_Utils::user_started_lesson( $lesson_id, get_current_user_id() ) ) {
+			return;
+		}
+
 		if( false === Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ) {
 			?>
 			<form class="lesson_button_form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
@@ -1174,6 +1179,9 @@ class Sensei_Frontend {
 		return $title;
 	} // sensei_lesson_preview_title
 
+	/**
+	 * Action for starting course.
+	 */
 	public function sensei_course_start() {
 		global $post, $current_user;
 
@@ -1213,6 +1221,36 @@ class Sensei_Frontend {
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_course_start()
+
+	/**
+	 * Action for starting lesson.
+	 */
+	public function sensei_lesson_start() {
+		global $post, $current_user;
+
+		// Check if the user is taking the lesson
+		$is_user_taking_lesson = Sensei_Utils::user_started_lesson( $post->ID, $current_user->ID );
+		// Handle user starting the lesson
+		if ( isset( $_POST['lesson_start'] )
+		    && wp_verify_nonce( $_POST['woothemes_sensei_start_lesson_noonce'], 'woothemes_sensei_start_lesson_noonce' )
+		    && ! $is_user_taking_lesson ) {
+
+			// Start the lesson
+			$activity_logged = Sensei_Utils::user_start_lesson( $current_user->ID, $post->ID );
+			$this->data = new stdClass();
+			$this->data->is_user_taking_lesson = false;
+			if ( $activity_logged ) {
+				$this->data->is_user_taking_lesson = true;
+
+				// Refresh page to avoid re-posting
+				?>
+
+			    <script type="text/javascript"> window.location = '<?php echo get_permalink( $post->ID ); ?>'; </script>
+
+			    <?php
+			} // End If Statement
+		} // End If Statement
+	} // End sensei_lesson_start()
 
     /**
      * @deprecated since 1.9.0
