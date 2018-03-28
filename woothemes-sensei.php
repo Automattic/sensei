@@ -14,7 +14,8 @@
  *
  * Woo: 152116:bad2a02a063555b7e2bee59924690763
  */
-/*  Copyright 2013-2017  WooCommerce  (email : info@woocommerce.com)
+
+/*  Copyright 2013-2018 Automattic
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
