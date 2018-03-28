@@ -1,5 +1,32 @@
 *** Sensei Changelog ***
 
+2018.04.04 - version 1.10.0
+
+* Fix: Fixes associating courses after purchase of a variable subscription product
+* Fix: Allow certain HTML tags on quiz correct answer result
+* Fix: ​Fix number parameter not working for [sensei_user_courses] shortcode
+* Fix: Ensure answers to true / false questions are translated for students
+* Fix: Fix PHP notices when viewing or adding a lesson and there are no courses
+* Fix: Fix PHP 7.2.x warnings
+* Fix: Fix get_class warning on PHP 7.2.x
+* Fix: Check if WC_VERSION constant is defined before using it
+* Fix: Fix CSS class name translation
+* Fix: Hardcode DAY_IN_SECONDS to avoid continuous sending of data on old WP installations
+* Fix: Fix PHP notices when purchasing non-course product as a guest
+* Tweak: Remove WooThemes branding on settings page
+* Tweak: On single course page, link to module only if we should
+* Tweak: Conditionally link to module in lesson breadcrumb
+* Tweak: Exclude modules from course navigation when not appropriate
+* Tweak: Send usage data immediately when enabled through opt-in dialog
+* Tweak: Clean up extended settings in Gutenberg Lesson editor
+* New: Delete plugin data on uninstall
+* New: Add revisions support to courses, lessons and questions
+* New: Add sensei_start_course_redirect_url filter when starting course
+* New: Add usage tracking for active and completed courses
+* New: Show lesson tags in Gutenberg editor
+* New: Add usage tracking for system info
+
+
 2018.02.06 - version 1.9.20
 
 * New: Course navigation moves between both lessons and modules
