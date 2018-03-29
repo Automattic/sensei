@@ -1184,8 +1184,11 @@ class Sensei_Course {
 		switch( $product->get_type() ) {
 			case 'subscription_variation':
 			case 'variation':
-				$parent_product_courses = get_posts( self::get_product_courses_query_args( $product->get_parent_id() ) );
-				$courses                = array_merge( $courses, $parent_product_courses);
+				if ( empty( $courses ) ) {
+
+					$courses = get_posts( self::get_product_courses_query_args( $product->get_parent_id() ) );
+
+				}
 				break;
 
 			case 'variable-subscription':
