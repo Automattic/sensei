@@ -1184,8 +1184,17 @@ class Sensei_Course {
 		switch( $product->get_type() ) {
 			case 'subscription_variation':
 			case 'variation':
-				$parent_product_courses = get_posts( self::get_product_courses_query_args( $product->get_parent_id() ) );
-				$courses                = array_merge( $courses, $parent_product_courses);
+				/**
+				 * Merge a product variation's courses with the parent's courses. Defaults to false.
+				 *
+				 * @since 1.10.0
+				 *
+				 * @param bool $merge_courses_with_parent_product True to merge with parent product's courses.
+				 */
+				if ( empty( $courses ) || apply_filters( 'sensei_merge_courses_with_parent_product', false ) ) {
+					$parent_product_courses = get_posts( self::get_product_courses_query_args( $product->get_parent_id() ) );
+					$courses                = array_merge( $courses, $parent_product_courses );
+				}
 				break;
 
 			case 'variable-subscription':
