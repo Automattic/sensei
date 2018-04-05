@@ -64,7 +64,7 @@ class Sensei_Settings extends Sensei_Settings_API {
      * @param $new_value
      */
     public function set( $setting, $new_value ){
-    	
+
         $settings = get_option( $this->token, array() );
 		$settings[ $setting ] = $new_value;
 		return update_option( $this->token,$settings );
@@ -243,6 +243,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['sensei_video_embed_html_sanitization_disable'] = array(
 								'name' => __( 'Disable HTML security', 'woothemes-sensei' ),
 								'description' => __( 'Allow any HTML tags in the Video Embed field. Warning: Enabling this may leave your site more vulnerable to XSS attacks', 'woothemes-sensei' ),
+								'type' => 'checkbox',
+								'default' => false,
+								'section' => 'default-settings'
+								);
+
+		$fields['sensei_delete_data_on_uninstall'] = array(
+								'name' => __( 'Delete all data on uninstall', 'woothemes-sensei' ),
+								'description' => __( 'Delete all saved data for Sensei when the plugin is deleted. IMPORTANT NOTE: once the data is deleted, it cannot be restored!', 'woothemes-sensei' ),
 								'type' => 'checkbox',
 								'default' => false,
 								'section' => 'default-settings'
