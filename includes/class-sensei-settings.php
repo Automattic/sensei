@@ -249,8 +249,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 								);
 
 		$fields['sensei_delete_data_on_uninstall'] = array(
-								'name' => __( 'Delete all data on uninstall', 'woothemes-sensei' ),
-								'description' => __( 'Delete all saved data for Sensei when the plugin is deleted. IMPORTANT NOTE: once the data is deleted, it cannot be restored!', 'woothemes-sensei' ),
+								'name' => __( 'Delete data on uninstall', 'woothemes-sensei' ),
+								'description' => __( 'Delete Sensei data when the plugin is deleted. Once removed, this data cannot be restored.', 'woothemes-sensei' ),
 								'type' => 'checkbox',
 								'default' => false,
 								'section' => 'default-settings'
