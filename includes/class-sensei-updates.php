@@ -1151,24 +1151,32 @@ class Sensei_Updates
 
 		// ...get all Quiz IDs for the above Lessons
 		$id_list = join( ',', $lesson_ids );
-		$meta_list = $wpdb->get_results( "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = '_quiz_lesson' AND meta_value IN ($id_list)", ARRAY_A );
 		$lesson_quiz_ids = array();
-		if ( !empty($meta_list) ) {
-			foreach ( $meta_list as $metarow ) {
-				$lesson_id = $metarow['meta_value'];
-				$quiz_id = $metarow['post_id'];
-				$lesson_quiz_ids[ $lesson_id ] = $quiz_id;
-			}
-		}
-
-		// ...check all Quiz IDs for questions
-		$id_list = join( ',', array_values($lesson_quiz_ids) );
-		$meta_list = $wpdb->get_results( "SELECT meta_value FROM $wpdb->postmeta WHERE meta_key = '_quiz_id' AND meta_value IN ($id_list)", ARRAY_A );
 		$lesson_quiz_ids_with_questions = array();
-		if ( !empty($meta_list) ) {
-			foreach ( $meta_list as $metarow ) {
-				$quiz_id = $metarow['meta_value'];
-				$lesson_quiz_ids_with_questions[] = $quiz_id;
+
+		if ( ! empty( $id_list ) ) {
+			$meta_list = $wpdb->get_results( "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = '_quiz_lesson' AND meta_value IN ($id_list)", ARRAY_A );
+
+			if ( ! empty( $meta_list ) ) {
+				foreach ( $meta_list as $metarow ) {
+					$lesson_id = $metarow['meta_value'];
+					$quiz_id = $metarow['post_id'];
+					$lesson_quiz_ids[ $lesson_id ] = $quiz_id;
+				}
+			}
+
+			// ...check all Quiz IDs for questions
+			$id_list = join( ',', array_values( $lesson_quiz_ids ) );
+
+			if ( ! empty( $id_list ) ) {
+				$meta_list = $wpdb->get_results( "SELECT meta_value FROM $wpdb->postmeta WHERE meta_key = '_quiz_id' AND meta_value IN ($id_list)", ARRAY_A );
+
+				if ( ! empty( $meta_list ) ) {
+					foreach ( $meta_list as $metarow ) {
+						$quiz_id = $metarow['meta_value'];
+						$lesson_quiz_ids_with_questions[] = $quiz_id;
+					}
+				}
 			}
 		}
 
@@ -1234,31 +1242,39 @@ class Sensei_Updates
 		$lesson_ids_with_quizzes = get_posts( $args );
 		// ...get all Quiz IDs for the above Lessons
 		$id_list = join( ',', $lesson_ids_with_quizzes );
-		$meta_list = $wpdb->get_results( "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = '_quiz_lesson' AND meta_value IN ($id_list)", ARRAY_A );
 		$lesson_quiz_ids = array();
-		if ( !empty($meta_list) ) {
-			foreach ( $meta_list as $metarow ) {
-				$lesson_id = $metarow['meta_value'];
-				$quiz_id = $metarow['post_id'];
-				$lesson_quiz_ids[ $lesson_id ] = $quiz_id;
-			}
-		}
-
-		// ...get all Pass Required & Passmarks for the above Lesson/Quizzes
-		$id_list = join( ',', array_values($lesson_quiz_ids) );
-		$meta_list = $wpdb->get_results( "SELECT post_id, meta_key, meta_value FROM $wpdb->postmeta WHERE ( meta_key = '_pass_required' OR meta_key = '_quiz_passmark' ) AND post_id IN ($id_list)", ARRAY_A );
 		$quizzes_pass_required = $quizzes_passmarks = array();
-		if ( !empty($meta_list) ) {
-			foreach ( $meta_list as $metarow ) {
-				if ( !empty($metarow['meta_value']) ) {
+
+		if ( ! empty( $id_list ) ) {
+			$meta_list = $wpdb->get_results( "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = '_quiz_lesson' AND meta_value IN ($id_list)", ARRAY_A );
+
+			if ( !empty($meta_list) ) {
+				foreach ( $meta_list as $metarow ) {
+					$lesson_id = $metarow['meta_value'];
 					$quiz_id = $metarow['post_id'];
-					$key = $metarow['meta_key'];
-					$value = $metarow['meta_value'];
-					if ( '_pass_required' == $key ) {
-						$quizzes_pass_required[ $quiz_id ] = $value;
-					}
-					if ( '_quiz_passmark' == $key ) {
-						$quizzes_passmarks[ $quiz_id ] = $value;
+					$lesson_quiz_ids[ $lesson_id ] = $quiz_id;
+				}
+			}
+
+			// ...get all Pass Required & Passmarks for the above Lesson/Quizzes
+			$id_list = join( ',', array_values($lesson_quiz_ids) );
+
+			if ( ! empty( $id_list ) ) {
+				$meta_list = $wpdb->get_results( "SELECT post_id, meta_key, meta_value FROM $wpdb->postmeta WHERE ( meta_key = '_pass_required' OR meta_key = '_quiz_passmark' ) AND post_id IN ($id_list)", ARRAY_A );
+
+				if ( !empty($meta_list) ) {
+					foreach ( $meta_list as $metarow ) {
+						if ( !empty($metarow['meta_value']) ) {
+							$quiz_id = $metarow['post_id'];
+							$key = $metarow['meta_key'];
+							$value = $metarow['meta_value'];
+							if ( '_pass_required' == $key ) {
+								$quizzes_pass_required[ $quiz_id ] = $value;
+							}
+							if ( '_quiz_passmark' == $key ) {
+								$quizzes_passmarks[ $quiz_id ] = $value;
+							}
+						}
 					}
 				}
 			}
