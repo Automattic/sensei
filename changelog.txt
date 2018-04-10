@@ -1,5 +1,10 @@
 *** Sensei Changelog ***
 
+2018.04.11 - version 1.10.1
+
+* Fix: Fix error in data updates when there are no quizzes
+* Tweak: Add setting for data deletion
+
 2018.04.04 - version 1.10.0
 
 * Fix: Fixes associating courses after purchase of a variable subscription product
@@ -25,7 +30,6 @@
 * New: Add usage tracking for active and completed courses
 * New: Show lesson tags in Gutenberg editor
 * New: Add usage tracking for system info
-
 
 2018.02.06 - version 1.9.20
 
