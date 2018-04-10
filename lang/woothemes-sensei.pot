@@ -129,7 +129,7 @@ msgstr ""
 msgid "%sSensei in your language %s. There is a translation available for your language."
 msgstr ""
 
-#: includes/class-sensei-admin.php:400, includes/class-sensei-settings.php:645
+#: includes/class-sensei-admin.php:400, includes/class-sensei-settings.php:653
 msgid "Install"
 msgstr ""
 
@@ -924,7 +924,7 @@ msgstr ""
 msgid "Translations installed/updated successfully!"
 msgstr ""
 
-#: includes/class-sensei-learner-profiles.php:25, includes/class-sensei-settings.php:464
+#: includes/class-sensei-learner-profiles.php:25, includes/class-sensei-settings.php:472
 msgid "learner"
 msgstr ""
 
@@ -2385,359 +2385,367 @@ msgstr ""
 msgid "Allow any HTML tags in the Video Embed field. Warning: Enabling this may leave your site more vulnerable to XSS attacks"
 msgstr ""
 
-#: includes/class-sensei-settings.php:254
+#: includes/class-sensei-settings.php:252
+msgid "Delete data on uninstall"
+msgstr ""
+
+#: includes/class-sensei-settings.php:253
+msgid "Delete Sensei data when the plugin is deleted. Once removed, this data cannot be restored."
+msgstr ""
+
+#: includes/class-sensei-settings.php:262
 msgid "Courses are complete:"
 msgstr ""
 
-#: includes/class-sensei-settings.php:255
+#: includes/class-sensei-settings.php:263
 msgid "This will determine when courses are marked as complete."
 msgstr ""
 
-#: includes/class-sensei-settings.php:264
+#: includes/class-sensei-settings.php:272
 msgid "Display Course Author"
 msgstr ""
 
-#: includes/class-sensei-settings.php:265
+#: includes/class-sensei-settings.php:273
 msgid "Output the Course Author on Course archive and My Courses page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:272
+#: includes/class-sensei-settings.php:280
 msgid "My Courses Pagination"
 msgstr ""
 
-#: includes/class-sensei-settings.php:273
+#: includes/class-sensei-settings.php:281
 msgid "The number of courses to output for the my courses page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:282
+#: includes/class-sensei-settings.php:290
 msgid "Course Archive Image"
 msgstr ""
 
-#: includes/class-sensei-settings.php:283
+#: includes/class-sensei-settings.php:291
 msgid "Output the Course Image on the Course Archive Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:290
+#: includes/class-sensei-settings.php:298
 msgid "Image Width - Archive"
 msgstr ""
 
-#: includes/class-sensei-settings.php:291
+#: includes/class-sensei-settings.php:299
 msgid "The width in pixels of the featured image for the Course Archive page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:299
+#: includes/class-sensei-settings.php:307
 msgid "Image Height - Archive"
 msgstr ""
 
-#: includes/class-sensei-settings.php:300
+#: includes/class-sensei-settings.php:308
 msgid "The height in pixels of the featured image for the Course Archive page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:308
+#: includes/class-sensei-settings.php:316
 msgid "Image Hard Crop - Archive"
 msgstr ""
 
-#: includes/class-sensei-settings.php:309, includes/class-sensei-settings.php:343, includes/class-sensei-settings.php:422, includes/class-sensei-settings.php:456
+#: includes/class-sensei-settings.php:317, includes/class-sensei-settings.php:351, includes/class-sensei-settings.php:430, includes/class-sensei-settings.php:464
 msgid "After changing this setting, you may need to %1$sregenerate your thumbnails%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:316
+#: includes/class-sensei-settings.php:324
 msgid "Single Course Image"
 msgstr ""
 
-#: includes/class-sensei-settings.php:317
+#: includes/class-sensei-settings.php:325
 msgid "Output the Course Image on the Single Course Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:324, includes/class-sensei-settings.php:437
+#: includes/class-sensei-settings.php:332, includes/class-sensei-settings.php:445
 msgid "Image Width - Single"
 msgstr ""
 
-#: includes/class-sensei-settings.php:325
+#: includes/class-sensei-settings.php:333
 msgid "The width in pixels of the featured image for the Course single post page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:333, includes/class-sensei-settings.php:446
+#: includes/class-sensei-settings.php:341, includes/class-sensei-settings.php:454
 msgid "Image Height - Single"
 msgstr ""
 
-#: includes/class-sensei-settings.php:334
+#: includes/class-sensei-settings.php:342
 msgid "The height in pixels of the featured image for the Course single post page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:342, includes/class-sensei-settings.php:455
+#: includes/class-sensei-settings.php:350, includes/class-sensei-settings.php:463
 msgid "Image Hard Crop - Single"
 msgstr ""
 
-#: includes/class-sensei-settings.php:350
+#: includes/class-sensei-settings.php:358
 msgid "Single Course page displays:"
 msgstr ""
 
-#: includes/class-sensei-settings.php:351
+#: includes/class-sensei-settings.php:359
 msgid "Determines what content to display on the single course page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:360
+#: includes/class-sensei-settings.php:368
 msgid "Featured Courses Panel"
 msgstr ""
 
-#: includes/class-sensei-settings.php:361
+#: includes/class-sensei-settings.php:369
 msgid "Output the Featured Courses Panel on the Course Archive Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:368
+#: includes/class-sensei-settings.php:376
 msgid "More link text"
 msgstr ""
 
-#: includes/class-sensei-settings.php:369
+#: includes/class-sensei-settings.php:377
 msgid "The text that will be displayed on the Course Archive for the more courses link."
 msgstr ""
 
-#: includes/class-sensei-settings.php:371
+#: includes/class-sensei-settings.php:379
 msgid "More"
 msgstr ""
 
-#: includes/class-sensei-settings.php:379
+#: includes/class-sensei-settings.php:387
 msgid "Allow Comments for Lessons"
 msgstr ""
 
-#: includes/class-sensei-settings.php:380
+#: includes/class-sensei-settings.php:388
 msgid "This will allow learners to post comments on the single Lesson page, only learner who have access to the Lesson will be allowed to comment."
 msgstr ""
 
-#: includes/class-sensei-settings.php:387
+#: includes/class-sensei-settings.php:395
 msgid "Display Lesson Author"
 msgstr ""
 
-#: includes/class-sensei-settings.php:388
+#: includes/class-sensei-settings.php:396
 msgid "Output the Lesson Author on Course single page & Lesson archive page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:395
+#: includes/class-sensei-settings.php:403
 msgid "Course Lesson Images"
 msgstr ""
 
-#: includes/class-sensei-settings.php:396
+#: includes/class-sensei-settings.php:404
 msgid "Output the Lesson Image on the Single Course Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:403
+#: includes/class-sensei-settings.php:411
 msgid "Image Width - Course Lessons"
 msgstr ""
 
-#: includes/class-sensei-settings.php:404
+#: includes/class-sensei-settings.php:412
 msgid "The width in pixels of the featured image for the Lessons on the Course Single page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:412
+#: includes/class-sensei-settings.php:420
 msgid "Image Height - Course Lessons"
 msgstr ""
 
-#: includes/class-sensei-settings.php:413
+#: includes/class-sensei-settings.php:421
 msgid "The height in pixels of the featured image for the Lessons on the Course Single page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:421
+#: includes/class-sensei-settings.php:429
 msgid "Image Hard Crop - Course Lessons"
 msgstr ""
 
-#: includes/class-sensei-settings.php:429
+#: includes/class-sensei-settings.php:437
 msgid "Single Lesson Images"
 msgstr ""
 
-#: includes/class-sensei-settings.php:430
+#: includes/class-sensei-settings.php:438
 msgid "Output the Lesson Image on the Single Lesson Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:438
+#: includes/class-sensei-settings.php:446
 msgid "The width in pixels of the featured image for the Lessons single post page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:447
+#: includes/class-sensei-settings.php:455
 msgid "The height in pixels of the featured image for the Lessons single post page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:468
+#: includes/class-sensei-settings.php:476
 msgid "Public learner profiles"
 msgstr ""
 
-#: includes/class-sensei-settings.php:469
+#: includes/class-sensei-settings.php:477
 msgid "Enable public learner profiles that will be accessible to everyone. Profile URL format: %s"
 msgstr ""
 
-#: includes/class-sensei-settings.php:476
+#: includes/class-sensei-settings.php:484
 msgid "Show learner's courses"
 msgstr ""
 
-#: includes/class-sensei-settings.php:477
+#: includes/class-sensei-settings.php:485
 msgid "Display the learner's active and completed courses on their profile."
 msgstr ""
 
-#: includes/class-sensei-settings.php:486
+#: includes/class-sensei-settings.php:494
 msgid "Their quiz is graded (auto and manual grading)"
 msgstr ""
 
-#: includes/class-sensei-settings.php:487
+#: includes/class-sensei-settings.php:495
 msgid "They complete a course"
 msgstr ""
 
-#: includes/class-sensei-settings.php:491
+#: includes/class-sensei-settings.php:499
 msgid "A learner starts their course"
 msgstr ""
 
-#: includes/class-sensei-settings.php:492
+#: includes/class-sensei-settings.php:500
 msgid "A learner completes their course"
 msgstr ""
 
-#: includes/class-sensei-settings.php:493
+#: includes/class-sensei-settings.php:501
 msgid "A learner completes a lesson"
 msgstr ""
 
-#: includes/class-sensei-settings.php:494
+#: includes/class-sensei-settings.php:502
 msgid "A learner submits a quiz for grading"
 msgstr ""
 
-#: includes/class-sensei-settings.php:495
+#: includes/class-sensei-settings.php:503
 msgid "A learner sends a private message to a teacher"
 msgstr ""
 
-#: includes/class-sensei-settings.php:499
+#: includes/class-sensei-settings.php:507
 msgid "They receive a reply to their private message"
 msgstr ""
 
-#: includes/class-sensei-settings.php:503
+#: includes/class-sensei-settings.php:511
 msgid "Emails Sent to Learners"
 msgstr ""
 
-#: includes/class-sensei-settings.php:504
+#: includes/class-sensei-settings.php:512
 msgid "Select the notifications that will be sent to learners."
 msgstr ""
 
-#: includes/class-sensei-settings.php:512
+#: includes/class-sensei-settings.php:520
 msgid "Emails Sent to Teachers"
 msgstr ""
 
-#: includes/class-sensei-settings.php:513
+#: includes/class-sensei-settings.php:521
 msgid "Select the notifications that will be sent to teachers."
 msgstr ""
 
-#: includes/class-sensei-settings.php:521
+#: includes/class-sensei-settings.php:529
 msgid "Emails Sent to All Users"
 msgstr ""
 
-#: includes/class-sensei-settings.php:522
+#: includes/class-sensei-settings.php:530
 msgid "Select the notifications that will be sent to all users."
 msgstr ""
 
-#: includes/class-sensei-settings.php:530
+#: includes/class-sensei-settings.php:538
 msgid "\"From\" Name"
 msgstr ""
 
-#: includes/class-sensei-settings.php:531
+#: includes/class-sensei-settings.php:539
 msgid "The name from which all emails will be sent."
 msgstr ""
 
-#: includes/class-sensei-settings.php:539
+#: includes/class-sensei-settings.php:547
 msgid "\"From\" Address"
 msgstr ""
 
-#: includes/class-sensei-settings.php:540
+#: includes/class-sensei-settings.php:548
 msgid "The address from which all emails will be sent."
 msgstr ""
 
-#: includes/class-sensei-settings.php:548
+#: includes/class-sensei-settings.php:556
 msgid "Header Image"
 msgstr ""
 
-#: includes/class-sensei-settings.php:549
+#: includes/class-sensei-settings.php:557
 msgid "Enter a URL to an image you want to show in the email's header. Upload your image using the %1$smedia uploader%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:557
+#: includes/class-sensei-settings.php:565
 msgid "Email Footer Text"
 msgstr ""
 
-#: includes/class-sensei-settings.php:558
+#: includes/class-sensei-settings.php:566
 msgid "The text to appear in the footer of Sensei emails."
 msgstr ""
 
-#: includes/class-sensei-settings.php:560, templates/emails/footer.php:23
+#: includes/class-sensei-settings.php:568, templates/emails/footer.php:23
 msgid "%1$s - Powered by Sensei"
 msgstr ""
 
-#: includes/class-sensei-settings.php:566
+#: includes/class-sensei-settings.php:574
 msgid "Base Colour"
 msgstr ""
 
-#: includes/class-sensei-settings.php:567
+#: includes/class-sensei-settings.php:575
 msgid "The base colour for Sensei email templates. Default %1$s#557da1%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:575
+#: includes/class-sensei-settings.php:583
 msgid "Background Colour"
 msgstr ""
 
-#: includes/class-sensei-settings.php:576
+#: includes/class-sensei-settings.php:584
 msgid "The background colour for Sensei email templates. Default %1$s#f5f5f5%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:584
+#: includes/class-sensei-settings.php:592
 msgid "Body Background Colour"
 msgstr ""
 
-#: includes/class-sensei-settings.php:585
+#: includes/class-sensei-settings.php:593
 msgid "The main body background colour for Sensei email templates. Default %1$s#fdfdfd%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:593
+#: includes/class-sensei-settings.php:601
 msgid "Body Text Colour"
 msgstr ""
 
-#: includes/class-sensei-settings.php:594
+#: includes/class-sensei-settings.php:602
 msgid "The main body text colour for Sensei email templates. Default %1$s#505050%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:604
+#: includes/class-sensei-settings.php:612
 msgid "Enable WooCommerce Courses"
 msgstr ""
 
-#: includes/class-sensei-settings.php:605
+#: includes/class-sensei-settings.php:613
 msgid "Use WooCommerce to sell Courses by linking a Product to a Course."
 msgstr ""
 
-#: includes/class-sensei-settings.php:612
+#: includes/class-sensei-settings.php:620
 msgid "Enable Sensei WooCommerce Integration Debugging"
 msgstr ""
 
-#: includes/class-sensei-settings.php:613
+#: includes/class-sensei-settings.php:621
 msgid "Advanced: Log Sensei/WooCommerce integration events (Uses WC_Logger, logs events at `notice` level)"
 msgstr ""
 
-#: includes/class-sensei-settings.php:623
+#: includes/class-sensei-settings.php:631
 msgid "Restrict course video"
 msgstr ""
 
-#: includes/class-sensei-settings.php:624
+#: includes/class-sensei-settings.php:632
 msgid "Used when you don't want the course video to be viewable by non-members"
 msgstr ""
 
-#: includes/class-sensei-settings.php:630
+#: includes/class-sensei-settings.php:638
 msgid "Auto-start courses belonging to a membership"
 msgstr ""
 
-#: includes/class-sensei-settings.php:631
+#: includes/class-sensei-settings.php:639
 msgid "Automatically start courses belonging to a WC Membership when activated"
 msgstr ""
 
-#: includes/class-sensei-settings.php:640
+#: includes/class-sensei-settings.php:648
 msgid "Install Language Pack"
 msgstr ""
 
-#: includes/class-sensei-settings.php:641
+#: includes/class-sensei-settings.php:649
 msgid "Use this action to install or re-install translation for your language if available."
 msgstr ""
 
-#: includes/class-sensei-settings.php:697
+#: includes/class-sensei-settings.php:705
 msgid "Select a Page:"
 msgstr ""
 
