@@ -1313,7 +1313,7 @@ class Sensei_Admin {
 
                         // if lesson belongs to one fo the course modules then exclude it here
                         // as it is listed above
-                        if( has_term( $module_items_ids, 'module', $lesson->ID )  ){
+                        if( !empty($module_items_ids) && has_term( $module_items_ids, 'module', $lesson->ID )  ){
 
                             continue;
 
