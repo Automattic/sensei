@@ -399,6 +399,7 @@ class Sensei_PostTypes {
 			    'hierarchical' => false,
 			    'menu_position' => 50,
 			    'supports' => array( 'title', 'editor', 'comments' ),
+			    'delete_with_user' => true,
 			);
 
             /**
