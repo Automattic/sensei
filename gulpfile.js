@@ -90,7 +90,7 @@ gulp.task( 'pot', function() {
 			domain: 'woothemes-sensei',
 			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
 		}) )
-		.pipe( gulp.dest( 'lang' ) );
+		.pipe( gulp.dest( 'lang/woothemes-sensei.pot' ) );
 });
 
 gulp.task ( 'textdomain' , function() {
