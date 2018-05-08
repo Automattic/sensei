@@ -17,7 +17,7 @@
     "fs-extra": "^6.0.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.1",
-    "gulp-checktextdomain": "^2.1.1",
+    "gulp-checktextdomain": "^1.1.1",
     "gulp-chmod": "^2.0.0",
     "gulp-minify-css": "^1.2.4",
     "gulp-rename": "^1.2.2",
