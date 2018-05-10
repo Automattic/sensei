@@ -69,7 +69,7 @@ gulp.task( 'JS', ['clean'], function() {
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
 		.pipe( rename({ extname: '.min.js' }) )
-		.pipe( chmod( 644 ) )
+		.pipe( chmod( 0o644 ) )
 		.pipe( gulp.dest( 'assets/js' ));
 });
 
@@ -79,7 +79,7 @@ gulp.task( 'adminJS', ['clean'], function() {
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
 		.pipe( rename({ extname: '.min.js' }) )
-		.pipe( chmod( 644 ) )
+		.pipe( chmod( 0o644 ) )
 		.pipe( gulp.dest( 'assets/js/admin' ) );
 });
 
@@ -90,7 +90,7 @@ gulp.task( 'pot', function() {
 			domain: 'woothemes-sensei',
 			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
 		}) )
-		.pipe( gulp.dest( 'lang' ) );
+		.pipe( gulp.dest( 'lang/woothemes-sensei.pot' ) );
 });
 
 gulp.task ( 'textdomain' , function() {
