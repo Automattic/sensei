@@ -140,6 +140,12 @@ class Sensei_Templates {
 
         global $wp_query, $email_template;
 
+		// If our unsupported theme renderer is handling the request, we do not
+		// need to find a custom template.
+		if ( Sensei_Unsupported_Themes::get_instance()->is_handling_request() ) {
+			return $template;
+		}
+
         $find = array( 'woothemes-sensei.php' );
         $file = '';
 
