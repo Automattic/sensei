@@ -269,3 +269,16 @@ function sensei_is_login_required(){
     return $login_required;
 
 }
+
+/**
+ * Checks if this theme supports Sensei templates.
+ *
+ * @since 1.11.0
+ * @return bool
+ */
+function sensei_does_theme_support_templates() {
+	$current_theme = get_option( 'template' );
+	$themes = Sensei()->theme_integration_loader->get_supported_themes();
+
+	return in_array( $current_theme, $themes ) || current_theme_supports( 'sensei' );
+}
