@@ -1108,7 +1108,8 @@ class Sensei_Utils {
 			foreach( $lessons as $lesson ) {
 
 				// Check for lesson having questions, thus a quiz, thus having a grade
-				$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson->ID );
+				$has_questions = Sensei()->lesson->lesson_has_quiz_with_graded_questions( $lesson->ID );
+
 				if ( $has_questions ) {
 					$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, $user_id );
 
