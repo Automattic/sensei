@@ -588,6 +588,10 @@ class Sensei_Core_Modules
 	 */
 	public function module_archive_template($template) {
 
+		if ( Sensei_Unsupported_Themes::get_instance()->is_handling_request() ) {
+			return $template;
+		}
+
 		if ( ! is_tax($this->taxonomy) ) {
 			return $template;
 		}
