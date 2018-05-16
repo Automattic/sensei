@@ -4018,6 +4018,29 @@ class Sensei_Lesson {
     }
 
 	/**
+	 * Checks if a lesson has a quiz that has at least one graded question.
+	 *
+	 * @param int $lesson_id The Lesson.
+	 * @return bool
+	 */
+	public function lesson_has_quiz_with_graded_questions( $lesson_id ) {
+		// Lesson quizzes
+		$quiz_id = $this->lesson_quizzes( $lesson_id );
+		if ( empty( $quiz_id ) ) {
+			return false;
+		}
+
+		$has_quiz_questions = self::lesson_quiz_has_questions( $lesson_id );
+		if ( false === $has_quiz_questions ) {
+			return false;
+		}
+
+		$quiz_total = Sensei_Utils::sensei_get_quiz_total( $quiz_id );
+
+		return 0 !== $quiz_total;
+	}
+
+	/**
      * Lesson Quiz Has Questions
      *
 	 * @param int $lesson_id Lesson.
