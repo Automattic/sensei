@@ -418,15 +418,16 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 		update_post_meta( $quiz_id, '_pass_required', 'on' );
 		update_post_meta( $quiz_id, '_quiz_passmark' , 50 );
 
-		update_post_meta( $lesson_id, '_quiz_has_questions', true );
-
+		if ( $number > 0 ) {
+			update_post_meta( $lesson_id, '_quiz_has_questions', true );
+		}
 
 		// if the database already contains questions don't create more but add
 		// the existing questions to the passed in lesson id's lesson
 		$question_post_query = new WP_Query( array( 'post_type' => 'question' ) );
 		$questions = $question_post_query->get_posts();
 
-		if( ! count( $questions ) > 0 ){
+		if( empty( $questions ) || ! empty( $question_args ) ){
 
 			// generate questions if none exists
 			$questions = $this->generate_questions( $number );
@@ -744,7 +745,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 	 */
 	public function get_lesson_graded_quiz() {
 		$lesson_id = $this->get_lesson_no_quiz();
-		$this->attach_lessons_questions( 10, $lesson_id, array( 'question_grade' => 1 ) );
+		$this->attach_lessons_questions( 10, $lesson_id, array( 'question_grade' => '1' ) );
 		return $lesson_id;
 	}
 
@@ -754,7 +755,7 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 	 */
 	public function get_lesson_no_graded_quiz() {
 		$lesson_id = $this->get_lesson_no_quiz();
-		$this->attach_lessons_questions( 10, $lesson_id, array( 'question_grade' => 0 ) );
+		$this->attach_lessons_questions( 10, $lesson_id, array( 'question_grade' => '0' ) );
 		return $lesson_id;
 	}
 
