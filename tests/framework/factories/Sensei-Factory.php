@@ -380,84 +380,85 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
 
     }// generate_user_quiz_grades
 
-    /**
-     * Generate and attach lesson questions.
-     *
-     * This will create a set of questions. These set of questions will be added to every lesson.
-     * So all lessons the makes use of this function will have the same set of questions in their
-     * quiz.
-     *
-     * @param int $number number of questions to generate. Default 10
-     * @param int $lesson_id
-     * @throws Exception
-     * @trows new 'Generate questions needs a valid lesson ID.' if the ID passed in is not a valid lesson
-     */
-    protected function attach_lessons_questions( $number = 10 , $lesson_id ){
+	/**
+	 * Generate and attach lesson questions.
+	 *
+	 * This will create a set of questions. These set of questions will be added to every lesson.
+	 * So all lessons the makes use of this function will have the same set of questions in their
+	 * quiz.
+	 *
+	 * @param int   $number number of questions to generate. Default 10
+	 * @param int   $lesson_id
+	 * @param array $question_args
+	 * @throws Exception
+	 * @trows new 'Generate questions needs a valid lesson ID.' if the ID passed in is not a valid lesson
+	 */
+	protected function attach_lessons_questions( $number = 10 , $lesson_id, $question_args = array() ){
+
+		if( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
+			|| ! get_post( $lesson_id ) ||  'lesson' != get_post_type( $lesson_id )  ){
+			throw new Exception('Generate questions needs a valid lesson ID.');
+		}
+
+		// create a new quiz and attach it to the lesson
+		$new_quiz_args = array(
+			'post_type' => 'quiz',
+			'post_name' => 'lesson_id_ ' .  $lesson_id . '_quiz' ,
+			'post_title' => 'lesson_id_ ' .  $lesson_id . '_quiz' ,
+			'post_status' => 'publish',
+			'post_parent' => $lesson_id
+
+		);
+
+		$quiz_id = wp_insert_post( $new_quiz_args );
+
+		// setup quiz meta
+		update_post_meta( $quiz_id, '_quiz_grade_type', 'manual' );
+		update_post_meta( $quiz_id, '_pass_required', 'on' );
+		update_post_meta( $quiz_id, '_quiz_passmark' , 50 );
+
+		update_post_meta( $lesson_id, '_quiz_has_questions', true );
+
+
+		// if the database already contains questions don't create more but add
+		// the existing questions to the passed in lesson id's lesson
+		$question_post_query = new WP_Query( array( 'post_type' => 'question' ) );
+		$questions = $question_post_query->get_posts();
+
+		if( ! count( $questions ) > 0 ){
+
+			// generate questions if none exists
+			$questions = $this->generate_questions( $number );
+
+			// create random $number of question   lessons needed in the class tests
+			foreach ( $questions as $question ) {
+
+				$question[ 'quiz_id' ] = $quiz_id;
+				$question[ 'post_author'] = get_post( $quiz_id )->post_author;
+				Sensei()->lesson->lesson_save_question( array_merge( $question, $question_args ) );
+
+			} // end for each range 0 to 12
 
 
 
-        if( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
-            || ! get_post( $lesson_id ) ||  'lesson'!= get_post_type( $lesson_id )  ){
-            throw new Exception('Generate questions needs a valid lesson ID.');
-        }
+		} else {
 
-        // create a new quiz and attach it to the lesson
-        $new_quiz_args = array(
-            'post_type' => 'quiz',
-            'post_name' => 'lesson_id_ ' .  $lesson_id . '_quiz' ,
-            'post_title' => 'lesson_id_ ' .  $lesson_id . '_quiz' ,
-            'post_status' => 'publish',
-            'post_parent' => $lesson_id
+			// simply add questions to incoming lesson id
 
-        );
+			foreach ( $questions as $index => $question  ) {
 
-        $quiz_id = wp_insert_post( $new_quiz_args );
+				// Add to quiz
+				add_post_meta( $question->ID, '_quiz_id', $quiz_id , false );
 
-        // setup quiz meta
-        update_post_meta( $quiz_id, '_quiz_grade_type', 'manual' );
-        update_post_meta( $quiz_id, '_pass_required', 'on' );
-        update_post_meta( $quiz_id, '_quiz_passmark' , 50 );
+				// Set order of question
+				$question_order = $quiz_id . '000' . $index;
+				add_post_meta( $question->ID, '_quiz_question_order' . $quiz_id , $question_order );
 
+			}
+		} // end if count
 
-        // if the database already contains questions don't create more but add
-        // the existing questions to the passed in lesson id's lesson
-        $question_post_query = new WP_Query( array( 'post_type' => 'question' ) );
-        $questions = $question_post_query->get_posts();
-
-        if( ! count( $questions ) > 0 ){
-
-            // generate questions if none exists
-            $questions = $this->generate_questions( $number );
-
-            // create random $number of question   lessons needed in the class tests
-            foreach ( $questions as $question ) {
-
-                $question[ 'quiz_id' ] = $quiz_id;
-                $question[ 'post_author'] = get_post( $quiz_id )->post_author;
-                Sensei()->lesson->lesson_save_question( $question );
-
-            } // end for each range 0 to 12
-
-
-
-        } else {
-
-            // simply add questions to incoming lesson id
-
-            foreach ( $questions as $index => $question  ) {
-
-                // Add to quiz
-                add_post_meta( $question->ID, '_quiz_id', $quiz_id , false );
-
-                // Set order of question
-                $question_order = $quiz_id . '000' . $index;
-                add_post_meta( $question->ID, '_quiz_question_order' . $quiz_id , $question_order );
-
-            }
-        } // end if count
-
-        return;
-    }
+		return;
+	}
 
     /**
      * Generates questions from each question type with the correct data and then attaches that to the quiz
@@ -709,5 +710,51 @@ class Sensei_Factory extends  WP_UnitTest_Factory{
         return $answers_feedback;
 
     } // end generate_user_answers_feedback
+
+	/**
+	 * @return int|WP_Error
+	 */
+	public function get_lesson_no_quiz() {
+		$id = sha1( microtime( true ) );
+		$args = array(
+			'post_content' => 'lesson ' . $id . ' test content',
+			'post_name' => 'test-lesson ' . $id,
+			'post_title' => 'test-lesson ' . $id,
+			'post_status' => 'publish',
+			'post_type' => 'lesson'
+		);
+
+		return wp_insert_post( $args );
+	}
+
+	/**
+	 * @return int|WP_Error
+	 * @throws Exception
+	 */
+	public function get_lesson_empty_quiz() {
+		$lesson_id = $this->get_lesson_no_quiz();
+		$this->attach_lessons_questions( 0, $lesson_id );
+		return $lesson_id;
+	}
+
+	/**
+	 * @return int|WP_Error
+	 * @throws Exception
+	 */
+	public function get_lesson_graded_quiz() {
+		$lesson_id = $this->get_lesson_no_quiz();
+		$this->attach_lessons_questions( 10, $lesson_id, array( 'question_grade' => 1 ) );
+		return $lesson_id;
+	}
+
+	/**
+	 * @return int|WP_Error
+	 * @throws Exception
+	 */
+	public function get_lesson_no_graded_quiz() {
+		$lesson_id = $this->get_lesson_no_quiz();
+		$this->attach_lessons_questions( 10, $lesson_id, array( 'question_grade' => 0 ) );
+		return $lesson_id;
+	}
 
 }// end Sensei Factory class

@@ -1,6 +1,10 @@
 <?php
 
 class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
+	/**
+	 * @var Sensei_Factory
+	 */
+	private $factory;
 
     /**
      * Constructor function
@@ -175,6 +179,38 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
       Sensei()->lesson->add_lesson_to_course_order( $a_lesson_assigned_to_an_invalid_course_id );
       $this->assertEquals( 5, count( self::get_course_lesson_order( $course_id ) ), 'do nothing on lessons where no order meta is found' );
     }
+
+	/**
+	 * @covers Sensei_Lesson::lesson_has_quiz_with_graded_questions()
+	 */
+	public function testLessonHasQuizWithGradedQuestionsLessonWithNoQuiz() {
+		$lesson_id = $this->factory->get_lesson_no_quiz();
+		$this->assertFalse( Sensei()->lesson->lesson_has_quiz_with_graded_questions( $lesson_id ) );
+	}
+
+	/**
+	 * @covers Sensei_Lesson::lesson_has_quiz_with_graded_questions()
+	 */
+	public function testLessonHasQuizWithGradedQuestionsQuizWithNoQuestions() {
+		$lesson_id = $this->factory->get_lesson_empty_quiz();
+		$this->assertFalse( Sensei()->lesson->lesson_has_quiz_with_graded_questions( $lesson_id ) );
+	}
+
+	/**
+	 * @covers Sensei_Lesson::lesson_has_quiz_with_graded_questions()
+	 */
+	public function testLessonHasQuizWithGradedQuestionsQuizWithNoGradedQuestions() {
+		$lesson_id = $this->factory->get_lesson_no_graded_quiz();
+		$this->assertFalse( Sensei()->lesson->lesson_has_quiz_with_graded_questions( $lesson_id ) );
+	}
+
+	/**
+	 * @covers Sensei_Lesson::lesson_has_quiz_with_graded_questions()
+	 */
+	public function testLessonHasQuizWithGradedQuestionsQuizWithGradedQuestions() {
+		$lesson_id = $this->factory->get_lesson_graded_quiz();
+		$this->assertTrue( Sensei()->lesson->lesson_has_quiz_with_graded_questions( $lesson_id ) );
+	}
 
     private static function get_course_lesson_order( $course_id ) {
       $order_string_array = explode( ',', get_post_meta( intval( $course_id ), '_lesson_order', true ) );
