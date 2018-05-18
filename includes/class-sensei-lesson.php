@@ -3578,7 +3578,7 @@ class Sensei_Lesson {
 
 		}
 
-		return  Sensei_Utils::user_completed_lesson( $pre_requisite_id, $user_id );
+		return Sensei_Utils::user_completed_lesson( $pre_requisite_id, $user_id );
 
 	}// end is_prerequisite_complete
 
