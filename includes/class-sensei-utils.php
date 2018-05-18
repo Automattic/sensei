@@ -706,7 +706,7 @@ class Sensei_Utils {
 
                 // if users is already taking the lesson  and the status changes to complete update it
                 $current_user_activity = get_comment($activity_logged);
-                if( $status=='complete' &&
+                if( in_array( $status, array( 'complete', 'passed' ), true ) &&
                     $status != $current_user_activity->comment_approved  ){
 
                     $comment = array();
