@@ -47,7 +47,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
     /**
      * Testing the is lesson pre-requisite completed function.
-     * @group jake-wip
      * @since 1.9.0
      */
     public function testIsPreRequisiteComplete() {
