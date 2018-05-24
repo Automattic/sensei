@@ -91,7 +91,16 @@ class Sensei_Factory extends WP_UnitTest_Factory{
 			return;
 		}
 
-		$this->lesson_ids = $this->generate_test_lessons();
+		$this->module_id = $this->module->create_and_get()->to_array();
+		$this->lesson_ids = $this->lesson->create_many( 10 );
+
+		// Add all but the last lesson to the module.
+		foreach ( array_slice( $this->lesson_ids, 0, 9 ) as $lesson_id ) {
+			wp_set_object_terms( $lesson_id, $this->module_id['term_id'], 'module' );
+			add_post_meta( $lesson_id, '_order_module_' . $this->module_id['term_id'], 0 );
+		}
+		$this->other_lesson_ids = array_slice( $this->lesson_ids, 9 );
+
 		$this->generate_test_courses();
 
 		// generate lesson questions
@@ -200,42 +209,6 @@ class Sensei_Factory extends WP_UnitTest_Factory{
 		return $result;
 
 	} // end get_random_course_id()
-
-	/**
-		* Generate lessons and (maybe) add them to a module.
-		*
-		* @param int $number Number of lessons to generate. Default 10.
-		* @return array $lesson_ids
-	*/
-	protected function generate_test_lessons( $number = 10 ) {
-		$lesson_ids = array();
-
-		// Add modules.
-		$this->module_id = wp_insert_term( 'Module 1', 'module' );
-
-		foreach ( range( 1, $number ) as $count ) {
-			$args = array(
-				'post_content' => 'lesson ' . $count . ' test content',
-				'post_name' => 'test-lesson ' . $count,
-				'post_title' => 'test-lesson ' . $count,
-				'post_status' => 'publish',
-				'post_type' => 'lesson'
-			);
-
-			$lesson_ids[ $count - 1 ] = wp_insert_post( $args );
-			$lesson_id = $lesson_ids[ $count - 1 ];
-
-			// Add all but the last lesson to the module.
-			if ( $count < 10 ) {
-				wp_set_object_terms( $lesson_id, $this->module_id['term_id'], 'module' );
-				add_post_meta( $lesson_id, '_order_module_' . $this->module_id['term_id'], 0 );
-			} else {
-				$this->other_lesson_ids[] = $lesson_id;
-			}
-		}
-
-		return $lesson_ids;
-	}
 
 	/**
 	 * generate random courses
