@@ -113,7 +113,10 @@ class Sensei_Unsupported_Themes {
 		// Remove the filter we're in to avoid nested calls.
 		remove_filter( 'the_content', array( $this, 'course_page_content_filter' ) );
 
-		$renderer = new Sensei_Renderer_Single_Course( array( 'id' => get_the_ID() ) );
+		$renderer = new Sensei_Renderer_Single_Course( array(
+			'id'              => get_the_ID(),
+			'show_pagination' => true,
+		) );
 		$content = $renderer->render();
 
 		return $content;

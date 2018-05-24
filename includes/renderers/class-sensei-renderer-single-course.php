@@ -34,6 +34,7 @@ class Sensei_Renderer_Single_Course {
 	 */
 	public function __construct( $attributes ) {
 		$this->id = isset( $attributes['id'] ) ? $attributes['id'] : '';
+		$this->show_pagination = isset( $attributes['show_pagination'] ) ? $attributes['show_pagination'] : false;
 		$this->setup_course_query();
 	}
 
@@ -82,6 +83,9 @@ class Sensei_Renderer_Single_Course {
 		add_filter( 'sensei_show_main_header', '__return_false' );
 		add_action( 'sensei_single_course_lessons_before', array( $this, 'set_global_vars' ), 1, 0 );
 		Sensei_Templates::get_template( 'single-course.php' );
+		if ( $this->show_pagination ) {
+			do_action( 'sensei_pagination' );
+		}
 		$output = ob_get_clean();
 
 		// set back the global query and post
