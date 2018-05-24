@@ -101,7 +101,7 @@ class Sensei_Factory extends WP_UnitTest_Factory{
 		}
 		$this->other_lesson_ids = array_slice( $this->lesson_ids, 9 );
 
-		$this->generate_test_courses();
+		$this->course_ids = $this->course->create_many( 10 );
 
 		// generate lesson questions
 		foreach( $this->lesson_ids as $lesson_id ){
@@ -209,35 +209,6 @@ class Sensei_Factory extends WP_UnitTest_Factory{
 		return $result;
 
 	} // end get_random_course_id()
-
-	/**
-	 * generate random courses
-	 *
-	 * @param int $number how many courses would you like to generate. Default 10.
-	 * @return array $course_ids
-	 */
-	public function generate_test_courses( $number = 10  ){
-
-		$course_ids = array();
-
-		// create random $number of test Course needed in the class tests
-		foreach (range( 1, $number ) as $count ) {
-
-			$new_course_args = array(
-				'post_content' => 'Course ' . ( $count + 1 ) . ' test content',
-				'post_name' => 'test-course ' . ( $count + 1 ) ,
-				'post_title' => 'test-course ' . ( $count + 1 ) ,
-				'post_status' => 'publish',
-				'post_type' => 'course'
-			);
-			// add the course id to the array of ids
-			$course_ids[ $count ] = wp_insert_post( $new_course_args );
-
-		} // end for each range 0 to 12
-		$this->course_ids = array_merge( $this->course_ids, $course_ids );
-		return $course_ids;
-
-	}// end generate_test_courses
 
 	/**
 	 * Attach modules and lessons to each course.
