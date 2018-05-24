@@ -25,6 +25,7 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	public static function get_usage_data() {
 		$question_type_count = self::get_question_type_count();
+		$quiz_stats          = self::get_quiz_stats();
 		$usage_data          = array(
 			'courses'                 => wp_count_posts( 'course' )->publish,
 			'course_active'           => self::get_course_active_count(),
@@ -51,7 +52,66 @@ class Sensei_Usage_Tracking_Data {
 			'teachers'                => self::get_teacher_count(),
 		);
 
-		return array_merge( $question_type_count, $usage_data );
+		return array_merge( $question_type_count, $usage_data, $quiz_stats );
+	}
+
+	/**
+	 * Get stats related to lesson quizzes.
+	 *
+	 * @since 1.11.0
+	 *
+	 * @return array
+	 */
+	private static function get_quiz_stats() {
+		$query = new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'fields'         => 'ids',
+				'posts_per_page' => -1,
+				'meta_query'     => array(
+					array(
+						'key'      => '_quiz_has_questions',
+						'value'    => true,
+					),
+					array(
+						'key'      => '_lesson_course',
+						'value'    => '',
+						'compare'  => '!=',
+					),
+					array(
+						'key'      => '_lesson_course',
+						'value'    => '0',
+						'compare'  => '!=',
+					),
+				),
+			)
+		);
+
+		$stats = array(
+			'quiz_total'    => 0,
+			'questions_min' => null,
+			'questions_max' => null,
+		);
+		$question_counts = array();
+
+		foreach ( $query->posts as $lesson_id ) {
+			$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+			if ( empty( $course_id ) || 'publish' !== get_post_status( $lesson_id ) || 'publish' !== get_post_status( $course_id ) ) {
+				continue;
+			}
+
+			$quiz_id             = Sensei()->lesson->lesson_quizzes( $lesson_id );
+			$quiz_question_posts = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+			$question_counts[]   = count( $quiz_question_posts );
+			$stats['quiz_total']++;
+		}
+
+		if ( ! empty( $question_counts ) ) {
+			$stats['questions_min'] = min( $question_counts );
+			$stats['questions_max'] = max( $question_counts );
+		}
+
+		return $stats;
 	}
 
 	/**

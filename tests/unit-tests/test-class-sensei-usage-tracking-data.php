@@ -4,6 +4,20 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	private $course_ids;
 	private $modules;
 
+	/**
+	 * Sets up the factory.
+	 */
+	public function setUp(){
+		parent::setUp();
+
+		$this->factory = new Sensei_Factory();
+	}// end function setUp()
+
+	public function tearDown(){
+		parent::tearDown();
+		$this->factory->tearDown();
+	} // end tearDown
+
 	private function setupCoursesAndModules() {
 		$this->course_ids = $this->factory->post->create_many(
 			3, array(
@@ -100,6 +114,106 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 				)
 			);
 		}
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 */
+	public function testGetMinMaxQuestionsSimple() {
+		$this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
+		$this->factory->get_course_with_lessons( array( 'question_count' => 2 ) );
+		$this->factory->get_course_with_lessons( array( 'question_count' => 7 ) );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 2, $usage_data['questions_min'] );
+		$this->assertEquals( 7, $usage_data['questions_max'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 */
+	public function testGetMinMaxQuestionsNoQuestions() {
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 0, $usage_data['quiz_total'] );
+		$this->assertEquals( null, $usage_data['questions_min'] );
+		$this->assertEquals( null, $usage_data['questions_max'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 */
+	public function testGetMinMaxQuestionsMinMaxSame() {
+		$this->factory->get_course_with_lessons( array(
+			'lesson_count' => 1,
+			'question_count' => 2,
+		) );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 1, $usage_data['quiz_total'] );
+		$this->assertEquals( 2, $usage_data['questions_min'] );
+		$this->assertEquals( 2, $usage_data['questions_max'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 */
+	public function testGetMinMaxQuestionsLessonVariance() {
+		$this->factory->course->create();
+		$this->factory->lesson->create();
+
+		$this->factory->get_course_with_lessons( array(
+			'lesson_count' => 1,
+			'question_count' => 0,
+		) );
+		$this->factory->get_course_with_lessons( array(
+			'question_count' => array( 1, 2 ),
+			'lesson_count' => 2,
+		) );
+		$this->factory->get_course_with_lessons( array(
+			'question_count' => array( 0, 1, 11 ),
+			'lesson_count'   => 4, // Missing one should be 5 questions.
+		) );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 5, $usage_data['quiz_total'] );
+		$this->assertEquals( 1, $usage_data['questions_min'] );
+		$this->assertEquals( 11, $usage_data['questions_max'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 */
+	public function testGetMinMaxQuestionsDrafts() {
+		$this->factory->get_course_with_lessons( array(
+			'lesson_count'   => 1,
+			'question_count' => 4,
+			'lesson_args'    => array(
+				'post_status' => 'draft',
+			),
+		) );
+		$this->factory->get_course_with_lessons( array(
+			'lesson_count'   => 1,
+			'question_count' => 4,
+			'course_args'    => array(
+				'post_status' => 'draft',
+			),
+		) );
+
+		$this->factory->get_course_with_lessons( array(
+			'question_count' => array( 2, 3 ),
+			'lesson_count'   => 2,
+		) );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 2, $usage_data['quiz_total'] );
+		$this->assertEquals( 2, $usage_data['questions_min'] );
+		$this->assertEquals( 3, $usage_data['questions_max'] );
 	}
 
 	/**
