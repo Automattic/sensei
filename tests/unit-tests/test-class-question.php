@@ -43,7 +43,7 @@ class Sensei_Class_Question_Test extends WP_UnitTestCase {
      * This tests Woothemes_Sensei()->quiz->get_question_type
      */
     public function testGetQuestionType() {
-        $this->factory->createBasicCourses();
+        $this->factory->generate_basic_setup();
 
         // doe this method exist on the quiz class?
         $this->assertTrue( method_exists( 'WooThemes_Sensei_Quiz', 'submit_answers_for_grading'  ) ,

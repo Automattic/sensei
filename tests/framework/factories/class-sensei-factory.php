@@ -402,22 +402,16 @@ class Sensei_Factory extends WP_UnitTest_Factory{
 			throw new Exception('Generate questions needs a valid lesson ID.');
 		}
 
-		// create a new quiz and attach it to the lesson
-		$new_quiz_args = array(
-			'post_type' => 'quiz',
-			'post_name' => 'lesson_id_ ' .  $lesson_id . '_quiz' ,
-			'post_title' => 'lesson_id_ ' .  $lesson_id . '_quiz' ,
-			'post_status' => 'publish',
-			'post_parent' => $lesson_id
-
+		$quiz_id = $this->quiz->create(
+			array(
+				'post_parent' => $lesson_id,
+				'meta_input'  => array(
+					'_quiz_grade_type' => 'manual',
+					'_pass_required'   => 'on',
+					'_quiz_passmark'   => 50,
+				),
+			)
 		);
-
-		$quiz_id = wp_insert_post( $new_quiz_args );
-
-		// setup quiz meta
-		update_post_meta( $quiz_id, '_quiz_grade_type', 'manual' );
-		update_post_meta( $quiz_id, '_pass_required', 'on' );
-		update_post_meta( $quiz_id, '_quiz_passmark' , 50 );
 
 		if ( $number > 0 ) {
 			update_post_meta( $lesson_id, '_quiz_has_questions', true );
@@ -431,16 +425,9 @@ class Sensei_Factory extends WP_UnitTest_Factory{
 		if( empty( $questions ) || ! empty( $question_args ) ){
 
 			// generate questions if none exists
-			$questions = $this->generate_questions( $number );
-
-			// create random $number of question   lessons needed in the class tests
-			foreach ( $questions as $question ) {
-
-				$question[ 'quiz_id' ] = $quiz_id;
-				$question[ 'post_author'] = get_post( $quiz_id )->post_author;
-				Sensei()->lesson->lesson_save_question( array_merge( $question, $question_args ) );
-
-			} // end for each range 0 to 12
+			$question_args['quiz_id']     = $quiz_id;
+			$question_args['post_author'] = get_post( $quiz_id )->post_author;
+			$this->basic_test_question_ids = $this->question->create_many( $number, $question_args );
 
 		} else {
 
@@ -459,113 +446,6 @@ class Sensei_Factory extends WP_UnitTest_Factory{
 		} // end if count
 
 		return;
-	}
-
-	/**
-	 * Generates questions from each question type with the correct data and then attaches that to the quiz
-	 *
-	 * @param int $number the amount of questions we want to attach defaults to 10
-	 * @return array $questions
-	 */
-	protected function generate_questions( $number = 10 ){
-		if ( empty( $number ) ) {
-			return array();
-		}
-		$chosen_questions =  array(); // will be used to store generated question
-		$sample_questions = array(); // will be used to store 1 sample from each question type
-
-		// get all allowed question data
-		//'multiple-choice' 'boolean' 'gap-fill' 'single-line' 'multi-line' 'file-upload'
-		$question_types = Sensei()->question->question_types();
-
-		// get the question type slug as this is used to determine the slug and not the string type
-		$question_type_slugs = array_keys($question_types);
-
-		// generate ten random-ish questions
-		foreach( range( 0, ( $number - 1 ) ) as $count ) {
-
-			//make sure that at least on question from each type is included
-			if( $count < count( $question_types ) ){
-
-				//setup the question type at the current index
-				$type =  $question_type_slugs[ $count ];
-
-			}else{
-
-				// setup a random question type
-				$random_index = rand( 0, count( $question_types ) - 1 );
-				$type =  $question_type_slugs[$random_index];
-
-			}
-
-			$sample_questions[] = $this->get_sample_question_data( $type, $number );
-		}
-
-		// create the requested number tests from the sample questions
-		foreach( range( 1 , $number ) as $count ){
-
-			// get the available question types
-			$available_question_types = count( $sample_questions);
-			$highest_question_type_array_index = $available_question_types-1;
-
-			//select a random question
-			$random_index = rand( 0, $highest_question_type_array_index  );
-			$randomly_chosen_question = $sample_questions[ $random_index ];
-
-			// attache the chosen question to be returned
-			$chosen_questions[] = $randomly_chosen_question;
-		}
-
-		return $chosen_questions;
-
-	}// end generate_and_attach_questions
-
-	public function get_sample_question_data( $type, $number = 0 ) {
-		$test_question_data = array(
-			'question_type' => $type ,
-			'question_category' => 'undefined' ,
-			'action' => 'add',
-			'question' => 'Is this a sample' . $type  . ' question ? _ ' . rand() ,
-			'question_grade' => '1' ,
-			'answer_feedback' => 'Answer Feedback sample ' . rand() ,
-			'question_description' => ' Basic description for the question' ,
-			'question_media' => '' ,
-			'answer_order' => '' ,
-			'random_order' => 'yes' ,
-			'question_count' => $number
-		);
-
-		// setup the right / wrong answers base on the question type
-		if ('multiple-choice' == $type ) {
-
-			$test_question_data['question_right_answers'] = array( 'right' ) ;
-			$test_question_data['question_wrong_answers'] = array( 'wrong1', 'wrong2',  'wrong3' )  ;
-
-		} elseif ('boolean' == $type ) {
-
-			$test_question_data[ 'question_right_answer_boolean' ] = true;
-
-		} elseif ( 'single-line' == $type  ) {
-
-			$test_question_data[ 'add_question_right_answer_singleline' ] = '';
-
-		} elseif ( 'gap-fill' == $type ) {
-
-			$test_question_data[ 'add_question_right_answer_gapfill_pre' ] = '';
-			$test_question_data[ 'add_question_right_answer_gapfill_gap' ] = '';
-			$test_question_data[ 'add_question_right_answer_gapfill_post'] = '';
-
-		} elseif ( 'multi-line' == $type  ) {
-
-			$test_question_data [ 'add_question_right_answer_multiline' ] = '';
-
-		} elseif ( 'file-upload' == $type ) {
-
-			$test_question_data [ 'add_question_right_answer_fileupload'] = '';
-			$test_question_data [ 'add_question_wrong_answer_fileupload' ] = '';
-
-		}
-		return $test_question_data;
 	}
 
 	/**
@@ -714,16 +594,7 @@ class Sensei_Factory extends WP_UnitTest_Factory{
 	 * @return int|WP_Error
 	 */
 	public function get_lesson_no_quiz() {
-		$id = sha1( microtime( true ) );
-		$args = array(
-			'post_content' => 'lesson ' . $id . ' test content',
-			'post_name' => 'test-lesson ' . $id,
-			'post_title' => 'test-lesson ' . $id,
-			'post_status' => 'publish',
-			'post_type' => 'lesson'
-		);
-
-		return wp_insert_post( $args );
+		return $this->lesson->create();
 	}
 
 	/**

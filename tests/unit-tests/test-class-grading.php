@@ -132,7 +132,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$lesson_id = $this->factory->get_random_lesson_id();
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
-		$question = $this->factory->get_sample_question_data( $question_type );
+		$question = $this->factory->question->get_sample_question_data( $question_type );
 		$question[ 'quiz_id' ] = $quiz_id;
 		$question[ 'post_author'] = get_post( $quiz_id )->post_author;
 		return Sensei()->lesson->lesson_save_question( $question );
