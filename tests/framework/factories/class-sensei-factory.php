@@ -39,12 +39,48 @@ class Sensei_Factory extends WP_UnitTest_Factory{
 	protected $question_ids;
 
 	/**
+	 * @var WP_UnitTest_Factory_For_Course
+	 */
+	public $course;
+
+	/**
+	 * @var WP_UnitTest_Factory_For_Lesson
+	 */
+	public $lesson;
+
+	/**
+	 * @var WP_UnitTest_Factory_For_Quiz
+	 */
+	public $quiz;
+
+	/**
+	 * @var WP_UnitTest_Factory_For_Question
+	 */
+	public $question;
+
+	/**
+	 * @var WP_UnitTest_Factory_For_Module
+	 */
+	public $module;
+
+	/**
 	 * constructor function
 	 *
 	 * This sets up some basic demo data
 	 */
 	public function __construct(){
 		parent::__construct();
+		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-course.php';
+		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-quiz.php';
+		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-question.php';
+		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-lesson.php';
+		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-module.php';
+
+		$this->course   = new WP_UnitTest_Factory_For_Course( $this );
+		$this->lesson   = new WP_UnitTest_Factory_For_Lesson( $this );
+		$this->quiz     = new WP_UnitTest_Factory_For_Quiz( $this );
+		$this->question = new WP_UnitTest_Factory_For_Question( $this );
+		$this->module   = new WP_UnitTest_Factory_For_Module( $this );
 	}// end construct
 
 	/**
