@@ -47,6 +47,9 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$modules = wp_get_post_terms( $course_id, 'module' );
 		$test_module = $modules[0];
 
+		wp_update_term( $test_module->term_id, $test_module->taxonomy, array( 'description' => '' ) );
+		$test_module = get_term( $test_module->term_id, 'module' );
+
 		// Module doesn't have description.
 		$this->assertFalse( Sensei()->modules->do_link_to_module( $test_module ) );
 	}
@@ -58,10 +61,6 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$course_id = $this->factory->get_course_with_modules();
 		$modules = wp_get_post_terms( $course_id, 'module' );
 		$test_module = $modules[0];
-
-		wp_update_term( $test_module->term_id, $test_module->taxonomy, array( 'description' => 'A test description' ) );
-
-		$test_module = get_term( $test_module->term_id, 'module' );
 
 		// Module now has description.
 		$this->assertTrue( Sensei()->modules->do_link_to_module( $test_module ) );
