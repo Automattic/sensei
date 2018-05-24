@@ -73,7 +73,7 @@ a.sensei-certificate-link {
 }
 
 /* Courses */
-#main .course, #main .course-container {
+.course, .course-container {
   @include clearfix();
   position: relative;
   margin: 0 0 1.618em;
@@ -166,7 +166,7 @@ a.sensei-certificate-link {
 }
 
 // Single Course
-.single-course {
+.course {
   .course-meta {
     margin-bottom: 1.618em;
     @include clearfix;
