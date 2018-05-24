@@ -60,7 +60,7 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public function includes() {
 		// factories
-		require_once( $this->tests_dir . '/framework/factories/Sensei-Factory.php' );
+		require_once( $this->tests_dir . '/framework/factories/class-sensei-factory.php' );
 	}
 	/**
 	 * Get the single class instance.
