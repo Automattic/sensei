@@ -175,14 +175,14 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			'lesson_count' => 2,
 		) );
 		$this->factory->get_course_with_lessons( array(
-			'question_count' => array( 0, 1, 11 ),
+			'question_count' => array( 0, 1, 6 ),
 			'lesson_count'   => 4, // Missing one should be 5 questions.
 		) );
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertEquals( 5, $usage_data['quiz_total'] );
 		$this->assertEquals( 1, $usage_data['questions_min'] );
-		$this->assertEquals( 11, $usage_data['questions_max'] );
+		$this->assertEquals( 6, $usage_data['questions_max'] );
 	}
 
 	/**
@@ -204,7 +204,6 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 				'post_status' => 'draft',
 			),
 		) );
-
 		$this->factory->get_course_with_lessons( array(
 			'question_count' => array( 2, 3 ),
 			'lesson_count'   => 2,
@@ -214,6 +213,60 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->assertEquals( 2, $usage_data['quiz_total'] );
 		$this->assertEquals( 2, $usage_data['questions_min'] );
 		$this->assertEquals( 3, $usage_data['questions_max'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 */
+	public function testCategoryQuestionsNone() {
+		$this->factory->get_course_with_lessons( array(
+			'lesson_count'            => 1,
+			'question_count'          => 2,
+			'multiple_question_count' => 0,
+		) );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 0, $usage_data['category_questions'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 */
+	public function testCategoryQuestionsSimple() {
+		$this->factory->get_course_with_lessons( array(
+			'lesson_count'            => 1,
+			'question_count'          => 2,
+			'multiple_question_count' => 1,
+		) );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 1, $usage_data['category_questions'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 */
+	public function testCategoryQuestionsWithDraft() {
+		$this->factory->get_course_with_lessons( array(
+			'lesson_count'            => 2,
+			'question_count'          => array( 0, 1 ),
+			'multiple_question_count' => array( 1, 2 ),
+		) );
+
+		$this->factory->get_course_with_lessons( array(
+			'lesson_count'            => 1,
+			'question_count'          => 2,
+			'multiple_question_count' => 1,
+			'lesson_args'             => array(
+				'post_status' => 'draft',
+			),
+		) );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 3, $usage_data['category_questions'] );
 	}
 
 	/**
