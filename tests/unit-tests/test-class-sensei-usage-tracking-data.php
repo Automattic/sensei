@@ -273,6 +273,108 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Used as a data provider for quiz settings test.
+	 *
+	 * @return array
+	 */
+	public function quizSettingData() {
+		return array(
+			array(
+				'quiz_valid_num_questions',
+				'_show_questions',
+				array( '' ),
+				array( 1, 2, 3 ),
+			),
+			array(
+				'quiz_pass_required',
+				'_pass_required',
+				array( 'off', '' ),
+				array( 'on' ),
+			),
+			array(
+				'quiz_rand_questions',
+				'_random_question_order',
+				array( 'no', '' ),
+				array( 'yes' ),
+			),
+			array(
+				'quiz_auto_grade',
+				'_quiz_grade_type',
+				array( 'manual', '' ),
+				array( 'auto' ),
+			),
+			array(
+				'quiz_allow_retake',
+				'_enable_quiz_reset',
+				array( 'off', '' ),
+				array( 'on' ),
+			),
+		);
+	}
+
+	/**
+	 * @param string $stat_key
+	 * @param string $meta_key
+	 * @param array  $invalid_values
+	 * @param array  $valid_values
+	 *
+	 * @dataProvider quizSettingData
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_setting_value_count
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_setting_non_empty_count
+	 */
+	public function testQuizSettingCounts( $stat_key, $meta_key, $invalid_values, $valid_values ) {
+		$default_values = array(
+			'_pass_required'         => '',
+			'_quiz_passmark'         => 70,
+			'_show_questions'        => '',
+			'_random_question_order' => 'no',
+			'_quiz_grade_type'       => 'auto',
+			'_enable_quiz_reset'     => '',
+		);
+
+		foreach ( $invalid_values as $value ) {
+			$this->factory->get_course_with_lessons( array(
+				'lesson_count'   => 1,
+				'question_count' => 3,
+				'quiz_args'      => array(
+					'meta_input' => array_merge( $default_values, array(
+						$meta_key => $value,
+					) ),
+				),
+			) );
+		}
+
+		foreach ( $valid_values as $value ) {
+			$this->factory->get_course_with_lessons( array(
+				'lesson_count'   => 1,
+				'question_count' => 3,
+				'quiz_args'      => array(
+					'meta_input' => array_merge( $default_values, array(
+						$meta_key => $value,
+					) ),
+				),
+			) );
+			$this->factory->get_course_with_lessons( array(
+				'lesson_count'   => 1,
+				'question_count' => 3,
+				'lesson_args'    => array(
+					'post_status' => 'draft',
+				),
+				'quiz_args'      => array(
+					'meta_input' => array_merge( $default_values, array(
+						$meta_key => $value,
+					) ),
+				),
+			) );
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$this->assertEquals( count( $valid_values ), $usage_data[ $stat_key ] );
+	}
+
+	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */
 	public function testGetUsageDataCourses() {

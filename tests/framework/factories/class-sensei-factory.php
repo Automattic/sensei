@@ -177,6 +177,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			'question_count'          => 5,
 			'multiple_question_count' => 0,
 			'course_args'             => array(),
+			'quiz_args'               => array(),
 			'lesson_args'             => array(),
 			'question_args'           => array(),
 			'multiple_question_args'  => array(),
@@ -211,7 +212,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 					$question_count = $default_args['question_count'];
 				}
 			}
-			$this->attach_lessons_questions( $question_count, $lesson_id, $args['question_args'], false );
+			$this->attach_lessons_questions( $question_count, $lesson_id, $args['question_args'], $args['quiz_args'], false );
 
 			$multiple_question_count = $args['multiple_question_count'];
 			if ( is_array( $multiple_question_count ) ) {
@@ -221,7 +222,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 					$multiple_question_count = $default_args['multiple_question_count'];
 				}
 			}
-			$this->attach_lessons_multiple_questions( $multiple_question_count, $lesson_id, $args['multiple_question_args'] );
+			$this->attach_lessons_multiple_questions( $multiple_question_count, $lesson_id, $args['multiple_question_args'], $args['quiz_args'] );
 		}
 
 		return array( 'course_id' => $course_id, 'lesson_ids' => $lesson_ids );
@@ -476,18 +477,19 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 * @param int   $number number of questions to generate. Default 10
 	 * @param int   $lesson_id
 	 * @param array $question_args
+	 * @param array $quiz_args
 	 * @param bool  $reuse_questions
 	 *
 	 * @throws Exception 'Generate questions needs a valid lesson ID.' if the ID passed in is not a valid lesson
 	 */
-	protected function attach_lessons_questions( $number = 10, $lesson_id, $question_args = array(), $reuse_questions = true ) {
+	protected function attach_lessons_questions( $number = 10, $lesson_id, $question_args = array(), $quiz_args = array(), $reuse_questions = true ) {
 
 		if ( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
 			 || ! get_post( $lesson_id ) || 'lesson' != get_post_type( $lesson_id ) ) {
 			throw new Exception( 'Generate questions needs a valid lesson ID.' );
 		}
 
-		$quiz_id = $this->maybe_create_quiz_for_lesson( $lesson_id );
+		$quiz_id = $this->maybe_create_quiz_for_lesson( $lesson_id, $quiz_args );
 
 		if ( $number > 0 ) {
 			update_post_meta( $lesson_id, '_quiz_has_questions', true );
@@ -531,11 +533,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 * @param int $number
 	 * @param $lesson_id
 	 * @param array $multiple_question_args
-	 *
+	 * @param array $quiz_args
 	 * @return int[]
 	 * @throws Exception
 	 */
-	protected function attach_lessons_multiple_questions( $number = 10, $lesson_id, $multiple_question_args = array() ) {
+	protected function attach_lessons_multiple_questions( $number = 10, $lesson_id, $multiple_question_args = array(), $quiz_args = array() ) {
 		if ( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
 			 || ! get_post( $lesson_id ) || 'lesson' != get_post_type( $lesson_id ) ) {
 			throw new Exception( 'Generate questions needs a valid lesson ID.' );
@@ -545,7 +547,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			return array();
 		}
 
-		$quiz_id = $this->maybe_create_quiz_for_lesson( $lesson_id );
+		$quiz_id = $this->maybe_create_quiz_for_lesson( $lesson_id, $quiz_args );
 		if ( $number > 0 ) {
 			update_post_meta( $lesson_id, '_quiz_has_questions', true );
 		}
@@ -556,22 +558,25 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	/**
 	 * Creates (if necessary) up the quiz for a lesson.
 	 *
-	 * @param int $lesson_id
+	 * @param int   $lesson_id
+	 * @param array $quiz_args
 	 * @return int
 	 */
-	protected function maybe_create_quiz_for_lesson( $lesson_id ) {
+	protected function maybe_create_quiz_for_lesson( $lesson_id, $quiz_args = array() ) {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		if ( empty( $quiz_id ) ) {
-			$quiz_id = $this->quiz->create(
-				array(
-					'post_parent' => $lesson_id,
-					'meta_input'  => array(
-						'_quiz_grade_type' => 'manual',
-						'_pass_required'   => 'on',
-						'_quiz_passmark'   => 50,
-					),
-				)
+			$default_quiz_args = array( 'post_parent' => $lesson_id );
+			$default_meta_input = array(
+				'_quiz_grade_type' => 'manual',
+				'_pass_required'   => 'on',
+				'_quiz_passmark'   => 50,
 			);
+			$final_quiz_args = array_merge( $default_quiz_args, $quiz_args );
+			if ( empty ( $quiz_args['meta_input'] ) ) {
+				$quiz_args['meta_input'] = array();
+			}
+			$final_quiz_args['meta_input'] = array_merge( $default_meta_input, $quiz_args['meta_input'] );
+			$quiz_id = $this->quiz->create( $final_quiz_args );
 		}
 		return $quiz_id;
 	}
