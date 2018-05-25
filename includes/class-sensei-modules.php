@@ -1404,7 +1404,7 @@ class Sensei_Core_Modules
 
 	   if( sensei_module_has_lessons() ){
 
-			echo '<header><h2>' . __('Modules', 'woothemes-sensei') . '</h2></header>';
+			echo '<header class="modules-title"><h2>' . __('Modules', 'woothemes-sensei') . '</h2></header>';
 
 		}
 
