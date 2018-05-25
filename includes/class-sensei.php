@@ -99,6 +99,11 @@ class Sensei_Main {
 	public $notices;
 
 	/**
+	 * @var Sensei_Theme_Integration_Loader
+	 */
+	public $theme_integration_loader;
+
+	/**
 	 * @var WooThemes_Sensei_Grading
 	 */
 	public $grading;
@@ -380,7 +385,7 @@ class Sensei_Main {
 			$this->notices = new Sensei_Notices();
 
 			// Load built in themes support integration
-			new Sensei_Theme_Integration_Loader();
+			$this->theme_integration_loader = new Sensei_Theme_Integration_Loader();
 
 		}
 
