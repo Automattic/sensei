@@ -87,10 +87,15 @@ class Sensei_Usage_Tracking_Data {
 		) );
 
 		$stats = array(
-			'quiz_total'         => 0,
-			'questions_min'      => null,
-			'questions_max'      => null,
-			'category_questions' => 0,
+			'quiz_total'               => 0,
+			'questions_min'            => null,
+			'questions_max'            => null,
+			'category_questions'       => 0,
+			'quiz_pass_required'       => 0,
+			'quiz_valid_num_questions' => 0,
+			'quiz_rand_questions'      => 0,
+			'quiz_auto_grade'          => 0,
+			'quiz_allow_retake'        => 0,
 		);
 		$question_counts    = array();
 		$published_quiz_ids = array();
@@ -109,7 +114,12 @@ class Sensei_Usage_Tracking_Data {
 		}
 
 		if ( ! empty( $published_quiz_ids ) ) {
-			$stats['category_questions'] = self::get_category_question_count( $published_quiz_ids );
+			$stats['category_questions']       = self::get_category_question_count( $published_quiz_ids );
+			$stats['quiz_valid_num_questions'] = self::get_quiz_setting_non_empty_count( $published_quiz_ids, '_show_questions' );
+			$stats['quiz_pass_required']       = self::get_quiz_setting_value_count( $published_quiz_ids, '_pass_required', 'on' );
+			$stats['quiz_rand_questions']      = self::get_quiz_setting_value_count( $published_quiz_ids, '_random_question_order', 'yes' );
+			$stats['quiz_auto_grade']          = self::get_quiz_setting_value_count( $published_quiz_ids, '_quiz_grade_type', 'auto' );
+			$stats['quiz_allow_retake']        = self::get_quiz_setting_value_count( $published_quiz_ids, '_enable_quiz_reset', 'on' );
 		}
 
 		if ( ! empty( $question_counts ) ) {
@@ -118,6 +128,39 @@ class Sensei_Usage_Tracking_Data {
 		}
 
 		return $stats;
+	}
+
+	/**
+	 * Get the number of quizzes with a non-empty value of a post meta.
+	 *
+	 * @since 1.11.0
+	 *
+	 * @param int[]  $published_quiz_ids
+	 * @param string $meta_key
+	 * @return int
+	 */
+	private static function get_quiz_setting_non_empty_count( $published_quiz_ids, $meta_key ) {
+		global $wpdb;
+
+		$published_quiz_ids = array_map( 'intval', $published_quiz_ids );
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT count(DISTINCT `post_id`) FROM {$wpdb->postmeta} WHERE `post_id` IN (" . implode( ',', $published_quiz_ids ) . ") AND `meta_key`=%s AND `meta_value`!='' AND `meta_value`!='0'", $meta_key ) );
+	}
+
+	/**
+	 * Get the number of quizzes with a non-empty value of a post meta.
+	 *
+	 * @since 1.11.0
+	 *
+	 * @param int[]  $published_quiz_ids
+	 * @param string $meta_key
+	 * @param string $meta_value
+	 * @return int
+	 */
+	private static function get_quiz_setting_value_count( $published_quiz_ids, $meta_key, $meta_value ) {
+		global $wpdb;
+
+		$published_quiz_ids = array_map( 'intval', $published_quiz_ids );
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT count(DISTINCT `post_id`) FROM {$wpdb->postmeta} WHERE `post_id` IN (" . implode( ',', $published_quiz_ids ) . ") AND `meta_key`=%s AND `meta_value`=%s", $meta_key, $meta_value ) );
 	}
 
 	/**
