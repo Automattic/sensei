@@ -63,36 +63,37 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array
 	 */
 	private static function get_quiz_stats() {
-		$query = new WP_Query(
-			array(
-				'post_type'      => 'lesson',
-				'fields'         => 'ids',
-				'posts_per_page' => -1,
-				'meta_query'     => array(
-					array(
-						'key'      => '_quiz_has_questions',
-						'value'    => true,
-					),
-					array(
-						'key'      => '_lesson_course',
-						'value'    => '',
-						'compare'  => '!=',
-					),
-					array(
-						'key'      => '_lesson_course',
-						'value'    => '0',
-						'compare'  => '!=',
-					),
+		$query = new WP_Query( array(
+			'post_type'      => 'lesson',
+			'fields'         => 'ids',
+			'posts_per_page' => -1,
+			'no_found_rows'  => true,
+			'meta_query'     => array(
+				array(
+					'key'   => '_quiz_has_questions',
+					'value' => true,
 				),
-			)
-		);
+				array(
+					'key'     => '_lesson_course',
+					'value'   => '',
+					'compare' => '!=',
+				),
+				array(
+					'key'     => '_lesson_course',
+					'value'   => '0',
+					'compare' => '!=',
+				),
+			),
+		) );
 
 		$stats = array(
-			'quiz_total'    => 0,
-			'questions_min' => null,
-			'questions_max' => null,
+			'quiz_total'         => 0,
+			'questions_min'      => null,
+			'questions_max'      => null,
+			'category_questions' => 0,
 		);
-		$question_counts = array();
+		$question_counts    = array();
+		$published_quiz_ids = array();
 
 		foreach ( $query->posts as $lesson_id ) {
 			$course_id = Sensei()->lesson->get_course_id( $lesson_id );
@@ -100,10 +101,28 @@ class Sensei_Usage_Tracking_Data {
 				continue;
 			}
 
-			$quiz_id             = Sensei()->lesson->lesson_quizzes( $lesson_id );
-			$quiz_question_posts = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
-			$question_counts[]   = count( $quiz_question_posts );
+			$quiz_id              = Sensei()->lesson->lesson_quizzes( $lesson_id );
+			$quiz_question_posts  = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+			$question_counts[]    = count( $quiz_question_posts );
+			$published_quiz_ids[] = $quiz_id;
 			$stats['quiz_total']++;
+		}
+
+		if ( ! empty( $published_quiz_ids ) ) {
+			$multiple_question_query     = new WP_Query( array(
+				'post_type'        => 'multiple_question',
+				'posts_per_page'   => -1,
+				'fields'           => 'ids',
+				'no_found_rows'    => true,
+				'suppress_filters' => 1,
+				'meta_query'       => array(
+					array(
+						'key'   => '_quiz_id',
+						'value' => $published_quiz_ids,
+					),
+				),
+			) );
+			$stats['category_questions'] = count( $multiple_question_query->posts );
 		}
 
 		if ( ! empty( $question_counts ) ) {
