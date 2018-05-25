@@ -60,9 +60,19 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	public $question;
 
 	/**
+	 * @var WP_UnitTest_Factory_For_Multiple_Question
+	 */
+	public $multiple_question;
+
+	/**
 	 * @var WP_UnitTest_Factory_For_Module
 	 */
 	public $module;
+
+	/**
+	 * @var WP_UnitTest_Factory_For_Question_Category
+	 */
+	public $question_category;
 
 	/**
 	 * constructor function
@@ -74,14 +84,18 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-course.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-quiz.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-question.php';
+		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-multiple-question.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-lesson.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-module.php';
+		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-question-category.php';
 
-		$this->course   = new WP_UnitTest_Factory_For_Course( $this );
-		$this->lesson   = new WP_UnitTest_Factory_For_Lesson( $this );
-		$this->quiz     = new WP_UnitTest_Factory_For_Quiz( $this );
-		$this->question = new WP_UnitTest_Factory_For_Question( $this );
-		$this->module   = new WP_UnitTest_Factory_For_Module( $this );
+		$this->course            = new WP_UnitTest_Factory_For_Course( $this );
+		$this->lesson            = new WP_UnitTest_Factory_For_Lesson( $this );
+		$this->quiz              = new WP_UnitTest_Factory_For_Quiz( $this );
+		$this->question          = new WP_UnitTest_Factory_For_Question( $this );
+		$this->multiple_question = new WP_UnitTest_Factory_For_Multiple_Question( $this );
+		$this->module            = new WP_UnitTest_Factory_For_Module( $this );
+		$this->question_category = new WP_UnitTest_Factory_For_Question_Category( $this );
 	}// end construct
 
 	/**
@@ -159,12 +173,14 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 */
 	public function get_course_with_lessons( $args = array() ) {
 		$default_args = array(
-			'lesson_count'  => 1,
-			'question_count' => 5,
-			'course_args'    => array(),
-			'lesson_args'    => array(),
-			'question_args'  => array(),
-			'use_module'     => false,
+			'lesson_count'            => 1,
+			'question_count'          => 5,
+			'multiple_question_count' => 0,
+			'course_args'             => array(),
+			'lesson_args'             => array(),
+			'question_args'           => array(),
+			'multiple_question_args'  => array(),
+			'use_module'              => false,
 		);
 		$args = wp_parse_args( $args, $default_args );
 		$module = false;
@@ -195,8 +211,17 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 					$question_count = $default_args['question_count'];
 				}
 			}
-
 			$this->attach_lessons_questions( $question_count, $lesson_id, $args['question_args'], false );
+
+			$multiple_question_count = $args['multiple_question_count'];
+			if ( is_array( $multiple_question_count ) ) {
+				if ( isset( $multiple_question_count[ $key ] ) ) {
+					$multiple_question_count = $multiple_question_count[ $key ];
+				} else {
+					$multiple_question_count = $default_args['multiple_question_count'];
+				}
+			}
+			$this->attach_lessons_multiple_questions( $multiple_question_count, $lesson_id, $args['multiple_question_args'] );
 		}
 
 		return array( 'course_id' => $course_id, 'lesson_ids' => $lesson_ids );
@@ -462,16 +487,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			throw new Exception( 'Generate questions needs a valid lesson ID.' );
 		}
 
-		$quiz_id = $this->quiz->create(
-			array(
-				'post_parent' => $lesson_id,
-				'meta_input'  => array(
-					'_quiz_grade_type' => 'manual',
-					'_pass_required'   => 'on',
-					'_quiz_passmark'   => 50,
-				),
-			)
-		);
+		$quiz_id = $this->maybe_create_quiz_for_lesson( $lesson_id );
 
 		if ( $number > 0 ) {
 			update_post_meta( $lesson_id, '_quiz_has_questions', true );
@@ -509,6 +525,55 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		} // end if count
 
 		return;
+	}
+
+	/**
+	 * @param int $number
+	 * @param $lesson_id
+	 * @param array $multiple_question_args
+	 *
+	 * @return int[]
+	 * @throws Exception
+	 */
+	protected function attach_lessons_multiple_questions( $number = 10, $lesson_id, $multiple_question_args = array() ) {
+		if ( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
+			 || ! get_post( $lesson_id ) || 'lesson' != get_post_type( $lesson_id ) ) {
+			throw new Exception( 'Generate questions needs a valid lesson ID.' );
+		}
+
+		if ( empty( $number ) ) {
+			return array();
+		}
+
+		$quiz_id = $this->maybe_create_quiz_for_lesson( $lesson_id );
+		if ( $number > 0 ) {
+			update_post_meta( $lesson_id, '_quiz_has_questions', true );
+		}
+
+		return $this->multiple_question->create_many( $number, array_merge( $multiple_question_args, array( 'quiz_id' => $quiz_id ) ) );
+	}
+
+	/**
+	 * Creates (if necessary) up the quiz for a lesson.
+	 *
+	 * @param int $lesson_id
+	 * @return int
+	 */
+	protected function maybe_create_quiz_for_lesson( $lesson_id ) {
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( empty( $quiz_id ) ) {
+			$quiz_id = $this->quiz->create(
+				array(
+					'post_parent' => $lesson_id,
+					'meta_input'  => array(
+						'_quiz_grade_type' => 'manual',
+						'_pass_required'   => 'on',
+						'_quiz_passmark'   => 50,
+					),
+				)
+			);
+		}
+		return $quiz_id;
 	}
 
 	/**
