@@ -218,6 +218,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 * @covers Sensei_Usage_Tracking_Data::get_category_question_count
 	 */
 	public function testCategoryQuestionsNone() {
 		$this->factory->get_course_with_lessons( array(
@@ -233,6 +234,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 * @covers Sensei_Usage_Tracking_Data::get_category_question_count
 	 */
 	public function testCategoryQuestionsSimple() {
 		$this->factory->get_course_with_lessons( array(
@@ -248,6 +250,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 * @covers Sensei_Usage_Tracking_Data::get_category_question_count
 	 */
 	public function testCategoryQuestionsWithDraft() {
 		$this->factory->get_course_with_lessons( array(

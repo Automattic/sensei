@@ -122,7 +122,7 @@ class Sensei_Usage_Tracking_Data {
 					),
 				),
 			) );
-			$stats['category_questions'] = count( $multiple_question_query->posts );
+			$stats['category_questions'] = self::get_category_question_count( $published_quiz_ids );
 		}
 
 		if ( ! empty( $question_counts ) ) {
@@ -131,6 +131,32 @@ class Sensei_Usage_Tracking_Data {
 		}
 
 		return $stats;
+	}
+
+	/**
+	 * Get the number of category/multiple questions assigned to published quizzes.
+	 *
+	 * @since 1.11.0
+	 * 
+	 * @param int[] $published_quiz_ids
+	 * @return int
+	 */
+	private static function get_category_question_count( $published_quiz_ids ) {
+		$multiple_question_query     = new WP_Query( array(
+			'post_type'        => 'multiple_question',
+			'posts_per_page'   => -1,
+			'fields'           => 'ids',
+			'no_found_rows'    => true,
+			'suppress_filters' => 1,
+			'meta_query'       => array(
+				array(
+					'key'   => '_quiz_id',
+					'value' => $published_quiz_ids,
+				),
+			),
+		) );
+
+		return count( $multiple_question_query->posts );
 	}
 
 	/**
