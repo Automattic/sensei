@@ -1333,7 +1333,7 @@ class Sensei_WC {
 		if ( 0 < sizeof( $order->get_items() ) ) {
 
 			// Get order user
-			$user_id = $order->__get( 'user_id' );
+			$user_id = $order->get_customer_id();
 
 			foreach ( $order->get_items() as $item ) {
 
