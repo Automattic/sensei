@@ -1233,8 +1233,12 @@ class Sensei_WC {
 		    return;
         }
 		$order_status = Sensei_WC_Utils::get_order_status( $order );
+		
+		$accepted_order_stati = array( 'wc-completed', 'wc-processing' );
+		
+		$additional_order_stati = apply_filters( 'sensei_wc_add_order_stati', $accepted_order_stati );
 
-		if ( ! in_array( $order_status, array( 'wc-completed', 'wc-processing' ) ) ) {
+		if ( ! in_array( $order_status,  $additional_order_stati ) ) {
 			return;
 		}
 		$user = get_user_by( 'id', $order->get_user_id() );
@@ -1333,7 +1337,7 @@ class Sensei_WC {
 		if ( 0 < sizeof( $order->get_items() ) ) {
 
 			// Get order user
-			$user_id = $order->__get( 'user_id' );
+			$user_id = $order->get_customer_id();
 
 			foreach ( $order->get_items() as $item ) {
 
