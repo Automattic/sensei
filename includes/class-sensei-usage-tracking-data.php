@@ -92,6 +92,7 @@ class Sensei_Usage_Tracking_Data {
 			'questions_max'            => null,
 			'category_questions'       => 0,
 			'quiz_pass_required'       => 0,
+			'quiz_passmark'            => 0,
 			'quiz_valid_num_questions' => 0,
 			'quiz_rand_questions'      => 0,
 			'quiz_auto_grade'          => 0,
@@ -116,6 +117,7 @@ class Sensei_Usage_Tracking_Data {
 		if ( ! empty( $published_quiz_ids ) ) {
 			$stats['category_questions']       = self::get_category_question_count( $published_quiz_ids );
 			$stats['quiz_valid_num_questions'] = self::get_quiz_setting_non_empty_count( $published_quiz_ids, '_show_questions' );
+			$stats['quiz_passmark']            = self::get_quiz_setting_non_empty_count( $published_quiz_ids, '_quiz_passmark' );
 			$stats['quiz_pass_required']       = self::get_quiz_setting_value_count( $published_quiz_ids, '_pass_required', 'on' );
 			$stats['quiz_rand_questions']      = self::get_quiz_setting_value_count( $published_quiz_ids, '_random_question_order', 'yes' );
 			$stats['quiz_auto_grade']          = self::get_quiz_setting_value_count( $published_quiz_ids, '_quiz_grade_type', 'auto' );
