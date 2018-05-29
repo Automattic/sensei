@@ -2766,11 +2766,18 @@ class Sensei_Course {
             );
         }
 
-        //setting lesson order
-        $course_lesson_order = get_post_meta( $course_id, '_lesson_order', true);
+		//setting lesson order
+		$course_lesson_order = get_post_meta( $course_id, '_lesson_order', true );
+		$all_ids             = get_posts( array(
+			'post_type'      => 'lesson',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'meta_key'       => '_lesson_course',
+			'meta_value'     => intval( $course_id ),
+		) );
         if( !empty( $course_lesson_order ) ){
 
-            $course_lesson_query_args['post__in'] = explode( ',', $course_lesson_order );
+            $course_lesson_query_args['post__in'] = array_merge( explode( ',', $course_lesson_order ), $all_ids );
             $course_lesson_query_args['orderby']= 'post__in' ;
             unset( $course_lesson_query_args['order'] );
 
