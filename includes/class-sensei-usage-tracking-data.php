@@ -87,16 +87,16 @@ class Sensei_Usage_Tracking_Data {
 		) );
 
 		$stats = array(
-			'quiz_total'               => 0,
-			'questions_min'            => null,
-			'questions_max'            => null,
-			'category_questions'       => 0,
-			'quiz_pass_required'       => 0,
-			'quiz_passmark'            => 0,
-			'quiz_valid_num_questions' => 0,
-			'quiz_rand_questions'      => 0,
-			'quiz_auto_grade'          => 0,
-			'quiz_allow_retake'        => 0,
+			'quiz_total'          => 0,
+			'questions_min'       => null,
+			'questions_max'       => null,
+			'category_questions'  => 0,
+			'quiz_pass_required'  => 0,
+			'quiz_passmark'       => 0,
+			'quiz_num_questions'  => 0,
+			'quiz_rand_questions' => 0,
+			'quiz_auto_grade'     => 0,
+			'quiz_allow_retake'   => 0,
 		);
 		$question_counts    = array();
 		$published_quiz_ids = array();
@@ -115,13 +115,13 @@ class Sensei_Usage_Tracking_Data {
 		}
 
 		if ( ! empty( $published_quiz_ids ) ) {
-			$stats['category_questions']       = self::get_category_question_count( $published_quiz_ids );
-			$stats['quiz_valid_num_questions'] = self::get_quiz_setting_non_empty_count( $published_quiz_ids, '_show_questions' );
-			$stats['quiz_passmark']            = self::get_quiz_setting_non_empty_count( $published_quiz_ids, '_quiz_passmark' );
-			$stats['quiz_pass_required']       = self::get_quiz_setting_value_count( $published_quiz_ids, '_pass_required', 'on' );
-			$stats['quiz_rand_questions']      = self::get_quiz_setting_value_count( $published_quiz_ids, '_random_question_order', 'yes' );
-			$stats['quiz_auto_grade']          = self::get_quiz_setting_value_count( $published_quiz_ids, '_quiz_grade_type', 'auto' );
-			$stats['quiz_allow_retake']        = self::get_quiz_setting_value_count( $published_quiz_ids, '_enable_quiz_reset', 'on' );
+			$stats['category_questions']  = self::get_category_question_count( $published_quiz_ids );
+			$stats['quiz_num_questions']  = self::get_quiz_setting_non_empty_count( $published_quiz_ids, '_show_questions' );
+			$stats['quiz_passmark']       = self::get_quiz_setting_non_empty_count( $published_quiz_ids, '_quiz_passmark' );
+			$stats['quiz_pass_required']  = self::get_quiz_setting_value_count( $published_quiz_ids, '_pass_required', 'on' );
+			$stats['quiz_rand_questions'] = self::get_quiz_setting_value_count( $published_quiz_ids, '_random_question_order', 'yes' );
+			$stats['quiz_auto_grade']     = self::get_quiz_setting_value_count( $published_quiz_ids, '_quiz_grade_type', 'auto' );
+			$stats['quiz_allow_retake']   = self::get_quiz_setting_value_count( $published_quiz_ids, '_enable_quiz_reset', 'on' );
 		}
 
 		if ( ! empty( $question_counts ) ) {
