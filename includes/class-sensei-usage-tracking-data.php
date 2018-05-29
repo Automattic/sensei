@@ -106,10 +106,13 @@ class Sensei_Usage_Tracking_Data {
 			if ( empty( $course_id ) || 'publish' !== get_post_status( $lesson_id ) || 'publish' !== get_post_status( $course_id ) ) {
 				continue;
 			}
-
 			$quiz_id              = Sensei()->lesson->lesson_quizzes( $lesson_id );
 			$quiz_question_posts  = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
-			$question_counts[]    = count( $quiz_question_posts );
+			$question_count = count( $quiz_question_posts );
+			if ( 0 === $question_count ) {
+				continue;
+			}
+			$question_counts[]    = $question_count;
 			$published_quiz_ids[] = $quiz_id;
 			$stats['quiz_total']++;
 		}
