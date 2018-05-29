@@ -1237,7 +1237,7 @@ class Sensei_WC {
 		/**
 		 * Allow order statuses to be filtered.
 		 *
-		 * @since 1.10.1
+		 * @since 1.11.0
 		 *
 		 * @param array Currently accepted order statuses.
 		 */
