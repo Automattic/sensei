@@ -382,6 +382,43 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_setting_value_count
+	 * @covers Sensei_Usage_Tracking_Data::get_quiz_setting_non_empty_count
+	 */
+	public function testQuizSettingCountsWithBadLesson() {
+		$values = array(
+			'_pass_required'         => '',
+			'_quiz_passmark'         => 70,
+			'_show_questions'        => '',
+			'_random_question_order' => 'no',
+			'_quiz_grade_type'       => 'auto',
+			'_enable_quiz_reset'     => 'on',
+		);
+		$course_lessons_a = $this->factory->get_course_with_lessons( array(
+			'lesson_count'   => 1,
+			'question_count' => 3,
+			'quiz_args'      => array(
+				'meta_input' => $values,
+			),
+		) );
+		$course_lessons_b = $this->factory->get_course_with_lessons( array(
+			'lesson_count'   => 1,
+			'question_count' => 0,
+			'quiz_args'      => array(
+				'meta_input' => $values,
+			),
+		) );
+
+		// Fake out! Replicate a data integrity issue that exists in Sensei.
+		update_post_meta( $course_lessons_b['lesson_ids'][0], '_quiz_has_questions', '1' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$this->assertEquals( 1, $usage_data['quiz_allow_retake'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */
 	public function testGetUsageDataCourses() {
 		$published = 4;
