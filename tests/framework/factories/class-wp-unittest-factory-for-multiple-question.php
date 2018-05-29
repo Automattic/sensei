@@ -35,7 +35,7 @@ class WP_UnitTest_Factory_For_Multiple_Question extends WP_UnitTest_Factory_For_
 
 		if ( ! empty( $args['quiz_id'] ) ) {
 			$args['meta_input']['_quiz_id']             = $args['quiz_id'];
-			$args['meta_input']['_quiz_question_order'] = $args['quiz_id'] . '000' . $args['meta_input']['number'];
+			$args['meta_input']['_quiz_question_order' . $args['quiz_id']] = $args['quiz_id'] . '000' . $args['meta_input']['number'];
 			$lesson_id                                  = get_post_meta( $args['quiz_id'], '_quiz_lesson', true );
 			update_post_meta( $lesson_id, '_quiz_has_questions', '1' );
 		}
