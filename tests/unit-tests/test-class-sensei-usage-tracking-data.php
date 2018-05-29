@@ -286,6 +286,12 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 				array( 1, 2, 3 ),
 			),
 			array(
+				'quiz_passmark',
+				'_quiz_passmark',
+				array( '', 0 ),
+				array( 1, 20, 100 ),
+			),
+			array(
 				'quiz_pass_required',
 				'_pass_required',
 				array( 'off', '' ),
