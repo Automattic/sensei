@@ -280,7 +280,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function quizSettingData() {
 		return array(
 			array(
-				'quiz_valid_num_questions',
+				'quiz_num_questions',
 				'_show_questions',
 				array( '' ),
 				array( 1, 2, 3 ),
