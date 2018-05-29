@@ -1233,12 +1233,15 @@ class Sensei_WC {
 		    return;
         }
 		$order_status = Sensei_WC_Utils::get_order_status( $order );
-		
-		$accepted_order_stati = array( 'wc-completed', 'wc-processing' );
-		
-		$additional_order_stati = apply_filters( 'sensei_wc_add_order_stati', $accepted_order_stati );
 
-		if ( ! in_array( $order_status,  $additional_order_stati ) ) {
+		/**
+		 * Allow order statuses to be filtered.
+		 *
+		 * @since 1.10.1
+		 *
+		 * @param array Currently accepted order statuses.
+		 */
+		if ( ! in_array( $order_status, apply_filters( 'sensei_wc_order_statuses',  array( 'wc-completed', 'wc-processing' ) ) ) ) {
 			return;
 		}
 		$user = get_user_by( 'id', $order->get_user_id() );
