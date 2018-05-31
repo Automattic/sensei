@@ -456,17 +456,19 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		foreach ( $subscribers as $subscriber ) {
 			$this->factory->comment->create(
 				array(
-					'user_id'         => $subscriber,
-					'comment_post_ID' => $this->course_ids[0],
-					'comment_type'    => 'sensei_course_status',
+					'user_id'          => $subscriber,
+					'comment_post_ID'  => $this->course_ids[0],
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'in-progress',
 				)
 			);
 
 			$this->factory->comment->create(
 				array(
-					'user_id'         => $subscriber,
-					'comment_post_ID' => $this->course_ids[1],
-					'comment_type'    => 'sensei_course_status',
+					'user_id'          => $subscriber,
+					'comment_post_ID'  => $this->course_ids[1],
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'complete',
 				)
 			);
 		}
