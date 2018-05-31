@@ -357,25 +357,15 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of learners.
 	 **/
 	private static function get_learner_count() {
-		$learner_count = 0;
-		$user_query    = new WP_User_Query( array( 'fields' => 'ID' ) );
-		$learners      = $user_query->get_results();
+		global $wpdb;
 
-		foreach ( $learners as $learner ) {
-			$course_args = array(
-				'user_id' => $learner,
-				'type'    => 'sensei_course_status',
-				'status'  => 'any',
-			);
-
-			$course_count = Sensei_Utils::sensei_check_for_activity( $course_args );
-
-			if ( $course_count > 0 ) {
-				$learner_count++;
-			}
-		}
-
-		return $learner_count;
+		return $wpdb->get_var(
+			"SELECT COUNT(DISTINCT user_id)
+			FROM {$wpdb->comments}
+			WHERE comment_type = 'sensei_course_status'
+				AND comment_approved IN ('in-progress', 'complete')
+				AND user_id <> 0"
+		);
 	}
 
 	/**
