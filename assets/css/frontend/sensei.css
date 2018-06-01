@@ -244,6 +244,9 @@ a.sensei-certificate-link {
 .lesson .lesson-meta {
   margin: 0 0 1.618em; }
 
+.lesson header h1 {
+  margin-bottom: 0.5em; }
+
 .sensei-breadcrumb {
   background: #fafafa;
   margin: 2em 0;

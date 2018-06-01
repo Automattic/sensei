@@ -3617,7 +3617,7 @@ class Sensei_Lesson {
 
 		$course_id =  Sensei()->lesson->get_course_id( get_the_ID() );
 
-		if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) || sensei_all_access() ) {
+		if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( get_the_ID() ) ) {
 
 			return;
 
@@ -3640,15 +3640,7 @@ class Sensei_Lesson {
 						$a_element .= esc_html__( 'course', 'woothemes-sensei' );
 						$a_element .= '</a>';
 
-						if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
-
-							$message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $a_element );
-
-						}else{
-
-							$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
-
-						}
+						$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 						Sensei()->notices->add_notice( $message, 'info' );
 
@@ -3660,15 +3652,7 @@ class Sensei_Lesson {
 					$a_element .= esc_html__( 'course', 'woothemes-sensei' );
 					$a_element .= '</a>';
 
-					if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
-
-						$message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $a_element );
-
-					}else{
-
-						$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
-
-					}
+					$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 					Sensei()->notices->add_notice( $message, 'alert' );
 
@@ -3686,15 +3670,7 @@ class Sensei_Lesson {
 											. '">' . esc_html__( 'course', 'woothemes-sensei' )
 										. '</a>';
 
-						if ( Sensei_Utils::is_preview_lesson( get_the_ID( ) ) ) {
-
-							echo sprintf( esc_html__( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ),  $course_link );
-
-						} else {
-
-							echo sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
-
-						}
+			echo sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
 
 						?>
 					</div>
