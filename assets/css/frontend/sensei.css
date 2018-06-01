@@ -67,6 +67,9 @@ License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2
     zoom: 1; } }
 
 /**
+ * Fonts
+ */
+/**
  * Base
  */
 .clearfix:before, .clearfix:after {
@@ -352,6 +355,33 @@ a.sensei-certificate-link {
 
 .single-lesson .lesson_button_form {
   display: inline; }
+
+/* Preview indicators */
+.lesson .preview-label, .module-lessons .preview-label {
+  color: white;
+  background: #63a95f;
+  padding: .2em 1em;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  clear: both;
+  display: inline-block;
+  position: relative; }
+  .lesson .preview-label:before, .module-lessons .preview-label:before {
+    font-family: FontAwesomeSensei, FontAwesome;
+    display: inline-block;
+    margin-right: 0.168em;
+    line-height: 1em;
+    width: 1em;
+    content: '\f13e'; }
+
+.lesson h1 .preview-label, .module-lessons h1 .preview-label {
+  margin-left: 10px;
+  letter-spacing: normal;
+  font-size: 75%;
+  font-weight: 400; }
 
 div.course-container div.course {
   display: block;

@@ -1140,16 +1140,22 @@ class Sensei_Frontend {
 
 	public function sensei_lesson_preview_title_text( $course_id ) {
 
-		$preview_text = __( '(Preview)', 'woothemes-sensei' );
+		$preview_text = __( 'Preview', 'woothemes-sensei' );
 
 		//if this is a paid course
 		if ( Sensei_WC::is_woocommerce_active() ) {
     	    $wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
     	    if ( 0 < $wc_post_id ) {
-    	    	$preview_text = __( '(Free Preview)', 'woothemes-sensei' );
+    	    	$preview_text = __( 'Free Preview', 'woothemes-sensei' );
     	    } // End If Statement
     	}
     	return $preview_text;
+	}
+
+	public function sensei_lesson_preview_title_tag( $course_id ) {
+		return '<span class="preview-label">'
+			. $this->sensei_lesson_preview_title_text( $course_id )
+			. '</span>';
 	}
 
 	public function sensei_lesson_preview_title( $title = '', $id = 0 ) {
@@ -1167,7 +1173,7 @@ class Sensei_Frontend {
 
 				// Check if the user is taking the course
 				if( is_singular( 'lesson' ) && Sensei_Utils::is_preview_lesson( $post->ID ) && ! Sensei_Utils::user_started_course( $course_id, $current_user->ID ) && $post->ID == $id ) {
-					$title .= ' ' . $this->sensei_lesson_preview_title_text( $course_id );
+					$title .= ' ' . $this->sensei_lesson_preview_title_tag( $course_id );
 				}
 			}
 		}
