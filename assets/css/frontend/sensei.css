@@ -377,7 +377,7 @@ a.sensei-certificate-link {
     width: 1em;
     content: '\f13e'; }
 
-.lesson h1 .preview-label, .module-lessons h1 .preview-label {
+.lesson h1 .preview-label, .lesson h2 .preview-label, .module-lessons h1 .preview-label, .module-lessons h2 .preview-label {
   margin-left: 10px;
   letter-spacing: normal;
   font-size: 75%;

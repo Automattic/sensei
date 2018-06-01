@@ -392,11 +392,13 @@ a.sensei-certificate-link {
 		}
 	}
 
-	h1 .preview-label {
-		margin-left: 10px;
-		letter-spacing: normal;
-		font-size: 75%;
-		font-weight: 400;
+	h1, h2 {
+		.preview-label {
+			margin-left: 10px;
+			letter-spacing: normal;
+			font-size: 75%;
+			font-weight: 400;
+		}
 	}
 }
 
