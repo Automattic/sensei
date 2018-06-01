@@ -712,6 +712,7 @@ class Sensei_Utils {
                     $comment = array();
                     $comment['comment_ID'] = $activity_logged;
                     $comment['comment_approved'] = $status;
+                    $comment['comment_date'] = current_time( 'mysql' );
                     wp_update_comment( $comment );
 
                 }
