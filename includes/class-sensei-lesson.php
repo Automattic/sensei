@@ -3401,7 +3401,7 @@ class Sensei_Lesson {
 		$preview_label = '';
 		if ( $is_preview && !$is_user_taking_course ) {
 
-			$preview_label = Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id);
+			$preview_label = Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id );
 
 		}
 
