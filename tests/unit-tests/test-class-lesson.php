@@ -271,6 +271,29 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$this->assertTrue( false !== Sensei_Utils::user_started_lesson( $lesson_id, $user_id ) );
 	}
 
+	/**
+	 * @covers Sensei_Lesson::maybe_start_lesson
+	 */
+	public function testMaybeStartLessonPreviewLesson() {
+		$user_id = wp_create_user( 'getlearnertestuser','password', 'getlearnertestuser@sensei-test.com'  );
+		wp_set_current_user( $user_id );
+
+		$course_lessons = $this->factory->get_course_with_lessons( array(
+			'lesson_count'   => 1,
+			'question_count' => 1,
+			'lesson_args'    => array(
+				'meta_input' => array(
+					'_lesson_preview' => true,
+				),
+			),
+		) );
+		$lesson_id = array_pop( $course_lessons['lesson_ids'] );
+		$this->assertEquals( '1', get_post_meta( $lesson_id, '_lesson_preview', true ) );
+
+		Sensei_Lesson::maybe_start_lesson( $lesson_id, $user_id );
+		$this->assertFalse( Sensei_Utils::user_started_lesson( $lesson_id, $user_id ) );
+	}
+
     private static function get_course_lesson_order( $course_id ) {
       $order_string_array = explode( ',', get_post_meta( intval( $course_id ), '_lesson_order', true ) );
       return array_map( 'intval', $order_string_array );
