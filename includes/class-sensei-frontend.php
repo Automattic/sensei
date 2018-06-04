@@ -1149,7 +1149,17 @@ class Sensei_Frontend {
     	    	$preview_text = __( 'Free Preview', 'woothemes-sensei' );
     	    } // End If Statement
     	}
-    	return $preview_text;
+
+		/**
+		 * The lesson preview indicator text. Defaults to "Preview" or "Free
+		 * Preview" when the course is attached to a product.
+		 *
+		 * @since 1.11.0
+		 *
+		 * @param string $preview_text
+		 * @param int    $course_id
+		 */
+		return apply_filters( 'sensei_lesson_preview_title_text', $preview_text, $course_id );
 	}
 
 	public function sensei_lesson_preview_title_tag( $course_id ) {
