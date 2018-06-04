@@ -104,6 +104,9 @@ class Sensei_Lesson {
 
 		} else {
 			// Frontend actions
+
+			// Starts lesson when the student visits for the first time and prerequisite courses have been met.
+			add_action( 'sensei_single_lesson_content_inside_before', array( __CLASS__, 'maybe_start_lesson' ) );
 		} // End If Statement
 	} // End __construct()
 
@@ -143,7 +146,6 @@ class Sensei_Lesson {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
 	} // End meta_box_setup()
-
 
 	/**
 	 * lesson_info_meta_box_content function.
@@ -3545,6 +3547,42 @@ class Sensei_Lesson {
 
 		return apply_filters( 'sensei_lesson_prerequisite', $prerequisite_lesson_id, $current_lesson_id );
 
+	}
+
+	/**
+	 * Start the lesson the first time the student visits the page.
+	 *
+	 * @param int|string $lesson_id
+	 * @param int|string $user_id
+	 */
+	public static function maybe_start_lesson( $lesson_id = '', $user_id = '' ) {
+		if ( empty( $lesson_id ) ) {
+			$lesson_id = get_the_ID();
+		}
+
+		if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $lesson_id ) || empty( $user_id ) || 'lesson' !== get_post_type( $lesson_id ) ) {
+			return;
+		}
+
+		$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+		$user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
+		if ( ! $user_taking_course || ! sensei_can_user_view_lesson( $lesson_id, $user_id ) ) {
+			return;
+		}
+
+		if ( ! self::is_prerequisite_complete( $lesson_id, $user_id ) ) {
+			return;
+		}
+
+		if ( false !== Sensei_Utils::user_started_lesson( $lesson_id, $user_id ) ) {
+			return;
+		}
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 	}
 
 	/**
