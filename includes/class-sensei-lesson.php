@@ -3426,9 +3426,10 @@ class Sensei_Lesson {
 			<h2>
 				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ) ?>"
 				   title="<?php echo esc_attr( $heading_link_title ) ?>" >
-					<?php echo $count_markup. get_the_title( $lesson_id ) . $preview_label; ?>
 				</a>
 			</h2>
+
+			<?php echo $count_markup. get_the_title( $lesson_id ) . $preview_label; ?>
 
 			<p class="lesson-meta">
 
@@ -3752,10 +3753,15 @@ class Sensei_Lesson {
 	 */
 	public static function the_title(){
 
-		global $post;
+		global $post, $current_user;
+
+		$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+		$is_preview = isset( $post->ID )
+			&& Sensei_Utils::is_preview_lesson( $post->ID )
+			&& ! Sensei_Utils::user_started_course( $course_id, $current_user->ID );
 
 		?>
-		<header>
+		<header class="lesson-title">
 
 			<h1>
 
@@ -3767,6 +3773,12 @@ class Sensei_Lesson {
 				?>
 
 			</h1>
+
+			<?php
+				if ( $is_preview ) {
+					echo Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id );
+				}
+			?>
 
 		</header>
 
