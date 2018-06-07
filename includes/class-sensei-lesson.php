@@ -3628,59 +3628,26 @@ class Sensei_Lesson {
 		?>
 
 		<section class="course-signup lesson-meta">
-
 			<?php
 
 			global $current_user;
-			$wc_post_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
+			global $post;
 
+			$is_preview = Sensei_Utils::is_preview_lesson( $post->ID );
+			
 			if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $course_id ) ) {
-
-				if( is_user_logged_in() && ! Sensei_Utils::user_started_course( $course_id, $current_user->ID )  ) {
-
-						$a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' )  . '">';
-						$a_element .= esc_html__( 'course', 'woothemes-sensei' );
-						$a_element .= '</a>';
-
-						$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
-
-						Sensei()->notices->add_notice( $message, 'info' );
-
+				if ( is_user_logged_in() && ! Sensei_Utils::user_started_course( $course_id, $current_user->ID ) && ! $is_preview ) {
+					Sensei()->notices->add_notice( sensei_permissions_notice(), 'info' );
 				}
-
-				if( ! is_user_logged_in() ) {
-
-					$a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' )  . '">';
-					$a_element .= esc_html__( 'course', 'woothemes-sensei' );
-					$a_element .= '</a>';
-
-					$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
-
-					Sensei()->notices->add_notice( $message, 'alert' );
-
+				if ( ! is_user_logged_in() && ! $is_preview ) {
+					Sensei()->notices->add_notice( sensei_permissions_notice(), 'alert' );
 				}
-
-			} else { ?>
-
-				<?php if( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) &&  sensei_is_login_required() )  : ?>
-
-					<div class="sensei-message alert">
-						<?php
-						$course_link =  '<a href="'
-											. esc_url( get_permalink( $course_id ) )
-											. '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' )
-											. '">' . esc_html__( 'course', 'woothemes-sensei' )
-										. '</a>';
-
-			echo sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
-
-						?>
-					</div>
-
-				<?php endif; ?>
-
-			<?php } // End If Statement ?>
-
+			} else {
+				if ( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) && sensei_is_login_required() && ! $is_preview ) {
+					Sensei()->notices->add_notice( sensei_permissions_notice(), 'alert' );
+				}
+            }
+			?>
 		</section>
 
 		<?php
