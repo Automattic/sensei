@@ -3422,14 +3422,15 @@ class Sensei_Lesson {
 		$heading_link_title = sprintf( esc_html__( 'Start %s', 'woothemes-sensei' ), get_the_title( $lesson_id ) );
 
 		?>
-		<header>
+		<header class="lesson-title">
 			<h2>
 				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ) ?>"
 				   title="<?php echo esc_attr( $heading_link_title ) ?>" >
+					<?php echo $count_markup. get_the_title( $lesson_id ); ?>
 				</a>
 			</h2>
 
-			<?php echo $count_markup. get_the_title( $lesson_id ) . $preview_label; ?>
+			<?php echo $preview_label; ?>
 
 			<p class="lesson-meta">
 

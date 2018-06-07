@@ -383,7 +383,7 @@ a.sensei-certificate-link {
 .lesson header .preview-label, .module-lessons header .preview-label {
   margin-left: 10px; }
 
-.lesson header.lesson-title h1, .module-lessons header.lesson-title h1 {
+.lesson header.lesson-title h1, .lesson header.lesson-title h2, .module-lessons header.lesson-title h1, .module-lessons header.lesson-title h2 {
   display: inline-block; }
 
 div.course-container div.course {

@@ -400,8 +400,10 @@ a.sensei-certificate-link {
 			margin-left: 10px;
 		}
 
-		&.lesson-title h1 {
-			display: inline-block;
+		&.lesson-title {
+			h1, h2 {
+				display: inline-block;
+			}
 		}
 	}
 }
