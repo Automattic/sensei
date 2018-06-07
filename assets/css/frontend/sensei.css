@@ -380,11 +380,19 @@ a.sensei-certificate-link {
     width: 1em;
     content: '\f13e'; }
 
-.lesson header .preview-label, .module-lessons header .preview-label {
-  margin-left: 10px; }
-
-.lesson header.lesson-title h1, .lesson header.lesson-title h2, .module-lessons header.lesson-title h1, .module-lessons header.lesson-title h2 {
-  display: inline-block; }
+.lesson header, .module-lessons header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.5em; }
+  .lesson header .preview-label, .module-lessons header .preview-label {
+    margin-left: 10px;
+    font-size: 1.1em; }
+  .lesson header.lesson-title h1, .lesson header.lesson-title h2, .module-lessons header.lesson-title h1, .module-lessons header.lesson-title h2 {
+    display: inline-block;
+    margin: 0; }
+  .lesson header .lesson-meta, .module-lessons header .lesson-meta {
+    width: 100%; }
 
 div.course-container div.course {
   display: block;
