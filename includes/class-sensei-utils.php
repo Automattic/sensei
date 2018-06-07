@@ -2393,7 +2393,10 @@ class Sensei_Utils {
 
 		if ( is_multisite() ){
 
-			$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
+			$active_sitewide_plugins = get_site_option( 'active_sitewide_plugins' );
+			if ( $active_sitewide_plugins ) {
+				$active_plugins = array_merge( $active_plugins, $active_sitewide_plugins );
+			}
 
 		}
 
