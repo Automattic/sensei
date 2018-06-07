@@ -130,26 +130,7 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 					}
 					.preview-label {
 						float: right;
-						color: rgba(255,255,255,1);
-						background: #63a95f;
-						padding:.2em 1em;
-						-webkit-border-radius:5px;
-						border-radius:5px;
-						-moz-background-clip:padding;
-						-webkit-background-clip:padding-box;
-						background-clip:padding-box;
-						clear: both;
-						display: inline-block;
-						position: relative;
 						top: -0.2em;
-						&:before {
-							font-family: $fontawesome;
-							display: inline-block;
-							margin-right: 0.168em;
-							line-height: 1em;
-							width: 1em;
-							content: '\f13e';
-						}
 					}
 				}
 				&.completed {

@@ -3401,8 +3401,7 @@ class Sensei_Lesson {
 		$preview_label = '';
 		if ( $is_preview && !$is_user_taking_course ) {
 
-			$preview_label = Sensei()->frontend->sensei_lesson_preview_title_text( $lesson_id);
-			$preview_label = '<span class="preview-heading">' . esc_html( $preview_label ) . '</span>';
+			$preview_label = Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id );
 
 		}
 
@@ -3423,13 +3422,15 @@ class Sensei_Lesson {
 		$heading_link_title = sprintf( esc_html__( 'Start %s', 'woothemes-sensei' ), get_the_title( $lesson_id ) );
 
 		?>
-		<header>
+		<header class="lesson-title">
 			<h2>
 				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ) ?>"
 				   title="<?php echo esc_attr( $heading_link_title ) ?>" >
-					<?php echo $count_markup. get_the_title( $lesson_id ) . $preview_label; ?>
+					<?php echo $count_markup. get_the_title( $lesson_id ); ?>
 				</a>
 			</h2>
+
+			<?php echo $preview_label; ?>
 
 			<p class="lesson-meta">
 
@@ -3618,7 +3619,7 @@ class Sensei_Lesson {
 
 		$course_id =  Sensei()->lesson->get_course_id( get_the_ID() );
 
-		if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) || sensei_all_access() ) {
+		if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( get_the_ID() ) ) {
 
 			return;
 
@@ -3641,15 +3642,7 @@ class Sensei_Lesson {
 						$a_element .= esc_html__( 'course', 'woothemes-sensei' );
 						$a_element .= '</a>';
 
-						if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
-
-							$message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $a_element );
-
-						}else{
-
-							$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
-
-						}
+						$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 						Sensei()->notices->add_notice( $message, 'info' );
 
@@ -3661,15 +3654,7 @@ class Sensei_Lesson {
 					$a_element .= esc_html__( 'course', 'woothemes-sensei' );
 					$a_element .= '</a>';
 
-					if( Sensei_Utils::is_preview_lesson( get_the_ID()  ) ){
-
-						$message = sprintf( esc_html__( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $a_element );
-
-					}else{
-
-						$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
-
-					}
+					$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 					Sensei()->notices->add_notice( $message, 'alert' );
 
@@ -3687,15 +3672,7 @@ class Sensei_Lesson {
 											. '">' . esc_html__( 'course', 'woothemes-sensei' )
 										. '</a>';
 
-						if ( Sensei_Utils::is_preview_lesson( get_the_ID( ) ) ) {
-
-							echo sprintf( esc_html__( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ),  $course_link );
-
-						} else {
-
-							echo sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
-
-						}
+			echo sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
 
 						?>
 					</div>
@@ -3777,10 +3754,15 @@ class Sensei_Lesson {
 	 */
 	public static function the_title(){
 
-		global $post;
+		global $post, $current_user;
+
+		$course_id = get_post_meta( $post->ID, '_lesson_course', true );
+		$is_preview = isset( $post->ID )
+			&& Sensei_Utils::is_preview_lesson( $post->ID )
+			&& ! Sensei_Utils::user_started_course( $course_id, $current_user->ID );
 
 		?>
-		<header>
+		<header class="lesson-title">
 
 			<h1>
 
@@ -3792,6 +3774,12 @@ class Sensei_Lesson {
 				?>
 
 			</h1>
+
+			<?php
+				if ( $is_preview ) {
+					echo Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id );
+				}
+			?>
 
 		</header>
 
