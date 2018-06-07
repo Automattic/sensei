@@ -1,5 +1,19 @@
 *** Sensei Changelog ***
 
+2018.06.13 - version 1.11.0
+
+* Fix: Fix display of all other lessons after module is removed
+* Fix: Fix when force completing lessons with quizzes with questions
+* Fix: Course score based on quizzes that have graded questions
+* Tweak: Improve performance of fetching the learner count for usage tracking
+* Tweak: Use domain as value of Tracks userid parameter
+* Tweak: Delete user's messages when the user is deleted
+* New: Add filter for successful payment statuses - sensei_wc_order_statuses
+* New: Add (Free) Preview label to lesson title
+* New: Add usage tracking for quiz settings
+* New: Add stats for number of quizzes and quiz questions
+* New: Add email column to Analysis screen
+
 2018.04.11 - version 1.10.1
 
 * Fix: Fix error in data updates when there are no quizzes
