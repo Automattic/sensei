@@ -2632,8 +2632,7 @@ class Sensei_Course {
         }
 
         if ( ( is_user_logged_in() && $is_user_taking_course )
-            || ( $access_permission && !$has_product_attached)
-            || 'full' == Sensei()->settings->get( 'course_single_content_display' ) ) {
+            || ( $access_permission && !$has_product_attached) ) {
 
 	        // compensate for core providing and empty $content
 
@@ -2806,29 +2805,6 @@ class Sensei_Course {
         if( 'course' == get_post_type( $post_id )  ){
 
             Sensei()->initiate_rewrite_rules_flush();
-
-        }
-
-    }
-
-    /**
-     * Optionally return the full content on the single course pages
-     * depending on the users course_single_content_display setting
-     *
-     * @since 1.9.0
-     * @param $excerpt
-     * @return string
-     */
-    public static function full_content_excerpt_override( $excerpt ){
-
-        if (   is_singular('course')  &&
-                'full' == Sensei()->settings->get( 'course_single_content_display' ) ){
-
-            return get_the_content();
-
-        } else {
-
-            return $excerpt;
 
         }
 

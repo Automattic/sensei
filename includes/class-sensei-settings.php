@@ -162,7 +162,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$pages_array = $this->pages_array();
 		$posts_per_page_array = array( '0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20' );
 		$complete_settings = array( 'passed' => __( 'Once all the course lessons have been completed', 'woothemes-sensei' ), 'complete' => __( 'At any time (by clicking the \'Complete Course\' button)', 'woothemes-sensei' ) );
-		$course_display_settings = array( 'excerpt' => __( 'Course Excerpt', 'woothemes-sensei' ), 'full' => __( 'Full Course Content', 'woothemes-sensei' ) );
 		$quiz_points_formats = array(
 			'none'     => __( "Don't show quiz question points", 'woothemes-sensei' ),
 			'number'   => __( "Number (e.g. 1. Default)", 'woothemes-sensei' ),
@@ -352,16 +351,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 								'type' => 'checkbox',
 								'default' => false,
 								'section' => 'course-settings'
-								);
-
-		$fields['course_single_content_display'] = array(
-								'name' => __( 'Single Course page displays:', 'woothemes-sensei' ),
-								'description' => __( 'Determines what content to display on the single course page.', 'woothemes-sensei' ),
-								'type' => 'select',
-								'default' => 'excerpt',
-								'section' => 'course-settings',
-								'required' => 0,
-								'options' => $course_display_settings
 								);
 
 		$fields['course_archive_featured_enable'] = array(
