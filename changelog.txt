@@ -8,6 +8,7 @@
 * Tweak: Improve performance of fetching the learner count for usage tracking
 * Tweak: Use domain as value of Tracks userid parameter
 * Tweak: Delete user's messages when the user is deleted
+* Tweak: Update URL and Twitter account in tweet that can be sent after activating
 * New: Add filter for successful payment statuses - sensei_wc_order_statuses
 * New: Add (Free) Preview label to lesson title
 * New: Add usage tracking for quiz settings
