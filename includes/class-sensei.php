@@ -839,6 +839,10 @@ class Sensei_Main {
 		if ( sensei_all_access() ) { return true;
 		}
 
+		if ( post_password_required( get_the_ID() ) ) {
+			return false;
+		}
+
 		if ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) {
 			if ( is_user_logged_in() ) {
 				return true;
