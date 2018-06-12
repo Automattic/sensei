@@ -2814,12 +2814,13 @@ class Sensei_Course {
 	 * Optionally return the full content on the single course pages
 	 * depending on the users course_single_content_display setting
 	 *
-	 * @deprecated since 1.11.0
+	 * @since 1.9.0
+	 * @deprecated since 1.12.0
 	 * @param $excerpt
 	 * @return string
 	 */
 	public static function full_content_excerpt_override( $excerpt ) {
-		_deprecated_function( __METHOD__, '1.11.0', 'The single course page display setting is no longer used.' );
+		_deprecated_function( __METHOD__, '1.12.0' );
 		return $excerpt;
 	}
 
