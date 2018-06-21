@@ -1,6 +1,9 @@
 {
+	"name": "Sensei",
+	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
 	"require-dev": {
 		"apigen/apigen": "*",
+		"squizlabs/php_codesniffer": "3.*",
 		"wp-coding-standards/wpcs": "^0.14.0",
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.4.4"
 	}
