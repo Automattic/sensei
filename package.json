@@ -15,7 +15,7 @@
     "babel-preset-stage-3": "^6.24.1",
     "del": "^3.0.0",
     "fs-extra": "^6.0.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-babel": "^7.0.1",
     "gulp-checktextdomain": "^1.1.1",
     "gulp-chmod": "^2.0.0",
