@@ -1,5 +1,5 @@
 {
-	"name": "Sensei",
+	"name": "woothemes-sensei",
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
 	"require-dev": {
 		"apigen/apigen": "*",
