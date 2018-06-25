@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Gulp File
  *
@@ -8,6 +9,7 @@
  *
  * 3) Run gulp to mifiy javascript and css using the 'gulp' command.
  */
+
 
 var gulp            = require( 'gulp' );
 var rename          = require( 'gulp-rename' );
@@ -22,10 +24,8 @@ var checktextdomain = require( 'gulp-checktextdomain' );
 var babel           = require( 'gulp-babel' );
 
 var paths = {
-	scripts: ['assets/js/*.js' ],
-	adminScripts: ['assets/js/admin/*.js'],
-	css: ['assets/css/*.scss'],
-    frontedCss: ['assets/css/frontend/*.scss']
+	scripts: ['assets/js/**/*.js'],
+	css: ['assets/css/**/*.scss'],
 };
 
 var babelOptions = {
@@ -44,26 +44,18 @@ var babelOptions = {
 	],
 };
 
-gulp.task( 'clean', function( cb ) {
-	return del( ['assets/js/*.min.js','assets/js/admin/*.min.js', 'assets/css/*.min.css'], cb );
-});
+gulp.task( 'clean', gulp.series(function( cb ) {
+	return del( ['assets/js/**/*.min.js','assets/js/**/*.min.js', 'assets/css/**/*.min.css'], cb );
+}));
 
-gulp.task( 'default', [ 'CSS','FrontendCSS','JS','adminJS' ] );
-
-gulp.task( 'CSS', ['clean'], function() {
+gulp.task( 'CSS', gulp.series( function() {
 	return gulp.src( paths.css )
-        .pipe( sass().on('error', sass.logError))
-	.pipe( minifyCSS({ keepBreaks: false }) )
+    .pipe( sass().on('error', sass.logError))
+		.pipe( minifyCSS({ keepBreaks: false }) )
 		.pipe( gulp.dest( 'assets/css' ) );
-});
+}));
 
-gulp.task( 'FrontendCSS', function() {
-    return gulp.src( paths.frontedCss )
-        .pipe( sass().on('error', sass.logError))
-        .pipe( gulp.dest( './assets/css/frontend' ) );
-});
-
-gulp.task( 'JS', ['clean'], function() {
+gulp.task( 'JS', gulp.series( function() {
 	return gulp.src( paths.scripts )
 		.pipe( babel( babelOptions ) )
 		// This will minify and rename to *.min.js
@@ -71,19 +63,9 @@ gulp.task( 'JS', ['clean'], function() {
 		.pipe( rename({ extname: '.min.js' }) )
 		.pipe( chmod( 0o644 ) )
 		.pipe( gulp.dest( 'assets/js' ));
-});
+}));
 
-gulp.task( 'adminJS', ['clean'], function() {
-	return gulp.src( paths.adminScripts )
-		.pipe( babel( babelOptions ) )
-		// This will minify and rename to *.min.js
-		.pipe( uglify() )
-		.pipe( rename({ extname: '.min.js' }) )
-		.pipe( chmod( 0o644 ) )
-		.pipe( gulp.dest( 'assets/js/admin' ) );
-});
-
-gulp.task( 'pot', function() {
+gulp.task( 'pot', gulp.series( function() {
 	return gulp.src( [ '**/**.php', '!node_modules/**'] )
 		.pipe( sort() )
 		.pipe( wpPot({
@@ -91,9 +73,9 @@ gulp.task( 'pot', function() {
 			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
 		}) )
 		.pipe( gulp.dest( 'lang/woothemes-sensei.pot' ) );
-});
+}));
 
-gulp.task ( 'textdomain' , function() {
+gulp.task( 'textdomain' , gulp.series( function() {
 	return gulp.src( [ '**/*.php', '!node_modules/**'] )
 		.pipe( checktextdomain({
 			text_domain: 'woothemes-sensei',
@@ -114,4 +96,6 @@ gulp.task ( 'textdomain' , function() {
 				'_nx_noop:1,2,3c,4d'
 			]
 		}));
-});
+}));
+
+gulp.task( 'default', gulp.series( 'clean', 'CSS', 'JS' ) );
