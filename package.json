@@ -28,6 +28,6 @@
     "orchestrator": "^0.3.8"
   },
   "dependencies": {
-    "select2": "4.0.3"
+    "select2": "4.0.5"
   }
 }
