@@ -7,7 +7,7 @@
  * 2) Install all the modules from package.json:
  * $ npm install
  *
- * 3) Run gulp to mifiy javascript and css using the 'gulp' command.
+ * 3) Run gulp to minify javascript and css using the 'gulp' command.
  */
 
 
@@ -24,8 +24,13 @@ var checktextdomain = require( 'gulp-checktextdomain' );
 var babel           = require( 'gulp-babel' );
 
 var paths = {
-	scripts: ['assets/js/**/*.js'],
-	css: ['assets/css/**/*.scss'],
+	scripts: [ 'assets/js/**/*.js' ],
+	css: [ 'assets/css/**/*.scss' ],
+	select2: [
+		'node_modules/select2/dist/css/select2.min.css',
+		'node_modules/select2/dist/js/select2.full.js',
+		'node_modules/select2/dist/js/select2.full.min.js'
+	]
 };
 
 var babelOptions = {
@@ -44,40 +49,45 @@ var babelOptions = {
 	],
 };
 
-gulp.task( 'clean', gulp.series(function( cb ) {
-	return del( ['assets/js/**/*.min.js','assets/js/**/*.min.js', 'assets/css/**/*.min.css'], cb );
-}));
+gulp.task( 'clean', gulp.series( function( cb ) {
+	return del( [
+		'assets/js/**/*.min.js',
+		'assets/js/**/*.min.js',
+		'assets/css/**/*.min.css',
+		'assets/vendor/select2/**'
+	], cb );
+} ) );
 
 gulp.task( 'CSS', gulp.series( function() {
 	return gulp.src( paths.css )
-    .pipe( sass().on('error', sass.logError))
-		.pipe( minifyCSS({ keepBreaks: false }) )
+    .pipe( sass().on( 'error', sass.logError ) )
+		.pipe( minifyCSS( { keepBreaks: false } ) )
 		.pipe( gulp.dest( 'assets/css' ) );
-}));
+} ) );
 
 gulp.task( 'JS', gulp.series( function() {
 	return gulp.src( paths.scripts )
 		.pipe( babel( babelOptions ) )
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
-		.pipe( rename({ extname: '.min.js' }) )
+		.pipe( rename( { extname: '.min.js' } ) )
 		.pipe( chmod( 0o644 ) )
-		.pipe( gulp.dest( 'assets/js' ));
-}));
+		.pipe( gulp.dest( 'assets/js' ) );
+} ) );
 
 gulp.task( 'pot', gulp.series( function() {
-	return gulp.src( [ '**/**.php', '!node_modules/**'] )
+	return gulp.src( [ '**/**.php', '!node_modules/**' ] )
 		.pipe( sort() )
-		.pipe( wpPot({
+		.pipe( wpPot( {
 			domain: 'woothemes-sensei',
 			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
-		}) )
+		} ) )
 		.pipe( gulp.dest( 'lang/woothemes-sensei.pot' ) );
-}));
+} ) );
 
-gulp.task( 'textdomain' , gulp.series( function() {
-	return gulp.src( [ '**/*.php', '!node_modules/**'] )
-		.pipe( checktextdomain({
+gulp.task( 'textdomain', gulp.series( function() {
+	return gulp.src( [ '**/*.php', '!node_modules/**' ] )
+		.pipe( checktextdomain( {
 			text_domain: 'woothemes-sensei',
 			keywords: [
 				'__:1,2d',
@@ -95,7 +105,12 @@ gulp.task( 'textdomain' , gulp.series( function() {
 				'_n_noop:1,2,3d',
 				'_nx_noop:1,2,3c,4d'
 			]
-		}));
-}));
+		} ) );
+} ) );
 
-gulp.task( 'default', gulp.series( 'clean', 'CSS', 'JS' ) );
+gulp.task( 'vendor', function() {
+	return gulp.src( paths.select2 )
+		.pipe( gulp.dest( 'assets/vendor/select2' ) );
+} );
+
+gulp.task( 'default', gulp.series( 'clean', 'CSS', 'JS', 'vendor' ) );
