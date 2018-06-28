@@ -54,13 +54,14 @@ gulp.task( 'clean', gulp.series( function( cb ) {
 		'assets/js/**/*.min.js',
 		'assets/js/**/*.min.js',
 		'assets/css/**/*.min.css',
-		'assets/vendor/select2/**'
+		'assets/vendor/select2/**',
+		'build'
 	], cb );
 } ) );
 
 gulp.task( 'CSS', gulp.series( function() {
 	return gulp.src( paths.css )
-    .pipe( sass().on( 'error', sass.logError ) )
+		.pipe( sass().on( 'error', sass.logError ) )
 		.pipe( minifyCSS( { keepBreaks: false } ) )
 		.pipe( gulp.dest( 'assets/css' ) );
 } ) );
