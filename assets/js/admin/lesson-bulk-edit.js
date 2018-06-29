@@ -2,9 +2,7 @@
  * Lesson bulk edit screen save functionality
  */
 
-jQuery(document).ready(function() {
-	var $ = jQuery.noConflict();
-
+jQuery( function( $ ) {
 	$( '#bulk_edit' ).live( 'click a#bulk_edit', function() {
 		// define the bulk edit row
 		var $bulk_row = $( '#bulk-edit' );
@@ -61,4 +59,4 @@ jQuery(document).ready(function() {
 			}
 		});
 	});
-})(jQuery);
+} );
