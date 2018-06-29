@@ -33,22 +33,6 @@ var paths = {
 	]
 };
 
-var babelOptions = {
-	'presets': [
-		[ 'env', {
-			'targets': {
-				'browsers': [
-					"last 2 versions",
-					"Safari >= 9",
-					"iOS >= 9",
-					"not ie <= 10"
-				]
-			}
-		} ],
-		'stage-3'
-	],
-};
-
 gulp.task( 'clean', gulp.series( function( cb ) {
 	return del( [
 		'assets/js/**/*.min.js',
@@ -68,7 +52,7 @@ gulp.task( 'CSS', gulp.series( function() {
 
 gulp.task( 'JS', gulp.series( function() {
 	return gulp.src( paths.scripts )
-		.pipe( babel( babelOptions ) )
+		.pipe( babel() )
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
 		.pipe( rename( { extname: '.min.js' } ) )
