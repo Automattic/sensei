@@ -40,35 +40,35 @@ jobs:
       php: 7.2
       env: WP_VERSION=latest
       script:
-        - ./bin/run-wp-unit-tests.sh
+        - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 7.1
       env: WP_VERSION=latest
       script:
-        - ./bin/run-wp-unit-tests.sh
+        - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 7.0
       env: WP_VERSION=latest
       script:
-        - ./bin/run-wp-unit-tests.sh
+        - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 5.6
       env: WP_VERSION=4.4
       script:
-        - ./bin/run-wp-unit-tests.sh
+        - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 5.6
       env: WP_VERSION=latest
       script:
-        - ./bin/run-wp-unit-tests.sh
+        - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 5.6
       env: WP_VERSION=trunk
       script:
-        - ./bin/run-wp-unit-tests.sh
+        - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 5.3
       env: WP_VERSION=latest
       dist: precise
       script:
-        - ./bin/run-wp-unit-tests.sh
+        - ./tests/bin/run-wp-unit-tests.sh
