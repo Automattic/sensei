@@ -33,41 +33,26 @@ var paths = {
 	]
 };
 
-var babelOptions = {
-	'presets': [
-		[ 'env', {
-			'targets': {
-				'browsers': [
-					"last 2 versions",
-					"Safari >= 9",
-					"iOS >= 9",
-					"not ie <= 10"
-				]
-			}
-		} ],
-		'stage-3'
-	],
-};
-
 gulp.task( 'clean', gulp.series( function( cb ) {
 	return del( [
 		'assets/js/**/*.min.js',
 		'assets/js/**/*.min.js',
 		'assets/css/**/*.min.css',
-		'assets/vendor/select2/**'
+		'assets/vendor/select2/**',
+		'build'
 	], cb );
 } ) );
 
 gulp.task( 'CSS', gulp.series( function() {
 	return gulp.src( paths.css )
-    .pipe( sass().on( 'error', sass.logError ) )
+		.pipe( sass().on( 'error', sass.logError ) )
 		.pipe( minifyCSS( { keepBreaks: false } ) )
 		.pipe( gulp.dest( 'assets/css' ) );
 } ) );
 
 gulp.task( 'JS', gulp.series( function() {
 	return gulp.src( paths.scripts )
-		.pipe( babel( babelOptions ) )
+		.pipe( babel() )
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
 		.pipe( rename( { extname: '.min.js' } ) )
