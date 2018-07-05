@@ -23,7 +23,7 @@ install_test_suite() {
 	# set up testing suite
 	cd $WP_TESTS_DIR
 	rm -rf wp-tests-config.php
-	cp ../../wp-tests-config.php wp-tests-config.php
+	cp ../../wp-tests-config-sample.php wp-tests-config.php
 
 	sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR':" wp-tests-config.php
 	sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" wp-tests-config.php
