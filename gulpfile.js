@@ -10,18 +10,18 @@
  * 3) Run gulp to minify javascript and css using the 'gulp' command.
  */
 
-
-var gulp            = require( 'gulp' );
-var rename          = require( 'gulp-rename' );
-var uglify          = require( 'gulp-uglify' );
-var minifyCSS       = require( 'gulp-minify-css' );
+var babel           = require( 'gulp-babel' );
+var checktextdomain = require( 'gulp-checktextdomain' );
 var chmod           = require( 'gulp-chmod' );
 var del             = require( 'del' );
+var gulp            = require( 'gulp' );
+var minifyCSS       = require( 'gulp-minify-css' );
+var phpunit         = require( 'gulp-phpunit' );
+var rename          = require( 'gulp-rename' );
 var sass            = require( 'gulp-sass' );
-var wpPot           = require( 'gulp-wp-pot' );
 var sort            = require( 'gulp-sort' );
-var checktextdomain = require( 'gulp-checktextdomain' );
-var babel           = require( 'gulp-babel' );
+var uglify          = require( 'gulp-uglify' );
+var wpPot           = require( 'gulp-wp-pot' );
 
 var paths = {
 	scripts: [ 'assets/js/**/*.js' ],
@@ -98,4 +98,9 @@ gulp.task( 'vendor', function() {
 		.pipe( gulp.dest( 'assets/vendor/select2' ) );
 } );
 
-gulp.task( 'default', gulp.series( 'clean', 'CSS', 'JS', 'vendor' ) );
+gulp.task( 'test', function() {
+	return gulp.src( 'phpunit.xml' )
+		.pipe( phpunit() );
+} );
+
+gulp.task( 'default', gulp.series( 'test', 'clean', 'CSS', 'JS', 'vendor' ) );
