@@ -45,6 +45,6 @@
   "scripts": {
     "build": "gulp && cross-env BABEL_ENV=default webpack --mode=production",
     "dev": "gulp && cross-env BABEL_ENV=default webpack --mode=development --watch",
-    "test": "jest"
+    "test": "gulp test && jest"
   }
 }
