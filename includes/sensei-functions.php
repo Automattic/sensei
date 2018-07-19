@@ -269,3 +269,24 @@ function sensei_is_login_required(){
     return $login_required;
 
 }
+
+/**
+ * Display a permission message to use when a user has not signed up to the course.
+ *
+ * @return mixed|string
+ */
+function sensei_permissions_notice() {
+	global $post;
+	
+	$lesson_course_id = get_post_meta( $post->ID, '_lesson_course',true );
+	$course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+	$message = sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ),  $course_link );
+	
+	/**
+	 * Filters the permission message shown in the notices area.
+	 *
+	 * @param string $message
+	 * @param string $post_id
+	 */
+	return apply_filters( 'sensei_permissions_notice', $message, $post->ID );
+}
