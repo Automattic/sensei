@@ -58,7 +58,7 @@ class Sensei_Theme_Integration_Loader {
 	/**
 	 * Get names of all themes supported by default.
 	 *
-	 * @since 1.11.0
+	 * @since 1.12.0
 	 */
 	public function get_supported_themes() {
 		return $this->themes;

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author Automattic
  *
- * @since 1.11.0
+ * @since 1.12.0
  */
 class Sensei_Unsupported_Themes {
 
@@ -32,7 +32,7 @@ class Sensei_Unsupported_Themes {
 	/**
 	 * Initialize rendering system for unsupported themes.
 	 *
-	 * @since 1.11.0
+	 * @since 1.12.0
 	 */
 	public static function init() {
 		$instance = self::get_instance();
@@ -42,7 +42,7 @@ class Sensei_Unsupported_Themes {
 	/**
 	 * Get the singleton instance.
 	 *
-	 * @since 1.11.0
+	 * @since 1.12.0
 	 */
 	public static function get_instance() {
 		if ( ! self::$_instance ) {
@@ -54,7 +54,7 @@ class Sensei_Unsupported_Themes {
 	/**
 	 * Private constructor.
 	 *
-	 * @since 1.11.0
+	 * @since 1.12.0
 	 */
 	private function __construct() {
 	}
@@ -63,7 +63,7 @@ class Sensei_Unsupported_Themes {
 	 * Determine whether this class is handling the rendering for this
 	 * request.
 	 *
-	 * @since 1.11.0
+	 * @since 1.12.0
 	 *
 	 * @return bool
 	 */
@@ -75,7 +75,7 @@ class Sensei_Unsupported_Themes {
 	 * Set up handling for this request if possible. If the request is
 	 * handled here, sets the instance variable $_is_handling_request.
 	 *
-	 * @since 1.11.0
+	 * @since 1.12.0
 	 */
 	protected function maybe_handle_request() {
 		// Do nothing if this theme supports Sensei.
@@ -92,7 +92,7 @@ class Sensei_Unsupported_Themes {
 	/**
 	 * Set up handling for a single course page.
 	 *
-	 * @since 1.11.0
+	 * @since 1.12.0
 	 */
 	private function handle_course_page() {
 		add_filter( 'the_content', array( $this, 'course_page_content_filter' ) );
@@ -101,7 +101,7 @@ class Sensei_Unsupported_Themes {
 	/**
 	 * Filter the content and insert Sensei course content.
 	 *
-	 * @since 1.11.0
+	 * @since 1.12.0
 	 * @param $content The existing content.
 	 * @return string
 	 */

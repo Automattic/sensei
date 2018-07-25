@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author Automattic
  *
- * @since 1.11.0
+ * @since 1.12.0
  */
 class Sensei_Renderer_Single_Course {
 
@@ -27,7 +27,7 @@ class Sensei_Renderer_Single_Course {
 	/**
 	 * Setup the renderer object
 	 *
-	 * @since 1.11.0
+	 * @since 1.12.0
 	 * @param array $attributes
 	 * @param string $content
 	 * @param string $shortcode the shortcode that was called for this instance

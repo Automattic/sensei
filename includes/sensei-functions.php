@@ -273,7 +273,7 @@ function sensei_is_login_required(){
 /**
  * Checks if this theme supports Sensei templates.
  *
- * @since 1.11.0
+ * @since 1.12.0
  * @return bool
  */
 function sensei_does_theme_support_templates() {

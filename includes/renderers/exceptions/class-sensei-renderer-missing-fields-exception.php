@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author Automattic
  *
- * @since 1.11.0
+ * @since 1.12.0
  */
 class Sensei_Renderer_Missing_Fields_Exception extends Exception {
 	public function __construct( $fields ) {
