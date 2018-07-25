@@ -17,20 +17,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Renderer_Single_Course {
 
 	/**
-	 * @var array $course_page_query {
-	 *   @type WP_Post
-	 * }
-	 * The courses query.
+	 * @var WP_Query $course_page_query The query for the Course post.
 	 */
 	protected $course_page_query;
+
+	/**
+	 * @var WP_Post $global_post_ref Backup of the global $post variable.
+	 */
+	protected $global_post_ref;
+
+	/**
+	 * @var WP_Query $global_wp_query_ref Backup of the global $wp_query variable.
+	 */
+	protected $global_wp_query_ref;
+
+	/**
+	 * @var array $global_pages_ref Backup of the global $pages variable.
+	 */
+	protected $global_pages_ref;
 
 	/**
 	 * Setup the renderer object
 	 *
 	 * @since 1.12.0
-	 * @param array $attributes
-	 * @param string $content
-	 * @param string $shortcode the shortcode that was called for this instance
+	 * @param array  $attributes {
+	 *   @type int  id              The course ID.
+	 *   @type bool show_pagination Whether to show pagination on the course page.
+	 * }
 	 */
 	public function __construct( $attributes ) {
 		$this->id = isset( $attributes['id'] ) ? $attributes['id'] : '';
@@ -39,9 +52,41 @@ class Sensei_Renderer_Single_Course {
 	}
 
 	/**
+	 * Render and return the content. This will use the 'single-course.php'
+	 * template, and will use an overridden version if it exists.
+	 *
+	 * @return string The rendered output.
+	 */
+	public function render() {
+		if( empty( $this->id ) ){
+			throw new Sensei_Renderer_Missing_Fields_Exception( array( 'id' ) );
+		}
+
+		// Set the wp_query to the current courses query.
+		global $wp_query, $post, $pages;
+
+		$this->set_global_vars();
+
+		// Capture output.
+		ob_start();
+		add_filter( 'sensei_show_main_footer', '__return_false' );
+		add_filter( 'sensei_show_main_header', '__return_false' );
+		add_action( 'sensei_single_course_lessons_before', array( $this, 'set_global_vars' ), 1, 0 );
+		Sensei_Templates::get_template( 'single-course.php' );
+		if ( $this->show_pagination ) {
+			do_action( 'sensei_pagination' );
+		}
+		$output = ob_get_clean();
+
+		$this->reset_global_vars();
+
+		return $output;
+	}
+
+	/**
 	 * Create the courses query.
 	 */
-	public function setup_course_query(){
+	private function setup_course_query(){
 		if ( empty( $this->id ) ) {
 			return;
 		}
@@ -57,57 +102,33 @@ class Sensei_Renderer_Single_Course {
 	}
 
 	/**
-	 * Render and return the content. This will use the 'single-course.php'
-	 * template, and will use an overridden version if it exists.
-	 *
-	 * @return string
-	 */
-	public function render() {
-		if( empty( $this->id ) ){
-			throw new Sensei_Renderer_Missing_Fields_Exception( array( 'id' ) );
-		}
-
-		// Set the wp_query to the current courses query.
-		global $wp_query, $post, $pages;
-
-		// backups
-		$global_post_ref     = clone $post;
-		$global_wp_query_ref = clone $wp_query;
-		$global_pages_ref    = $pages;
-
-		$this->set_global_vars();
-
-		// Capture output.
-		ob_start();
-		add_filter( 'sensei_show_main_footer', '__return_false' );
-		add_filter( 'sensei_show_main_header', '__return_false' );
-		add_action( 'sensei_single_course_lessons_before', array( $this, 'set_global_vars' ), 1, 0 );
-		Sensei_Templates::get_template( 'single-course.php' );
-		if ( $this->show_pagination ) {
-			do_action( 'sensei_pagination' );
-		}
-		$output = ob_get_clean();
-
-		// set back the global query and post
-		// restore global backups
-		$wp_query       = $global_wp_query_ref;
-		$post           = $global_post_ref;
-		$wp_query->post = $global_post_ref;
-		$pages          = $global_pages_ref;
-
-		return $output;
-	}// end render
-
-	/**
 	 * Set global variables to the currently requested course.
 	 */
-	public function set_global_vars() {
+	private function set_global_vars() {
 		global $wp_query, $post, $pages;
+
+		// Backup global vars.
+		$this->global_post_ref     = clone $post;
+		$this->global_wp_query_ref = clone $wp_query;
+		$this->global_pages_ref    = $pages;
 
 		// Alter global var states.
 		$post           = get_post( $this->id );
 		$pages          = array( $post->post_content );
 		$wp_query       = $this->course_page_query;
 		$wp_query->post = get_post( $this->id );
+	}
+
+	/**
+	 * Reset global variables to what they were before the render.
+	 */
+	private function reset_global_vars() {
+		global $wp_query, $post, $pages;
+
+		// Restore global backups.
+		$wp_query       = $this->global_wp_query_ref;
+		$post           = $this->global_post_ref;
+		$wp_query->post = $this->global_post_ref;
+		$pages          = $this->global_pages_ref;
 	}
 }
