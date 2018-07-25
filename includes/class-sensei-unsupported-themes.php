@@ -102,8 +102,10 @@ class Sensei_Unsupported_Themes {
 	 * Filter the content and insert Sensei course content.
 	 *
 	 * @since 1.12.0
-	 * @param $content The existing content.
-	 * @return string
+	 *
+	 * @param string $content The raw post content.
+	 *
+	 * @return string The content to be displayed on the page.
 	 */
 	public function course_page_content_filter( $content ) {
 		if ( ! is_main_query() ) {
@@ -113,9 +115,21 @@ class Sensei_Unsupported_Themes {
 		// Remove the filter we're in to avoid nested calls.
 		remove_filter( 'the_content', array( $this, 'course_page_content_filter' ) );
 
+		$course_id = get_the_ID();
+
+		/**
+		 * Whether to show pagination on the course page when displaying on a
+		 * theme that does not explicitly support Sensei.
+		 *
+		 * @param  bool $show_pagination The initial value.
+		 * @param  int  $course_id       The course ID.
+		 * @return bool
+		 */
+		$show_pagination = apply_filters( 'sensei_course_page_show_pagination', true, $course_id );
+
 		$renderer = new Sensei_Renderer_Single_Course( array(
-			'id'              => get_the_ID(),
-			'show_pagination' => true,
+			'id'              => $course_id,
+			'show_pagination' => $show_pagination,
 		) );
 		$content = $renderer->render();
 

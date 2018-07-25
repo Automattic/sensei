@@ -65,6 +65,7 @@ class Sensei_Renderer_Single_Course {
 		// Set the wp_query to the current courses query.
 		global $wp_query, $post, $pages;
 
+		$this->backup_global_vars();
 		$this->set_global_vars();
 
 		// Capture output.
@@ -102,17 +103,25 @@ class Sensei_Renderer_Single_Course {
 	}
 
 	/**
-	 * Set global variables to the currently requested course.
+	 * Backup the globals that we will be modifying. Set them back with
+	 * `reset_global_vars`.
 	 */
-	private function set_global_vars() {
+	private function backup_global_vars() {
 		global $wp_query, $post, $pages;
 
-		// Backup global vars.
 		$this->global_post_ref     = clone $post;
 		$this->global_wp_query_ref = clone $wp_query;
 		$this->global_pages_ref    = $pages;
 
-		// Alter global var states.
+	}
+
+	/**
+	 * Set global variables to the currently requested course. This is used
+	 * internally and should not be called from external code.
+	 *
+	 * @access private
+	 */
+	public function set_global_vars() {
 		$post           = get_post( $this->id );
 		$pages          = array( $post->post_content );
 		$wp_query       = $this->course_page_query;
@@ -120,12 +129,12 @@ class Sensei_Renderer_Single_Course {
 	}
 
 	/**
-	 * Reset global variables to what they were before the render.
+	 * Reset global variables to what they were before calling
+	 * `backup_global_vars`.
 	 */
 	private function reset_global_vars() {
 		global $wp_query, $post, $pages;
 
-		// Restore global backups.
 		$wp_query       = $this->global_wp_query_ref;
 		$post           = $this->global_post_ref;
 		$wp_query->post = $this->global_post_ref;
