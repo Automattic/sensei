@@ -109,8 +109,8 @@ class Sensei_Renderer_Single_Course {
 	private function backup_global_vars() {
 		global $wp_query, $post, $pages;
 
-		$this->global_post_ref     = clone $post;
-		$this->global_wp_query_ref = clone $wp_query;
+		$this->global_post_ref     = $post;
+		$this->global_wp_query_ref = $wp_query;
 		$this->global_pages_ref    = $pages;
 
 	}
