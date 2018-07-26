@@ -122,6 +122,8 @@ class Sensei_Renderer_Single_Course {
 	 * @access private
 	 */
 	public function set_global_vars() {
+		global $wp_query, $post, $pages;
+
 		$post           = get_post( $this->id );
 		$pages          = array( $post->post_content );
 		$wp_query       = $this->course_page_query;
