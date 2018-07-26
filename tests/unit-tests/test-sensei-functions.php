@@ -49,6 +49,8 @@ class Sensei_Functions_Test extends WP_UnitTestCase {
 
 	/**
 	 * Filter for setting theme to Twenty Sixteen.
+	 *
+	 * @since 1.12.0
 	 */
 	public function setThemeTwentySixteen() {
 		return 'twentysixteen';

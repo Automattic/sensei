@@ -52,6 +52,15 @@ class Sensei_Unsupported_Themes {
 	}
 
 	/**
+	 * Reset the singleton instance (used for testing).
+	 *
+	 * @since 1.12.0
+	 */
+	public static function reset() {
+		self::$_instance = null;
+	}
+
+	/**
 	 * Private constructor.
 	 *
 	 * @since 1.12.0
