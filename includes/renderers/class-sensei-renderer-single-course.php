@@ -139,7 +139,6 @@ class Sensei_Renderer_Single_Course {
 
 		$wp_query       = $this->global_wp_query_ref;
 		$post           = $this->global_post_ref;
-		$wp_query->post = $this->global_post_ref;
 		$pages          = $this->global_pages_ref;
 	}
 }
