@@ -24,10 +24,16 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldThrowExceptionOnMissingId() {
-		$this->expectException( 'Sensei_Renderer_Missing_Fields_Exception' );
-
 		$renderer = new Sensei_Renderer_Single_Course( array() );
-		$renderer->render();
+
+		try {
+			$renderer->render();
+		} catch ( Throwable $exception ) {
+			$this->assertInstanceOf( 'Sensei_Renderer_Missing_Fields_Exception', $exception );
+			return;
+		}
+
+		$this->fail( 'No exception thrown' );
 	}
 
 	/**
