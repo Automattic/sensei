@@ -28,7 +28,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 
 		try {
 			$renderer->render();
-		} catch ( Throwable $exception ) {
+		} catch ( Exception $exception ) {
 			$this->assertInstanceOf( 'Sensei_Renderer_Missing_Fields_Exception', $exception );
 			return;
 		}
