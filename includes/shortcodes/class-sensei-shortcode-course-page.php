@@ -24,7 +24,11 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 	 * @param string $shortcode the shortcode that was called for this instance
 	 */
 	public function __construct( $attributes, $content, $shortcode ){
-		$this->renderer = new Sensei_Renderer_Single_Course( $attributes );
+		$this->id = isset( $attributes['id'] ) ? $attributes['id'] : '';
+
+		if ( $this->id ) {
+			$this->renderer = new Sensei_Renderer_Single_Course( $this->id, $attributes );
+		}
 	}
 
 	/**
@@ -33,6 +37,13 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 	 * @return string $content
 	 */
 	public function render() {
+		if ( empty( $this->id ) ) {
+			return sprintf(
+				__( 'Please supply a course ID for the shortcode: %s', 'woothemes-sensei' ),
+				'[sensei_course_page id=""]'
+			);
+		}
+
 		try {
 			return $this->renderer->render();
 		} catch ( Sensei_Renderer_Missing_Fields_Exception $e ) {

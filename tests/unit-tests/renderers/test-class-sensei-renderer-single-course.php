@@ -19,24 +19,6 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure renderer throws an exception on missing ID.
-	 *
-	 * @since 1.12.0
-	 */
-	public function testShouldThrowExceptionOnMissingId() {
-		$renderer = new Sensei_Renderer_Single_Course( array() );
-
-		try {
-			$renderer->render();
-		} catch ( Exception $exception ) {
-			$this->assertInstanceOf( 'Sensei_Renderer_Missing_Fields_Exception', $exception );
-			return;
-		}
-
-		$this->fail( 'No exception thrown' );
-	}
-
-	/**
 	 * Ensure renderer resets the global vars to what they were before.
 	 *
 	 * @since 1.12.0
@@ -51,7 +33,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 		$post_clone  = clone $post;
 		$pages_clone = $pages; // Arrays are assigned by value.
 
-		$renderer = new Sensei_Renderer_Single_Course( array( 'id' => $this->course_id ) );
+		$renderer = new Sensei_Renderer_Single_Course( $this->course_id );
 		$renderer->render();
 
 		$this->assertSame( $old_query, $wp_query, '$wp_query should be reset' );
@@ -71,7 +53,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 		$this->assertFalse( has_filter( 'sensei_show_main_header', '__return_false' ), 'Header should initially be enabled' );
 		$this->assertFalse( has_filter( 'sensei_show_main_footer', '__return_false' ), 'Footer should initially be enabled' );
 
-		$renderer = new Sensei_Renderer_Single_Course( array( 'id' => $this->course_id ) );
+		$renderer = new Sensei_Renderer_Single_Course( $this->course_id );
 		$renderer->render();
 
 		$this->assertNotFalse( has_filter( 'sensei_show_main_header', '__return_false' ), 'Header should be disabled by renderer' );
@@ -92,7 +74,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 			'Should not have already done action sensei_single_course_content_inside_before'
 		);
 
-		$renderer = new Sensei_Renderer_Single_Course( array( 'id' => $this->course_id ) );
+		$renderer = new Sensei_Renderer_Single_Course( $this->course_id );
 		$output = $renderer->render();
 
 		$this->assertEquals(
@@ -108,8 +90,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldShowPaginationWhenRequired() {
-		$renderer = new Sensei_Renderer_Single_Course( array(
-			'id'              => $this->course_id,
+		$renderer = new Sensei_Renderer_Single_Course( $this->course_id, array(
 			'show_pagination' => false,
 		) );
 		$renderer->render();
@@ -120,8 +101,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 			'Should not show pagination when show_pagination is false'
 		);
 
-		$renderer = new Sensei_Renderer_Single_Course( array(
-			'id'              => $this->course_id,
+		$renderer = new Sensei_Renderer_Single_Course( $this->course_id, array(
 			'show_pagination' => true,
 		) );
 		$renderer->render();

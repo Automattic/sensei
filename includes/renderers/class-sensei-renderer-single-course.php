@@ -40,14 +40,15 @@ class Sensei_Renderer_Single_Course {
 	 * Setup the renderer object
 	 *
 	 * @since 1.12.0
-	 * @param array  $attributes {
-	 *   @type int  id              The course ID.
+	 *
+	 * @param int   $course_id  The course ID.
+	 * @param array $options {
 	 *   @type bool show_pagination Whether to show pagination on the course page.
 	 * }
 	 */
-	public function __construct( $attributes ) {
-		$this->id = isset( $attributes['id'] ) ? $attributes['id'] : '';
-		$this->show_pagination = isset( $attributes['show_pagination'] ) ? $attributes['show_pagination'] : false;
+	public function __construct( $course_id, $options = array() ) {
+		$this->course_id = $course_id;
+		$this->show_pagination = isset( $options['show_pagination'] ) ? $options['show_pagination'] : false;
 		$this->setup_course_query();
 	}
 
@@ -58,10 +59,6 @@ class Sensei_Renderer_Single_Course {
 	 * @return string The rendered output.
 	 */
 	public function render() {
-		if( empty( $this->id ) ){
-			throw new Sensei_Renderer_Missing_Fields_Exception( array( 'id' ) );
-		}
-
 		// Set the wp_query to the current courses query.
 		global $wp_query, $post, $pages;
 
@@ -88,7 +85,7 @@ class Sensei_Renderer_Single_Course {
 	 * Create the courses query.
 	 */
 	private function setup_course_query(){
-		if ( empty( $this->id ) ) {
+		if ( empty( $this->course_id ) ) {
 			return;
 		}
 
@@ -96,7 +93,7 @@ class Sensei_Renderer_Single_Course {
 			'post_type'      => 'course',
 			'posts_per_page' => 1,
 			'post_status'    => 'publish',
-			'post__in'       => array( $this->id ),
+			'post__in'       => array( $this->course_id ),
 		);
 
 		$this->course_page_query = new WP_Query( $args );
@@ -124,10 +121,10 @@ class Sensei_Renderer_Single_Course {
 	public function set_global_vars() {
 		global $wp_query, $post, $pages;
 
-		$post           = get_post( $this->id );
+		$post           = get_post( $this->course_id );
 		$pages          = array( $post->post_content );
 		$wp_query       = $this->course_page_query;
-		$wp_query->post = get_post( $this->id );
+		$wp_query->post = get_post( $this->course_id );
 	}
 
 	/**

@@ -136,8 +136,7 @@ class Sensei_Unsupported_Themes {
 		 */
 		$show_pagination = apply_filters( 'sensei_course_page_show_pagination', true, $course_id );
 
-		$renderer = new Sensei_Renderer_Single_Course( array(
-			'id'              => $course_id,
+		$renderer = new Sensei_Renderer_Single_Course( $course_id, array(
 			'show_pagination' => $show_pagination,
 		) );
 		$content = $renderer->render();

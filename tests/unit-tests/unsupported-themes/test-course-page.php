@@ -79,9 +79,8 @@ class Sensei_Unsupported_Themes_Course_Page_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldUseSingleCourseRenderer() {
-		$handler_content  = $this->handler->course_page_content_filter( '' );
-		$renderer         = new Sensei_Renderer_Single_Course( array(
-			'id'              => $this->course->ID,
+		$handler_content = $this->handler->course_page_content_filter( '' );
+		$renderer        = new Sensei_Renderer_Single_Course( $this->course->ID, array(
 			'show_pagination' => true,
 		) );
 		$renderer_content = $renderer->render();
