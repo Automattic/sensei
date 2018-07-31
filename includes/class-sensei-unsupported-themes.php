@@ -92,7 +92,7 @@ class Sensei_Unsupported_Themes {
 			return;
 		}
 
-		if ( is_single() && get_post_type() == 'course' ) {
+		if ( is_single() && 'course' === get_post_type() ) {
 			$this->_is_handling_request = true;
 			$this->handle_course_page();
 		}

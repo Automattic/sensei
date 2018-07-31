@@ -280,5 +280,5 @@ function sensei_does_theme_support_templates() {
 	$current_theme = wp_get_theme()->get_template();
 	$themes = Sensei()->theme_integration_loader->get_supported_themes();
 
-	return in_array( $current_theme, $themes ) || current_theme_supports( 'sensei' );
+	return in_array( $current_theme, $themes, true ) || current_theme_supports( 'sensei' );
 }
