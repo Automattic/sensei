@@ -144,10 +144,6 @@ add_action( 'sensei_single_course_modules_before', array( 'Sensei_Core_Modules',
 // hook in the module loop destructor functionality
 add_action( 'sensei_single_course_modules_after', array( 'Sensei_Core_Modules', 'teardown_single_course_module_loop' ) );
 
-// @since 1.9.0
-// hook in the possible full content override to show instead of excerpt
-add_filter('get_the_excerpt', array( 'Sensei_Course', 'full_content_excerpt_override' ) );
-
 //@since 1.9.0
 //Course meta
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 30 );
