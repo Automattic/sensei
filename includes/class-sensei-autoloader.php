@@ -150,11 +150,6 @@ class Sensei_Autoloader {
 			 */
 			'Sensei_Renderer_Single_Course' => 'renderers/class-sensei-renderer-single-course.php',
 
-			/**
-			 * Renderer Exceptions
-			 */
-			'Sensei_Renderer_Missing_Fields_Exception' => 'renderers/exceptions/class-sensei-renderer-missing-fields-exception.php',
-
             /**
              * Built in theme integration support
              */
