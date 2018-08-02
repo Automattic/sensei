@@ -50,6 +50,25 @@ class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Them
 	}
 
 	/**
+	 * Return the content for the course module page.
+	 *
+	 * @since 1.12.0
+	 *
+	 * @return string
+	 */
+	private function render_module_page() {
+		ob_start();
+		add_filter( 'sensei_show_main_header', '__return_false' );
+		add_filter( 'sensei_show_main_footer', '__return_false' );
+		add_filter( 'the_title', '__return_false' );
+		add_action( 'sensei_taxonomy_module_content_after', array( $this, 'do_sensei_pagination' ) );
+		Sensei_Templates::get_template( 'taxonomy-module.php' );
+		$content = ob_get_clean();
+
+		return $content;
+	}
+
+	/**
 	 * Set up this request to output the given content as if it were the HTML
 	 * inside a Page object.
 	 *
@@ -118,21 +137,10 @@ class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Them
 	}
 
 	/**
-	 * Return the content for the course module page.
-	 *
-	 * @since 1.12.0
-	 *
-	 * @return string
+	 * Run the sensei_pagination action. This can be used in a hook.
 	 */
-	private function render_module_page() {
-		ob_start();
-		add_filter( 'sensei_show_main_header', '__return_false' );
-		add_filter( 'sensei_show_main_footer', '__return_false' );
-		add_filter( 'the_title', '__return_false' );
-		Sensei_Templates::get_template( 'taxonomy-module.php' );
-		$content = ob_get_clean();
-
-		return $content;
+	public function do_sensei_pagination() {
+		do_action( 'sensei_pagination' );
 	}
 
 	/**
