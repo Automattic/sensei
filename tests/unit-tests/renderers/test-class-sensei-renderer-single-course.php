@@ -2,6 +2,11 @@
 
 class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 
+	/**
+	 * @var int $course_id The ID of the course created for the tests.
+	 */
+	private $course_id;
+
 	public function setUp() {
 		global $post, $page;
 

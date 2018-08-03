@@ -16,6 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 
 	/**
+	 * @var int $id The ID of the course to render.
+	 */
+	private $id;
+
+	/**
+	 * @var Sensei_Renderer_Single_Course $renderer The renderer to use for
+	 *                                              rendering the shortcode
+	 *                                              content.
+	 */
+	private $show_pagination;
+
+	/**
 	 * Setup the shortcode object
 	 *
 	 * @since 1.9.0

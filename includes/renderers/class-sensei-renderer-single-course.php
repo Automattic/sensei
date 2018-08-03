@@ -17,6 +17,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Renderer_Single_Course {
 
 	/**
+	 * @var int $course_id The ID of the course to render.
+	 */
+	private $course_id;
+
+	/**
+	 * @var bool $show_pagination Whether or not to render pagination links.
+	 */
+	private $show_pagination;
+
+	/**
 	 * @var WP_Query $course_page_query The query for the Course post.
 	 */
 	protected $course_page_query;
