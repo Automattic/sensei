@@ -60,7 +60,6 @@ class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Them
 		ob_start();
 		add_filter( 'sensei_show_main_header', '__return_false' );
 		add_filter( 'sensei_show_main_footer', '__return_false' );
-		add_filter( 'the_title', '__return_false' );
 		add_action( 'sensei_taxonomy_module_content_after', array( $this, 'do_sensei_pagination' ) );
 		Sensei_Templates::get_template( 'taxonomy-module.php' );
 		$content = ob_get_clean();
@@ -129,6 +128,12 @@ class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Them
 		$wp_query->is_archive = false;
 		$wp_query->is_tax     = false;
 
+		/*
+		 * Prevent the title from appearing, since it's assumed that the
+		 * rendered content will take care of that.
+		 */
+		add_filter( 'the_title', array( $this, 'hide_dummy_post_title' ), 10, 2 );
+
 		// Prepare everything for rendering.
 		setup_postdata( $post );
 		remove_all_filters( 'the_content' );
@@ -141,6 +146,21 @@ class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Them
 	 */
 	public function do_sensei_pagination() {
 		do_action( 'sensei_pagination' );
+	}
+
+	/**
+	 * Return empty string for the dummy post so we don't show its title.
+	 *
+	 * @param string $title
+	 * @param string $id
+	 *
+	 * @return string|bool
+	 */
+	public function hide_dummy_post_title( $title, $id ) {
+		if ( 0 === $id ) {
+			return '';
+		}
+		return $title;
 	}
 
 	/**
