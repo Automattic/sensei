@@ -33,6 +33,8 @@ class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Them
 	 * @since 1.12.0
 	 */
 	public function handle_request() {
+		global $post;
+
 		// The post is always a lesson. This is because a Module query is
 		// always limited to lessons (see function `module_archive_filter` in
 		// Sensei_Modules).
