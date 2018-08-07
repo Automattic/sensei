@@ -100,10 +100,10 @@ class Sensei_Renderer_Single_Lesson {
 		}
 
 		$args = array(
+			'p'              => $this->lesson_id,
 			'post_type'      => 'lesson',
 			'posts_per_page' => 1,
 			'post_status'    => 'publish',
-			'post__in'       => array( $this->lesson_id ),
 		);
 
 		$this->lesson_page_query = new WP_Query( $args );

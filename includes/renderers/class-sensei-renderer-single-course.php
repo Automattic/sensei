@@ -100,10 +100,10 @@ class Sensei_Renderer_Single_Course {
 		}
 
 		$args = array(
+			'p'              => $this->course_id,
 			'post_type'      => 'course',
 			'posts_per_page' => 1,
 			'post_status'    => 'publish',
-			'post__in'       => array( $this->course_id ),
 		);
 
 		$this->course_page_query = new WP_Query( $args );
