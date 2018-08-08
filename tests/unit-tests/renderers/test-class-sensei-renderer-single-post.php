@@ -1,25 +1,26 @@
 <?php
 
-class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
+class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 
 	/**
-	 * @var int $course_id The ID of the course created for the tests.
+	 * @var int $post_id The ID of the post created for the tests.
 	 */
-	private $course_id;
+	private $post_id;
 
 	public function setUp() {
-		global $post, $page;
+		global $post, $page, $wp_query, $wp_the_query;
 
 		parent::setUp();
 
 		// Set up globals.
-		$post = $this->factory->post->create_and_get();
-		$page = 1;
+		$post         = $this->factory->post->create_and_get();
+		$page         = 1;
+		$wp_query     = new WP_Query( array( 'p' => $post->ID ) );
+		$wp_the_query = $wp_query;
 
-		// Set up Course.
-		$this->course_id = $this->factory->post->create( array(
+		// Set up Post.
+		$this->post_id = $this->factory->post->create( array(
 			'post_status' => 'publish',
-			'post_type'   => 'course',
 		) );
 	}
 
@@ -38,7 +39,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 		$post_clone  = clone $post;
 		$pages_clone = $pages; // Arrays are assigned by value.
 
-		$renderer = new Sensei_Renderer_Single_Course( $this->course_id );
+		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single.php' );
 		$renderer->render();
 
 		$this->assertSame( $old_query, $wp_query, '$wp_query should be reset' );
@@ -58,7 +59,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 		$this->assertFalse( has_filter( 'sensei_show_main_header', '__return_false' ), 'Header should initially be enabled' );
 		$this->assertFalse( has_filter( 'sensei_show_main_footer', '__return_false' ), 'Footer should initially be enabled' );
 
-		$renderer = new Sensei_Renderer_Single_Course( $this->course_id );
+		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single.php' );
 		$renderer->render();
 
 		$this->assertNotFalse( has_filter( 'sensei_show_main_header', '__return_false' ), 'Header should be disabled by renderer' );
@@ -66,20 +67,38 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure renderer loads the `single-course.php` template.
+	 * Ensure renderer disables the_title for the post being rendered.
 	 *
 	 * @since 1.12.0
 	 */
-	public function testShouldUseSingleCourseTemplate() {
-		// We'll test to ensure it uses the template by checking if the
-		// sensei_single_course_content_inside_before action was run.
+	public function testShouldDisableThePostTitle() {
+		// TODO
+	}
+
+	/**
+	 * Ensure renderer loads the given template.
+	 *
+	 * @since 1.12.0
+	 */
+	public function testShouldUseGivenTemplate() {
+		/*
+		 * We'll test to ensure it uses the template by using single-course.php
+		 * and checking if the sensei_single_course_content_inside_before
+		 * action was run.
+		 */
 		$this->assertEquals(
 			0,
 			did_action( 'sensei_single_course_content_inside_before' ),
 			'Should not have already done action sensei_single_course_content_inside_before'
 		);
 
-		$renderer = new Sensei_Renderer_Single_Course( $this->course_id );
+		// Set up a course post.
+		$this->post_id = $this->factory->post->create( array(
+			'post_status' => 'publish',
+			'post_type'   => 'course',
+		) );
+
+		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single-course.php' );
 		$output = $renderer->render();
 
 		$this->assertEquals(
@@ -95,7 +114,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldShowPaginationWhenRequired() {
-		$renderer = new Sensei_Renderer_Single_Course( $this->course_id, array(
+		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, array(
 			'show_pagination' => false,
 		) );
 		$renderer->render();
@@ -106,7 +125,7 @@ class Sensei_Renderer_Single_Course_Test extends WP_UnitTestCase {
 			'Should not show pagination when show_pagination is false'
 		);
 
-		$renderer = new Sensei_Renderer_Single_Course( $this->course_id, array(
+		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single.php', array(
 			'show_pagination' => true,
 		) );
 		$renderer->render();
