@@ -30,7 +30,6 @@ class Sensei_Unsupported_Theme_Handler_Lesson implements Sensei_Unsupported_Them
 	 * @since 1.12.0
 	 */
 	public function handle_request() {
-		error_log( 'Handling request' );
 		add_filter( 'the_content', array( $this, 'lesson_page_content_filter' ) );
 	}
 
@@ -63,13 +62,24 @@ class Sensei_Unsupported_Theme_Handler_Lesson implements Sensei_Unsupported_Them
 		 */
 		$show_pagination = apply_filters( 'sensei_lesson_page_show_pagination', true, $lesson_id );
 
-		$renderer = new Sensei_Renderer_Single_Lesson( $lesson_id, array(
-			'show_pagination' => $show_pagination,
-		) );
-		error_log( 'Calling renderer' );
+		$renderer = $this->get_lesson_renderer( $lesson_id, $show_pagination );
 		$content = $renderer->render();
 
 		return $content;
+	}
+
+	/**
+	 * Get a renderer that will render the lesson.
+	 *
+	 * @param int  $lesson_id       The ID of the lesson to render.
+	 * @param bool $show_pagination Whether to show pagination in the rendereed output.
+	 *
+	 * @return Sensei_Renderer_Single_Post
+	 */
+	private function get_lesson_renderer( $lesson_id, $show_pagination ) {
+		return new Sensei_Renderer_Single_Post( $lesson_id, 'single-lesson.php', array(
+			'show_pagination' => $show_pagination,
+		) );
 	}
 
 }

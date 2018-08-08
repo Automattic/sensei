@@ -58,6 +58,8 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 		}
 
 		try {
+			// Ensure the global vars are set properly for the Lessons display.
+			add_action( 'sensei_single_course_lessons_before', array( $this->renderer, 'set_global_vars' ), 1, 0 );
 			return $this->renderer->render();
 		} catch ( Sensei_Renderer_Missing_Fields_Exception $e ) {
 			// translators: Placeholders are the shortcode name and the error message.

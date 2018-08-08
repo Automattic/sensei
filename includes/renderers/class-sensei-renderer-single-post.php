@@ -6,20 +6,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  *
- * Renders a single Sensei lesson based on the given ID. The rendered result is
- * meant to be displayed on the frontend, and may be used by shortcodes or
- * other rendering code.
+ * Renders a single Sensei post of any type based on the given ID. The rendered
+ * result is meant to be displayed on the frontend, and may be used by
+ * shortcodes or other rendering code.
  *
  * @author Automattic
  *
  * @since 1.12.0
  */
-class Sensei_Renderer_Single_Lesson {
+class Sensei_Renderer_Single_Post {
 
 	/**
-	 * @var int $lesson_id The ID of the lesson to render.
+	 * @var int $post_id The ID of the post to render.
 	 */
-	private $lesson_id;
+	private $post_id;
+
+	/**
+	 * @var string $template The filename of the template to render.
+	 */
+	private $template;
 
 	/**
 	 * @var bool $show_pagination Whether or not to render pagination links.
@@ -27,9 +32,9 @@ class Sensei_Renderer_Single_Lesson {
 	private $show_pagination;
 
 	/**
-	 * @var WP_Query $lesson_page_query The query for the Lesson post.
+	 * @var WP_Query $post_query The query for the post.
 	 */
-	protected $lesson_page_query;
+	protected $post_query;
 
 	/**
 	 * @var WP_Post $global_post_ref Backup of the global $post variable.
@@ -51,25 +56,26 @@ class Sensei_Renderer_Single_Lesson {
 	 *
 	 * @since 1.12.0
 	 *
-	 * @param int   $lesson_id  The lesson ID.
+	 * @param int   $post_id  The post ID.
 	 * @param array $options {
-	 *   @type bool show_pagination Whether to show pagination on the lesson page.
+	 *   @type bool show_pagination Whether to show Sensei's pagination in the rendered output.
 	 * }
 	 */
-	public function __construct( $lesson_id, $options = array() ) {
-		$this->lesson_id = $lesson_id;
+	public function __construct( $post_id, $template, $options = array() ) {
+		$this->post_id = $post_id;
+		$this->template = $template;
 		$this->show_pagination = isset( $options['show_pagination'] ) ? $options['show_pagination'] : false;
-		$this->setup_lesson_query();
+		$this->setup_post_query();
 	}
 
 	/**
-	 * Render and return the content. This will use the 'single-lesson.php'
-	 * template, and will use an overridden version if it exists.
+	 * Render and return the content. This will use the given template, and
+	 * will use an overridden version if it exists.
 	 *
 	 * @return string The rendered output.
 	 */
 	public function render() {
-		// Set the wp_query to the current lessons query.
+		// Set the wp_query to the current posts query.
 		global $wp_query, $post, $pages;
 
 		$this->backup_global_vars();
@@ -79,8 +85,7 @@ class Sensei_Renderer_Single_Lesson {
 		ob_start();
 		add_filter( 'sensei_show_main_footer', '__return_false' );
 		add_filter( 'sensei_show_main_header', '__return_false' );
-		add_action( 'sensei_single_lesson_lessons_before', array( $this, 'set_global_vars' ), 1, 0 );
-		Sensei_Templates::get_template( 'single-lesson.php' );
+		Sensei_Templates::get_template( $this->template );
 		if ( $this->show_pagination ) {
 			do_action( 'sensei_pagination' );
 		}
@@ -92,21 +97,16 @@ class Sensei_Renderer_Single_Lesson {
 	}
 
 	/**
-	 * Create the lessons query.
+	 * Create the posts query.
 	 */
-	private function setup_lesson_query(){
-		if ( empty( $this->lesson_id ) ) {
+	private function setup_post_query(){
+		if ( empty( $this->post_id ) ) {
 			return;
 		}
 
-		$args = array(
-			'p'              => $this->lesson_id,
-			'post_type'      => 'lesson',
-			'posts_per_page' => 1,
-			'post_status'    => 'publish',
-		);
+		$args = array( 'p' => $this->post_id );
 
-		$this->lesson_page_query = new WP_Query( $args );
+		$this->post_query = new WP_Query( $args );
 	}
 
 	/**
@@ -123,7 +123,7 @@ class Sensei_Renderer_Single_Lesson {
 	}
 
 	/**
-	 * Set global variables to the currently requested lesson. This is used
+	 * Set global variables to the currently requested post. This is used
 	 * internally and should not be called from external code.
 	 *
 	 * @access private
@@ -131,10 +131,10 @@ class Sensei_Renderer_Single_Lesson {
 	public function set_global_vars() {
 		global $wp_query, $post, $pages;
 
-		$post           = get_post( $this->lesson_id );
+		$post           = get_post( $this->post_id );
 		$pages          = array( $post->post_content );
-		$wp_query       = $this->lesson_page_query;
-		$wp_query->post = get_post( $this->lesson_id );
+		$wp_query       = $this->post_query;
+		$wp_query->post = get_post( $this->post_id );
 	}
 
 	/**

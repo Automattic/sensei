@@ -148,8 +148,7 @@ class Sensei_Autoloader {
 			/**
 			 * Renderers
 			 */
-			'Sensei_Renderer_Single_Course' => 'renderers/class-sensei-renderer-single-course.php',
-			'Sensei_Renderer_Single_Lesson' => 'renderers/class-sensei-renderer-single-lesson.php',
+			'Sensei_Renderer_Single_Post'   => 'renderers/class-sensei-renderer-single-post.php',
 
 			/**
 			 * Unsupported theme handlers.

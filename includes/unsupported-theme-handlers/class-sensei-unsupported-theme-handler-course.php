@@ -62,12 +62,24 @@ class Sensei_Unsupported_Theme_Handler_Course implements Sensei_Unsupported_Them
 		 */
 		$show_pagination = apply_filters( 'sensei_course_page_show_pagination', true, $course_id );
 
-		$renderer = new Sensei_Renderer_Single_Course( $course_id, array(
-			'show_pagination' => $show_pagination,
-		) );
+		$renderer = $this->get_course_renderer( $course_id, $show_pagination );
 		$content = $renderer->render();
 
 		return $content;
+	}
+
+	/**
+	 * Get a renderer that will render the course.
+	 *
+	 * @param int  $course_id       The ID of the course to render.
+	 * @param bool $show_pagination Whether to show pagination in the rendereed output.
+	 *
+	 * @return Sensei_Renderer_Single_Post
+	 */
+	private function get_course_renderer( $course_id, $show_pagination ) {
+		return new Sensei_Renderer_Single_Post( $course_id, 'single-course.php', array(
+			'show_pagination' => $show_pagination,
+		) );
 	}
 
 }
