@@ -90,7 +90,7 @@ class Sensei_Renderer_Single_Post {
 		add_filter( 'sensei_show_main_header', '__return_false' );
 
 		// We'll make the assumption that the theme will display the title.
-		add_filter( 'sensei_single_title', '__return_false' );
+		add_filter( 'the_title', array( $this, 'hide_the_title' ), 10, 2 );
 
 		// Render the template, and pagination if needed.
 		Sensei_Templates::get_template( $this->template );
@@ -100,6 +100,11 @@ class Sensei_Renderer_Single_Post {
 		$output = ob_get_clean();
 
 		$this->reset_global_vars();
+
+		// Reset all filters.
+		remove_filter( 'sensei_show_main_footer', '__return_false' );
+		remove_filter( 'sensei_show_main_header', '__return_false' );
+		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 10, 2 );
 
 		return $output;
 	}
@@ -154,5 +159,22 @@ class Sensei_Renderer_Single_Post {
 		$wp_query       = $this->global_wp_query_ref;
 		$post           = $this->global_post_ref;
 		$pages          = $this->global_pages_ref;
+	}
+
+	/**
+	 * Hide the title of this post on the page.
+	 *
+	 * @access private
+	 *
+	 * @param string $title   The incoming title.
+	 * @param int    $post_id The incoming post ID.
+	 *
+	 * @return string Empty string if $post_id matches our post, $title otherwise.
+	 */
+	public function hide_the_title( $title, $post_id ) {
+		if ( $this->post_id === $post_id ) {
+			return '';
+		}
+		return $title;
 	}
 }
