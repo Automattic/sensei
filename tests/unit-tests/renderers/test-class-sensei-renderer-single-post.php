@@ -55,15 +55,36 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 	 *
 	 * @since 1.12.0
 	 */
-	public function testShouldDisableHeaderAndFooter() {
-		$this->assertFalse( has_filter( 'sensei_show_main_header', '__return_false' ), 'Header should initially be enabled' );
-		$this->assertFalse( has_filter( 'sensei_show_main_footer', '__return_false' ), 'Footer should initially be enabled' );
-
+	public function testShouldTemporarilyDisableHeaderAndFooter() {
 		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single.php' );
 		$renderer->render();
 
-		$this->assertNotFalse( has_filter( 'sensei_show_main_header', '__return_false' ), 'Header should be disabled by renderer' );
-		$this->assertNotFalse( has_filter( 'sensei_show_main_footer', '__return_false' ), 'Footer should be disabled by renderer' );
+		/*
+		 * sensei_get_header and sensei_get_footer fire the actions
+		 * 'sensei_before_main_content' and 'sensei_after_main_content',
+		 * respectively. If these actions were not called, we know that the
+		 * header and footer were skipped.
+		 */
+		$this->assertEquals(
+			0,
+			did_action( 'sensei_before_main_content' ),
+			'Should not have called sensei_before_main_content'
+		);
+		$this->assertEquals(
+			0,
+			did_action( 'sensei_after_main_content' ),
+			'Should not have called sensei_after_main_content'
+		);
+
+		// When render is complete, header and footer should be re-enabled.
+		$this->assertFalse(
+			has_filter( 'sensei_show_main_header', '__return_false' ),
+			'Header should be re-enabled'
+		);
+		$this->assertFalse(
+			has_filter( 'sensei_show_main_footer', '__return_false' ),
+			'Footer should be re-enabled'
+		);
 	}
 
 	/**
@@ -71,8 +92,28 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 	 *
 	 * @since 1.12.0
 	 */
-	public function testShouldDisableThePostTitle() {
-		// TODO
+	public function testShouldTemporarilyDisableThePostTitle() {
+		// Set up a course post so we can use 'single-course.php'.
+		$this->post_id = $this->factory->post->create( array(
+			'post_status' => 'publish',
+			'post_type'   => 'course',
+			'post_title'  => $this->get_fake_title(),
+		) );
+
+		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single-course.php' );
+		$output = $renderer->render();
+
+		$this->assertNotContains(
+			$this->get_fake_title(),
+			$output,
+			'Post title should not be rendered'
+		);
+
+		$this->assertEquals(
+			$this->get_fake_title(),
+			get_the_title( $this->post_id ),
+			'Post title filter should be removed after render'
+		);
 	}
 
 	/**
@@ -114,7 +155,7 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldShowPaginationWhenRequired() {
-		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, array(
+		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single.php', array(
 			'show_pagination' => false,
 		) );
 		$renderer->render();
@@ -135,5 +176,16 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 			did_action( 'sensei_pagination' ),
 			'Should show pagination when show_pagination is true'
 		);
+	}
+
+	/**
+	 * Get a fake title for our post.
+	 *
+	 * @since 1.12.0
+	 *
+	 * @return string The fake title.
+	 */
+	public function get_fake_title() {
+		return 'FAKE POST TITLE';
 	}
 }
