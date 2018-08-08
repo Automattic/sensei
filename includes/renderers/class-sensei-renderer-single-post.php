@@ -47,6 +47,11 @@ class Sensei_Renderer_Single_Post {
 	protected $global_wp_query_ref;
 
 	/**
+	 * @var WP_Query $global_wp_the_query_ref Backup of the global $wp_the_query variable.
+	 */
+	protected $global_wp_the_query_ref;
+
+	/**
 	 * @var array $global_pages_ref Backup of the global $pages variable.
 	 */
 	protected $global_pages_ref;
@@ -76,9 +81,6 @@ class Sensei_Renderer_Single_Post {
 	 * @return string The rendered output.
 	 */
 	public function render() {
-		// Set the wp_query to the current posts query.
-		global $wp_query, $post, $pages;
-
 		$this->backup_global_vars();
 		$this->set_global_vars();
 
@@ -127,11 +129,12 @@ class Sensei_Renderer_Single_Post {
 	 * `reset_global_vars`.
 	 */
 	private function backup_global_vars() {
-		global $wp_query, $post, $pages;
+		global $wp_query, $wp_the_query, $post, $pages;
 
-		$this->global_post_ref     = $post;
-		$this->global_wp_query_ref = $wp_query;
-		$this->global_pages_ref    = $pages;
+		$this->global_post_ref         = $post;
+		$this->global_wp_query_ref     = $wp_query;
+		$this->global_wp_the_query_ref = $wp_query;
+		$this->global_pages_ref        = $pages;
 	}
 
 	/**
@@ -141,11 +144,12 @@ class Sensei_Renderer_Single_Post {
 	 * @access private
 	 */
 	public function set_global_vars() {
-		global $wp_query, $post, $pages;
+		global $wp_query, $wp_the_query, $post, $pages;
 
 		$post           = get_post( $this->post_id );
 		$pages          = array( $post->post_content );
 		$wp_query       = $this->post_query;
+		$wp_the_query   = $wp_query;
 		$wp_query->post = get_post( $this->post_id );
 	}
 
@@ -154,11 +158,12 @@ class Sensei_Renderer_Single_Post {
 	 * `backup_global_vars`.
 	 */
 	private function reset_global_vars() {
-		global $wp_query, $post, $pages;
+		global $wp_query, $wp_the_query, $post, $pages;
 
-		$wp_query       = $this->global_wp_query_ref;
-		$post           = $this->global_post_ref;
-		$pages          = $this->global_pages_ref;
+		$wp_query     = $this->global_wp_query_ref;
+		$wp_the_query = $this->global_wp_the_query_ref;
+		$post         = $this->global_post_ref;
+		$pages        = $this->global_pages_ref;
 	}
 
 	/**
