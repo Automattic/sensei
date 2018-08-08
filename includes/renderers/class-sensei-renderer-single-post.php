@@ -56,8 +56,9 @@ class Sensei_Renderer_Single_Post {
 	 *
 	 * @since 1.12.0
 	 *
-	 * @param int   $post_id  The post ID.
-	 * @param array $options {
+	 * @param int    $post_id  The post ID.
+	 * @param string $template The template to use for rendering the post.
+	 * @param array  $options  {
 	 *   @type bool show_pagination Whether to show Sensei's pagination in the rendered output.
 	 * }
 	 */
@@ -106,7 +107,7 @@ class Sensei_Renderer_Single_Post {
 	/**
 	 * Create the posts query.
 	 */
-	private function setup_post_query(){
+	private function setup_post_query() {
 		if ( empty( $this->post_id ) ) {
 			return;
 		}
@@ -126,7 +127,6 @@ class Sensei_Renderer_Single_Post {
 		$this->global_post_ref     = $post;
 		$this->global_wp_query_ref = $wp_query;
 		$this->global_pages_ref    = $pages;
-
 	}
 
 	/**
