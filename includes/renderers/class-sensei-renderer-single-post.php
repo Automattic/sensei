@@ -84,15 +84,15 @@ class Sensei_Renderer_Single_Post {
 		$this->backup_global_vars();
 		$this->set_global_vars();
 
-		// Capture output.
-		ob_start();
-
 		// Remove the header and footer.
 		add_filter( 'sensei_show_main_footer', '__return_false' );
 		add_filter( 'sensei_show_main_header', '__return_false' );
 
 		// We'll make the assumption that the theme will display the title.
 		add_filter( 'the_title', array( $this, 'hide_the_title' ), 10, 2 );
+
+		// Capture output.
+		ob_start();
 
 		// Render the template, and pagination if needed.
 		Sensei_Templates::get_template( $this->template );
