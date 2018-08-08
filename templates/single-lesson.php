@@ -13,7 +13,10 @@
 global $post;
 
 get_sensei_header();
-the_post();
+
+if ( have_posts() ) {
+	the_post();
+}
 ?>
 
 <article <?php post_class( array( 'lesson', 'post' ) ); ?>>
