@@ -83,8 +83,15 @@ class Sensei_Renderer_Single_Post {
 
 		// Capture output.
 		ob_start();
+
+		// Remove the header and footer.
 		add_filter( 'sensei_show_main_footer', '__return_false' );
 		add_filter( 'sensei_show_main_header', '__return_false' );
+
+		// We'll make the assumption that the theme will display the title.
+		add_filter( 'sensei_single_title', '__return_false' );
+
+		// Render the template, and pagination if needed.
 		Sensei_Templates::get_template( $this->template );
 		if ( $this->show_pagination ) {
 			do_action( 'sensei_pagination' );
