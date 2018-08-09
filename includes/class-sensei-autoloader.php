@@ -145,6 +145,11 @@ class Sensei_Autoloader {
             'Sensei_Shortcode_Unpurchased_Courses' => 'shortcodes/class-sensei-shortcode-unpurchased-courses.php',
             'Sensei_Legacy_Shortcodes'             => 'shortcodes/class-sensei-legacy-shortcodes.php',
 
+			/**
+			 * Renderers
+			 */
+			'Sensei_Renderer_Single_Course' => 'renderers/class-sensei-renderer-single-course.php',
+
             /**
              * Built in theme integration support
              */

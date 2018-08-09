@@ -2968,7 +2968,7 @@ class Sensei_Course {
 
 		global $post;
 
-		if ( ! is_singular( 'course' )  ) {
+		if ( ! ( $post instanceOf WP_Post ) || 'course' !== $post->post_type ) {
 			return;
 		}
 

@@ -29,6 +29,9 @@ if ( !isset( $this ) || !is_a( $this, 'Sensei_Main' ) ) {
 //This hook allow us to change the template WordPress loads for a given page/post_type @since 1.9.0
 add_filter( 'template_include', array ( 'Sensei_Templates', 'template_loader' ), 10, 1 );
 
+// Handle unsupported themes if needed.
+add_action( 'template_redirect', array( 'Sensei_Unsupported_Themes', 'init' ) );
+
 //This hook adds the sensei pagination to the pagination hook
 add_action( 'sensei_pagination', array( 'Sensei_Frontend', 'load_content_pagination' ), 30 );
 
