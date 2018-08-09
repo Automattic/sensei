@@ -16,6 +16,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Theme_Handler_Interface {
 
 	/**
+	 * @var WP_Query The original query for the module.
+	 */
+	private $module_query;
+
+	/**
+	 * @var WP_Post The original post for the module query.
+	 */
+	private $module_post;
+
+	/**
 	 * We can handle this request if it is for a Course page.
 	 *
 	 * @return bool
@@ -117,10 +127,19 @@ class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Them
 			'filter'                => 'raw',
 		), $post_params, array( 'post_content' => $content ) );
 
-		// Set up new global $post and set it on $wp_query.
+		// Save the current query and post for the module.
+		$this->module_query = $wp_query;
+		$this->module_post  = $post;
+
+		/*
+		 * Set up new global $post and set it on $wp_query. Set $wp_the_query
+		 * as well so we can reset it back to this later.
+		 */
 		$post            = new WP_Post( (object) $dummy_post_properties );
+		$wp_query        = clone $wp_query;
 		$wp_query->post  = $post;
 		$wp_query->posts = array( $post );
+		$wp_the_query    = $wp_query;
 
 		// Prevent comments form from appearing.
 		$wp_query->post_count = 1;
@@ -141,6 +160,10 @@ class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Them
 		remove_all_filters( 'the_content' );
 		remove_all_filters( 'the_excerpt' );
 		add_filter( 'template_include', array( $this, 'force_single_template_filter' ) );
+
+		// Ensure the sidebar widgets see this as a module page.
+		add_action( 'dynamic_sidebar_before', array( $this, 'setup_module_query' ) );
+		add_action( 'dynamic_sidebar_after', 'wp_reset_query' );
 	}
 
 	/**
@@ -189,6 +212,24 @@ class Sensei_Unsupported_Theme_Handler_Module implements Sensei_Unsupported_Them
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Set the globals back to the Module query and post. This is important
+	 * when running code that may check to see if this is a Module page.
+	 *
+	 * @since 1.12.0
+	 */
+	public function setup_module_query() {
+		global $wp_query, $post;
+
+		// Just to be sure.
+		if ( ! $this->module_query ) {
+			throw new Exception( 'setup_module_query cannot be called before output_content_as_page' );
+		}
+
+		$wp_query = $this->module_query;
+		$post     = $this->module_post;
 	}
 
 }
