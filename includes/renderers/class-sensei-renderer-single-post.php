@@ -88,7 +88,7 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 		add_filter( 'sensei_show_main_header', '__return_false' );
 
 		// We'll make the assumption that the theme will display the title.
-		add_filter( 'the_title', array( $this, 'hide_the_title' ), 10, 2 );
+		add_filter( 'the_title', array( $this, 'hide_the_title' ), 100, 2 );
 
 		// Capture output.
 		ob_start();
