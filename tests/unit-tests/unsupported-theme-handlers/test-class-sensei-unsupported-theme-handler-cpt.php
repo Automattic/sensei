@@ -19,13 +19,35 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 
 		// We'll use a Course post and handler to test this.
 		$this->setupCoursePage();
-		$this->handler = new Sensei_Unsupported_Theme_Handler_Course();
+		$this->handler = new Sensei_Unsupported_Theme_Handler_CPT( 'course' );
 	}
 
 	public function tearDown() {
 		$this->handler = null;
 
 		parent::tearDown();
+	}
+
+	/**
+	 * Ensure Sensei_Unsupported_Theme_Handler_CPT handles the CPT Page.
+	 *
+	 * @since 1.12.0
+	 */
+	public function testShouldHandleCPTPage() {
+		$this->assertTrue( $this->handler->can_handle_request() );
+	}
+
+	/**
+	 * Ensure Sensei_Unsupported_Theme_Handler_CPT does not handle a
+	 * non-CPT page.
+	 *
+	 * @since 1.12.0
+	 */
+	public function testShouldNotHandleNonCPTPage() {
+		global $post;
+		$post = $this->factory->post->create_and_get();
+
+		$this->assertFalse( $this->handler->can_handle_request() );
 	}
 
 	/**
@@ -64,6 +86,50 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 		$this->handler->cpt_page_content_filter( '' );
 
 		$this->assertFalse( has_filter( 'the_content', array( $this->handler, 'cpt_page_content_filter' ) ) );
+	}
+
+	/**
+	 * Ensure the content filter uses the Single Post Renderer.
+	 *
+	 * @since 1.12.0
+	 */
+	public function testShouldUseSinglePostRenderer() {
+		$handler_content = $this->handler->cpt_page_content_filter( '' );
+		$renderer        = new Sensei_Renderer_Single_Post(
+			$this->course->ID,
+			'single-course.php',
+			array(
+				'show_pagination' => true,
+			)
+		);
+		$renderer_content = $renderer->render();
+
+		$this->assertEquals(
+			$renderer_content,
+			$handler_content,
+			'Output of content filter should match the output of the renderer'
+		);
+	}
+
+	/**
+	 * Ensure the content filter shows pagination when by default.
+	 *
+	 * @since 1.12.0
+	 */
+	public function testShouldShowPaginationByDefault() {
+		$this->handler->cpt_page_content_filter( '' );
+		$this->assertEquals( 1, did_action( 'sensei_pagination' ) );
+	}
+
+	/**
+	 * Ensure the content filter hides pagination when filtered.
+	 *
+	 * @since 1.12.0
+	 */
+	public function testShouldHidePaginationWhenFiltered() {
+		add_filter( 'sensei_cpt_page_show_pagination', '__return_false' );
+		$this->handler->cpt_page_content_filter( '' );
+		$this->assertEquals( 0, did_action( 'sensei_pagination' ) );
 	}
 
 	/**
