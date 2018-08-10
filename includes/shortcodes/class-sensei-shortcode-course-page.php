@@ -25,7 +25,7 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 	 *                                              rendering the shortcode
 	 *                                              content.
 	 */
-	private $show_pagination;
+	private $renderer;
 
 	/**
 	 * Setup the shortcode object
@@ -39,7 +39,7 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 		$this->id = isset( $attributes['id'] ) ? $attributes['id'] : '';
 
 		if ( $this->id ) {
-			$this->renderer = new Sensei_Renderer_Single_Course( $this->id, $attributes );
+			$this->renderer = new Sensei_Renderer_Single_Post( $this->id, 'single-course.php', $attributes );
 		}
 	}
 
