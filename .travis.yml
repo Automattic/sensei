@@ -32,10 +32,12 @@ before_script:
   fi
 jobs:
   include:
-    - stage: test
-      script:
-        - npm install || exit 1
-        - npm run test || exit 1
+    # There are no JS blocks to test yet. Uncomment below when we start adding
+    # blocks.
+    #- stage: test
+    #  script:
+    #    - npm install || exit 1
+    #    - npm run test-js || exit 1
     - stage: test
       php: 7.2
       env: WP_VERSION=latest
