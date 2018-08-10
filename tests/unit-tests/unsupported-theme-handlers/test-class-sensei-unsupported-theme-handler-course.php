@@ -3,7 +3,7 @@
 class Sensei_Unsupported_Theme_Handler_Course_Test extends WP_UnitTestCase {
 
 	/**
-	 * @var Sensei_Unsupported_Theme_Handler_Course_Test The request handler to test.
+	 * @var Sensei_Unsupported_Theme_Handler_Course The request handler to test.
 	 */
 	private $handler;
 
@@ -49,53 +49,19 @@ class Sensei_Unsupported_Theme_Handler_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure Sensei_Unsupported_Theme_Handler_Course sets up its `the_content`
-	 * filter.
-	 *
-	 * @since 1.12.0
-	 */
-	public function testShouldSetUpContentFilter() {
-		$this->handler->handle_request();
-		$this->assertNotFalse( has_filter( 'the_content', array( $this->handler, 'course_page_content_filter' ) ) );
-	}
-
-	/**
-	 * Ensure the content filter only runs if it is in the main query.
-	 *
-	 * @since 1.12.0
-	 */
-	public function testShouldRunOnlyInMainQuery() {
-		global $wp_query;
-
-		// Move out of main query.
-		$wp_query = new WP_Query();
-
-		$content = 'dummy content';
-
-		$this->assertSame( $content, $this->handler->course_page_content_filter( $content ) );
-	}
-
-	/**
-	 * Ensure the content filter removes itself from `the_content`.
-	 *
-	 * @since 1.12.0
-	 */
-	public function testShouldRemoveContentFilter() {
-		$this->handler->course_page_content_filter( '' );
-
-		$this->assertFalse( has_filter( 'the_content', array( $this->handler, 'course_page_content_filter' ) ) );
-	}
-
-	/**
 	 * Ensure the content filter uses the Single Course Renderer.
 	 *
 	 * @since 1.12.0
 	 */
-	public function testShouldUseSingleCourseRenderer() {
-		$handler_content = $this->handler->course_page_content_filter( '' );
-		$renderer        = new Sensei_Renderer_Single_Course( $this->course->ID, array(
-			'show_pagination' => true,
-		) );
+	public function testShouldUseSinglePostRenderer() {
+		$handler_content = $this->handler->cpt_page_content_filter( '' );
+		$renderer        = new Sensei_Renderer_Single_Post(
+			$this->course->ID,
+			'single-course.php',
+			array(
+				'show_pagination' => true,
+			)
+		);
 		$renderer_content = $renderer->render();
 
 		$this->assertEquals(
@@ -111,7 +77,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldShowPaginationByDefault() {
-		$this->handler->course_page_content_filter( '' );
+		$this->handler->cpt_page_content_filter( '' );
 		$this->assertEquals( 1, did_action( 'sensei_pagination' ) );
 	}
 
@@ -122,7 +88,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Test extends WP_UnitTestCase {
 	 */
 	public function testShouldHidePaginationWhenFiltered() {
 		add_filter( 'sensei_course_page_show_pagination', '__return_false' );
-		$this->handler->course_page_content_filter( '' );
+		$this->handler->cpt_page_content_filter( '' );
 		$this->assertEquals( 0, did_action( 'sensei_pagination' ) );
 	}
 

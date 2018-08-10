@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 /**
- *
  * Renders a single Sensei post of any type based on the given ID. The rendered
  * result is meant to be displayed on the frontend, and may be used by
  * shortcodes or other rendering code.
@@ -14,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.12.0
  */
-class Sensei_Renderer_Single_Post {
+class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 
 	/**
 	 * @var int $post_id The ID of the post to render.

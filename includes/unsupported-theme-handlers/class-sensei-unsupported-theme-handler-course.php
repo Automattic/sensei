@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.12.0
  */
-class Sensei_Unsupported_Theme_Handler_Course implements Sensei_Unsupported_Theme_Handler_Interface {
+class Sensei_Unsupported_Theme_Handler_Course extends Sensei_Unsupported_Theme_Handler_CPT {
 
 	/**
 	 * We can handle this request if it is for a Course page.
@@ -25,31 +25,9 @@ class Sensei_Unsupported_Theme_Handler_Course implements Sensei_Unsupported_Them
 	}
 
 	/**
-	 * Set up handling for a single course page.
-	 *
-	 * @since 1.12.0
+	 * Get the course renderer object.
 	 */
-	public function handle_request() {
-		add_filter( 'the_content', array( $this, 'course_page_content_filter' ) );
-	}
-
-	/**
-	 * Filter the content and insert Sensei course content.
-	 *
-	 * @since 1.12.0
-	 *
-	 * @param string $content The raw post content.
-	 *
-	 * @return string The content to be displayed on the page.
-	 */
-	public function course_page_content_filter( $content ) {
-		if ( ! is_main_query() ) {
-			return $content;
-		}
-
-		// Remove the filter we're in to avoid nested calls.
-		remove_filter( 'the_content', array( $this, 'course_page_content_filter' ) );
-
+	protected function get_renderer() {
 		$course_id = get_the_ID();
 
 		/**
@@ -62,24 +40,8 @@ class Sensei_Unsupported_Theme_Handler_Course implements Sensei_Unsupported_Them
 		 */
 		$show_pagination = apply_filters( 'sensei_course_page_show_pagination', true, $course_id );
 
-		$renderer = $this->get_course_renderer( $course_id, $show_pagination );
-		$content = $renderer->render();
-
-		return $content;
-	}
-
-	/**
-	 * Get a renderer that will render the course.
-	 *
-	 * @param int  $course_id       The ID of the course to render.
-	 * @param bool $show_pagination Whether to show pagination in the rendereed output.
-	 *
-	 * @return Sensei_Renderer_Single_Post
-	 */
-	private function get_course_renderer( $course_id, $show_pagination ) {
 		return new Sensei_Renderer_Single_Post( $course_id, 'single-course.php', array(
 			'show_pagination' => $show_pagination,
 		) );
 	}
-
 }
