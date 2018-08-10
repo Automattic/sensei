@@ -20,7 +20,7 @@ To make things easier we've created these guidelines:
 Unit tests can be run locally. Please see our [ test instructions ](https://github.com/woothemes/sensei/tree/master/tests#readme) to run the unit tests.
 
 ## Development Blog
-Please follow further development updates at [develop.woothemes.com/sensei]( http://senseilms.wordpress.com/ )
+Please follow further development updates at [https://senseilms.com/blog/](https://senseilms.com/blog/)
 
 
 *We appreciate all your efforts. Your contributions make Sensei even better!*
