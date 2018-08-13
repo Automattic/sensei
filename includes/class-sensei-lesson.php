@@ -34,7 +34,7 @@ class Sensei_Lesson {
 		// Admin actions
 		if ( is_admin() ) {
       		//Sort Lessons on Admin Edit Page
-      		add_action( 'pre_get_posts', 'admin_sort_lessons' );
+      		add_action( 'pre_get_posts', 'sensei_admin_sort_lessons' );
 
 			// Metabox functions
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
