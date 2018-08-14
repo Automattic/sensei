@@ -41,7 +41,7 @@ class Sensei_Frontend {
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 
 		// 1.2.1
-		add_action( 'wp_head', array( $this, 'sensei_complete_lesson' ), 10 );
+		add_action( 'init', array( $this, 'sensei_complete_lesson' ), 10 );
 		add_action( 'wp_head', array( $this, 'sensei_complete_course' ), 10 );
 		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
 		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
@@ -61,6 +61,7 @@ class Sensei_Frontend {
 		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 );
 		//1.6.3
 		add_action( 'init', array( $this, 'sensei_process_registration' ), 2 );
+
 		//1.7.0
 		add_action( 'sensei_pagination', array( $this, 'sensei_breadcrumb' ), 80, 1 );
 
@@ -750,34 +751,69 @@ class Sensei_Frontend {
 
 	public function sensei_complete_lesson() {
 		global $post,  $current_user;
+
+		if ( ! isset( $_POST['quiz_action'] ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_lesson_noonce' ], 'woothemes_sensei_complete_lesson_noonce' ) ) {
+			return;
+		}
+
+		$lesson_id = intval( $_POST['lesson_id'] );
+
+		if ( $lesson_id <= 0 ) {
+			return;
+		}
+
 		// Handle Quiz Completion
-		if ( isset( $_POST['quiz_action'] ) && wp_verify_nonce( $_POST[ 'woothemes_sensei_complete_lesson_noonce' ], 'woothemes_sensei_complete_lesson_noonce' ) ) {
+		$sanitized_submit = esc_html( $_POST['quiz_action'] );
 
-			$sanitized_submit = esc_html( $_POST['quiz_action'] );
+		switch ($sanitized_submit) {
+              case 'lesson-complete':
+				Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, $complete = true );
+				$this->maybe_redirect_to_next_lesson( $lesson_id );
 
-			switch ($sanitized_submit) {
-                case 'lesson-complete':
+				break;
 
-					Sensei_Utils::sensei_start_lesson( $post->ID, $current_user->ID, $complete = true );
+              case 'lesson-reset':
+				Sensei_Utils::sensei_remove_user_from_lesson( $lesson_id, $current_user->ID );
 
-					break;
+				$this->messages = '<div class="sensei-message note">' .  __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) . '</div>';
+				break;
 
-                case 'lesson-reset':
+			default:
+				// Nothing
+				break;
 
-					Sensei_Utils::sensei_remove_user_from_lesson( $post->ID, $current_user->ID );
-
-					$this->messages = '<div class="sensei-message note">' .  __( 'Lesson Reset Successfully.', 'woothemes-sensei' ) . '</div>';
-					break;
-
-				default:
-					// Nothing
-					break;
-
-			} // End Switch Statement
-
-		} // End If Statement
+		} // End Switch Statement
 
 	} // End sensei_complete_lesson()
+
+	/**
+	 * Redirect to the next lesson, if applicable.
+	 *
+	 * @since 1.12.0
+	 *
+	 * @param int $lesson_id Lesson ID
+	 */
+	private function maybe_redirect_to_next_lesson( $lesson_id = 0 ) {
+		if ( $lesson_id > 0 ) {
+			$nav_links = sensei_get_prev_next_lessons( $lesson_id );
+
+			if ( isset( $nav_links['next'] ) ) {
+				/**
+				 * Filter the URL that students are redirected to after completing a lesson.
+				 *
+				 * @since 1.12.0
+				 *
+				 * @param string $redirect_url URL to redirect students to after completing a lesson.
+				 */
+				wp_safe_redirect( apply_filters( 'sensei_complete_lesson_redirect_url', esc_url_raw( $nav_links['next']['url'] ) ) );
+				exit;
+			}
+		}
+	}
 
 	public function sensei_complete_course() {
 		global $post,  $current_user, $wp_query;
@@ -909,6 +945,7 @@ class Sensei_Frontend {
                 />
 
 	            <input type="hidden" name="quiz_action" value="lesson-complete" />
+	            <input type="hidden" name="lesson_id" value="<?php echo esc_attr( $lesson_id ); ?>" />
 
                 <input type="submit"
                        name="quiz_complete"
@@ -924,6 +961,7 @@ class Sensei_Frontend {
 		global  $post;
 
 		$quiz_id = 0;
+		$lesson_id = $post->ID;
 
 		// Lesson quizzes
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $post->ID );
@@ -943,6 +981,7 @@ class Sensei_Frontend {
             value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
 
             <input type="hidden" name="quiz_action" value="lesson-reset" />
+            <input type="hidden" name="lesson_id" value="<?php echo esc_attr( $lesson_id ); ?>" />
 
             <input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php _e( 'Reset Lesson', 'woothemes-sensei' ); ?>"/>
 
