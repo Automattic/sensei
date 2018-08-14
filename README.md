@@ -33,8 +33,8 @@ version, but serves as a model for future changes.
   * Membership
   * Permissions
 
-##Contributing to Sensei
+## Contributing to Sensei
 See our guidelines here: [Contributing to Sensei](https://github.com/woothemes/sensei/blob/master/CONTRIBUTING.md)
 
-##Development Blog
+## Development Blog
 Please follow further development updates at [develop.woothemes.com/sensei]( http://develop.woothemes.com/sensei )
