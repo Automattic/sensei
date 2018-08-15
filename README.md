@@ -1,4 +1,4 @@
-# [Sensei](https://senseilms.com/) [![Build Status](https://travis-ci.org/Automattic/sensei.svg?branch=master)](http://travis-ci.org/Automattic/sensei) [![Coverage Status](https://coveralls.io/repos/github/woothemes/sensei/badge.svg?branch=master)](https://coveralls.io/github/woothemes/sensei?branch=master)
+# [Sensei](https://woocommerce.com/products/sensei/) [![Build Status](https://travis-ci.org/Automattic/sensei.svg?branch=master)](http://travis-ci.org/Automattic/sensei)
 
 **A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.**
 
