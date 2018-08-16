@@ -762,7 +762,7 @@ class Sensei_Frontend {
 
 		$lesson_id = intval( $_POST['lesson_id'] );
 
-		if ( $lesson_id <= 0 ) {
+		if ( 0 >= $lesson_id ) {
 			return;
 		}
 
