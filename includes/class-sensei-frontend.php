@@ -798,20 +798,22 @@ class Sensei_Frontend {
 	 * @param int $lesson_id Lesson ID
 	 */
 	private function maybe_redirect_to_next_lesson( $lesson_id = 0 ) {
-		if ( $lesson_id > 0 ) {
-			$nav_links = sensei_get_prev_next_lessons( $lesson_id );
+		if ( 0 >= $lesson_id ) {
+			return;
+		}
 
-			if ( isset( $nav_links['next'] ) ) {
-				/**
-				 * Filter the URL that students are redirected to after completing a lesson.
-				 *
-				 * @since 1.12.0
-				 *
-				 * @param string $redirect_url URL to redirect students to after completing a lesson.
-				 */
-				wp_safe_redirect( apply_filters( 'sensei_complete_lesson_redirect_url', esc_url_raw( $nav_links['next']['url'] ) ) );
-				exit;
-			}
+		$nav_links = sensei_get_prev_next_lessons( $lesson_id );
+
+		if ( isset( $nav_links['next'] ) ) {
+			/**
+			 * Filter the URL that students are redirected to after completing a lesson.
+			 *
+			 * @since 1.12.0
+			 *
+			 * @param string $redirect_url URL to redirect students to after completing a lesson.
+			 */
+			wp_safe_redirect( apply_filters( 'sensei_complete_lesson_redirect_url', esc_url_raw( $nav_links['next']['url'] ) ) );
+			exit;
 		}
 	}
 
