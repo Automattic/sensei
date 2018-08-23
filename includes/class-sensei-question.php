@@ -674,7 +674,7 @@ class Sensei_Question {
 	 * This function has to be run inside the quiz question loop on the single quiz page.
 	 *
 	 * It show the correct/incorrect answer per question depending on the quiz logic explained here:
-	 * https://docs.woothemes.com/document/sensei-quiz-settings-flowchart/
+	 * https://docs.woocommerce.com/document/sensei-quiz-settings-flowchart/
 	 *
 	 * Pseudo code for logic:  https://github.com/Automattic/sensei/issues/1422#issuecomment-214494263
 	 *
