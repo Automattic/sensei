@@ -2,7 +2,7 @@
 /**
  * Teacher new message email
  *
- * @author WooThemes
+ * @author  Automattic
  * @package Sensei/Templates/Emails/HTML
  * @version 1.6.0
  */

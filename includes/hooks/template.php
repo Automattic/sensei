@@ -4,10 +4,10 @@
  *
  * Action/filter hooks used for Sensei functionality hooked into Sensei Templates
  *
- * @author 		WooThemes
- * @package 	Sensei
- * @category 	Hooks
- * @version     1.9.0
+ * @author   Automattic
+ * @package  Sensei
+ * @category Hooks
+ * @version  1.9.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -1,13 +1,13 @@
 <?php
 /**
- * WooThemes Sensei Uninstall
+ * Sensei Uninstall
  *
  * Uninstalls the plugin and associated data.
  *
  * @package WordPress
  * @subpackage Sensei
  * @category Core
- * @author WooThemes
+ * @author Automattic
  * @since 1.0.0
  */
 

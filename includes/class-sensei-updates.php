@@ -274,7 +274,7 @@ class Sensei_Updates
             <p><?php printf(__('These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'woothemes-sensei'), '<code>', '</code>'); ?></p>
 
             <div class="updated"><p>
-                    <strong><?php _e('Only run these updates if you have been instructed to do so by WooThemes support staff.', 'woothemes-sensei'); ?></strong>
+                    <strong><?php _e('Only run these updates if you have been instructed to do so by Support staff.', 'woothemes-sensei'); ?></strong>
                 </p></div>
 
             <table class="widefat" cellspacing="0" id="update-plugins-table">
