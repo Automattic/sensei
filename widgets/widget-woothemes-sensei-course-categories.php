@@ -4,8 +4,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 /**
  * Sensei Course Categories Widget
  *
- * A WooThemes Sensei Course Categories widget.
- *
  * @package Views
  * @subpackage Widgets
  * @author Automattic
