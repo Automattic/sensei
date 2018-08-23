@@ -2,9 +2,9 @@
 /**
  * Email Header
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates/Emails
- * @version     1.6.0
+ * @author  Automattic
+ * @package Sensei/Templates/Emails
+ * @version 1.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly

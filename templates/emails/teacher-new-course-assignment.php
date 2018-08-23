@@ -2,7 +2,7 @@
 /**
  * Teacher new message email
  *
- * @author WooThemes
+ * @author  Automattic
  * @package Sensei/Templates/Emails/HTML
  */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly

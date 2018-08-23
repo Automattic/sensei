@@ -2,9 +2,9 @@
 /**
  * Pagination - Posts
  *
- * @author 		WooThemes
- * @package 	Sensei/Templates
- * @version     1.1.0
+ * @author  Automattic
+ * @package Sensei/Templates
+ * @version 1.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
