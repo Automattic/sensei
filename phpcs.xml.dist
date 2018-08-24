@@ -12,6 +12,10 @@
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 
+	<config name="minimum_supported_wp_version" value="4.7" />
+	<!-- Check for cross-version support for PHP 5.2 and higher. -->
+	<config name="testVersion" value="5.2-"/>
+
 	<!-- Include the WordPress ruleset, with exclusions. -->
 
 	<rule ref="WordPress">
