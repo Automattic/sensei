@@ -6,8 +6,6 @@
 	<!-- Set a description for this ruleset. -->
 	<description>A custom set of code standard rules to check for WordPress themes and plugins.</description>
 
-	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
-
 	<exclude-pattern>apigen/</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
@@ -16,8 +14,8 @@
 	<!-- Check for cross-version support for PHP 5.2 and higher. -->
 	<config name="testVersion" value="5.2-"/>
 
-	<!-- Include the WordPress ruleset, with exclusions. -->
-
+	<!-- Rules -->
+	<rule ref="PHPCompatibility" />
 	<rule ref="WordPress">
 		<exclude name="WordPress.VIP" />
 	</rule>
