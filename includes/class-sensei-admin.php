@@ -1589,7 +1589,7 @@ class Sensei_Admin {
 			$general_settings_url = '<a href="' . esc_attr( esc_url( admin_url( 'options-general.php' ) ) ) . '">' . __( 'Settings > General', 'woothemes-sensei' ) . '</a>';
 			$add_new_user_url = '<a href="' . esc_attr( esc_url( admin_url( 'user-new.php' ) ) ) . '">' . __( 'add a new Administrator', 'woothemes-sensei' ) . '</a>';
 			$existing_administrators_link = '<a href="' . esc_attr( esc_url( admin_url( 'users.php?role=administrator' ) ) ) . '">' . __( 'existing Administrator', 'woothemes-sensei' ) . '</a>';
-			$current_setting = esc_html__( get_bloginfo( 'admin_email' ) );
+			$current_setting = esc_html( get_bloginfo( 'admin_email' ) );
 			?><div id="message" class="error sensei-message sensei-connect">
 				<p>
 					<strong>
