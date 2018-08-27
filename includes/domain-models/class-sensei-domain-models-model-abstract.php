@@ -193,7 +193,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
     public function get_id() {
         throw new Sensei_Domain_Models_Exception('override me ' . __FUNCTION__ );
     }
-    
+
     /**
      * validates this object instance
      * @throws Sensei_Domain_Models_Exception
@@ -226,6 +226,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
         if ( $field_declaration->required && empty( $value ) ) {
             return new WP_Error(
                 'required-field-empty',
+				// translators: Placeholder %s is the name of the field.
                 sprintf( __( '%s cannot be empty', 'woothemes-sensei' ), $field_declaration->name )
             );
         } else if ( !$field_declaration->required && ! empty( $value ) ) {

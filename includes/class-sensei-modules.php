@@ -184,6 +184,7 @@ class Sensei_Core_Modules
 			$html .= $this->render_module_select_for_course( $lesson_course, $lesson_module );
 
 		} else {
+			// translators: The placeholders are opening and closing <em> tags.
 			$html .= '<p>' . sprintf(__('No modules are available for this lesson yet. %1$sPlease select a course first.%2$s', 'woothemes-sensei'), '<em>', '</em>') . '</p>';
 		} // End If Statement
 		$html .= '</div>';
@@ -227,6 +228,15 @@ class Sensei_Core_Modules
 			$html .= '</select>' . "\n";
 		} else {
 			$course_url = admin_url('post.php?post=' . urlencode($lesson_course) . '&action=edit');
+
+			/*
+			 * translators: The placeholders are as follows:
+			 *
+			 * %1$s - <em>
+			 * %2$s - </em>
+			 * %3$s - Opening <a> tag to link to the Course URL.
+			 * %4$s - </a>
+			 */
 			$html .= '<p>' . sprintf(__('No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'woothemes-sensei'), '<em>', '</em>', '<a href="' . esc_url($course_url) . '">', '</a>') . '</p>';
 		} // End If Statement
 		return $html;
