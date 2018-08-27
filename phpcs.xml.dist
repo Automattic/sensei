@@ -1,18 +1,21 @@
 <?xml version="1.0"?>
-<ruleset name="WordPress Coding Standards">
+<ruleset name="Sensei">
 	<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
 	<!-- See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/blob/develop/WordPress-Core/ruleset.xml -->
 
 	<!-- Set a description for this ruleset. -->
 	<description>A custom set of code standard rules to check for WordPress themes and plugins.</description>
 
-	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
-
-	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>apigen/</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
 
-	<!-- Include the WordPress ruleset, with exclusions. -->
+	<config name="minimum_supported_wp_version" value="4.7" />
+	<!-- Check for cross-version support for PHP 5.2 and higher. -->
+	<config name="testVersion" value="5.2-"/>
 
+	<!-- Rules -->
+	<rule ref="PHPCompatibility" />
 	<rule ref="WordPress">
 		<exclude name="WordPress.VIP" />
 	</rule>
