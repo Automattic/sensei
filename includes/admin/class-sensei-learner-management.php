@@ -330,7 +330,21 @@ class Sensei_Learner_Management {
 			$title    .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>';
 		}
 		?>
-			<h1><?php echo apply_filters( 'sensei_learners_nav_title', $title ); ?> | <a href="<?php echo esc_attr( $this->bulk_actions_controller->get_url() ); ?>"><?php echo $this->bulk_actions_controller->get_name(); ?></a></h1>
+			<h1>
+				<?php
+				echo wp_kses(
+					apply_filters( 'sensei_learners_nav_title', $title ), array(
+						'span' => array(
+							'class' => array(),
+						),
+						'a'    => array(
+							'href' => array(),
+						),
+					)
+				);
+				?>
+				| <a href="<?php echo esc_attr( $this->bulk_actions_controller->get_url() ); ?>"><?php echo esc_html( $this->bulk_actions_controller->get_name() ); ?></a></h1>
+			</h1>
 		<?php
 	} // End learners_default_nav()
 
@@ -421,7 +435,7 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		exit( $mysql_date );
+		exit( esc_html( $mysql_date ) );
 	}
 
 	/**
@@ -666,8 +680,8 @@ class Sensei_Learner_Management {
 				);
 			}
 			?>
-			<div class="learners-notice <?php echo $msg[0]; ?>">
-				<p><?php echo $msg[1]; ?></p>
+			<div class="learners-notice <?php echo esc_attr( $msg[0] ); ?>">
+				<p><?php echo esc_html( $msg[1] ); ?></p>
 			</div>
 			<?php
 		}
