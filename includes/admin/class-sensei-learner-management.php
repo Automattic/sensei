@@ -73,7 +73,7 @@ class Sensei_Learner_Management {
 			add_filter( 'set-screen-option', array( $this, 'set_learner_management_screen_option' ), 20, 3 );
 			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30 );
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container' ) );
-			if ( isset( $_GET['page'] ) && ( ( $_GET['page'] == $this->page_slug ) || ( $_GET['page'] == 'sensei_learner_admin' ) ) ) {
+			if ( isset( $_GET['page'] ) && ( ( $_GET['page'] === $this->page_slug ) || ( $_GET['page'] === 'sensei_learner_admin' ) ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
@@ -119,7 +119,7 @@ class Sensei_Learner_Management {
 	 * @return bool|string
 	 */
 	public function set_learner_management_screen_option( $status, $option, $value ) {
-		if ( self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE == $option ) {
+		if ( self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE === $option ) {
 			return $value;
 		}
 		return $status;
@@ -228,7 +228,7 @@ class Sensei_Learner_Management {
 		} else {
 			$sensei_learners_object = new $object_name( $data, $optional_data );
 		} // End If Statement
-		if ( 'Main' == $name ) {
+		if ( 'Main' === $name ) {
 			$sensei_learners_object->prepare_items();
 		} // End If Statement
 		return $sensei_learners_object;
@@ -295,11 +295,11 @@ class Sensei_Learner_Management {
 	 * @param string $which Wrapper location. Valid values are 'top' and 'bottom'.
 	 */
 	public function wrapper_container( $which ) {
-		if ( 'top' == $which ) {
+		if ( 'top' === $which ) {
 			?>
 			<div id="woothemes-sensei" class="wrap woothemes-sensei">
 			<?php
-		} elseif ( 'bottom' == $which ) {
+		} elseif ( 'bottom' === $which ) {
 			?>
 			</div><!--/#woothemes-sensei-->
 			<?php
@@ -390,7 +390,7 @@ class Sensei_Learner_Management {
 
 		// validate we can edit date.
 		$may_edit_date = false;
-		if ( current_user_can( 'manage_sensei' ) || $post->post_author == get_current_user_id() ) {
+		if ( current_user_can( 'manage_sensei' ) || $post->post_author === get_current_user_id() ) {
 			$may_edit_date = true;
 		}
 
@@ -450,7 +450,7 @@ class Sensei_Learner_Management {
 
 		// validate the user.
 		$may_remove_user = false;
-		if ( current_user_can( 'manage_sensei' ) || $post->post_author == get_current_user_id() ) {
+		if ( current_user_can( 'manage_sensei' ) || $post->post_author === get_current_user_id() ) {
 			$may_remove_user = true;
 		}
 
@@ -552,7 +552,7 @@ class Sensei_Learner_Management {
 			foreach ( $users as $user ) {
 				$full_name = Sensei_Learner::get_full_name( $user->ID );
 
-				if ( trim( $user->display_name ) == trim( $full_name ) ) {
+				if ( trim( $user->display_name ) === trim( $full_name ) ) {
 
 					$name = $full_name;
 
@@ -586,7 +586,7 @@ class Sensei_Learner_Management {
 			return $result;
 		}
 
-		if ( ( ! isset( $_POST['add_user_id'] ) || '' == $_POST['add_user_id'] ) || ! isset( $_POST['add_post_type'] ) || ! isset( $_POST['add_course_id'] ) || ! isset( $_POST['add_lesson_id'] ) ) {
+		if ( ( ! isset( $_POST['add_user_id'] ) || '' === $_POST['add_user_id'] ) || ! isset( $_POST['add_post_type'] ) || ! isset( $_POST['add_course_id'] ) || ! isset( $_POST['add_lesson_id'] ) ) {
 			return $result;
 		}
 
@@ -600,7 +600,7 @@ class Sensei_Learner_Management {
 				$result = Sensei_Utils::user_start_course( $user_id, $course_id );
 
 				// Complete each lesson if course is set to be completed.
-				if ( isset( $_POST['add_complete_course'] ) && 'yes' == $_POST['add_complete_course'] ) {
+				if ( isset( $_POST['add_complete_course'] ) && 'yes' === $_POST['add_complete_course'] ) {
 					Sensei_Utils::force_complete_user_course( $user_id, $course_id );
 				}
 
@@ -608,7 +608,7 @@ class Sensei_Learner_Management {
 
 			case 'lesson':
 				$complete = false;
-				if ( isset( $_POST['add_complete_lesson'] ) && 'yes' == $_POST['add_complete_lesson'] ) {
+				if ( isset( $_POST['add_complete_lesson'] ) && 'yes' === $_POST['add_complete_lesson'] ) {
 					$complete = true;
 				}
 
@@ -649,10 +649,10 @@ class Sensei_Learner_Management {
 	 * Displays a notice to indicate whether or not the Learner(s) was added successfully.
 	 */
 	public function add_learner_notices() {
-		if ( isset( $_GET['page'] ) && $this->page_slug == $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
-			if ( 'error' != $_GET['message'] ) {
+		if ( isset( $_GET['page'] ) && $this->page_slug === $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
+			if ( 'error' !== $_GET['message'] ) {
 				$message = __( 'Learner added successfully!', 'woothemes-sensei' );
-				if ( 'success_bulk' == $_GET['message'] ) {
+				if ( 'success_bulk' === $_GET['message'] ) {
 					$message = __( 'Learners added successfully!', 'woothemes-sensei' );
 				}
 				$msg = array( 'updated', $message );
