@@ -73,7 +73,8 @@ class Sensei_Learner_Management {
 			add_filter( 'set-screen-option', array( $this, 'set_learner_management_screen_option' ), 20, 3 );
 			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30 );
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container' ) );
-			if ( isset( $_GET['page'] ) && ( ( $_GET['page'] === $this->page_slug ) || ( $_GET['page'] === 'sensei_learner_admin' ) ) ) {
+
+			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) || ( 'sensei_learner_admin' === $_GET['page'] ) ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
@@ -390,7 +391,8 @@ class Sensei_Learner_Management {
 
 		// validate we can edit date.
 		$may_edit_date = false;
-		if ( current_user_can( 'manage_sensei' ) || $post->post_author === get_current_user_id() ) {
+
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === $post->post_author ) {
 			$may_edit_date = true;
 		}
 
@@ -450,7 +452,8 @@ class Sensei_Learner_Management {
 
 		// validate the user.
 		$may_remove_user = false;
-		if ( current_user_can( 'manage_sensei' ) || $post->post_author === get_current_user_id() ) {
+
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === $post->post_author ) {
 			$may_remove_user = true;
 		}
 
