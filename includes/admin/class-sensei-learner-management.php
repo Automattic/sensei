@@ -1,6 +1,16 @@
 <?php
+/**
+ * Learner Management
+ *
+ * Handles adding or removing learners from a course/lesson, resetting progress in a course/lesson,
+ * and editing the start date of a course/lesson.
+ *
+ * @package Sensei\Learner\Management
+ * @since 1.3.0
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -14,18 +24,43 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.3.0
  */
 class Sensei_Learner_Management {
-
+	/**
+	 * Name of the menu/page.
+	 *
+	 * @var string $name
+	 */
 	public $name;
+	/**
+	 * Main plugin file name.
+	 *
+	 * @var string $file
+	 */
 	public $file;
+	/**
+	 * Menu slug name.
+	 *
+	 * @var string $page_slug
+	 */
 	public $page_slug;
+	/**
+	 * Reference to the class responsible for Bulk Learner Actions.
+	 *
+	 * @var Sensei_Learners_Admin_Bulk_Actions_Controller $bulk_actions_controller
+	 */
 	public $bulk_actions_controller;
+	/**
+	 * Per page screen option ID.
+	 *
+	 * @var string SENSEI_LEARNER_MANAGEMENT_PER_PAGE
+	 */
 	const SENSEI_LEARNER_MANAGEMENT_PER_PAGE = 'sensei_learner_management_per_page';
 
 	/**
 	 * Constructor
 	 *
 	 * @since  1.6.0
-	 * @return  void
+	 *
+	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
 		$this->name = __( 'Learner Management', 'woothemes-sensei' );
@@ -33,7 +68,7 @@ class Sensei_Learner_Management {
 		$this->file      = $file;
 		$this->page_slug = 'sensei_learners';
 
-		// Admin functions
+		// Admin functions.
 		if ( is_admin() ) {
 			add_filter( 'set-screen-option', array( $this, 'set_learner_management_screen_option' ), 20, 3 );
 			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30 );
@@ -49,7 +84,7 @@ class Sensei_Learner_Management {
 			$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
 		} // End If Statement
 
-		// Ajax functions
+		// Ajax functions.
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 			add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
@@ -60,11 +95,10 @@ class Sensei_Learner_Management {
 	} // End __construct()
 
 	/**
-	 * learners_admin_menu function.
+	 * Add learner management menu.
 	 *
 	 * @since  1.6.0
 	 * @access public
-	 * @return void
 	 */
 	public function learners_admin_menu() {
 		global $menu;
@@ -76,6 +110,14 @@ class Sensei_Learner_Management {
 
 	} // End learners_admin_menu()
 
+	/**
+	 * Sets the pagination screen option value for the Bulk Learner Actions table.
+	 *
+	 * @param bool   $status Status.
+	 * @param string $option Screen option ID.
+	 * @param string $value  Learners per page.
+	 * @return bool|string
+	 */
 	public function set_learner_management_screen_option( $status, $option, $value ) {
 		if ( self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE == $option ) {
 			return $value;
@@ -83,6 +125,9 @@ class Sensei_Learner_Management {
 		return $status;
 	}
 
+	/**
+	 * Adds a "Learners per page" screen option to the Bulk Learner Actions page.
+	 */
 	public function load_screen_options_when_on_bulk_actions() {
 		if ( isset( $this->bulk_actions_controller ) && $this->bulk_actions_controller->is_current_page() ) {
 
@@ -96,18 +141,17 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * enqueue_scripts function.
+	 * Enqueues scripts.
 	 *
 	 * @description Load in JavaScripts where necessary.
 	 * @access public
 	 * @since 1.6.0
-	 * @return void
 	 */
 	public function enqueue_scripts() {
 		$is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 		$suffix   = $is_debug ? '' : '.min';
 
-		// Load Learners JS
+		// Load Learners JS.
 		wp_enqueue_script(
 			'sensei-learners-general',
 			Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
@@ -136,12 +180,11 @@ class Sensei_Learner_Management {
 	} // End enqueue_scripts()
 
 	/**
-	 * enqueue_styles function.
+	 * Enqueue styles.
 	 *
 	 * @description Load in CSS styles where necessary.
 	 * @access public
 	 * @since 1.6.0
-	 * @return void
 	 */
 	public function enqueue_styles() {
 
@@ -151,14 +194,13 @@ class Sensei_Learner_Management {
 	} // End enqueue_styles()
 
 	/**
-	 * load_data_table_files loads required files for Learners
+	 * Loads dependent files.
 	 *
 	 * @since  1.6.0
-	 * @return void
 	 */
 	public function load_data_table_files() {
 
-		// Load Learners Classes
+		// Load Learners Classes.
 		$classes_to_load = array(
 			'list-table',
 			'learners-main',
@@ -170,16 +212,16 @@ class Sensei_Learner_Management {
 	} // End load_data_table_files()
 
 	/**
-	 * load_data_object creates new instance of class
+	 * Creates new instance of class.
 	 *
 	 * @since  1.6.0
-	 * @param  string    $name          Name of class
-	 * @param  integer   $data          constructor arguments
-	 * @param  undefined $optional_data optional constructor arguments
+	 * @param  string    $name          Name of class.
+	 * @param  integer   $data          constructor arguments.
+	 * @param  undefined $optional_data optional constructor arguments.
 	 * @return object                 class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
-		// Load Analysis data
+		// Load Analysis data.
 		$object_name = 'WooThemes_Sensei_Learners_' . $name;
 		if ( is_null( $optional_data ) ) {
 			$sensei_learners_object = new $object_name( $data );
@@ -193,11 +235,10 @@ class Sensei_Learner_Management {
 	} // End load_data_object()
 
 	/**
-	 * learners_page function.
+	 * Outputs the content for the Learner Management page.
 	 *
 	 * @since 1.6.0
 	 * @access public
-	 * @return void
 	 */
 	public function learners_page() {
 		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
@@ -205,7 +246,7 @@ class Sensei_Learner_Management {
 			$this->bulk_actions_controller->learner_admin_page();
 			return;
 		}
-		// Load Learners data
+		// Load Learners data.
 		$course_id = 0;
 		$lesson_id = 0;
 		if ( isset( $_GET['course_id'] ) ) {
@@ -215,7 +256,7 @@ class Sensei_Learner_Management {
 			$lesson_id = intval( $_GET['lesson_id'] );
 		}
 		$sensei_learners_main = $this->load_data_object( 'Main', $course_id, $lesson_id );
-		// Wrappers
+		// Wrappers.
 		do_action( 'learners_before_container' );
 		do_action( 'learners_wrapper_container', 'top' );
 		$this->learners_headers();
@@ -234,11 +275,10 @@ class Sensei_Learner_Management {
 	} // End learners_default_view()
 
 	/**
-	 * learners_headers outputs Learners general headers
+	 * Outputs the breadcrumb.
 	 *
 	 * @since  1.6.0
-	 * @param array $args
-	 * @return void
+	 * @param array $args Partial function names.
 	 */
 	public function learners_headers( $args = array( 'nav' => 'default' ) ) {
 
@@ -249,11 +289,10 @@ class Sensei_Learner_Management {
 	} // End learners_headers()
 
 	/**
-	 * wrapper_container wrapper for Learners area
+	 * Wrapper for Learners area.
 	 *
 	 * @since  1.6.0
-	 * @param $which string
-	 * @return void
+	 * @param string $which Wrapper location. Valid values are 'top' and 'bottom'.
 	 */
 	public function wrapper_container( $which ) {
 		if ( 'top' == $which ) {
@@ -268,10 +307,9 @@ class Sensei_Learner_Management {
 	} // End wrapper_container()
 
 	/**
-	 * learners_default_nav default nav area for Learners
+	 * Default nav area for Learners.
 	 *
 	 * @since  1.6.0
-	 * @return void
 	 */
 	public function learners_default_nav() {
 		$title = $this->name;
@@ -295,9 +333,12 @@ class Sensei_Learner_Management {
 		<?php
 	} // End learners_default_nav()
 
+	/**
+	 * Filters table by course category.
+	 */
 	public function get_redirect_url() {
 
-		// Parse POST data
+		// Parse POST data.
 		$data        = $_POST['data'];
 		$course_data = array();
 		parse_str( $data, $course_data );
@@ -317,8 +358,11 @@ class Sensei_Learner_Management {
 		die();
 	}
 
+	/**
+	 * Edits the course/lesson start date.
+	 */
 	public function edit_date_started() {
-		// check the nonce, valid post
+		// check the nonce, valid post.
 		$nonce = '';
 		if ( isset( $_POST['edit_date_nonce'] ) ) {
 			$nonce = esc_html( $_POST['edit_date_nonce'] );
@@ -344,8 +388,7 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		// if ( update_comment_meta() )
-		// validate we can edit date
+		// validate we can edit date.
 		$may_edit_date = false;
 		if ( current_user_can( 'manage_sensei' ) || $post->post_author == get_current_user_id() ) {
 			$may_edit_date = true;
@@ -379,8 +422,13 @@ class Sensei_Learner_Management {
 		exit( $mysql_date );
 	}
 
+	/**
+	 * Resets Learner progress or removes a Learner from a course/lesson.
+	 *
+	 * @param string $action Action to perform. Valid values are 'reset' and 'remove'.
+	 */
 	public function handle_reset_remove_user_post( $action ) {
-		// Parse POST data
+		// Parse POST data.
 		$data        = sanitize_text_field( $_POST['data'] );
 		$action_data = array();
 		parse_str( $data, $action_data );
@@ -388,7 +436,7 @@ class Sensei_Learner_Management {
 		// Security checks
 		// ensure the current user may remove users from post
 		// only teacher or admin can remove users
-		// check the nonce, valid post
+		// check the nonce, valid post.
 		$nonce = '';
 		if ( isset( $_POST['modify_user_post_nonce'] ) ) {
 			$nonce = esc_html( $_POST['modify_user_post_nonce'] );
@@ -400,7 +448,7 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		// validate the user
+		// validate the user.
 		$may_remove_user = false;
 		if ( current_user_can( 'manage_sensei' ) || $post->post_author == get_current_user_id() ) {
 			$may_remove_user = true;
@@ -456,14 +504,23 @@ class Sensei_Learner_Management {
 		exit( '' );
 	}
 
+	/**
+	 * Resets Learner progress for a course/lesson.
+	 */
 	public function reset_user_post() {
 		$this->handle_reset_remove_user_post( 'reset' );
 	}
 
+	/**
+	 * Removes a Learner from a course/lesson.
+	 */
 	public function remove_user_from_post() {
 		$this->handle_reset_remove_user_post( 'remove' );
 	}
 
+	/**
+	 * Searches for a Learner by name or username.
+	 */
 	public function json_search_users() {
 
 		check_ajax_referer( 'search-users', 'security' );
@@ -512,6 +569,11 @@ class Sensei_Learner_Management {
 		wp_send_json( $found_users );
 	}
 
+	/**
+	 * Adds a Learner to a course/lesson.
+	 *
+	 * @return bool false if the Learner was not added.
+	 */
 	public function add_new_learners() {
 
 		$result = false;
@@ -537,7 +599,7 @@ class Sensei_Learner_Management {
 			case 'course':
 				$result = Sensei_Utils::user_start_course( $user_id, $course_id );
 
-				// Complete each lesson if course is set to be completed
+				// Complete each lesson if course is set to be completed.
 				if ( isset( $_POST['add_complete_course'] ) && 'yes' == $_POST['add_complete_course'] ) {
 					Sensei_Utils::force_complete_user_course( $user_id, $course_id );
 				}
@@ -555,7 +617,7 @@ class Sensei_Learner_Management {
 				break;
 		}
 
-		// Set redirect URL after adding user to course/lesson
+		// Set redirect URL after adding user to course/lesson.
 		$query_args = array(
 			'page' => $this->page_slug,
 			'view' => 'learners',
@@ -583,6 +645,9 @@ class Sensei_Learner_Management {
 		exit;
 	}
 
+	/**
+	 * Displays a notice to indicate whether or not the Learner(s) was added successfully.
+	 */
 	public function add_learner_notices() {
 		if ( isset( $_GET['page'] ) && $this->page_slug == $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
 			if ( 'error' != $_GET['message'] ) {
@@ -613,7 +678,7 @@ class Sensei_Learner_Management {
 	 * @deprecated since 1.9.0 use Se
 	 * @since 1.8.0
 	 *
-	 * @param int $user_id | bool false for an invalid $user_id
+	 * @param int $user_id | bool false for an invalid $user_id.
 	 *
 	 * @return string $full_name
 	 */
@@ -623,10 +688,20 @@ class Sensei_Learner_Management {
 
 	}
 
+	/**
+	 * Rebuilds and appends query variables to the URL.
+	 *
+	 * @return string URL query string.
+	 */
 	public function get_url() {
 		return add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) );
 	}
 
+	/**
+	 * Gets the name of the menu/page.
+	 *
+	 * @return string Name of the menu/page.
+	 */
 	public function get_name() {
 		return $this->name;
 	}
