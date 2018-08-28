@@ -63,8 +63,7 @@ class Sensei_Learner_Management {
 	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
-		$this->name = __( 'Learner Management', 'woothemes-sensei' );
-
+		$this->name      = __( 'Learner Management', 'woothemes-sensei' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_learners';
 
