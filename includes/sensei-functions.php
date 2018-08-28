@@ -292,7 +292,7 @@ function sensei_admin_sort_lessons( $query ) {
 		return;
 
 	$screen = get_current_screen();
-	if( 'edit' == $screen->base && 'lesson' == $screen->post_type && !isset( $_GET['orderby'] ) ) {
+	if( 'edit' === $screen->base && 'lesson' === $screen->post_type && !isset( $_GET['orderby'] ) ) {
 		$query->set( 'orderby', 'meta_value' );
 		$query->set( 'order', '_lesson_order' );
 	}
