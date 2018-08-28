@@ -288,14 +288,14 @@ function sensei_does_theme_support_templates() {
  * @param type $query
  */
 function sensei_admin_sort_lessons( $query ) {
-  if( !is_admin() )
-      return;
+	if( !is_admin() )
+		return;
 
-  $screen = get_current_screen();
-  if( 'edit' == $screen->base && 'lesson' == $screen->post_type && !isset( $_GET['orderby'] ) ) {
-      $query->set( 'orderby', 'meta_value' );
-      $query->set( 'order', '_lesson_order' );
-  }
-  return;
+	$screen = get_current_screen();
+	if( 'edit' == $screen->base && 'lesson' == $screen->post_type && !isset( $_GET['orderby'] ) ) {
+		$query->set( 'orderby', 'meta_value' );
+		$query->set( 'order', '_lesson_order' );
+	}
+	return;
 
 }
