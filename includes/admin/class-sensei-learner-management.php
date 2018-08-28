@@ -173,6 +173,7 @@ class Sensei_Learner_Management {
 			'modify_user_post_nonce'     => wp_create_nonce( 'modify_user_post_nonce' ),
 			'search_users_nonce'         => wp_create_nonce( 'search-users' ),
 			'edit_date_nonce'            => wp_create_nonce( 'edit_date_nonce' ),
+			'course_category_nonce'      => wp_create_nonce( 'course_category_nonce' ),
 			'selectplaceholder'          => __( 'Select Learner', 'woothemes-sensei' ),
 		);
 
@@ -351,6 +352,7 @@ class Sensei_Learner_Management {
 	 * Filters table by course category.
 	 */
 	public function get_redirect_url() {
+		check_ajax_referer( 'course_category_nonce', 'security' );
 
 		// Parse POST data.
 		$data        = $_POST['data'];
@@ -376,15 +378,7 @@ class Sensei_Learner_Management {
 	 * Edits the course/lesson start date.
 	 */
 	public function edit_date_started() {
-		// check the nonce, valid post.
-		$nonce = '';
-		if ( isset( $_POST['edit_date_nonce'] ) ) {
-			$nonce = esc_html( $_POST['edit_date_nonce'] );
-		}
-
-		if ( ! wp_verify_nonce( $nonce, 'edit_date_nonce' ) ) {
-			exit( '' );
-		}
+		check_ajax_referer( 'edit_date_nonce', 'security' );
 
 		$data        = sanitize_text_field( $_POST['data'] );
 		$action_data = array();
@@ -443,19 +437,12 @@ class Sensei_Learner_Management {
 	 * @param string $action Action to perform. Valid values are 'reset' and 'remove'.
 	 */
 	public function handle_reset_remove_user_post( $action ) {
+		check_ajax_referer( 'modify_user_post_nonce', 'security' );
+
 		// Parse POST data.
 		$data        = sanitize_text_field( $_POST['data'] );
 		$action_data = array();
 		parse_str( $data, $action_data );
-
-		// Security checks
-		// ensure the current user may remove users from post
-		// only teacher or admin can remove users
-		// check the nonce, valid post.
-		$nonce = '';
-		if ( isset( $_POST['modify_user_post_nonce'] ) ) {
-			$nonce = esc_html( $_POST['modify_user_post_nonce'] );
-		}
 
 		$post = get_post( intval( $action_data['post_id'] ) );
 
@@ -466,11 +453,12 @@ class Sensei_Learner_Management {
 		// validate the user.
 		$may_remove_user = false;
 
+		// Only teachers and admins can remove users.
 		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === $post->post_author ) {
 			$may_remove_user = true;
 		}
 
-		if ( ! wp_verify_nonce( $nonce, 'modify_user_post_nonce' ) || ! is_a( $post, 'WP_Post' ) || ! $may_remove_user ) {
+		if ( ! is_a( $post, 'WP_Post' ) || ! $may_remove_user ) {
 			exit( '' );
 		}
 
