@@ -3233,11 +3233,13 @@ class Sensei_Course {
 			$prerequisite_course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) )
 				. '" title="'
 				. sprintf(
+					// translators: Placeholder $1$s is the course title.
 					esc_attr__( 'You must first complete: %1$s', 'woothemes-sensei' ),
 					$course_title )
 				 . '">' . $course_title . '</a>';
 
 			$complete_prerequisite_message = sprintf(
+				// translators: Placeholder $1$s is the course title.
 				esc_html__( 'You must first complete %1$s before viewing this course', 'woothemes-sensei' ),
 				$prerequisite_course_link );
 

@@ -689,10 +689,13 @@ class Sensei_Main {
 
 					$user_allowed = false;
 					$course_link  = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+
+					// translators: The placeholder %s is a link to the course.
 					$this->notices->add_notice( sprintf( __( 'Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link ), 'info' );
 
 				} elseif ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) && ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
 
+					// translators: The placeholders are the opening and closing tags for a link to log in.
 					$message = sprintf( __( 'Or %1$s login %2$s to access your purchased courses', 'woothemes-sensei' ), '<a href="' . sensei_user_login_url() . '">', '</a>' );
 					$this->notices->add_notice( $message, 'info' );
 
@@ -726,15 +729,18 @@ class Sensei_Main {
 					$wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
 					if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
 						if ( $is_preview ) {
+							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
 						} else {
+							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Lesson.', 'woothemes-sensei' ), $course_link );
 						}
 					} else {
 						if ( $is_preview ) {
+							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
 						} else {
-							/** This filter is documented in class-woothemes-sensei-frontend.php */
+							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
 						}
 					} // End if().
@@ -762,6 +768,7 @@ class Sensei_Main {
 
 							$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'woothemes-sensei' );
 							$lesson_link = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
+							// translators: The placeholder %1$s is a link to the Lesson.
 							$this->permissions_message['message'] = sprintf( __( 'Please complete the previous %1$s before taking this Quiz.', 'woothemes-sensei' ), $lesson_link );
 
 						} else {
@@ -779,8 +786,10 @@ class Sensei_Main {
 						$course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 						$wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
 						if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
+							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
 						} else {
+							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
 						} // End if().
 					} else {
@@ -789,6 +798,7 @@ class Sensei_Main {
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'woothemes-sensei' );
 					$course_link = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+					// translators: The placeholder %1$s is a link to the Course.
 					$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before taking this Quiz.', 'woothemes-sensei' ), $course_link );
 				} // End if().
 				break;

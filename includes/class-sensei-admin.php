@@ -1589,11 +1589,22 @@ class Sensei_Admin {
 			$general_settings_url = '<a href="' . esc_attr( esc_url( admin_url( 'options-general.php' ) ) ) . '">' . __( 'Settings > General', 'woothemes-sensei' ) . '</a>';
 			$add_new_user_url = '<a href="' . esc_attr( esc_url( admin_url( 'user-new.php' ) ) ) . '">' . __( 'add a new Administrator', 'woothemes-sensei' ) . '</a>';
 			$existing_administrators_link = '<a href="' . esc_attr( esc_url( admin_url( 'users.php?role=administrator' ) ) ) . '">' . __( 'existing Administrator', 'woothemes-sensei' ) . '</a>';
-			$current_setting = esc_html__( get_bloginfo( 'admin_email' ) );
+			$current_setting = esc_html( get_bloginfo( 'admin_email' ) );
+
+			/*
+			 * translators: The %s placeholders are as follows:
+			 *
+			 * - A link to the General Settings page with the translated text "Settings > General".
+			 * - A link to add an admin user with the translated text "add a new Administrator".
+			 * - The current admin email address from the Settings.
+			 * - A link to view the existing admin users, with the translated text "existing Administrator".
+			 */
+			$warning = __( 'To prevent issues with Sensei module names, your Email Address in %s should also belong to an Administrator user. You can either %s with the email address %s, or change that email address to match the email of an %s.', 'woothemes-sensei' );
+
 			?><div id="message" class="error sensei-message sensei-connect">
 				<p>
 					<strong>
-						<?php printf( esc_html__( 'To prevent issues with Sensei module names, your Email Address in %s should also belong to an Administrator user. You can either %s with the email address %s, or change that email address to match the email of an %s.', 'woothemes-sensei' ), $general_settings_url, $add_new_user_url, $current_setting, $existing_administrators_link ); ?>
+						<?php printf( esc_html( $warning ), $general_settings_url, $add_new_user_url, $current_setting, $existing_administrators_link ); ?>
 					</strong>
 				</p>
 			</div><?php
