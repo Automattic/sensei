@@ -197,7 +197,7 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative="" , $ar
 
     if( has_action( $hook_tag ) ){
 
-        $error_message = sprintf( __( "SENSEI: The hook '%s', has been deprecated since '%s'." , 'woothemes-sensei'), $hook_tag ,$version );
+        $error_message = sprintf( __( "SENSEI: The hook '%1\$s', has been deprecated since '%2\$s'." , 'woothemes-sensei'), $hook_tag ,$version );
 
         if( !empty( $alternative ) ){
 

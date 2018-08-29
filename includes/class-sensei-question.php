@@ -900,7 +900,7 @@ class Sensei_Question {
                 $upload_size_unit = (int) $upload_size_unit;
 
             }
-            $max_upload_size = sprintf( __( 'Maximum upload file size: %d%s', 'woothemes-sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
+            $max_upload_size = sprintf( __( 'Maximum upload file size: %1$d%2$s', 'woothemes-sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
 
             // Assemble all the data needed by the file upload template
             $question_data[ 'answer_media_url' ]      = $answer_media_url;

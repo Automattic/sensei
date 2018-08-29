@@ -318,7 +318,7 @@ class Sensei_Updates
                                             <input type="hidden" name="checked[]" value="<?php echo $update; ?>">
                                             <strong><?php echo $data['title']; ?></strong><br><?php echo $data['desc']; ?>
                                             <br>
-                                            <em><?php printf(__('Originally included in %s v%s', 'woothemes-sensei'), $product, $version); ?></em>
+                                            <em><?php printf(__('Originally included in %1$s v%2$s', 'woothemes-sensei'), $product, $version); ?></em>
                                         </p>
                                     </td>
                                     <?php

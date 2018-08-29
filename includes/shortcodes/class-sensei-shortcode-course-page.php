@@ -59,7 +59,7 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 		try {
 			return $this->renderer->render();
 		} catch ( Sensei_Renderer_Missing_Fields_Exception $e ) {
-			return sprintf( __( 'Error rendering %s shortcode - %s', 'woothemes-sensei' ), '[sensei_course_page]', $e->getMessage() );
+			return sprintf( __( 'Error rendering %1$s shortcode - %2$s', 'woothemes-sensei' ), '[sensei_course_page]', $e->getMessage() );
 		}
 	}
 
