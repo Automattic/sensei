@@ -3888,25 +3888,25 @@ class Sensei_Lesson {
 	} // End sensei_lesson_quiz_meta()
 
 	/**
-	 * Show the lesson comments. This should be used in the loop.
+	 * Shows the lesson comments. This should be used in the loop.
 	 *
 	 * @since 1.9.0
 	 */
-	public static function output_comments(){
+	public static function output_comments() {
+		global $post;
 
 		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
-		$allow_comments = Sensei()->settings->settings[ 'lesson_comments' ];
-		$user_taking_course = Sensei_Utils::user_started_course($course_id );
+		$allow_comments = Sensei()->settings->settings['lesson_comments'];
+		$user_taking_course = Sensei_Utils::user_started_course( $course_id );
+		$has_access = ! Sensei()->settings->get( 'access_permission' );
+		$is_preview = Sensei_Utils::is_preview_lesson( $post->ID );
 
-		$lesson_allow_comments = $allow_comments  && $user_taking_course;
+		$lesson_allow_comments = $allow_comments && ( $user_taking_course || $has_access || $is_preview );
 
-		if (  $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
-
+		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
 			comments_template();
-
-		} // End If Statement
-
-	} //output_comments
+		}
+	}
 
 	/**
 	 * Display the leeson quiz status if it should be shown
