@@ -41,7 +41,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	 * @param array|int|WP_Post|WP_Comment|WP_User $data the data object. either an int id, a wp entity.
 	 * @since 1.9.13
 	 */
-	function __construct( $data = array() ) {
+	public function __construct( $data = array() ) {
 		$this->fields = self::get_field_declarations( get_class( $this ) );
 		$this->data = array();
 

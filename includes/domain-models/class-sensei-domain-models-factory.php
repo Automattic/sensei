@@ -31,7 +31,7 @@ class Sensei_Domain_Models_Factory {
 	 * @param string $klass Name of the registry class.
 	 * @param object $registry Reference to the registry class.
 	 */
-	function __construct( $klass, $registry ) {
+	public function __construct( $klass, $registry ) {
 		$this->registry = $registry;
 		$this->klass = $klass;
 	}
