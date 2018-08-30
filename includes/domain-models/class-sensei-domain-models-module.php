@@ -1,4 +1,9 @@
 <?php
+/**
+ * Module Domain Model
+ *
+ * @package Sensei\Domain Models\Model\Module
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -7,9 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Domain_Models_Module
  *
- * @package Domain_Models
+ * @package Sensei\Domain Models\Model\Module
  */
 class Sensei_Domain_Models_Module extends Sensei_Domain_Models_Model_Abstract {
+	/**
+	 * Declares module fields.
+	 *
+	 * @return array Fields
+	 */
 	public static function declare_fields() {
 		return array(
 			self::field()
@@ -32,6 +42,11 @@ class Sensei_Domain_Models_Module extends Sensei_Domain_Models_Model_Abstract {
 		);
 	}
 
+	/**
+	 * Gets the module ID.
+	 *
+	 * @return int Module ID
+	 */
 	public function get_id() {
 		return $this->id;
 	}

@@ -1,16 +1,26 @@
 <?php
+/**
+ * Course Domain Model
+ *
+ * @package Sensei\Domain Models\Model\Course
+ * @since 1.9.13
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
 /**
- * Class Sensei_Domain_Models_Course
+ * Course domain model class.
  *
- * @package Domain_Models
+ * @since 1.9.13
  */
 class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
-
+	/**
+	 * Declares course fields.
+	 *
+	 * @return array Fields
+	 */
 	public static function declare_fields() {
 		return array(
 			self::field()
@@ -98,37 +108,59 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 		);
 	}
 
+	/**
+	 * Gets the course ID.
+	 *
+	 * @return int Course ID
+	 */
 	public function get_id() {
 		return $this->id;
 	}
 
+	/**
+	 * Gets the module IDs.
+	 *
+	 * @return array Module IDs
+	 */
 	protected function course_module_ids() {
 		$modules = Sensei()->modules->get_course_modules( absint( $this->id ) );
 		return array_map( 'absint', wp_list_pluck( $modules, 'term_id' ) );
 	}
 
 	/**
-	 * Get module order callable
+	 * Gets module order for a course.
 	 *
-	 * @return array
+	 * @return array Module order or empty array if not set.
 	 */
 	protected function module_order() {
 		$modules = Sensei()->modules->get_course_module_order( absint( $this->id ) );
 		return ( empty( $modules ) ) ? array() : array_map( 'absint', $modules );
 	}
 
+	/**
+	 * Validates the course author.
+	 *
+	 * @param int $author_id Author ID.
+	 * @return bool|WP_Error true if the author is valid, WP_Error on failure.
+	 */
 	protected function validate_author( $author_id ) {
 		$author = $this->get_author( $author_id );
 		if ( null === $author ) {
 			return new WP_Error( 'invalid-author-id', __( 'Invalid author id', 'woothemes-sensei' ) );
 		}
-		// the author should be able to create courses
+		// the author should be able to create courses.
 		if ( false === user_can( $author, 'create_courses' ) ) {
 			return new WP_Error( 'invalid-author-permissions', __( 'Invalid author permissions', 'woothemes-sensei' ) );
 		}
 		return true;
 	}
 
+	/**
+	 * Validates the course status.
+	 *
+	 * @param string $status Course status.
+	 * @return bool|WP_Error true if the status is valid, WP_Error on failure.
+	 */
 	protected function validate_status( $status ) {
 		if ( 'publish' === $status ) {
 			$author_id = $this->author;
@@ -136,7 +168,7 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 				return new WP_Error( 'missing-author-id', __( 'Cannot publish when author is missing', 'woothemes-sensei' ) );
 			}
 			$author = $this->get_author( $author_id );
-			// the author should be able to publish courses
+			// the author should be able to publish courses.
 			if ( false === user_can( $author, 'publish_courses' ) ) {
 				return new WP_Error( 'invalid-status-permissions', __( 'Author Cannot publish courses', 'woothemes-sensei' ) );
 			}
@@ -145,6 +177,12 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 		return true;
 	}
 
+	/**
+	 * Gets the author.
+	 *
+	 * @param int $author_id Author ID.
+	 * @return WP_User|false User object on success, false on failure.
+	 */
 	protected function get_author( $author_id ) {
 		return Sensei_Domain_Models_Registry::get_instance()
 			->get_data_store( 'users' )
@@ -152,8 +190,10 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 	}
 
 	/**
-	 * @param $error_data array
-	 * @return WP_Error
+	 * Generates a validation error.
+	 *
+	 * @param array $error_data List of data for error codes.
+	 * @return WP_Error Validation error.
 	 */
 	protected function validation_error( $error_data ) {
 		return new WP_Error( 'validation-error', __( 'Validation Error', 'woothemes-sensei' ), $error_data );

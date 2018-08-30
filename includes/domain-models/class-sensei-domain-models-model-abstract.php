@@ -1,24 +1,36 @@
 <?php
+/**
+ * Defines an abstract class that domain models should inherit from
+ *
+ * @package Sensei\Domain Models|Model
+ * @since 1.9.13
+ */
 
 /**
  * Class Sensei_Domain_Models_Model_Abstract
  *
- * @package Domain_Models
+ * @package Sensei\Domain Models|Model
  * @since 1.9.13
  */
 abstract class Sensei_Domain_Models_Model_Abstract {
 
 	/**
+	 * Data.
+	 *
 	 * @var array
 	 */
 	protected $data;
 
 	/**
+	 * Raw data.
+	 *
 	 * @var array|int|null|WP_Comment|WP_Post|WP_User
 	 */
 	protected $raw_data;
 
 	/**
+	 * Fields.
+	 *
 	 * @var array the model fields Sensei_Domain_Models_Field
 	 */
 	protected $fields;
@@ -26,7 +38,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Sensei_Domain_Models_Course constructor.
 	 *
-	 * @param array|int|WP_Post|WP_Comment|WP_User $data the data object. either an int id, a wp entity
+	 * @param array|int|WP_Post|WP_Comment|WP_User $data the data object. either an int id, a wp entity.
 	 * @since 1.9.13
 	 */
 	function __construct( $data = array() ) {
@@ -43,7 +55,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 
 		$post_array_keys = array_keys( $model_data );
 		foreach ( $this->fields as $key => $field_declaration ) {
-			// eager load anything that is not a meta or derived field
+			// eager load anything that is not a meta or derived field.
 			if ( false === $field_declaration->is_field() ) {
 				continue;
 			}
@@ -51,6 +63,13 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 		}
 	}
 
+	/**
+	 * Gets an entity.
+	 *
+	 * @param mixed $entity Entity ID.
+	 * @return mixed Entity.
+	 * @throws Sensei_Domain_Models_Exception If an invalid entity.
+	 */
 	protected function get_data_array_from_entity( $entity ) {
 		if ( is_numeric( $entity ) ) {
 			$data_store = $this->get_data_store();
@@ -63,13 +82,21 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	}
 
 	/**
-	 * @param string $field_name
-	 * @return mixed|null
+	 * Gets the value for a particular field.
+	 *
+	 * @param string $field_name Field name.
+	 * @return mixed|null Field value.
 	 */
 	public function __get( $field_name ) {
 		return $this->get_value_for( $field_name );
 	}
 
+	/**
+	 * Gets the value for a particular field.
+	 *
+	 * @param string $field_name Field name.
+	 * @return mixed Field value.
+	 */
 	public function get_value_for( $field_name ) {
 		if ( ! isset( $this->fields[ $field_name ] ) ) {
 			return null;
@@ -80,9 +107,10 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	}
 
 	/**
-	 * @param $field
-	 * @param $value
-	 * @return void
+	 * Sets the value for a particular field.
+	 *
+	 * @param string $field Field name.
+	 * @param mixed  $value Field value.
 	 */
 	public function set_value( $field, $value ) {
 		if ( ! isset( $this->fields[ $field ] ) ) {
@@ -95,7 +123,10 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	}
 
 	/**
-	 * @param $other WP_REST_Request
+	 * Updates field values sent by a REST API request.
+	 *
+	 * @param WP_REST_Request $request REST API request object.
+	 * @param bool            $updating true if the fields should be updated, false otherwise.
 	 * @return Sensei_Domain_Models_Model_Abstract
 	 */
 	public function merge_updates_from_request( $request, $updating = false ) {
@@ -115,10 +146,12 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 
 
 	/**
-	 * @param $field_declaration Sensei_Domain_Models_Field_Declaration
-	 * @param $post_array_keys array
-	 * @param $model_data array
-	 * @param $key string
+	 * Sets the value for a particular field.
+	 *
+	 * @param Sensei_Domain_Models_Field_Declaration $field_declaration Field declaration.
+	 * @param array                                  $post_array_keys Model data keys.
+	 * @param array                                  $model_data Model data.
+	 * @param string                                 $key Field name.
 	 */
 	protected function add_data_for_key( $field_declaration, $post_array_keys, $model_data, $key ) {
 		$map_from = $field_declaration->get_name_to_map_from();
@@ -132,7 +165,9 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	}
 
 	/**
-	 * @param Sensei_Domain_Models_Field_Declaration $field_declaration
+	 * Sets the value for a particular field if not already set.
+	 *
+	 * @param Sensei_Domain_Models_Field_Declaration $field_declaration Field declaration.
 	 */
 	protected function load_field_value_if_missing( $field_declaration ) {
 		$field_name = $field_declaration->name;
@@ -145,22 +180,35 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 				$value = call_user_func( array( $this, $map_from ) );
 				$this->set_value( $field_name, $value );
 			} else {
-				// load the default value for the field
+				// load the default value for the field.
 				$this->set_value( $field_name, $field_declaration->get_default_value() );
 			}
 		}
 	}
 
+	/**
+	 * Inserts or updates an entity.
+	 *
+	 * @return int|WP_Error Entity ID on success. Value 0 or WP_Error on failure.
+	 */
 	public function upsert() {
 		$fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field_Declaration::FIELD );
 		$meta_fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field_Declaration::META );
 		return $this->get_data_store()->upsert( $this, $fields, $meta_fields );
 	}
 
+	/**
+	 * Deletes an entity.
+	 */
 	public function delete() {
 		return $this->get_data_store()->delete( $this );
 	}
 
+	/**
+	 * Maps JSON name to field name.
+	 *
+	 * @return array Array of field mappings.
+	 */
 	public function get_data_transfer_object_field_mappings() {
 		$mappings = array();
 		foreach ( self::get_field_declarations( get_class( $this ) ) as $field_declaration ) {
@@ -172,35 +220,44 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 		return $mappings;
 	}
 
+	/**
+	 * Gets the fields to be inserted or updated.
+	 *
+	 * @param string $field_type Field type.
+	 * @return array Array of field mappings.
+	 */
 	private function map_field_types_for_upserting( $field_type ) {
 		$field_values_to_insert = array();
 		foreach ( self::get_field_declarations( get_class( $this ), $field_type ) as $field_declaration ) {
-			$what_to_map_to = $field_declaration->get_name_to_map_from();
+			$what_to_map_to = $field_declaration->get_name_to_map_from(); // Field name.
 			$field_values_to_insert[ $what_to_map_to ] = $this->get_value_for( $field_declaration->name );
 		}
 		return $field_values_to_insert;
 	}
 
 	/**
-	 * @throws Sensei_Domain_Models_Exception
-	 * @return array
+	 * Throws an exception if this function has not been overridden.
+	 *
+	 * @throws Sensei_Domain_Models_Exception If this function has not been overridden.
 	 */
 	public static function declare_fields() {
 		throw new Sensei_Domain_Models_Exception( 'override me ' . __FUNCTION__ );
 	}
 
 	/**
-	 * @return int
+	 * Throws an exception if this function has not been overridden.
+	 *
+	 * @throws Sensei_Domain_Models_Exception If this function has not been overridden.
 	 */
 	public function get_id() {
 		throw new Sensei_Domain_Models_Exception( 'override me ' . __FUNCTION__ );
 	}
 
 	/**
-	 * validates this object instance
+	 * Validates the object instance.
 	 *
-	 * @throws Sensei_Domain_Models_Exception
-	 * @return bool|WP_Error
+	 * @return bool|WP_Error true if instance is valid, WP_Error otherwise.
+	 * @throws Sensei_Domain_Models_Exception If validation failed.
 	 */
 	public function validate() {
 		$validation_errors = array();
@@ -218,8 +275,11 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	}
 
 	/**
-	 * @param $field_declaration Sensei_Domain_Models_Field_Declaration
-	 * @return bool|WP_Error
+	 * Validates the fields.
+	 *
+	 * @param Sensei_Domain_Models_Field_Declaration $field_declaration Field declaration.
+	 * @return bool|WP_Error true if field validation passed
+	 *                       WP_Error if a required field has no value
 	 */
 	protected function run_field_validations( $field_declaration ) {
 		if ( $field_declaration->is_derived_field() ) {
@@ -251,8 +311,10 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	}
 
 	/**
-	 * @param $declared_field_builders array of Sensei_Domain_Models_Field_Builder
-	 * @return array
+	 * Gets the field declarations.
+	 *
+	 * @param array $declared_field_builders Field builders.
+	 * @return array Field declarations.
 	 */
 	public static function initialize_field_map( $declared_field_builders ) {
 		$fields = array();
@@ -263,38 +325,79 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 		return $fields;
 	}
 
+	/**
+	 * Filters field declarations by type.
+	 *
+	 * @param string $klass Name of the model class.
+	 * @param mixed  $filter_by_type Type to filter on.
+	 * @return array Filtered field declarations.
+	 */
 	public static function get_field_declarations( $klass, $filter_by_type = null ) {
 		return Sensei_Domain_Models_Registry::get_instance()
 			->get_field_declarations( $klass, $filter_by_type );
 	}
 
+	/**
+	 * Gets an instance of the field declaration builder.
+	 *
+	 * @return Sensei_Domain_Models_Field_Declaration_Builder Field declaration builder instance.
+	 */
 	protected static function field() {
 		return new Sensei_Domain_Models_Field_Declaration_Builder();
 	}
 
+	/**
+	 * Sets the type of a meta field.
+	 *
+	 * @return Sensei_Domain_Models_Field_Declaration_Builder Field declaration builder instance.
+	 */
 	protected static function meta_field() {
 		return self::field()->of_type( Sensei_Domain_Models_Field_Declaration::META );
 	}
 
+	/**
+	 * Sets the type of a derived field.
+	 *
+	 * @return Sensei_Domain_Models_Field_Declaration_Builder Field declaration builder instance.
+	 */
 	protected static function derived_field() {
 		return self::field()->of_type( Sensei_Domain_Models_Field_Declaration::DERIVED );
 	}
 
+	/**
+	 * Converts a value to a boolean.
+	 *
+	 * @param mixed $value Value to convert.
+	 * @return bool Value converted to a boolean.
+	 */
 	protected function as_bool( $value ) {
 		return (bool) $value;
 	}
 
+	/**
+	 * Converts a value to a non-negative integer.
+	 *
+	 * @param mixed $value Value to convert.
+	 * @return int Value converted to an integer.
+	 */
 	protected function as_uint( $value ) {
 		return absint( $value );
 	}
 
+	/**
+	 * Converts a value to a non-negative integer, if possible.
+	 *
+	 * @param mixed $value Value to convert.
+	 * @return int|null Value converted to an integer, or null if $value is empty or not a number.
+	 */
 	protected function as_nullable_uint( $value ) {
 		return ( empty( $value ) && ! is_numeric( $value ) ) ? null : $this->as_uint( $value );
 	}
 
 	/**
-	 * @param $data
-	 * @param $field_declaration Sensei_Domain_Models_Field_Declaration
+	 * Prepares fields by converting them to the proper data type.
+	 *
+	 * @param Sensei_Domain_Models_Field_Declaration $field_declaration Field declaration.
 	 * @return mixed|null
 	 */
 	private function prepare_value( $field_declaration ) {
@@ -308,8 +411,10 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	}
 
 	/**
-	 * @return Sensei_Domain_Models_Data_Store
-	 * @throws Sensei_Domain_Models_Exception
+	 * Gets an instance of the data store.
+	 *
+	 * @return Sensei_Domain_Models_Data_Store Data Store.
+	 * @throws Sensei_Domain_Models_Exception If no data store exists.
 	 */
 	protected function get_data_store() {
 		return Sensei_Domain_Models_Registry::get_instance()->get_data_store_for_domain_model( get_class( $this ) );

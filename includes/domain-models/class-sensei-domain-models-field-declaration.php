@@ -1,4 +1,10 @@
 <?php
+/**
+ * Domain Models Field Declaration
+ *
+ * @package Sensei\Domain Models\Field
+ * @since 1.9.13
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -7,10 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Domain_Models_Field_Declaration
  *
- * @package Domain_Models
+ * @package Sensei\Domain Models\Field
  */
 class Sensei_Domain_Models_Field_Declaration {
-
 	const FIELD   = 'field';
 	const META    = 'meta_field';
 	const DERIVED = 'derived_field';
@@ -23,26 +28,103 @@ class Sensei_Domain_Models_Field_Declaration {
 	const ANY_VALUE     = 'any';
 	const ENUM          = 'enum';
 
+	/**
+	 * Function to call before getting the value.
+	 *
+	 * @var string
+	 */
 	public $before_return;
+	/**
+	 * Function to call before outputting the value.
+	 *
+	 * @var string
+	 */
 	public $before_output;
+	/**
+	 * Database field name.
+	 *
+	 * @var string
+	 */
 	public $map_from;
+	/**
+	 * Field type.
+	 *
+	 * @var string
+	 */
 	public $type;
+	/**
+	 * Field name.
+	 *
+	 * @var string
+	 */
 	public $name;
+	/**
+	 * Whether this field is the primary key field.
+	 *
+	 * @var bool
+	 */
 	public $primary;
+	/**
+	 * Whether this field is required.
+	 *
+	 * @var bool
+	 */
 	public $required;
+	/**
+	 * Supported output types.
+	 *
+	 * @var array
+	 */
 	public $supported_outputs;
+	/**
+	 * Field description.
+	 *
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * Name to use in JSON output.
+	 *
+	 * @var string
+	 */
 	public $json_name;
+	/**
+	 * Validation function names.
+	 *
+	 * @var array
+	 */
 	public $validations;
+	/**
+	 * Default value of the field.
+	 *
+	 * @var mixed
+	 */
 	private $default_value;
+	/**
+	 * Data type of the field.
+	 *
+	 * @var string
+	 */
 	private $value_type;
-
+	/**
+	 * Accepted field types.
+	 *
+	 * @var array
+	 */
 	private $accepted_field_types = array(
 		self::FIELD,
 		self::META,
 		self::DERIVED,
 	);
 
+	/**
+	 * Constructor
+	 *
+	 * @param array $args Field properties.
+	 * @throws Sensei_Domain_Models_Exception If the provided argument does not have a 'name' or
+	 *                                        'type' property, or if the 'type' is not one of the
+	 *                                        accepted types.
+	 */
 	public function __construct( $args ) {
 		if ( ! isset( $args['name'] ) ) {
 			throw new Sensei_Domain_Models_Exception( 'every field should have a name' );
@@ -64,22 +146,50 @@ class Sensei_Domain_Models_Field_Declaration {
 		$this->validations       = $this->value_or_default( $args, 'validations', array() );
 	}
 
+	/**
+	 * Gets a field property value.
+	 *
+	 * @param array  $args Field properties.
+	 * @param string $name Property name.
+	 * @param mixed  $default Default property value.
+	 * @return mixed Property value.
+	 */
 	private function value_or_default( $args, $name, $default = null ) {
 		return isset( $args[ $name ] ) ? $args[ $name ] : $default;
 	}
 
+	/**
+	 * Gets whether or not the field is a meta field.
+	 *
+	 * @return bool Whether or not the field is a meta field.
+	 */
 	public function is_meta_field() {
 		return $this->type === self::META;
 	}
 
+	/**
+	 * Gets whether the field is a derived field.
+	 *
+	 * @return bool Whether or not the field is a derived field.
+	 */
 	public function is_derived_field() {
 		return $this->type === self::DERIVED;
 	}
 
+	/**
+	 * Gets whether or not the field is a regular field.
+	 *
+	 * @return bool Whether or not the field is a regular field.
+	 */
 	public function is_field() {
 		return $this->type === self::FIELD;
 	}
 
+	/**
+	 * Gets the field name.
+	 *
+	 * @return string Field name.
+	 */
 	public function get_name_to_map_from() {
 		if ( isset( $this->map_from ) && ! empty( $this->map_from ) ) {
 			return $this->map_from;
@@ -88,6 +198,11 @@ class Sensei_Domain_Models_Field_Declaration {
 		return $this->name;
 	}
 
+	/**
+	 * Gets the default value.
+	 *
+	 * @return mixed Default value.
+	 */
 	public function get_default_value() {
 		if ( isset( $this->default_value ) && ! empty( $this->default_value ) ) {
 			return ( is_array( $this->default_value ) && is_callable( $this->default_value ) ) ? call_user_func( $this->default_value ) : $this->default_value;
@@ -112,6 +227,12 @@ class Sensei_Domain_Models_Field_Declaration {
 		return null;
 	}
 
+	/**
+	 * Gets the field value.
+	 *
+	 * @param mixed $value Field value.
+	 * @return mixed Field value casted to the proper type.
+	 */
 	public function cast_value( $value ) {
 		if ( self::INT_VALUE === $this->value_type ) {
 			return intval( $value, 10 );
@@ -128,10 +249,21 @@ class Sensei_Domain_Models_Field_Declaration {
 		return $value;
 	}
 
+	/**
+	 * Checks if the field supports a particular output type.
+	 *
+	 * @param string $type Output type.
+	 * @return bool true if the output type is supported, false otherwise.
+	 */
 	public function suppports_output_type( $type ) {
 		return in_array( $type, $this->supported_outputs, true );
 	}
 
+	/**
+	 * Gets the schema for a field.
+	 *
+	 * @return array Field schema.
+	 */
 	public function as_item_schema_property() {
 		$schema = array(
 			'description' => $this->description,

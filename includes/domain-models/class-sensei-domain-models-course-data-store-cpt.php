@@ -1,13 +1,26 @@
 <?php
+/**
+ * Course Data Store
+ *
+ * @package Sensei\Domain Models\Data Store\Course
+ * @since 1.9.13
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
+/**
+ * Course data store class.
+ *
+ * @since 1.9.13
+ */
 class Sensei_Domain_Models_Course_Data_Store_Cpt implements Sensei_Domain_Models_Data_Store {
 	/**
-	 * @param $course Sensei_Domain_Models_Course
-	 * @param array                              $args
+	 * Deletes a course.
+	 *
+	 * @param Sensei_Domain_Models_Course $course Course model.
+	 * @param array                       $args Course deletion arguments.
 	 */
 	public function delete( $course, $args = array() ) {
 		$id = $course->get_id();
@@ -30,19 +43,28 @@ class Sensei_Domain_Models_Course_Data_Store_Cpt implements Sensei_Domain_Models
 	}
 
 	/**
-	 * @param $entity Sensei_Domain_Models_Model_Abstract
-	 * @return mixed
+	 * Inserts or updates a course.
+	 *
+	 * @param Sensei_Domain_Models_Course $entity Course model.
+	 * @param array                       $fields Elements to update or insert.
+	 * @param array                       $meta_fields Field values to update or insert.
+	 * @return int|WP_Error Post ID on success. Value 0 or WP_Error on failure.
 	 */
 	public function upsert( $entity, $fields, $meta_fields = array() ) {
 		// $fields['meta_input'] = $meta_fields;
 		$success = wp_insert_post( $fields, true );
 		if ( is_wp_error( $success ) ) {
-			// todo: something wrong
+			// todo: something wrong.
 			return $success;
 		}
 		return absint( $success );
 	}
 
+	/**
+	 * Gets all courses.
+	 *
+	 * @return array List of courses.
+	 */
 	public function get_entities() {
 		$query = new WP_Query(
 			array(
@@ -53,11 +75,24 @@ class Sensei_Domain_Models_Course_Data_Store_Cpt implements Sensei_Domain_Models
 		return $query->get_posts();
 	}
 
+	/**
+	 * Gets a course.
+	 *
+	 * @param int|string $course_id Course ID.
+	 * @return array|null Course as array on success, null otherwise.
+	 */
 	public function get_entity( $course_id ) {
 		$course = get_post( absint( $course_id ) );
 		return ! empty( $course ) && $course->post_type === 'course' ? $course->to_array() : null;
 	}
 
+	/**
+	 * Gets a meta data field for a course.
+	 *
+	 * @param Sensei_Domain_Models_Course            $course Course model.
+	 * @param Sensei_Domain_Models_Field_Declaration $field_declaration Course field declaration.
+	 * @return mixed Value of meta data field.
+	 */
 	public function get_meta_field_value( $course, $field_declaration ) {
 		$map_from = $field_declaration->get_name_to_map_from();
 		return get_post_meta( $course->get_id(), $map_from, true );

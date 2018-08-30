@@ -1,17 +1,46 @@
 <?php
+/**
+ * Domain Models Registry
+ *
+ * @package Sensei\Domain Models\Registry
+ * @since 1.9.13
+ */
 
-
+/**
+ * Domain Models Registry.
+ *
+ * Central storage for frequently used objects.
+ *
+ * @since 1.9.13
+ */
 class Sensei_Domain_Models_Registry {
-
+	/**
+	 * Registry class instance.
+	 *
+	 * @var Sensei_Domain_Models_Registry
+	 */
 	private static $instance = null;
+	/**
+	 * Data stores for the domain models.
+	 *
+	 * @var array
+	 */
 	protected $data_stores;
 
+	/**
+	 * Constructor
+	 */
 	private function __construct() {
 		$this->field_declarations_by_model = array();
 		$this->factories = array();
 		$this->data_stores = array();
 	}
 
+	/**
+	 * Gets an instance of the registry.
+	 *
+	 * @return Sensei_Domain_Models_Registry Registry.
+	 */
 	public static function get_instance() {
 		if ( empty( self::$instance ) ) {
 			self::$instance = new self();
@@ -19,6 +48,12 @@ class Sensei_Domain_Models_Registry {
 		return self::$instance;
 	}
 
+	/**
+	 * Gets all domain model factories.
+	 *
+	 * @param string $klass Name of the domain model class.
+	 * @return array Domain model factories.
+	 */
 	public function get_factory( $klass ) {
 		$klass = is_string( $klass ) ? $klass : get_class( $klass );
 		$this->get_field_declarations( $klass );
@@ -30,8 +65,11 @@ class Sensei_Domain_Models_Registry {
 	}
 
 	/**
-	 * @param $request
-	 * @return Sensei_Domain_Models_Course
+	 * Creates a domain model from a request.
+	 *
+	 * @param string $klass Name of the domain model class.
+	 * @param array  $request Request.
+	 * @return Sensei_Domain_Models_Model_Abstract Domain model.
 	 */
 	public function new_from_request( $klass, $request ) {
 		$fields = $this->get_field_declarations( $klass );
@@ -47,6 +85,12 @@ class Sensei_Domain_Models_Registry {
 		return $this->create_object( $klass, $field_data );
 	}
 
+	/**
+	 * Creates a domain model for each entity.
+	 *
+	 * @param string $klass Name of the domain model class.
+	 * @return Sensei_Domain_Models_Model_Collection Domain model collection.
+	 */
 	public function all( $klass ) {
 		$results = array();
 		foreach ( $this->get_entities( $klass ) as $entity ) {
@@ -55,28 +99,44 @@ class Sensei_Domain_Models_Registry {
 		return new Sensei_Domain_Models_Model_Collection( $results );
 	}
 
+	/**
+	 * Finds an entity and creates a domain model for it.
+	 *
+	 * @param string     $klass Name of the domain model class.
+	 * @param int|string $id Entity ID.
+	 * @return Sensei_Domain_Models_Model_Abstract|null Domain model object on success, null otherwise.
+	 */
 	public function find_one_by_id( $klass, $id ) {
 		$entity = $this->get_entity( $klass, $id );
 		return ! empty( $entity ) ? $this->create_object( $klass, $entity ) : null;
 	}
 
 	/**
-	 * @param $id unique id
-	 * @throws Sensei_Domain_Models_Exception
-	 * return object|null
+	 * Gets an entity of a particular domain model.
+	 *
+	 * @param string     $klass Name of the domain model class.
+	 * @param int|string $id Entity ID.
+	 * @return mixed Entity.
 	 */
 	public function get_entity( $klass, $id ) {
 		return $this->call_fn( $klass, 'get_entity', $id );
 	}
 
 	/**
-	 * @throws Sensei_Domain_Models_Exception
-	 * @return array
+	 * Gets all entities of a particular domain model.
+	 *
+	 * @param string $klass Name of the domain model class.
+	 * @return array List of entities.
 	 */
 	public function get_entities( $klass ) {
 		return $this->call_fn( $klass, 'get_entities' );
 	}
 
+	/**
+	 * Executes the callback function in a domain model class.
+	 *
+	 * @return mixed
+	 */
 	private function call_fn() {
 		$args = func_get_args();
 		$klass = array_shift( $args );
@@ -84,11 +144,25 @@ class Sensei_Domain_Models_Registry {
 		return call_user_func_array( array( $this->get_domain_model_class( $klass ), $fn_name ), $args );
 	}
 
+	/**
+	 * Creates a domain model from an entity.
+	 *
+	 * @param string                                    $klass Name of the domain model class.
+	 * @param Sensei_Domain_Models_Model_Abstract|array $entity Entity.
+	 * @return Sensei_Domain_Models_Model_Abstract Domain model.
+	 */
 	public function create_object( $klass, $entity ) {
 		$klass = $this->get_domain_model_class( $klass );
 		return new $klass( $entity );
 	}
 
+	/**
+	 * Gets the domain model class name.
+	 *
+	 * @param string $thing Name of the domain model class.
+	 * @return string Domain model class name.
+	 * @throws Sensei_Domain_Models_Exception If the domain model has not been registered.
+	 */
 	private function get_domain_model_class( $thing ) {
 		$thing = $this->ensure_class_string( $thing );
 
@@ -100,6 +174,15 @@ class Sensei_Domain_Models_Registry {
 		return $thing;
 	}
 
+	/**
+	 * Filters field declarations by type.
+	 *
+	 * @param string $klass Name of the domain model class.
+	 * @param mixed  $filter_by_type Type to filter on.
+	 * @return array Filtered field declarations.
+	 * @throws Sensei_Domain_Models_Exception If class argument does not extend
+	 *                                        Sensei_Domain_Models_Model_Abstract.
+	 */
 	public function get_field_declarations( $klass, $filter_by_type = null ) {
 		$super = 'Sensei_Domain_Models_Model_Abstract';
 		if ( ! is_subclass_of( $klass, $super ) ) {
@@ -108,7 +191,7 @@ class Sensei_Domain_Models_Registry {
 
 		if ( ! isset( $this->field_declarations_by_model[ $klass ] ) ||
 			null === $this->field_declarations_by_model[ $klass ] ) {
-			// lazy-load model declarations when the first model if this type is constructed
+			// lazy-load model declarations when the first model if this type is constructed.
 			$fields = call_user_func( array( $klass, 'declare_fields' ) );
 			$this->field_declarations_by_model[ $klass ] = call_user_func( array( $klass, 'initialize_field_map' ), $fields );
 		}
@@ -125,18 +208,22 @@ class Sensei_Domain_Models_Registry {
 	}
 
 	/**
-	 * @param $type_class string the sensei domain model class
-	 * @param $data_store Sensei_Domain_Models_Data_Store the data store instance
-	 * @return $this
+	 * Sets the data store for a particular domain model class.
+	 *
+	 * @param string                          $type_class Name of the domain model class.
+	 * @param Sensei_Domain_Models_Data_Store $data_store Data store.
+	 * @return Sensei_Domain_Models_Registry Domain model registry.
 	 */
 	public function set_data_store_for_domain_model( $type_class, $data_store ) {
 		return $this->set_data_store( $type_class, $data_store );
 	}
 
 	/**
-	 * @param $type_class string
-	 * @return Sensei_Domain_Models_Data_Store
-	 * @throws Sensei_Domain_Models_Exception
+	 * Gets the data store for a particular domain model class.
+	 *
+	 * @param string $type_class Name of the domain model class.
+	 * @return Sensei_Domain_Models_Data_Store|null Data store if it exists, null otherwise.
+	 * @throws Sensei_Domain_Models_Exception If no data store exists..
 	 */
 	public function get_data_store_for_domain_model( $type_class ) {
 		$type_class = $this->ensure_class_string( $type_class );
@@ -147,9 +234,11 @@ class Sensei_Domain_Models_Registry {
 	}
 
 	/**
-	 * @param $name string
-	 * @param $data_store_instance Sensei_Domain_Models_Data_Store
-	 * @return $this
+	 * Sets the data store for a particular domain model class.
+	 *
+	 * @param string                          $name Name of the domain model class.
+	 * @param Sensei_Domain_Models_Data_Store $data_store_instance Data store.
+	 * @return Sensei_Domain_Models_Registry Domain model registry.
 	 */
 	public function set_data_store( $name, $data_store_instance ) {
 		$this->data_stores[ $name ] = $data_store_instance;
@@ -157,8 +246,10 @@ class Sensei_Domain_Models_Registry {
 	}
 
 	/**
-	 * @param $name
-	 * @return null|Sensei_Domain_Models_Data_Store
+	 * Gets the data store for a particular domain model class.
+	 *
+	 * @param string $name Name of the domain model class.
+	 * @return Sensei_Domain_Models_Data_Store|null Data store if it exists, null otherwise.
 	 */
 	public function get_data_store( $name ) {
 		if ( isset( $this->data_stores[ $name ] ) ) {
@@ -167,6 +258,12 @@ class Sensei_Domain_Models_Registry {
 		return null;
 	}
 
+	/**
+	 * Gets the class name.
+	 *
+	 * @param string|object $thing Class name or class instance.
+	 * @return string Class name.
+	 */
 	private function ensure_class_string( $thing ) {
 		if ( ! is_string( $thing ) ) {
 			return get_class( $thing );
