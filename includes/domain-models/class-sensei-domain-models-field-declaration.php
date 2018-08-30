@@ -164,7 +164,7 @@ class Sensei_Domain_Models_Field_Declaration {
 	 * @return bool Whether or not the field is a meta field.
 	 */
 	public function is_meta_field() {
-		return $this->type === self::META;
+		return self::META === $this->type;
 	}
 
 	/**
@@ -173,7 +173,7 @@ class Sensei_Domain_Models_Field_Declaration {
 	 * @return bool Whether or not the field is a derived field.
 	 */
 	public function is_derived_field() {
-		return $this->type === self::DERIVED;
+		return self::DERIVED === $this->type;
 	}
 
 	/**
@@ -182,7 +182,7 @@ class Sensei_Domain_Models_Field_Declaration {
 	 * @return bool Whether or not the field is a regular field.
 	 */
 	public function is_field() {
-		return $this->type === self::FIELD;
+		return self::FIELD === $this->type;
 	}
 
 	/**

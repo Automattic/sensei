@@ -83,7 +83,7 @@ class Sensei_Domain_Models_Course_Data_Store_Cpt implements Sensei_Domain_Models
 	 */
 	public function get_entity( $course_id ) {
 		$course = get_post( absint( $course_id ) );
-		return ! empty( $course ) && $course->post_type === 'course' ? $course->to_array() : null;
+		return ! empty( $course ) && 'course' === $course->post_type ? $course->to_array() : null;
 	}
 
 	/**
