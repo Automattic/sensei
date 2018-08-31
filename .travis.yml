@@ -78,3 +78,8 @@ jobs:
       script:
         - npm install
         - npx eslint --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .
+    - stage: test
+      php: 7.2
+      script:
+        - composer install
+        - ./vendor/bin/phpcs -s --sniffs=WordPress.WP.I18n,Generic.PHP.Syntax .
