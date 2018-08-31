@@ -957,6 +957,7 @@ class Sensei_Lesson {
 					} else {
 						$row_numbers = $question_counter . ' - ' . $end_number;
 					}
+					// translators: Placeholder is the question category name.
 					$row_title = sprintf( esc_html__( 'Selected from \'%1$s\' ', 'woothemes-sensei' ), $multiple_data[0] );
 
 					$html .= '<td class="table-count question-number question-count-column"><span class="number hidden">' . esc_html( $question_counter ) . '</span><span class="hidden total-number">' . esc_html( $multiple_data[1] ) . '</span><span class="row-numbers">' . esc_html( $row_numbers ) . '</span></td>';
@@ -1063,6 +1064,7 @@ class Sensei_Lesson {
 			$html .= '<div class="tab-content" id="tab-new-content">';
 
 		if ( 'quiz' == $context ) {
+			// translators: Placeholders are an opening and closing <a> tag linking to the question bank.
 			$html .= '<p><em>' . sprintf( esc_html__( 'Add a new question to this quiz - your question will also be added to the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
 		}
 
@@ -1138,6 +1140,7 @@ class Sensei_Lesson {
 
 			$html .= '<div class="tab-content hidden" id="tab-existing-content">';
 
+				// translators: Placeholders are an opening and closing <a> tag linking to the question bank.
 				$html .= '<p><em>' . sprintf( esc_html__( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
 
 				$html .= '<div id="existing-filters" class="alignleft actions">
@@ -1213,6 +1216,7 @@ class Sensei_Lesson {
 			if ( ! empty( $question_cats ) && ! is_wp_error( $question_cats ) ) {
 				$html .= '<div class="tab-content hidden" id="tab-multiple-content">';
 
+					// translators: Placeholders are an opening and closing <a> tag linking to the question categories page.
 					$html .= '<p><em>' . sprintf( esc_html__( 'Add any number of questions from a specified category. Edit your question categories %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) . '">', '</a>' ) . '</em></p>';
 
 					$html .= '<p><select id="add-multiple-question-category-options" name="multiple_category" class="chosen_select widefat question-category-select">' . "\n";
@@ -1955,12 +1959,14 @@ class Sensei_Lesson {
 			case 'lesson-course':
 				$lesson_course_id = get_post_meta( $id, '_lesson_course', true );
 				if ( 0 < absint( $lesson_course_id ) ) {
+					// translators: Placeholder is the course title.
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . sprintf( esc_attr__( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_course_id ) ) ) . '">' . get_the_title( absint( $lesson_course_id ) ) . '</a>';
 				} // End If Statement
 				break;
 			case 'lesson-prerequisite':
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true );
 				if ( 0 < absint( $lesson_prerequisite_id ) ) {
+					// translators: Placeholder is the title of the prerequisite lesson.
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . sprintf( esc_attr__( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) . '">' . get_the_title( absint( $lesson_prerequisite_id ) ) . '</a>';
 				} // End If Statement
 				break;
@@ -2088,6 +2094,7 @@ class Sensei_Lesson {
 				$post_data = array(
 					'post_content' => '',
 					'post_status' => 'publish',
+					// translators: Placeholders are the question number and the question category name.
 					'post_title' => sprintf( esc_html__( '%1$s Question(s) from %2$s', 'woothemes-sensei' ), $question_number, $cat->name ),
 					'post_type' => 'multiple_question',
 				);
@@ -3472,6 +3479,7 @@ class Sensei_Lesson {
 
 		}
 
+		// translators: Placeholder is the lesson title.
 		$heading_link_title = sprintf( esc_html__( 'Start %s', 'woothemes-sensei' ), get_the_title( $lesson_id ) );
 
 		?>
@@ -3694,6 +3702,7 @@ class Sensei_Lesson {
 						$a_element .= esc_html__( 'course', 'woothemes-sensei' );
 						$a_element .= '</a>';
 
+						// translators: Placeholder is a link to the Course.
 						$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 						Sensei()->notices->add_notice( $message, 'info' );
@@ -3706,6 +3715,7 @@ class Sensei_Lesson {
 					$a_element .= esc_html__( 'course', 'woothemes-sensei' );
 					$a_element .= '</a>';
 
+					// translators: Placeholder is a link to the Course.
 					$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
 
 					Sensei()->notices->add_notice( $message, 'alert' );
@@ -3724,6 +3734,7 @@ class Sensei_Lesson {
 											. '">' . esc_html__( 'course', 'woothemes-sensei' )
 										. '</a>';
 
+						// translators: Placeholder is a link to the Course.
 						echo sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
 
 						?>
@@ -3749,8 +3760,16 @@ class Sensei_Lesson {
 		$lesson_has_pre_requisite = $lesson_prerequisite > 0;
 		if ( ! WooThemes_Sensei_Lesson::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
 
-			$prerequisite_lesson_link  = '<a href="' . esc_url( get_permalink( $lesson_prerequisite ) ) . '" title="' . sprintf( esc_attr__( 'You must first complete: %1$s', 'woothemes-sensei' ), get_the_title( $lesson_prerequisite ) ) . '">' . get_the_title( $lesson_prerequisite ) . '</a>';
-			Sensei()->notices->add_notice( sprintf( esc_html__( 'You must first complete %1$s before viewing this Lesson', 'woothemes-sensei' ), $prerequisite_lesson_link ), 'info' );
+			$prerequisite_lesson_link  = '<a href="'
+				. esc_url( get_permalink( $lesson_prerequisite ) )
+				. '" title="'
+				// translators: Placeholder is the lesson prerequisite title.
+				. sprintf( esc_attr__( 'You must first complete: %1$s', 'woothemes-sensei' ), get_the_title( $lesson_prerequisite ) )
+				. '">'
+				. get_the_title( $lesson_prerequisite )
+				. '</a>';
+			// translators: Placeholder is the link to the prerequisite lesson.
+			Sensei()->notices->add_notice( sprintf( esc_html__( 'You must first complete %1$s before viewing this Lesson', 'woothemes-sensei' ), $prerequisite_lesson_link ), 'info');
 
 		}
 

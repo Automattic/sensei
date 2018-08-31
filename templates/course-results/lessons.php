@@ -71,7 +71,10 @@ global $course;
                     <h2>
 
                         <a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>"
-                           title="<?php echo esc_attr_e( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) ); ?>">
+                           title="<?php
+							// translators: Placeholder is the lesson title.
+							echo esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) );
+						?> ">
 
                             <?php echo esc_html( $lesson->post_title ); ?>
 
@@ -128,9 +131,15 @@ global $course;
 
                 <h2>
 
-                    <a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ) ?>" title="<?php esc_attr_e( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) ) ?>" >
+                    <a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ) ?>" title="<?php
+						// translators: Placeholder it the lesson title.
+						esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) )
+					?>" >
 
-                        <?php esc_html_e( sprintf( __( '%s', 'woothemes-sensei' ), $lesson->post_title ) ); ?>
+						<?php
+						// translators: Placeholder is the lesson title.
+						esc_html( $lesson->post_title );
+						?>
 
                     </a>
 

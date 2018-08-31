@@ -516,7 +516,14 @@ class Sensei_Course {
 				$html .= '<p>'."\n";
 
 					$html .= $post_item->post_title."\n";
-					$html .= '<a href="' . esc_url( get_edit_post_link( $post_item->ID ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $post_item->post_title ) ) . '" class="edit-lesson-action">' . __( 'Edit this lesson', 'woothemes-sensei' ) . '</a>';
+				$html .= '<a href="'
+					. esc_url( get_edit_post_link( $post_item->ID ) )
+					. '" title="'
+					// translators: Placeholder is the Lesson title.
+					. esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $post_item->post_title ) )
+					. '" class="edit-lesson-action">'
+					. __( 'Edit this lesson', 'woothemes-sensei' )
+					. '</a>';
 
 				$html .= '</p>'."\n";
 
@@ -611,7 +618,16 @@ class Sensei_Course {
 
 			case 'course-prerequisite':
 				$course_prerequisite_id = get_post_meta( $id, '_course_prerequisite', true);
-				if ( 0 < absint( $course_prerequisite_id ) ) { echo '<a href="' . esc_url( get_edit_post_link( absint( $course_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_prerequisite_id ) ) ) ) . '">' . get_the_title( absint( $course_prerequisite_id ) ) . '</a>'; }
+				if ( 0 < absint( $course_prerequisite_id ) ) {
+					echo '<a href="'
+						. esc_url( get_edit_post_link( absint( $course_prerequisite_id ) ) )
+						. '" title="'
+						// translators: Placeholder is the title of the course prerequisite.
+						. esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_prerequisite_id ) ) ) )
+						. '">'
+						. get_the_title( absint( $course_prerequisite_id ) )
+						. '</a>';
+				}
 
 			break;
 
@@ -632,7 +648,14 @@ class Sensei_Course {
 						} else {
 							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
 						} // End If Statement
-						echo '<a href="' . esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $product_name ) ) . '">' . $product_name . '</a>';
+						echo '<a href="'
+							. esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) )
+							. '" title="'
+							// translators: Placeholder is the product name.
+							. esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $product_name ) )
+							. '">'
+							. $product_name
+							. '</a>';
 					} // End If Statement
 				} // End If Statement
 			break;
@@ -1381,9 +1404,14 @@ class Sensei_Course {
 				// Course Categories
 				if ( '' != $category_output ) {
 
-					$active_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';
+					$active_html .= '<span class="course-category">'
+						// translators: Placeholder is a comma-separated list of the Course categories.
+						. sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output )
+						. '</span>';
 
 				} // End If Statement
+
+				// translators: Placeholders are the counts for lessons completed and total lessons, respectively.
 				$active_html .= '<span class="course-lesson-progress">' . sprintf( __( '%1$d of %2$d lessons completed', 'woothemes-sensei' ) , $lessons_completed, $lesson_count  ) . '</span>';
 
 				$active_html .= '</p>';
@@ -1520,6 +1548,7 @@ class Sensei_Course {
 							// Course Categories
 							if ( '' != $category_output ) {
 
+								// translators: Placeholder is comma-separated list of course categories.
 								$complete_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';
 
 							} // End If Statement
@@ -1769,6 +1798,7 @@ class Sensei_Course {
 		$completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
 		$total_lessons = count( $this->course_lessons( $course_id ) );
 
+		// translators: Placeholders are the counts for lessons completed and total lessons, respectively.
 		$statement = sprintf( _n('Currently completed %1$s lesson of %2$s in total', 'Currently completed %1$s lessons of %2$s in total', $completed, 'woothemes-sensei'), $completed, $total_lessons );
 
 		/**
@@ -2047,7 +2077,10 @@ class Sensei_Course {
 				<a href="<?php echo get_permalink(); ?>">
 					<?php _e( 'Preview this course', 'woothemes-sensei' ) ?>
 				</a>
-				- <?php echo sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ) ; ?>
+				- <?php
+					// translators: Placeholder is the number of preview lessons.
+					echo sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ) ;
+				?>
 			</p>
 
 		<?php
@@ -2081,7 +2114,12 @@ class Sensei_Course {
 
 	   <?php if ( '' != $category_output ) { ?>
 
-			<span class="course-category"><?php echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ); ?></span>
+			<span class="course-category">
+				<?php
+				// translators: Placeholder is a comma-separated list of the course categories.
+				echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output );
+				?>
+</span>
 
 		<?php } // End If Statement
 
@@ -2091,6 +2129,7 @@ class Sensei_Course {
 
 			$completed = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
 			$lesson_count = count( $this->course_lessons( $course->ID ) );
+			// translators: Placeholders are the number of lessons completed and the total number of lessons, respectively.
 			echo '<span class="course-lesson-progress">' . sprintf( __( '%1$d of %2$d lessons completed', 'woothemes-sensei' ) , $completed, $lesson_count  ) . '</span>';
 
 		}
@@ -2560,6 +2599,7 @@ class Sensei_Course {
 			$taxonomy_obj = $wp_query->get_queried_object();
 			$taxonomy_short_name = $taxonomy_obj->taxonomy;
 			$taxonomy_raw_obj = get_taxonomy( $taxonomy_short_name );
+			// translators: Placeholders are the taxonomy name and the term name, respectively.
 			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes-sensei' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
 			echo apply_filters( 'course_category_archive_title', $before_html . $title . $after_html );
 			return;
@@ -2896,6 +2936,7 @@ class Sensei_Course {
 			if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) ) {
 
 				$login_link =  '<a href="' . sensei_user_login_url() . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
+				// translators: Placeholder is a link to log in.
 				$message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
 				Sensei()->notices->add_notice( $message, 'info' ) ;
 				Sensei_WC::the_add_to_cart_button_html( $post->ID );
@@ -2908,6 +2949,7 @@ class Sensei_Course {
 					$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
 					$anchor_after = '</a>';
 					$notice = sprintf(
+						// translators: Placeholders are an opening and closing <a> tag linking to the login URL.
 						__('or %1$slog in%2$s to view this course.', 'woothemes-sensei'),
 						$anchor_before,
 						$anchor_after

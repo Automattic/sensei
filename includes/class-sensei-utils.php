@@ -164,6 +164,7 @@ class Sensei_Utils {
 		}
 		// Check for legacy code
 		if ( isset($args['type']) && in_array($args['type'], array('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_quiz_grade', 'sense_answer_notes') ) ) {
+			// translators: Placeholder is the name of a deprecated Sensei activity type.
 			_deprecated_argument( __FUNCTION__, '1.7', sprintf( __('Sensei activity type %s is no longer used.', 'woothemes-sensei'), $args['type'] ) );
 			return false;
 		}
@@ -1195,10 +1196,12 @@ class Sensei_Utils {
 				if( $user_grade >= $passmark ) {
 					$status = 'passed';
 					$box_class = 'tick';
+					// translators: Placeholder is the user's grade.
 					$message = sprintf( __( 'You have passed this course with a grade of %1$d%%.', 'woothemes-sensei' ), $user_grade );
 				} else {
 					$status = 'failed';
 					$box_class = 'alert';
+					// translators: Placeholders are the required grade and the actual grade, respectively.
 					$message = sprintf( __( 'You require %1$d%% to pass this course. Your grade is %2$s%%.', 'woothemes-sensei' ), $passmark, $user_grade );
 				}
 			}
@@ -1270,9 +1273,9 @@ class Sensei_Utils {
 			$has_quiz_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 
 			if ( ! $started_course ) {
-
-				$status = 'not_started_course';
+$status = 'not_started_course';
 				$box_class = 'info';
+				// translators: Placeholders are an opening and closing <a> tag linking to the course permalink.
 				$message = sprintf( __( 'Please sign up for %1$sthe course%2$s before taking this quiz', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">', '</a>' );
 
 			} elseif ( ! is_user_logged_in() ) {
@@ -1298,8 +1301,10 @@ class Sensei_Utils {
 				// Lesson status will be "passed" (passmark reached)
 				elseif ( ! empty( $quiz_grade ) && abs( $quiz_grade ) >= 0 ) {
 					if( $is_lesson ) {
+						// translators: Placeholder is the quiz grade.
 						$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %s%%', 'woothemes-sensei' ), Sensei_Utils::round( $quiz_grade ) );
 					} else {
+						// translators: Placeholder is the quiz grade.
 						$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %s%%', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_grade ) );
 					}
 				}
@@ -1322,8 +1327,10 @@ class Sensei_Utils {
 					$status = 'complete';
 					$box_class = 'info';
 					if( $is_lesson ) {
+						// translators: Placeholders are an opening and closing <a> tag linking to the quiz permalink.
 						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
 					} else {
+						// translators: Placeholder is the quiz passmark.
 						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ) );
 					}
 				}
@@ -1332,8 +1339,10 @@ class Sensei_Utils {
 					$status = 'failed';
 					$box_class = 'alert';
 					if( $is_lesson ) {
+						// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
 						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ),  Sensei_Utils::round( $quiz_grade ) );
 					} else {
+						// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
 						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ),  Sensei_Utils::round( $quiz_grade ) );
 					}
 				}
@@ -1345,8 +1354,10 @@ class Sensei_Utils {
 					if( ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, get_current_user_id() ) ) {
 						$message = '';
 					}  else if( $is_lesson ) {
+						// translators: Placeholder is the quiz passmark.
 						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ) );
 					} else {
+						// translators: Placeholder is the quiz passmark.
 						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'woothemes-sensei' ),  Sensei_Utils::round( $quiz_passmark ) );
 					}
 				}
@@ -1361,10 +1372,12 @@ class Sensei_Utils {
 
 			if ( Sensei_WC::is_course_purchasable( $course_id ) ){
 
+				// translators: Placeholder is a link to the course permalink.
 				$message = sprintf( __( 'Please purchase the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
 
 			} else {
 
+				// translators: Placeholder is a link to the course permalink.
 				$message = sprintf( __( 'Please sign up for the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
 
 			}

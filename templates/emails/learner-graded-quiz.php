@@ -23,7 +23,12 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 
 <?php do_action( 'sensei_before_email_content', $template ); ?>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php printf( __( 'You %1$s the lesson', 'woothemes-sensei' ), $passed ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>">
+<?php
+// translators: Placeholder is the translated text for "passed" or "failed".
+printf( __( 'You %1$s the lesson', 'woothemes-sensei' ), $passed );
+?>
+</p>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo get_the_title( $lesson_id ); ?></h2>
 
@@ -31,10 +36,20 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo $grade . '%'; ?></h2>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php printf( __( 'The pass mark is %1$s', 'woothemes-sensei' ), $passmark . '%' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>">
+<?php
+// translators: Placeholder is the passmark as a percentage.
+printf( __( 'The pass mark is %1$s', 'woothemes-sensei' ), $passmark . '%' );
+?>
+</p>
 
 <hr/>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php printf( __( 'You can review your grade and your answers %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . get_permalink( $quiz_id ) . '">', '</a>' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>">
+<?php
+// translators: Placeholders are an opening and closing <a> tag linking to the quiz permalink.
+printf( __( 'You can review your grade and your answers %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . get_permalink( $quiz_id ) . '">', '</a>' );
+?>
+</p>
 
 <?php do_action( 'sensei_after_email_content', $template ); ?>
