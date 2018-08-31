@@ -173,7 +173,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['access_permission'] = array(
 								'name' => __( 'Access Permissions', 'woothemes-sensei' ),
-								'description' => __( 'Users must be logged in to view Course and Lesson content.', 'woothemes-sensei' ),
+								'description' => __( 'Users must be logged in to view Course and Lesson content.', 'woothemes-sensei', 'woothemes-sensei' ),
 								'type' => 'checkbox',
 								'default' => true,
 								'section' => 'default-settings'
@@ -313,7 +313,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['course_archive_image_hard_crop'] = array(
 								'name' => __( 'Image Hard Crop - Archive', 'woothemes-sensei' ),
-								// translators: Placeholders are an opening and closing <a> tag linking to the documentation page.
 								'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
 								'type' => 'checkbox',
 								'default' => false,
@@ -348,7 +347,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['course_single_image_hard_crop'] = array(
 								'name' => __( 'Image Hard Crop - Single', 'woothemes-sensei' ),
-								// translators: Placeholders are an opening and closing <a> tag linking to the documentation page.
 								'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
 								'type' => 'checkbox',
 								'default' => false,
@@ -418,7 +416,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['lesson_archive_image_hard_crop'] = array(
 								'name' => __( 'Image Hard Crop - Course Lessons', 'woothemes-sensei' ),
-								// translators: Placeholders are an opening and closing <a> tag linking to the documentation page.
 								'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
 								'type' => 'checkbox',
 								'default' => false,
@@ -453,7 +450,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['lesson_single_image_hard_crop'] = array(
 								'name' => __( 'Image Hard Crop - Single', 'woothemes-sensei' ),
-								// translators: Placeholders are an opening and closing <a> tag linking to the documentation page.
 								'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
 								'type' => 'checkbox',
 								'default' => false,
@@ -467,7 +463,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['learner_profile_enable'] = array(
 							'name' => __( 'Public learner profiles', 'woothemes-sensei' ),
-							// translators: Placeholder is a profile URL example.
 							'description' => sprintf( __( 'Enable public learner profiles that will be accessible to everyone. Profile URL format: %s', 'woothemes-sensei' ), $profile_url_example ),
 							'type' => 'checkbox',
 							'default' => true,
@@ -548,7 +543,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['email_header_image'] = array(
 								'name' => __( 'Header Image', 'woothemes-sensei' ),
-								// translators: Placeholders are opening and closing <a> tags linking to the media uploader.
 								'description' => sprintf( __( 'Enter a URL to an image you want to show in the email\'s header. Upload your image using the %1$smedia uploader%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'media-new.php' ) . '">', '</a>' ),
 								'type' => 'text',
 								'default' => '',
@@ -560,7 +554,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 								'name' => __( 'Email Footer Text', 'woothemes-sensei' ),
 								'description' => __( 'The text to appear in the footer of Sensei emails.', 'woothemes-sensei' ),
 								'type' => 'textarea',
-								// translators: Placeholder is the blog name.
 								'default' => sprintf( __( '%1$s - Powered by Sensei', 'woothemes-sensei' ), get_bloginfo( 'name' ) ),
 								'section' => 'email-notification-settings',
 								'required' => 0
@@ -568,7 +561,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['email_base_color'] = array(
 								'name' => __( 'Base Colour', 'woothemes-sensei' ),
-								// translators: Placeholders are opening and closing <code> tags.
 								'description' => sprintf( __( 'The base colour for Sensei email templates. Default %1$s#557da1%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
 								'type' => 'color',
 								'default' => '#557da1',
@@ -578,7 +570,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['email_background_color'] = array(
 								'name' => __( 'Background Colour', 'woothemes-sensei' ),
-								// translators: Placeholders are opening and closing <code> tags.
 								'description' => sprintf( __( 'The background colour for Sensei email templates. Default %1$s#f5f5f5%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
 								'type' => 'color',
 								'default' => '#f5f5f5',
@@ -588,7 +579,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['email_body_background_color'] = array(
 								'name' => __( 'Body Background Colour', 'woothemes-sensei' ),
-								// translators: Placeholders are opening and closing <code> tags.
 								'description' => sprintf( __( 'The main body background colour for Sensei email templates. Default %1$s#fdfdfd%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
 								'type' => 'color',
 								'default' => '#fdfdfd',
@@ -598,7 +588,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['email_text_color'] = array(
 								'name' => __( 'Body Text Colour', 'woothemes-sensei' ),
-								// translators: Placeholders are opening and closing <code> tags.
 								'description' => sprintf( __( 'The main body text colour for Sensei email templates. Default %1$s#505050%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
 								'type' => 'color',
 								'default' => '#505050',

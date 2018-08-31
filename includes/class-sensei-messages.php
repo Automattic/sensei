@@ -150,9 +150,7 @@ class Sensei_Messages {
 
 			$settings[] = array(
 				'id'          => 'post',
-				// translators: Placeholder the post type (e.g. lesson or course) to which this message relates.
 				'label'       => sprintf( __( 'Message from %1$s:', 'woothemes-sensei' ), $message_posttype ),
-				// translators: Placeholder the post type (e.g. lesson or course) to which this message relates.
 				'description' => sprintf( __( 'The %1$s to which this message relates.', 'woothemes-sensei' ), $message_posttype ),
 				'type'        => 'plain-text',
 				'default'     => $course_name,
@@ -597,10 +595,7 @@ class Sensei_Messages {
             <p class="message-meta">
                 <small>
                     <em>
-						<?php
-						// translators: Placeholders are the sender's display name and the date, respectively.
-						printf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() );
-						?>
+                        <?php printf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() ); ?>
                     </em>
                 </small>
             </p>
@@ -621,7 +616,6 @@ class Sensei_Messages {
 
         $content_post_id = get_post_meta( $post->ID, '_post', true );
         if( $content_post_id ) {
-			// translators: Placeholder is a link to post, with the post's title as the link text.
             $title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), '<a href="' . get_permalink( $content_post_id ) . '">' . get_the_title( $content_post_id ) . '</a>' );
         } else {
             $title = get_the_title( $post->ID );
@@ -687,7 +681,6 @@ class Sensei_Messages {
 
         if( $content_post_id ) {
 
-			// translators: Placeholder is the post title.
             $title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), get_the_title( $content_post_id ) );
 
         } else {
@@ -718,7 +711,6 @@ class Sensei_Messages {
         $sender = get_user_by( 'login', $sender_username );
 
         if( $sender_username && $sender instanceof WP_User ) {
-			// translators: Placeholders are the sender's display name and the date.
             $sender_display_name = sprintf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() );
             ?>
             <p class="message-meta">

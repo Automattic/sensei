@@ -483,7 +483,6 @@ class Sensei_WC {
 							  . '" title="' . __( 'complete purchase', 'woothemes-sensei' ) . '">'
 							  . __( 'complete the purchase', 'woothemes-sensei' ) . '</a>';
 
-				// translators: Placeholder is a link to the cart.
 				echo sprintf( __( 'You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei' ), $cart_link );
 
 				?>
@@ -964,7 +963,6 @@ class Sensei_WC {
 
 			$cart_link = '<a href="' . wc_get_checkout_url() . '" title="' . __( 'Checkout', 'woocommerce' ) . '">' . __( 'checkout', 'woocommerce' ) . '</a>';
 
-			// translators: Placeholder is a link to the cart.
 			$message = sprintf( __( 'This course is already in your cart, please proceed to %1$s, to gain access.', 'woothemes-sensei' ), $cart_link );
 			?>
 			<span class="add-to-cart-login">
@@ -985,7 +983,6 @@ class Sensei_WC {
 			<?php
 
 		} else {
-			// translators: Placeholder is a link to log in.
 			$message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
 			?>
 				<span class="add-to-cart-login">
@@ -1197,7 +1194,6 @@ class Sensei_WC {
 							$title = $course->post_title;
 							$permalink = get_permalink( $course->ID );
 							$order_contains_courses = true;
-							// translators: Placeholder is a link to the course.
 							$course_details_html .= '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
 						}
 					}

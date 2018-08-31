@@ -33,11 +33,6 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 
 <hr/>
 
-<p style="<?php echo esc_attr( $small ); ?>">
-<?php
-// translators: Placeholders are an opening and closing <a> tag linking to the course's learners page in wp-admin.
-printf( __( 'Manage this course\'s learners %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) . '">', '</a>' );
-?>
-</p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php printf( __( 'Manage this course\'s learners %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) . '">', '</a>' ); ?></p>
 
 <?php do_action( 'sensei_after_email_content', $template ); ?>

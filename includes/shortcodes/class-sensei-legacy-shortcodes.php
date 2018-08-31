@@ -363,12 +363,7 @@ class Sensei_Legacy_Shortcodes {
                                 </span>
 
                         <?php if ( '' != $category_output ) { ?>
-                            <span class="course-category">
-								<?php
-								// translators: Placeholder is a comma-separated list of categories.
-								echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output );
-								?>
-							</span>
+                            <span class="course-category"><?php echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ); ?></span>
                         <?php } // End If Statement ?>
 
                         <?php sensei_simple_course_price( $course_id ); ?>
@@ -380,7 +375,6 @@ class Sensei_Legacy_Shortcodes {
                     </p>
 
                     <?php if ( 0 < $preview_lesson_count && !$is_user_taking_course ) {
-						// translators: Placeholder is the number of preview lessons.
                         $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ); ?>
                         <p class="sensei-free-lessons">
                             <a href="<?php echo get_permalink( $course_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?>

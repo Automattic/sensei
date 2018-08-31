@@ -264,7 +264,6 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				}
 
                 $title = Sensei_Learner::get_full_name( $user_activity->user_id );
-				// translators: Placeholder is the full name of the learner.
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
 
@@ -285,7 +284,6 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						'title' => '<strong><a class="row-title" href="' . admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) . '" title="' . esc_attr( $a_title ) . '">' . $title . '</a></strong>',
 						'date_started' => get_comment_meta( $user_activity->comment_ID, 'start', true),
 						'user_status' => $status_html,
-						// translators: Placeholder is the "object type"; lesson or course.
 						'actions' => '<a class="remove-learner button" data-user_id="' . $user_activity->user_id . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Remove from %1$s', 'woothemes-sensei' ), $object_type ) . '</a>'
 							. '<a class="reset-learner button" data-user_id="' . $user_activity->user_id . '" data-post_id="' . $post_id . '" data-post_type="' . $post_type . '">' . sprintf( __( 'Reset progress', 'woothemes-sensei' ), $object_type ) . '</a>'
 					. $edit_start_date_form,
@@ -296,7 +294,6 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			case 'lessons' :
 				$lesson_learners = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_lesson_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
-				// translators: Placeholder is the item title.
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
 				$grading_action = '';
@@ -316,7 +313,6 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			default:
                 $course_learners = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_course_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
-				// translators: Placeholder is the item title.
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
 
 				$grading_action = '';
@@ -567,7 +563,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			$menu['learners'] = '<a class="' . $learners_class . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Learners', 'woothemes-sensei' ) . '</a>';
 			$menu['lessons'] = '<a class="' . $lessons_class . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Lessons', 'woothemes-sensei' ) . '</a>';
 
-		}
+		} 
 		// Have Course and Lesson
 		elseif( $this->course_id && $this->lesson_id ) {
 
@@ -579,12 +575,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			$course = get_the_title( $this->course_id );
 
-			$menu['back'] = '<a href="'
-				. esc_url( add_query_arg( $query_args, admin_url( 'admin.php' ) ) )
-				. '">'
-				// translators: Placeholders %1$s and %3$s are the opening and closing <em> tags, %2$s is the Course title.
-				. sprintf( __( '%1$sBack to %2$s%3$s', 'woothemes-sensei' ), '<em>&larr; ', $course, '</em>' )
-				. '</a>';
+			$menu['back'] = '<a href="' . esc_url( add_query_arg( $query_args, admin_url( 'admin.php' ) ) ) . '">' . sprintf( __( '%1$sBack to %2$s%3$s', 'woothemes-sensei' ), '<em>&larr; ', $course, '</em>' ) . '</a>';
 		}
 		$menu = apply_filters( 'sensei_learners_sub_menu', $menu );
 		if ( !empty($menu) ) {
@@ -637,16 +628,11 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		}
 		?>
 		<div class="postbox">
-			<h3><span>
-				<?php
-				// translators: Placeholder is the post type.
-				printf( __( 'Add Learner to %1$s', 'woothemes-sensei' ), $post_type );
-				?>
-			</span></h3>
+			<h3><span><?php printf( __( 'Add Learner to %1$s', 'woothemes-sensei' ), $post_type ); ?></span></h3>
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
-						<select name="add_user_id" id="add_learner_search" multiple="multiple" style="min-width:300px;">
+						<select name="add_user_id" id="add_learner_search" multiple="multiple" style="min-width:300px;>
 							<option value="0" selected="selected"><?php _e( 'Find learner', 'woothemes-sensei' ) ;?></option>
 						</select>
 						<?php if( 'lesson' == $form_post_type ) { ?>
@@ -657,19 +643,9 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						<br/>
 						<span class="description"><?php _e( 'Search for a user by typing their name or username.', 'woothemes-sensei' ); ?></span>
 					</p>
-					<p>
-						<?php
-						// translators: Placeholder is the post title.
-						submit_button( sprintf( __( 'Add to \'%1$s\'', 'woothemes-sensei' ), $post_title ), 'primary', 'add_learner_submit', false, array() );
-						?>
-					</p>
+					<p><?php submit_button( sprintf( __( 'Add to \'%1$s\'', 'woothemes-sensei' ), $post_title ), 'primary', 'add_learner_submit', false, array() ); ?></p>
 					<?php if( 'lesson' == $form_post_type ) { ?>
-						<p><span class="description">
-							<?php
-							// translators: Placeholder is the course title.
-							printf( __( 'Learner will also be added to the course \'%1$s\' if they are not already taking it.', 'woothemes-sensei' ), $course_title );
-							?>
-						</span></p>
+						<p><span class="description"><?php printf( __( 'Learner will also be added to the course \'%1$s\' if they are not already taking it.', 'woothemes-sensei' ), $course_title ); ?></span></p>
 					<?php } ?>
 
 					<input type="hidden" name="add_post_type" value="<?php echo $form_post_type; ?>" />

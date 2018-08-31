@@ -634,27 +634,19 @@ class Sensei_PostTypes {
 		$lower_case_plural =  function_exists( 'mb_strtolower' ) ? mb_strtolower( $plural, 'UTF-8') :  strtolower( $plural );
 
 		$labels = array(
-		    'name' => $plural,
-		    'singular_name' => $singular,
+		    'name' => sprintf( _x( '%s', 'post type general name', 'woothemes-sensei' ), $plural ),
+		    'singular_name' => sprintf( _x( '%s', 'post type singular name', 'woothemes-sensei' ), $singular ),
 		    'add_new' => __( 'Add New', 'woothemes-sensei' ),
-			// translators: Placeholder is the singular post type label.
 		    'add_new_item' => sprintf( __( 'Add New %s', 'woothemes-sensei' ), $singular ),
-			// translators: Placeholder is the singular post type label.
 		    'edit_item' => sprintf( __( 'Edit %s', 'woothemes-sensei' ), $singular ),
-			// translators: Placeholder is the singular post type label.
 		    'new_item' => sprintf( __( 'New %s', 'woothemes-sensei' ), $singular ),
-			// translators: Placeholder is the plural post type label.
 		    'all_items' => sprintf( __( 'All %s', 'woothemes-sensei' ), $plural ),
-			// translators: Placeholder is the singular post type label.
 		    'view_item' => sprintf( __( 'View %s', 'woothemes-sensei' ), $singular ),
-			// translators: Placeholder is the plural post type label.
 		    'search_items' => sprintf( __( 'Search %s', 'woothemes-sensei' ), $plural ),
-			// translators: Placeholder is the lower-case plural post type label.
 		    'not_found' =>  sprintf( __( 'No %s found', 'woothemes-sensei' ), $lower_case_plural ) ,
-			// translators: Placeholder is the lower-case plural post type label.
 		    'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'woothemes-sensei' ),  $lower_case_plural ),
 		    'parent_item_colon' => '',
-		    'menu_name' => $menu,
+		    'menu_name' => sprintf( __( '%s', 'woothemes-sensei' ), $menu )
 		  );
 
 		return $labels;
@@ -691,30 +683,15 @@ class Sensei_PostTypes {
 
 		$messages = array(
 			0 => '',
-			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
 			1 => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			2 => __( 'Custom field updated.' , 'woothemes-sensei' ),
 			3 => __( 'Custom field deleted.' , 'woothemes-sensei' ),
-			// translators: Placeholder is the singular label for the post type.
 			4 => sprintf( __( '%1$s updated.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'] ),
-			// translators: Placeholders are the singular label for the post type and the post's revision, respectively.
 			5 => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
 			6 => sprintf( __( '%1$s published. %2$sView %1$s%3$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-			// translators: Placeholder is the singular label for the post type.
 			7 => sprintf( __( '%1$s saved.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'] ),
-			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
 			8 => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
-			/*
- 			 * translators: Placeholders are as follows (in order):
- 			 *
- 			 * - The singular label for the post type.
- 			 * - The formatted post date.
- 			 * - The opening tag for the post's permalink.
- 			 * - The closing tag for the post's permalink.
- 			 */
 			9 => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i' , 'woothemes-sensei' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $this->labels[$post_type]['singular'], '</a>' ),
- 			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
 			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.' , 'woothemes-sensei' ), $this->labels[$post_type]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $this->labels[$post_type]['singular'], '</a>' ),
 		);
 

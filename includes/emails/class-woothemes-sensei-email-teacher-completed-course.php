@@ -55,10 +55,9 @@ class WooThemes_Sensei_Email_Teacher_Completed_Course {
 
 		// Set recipient (learner)
 		$this->recipient = stripslashes( $this->teacher->user_email );
-
+		
 		do_action('sensei_before_mail', $this->recipient);
-
-		// translators: Placeholder is the blog name.
+		
 		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has completed a course', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
 		$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has completed a course', 'woothemes-sensei' ), $this->template );
 

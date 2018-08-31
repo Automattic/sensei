@@ -27,12 +27,7 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo $learner_name; ?></h2>
 
-<p style="<?php echo esc_attr( $small ); ?>">
-<?php
-// translators: Placeholder is the post type (e.g. course or lesson).
-printf( __( 'has sent you a private message regarding the %1$s', 'woothemes-sensei' ), $content_type );
-?>
-</p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php printf( __( 'has sent you a private message regarding the %1$s', 'woothemes-sensei' ), $content_type ); ?></p>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo $content_title; ?></h2>
 
@@ -42,11 +37,6 @@ printf( __( 'has sent you a private message regarding the %1$s', 'woothemes-sens
 
 <hr/>
 
-<p style="<?php echo esc_attr( $small ); ?>">
-<?php
-// translators: Placeholders are an opening and closing <a> tag linking to the Message permalink.
-printf( __( 'You can reply to this message %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . get_permalink( $message_id ) . '">', '</a>' );
-?>
-</p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php printf( __( 'You can reply to this message %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . get_permalink( $message_id ) . '">', '</a>' ); ?></p>
 
 <?php do_action( 'sensei_after_email_content', $template ); ?>

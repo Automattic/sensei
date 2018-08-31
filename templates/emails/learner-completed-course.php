@@ -23,12 +23,7 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 
 <?php do_action( 'sensei_before_email_content', $template ); ?>
 
-<p style="<?php echo esc_attr( $small ); ?>">
-<?php
-// translators: Placeholder is the translated text for "passed" or "failed".
-printf( __( 'You have completed and %1$s the course', 'woothemes-sensei' ), $passed );
-?>
-</p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php printf( __( 'You have completed and %1$s the course', 'woothemes-sensei' ), $passed ); ?></p>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo get_the_title( $course_id ); ?></h2>
 

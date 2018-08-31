@@ -271,12 +271,7 @@ class Sensei_Updates
         } else { ?>
 
             <h2><?php _e('Updates', 'woothemes-sensei'); ?></h2>
-            <p>
-				<?php
-				// translators: Placeholders are opening and closing <code> tags.
-				printf(__('These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'woothemes-sensei'), '<code>', '</code>');
-				?>
-			</p>
+            <p><?php printf(__('These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'woothemes-sensei'), '<code>', '</code>'); ?></p>
 
             <div class="updated"><p>
                     <strong><?php _e('Only run these updates if you have been instructed to do so by Support staff.', 'woothemes-sensei'); ?></strong>
@@ -323,12 +318,7 @@ class Sensei_Updates
                                             <input type="hidden" name="checked[]" value="<?php echo $update; ?>">
                                             <strong><?php echo $data['title']; ?></strong><br><?php echo $data['desc']; ?>
                                             <br>
-                                            <em>
-												<?php
-												// translators: Placeholders are the product name and the version number, respectively.
-												printf(__('Originally included in %1$s v%2$s', 'woothemes-sensei'), $product, $version);
-												?>
-											</em>
+                                            <em><?php printf(__('Originally included in %1$s v%2$s', 'woothemes-sensei'), $product, $version); ?></em>
                                         </p>
                                     </td>
                                     <?php
@@ -340,10 +330,7 @@ class Sensei_Updates
                                     <td><p><?php echo $type_label; ?></p></td>
                                     <td>
                                         <p>
-                                            <input onclick="javascript:return confirm('<?php
-												// translators: Placeholder is the title of the update.
-												echo addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'woothemes-sensei' ), $data['title'] ) );
-												?>');"
+                                            <input onclick="javascript:return confirm('<?php echo addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'woothemes-sensei' ), $data['title'] ) ); ?>');"
                                                    id="update-sensei"
                                                    class="button<?php if( ! $update_run ) { echo ' button-primary'; } ?>"
                                                    type="submit"
@@ -547,7 +534,6 @@ class Sensei_Updates
 				switch( $version ) {
 
 					case '1.7.0':
-						// translators: Placeholders are an opening and closing <a> tag linking to an informational post.
 						$update_message .= '<p><em>' . sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'woothemes-sensei' ), '<a href="http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) . '</em></p>' . "\n";
 					break;
 

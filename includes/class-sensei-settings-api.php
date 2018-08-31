@@ -794,7 +794,6 @@ class Sensei_Settings_API {
 		if ( isset( $data['error_message'] ) ) {
 			$message = $data['error_message'];
 		} else {
-			// translators: Placeholder is the field name.
 			$message = sprintf( __( '%s is a required field', 'woothemes-sensei' ), $data['name'] );
 		}
 		$this->errors[$key] = $message;
@@ -812,7 +811,6 @@ class Sensei_Settings_API {
 				add_settings_error( $this->token . '-errors', $k, $v, 'error' );
 			}
 		} else {
-			// translators: Placeholder is the name of the settings page.
 			$message = sprintf( __( '%s updated', 'woothemes-sensei' ), $this->name );
 			add_settings_error( $this->token . '-errors', $this->token, $message, 'updated' );
 		}

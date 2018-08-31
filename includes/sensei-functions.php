@@ -201,7 +201,6 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative="" , $ar
 
         if( !empty( $alternative ) ){
 
-			// translators: Placeholder is the alternative action name.
             $error_message .= sprintf( __("Please use '%s' instead.", 'woothemes-sensei'), $alternative ) ;
 
         }

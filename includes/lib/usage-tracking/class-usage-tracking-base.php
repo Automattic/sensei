@@ -8,8 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain
-
 /**
  * Usage Tracking class. Please update the prefix to something unique to your
  * plugin.
@@ -578,4 +576,3 @@ abstract class Sensei_Usage_Tracking_Base {
 <?php
 	}
 }
-// phpcs: enable
