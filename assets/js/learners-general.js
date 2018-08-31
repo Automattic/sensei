@@ -35,7 +35,8 @@ jQuery(document).ready( function( $ ) {
 			ajaxurl,
 			{
 				action : 'get_redirect_url_learners',
-				data : dataToPost
+				data : dataToPost,
+				security: window.woo_learners_general_data.course_category_nonce
 			},
 			function( response ) {
 				// Check for a response
@@ -69,8 +70,8 @@ jQuery(document).ready( function( $ ) {
 			ajaxurl,
 			{
 				action : 'edit_date_started',
-				edit_date_nonce : window.woo_learners_general_data.edit_date_nonce,
-				data : dataToPost
+				data : dataToPost,
+				security: window.woo_learners_general_data.edit_date_nonce
 			},
 			function( response ) {
 				if ( response ) {
@@ -128,8 +129,8 @@ jQuery(document).ready( function( $ ) {
 				ajaxurl,
 				{
 					action : actions[current_action].action,
-					modify_user_post_nonce : window.woo_learners_general_data.modify_user_post_nonce,
-					data : dataToPost
+					data : dataToPost,
+					security: window.woo_learners_general_data.modify_user_post_nonce
 				},
 				function( response ) {
 					if ( response ) {
