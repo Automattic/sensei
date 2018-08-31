@@ -1769,7 +1769,7 @@ class Sensei_Course {
 		$completed = count( $this->get_completed_lesson_ids( $course_id, $user_id ) );
 		$total_lessons = count( $this->course_lessons( $course_id ) );
 
-		$statement = sprintf( _n('Currently completed %s lesson of %s in total', 'Currently completed %s lessons of %s in total', $completed, 'woothemes-sensei'), $completed, $total_lessons );
+		$statement = sprintf( _n('Currently completed %1$s lesson of %2$s in total', 'Currently completed %1$s lessons of %2$s in total', $completed, 'woothemes-sensei'), $completed, $total_lessons );
 
 		/**
 		 * Filter the course completion statement.
@@ -2908,7 +2908,7 @@ class Sensei_Course {
 					$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
 					$anchor_after = '</a>';
 					$notice = sprintf(
-						__('or %slog in%s to view this course.', 'woothemes-sensei'),
+						__('or %1$slog in%2$s to view this course.', 'woothemes-sensei'),
 						$anchor_before,
 						$anchor_after
 					);
