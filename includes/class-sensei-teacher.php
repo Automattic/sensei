@@ -1571,7 +1571,10 @@ class Sensei_Teacher {
 		?>
 			<h2 class="teacher-archive-title">
 
-				<?php echo sprintf( __( 'All courses by %s', 'woothemes-sensei' ) , $author_name ); ?>
+				<?php
+				// translators: Placeholder is the author name.
+				echo sprintf( __( 'All courses by %s', 'woothemes-sensei' ) , $author_name );
+				?>
 
 			</h2>
 		<?php

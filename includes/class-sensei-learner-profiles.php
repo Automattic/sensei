@@ -68,6 +68,7 @@ class Sensei_Learner_Profiles {
 
             $name = Sensei_Learner::get_full_name( $learner_user->ID );
 
+			// translators: Placeholder is the full name of the learner.
 			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) . ' ' . $sep . ' ';
 		}
 		return $title;
@@ -98,7 +99,7 @@ class Sensei_Learner_Profiles {
 				$permalink = trailingslashit( get_home_url() ) . '?learner_profile=' . $user->user_nicename;
 			}
 		}
-		
+
         /**
          * This allows filtering of the Learner Profile permalinks.
          * @since 1.9.13
@@ -137,6 +138,7 @@ class Sensei_Learner_Profiles {
 			$name = $user->display_name;
 		}
 		$name = apply_filters( 'sensei_learner_profile_courses_heading_name', $name );
+		// translators: Placeholder is the first name or the display name of the user.
 		echo '<h2>' . apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) . '</h2>';
 	}
 

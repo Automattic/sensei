@@ -394,7 +394,12 @@ class Sensei_Admin {
 	public function language_pack_install_notice() {
 		?>
 		<div id="message" class="updated sensei-message sensei-connect">
-				<p><?php echo sprintf( __( '%1$sSensei in your language %2$s. There is a translation available for your language.', 'woothemes-sensei' ),'<strong>','</strong>' ); ?><p>
+			<p>
+				<?php
+				// translators: Placeholders are opening and closing <strong> tags.
+				echo sprintf( __( '%1$sSensei in your language %2$s. There is a translation available for your language.', 'woothemes-sensei' ),'<strong>','</strong>' );
+				?>
+			</p>
 
 				<p class="submit">
 					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php _e( 'Install', 'woothemes-sensei' ); ?></a>
@@ -509,6 +514,7 @@ class Sensei_Admin {
 	 */
 	private function duplicate_content( $post_type = 'lesson', $with_lessons = false ) {
 		if ( ! isset( $_GET['post'] ) ) {
+			// translators: Placeholder is the post type string.
 			wp_die( sprintf( __( 'Please supply a %1$s ID.', 'woothemes-sensei' ) ), $post_type );
 		}
 
