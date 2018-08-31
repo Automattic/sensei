@@ -1,46 +1,61 @@
 <?php
+/**
+ * Defines an interface that domain model data stores should implement
+ *
+ * @package Sensei\Domain Models
+ * @since 1.9.13
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 } // Exit if accessed directly
 
-/**
- * Interface Sensei_Domain_Models_Data_Store
- */
 interface Sensei_Domain_Models_Data_Store {
 
-    /**
-     * @return Sensei_Domain_Models_Model_Collection
-     */
-    public function get_entities();
+	/**
+	 * Gets all entities.
+	 *
+	 * @return Sensei_Domain_Models_Model_Collection
+	 */
+	public function get_entities();
 
 
-    /**
-     * @param $id the id of the entity
-     * @return Sensei_Domain_Models_Model_Abstract
-     */
-    public function get_entity( $id );
+	/**
+	 * Gets an entity.
+	 *
+	 * @param int|string $id Entity ID.
+	 * @return Sensei_Domain_Models_Model_Abstract
+	 */
+	public function get_entity( $id );
 
 
-    /**
-     * @param $entity Sensei_Domain_Models_Model_Abstract
-     * @param $field_declaration Sensei_Domain_Models_Field_Declaration
-     * @return mixed
-     */
-    public function get_meta_field_value( $model, $field_declaration );
+	/**
+	 * Gets a meta data field for an entity.
+	 *
+	 * @param Sensei_Domain_Models_Model_Abstract    $model Entity.
+	 * @param Sensei_Domain_Models_Field_Declaration $field_declaration Entity fields.
+	 * @return mixed
+	 */
+	public function get_meta_field_value( $model, $field_declaration );
 
-    /**
-     * @param $model Sensei_Domain_Models_Model_Abstract
-     * @param array $args
-     * @return mixed
-     */
-    public function delete( $model, $args = array() );
+	/**
+	 * Deletes an entity.
+	 *
+	 * @param Sensei_Domain_Models_Model_Abstract $model Entity.
+	 * @param array                               $args Entity deletion arguments.
+	 * @return mixed
+	 */
+	public function delete( $model, $args = array() );
 
-    /**
-     * @param $entity Sensei_Domain_Models_Model_Abstract
-     * @return mixed
-     */
-    public function upsert( $entity, $fields, $meta_fields = array() );
+	/**
+	 * Inserts or updates an entity.
+	 *
+	 * @param Sensei_Domain_Models_Model_Abstract $entity Entity.
+	 * @param array                               $fields Elements to update or insert.
+	 * @param array                               $meta_fields Field values to update or insert.
+	 * @return mixed
+	 */
+	public function upsert( $entity, $fields, $meta_fields = array() );
 
 
 }
