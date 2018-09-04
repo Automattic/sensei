@@ -1273,7 +1273,7 @@ class Sensei_Utils {
 			$has_quiz_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 
 			if ( ! $started_course ) {
-$status = 'not_started_course';
+				$status = 'not_started_course';
 				$box_class = 'info';
 				// translators: Placeholders are an opening and closing <a> tag linking to the course permalink.
 				$message = sprintf( __( 'Please sign up for %1$sthe course%2$s before taking this quiz', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'woothemes-sensei' ) ) . '">', '</a>' );
