@@ -136,10 +136,7 @@ global $course;
 						esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) )
 					?>" >
 
-						<?php
-						// translators: Placeholder is the lesson title.
-						esc_html( $lesson->post_title );
-						?>
+						<?php echo esc_html( $lesson->post_title ); ?>
 
                     </a>
 

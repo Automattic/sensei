@@ -1439,8 +1439,11 @@ class Sensei_Frontend {
 		if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
 
 			if ( Sensei_WC::is_product_in_cart( $wc_post_id ) ) {
-				// translators: Placeholder is a link to complete the purchase.
-				echo '<div class="sensei-message info">' . sprintf( __( 'You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei' ) . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __( 'complete the purchase', 'woothemes-sensei' ) . '">' . __( 'complete the purchase', 'woothemes-sensei' ) . '</a>' );
+				echo '<div class="sensei-message info">' . sprintf(
+					// translators: Placeholder is a link to complete the purchase.
+					__( 'You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei' ) . '</div>',
+					'<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __( 'complete the purchase', 'woothemes-sensei' ) . '">' . __( 'complete the purchase', 'woothemes-sensei' ) . '</a>'
+				);
 			} // End If Statement
 		} // End If Statement
 
