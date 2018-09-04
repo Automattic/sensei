@@ -65,7 +65,7 @@ class Sensei_Frontend {
 		add_action( 'sensei_before_main_content', array( $this, 'sensei_output_content_wrapper' ), 10 );
 		add_action( 'sensei_after_main_content', array( $this, 'sensei_output_content_wrapper_end' ), 10 );
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
-		add_action( 'init', array( $this, 'sensei_complete_lesson' ), 10 );
+		add_action( 'wp', array( $this, 'sensei_complete_lesson' ), 10 );
 		add_action( 'wp_head', array( $this, 'sensei_complete_course' ), 10 );
 		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
 		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
@@ -808,7 +808,7 @@ class Sensei_Frontend {
 	 * Marks a lesson as complete.
 	 */
 	public function sensei_complete_lesson() {
-		global $post,  $current_user;
+		global $post, $current_user;
 
 		if ( ! isset( $_POST['quiz_action'] ) ) {
 			return;
@@ -818,7 +818,7 @@ class Sensei_Frontend {
 			return;
 		}
 
-		$lesson_id = intval( $_POST['lesson_id'] );
+		$lesson_id = $post->ID;
 
 		if ( 0 >= $lesson_id ) {
 			return;
@@ -1035,7 +1035,6 @@ class Sensei_Frontend {
 				/>
 
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<input type="hidden" name="lesson_id" value="<?php echo esc_attr( $lesson_id ); ?>" />
 
 				<input type="submit"
 					   name="quiz_complete"
@@ -1054,7 +1053,6 @@ class Sensei_Frontend {
 		global  $post;
 
 		$quiz_id = 0;
-		$lesson_id = $post->ID;
 
 		// Lesson quizzes.
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $post->ID );
@@ -1074,7 +1072,6 @@ class Sensei_Frontend {
 			value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>" />
 
 			<input type="hidden" name="quiz_action" value="lesson-reset" />
-			<input type="hidden" name="lesson_id" value="<?php echo esc_attr( $lesson_id ); ?>" />
 
 			<input type="submit" name="quiz_complete" class="quiz-submit reset" value="<?php _e( 'Reset Lesson', 'woothemes-sensei' ); ?>"/>
 
