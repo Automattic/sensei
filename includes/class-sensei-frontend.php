@@ -1130,6 +1130,7 @@ class Sensei_Frontend {
 			<p class="course-excerpt"><?php the_excerpt(); ?></p>
 			<?php
 			if ( 0 < $free_lesson_count ) {
+				// translators: Placeholder is the number of free lessons in the course.
 				$free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes-sensei' ), $free_lesson_count );
 				?>
 				<p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ); ?></a> - <?php echo $free_lessons; ?></p>
