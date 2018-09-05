@@ -19,16 +19,19 @@ class Sensei_Db_Query_Learners {
     private function build_query( $type = 'paginate' ) {
         global $wpdb;
 
-        $user_query_args = array();
-		if ( ! empty( $this->search ) ) {
-			// $user_query_args['search_columns'] = array( 'user_login', 'user_nicename', 'user_email' );
-			$user_query_args['search'] = '*' . sanitize_text_field( $this->search ) . '*';
-		}
+		$matching_user_ids = null;
+		if ( is_multisite() || ! empty( $this->search ) ) {
+			$user_query_args = array();
+			if ( ! empty( $this->search ) ) {
+				$user_query_args['search'] = '*' . sanitize_text_field( $this->search ) . '*';
+			}
 
-		$user_query_args['fields'] = 'ids';
-		$user_query_args['number'] = -1;
-		$user_query = new WP_User_Query( $user_query_args );
-		$matching_user_ids = array_map( 'absint', $user_query->get_results() );
+			$user_query_args['fields'] = 'ids';
+			$user_query_args['number'] = -1;
+
+			$user_query        = new WP_User_Query( $user_query_args );
+			$matching_user_ids = array_map( 'absint', $user_query->get_results() );
+		}
 
         $sql = "SELECT SQL_CALC_FOUND_ROWS `u`.`ID` AS 'user_id',
               `u`.`user_nicename`,
@@ -41,13 +44,13 @@ class Sensei_Db_Query_Learners {
               SELECT * FROM `{$wpdb->comments}` AS `sc`
               WHERE `sc`.`comment_type` = 'sensei_course_status'
             ) AS `c` ON `u`.`ID` = `c`.`user_id`";
-		$sql .= ' WHERE';
-		$user_id_in = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
-		$sql .= " u.ID IN ({$user_id_in})";
-		if ( ! empty ( $this->filter_by_course_id ) ) {
-			$sql .= ' AND';
+		$sql .= ' WHERE 1=1';
+		if ( null !== $matching_user_ids ) {
+			$user_id_in = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
+			$sql        .= " AND u.ID IN ({$user_id_in})";
 		}
 		if ( ! empty( $this->filter_by_course_id ) ) {
+			$sql .= ' AND';
 			$eq = ('inc' == $this->filter_type ) ? '=' : '!=';
 			$sql .= " c.comment_post_ID {$eq} {$this->filter_by_course_id} AND c.comment_approved IS NOT NULL";
 		}
