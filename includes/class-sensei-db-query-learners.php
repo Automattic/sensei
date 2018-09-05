@@ -19,22 +19,16 @@ class Sensei_Db_Query_Learners {
     private function build_query( $type = 'paginate' ) {
         global $wpdb;
 
-		$matching_user_ids = false;
-        if ( ! empty( $this->search ) ) {
-			$search_term = $wpdb->prepare('%s', $this->search . '%');
-			$user_sql = "
-				SELECT `u`.`ID`
-				  FROM `{$wpdb->users}` AS `u`
-				LEFT JOIN `{$wpdb->usermeta}` AS `um` ON `um`.`user_id` = `u`.`ID`
-				WHERE u.user_login LIKE {$search_term}
-				  OR u.user_nicename LIKE {$search_term}
-				  OR u.user_email LIKE {$search_term}
-				  OR (um.meta_key = 'nickname' AND um.meta_value LIKE {$search_term})
-				  OR (um.meta_key = 'first_name' AND um.meta_value LIKE {$search_term})
-				  OR (um.meta_key = 'last_name' AND um.meta_value LIKE {$search_term})
-				GROUP BY `um`.`user_id`";
-			$matching_user_ids = array_map( 'absint', wp_list_pluck( $wpdb->get_results( $user_sql ), 'ID' ) );
+        $user_query_args = array();
+		if ( ! empty( $this->search ) ) {
+			// $user_query_args['search_columns'] = array( 'user_login', 'user_nicename', 'user_email' );
+			$user_query_args['search'] = '*' . sanitize_text_field( $this->search ) . '*';
 		}
+
+		$user_query_args['fields'] = 'ids';
+		$user_query_args['number'] = -1;
+		$user_query = new WP_User_Query( $user_query_args );
+		$matching_user_ids = array_map( 'absint', $user_query->get_results() );
 
         $sql = "SELECT `u`.`ID` AS 'user_id',
               `u`.`user_nicename`,
@@ -47,20 +41,16 @@ class Sensei_Db_Query_Learners {
               SELECT * FROM `{$wpdb->comments}` AS `sc`
               WHERE `sc`.`comment_type` = 'sensei_course_status'
             ) AS `c` ON `u`.`ID` = `c`.`user_id`";
-        if ( ! empty( $this->search ) || ! empty( $this->filter_by_course_id ) ) {
-            $sql .= ' WHERE';
-            if ( ! empty( $this->search ) ) {
-				$user_id_in = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
-				$sql .= " u.ID IN ({$user_id_in})";
-                if ( ! empty ( $this->filter_by_course_id ) ) {
-                    $sql .= ' AND';
-                }
-            }
-            if ( ! empty( $this->filter_by_course_id ) ) {
-                $eq = ('inc' == $this->filter_type ) ? '=' : '!=';
-                $sql .= " c.comment_post_ID {$eq} {$this->filter_by_course_id} AND c.comment_approved IS NOT NULL";
-            }
-        }
+		$sql .= ' WHERE';
+		$user_id_in = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
+		$sql .= " u.ID IN ({$user_id_in})";
+		if ( ! empty ( $this->filter_by_course_id ) ) {
+			$sql .= ' AND';
+		}
+		if ( ! empty( $this->filter_by_course_id ) ) {
+			$eq = ('inc' == $this->filter_type ) ? '=' : '!=';
+			$sql .= " c.comment_post_ID {$eq} {$this->filter_by_course_id} AND c.comment_approved IS NOT NULL";
+		}
 
         $sql .= " GROUP BY `u`.`ID`";
         if ( ! empty( $this->order_by ) && 'learner' === $this->order_by && in_array( $this->order_type, array('ASC', 'DESC') ) ) {
