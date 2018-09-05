@@ -756,7 +756,10 @@ class Sensei_Frontend {
 				if ( $tag_list ) {
 					?>
 					<section class="lesson-tags">
-						<?php printf( __( 'Lesson tags: %1$s', 'woothemes-sensei' ), $tag_list ); ?>
+						<?php
+							// translators: Placeholder is a comma-separated list of links to the tags.
+							printf( __( 'Lesson tags: %1$s', 'woothemes-sensei' ), $tag_list );
+						?>
 					</section>
 					<?php
 				}
@@ -789,6 +792,7 @@ class Sensei_Frontend {
 	 */
 	public function lesson_tag_archive_header( $title ) {
 		if ( is_tax( 'lesson-tag' ) ) {
+			// translators: Placeholder is the filtered tag name.
 			$title = sprintf( __( 'Lesson tag: %1$s', 'woothemes-sensei' ), apply_filters( 'sensei_lesson_tag_archive_title', get_queried_object()->name ) );
 		}
 		return $title;
@@ -914,7 +918,10 @@ class Sensei_Frontend {
 						do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
 
 						// Success message.
-						$this->messages = '<header class="archive-header"><div class="sensei-message tick">' . sprintf( __( '%1$s marked as complete.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
+						$this->messages = '<header class="archive-header"><div class="sensei-message tick">'
+							// translators: Placeholder is the Course title.
+							. sprintf( __( '%1$s marked as complete.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) )
+							. '</div></header>';
 					} // End If Statement
 
 					break;
@@ -923,7 +930,10 @@ class Sensei_Frontend {
 					Sensei_Utils::sensei_remove_user_from_course( $sanitized_course_id, $current_user->ID );
 
 					// Success message.
-					$this->messages = '<header class="archive-header"><div class="sensei-message tick">' . sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) ) . '</div></header>';
+					$this->messages = '<header class="archive-header"><div class="sensei-message tick">'
+						// translators: Placeholder is the Course title.
+						. sprintf( __( '%1$s deleted.', 'woothemes-sensei' ), get_the_title( $sanitized_course_id ) )
+						. '</div></header>';
 					break;
 
 				default:
@@ -1108,13 +1118,19 @@ class Sensei_Frontend {
 			<?php } // End If Statement ?>
 			   <span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' . __( 'Lessons', 'woothemes-sensei' ); ?></span>
 			<?php if ( '' != $category_output ) { ?>
-			   <span class="course-category"><?php echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ); ?></span>
+				<span class="course-category">
+					<?php
+					// translators: Placeholder is a comma-separated list of course categories.
+					echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output );
+					?>
+				</span>
 			<?php } // End If Statement ?>
 			<?php sensei_simple_course_price( $post_id ); ?>
 			</p>
 			<p class="course-excerpt"><?php the_excerpt(); ?></p>
 			<?php
 			if ( 0 < $free_lesson_count ) {
+				// translators: Placeholder is the number of free lessons in the course.
 				$free_lessons = sprintf( __( 'You can access %d of this course\'s lessons for free', 'woothemes-sensei' ), $free_lesson_count );
 				?>
 				<p class="sensei-free-lessons"><a href="<?php echo get_permalink( $post_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ); ?></a> - <?php echo $free_lessons; ?></p>
@@ -1284,7 +1300,15 @@ class Sensei_Frontend {
 				<span class="course-author"><?php _e( 'by', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
 				<?php } ?>
 				<?php if ( 0 < intval( $lesson_course_id ) ) { ?>
-				<span class="lesson-course"><?php echo '&nbsp;' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . __( 'View course', 'woothemes-sensei' ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
+				<span class="lesson-course">
+					<?php
+					echo '&nbsp;' . sprintf(
+						// translators: Placeholder is a link to view the course.
+						__( 'Part of: %s', 'woothemes-sensei' ),
+						'<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . __( 'View course', 'woothemes-sensei' ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>'
+					);
+					?>
+				</span>
 				<?php } ?>
 			</p>
 			<p class="lesson-excerpt"><?php the_excerpt(); ?></p>
@@ -1416,7 +1440,11 @@ class Sensei_Frontend {
 		if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
 
 			if ( Sensei_WC::is_product_in_cart( $wc_post_id ) ) {
-				echo '<div class="sensei-message info">' . sprintf( __( 'You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei' ) . '</div>', '<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __( 'complete the purchase', 'woothemes-sensei' ) . '">' . __( 'complete the purchase', 'woothemes-sensei' ) . '</a>' );
+				echo '<div class="sensei-message info">' . sprintf(
+					// translators: Placeholder is a link to complete the purchase.
+					__( 'You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei' ) . '</div>',
+					'<a class="cart-complete" href="' . $woocommerce->cart->get_checkout_url() . '" title="' . __( 'complete the purchase', 'woothemes-sensei' ) . '">' . __( 'complete the purchase', 'woothemes-sensei' ) . '</a>'
+				);
 			} // End If Statement
 		} // End If Statement
 
@@ -1905,6 +1933,7 @@ class Sensei_Frontend {
 		// register user.
 		$user_id = wp_create_user( $new_user_name, $new_user_password, $new_user_email );
 		if ( ! $user_id || is_wp_error( $user_id ) ) {
+			// translators: Placeholder is the admin email address.
 			Sensei()->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert' );
 		}
 

@@ -394,7 +394,12 @@ class Sensei_Admin {
 	public function language_pack_install_notice() {
 		?>
 		<div id="message" class="updated sensei-message sensei-connect">
-				<p><?php echo sprintf( __( '%sSensei in your language %s. There is a translation available for your language.', 'woothemes-sensei' ),'<strong>','</strong>' ); ?><p>
+			<p>
+				<?php
+				// translators: Placeholders are opening and closing <strong> tags.
+				echo sprintf( __( '%1$sSensei in your language %2$s. There is a translation available for your language.', 'woothemes-sensei' ),'<strong>','</strong>' );
+				?>
+			</p>
 
 				<p class="submit">
 					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php _e( 'Install', 'woothemes-sensei' ); ?></a>
@@ -509,6 +514,7 @@ class Sensei_Admin {
 	 */
 	private function duplicate_content( $post_type = 'lesson', $with_lessons = false ) {
 		if ( ! isset( $_GET['post'] ) ) {
+			// translators: Placeholder is the post type string.
 			wp_die( sprintf( __( 'Please supply a %1$s ID.', 'woothemes-sensei' ) ), $post_type );
 		}
 
@@ -1599,7 +1605,7 @@ class Sensei_Admin {
 			 * - The current admin email address from the Settings.
 			 * - A link to view the existing admin users, with the translated text "existing Administrator".
 			 */
-			$warning = __( 'To prevent issues with Sensei module names, your Email Address in %s should also belong to an Administrator user. You can either %s with the email address %s, or change that email address to match the email of an %s.', 'woothemes-sensei' );
+			$warning = __( 'To prevent issues with Sensei module names, your Email Address in %1$s should also belong to an Administrator user. You can either %2$s with the email address %3$s, or change that email address to match the email of an %4$s.', 'woothemes-sensei' );
 
 			?><div id="message" class="error sensei-message sensei-connect">
 				<p>

@@ -278,7 +278,12 @@ class Sensei_Language_Pack_Manager {
 				echo '<div class="error"><p>' . __( 'Failed to install/update the translation:', 'woothemes-sensei' ) . ' ' . __( 'There is no translation available for your language!', 'woothemes-sensei' ) . '</p></div>';
 				break;
 			case 4 :
-				echo '<div class="error"><p>' . __( 'Failed to install/update the translation:', 'woothemes-sensei' ) . ' ' . sprintf( __( 'An authentication error occurred while updating the translation. Please try again or configure your %sUpgrade Constants%s.', 'woothemes-sensei' ), '<a href="http://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants">', '</a>' ) . '</p></div>';
+				echo '<div class="error"><p>'
+					. __( 'Failed to install/update the translation:', 'woothemes-sensei' )
+					. ' '
+					// translators: Placeholders are an opening and closing <a> tag for the WordPress Codex page.
+					. sprintf( __( 'An authentication error occurred while updating the translation. Please try again or configure your %1$sUpgrade Constants%2$s.', 'woothemes-sensei' ), '<a href="http://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants">', '</a>' )
+					. '</p></div>';
 				break;
 			case 5 :
 				echo '<div class="error"><p>' . __( 'Failed to install/update the translation:', 'woothemes-sensei' ) . ' ' . __( 'Sorry but there is no translation available for your language =/', 'woothemes-sensei' ) . '</p></div>';

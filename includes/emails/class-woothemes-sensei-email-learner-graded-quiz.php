@@ -56,12 +56,13 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 
 		// Set recipient (learner)
 		$this->recipient = stripslashes( $this->user->user_email );
- 
+
 		do_action('sensei_before_mail', $this->recipient);
-		
+
+		// translators: Placeholder is the blog name.
 		$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your quiz has been graded', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
 		$this->heading = apply_filters( 'sensei_email_heading', __( 'Your quiz has been graded', 'woothemes-sensei' ), $this->template );
-		
+
 
 		// Get passed flag
 		$passed = __( 'failed', 'woothemes-sensei' );
@@ -73,6 +74,7 @@ class WooThemes_Sensei_Email_Learner_Graded_Quiz {
 		$grade_type = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 
 		if( 'auto' == $grade_type ) {
+			// translators: Placeholder is the blog name.
 			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a quiz', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
 			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a quiz', 'woothemes-sensei' ), $this->template );
 		}

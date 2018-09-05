@@ -1132,6 +1132,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
              }
 
+			 // translators: Placeholder is the quiz name with any instance of the word "quiz" removed.
              $title = sprintf( __( '%s Quiz', 'woothemes-sensei' ), $title_with_no_quizzes );
          }
 

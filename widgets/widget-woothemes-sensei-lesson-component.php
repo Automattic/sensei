@@ -199,7 +199,15 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
     					<br />
     				<?php } // End If Statement ?>
     				<?php if ( 0 < $lesson_course_id ) { ?>
-                        <span class="lesson-course"><?php echo ' ' . sprintf( __( 'Part of: %s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'woothemes-sensei' ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>' ); ?></span>
+                        <span class="lesson-course">
+							<?php
+							echo ' ' . sprintf(
+								// translators: Placeholder is a link to the Course permalink.
+								__( 'Part of: %s', 'woothemes-sensei' ),
+								'<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'woothemes-sensei' ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>'
+							);
+							?>
+						</span>
                     <?php } ?>
     				<br />
 		    	</li>

@@ -164,6 +164,7 @@ class Sensei_Question {
 	public function question_lessons_panel() {
 		global $post;
 
+		// translators: Placeholders are an opening and closing <em> tag.
 		$no_lessons = sprintf( __( '%1$sThis question does not appear in any quizzes yet.%2$s', 'woothemes-sensei' ), '<em>', '</em>' );
 
 		if( ! isset( $post->ID ) ) {
@@ -740,6 +741,7 @@ class Sensei_Question {
 		} elseif( $user_question_grade > 0 ) {
 			$user_correct         = true;
 			$answer_message_class = 'user_right';
+			// translators: Placeholder is the question grade.
 			$answer_message       = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
 		} else {
             $user_correct          = false;
@@ -900,7 +902,8 @@ class Sensei_Question {
                 $upload_size_unit = (int) $upload_size_unit;
 
             }
-            $max_upload_size = sprintf( __( 'Maximum upload file size: %d%s', 'woothemes-sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
+			// translators: Placeholders are the upload size and the measurement (e.g. 5 MB)
+            $max_upload_size = sprintf( __( 'Maximum upload file size: %1$d%2$s', 'woothemes-sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
 
             // Assemble all the data needed by the file upload template
             $question_data[ 'answer_media_url' ]      = $answer_media_url;

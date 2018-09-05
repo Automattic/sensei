@@ -269,7 +269,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		switch( $this->type ) {
 			case 'courses' :
 				// Get Learners (i.e. those who have started)
-				$course_args = array( 
+				$course_args = array(
 						'post_id' => $item->ID,
 						'type' => 'sensei_course_status',
 						'status' => 'any',
@@ -277,7 +277,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 				$course_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_learners', $course_args, $item ) );
 
 				// Get Course Completions
-				$course_args = array( 
+				$course_args = array(
 						'post_id' => $item->ID,
 						'type' => 'sensei_course_status',
 						'status' => 'complete',
@@ -288,7 +288,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 				$course_lessons = Sensei()->lesson->lesson_count( array('publish', 'private'), $item->ID );
 
 				// Get Percent Complete
-				$grade_args = array( 
+				$grade_args = array(
 						'post_id' => $item->ID,
 						'type' => 'sensei_course_status',
 						'status' => 'any',
@@ -324,7 +324,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 
 			case 'lessons' :
 				// Get Learners (i.e. those who have started)
-				$lesson_args = array( 
+				$lesson_args = array(
 						'post_id' => $item->ID,
 						'type' => 'sensei_lesson_status',
 						'status' => 'any',
@@ -332,7 +332,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 				$lesson_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_learners', $lesson_args, $item ) );
 
 				// Get Course Completions
-				$lesson_args = array( 
+				$lesson_args = array(
 						'post_id' => $item->ID,
 						'type' => 'sensei_lesson_status',
 						'status' => array( 'complete', 'graded', 'passed', 'failed' ),
@@ -340,14 +340,14 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 					);
 				$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
 
-				// Course 
+				// Course
 				$course_id = get_post_meta( $item->ID, '_lesson_course', true );
 				$course_title = $course_id ? get_the_title( $course_id ) : '';
 
 				$lesson_average_grade = __('n/a', 'woothemes-sensei');
 				if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
 					// Get Percent Complete
-					$grade_args = array( 
+					$grade_args = array(
 							'post_id' => $item->ID,
 							'type' => 'sensei_lesson_status',
 							'status' => array( 'graded', 'passed', 'failed' ),
@@ -393,7 +393,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 			case 'users' :
 			default:
 				// Get Started Courses
-				$course_args = array( 
+				$course_args = array(
 						'user_id' => $item->ID,
 						'type' => 'sensei_course_status',
 						'status' => 'any',
@@ -401,7 +401,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 				$user_courses_started = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args, $item ) );
 
 				// Get Completed Courses
-				$course_args = array( 
+				$course_args = array(
 						'user_id' => $item->ID,
 						'type' => 'sensei_course_status',
 						'status' => 'complete',
@@ -409,7 +409,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 				$user_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item ) );
 
 				// Get Quiz Grades
-				$grade_args = array( 
+				$grade_args = array(
 						'user_id' => $item->ID,
 						'type' => 'sensei_lesson_status',
 						'status' => 'any',
@@ -569,12 +569,12 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		}
 
 
-		$course_args = array( 
+		$course_args = array(
 				'type' => 'sensei_course_status',
 				'status' => 'any',
 			);
 		$total_courses_started = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_total_courses_started', $course_args ) );
-		$course_args = array( 
+		$course_args = array(
 				'type' => 'sensei_course_status',
 				'status' => 'complete',
 			);
@@ -582,7 +582,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		$average_courses_per_learner = Sensei_Utils::quotient_as_absolute_rounded_number( $total_courses_started, $user_count, 2 );
 
 		// Setup the boxes to render
-		$stats_to_render = array( 
+		$stats_to_render = array(
 								__( 'Total Courses', 'woothemes-sensei' ) => $total_courses,
 								__( 'Total Lessons', 'woothemes-sensei' ) => $total_lessons,
 								__( 'Total Learners', 'woothemes-sensei' ) => $user_count,
@@ -605,6 +605,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		} else {
 			$type = $this->view;
 		}
+		// translators: Placeholders %1$s and %3$s are opening and closing <em> tages, %2$s is the view type.
 		echo  sprintf( __( '%1$sNo %2$s found%3$s', 'woothemes-sensei' ), '<em>', $type, '</em>' );
 	} // End no_items()
 
