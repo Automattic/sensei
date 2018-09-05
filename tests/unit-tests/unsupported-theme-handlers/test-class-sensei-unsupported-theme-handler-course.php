@@ -1,9 +1,9 @@
 <?php
 
-class Sensei_Unsupported_Themes_Course_Page_Test extends WP_UnitTestCase {
+class Sensei_Unsupported_Theme_Handler_Course_Test extends WP_UnitTestCase {
 
 	/**
-	 * @var Sensei_Unsupported_Themes The Sensei_Unsupported_Themes instance.
+	 * @var Sensei_Unsupported_Theme_Handler_Course_Test The request handler to test.
 	 */
 	private $handler;
 
@@ -17,32 +17,45 @@ class Sensei_Unsupported_Themes_Course_Page_Test extends WP_UnitTestCase {
 
 		$this->setupCoursePage();
 
-		Sensei_Unsupported_Themes::init();
-		$this->handler = Sensei_Unsupported_Themes::get_instance();
+		$this->handler = new Sensei_Unsupported_Theme_Handler_Course();
 	}
 
 	public function tearDown() {
 		$this->handler = null;
-		Sensei_Unsupported_Themes::reset();
 
 		parent::tearDown();
 	}
 
 	/**
-	 * Ensure Sensei_Unsupported_Themes handles the Course Page.
+	 * Ensure Sensei_Unsupported_Theme_Handler_Course handles the Course Page.
 	 *
 	 * @since 1.12.0
 	 */
 	public function testShouldHandleCoursePage() {
-		$this->assertTrue( $this->handler->is_handling_request() );
+		$this->assertTrue( $this->handler->can_handle_request() );
 	}
 
 	/**
-	 * Ensure Sensei_Unsupported_Themes sets up its `the_content` filter.
+	 * Ensure Sensei_Unsupported_Theme_Handler_Course does not handle a
+	 * non-Course page.
+	 *
+	 * @since 1.12.0
+	 */
+	public function testShouldNotHandleNonCoursePage() {
+		global $post;
+		$post = $this->factory->post->create_and_get();
+
+		$this->assertFalse( $this->handler->can_handle_request() );
+	}
+
+	/**
+	 * Ensure Sensei_Unsupported_Theme_Handler_Course sets up its `the_content`
+	 * filter.
 	 *
 	 * @since 1.12.0
 	 */
 	public function testShouldSetUpContentFilter() {
+		$this->handler->handle_request();
 		$this->assertNotFalse( has_filter( 'the_content', array( $this->handler, 'course_page_content_filter' ) ) );
 	}
 
