@@ -30,7 +30,7 @@ class Sensei_Db_Query_Learners {
 		$user_query = new WP_User_Query( $user_query_args );
 		$matching_user_ids = array_map( 'absint', $user_query->get_results() );
 
-        $sql = "SELECT `u`.`ID` AS 'user_id',
+        $sql = "SELECT SQL_CALC_FOUND_ROWS `u`.`ID` AS 'user_id',
               `u`.`user_nicename`,
               `u`.`user_login`,
               `u`.`user_email`,
@@ -70,7 +70,7 @@ class Sensei_Db_Query_Learners {
         $sql = $this->build_query();
 
         $results = $wpdb->get_results( $sql );
-        $this->total_items = intval( $wpdb->query( $this->build_query('count') ) );
+        $this->total_items = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) );
         return $results;
     }
 }
