@@ -105,7 +105,7 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 		// Reset all filters.
 		remove_filter( 'sensei_show_main_footer', '__return_false' );
 		remove_filter( 'sensei_show_main_header', '__return_false' );
-		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 10, 2 );
+		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 10 );
 
 		return $output;
 	}
@@ -132,7 +132,7 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 
 		$this->global_post_ref         = $post;
 		$this->global_wp_query_ref     = $wp_query;
-		$this->global_wp_the_query_ref = $wp_query;
+		$this->global_wp_the_query_ref = $wp_the_query;
 		$this->global_pages_ref        = $pages;
 	}
 
