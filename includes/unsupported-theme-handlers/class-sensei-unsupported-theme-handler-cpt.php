@@ -45,6 +45,18 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 */
 	public function handle_request() {
 		add_filter( 'the_content', array( $this, 'cpt_page_content_filter' ) );
+
+		// Handle some type-specific items.
+		if ( 'lesson' === $this->post_type ) {
+			// Use theme comments UI instead of Sensei's
+			remove_action( 'sensei_pagination', array( 'Sensei_Lesson', 'output_comments' ), 90 );
+
+			// Turn off theme comments if needed.
+			if ( ! Sensei()->settings->get( 'lesson_comments' ) ) {
+				add_filter( 'comments_open', '__return_false', 100 );
+				add_filter( 'get_comments_number', '__return_false', 100 );
+			}
+		}
 	}
 
 	/**
