@@ -1867,7 +1867,7 @@ class Sensei_Utils {
 					'action'    => 'update', // Update the existing status...
 					'keep_time' => true, // ...but don't change the existing timestamp
 				);
-			if( 'in-progress' == $status ) {
+			if( in_array( $status, array( 'in-progress', 'ungraded', 'graded' ), true ) ) {
 				unset( $args['keep_time'] ); // Keep updating what's happened
 			}
 
