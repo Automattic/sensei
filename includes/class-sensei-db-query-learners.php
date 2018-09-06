@@ -29,10 +29,9 @@ class Sensei_Db_Query_Learners {
 	/**
 	 * Build the SQL query for getting users.
 	 *
-	 * @param string $type Type of query to build. `pagination` or ... not pagination.
 	 * @return string
 	 */
-	private function build_query( $type = 'paginate' ) {
+	private function build_query() {
 		global $wpdb;
 
 		$matching_user_ids = null;
@@ -77,9 +76,7 @@ class Sensei_Db_Query_Learners {
 			$sql       .= " ORDER BY `u`.`user_login` {$order_type}";
 		}
 
-		if ( 'paginate' === $type ) {
-			$sql .= $wpdb->prepare( ' LIMIT %d OFFSET %d ', array( $this->per_page, $this->offset ) );
-		}
+		$sql .= $wpdb->prepare( ' LIMIT %d OFFSET %d ', array( $this->per_page, $this->offset ) );
 
 		return $sql;
 	}
