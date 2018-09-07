@@ -24,6 +24,15 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	private $original_post;
 
 	/**
+	 * Prepare the WP query object for the imitated request.
+	 *
+	 * @param WP_Query $wp_query
+	 * @param WP_Post $post_to_copy
+	 * @param array $post_params
+	 */
+	abstract protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params );
+
+	/**
 	 * Set up this request to output the given content as if it were the HTML
 	 * inside a Page object.
 	 *
@@ -91,8 +100,9 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		$wp_query->is_page       = true;
 		$wp_query->is_single     = true;
 		$wp_query->is_archive    = false;
-		$wp_query->is_tax        = true;
 		$wp_query->max_num_pages = 0;
+
+		$this->prepare_wp_query( $wp_query, $post_to_copy, $post_params );
 
 		/*
 		 * Prevent the title from appearing, since it's assumed that the

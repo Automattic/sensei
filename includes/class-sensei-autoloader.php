@@ -153,10 +153,11 @@ class Sensei_Autoloader {
 			/**
 			 * Unsupported theme handlers.
 			 */
-			'Sensei_Unsupported_Theme_Handler_Interface'     => 'unsupported-theme-handlers/interface-sensei-unsupported-theme-handler.php',
-			'Sensei_Unsupported_Theme_Handler_Page_Imitator' => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-page-imitator.php',
-			'Sensei_Unsupported_Theme_Handler_Course'        => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course.php',
-			'Sensei_Unsupported_Theme_Handler_Module'        => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-module.php',
+			'Sensei_Unsupported_Theme_Handler_Interface'      => 'unsupported-theme-handlers/interface-sensei-unsupported-theme-handler.php',
+			'Sensei_Unsupported_Theme_Handler_Page_Imitator'  => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-page-imitator.php',
+			'Sensei_Unsupported_Theme_Handler_Course'         => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course.php',
+			'Sensei_Unsupported_Theme_Handler_Module'         => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-module.php',
+			'Sensei_Unsupported_Theme_Handler_Course_Results' => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course-results.php',
 
             /**
              * Built in theme integration support
