@@ -25,7 +25,7 @@ do_action( 'sensei_course_results_content_before' );
 ?>
 
 <?php
-global $course;
+global $course, $wp_query;
 $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );
 ?>
 
