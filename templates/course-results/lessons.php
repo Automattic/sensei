@@ -61,11 +61,13 @@ global $course;
                     $has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson->ID );
                     if ( $has_questions ) {
                         $lesson_status = Sensei_Utils::user_lesson_status( $lesson->ID, get_current_user_id() );
-                        // Get user quiz grade
-                        $lesson_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
-                        if ( $lesson_grade ) {
-                            $lesson_grade .= '%';
-                        }
+                        if ( $lesson_status ) {
+							// Get user quiz grade
+							$lesson_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
+							if ( $lesson_grade ) {
+								$lesson_grade .= '%';
+							}
+						}
                     }
                     ?>
                     <h2>
