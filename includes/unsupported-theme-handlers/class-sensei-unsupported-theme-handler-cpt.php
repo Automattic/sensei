@@ -69,7 +69,7 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * @return string The content to be displayed on the page.
 	 */
 	public function cpt_page_content_filter( $content ) {
-		if ( ! is_main_query() ) {
+		if ( ! is_main_query() || ! in_the_loop() ) {
 			return $content;
 		}
 
