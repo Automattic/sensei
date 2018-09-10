@@ -1,5 +1,7 @@
 <?php
 
+include_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
+
 class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 
 	/**
@@ -22,11 +24,7 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 
 		$this->setupModulePage();
 
-		// Set up the page.php template.
-		$filename = get_template_directory() . '/page.php';
-		$handle = fopen( $filename, 'w' );
-		fwrite( $handle, "<?php\n// Silence is golden\n" );
-		fclose( $handle );
+		Sensei_Unsupported_Theme_Handler_Page_Imitator_Test::create_page_template();
 
 		$this->handler = new Sensei_Unsupported_Theme_Handler_Module();
 	}
@@ -34,9 +32,7 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 	public function tearDown() {
 		$this->handler = null;
 
-		// Remove the page.php template.
-		$filename = get_template_directory() . '/page.php';
-		unlink( $filename );
+		Sensei_Unsupported_Theme_Handler_Page_Imitator_Test::delete_page_template();
 
 		parent::tearDown();
 	}
@@ -171,41 +167,6 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 				"Dummy post field $post_field should be copied from the Module's $module_field"
 			);
 		}
-	}
-
-	/**
-	 * Ensure Sensei_Unsupported_Theme_Handler_Module renders the dummy post
-	 * with the 'page' template if it's available.
-	 *
-	 * @since 1.12.0
-	 */
-	public function testShouldRenderDummyPostWithPageTemplate() {
-		$this->handler->handle_request();
-		$template_file = apply_filters( 'template_include', 'taxonomy-module.php' );
-		$this->assertEquals( get_template_directory() . '/page.php', $template_file );
-	}
-
-	/**
-	 * Ensure Sensei_Unsupported_Theme_Handler_Module hides the dummy post
-	 * title when it is rendered.
-	 *
-	 * @since 1.12.0
-	 */
-	public function testShouldHideDummyPostTitle() {
-		global $post;
-
-		$this->handler->handle_request();
-
-		$this->assertEquals(
-			'',
-			apply_filters( 'the_title', 'Dummy Post Title', $post->ID ),
-			'Title of the dummy post should be blank'
-		);
-		$this->assertEquals(
-			'Course Title',
-			apply_filters( 'the_title', 'Course Title', $this->course ),
-			'Title of the course post should no be blank'
-		);
 	}
 
 	/**
