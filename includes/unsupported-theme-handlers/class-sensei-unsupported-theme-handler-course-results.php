@@ -65,7 +65,6 @@ class Sensei_Unsupported_Theme_Handler_Course_Results
 		ob_start();
 		add_filter( 'sensei_show_main_header', '__return_false' );
 		add_filter( 'sensei_show_main_footer', '__return_false' );
-		add_action( 'sensei_taxonomy_module_content_after', array( $this, 'do_sensei_pagination' ) );
 		Sensei_Templates::get_template( 'course-results.php' );
 		$content = ob_get_clean();
 
