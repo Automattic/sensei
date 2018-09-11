@@ -4,9 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Unsupported Theme Handler for the Course Progress Page.
+ * Sensei Unsupported Theme Handler for the Course Results Page.
  *
- * Handles rendering the course progress page for themes that do not declare support for
+ * Handles rendering the course results page for themes that do not declare support for
  * Sensei.
  *
  * @author Automattic
@@ -18,7 +18,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Results
 	implements Sensei_Unsupported_Theme_Handler_Interface {
 
 	/**
-	 * We can handle this request if it is for a course progress page.
+	 * We can handle this request if it is for a course results page.
 	 *
 	 * @return bool
 	 */
@@ -29,7 +29,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Results
 	}
 
 	/**
-	 * Set up handling for a course progress page.
+	 * Set up handling for a course results page.
 	 *
 	 * This is done by manually rendering the content for the page, creating a
 	 * dummy post object, setting its content to the rendered content we generated,
