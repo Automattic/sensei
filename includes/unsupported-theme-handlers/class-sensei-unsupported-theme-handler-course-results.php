@@ -46,7 +46,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Results
 		 */
 		$course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );
 
-		// Render the module page and output it as a Page.
+		// Render the course results page and output it as a Page.
 		$content = $this->render_page();
 		$this->output_content_as_page( $content, $course, array(
 			'post_title' => sanitize_text_field( $course->post_title ),
