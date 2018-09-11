@@ -61,7 +61,7 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile
 			'post_type'         => 'page',
 		) );
 
-		// Render the module page and output it as a Page.
+		// Render the learner profile page and output it as a Page.
 		$content = $this->render_page();
 		$this->output_content_as_page( $content, $learner_post, array(
 			'post_title' => sanitize_text_field( $learner_post->post_title ),
