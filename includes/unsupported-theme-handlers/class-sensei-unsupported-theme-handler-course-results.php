@@ -50,7 +50,6 @@ class Sensei_Unsupported_Theme_Handler_Course_Results
 		$content = $this->render_page();
 		$this->output_content_as_page( $content, $course, array(
 			'post_title' => sanitize_text_field( $course->post_title ),
-			'post_name'  => $course->post_name,
 		) );
 	}
 
