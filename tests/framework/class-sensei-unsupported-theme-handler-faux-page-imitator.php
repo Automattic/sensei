@@ -32,7 +32,7 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 	}
 
 	/**
-	 * We can handle this request if it is for a course results page.
+	 * We can handle this request.
 	 *
 	 * @return bool
 	 */
@@ -41,7 +41,7 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 	}
 
 	/**
-	 * Set up handling for a course results page.
+	 * Set up handling for a faux page.
 	 *
 	 * This is done by manually rendering the content for the page, creating a
 	 * dummy post object, setting its content to the rendered content we generated,
@@ -62,7 +62,7 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 	}
 
 	/**
-	 * Return the content for the course results page.
+	 * Return the test content.
 	 *
 	 * @since 1.12.0
 	 *
