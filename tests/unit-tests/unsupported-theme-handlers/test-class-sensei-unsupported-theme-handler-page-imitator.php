@@ -139,13 +139,13 @@ class Sensei_Unsupported_Theme_Handler_Page_Imitator_Test extends WP_UnitTestCas
 		$this->assertEquals(
 			'Course Title',
 			apply_filters( 'the_title', 'Course Title', $this->course ),
-			'Title of the course post should no be blank'
+			'Title of the course post should not be blank'
 		);
 	}
 
 	/**
-	 * Helper to set up the current request to be a Module page. This request
-	 * will be handled by the unsupported theme handler if the theme is not
+	 * Helper to set up the current request to be an unsupported page (using course object).
+	 * This request will be handled by the unsupported theme handler if the theme is not
 	 * supported.
 	 *
 	 * @since 1.12.0
