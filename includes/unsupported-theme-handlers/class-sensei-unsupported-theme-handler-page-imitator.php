@@ -28,9 +28,11 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 *
 	 * @param WP_Query $wp_query
 	 * @param WP_Post  $post_to_copy
-	 * @param array    $post_params
+	 * @param array    prepare_wp_query$post_params
 	 */
-	abstract protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params );
+	protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params ) {
+		// For use in sub-classes.
+	}
 
 	/**
 	 * Set up this request to output the given content as if it were the HTML
