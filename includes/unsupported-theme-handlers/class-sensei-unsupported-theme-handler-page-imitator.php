@@ -27,8 +27,8 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * Prepare the WP query object for the imitated request.
 	 *
 	 * @param WP_Query $wp_query
-	 * @param WP_Post $post_to_copy
-	 * @param array $post_params
+	 * @param WP_Post  $post_to_copy
+	 * @param array    $post_params
 	 */
 	abstract protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params );
 
