@@ -20,7 +20,7 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 	/**
 	 * @var WP_Post $test_page
 	 */
-	private static $test_page;
+	private $test_page;
 
 	/**
 	 * Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator constructor.
@@ -28,11 +28,11 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 	 * @param WP_Post $test_page
 	 */
 	public function __construct( $test_page ) {
-		self::$test_page = $test_page;
+		$this->test_page = $test_page;
 	}
 
 	/**
-	 * We can handle this request if it is for a course progress page.
+	 * We can handle this request if it is for a course results page.
 	 *
 	 * @return bool
 	 */
@@ -41,7 +41,7 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 	}
 
 	/**
-	 * Set up handling for a course progress page.
+	 * Set up handling for a course results page.
 	 *
 	 * This is done by manually rendering the content for the page, creating a
 	 * dummy post object, setting its content to the rendered content we generated,
@@ -51,7 +51,7 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 	 * @since 1.12.0
 	 */
 	public function handle_request() {
-		$test_page = self::$test_page;
+		$test_page = $this->test_page;
 
 		// Render the module page and output it as a Page.
 		$content = $this->render_page();
