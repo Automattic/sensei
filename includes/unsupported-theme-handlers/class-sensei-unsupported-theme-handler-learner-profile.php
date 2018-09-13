@@ -48,23 +48,10 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile
 			return;
 		}
 
-		$learner_post = new WP_Post( (object) array(
-			'post_author'       => $learner_user->ID,
-			'post_date'         => $learner_user->user_registered,
-			'post_date_gmt'     => $learner_user->user_registered,
-			'post_modified'     => $learner_user->user_registered,
-			'post_modified_gmt' => $learner_user->user_registered,
-			'post_title'        => $learner_user->display_name,
-			'post_name'         => $learner_user->user_nicename,
-			'post_excerpt'      => '',
-			'post_content'      => '',
-			'post_type'         => 'page',
-		) );
-
 		// Render the learner profile page and output it as a Page.
 		$content = $this->render_page();
-		$this->output_content_as_page( $content, $learner_post, array(
-			'post_title' => sanitize_text_field( $learner_post->post_title ),
+		$this->output_content_as_page( $content, $learner_user, array(
+			'post_title' => sanitize_text_field( $learner_user->display_name ),
 		) );
 	}
 
