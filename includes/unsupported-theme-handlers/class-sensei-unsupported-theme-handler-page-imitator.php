@@ -46,41 +46,17 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 *
 	 * @since 1.12.0
 	 *
-	 * @param string  $content      The content to output as a Page.
-	 * @param WP_Post $post_to_copy The WP_Post to use when populating required
-	 *                              fields for the Page.
-	 * @param array   $post_params  Optional post parameters to override when
-	 *                              creating the Page.
+	 * @param string $content        The content to output as a Page.
+	 * @param object $object_to_copy The WP_Post to use when populating required
+	 *                               fields for the Page.
+	 * @param array  $post_params    Optional post parameters to override when
+	 *                               creating the Page.
 	 */
-	protected function output_content_as_page( $content, $post_to_copy, $post_params = array() ) {
+	protected function output_content_as_page( $content, $object_to_copy, $post_params = array() ) {
 		global $post, $wp_query;
 
 		// Set up dummy post for rendering.
-		$dummy_post_properties = array_merge( array(
-			'ID'                    => 0,
-			'post_status'           => 'publish',
-			'post_author'           => $post_to_copy->post_author,
-			'post_parent'           => 0,
-			'post_type'             => 'page',
-			'post_date'             => $post_to_copy->post_date,
-			'post_date_gmt'         => $post_to_copy->post_date_gmt,
-			'post_modified'         => $post_to_copy->post_modified,
-			'post_modified_gmt'     => $post_to_copy->post_modified_gmt,
-			'post_title'            => $post_to_copy->post_title,
-			'post_excerpt'          => '',
-			'post_content_filtered' => '',
-			'post_mime_type'        => '',
-			'post_password'         => '',
-			'post_name'             => $post_to_copy->post_name,
-			'guid'                  => '',
-			'menu_order'            => 0,
-			'pinged'                => '',
-			'to_ping'               => '',
-			'ping_status'           => '',
-			'comment_status'        => 'closed',
-			'comment_count'         => 0,
-			'filter'                => 'raw',
-		), $post_params, array( 'post_content' => $content ) );
+		$dummy_post_properties = array_merge( $this->generate_dummy_post_args( $object_to_copy ), $post_params, array( 'post_content' => $content ) );
 
 		// Save the current query and post for the view.
 		$this->original_query = $wp_query;
@@ -104,7 +80,7 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		$wp_query->is_archive    = false;
 		$wp_query->max_num_pages = 0;
 
-		$this->prepare_wp_query( $wp_query, $post_to_copy, $post_params );
+		$this->prepare_wp_query( $wp_query, $object_to_copy, $post_params );
 
 		/*
 		 * Prevent the title from appearing, since it's assumed that the
@@ -121,6 +97,101 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		// Ensure the sidebar widgets see this as the original page.
 		add_action( 'dynamic_sidebar_before', array( $this, 'setup_original_query' ) );
 		add_action( 'dynamic_sidebar_after', 'wp_reset_query' );
+	}
+
+	/**
+	 * Generate dummy post args.
+	 *
+	 * @param object $object_to_copy
+	 * @return array
+	 */
+	private function generate_dummy_post_args( $object_to_copy ) {
+		$default_args = array(
+			'ID'                    => 0,
+			'post_status'           => 'publish',
+			'post_author'           => 0,
+			'post_parent'           => 0,
+			'post_type'             => 'page',
+			'post_date'             => current_time( 'mysql' ),
+			'post_date_gmt'         => current_time( 'mysql' ),
+			'post_modified'         => current_time( 'mysql' ),
+			'post_modified_gmt'     => current_time( 'mysql' ),
+			'post_title'            => '',
+			'post_excerpt'          => '',
+			'post_content_filtered' => '',
+			'post_mime_type'        => '',
+			'post_password'         => '',
+			'post_name'             => '',
+			'guid'                  => '',
+			'menu_order'            => 0,
+			'pinged'                => '',
+			'to_ping'               => '',
+			'ping_status'           => '',
+			'comment_status'        => 'closed',
+			'comment_count'         => 0,
+			'filter'                => 'raw',
+		);
+
+		if ( $object_to_copy instanceof WP_Term ) {
+			return array_merge( $default_args, $this->generate_post_args_from_term( $object_to_copy ) );
+		}
+		if ( $object_to_copy instanceof WP_User ) {
+			return array_merge( $default_args, $this->generate_post_args_from_user( $object_to_copy ) );
+		}
+		if ( $object_to_copy instanceof WP_Post ) {
+			return array_merge( $default_args, $this->generate_post_args_from_post( $object_to_copy ) );
+		}
+
+		return $default_args;
+	}
+
+	/**
+	 * Generate dummy post args from term object.
+	 *
+	 * @param WP_Term $term_to_copy
+	 * @return array
+	 */
+	private function generate_post_args_from_term( $term_to_copy ) {
+		return array(
+			'post_title' => $term_to_copy->name,
+			'post_name'  => $term_to_copy->slug,
+		);
+	}
+
+	/**
+	 * Generate dummy post args from user object.
+	 *
+	 * @param WP_User $user_to_copy
+	 * @return array
+	 */
+	private function generate_post_args_from_user( $user_to_copy ) {
+		return array(
+			'post_author'       => $user_to_copy->ID,
+			'post_date'         => $user_to_copy->user_registered,
+			'post_date_gmt'     => $user_to_copy->user_registered,
+			'post_modified'     => $user_to_copy->user_registered,
+			'post_modified_gmt' => $user_to_copy->user_registered,
+			'post_title'        => $user_to_copy->display_name,
+			'post_name'         => $user_to_copy->user_nicename,
+		);
+	}
+
+	/**
+	 * Generate dummy post args from another post object.
+	 *
+	 * @param WP_Post $post_to_copy
+	 * @return array
+	 */
+	private function generate_post_args_from_post( $post_to_copy ) {
+		return array(
+			'post_author'       => $post_to_copy->post_author,
+			'post_date'         => $post_to_copy->post_date,
+			'post_date_gmt'     => $post_to_copy->post_date_gmt,
+			'post_modified'     => $post_to_copy->post_modified,
+			'post_modified_gmt' => $post_to_copy->post_modified_gmt,
+			'post_title'        => $post_to_copy->post_title,
+			'post_name'         => $post_to_copy->post_name,
+		);
 	}
 
 	/**
