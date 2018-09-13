@@ -21,12 +21,21 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	protected $post_type;
 
 	/**
+	 * @var array Additional options.
+	 */
+	protected $options;
+
+	/**
 	 * Construct the handler.
 	 *
 	 * @param string $post_type The post type to render.
+	 * @param array  $options   An array of options. Currently supports:
+	 *                            bool   show_pagination
+	 *                            string template_filename
 	 */
-	public function __construct( $post_type ) {
+	public function __construct( $post_type, $options = array() ) {
 		$this->post_type = $post_type;
+		$this->options   = $options;
 	}
 
 	/**
@@ -82,6 +91,10 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		return $content;
 	}
 
+	protected function get_option( $name, $default = null ) {
+		return isset( $this->options[ $name ] ) ? $this->options[ $name ] : $default;
+	}
+
 	/**
 	 * Get the renderer for this handler. Subclasses may override this to
 	 * provide a custom object that implements Sensei_Renderer_Interface.
@@ -89,7 +102,8 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * @return Sensei_Renderer_Interface The renderer object to use.
 	 */
 	protected function get_renderer() {
-		$post_id = get_the_ID();
+		$post_id         = get_the_ID();
+		$show_pagination = $this->get_option( 'show_pagination', true );
 
 		/**
 		 * Whether to show pagination on the CPT page when displaying on a
@@ -102,7 +116,7 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		 */
 		$show_pagination = apply_filters(
 			'sensei_cpt_page_show_pagination',
-			true,
+			$show_pagination,
 			$this->post_type,
 			$post_id
 		);
@@ -113,7 +127,7 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	}
 
 	protected function get_template_filename() {
-		return "single-{$this->post_type}.php";
+		return $this->get_option( 'template_filename', "single-{$this->post_type}.php" );
 	}
 
 }

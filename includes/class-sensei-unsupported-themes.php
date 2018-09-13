@@ -77,6 +77,10 @@ class Sensei_Unsupported_Themes {
 		$this->_handlers = array(
 			new Sensei_Unsupported_Theme_Handler_CPT( 'course' ),
 			new Sensei_Unsupported_Theme_Handler_CPT( 'lesson' ),
+			new Sensei_Unsupported_Theme_Handler_CPT( 'sensei_message', array(
+				'show_pagination'   => false,
+				'template_filename' => 'single-message.php',
+			) ),
 			new Sensei_Unsupported_Theme_Handler_Module(),
 			new Sensei_Unsupported_Theme_Handler_Course_Results(),
 			new Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive(),
