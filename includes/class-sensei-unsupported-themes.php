@@ -78,6 +78,7 @@ class Sensei_Unsupported_Themes {
 			new Sensei_Unsupported_Theme_Handler_Course(),
 			new Sensei_Unsupported_Theme_Handler_Module(),
 			new Sensei_Unsupported_Theme_Handler_Course_Results(),
+			new Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive(),
 		);
 	}
 
