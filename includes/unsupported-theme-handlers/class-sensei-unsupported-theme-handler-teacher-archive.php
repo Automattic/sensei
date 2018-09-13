@@ -46,27 +46,10 @@ class Sensei_Unsupported_Theme_Handler_Teacher_Archive
 	public function handle_request() {
 		$this->author = get_user_by( 'id', get_query_var('author') );
 
-		if ( ! $this->author ) {
-			return;
-		}
-
-		$teacher_post = new WP_Post( (object) array(
-			'post_author'       => $this->author->ID,
-			'post_date'         => $this->author->user_registered,
-			'post_date_gmt'     => $this->author->user_registered,
-			'post_modified'     => $this->author->user_registered,
-			'post_modified_gmt' => $this->author->user_registered,
-			'post_title'        => $this->author->display_name,
-			'post_name'         => $this->author->user_nicename,
-			'post_excerpt'      => '',
-			'post_content'      => '',
-			'post_type'         => 'page',
-		) );
-
 		// Render the teacher archive page and output it as a Page.
 		$content = $this->render_page();
-		$this->output_content_as_page( $content, $teacher_post, array(
-			'post_title' => sanitize_text_field( $teacher_post->post_title ),
+		$this->output_content_as_page( $content, $this->author, array(
+			'post_title' => sanitize_text_field( $this->author->display_name ),
 		) );
 	}
 
