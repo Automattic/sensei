@@ -11,7 +11,10 @@
  */
 ?>
 
-<?php  get_sensei_header();  ?>
+<?php
+get_sensei_header();
+the_post();
+?>
 
 <article <?php post_class(); ?> >
 
