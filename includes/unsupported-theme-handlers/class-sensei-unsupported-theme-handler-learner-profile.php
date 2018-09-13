@@ -50,9 +50,7 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile
 
 		// Render the learner profile page and output it as a Page.
 		$content = $this->render_page();
-		$this->output_content_as_page( $content, $learner_user, array(
-			'post_title' => sanitize_text_field( $learner_user->display_name ),
-		) );
+		$this->output_content_as_page( $content, $learner_user );
 	}
 
 	/**
