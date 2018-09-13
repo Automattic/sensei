@@ -65,7 +65,6 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile
 		$content = $this->render_page();
 		$this->output_content_as_page( $content, $learner_post, array(
 			'post_title' => sanitize_text_field( $learner_post->post_title ),
-			'post_name'  => $learner_post->post_name,
 		) );
 	}
 
@@ -91,7 +90,7 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile
 	 *
 	 * @param WP_Query $wp_query
 	 * @param WP_Post  $post_to_copy
-	 * @param array $post_params
+	 * @param array    $post_params
 	 */
 	protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params ) {
 		$wp_query->queried_object    = $post_to_copy;
