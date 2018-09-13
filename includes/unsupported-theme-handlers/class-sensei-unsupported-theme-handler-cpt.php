@@ -16,6 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_Handler_Interface {
 
 	/**
+	 * @var int The post ID.
+	 */
+	protected $post_id;
+
+	/**
 	 * @var string The post type to render.
 	 */
 	protected $post_type;
@@ -53,6 +58,8 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * @since 1.12.0
 	 */
 	public function handle_request() {
+		$this->post_id = get_the_ID();
+
 		add_filter( 'the_content', array( $this, 'cpt_page_content_filter' ) );
 
 		// Handle some type-specific items.
@@ -65,6 +72,11 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 				add_filter( 'comments_open', '__return_false', 100 );
 				add_filter( 'get_comments_number', '__return_false', 100 );
 			}
+		}
+
+		if ( 'sensei_message' === $this->post_type ) {
+			// Do not display the Message title.
+			add_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
 		}
 	}
 
@@ -102,7 +114,6 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * @return Sensei_Renderer_Interface The renderer object to use.
 	 */
 	protected function get_renderer() {
-		$post_id         = get_the_ID();
 		$show_pagination = $this->get_option( 'show_pagination', true );
 
 		/**
@@ -118,16 +129,38 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 			'sensei_cpt_page_show_pagination',
 			$show_pagination,
 			$this->post_type,
-			$post_id
+			$this->post_id
 		);
 
-		return new Sensei_Renderer_Single_Post( $post_id, $this->get_template_filename(), array(
+		return new Sensei_Renderer_Single_Post( $this->post_id, $this->get_template_filename(), array(
 			'show_pagination' => $show_pagination,
 		) );
 	}
 
+	/**
+	 * Get the name of the template file. By default, this is
+	 * "single-{post_type}.php", but could be supplied by an option in the
+	 * constructor.
+	 *
+	 * @return string
+	 */
 	protected function get_template_filename() {
 		return $this->get_option( 'template_filename', "single-{$this->post_type}.php" );
+	}
+
+	/**
+	 * Use in the_title filter to hide the post title.
+	 *
+	 * @param string $title The original title.
+	 * @param int    $id    The post ID.
+	 *
+	 * @return string The original title or empty string.
+	 */
+	public function hide_the_title( $title, $id ) {
+		if ( is_main_query() && in_the_loop() && $id === $this->post_id ) {
+			return '';
+		}
+		return $title;
 	}
 
 }
