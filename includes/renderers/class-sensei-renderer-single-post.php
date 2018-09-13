@@ -118,7 +118,10 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 			return;
 		}
 
-		$args = array( 'p' => $this->post_id );
+		$args = array(
+			'p'         => $this->post_id,
+			'post_type' => get_post_type( $this->post_id ),
+		);
 
 		$this->post_query = new WP_Query( $args );
 	}
@@ -145,11 +148,10 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	public function set_global_vars() {
 		global $wp_query, $wp_the_query, $post, $pages;
 
-		$post           = get_post( $this->post_id );
-		$pages          = array( $post->post_content );
-		$wp_query       = $this->post_query;
-		$wp_the_query   = $wp_query;
-		$wp_query->post = get_post( $this->post_id );
+		$post         = get_post( $this->post_id );
+		$pages        = array( $post->post_content );
+		$wp_query     = $this->post_query;
+		$wp_the_query = $wp_query;
 	}
 
 	/**
