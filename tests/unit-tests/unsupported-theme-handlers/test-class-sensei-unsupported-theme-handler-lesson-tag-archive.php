@@ -38,7 +38,7 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive_Test extends WP_UnitTe
 	 *
 	 * @since 1.12.0
 	 */
-	public function testShouldHandleTeacherArchivePage() {
+	public function testShouldHandleLessonTagArchivePage() {
 		$this->assertTrue( $this->handler->can_handle_request() );
 	}
 
@@ -48,7 +48,7 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive_Test extends WP_UnitTe
 	 *
 	 * @since 1.12.0
 	 */
-	public function testShouldNotHandleNonTeacherArchivePage() {
+	public function testShouldNotHandleNonLessonTagArchivePage() {
 		// Set up the query to be for the Courses page.
 		global $wp_query;
 		$wp_query = new WP_Query( array(
