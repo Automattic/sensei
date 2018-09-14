@@ -29,8 +29,8 @@ class Sensei_Unsupported_Theme_Handler_Teacher_Archive
 	 */
 	public function can_handle_request() {
 		return is_author()
-				&& Sensei_Teacher::is_a_teacher( get_query_var('author') )
-				&& ! user_can( get_query_var('author'), 'manage_options' );
+				&& Sensei_Teacher::is_a_teacher( get_query_var( 'author' ) )
+				&& ! user_can( get_query_var( 'author' ), 'manage_options' );
 	}
 
 	/**
@@ -44,7 +44,7 @@ class Sensei_Unsupported_Theme_Handler_Teacher_Archive
 	 * @since 1.12.0
 	 */
 	public function handle_request() {
-		$this->author = get_user_by( 'id', get_query_var('author') );
+		$this->author = get_user_by( 'id', get_query_var( 'author' ) );
 
 		// Render the teacher archive page and output it as a Page.
 		$content = $this->render_page();
