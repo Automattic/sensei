@@ -25,7 +25,7 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 	 *                                              rendering the shortcode
 	 *                                              content.
 	 */
-	private $show_pagination;
+	private $renderer;
 
 	/**
 	 * Setup the shortcode object
@@ -39,7 +39,7 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 		$this->id = isset( $attributes['id'] ) ? $attributes['id'] : '';
 
 		if ( $this->id ) {
-			$this->renderer = new Sensei_Renderer_Single_Course( $this->id, $attributes );
+			$this->renderer = new Sensei_Renderer_Single_Post( $this->id, 'single-course.php', $attributes );
 		}
 	}
 
@@ -58,6 +58,8 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 		}
 
 		try {
+			// Ensure the global vars are set properly for the Lessons display.
+			add_action( 'sensei_single_course_lessons_before', array( $this->renderer, 'set_global_vars' ), 1, 0 );
 			return $this->renderer->render();
 		} catch ( Sensei_Renderer_Missing_Fields_Exception $e ) {
 			// translators: Placeholders are the shortcode name and the error message.

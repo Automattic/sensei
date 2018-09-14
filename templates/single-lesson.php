@@ -9,11 +9,15 @@
  * @category    Templates
  * @version     1.9.0
  */
+
+global $post;
+
+get_sensei_header();
+
+if ( have_posts() ) {
+	the_post();
+}
 ?>
-
-<?php  get_sensei_header();  ?>
-
-<?php the_post(); ?>
 
 <article <?php post_class( array( 'lesson', 'post' ) ); ?>>
 

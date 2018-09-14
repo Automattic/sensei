@@ -390,22 +390,20 @@ a.sensei-certificate-link {
 		}
 	}
 
-	header {
+	header.lesson-title {
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
 		margin-bottom: 0.5em;
 
+		h1, h2 {
+			display: inline-block;
+			margin: 0;
+		}
+
 		.preview-label {
 			margin-left: 10px;
 			font-size: 1.1em;
-		}
-
-		&.lesson-title {
-			h1, h2 {
-				display: inline-block;
-				margin: 0;
-			}
 		}
 
 		.lesson-meta {

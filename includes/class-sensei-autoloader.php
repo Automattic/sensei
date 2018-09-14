@@ -148,14 +148,15 @@ class Sensei_Autoloader {
 			/**
 			 * Renderers
 			 */
-			'Sensei_Renderer_Single_Course' => 'renderers/class-sensei-renderer-single-course.php',
+			'Sensei_Renderer_Interface'   => 'renderers/interface-sensei-renderer.php',
+			'Sensei_Renderer_Single_Post' => 'renderers/class-sensei-renderer-single-post.php',
 
 			/**
 			 * Unsupported theme handlers.
 			 */
 			'Sensei_Unsupported_Theme_Handler_Interface'          => 'unsupported-theme-handlers/interface-sensei-unsupported-theme-handler.php',
 			'Sensei_Unsupported_Theme_Handler_Page_Imitator'      => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-page-imitator.php',
-			'Sensei_Unsupported_Theme_Handler_Course'             => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course.php',
+			'Sensei_Unsupported_Theme_Handler_CPT'                => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-cpt.php',
 			'Sensei_Unsupported_Theme_Handler_Module'             => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-module.php',
 			'Sensei_Unsupported_Theme_Handler_Course_Results'     => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course-results.php',
 			'Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive' => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-lesson-tag-archive.php',
