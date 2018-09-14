@@ -48,9 +48,7 @@ class Sensei_Unsupported_Theme_Handler_Teacher_Archive
 
 		// Render the teacher archive page and output it as a Page.
 		$content = $this->render_page();
-		$this->output_content_as_page( $content, $this->author, array(
-			'post_title' => sanitize_text_field( $this->author->display_name ),
-		) );
+		$this->output_content_as_page( $content, $this->author );
 	}
 
 	/**
