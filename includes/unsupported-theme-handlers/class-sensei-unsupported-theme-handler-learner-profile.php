@@ -42,7 +42,7 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile
 		/**
 		 * @var WP_User $learner_user
 		 */
-		$learner_user = Sensei_Learner::find_by_query_var( get_query_var('learner_profile') );
+		$learner_user = Sensei_Learner::find_by_query_var( get_query_var( 'learner_profile' ) );
 
 		if ( ! $learner_user ) {
 			$learner_user = new WP_User;
