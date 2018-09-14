@@ -47,12 +47,12 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * @since 1.12.0
 	 *
 	 * @param string $content        The content to output as a Page.
-	 * @param object $object_to_copy The WP_Post to use when populating required
+	 * @param object $object_to_copy Optional WP_Post to use when populating
 	 *                               fields for the Page.
 	 * @param array  $post_params    Optional post parameters to override when
 	 *                               creating the Page.
 	 */
-	protected function output_content_as_page( $content, $object_to_copy, $post_params = array() ) {
+	protected function output_content_as_page( $content, $object_to_copy = null, $post_params = array() ) {
 		global $post, $wp_query;
 
 		// Set up dummy post for rendering.
