@@ -61,6 +61,7 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		$this->post_id = get_the_ID();
 
 		add_filter( 'the_content', array( $this, 'cpt_page_content_filter' ) );
+		add_filter( 'template_include', array( $this, 'force_page_template' ) );
 
 		// Handle some type-specific items.
 		if ( 'lesson' === $this->post_type ) {
@@ -161,6 +162,16 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 			return '';
 		}
 		return $title;
+	}
+
+	public function force_page_template( $template ) {
+		$path = get_query_template( 'page' );
+
+		if ( $path ) {
+			return $path;
+		}
+
+		return $template;
 	}
 
 }
