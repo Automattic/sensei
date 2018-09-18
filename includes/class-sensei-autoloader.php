@@ -161,6 +161,7 @@ class Sensei_Autoloader {
 			'Sensei_Unsupported_Theme_Handler_Course_Results'     => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course-results.php',
 			'Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive' => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-lesson-tag-archive.php',
 			'Sensei_Unsupported_Theme_Handler_Teacher_Archive'    => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-teacher-archive.php',
+			'Sensei_Unsupported_Theme_Handler_Message_Archive'    => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-message-archive.php',
 			'Sensei_Unsupported_Theme_Handler_Learner_Profile'    => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-learner-profile.php',
 			'Sensei_Unsupported_Theme_Handler_Course_Archive'     => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course-archive.php',
 
