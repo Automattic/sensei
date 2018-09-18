@@ -141,6 +141,9 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		if ( $object_to_copy instanceof WP_Post ) {
 			return array_merge( $default_args, $this->generate_post_args_from_post( $object_to_copy ) );
 		}
+		if ( $object_to_copy instanceof WP_Post_Type ) {
+			return array_merge( $default_args, $this->generate_post_args_from_post_type( $object_to_copy ) );
+		}
 
 		return $default_args;
 	}
@@ -191,6 +194,20 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 			'post_modified_gmt' => $post_to_copy->post_modified_gmt,
 			'post_title'        => $post_to_copy->post_title,
 			'post_name'         => $post_to_copy->post_name,
+		);
+	}
+
+
+	/**
+	 * Generate dummy post args from a post type object.
+	 *
+	 * @param WP_Post_Type $post_type_to_copy
+	 * @return array
+	 */
+	private function generate_post_args_from_post_type( $post_type_to_copy ) {
+		return array(
+			'post_title' => $post_type_to_copy->label,
+			'post_name'  => $post_type_to_copy->name,
 		);
 	}
 
