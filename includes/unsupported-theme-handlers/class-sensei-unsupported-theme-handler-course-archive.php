@@ -39,9 +39,19 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 	 * @since 1.12.0
 	 */
 	public function handle_request() {
+		global $wp_query;
+
 		// Render the course archive page and output it as a Page.
 		$content = $this->render_page();
-		$this->output_content_as_page( $content );
+
+		if ( is_tax( 'course-category' ) ) {
+			$term = $wp_query->get_queried_object();
+			$this->output_content_as_page( $content, $term );
+		} else {
+			$this->output_content_as_page( $content, null, array(
+				'post_title' => __( 'Courses' ),
+			) );
+		}
 	}
 
 	/**
