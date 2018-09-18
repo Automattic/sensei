@@ -75,6 +75,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	public $question_category;
 
 	/**
+	 * @var WP_UnitTest_Factory_For_Message
+	 */
+	public $message;
+
+	/**
 	 * constructor function
 	 *
 	 * This sets up some basic demo data
@@ -87,6 +92,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-multiple-question.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-lesson.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-module.php';
+		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-message.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-question-category.php';
 
 		$this->course            = new WP_UnitTest_Factory_For_Course( $this );
@@ -95,6 +101,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		$this->question          = new WP_UnitTest_Factory_For_Question( $this );
 		$this->multiple_question = new WP_UnitTest_Factory_For_Multiple_Question( $this );
 		$this->module            = new WP_UnitTest_Factory_For_Module( $this );
+		$this->message           = new WP_UnitTest_Factory_For_Message( $this );
 		$this->question_category = new WP_UnitTest_Factory_For_Question_Category( $this );
 	}// end construct
 
