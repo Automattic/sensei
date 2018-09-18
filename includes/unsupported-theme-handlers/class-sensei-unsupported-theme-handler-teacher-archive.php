@@ -74,10 +74,10 @@ class Sensei_Unsupported_Theme_Handler_Teacher_Archive
 	 * query.
 	 *
 	 * @param WP_Query $wp_query
-	 * @param WP_Post  $post_to_copy
+	 * @param object   $object_to_copy
 	 * @param array    $post_params
 	 */
-	protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params ) {
+	protected function prepare_wp_query( $wp_query, $object_to_copy, $post_params ) {
 		$wp_query->queried_object    = $this->author;
 		$wp_query->queried_object_id = $this->author->ID;
 	}

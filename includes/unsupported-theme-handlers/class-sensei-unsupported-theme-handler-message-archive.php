@@ -68,15 +68,13 @@ class Sensei_Unsupported_Theme_Handler_Message_Archive
 	}
 
 	/**
-	 * Prepare the WP query object for the imitated request. The `queried_object` property should
-	 * be the queried author in order for it to show up in the page's `<title>` tag for this author
-	 * query.
+	 * Prepare the WP query object for the imitated request.
 	 *
 	 * @param WP_Query $wp_query
-	 * @param WP_Post  $post_to_copy
+	 * @param object   $object_to_copy
 	 * @param array    $post_params
 	 */
-	protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params ) {
+	protected function prepare_wp_query( $wp_query, $object_to_copy, $post_params ) {
 		global $post;
 		$wp_query->queried_object = $post;
 	}
