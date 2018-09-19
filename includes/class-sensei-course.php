@@ -909,7 +909,18 @@ class Sensei_Course {
 				// Display Image Placeholder if none
 				if ( Sensei()->settings->get( 'placeholder_images_enable' ) ) {
 
-					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+					/**
+					 * Filter the image HTML when no course image exists.
+					 *
+					 * @since 1.1.0
+					 * @since 1.12.0 Added $course_id, $width, and $height.
+					 *
+					 * @param string $img_html  Course image HTML.
+					 * @param int    $course_id Course ID.
+					 * @param int    $width     Requested image width.
+					 * @param int    $height    Requested image height.
+					 */
+					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />', $course_id, $width, $height );
 					$used_placeholder = true;
 
 				} // End If Statement
