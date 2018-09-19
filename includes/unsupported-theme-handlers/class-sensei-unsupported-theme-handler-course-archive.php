@@ -66,6 +66,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 		add_filter( 'sensei_show_main_header', '__return_false' );
 		add_filter( 'sensei_show_main_footer', '__return_false' );
 		Sensei_Templates::get_template( 'archive-course.php' );
+		do_action( 'sensei_pagination' );
 		$content = ob_get_clean();
 
 		return $content;
