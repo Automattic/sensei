@@ -49,7 +49,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 			$this->output_content_as_page( $content, $term );
 		} else {
 			$this->output_content_as_page( $content, null, array(
-				'post_title' => __( 'Courses' ),
+				'post_title' => __( 'Courses', 'woothemes-sensei' ),
 			) );
 		}
 	}
