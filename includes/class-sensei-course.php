@@ -883,10 +883,11 @@ class Sensei_Course {
 
 		} // End If Statement
 
-		$img_url = '';
+		$img_html         = '';
+		$used_placeholder = false;
 		if ( has_post_thumbnail( $course_id ) ) {
 			// Get Featured Image
-			$img_url = get_the_post_thumbnail( $course_id, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
+			$img_html = get_the_post_thumbnail( $course_id, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
 		} else {
 
 			// Check for a Lesson Image
@@ -895,20 +896,21 @@ class Sensei_Course {
 			foreach ($course_lessons as $lesson_item){
 				if ( has_post_thumbnail( $lesson_item->ID ) ) {
 					// Get Featured Image
-					$img_url = get_the_post_thumbnail( $lesson_item->ID, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
-					if ( '' != $img_url ) {
+					$img_html = get_the_post_thumbnail( $lesson_item->ID, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft') );
+					if ( '' !== $img_html ) {
 						break;
 					} // End If Statement
 
 				} // End If Statement
 			} // End For Loop
 
-			if ( '' == $img_url ) {
+			if ( '' === $img_html ) {
 
 				// Display Image Placeholder if none
 				if ( Sensei()->settings->get( 'placeholder_images_enable' ) ) {
 
-					$img_url = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />' );
+					$used_placeholder = true;
 
 				} // End If Statement
 
@@ -916,9 +918,22 @@ class Sensei_Course {
 
 		} // End If Statement
 
-		if ( '' != $img_url ) {
+		/**
+		 * Filter the HTML for the course image. If not blank, this will be surrounded with an anchor tag linking to the course.
+		 *
+		 * @since 1.12.0
+		 *
+		 * @param string $img_html         Course image HTML.
+		 * @param int    $course_id        Course ID.
+		 * @param int    $width            Requested image width.
+		 * @param int    $height           Requested image height.
+		 * @param bool   $used_placeholder True if placeholder was used in the generation of the image HTML.
+		 */
+		$img_html = apply_filters( 'sensei_course_image_html', $img_html, $course_id, $width, $height, $used_placeholder );
 
-			$html .= '<a href="' . get_permalink( $course_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $course_id ) ) . '">' . $img_url  .'</a>';
+		if ( '' != $img_html ) {
+
+			$html .= '<a href="' . get_permalink( $course_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $course_id ) ) . '">' . $img_html  .'</a>';
 
 		} // End If Statement
 
