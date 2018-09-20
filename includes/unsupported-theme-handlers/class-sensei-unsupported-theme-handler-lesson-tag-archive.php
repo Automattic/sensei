@@ -68,6 +68,7 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive
 		} else {
 			Sensei_Templates::get_template( 'archive-lesson.php' );
 		}
+		do_action( 'sensei_pagination' );
 		$content = ob_get_clean();
 
 		return $content;
