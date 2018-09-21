@@ -105,7 +105,7 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 		// Reset all filters.
 		remove_filter( 'sensei_show_main_footer', '__return_false' );
 		remove_filter( 'sensei_show_main_header', '__return_false' );
-		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 10 );
+		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 100 );
 
 		return $output;
 	}
