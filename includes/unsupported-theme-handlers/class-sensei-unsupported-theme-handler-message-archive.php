@@ -62,6 +62,8 @@ class Sensei_Unsupported_Theme_Handler_Message_Archive
 		add_filter( 'sensei_show_main_footer', '__return_false' );
 
 		Sensei_Templates::get_template( 'archive-message.php' );
+		do_action( 'sensei_pagination' );
+
 		$content = ob_get_clean();
 
 		return $content;
