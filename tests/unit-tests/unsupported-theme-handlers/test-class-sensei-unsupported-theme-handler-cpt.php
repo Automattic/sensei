@@ -99,6 +99,7 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldRemoveContentFilter() {
+		$this->handler->handle_request();
 		$this->handler->cpt_page_content_filter( '' );
 
 		$this->assertFalse( has_filter( 'the_content', array( $this->handler, 'cpt_page_content_filter' ) ) );
@@ -110,6 +111,8 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldUseSinglePostRenderer() {
+		$this->handler->handle_request();
+
 		$handler_content = $this->handler->cpt_page_content_filter( '' );
 		$renderer        = new Sensei_Renderer_Single_Post(
 			$this->course->ID,
@@ -133,6 +136,7 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldShowPaginationByDefault() {
+		$this->handler->handle_request();
 		$this->handler->cpt_page_content_filter( '' );
 		$this->assertEquals( 1, did_action( 'sensei_pagination' ) );
 	}
@@ -144,6 +148,7 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 	 */
 	public function testShouldHidePaginationWhenFiltered() {
 		add_filter( 'sensei_cpt_page_show_pagination', '__return_false' );
+		$this->handler->handle_request();
 		$this->handler->cpt_page_content_filter( '' );
 		$this->assertEquals( 0, did_action( 'sensei_pagination' ) );
 	}
