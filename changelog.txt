@@ -1,5 +1,18 @@
 *** Sensei Changelog ***
 
+2018.10.17 - version 1.12.0
+
+* New: Better support for non-Sensei themes
+* New: Redirect to next lesson after completing a lesson
+* New: Show comments for preview lessons
+* New: Add `sensei_course_image_html` filter to enable altering HTML output of a course image
+* Tweak: Start lesson when student first views lesson page
+* Tweak: Remove _Single Course page displays_ setting
+* Tweak: Minify sensei.css
+* Tweak: Upgrade Select2 to latest version
+* Fix: Bulk Learner Actions showing all users in the network
+* Fix: JavaScript error on Lessons page
+
 2018.06.13 - version 1.11.0
 
 * Fix: Fix display of all other lessons after module is removed
