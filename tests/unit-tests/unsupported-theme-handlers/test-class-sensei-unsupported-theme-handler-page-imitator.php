@@ -156,9 +156,8 @@ class Sensei_Unsupported_Theme_Handler_Page_Imitator_Test extends WP_UnitTestCas
 		$this->course = $this->factory->course->create_and_get();
 		$this->factory->post->create_many( 2 );
 
-		// Setup $wp_query to be for the lessons in Module 2.
 		$args         = array(
-			'post_type' => 'post',
+			'post_type' => 'course',
 		);
 		$wp_query     = new WP_Query( $args );
 		$wp_the_query = $wp_query;

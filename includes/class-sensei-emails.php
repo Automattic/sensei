@@ -215,6 +215,7 @@ class Sensei_Emails {
 		include( $template );
 		do_action( 'sensei_after_email_template', $email_template );
 
+		$email_template = '';
 		return ob_get_clean();
 	}
 
