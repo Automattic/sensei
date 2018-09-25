@@ -140,12 +140,6 @@ class Sensei_Templates {
 
         global $wp_query, $email_template;
 
-		// If our unsupported theme renderer is handling the request, we do not
-		// need to find a custom template.
-		if ( Sensei_Unsupported_Themes::get_instance()->is_handling_request() ) {
-			return $template;
-		}
-
         $find = array( 'woothemes-sensei.php' );
         $file = '';
 
@@ -154,6 +148,14 @@ class Sensei_Templates {
             $file 	= 'emails/' . $email_template;
             $find[] = $file;
             $find[] = Sensei()->template_url . $file;
+
+		} elseif ( Sensei_Unsupported_Themes::get_instance()->is_handling_request() ) {
+
+			/*
+			* If our unsupported theme renderer is handling the request, we do
+			* not need to find a custom template.
+			*/
+			$file = null;
 
         } elseif ( is_single() && get_post_type() == 'course' ) {
 
