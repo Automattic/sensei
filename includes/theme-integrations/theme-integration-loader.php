@@ -35,25 +35,26 @@ class Sensei_Theme_Integration_Loader {
 
     }
 
-    /**
-     * Setup the theme slugs supported by Sensei Core
-     *
-     * @since 1.9.0
-     */
-    private function setup_themes(){
+	/**
+	 * Setup the theme slugs supported by Sensei Core
+	 *
+	 * @since 1.9.0
+	 */
+	private function setup_themes(){
 
-        $this->themes = array(
-            'twentyeleven',
-            'twentytwelve',
-            'twentythirteen',
-            'twentyfourteen',
-            'twentyfifteen',
-            'twentysixteen',
-            'twentyseventeen',
-            'storefront',
-        );
+		$this->themes = array(
+			'twentyeleven',
+			'twentytwelve',
+			'twentythirteen',
+			'twentyfourteen',
+			'twentyfifteen',
+			'twentysixteen',
+			'twentyseventeen',
+			'storefront',
+			'Divi',
+		);
 
-    }// end setup themes
+	}// end setup themes
 
 	/**
 	 * Get names of all themes supported by default.
