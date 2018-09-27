@@ -39,7 +39,7 @@ class Sensei_Bootstrap {
     }
 
     private function init_autoloader() {
-        require_once( 'class-sensei-autoloader.php' );
+        require_once( dirname( __FILE__ ) . '/class-sensei-autoloader.php' );
         $this->autoloader = new Sensei_Autoloader();
     }
 
@@ -51,7 +51,7 @@ class Sensei_Bootstrap {
     }
 
     private function init_must_have_includes() {
-        require_once( 'lib/woo-functions.php' );
-        require_once( 'sensei-functions.php' );
+        require_once( dirname( __FILE__ ) . '/lib/woo-functions.php' );
+        require_once( dirname( __FILE__ ) . '/sensei-functions.php' );
     }
 }
