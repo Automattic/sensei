@@ -581,10 +581,10 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			$menu['back'] = '<a href="'
 				. esc_url( add_query_arg( $query_args, admin_url( 'admin.php' ) ) )
-				. '">'
-				// translators: Placeholders %1$s and %3$s are the opening and closing <em> tags, %2$s is the Course title.
-				. sprintf( __( '%1$sBack to %2$s%3$s', 'woothemes-sensei' ), '<em>&larr; ', $course, '</em>' )
-				. '</a>';
+				. '"><em>&larr; '
+				// translators: Placeholder is the Course title.
+				. sprintf( __( 'Back to %s', 'woothemes-sensei' ), $course )
+				. '</em></a>';
 		}
 		$menu = apply_filters( 'sensei_learners_sub_menu', $menu );
 		if ( !empty($menu) ) {
