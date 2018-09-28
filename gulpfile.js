@@ -36,6 +36,7 @@ var paths = {
 		'assets/**/*',
 		'changelog.txt',
 		'CONTRIBUTING.md',
+		'LICENSE',
 		'dummy_data.xml',
 		'includes/**/*',
 		'lang/**/*',
