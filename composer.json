@@ -6,7 +6,7 @@
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
 		"phpcompatibility/phpcompatibility-wp": "^1",
 		"phpunit/phpunit": "^6.5",
-		"squizlabs/php_codesniffer": "3.*",
+		"squizlabs/php_codesniffer": "^3.3",
 		"wp-coding-standards/wpcs": "^0.14.0"
 	},
 	"prefer-stable": true
