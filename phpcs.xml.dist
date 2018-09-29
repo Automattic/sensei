@@ -16,7 +16,7 @@
 
 	<!-- Rules -->
 	<rule ref="PHPCompatibilityWP"/>
-	<rule ref="WordPress">
-		<exclude name="WordPress.VIP" />
-	</rule>
+	<rule ref="WordPress-Extra"/>
+	<rule ref="WordPress-Docs"/>
+
 </ruleset>
