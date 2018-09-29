@@ -70,15 +70,33 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 
 			// Turn off theme comments if needed.
 			if ( ! Sensei()->settings->get( 'lesson_comments' ) ) {
-				add_filter( 'comments_open', '__return_false', 100 );
-				add_filter( 'get_comments_number', '__return_false', 100 );
+				$this->disable_comments();
 			}
 		}
 
 		if ( 'sensei_message' === $this->post_type ) {
 			// Do not display the Message title.
 			add_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
+
+			// Do not display comments through the theme.
+			$this->disable_comments();
 		}
+	}
+
+	/**
+	 * Disable rendering of comments.
+	 */
+	public function disable_comments() {
+		add_filter( 'comments_open', '__return_false', 100 );
+		add_filter( 'get_comments_number', '__return_false', 100 );
+	}
+
+	/**
+	 * If we have previously disabled comments, re-enable them.
+	 */
+	public function reenable_comments() {
+		remove_filter( 'comments_open', '__return_false', 100 );
+		remove_filter( 'get_comments_number', '__return_false', 100 );
 	}
 
 	/**
@@ -98,8 +116,14 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		// Remove the filter we're in to avoid nested calls.
 		remove_filter( 'the_content', array( $this, 'cpt_page_content_filter' ) );
 
+		// Temporarily re-enable comments.
+		$this->reenable_comments();
+
 		$renderer = $this->get_renderer();
 		$content  = $renderer->render();
+
+		// Disable comments again.
+		$this->disable_comments();
 
 		return $content;
 	}
