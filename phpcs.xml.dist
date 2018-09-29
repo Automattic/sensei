@@ -19,4 +19,13 @@
 	<rule ref="WordPress-Extra"/>
 	<rule ref="WordPress-Docs"/>
 
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element name="sensei"/>
+				<element name="woothemes"/>
+			</property>
+		</properties>
+	</rule>
+
 </ruleset>
