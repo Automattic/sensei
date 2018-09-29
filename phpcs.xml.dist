@@ -15,7 +15,7 @@
 	<config name="testVersion" value="5.2-"/>
 
 	<!-- Rules -->
-	<rule ref="PHPCompatibility" />
+	<rule ref="PHPCompatibilityWP"/>
 	<rule ref="WordPress">
 		<exclude name="WordPress.VIP" />
 	</rule>
