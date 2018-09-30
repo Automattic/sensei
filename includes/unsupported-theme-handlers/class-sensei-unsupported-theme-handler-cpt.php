@@ -75,8 +75,8 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		}
 
 		if ( 'sensei_message' === $this->post_type ) {
-			// Do not display the Message title.
-			add_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
+			// Hide the message title until `the_content` is displayed.
+			$this->add_filter_hide_the_title();
 
 			// Do not display comments through the theme.
 			$this->disable_comments();
@@ -115,6 +115,9 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 
 		// Remove the filter we're in to avoid nested calls.
 		remove_filter( 'the_content', array( $this, 'cpt_page_content_filter' ) );
+
+		// Remove the filter to hide the title (if needed).
+		$this->remove_filter_hide_the_title();
 
 		// Temporarily re-enable comments.
 		$this->reenable_comments();
@@ -171,6 +174,20 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 */
 	protected function get_template_filename() {
 		return $this->get_option( 'template_filename', "single-{$this->post_type}.php" );
+	}
+
+	/**
+	 * Add a filter to hide the post title.
+	 */
+	public function add_filter_hide_the_title() {
+		add_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
+	}
+
+	/**
+	 * Remove the filter to hide the post title.
+	 */
+	public function remove_filter_hide_the_title() {
+		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
 	}
 
 	/**

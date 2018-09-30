@@ -93,19 +93,21 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 		// Capture output.
 		ob_start();
 
-		// Render the template, and pagination if needed.
+		// Render the template.
 		Sensei_Templates::get_template( $this->template );
+
+		// Reset all filters.
+		remove_filter( 'sensei_show_main_footer', '__return_false' );
+		remove_filter( 'sensei_show_main_header', '__return_false' );
+		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 100 );
+
+		// Render pagination if needed.
 		if ( $this->show_pagination ) {
 			do_action( 'sensei_pagination' );
 		}
 		$output = ob_get_clean();
 
 		$this->reset_global_vars();
-
-		// Reset all filters.
-		remove_filter( 'sensei_show_main_footer', '__return_false' );
-		remove_filter( 'sensei_show_main_header', '__return_false' );
-		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 100 );
 
 		return $output;
 	}
