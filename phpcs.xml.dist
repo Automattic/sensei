@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
-<ruleset name="Sensei">
+<ruleset name="Sensei"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+
 	<description>A custom set of code standard rules to check for Sensei plugin.</description>
 
 	<!-- For help in understanding this file: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
