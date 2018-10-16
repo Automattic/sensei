@@ -47,6 +47,10 @@ class Sensei_Unsupported_Theme_Handler_Message_Archive
 		// Render the message archive page and output it as a Page.
 		$content = $this->render_page();
 		$this->output_content_as_page( $content, $post_type );
+
+		// Do not display any pagination from the theme.
+		add_filter( 'previous_post_link', '__return_false' );
+		add_filter( 'next_post_link', '__return_false' );
 	}
 
 	/**
