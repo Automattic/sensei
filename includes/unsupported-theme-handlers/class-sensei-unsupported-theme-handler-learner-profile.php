@@ -51,6 +51,9 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile
 		// Render the learner profile page and output it as a Page.
 		$content = $this->render_page();
 		$this->output_content_as_page( $content, $learner_user );
+
+		// Disable pagination.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
 	}
 
 	/**

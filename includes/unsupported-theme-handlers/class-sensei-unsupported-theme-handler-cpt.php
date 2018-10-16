@@ -92,10 +92,6 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 
 			// Do not display comments through the theme.
 			$this->disable_comments();
-
-			// Do not display any pagination.
-			add_filter( 'previous_post_link', '__return_false' );
-			add_filter( 'next_post_link', '__return_false' );
 		}
 	}
 
@@ -143,6 +139,9 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 
 		// Disable comments again.
 		$this->disable_comments();
+
+		// Disable pagination.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
 
 		return $content;
 	}

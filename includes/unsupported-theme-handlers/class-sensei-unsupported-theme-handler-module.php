@@ -51,6 +51,9 @@ class Sensei_Unsupported_Theme_Handler_Module
 			'post_title' => sanitize_text_field( $module->name ),
 			'post_name'  => $module->slug,
 		) );
+
+		// Disable pagination.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
 	}
 
 	/**

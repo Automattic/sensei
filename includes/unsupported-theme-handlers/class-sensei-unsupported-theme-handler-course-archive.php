@@ -52,6 +52,9 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 				'post_title' => __( 'Courses', 'woothemes-sensei' ),
 			) );
 		}
+
+		// Disable pagination.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
 	}
 
 	/**

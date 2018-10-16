@@ -51,6 +51,9 @@ class Sensei_Unsupported_Theme_Handler_Course_Results
 		$this->output_content_as_page( $content, $course, array(
 			'post_title' => sanitize_text_field( $course->post_title ),
 		) );
+
+		// Disable pagination.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
 	}
 
 	/**
