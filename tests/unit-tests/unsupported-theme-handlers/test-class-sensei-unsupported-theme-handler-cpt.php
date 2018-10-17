@@ -113,7 +113,6 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 	public function testShouldUseSinglePostRenderer() {
 		$this->handler->handle_request();
 
-		$handler_content = $this->handler->cpt_page_content_filter( '' );
 		$renderer        = new Sensei_Renderer_Single_Post(
 			$this->course->ID,
 			'single-course.php',
@@ -122,6 +121,9 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 			)
 		);
 		$renderer_content = $renderer->render();
+
+		// Run the handler last, since it has side-effects.
+		$handler_content = $this->handler->cpt_page_content_filter( '' );
 
 		$this->assertEquals(
 			$renderer_content,
