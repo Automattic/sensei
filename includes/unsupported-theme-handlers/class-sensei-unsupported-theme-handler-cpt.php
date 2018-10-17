@@ -1,4 +1,10 @@
 <?php
+/**
+ * Unsupported Theme Handler for CPT's.
+ *
+ * @package Core
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -16,17 +22,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_Handler_Interface {
 
 	/**
-	 * @var int The post ID.
+	 * The post ID.
+	 *
+	 * @var int $post_id
 	 */
 	protected $post_id;
 
 	/**
-	 * @var string The post type to render.
+	 * The post type to render.
+	 *
+	 * @var string $post_type
 	 */
 	protected $post_type;
 
 	/**
-	 * @var array Additional options.
+	 * Additional options.
+	 *
+	 * @var array $options
 	 */
 	protected $options;
 
@@ -35,8 +47,8 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 *
 	 * @param string $post_type The post type to render.
 	 * @param array  $options   An array of options. Currently supports:
-	 *                            bool   show_pagination
-	 *                            string template_filename
+	 *                            bool   show_pagination   Whether to show pagination.
+	 *                            string template_filename The template file to use for rendering.
 	 */
 	public function __construct( $post_type, $options = array() ) {
 		$this->post_type = $post_type;
@@ -65,20 +77,38 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 
 		// Handle some type-specific items.
 		if ( 'lesson' === $this->post_type ) {
-			// Use theme comments UI instead of Sensei's
+			// Use theme comments UI instead of Sensei's.
 			remove_action( 'sensei_pagination', array( 'Sensei_Lesson', 'output_comments' ), 90 );
 
 			// Turn off theme comments if needed.
 			if ( ! Sensei()->settings->get( 'lesson_comments' ) ) {
-				add_filter( 'comments_open', '__return_false', 100 );
-				add_filter( 'get_comments_number', '__return_false', 100 );
+				$this->disable_comments();
 			}
 		}
 
 		if ( 'sensei_message' === $this->post_type ) {
-			// Do not display the Message title.
-			add_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
+			// Hide the message title until `the_content` is displayed.
+			$this->add_filter_hide_the_title();
+
+			// Do not display comments through the theme.
+			$this->disable_comments();
 		}
+	}
+
+	/**
+	 * Disable rendering of comments.
+	 */
+	public function disable_comments() {
+		add_filter( 'comments_open', '__return_false', 100 );
+		add_filter( 'get_comments_number', '__return_false', 100 );
+	}
+
+	/**
+	 * If we have previously disabled comments, re-enable them.
+	 */
+	public function reenable_comments() {
+		remove_filter( 'comments_open', '__return_false', 100 );
+		remove_filter( 'get_comments_number', '__return_false', 100 );
 	}
 
 	/**
@@ -98,12 +128,32 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		// Remove the filter we're in to avoid nested calls.
 		remove_filter( 'the_content', array( $this, 'cpt_page_content_filter' ) );
 
+		// Remove the filter to hide the title (if needed).
+		$this->remove_filter_hide_the_title();
+
+		// Temporarily re-enable comments.
+		$this->reenable_comments();
+
 		$renderer = $this->get_renderer();
 		$content  = $renderer->render();
+
+		// Disable comments again.
+		$this->disable_comments();
+
+		// Disable pagination.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
 
 		return $content;
 	}
 
+	/**
+	 * Get an option from the $options array, or the default value if that
+	 * option was not set.
+	 *
+	 * @param string $name    The option name.
+	 * @param string $default The default option value. If not specified, this
+	 *                        will be null.
+	 */
 	protected function get_option( $name, $default = null ) {
 		return isset( $this->options[ $name ] ) ? $this->options[ $name ] : $default;
 	}
@@ -150,6 +200,20 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	}
 
 	/**
+	 * Add a filter to hide the post title.
+	 */
+	public function add_filter_hide_the_title() {
+		add_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
+	}
+
+	/**
+	 * Remove the filter to hide the post title.
+	 */
+	public function remove_filter_hide_the_title() {
+		remove_filter( 'the_title', array( $this, 'hide_the_title' ), 20, 2 );
+	}
+
+	/**
 	 * Use in the_title filter to hide the post title.
 	 *
 	 * @param string $title The original title.
@@ -164,6 +228,12 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		return $title;
 	}
 
+	/**
+	 * Filter to return the page.php template of the theme if possible.
+	 *
+	 * @param  string $template The original template to be used.
+	 * @return string The page.php template if possible, the original template * otherwise.
+	 */
 	public function force_page_template( $template ) {
 		$path = get_query_template( 'page' );
 

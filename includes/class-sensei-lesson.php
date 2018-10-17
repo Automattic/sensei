@@ -4008,7 +4008,7 @@ class Sensei_Lesson {
 		$lesson_allow_comments = $allow_comments && ( $user_taking_course || $has_access || $is_preview );
 
 		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
-			comments_template();
+			comments_template( '', true );
 		}
 	}
 

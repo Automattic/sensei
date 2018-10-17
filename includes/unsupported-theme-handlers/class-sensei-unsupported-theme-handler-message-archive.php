@@ -47,6 +47,9 @@ class Sensei_Unsupported_Theme_Handler_Message_Archive
 		// Render the message archive page and output it as a Page.
 		$content = $this->render_page();
 		$this->output_content_as_page( $content, $post_type );
+
+		// Disable pagination.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
 	}
 
 	/**

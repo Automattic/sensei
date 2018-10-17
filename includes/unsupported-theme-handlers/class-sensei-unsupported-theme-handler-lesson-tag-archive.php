@@ -47,6 +47,9 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive
 		// Render the lesson tag archive page and output it as a Page.
 		$content = $this->render_page();
 		$this->output_content_as_page( $content, $term );
+
+		// Disable pagination.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
 	}
 
 	/**

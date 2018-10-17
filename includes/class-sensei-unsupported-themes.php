@@ -78,7 +78,7 @@ class Sensei_Unsupported_Themes {
 			new Sensei_Unsupported_Theme_Handler_CPT( 'course' ),
 			new Sensei_Unsupported_Theme_Handler_CPT( 'lesson' ),
 			new Sensei_Unsupported_Theme_Handler_CPT( 'sensei_message', array(
-				'show_pagination'   => false,
+				'show_pagination'   => true,
 				'template_filename' => 'single-message.php',
 			) ),
 			new Sensei_Unsupported_Theme_Handler_CPT( 'quiz' ),
