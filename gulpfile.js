@@ -79,7 +79,7 @@ gulp.task( 'JS', gulp.series( function() {
 } ) );
 
 gulp.task( 'pot', gulp.series( function() {
-	return gulp.src( [ '**/**.php', '!node_modules/**' ] )
+	return gulp.src( [ '**/**.php', '!node_modules/**', '!build/**' ] )
 		.pipe( sort() )
 		.pipe( wpPot( {
 			domain: 'woothemes-sensei',
@@ -89,7 +89,7 @@ gulp.task( 'pot', gulp.series( function() {
 } ) );
 
 gulp.task( 'textdomain', gulp.series( function() {
-	return gulp.src( [ '**/*.php', '!node_modules/**' ] )
+	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' ] )
 		.pipe( checktextdomain( {
 			text_domain: 'woothemes-sensei',
 			keywords: [
