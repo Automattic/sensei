@@ -108,7 +108,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
         $login = esc_html( $learner->user_login );
         $title = esc_html( Sensei_Learner::get_full_name( $learner->user_id ) );
 		// translators: Placeholder %s is the learner's full name.
-        $a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
+        $a_title = sprintf( __( 'Edit &#8220;%s&#8221;', 'woothemes-sensei' ), $title );
         $html = '<strong><a class="row-title" href="' . admin_url( 'user-edit.php?user_id=' . $learner->user_id ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $login ) . '</a></strong>';
         $html .= ' <span>(<em>' . $title . '</em>, ' . esc_html( $learner->user_email ) . ')</span>';
         return $html;

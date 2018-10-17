@@ -535,7 +535,7 @@ class Sensei_Learner_Management {
 			die();
 		}
 
-		$default = isset( $_GET['default'] ) ? $_GET['default'] : __( 'None', 'woocommerce' );
+		$default = isset( $_GET['default'] ) ? $_GET['default'] : __( 'None', 'woothemes-sensei' );
 
 		$found_users = array( '' => $default );
 

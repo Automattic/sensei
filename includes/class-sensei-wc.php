@@ -962,7 +962,7 @@ class Sensei_WC {
 
 		if ( self::is_product_in_cart( $wc_product_id ) ) {
 
-			$cart_link = '<a href="' . wc_get_checkout_url() . '" title="' . __( 'Checkout', 'woocommerce' ) . '">' . __( 'checkout', 'woocommerce' ) . '</a>';
+			$cart_link = '<a href="' . wc_get_checkout_url() . '" title="' . __( 'Checkout', 'woothemes-sensei' ) . '">' . __( 'checkout', 'woothemes-sensei' ) . '</a>';
 
 			// translators: Placeholder is a link to the cart.
 			$message = sprintf( __( 'This course is already in your cart, please proceed to %1$s, to gain access.', 'woothemes-sensei' ), $cart_link );
