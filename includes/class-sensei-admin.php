@@ -1121,7 +1121,7 @@ class Sensei_Admin {
 				$count++;
 				$class = 'course';
 				if ( $count == 1 ) { $class .= ' first'; }
-				if ( $count == count( $course ) ) { $class .= ' last'; }
+				if ( $count == count( $all_course_ids ) ) { $class .= ' last'; }
 				if ( $count % 2 != 0 ) {
 					$class .= ' alternate';
 				}
@@ -1280,7 +1280,7 @@ class Sensei_Admin {
                             $count++;
                             $class = 'lesson';
                             if ( $count == 1 ) { $class .= ' first'; }
-                            if ( $count == count( $lesson ) ) { $class .= ' last'; }
+                            if ( $count == count( $lessons ) ) { $class .= ' last'; }
                             if ( $count % 2 != 0 ) {
                                 $class .= ' alternate';
                             }
@@ -1328,7 +1328,7 @@ class Sensei_Admin {
 						$count++;
 						$class = 'lesson';
 						if ( $count == 1 ) { $class .= ' first'; }
-						if ( $count == count( $lesson ) ) { $class .= ' last'; }
+						if ( $count == count( $lessons ) ) { $class .= ' last'; }
 						if ( $count % 2 != 0 ) {
 
 							$class .= ' alternate';
