@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2018.10.17 - version 1.12.0
+2018.10.22 - version 1.12.0
 
 * New: Better support for non-Sensei themes
 * New: Redirect to next lesson after completing a lesson
