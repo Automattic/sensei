@@ -76,22 +76,9 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		add_filter( 'template_include', array( $this, 'force_page_template' ) );
 
 		// Handle some type-specific items.
-		if ( 'lesson' === $this->post_type ) {
-			// Use theme comments UI instead of Sensei's.
-			remove_action( 'sensei_pagination', array( 'Sensei_Lesson', 'output_comments' ), 90 );
-
-			// Turn off theme comments if needed.
-			if ( ! Sensei()->settings->get( 'lesson_comments' ) ) {
-				$this->disable_comments();
-			}
-		}
-
 		if ( 'sensei_message' === $this->post_type ) {
 			// Hide the message title until `the_content` is displayed.
 			$this->add_filter_hide_the_title();
-
-			// Do not display comments through the theme.
-			$this->disable_comments();
 		}
 	}
 
