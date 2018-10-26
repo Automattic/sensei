@@ -53,7 +53,7 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 *                               creating the Page.
 	 */
 	protected function output_content_as_page( $content, $object_to_copy = null, $post_params = array() ) {
-		global $post, $wp_query;
+		global $post, $wp_query, $wp_the_query;
 
 		// Set up dummy post for rendering.
 		$dummy_post_properties = array_merge( $this->generate_dummy_post_args( $object_to_copy ), $post_params, array( 'post_content' => $content ) );
@@ -79,6 +79,10 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		$wp_query->is_single     = true;
 		$wp_query->is_archive    = false;
 		$wp_query->max_num_pages = 0;
+
+		add_filter( 'comments_template_query_args', array( $this, 'filter_comment_args_load_none' ), 100 );
+		add_filter( 'comments_open', '__return_false', 100 );
+		add_filter( 'get_comments_number', '__return_false', 100 );
 
 		$this->prepare_wp_query( $wp_query, $object_to_copy, $post_params );
 
@@ -231,6 +235,19 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 			return '';
 		}
 		return $title;
+	}
+
+	/**
+	 * Filter on `comments_template_query_args` to ensure that no comments are
+	 * loaded.
+	 *
+	 * @param array $comment_args
+	 *
+	 * @return array
+	 */
+	public function filter_comment_args_load_none( $comment_args ) {
+		$comment_args['comment__in'] = array( 0 );
+		return $comment_args;
 	}
 
 	/**
