@@ -67,6 +67,7 @@ jQuery( document ).ready( function () {
 		ajax: {
 			// in wp-admin ajaxurl is supplied by WordPress and is available globaly
 			url: ajaxurl,
+			delay: 250,
 			dataType: 'json',
 			cache: true,
 			data: function (params) { // page is the one-based page number tracked by Select2
