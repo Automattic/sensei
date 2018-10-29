@@ -1894,11 +1894,11 @@ class Sensei_Frontend {
 		// Check the username.
 		$username_error_notice = '';
 		if ( $new_user_name == '' ) {
-			$username_error_notice = __( '<strong>ERROR</strong>: Please enter a username.' );
+			$username_error_notice = __( '<strong>ERROR</strong>: Please enter a username.', 'woothemes-sensei' );
 		} elseif ( ! validate_username( $new_user_name ) ) {
-			$username_error_notice = __( '<strong>ERROR</strong>: This username is invalid because it uses illegal characters. Please enter a valid username.' );
+			$username_error_notice = __( '<strong>ERROR</strong>: This username is invalid because it uses illegal characters. Please enter a valid username.', 'woothemes-sensei' );
 		} elseif ( username_exists( $new_user_name ) ) {
-			$username_error_notice = __( '<strong>ERROR</strong>: This username is already registered. Please choose another one.' );
+			$username_error_notice = __( '<strong>ERROR</strong>: This username is already registered. Please choose another one.', 'woothemes-sensei' );
 		}
 
 		// exit on username error.
@@ -1910,11 +1910,11 @@ class Sensei_Frontend {
 		// Check the e-mail address.
 		$email_error_notice = '';
 		if ( $new_user_email == '' ) {
-			$email_error_notice = __( '<strong>ERROR</strong>: Please enter an email address.' );
+			$email_error_notice = __( '<strong>ERROR</strong>: Please enter an email address.', 'woothemes-sensei' );
 		} elseif ( ! is_email( $new_user_email ) ) {
-			$email_error_notice = __( '<strong>ERROR</strong>: The email address isn&#8217;t correct.' );
+			$email_error_notice = __( '<strong>ERROR</strong>: The email address isn&#8217;t correct.', 'woothemes-sensei' );
 		} elseif ( email_exists( $new_user_email ) ) {
-			$email_error_notice = __( '<strong>ERROR</strong>: This email is already registered, please choose another one.' );
+			$email_error_notice = __( '<strong>ERROR</strong>: This email is already registered, please choose another one.', 'woothemes-sensei' );
 		}
 
 		// exit on email address error.
@@ -1926,7 +1926,7 @@ class Sensei_Frontend {
 		// check user password
 		// exit on email address error.
 		if ( empty( $new_user_password ) ) {
-			Sensei()->notices->add_notice( __( '<strong>ERROR</strong>: The password field is empty.' ), 'alert' );
+			Sensei()->notices->add_notice( __( '<strong>ERROR</strong>: The password field is empty.', 'woothemes-sensei' ), 'alert' );
 			return;
 		}
 
@@ -1934,7 +1934,7 @@ class Sensei_Frontend {
 		$user_id = wp_create_user( $new_user_name, $new_user_password, $new_user_email );
 		if ( ! $user_id || is_wp_error( $user_id ) ) {
 			// translators: Placeholder is the admin email address.
-			Sensei()->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !' ), get_option( 'admin_email' ) ), 'alert' );
+			Sensei()->notices->add_notice( sprintf( __( '<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href="mailto:%s">webmaster</a> !', 'woothemes-sensei' ), get_option( 'admin_email' ) ), 'alert' );
 		}
 
 		// Notify the Admin and not the user. See https://github.com/Automattic/sensei/issues/1761.

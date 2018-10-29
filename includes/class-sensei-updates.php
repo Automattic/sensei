@@ -138,7 +138,7 @@ class Sensei_Updates
                         || ! wp_verify_nonce( $_POST[ $function_name.'_nonce_field' ] , 'run_'.$function_name ) ){
 
                         wp_die(
-                            '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                            '<h1>' . __( 'Cheatin&#8217; uh?', 'woothemes-sensei' ) . '</h1>' .
                             '<p>' . __( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
                             403
                         );
@@ -187,7 +187,7 @@ class Sensei_Updates
                     || ! wp_verify_nonce( $_GET[ $function_name.'_nonce' ] , 'run_'.$function_name ) ){
 
                     wp_die(
-                        '<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+                        '<h1>' . __( 'Cheatin&#8217; uh?', 'woothemes-sensei' ) . '</h1>' .
                         '<p>' . __( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
                         403
                     );

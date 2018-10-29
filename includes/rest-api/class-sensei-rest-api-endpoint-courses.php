@@ -65,7 +65,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 
         $course = $this->factory->find_one_by_id($item_id);
         if ( empty( $course ) ) {
-            return $this->not_found( __( 'Course not found' ) );
+            return $this->not_found( __( 'Course not found', 'woothemes-sensei' ) );
         }
 
         return $this->succeed( $this->prepare_data_transfer_object( $course ) );

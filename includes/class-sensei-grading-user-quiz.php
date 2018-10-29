@@ -257,7 +257,7 @@ class Sensei_Grading_User_Quiz {
 				<span class="total_grade_total"><?php echo $user_quiz_grade_total; ?></span> / <span class="quiz_grade_total"><?php echo $quiz_grade_total; ?></span> (<span class="total_grade_percent"><?php echo $quiz_grade; ?></span>%)
 			</div>
 			<div class="buttons">
-				<input type="submit" value="<?php esc_attr_e( 'Save' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
+				<input type="submit" value="<?php esc_attr_e( 'Save', 'woothemes-sensei' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
 				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'woothemes-sensei' ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
 				<input type="reset" value="<?php esc_attr_e( 'Reset', 'woothemes-sensei' ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
 			</div>

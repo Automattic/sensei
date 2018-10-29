@@ -1816,7 +1816,7 @@ class Sensei_Core_Modules
 		<div id="taxonomy-<?php echo $tax_name; ?>" class="categorydiv">
 			<ul id="<?php echo $tax_name; ?>-tabs" class="category-tabs">
 				<li class="tabs"><a href="#<?php echo $tax_name; ?>-all"><?php echo $taxonomy->labels->all_items; ?></a></li>
-				<li class="hide-if-no-js"><a href="#<?php echo $tax_name; ?>-pop"><?php _e( 'Most Used' ); ?></a></li>
+				<li class="hide-if-no-js"><a href="#<?php echo $tax_name; ?>-pop"><?php _e( 'Most Used','woothemes-sensei' ); ?></a></li>
 			</ul>
 
 			<div id="<?php echo $tax_name; ?>-pop" class="tabs-panel" style="display: none;">
@@ -1840,7 +1840,7 @@ class Sensei_Core_Modules
 						<a id="sensei-<?php echo $tax_name; ?>-add-toggle" href="#<?php echo $tax_name; ?>-add" class="hide-if-no-js">
 							<?php
 							/* translators: %s: add new taxonomy label */
-							printf( __( '+ %s' ), $taxonomy->labels->add_new_item );
+							printf( __( '+ %s', 'woothemes-sensei' ), $taxonomy->labels->add_new_item );
 							?>
 						</a>
 					</h4>

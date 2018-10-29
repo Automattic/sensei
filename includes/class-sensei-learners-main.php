@@ -265,7 +265,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
                 $title = Sensei_Learner::get_full_name( $user_activity->user_id );
 				// translators: Placeholder is the full name of the learner.
-				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
+				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;', 'woothemes-sensei' ), $title );
 				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
 
                 /**
@@ -297,7 +297,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				$lesson_learners = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_lesson_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_lesson_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
 				// translators: Placeholder is the item title.
-				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
+				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;', 'woothemes-sensei' ), $title );
 
 				$grading_action = '';
 				if ( Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
@@ -317,7 +317,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
                 $course_learners = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_learners_course_learners', array( 'post_id' => $item->ID, 'type' => 'sensei_course_status', 'status' => 'any' ) ) );
 				$title = get_the_title( $item );
 				// translators: Placeholder is the item title.
-				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;' ), $title );
+				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;', 'woothemes-sensei' ), $title );
 
 				$grading_action = '';
 				if ( version_compare($wp_version, '4.1', '>=') ) {
