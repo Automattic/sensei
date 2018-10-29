@@ -80,9 +80,7 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		$wp_query->is_archive    = false;
 		$wp_query->max_num_pages = 0;
 
-		add_filter( 'comments_template_query_args', array( $this, 'filter_comment_args_load_none' ), 100 );
-		add_filter( 'comments_open', '__return_false', 100 );
-		add_filter( 'get_comments_number', '__return_false', 100 );
+		Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
 
 		$this->prepare_wp_query( $wp_query, $object_to_copy, $post_params );
 
@@ -235,19 +233,6 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 			return '';
 		}
 		return $title;
-	}
-
-	/**
-	 * Filter on `comments_template_query_args` to ensure that no comments are
-	 * loaded.
-	 *
-	 * @param array $comment_args
-	 *
-	 * @return array
-	 */
-	public function filter_comment_args_load_none( $comment_args ) {
-		$comment_args['comment__in'] = array( 0 );
-		return $comment_args;
 	}
 
 	/**

@@ -75,27 +75,14 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		add_filter( 'the_content', array( $this, 'cpt_page_content_filter' ) );
 		add_filter( 'template_include', array( $this, 'force_page_template' ) );
 
+		// Disable comments.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
+
 		// Handle some type-specific items.
 		if ( 'sensei_message' === $this->post_type ) {
 			// Hide the message title until `the_content` is displayed.
 			$this->add_filter_hide_the_title();
 		}
-	}
-
-	/**
-	 * Disable rendering of comments.
-	 */
-	public function disable_comments() {
-		add_filter( 'comments_open', '__return_false', 100 );
-		add_filter( 'get_comments_number', '__return_false', 100 );
-	}
-
-	/**
-	 * If we have previously disabled comments, re-enable them.
-	 */
-	public function reenable_comments() {
-		remove_filter( 'comments_open', '__return_false', 100 );
-		remove_filter( 'get_comments_number', '__return_false', 100 );
 	}
 
 	/**
@@ -119,13 +106,13 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 		$this->remove_filter_hide_the_title();
 
 		// Temporarily re-enable comments.
-		$this->reenable_comments();
+		Sensei_Unsupported_Theme_Handler_Utils::reenable_comments();
 
 		$renderer = $this->get_renderer();
 		$content  = $renderer->render();
 
-		// Disable comments again.
-		$this->disable_comments();
+		// Disable theme comments.
+		Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
 
 		// Disable pagination.
 		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
