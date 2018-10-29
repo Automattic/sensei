@@ -53,7 +53,7 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 *                               creating the Page.
 	 */
 	protected function output_content_as_page( $content, $object_to_copy = null, $post_params = array() ) {
-		global $post, $wp_query;
+		global $post, $wp_query, $wp_the_query;
 
 		// Set up dummy post for rendering.
 		$dummy_post_properties = array_merge( $this->generate_dummy_post_args( $object_to_copy ), $post_params, array( 'post_content' => $content ) );
@@ -79,6 +79,8 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		$wp_query->is_single     = true;
 		$wp_query->is_archive    = false;
 		$wp_query->max_num_pages = 0;
+
+		Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
 
 		$this->prepare_wp_query( $wp_query, $object_to_copy, $post_params );
 
