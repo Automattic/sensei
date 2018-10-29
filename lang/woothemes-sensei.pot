@@ -420,7 +420,7 @@ msgstr ""
 msgid "Course Notifications"
 msgstr ""
 
-#: includes/class-sensei-course.php:235, includes/class-sensei-course.php:351, includes/class-sensei-course.php:666, includes/class-sensei-lesson.php:176, includes/class-sensei-lesson.php:218, includes/class-sensei-lesson.php:620, includes/class-sensei-lesson.php:646, includes/class-sensei-lesson.php:687, includes/class-sensei-lesson.php:1099, includes/class-sensei-modules.php:224, includes/class-sensei-utils.php:2221
+#: includes/class-sensei-course.php:235, includes/class-sensei-course.php:351, includes/class-sensei-course.php:666, includes/class-sensei-lesson.php:176, includes/class-sensei-lesson.php:218, includes/class-sensei-lesson.php:620, includes/class-sensei-lesson.php:646, includes/class-sensei-lesson.php:687, includes/class-sensei-lesson.php:1099, includes/class-sensei-modules.php:224, includes/class-sensei-utils.php:2221, includes/admin/class-sensei-learner-management.php:538
 msgid "None"
 msgstr ""
 
@@ -766,6 +766,39 @@ msgstr ""
 msgid "complete the purchase"
 msgstr ""
 
+#: includes/class-sensei-frontend.php:1897
+msgid "<strong>ERROR</strong>: Please enter a username."
+msgstr ""
+
+#: includes/class-sensei-frontend.php:1899
+msgid "<strong>ERROR</strong>: This username is invalid because it uses illegal characters. Please enter a valid username."
+msgstr ""
+
+#: includes/class-sensei-frontend.php:1901
+msgid "<strong>ERROR</strong>: This username is already registered. Please choose another one."
+msgstr ""
+
+#: includes/class-sensei-frontend.php:1913
+msgid "<strong>ERROR</strong>: Please enter an email address."
+msgstr ""
+
+#: includes/class-sensei-frontend.php:1915
+msgid "<strong>ERROR</strong>: The email address isn&#8217;t correct."
+msgstr ""
+
+#: includes/class-sensei-frontend.php:1917
+msgid "<strong>ERROR</strong>: This email is already registered, please choose another one."
+msgstr ""
+
+#: includes/class-sensei-frontend.php:1929
+msgid "<strong>ERROR</strong>: The password field is empty."
+msgstr ""
+
+#. translators: Placeholder is the admin email address.
+#: includes/class-sensei-frontend.php:1937
+msgid "<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact the <a href=\"mailto:%s\">webmaster</a> !"
+msgstr ""
+
 #: includes/class-sensei-frontend.php:1979
 msgid "Incorrect login details"
 msgstr ""
@@ -802,7 +835,7 @@ msgstr ""
 msgid "Grade:"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:68
+#: includes/class-sensei-grading-user-quiz.php:68, includes/class-sensei-grading-user-quiz.php:260
 msgid "Save"
 msgstr ""
 
@@ -974,6 +1007,14 @@ msgstr ""
 
 #: includes/class-sensei-learners-admin-bulk-actions-view.php:82, includes/class-sensei-learners-main.php:229
 msgid "No results found"
+msgstr ""
+
+#. translators: Placeholder %s is the learner's full name.
+#. translators: Placeholder is the full name of the learner.
+#. translators: Placeholder is the item title.
+#. translators: Placeholder is the item title.
+#: includes/class-sensei-learners-admin-bulk-actions-view.php:111, includes/class-sensei-learners-main.php:268, includes/class-sensei-learners-main.php:300, includes/class-sensei-learners-main.php:320
+msgid "Edit &#8220;%s&#8221;"
 msgstr ""
 
 #: includes/class-sensei-learners-admin-bulk-actions-view.php:146
@@ -1742,6 +1783,15 @@ msgstr ""
 
 #: includes/class-sensei-modules.php:1620
 msgid "No modules found."
+msgstr ""
+
+#: includes/class-sensei-modules.php:1819
+msgid "Most Used"
+msgstr ""
+
+#. translators: %s: add new taxonomy label
+#: includes/class-sensei-modules.php:1843
+msgid "+ %s"
 msgstr ""
 
 #: includes/class-sensei-posttypes.php:120
@@ -2981,6 +3031,10 @@ msgstr ""
 msgid "Data Updates"
 msgstr ""
 
+#: includes/class-sensei-updates.php:141, includes/class-sensei-updates.php:190
+msgid "Cheatin&#8217; uh?"
+msgstr ""
+
 #: includes/class-sensei-updates.php:142, includes/class-sensei-updates.php:191
 msgid "The nonce supplied in order to run this update function is invalid"
 msgstr ""
@@ -3231,6 +3285,14 @@ msgstr ""
 
 #: includes/class-sensei-wc.php:815
 msgid "Purchase this Course"
+msgstr ""
+
+#: includes/class-sensei-wc.php:965
+msgid "Checkout"
+msgstr ""
+
+#: includes/class-sensei-wc.php:965
+msgid "checkout"
 msgstr ""
 
 #. translators: Placeholder is a link to the cart.
@@ -3650,12 +3712,20 @@ msgstr ""
 msgid "Your student has started a course"
 msgstr ""
 
+#: includes/rest-api/class-sensei-rest-api-endpoint-courses.php:68
+msgid "Course not found"
+msgstr ""
+
 #: includes/rest-api/class-sensei-rest-api-endpoint-courses.php:104, includes/rest-api/class-sensei-rest-api-endpoint-courses.php:141
 msgid "Course does not exist"
 msgstr ""
 
 #: includes/rest-api/class-sensei-rest-api-endpoint-courses.php:137
 msgid "No Course ID provided"
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-endpoint-modules.php:41
+msgid "Module not found"
 msgstr ""
 
 #: includes/shortcodes/class-sensei-shortcode-course-categories.php:94
