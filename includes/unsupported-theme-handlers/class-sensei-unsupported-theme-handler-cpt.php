@@ -95,6 +95,13 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * @return string The content to be displayed on the page.
 	 */
 	public function cpt_page_content_filter( $content ) {
+		/*
+		 * Ensure that we are in the main query, and in the loop. Otherwise,
+		 * this may run in an unexpected place (e.g. when automatically
+		 * generating an excerpt). This will yield unexpected behaviour, and
+		 * since this filter only runs once, it means that we will not get the
+		 * desired full template render in the main content in such a case.
+		 */
 		if ( ! is_main_query() || ! in_the_loop() ) {
 			return $content;
 		}
