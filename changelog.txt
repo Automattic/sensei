@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2018.10.31 - version 1.12.1
+2018.11.01 - version 1.12.1
 
 * Fix: Comments not displaying on Lesson page on unsupported themes
 * Fix: I18n problems
