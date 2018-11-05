@@ -186,9 +186,39 @@ class Sensei_Lesson {
 
 		$html .= '<p>' . esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
 
-		echo $html;
-
-	} // End lesson_info_meta_box_content()
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				$this->allowed_html,
+				array(
+					'input' => array(
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'option' => array(
+						'selected' => array(),
+						'value' => array(),
+					),
+					'select' => array(
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+					),
+					'textarea' => array(
+						'cols' => array(),
+						'id' => array(),
+						'name' => array(),
+						'rows' => array(),
+						'tabindex' => array(),
+					),
+				)
+			)
+		);
+	}
 
 	/**
 	 * lesson_prerequisite_meta_box_content function.
@@ -223,8 +253,31 @@ class Sensei_Lesson {
 		} else {
 			$html .= '<p>' . esc_html__( 'No lessons exist yet. Please add some first.', 'woothemes-sensei' ) . '</p>';
 		} // End If Statement
-		// Output the HTML
-		echo $html;
+
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'id' => array(),
+						'name' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'option' => array(
+						'selected' => array(),
+						'value' => array(),
+					),
+					'select' => array(
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+						'style' => array(),
+					),
+				)
+			)
+		);
 	} // End lesson_prerequisite_meta_box_content()
 
 	/**
@@ -248,8 +301,21 @@ class Sensei_Lesson {
 		$html .= '<label for="lesson_preview">';
 		$html .= '<input type="checkbox" id="lesson_preview" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . esc_html__( 'Allow this lesson to be viewed without purchase/login', 'woothemes-sensei' ) . '<br>';
 
-		// Output the HTML
-		echo $html;
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'checked' => array(),
+						'id' => array(),
+						'name' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+				)
+			)
+		);
 	} // End lesson_preview_meta_box_content()
 
 	/**
@@ -677,7 +743,7 @@ class Sensei_Lesson {
 						if ( 0 != $prev_parent_id ) {
 							$html .= '</optgroup>';
 						}
-						$html .= '<optgroup label="' . get_the_title( $parent_id ) . '">';
+						$html .= '<optgroup label="' . esc_attr( get_the_title( $parent_id ) ) . '">';
 						$prev_parent_id = $parent_id;
 					} elseif ( ! $parent_id && 0 == $prev_parent_id ) {
 						$html .= '</optgroup>';
@@ -712,8 +778,45 @@ class Sensei_Lesson {
 				$html .= '</div>';
 		} // End If Statement
 
-		// Output the HTML
-		echo $html;
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+						'size' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'optgroup' => array(
+						'label' => array(),
+					),
+					'option' => array(
+						'class' => array(),
+						'selected' => array(),
+						'value' => array(),
+					),
+					'select' => array(
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+						'style' => array(),
+					),
+					'textarea' => array(
+						'class' => array(),
+						'cols' => array(),
+						'id' => array(),
+						'name' => array(),
+						'rows' => array(),
+						'size' => array(),
+						'value' => array(),
+					),
+				)
+			)
+		);
 	} // End lesson_course_meta_box_content()
 
 	public function quiz_panel( $quiz_id = 0 ) {
@@ -730,7 +833,7 @@ class Sensei_Lesson {
 			// Quiz Panel CSS Class
 			$quiz_class = '';
 		if ( 0 == $quiz_id ) {
-			$quiz_class = ' class="hidden"';
+			$quiz_class = 'hidden';
 		} // End If Statement
 			// Build the HTML to Output
 			$message_class = '';
@@ -753,7 +856,7 @@ class Sensei_Lesson {
 		}
 
 			// Inner DIV
-			$html .= '<div id="add-quiz-metadata"' . esc_attr( $quiz_class ) . '>';
+			$html .= '<div id="add-quiz-metadata" class="' . esc_attr( $quiz_class ) . '">';
 
 				// Quiz ID
 				$html .= '<input type="hidden" name="quiz_id" id="quiz_id" value="' . esc_attr( $quiz_id ) . '" />';
@@ -768,7 +871,7 @@ class Sensei_Lesson {
 			$html .= '</div>';
 
 			// Question Container DIV
-			$html .= '<div id="add-question-main"' . esc_attr( $quiz_class ) . '>';
+			$html .= '<div id="add-question-main" class="' . esc_attr( $quiz_class ) . '">';
 				// Inner DIV
 				$html .= '<div id="add-question-metadata">';
 
@@ -830,8 +933,41 @@ class Sensei_Lesson {
 
 		$html .= '</div>';
 
-		return $html;
-
+		return wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'button' => array(
+						'class' => array(),
+						'data-uploader_button_text' => array(),
+						'data-uploader_title' => array(),
+						'id' => array(),
+					),
+					'input' => array(
+						'checked' => array(),
+						'class' => array(),
+						'id' => array(),
+						'max' => array(),
+						'min' => array(),
+						'name' => array(),
+						'placeholder' => array(),
+						'rel' => array(),
+						'size' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'option' => array(
+						'value' => array(),
+					),
+					'select' => array(
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+					),
+				)
+			)
+		);
 	}
 
 	public function quiz_panel_questions( $questions = array() ) {
@@ -960,7 +1096,7 @@ class Sensei_Lesson {
 					$html .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 					$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', __( 'True/False', 'woothemes-sensei' ) ), $question_type ) );
 					$html .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
-					$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'woothemes-sensei' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit">' . esc_html__( 'Edit', 'woothemes-sensei' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'woothemes-sensei' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'woothemes-sensei' ) . '</a></td>';
+					$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'woothemes-sensei' ) . '" href="#question_' . esc_url( $question_counter ) . '" class="question_table_edit">' . esc_html__( 'Edit', 'woothemes-sensei' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'woothemes-sensei' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'woothemes-sensei' ) . '</a></td>';
 
 				} else {
 
@@ -977,7 +1113,7 @@ class Sensei_Lesson {
 					$html .= '<td>' . esc_html( $row_title ) . '</td>';
 					$html .= '<td class="question-grade-column"></td>';
 					$html .= '<td><input type="hidden" name="question_id" class="row_question_id" id="question_' . esc_attr( $question_counter ) . '_id" value="' . esc_attr( $question_id ) . '" /></td>';
-					$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'woothemes-sensei' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit" style="visibility:hidden;">' . esc_html__( 'Edit', 'woothemes-sensei' ) . '</a> <a title="' . esc_attr__( 'Remove Question(s)', 'woothemes-sensei' ) . '" href="#add-question-metadata" class="question_multiple_delete" rel="' . esc_attr( $question_id ) . '">' . esc_html__( 'Remove', 'woothemes-sensei' ) . '</a></td>';
+					$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'woothemes-sensei' ) . '" href="#question_' . esc_url( $question_counter ) . '" class="question_table_edit" style="visibility:hidden;">' . esc_html__( 'Edit', 'woothemes-sensei' ) . '</a> <a title="' . esc_attr__( 'Remove Question(s)', 'woothemes-sensei' ) . '" href="#add-question-metadata" class="question_multiple_delete" rel="' . esc_attr( $question_id ) . '">' . esc_html__( 'Remove', 'woothemes-sensei' ) . '</a></td>';
 
 				}
 					$html .= '</tr>';
@@ -1053,7 +1189,31 @@ class Sensei_Lesson {
 
 		}
 
-		return $html;
+		return wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'button' => array(
+						'class' => array(),
+						'data-uploader_button_text' => array(),
+						'data-uploader_title' => array(),
+						'id' => array(),
+					),
+					'input' => array(
+						'checked' => array(),
+						'class' => array(),
+						'id' => array(),
+						'min' => array(),
+						'name' => array(),
+						'rel' => array(),
+						'size' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+				)
+			)
+		);
 	}
 
 	public function quiz_panel_add( $context = 'quiz' ) {
@@ -1078,7 +1238,7 @@ class Sensei_Lesson {
 
 		if ( 'quiz' == $context ) {
 			// translators: Placeholders are an opening and closing <a> tag linking to the question bank.
-			$html .= '<p><em>' . sprintf( esc_html__( 'Add a new question to this quiz - your question will also be added to the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
+			$html .= '<p><em>' . sprintf( __( 'Add a new question to this quiz - your question will also be added to the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( admin_url( 'edit.php?post_type=question' ) ) . '">', '</a>' ) . '</em></p>';
 		}
 
 				$html .= '<div class="question">';
@@ -1154,7 +1314,7 @@ class Sensei_Lesson {
 			$html .= '<div class="tab-content hidden" id="tab-existing-content">';
 
 				// translators: Placeholders are an opening and closing <a> tag linking to the question bank.
-				$html .= '<p><em>' . sprintf( esc_html__( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit.php?post_type=question' ) . '">', '</a>' ) . '</em></p>';
+				$html .= '<p><em>' . sprintf( __( 'Add an existing question to this quiz from the %1$squestion bank%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( admin_url( 'edit.php?post_type=question' ) ) . '">', '</a>' ) . '</em></p>';
 
 				$html .= '<div id="existing-filters" class="alignleft actions">
 								<select id="existing-status">
@@ -1230,7 +1390,7 @@ class Sensei_Lesson {
 				$html .= '<div class="tab-content hidden" id="tab-multiple-content">';
 
 					// translators: Placeholders are an opening and closing <a> tag linking to the question categories page.
-					$html .= '<p><em>' . sprintf( esc_html__( 'Add any number of questions from a specified category. Edit your question categories %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) . '">', '</a>' ) . '</em></p>';
+					$html .= '<p><em>' . sprintf( __( 'Add any number of questions from a specified category. Edit your question categories %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) ) . '">', '</a>' ) . '</em></p>';
 
 					$html .= '<p><select id="add-multiple-question-category-options" name="multiple_category" class="chosen_select widefat question-category-select">' . "\n";
 					$html .= '<option value="">' . esc_html__( 'Select a Question Category', 'woothemes-sensei' ) . '</option>' . "\n";
@@ -1369,13 +1529,24 @@ class Sensei_Lesson {
 
 		$html .= '<tr class="' . esc_attr( $existing_class ) . '">
 					<td class="cb"><input type="checkbox" value="' . esc_attr( $question_id ) . '" class="existing-item" /></td>
-					<td>' . get_the_title( $question_id ) . '</td>
+					<td>' . esc_html( get_the_title( $question_id ) ) . '</td>
 					<td>' . esc_html( $question_type ) . '</td>
 					<td>' . esc_html( $question_cat_list ) . '</td>
 				  </tr>';
 
-		return $html;
-
+		return wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'class' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+				)
+			)
+		);
 	}
 
 	public function quiz_panel_filter_existing_questions() {
@@ -1390,7 +1561,7 @@ class Sensei_Lesson {
 		} // End If Statement
 
 		if ( ! wp_verify_nonce( $nonce, 'filter_existing_questions_nonce' ) ) {
-			die( $return );
+			die( '' );
 		} // End If Statement
 
 		// Parse POST data
@@ -1447,7 +1618,7 @@ class Sensei_Lesson {
 			wp_send_json( $return );
 		}
 
-		die( $return );
+		die( '' );
 	}
 
 	public function quiz_panel_question_field( $question_type = '', $question_id = 0, $question_counter = 0 ) {
@@ -1489,7 +1660,7 @@ class Sensei_Lesson {
 							$right_answers[ $i ] = ''; }
 						$right_answer_id = $this->get_answer_id( $right_answers[ $i ] );
 						// Right Answer
-						$right_answer = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_right_answer_' . $i . '"><span>' . esc_html__( 'Right:', 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '" name="question_right_answers[]" value="' . esc_attr( $right_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+						$right_answer = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '"><span>' . esc_html__( 'Right:', 'woothemes-sensei' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '" name="question_right_answers[]" value="' . esc_attr( $right_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
 						if ( $question_id ) {
 							$answers[ $right_answer_id ] = $right_answer;
 						} else {
@@ -1648,7 +1819,24 @@ class Sensei_Lesson {
 			}
 		}
 
-		return $html;
+		return wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'checked' => array(),
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+						'rel' => array(),
+						'size' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+				)
+			)
+		);
 	}
 
 	public function quiz_panel_question_feedback( $question_counter = 0, $question_id = 0, $question_type = '' ) {
@@ -1679,7 +1867,7 @@ class Sensei_Lesson {
 		$html .= '<textarea id="' . esc_attr( $field_name ) . '" name="' . esc_attr( $field_name ) . '" rows="4" cols="40" class="answer_feedback widefat">' . esc_textarea( $feedback ) . '</textarea>';
 		$html .= '</p>';
 
-		return $html;
+		return wp_kses_post( $html );
 	}
 
 	public function question_get_answer_id() {
@@ -1711,7 +1899,7 @@ class Sensei_Lesson {
 		parse_str( $data, $answer_data );
 		$answer = $answer_data['answer_value'];
 		$answer_id = $this->get_answer_id( $answer );
-		echo $answer_id;
+		echo esc_html( $answer_id );
 		die();
 	}
 
@@ -1743,7 +1931,7 @@ class Sensei_Lesson {
 			$quiz_id = $this->lesson_quizzes( $post->ID, 'any' );
 		}
 
-		echo $this->quiz_panel( $quiz_id );
+		echo $this->quiz_panel( $quiz_id ); // WPCS: XSS ok.
 
 	} // End lesson_quiz_meta_box_content()
 
@@ -1771,7 +1959,44 @@ class Sensei_Lesson {
 			$html .= '<p><em>' . esc_html__( 'There is no quiz for this lesson yet - please add one in the \'Quiz Questions\' box.', 'woothemes-sensei' ) . '</em></p>';
 		}
 
-		echo $html;
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'checked' => array(),
+						'class' => array(),
+						'disabled' => array(),
+						'id' => array(),
+						'max' => array(),
+						'min' => array(),
+						'name' => array(),
+						'placeholder' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'option' => array(
+						'selected' => array(),
+						'value' => array(),
+					),
+					'select' => array(
+						'disabled' => array(),
+						'id' => array(),
+						'multiple' => array(),
+						'name' => array(),
+					),
+					'textarea' => array(
+						'cols' => array(),
+						'disabled' => array(),
+						'id' => array(),
+						'name' => array(),
+						'placeholder' => array(),
+						'rows' => array(),
+					),
+				)
+			)
+		);
 	}
 
 	public function quiz_settings_panel( $lesson_id = 0, $quiz_id = 0 ) {
@@ -1991,7 +2216,7 @@ class Sensei_Lesson {
 
 		switch ( $column_name ) {
 			case 'id':
-				echo $id;
+				echo esc_html( $id );
 				break;
 			case 'lesson-course':
 				$lesson_course_id = get_post_meta( $id, '_lesson_course', true );
@@ -2038,7 +2263,7 @@ class Sensei_Lesson {
 		$current_user = wp_get_current_user();
 		$question_data['post_author'] = $current_user->ID;
 		$updated = $this->lesson_save_course( $course_data );
-		echo $updated;
+		echo esc_html( $updated );
 		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	} // End lesson_add_course()
 
@@ -2093,7 +2318,7 @@ class Sensei_Lesson {
 			} // End If Statement
 		} // End If Statement
 
-		echo $return;
+		echo $return; // WPCS: XSS ok.
 
 		die();
 	} // End lesson_update_question()
@@ -2111,7 +2336,7 @@ class Sensei_Lesson {
 
 		if ( ! wp_verify_nonce( $nonce, 'lesson_add_multiple_questions_nonce' )
 			|| ! current_user_can( 'edit_lessons' ) ) {
-			die( $return );
+			die( esc_html( $return ) );
 		} // End If Statement
 
 		// Parse POST data
@@ -2153,7 +2378,7 @@ class Sensei_Lesson {
 			}
 		}
 
-		echo $return;
+		echo $return; // WPCS: XSS ok.
 
 		die();
 	}
@@ -2241,7 +2466,7 @@ class Sensei_Lesson {
 			}
 		}
 
-		echo $return;
+		echo esc_html( $return );
 
 		die( '' );
 	}
@@ -2294,7 +2519,7 @@ class Sensei_Lesson {
 			}
 		}
 
-		echo $return;
+		echo $return; // WPCS: XSS ok.
 
 		die( '' );
 	}
@@ -3122,7 +3347,7 @@ class Sensei_Lesson {
 			// Display Image Placeholder if none
 			if ( Sensei()->settings->settings['placeholder_images_enable'] ) {
 
-				$img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . esc_attr( $width ) . 'x' . esc_attr( $height ) . '" class="woo-image thumbnail alignleft" />' );
+				$img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . esc_url( $width ) . 'x' . esc_url( $height ) . '" class="woo-image thumbnail alignleft" />' );
 
 			} // End If Statement
 		} // End If Statement
@@ -3133,13 +3358,12 @@ class Sensei_Lesson {
 
 		} else {
 
-			$html .= '<a href="' . get_permalink( $lesson_id ) . '" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . $img_element . '</a>';
+			$html .= '<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" title="' . esc_attr( get_post_field( 'post_title', $lesson_id ) ) . '">' . wp_kses_post( $img_element ) . '</a>';
 
 		}
 
 		return $html;
-
-	} // End lesson_image()
+	}
 
 	/**
 	 * Ooutpu the lesson image
@@ -3149,7 +3373,7 @@ class Sensei_Lesson {
 	 */
 	public static function the_lesson_image( $lesson_id = 0 ) {
 
-		echo Sensei()->lesson->lesson_image( $lesson_id );
+		echo wp_kses_post( Sensei()->lesson->lesson_image( $lesson_id ) );
 
 	}
 
@@ -3167,7 +3391,7 @@ class Sensei_Lesson {
 			$excerpt = $lesson->post_excerpt;
 
 			// if $add_p_tags true wrap with <p> else return the excerpt as is
-			$html = $add_p_tags ? wpautop( $excerpt ) : $excerpt;
+			$html = $add_p_tags ? wp_kses_post( wpautop( $excerpt ) ) : esc_html( $excerpt );
 
 		}
 		return apply_filters( 'sensei_lesson_excerpt', $html );
@@ -3233,7 +3457,7 @@ class Sensei_Lesson {
 
 		?>
 		<fieldset class="sensei-edit-field-set inline-edit-lesson">
-			<div class="sensei-inline-edit-col column-<?php echo $column_name; ?>">
+			<div class="sensei-inline-edit-col column-<?php echo esc_attr( $column_name ); ?>">
 					<?php
 					echo '<h4>' . esc_html__( 'Lesson Information', 'woothemes-sensei' ) . '</h4>';
 					// create a nonce field to be  used as a security measure when saving the data
@@ -3263,7 +3487,7 @@ class Sensei_Lesson {
 						'class' => ' ',
 					);
 					$course_field = Sensei_Utils::generate_drop_down( '-1', $course_options, $course_attributes );
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Lesson Course', 'woothemes-sensei' ), $course_field );
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Lesson Course', 'woothemes-sensei' ), $course_field ); // WPCS: XSS ok.
 
 					//
 					// lesson complexity selection
@@ -3277,11 +3501,11 @@ class Sensei_Lesson {
 						'class' => ' ',
 					);
 					$complexity_filed = Sensei_Utils::generate_drop_down( '-1', $lesson_complexities, $complexity_dropdown_attributes );
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Lesson Complexity', 'woothemes-sensei' ), $complexity_filed );
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Lesson Complexity', 'woothemes-sensei' ), $complexity_filed ); // WPCS: XSS ok.
 
 					?>
 
-					<h4><?php _e( 'Quiz Settings', 'woothemes-sensei' ); ?> </h4>
+					<h4><?php esc_html_e( 'Quiz Settings', 'woothemes-sensei' ); ?> </h4>
 
 					<?php
 
@@ -3300,13 +3524,13 @@ class Sensei_Lesson {
 						'class' => ' ',
 					);
 					$require_pass_field = Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass required', 'woothemes-sensei' ), $require_pass_field );
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass required', 'woothemes-sensei' ), $require_pass_field ); // WPCS: XSS ok.
 
 					//
 					// Quiz pass percentage
 					//
 					$quiz_pass_percentage_field = '<input name="quiz_passmark" id="sensei-edit-quiz-pass-percentage" type="number" />';
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass Percentage', 'woothemes-sensei' ), $quiz_pass_percentage_field );
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass Percentage', 'woothemes-sensei' ), $quiz_pass_percentage_field ); // WPCS: XSS ok.
 
 					//
 					// Enable quiz reset button
@@ -3323,7 +3547,7 @@ class Sensei_Lesson {
 						'class' => ' ',
 					);
 					$quiz_reset_field = Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Enable quiz reset button', 'woothemes-sensei' ), $quiz_reset_field );
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Enable quiz reset button', 'woothemes-sensei' ), $quiz_reset_field ); // WPCS: XSS ok.
 
 					?>
 			</div>
@@ -3352,9 +3576,29 @@ class Sensei_Lesson {
 		$html .= '</span>';
 		$html .= '</label></div>';
 
-		return $html;
-
-	}//end generate_all_lessons_edit_field()
+		return wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'id' => array(),
+						'name' => array(),
+						'type' => array(),
+					),
+					'option' => array(
+						'selected' => array(),
+						'value' => array(),
+					),
+					'select' => array(
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+					),
+				)
+			)
+		);
+	}
 
 	/**
 	 * Respond to the ajax call from the bulk edit save function. This comes
@@ -3565,11 +3809,11 @@ class Sensei_Lesson {
 			<h2>
 				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>"
 				   title="<?php echo esc_attr( $heading_link_title ); ?>" >
-					<?php echo $count_markup . get_the_title( $lesson_id ); ?>
+					<?php echo wp_kses_post( $count_markup ) . get_the_title( $lesson_id ); ?>
 				</a>
 			</h2>
 
-			<?php echo $preview_label; ?>
+			<?php echo wp_kses_post( $preview_label ); ?>
 
 			<p class="lesson-meta">
 
@@ -3587,18 +3831,18 @@ class Sensei_Lesson {
 
 				if ( Sensei()->settings->get( 'lesson_author' ) ) {
 
-					$meta_html .= '<span class="lesson-author">' . esc_html__( 'Author:', 'woothemes-sensei' ) . ' ' . '<a href="' . get_author_posts_url( absint( get_post()->post_author ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+					$meta_html .= '<span class="lesson-author">' . esc_html__( 'Author:', 'woothemes-sensei' ) . ' ' . '<a href="' . esc_url( get_author_posts_url( absint( get_post()->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
 
 				} // End If Statement
 				if ( '' != $lesson_complexity ) {
 
-					$meta_html .= '<span class="lesson-complexity">' . esc_html__( 'Complexity:', 'woothemes-sensei' ) . ' ' . $lesson_complexity . '</span>';
+					$meta_html .= '<span class="lesson-complexity">' . esc_html__( 'Complexity:', 'woothemes-sensei' ) . ' ' . esc_html( $lesson_complexity ) . '</span>';
 
 				}
 
 				if ( Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() ) ) {
 
-					$meta_html .= '<span class="lesson-status complete">' . __( 'Complete', 'woothemes-sensei' ) . '</span>';
+					$meta_html .= '<span class="lesson-status complete">' . esc_html__( 'Complete', 'woothemes-sensei' ) . '</span>';
 
 				} elseif ( $user_lesson_status ) {
 
@@ -3606,7 +3850,7 @@ class Sensei_Lesson {
 
 				} // End If Statement
 
-				echo $meta_html;
+				echo wp_kses_post( $meta_html );
 
 				?>
 
@@ -3637,7 +3881,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		echo Sensei()->lesson->lesson_image( $lesson_id );
+		echo wp_kses_post( Sensei()->lesson->lesson_image( $lesson_id ) );
 	}
 
 
@@ -3849,7 +4093,7 @@ class Sensei_Lesson {
 										. '</a>';
 
 						// translators: Placeholder is a link to the Course.
-						echo sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
+						echo wp_kses_post( sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link ) );
 
 						?>
 					</div>
@@ -3915,7 +4159,7 @@ class Sensei_Lesson {
 		$title = '';
 		if ( is_post_type_archive( 'lesson' ) ) {
 
-			$title = esc_html__( 'Lessons Archive', 'woothemes-sensei' );
+			$title = __( 'Lessons Archive', 'woothemes-sensei' );
 
 		} elseif ( is_tax( 'module' ) ) {
 
@@ -3927,7 +4171,7 @@ class Sensei_Lesson {
 
 		$html = $before_html . $title . $after_html;
 
-		echo apply_filters( 'sensei_lesson_archive_title', $html );
+		echo wp_kses_post( apply_filters( 'sensei_lesson_archive_title', $html ) );
 
 	} // sensei_course_archive_header()
 
@@ -3955,14 +4199,14 @@ class Sensei_Lesson {
 				/**
 				 * Filter documented in class-sensei-messages.php the_title
 				 */
-				echo apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type );
+				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type ) );
 				?>
 
 			</h1>
 
 			<?php
 			if ( $is_preview ) {
-				echo Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id );
+				echo wp_kses_post( Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id ) );
 			}
 			?>
 
@@ -4113,7 +4357,8 @@ class Sensei_Lesson {
 				$status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, $user_id, true );
 
 				if ( ! empty( $status['message'] ) ) {
-					echo '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' . Sensei_Wp_Kses::wp_kses( $status['message'] ) . '</div>';
+					echo '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' .
+						wp_kses_post( $status['message'] ) . '</div>';
 				}
 
 				if ( $has_quiz_questions ) {

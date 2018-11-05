@@ -117,7 +117,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 
     			<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_start_course_noonce' ) ); ?>" />
 
-    			<span><input name="course_start" type="submit" class="course-start" value="<?php _e( 'Start taking this Course', 'woothemes-sensei' ); ?>"/></span>
+    			<span><input name="course_start" type="submit" class="course-start" value="<?php esc_html_e( 'Start taking this Course', 'woothemes-sensei' ); ?>"/></span>
 
     		</form><?php
     	} // End If Statement
@@ -178,7 +178,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
              && $product->is_in_stock() && !sensei_check_if_product_is_in_cart( $wc_post_id ) ) { ?>
 
             <span class="course-price">
-	            <?php echo $product->get_price_html(); ?>
+	            <?php echo wp_kses_post( $product->get_price_html() ); ?>
             </span>
 
         <?php } // End If Statement
@@ -668,7 +668,7 @@ function sensei_get_the_module_title(){
  */
 function sensei_the_module_title(){
 
-	echo sensei_get_the_module_title();
+	echo esc_html( sensei_get_the_module_title() );
 
 }
 
@@ -711,8 +711,8 @@ function sensei_get_the_module_status(){
 		return '';
 	}
 
-    $module_status_html = '<p class="status module-status ' . $status_class . '">'
-                            . $module_status
+    $module_status_html = '<p class="status module-status ' . esc_attr( $status_class ) . '">'
+                            . esc_html( $module_status )
                             . '</p>';
 
     /**
@@ -736,7 +736,7 @@ function sensei_get_the_module_status(){
  */
 function sensei_the_module_status(){
 
-    echo sensei_get_the_module_status();
+    echo esc_html( sensei_get_the_module_status() );
 
 }
 
@@ -771,7 +771,7 @@ function sensei_get_the_module_id() {
  */
 function sensei_the_module_id(){
 
-	echo sensei_get_the_module_id();
+	echo esc_html( sensei_get_the_module_id() );
 
 }
 
@@ -1130,7 +1130,7 @@ function the_no_permissions_title(){
      * @since 1.9.0
      * @param $no_permissions_title
      */
-    echo apply_filters( 'sensei_the_no_permissions_title', Sensei()->permissions_message['title'] );
+    echo wp_kses_post( apply_filters( 'sensei_the_no_permissions_title', Sensei()->permissions_message['title'] ) );
 
 }
 
@@ -1148,7 +1148,7 @@ function the_no_permissions_message( $post_id ){
      * @since 1.9.0
      * @param $no_permissions_message
      */
-    echo apply_filters( 'sensei_the_no_permissions_message', Sensei()->permissions_message['message'] , $post_id );
+    echo wp_kses_post( apply_filters( 'sensei_the_no_permissions_message', Sensei()->permissions_message['message'] , $post_id ) );
 }
 
 /**
@@ -1187,7 +1187,7 @@ function sensei_the_excerpt( $post_id ){
  */
 function sensei_the_my_courses_content(){
 
-    echo Sensei()->course->load_user_courses_content( wp_get_current_user() );
+    echo Sensei()->course->load_user_courses_content( wp_get_current_user() ); // WPCS: XSS ok.
 
 } // sensei_the_my_courses_content
 
@@ -1245,7 +1245,7 @@ function sensei_the_lesson_excerpt( $lesson_id = '' ) {
         return;
     }
 
-    echo Sensei_Lesson::lesson_excerpt( get_post( $lesson_id ), false );
+    echo wp_kses_post( Sensei_Lesson::lesson_excerpt( get_post( $lesson_id ), false ) );
 
 }// End lesson_excerpt()
 
@@ -1276,7 +1276,7 @@ function sensei_the_course_results_lessons(){
  */
 function sensei_courses_per_row(){
 
-    echo Sensei_Course::get_loop_number_of_columns();
+    echo esc_html( Sensei_Course::get_loop_number_of_columns() );
 
 }
 
@@ -1323,7 +1323,7 @@ function get_the_lesson_status_class(){
  */
 function sensei_the_lesson_status_class(){
 
-    echo get_the_lesson_status_class();
+    echo esc_html( get_the_lesson_status_class() );
 }
 
 /**
@@ -1350,5 +1350,5 @@ function sensei_get_the_module_description() {
  * Print out the current module Description
  */
 function sensei_the_module_description(){
-	echo sensei_get_the_module_description();
+	echo esc_html( sensei_get_the_module_description() );
 }

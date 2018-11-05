@@ -23,22 +23,24 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 
 <?php do_action( 'sensei_before_email_content', $template ); ?>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php _e( 'Your student', 'woothemes-sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'Your student', 'woothemes-sensei' ); ?></p>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo $learner_name; ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $learner_name ); ?></h2>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php _e( 'has submitted the quiz for lesson', 'woothemes-sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'has submitted the quiz for lesson', 'woothemes-sensei' ); ?></p>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo get_the_title( $lesson_id ); ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( get_the_title( $lesson_id ) ); ?></h2>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php _e( 'for grading.', 'woothemes-sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'for grading.', 'woothemes-sensei' ); ?></p>
 
 <hr/>
 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholders are an opening and closing <a> tag linking to the grading page for the quiz.
-printf( __( 'You can grade this quiz %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'admin.php?page=sensei_grading&user=' . $learner_id . '&quiz_id=' . $quiz_id ) . '">', '</a>' );
+printf( esc_html__( 'You can grade this quiz %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' .
+	esc_url( admin_url( 'admin.php?page=sensei_grading&user=' . $learner_id . '&quiz_id=' . $quiz_id ) ) .
+	'">', '</a>' );
 ?>
 </p>
 

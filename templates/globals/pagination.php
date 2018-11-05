@@ -19,7 +19,7 @@ if ( $wp_query->max_num_pages <= 1 ) {
 ?>
 <nav class="sensei-pagination">
     <?php
-    echo paginate_links( apply_filters( 'sensei_pagination_args', array(
+    echo wp_kses_post( paginate_links( apply_filters( 'sensei_pagination_args', array(
         'base'         => esc_url_raw( str_replace( 999999999, '%#%', get_pagenum_link( 999999999, false ) ) ),
         'format'       => '',
         'add_args'     => '',
@@ -30,6 +30,6 @@ if ( $wp_query->max_num_pages <= 1 ) {
         'type'         => 'list',
         'end_size'     => 3,
         'mid_size'     => 3
-    ) ) );
+    ) ) ) );
     ?>
 </nav>

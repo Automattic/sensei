@@ -23,27 +23,27 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 
 <?php do_action( 'sensei_before_email_content', $template ); ?>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo $commenter_name; ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $commenter_name ); ?></h2>
 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is the post type (e.g. course or lesson)
-printf( __( 'has replied to your private message regarding the %1$s', 'woothemes-sensei' ), $content_type );
+printf( esc_html__( 'has replied to your private message regarding the %1$s', 'woothemes-sensei' ), esc_html( $content_type ) );
 ?>
 </p>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo $content_title; ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $content_title ); ?></h2>
 
 <hr/>
 
-<?php echo wpautop( $message ); ?>
+<?php echo wp_kses_post( wpautop( $message ) ); ?>
 
 <hr/>
 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is an opening an closing <a> tag linking to the comment.
-printf( __( 'You can view the message and reply %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . $comment_link . '">', '</a>' );
+printf( esc_html__( 'You can view the message and reply %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( $comment_link ) . '">', '</a>' );
 ?>
 </p>
 

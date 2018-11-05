@@ -279,7 +279,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 		$lesson_title = '<a href="' . add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->comment_post_ID ), admin_url( 'admin.php' ) ) . '">' . get_the_title( $item->comment_post_ID ) . '</a>';
 
 		$column_data = apply_filters( 'sensei_grading_main_column_data', array(
-				'title' => '<strong><a class="row-title" href="' . esc_url( add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id ), admin_url( 'admin.php' ) ) ) . '"">' . $title . '</a></strong>',
+				'title' => '<strong><a class="row-title" href="' . esc_url( add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id ), admin_url( 'admin.php' ) ) ) . '">' . $title . '</a></strong>',
 				'course' => $course_title,
 				'lesson' => $lesson_title,
 				'updated' => $item->comment_date,
@@ -299,7 +299,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 	 */
 	public function no_items() {
 
-        _e( 'No submissions found.', 'woothemes-sensei' );
+        esc_html_e( 'No submissions found.', 'woothemes-sensei' );
 
 	} // End no_items()
 
@@ -318,7 +318,15 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<select id="grading-course-options" name="grading_course" class="chosen_select widefat">' . "\n";
 
-				echo Sensei()->grading->courses_drop_down_html( $this->course_id );
+				echo wp_kses(
+					Sensei()->grading->courses_drop_down_html( $this->course_id ),
+					array(
+						'option' => array(
+							'selected' => array(),
+							'value' => array()
+						)
+					)
+				);
 
 			echo '</select>' . "\n";
 
@@ -326,9 +334,17 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 		echo '<div class="select-box">' . "\n";
 
-			echo '<select id="grading-lesson-options" data-placeholder="&larr; ' . __( 'Select a course', 'woothemes-sensei' ) . '" name="grading_lesson" class="chosen_select widefat">' . "\n";
+			echo '<select id="grading-lesson-options" data-placeholder="&larr; ' . esc_attr__( 'Select a course', 'woothemes-sensei' ) . '" name="grading_lesson" class="chosen_select widefat">' . "\n";
 
-				echo Sensei()->grading->lessons_drop_down_html( $this->course_id, $this->lesson_id );
+				echo wp_kses(
+					Sensei()->grading->lessons_drop_down_html( $this->course_id, $this->lesson_id ),
+					array(
+						'option' => array(
+							'selected' => array(),
+							'value' => array()
+						)
+					)
+				);
 
 			echo '</select>' . "\n";
 
@@ -338,7 +354,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<div class="select-box reset-filter">' . "\n";
 
-				echo '<a class="button-secondary" href="' . esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) . '">' . __( 'Reset filter', 'woothemes-sensei' ) . '</a>' . "\n";
+				echo '<a class="button-secondary" href="' . esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) . '">' . esc_html__( 'Reset filter', 'woothemes-sensei' ) . '</a>' . "\n";
 
 			echo '</div>' . "\n";
 
@@ -425,7 +441,8 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 			foreach ( $menu as $class => $item ) {
 				$menu[ $class ] = "\t<li class='$class'>$item";
 			}
-			echo implode( " |</li>\n", $menu ) . "</li>\n";
+
+			echo implode( " |</li>\n", wp_kses_post( $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
 

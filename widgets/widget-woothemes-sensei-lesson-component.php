@@ -63,10 +63,10 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 			$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
 
 			/* Before widget (defined by themes). */
-			echo $before_widget;
+			echo wp_kses_post( $before_widget );
 
 			/* Display the widget title if one was input (before and after defined by themes). */
-			if ( $title ) { echo $before_title . $title . $after_title; }
+			if ( $title ) { echo wp_kses_post( $before_title . $title . $after_title ); }
 
 			/* Widget content. */
 			// Add actions for plugins/themes to hook onto.
@@ -80,7 +80,7 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 			do_action( $this->woo_widget_cssclass . '_bottom' );
 
 			/* After widget (defined by themes). */
-			echo $after_widget;
+			echo wp_kses_post( $after_widget );
 		} // End If Statement
 
 	} // End widget()
@@ -129,21 +129,21 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 ?>
 		<!-- Widget Title: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"  value="<?php echo esc_attr( $instance['title'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" />
 		</p>
 		<!-- Widget Component: Select Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php _e( 'Component:', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php esc_html_e( 'Component:', 'woothemes-sensei' ); ?></label>
 			<select name="<?php echo esc_attr( $this->get_field_name( 'component' ) ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>">
 			<?php foreach ( $this->woo_widget_componentslist as $k => $v ) { ?>
-				<option value="<?php echo esc_attr( $k ); ?>"<?php selected( $instance['component'], $k ); ?>><?php echo $v; ?></option>
+				<option value="<?php echo esc_attr( $k ); ?>"<?php selected( $instance['component'], $k ); ?>><?php echo esc_html( $v ); ?></option>
 			<?php } ?>
 			</select>
 		</p>
 		<!-- Widget Limit: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php _e( 'Number of Lessons (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Lessons (optional):', 'woothemes-sensei' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>"  value="<?php echo esc_attr( $instance['limit'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>" />
 		</p>
 
@@ -187,11 +187,11 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 		    ?>
 		    	<li class="fix">
 		    		<?php do_action( 'sensei_lesson_image', $post_id, '100', '100', false, true ); ?>
-		    		<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a>
+		    		<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo esc_html( $post_title ); ?></a>
 		    		<br />
 		    		<?php if ( isset( Sensei()->settings->settings[ 'lesson_author' ] ) && ( Sensei()->settings->settings[ 'lesson_author' ] ) ) { ?>
     					<span class="course-author">
-    						<?php _e( 'by', 'woothemes-sensei' ); ?>
+    						<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
     						<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
     							<?php echo esc_html( $author_display_name ); ?>
     						</a>
@@ -201,18 +201,18 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
     				<?php if ( 0 < $lesson_course_id ) { ?>
                         <span class="lesson-course">
 							<?php
-							echo ' ' . sprintf(
+							echo ' ' . wp_kses_post( sprintf(
 								// translators: Placeholder is a link to the Course permalink.
 								__( 'Part of: %s', 'woothemes-sensei' ),
-								'<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'woothemes-sensei' ) ) . '"><em>' . get_the_title( $lesson_course_id ) . '</em></a>'
-							);
+								'<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'woothemes-sensei' ) ) . '"><em>' . esc_html( get_the_title( $lesson_course_id ) ) . '</em></a>'
+							) );
 							?>
 						</span>
                     <?php } ?>
     				<br />
 		    	</li>
 		    <?php } // End For Loop ?>
-		    <?php echo '<li class="my-account fix"><a class="button" href="'. esc_url( get_post_type_archive_link( 'lesson' ) ) .'">'.__('More Lessons', 'woothemes-sensei').'</a></li>'; ?>
+		    <?php echo '<li class="my-account fix"><a class="button" href="'. esc_url( get_post_type_archive_link( 'lesson' ) ) .'">' . esc_html__( 'More Lessons', 'woothemes-sensei' ) . '</a></li>'; ?>
 		</ul>
 		<?php } // End If Statement
 	} // End load_component()

@@ -565,7 +565,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 				$text = __( 'No lessons found.', 'woothemes-sensei' );
 				break;
 		}
-		echo apply_filters( 'sensei_analysis_course_no_items_text', $text );
+		echo wp_kses_post( apply_filters( 'sensei_analysis_course_no_items_text', $text ) );
 	} // End no_items()
 
 	/**
@@ -602,8 +602,8 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 				$lessons_class = 'current';
 				break;
 		}
-		$menu['lesson'] = sprintf( '<a href="%s" class="%s">%s</a>', $lessons_url, $lessons_class, $lessons_text );
-		$menu['user'] = sprintf( '<a href="%s" class="%s">%s</a>', $learners_url, $learners_class, $learners_text );
+		$menu['lesson'] = sprintf( '<a href="%s" class="%s">%s</a>', esc_url( $lessons_url ), esc_attr( $lessons_class ), esc_html( $lessons_text ) );
+		$menu['user'] = sprintf( '<a href="%s" class="%s">%s</a>', esc_url( $learners_url ), esc_attr( $learners_class ), esc_html( $learners_text ) );
 
 		$menu = apply_filters( 'sensei_analysis_course_sub_menu', $menu );
 		if ( !empty($menu) ) {
@@ -611,7 +611,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 			foreach ( $menu as $class => $item ) {
 				$menu[ $class ] = "\t<li class='$class'>$item";
 			}
-			echo implode( " |</li>\n", $menu ) . "</li>\n";
+			echo implode( " |</li>\n", wp_kses_post( $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
 	} // End data_table_header()
@@ -635,7 +635,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 			$url_args['user_id'] = $this->user_id;
 		}
 		$url =  add_query_arg( $url_args, admin_url( 'admin.php' ) );
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . __( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
 	} // End data_table_footer()
 
 	/**

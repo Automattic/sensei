@@ -139,7 +139,7 @@ class Sensei_Learner_Profiles {
 		}
 		$name = apply_filters( 'sensei_learner_profile_courses_heading_name', $name );
 		// translators: Placeholder is the first name or the display name of the user.
-		echo '<h2>' . apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) . '</h2>';
+		echo '<h2>' . wp_kses_post( apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'woothemes-sensei' ), $name ) ) ) . '</h2>';
 	}
 
 	/**
@@ -192,13 +192,13 @@ class Sensei_Learner_Profiles {
 
 		<div id="learner-info">
 
-			<div class="learner-avatar"><?php echo $learner_avatar; ?></div>
+			<div class="learner-avatar"><?php echo wp_kses_post( $learner_avatar ); ?></div>
 
 			<div class="learner-content">
 
-				<h2><?php echo $learner_name; ?></h2>
+				<h2><?php echo esc_html( $learner_name ); ?></h2>
 
-				<div class="description"><?php echo wpautop( $learner_bio ); ?></div>
+				<div class="description"><?php echo wp_kses_post( wpautop( $learner_bio ) ); ?></div>
 
 			</div>
 

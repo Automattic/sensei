@@ -274,18 +274,18 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
         $msgClass = 'notice-error';
         $trans = $msg;
         if ('error-invalid-action' === $msg) {
-            $trans = esc_html__( 'This bulk action is not supported', 'woothemes-sensei' );
+            $trans = __( 'This bulk action is not supported', 'woothemes-sensei' );
         }
         if ('error-invalid-course' === $msg) {
-            $trans = esc_html__( 'Invalid Course', 'woothemes-sensei' );
+            $trans = __( 'Invalid Course', 'woothemes-sensei' );
         }
         if ('success-action-success' === $msg) {
             $msgClass = 'notice-success';
-            $trans = esc_html__( 'Bulk learner action succeeded', 'woothemes-sensei' );
+            $trans = __( 'Bulk learner action succeeded', 'woothemes-sensei' );
         }
         ?>
-        <div class="learners-notice <?php echo $msgClass; ?>">
-            <p><?php echo $trans; ?></p>
+        <div class="learners-notice <?php echo esc_attr( $msgClass ); ?>">
+            <p><?php echo esc_html( $trans ); ?></p>
         </div>
         <?php
     }

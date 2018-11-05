@@ -31,16 +31,16 @@ foreach( $question_data[ 'answer_options' ] as $id => $option ) {
     ?>
 
     <li class="<?php echo esc_attr( $option[ 'option_class' ] ); ?>">
-        <input type="<?php echo $option[ 'type' ]; ?>"
-               id="<?php echo esc_attr( 'question_' . $question_data['ID'] ) . '-option-' . $count; ?>"
+        <input type="<?php echo esc_attr( $option[ 'type' ] ); ?>"
+               id="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $count ); ?>"
                name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>[]"
-               value="<?php echo esc_attr( $option['answer'] ); ?>" <?php echo $option['checked']; ?>
+               value="<?php echo esc_attr( $option['answer'] ); ?>" <?php echo esc_attr( $option['checked'] ); ?>
                 <?php echo is_user_logged_in() ? '' : ' disabled'; ?>
             />
 
-        <label for="<?php echo esc_attr( 'question_' . $question_data['ID'] ) . '-option-' . $count; ?>">
+        <label for="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $count ); ?>">
 
-            <?php echo apply_filters( 'sensei_answer_text', $option['answer'] ); ?>
+            <?php echo wp_kses_post( apply_filters( 'sensei_answer_text', $option['answer'] ) ); ?>
 
         </label>
 

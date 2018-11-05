@@ -32,16 +32,16 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
     }
 
     public function output_headers() {
-        $link_back_to_lm = '<a href="' . esc_attr( $this->controller->analysis->get_url() ) . '">' . esc_html( $this->controller->analysis->get_name() ) . '</a>';
+        $link_back_to_lm = '<a href="' . esc_url( $this->controller->analysis->get_url() ) . '">' . esc_html( $this->controller->analysis->get_name() ) . '</a>';
         $title = $this->name;
         $subtitle = '';
         if ( isset( $this->query_args['filter_by_course_id'] ) ) {
             $course = get_post( absint( $this->query_args['filter_by_course_id'] ) );
             if ( !empty( $course ) ) {
-                $subtitle .= '<h2>' . $course->post_title . '</h2>';
+                $subtitle .= '<h2>' . esc_html( $course->post_title ) . '</h2>';
             }
         }
-        echo '<h1>'. $link_back_to_lm . ' | ' . $title . '</h1>' . $subtitle;
+        echo '<h1>'. wp_kses_post( $link_back_to_lm ) . ' | ' . esc_html( $title ) . '</h1>' . wp_kses_post( $subtitle );
     }
 
     function get_columns() {
@@ -124,7 +124,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
 
     public function no_items() {
         $text = __( 'No learners found.', 'woothemes-sensei' );
-        echo apply_filters( 'sensei_learners_no_items_text', $text );
+        echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
     }
 
     private function courses_select( $courses, $selected_course, $select_id = 'course-select', $name='course_id', $select_label = null, $multiple = false ) {
@@ -183,7 +183,20 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
                 <div id="sensei-bulk-learner-actions-modal" style="display:none;">
                     <?php $this->render_bulk_actions_form( $courses ); ?>
                 </div>
-                <?php echo $this->render_bulk_action_select_box(); ?>
+                <?php
+                  echo wp_kses(
+                    $this->render_bulk_action_select_box(),
+                    array(
+                      'option' => array(
+                        'value' => array(),
+                      ),
+                      'select' => array(
+                        'id' => array(),
+                        'name' => array(),
+                      ),
+                    )
+                  );
+                ?>
                 <button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action"><?php echo esc_html__( 'Select Courses', 'woothemes-sensei' ); ?></button>
             </div>
             <div class="alignleft actions">

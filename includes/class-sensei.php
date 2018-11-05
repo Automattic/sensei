@@ -296,7 +296,7 @@ class Sensei_Main {
 	 * @since 1.8.0
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '1.8' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '1.8' );
 	}
 
 	/**
@@ -305,7 +305,7 @@ class Sensei_Main {
 	 * @since 1.8.0
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '1.8' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '1.8' );
 	}
 
 	/**

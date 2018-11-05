@@ -606,7 +606,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 			$type = $this->view;
 		}
 		// translators: Placeholders %1$s and %3$s are opening and closing <em> tages, %2$s is the view type.
-		echo  sprintf( __( '%1$sNo %2$s found%3$s', 'woothemes-sensei' ), '<em>', $type, '</em>' );
+		echo wp_kses_post( sprintf( __( '%1$sNo %2$s found%3$s', 'woothemes-sensei' ), '<em>', $type, '</em>' ) );
 	} // End no_items()
 
 	/**
@@ -639,9 +639,9 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 		$lesson_args['view'] = 'lessons';
 		$courses_args['view'] = 'courses';
 
-		$menu['learners'] = '<a class="' . $learners_class . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ). '">' . __( 'Learners', 'woothemes-sensei' ) . '</a>';
-		$menu['courses'] = '<a class="' . $courses_class . '" href="' . esc_url ( add_query_arg( $courses_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Courses', 'woothemes-sensei' ) . '</a>';
-		$menu['lessons'] = '<a class="' . $lessons_class . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Lessons', 'woothemes-sensei' ) . '</a>';
+		$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ). '">' . esc_html__( 'Learners', 'woothemes-sensei' ) . '</a>';
+		$menu['courses'] = '<a class="' . esc_attr( $courses_class ) . '" href="' . esc_url ( add_query_arg( $courses_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Courses', 'woothemes-sensei' ) . '</a>';
+		$menu['lessons'] = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Lessons', 'woothemes-sensei' ) . '</a>';
 
 		$menu = apply_filters( 'sensei_analysis_overview_sub_menu', $menu );
 		if ( !empty($menu) ) {
@@ -649,7 +649,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 			foreach ( $menu as $class => $item ) {
 				$menu[ $class ] = "\t<li class='$class'>$item";
 			}
-			echo implode( " |</li>\n", $menu ) . "</li>\n";
+			echo implode( " |</li>\n", wp_kses_post( $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
 	} // End data_table_header()
@@ -675,7 +675,7 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 			break;
 		} // End Switch Statement
 		$url = add_query_arg( array( 'page' => $this->page_slug, 'view' => $this->type, 'sensei_report_download' => $report ), admin_url( 'admin.php' ) );
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . __( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
 	} // End data_table_footer()
 
 	/**

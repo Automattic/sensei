@@ -480,11 +480,11 @@ class Sensei_WC {
 				<?php
 				$checkout_url = Sensei_WC_Utils::get_checkout_url();
 				$cart_link = '<a class="cart-complete" href="' . esc_url( $checkout_url )
-							  . '" title="' . __( 'complete purchase', 'woothemes-sensei' ) . '">'
-							  . __( 'complete the purchase', 'woothemes-sensei' ) . '</a>';
+							  . '" title="' . esc_attr__( 'complete purchase', 'woothemes-sensei' ) . '">'
+							  . esc_html__( 'complete the purchase', 'woothemes-sensei' ) . '</a>';
 
 				// translators: Placeholder is a link to the cart.
-				echo sprintf( __( 'You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei' ), $cart_link );
+				echo wp_kses_post( sprintf( __( 'You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei' ), $cart_link ) );
 
 				?>
 			</div>
@@ -881,7 +881,7 @@ class Sensei_WC {
 				$variation_data = Sensei_WC_Utils::get_product_variation_data( $product );
 				?>
 
-				<input type="hidden" name="variation_id" value="<?php echo Sensei_WC_Utils::get_product_variation_id( $product ); ?>" />
+				<input type="hidden" name="variation_id" value="<?php echo esc_attr( Sensei_WC_Utils::get_product_variation_id( $product ) ); ?>" />
 				<?php if ( is_array( $variation_data ) && count( $variation_data ) > 0 ) { ?>
 
 					<?php foreach ( $variation_data as $att => $val ) { ?>
@@ -905,7 +905,7 @@ class Sensei_WC {
 				 *
 				 * @param string $button_text
 				 */
-				echo apply_filters( 'sensei_wc_single_add_to_cart_button_text', $button_text );
+				echo wp_kses_post( apply_filters( 'sensei_wc_single_add_to_cart_button_text', $button_text ) );
 				?>
 			</button>
 
@@ -957,18 +957,21 @@ class Sensei_WC {
 
 		// login link
 		$my_courses_page_id = intval( Sensei()->settings->settings['my_course_page'] );
-		$login_link = '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
+		$login_link = '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' .
+			esc_html__( 'log in', 'woothemes-sensei' ) . '</a>';
 		$wc_product_id = self::get_course_product_id( $course_id );
 
 		if ( self::is_product_in_cart( $wc_product_id ) ) {
 
-			$cart_link = '<a href="' . wc_get_checkout_url() . '" title="' . __( 'Checkout', 'woothemes-sensei' ) . '">' . __( 'checkout', 'woothemes-sensei' ) . '</a>';
+			$cart_link = '<a href="' . esc_url( wc_get_checkout_url() ) . '" title="' .
+				esc_attr__( 'Checkout', 'woothemes-sensei' ) . '">' . esc_html__( 'checkout', 'woothemes-sensei' ) .
+				'</a>';
 
 			// translators: Placeholder is a link to the cart.
 			$message = sprintf( __( 'This course is already in your cart, please proceed to %1$s, to gain access.', 'woothemes-sensei' ), $cart_link );
 			?>
 			<span class="add-to-cart-login">
-					<?php echo $message; ?>
+					<?php echo wp_kses_post( $message ); ?>
 				</span>
 
 			<?php
@@ -989,7 +992,7 @@ class Sensei_WC {
 			$message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
 			?>
 				<span class="add-to-cart-login">
-					<?php echo $message; ?>
+					<?php echo wp_kses_post( $message ); ?>
 				</span>
 
 			<?php
@@ -1165,7 +1168,7 @@ class Sensei_WC {
 		// If object have items go through them all to find course
 		if ( 0 < sizeof( $order_items ) ) {
 
-			$course_details_html = '<h2>' . __( 'Course details', 'woothemes-sensei' ) . '</h2>';
+			$course_details_html = '<h2>' . esc_html__( 'Course details', 'woothemes-sensei' ) . '</h2>';
 			$order_contains_courses = false;
 
 			foreach ( $order_items as $item ) {
@@ -1198,7 +1201,7 @@ class Sensei_WC {
 							$permalink = get_permalink( $course->ID );
 							$order_contains_courses = true;
 							// translators: Placeholder is a link to the course.
-							$course_details_html .= '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . $title . '</a>' ) . '</p>';
+							$course_details_html .= '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . esc_html( $title ) . '</a>' ) . '</p>';
 						}
 					}
 				}
@@ -1207,7 +1210,7 @@ class Sensei_WC {
 			// Output Course details
 			if ( $order_contains_courses ) {
 
-				echo $course_details_html;
+				echo wp_kses_post( $course_details_html );
 
 			}
 		} // End if().

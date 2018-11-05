@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <div class="answer">
 
     <label for="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ] ); ?>">
-        <?php _e( 'Answer:', 'woothemes-sensei' ); ?>
+        <?php esc_html_e( 'Answer:', 'woothemes-sensei' ); ?>
     </label>
 
     <input type="text" id="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ] ); ?>"

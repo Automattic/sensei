@@ -57,10 +57,10 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
 
 		/* Before widget (defined by themes). */
-		echo $before_widget;
+		echo wp_kses_post( $before_widget );
 
 		/* Display the widget title if one was input (before and after defined by themes). */
-		if ( $title ) { echo $before_title . $title . $after_title; }
+		if ( $title ) { echo wp_kses_post( $before_title . $title . $after_title ); }
 
 		/* Widget content. */
 		// Add actions for plugins/themes to hook onto.
@@ -74,7 +74,7 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 		do_action( $this->woo_widget_cssclass . '_bottom' );
 
 		/* After widget (defined by themes). */
-		echo $after_widget;
+		echo wp_kses_post( $after_widget );
 
 	} // End widget()
 
@@ -122,12 +122,12 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 ?>
 		<!-- Widget Title: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"  value="<?php echo esc_attr( $instance['title'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" />
 		</p>
 		<!-- Widget Course Category: Select Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'course_category' ) ); ?>"><?php _e( 'Course Category:', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'course_category' ) ); ?>"><?php esc_html_e( 'Course Category:', 'woothemes-sensei' ); ?></label>
 			<?php
 			$cat_args = array( 'hierarchical' => true, 'show_option_none' => __( 'Select Category:', 'woothemes-sensei' ), 'taxonomy' => 'course-category', 'orderby' => 'name', 'selected' => intval( $instance['course_category'] ), 'id' => $this->get_field_id( 'course_category' ), 'name' => $this->get_field_name( 'course_category' ), 'class' => 'widefat' );
 			wp_dropdown_categories(apply_filters('widget_course_categories_dropdown_args', $cat_args));
@@ -135,7 +135,7 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 		</p>
 		<!-- Widget Limit: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php _e( 'Number of Courses (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Courses (optional):', 'woothemes-sensei' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>"  value="<?php echo esc_attr( $instance['limit'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>" />
 		</p>
 
@@ -182,18 +182,18 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 		    ?>
 		    	<li class="fix">
 		    		<?php do_action( 'sensei_course_image', $post_id ); ?>
-		    		<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo $post_title; ?></a>
+		    		<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo esc_html( $post_title ); ?></a>
 		    		<br />
 		    		<?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
     					<span class="course-author">
-    						<?php _e( 'by', 'woothemes-sensei' ); ?>
+    						<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
     						<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
     							<?php echo esc_html( $author_display_name ); ?>
     						</a>
     					</span>
     					<br />
     				<?php } // End If Statement ?>
-    				<span class="course-lesson-count"><?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' .  __( 'Lessons', 'woothemes-sensei' ); ?></span>
+    				<span class="course-lesson-count"><?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?></span>
     				<br />
     				<?php sensei_simple_course_price( $post_id ); ?>
 		    	</li>

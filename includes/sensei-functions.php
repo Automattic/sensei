@@ -206,7 +206,7 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative="" , $ar
 
         }
 
-        trigger_error( $error_message );
+        trigger_error( esc_html( $error_message ) );
         do_action( $hook_tag , $args );
 
     }

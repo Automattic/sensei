@@ -49,7 +49,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <p class="course-excerpt">
 
-                <?php echo get_the_excerpt(); ?>
+                <?php echo esc_html( get_the_excerpt() ); ?>
 
             </p>
 

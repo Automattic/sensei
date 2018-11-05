@@ -346,9 +346,9 @@ class Sensei_Analysis {
 	 */
 	public function render_stats_box( $title, $data ) {
 		?><div class="postbox">
-			<h2><span><?php echo $title; ?></span></h2>
+			<h2><span><?php echo esc_html( $title ); ?></span></h2>
 			<div class="inside">
-				<p class="stat"><?php echo $data; ?></p>
+				<p class="stat"><?php echo esc_html( $data ); ?></p>
 			</div>
 		</div><?php
 	} // End render_stats_box()
@@ -390,7 +390,7 @@ class Sensei_Analysis {
 		$title = $this->name;
 		?>
 			<h1>
-				<?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?>
+				<?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?>
 			</h1>
 		<?php
 	} // End analysis_default_nav()
@@ -412,7 +412,7 @@ class Sensei_Analysis {
 
 		} // End If Statement
 		?>
-			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
+			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	} // End analysis_user_profile_nav()
 
@@ -432,13 +432,13 @@ class Sensei_Analysis {
             $title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', $url, $user_name );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), $user_data->display_name );
 		} // End If Statement
-		if ( isset( $_GET['course_id'] ) ) { 
+		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
-			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
+			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	} // End analysis_user_course_nav()
 
@@ -450,13 +450,13 @@ class Sensei_Analysis {
 	public function analysis_course_nav() {
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
-		if ( isset( $_GET['course_id'] ) ) { 
+		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>',esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
-			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
+			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	} // End analysis_course_nav()
 
@@ -468,13 +468,13 @@ class Sensei_Analysis {
 	public function analysis_course_users_nav() {
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
-		if ( isset( $_GET['course_id'] ) ) { 
+		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
 			$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
 		?>
-			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
+			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	} // End analysis_course_users_nav()
 
@@ -486,7 +486,7 @@ class Sensei_Analysis {
 	public function analysis_lesson_users_nav() {
 
 		$title = sprintf( '<a href="%s">%s</a>', add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) ), esc_html( $this->name ) );
-		if ( isset( $_GET['lesson_id'] ) ) { 
+		if ( isset( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
 			$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
@@ -495,7 +495,7 @@ class Sensei_Analysis {
 			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $lesson_id ) );
 		}
 		?>
-			<h1><?php echo apply_filters( 'sensei_analysis_nav_title', $title ); ?></h1>
+			<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $title ) ); ?></h1>
 		<?php
 	} // End analysis_lesson_users_nav()
 
@@ -511,7 +511,7 @@ class Sensei_Analysis {
 
 			// Simple verification to ensure intent, Note that a Nonce is per user, so the URL can't be shared
 			if ( !wp_verify_nonce( $_REQUEST['_sdl_nonce'], 'sensei_csv_download-' . $report ) ) {
-				wp_die( __('Invalid request', 'woothemes-sensei') );
+				wp_die( esc_html__('Invalid request', 'woothemes-sensei') );
 			}
 
 			// Setup the variables we might need

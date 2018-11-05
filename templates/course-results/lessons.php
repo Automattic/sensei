@@ -27,7 +27,7 @@ global $course;
 
     <header>
 
-        <h2>  <?php _e( 'Lessons', 'woothemes-sensei' );  ?> </h2>
+        <h2>  <?php esc_html_e( 'Lessons', 'woothemes-sensei' );  ?> </h2>
 
     </header>
 
@@ -51,7 +51,7 @@ global $course;
 
 	            ?>
 
-                <h3> <?php echo $module->name; ?></h3>
+                <h3> <?php echo esc_html( $module->name ); ?></h3>
 
                 <?php
                 $count = 0;
@@ -83,7 +83,7 @@ global $course;
                         </a>
 
                         <span class="lesson-grade">
-                            <?php echo $lesson_grade; ?>
+                            <?php echo esc_html( $lesson_grade ); ?>
                         </span>
 
                     </h2>
@@ -107,7 +107,7 @@ global $course;
                 <?php
                 // lesson title will already appear above
                 if ( $course_has_lessons_in_modules ) {
-	                _e( 'Other Lessons', 'woothemes-sensei' );
+	                esc_html_e( 'Other Lessons', 'woothemes-sensei' );
                 }
                 ?>
 
@@ -142,7 +142,7 @@ global $course;
 
                     </a>
 
-                    <span class="lesson-grade"><?php echo  $lesson_grade; ?></span>
+                    <span class="lesson-grade"><?php echo esc_html( $lesson_grade ); ?></span>
 
                 </h2>
 
@@ -153,13 +153,13 @@ global $course;
 
         <h2 class="total-grade">
 
-            <?php _e( 'Total Grade', 'woothemes-sensei' ); ?>
+            <?php esc_html_e( 'Total Grade', 'woothemes-sensei' ); ?>
             <span class="lesson-grade">
 
                 <?php
 
                     $course_user_grade = Sensei_Utils::sensei_course_user_grade( $course->ID, get_current_user_id() );
-                    echo $course_user_grade . '%';
+                    echo esc_html( $course_user_grade ) . '%';
 
                 ?>
 

@@ -23,14 +23,14 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 
 <?php do_action( 'sensei_before_email_content', $template ); ?>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php _e( 'Your student', 'woothemes-sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'Your student', 'woothemes-sensei' ); ?></p>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo $learner_name; ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $learner_name ); ?></h2>
 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is the translated text for "passed" or "failed".
-printf( __( 'has completed and %1$s the course', 'woothemes-sensei' ), $passed );
+printf( esc_html__( 'has completed and %1$s the course', 'woothemes-sensei' ), esc_html( $passed ) );
 ?>
 </p>
 
@@ -41,7 +41,7 @@ printf( __( 'has completed and %1$s the course', 'woothemes-sensei' ), $passed )
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholders are an opening an closing <a> tag linking to the course learners admin page.
-printf( __( 'Manage this course\'s learners %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) . '">', '</a>' );
+printf( esc_html__( 'Manage this course\'s learners %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) ) . '">', '</a>' );
 ?>
 </p>
 

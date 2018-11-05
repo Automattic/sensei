@@ -501,7 +501,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				$text = __( 'No courses found.', 'woothemes-sensei' );
 				break;
 		}
-		echo apply_filters( 'sensei_learners_no_items_text', $text );
+		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
 	} // End no_items()
 
 	/**
@@ -526,12 +526,12 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<div class="select-box">' . "\n";
 
-				echo '<select id="course-category-options" data-placeholder="' . __( 'Course Category', 'woothemes-sensei' ) . '" name="learners_course_cat" class="chosen_select widefat">' . "\n";
+				echo '<select id="course-category-options" data-placeholder="' . esc_attr__( 'Course Category', 'woothemes-sensei' ) . '" name="learners_course_cat" class="chosen_select widefat">' . "\n";
 
-					echo '<option value="0">' . __( 'All Course Categories', 'woothemes-sensei' ) . '</option>' . "\n";
+					echo '<option value="0">' . esc_html__( 'All Course Categories', 'woothemes-sensei' ) . '</option>' . "\n";
 
 					foreach( $cats as $cat ) {
-						echo '<option value="' . $cat->term_id . '"' . selected( $cat->term_id, $selected_cat, false ) . '>' . $cat->name . '</option>' . "\n";
+						echo '<option value="' . esc_attr( $cat->term_id ) . '"' . selected( $cat->term_id, $selected_cat, false ) . '>' . esc_html( $cat->name ) . '</option>' . "\n";
 					}
 
 				echo '</select>' . "\n";
@@ -564,8 +564,8 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			$learner_args['view'] = 'learners';
 			$lesson_args['view'] = 'lessons';
 
-			$menu['learners'] = '<a class="' . $learners_class . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Learners', 'woothemes-sensei' ) . '</a>';
-			$menu['lessons'] = '<a class="' . $lessons_class . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Lessons', 'woothemes-sensei' ) . '</a>';
+			$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Learners', 'woothemes-sensei' ) . '</a>';
+			$menu['lessons'] = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Lessons', 'woothemes-sensei' ) . '</a>';
 
 		}
 		// Have Course and Lesson
@@ -583,7 +583,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				. esc_url( add_query_arg( $query_args, admin_url( 'admin.php' ) ) )
 				. '"><em>&larr; '
 				// translators: Placeholder is the Course title.
-				. sprintf( __( 'Back to %s', 'woothemes-sensei' ), $course )
+				. esc_html( sprintf( __( 'Back to %s', 'woothemes-sensei' ), $course ) )
 				. '</em></a>';
 		}
 		$menu = apply_filters( 'sensei_learners_sub_menu', $menu );
@@ -592,7 +592,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			foreach ( $menu as $class => $item ) {
 				$menu[ $class ] = "\t<li class='$class'>$item";
 			}
-			echo implode( " |</li>\n", $menu ) . "</li>\n";
+			echo implode( " |</li>\n", wp_kses_post( $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
 
@@ -640,22 +640,22 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			<h3><span>
 				<?php
 				// translators: Placeholder is the post type.
-				printf( __( 'Add Learner to %1$s', 'woothemes-sensei' ), $post_type );
+				printf( esc_html__( 'Add Learner to %1$s', 'woothemes-sensei' ), esc_html( $post_type ) );
 				?>
 			</span></h3>
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
 						<select name="add_user_id" id="add_learner_search" multiple="multiple" style="min-width:300px;">
-							<option value="0" selected="selected"><?php _e( 'Find learner', 'woothemes-sensei' ) ;?></option>
+							<option value="0" selected="selected"><?php esc_html_e( 'Find learner', 'woothemes-sensei' ) ;?></option>
 						</select>
 						<?php if( 'lesson' == $form_post_type ) { ?>
-							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php _e( 'Complete lesson for learner', 'woothemes-sensei' ); ?></label>
+							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for learner', 'woothemes-sensei' ); ?></label>
 						<?php } elseif( 'course' == $form_post_type ) { ?>
-							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php _e( 'Complete course for learner', 'woothemes-sensei' ); ?></label>
+							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for learner', 'woothemes-sensei' ); ?></label>
 						<?php } ?>
 						<br/>
-						<span class="description"><?php _e( 'Search for a user by typing their name or username.', 'woothemes-sensei' ); ?></span>
+						<span class="description"><?php esc_html_e( 'Search for a user by typing their name or username.', 'woothemes-sensei' ); ?></span>
 					</p>
 					<p>
 						<?php
@@ -667,14 +667,14 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						<p><span class="description">
 							<?php
 							// translators: Placeholder is the course title.
-							printf( __( 'Learner will also be added to the course \'%1$s\' if they are not already taking it.', 'woothemes-sensei' ), $course_title );
+							printf( esc_html__( 'Learner will also be added to the course \'%1$s\' if they are not already taking it.', 'woothemes-sensei' ), esc_html( $course_title ) );
 							?>
 						</span></p>
 					<?php } ?>
 
-					<input type="hidden" name="add_post_type" value="<?php echo $form_post_type; ?>" />
-					<input type="hidden" name="add_course_id" value="<?php echo $form_course_id; ?>" />
-					<input type="hidden" name="add_lesson_id" value="<?php echo $form_lesson_id; ?>" />
+					<input type="hidden" name="add_post_type" value="<?php echo esc_attr( $form_post_type ); ?>" />
+					<input type="hidden" name="add_course_id" value="<?php echo esc_attr( $form_course_id ); ?>" />
+					<input type="hidden" name="add_lesson_id" value="<?php echo esc_attr( $form_lesson_id ); ?>" />
 					<?php
 						do_action( 'sensei_learners_add_learner_form' );
 					?>
