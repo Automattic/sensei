@@ -286,8 +286,8 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						'date_started' => get_comment_meta( $user_activity->comment_ID, 'start', true),
 						'user_status' => $status_html,
 						// translators: Placeholder is the "object type"; lesson or course.
-						'actions' => '<a class="remove-learner button" data-user_id="' . esc_attr( $user_activity->user_id ) . '" data-post_id="' . esc_attr( $post_id ) . '" data-post_type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>'
-							. '<a class="reset-learner button" data-user_id="' . esc_attr( $user_activity->user_id ) . '" data-post_id="' . esc_attr( $post_id ) . '" data-post_type="' . esc_attr( $post_type ). '">' . sprintf( esc_html__( 'Reset progress', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>'
+						'actions' => '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>'
+							. '<a class="reset-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ). '">' . sprintf( esc_html__( 'Reset progress', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>'
 							. $edit_start_date_form,
 					), $item, $post_id, $post_type ),
 					array_merge(
@@ -297,10 +297,10 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 								'class' => array(),
 								'href' => array(),
 								'title' => array(),
-								'data-comment_id' => array(),
-								'data-post_id' => array(),
-								'data-post_type' => array(),
-								'data-user_id' => array(),
+								'data-comment-id' => array(),
+								'data-post-id' => array(),
+								'data-post-type' => array(),
+								'data-user-id' => array(),
 							),
 							'input' => array(
 								'class' => array(),
@@ -360,7 +360,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		$date_started = get_comment_meta( $comment_id, 'start', true);
 		$form = '<form class="edit-start-date">';
 		$form .= '<input class="edit-start-date-date-picker" type="text" value="'. esc_attr( $date_started ) . '">';
-		$form .= '<a class="edit-start-date-submit button" data-user_id="' . esc_attr( $user_activity->user_id ) . '" data-post_id="' . esc_attr( $post_id ) . '" data-post_type="' . esc_attr( $post_type ) . '" data-comment_id="' . esc_attr( $comment_id ) . '">' . sprintf( esc_html__( 'Edit Start Date', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>';
+		$form .= '<a class="edit-start-date-submit button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" data-comment-id="' . esc_attr( $comment_id ) . '">' . sprintf( esc_html__( 'Edit Start Date', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>';
 		$form .= '</form>';
 
 		return $form;
