@@ -652,14 +652,14 @@ class Sensei_Grading {
     } // end admin_process_grading_submission
 
 	public function get_redirect_url() {
-		// Parse POST data
-		$data = $_POST['data'];
-		$lesson_data = array();
-		parse_str($data, $lesson_data);
+		if ( ! isset( $_GET['course_id'] ) || ! isset( $_GET['lesson_id'] ) ) {
+			wp_die();
+		}
 
-		$lesson_id = intval( $lesson_data['lesson_id'] );
-		$course_id = intval( $lesson_data['course_id'] );
-		$grading_view = sanitize_text_field( $lesson_data['view'] );
+		// Get data.
+		$course_id    = intval( $_GET['course_id'] );
+		$lesson_id    = intval( $_GET['lesson_id'] );
+		$grading_view = ( isset( $_GET['view'] ) && $_GET['view'] ) ? $_GET['view'] : 'ungraded';
 
 		$redirect_url = '';
 		if ( 0 < $lesson_id && 0 < $course_id ) {
@@ -667,7 +667,7 @@ class Sensei_Grading {
 		} // End If Statement
 
 		echo $redirect_url;
-		die();
+		wp_die();
 	}
 
 	public function add_grading_notices() {

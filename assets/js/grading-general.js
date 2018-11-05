@@ -176,26 +176,18 @@ jQuery(document).ready( function() {
 	 */
 	jQuery( '#grading-lesson-options' ).on( 'change', '', function() {
 		// Populate the Lessons select box
-		var lessonId = jQuery(this).val();
-		var courseId = jQuery( '#grading-course-options' ).val();
-		var dataToPost = '';
-		dataToPost += 'lesson_id' + '=' + lessonId;
-		dataToPost += '&course_id' + '=' + courseId;
-
+		var lessonId    = jQuery(this).val();
+		var courseId    = jQuery( '#grading-course-options' ).val();
 		var gradingView = jQuery.fn.getQueryVariable( 'view' );
-		if( gradingView ) {
-			dataToPost += '&view' + '=' + gradingView;
-		} else {
-			dataToPost += '&view' + '=ungraded';
-		}
 
 		// Perform the AJAX call to get the select box.
-		jQuery.post(
+		jQuery.get(
 			ajaxurl,
 			{
-				action : 'get_redirect_url',
-				get_lessons_html_nonce : woo_localized_data.get_lessons_html_nonce,
-				data : dataToPost
+				action: 'get_redirect_url',
+				course_id: courseId,
+				lesson_id: lessonId,
+				view: gradingView,
 			},
 			function( response ) {
 				// Check for a response
