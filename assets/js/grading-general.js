@@ -140,15 +140,11 @@ jQuery(document).ready( function() {
 	jQuery( '#grading-course-options' ).on( 'change', '', function() {
 		// Populate the Lessons select box
 		var courseId = jQuery(this).val();
-		var dataToPost = '';
-		dataToPost += 'course_id' + '=' + courseId;
-		// Perform the AJAX call to get the select box.
-		jQuery.post(
+		jQuery.get(
 			ajaxurl,
 			{
-				action : 'get_lessons_dropdown',
-				get_lessons_dropdown_nonce : woo_localized_data.get_lessons_dropdown_nonce,
-				data : dataToPost
+				action: 'get_lessons_dropdown',
+				course_id: courseId,
 			},
 			function( response ) {
 				// Check for a response

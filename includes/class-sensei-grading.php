@@ -470,20 +470,18 @@ class Sensei_Grading {
 	 * @return string
 	 */
 	public function get_lessons_dropdown() {
+		if ( ! isset( $_GET['course_id'] ) ) {
+			wp_die();
+		}
 
-		$posts_array = array();
+		// Get course ID.
+		$course_id = intval( $_GET['course_id'] );
 
-		// Parse POST data
-		$data = $_POST['data'];
-		$course_data = array();
-		parse_str($data, $course_data);
-
-		$course_id = intval( $course_data['course_id'] );
-
+		// Output HTML.
 		$html = $this->lessons_drop_down_html( $course_id );
-
 		echo $html;
-		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
+
+		wp_die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	}
 
 	public function lessons_drop_down_html( $course_id = 0, $selected_lesson_id = 0 ) {
