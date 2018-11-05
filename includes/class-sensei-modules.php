@@ -56,6 +56,7 @@ class Sensei_Core_Modules
 
 		// Handle module ordering
 		add_action('admin_menu', array($this, 'register_modules_admin_menu_items'), 30 );
+		add_action( 'admin_post_order_modules', array( $this, 'handle_order_modules' ) );
 		add_filter('manage_edit-course_columns', array($this, 'course_columns'), 11, 1);
 		add_action('manage_posts_custom_column', array($this, 'course_column_content'), 11, 2);
 
@@ -866,7 +867,29 @@ class Sensei_Core_Modules
 
 		// Regsiter new admin page for module ordering
 		$hook = add_submenu_page('edit.php?post_type=course', __('Order Modules', 'woothemes-sensei'), __('Order Modules', 'woothemes-sensei'), 'edit_lessons', $this->order_page_slug, array($this, 'module_order_screen'));
+	}
 
+	/**
+	 * Handle the POST request for reordering the Modules.
+	 *
+	 * @since 1.12.2
+	 */
+	public function handle_order_modules() {
+		check_admin_referer( 'order_modules' );
+
+		if ( isset( $_POST['module-order'] ) && 0 < strlen( $_POST['module-order'] ) ) {
+			$ordered = $this->save_course_module_order( esc_attr( $_POST['module-order'] ), esc_attr( $_POST['course_id'] ) );
+		}
+
+		wp_redirect( esc_url_raw( add_query_arg(
+			array(
+				'post_type' => 'course',
+				'page'      => $this->order_page_slug,
+				'ordered'   => $ordered,
+				'course_id' => $_POST['course_id'],
+			),
+			admin_url( 'edit.php' )
+		) ) );
 	}
 
 	/**
@@ -885,14 +908,10 @@ class Sensei_Core_Modules
 
 		$html = '';
 
-		if (isset($_POST['module-order']) && 0 < strlen($_POST['module-order'])) {
-			$ordered = $this->save_course_module_order(esc_attr($_POST['module-order']), esc_attr($_POST['course_id']));
-
-			if ($ordered) {
-				$html .= '<div class="updated fade">' . "\n";
-				$html .= '<p>' . __('The module order has been saved for this course.', 'woothemes-sensei') . '</p>' . "\n";
-				$html .= '</div>' . "\n";
-			}
+		if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
+			$html .= '<div class="updated fade">' . "\n";
+			$html .= '<p>' . __('The module order has been saved for this course.', 'woothemes-sensei') . '</p>' . "\n";
+			$html .= '</div>' . "\n";
 		}
 
 		$courses = Sensei()->course->get_all_courses();
@@ -931,7 +950,9 @@ class Sensei_Core_Modules
 						$order_string = implode(',', $order);
 					}
 
-					$html .= '<form id="editgrouping" method="post" action="" class="validate">' . "\n";
+					$html .= '<form id="editgrouping" method="post" action="'
+						. admin_url( 'admin-post.php' )
+						. '" class="validate">' . "\n";
 					$html .= '<ul class="sortable-module-list">' . "\n";
 					$count = 0;
 					foreach ($modules as $module) {
@@ -950,6 +971,8 @@ class Sensei_Core_Modules
 					}
 					$html .= '</ul>' . "\n";
 
+					$html .= '<input type="hidden" name="action" value="order_modules" />' . "\n";
+					$html .= wp_nonce_field( 'order_modules', '_wpnonce', true, false ) . "\n";
 					$html .= '<input type="hidden" name="module-order" value="' . $order_string . '" />' . "\n";
 					$html .= '<input type="hidden" name="course_id" value="' . $course_id . '" />' . "\n";
 					$html .= '<input type="submit" class="button-primary" value="' . __('Save module order', 'woothemes-sensei') . '" />' . "\n";
