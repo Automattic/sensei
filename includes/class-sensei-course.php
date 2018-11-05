@@ -2114,8 +2114,8 @@ class Sensei_Course {
 
 		wp_nonce_field( 'update-course-notification-setting','_sensei_course_notification' );
 
-		echo '<input id="disable_sensei_course_notification" ' . $checked ? 'checked="checked"' : '' . ' type="checkbox" name="disable_sensei_course_notification" >';
-		echo '<label for="disable_sensei_course_notification">' . esc_html__('Disable notifications on this course?', 'woothemes-sensei') . '</label>';
+		echo '<input id="disable_sensei_course_notification" ' . checked( $checked, true, false ) . ' type="checkbox" name="disable_sensei_course_notification" >';
+		echo '<label for="disable_sensei_course_notification">' . esc_html__( 'Disable notifications on this course?', 'woothemes-sensei' ) . '</label>';
 
 	}// end course_notification_meta_box_content
 
