@@ -317,7 +317,7 @@ class Sensei_Settings_API {
             echo '<section id="' . esc_attr( $section_id ) . '">';
 
             if ($section['name'])
-                echo '<h2>' . esc_html( $section['name'] ) . '</h2>\n';
+                echo '<h2>' . esc_html( $section['name'] ) . '</h2>' . "\n";
 
             echo '<table class="form-table">';
             do_settings_fields($page, $section_id );
