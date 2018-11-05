@@ -116,13 +116,13 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
             return;
         }
 
+        check_admin_referer( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS, self::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD );
+
         $sensei_bulk_action = $_POST['sensei_bulk_action'];
 
         if (!in_array( $sensei_bulk_action, array_keys( $this->get_known_bulk_actions() ) )) {
             $this->redirect_to_learner_admin_index( 'error-invalid-action' );
         }
-
-        check_admin_referer( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS, self::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD );
 
         $course_ids = isset( $_POST['bulk_action_course_ids'] ) ? explode(',', $_POST['bulk_action_course_ids'] ) : array();
         $user_ids = isset( $_POST['bulk_action_user_ids'] ) ? array_map('absint', explode(',', $_POST['bulk_action_user_ids'])) : array();
