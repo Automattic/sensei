@@ -217,7 +217,8 @@ class Sensei_List_Table extends WP_List_Table {
 			echo '<td class="' . esc_attr( $column_name ) . ' column-' . esc_attr( $column_name ) .
 				'" style="' . esc_attr( $style ) . '">';
 			if ( isset($column_data[$column_name]) ) {
-				echo wp_kses_post( $column_data[$column_name] );
+				// $column_data is escaped in the individual get_row_data functions.
+				echo $column_data[$column_name]; // WPCS: XSS ok.
 			}
 			echo "</td>";
 		}

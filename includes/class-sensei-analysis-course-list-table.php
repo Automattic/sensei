@@ -311,8 +311,8 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 
 					$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) );
 
-					$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $user_name . '</a></strong>';
-					$status = sprintf( '<span class="%s">%s</span>', $status_class, $status );
+					$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
+					$status = sprintf( '<span class="%s">%s</span>', esc_attr( $status_class ), esc_html( $status ) );
 					if ( is_numeric($course_percent) ) {
 
 						$course_percent .= '%';
@@ -328,7 +328,6 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 												'percent' => $course_percent,
 											), $item, $this );
 				break;
-
 			case 'lesson':
 			default:
 				// Displaying lessons for this Course for a specific User
@@ -391,11 +390,12 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 						$url = add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->ID ), admin_url( 'admin.php' ) );
 						$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
-						$status = sprintf( '<span class="%s">%s</span>', $status_class, $status );
+						$status = sprintf( '<span class="%s">%s</span>', esc_attr( $status_class ), esc_html( $status ) );
 						if ( is_numeric($grade) ) {
 							$grade .= '%';
 						}
 					} // End If Statement
+
 					$column_data = apply_filters( 'sensei_analysis_course_column_data', array( 'title' => $lesson_title,
 													'started' => $user_start_date,
 													'completed' => $user_end_date,
@@ -452,6 +452,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 							$lesson_average_grade .= '%';
 						}
 					} // End If Statement
+
 					$column_data = apply_filters( 'sensei_analysis_course_column_data', array( 'title' => $lesson_title,
 													'num_learners' => $lesson_students,
 													'completions' => $lesson_completions,
@@ -461,7 +462,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 				break;
 		} // END switch
 
-		return $column_data;
+		return wp_kses_post( $column_data );
 	}
 
 	/**

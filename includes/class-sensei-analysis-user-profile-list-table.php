@@ -188,7 +188,6 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-
 		$course_title =  get_the_title( $item->comment_post_ID );
 		$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
 		$course_start_date = get_comment_meta( $item->comment_ID, 'start', true );
@@ -212,8 +211,8 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		if ( !$this->csv_output ) {
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $this->user_id, 'course_id' => $item->comment_post_ID ), admin_url( 'admin.php' ) );
 
-			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $course_title . '</a></strong>';
-			$status = sprintf( '<span class="%s">%s</span>', $status_class, $status );
+			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $course_title ) . '</a></strong>';
+			$status = sprintf( '<span class="%s">%s</span>', esc_attr( $status_class ), esc_html( $status ) );
 			if ( is_numeric($course_percent) ) {
 				$course_percent .= '%';
 			}
@@ -225,7 +224,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 										'percent' => $course_percent,
 									), $item );
 
-		return $column_data;
+		return wp_kses_post( $column_data );
 	}
 
 	/**

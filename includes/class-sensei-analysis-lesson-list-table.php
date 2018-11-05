@@ -190,7 +190,6 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-
 		$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
 		$user_end_date = $item->comment_date;
 		$status_class = $grade = '';
@@ -235,12 +234,13 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
         if ( !$this->csv_output ) {
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) );
 
-			$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $user_name . '</a></strong>';
-			$status = sprintf( '<span class="%s">%s</span>', $item->comment_approved, $status );
+			$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
+			$status = sprintf( '<span class="%s">%s</span>', esc_attr( $item->comment_approved ), esc_html( $status ) );
 			if ( is_numeric($grade) ) {
 				$grade .= '%';
 			}
 		} // End If Statement
+
 		$column_data = apply_filters( 'sensei_analysis_lesson_column_data', array( 'title' => $user_name,
 										'started' => $user_start_date,
 										'completed' => $user_end_date,
@@ -248,7 +248,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 										'grade' => $grade,
 									), $item, $this );
 
-		return $column_data;
+		return wp_kses_post( $column_data );
 	}
 
 	/**
