@@ -1466,8 +1466,21 @@ class Sensei_WC {
 			}
 		}
 
-		$has_payment_method = isset( $_POST['payment_method'] );
-		$payment_method = $has_payment_method ? sanitize_text_field( $_POST['payment_method'] ) : '';
+		/*
+		 * If we're processing a WooCommerce Checkout, check for the payment
+		 * method.
+		 *
+		 * Note that we can ignore these the nonce verification inside the check
+		 * for WOOCOMMERCE_CHECKOUT. If we're in the WooCommerce checkout
+		 * process, we can trust that nonce verification has already been done.
+		 */
+		if ( WOOCOMMERCE_CHECKOUT ) {
+			$has_payment_method = isset( $_POST['payment_method'] ); // phpcs:ignore WordPress.Security.NonceVerification
+			$payment_method     = $has_payment_method ? sanitize_text_field( $_POST['payment_method'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		} else {
+			$has_payment_method = false;
+			$payment_method     = '';
+		}
 		$is_user_taking_course = Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
 		$currently_purchasing_course = $has_payment_method || ( null !== $order && is_a( $order, 'WC_Order' ) );
 		Sensei_WC_Utils::log( 'Sensei_WC::course_update: user_taking_course: ' . ( $is_user_taking_course ? 'yes' : 'no' ) );
