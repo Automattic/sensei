@@ -1272,6 +1272,8 @@ class Sensei_Frontend {
 						<?php do_action( 'sensei_register_form_fields' ); ?>
 						<?php do_action( 'register_form' ); ?>
 
+						<?php wp_nonce_field( 'sensei-register' ); ?>
+
 						<p class="form-row">
 							<input type="submit" class="button" name="register" value="<?php _e( 'Register', 'woothemes-sensei' ); ?>" />
 						</p>
@@ -1875,10 +1877,17 @@ class Sensei_Frontend {
 	public function sensei_process_registration() {
 		global   $current_user;
 		// check the for the sensei specific registration requests.
+		// phpcs:ignore WordPress.Security.NonceVerification -- We are just checking whether to return here.
 		if ( ! isset( $_POST['sensei_reg_username'] ) && ! isset( $_POST['sensei_reg_email'] ) && ! isset( $_POST['sensei_reg_password'] ) ) {
 			// exit if this is not a sensei registration request.
 			return;
 		}
+
+		// Validate the registration request nonce.
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'sensei-register' ) ) {
+			return;
+		}
+
 		// check for spam throw cheating huh.
 		if ( isset( $_POST['email_2'] ) && '' !== $_POST['email_2'] ) {
 			$message = 'Error:  The spam field should be empty';
