@@ -88,4 +88,4 @@ jobs:
       php: 7.2
       script:
         - composer install
-        - ./vendor/bin/phpcs -s --sniffs=WordPress.WP.I18n,Generic.PHP.Syntax .
+        - ./vendor/bin/phpcs -s -v --sniffs=WordPress.WP.I18n,Generic.PHP.Syntax .
