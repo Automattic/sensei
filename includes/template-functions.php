@@ -736,7 +736,7 @@ function sensei_get_the_module_status(){
  */
 function sensei_the_module_status(){
 
-    echo esc_html( sensei_get_the_module_status() );
+    echo wp_kses_post( sensei_get_the_module_status() );
 
 }
 
