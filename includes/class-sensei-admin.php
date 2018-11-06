@@ -1355,7 +1355,7 @@ class Sensei_Admin {
 
                     if( count( $lessons ) > 0 ) {
                         $html .= '<h3>' . esc_html( $module->name ) . '</h3>' . "\n";
-                        $html .= '<ul class="sortable-lesson-list" data-module_id="' . esc_attr( $module->term_id ) . '">' . "\n";
+                        $html .= '<ul class="sortable-lesson-list" data-module-id="' . esc_attr( $module->term_id ) . '">' . "\n";
 
                         $count = 0;
                         foreach( $lessons as $lesson ) {
@@ -1395,7 +1395,7 @@ class Sensei_Admin {
 						$html .= '<h3>' . esc_html__( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
 					}
 
-					$html .= '<ul class="sortable-lesson-list" data-module_id="0">' . "\n";
+					$html .= '<ul class="sortable-lesson-list" data-module-id="0">' . "\n";
 					$count = 0;
 					$other_lessons = array();
 
@@ -1465,7 +1465,7 @@ class Sensei_Admin {
 					),
 					'ul' => array(
 						'class' => array(),
-						'data-module_id' => array(),
+						'data-module-id' => array(),
 					),
 				)
 			)
