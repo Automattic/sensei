@@ -471,6 +471,16 @@ class Sensei_Grading {
 	 */
 	public function get_lessons_dropdown() {
 		if ( ! isset( $_GET['course_id'] ) ) {
+			// Try deprecated functionality as a fallback.
+			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+			if ( isset( $_POST['data'] ) ) {
+				_doing_it_wrong(
+					'get_lessons_dropdown',
+					'The get_lessons_dropdown AJAX call should be a GET request with parameter "course_id".',
+					'1.12.2'
+				);
+				$this->deprecated_get_lessons_dropdown();
+			}
 			wp_die();
 		}
 
@@ -482,6 +492,27 @@ class Sensei_Grading {
 		echo $html;
 
 		wp_die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
+	}
+
+	/**
+	 * Deprecated version of the get_lessons_dropdown function, used as a
+	 * fallback.
+	 */
+	private function deprecated_get_lessons_dropdown() {
+		$posts_array = array();
+
+		// Parse POST data
+		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+		$data = $_POST['data'];
+		$course_data = array();
+		parse_str($data, $course_data);
+
+		$course_id = intval( $course_data['course_id'] );
+
+		$html = $this->lessons_drop_down_html( $course_id );
+
+		echo $html;
+		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	}
 
 	public function lessons_drop_down_html( $course_id = 0, $selected_lesson_id = 0 ) {
@@ -653,6 +684,16 @@ class Sensei_Grading {
 
 	public function get_redirect_url() {
 		if ( ! isset( $_GET['course_id'] ) || ! isset( $_GET['lesson_id'] ) ) {
+			// Try deprecated functionality as a fallback.
+			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+			if ( isset( $_POST['data'] ) ) {
+				_doing_it_wrong(
+					'get_redirect_url',
+					'The get_redirect_url AJAX call should be a GET request with parameters "course_id" and "lesson_id".',
+					'1.12.2'
+				);
+				$this->deprecated_get_redirect_url();
+			}
 			wp_die();
 		}
 
@@ -668,6 +709,29 @@ class Sensei_Grading {
 
 		echo $redirect_url;
 		wp_die();
+	}
+
+	/**
+	 * Deprecated version of the get_redirect_url function, used as a fallback.
+	 */
+	private function deprecated_get_redirect_url() {
+		// Parse POST data
+		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+		$data = $_POST['data'];
+		$lesson_data = array();
+		parse_str($data, $lesson_data);
+
+		$lesson_id = intval( $lesson_data['lesson_id'] );
+		$course_id = intval( $lesson_data['course_id'] );
+		$grading_view = sanitize_text_field( $lesson_data['view'] );
+
+		$redirect_url = '';
+		if ( 0 < $lesson_id && 0 < $course_id ) {
+			$redirect_url = esc_url_raw( apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id, 'course_id' => $course_id, 'view' => $grading_view ), admin_url( 'admin.php' ) ) ) );
+		} // End If Statement
+
+		echo $redirect_url;
+		die();
 	}
 
 	public function add_grading_notices() {
