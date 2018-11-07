@@ -1121,7 +1121,7 @@ class Sensei_Admin {
 				$count++;
 				$class = 'course';
 				if ( $count == 1 ) { $class .= ' first'; }
-				if ( $count == count( $course ) ) { $class .= ' last'; }
+				if ( $count == count( $all_course_ids ) ) { $class .= ' last'; }
 				if ( $count % 2 != 0 ) {
 					$class .= ' alternate';
 				}
@@ -1280,7 +1280,7 @@ class Sensei_Admin {
                             $count++;
                             $class = 'lesson';
                             if ( $count == 1 ) { $class .= ' first'; }
-                            if ( $count == count( $lesson ) ) { $class .= ' last'; }
+                            if ( $count == count( $lessons ) ) { $class .= ' last'; }
                             if ( $count % 2 != 0 ) {
                                 $class .= ' alternate';
                             }
@@ -1296,7 +1296,7 @@ class Sensei_Admin {
                     }
                 }
 
-
+                // Other Lessons
                 $lessons = Sensei()->course->course_lessons( $course_id );
 
 				if( 0 < count( $lessons ) ) {
@@ -1315,28 +1315,31 @@ class Sensei_Admin {
 
 					$html .= '<ul class="sortable-lesson-list" data-module_id="0">' . "\n";
 					$count = 0;
+					$other_lessons = array();
+
 					foreach ( $lessons as $lesson ) {
-
-                        // if lesson belongs to one fo the course modules then exclude it here
-                        // as it is listed above
-                        if( has_term( $module_items_ids, 'module', $lesson->ID )  ){
-
+                        // Exclude course modules.
+                        if ( has_term( $module_items_ids, 'module', $lesson->ID )  ) {
                             continue;
-
                         }
 
+                        $other_lessons[] = $lesson;
+                    }
+
+					foreach ( $other_lessons as $other_lesson ) {
 						$count++;
 						$class = 'lesson';
+
 						if ( $count == 1 ) { $class .= ' first'; }
-						if ( $count == count( $lesson ) ) { $class .= ' last'; }
+						if ( $count === count( $other_lessons ) ) { $class .= ' last'; }
 						if ( $count % 2 != 0 ) {
 
 							$class .= ' alternate';
 
 						}
-						$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . esc_html( $lesson->post_title ) . '</span></li>' . "\n";
+						$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $other_lesson->ID ) . '" style="width: 100%;"> ' . esc_html( $other_lesson->post_title ) . '</span></li>' . "\n";
 
-						$displayed_lessons[] = $lesson->ID;
+						$displayed_lessons[] = $other_lesson->ID;
 					}
 					$html .= '</ul>' . "\n";
 				} else {
