@@ -122,7 +122,7 @@ class Sensei_Updates
         $function_name= '';
         if ( isset($_GET['action']) && $_GET['action'] == 'update'
             && isset($_GET['n']) && intval($_GET['n']) >= 0
-            && ( (isset($_POST['checked'][0]) && '' != $_POST['checked'][0]) || (isset($_GET['functions']) && '' != $_GET['functions']))) {
+            && ( (isset($_POST['checked'][0]) && '' != $_POST['checked'][0]) || (isset($_GET['functions']) && '' != $_GET['functions']))) { // phpcs:ignore WordPress.Security.NonceVerification -- Nonce's are verified below
 
             // Setup the data variables
             $n = intval($_GET['n']);
@@ -130,9 +130,9 @@ class Sensei_Updates
             $done_processing = false;
 
             // Check for updates to run
-            if (isset($_POST['checked'][0]) && '' != $_POST['checked'][0]) {
+            if (isset($_POST['checked'][0]) && '' != $_POST['checked'][0]) { // phpcs:ignore WordPress.Security.NonceVerification -- Nonce's are verified below
 
-                foreach ($_POST['checked'] as $key => $function_name) {
+                foreach ($_POST['checked'] as $key => $function_name) { // phpcs:ignore WordPress.Security.NonceVerification -- Nonce's are verified below
 
                     if( ! isset(  $_POST[ $function_name.'_nonce_field' ] )
                         || ! wp_verify_nonce( $_POST[ $function_name.'_nonce_field' ] , 'run_'.$function_name ) ){

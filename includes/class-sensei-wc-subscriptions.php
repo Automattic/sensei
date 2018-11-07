@@ -192,7 +192,7 @@ class Sensei_WC_Subscriptions {
 
         // avoid changing the filter value in the following cases
         if( empty( $course_id ) || empty( $user_id ) || ! is_user_logged_in() || is_admin()
-            || isset( $_POST[ 'payment_method' ] ) || isset( $_POST['order_status']  ) ) {
+            || isset( $_POST[ 'payment_method' ] ) || isset( $_POST['order_status'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 
             return $has_user_started_course;
 

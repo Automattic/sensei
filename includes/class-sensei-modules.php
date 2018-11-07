@@ -382,7 +382,15 @@ class Sensei_Core_Modules
 	 */
 	public function save_module_course( $module_id )
 	{
+		/*
+		 * It is safe to ignore nonce verification here because this is called
+		 * from `edited_{$taxonomy}` and `created_{$taxonomy}` on a post to
+		 * `edit-tags.php`, which occur after WordPress performs its own nonce
+		 * verification.
+		 */
 
+
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) {
 			return;
 		}
@@ -409,8 +417,10 @@ class Sensei_Core_Modules
 		}
 
 		// Add module to selected courses
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_POST['module_courses'] ) && ! empty( $_POST['module_courses'] ) ) {
 
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$course_ids = is_array( $_POST['module_courses'] ) ? $_POST['module_courses'] : explode( ",", $_POST['module_courses'] );
 
 			foreach ( $course_ids as $course_id ) {

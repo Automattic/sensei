@@ -737,8 +737,13 @@ class Sensei_Settings extends Sensei_Settings_API {
      */
     public static function flush_rewrite_rules(){
 
-        if ( isset( $_POST[ 'option_page' ] ) && 'woothemes-sensei-settings' == $_POST[ 'option_page' ]
-            && isset( $_POST[ 'action' ] ) && 'update' == $_POST[ 'action' ] ) {
+		/*
+		 * Skipping nonce check because it is already done by WordPress for the Settings page.
+		 * phpcs:disable WordPress.Security.NonceVerification
+		 */
+		if ( isset( $_POST[ 'option_page' ] ) && 'woothemes-sensei-settings' === $_POST[ 'option_page' ]
+			&& isset( $_POST[ 'action' ] ) && 'update' === $_POST[ 'action' ] ) {
+			// phpcs:enable WordPress.Security.NonceVerification
 
             Sensei()->initiate_rewrite_rules_flush();
 

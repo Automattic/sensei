@@ -468,13 +468,20 @@ class Sensei_Course {
 	 * @return int new meta id | bool meta value saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
+		/*
+		 * This function is called from `meta_box_save` where the nonce is
+		 * verified. We can ignore nonce verification here.
+		 */
+
 		// Get the meta key.
 		$meta_key = '_' . $post_key;
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'course_video_embed' == $post_key ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$new_meta_value = ( isset( $_POST[ $post_key ] ) ) ? $_POST[ $post_key ] : '';
 			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, self::$allowed_html );
 		} else {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$new_meta_value = ( isset( $_POST[$post_key] ) ? sanitize_html_class( $_POST[$post_key] ) : '' );
 		} // End If Statement
 

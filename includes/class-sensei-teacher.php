@@ -317,6 +317,7 @@ class Sensei_Teacher {
 	public function save_teacher_meta_box( $course_id ) {
 
 		// check if this is a post from saving the teacher, if not exit early
+		// phpcs:ignore WordPress.Security.NonceVerification -- ok because we don't change anything based on these values.
 		if ( ! isset( $_POST['sensei-course-teacher-author'] ) || ! isset( $_POST['post_ID'] ) ) {
 			return;
 		}
@@ -1442,11 +1443,11 @@ class Sensei_Teacher {
 	 * @param object $user
 	 * @return void
 	 */
-
 	public function teacher_login_redirect( $user_login, $user ) {
 
 		if ( user_can( $user, 'edit_courses' ) ) {
 
+			// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
 			if ( isset( $_POST['redirect_to'] ) ) {
 
 				wp_redirect( $_POST['redirect_to'], 303 );

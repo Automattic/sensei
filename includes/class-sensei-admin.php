@@ -1424,16 +1424,21 @@ class Sensei_Admin {
 
 	public function save_lesson_order( $order_string = '', $course_id = 0 ) {
 
+		/**
+		 * It is safe to ignore nonce validation here, because this is called
+		 * from `handle_order_lessons` and the nonce validation is done there.
+		 */
+
 		if( $course_id ) {
 
             $modules = Sensei()->modules->get_course_modules( intval( $course_id ) );
 
             foreach( $modules as $module ) {
 
+				// phpcs:ignore WordPress.Security.NonceVerification
+				if ( isset( $_POST[ 'lesson-order-module-' . $module->term_id ] ) && $_POST[ 'lesson-order-module-' . $module->term_id ] ) {
 
-                if( isset( $_POST[ 'lesson-order-module-' . $module->term_id ] )
-                    && $_POST[ 'lesson-order-module-' . $module->term_id ] ) {
-
+					// phpcs:ignore WordPress.Security.NonceVerification
                     $order = explode( ',', $_POST[ 'lesson-order-module-' . $module->term_id ] );
                     $i = 1;
                     foreach( $order as $lesson_id ) {
