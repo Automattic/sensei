@@ -1683,7 +1683,33 @@ class Sensei_Lesson {
 	}
 
 	public function question_get_answer_id() {
+		if ( ! isset( $_GET['answer_value'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+			if ( isset( $_POST['data'] ) ) {
+				_doing_it_wrong(
+					'question_get_answer_id',
+					'The question_get_answer_id AJAX call should be a GET request with parameter "answer_value".',
+					'1.12.2'
+				);
+				$this->deprecated_question_get_answer_id();
+			}
+			wp_die();
+		}
 		$answer = $_GET['answer_value'];
+		$answer_id = $this->get_answer_id( $answer );
+		echo $answer_id;
+		wp_die();
+	}
+
+	/**
+	 * Deprecated version of question_get_answer_id() to use as a fallback.
+	 */
+	private function deprecated_question_get_answer_id() {
+		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+		$data = $_POST['data'];
+		$answer_data = array();
+		parse_str( $data, $answer_data );
+		$answer = $answer_data['answer_value'];
 		$answer_id = $this->get_answer_id( $answer );
 		echo $answer_id;
 		die();
