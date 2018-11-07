@@ -28,6 +28,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                                                 'textquestion' . $question_data[ 'ID' ] ,
                                                 'sensei_question[' . $question_data[ 'ID' ] . ']' );
 
-?>
-
-

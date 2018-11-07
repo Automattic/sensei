@@ -405,16 +405,26 @@ class Sensei_Question {
 	} // end get_question_grade
 
 
-    /**
-     * This function simply loads the question type template
-     *
-     * @since 1.9.0
-     * @param $question_type
-     */
-    public static function load_question_template( $question_type ){
+	/**
+	 * This function simply loads the question type template
+	 *
+	 * @since 1.9.0
+	 * @param string $question_type The question type.
+	 */
+	public static function load_question_template( $question_type ){
+		$old_template_name = 'single-quiz/question_type-' . $question_type . '.php';
+		$new_template_name = 'single-quiz/question-type-' . $question_type . '.php';
 
-        Sensei_Templates::get_template  ( 'single-quiz/question_type-' . $question_type . '.php' );
-    }
+		/*
+		 * For backwards compatibility, try to locate and load the file with the
+		 * old name first.
+		 */
+		if ( Sensei_Templates::locate_template( $old_template_name ) ) {
+			Sensei_Templates::get_template( $old_template_name );
+		} else {
+			Sensei_Templates::get_template( $new_template_name );
+		}
+	}
 
     /**
      * Echo the sensei question title.

@@ -874,7 +874,7 @@ class Sensei_Main {
 	 */
 	public function load_class( $class_name = '' ) {
 		if ( '' != $class_name && '' != $this->token ) {
-			require_once( 'class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php' );
+			require_once( dirname( __FILE__ ) . '/class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php' );
 		} // End if().
 	} // End load_class()
 
@@ -1071,7 +1071,7 @@ class Sensei_Main {
 
 		if ( ! class_exists( 'Sensei_Modules' ) && 'Sensei_Modules' !== $class ) {
 			// Load the modules class.
-			require_once( 'class-sensei-modules.php' );
+			require_once( dirname( __FILE__ ) . '/class-sensei-modules.php' );
 			$this->modules = new Sensei_Core_Modules( $this->main_plugin_file_name );
 
 		} else {

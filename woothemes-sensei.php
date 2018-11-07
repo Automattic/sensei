@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-require_once( 'includes/class-sensei-bootstrap.php' );
+require_once( dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php' );
 
 Sensei_Bootstrap::get_instance()->bootstrap();
 

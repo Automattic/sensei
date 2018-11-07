@@ -78,7 +78,7 @@ if ( ! defined( 'ABSPATH' ) ){ exit; } // Exit if accessed directly
 	  */
 	 function quiz_question_type( $question_type = 'multiple-choice' ) {
 
-         Sensei_Templates::get_template( 'single-quiz/question_type-' . $question_type . '.php' );
+         Sensei_Question::load_question_template( $question_type );
 
 	 } // End lesson_single_meta()
 

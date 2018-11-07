@@ -170,7 +170,7 @@ class Sensei_Autoloader {
              * Built in theme integration support
              */
             'Sensei_Theme_Integration_Loader' => 'theme-integrations/theme-integration-loader.php',
-            'Sensei__S'                       => 'theme-integrations/_s.php',
+            'Sensei__S'                       => 'theme-integrations/underscores.php',
             'Sensei_Twentyeleven'             => 'theme-integrations/twentyeleven.php',
             'Sensei_Twentytwelve'             => 'theme-integrations/twentytwelve.php',
             'Sensei_Twentythirteen'           => 'theme-integrations/Twentythirteen.php',
