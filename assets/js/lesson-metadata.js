@@ -1277,12 +1277,11 @@ jQuery(document).ready( function() {
 		var answer_value = jQuery( this ).val();
 		var answer_field = jQuery( this );
 
-		var dataToPost = '&answer_value=' + answer_value;
-		jQuery.post(
+		jQuery.get(
 			ajaxurl,
 			{
 				action : 'question_get_answer_id',
-				data : dataToPost
+				answer_value: answer_value,
 			},
 			function( response ) {
 				if ( response ) {
@@ -1365,13 +1364,12 @@ jQuery(document).ready( function() {
 
 	jQuery( '#add-multiple-question-category-options' ).change( function() {
 		var cat = jQuery( this ).val();
-		var dataToPost = 'cat=' + cat;
 
-		jQuery.post(
+		jQuery.get(
 			ajaxurl,
 			{
 				action : 'get_question_category_limit',
-				data : dataToPost
+				cat: cat,
 			},
 			function( response ) {
 				if ( response ) {

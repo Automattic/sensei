@@ -1671,10 +1671,7 @@ class Sensei_Lesson {
 	}
 
 	public function question_get_answer_id() {
-		$data = $_POST['data'];
-		$answer_data = array();
-		parse_str( $data, $answer_data );
-		$answer = $answer_data['answer_value'];
+		$answer = $_GET['answer_value'];
 		$answer_id = $this->get_answer_id( $answer );
 		echo $answer_id;
 		die();
@@ -2157,13 +2154,8 @@ class Sensei_Lesson {
 		// Set default
 		$return = 1;
 
-		// Parse POST data
-		$data = $_POST['data'];
-		$cat_data = array();
-		parse_str( $data, $cat_data );
-
-		if ( isset( $cat_data['cat'] ) && '' != $cat_data['cat'] ) {
-			$cat = get_term( $cat_data['cat'], 'question-category' );
+		if ( isset( $_GET['cat'] ) && '' != $_GET['cat'] ) {
+			$cat = get_term( $_GET['cat'], 'question-category' );
 			if ( isset( $cat->count ) ) {
 				$return = $cat->count;
 			}
