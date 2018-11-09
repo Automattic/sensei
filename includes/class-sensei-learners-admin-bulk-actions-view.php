@@ -276,7 +276,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
             if ($courses_completed > 0) {
                 $html .= ', ' . $courses_completed . ' '. esc_html__('Completed', 'woothemes-sensei');
             }
-            $html .= ' <a href="#" class="learner-course-overview-detail-btn" >...<span>more</span></a><br/>';
+            $html .= ' <a href="#" class="learner-course-overview-detail-btn">' .
+                wp_kses_post( __( '...<span>more</span>', 'woothemes-sensei' ) ) . '</a><br/>';
             $courses = implode('<br />', $course_arr);
 
             return $html . '<div class="learner-course-overview-detail" style="display:none">' . $courses . '</div>';
