@@ -1026,6 +1026,102 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_course_enrolments
+	 */
+	public function testGetCourseEnrolments() {
+		$enrolments = 5;
+
+		// Create course and users.
+		$course_id = $this->factory->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
+		$subscribers = $this->factory->user->create_many( $enrolments, array( 'role' => 'subscriber' ) );
+
+		// Enroll users in course.
+		foreach ( $subscribers as $subscriber ) {
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $subscriber,
+					'comment_post_ID'  => $course_id,
+					'comment_type'     => 'sensei_course_status',
+				)
+			);
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_enrolments', $usage_data, 'Key' );
+		$this->assertEquals( $enrolments, $usage_data['course_enrolments'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_course_enrolments
+	 */
+	public function testGetCourseEnrolmentsNoAdminUsers() {
+		$enrolments = 3;
+
+		// Create course and users.
+		$course_id = $this->factory->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
+		$administrators = $this->factory->user->create_many( 2, array( 'role' => 'administrator' ) );
+		$subscribers = $this->factory->user->create_many( $enrolments, array( 'role' => 'subscriber' ) );
+
+		// Enroll users in course.
+		foreach ( array_merge( $administrators, $subscribers ) as $user ) {
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $user,
+					'comment_post_ID'  => $course_id,
+					'comment_type'     => 'sensei_course_status',
+				)
+			);
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( $enrolments, $usage_data['course_enrolments'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_course_enrolments
+	 */
+	public function testGetCourseEnrolmentsPublishedCourses() {
+		// Create course and users.
+		$course_id = $this->factory->post->create(
+			array(
+				'post_status' => 'draft',
+				'post_type' => 'course',
+			)
+		);
+		$subscribers = $this->factory->user->create_many( 5, array( 'role' => 'subscriber' ) );
+
+		// Enroll users in course.
+		foreach ( $subscribers as $subscriber ) {
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $subscriber,
+					'comment_post_ID'  => $course_id,
+					'comment_type'     => 'sensei_course_status',
+				)
+			);
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 0, $usage_data['course_enrolments'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_has_length_count
 	 */
 	public function testGetLessonHasLengthCount() {

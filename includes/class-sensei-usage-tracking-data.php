@@ -34,6 +34,7 @@ class Sensei_Usage_Tracking_Data {
 			'course_no_notifications' => self::get_course_no_notifications_count(),
 			'course_prereqs'          => self::get_course_prereqs_count(),
 			'course_featured'         => self::get_course_featured_count(),
+			'course_enrolments'       => self::get_course_enrolments(),
 			'learners'                => self::get_learner_count(),
 			'lessons'                 => wp_count_posts( 'lesson' )->publish,
 			'lesson_modules'          => self::get_lesson_module_count(),
@@ -329,6 +330,27 @@ class Sensei_Usage_Tracking_Data {
 		);
 
 		return $query->found_posts;
+	}
+
+	/**
+	 * Gets the total number of non-admin learners enrolled in at least one published course.
+	 *
+	 * @since 1.12.2
+	 *
+	 * @return int Number of course enrolments.
+	 **/
+	private static function get_course_enrolments() {
+		global $wpdb;
+
+		return $wpdb->get_var(
+			"SELECT COUNT(DISTINCT c.user_id)
+			FROM {$wpdb->comments} c
+			INNER JOIN {$wpdb->usermeta} um ON c.user_id = um.user_id
+			INNER JOIN {$wpdb->posts} p ON p.ID = c.comment_post_ID
+			WHERE comment_type = 'sensei_course_status'
+				AND meta_key = '{$wpdb->prefix}capabilities' AND meta_value NOT LIKE '%administrator%'
+				AND post_status = 'publish' AND c.user_id <> 0"
+		);
 	}
 
 	/**
