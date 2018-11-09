@@ -148,12 +148,21 @@ class Sensei_Messages {
 			$course = get_post( get_post_meta( $post->ID, '_post', true ) );
 			$course_name = $course->post_title;
 
+			switch ( $message_posttype ) {
+				case 'course':
+					$label = __( 'Message from course:', 'woothemes-sensei' );
+					$description = __( 'The course to which this message relates.', 'woothemes-sensei' );
+					break;
+				case 'lesson':
+					$label = __( 'Message from lesson:', 'woothemes-sensei' );
+					$description = __( 'The lesson to which this message relates.', 'woothemes-sensei' );
+					break;
+			}
+
 			$settings[] = array(
 				'id'          => 'post',
-				// translators: Placeholder the post type (e.g. lesson or course) to which this message relates.
-				'label'       => sprintf( __( 'Message from %1$s:', 'woothemes-sensei' ), $message_posttype ),
-				// translators: Placeholder the post type (e.g. lesson or course) to which this message relates.
-				'description' => sprintf( __( 'The %1$s to which this message relates.', 'woothemes-sensei' ), $message_posttype ),
+				'label'       => $label,
+				'description' => $description,
 				'type'        => 'plain-text',
 				'default'     => $course_name,
 			);
