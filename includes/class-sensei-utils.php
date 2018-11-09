@@ -1122,7 +1122,7 @@ class Sensei_Utils {
 					$quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
 
 					// Add up total grade
-					$total_grade += $quiz_grade;
+					$total_grade += intval( $quiz_grade );
 
 					++$lesson_count;
 				}
