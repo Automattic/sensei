@@ -35,6 +35,7 @@ class Sensei_Usage_Tracking_Data {
 			'course_prereqs'          => self::get_course_prereqs_count(),
 			'course_featured'         => self::get_course_featured_count(),
 			'enrolments'              => self::get_course_enrolments(),
+			'enrolment_last'          => self::get_last_course_enrolment(),
 			'learners'                => self::get_learner_count(),
 			'lessons'                 => wp_count_posts( 'lesson' )->publish,
 			'lesson_modules'          => self::get_lesson_module_count(),
@@ -353,6 +354,28 @@ class Sensei_Usage_Tracking_Data {
 			INNER JOIN {$wpdb->posts} p ON p.ID = c.comment_post_ID
 			WHERE comment_type = 'sensei_course_status'
 				AND meta_key = '{$wpdb->prefix}capabilities' AND meta_value NOT LIKE '%administrator%'
+				AND post_status = 'publish' AND c.user_id <> 0"
+		);
+	}
+
+	/**
+	 * Gets the date of the most recent enrolment by any non-admin learner in any published course.
+	 *
+	 * @since 1.12.2
+	 *
+	 * @return int Date of the most recent course enrolment.
+	 **/
+	private static function get_last_course_enrolment() {
+		global $wpdb;
+
+		return $wpdb->get_var(
+			"SELECT IFNULL(MAX(cm.meta_value), 'N/A')
+			FROM {$wpdb->comments} c
+			INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_ID
+			INNER JOIN {$wpdb->usermeta} um ON c.user_id = um.user_id
+			INNER JOIN {$wpdb->posts} p ON p.ID = c.comment_post_ID
+			WHERE comment_type = 'sensei_course_status' AND cm.meta_key = 'start'
+				AND um.meta_key = '{$wpdb->prefix}capabilities' AND um.meta_value NOT LIKE '%administrator%'
 				AND post_status = 'publish' AND c.user_id <> 0"
 		);
 	}

@@ -1186,6 +1186,117 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_last_course_enrolment
+	 */
+	public function testGetLastCourseEnrolment() {
+		$last_enrolment_date = '2018-11-09 09:48:05';
+
+		// Create course and users.
+		$course_id = $this->factory->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
+		$subscribers = $this->factory->user->create_many( 3, array( 'role' => 'subscriber' ) );
+		$comment_ids = array();
+
+		// Enroll users in course.
+		foreach ( $subscribers as $subscriber ) {
+			$comment_ids[] = $this->factory->comment->create(
+				array(
+					'user_id'          => $subscriber,
+					'comment_post_ID'  => $course_id,
+					'comment_type'     => 'sensei_course_status',
+				)
+			);
+		}
+
+		update_comment_meta( $comment_ids[0], 'start', '2017-05-23 10:59:00' );
+		update_comment_meta( $comment_ids[1], 'start', $last_enrolment_date );
+		update_comment_meta( $comment_ids[2], 'start', '2018-10-01 13:25:25' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'enrolment_last', $usage_data, 'Key' );
+		$this->assertEquals( $last_enrolment_date, $usage_data['enrolment_last'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_last_course_enrolment
+	 */
+	public function testGetLastCourseEnrolmentNoAdminUsers() {
+		$last_enrolment_date = '2017-05-23 10:59:00';
+
+		// Create course and users.
+		$course_id = $this->factory->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
+		$subscribers = $this->factory->user->create_many( 1, array( 'role' => 'subscriber' ) );
+		$administrators = $this->factory->user->create_many( 2, array( 'role' => 'administrator' ) );
+		$comment_ids = array();
+
+		// Enroll users in course.
+		foreach ( array_merge( $subscribers, $administrators ) as $user ) {
+			$comment_ids[] = $this->factory->comment->create(
+				array(
+					'user_id'          => $user,
+					'comment_post_ID'  => $course_id,
+					'comment_type'     => 'sensei_course_status',
+				)
+			);
+		}
+
+		update_comment_meta( $comment_ids[0], 'start', $last_enrolment_date ); // Subscriber.
+		update_comment_meta( $comment_ids[1], 'start', '2018-11-09 09:48:05' ); // Admin.
+		update_comment_meta( $comment_ids[2], 'start', '2018-10-01 13:25:25' ); // Admin.
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( $last_enrolment_date, $usage_data['enrolment_last'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_last_course_enrolment
+	 */
+	public function testGetLastCourseEnrolmentPublishedCourses() {
+		// Create course and users.
+		$course_id = $this->factory->post->create(
+			array(
+				'post_status' => 'draft',
+				'post_type' => 'course',
+			)
+		);
+		$subscribers = $this->factory->user->create_many( 3, array( 'role' => 'subscriber' ) );
+		$comment_ids = array();
+
+		// Enroll users in course.
+		foreach ( $subscribers as $subscriber ) {
+			$comment_ids[] = $this->factory->comment->create(
+				array(
+					'user_id'          => $subscriber,
+					'comment_post_ID'  => $course_id,
+					'comment_type'     => 'sensei_course_status',
+				)
+			);
+		}
+
+		update_comment_meta( $comment_ids[0], 'start', '2017-05-23 10:59:00' );
+		update_comment_meta( $comment_ids[1], 'start', '2018-11-09 09:48:05' );
+		update_comment_meta( $comment_ids[2], 'start', '2018-10-01 13:25:25' );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertEquals( 'N/A', $usage_data['enrolment_last'] );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_has_length_count
 	 */
 	public function testGetLessonHasLengthCount() {
