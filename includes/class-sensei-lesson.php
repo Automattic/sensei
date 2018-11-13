@@ -2192,12 +2192,50 @@ class Sensei_Lesson {
 	}
 
 	public function get_question_category_limit() {
-
 		// Set default
 		$return = 1;
 
 		if ( isset( $_GET['cat'] ) && '' != $_GET['cat'] ) {
 			$cat = get_term( $_GET['cat'], 'question-category' );
+			if ( isset( $cat->count ) ) {
+				$return = $cat->count;
+			}
+		} else {
+			// Fallback to old behaviour if $_POST['data'] exists.
+			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+			if ( isset( $_POST['data'] ) ) {
+				_doing_it_wrong(
+					'get_question_category_limit',
+					'The get_question_category_limit AJAX call should be a GET request with parameter "cat".',
+					'1.12.2'
+				);
+				$this->deprecated_get_question_category_limit();
+
+				wp_die();
+			}
+		}
+
+		echo $return;
+
+		die( '' );
+	}
+
+	/**
+	 * Deprecated version of get_question_category_limit() to use as a fallback.
+	 */
+	public function deprecated_get_question_category_limit() {
+
+		// Set default
+		$return = 1;
+
+		// Parse POST data
+		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+		$data = $_POST['data'];
+		$cat_data = array();
+		parse_str( $data, $cat_data );
+
+		if ( isset( $cat_data['cat'] ) && '' != $cat_data['cat'] ) {
+			$cat = get_term( $cat_data['cat'], 'question-category' );
 			if ( isset( $cat->count ) ) {
 				$return = $cat->count;
 			}
