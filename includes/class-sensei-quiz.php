@@ -1225,12 +1225,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $lesson_id =  Sensei()->quiz->get_lesson_id( $quiz_id );
         $status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id , get_current_user_id() );
         $messages = Sensei()->frontend->messages;
+        $message = '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' . wp_kses_post( $status['message'] ) . '</div>';
+        $messages = Sensei()->frontend->messages;
 
         if ( ! empty( $messages ) ) {
-          echo wp_kses_post( $messages );
-        } else {
-           echo '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' . wp_kses_post( $status['message'] ) . '</div>';
+          $message .= wp_kses_post( $messages );
         }
+
+        echo $message; // WPCS: XSS ok.
     }
 
      /**
