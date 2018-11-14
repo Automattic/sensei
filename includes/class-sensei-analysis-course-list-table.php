@@ -613,7 +613,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 				$menu[ $class ] = "\t<li class='$class'>$item";
 			}
 
-			echo wp_kses_post( implode( " |</li>\n", wp_kses_post( $menu ) ) ) . "</li>\n";
+			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
 	} // End data_table_header()
