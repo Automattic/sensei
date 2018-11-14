@@ -94,24 +94,6 @@ class Sensei_Wp_Kses {
 	}
 
 	/**
-	 * Sanitizes data for allowed HTML tags for an array of elements.
-	 *
-	 * @since 1.12.2
-	 *
-	 * @param array $unescaped_data Array of unescaped data.
-	 * @return array Escaped data.
-	 **/
-	public static function wp_kses_post_array( $unescaped_data ) {
-		$escaped_data = array();
-
-		foreach ( $unescaped_data as $key => $data ) {
-			$escaped_data[$key] = wp_kses_post( $data );
-		}
-
-		return $escaped_data;
-	}
-
-	/**
 	 * Sanitizes content for an array of HTML elements.
 	 * Allows for both regular post HTML tags and custom HTML tags.
 	 *

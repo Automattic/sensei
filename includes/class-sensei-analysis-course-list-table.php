@@ -462,7 +462,7 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 				break;
 		} // END switch
 
-		return Sensei_Wp_Kses::wp_kses_post_array( $column_data );
+		return Sensei_Wp_Kses::wp_kses_array( $column_data );
 	}
 
 	/**

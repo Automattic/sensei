@@ -342,7 +342,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					$this->course_id
 				);
 
-				$escaped_column_data = Sensei_Wp_Kses::wp_kses_post_array( $column_data );
+				$escaped_column_data = Sensei_Wp_Kses::wp_kses_array( $column_data );
 
 				break;
 			case 'courses' :
@@ -368,7 +368,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					$item
 				);
 
-				$escaped_column_data = Sensei_Wp_Kses::wp_kses_post_array( $column_data );
+				$escaped_column_data = Sensei_Wp_Kses::wp_kses_array( $column_data );
 
 				break;
 		} // switch
