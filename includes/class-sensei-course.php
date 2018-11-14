@@ -2697,11 +2697,10 @@ class Sensei_Course {
 
 		}
 
-		if ( ( is_user_logged_in() && $is_user_taking_course )
-			|| ( $access_permission && !$has_product_attached) ) {
-
+		if ( ( is_user_logged_in() && $is_user_taking_course ) // Logged in and taking course.
+			|| ( $access_permission && ! $has_product_attached) // Not required to be logged in & no product attached.
+			|| ( ! $access_permission && $has_product_attached ) ) { // Required to be logged in and product attached.
 			// compensate for core providing and empty $content
-
 			if( empty( $content ) ){
 				remove_filter( 'the_content', array( 'Sensei_Course', 'single_course_content') );
 				$course = get_post( get_the_ID() );
