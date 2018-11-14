@@ -248,7 +248,13 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 										'grade' => $grade,
 									), $item, $this );
 
-		return wp_kses_post( $column_data );
+		$escaped_column_data = array();
+
+		foreach ( $column_data as $key => $data ) {
+			$escaped_column_data[$key] = wp_kses_post( $data );
+		}
+
+		return $escaped_column_data;
 	}
 
 	/**
