@@ -632,7 +632,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			foreach ( $menu as $class => $item ) {
 				$menu[ $class ] = "\t<li class='$class'>$item";
 			}
-			echo implode( " |</li>\n", wp_kses_post( $menu ) ) . "</li>\n";
+			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
 
