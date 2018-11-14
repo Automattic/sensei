@@ -437,6 +437,7 @@ class Sensei_PostTypes {
 		$args = array(
 			'hierarchical' => true,
 			'labels' => $labels,
+			'show_in_rest' => true,
 			'show_ui' => true,
 			'query_var' => true,
 			'show_in_nav_menus' => true,
