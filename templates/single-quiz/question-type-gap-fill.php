@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
     <span class="gapfill-answer-pre">
 
-        <?php echo wp_kses_post( apply_filters( 'sensei_answer_text', $question_data[ 'gapfill_pre' ] ) ); ?>
+        <?php echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data[ 'gapfill_pre' ] ) ) ); ?>
 
         <input type="text" id="<?php echo esc_attr( 'question_' .  $question_data[ 'ID' ]  ); ?>"
                name="<?php echo esc_attr( 'sensei_question[' . $question_data[ 'ID' ] . ']' ); ?>"
@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
         <span class="gapfill-answer-post">
 
-            <?php echo wp_kses_post( apply_filters( 'sensei_answer_text', $question_data[ 'gapfill_post' ] ) ); ?>
+            <?php echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data[ 'gapfill_post' ] ) ) ); ?>
 
         </span>
 
