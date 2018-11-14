@@ -448,7 +448,7 @@ class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
 				$menu[ $class ] = "\t<li class='$class'>$item";
 			}
 
-			echo implode( " |</li>\n", wp_kses_post( $menu ) ) . "</li>\n";
+			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
 
