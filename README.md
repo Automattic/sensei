@@ -33,6 +33,19 @@ version, but serves as a model for future changes.
   * Membership
   * Permissions
 
+## Getting Started
+
+You can poke around the code here on GitHub or you can install Sensei and run it locally.
+
+1.	Make sure you have [`git`](https://git-scm.com/), [`node`](https://nodejs.org/), and [`npm`](https://www.npmjs.com/get-npm) installed.
+2.	Clone this repository locally.
+3.	Execute the following commands from the root directory of the repository:
+```
+npm install
+npm run build-dev
+```
+4.	Copy the `build/woothemes-sensei` folder to the `wp-content/plugins` folder of your WordPress installation.
+
 ## Contributing to Sensei
 See our guidelines here: [Contributing to Sensei](https://github.com/woothemes/sensei/blob/master/CONTRIBUTING.md)
 
