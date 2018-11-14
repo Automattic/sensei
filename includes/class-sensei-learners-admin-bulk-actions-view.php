@@ -101,26 +101,33 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
          *
          * @return array
 		 */
-		return wp_kses(
-			apply_filters( 'sensei_learner_admin_get_row_data', $row_data, $item, $this ),
-			array_merge(
-				wp_kses_allowed_html( 'post' ),
-				array(
-					'a' => array(
-						'class' => array(),
-						'data-course-id' => array(),
-						'href' => array(),
-						'title' => array(),
-					),
-					'input' => array(
-						'class' => array(),
-						'name' => array(),
-						'type' => array(),
-						'value' => array(),
-					),
+		$row_data = apply_filters( 'sensei_learner_admin_get_row_data', $row_data, $item, $this );
+		$escaped_row_data = array();
+
+		foreach ( $row_data as $key => $data ) {
+			$escaped_row_data[$key] = wp_kses(
+				$data,
+				array_merge(
+					wp_kses_allowed_html( 'post' ),
+					array(
+						'a' => array(
+							'class' => array(),
+							'data-course-id' => array(),
+							'href' => array(),
+							'title' => array(),
+						),
+						'input' => array(
+							'class' => array(),
+							'name' => array(),
+							'type' => array(),
+							'value' => array(),
+						),
+					)
 				)
-			)
-		);
+			);
+		}
+
+		return $escaped_row_data;
     }
 
     private function get_learner_html( $learner ) {
