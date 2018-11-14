@@ -219,7 +219,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
      *
 	 * @param object $item The current item
      *
-     * @return array $column_data
+     * @return array Escaped column data.
 	 */
 	protected function get_row_data( $item ) {
 		global $wp_version;
@@ -232,6 +232,9 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				'actions' => '',
 			);
 		}
+
+		$escaped_column_data = array();
+
 		switch ( $this->view ) {
 			case 'learners' :
                 // in this case the item passed in is actually the users activity on course of lesson
@@ -280,8 +283,9 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
                  *   type html $action_buttons
                  * }
                  */
-				$column_data = wp_kses(
-					apply_filters( 'sensei_learners_main_column_data', array(
+				$column_data = apply_filters(
+					'sensei_learners_main_column_data',
+					array(
 						'title' => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
 						'date_started' => get_comment_meta( $user_activity->comment_ID, 'start', true),
 						'user_status' => $status_html,
@@ -289,25 +293,28 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						'actions' => '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>'
 							. '<a class="reset-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ). '">' . sprintf( esc_html__( 'Reset progress', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>'
 							. $edit_start_date_form,
-					), $item, $post_id, $post_type ),
-					array_merge(
-						wp_kses_allowed_html( 'post' ),
-						array(
-							'a' => array(
-								'class' => array(),
-								'href' => array(),
-								'title' => array(),
-								'data-comment-id' => array(),
-								'data-post-id' => array(),
-								'data-post-type' => array(),
-								'data-user-id' => array(),
-							),
-							'input' => array(
-								'class' => array(),
-								'type' => array(),
-								'value' => array(),
-							),
-						)
+					),
+					$item,
+					$post_id,
+					$post_type
+				);
+
+				$escaped_column_data = Sensei_Wp_Kses::wp_kses_array( $column_data,
+					array(
+						'a' => array(
+							'class' => array(),
+							'href' => array(),
+							'title' => array(),
+							'data-comment-id' => array(),
+							'data-post-id' => array(),
+							'data-post-type' => array(),
+							'data-user-id' => array(),
+						),
+						'input' => array(
+							'class' => array(),
+							'type' => array(),
+							'value' => array(),
+						),
 					)
 				);
 
@@ -323,12 +330,20 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					$grading_action = ' <a class="button" href="' . esc_url( add_query_arg( array( 'page' => 'sensei_grading', 'lesson_id' => $item->ID, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Grading', 'woothemes-sensei' ) . '</a>';
 				}
 
-				$column_data = wp_kses_post( apply_filters( 'sensei_learners_main_column_data', array(
+				$column_data = apply_filters(
+					'sensei_learners_main_column_data',
+					array(
 						'title' => '<strong><a class="row-title" href="' . esc_url( admin_url( 'post.php?action=edit&post=' . $item->ID ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
 						'num_learners' => esc_html( $lesson_learners ),
 						'updated' => esc_html( $item->post_modified ),
 						'actions' => '<a class="button" href="' . esc_url( add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $item->ID, 'course_id' => $this->course_id, 'view' => 'learners' ), admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
-					), $item, $this->course_id ) );
+					),
+					$item,
+					$this->course_id
+				);
+
+				$escaped_column_data = Sensei_Wp_Kses::wp_kses_post_array( $column_data );
+
 				break;
 			case 'courses' :
 			default:
@@ -342,17 +357,23 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 					$grading_action = ' <a class="button" href="' . esc_url( add_query_arg( array( 'page' => 'sensei_grading', 'course_id' => $item->ID ), admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Grading', 'woothemes-sensei' ) . '</a>';
 				}
 
-				$column_data = wp_kses_post( apply_filters( 'sensei_learners_main_column_data', array(
+				$column_data = apply_filters(
+					'sensei_learners_main_column_data',
+					array(
 						'title' => '<strong><a class="row-title" href="' . esc_url( add_query_arg( array( 'page' => 'sensei_learners', 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) )  . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
 						'num_learners' => esc_html( $course_learners ),
 						'updated' => esc_html( $item->post_modified ),
 						'actions' => '<a class="button" href="' . esc_url( add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $item->ID, 'view' => 'learners' ), admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
-					), $item ) );
+					),
+					$item
+				);
+
+				$escaped_column_data = Sensei_Wp_Kses::wp_kses_post_array( $column_data );
 
 				break;
 		} // switch
 
-		return $column_data;
+		return $escaped_column_data;
 	}
 
 	private function get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type ) {

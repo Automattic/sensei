@@ -110,4 +110,30 @@ class Sensei_Wp_Kses {
 
 		return $escaped_data;
 	}
+
+	/**
+	 * Sanitizes content for an array of HTML elements.
+	 * Allows for both regular post HTML tags and custom HTML tags.
+	 *
+	 * @since 1.12.2
+	 *
+	 * @param array $unescaped_data Array of unescaped data.
+	 * @param array $allowed_html List of allowed HTML elements.
+	 * @return array Escaped data.
+	 **/
+	public static function wp_kses_array( $unescaped_data, $allowed_html = array() ) {
+		$escaped_data = array();
+
+		foreach ( $unescaped_data as $key => $data ) {
+			$escaped_data[$key] = wp_kses(
+				$data,
+				array_merge(
+					wp_kses_allowed_html( 'post' ),
+					$allowed_html
+				)
+			);
+		}
+
+		return $escaped_data;
+	}
 }
