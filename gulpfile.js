@@ -122,7 +122,5 @@ gulp.task( 'zip-package', function() {
 		.pipe( gulp.dest( '.' ) );
 } );
 
-gulp.task( 'package', gulp.series( 'build', 'copy-package', 'zip-package' ) );
-gulp.task( 'package-unsafe', gulp.series( 'build-unsafe', 'copy-package', 'zip-package' ) );
-
+gulp.task( 'package', gulp.series( 'copy-package', 'zip-package' ) );
 gulp.task( 'default', gulp.series( 'build' ) );

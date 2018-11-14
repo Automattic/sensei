@@ -47,7 +47,8 @@
     "select2": "4.0.5"
   },
   "scripts": {
-    "build": "gulp && cross-env BABEL_ENV=default webpack --mode=production",
+    "build": "gulp build && cross-env BABEL_ENV=default webpack --mode=production && gulp package",
+    "build-unsafe": "gulp build-unsafe && cross-env BABEL_ENV=default webpack --mode=production && gulp package",
     "dev": "gulp && cross-env BABEL_ENV=default webpack --mode=development --watch",
     "test": "npm run test-php && npm run test-js",
     "test-php": "gulp test",
