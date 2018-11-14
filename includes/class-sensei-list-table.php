@@ -211,8 +211,9 @@ class Sensei_List_Table extends WP_List_Table {
 		foreach ( $columns as $column_name => $column_display_name ) {
 			$style = '';
 
-			if ( in_array( $column_name, $hidden ) )
+			if ( in_array( $column_name, $hidden ) ) {
 				$style = 'display:none;';
+			}
 
 			echo '<td class="' . esc_attr( $column_name ) . ' column-' . esc_attr( $column_name ) .
 				'" style="' . esc_attr( $style ) . '">';
