@@ -587,8 +587,8 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 			'page' => $this->page_slug,
 			'course_id' => $this->course_id,
 		);
-		$learners_url = esc_url( add_query_arg( array_merge( $url_args, array( 'view' => 'user' ) ), admin_url( 'admin.php' ) ) );
-		$lessons_url = esc_url( add_query_arg( array_merge( $url_args, array( 'view' => 'lesson' ) ), admin_url( 'admin.php' ) ) );
+		$learners_url = add_query_arg( array_merge( $url_args, array( 'view' => 'user' ) ), admin_url( 'admin.php' ) );
+		$lessons_url = add_query_arg( array_merge( $url_args, array( 'view' => 'lesson' ) ), admin_url( 'admin.php' ) );
 
 		$learners_class = $lessons_class = '';
 
