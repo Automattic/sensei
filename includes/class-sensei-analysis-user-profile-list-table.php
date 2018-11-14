@@ -224,7 +224,13 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 										'percent' => $course_percent,
 									), $item );
 
-		return wp_kses_post( $column_data );
+		$escaped_column_data = array();
+
+		foreach ( $column_data as $key => $data ) {
+			$escaped_column_data[$key] = wp_kses_post( $data );
+		}
+
+		return $escaped_column_data;
 	}
 
 	/**
