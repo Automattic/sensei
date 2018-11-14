@@ -57,8 +57,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 		// If this isn't a 'lesson' post, don't update it.
 		// if this is a revision don't save it
-		if ( ! isset( $_POST['post_type'] )
-		     || 'lesson' !== $_POST['post_type']
+		// We can ignore nonce verification because we don't make any changes using $_POST data.
+		if ( ! isset( $_POST['post_type'] ) // phpcs:ignore WordPress.Security.NonceVerification
+		     || 'lesson' !== $_POST['post_type'] // phpcs:ignore WordPress.Security.NonceVerification
 			|| wp_is_post_revision( $post_id ) ) {
 				return;
 		}
@@ -81,7 +82,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 		);
 
 		// Remove the action so that it doesn't fire again.
-		remove_action( 'save_post', array( $this, 'update_author' ) );
+		remove_action( 'save_post', array( $this, 'update_after_lesson_change' ) );
 
 		// Update the post into the database.
 		wp_update_post( $my_post );

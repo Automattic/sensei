@@ -33,7 +33,7 @@ class Sensei_Question {
 			add_action( 'restrict_manage_posts', array( $this, 'filter_options' ) );
 			add_filter( 'request', array( $this, 'filter_actions' ) );
 
-			add_action( 'save_post', array( $this, 'save_question' ), 10, 1 );
+			add_action( 'save_post_question', array( $this, 'save_question' ), 10, 1 );
 		} // End If Statement
 	} // End __construct()
 
@@ -236,29 +236,31 @@ class Sensei_Question {
 	}
 
 	public function save_question( $post_id = 0 ) {
+		/*
+		 * Ensure that we are on the `post` screen. If so, we can trust that
+		 * nonce verification has been performed.
+		 */
+		$screen = get_current_screen();
+		if ( ! $screen || 'post' !== $screen->base ) {
+			return;
+		}
 
-		if( ! isset( $_POST['post_type']
-            ) || 'question' != $_POST['post_type'] ) {
-            return;
-        }
-
-
-
-        //setup the data for saving
+		// Setup the data for saving.
+		// phpcs:ignore WordPress.Security.NonceVerification
 		$data = $_POST ;
-        $data['quiz_id'] = 0;
+		$data['quiz_id'] = 0;
 		$data['question_id'] = $post_id;
 
 		if ( ! wp_is_post_revision( $post_id ) ){
 
 			// Unhook function to prevent infinite loops
-			remove_action( 'save_post', array( $this, 'save_question' ) );
+			remove_action( 'save_post_question', array( $this, 'save_question' ) );
 
 			// Update question data
 			$question_id = Sensei()->lesson->lesson_save_question( $data, 'question' );
 
 			// Re-hook same function
-			add_action( 'save_post', array( $this, 'save_question' ) );
+			add_action( 'save_post_question', array( $this, 'save_question' ) );
 		}
 
 		return;

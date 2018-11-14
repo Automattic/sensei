@@ -486,7 +486,9 @@ class Sensei_Lesson {
 
 		$value = false;
 
+		// Since we don't do any updates here, we can ignore nonce verification.
 		if ( 'quiz_grade_type' == $field['id'] ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			if ( isset( $_POST[ $field['id'] ] ) && 'on' == $_POST[ $field['id'] ] ) {
 				$value = 'auto';
 			} else {
@@ -495,8 +497,8 @@ class Sensei_Lesson {
 			return $value;
 		}
 
-		if ( isset( $_POST[ $field['id'] ] ) ) {
-			$value = $_POST[ $field['id'] ];
+		if ( isset( $_POST[ $field['id'] ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$value = $_POST[ $field['id'] ]; // phpcs:ignore WordPress.Security.NonceVerification
 		} else {
 			$value = $field['default'];
 		}
@@ -514,10 +516,16 @@ class Sensei_Lesson {
 	 * @return int|bool meta id or saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
+		/*
+		 * This function is only called from `meta_box_save`, which performs
+		 * nonce verification, so we do not need to do so here.
+		 */
+
 		// Get the meta key.
 		$meta_key = '_' . $post_key;
 
 		// ignore fields are not posted
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! isset( $_POST[ $post_key ] ) ) {
 
 			// except for lesson preview checkbox field
@@ -534,13 +542,16 @@ class Sensei_Lesson {
 
 		// Get the posted data and sanitize it for use as an HTML class.
 		if ( 'lesson_video_embed' == $post_key ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$new_meta_value = isset( $_POST[ $post_key ] ) ? $_POST[ $post_key ] : '';
 			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, $this->allowed_html );
 		} else {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$new_meta_value = ( isset( $_POST[ $post_key ] ) ? sanitize_html_class( $_POST[ $post_key ] ) : '' );
 		} // End If Statement
 
 		// quick edit work around
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( 'lesson_preview' == $post_key && isset( $_POST['action'] ) && $_POST['action'] == 'inline-save' ) {
 			$new_meta_value = '-1';
 		}
@@ -1374,6 +1385,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request
 		$nonce = '';
 		if ( isset( $_POST['filter_existing_questions_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$nonce = esc_html( $_POST['filter_existing_questions_nonce'] );
 		} // End If Statement
 
@@ -1671,6 +1683,29 @@ class Sensei_Lesson {
 	}
 
 	public function question_get_answer_id() {
+		if ( ! isset( $_GET['answer_value'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+			if ( isset( $_POST['data'] ) ) {
+				_doing_it_wrong(
+					'question_get_answer_id',
+					'The question_get_answer_id AJAX call should be a GET request with parameter "answer_value".',
+					'1.12.2'
+				);
+				$this->deprecated_question_get_answer_id();
+			}
+			wp_die();
+		}
+		$answer = $_GET['answer_value'];
+		$answer_id = $this->get_answer_id( $answer );
+		echo $answer_id;
+		wp_die();
+	}
+
+	/**
+	 * Deprecated version of question_get_answer_id() to use as a fallback.
+	 */
+	private function deprecated_question_get_answer_id() {
+		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
 		$data = $_POST['data'];
 		$answer_data = array();
 		parse_str( $data, $answer_data );
@@ -1987,6 +2022,7 @@ class Sensei_Lesson {
 		global $current_user;
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_add_course_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$nonce = esc_html( $_POST['lesson_add_course_nonce'] );
 		} // End If Statement
 		if ( ! wp_verify_nonce( $nonce, 'lesson_add_course_nonce' )
@@ -2016,6 +2052,7 @@ class Sensei_Lesson {
 		global $current_user;
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$nonce = esc_html( $_POST['lesson_update_question_nonce'] );
 		} // End If Statement
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_nonce' )
@@ -2068,6 +2105,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request
 		$nonce = '';
 		if ( isset( $_POST['lesson_add_multiple_questions_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$nonce = esc_html( $_POST['lesson_add_multiple_questions_nonce'] );
 		} // End If Statement
 
@@ -2125,6 +2163,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request
 		$nonce = '';
 		if ( isset( $_POST['lesson_remove_multiple_questions_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$nonce = esc_html( $_POST['lesson_remove_multiple_questions_nonce'] );
 		} // End If Statement
 
@@ -2153,11 +2192,44 @@ class Sensei_Lesson {
 	}
 
 	public function get_question_category_limit() {
+		// Set default
+		$return = 1;
+
+		if ( isset( $_GET['cat'] ) && '' != $_GET['cat'] ) {
+			$cat = get_term( $_GET['cat'], 'question-category' );
+			if ( isset( $cat->count ) ) {
+				$return = $cat->count;
+			}
+		} else {
+			// Fallback to old behaviour if $_POST['data'] exists.
+			// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
+			if ( isset( $_POST['data'] ) ) {
+				_doing_it_wrong(
+					'get_question_category_limit',
+					'The get_question_category_limit AJAX call should be a GET request with parameter "cat".',
+					'1.12.2'
+				);
+				$this->deprecated_get_question_category_limit();
+
+				wp_die();
+			}
+		}
+
+		echo $return;
+
+		die( '' );
+	}
+
+	/**
+	 * Deprecated version of get_question_category_limit() to use as a fallback.
+	 */
+	public function deprecated_get_question_category_limit() {
 
 		// Set default
 		$return = 1;
 
 		// Parse POST data
+		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
 		$data = $_POST['data'];
 		$cat_data = array();
 		parse_str( $data, $cat_data );
@@ -2179,6 +2251,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request
 		$nonce = '';
 		if ( isset( $_POST['lesson_add_existing_questions_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$nonce = esc_html( $_POST['lesson_add_existing_questions_nonce'] );
 		} // End If Statement
 
@@ -2230,6 +2303,7 @@ class Sensei_Lesson {
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_grade_type_nonce'] ) ) {
 
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$nonce = esc_html( $_POST['lesson_update_grade_type_nonce'] );
 
 		} // End If Statement
@@ -2252,6 +2326,7 @@ class Sensei_Lesson {
 	public function lesson_update_question_order() {
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_order_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$nonce = esc_html( $_POST['lesson_update_question_order_nonce'] );
 		} // End If Statement
 
@@ -2279,6 +2354,7 @@ class Sensei_Lesson {
 	public function lesson_update_question_order_random() {
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_order_random_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$nonce = esc_html( $_POST['lesson_update_question_order_random_nonce'] );
 		} // End If Statement
 		if ( ! wp_verify_nonce( $nonce, 'lesson_update_question_order_random_nonce' )

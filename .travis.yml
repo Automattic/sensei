@@ -89,3 +89,8 @@ jobs:
       script:
         - composer install
         - ./vendor/bin/phpcs -s --sniffs=WordPress.WP.I18n,Generic.PHP.Syntax .
+    - stage: test
+      php: 7.2
+      script:
+        - composer install
+        - ./vendor/bin/phpcs -n -s --sniffs=WordPress.Security.NonceVerification .

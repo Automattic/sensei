@@ -1209,6 +1209,12 @@ class Sensei_Frontend {
 	} // End sensei_course_category_main_content()
 
 	public function sensei_login_form() {
+		/*
+		 * It is safe to ignore nonce verification below because we are just
+		 * using the POST data to display values in the form, not to change any
+		 * data on the server.
+		 */
+
 		?>
 		<div id="my-courses">
 			<?php Sensei()->notices->maybe_print_notices(); ?>
@@ -1240,8 +1246,8 @@ class Sensei_Frontend {
 							<label for="sensei_reg_username"><?php _e( 'Username', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
 							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="
 							<?php
-							if ( ! empty( $_POST['sensei_reg_username'] ) ) {
-								echo esc_attr( $_POST['sensei_reg_username'] );}
+							if ( ! empty( $_POST['sensei_reg_username'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+								echo esc_attr( $_POST['sensei_reg_username'] );} // phpcs:ignore WordPress.Security.NonceVerification
 ?>
 " />
 						</p>
@@ -1250,8 +1256,8 @@ class Sensei_Frontend {
 							<label for="sensei_reg_email"><?php _e( 'Email address', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
 							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="
 							<?php
-							if ( ! empty( $_POST['sensei_reg_email'] ) ) {
-								echo esc_attr( $_POST['sensei_reg_email'] );}
+							if ( ! empty( $_POST['sensei_reg_email'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+								echo esc_attr( $_POST['sensei_reg_email'] );} // phpcs:ignore WordPress.Security.NonceVerification
 ?>
 " />
 						</p>
@@ -1260,8 +1266,8 @@ class Sensei_Frontend {
 							<label for="sensei_reg_password"><?php _e( 'Password', 'woothemes-sensei' ); ?> <span class="required">*</span></label>
 							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="
 							<?php
-							if ( ! empty( $_POST['sensei_reg_password'] ) ) {
-								echo esc_attr( $_POST['sensei_reg_password'] );}
+							if ( ! empty( $_POST['sensei_reg_password'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+								echo esc_attr( $_POST['sensei_reg_password'] );} // phpcs:ignore WordPress.Security.NonceVerification
 ?>
 " />
 						</p>
@@ -1271,6 +1277,8 @@ class Sensei_Frontend {
 
 						<?php do_action( 'sensei_register_form_fields' ); ?>
 						<?php do_action( 'register_form' ); ?>
+
+						<?php wp_nonce_field( 'sensei-register' ); ?>
 
 						<p class="form-row">
 							<input type="submit" class="button" name="register" value="<?php _e( 'Register', 'woothemes-sensei' ); ?>" />
@@ -1875,10 +1883,17 @@ class Sensei_Frontend {
 	public function sensei_process_registration() {
 		global   $current_user;
 		// check the for the sensei specific registration requests.
+		// phpcs:ignore WordPress.Security.NonceVerification -- We are just checking whether to return here.
 		if ( ! isset( $_POST['sensei_reg_username'] ) && ! isset( $_POST['sensei_reg_email'] ) && ! isset( $_POST['sensei_reg_password'] ) ) {
 			// exit if this is not a sensei registration request.
 			return;
 		}
+
+		// Validate the registration request nonce.
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'sensei-register' ) ) {
+			return;
+		}
+
 		// check for spam throw cheating huh.
 		if ( isset( $_POST['email_2'] ) && '' !== $_POST['email_2'] ) {
 			$message = 'Error:  The spam field should be empty';
