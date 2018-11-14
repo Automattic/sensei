@@ -118,7 +118,8 @@ class Sensei_Wp_Kses {
 	 * @since 1.12.2
 	 *
 	 * @param array $unescaped_data Array of unescaped data.
-	 * @param array $allowed_html List of allowed HTML elements.
+	 * @param array $allowed_html List of allowed HTML elements (to be merged with results of
+	                              wp_kses_allowed_html( 'post' )).
 	 * @return array Escaped data.
 	 **/
 	public static function wp_kses_array( $unescaped_data, $allowed_html = array() ) {
