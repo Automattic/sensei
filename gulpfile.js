@@ -25,7 +25,6 @@ var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
 
 var paths = {
-	scripts: [ 'assets/js/**/*.js' ],
 	css: [ 'assets/css/**/*.scss' ],
 	select2: [
 		'node_modules/select2/dist/css/select2.min.css',
@@ -53,8 +52,6 @@ var paths = {
 
 gulp.task( 'clean', gulp.series( function( cb ) {
 	return del( [
-		'assets/js/**/*.min.js',
-		'assets/js/**/*.min.js',
 		'assets/css/**/*.min.css',
 		'assets/vendor/select2/**',
 		'build'
@@ -66,16 +63,6 @@ gulp.task( 'CSS', gulp.series( function() {
 		.pipe( sass().on( 'error', sass.logError ) )
 		.pipe( minifyCSS( { keepBreaks: false } ) )
 		.pipe( gulp.dest( 'assets/css' ) );
-} ) );
-
-gulp.task( 'JS', gulp.series( function() {
-	return gulp.src( paths.scripts )
-		.pipe( babel() )
-		// This will minify and rename to *.min.js
-		.pipe( uglify() )
-		.pipe( rename( { extname: '.min.js' } ) )
-		.pipe( chmod( 0o644 ) )
-		.pipe( gulp.dest( 'assets/js' ) );
 } ) );
 
 gulp.task( 'pot', gulp.series( function() {
@@ -121,8 +108,8 @@ gulp.task( 'test', function() {
 		.pipe( phpunit() );
 } );
 
-gulp.task( 'build', gulp.series( 'test', 'clean', 'CSS', 'JS', 'vendor' ) );
-gulp.task( 'build-unsafe', gulp.series( 'clean', 'CSS', 'JS', 'vendor' ) );
+gulp.task( 'build', gulp.series( 'test', 'clean', 'CSS', 'vendor' ) );
+gulp.task( 'build-unsafe', gulp.series( 'clean', 'CSS', 'vendor' ) );
 
 gulp.task( 'copy-package', function() {
 	return gulp.src( paths.packageContents, { base: '.' } )
