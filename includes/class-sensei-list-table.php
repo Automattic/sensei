@@ -200,26 +200,26 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	function single_row( $item ) {
 		static $row_class = '';
-		$row_class = ( $row_class == '' ? ' class="alternate"' : '' );
+		$row_class = ( $row_class == '' ? 'alternate' : '' );
 
-		echo '<tr' . $row_class . '>';
+		echo '<tr class="' . esc_attr( $row_class ) . '">';
 
 		$column_data = $this->get_row_data( $item );
 
 		list( $columns, $hidden ) = $this->get_column_info();
 
 		foreach ( $columns as $column_name => $column_display_name ) {
-			$class = "class='$column_name column-$column_name'";
-
 			$style = '';
-			if ( in_array( $column_name, $hidden ) )
-				$style = ' style="display:none;"';
 
-			$attributes = "$class$style";
+			if ( in_array( $column_name, $hidden ) ) {
+				$style = 'display:none;';
+			}
 
-			echo "<td $attributes>";
+			echo '<td class="' . esc_attr( $column_name ) . ' column-' . esc_attr( $column_name ) .
+				'" style="' . esc_attr( $style ) . '">';
 			if ( isset($column_data[$column_name]) ) {
-				echo $column_data[$column_name];
+				// $column_data is escaped in the individual get_row_data functions.
+				echo $column_data[$column_name]; // WPCS: XSS ok.
 			}
 			echo "</td>";
 		}
@@ -244,7 +244,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	function no_items() {
 
-		 _e( 'No items found.', 'woothemes-sensei' );
+		esc_html_e( 'No items found.', 'woothemes-sensei' );
 
 	} // End no_items()
 
@@ -264,7 +264,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function bulk_actions( $which = '' ) {
 		// This will be output Above the table headers on the left
-		echo apply_filters( 'sensei_list_bulk_actions', '' );
+		echo wp_kses_post( apply_filters( 'sensei_list_bulk_actions', '' ) );
 	} // End bulk_actions()
 
 } // End Class

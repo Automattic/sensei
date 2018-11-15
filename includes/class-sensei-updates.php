@@ -116,7 +116,7 @@ class Sensei_Updates
         <div class="wrap">
 
         <div id="icon-woothemes-sensei" class="icon32"><br></div>
-        <h1><?php _e('Sensei Updates', 'woothemes-sensei'); ?></h1>
+        <h1><?php esc_html_e('Sensei Updates', 'woothemes-sensei'); ?></h1>
 
         <?php
         $function_name= '';
@@ -138,8 +138,8 @@ class Sensei_Updates
                         || ! wp_verify_nonce( $_POST[ $function_name.'_nonce_field' ] , 'run_'.$function_name ) ){
 
                         wp_die(
-                            '<h1>' . __( 'Cheatin&#8217; uh?', 'woothemes-sensei' ) . '</h1>' .
-                            '<p>' . __( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
+                            '<h1>' . esc_html__( 'Cheatin&#8217; uh?', 'woothemes-sensei' ) . '</h1>' .
+                            '<p>' . esc_html__( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
                             403
                         );
 
@@ -187,8 +187,8 @@ class Sensei_Updates
                     || ! wp_verify_nonce( $_GET[ $function_name.'_nonce' ] , 'run_'.$function_name ) ){
 
                     wp_die(
-                        '<h1>' . __( 'Cheatin&#8217; uh?', 'woothemes-sensei' ) . '</h1>' .
-                        '<p>' . __( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
+                        '<h1>' . esc_html__( 'Cheatin&#8217; uh?', 'woothemes-sensei' ) . '</h1>' .
+                        '<p>' . esc_html__( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
                         403
                     );
 
@@ -225,11 +225,11 @@ class Sensei_Updates
 
         if (!$done_processing) { ?>
 
-            <h3><?php _e('Processing Updates...', 'woothemes-sensei'); ?></h3>
+            <h3><?php esc_html_e('Processing Updates...', 'woothemes-sensei'); ?></h3>
 
             <p>
 
-                <?php _e( "If your browser doesn't start loading the next page automatically, click this button:", 'woothemes-sensei' ); ?>
+                <?php esc_html_e( "If your browser doesn't start loading the next page automatically, click this button:", 'woothemes-sensei' ); ?>
 
                 <?php
                 $next_action_url = add_query_arg( array(
@@ -243,7 +243,7 @@ class Sensei_Updates
 
                 <a class="button"  href="<?php echo esc_url( $next_action_url ); ?>">
 
-                    <?php _e( 'Next', 'woothemes-sensei' ); ?>
+                    <?php esc_html_e( 'Next', 'woothemes-sensei' ); ?>
 
                 </a>
 
@@ -259,44 +259,44 @@ class Sensei_Updates
 
         <?php  } else { ?>
 
-            <p><strong><?php _e('Update completed successfully!', 'woothemes-sensei'); ?></strong></p>
+            <p><strong><?php esc_html_e('Update completed successfully!', 'woothemes-sensei'); ?></strong></p>
             <p>
-                <a href="<?php echo admin_url('edit.php?post_type=lesson'); ?>"><?php _e('Create a new lesson', 'woothemes-sensei'); ?></a>
+                <a href="<?php echo esc_url( admin_url('edit.php?post_type=lesson') ); ?>"><?php esc_html_e('Create a new lesson', 'woothemes-sensei'); ?></a>
                 or <a
-                    href="<?php echo admin_url('admin.php?page=sensei_updates'); ?>"><?php _e('run some more updates', 'woothemes-sensei'); ?></a>.
+                    href="<?php echo esc_url( admin_url('admin.php?page=sensei_updates') ); ?>"><?php esc_html_e('run some more updates', 'woothemes-sensei'); ?></a>.
             </p>
 
         <?php } // End If Statement
 
         } else { ?>
 
-            <h2><?php _e('Updates', 'woothemes-sensei'); ?></h2>
+            <h2><?php esc_html_e('Updates', 'woothemes-sensei'); ?></h2>
             <p>
 				<?php
 				// translators: Placeholders are opening and closing <code> tags.
-				printf(__('These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'woothemes-sensei'), '<code>', '</code>');
+				echo wp_kses_post( sprintf( __( 'These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'woothemes-sensei' ), '<code>', '</code>' ) );
 				?>
 			</p>
 
             <div class="updated"><p>
-                    <strong><?php _e('Only run these updates if you have been instructed to do so by Support staff.', 'woothemes-sensei'); ?></strong>
+                    <strong><?php esc_html_e('Only run these updates if you have been instructed to do so by Support staff.', 'woothemes-sensei'); ?></strong>
                 </p></div>
 
             <table class="widefat" cellspacing="0" id="update-plugins-table">
 
                 <thead>
                 <tr>
-                    <th scope="col" class="manage-column"><?php _e('Update', 'woothemes-sensei'); ?></th>
-                    <th scope="col" class="manage-column"><?php _e('Type', 'woothemes-sensei'); ?></th>
-                    <th scope="col" class="manage-column"><?php _e('Action', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php esc_html_e('Update', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php esc_html_e('Type', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php esc_html_e('Action', 'woothemes-sensei'); ?></th>
                 </tr>
                 </thead>
 
                 <tfoot>
                 <tr>
-                    <th scope="col" class="manage-column"><?php _e('Update', 'woothemes-sensei'); ?></th>
-                    <th scope="col" class="manage-column"><?php _e('Type', 'woothemes-sensei'); ?></th>
-                    <th scope="col" class="manage-column"><?php _e('Action', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php esc_html_e('Update', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php esc_html_e('Type', 'woothemes-sensei'); ?></th>
+                    <th scope="col" class="manage-column"><?php esc_html_e('Action', 'woothemes-sensei'); ?></th>
                 </tr>
                 </tfoot>
 
@@ -317,16 +317,16 @@ class Sensei_Updates
                             ?>
                             <form method="post" action="admin.php?page=sensei_updates&action=update&n=0"
                                   name="update-sensei" class="upgrade">
-                                <tr class="<?php echo $class; ?>">
+                                <tr class="<?php echo esc_attr( $class ); ?>">
                                     <td>
                                         <p>
-                                            <input type="hidden" name="checked[]" value="<?php echo $update; ?>">
-                                            <strong><?php echo $data['title']; ?></strong><br><?php echo $data['desc']; ?>
+                                            <input type="hidden" name="checked[]" value="<?php echo esc_attr( $update ); ?>">
+                                            <strong><?php echo esc_html( $data['title'] ); ?></strong><br><?php echo esc_html( $data['desc'] ); ?>
                                             <br>
                                             <em>
 												<?php
 												// translators: Placeholders are the product name and the version number, respectively.
-												printf(__('Originally included in %1$s v%2$s', 'woothemes-sensei'), $product, $version);
+												printf( esc_html__('Originally included in %1$s v%2$s', 'woothemes-sensei' ), esc_html( $product ), esc_html( $version ) );
 												?>
 											</em>
                                         </p>
@@ -337,17 +337,17 @@ class Sensei_Updates
                                         $type_label = __('Manual', 'woothemes-sensei');
                                     }
                                     ?>
-                                    <td><p><?php echo $type_label; ?></p></td>
+                                    <td><p><?php echo esc_html( $type_label ); ?></p></td>
                                     <td>
                                         <p>
                                             <input onclick="javascript:return confirm('<?php
 												// translators: Placeholder is the title of the update.
-												echo addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'woothemes-sensei' ), $data['title'] ) );
+												echo esc_html( addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'woothemes-sensei' ), $data['title'] ) ) );
 												?>');"
                                                    id="update-sensei"
                                                    class="button<?php if( ! $update_run ) { echo ' button-primary'; } ?>"
                                                    type="submit"
-                                                   value="<?php if( $update_run ) { _e( 'Re-run Update', 'woothemes-sensei' ); } else { _e( 'Run Update', 'woothemes-sensei' ); } ?>"
+                                                   value="<?php if( $update_run ) { esc_html_e( 'Re-run Update', 'woothemes-sensei' ); } else { esc_html_e( 'Run Update', 'woothemes-sensei' ); } ?>"
                                                    name="update">
 
                                             <?php
@@ -522,14 +522,14 @@ class Sensei_Updates
 
 				$update_title = __( 'Important Sensei updates required', 'woothemes-sensei' );
 
-				$update_message = '<h1>' . __( 'Important Sensei upgrades required!', 'woothemes-sensei' ) . '</h1>' . "\n";
-				$update_message .= '<p>' . __( 'The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$update_message = '<h1>' . esc_html__( 'Important Sensei upgrades required!', 'woothemes-sensei' ) . '</h1>' . "\n";
+				$update_message .= '<p>' . esc_html__( 'The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'woothemes-sensei' ) . '</p>' . "\n";
 
-				$update_message .= '<p><b>' . __( 'To run the upgrades click on each of the links below in the order that they appear.', 'woothemes-sensei' ) . '</b></p>' . "\n";
+				$update_message .= '<p><b>' . esc_html__( 'To run the upgrades click on each of the links below in the order that they appear.', 'woothemes-sensei' ) . '</b></p>' . "\n";
 
-				$update_message .= '<p>' . __( 'Clicking each link will open up a new window/tab - do not close that window/tab until you see the message \'Update completed successfully\'. Once you see that message you can close the window/tab and start the next upgrade by clicking on the next link in the list.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$update_message .= '<p>' . esc_html__( 'Clicking each link will open up a new window/tab - do not close that window/tab until you see the message \'Update completed successfully\'. Once you see that message you can close the window/tab and start the next upgrade by clicking on the next link in the list.', 'woothemes-sensei' ) . '</p>' . "\n";
 
-				$update_message .= '<p><b>' . __( 'Once all the upgrades have been completed you will be able to use your WordPress site again.', 'woothemes-sensei' ) . '</b></p>' . "\n";
+				$update_message .= '<p><b>' . esc_html__( 'Once all the upgrades have been completed you will be able to use your WordPress site again.', 'woothemes-sensei' ) . '</b></p>' . "\n";
 
 				$update_message .= '<ol>' . "\n";
 
@@ -539,7 +539,7 @@ class Sensei_Updates
 							break;
 						}
 
-						$update_message .= '<li style="margin:5px 0;"><a href="' . admin_url( 'admin.php?page=sensei_updates&action=update&n=0&functions[]=' . $function ) . '" target="_blank">' . $data['title'] . '</a></li>';
+						$update_message .= '<li style="margin:5px 0;"><a href="' . esc_url( admin_url( 'admin.php?page=sensei_updates&action=update&n=0&functions[]=' . $function ) ) . '" target="_blank">' . esc_html( $data['title'] ) . '</a></li>';
 					}
 
 				$update_message .= '</ol>' . "\n";
@@ -548,12 +548,12 @@ class Sensei_Updates
 
 					case '1.7.0':
 						// translators: Placeholders are an opening and closing <a> tag linking to an informational post.
-						$update_message .= '<p><em>' . sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'woothemes-sensei' ), '<a href="http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) . '</em></p>' . "\n";
+						$update_message .= '<p><em>' . wp_kses_post( sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'woothemes-sensei' ), '<a href="http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) ) . '</em></p>' . "\n";
 					break;
 
 				}
 
-				wp_die( $update_message, $update_title );
+				wp_die( wp_kses_post( $update_message ), esc_html( $update_title ) );
 			}
 		}
 	}

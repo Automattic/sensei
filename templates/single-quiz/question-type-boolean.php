@@ -67,22 +67,22 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <li class="<?php echo esc_attr( $answer_class ); ?>">
 
         <input type="radio"
-               id="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-'. $option_value; ?>"
+               id="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ] . '-option-'. $option_value ); ?>"
                name="<?php echo esc_attr( 'sensei_question[' . $question_data[ 'ID' ]  . ']' ); ?>"
-               value="<?php echo $option_value; ?>"
+               value="<?php echo esc_attr( $option_value ); ?>"
             <?php echo checked( $question_data[ 'user_answer_entry' ], $option_value, false ); ?>
             <?php if ( !is_user_logged_in() ) { echo ' disabled'; } ?>
 	    />
-        <label for="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ]  ) . '-option-' . $option_value; ?>">
+        <label for="<?php echo esc_attr( 'question_' . $question_data[ 'ID' ] . '-option-' . $option_value ); ?>">
             <?php
 
             if( 'true' == $option ){
 
-                _e( 'True', 'woothemes-sensei' );
+                esc_html_e( 'True', 'woothemes-sensei' );
 
             }else{
 
-                _e( 'False', 'woothemes-sensei' );
+                esc_html_e( 'False', 'woothemes-sensei' );
 
             }
 

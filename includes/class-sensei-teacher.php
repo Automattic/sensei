@@ -257,8 +257,8 @@ class Sensei_Teacher {
 					<?php
 						$user = get_user_by( 'id', $user_id );
 					?>
-					<option <?php selected( $current_author , $user_id , true ); ?> value="<?php echo $user_id; ?>" >
-						<?php echo  $user->display_name; ?>
+					<option <?php selected( $current_author , $user_id , true ); ?> value="<?php echo esc_attr( $user_id ); ?>" >
+						<?php echo esc_html( $user->display_name ); ?>
 					</option>
 
 			<?php }// End foreach().
@@ -1144,7 +1144,7 @@ class Sensei_Teacher {
 			return;
 		}
 
-		echo '<a href="' . get_edit_user_link( $teacher->ID ) . '" >' . $teacher->display_name . '</a>';
+		echo '<a href="' . esc_url( get_edit_user_link( $teacher->ID ) ) . '" >' . esc_html( $teacher->display_name ) . '</a>';
 
 	}//end course_column_data()
 
@@ -1263,15 +1263,27 @@ class Sensei_Teacher {
 		$selected = isset( $_GET['course_teacher'] ) ? $_GET['course_teacher'] : '';
 		$course_options = '';
 		foreach ( $users_who_can_edit_courses as $user ) {
-			$course_options .= '<option value="' . esc_attr( $user->ID ) . '" ' . selected( $selected, $user->ID, false ) . '>' . $user->display_name . '</option>';
+			$course_options .= '<option value="' . esc_attr( $user->ID ) . '" ' . selected( $selected, $user->ID, false ) . '>' . esc_html( $user->display_name ) . '</option>';
 		}
 
 		$output = '<select name="course_teacher" id="dropdown_course_teachers">';
-		$output .= '<option value="">' . __( 'Show all teachers', 'woothemes-sensei' ) . '</option>';
+		$output .= '<option value="">' . esc_html__( 'Show all teachers', 'woothemes-sensei' ) . '</option>';
 		$output .= $course_options;
 		$output .= '</select>';
 
-		echo $output;
+		echo wp_kses(
+			$output,
+			array(
+				'option' => array(
+					'selected' => array(),
+					'value' => array(),
+				),
+				'select' => array(
+					'id' => array(),
+					'name' => array(),
+				),
+			)
+		);
 	}
 
 	/**
@@ -1574,7 +1586,7 @@ class Sensei_Teacher {
 
 				<?php
 				// translators: Placeholder is the author name.
-				echo sprintf( __( 'All courses by %s', 'woothemes-sensei' ) , $author_name );
+				echo esc_html( sprintf( __( 'All courses by %s', 'woothemes-sensei' ) , $author_name ) );
 				?>
 
 			</h2>

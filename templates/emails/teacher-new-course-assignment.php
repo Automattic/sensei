@@ -19,15 +19,15 @@ do_action( 'sensei_before_email_content', $template );
 ?>
 
 <p style="<?php echo esc_attr( $style_small ); ?>">
-    <?php _e( 'The Course', 'woothemes-sensei' ); ?>
+    <?php esc_html_e( 'The Course', 'woothemes-sensei' ); ?>
 </p>
 
 <h2 style="<?php echo esc_attr( $style_large ); ?>">
-    <?php echo $sensei_email_data['course_name']; ?>
+    <?php echo esc_html( $sensei_email_data['course_name'] ); ?>
 </h2>
 
 <p style="<?php echo esc_attr( $style_small ); ?>">
-    <?php _e( 'has been assigned to you.', 'woothemes-sensei' ); ?>
+    <?php esc_html_e( 'has been assigned to you.', 'woothemes-sensei' ); ?>
 </p>
 
 <hr/>
@@ -35,7 +35,7 @@ do_action( 'sensei_before_email_content', $template );
 <p style="<?php echo esc_attr( $style_small ); ?>">
     <?php
 
-    echo __( 'You can edit the assigned course here: ', 'woothemes-sensei' ) . '<a href="' . esc_url( $sensei_email_data['course_edit_link'] ) . '">'. $sensei_email_data['course_name'] . '</a>';
+    echo esc_html__( 'You can edit the assigned course here: ', 'woothemes-sensei' ) . '<a href="' . esc_url( $sensei_email_data['course_edit_link'] ) . '">' . esc_html( $sensei_email_data['course_name'] ) . '</a>';
 
     ?>
 </p>

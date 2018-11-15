@@ -48,7 +48,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
         <header>
 
             <h1>
-                <?php echo $course->post_title; ?>
+                <?php echo esc_html( $course->post_title ); ?>
             </h1>
 
         </header>

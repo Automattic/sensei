@@ -26,20 +26,20 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is the translated text for "passed" or "failed".
-printf( __( 'You %1$s the lesson', 'woothemes-sensei' ), $passed );
+printf( esc_html__( 'You %1$s the lesson', 'woothemes-sensei' ), esc_html( $passed ) );
 ?>
 </p>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo get_the_title( $lesson_id ); ?></h2>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php _e( 'with a grade of', 'woothemes-sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'with a grade of', 'woothemes-sensei' ); ?></p>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo $grade . '%'; ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $grade ) . '%'; ?></h2>
 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is the passmark as a percentage.
-printf( __( 'The pass mark is %1$s', 'woothemes-sensei' ), $passmark . '%' );
+printf( esc_html__( 'The pass mark is %1$s', 'woothemes-sensei' ), esc_html( $passmark ) . '%' );
 ?>
 </p>
 
@@ -48,7 +48,7 @@ printf( __( 'The pass mark is %1$s', 'woothemes-sensei' ), $passmark . '%' );
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholders are an opening and closing <a> tag linking to the quiz permalink.
-printf( __( 'You can review your grade and your answers %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . get_permalink( $quiz_id ) . '">', '</a>' );
+printf( esc_html__( 'You can review your grade and your answers %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '">', '</a>' );
 ?>
 </p>
 

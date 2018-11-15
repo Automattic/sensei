@@ -33,7 +33,7 @@ class Sensei_Utils {
 	 * @return bool
 	 */
 	public static function sensei_is_woocommerce_present () {
-		_deprecated_function(__FUNCTION__, Sensei()->version, 'Sensei_WC::is_woocommerce_present');
+		_deprecated_function( __FUNCTION__, esc_html( Sensei()->version ), 'Sensei_WC::is_woocommerce_present' );
         return Sensei_WC::is_woocommerce_present();
 
 	} // End sensei_is_woocommerce_present()
@@ -89,7 +89,7 @@ class Sensei_Utils {
 		}
 		// Sanity check
 		if ( empty($args['user_id']) ) {
-			_deprecated_argument( __FUNCTION__, '1.0', __('At no point should user_id be equal to 0.', 'woothemes-sensei') );
+			_deprecated_argument( __FUNCTION__, '1.0', esc_html__('At no point should user_id be equal to 0.', 'woothemes-sensei') );
 			return false;
 		}
 
@@ -159,13 +159,13 @@ class Sensei_Utils {
 
 		// A user ID of 0 is in valid, so shortcut this
 		if ( isset( $args['user_id'] ) && 0 == intval ( $args['user_id'] ) ) {
-			_deprecated_argument( __FUNCTION__, '1.0', __('At no point should user_id be equal to 0.', 'woothemes-sensei') );
+			_deprecated_argument( __FUNCTION__, '1.0', esc_html__('At no point should user_id be equal to 0.', 'woothemes-sensei') );
 			return false;
 		}
 		// Check for legacy code
 		if ( isset($args['type']) && in_array($args['type'], array('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_quiz_grade', 'sense_answer_notes') ) ) {
 			// translators: Placeholder is the name of a deprecated Sensei activity type.
-			_deprecated_argument( __FUNCTION__, '1.7', sprintf( __('Sensei activity type %s is no longer used.', 'woothemes-sensei'), $args['type'] ) );
+			_deprecated_argument( __FUNCTION__, '1.7', esc_html( sprintf( __('Sensei activity type %s is no longer used.', 'woothemes-sensei'), $args['type'] ) ) );
 			return false;
 		}
 		// Are we checking for specific comment_approved statuses?
@@ -1367,8 +1367,8 @@ class Sensei_Utils {
 		}else{
 
 			$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-			$a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . __( 'Sign Up', 'woothemes-sensei' )  . '">';
-			$a_element .= __( 'course', 'woothemes-sensei' );
+			$a_element = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' )  . '">';
+			$a_element .= esc_html__( 'course', 'woothemes-sensei' );
 			$a_element .= '</a>';
 
 			if ( Sensei_WC::is_course_purchasable( $course_id ) ){
@@ -2208,7 +2208,7 @@ class Sensei_Utils {
         $combined_attributes = '';
         foreach( $attributes as $attribute => $value ){
 
-            $combined_attributes .= $attribute . '="'.$value.'"' . ' ';
+            $combined_attributes .= $attribute . '="' . esc_attr( $value ) . '"' . ' ';
 
         }// end for each
 
@@ -2218,7 +2218,7 @@ class Sensei_Utils {
 
         // show the none option if the client requested
         if( $enable_none_option ) {
-            $drop_down_element .= '<option value="">' . __('None', 'woothemes-sensei') . '</option>';
+            $drop_down_element .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
         }
 
         if ( count( $options ) > 0 ) {
@@ -2238,9 +2238,18 @@ class Sensei_Utils {
 
         $drop_down_element .= '</select>' . "\n";
 
-        return $drop_down_element;
-
-    }// generate_drop_down
+        return wp_kses( $drop_down_element, array(
+            'option' => array(
+                'selected' => array(),
+                'value' => array(),
+            ),
+            'select' => array(
+                'class' => array(),
+                'id' => array(),
+                'name' => array(),
+            ),
+        ) );
+    }
 
     /**
      * Wrapper for the default php round() function.

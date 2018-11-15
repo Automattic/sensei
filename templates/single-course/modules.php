@@ -88,7 +88,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
                         <header>
 
-                            <h3><?php _e('Lessons', 'woothemes-sensei') ?></h3>
+                            <h3><?php esc_html_e( 'Lessons', 'woothemes-sensei' ) ?></h3>
 
                         </header>
 
@@ -106,7 +106,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	                                    $course_id = Sensei()->lesson->get_course_id( get_the_ID() );
 	                                    if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) && ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ) {
 
-	                                        echo Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id );
+	                                        echo wp_kses_post( Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id ) );
 
                                         } ?>
 

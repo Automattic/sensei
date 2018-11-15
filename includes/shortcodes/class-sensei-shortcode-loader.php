@@ -135,8 +135,11 @@ class Sensei_Shortcode_Loader{
         // we expect the sensei class instantiated to implement the Sensei_Shortcode interface
         if( ! in_array( 'Sensei_Shortcode_Interface', class_implements( $shortcode) ) ){
 
-            $message = "The rendering class for your shortcode: $code, must implement the Sensei_Shortcode interface";
-            _doing_it_wrong('Sensei_Shortcode_Loader::render_shortcode',$message, '1.9.0' );
+            _doing_it_wrong(
+            	'Sensei_Shortcode_Loader::render_shortcode',
+            	'The rendering class for your shortcode: ' . esc_html( $code ) . ', must implement the Sensei_Shortcode interface',
+            	'1.9.0'
+            );
 
         }
 

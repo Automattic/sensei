@@ -34,6 +34,7 @@ class Sensei_Admin {
 
         //register admin scripts
         add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
+        add_action( 'admin_footer', array( $this, 'init_select2' ) );
 
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
@@ -199,7 +200,7 @@ class Sensei_Admin {
 
             ?>
             <div id="message" class="updated sensei-message sensei-connect">
-                <p><?php _e( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'woothemes-sensei' ); ?></p>
+                <p><?php echo wp_kses_post( __( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'woothemes-sensei' ) ); ?></p>
                 <p><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://woocommerce.com/products/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully." data-via="senseilms" data-size="large" data-hashtags="Sensei">Tweet</a>
                 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
             </div>
@@ -339,7 +340,7 @@ class Sensei_Admin {
 	    <div id="message" class="updated sensei-message sensei-connect">
 
             <p>
-                <?php _e( '<strong>Welcome to Sensei</strong> &#8211; You\'re almost ready to create some courses!', 'woothemes-sensei' ); ?>
+                <?php echo wp_kses_post( __( '<strong>Welcome to Sensei</strong> &#8211; You\'re almost ready to create some courses!', 'woothemes-sensei' ) ); ?>
             </p>
 
             <p class="submit">
@@ -347,13 +348,13 @@ class Sensei_Admin {
                 <a href="<?php echo esc_url( add_query_arg('install_sensei_pages', 'true', admin_url('admin.php?page=woothemes-sensei-settings') ) ); ?>"
                    class="button-primary">
 
-                    <?php _e( 'Install Sensei Pages', 'woothemes-sensei' ); ?>
+                    <?php esc_html_e( 'Install Sensei Pages', 'woothemes-sensei' ); ?>
 
                 </a>
 
                 <a class="skip button" href="<?php echo esc_url( add_query_arg( 'skip_install_sensei_pages', 'true', admin_url('admin.php?page=woothemes-sensei-settings' ) ) ); ?>">
 
-                    <?php _e('Skip setup', 'woothemes-sensei'); ?>
+                    <?php esc_html_e('Skip setup', 'woothemes-sensei'); ?>
 
                 </a>
 
@@ -374,19 +375,19 @@ class Sensei_Admin {
 	    <div id="message" class="updated sensei-message sensei-connect">
 
 	    	<p>
-                <?php _e( '<strong>Sensei has been installed</strong> &#8211; You\'re ready to start creating courses!', 'woothemes-sensei' ); ?>
+                <?php echo wp_kses_post( __( '<strong>Sensei has been installed</strong> &#8211; You\'re ready to start creating courses!', 'woothemes-sensei' ) ); ?>
             </p>
 
 			<p class="submit">
-                <a href="<?php echo admin_url('admin.php?page=woothemes-sensei-settings'); ?>" class="button-primary"><?php _e( 'Settings', 'woothemes-sensei' ); ?></a> <a class="docs button" href="http://www.woothemes.com/sensei-docs/">
-                    <?php _e('Documentation', 'woothemes-sensei'); ?>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=woothemes-sensei-settings') ); ?>" class="button-primary"><?php esc_html_e( 'Settings', 'woothemes-sensei' ); ?></a> <a class="docs button" href="http://www.woothemes.com/sensei-docs/">
+                    <?php esc_html_e('Documentation', 'woothemes-sensei'); ?>
                 </a>
             </p>
 
             <p>
 
                 <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you teach courses online. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">
-                    <?php _e('Tweet', 'woothemes-sensei'); ?>
+                    <?php esc_html_e('Tweet', 'woothemes-sensei'); ?>
                 </a>
 
                 <script>
@@ -414,13 +415,13 @@ class Sensei_Admin {
 			<p>
 				<?php
 				// translators: Placeholders are opening and closing <strong> tags.
-				echo sprintf( __( '%1$sSensei in your language %2$s. There is a translation available for your language.', 'woothemes-sensei' ),'<strong>','</strong>' );
+				echo wp_kses_post( sprintf( __( '%1$sSensei in your language %2$s. There is a translation available for your language.', 'woothemes-sensei' ),'<strong>','</strong>' ) );
 				?>
 			</p>
 
 				<p class="submit">
-					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php _e( 'Install', 'woothemes-sensei' ); ?></a>
-					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_dismiss_uri() ) ?>" class="docs button"><?php _e( 'Hide this notice', 'woothemes-sensei' ); ?></a>
+					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php esc_html_e( 'Install', 'woothemes-sensei' ); ?></a>
+					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_dismiss_uri() ) ?>" class="docs button"><?php esc_html_e( 'Hide this notice', 'woothemes-sensei' ); ?></a>
 				</p>
 		</div>
 		<?php
@@ -532,13 +533,13 @@ class Sensei_Admin {
 	private function duplicate_content( $post_type = 'lesson', $with_lessons = false ) {
 		if ( ! isset( $_GET['post'] ) ) {
 			// translators: Placeholder is the post type string.
-			wp_die( sprintf( __( 'Please supply a %1$s ID.', 'woothemes-sensei' ) ), $post_type );
+			wp_die( esc_html( sprintf( __( 'Please supply a %1$s ID.', 'woothemes-sensei' ) ), $post_type ) );
 		}
 
 		$post_id = $_GET['post'];
 		$post = get_post( $post_id );
 		if ( ! in_array( get_post_type( $post_id ), array( 'lesson', 'course' ), true ) ) {
-			wp_die( __( 'Invalid post type. Can duplicate only lessons and courses', 'woothemes-sensei' ) );
+			wp_die( esc_html__( 'Invalid post type. Can duplicate only lessons and courses', 'woothemes-sensei' ) );
 		}
 
 		$action = 'duplicate_'. $post_type;
@@ -547,7 +548,7 @@ class Sensei_Admin {
 		}
 		check_admin_referer( $action . '_' . $post_id );
 		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
-			wp_die( __( 'Insufficient permissions', 'woothemes-sensei' ) );
+			wp_die( esc_html__( 'Insufficient permissions', 'woothemes-sensei' ) );
 		}
 
 		if( ! is_wp_error( $post ) ) {
@@ -736,15 +737,26 @@ class Sensei_Admin {
 			$selected = isset( $_GET['lesson_course'] ) ? $_GET['lesson_course'] : '';
 			$course_options = '';
 			foreach( $courses as $course ) {
-				$course_options .= '<option value="' . esc_attr( $course->ID ) . '" ' . selected( $selected, $course->ID, false ) . '>' . get_the_title( $course->ID ) . '</option>';
+				$course_options .= '<option value="' . esc_attr( $course->ID ) . '" ' . selected( $selected, $course->ID, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>';
 			}
 
 			$output = '<select name="lesson_course" id="dropdown_lesson_course">';
-			$output .= '<option value="">'.__( 'Show all courses', 'woothemes-sensei' ).'</option>';
+			$output .= '<option value="">' . esc_html__( 'Show all courses', 'woothemes-sensei' ).'</option>';
 			$output .= $course_options;
 			$output .= '</select>';
 
-			echo $output;
+			$allowed_html = array(
+				'option' => array(
+					'selected' => array(),
+					'value' => array(),
+				),
+				'select' => array(
+					'id' => array(),
+					'name' => array(),
+				),
+			);
+
+			echo wp_kses( $output, $allowed_html );
 		}
 	}
 
@@ -1177,7 +1189,24 @@ class Sensei_Admin {
 			$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save course order', 'woothemes-sensei' ) . '" />' . "\n";
 		}
 
-		echo $html;
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'class' => array(),
+						'name' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'span' => array(
+						'rel' => array(),
+						'style' => array(),
+					),
+				)
+			)
+		);
 
 		?></div><?php
 
@@ -1246,7 +1275,7 @@ class Sensei_Admin {
 		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?><div id="<?php echo esc_attr( $this->lesson_order_page_slug ) ?>" class="wrap <?php echo esc_attr( $this->lesson_order_page_slug ) ?>">
-		<h1><?php _e( 'Order Lessons', 'woothemes-sensei' ); ?></h1><?php
+		<h1><?php esc_html_e( 'Order Lessons', 'woothemes-sensei' ); ?></h1><?php
 
 		$html = '';
 
@@ -1265,7 +1294,7 @@ class Sensei_Admin {
 		);
 		$courses = get_posts( $args );
 
-		$html .= '<form action="' . admin_url( 'edit.php' ) . '" method="get">' . "\n";
+		$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
 		$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
 		$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
 		$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
@@ -1276,16 +1305,12 @@ class Sensei_Admin {
 			if( isset( $_GET['course_id'] ) ) {
 				$course_id = intval( $_GET['course_id'] );
 			}
-			$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) .'>' . get_the_title( $course->ID ) . '</option>' . "\n";
+			$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) .'>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
 		}
 
 		$html .= '</select>' . "\n";
 		$html .= '<input type="submit" class="button-primary lesson-order-select-course-submit" value="' . esc_attr__( 'Select', 'woothemes-sensei' ) . '" />' . "\n";
 		$html .= '</form>' . "\n";
-
-		$html .= '<script type="text/javascript">' . "\n";
-		$html .= 'jQuery( \'#lesson-order-course\' ).select2({width:"resolve"});' . "\n";
-		$html .= '</script>' . "\n";
 
 		if( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
@@ -1330,7 +1355,7 @@ class Sensei_Admin {
 
                     if( count( $lessons ) > 0 ) {
                         $html .= '<h3>' . esc_html( $module->name ) . '</h3>' . "\n";
-                        $html .= '<ul class="sortable-lesson-list" data-module_id="' . esc_attr( $module->term_id ) . '">' . "\n";
+                        $html .= '<ul class="sortable-lesson-list" data-module-id="' . esc_attr( $module->term_id ) . '">' . "\n";
 
                         $count = 0;
                         foreach( $lessons as $lesson ) {
@@ -1370,7 +1395,7 @@ class Sensei_Admin {
 						$html .= '<h3>' . esc_html__( 'Other Lessons', 'woothemes-sensei' ) . '</h3>' . "\n";
 					}
 
-					$html .= '<ul class="sortable-lesson-list" data-module_id="0">' . "\n";
+					$html .= '<ul class="sortable-lesson-list" data-module-id="0">' . "\n";
 					$count = 0;
 					$other_lessons = array();
 
@@ -1410,14 +1435,51 @@ class Sensei_Admin {
 					$html .= wp_nonce_field( 'order_lessons', '_wpnonce', true, false ) . "\n";
 					$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
 					$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
-					$html .= '<input type="submit" class="button-primary" value="' . esc_html__( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
+					$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
 				}
 			}
 		}
 
-		echo $html;
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'class' => array(),
+						'name' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'option' => array(
+						'selected' => array(),
+						'value' => array(),
+					),
+					'select' => array(
+						'id' => array(),
+						'name' => array(),
+					),
+					'span' => array(
+						'rel' => array(),
+						'style' => array(),
+					),
+					'ul' => array(
+						'class' => array(),
+						'data-module-id' => array(),
+					),
+				)
+			)
+		);
 
 		?></div><?php
+	}
+
+	public function init_select2() {
+		?>
+		<script type="text/javascript">
+			jQuery( '#lesson-order-course' ).select2( { width: 'resolve' } );
+		</script>
+		<?php
 	}
 
 	public function get_lesson_order( $course_id = 0 ) {
@@ -1659,10 +1721,10 @@ class Sensei_Admin {
 		$maybe_admin = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
 		if ( false === $maybe_admin || false === user_can( $maybe_admin, 'manage_options' ) ) {
-			$general_settings_url = '<a href="' . esc_attr( esc_url( admin_url( 'options-general.php' ) ) ) . '">' . __( 'Settings > General', 'woothemes-sensei' ) . '</a>';
-			$add_new_user_url = '<a href="' . esc_attr( esc_url( admin_url( 'user-new.php' ) ) ) . '">' . __( 'add a new Administrator', 'woothemes-sensei' ) . '</a>';
-			$existing_administrators_link = '<a href="' . esc_attr( esc_url( admin_url( 'users.php?role=administrator' ) ) ) . '">' . __( 'existing Administrator', 'woothemes-sensei' ) . '</a>';
-			$current_setting = esc_html( get_bloginfo( 'admin_email' ) );
+			$general_settings_url = '<a href="' . esc_url( admin_url( 'options-general.php' ) ) . '">' . esc_html__( 'Settings > General', 'woothemes-sensei' ) . '</a>';
+			$add_new_user_url = '<a href="' . esc_url( admin_url( 'user-new.php' ) ) . '">' . esc_html__( 'add a new Administrator', 'woothemes-sensei' ) . '</a>';
+			$existing_administrators_link = '<a href="' . esc_url( admin_url( 'users.php?role=administrator' ) ) . '">' . esc_html__( 'existing Administrator', 'woothemes-sensei' ) . '</a>';
+			$current_setting = get_bloginfo( 'admin_email' );
 
 			/*
 			 * translators: The %s placeholders are as follows:
@@ -1677,7 +1739,7 @@ class Sensei_Admin {
 			?><div id="message" class="error sensei-message sensei-connect">
 				<p>
 					<strong>
-						<?php printf( esc_html( $warning ), $general_settings_url, $add_new_user_url, $current_setting, $existing_administrators_link ); ?>
+						<?php printf( esc_html( $warning ), wp_kses_post( $general_settings_url ), wp_kses_post( $add_new_user_url ), esc_html( $current_setting ), wp_kses_post( $existing_administrators_link ) ); ?>
 					</strong>
 				</p>
 			</div><?php

@@ -168,9 +168,44 @@ class Sensei_Messages {
 			);
 		}
 
-		$html = Sensei()->admin->render_settings( $settings, $post->ID, 'message-info' );
-
-		echo $html;
+		echo wp_kses(
+			Sensei()->admin->render_settings( $settings, $post->ID, 'message-info' ),
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'checked' => array(),
+						'class' => array(),
+						'disabled' => array(),
+						'id' => array(),
+						'max' => array(),
+						'min' => array(),
+						'name' => array(),
+						'placeholder' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'option' => array(
+						'selected' => array(),
+						'value' => array(),
+					),
+					'select' => array(
+						'disabled' => array(),
+						'id' => array(),
+						'multiple' => array(),
+						'name' => array(),
+					),
+					'textarea' => array(
+						'cols' => array(),
+						'disabled' => array(),
+						'id' => array(),
+						'name' => array(),
+						'placeholder' => array(),
+						'rows' => array(),
+					),
+				)
+			)
+		);
 	}
 
 	public function send_message_link( $post_id = 0, $user_id = 0 ) {
@@ -203,11 +238,11 @@ class Sensei_Messages {
                     $contact_button_text = __( 'Contact Teacher', 'woothemes-sensei' );
                 }
 
-				$html .= '<p><a class="button send-message-button" href="' . esc_url($href) . '#private_message">' . $contact_button_text . '</a></p>';
+				$html .= '<p><a class="button send-message-button" href="' . esc_url( $href ) . '#private_message">' . esc_html( $contact_button_text ) . '</a></p>';
 			}
 
 			if( isset( $this->message_notice ) && isset( $this->message_notice['type'] ) && isset( $this->message_notice['notice'] ) ) {
-				$html .= '<div class="sensei-message ' . $this->message_notice['type'] . '">' . $this->message_notice['notice'] . '</div>';
+				$html .= '<div class="sensei-message ' . esc_attr( $this->message_notice['type'] ) . '">' . esc_html( $this->message_notice['notice'] ) . '</div>';
 			}
 
 		}
@@ -224,7 +259,24 @@ class Sensei_Messages {
          *
          * @return string
          */
-        echo apply_filters( 'sensei_messages_send_message_link', $html, isset( $this->message_notice ) ? $this->message_notice : '', $post_id, $user_id );
+        echo wp_kses(
+          apply_filters( 'sensei_messages_send_message_link', $html, isset( $this->message_notice ) ? $this->message_notice : '', $post_id, $user_id ),
+          array_merge(
+            wp_kses_allowed_html( 'post' ),
+            array(
+              'input' => array(
+                'class' => array(),
+                'name' => array(),
+                'type' => array(),
+                'value' => array(),
+              ),
+              'textarea' => array(
+                'name' => array(),
+                'placeholder' => array(),
+              ),
+            )
+          )
+        );
 	}
 
 	public function teacher_contact_form( $post ) {
@@ -249,18 +301,18 @@ class Sensei_Messages {
 
         }
 
-		$html .= '<h3 id="private_message">' . __( 'Send Private Message', 'woothemes-sensei' ) . '</h3>';
+		$html .= '<h3 id="private_message">' . esc_html__( 'Send Private Message', 'woothemes-sensei' ) . '</h3>';
         $html .= '<p>';
         $html .=  $confirmation;
         $html .= '</p>';
 		$html .= '<form name="contact-teacher" action="" method="post" class="contact-teacher">';
 			$html .= '<p class="form-row form-row-wide">';
-				$html .= '<textarea name="contact_message" placeholder="' . __( 'Enter your private message.', 'woothemes-sensei' ) . '"></textarea>';
+				$html .= '<textarea name="contact_message" placeholder="' . esc_attr__( 'Enter your private message.', 'woothemes-sensei' ) . '"></textarea>';
 			$html .= '</p>';
 			$html .= '<p class="form-row">';
-				$html .= '<input type="hidden" name="post_id" value="' . absint( $post->ID ) . '" />';
+				$html .= '<input type="hidden" name="post_id" value="' . esc_attr( absint( $post->ID ) ) . '" />';
 				$html .= wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
-				$html .= '<input type="submit" class="send_message" value="' . __( 'Send Message', 'woothemes-sensei' ) . '" />';
+				$html .= '<input type="submit" class="send_message" value="' . esc_attr__( 'Send Message', 'woothemes-sensei' ) . '" />';
 			$html .= '</p>';
 			$html .= '<div class="fix"></div>';
 		$html .= '</form>';
@@ -608,7 +660,7 @@ class Sensei_Messages {
                     <em>
 						<?php
 						// translators: Placeholders are the sender's display name and the date, respectively.
-						printf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() );
+						echo esc_html( sprintf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() ) );
 						?>
                     </em>
                 </small>
@@ -631,9 +683,9 @@ class Sensei_Messages {
         $content_post_id = get_post_meta( $post->ID, '_post', true );
         if( $content_post_id ) {
 			// translators: Placeholder is a link to post, with the post's title as the link text.
-            $title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), '<a href="' . get_permalink( $content_post_id ) . '">' . get_the_title( $content_post_id ) . '</a>' );
+            $title = wp_kses_post( sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $content_post_id ) ) . '">' . esc_html( get_the_title( $content_post_id ) ) . '</a>' ) );
         } else {
-            $title = get_the_title( $post->ID );
+            $title = esc_html( get_the_title( $post->ID ) );
         }
 
         ?>
@@ -650,7 +702,7 @@ class Sensei_Messages {
                  * @param string $template
                  * @param string $post_type
                  */
-                echo apply_filters( 'sensei_single_title', $title, $post->post_type );
+                echo wp_kses_post( apply_filters( 'sensei_single_title', $title, $post->post_type ) );
                 ?>
 
             </h1>
@@ -669,18 +721,18 @@ class Sensei_Messages {
      *
      * @return string
      */
-    public static function the_archive_header( ){
+    public static function the_archive_header() {
 
         $html = '';
         $html .= '<header class="archive-header"><h1>';
-        $html .= __( 'My Messages', 'woothemes-sensei' );
+        $html .= esc_html__( 'My Messages', 'woothemes-sensei' );
         $html .= '</h1></header>';
 
         /**
          * Filter the sensei messages archive title.
          * @since 1.0.0
          */
-        echo apply_filters( 'sensei_message_archive_title', $html );
+        echo wp_kses_post( apply_filters( 'sensei_message_archive_title', $html ) );
 
     } // get_archive_header()
 
@@ -708,7 +760,7 @@ class Sensei_Messages {
         ?>
         <h2>
             <a href="<?php echo esc_url_raw( get_the_permalink( $message_post_id ) );?>">
-                <?php echo  $title; ?>
+                <?php echo esc_html( $title ); ?>
             </a>
 
         </h2>
@@ -732,7 +784,7 @@ class Sensei_Messages {
             ?>
             <p class="message-meta">
                 <small>
-                    <em> <?php echo $sender_display_name; ?> </em>
+                    <em><?php echo esc_html( $sender_display_name ); ?></em>
                 </small>
             </p>
 
@@ -750,9 +802,9 @@ class Sensei_Messages {
         if( ! Sensei()->settings->get('messages_disable')  ) {
             ?>
             <p class="my-messages-link-container">
-                <a class="my-messages-link" href="<?php echo get_post_type_archive_link( 'sensei_message' ); ?>"
-                   title="<?php _e( 'View & reply to private messages sent to your course & lesson teachers.', 'woothemes-sensei' ); ?>">
-                    <?php _e( 'My Messages', 'woothemes-sensei' ); ?>
+                <a class="my-messages-link" href="<?php echo esc_url( get_post_type_archive_link( 'sensei_message' ) ); ?>"
+                   title="<?php esc_attr_e( 'View & reply to private messages sent to your course & lesson teachers.', 'woothemes-sensei' ); ?>">
+                    <?php esc_html_e( 'My Messages', 'woothemes-sensei' ); ?>
                 </a>
             </p>
             <?php

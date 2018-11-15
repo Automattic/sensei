@@ -304,7 +304,7 @@ class Sensei_Legacy_Shortcodes {
                 $html .= $more_link_text;
                 $html .= '<span class="meta-nav"></span></a></div>';
 
-                echo apply_filters( 'course_archive_next_link', $html );
+                echo wp_kses_post( apply_filters( 'course_archive_next_link', $html ) );
 
             } // End If Statement
 
@@ -341,7 +341,7 @@ class Sensei_Legacy_Shortcodes {
 
                 <header>
 
-                    <h2><a href="<?php echo get_permalink($course_id) ?>" title="<?php echo $course->post_title; ?>"><?php echo $course->post_title; ?></a></h2>
+                    <h2><a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>" title="<?php echo esc_attr( $course->post_title ); ?>"><?php echo esc_html( $course->post_title ); ?></a></h2>
 
                 </header>
 
@@ -351,7 +351,7 @@ class Sensei_Legacy_Shortcodes {
 
                         <?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
                             <span class="course-author">
-                            	<?php _e( 'by', 'woothemes-sensei' ); ?>
+                            	<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
                             	<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
                             		<?php echo esc_html( $author_display_name   ); ?>
                             	</a>
@@ -359,14 +359,14 @@ class Sensei_Legacy_Shortcodes {
                         <?php } // End If Statement ?>
 
                         <span class="course-lesson-count">
-                                    <?php echo Sensei()->course->course_lesson_count( $course_id ) . '&nbsp;' .  __( 'Lessons', 'woothemes-sensei' ); ?>
+                                    <?php echo esc_html( Sensei()->course->course_lesson_count( $course_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
                                 </span>
 
                         <?php if ( '' != $category_output ) { ?>
                             <span class="course-category">
 								<?php
 								// translators: Placeholder is a comma-separated list of categories.
-								echo sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output );
+								echo wp_kses_post( sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) );
 								?>
 							</span>
                         <?php } // End If Statement ?>
@@ -375,7 +375,7 @@ class Sensei_Legacy_Shortcodes {
 
                     </p>
 
-                    <p class="course-excerpt"><?php echo $course->post_excerpt; ?>
+                    <p class="course-excerpt"><?php echo esc_html( $course->post_excerpt ); ?>
 
                     </p>
 
@@ -383,8 +383,8 @@ class Sensei_Legacy_Shortcodes {
 						// translators: Placeholder is the number of preview lessons.
                         $preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ); ?>
                         <p class="sensei-free-lessons">
-                            <a href="<?php echo get_permalink( $course_id ); ?>"><?php _e( 'Preview this course', 'woothemes-sensei' ) ?>
-                            </a> - <?php echo $preview_lessons; ?>
+                            <a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>"><?php esc_html_e( 'Preview this course', 'woothemes-sensei' ) ?>
+                            </a> - <?php echo esc_html( $preview_lessons ); ?>
                         </p>
                     <?php } ?>
 

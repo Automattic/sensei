@@ -70,12 +70,12 @@ class Sensei_Admin_Rest_Api_Testharness {
       }
         ?>
         <h3>nonce</h3>
-        <pre><?php echo $this->nonce; ?></pre>
+        <pre><?php echo esc_html( $this->nonce ); ?></pre>
         <h3>cookie</h3>
-        <pre><?php echo $cookie; ?></pre>
+        <pre><?php echo esc_html( $cookie ); ?></pre>
         <h3>rest url</h3>
         <pre><?php echo esc_url_raw( rest_url() ); ?></pre>
-        
+
         <div id="testharness-app">Testharness</div>
         <?php
     }

@@ -1205,7 +1205,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
                  /**
                   * Filter documented in class-sensei-messages.php the_title
                   */
-                 echo apply_filters( 'sensei_single_title', get_the_title( get_post() ), get_post_type( get_the_ID() ) );
+                 echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( get_post() ), get_post_type( get_the_ID() ) ) );
                  ?>
 
              </h1>
@@ -1224,14 +1224,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
         $lesson_id =  Sensei()->quiz->get_lesson_id( $quiz_id );
         $status = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id , get_current_user_id() );
-        $message = '<div class="sensei-message ' . $status['box_class'] . '">' . $status['message'] . '</div>';
+        $messages = Sensei()->frontend->messages;
+        $message = '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' . wp_kses_post( $status['message'] ) . '</div>';
         $messages = Sensei()->frontend->messages;
 
-        if ( !empty( $messages ) ) {
-          $message .= $messages;
+        if ( ! empty( $messages ) ) {
+          $message .= wp_kses_post( $messages );
         }
 
-        echo $message;
+        echo $message; // WPCS: XSS ok.
     }
 
      /**
@@ -1301,15 +1302,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
              <?php if ( '' == $user_quiz_grade && ( ! $user_lesson_status || 'ungraded' !== $user_lesson_status->comment_approved ) ) { ?>
 
-                 <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php  _e( 'Complete Quiz', 'woothemes-sensei' ); ?>"/></span>
+                 <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php esc_attr_e( 'Complete Quiz', 'woothemes-sensei' ); ?>"/></span>
 
-                 <span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php _e( 'Save Quiz', 'woothemes-sensei' ); ?>"/></span>
+                 <span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php esc_attr_e( 'Save Quiz', 'woothemes-sensei' ); ?>"/></span>
 
              <?php } // End If Statement ?>
 
              <?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
 
-                 <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php _e( 'Reset Quiz', 'woothemes-sensei' ); ?>"/></span>
+                 <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php esc_attr_e( 'Reset Quiz', 'woothemes-sensei' ); ?>"/></span>
 
              <?php } ?>
 

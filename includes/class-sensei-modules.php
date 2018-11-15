@@ -186,11 +186,34 @@ class Sensei_Core_Modules
 
 		} else {
 			// translators: The placeholders are opening and closing <em> tags.
-			$html .= '<p>' . sprintf(__('No modules are available for this lesson yet. %1$sPlease select a course first.%2$s', 'woothemes-sensei'), '<em>', '</em>') . '</p>';
+			$html .= '<p>' . sprintf( __( 'No modules are available for this lesson yet. %1$sPlease select a course first.%2$s', 'woothemes-sensei' ), '<em>', '</em>' ) . '</p>';
 		} // End If Statement
 		$html .= '</div>';
-		// Output the HTML
-		echo $html;
+
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'id' => array(),
+						'name' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'option' => array(
+						'selected' => array(),
+						'value' => array(),
+					),
+					'select' => array(
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+						'style' => array(),
+					),
+				)
+			)
+		);
 	}
 
 	/**
@@ -222,7 +245,7 @@ class Sensei_Core_Modules
 		// Build the HTML to output
 		if ( is_array( $modules ) && count( $modules ) > 0) {
 			$html .= '<select id="lesson-module-options" name="lesson_module" class="widefat" style="width: 100%">' . "\n";
-			$html .= '<option value="">' . __('None', 'woothemes-sensei') . '</option>';
+			$html .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
 			foreach ($modules as $module) {
 				$html .= '<option value="' . esc_attr(absint($module->term_id)) . '"' . selected($module->term_id, $lesson_module, false) . '>' . esc_html( $module->name ) . '</option>' . "\n";
 			}
@@ -238,7 +261,7 @@ class Sensei_Core_Modules
 			 * %3$s - Opening <a> tag to link to the Course URL.
 			 * %4$s - </a>
 			 */
-			$html .= '<p>' . sprintf(__('No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'woothemes-sensei'), '<em>', '</em>', '<a href="' . esc_url($course_url) . '">', '</a>') . '</p>';
+			$html .= '<p>' . wp_kses_post( sprintf( __( 'No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'woothemes-sensei' ), '<em>', '</em>', '<a href="' . esc_url( $course_url ) . '">', '</a>') ) . '</p>';
 		} // End If Statement
 		return $html;
 	}
@@ -365,7 +388,7 @@ class Sensei_Core_Modules
 		?>
 		<tr class="form-field">
 			<th scope="row" valign="top"><label
-					for="module_courses"><?php _e('Course(s)', 'woothemes-sensei'); ?></label></th>
+					for="module_courses"><?php esc_html_e( 'Course(s)', 'woothemes-sensei' ); ?></label></th>
 			<td>
 				<?php $this->render_module_course_multi_select( $module_courses ); ?>
 			</td>
@@ -710,10 +733,10 @@ class Sensei_Core_Modules
 					$status = __('In progress', 'woothemes-sensei');
 					$class = 'in-progress';
 				}
-				echo '<p class="status ' . esc_attr($class) . '">' . $status . '</p>';
+				echo '<p class="status ' . esc_attr($class) . '">' . esc_html( $status ) . '</p>';
 			}
 
-			echo '<p class="archive-description module-description">' . apply_filters('sensei_module_archive_description', nl2br($module->description), $module->term_id) . '</p>';
+			echo '<p class="archive-description module-description">' . wp_kses_post( apply_filters('sensei_module_archive_description', nl2br($module->description), $module->term_id) ) . '</p>';
 		}
 	}
 
@@ -914,23 +937,23 @@ class Sensei_Core_Modules
 		?>
 		<div id="<?php echo esc_attr($this->order_page_slug); ?>"
 			 class="wrap <?php echo esc_attr($this->order_page_slug); ?>">
-		<h1><?php _e('Order Modules', 'woothemes-sensei'); ?></h1><?php
+		<h1><?php esc_html_e( 'Order Modules', 'woothemes-sensei' ); ?></h1><?php
 
 		$html = '';
 
 		if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
 			$html .= '<div class="updated fade">' . "\n";
-			$html .= '<p>' . __('The module order has been saved for this course.', 'woothemes-sensei') . '</p>' . "\n";
+			$html .= '<p>' . esc_html__( 'The module order has been saved for this course.', 'woothemes-sensei' ) . '</p>' . "\n";
 			$html .= '</div>' . "\n";
 		}
 
 		$courses = Sensei()->course->get_all_courses();
 
-		$html .= '<form action="' . admin_url('edit.php') . '" method="get">' . "\n";
+		$html .= '<form action="' . esc_url( admin_url('edit.php') ) . '" method="get">' . "\n";
 		$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 		$html .= '<input type="hidden" name="page" value="' . esc_attr($this->order_page_slug) . '" />' . "\n";
 		$html .= '<select id="module-order-course" name="course_id">' . "\n";
-		$html .= '<option value="">' . __('Select a course', 'woothemes-sensei') . '</option>' . "\n";
+		$html .= '<option value="">' . esc_html__('Select a course', 'woothemes-sensei') . '</option>' . "\n";
 
 		foreach ($courses as $course) {
 			if (has_term('', $this->taxonomy, $course->ID)) {
@@ -938,12 +961,12 @@ class Sensei_Core_Modules
 				if (isset($_GET['course_id'])) {
 					$course_id = intval($_GET['course_id']);
 				}
-				$html .= '<option value="' . esc_attr(intval($course->ID)) . '" ' . selected($course->ID, $course_id, false) . '>' . get_the_title($course->ID) . '</option>' . "\n";
+				$html .= '<option value="' . esc_attr(intval($course->ID)) . '" ' . selected($course->ID, $course_id, false) . '>' . esc_html( get_the_title($course->ID) ) . '</option>' . "\n";
 			}
 		}
 
 		$html .= '</select>' . "\n";
-		$html .= '<input type="submit" class="button-primary module-order-select-course-submit" value="' . __('Select', 'woothemes-sensei') . '" />' . "\n";
+		$html .= '<input type="submit" class="button-primary module-order-select-course-submit" value="' . esc_attr__('Select', 'woothemes-sensei') . '" />' . "\n";
 		$html .= '</form>' . "\n";
 
 		if (isset($_GET['course_id'])) {
@@ -977,21 +1000,45 @@ class Sensei_Core_Modules
 						if ($count % 2 != 0) {
 							$class .= ' alternate';
 						}
-						$html .= '<li class="' . esc_attr($class) . '"><span rel="' . esc_attr($module->term_id) . '" style="width: 100%;"> ' . $module->name . '</span></li>' . "\n";
+						$html .= '<li class="' . esc_attr($class) . '"><span rel="' . esc_attr($module->term_id) . '" style="width: 100%;"> ' . esc_html( $module->name ) . '</span></li>' . "\n";
 					}
 					$html .= '</ul>' . "\n";
-
 					$html .= '<input type="hidden" name="action" value="order_modules" />' . "\n";
 					$html .= wp_nonce_field( 'order_modules', '_wpnonce', true, false ) . "\n";
-					$html .= '<input type="hidden" name="module-order" value="' . $order_string . '" />' . "\n";
-					$html .= '<input type="hidden" name="course_id" value="' . $course_id . '" />' . "\n";
-					$html .= '<input type="submit" class="button-primary" value="' . __('Save module order', 'woothemes-sensei') . '" />' . "\n";
-					$html .= '<a href="' . admin_url('post.php?post=' . $course_id . '&action=edit') . '" class="button-secondary">' . __('Edit course', 'woothemes-sensei') . '</a>' . "\n";
+					$html .= '<input type="hidden" name="module-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
+					$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
+					$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save module order', 'woothemes-sensei' ) . '" />' . "\n";
+					$html .= '<a href="' . esc_url( admin_url( 'post.php?post=' . $course_id . '&action=edit' ) ) . '" class="button-secondary">' . esc_html__( 'Edit course', 'woothemes-sensei' ) . '</a>' . "\n";
 				}
 			}
 		}
 
-		echo $html;
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'input' => array(
+						'class' => array(),
+						'name' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'option' => array(
+						'selected' => array(),
+						'value' => array(),
+					),
+					'select' => array(
+						'id' => array(),
+						'name' => array(),
+					),
+					'span' => array(
+						'rel' => array(),
+						'style' => array(),
+					),
+				)
+			)
+		);
 
 		?></div><?php
 	}
@@ -1023,7 +1070,7 @@ class Sensei_Core_Modules
 	{
 		if ($column == 'module_order') {
 			if (has_term('', $this->taxonomy, $course_id)) {
-				echo '<a class="button-secondary" href="' . admin_url('edit.php?post_type=course&page=module-order&course_id=' . urlencode(intval($course_id))) . '">' . __('Order modules', 'woothemes-sensei') . '</a>';
+				echo '<a class="button-secondary" href="' . esc_url( admin_url('edit.php?post_type=course&page=module-order&course_id=' . urlencode(intval($course_id))) ) . '">' . esc_html__('Order modules', 'woothemes-sensei') . '</a>';
 			}
 		}
 	}
@@ -1447,7 +1494,7 @@ class Sensei_Core_Modules
 
 	   if( sensei_module_has_lessons() ){
 
-			echo '<header class="modules-title"><h2>' . __('Modules', 'woothemes-sensei') . '</h2></header>';
+			echo '<header class="modules-title"><h2>' . esc_html__('Modules', 'woothemes-sensei') . '</h2></header>';
 
 		}
 
@@ -1846,43 +1893,43 @@ class Sensei_Core_Modules
 		$taxonomy = get_taxonomy( 'module' );
 
 		?>
-		<div id="taxonomy-<?php echo $tax_name; ?>" class="categorydiv">
-			<ul id="<?php echo $tax_name; ?>-tabs" class="category-tabs">
-				<li class="tabs"><a href="#<?php echo $tax_name; ?>-all"><?php echo $taxonomy->labels->all_items; ?></a></li>
-				<li class="hide-if-no-js"><a href="#<?php echo $tax_name; ?>-pop"><?php _e( 'Most Used','woothemes-sensei' ); ?></a></li>
+		<div id="taxonomy-<?php echo esc_attr( $tax_name ); ?>" class="categorydiv">
+			<ul id="<?php echo esc_attr( $tax_name ); ?>-tabs" class="category-tabs">
+				<li class="tabs"><a href="#<?php echo esc_url( $tax_name ); ?>-all"><?php echo esc_html( $taxonomy->labels->all_items ); ?></a></li>
+				<li class="hide-if-no-js"><a href="#<?php echo esc_url( $tax_name ); ?>-pop"><?php esc_html_e( 'Most Used', 'woothemes-sensei' ); ?></a></li>
 			</ul>
 
-			<div id="<?php echo $tax_name; ?>-pop" class="tabs-panel" style="display: none;">
-				<ul id="<?php echo $tax_name; ?>checklist-pop" class="categorychecklist form-no-clear" >
+			<div id="<?php echo esc_attr( $tax_name ); ?>-pop" class="tabs-panel" style="display: none;">
+				<ul id="<?php echo esc_attr( $tax_name ); ?>checklist-pop" class="categorychecklist form-no-clear" >
 					<?php $popular_ids = wp_popular_terms_checklist( $tax_name ); ?>
 				</ul>
 			</div>
 
-			<div id="<?php echo $tax_name; ?>-all" class="tabs-panel">
+			<div id="<?php echo esc_attr( $tax_name ); ?>-all" class="tabs-panel">
 				<?php
 				$name = ( $tax_name == 'category' ) ? 'post_category' : 'tax_input[' . $tax_name . ']';
-				echo "<input type='hidden' name='{$name}[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
+				echo "<input type='hidden' name='" . esc_attr( $name ) . "[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
 				?>
-				<ul id="<?php echo $tax_name; ?>checklist" data-wp-lists="list:<?php echo $tax_name; ?>" class="categorychecklist form-no-clear">
+				<ul id="<?php echo esc_attr( $tax_name ); ?>checklist" data-wp-lists="list:<?php echo esc_attr( $tax_name ); ?>" class="categorychecklist form-no-clear">
 					<?php wp_terms_checklist( $post->ID, array( 'taxonomy'=>$tax_name , 'popular_cats' => $popular_ids ) ); ?>
 				</ul>
 			</div>
 			<?php if ( current_user_can( $taxonomy->cap->edit_terms ) ) : ?>
-				<div id="<?php echo $tax_name; ?>-adder" class="wp-hidden-children">
+				<div id="<?php echo esc_attr( $tax_name ); ?>-adder" class="wp-hidden-children">
 					<h4>
-						<a id="sensei-<?php echo $tax_name; ?>-add-toggle" href="#<?php echo $tax_name; ?>-add" class="hide-if-no-js">
+						<a id="sensei-<?php echo esc_attr( $tax_name ); ?>-add-toggle" href="#<?php echo esc_url( $tax_name ); ?>-add" class="hide-if-no-js">
 							<?php
 							/* translators: %s: add new taxonomy label */
-							printf( __( '+ %s', 'woothemes-sensei' ), $taxonomy->labels->add_new_item );
+							printf( esc_html__( '+ %s', 'woothemes-sensei' ), esc_html( $taxonomy->labels->add_new_item ) );
 							?>
 						</a>
 					</h4>
-					<p id="sensei-<?php echo $tax_name; ?>-add" class="category-add wp-hidden-child">
-						<label class="screen-reader-text" for="new<?php echo $tax_name; ?>"><?php echo $taxonomy->labels->add_new_item; ?></label>
-						<input type="text" name="new<?php echo $tax_name; ?>" id="new<?php echo $tax_name; ?>" class="form-required form-input-tip" value="<?php echo esc_attr( $taxonomy->labels->new_item_name ); ?>" aria-required="true"/>
-						<a class="button" id="sensei-<?php echo $tax_name; ?>-add-submit" class="button category-add-submit"><?php echo esc_attr( $taxonomy->labels->add_new_item ); ?></a>
+					<p id="sensei-<?php echo esc_attr( $tax_name ); ?>-add" class="category-add wp-hidden-child">
+						<label class="screen-reader-text" for="new<?php echo esc_attr( $tax_name ); ?>"><?php echo esc_html( $taxonomy->labels->add_new_item ); ?></label>
+						<input type="text" name="new<?php echo esc_attr( $tax_name ); ?>" id="new<?php echo esc_attr( $tax_name ); ?>" class="form-required form-input-tip" value="<?php echo esc_attr( $taxonomy->labels->new_item_name ); ?>" aria-required="true"/>
+						<a class="button" id="sensei-<?php echo esc_attr( $tax_name ); ?>-add-submit" class="button category-add-submit"><?php echo esc_attr( $taxonomy->labels->add_new_item ); ?></a>
 						<?php wp_nonce_field( '_ajax_nonce-add-' . $tax_name, 'add_module_nonce' ); ?>
-						<span id="<?php echo $tax_name; ?>-ajax-response"></span>
+						<span id="<?php echo esc_attr( $tax_name ); ?>-ajax-response"></span>
 					</p>
 				</div>
 			<?php endif; ?>

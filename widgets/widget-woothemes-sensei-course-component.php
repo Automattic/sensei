@@ -76,10 +76,10 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
 
 		/* Before widget (defined by themes). */
-		echo $args['before_widget'];
+		echo wp_kses_post( $args['before_widget'] );
 
 		/* Display the widget title if one was input (before and after defined by themes). */
-		if ( $title ) { echo $args['before_title'] . $title . $args['after_title']; }
+		if ( $title ) { echo wp_kses_post( $args['before_title'] . $title . $args['after_title'] ); }
 
 		/* Widget content. */
 		// Add actions for plugins/themes to hook onto.
@@ -93,7 +93,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		do_action( $this->woo_widget_cssclass . '_bottom' );
 
 		/* After widget (defined by themes). */
-		echo $args['after_widget'];
+		echo wp_kses_post( $args['after_widget'] );
 
 
 		add_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
@@ -144,21 +144,21 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 ?>
 		<!-- Widget Title: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"  value="<?php echo esc_attr( $instance['title'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" />
 		</p>
 		<!-- Widget Component: Select Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php _e( 'Component:', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php esc_html_e( 'Component:', 'woothemes-sensei' ); ?></label>
 			<select name="<?php echo esc_attr( $this->get_field_name( 'component' ) ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>">
 			<?php foreach ( $this->woo_widget_componentslist as $k => $v ) { ?>
-				<option value="<?php echo esc_attr( $k ); ?>"<?php selected( $instance['component'], $k ); ?>><?php echo $v; ?></option>
+				<option value="<?php echo esc_attr( $k ); ?>"<?php selected( $instance['component'], $k ); ?>><?php echo esc_html( $v ); ?></option>
 			<?php } ?>
 			</select>
 		</p>
 		<!-- Widget Limit: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php _e( 'Number of Courses (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Courses (optional):', 'woothemes-sensei' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>"  value="<?php echo esc_attr( $instance['limit'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>" />
 		</p>
 
@@ -239,19 +239,19 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 		if ( 'featuredcourses' == $this->instance['component'] ) {
 
-			_e( 'You have no featured courses.', 'woothemes-sensei' );
+			esc_html_e( 'You have no featured courses.', 'woothemes-sensei' );
 
 		} elseif ( 'activecourses' == $this->instance['component'] ) {
 
-			_e( 'You have no active courses.', 'woothemes-sensei' );
+			esc_html_e( 'You have no active courses.', 'woothemes-sensei' );
 
 		} elseif ( 'completedcourses' == $this->instance['component'] ) {
 
-			_e( 'You have no completed courses.', 'woothemes-sensei' );
+			esc_html_e( 'You have no completed courses.', 'woothemes-sensei' );
 
 		}else{
 
-			_e( 'You have no courses.', 'woothemes-sensei' );
+			esc_html_e( 'You have no courses.', 'woothemes-sensei' );
 
 		}
 	}
@@ -283,14 +283,14 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 					<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>"
 					   title="<?php echo esc_attr( $post_title ); ?>">
 
-						<?php echo $post_title; ?>
+						<?php echo esc_html( $post_title ); ?>
 
 					</a>
 					<br />
 
 					<?php if ( isset( Sensei()->settings->settings[ 'course_author' ] ) && ( Sensei()->settings->settings[ 'course_author' ] ) ) { ?>
 						<span class="course-author">
-							<?php _e( 'by', 'woothemes-sensei' ); ?>
+							<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
 							<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
 								<?php echo esc_html( $author_display_name ); ?>
 							</a>
@@ -299,7 +299,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 					<?php } // End If Statement ?>
 
 					<span class="course-lesson-count">
-						<?php echo Sensei()->course->course_lesson_count( $post_id ) . '&nbsp;' . __( 'Lessons', 'woothemes-sensei' ); ?>
+						<?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
 					</span>
 
 					<br />
@@ -314,7 +314,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 			if ( 'activecourses' == esc_attr( $this->instance['component'] ) || 'completedcourses' == esc_attr( $this->instance['component'] ) ) {
 				$my_account_page_id = intval( Sensei()->settings->settings[ 'my_course_page' ] );
 				echo '<li class="my-account fix"><a href="'. esc_url( get_permalink( $my_account_page_id ) ) .'">'
-				     .__('My Courses', 'woothemes-sensei')
+				     . esc_html__( 'My Courses', 'woothemes-sensei' )
 				     .'<span class="meta-nav"></span></a></li>';
 			} // End If Statement
 

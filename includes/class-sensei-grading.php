@@ -261,28 +261,29 @@ class Sensei_Grading {
 
 		global  $wp_version;
 
-		$title = $this->name;
+		$title = esc_html( $this->name );
+
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 			if ( version_compare($wp_version, '4.1', '>=') ) {
-				$title .= '<span class="course-title">&gt;&nbsp;&nbsp;'.get_the_title( $course_id ).'</span>';
+				$title .= '<span class="course-title">&gt;&nbsp;&nbsp;' . esc_html( get_the_title( $course_id ) ) . '</span>';
 			}
 			else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', get_the_title( $course_id ) );
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
 			}
 		}
 		if ( isset( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
-			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>';
+			$title .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . esc_html( get_the_title( intval( $lesson_id ) ) ) . '</span>';
 		}
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
 
             $user_name = Sensei_Learner::get_full_name( $_GET['user_id'] );
-			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
+			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . esc_html( $user_name ) . '</span>';
 
 		} // End If Statement
 		?>
-			<h1><?php echo apply_filters( 'sensei_grading_nav_title', $title ); ?></h1>
+			<h1><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h1>
 		<?php
 	} // End grading_default_nav()
 
@@ -294,29 +295,30 @@ class Sensei_Grading {
 	public function grading_user_quiz_nav() {
 		global  $wp_version;
 
-		$title =  $this->name;
+		$title = esc_html( $this->name );
+
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id = intval( $_GET['quiz_id'] );
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 			if ( version_compare($wp_version, '4.1', '>=') ) {
 				$url = add_query_arg( array( 'page' => $this->page_slug, 'course_id' => $course_id ), admin_url( 'admin.php' ) );
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
 			}
 			else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', get_the_title( $course_id ) );
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
 			}
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id ), admin_url( 'admin.php' ) );
-			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $lesson_id ) );
+			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $lesson_id ) ) );
 		}
 		if ( isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 
             $user_name = Sensei_Learner::get_full_name( $_GET['user'] );
-			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . $user_name . '</span>';
+			$title .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . esc_html( $user_name ). '</span>';
 
 		} // End If Statement
 		?>
-			<h2><?php echo apply_filters( 'sensei_grading_nav_title', $title ); ?></h2>
+			<h2><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h2>
 		<?php
 	} // End grading_user_quiz_nav()
 
@@ -487,9 +489,15 @@ class Sensei_Grading {
 		// Get course ID.
 		$course_id = intval( $_GET['course_id'] );
 
-		// Output HTML.
-		$html = $this->lessons_drop_down_html( $course_id );
-		echo $html;
+		echo wp_kses(
+			$this->lessons_drop_down_html( $course_id ),
+			array(
+				'option' => array(
+					'selected' => array(),
+					'value' => array(),
+				),
+			)
+		);
 
 		wp_die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	}
@@ -509,9 +517,16 @@ class Sensei_Grading {
 
 		$course_id = intval( $course_data['course_id'] );
 
-		$html = $this->lessons_drop_down_html( $course_id );
+		echo wp_kses(
+			$this->lessons_drop_down_html( $course_id ),
+			array(
+				'option' => array(
+					'selected' => array(),
+					'value' => array(),
+				),
+			)
+		);
 
-		echo $html;
 		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	}
 
@@ -532,7 +547,7 @@ class Sensei_Grading {
 								);
 			$lessons = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
 
-			$html .= '<option value="">' . __( 'Select a lesson', 'woothemes-sensei' ) . '</option>';
+			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'woothemes-sensei' ) . '</option>';
 			if ( count( $lessons ) > 0 ) {
 				foreach ( $lessons as $lesson_id ){
 					$html .= '<option value="' . esc_attr( absint( $lesson_id ) ) . '" ' . selected( $lesson_id, $selected_lesson_id, false ) . '>' . esc_html( get_the_title( $lesson_id ) ) . '</option>' . "\n";
@@ -702,12 +717,12 @@ class Sensei_Grading {
 		$lesson_id    = intval( $_GET['lesson_id'] );
 		$grading_view = ( isset( $_GET['view'] ) && $_GET['view'] ) ? $_GET['view'] : 'ungraded';
 
-		$redirect_url = '';
 		if ( 0 < $lesson_id && 0 < $course_id ) {
-			$redirect_url = esc_url_raw( apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id, 'course_id' => $course_id, 'view' => $grading_view ), admin_url( 'admin.php' ) ) ) );
-		} // End If Statement
+			echo esc_url_raw( apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id, 'course_id' => $course_id, 'view' => $grading_view ), admin_url( 'admin.php' ) ) ) );
+		} else {
+			echo '';
+		}
 
-		echo $redirect_url;
 		wp_die();
 	}
 
@@ -725,12 +740,12 @@ class Sensei_Grading {
 		$course_id = intval( $lesson_data['course_id'] );
 		$grading_view = sanitize_text_field( $lesson_data['view'] );
 
-		$redirect_url = '';
 		if ( 0 < $lesson_id && 0 < $course_id ) {
-			$redirect_url = esc_url_raw( apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id, 'course_id' => $course_id, 'view' => $grading_view ), admin_url( 'admin.php' ) ) ) );
-		} // End If Statement
+			echo esc_url_raw( apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id, 'course_id' => $course_id, 'view' => $grading_view ), admin_url( 'admin.php' ) ) ) );
+		} else {
+			echo '';
+		}
 
-		echo $redirect_url;
 		die();
 	}
 
@@ -743,8 +758,8 @@ class Sensei_Grading {
 				);
 			}
 			?>
-			<div class="grading-notice <?php echo $msg[0]; ?>">
-				<p><?php echo $msg[1]; ?></p>
+			<div class="grading-notice <?php echo esc_attr( $msg[0] ); ?>">
+				<p><?php echo esc_html( $msg[1] ); ?></p>
 			</div>
 			<?php
 		}
@@ -753,7 +768,7 @@ class Sensei_Grading {
 	public function sensei_grading_notices() {
 		if ( isset( $_GET['action'] ) && 'graded' == $_GET['action'] ) {
 			echo '<div class="grading-notice updated">';
-				echo '<p>' . __( 'Quiz Graded Successfully!', 'woothemes-sensei' ) . '</p>';
+				echo '<p>' . esc_html__( 'Quiz Graded Successfully!', 'woothemes-sensei' ) . '</p>';
 			echo '</div>';
 		} // End If Statement
 	} // End sensei_grading_notices()

@@ -83,7 +83,7 @@ class Sensei_Question {
 		switch ( $column_name ) {
 
 			case 'id':
-				echo $id;
+				echo esc_html( $id );
 			break;
 
 			case 'question-type':
@@ -92,7 +92,7 @@ class Sensei_Question {
 				if( isset( $this->question_types[ $question_type ] ) ) {
 					$output = $this->question_types[ $question_type ];
 				}
-				echo $output;
+				echo esc_html( $output );
 			break;
 
 			case 'question-category':
@@ -100,7 +100,7 @@ class Sensei_Question {
 				if( ! $output ) {
 					$output = '&mdash;';
 				}
-				echo $output;
+				echo esc_html( $output );
 			break;
 
 			default:
@@ -143,7 +143,7 @@ class Sensei_Question {
 		if( 'post-new.php' == $pagenow ) {
 
 			$html .= '<div id="add-question-actions">';
-				$html .= Sensei()->lesson->quiz_panel_add( 'question' );
+			$html .= Sensei()->lesson->quiz_panel_add( 'question' );
 			$html .= '</div>';
 
 		} else {
@@ -152,13 +152,47 @@ class Sensei_Question {
 			$question_type =  Sensei()->question->get_question_type( $post->ID );
 
 			$html .= '<div id="add-question-metadata"><table class="widefat">';
-				$html .= Sensei()->lesson->quiz_panel_question( $question_type, 0, $question_id, 'question' );
+			$html .= Sensei()->lesson->quiz_panel_question( $question_type, 0, $question_id, 'question' );
 			$html .= '</table></div>';
 		}
 
 		$html .= '</div></div>';
 
-		echo $html;
+		echo wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'button' => array(
+						'class' => array(),
+						'data-uploader_button_text' => array(),
+						'data-uploader_title' => array(),
+						'id' => array(),
+					),
+					'input' => array(
+						'checked' => array(),
+						'class' => array(),
+						'id' => array(),
+						'max' => array(),
+						'min' => array(),
+						'name' => array(),
+						'placeholder' => array(),
+						'rel' => array(),
+						'size' => array(),
+						'type' => array(),
+						'value' => array(),
+					),
+					'option' => array(
+						'value' => array(),
+					),
+					'select' => array(
+						'class' => array(),
+						'id' => array(),
+						'name' => array(),
+					),
+				)
+			)
+		);
 	}
 
 	public function question_lessons_panel() {
@@ -168,7 +202,7 @@ class Sensei_Question {
 		$no_lessons = sprintf( __( '%1$sThis question does not appear in any quizzes yet.%2$s', 'woothemes-sensei' ), '<em>', '</em>' );
 
 		if( ! isset( $post->ID ) ) {
-			echo $no_lessons;
+			echo wp_kses_post( $no_lessons );
 			return;
 		}
 
@@ -202,7 +236,7 @@ class Sensei_Question {
 		}
 
 		if( 0 == count( $quizzes ) ) {
-			echo $no_lessons;
+			echo wp_kses_post( $no_lessons );
 			return;
 		}
 
@@ -219,7 +253,7 @@ class Sensei_Question {
 		}
 
 		if( ! $lessons ) {
-			echo $no_lessons;
+			echo wp_kses_post( $no_lessons );
 			return;
 		}
 
@@ -231,7 +265,7 @@ class Sensei_Question {
 
 		$html .= '</ul>';
 
-		echo $html;
+		echo wp_kses_post( $html );
 
 	}
 
@@ -279,7 +313,7 @@ class Sensei_Question {
 
 			// Question type
 			$selected = isset( $_GET['question_type'] ) ? $_GET['question_type'] : '';
-			$type_options = '<option value="">' . __( 'All types', 'woothemes-sensei' ) . '</option>';
+			$type_options = '<option value="">' . esc_html__( 'All types', 'woothemes-sensei' ) . '</option>';
 			foreach( $this->question_types as $label => $type ) {
 				$type_options .= '<option value="' . esc_attr( $label ) . '" ' . selected( $selected, $label, false ) . '>' . esc_html( $type ) . '</option>';
 			}
@@ -292,7 +326,7 @@ class Sensei_Question {
 			$cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
 			if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
 				$selected = isset( $_GET['question_cat'] ) ? $_GET['question_cat'] : '';
-				$cat_options = '<option value="">' . __( 'All categories', 'woothemes-sensei' ) . '</option>';
+				$cat_options = '<option value="">' . esc_html__( 'All categories', 'woothemes-sensei' ) . '</option>';
 				foreach( $cats as $cat ) {
 					$cat_options .= '<option value="' . esc_attr( $cat->slug ) . '" ' . selected( $selected, $cat->slug, false ) . '>' . esc_html( $cat->name ) . '</option>';
 				}
@@ -302,7 +336,18 @@ class Sensei_Question {
 				$output .= '</select>';
 			}
 
-			echo $output;
+			$allowed_html = array(
+				'option' => array(
+					'selected' => array(),
+					'value' => array(),
+				),
+				'select' => array(
+					'id' => array(),
+					'name' => array(),
+				),
+			);
+
+			echo wp_kses( $output, $allowed_html );
 		}
 	}
 
@@ -436,11 +481,9 @@ class Sensei_Question {
      * @since 1.9.0
      * @param $question_id
      */
-    public static function the_question_title( $question_id ){
-
-        echo self::get_the_question_title( $question_id );
-
-    }// end the_question_title
+    public static function the_question_title( $question_id ) {
+        echo wp_kses_post( self::get_the_question_title( $question_id ) );
+    }
 
     /**
      * Generate the question title with it's grade.
@@ -468,7 +511,7 @@ class Sensei_Question {
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
         $title_html  = '<span class="question question-title">';
-        $title_html .= $title;
+        $title_html .= esc_html( $title );
 		$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
 		$title_html .='</span>';
 
@@ -488,7 +531,7 @@ class Sensei_Question {
         /**
          * Already documented within WordPress Core
          */
-        return apply_filters( 'the_content', $question->post_content );
+        return apply_filters( 'the_content', wp_kses_post( $question->post_content ) );
 
     }
 
@@ -498,10 +541,8 @@ class Sensei_Question {
      * @since 1.9.0
      * @param $question_id
      */
-    public static function the_question_description( $question_id  ){
-
-        echo self::get_the_question_description( $question_id );
-
+    public static function the_question_description( $question_id ) {
+        echo self::get_the_question_description( $question_id ); // WPCS: XSS ok.
     }
 
     /**
@@ -529,7 +570,7 @@ class Sensei_Question {
                         case 'image':
                             $image_size = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
                             $attachment_src = wp_get_attachment_image_src( $question_media, $image_size );
-                            $question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank"><img src="' . $attachment_src[0] . '" width="' . $attachment_src[1] . '" height="' . $attachment_src[2] . '" /></a>';
+                            $question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank"><img src="' . esc_url( $attachment_src[0] ) . '" width="' . esc_attr( $attachment_src[1] ) . '" height="' . esc_attr( $attachment_src[2] ) . '" /></a>';
                             break;
 
                         case 'audio':
@@ -542,7 +583,7 @@ class Sensei_Question {
 
                         default:
                             $question_media_filename = basename( $question_media_url );
-                            $question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . $question_media_filename . '</a>';
+                            $question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank">' . esc_html( $question_media_filename ) . '</a>';
                             break;
                     }
                 }
@@ -553,18 +594,18 @@ class Sensei_Question {
         if( $question_media_link ) {
 
                 $output .= '<div class="question_media_display">';
-                $output .=      $question_media_link;
+                $output .= wp_kses_post( $question_media_link );
                 $output .= '<dl>';
 
                 if( $question_media_title ) {
 
-                   $output .= '<dt>'. $question_media_title. '</dt>';
+                   $output .= '<dt>' . wp_kses_post( $question_media_title ) . '</dt>';
 
                  }
 
                 if( $question_media_description ) {
 
-                    $output .= '<dd>' . $question_media_description . '</dd>';
+                    $output .= '<dd>' . wp_kses_post( $question_media_description ) . '</dd>';
 
                 }
 
@@ -587,7 +628,7 @@ class Sensei_Question {
      */
     public static function the_question_media( $question_id ){
 
-        echo self::get_the_question_media( $question_id );
+        echo wp_kses_post( self::get_the_question_media( $question_id ) );
 
     }
 
@@ -671,7 +712,7 @@ class Sensei_Question {
                          * @param string $question_id
                          * @param string $lesson_id
                          */
-                        echo apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
+                        echo wp_kses_post( apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id ) );
 
                     ?>
 
@@ -794,7 +835,7 @@ class Sensei_Question {
 		?>
 		<div class="answer_message <?php echo esc_attr( $final_css_classes ); ?>">
 
-			<span><?php echo Sensei_Wp_Kses::wp_kses( $final_message ) ?></span>
+			<span><?php echo wp_kses_post( $final_message ); ?></span>
 
 		</div>
 		<?php

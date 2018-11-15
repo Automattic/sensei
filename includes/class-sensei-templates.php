@@ -392,7 +392,7 @@ class Sensei_Templates {
         $html .= $course_title;
         $html .= '</a>';
         $html .= '</'. $title_html_tag. '>';
-        echo $html;
+        echo wp_kses_post( $html );
 
     }// end the title
 
@@ -706,8 +706,9 @@ class Sensei_Templates {
 		if( !empty( $my_courses_page_id ) && $my_courses_page_id ){
 
 			$my_courses_url = get_permalink( $my_courses_page_id  );
-			$register_link = '<a href="'.$my_courses_url. '">' . __('Register', 'woothemes-sensei') .'</a>';
-			echo '<div class="status register">' . $register_link . '</div>' ;
+
+			echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
+				esc_html__('Register', 'woothemes-sensei') .'</a></div>' ;
 
 		} else{
 

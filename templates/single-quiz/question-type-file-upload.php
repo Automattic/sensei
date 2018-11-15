@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 <?php if( $question_data[ 'question_helptext' ] ) { ?>
 
-    <?php echo apply_filters( 'the_content', $question_data[ 'question_helptext' ] ); ?>
+    <?php echo apply_filters( 'the_content', esc_html( $question_data[ 'question_helptext' ] ) ); // WPCS: XSS ok. ?>
 
 <?php } ?>
 
@@ -33,18 +33,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <p class="submitted_file">
 
         <?php
-
 		// translators: Placeholder %1$s is a link to the submitted file.
-        printf( __( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url(  $question_data[ 'answer_media_url' ] )
+        printf( esc_html__( 'Submitted file: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( $question_data[ 'answer_media_url' ] )
             . '" target="_blank">'
             . esc_html(  $question_data[ 'answer_media_filename' ] ) . '</a>' );
-
         ?>
 
     </p>
     <?php if( !  $question_data[ 'lesson_complete' ]  ) { ?>
 
-        <aside class="reupload_notice"><?php _e( 'Uploading a new file will replace your existing one:', 'woothemes-sensei' ); ?></aside>
+        <aside class="reupload_notice"><?php esc_html_e( 'Uploading a new file will replace your existing one:', 'woothemes-sensei' ); ?></aside>
 
     <?php } ?>
 
@@ -52,11 +50,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 <?php if( ! $question_data[ 'lesson_complete' ]  ) { ?>
 
-    <input type="file" name="file_upload_<?php echo  $question_data[ 'ID' ] ; ?>" />
+    <input type="file" name="file_upload_<?php echo esc_attr( $question_data[ 'ID' ] ); ?>" />
 
-    <input type="hidden" name="sensei_question[<?php echo  $question_data[ 'ID' ]; ?>]"
-           value="<?php echo esc_attr(  $question_data[ 'user_answer_entry' ] ); ?>" />
+    <input type="hidden" name="sensei_question[<?php echo esc_attr( $question_data[ 'ID' ] ); ?>]"
+           value="<?php echo esc_attr( $question_data[ 'user_answer_entry' ] ); ?>" />
 
-    <aside class="max_upload_size"><?php echo  $question_data[ 'max_upload_size' ]; ?></aside>
+    <aside class="max_upload_size"><?php echo esc_html( $question_data[ 'max_upload_size' ] ); ?></aside>
 
 <?php } ?>

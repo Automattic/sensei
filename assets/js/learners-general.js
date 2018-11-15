@@ -50,10 +50,10 @@ jQuery(document).ready( function( $ ) {
 	$('.edit-start-date-submit').click(function() {
 		var $this = $( this );
 		var new_date = $this.prev( '.edit-start-date-date-picker' ).val();
-		var user_id = $this.attr( 'data-user_id' );
-		var post_id = $this.attr( 'data-post_id' );
-		var post_type = $this.attr( 'data-post_type' );
-		var comment_id = $this.attr( 'data-comment_id' );
+		var user_id = $this.attr( 'data-user-id' );
+		var post_id = $this.attr( 'data-post-id' );
+		var post_type = $this.attr( 'data-post-type' );
+		var comment_id = $this.attr( 'data-comment-id' );
 		var dataToPost = '';
 
 		if ( ! user_id || ! post_id || ! post_type || ! new_date || ! comment_id ) {
@@ -84,9 +84,9 @@ jQuery(document).ready( function( $ ) {
 	jQuery( '.remove-learner, .reset-learner' ).click( function( event ) {
 		var dataToPost = '';
 
-		var user_id = jQuery( this ).attr( 'data-user_id' );
-		var post_id = jQuery( this ).attr( 'data-post_id' );
-		var post_type = jQuery( this ).attr( 'data-post_type' );
+		var user_id = jQuery( this ).attr( 'data-user-id' );
+		var post_id = jQuery( this ).attr( 'data-post-id' );
+		var post_type = jQuery( this ).attr( 'data-post-type' );
 
 		var confirm_message = window.woo_learners_general_data.remove_generic_confirm;
 

@@ -31,7 +31,7 @@
 
     <?php else: ?>
 
-        <p><?php _e( 'No lessons found that match your selection.', 'woothemes-sensei' ); ?></p>
+        <p><?php esc_html_e( 'No lessons found that match your selection.', 'woothemes-sensei' ); ?></p>
 
     <?php  endif; // End If Statement ?>
 

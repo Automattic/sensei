@@ -188,7 +188,6 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-
 		$course_title =  get_the_title( $item->comment_post_ID );
 		$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
 		$course_start_date = get_comment_meta( $item->comment_ID, 'start', true );
@@ -212,8 +211,8 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		if ( !$this->csv_output ) {
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $this->user_id, 'course_id' => $item->comment_post_ID ), admin_url( 'admin.php' ) );
 
-			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $course_title . '</a></strong>';
-			$status = sprintf( '<span class="%s">%s</span>', $status_class, $status );
+			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $course_title ) . '</a></strong>';
+			$status = sprintf( '<span class="%s">%s</span>', esc_attr( $status_class ), esc_html( $status ) );
 			if ( is_numeric($course_percent) ) {
 				$course_percent .= '%';
 			}
@@ -225,7 +224,13 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 										'percent' => $course_percent,
 									), $item );
 
-		return $column_data;
+		$escaped_column_data = array();
+
+		foreach ( $column_data as $key => $data ) {
+			$escaped_column_data[$key] = wp_kses_post( $data );
+		}
+
+		return $escaped_column_data;
 	}
 
 	/**
@@ -235,7 +240,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	private function get_course_statuses( $args ) {
 
-		$activity_args = array( 
+		$activity_args = array(
 				'user_id' => $this->user_id,
 				'type' => 'sensei_course_status',
 				'number' => isset( $args['number'] ) ? $args['number'] : 0 ,
@@ -274,7 +279,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		echo  __( 'No courses found.', 'woothemes-sensei' );
+		echo esc_html__( 'No courses found.', 'woothemes-sensei' );
 	} // End no_items()
 
 	/**
@@ -283,7 +288,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
-		echo '<strong>' . __( 'Courses', 'woothemes-sensei' ) . '</strong>';
+		echo '<strong>' . esc_html__( 'Courses', 'woothemes-sensei' ) . '</strong>';
 	}
 
 	/**
@@ -295,7 +300,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		$user = get_user_by( 'id', $this->user_id );
 		$report = sanitize_title( $user->display_name ) . '-course-overview';
 		$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $this->user_id, 'sensei_report_download' => $report ), admin_url( 'admin.php' ) );
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . __( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
 	}
 
 	/**

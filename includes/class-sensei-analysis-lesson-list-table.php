@@ -190,7 +190,6 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-
 		$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
 		$user_end_date = $item->comment_date;
 		$status_class = $grade = '';
@@ -235,12 +234,13 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
         if ( !$this->csv_output ) {
 			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) );
 
-			$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $user_name . '</a></strong>';
-			$status = sprintf( '<span class="%s">%s</span>', $item->comment_approved, $status );
+			$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
+			$status = sprintf( '<span class="%s">%s</span>', esc_attr( $item->comment_approved ), esc_html( $status ) );
 			if ( is_numeric($grade) ) {
 				$grade .= '%';
 			}
 		} // End If Statement
+
 		$column_data = apply_filters( 'sensei_analysis_lesson_column_data', array( 'title' => $user_name,
 										'started' => $user_start_date,
 										'completed' => $user_end_date,
@@ -248,7 +248,13 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 										'grade' => $grade,
 									), $item, $this );
 
-		return $column_data;
+		$escaped_column_data = array();
+
+		foreach ( $column_data as $key => $data ) {
+			$escaped_column_data[$key] = wp_kses_post( $data );
+		}
+
+		return $escaped_column_data;
 	}
 
 	/**
@@ -258,7 +264,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 */
 	private function get_lesson_statuses( $args ) {
 
-		$activity_args = array( 
+		$activity_args = array(
 				'post_id' => $this->lesson_id,
 				'type' => 'sensei_lesson_status',
 				'number' => $args['number'],
@@ -308,7 +314,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		 _e( 'No learners found.', 'woothemes-sensei' );
+		esc_html_e( 'No learners found.', 'woothemes-sensei' );
 	} // End no_items()
 
 	/**
@@ -317,7 +323,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
-		echo '<strong>' . __( 'Learners taking this Lesson', 'woothemes-sensei' ) . '</strong>';
+		echo '<strong>' . esc_html__( 'Learners taking this Lesson', 'woothemes-sensei' ) . '</strong>';
 	} // End data_table_header()
 
 	/**
@@ -329,7 +335,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		$lesson = get_post( $this->lesson_id );
 		$report = sanitize_title( $lesson->post_title ) . '-learners-overview';
 		$url = add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $this->lesson_id, 'sensei_report_download' => $report ), admin_url( 'admin.php' ) );
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . __( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
 	} // End data_table_footer()
 
 	/**

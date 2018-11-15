@@ -693,8 +693,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 	private function pages_array() {
 		// REFACTOR - Transform this into a field type instead.
 		// Setup an array of portfolio gallery terms for a dropdown.
-		$args = array( 'echo' => 0, 'hierarchical' => 1, 'sort_column' => 'post_title', 'sort_order' => 'ASC' );
-		$pages_dropdown = wp_dropdown_pages( $args );
+		$pages_dropdown = wp_dropdown_pages( array(
+			'echo' => 0,
+			'hierarchical' => 1,
+			'sort_column' => 'post_title',
+			'sort_order' => 'ASC'
+		) );
 		$page_items = array();
 
 		// Quick string hack to make sure we get the pages with the indents.
