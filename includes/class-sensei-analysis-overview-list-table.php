@@ -295,10 +295,10 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 						'meta_key' => 'percent',
 					);
 
-				$percent_count = count( Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), true ) );
+				$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
 				$percent_total = Sensei_Grading::get_course_users_grades_sum( $item->ID );
-
                 $course_average_percent = 0;
+
                 if( $percent_count > 0 && $percent_total > 0 ){
                     $course_average_percent = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 );
                 }
@@ -354,10 +354,10 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 							'meta_key' => 'grade',
 						);
 
-					$grade_count = count( Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true ));
+					$grade_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), false );
 					$grade_total = Sensei_Grading::get_lessons_users_grades_sum( $item->ID );
-
                     $lesson_average_grade = 0;
+
                     if( $grade_total > 0 && $grade_count > 0 ){
                         $lesson_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
                     }
@@ -416,10 +416,10 @@ class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
 						'meta_key' => 'grade',
 					);
 
-				$grade_count = count( Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), true ));
+				$grade_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_lesson_grades', $grade_args, $item ), false );
 				$grade_total = Sensei_Grading::get_user_graded_lessons_sum( $item->ID );
-
                 $user_average_grade = 0;
+
                 if( $grade_total > 0 && $grade_count > 0 ){
                     $user_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
                 }
