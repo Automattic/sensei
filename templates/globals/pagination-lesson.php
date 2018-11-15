@@ -1,10 +1,12 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * Pagination - Lesson
  *
- * @author 		Automattic
- * @package 	Sensei
+ * @author      Automattic
+ * @package     Sensei
  * @category    Templates
  * @version     1.9.0
  */
@@ -16,14 +18,14 @@ $nav_links = sensei_get_prev_next_lessons( $post->ID );
 // Output HTML
 if ( isset( $nav_links['previous'] ) || isset( $nav_links['next'] ) ) { ?>
 	<nav id="post-entries" class="post-entries fix">
-        <?php if ( isset( $nav_links['previous'] ) ) { ?>
-	        <div class="nav-prev fl">
-	        	<a href="<?php echo esc_url( $nav_links['previous']['url'] ); ?>" rel="prev">
-	        		<span class="meta-nav"></span>
-	        		<?php echo esc_html( $nav_links['previous']['name'] ); ?>
-	        	</a>
-	        </div>
-        <?php } ?>
+		<?php if ( isset( $nav_links['previous'] ) ) { ?>
+			<div class="nav-prev fl">
+				<a href="<?php echo esc_url( $nav_links['previous']['url'] ); ?>" rel="prev">
+					<span class="meta-nav"></span>
+					<?php echo esc_html( $nav_links['previous']['name'] ); ?>
+				</a>
+			</div>
+		<?php } ?>
 
 		<?php if ( isset( $nav_links['next'] ) ) { ?>
 			<div class="nav-next fr">
@@ -33,5 +35,5 @@ if ( isset( $nav_links['previous'] ) || isset( $nav_links['next'] ) ) { ?>
 				</a>
 			</div>
 		<?php } ?>
-    </nav><!-- #post-entries -->
+	</nav><!-- #post-entries -->
 <?php } ?>

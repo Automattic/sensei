@@ -14,19 +14,19 @@
  */
 interface Sensei_Shortcode_Interface {
 
-    /**
-     * All constructors must implement and accept $attributes and $content as arguments
-     *
-     * @param array $attributes
-     * @param string $content
-     * @param string $shortcode
-     * @return mixed
-     */
-    public function __construct($attributes, $content, $shortcode);
+	/**
+	 * All constructors must implement and accept $attributes and $content as arguments
+	 *
+	 * @param array  $attributes
+	 * @param string $content
+	 * @param string $shortcode
+	 * @return mixed
+	 */
+	public function __construct( $attributes, $content, $shortcode);
 
-    /**
-     * @return string generated output
-     */
-    public function render();
+	/**
+	 * @return string generated output
+	 */
+	public function render();
 
-}// end interface
+}//end interface

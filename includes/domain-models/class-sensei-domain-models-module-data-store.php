@@ -31,7 +31,7 @@ class Sensei_Domain_Models_Module_Data_Store implements Sensei_Domain_Models_Dat
 	 * @return array List of modules.
 	 */
 	public function get_entities() {
-		$query = new WP_Term_Query(
+		$query   = new WP_Term_Query(
 			array(
 				'taxonomy'   => 'module',
 				'hide_empty' => false,
@@ -39,7 +39,7 @@ class Sensei_Domain_Models_Module_Data_Store implements Sensei_Domain_Models_Dat
 				'order'      => 'ASC',
 			)
 		);
-		$terms = $query->get_terms();
+		$terms   = $query->get_terms();
 		$results = array();
 		foreach ( $terms as $term ) {
 			$results[] = (array) $term;

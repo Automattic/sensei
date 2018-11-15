@@ -48,9 +48,13 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 			$term = $wp_query->get_queried_object();
 			$this->output_content_as_page( $content, $term );
 		} else {
-			$this->output_content_as_page( $content, null, array(
-				'post_title' => __( 'Courses', 'woothemes-sensei' ),
-			) );
+			$this->output_content_as_page(
+				$content,
+				null,
+				array(
+					'post_title' => __( 'Courses', 'woothemes-sensei' ),
+				)
+			);
 		}
 
 		// Disable pagination.

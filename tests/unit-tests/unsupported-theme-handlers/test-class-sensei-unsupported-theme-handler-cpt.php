@@ -113,7 +113,7 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 	public function testShouldUseSinglePostRenderer() {
 		$this->handler->handle_request();
 
-		$renderer        = new Sensei_Renderer_Single_Post(
+		$renderer         = new Sensei_Renderer_Single_Post(
 			$this->course->ID,
 			'single-course.php',
 			array(
@@ -165,16 +165,21 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 	private function setupCoursePage() {
 		global $post, $wp_query, $wp_the_query, $page, $pages;
 
-		$this->course = $this->factory->post->create_and_get( array(
-			'post_status' => 'publish',
-			'post_type'   => 'course',
-		) );
+		$this->course = $this->factory->post->create_and_get(
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
 
 		// Create a couple more courses so we have pagination links.
-		$this->factory->post->create_many( 5, array(
-			'post_status' => 'publish',
-			'post_type'   => 'course',
-		) );
+		$this->factory->post->create_many(
+			5,
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
 
 		// Setup globals.
 		$post                  = $this->course;

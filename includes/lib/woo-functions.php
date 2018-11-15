@@ -7,8 +7,9 @@ if ( ! function_exists( 'woothemes_queue_update' ) ) {
 	function woothemes_queue_update( $file, $file_id, $product_id ) {
 		global $woothemes_queued_updates;
 
-		if ( ! isset( $woothemes_queued_updates ) )
+		if ( ! isset( $woothemes_queued_updates ) ) {
 			$woothemes_queued_updates = array();
+		}
 
 		$plugin             = new stdClass();
 		$plugin->file       = $file;
@@ -21,6 +22,7 @@ if ( ! function_exists( 'woothemes_queue_update' ) ) {
 
 /**
  * Load installer for the WooThemes Updater.
+ *
  * @return $api Object
  */
 if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_updater_install' ) ) {
@@ -31,11 +33,13 @@ if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_upda
 			false !== $api ||
 			! isset( $args->slug ) ||
 			'woothemes-updater' != $args->slug
-		) return $api;
+		) {
+			return $api;
+		}
 
-		$api = new stdClass();
-		$api->name = 'WooThemes Updater';
-		$api->version = '';
+		$api                = new stdClass();
+		$api->name          = 'WooThemes Updater';
+		$api->version       = '';
 		$api->download_link = esc_url( $download_url );
 		return $api;
 	}
@@ -50,23 +54,26 @@ if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_upda
 
 	/**
 	 * Display a notice if the "WooThemes Updater" plugin hasn't been installed.
+	 *
 	 * @return void
 	 */
 	function woothemes_updater_notice() {
-		$active_plugins = apply_filters( 'active_plugins', get_option('active_plugins' ) );
-		if ( in_array( 'woothemes-updater/woothemes-updater.php', $active_plugins ) ) return;
+		$active_plugins = apply_filters( 'active_plugins', get_option( 'active_plugins' ) );
+		if ( in_array( 'woothemes-updater/woothemes-updater.php', $active_plugins ) ) {
+			return;
+		}
 
-		$slug = 'woothemes-updater';
-		$install_url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug ), 'install-plugin_' . $slug );
+		$slug         = 'woothemes-updater';
+		$install_url  = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug ), 'install-plugin_' . $slug );
 		$activate_url = 'plugins.php?action=activate&plugin=' . urlencode( 'woothemes-updater/woothemes-updater.php' ) . '&plugin_status=all&paged=1&s&_wpnonce=' . urlencode( wp_create_nonce( 'activate-plugin_woothemes-updater/woothemes-updater.php' ) );
 
-		$message = '<a href="' . esc_url( $install_url ) . '">Install the WooCommerce Helper plugin</a> to get updates for Sensei and your other WooCommerce plugins.';
+		$message       = '<a href="' . esc_url( $install_url ) . '">Install the WooCommerce Helper plugin</a> to get updates for Sensei and your other WooCommerce plugins.';
 		$is_downloaded = false;
-		$plugins = array_keys( get_plugins() );
+		$plugins       = array_keys( get_plugins() );
 		foreach ( $plugins as $plugin ) {
 			if ( strpos( $plugin, 'woothemes-updater.php' ) !== false ) {
 				$is_downloaded = true;
-				$message = '<a href="' . esc_url( admin_url( $activate_url ) ) . '">Activate the WooCommerce Helper plugin</a> to get updates for Sensei and your other WooCommerce plugins.';
+				$message       = '<a href="' . esc_url( admin_url( $activate_url ) ) . '">Activate the WooCommerce Helper plugin</a> to get updates for Sensei and your other WooCommerce plugins.';
 			}
 		}
 		echo '<div class="updated fade"><p>' . wp_kses_post( $message ) . '</p></div>' . "\n";
@@ -81,12 +88,12 @@ if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_upda
  * @param  $version Version to check against
  * @return @boolean
  */
-if( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
+if ( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
 	function sensei_check_woocommerce_version( $version = '2.1' ) {
 		if ( Sensei_WC::is_woocommerce_active() ) {
 			global $woocommerce;
-			if( version_compare( $woocommerce->version, $version, ">=" ) ) {
-			    return true;
+			if ( version_compare( $woocommerce->version, $version, '>=' ) ) {
+				return true;
 			}
 		}
 		return false;

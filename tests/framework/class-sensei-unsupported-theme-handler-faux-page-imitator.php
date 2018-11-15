@@ -15,7 +15,7 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 	implements Sensei_Unsupported_Theme_Handler_Interface {
 
 	const TEST_CONTENT = '~~TEST CONTENT~~';
-	const TEST_ACTION = 'fuax-page-imitator-action';
+	const TEST_ACTION  = 'fuax-page-imitator-action';
 
 	/**
 	 * @var WP_Post $test_page
@@ -55,10 +55,14 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 
 		// Render the module page and output it as a Page.
 		$content = $this->render_page();
-		$this->output_content_as_page( $content, $test_page, array(
-			'post_title' => sanitize_text_field( $test_page->post_title ),
-			'post_name'  => $test_page->post_name,
-		) );
+		$this->output_content_as_page(
+			$content,
+			$test_page,
+			array(
+				'post_title' => sanitize_text_field( $test_page->post_title ),
+				'post_name'  => $test_page->post_name,
+			)
+		);
 	}
 
 	/**
@@ -78,7 +82,7 @@ class Sensei_Unsupported_Theme_Handler_Faux_Page_Imitator
 	 *
 	 * @param WP_Query $wp_query
 	 * @param WP_Post  $post_to_copy
-	 * @param array $post_params
+	 * @param array    $post_params
 	 */
 	protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params ) {
 		$wp_query->query_vars['is_test'] = true;

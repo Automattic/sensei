@@ -91,7 +91,7 @@ class Sensei_Usage_Tracking_Data {
 			)
 		);
 
-		$stats = array(
+		$stats              = array(
 			'quiz_total'          => 0,
 			'questions_min'       => null,
 			'questions_max'       => null,
@@ -111,9 +111,9 @@ class Sensei_Usage_Tracking_Data {
 			if ( empty( $course_id ) || 'publish' !== get_post_status( $lesson_id ) || 'publish' !== get_post_status( $course_id ) ) {
 				continue;
 			}
-			$quiz_id              = Sensei()->lesson->lesson_quizzes( $lesson_id );
-			$quiz_question_posts  = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
-			$question_count = count( $quiz_question_posts );
+			$quiz_id             = Sensei()->lesson->lesson_quizzes( $lesson_id );
+			$quiz_question_posts = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+			$question_count      = count( $quiz_question_posts );
 			if ( 0 === $question_count ) {
 				continue;
 			}
@@ -182,7 +182,7 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int
 	 */
 	private static function get_category_question_count( $published_quiz_ids ) {
-		$multiple_question_query     = new WP_Query(
+		$multiple_question_query = new WP_Query(
 			array(
 				'post_type'        => 'multiple_question',
 				'posts_per_page'   => -1,

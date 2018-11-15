@@ -10,38 +10,41 @@
  * @author Automattic
  *
  * @since 1.9.0
-*/
-Class Sensei_Twentyfourteen {
+ */
+class Sensei_Twentyfourteen {
 
-    /**
-     * Output opening wrappers
-     * @since 1.9.0
-     */
-    public function wrapper_start(){
-    ?>
+	/**
+	 * Output opening wrappers
+	 *
+	 * @since 1.9.0
+	 */
+	public function wrapper_start() {
+		?>
 
-        <div id="main-content" class="main-content">
-            <div id="primary" class="content-area">
-                <div id="content" class="site-content" role="main">
-                    <div class="entry-content">
+		<div id="main-content" class="main-content">
+			<div id="primary" class="content-area">
+				<div id="content" class="site-content" role="main">
+					<div class="entry-content">
 
-    <?php }
+		<?php
+	}
 
-    /**
-     * Output closing wrappers
-     *
-     * @since 1.9.0
-     */
-    public function wrapper_end(){ ?>
+	/**
+	 * Output closing wrappers
+	 *
+	 * @since 1.9.0
+	 */
+	public function wrapper_end() {
+		?>
 
 
-                    </div>
-                </div>
-            </div>
-        </div>
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <?php
-        get_sidebar();
-	 }
+		<?php
+		get_sidebar();
+	}
 
 }

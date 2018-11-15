@@ -91,7 +91,7 @@ class Sensei_Language_Pack_Manager {
 	 */
 	public static function has_language_pack_available( $locale = null ) {
 
-        if ( is_null( $locale ) ) {
+		if ( is_null( $locale ) ) {
 
 			$locale = get_locale();
 
@@ -109,11 +109,11 @@ class Sensei_Language_Pack_Manager {
 
 		}
 
-        if( isset( $_GET['translation_updated'] ) && 5 ==  $_GET['translation_updated'] ){
+		if ( isset( $_GET['translation_updated'] ) && 5 == $_GET['translation_updated'] ) {
 
-            return false;
+			return false;
 
-        }
+		}
 
 		$version = get_option( 'woothemes_sensei_language_pack_version', array( '0', $locale ) );
 
@@ -271,13 +271,13 @@ class Sensei_Language_Pack_Manager {
 		}
 
 		switch ( $_GET['translation_updated'] ) {
-			case 2 :
+			case 2:
 				echo '<div class="error"><p>' . esc_html__( 'Failed to install/update the translation:', 'woothemes-sensei' ) . ' ' . esc_html__( 'Seems you don\'t have permission to do this!', 'woothemes-sensei' ) . '</p></div>';
 				break;
-			case 3 :
+			case 3:
 				echo '<div class="error"><p>' . esc_html__( 'Failed to install/update the translation:', 'woothemes-sensei' ) . ' ' . esc_html__( 'There is no translation available for your language!', 'woothemes-sensei' ) . '</p></div>';
 				break;
-			case 4 :
+			case 4:
 				echo '<div class="error"><p>'
 					. esc_html__( 'Failed to install/update the translation:', 'woothemes-sensei' )
 					. ' '
@@ -285,11 +285,11 @@ class Sensei_Language_Pack_Manager {
 					. sprintf( wp_kses_post( __( 'An authentication error occurred while updating the translation. Please try again or configure your %1$sUpgrade Constants%2$s.', 'woothemes-sensei' ) ), '<a href="http://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants">', '</a>' )
 					. '</p></div>';
 				break;
-			case 5 :
+			case 5:
 				echo '<div class="error"><p>' . esc_html__( 'Failed to install/update the translation:', 'woothemes-sensei' ) . ' ' . esc_html__( 'Sorry but there is no translation available for your language =/', 'woothemes-sensei' ) . '</p></div>';
 				break;
 
-			default :
+			default:
 				echo '<div class="updated"><p>' . esc_html__( 'Translations installed/updated successfully!', 'woothemes-sensei' ) . '</p></div>';
 				break;
 		}

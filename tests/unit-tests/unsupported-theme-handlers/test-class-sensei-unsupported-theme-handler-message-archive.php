@@ -1,6 +1,6 @@
 <?php
 
-include_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
+require_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
 
 class Sensei_Unsupported_Theme_Handler_Message_Archive_Test extends WP_UnitTestCase {
 
@@ -46,9 +46,11 @@ class Sensei_Unsupported_Theme_Handler_Message_Archive_Test extends WP_UnitTestC
 	public function testShouldNotHandleNonMessageArchivePage() {
 		// Set up the query to be for the Courses page.
 		global $wp_query;
-		$wp_query = new WP_Query( array(
-			'post_type' => 'post',
-		) );
+		$wp_query = new WP_Query(
+			array(
+				'post_type' => 'post',
+			)
+		);
 
 		$this->assertFalse( $this->handler->can_handle_request() );
 	}

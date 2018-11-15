@@ -164,9 +164,13 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 			$this->post_id
 		);
 
-		return new Sensei_Renderer_Single_Post( $this->post_id, $this->get_template_filename(), array(
-			'show_pagination' => $show_pagination,
-		) );
+		return new Sensei_Renderer_Single_Post(
+			$this->post_id,
+			$this->get_template_filename(),
+			array(
+				'show_pagination' => $show_pagination,
+			)
+		);
 	}
 
 	/**

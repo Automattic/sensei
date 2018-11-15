@@ -130,11 +130,11 @@ class Sensei_WC_Utils {
 		if ( is_a( $item, 'WC_Order_Item_Product' ) ) {
 			// 2.7: we get a WC_Order_Item_Product.
 			$variation_id = $item->get_variation_id();
-			$product_id = $item->get_product_id();
+			$product_id   = $item->get_product_id();
 		} else {
 			// pre 2.7: we get an array.
 			$variation_id = isset( $item['variation_id'] ) ? $item['variation_id'] : null;
-			$product_id = $item['product_id'];
+			$product_id   = $item['product_id'];
 		}
 		if ( false === $always_return_parent_product_id
 			&& $variation_id && 0 < $variation_id
@@ -233,9 +233,13 @@ class Sensei_WC_Utils {
 		if ( ! $debugging_enabled ) {
 			return;
 		}
-		self::get_logger()->log( 'notice', $message, array(
-			'source' => 'woothemes_sensei_core',
-		) );
+		self::get_logger()->log(
+			'notice',
+			$message,
+			array(
+				'source' => 'woothemes_sensei_core',
+			)
+		);
 	}
 
 	/**

@@ -267,9 +267,9 @@ class Sensei_Domain_Models_Field_Declaration {
 	public function as_item_schema_property() {
 		$schema = array(
 			'description' => $this->description,
-			'type' => $this->value_type,
-			'required' => $this->required,
-			'context' => array( 'view', 'edit' ),
+			'type'        => $this->value_type,
+			'required'    => $this->required,
+			'context'     => array( 'view', 'edit' ),
 		);
 		return $schema;
 	}

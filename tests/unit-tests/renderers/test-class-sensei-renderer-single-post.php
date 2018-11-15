@@ -19,9 +19,11 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 		$wp_the_query = $wp_query;
 
 		// Set up Post.
-		$this->post_id = $this->factory->post->create( array(
-			'post_status' => 'publish',
-		) );
+		$this->post_id = $this->factory->post->create(
+			array(
+				'post_status' => 'publish',
+			)
+		);
 	}
 
 	/**
@@ -32,8 +34,8 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 	public function testShouldResetGlobalVars() {
 		global $wp_query, $post, $pages;
 
-		$old_query   = $wp_query;
-		$old_post    = $post;
+		$old_query = $wp_query;
+		$old_post  = $post;
 
 		$query_clone = clone $wp_query;
 		$post_clone  = clone $post;
@@ -94,14 +96,16 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 	 */
 	public function testShouldTemporarilyDisableThePostTitle() {
 		// Set up a course post so we can use 'single-course.php'.
-		$this->post_id = $this->factory->post->create( array(
-			'post_status' => 'publish',
-			'post_type'   => 'course',
-			'post_title'  => $this->get_fake_title(),
-		) );
+		$this->post_id = $this->factory->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+				'post_title'  => $this->get_fake_title(),
+			)
+		);
 
 		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single-course.php' );
-		$output = $renderer->render();
+		$output   = $renderer->render();
 
 		$this->assertNotContains(
 			$this->get_fake_title(),
@@ -134,13 +138,15 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 		);
 
 		// Set up a course post.
-		$this->post_id = $this->factory->post->create( array(
-			'post_status' => 'publish',
-			'post_type'   => 'course',
-		) );
+		$this->post_id = $this->factory->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
 
 		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single-course.php' );
-		$output = $renderer->render();
+		$output   = $renderer->render();
 
 		$this->assertEquals(
 			1,
@@ -155,9 +161,13 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 	 * @since 1.12.0
 	 */
 	public function testShouldShowPaginationWhenRequired() {
-		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single.php', array(
-			'show_pagination' => false,
-		) );
+		$renderer = new Sensei_Renderer_Single_Post(
+			$this->post_id,
+			'single.php',
+			array(
+				'show_pagination' => false,
+			)
+		);
 		$renderer->render();
 
 		$this->assertEquals(
@@ -166,9 +176,13 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 			'Should not show pagination when show_pagination is false'
 		);
 
-		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single.php', array(
-			'show_pagination' => true,
-		) );
+		$renderer = new Sensei_Renderer_Single_Post(
+			$this->post_id,
+			'single.php',
+			array(
+				'show_pagination' => true,
+			)
+		);
 		$renderer->render();
 
 		$this->assertEquals(

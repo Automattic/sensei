@@ -10,6 +10,7 @@
 class Sensei_Factory extends WP_UnitTest_Factory {
 	/**
 	 * All the course ids generated for the basic test setup.
+	 *
 	 * @since 1.8.0
 	 * @var array $basic_test_course_ids
 	 */
@@ -17,24 +18,28 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 	/**
 	 * Module term used in basic test setup.
+	 *
 	 * @var array $basic_test_module_term
 	 */
 	protected $basic_test_module_term;
 
 	/**
 	 * All the lessons ids used in the basic test setup.
+	 *
 	 * @var array $basic_test_lesson_ids
 	 */
 	protected $basic_test_lesson_ids;
 
 	/**
 	 * Only those lessons IDs that are not associated with a module in the basic test setup.
+	 *
 	 * @var array $basic_test_other_lesson_ids
 	 */
 	protected $basic_test_other_lesson_ids;
 
 	/**
 	 * Question IDs for basic test setup.
+	 *
 	 * @var array $lesson_ids
 	 */
 	protected $basic_test_question_ids;
@@ -103,7 +108,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		$this->module            = new WP_UnitTest_Factory_For_Module( $this );
 		$this->message           = new WP_UnitTest_Factory_For_Message( $this );
 		$this->question_category = new WP_UnitTest_Factory_For_Question_Category( $this );
-	}// end construct
+	}//end __construct()
 
 	/**
 	 * Create basic courses, lessons, and quizzes.
@@ -139,7 +144,6 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 	/**
 	 * Teardown data that the factory creates.
-	 *
 	 */
 	public function tearDown() {
 		if ( empty( $this->basic_test_course_ids ) ) {
@@ -190,17 +194,17 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			'multiple_question_args'  => array(),
 			'use_module'              => false,
 		);
-		$args = wp_parse_args( $args, $default_args );
-		$module = false;
+		$args         = wp_parse_args( $args, $default_args );
+		$module       = false;
 		if ( $args['use_module'] ) {
 			$module = $this->module->create_and_get();
 		}
-		$course_id  = $this->course->create( $args['course_args'] );
+		$course_id = $this->course->create( $args['course_args'] );
 		if ( $module ) {
 			wp_set_object_terms( $course_id, $module->term_id, 'module' );
 		}
 
-		if ( ! isset( $args['lesson_args']['meta_input']  ) ) {
+		if ( ! isset( $args['lesson_args']['meta_input'] ) ) {
 			$args['lesson_args']['meta_input'] = array();
 		}
 		$args['lesson_args']['meta_input']['_lesson_course'] = $course_id;
@@ -232,7 +236,10 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			$this->attach_lessons_multiple_questions( $multiple_question_count, $lesson_id, $args['multiple_question_args'], $args['quiz_args'] );
 		}
 
-		return array( 'course_id' => $course_id, 'lesson_ids' => $lesson_ids );
+		return array(
+			'course_id'  => $course_id,
+			'lesson_ids' => $lesson_ids,
+		);
 	}
 
 	/**
@@ -254,7 +261,6 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			foreach ( $random_index_s as $index ) {
 				array_push( $result, $this->basic_test_lesson_ids[ $index ] );
 			}// end for each
-
 		} else {
 
 			$random_index = array_rand( $this->basic_test_lesson_ids );
@@ -285,7 +291,6 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			foreach ( $random_index_s as $index ) {
 				array_push( $result, $this->basic_test_course_ids[ $index ] );
 			}// end for each
-
 		} else {
 
 			$random_index = array_rand( $this->basic_test_course_ids );
@@ -299,7 +304,6 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 	/**
 	 * Attach modules and lessons to each course.
-	 *
 	 */
 	public function attach_modules_and_lessons_to_courses() {
 		foreach ( $this->basic_test_course_ids as $course_id ) {
@@ -332,7 +336,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		return $lesson_ids;
 
-	}// end get courses
+	}//end get_lessons()
 
 	/**
 	 * @since 1.9.20
@@ -357,7 +361,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		return $course_ids;
 
-	}// end get courses
+	}//end get_courses()
 
 	/**
 	 * Get a course that has modules.
@@ -441,12 +445,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 				$user_quiz_answers[ $question->ID ] = '';
 
 			}
-
 		}// end for quiz_question_posts
 
 		return $user_quiz_answers;
 
-	}// end generate_user_quiz_answers()
+	}//end generate_user_quiz_answers()
 
 	/**
 	 * Generate an array of user quiz grades
@@ -472,7 +475,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		return $quiz_grades;
 
-	}// generate_user_quiz_grades
+	}//end generate_user_quiz_grades()
 
 	/**
 	 * Generate and attach lesson questions.
@@ -520,7 +523,6 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		} else {
 
 			// simply add questions to incoming lesson id
-
 			foreach ( $questions as $index => $question ) {
 
 				// Add to quiz
@@ -537,10 +539,10 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	}
 
 	/**
-	 * @param int $number
+	 * @param int       $number
 	 * @param $lesson_id
-	 * @param array $multiple_question_args
-	 * @param array $quiz_args
+	 * @param array     $multiple_question_args
+	 * @param array     $quiz_args
 	 * @return int[]
 	 * @throws Exception
 	 */
@@ -572,18 +574,18 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	protected function maybe_create_quiz_for_lesson( $lesson_id, $quiz_args = array() ) {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		if ( empty( $quiz_id ) ) {
-			$default_quiz_args = array( 'post_parent' => $lesson_id );
+			$default_quiz_args  = array( 'post_parent' => $lesson_id );
 			$default_meta_input = array(
 				'_quiz_grade_type' => 'manual',
 				'_pass_required'   => 'on',
 				'_quiz_passmark'   => 50,
 			);
-			$final_quiz_args = array_merge( $default_quiz_args, $quiz_args );
-			if ( empty ( $quiz_args['meta_input'] ) ) {
+			$final_quiz_args    = array_merge( $default_quiz_args, $quiz_args );
+			if ( empty( $quiz_args['meta_input'] ) ) {
 				$quiz_args['meta_input'] = array();
 			}
 			$final_quiz_args['meta_input'] = array_merge( $default_meta_input, $quiz_args['meta_input'] );
-			$quiz_id = $this->quiz->create( $final_quiz_args );
+			$quiz_id                       = $this->quiz->create( $final_quiz_args );
 		}
 		return $quiz_id;
 	}
@@ -599,14 +601,14 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	public function generate_test_files( $test_user_quiz_answers ) {
 
 		$files = array();
-		//check if there are any file-upload question types and generate the dummy file data
+		// check if there are any file-upload question types and generate the dummy file data
 		foreach ( $test_user_quiz_answers as $question_id => $answer ) {
 
-			//Setup the question types
+			// Setup the question types
 			$question_type = Sensei()->question->get_question_type( $question_id );
 
 			if ( 'file-upload' == $question_type ) {
-				//setup the sample image file location within the test folders
+				// setup the sample image file location within the test folders
 				$test_images_directory = dirname( dirname( dirname( __FILE__ ) ) ) . '/images/';
 
 				// make a copy of the file intended for upload as
@@ -621,18 +623,17 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 					'type'     => 'image/jpeg',
 					'tmp_name' => $new_test_image_location,
 					'error'    => 0,
-					'size'     => 4576
+					'size'     => 4576,
 				);
 
 				// pop the file on top of the car
 				$files[ 'file_upload_' . $question_id ] = $file;
 			}
-
 		} // end for each $test_user_quiz_answers
 
 		return $files;
 
-	}// end generate_test_files()
+	}//end generate_test_files()
 
 	/**
 	 * Returns a random none file question id from the given user input array
@@ -666,7 +667,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		$index = array_rand( $answers_without_files );
 
 		return $index;
-	}// end get_random_none_file_question_index
+	}//end get_random_none_file_question_index()
 
 
 	/**
@@ -701,7 +702,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		$index = array_rand( $file_type_answers );
 
 		return $index;
-	}// end get_random_none_file_question_index
+	}//end get_random_file_question_index()
 
 
 	/**
@@ -777,4 +778,4 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		return $lesson_id;
 	}
 
-}// end Sensei Factory class
+}//end class

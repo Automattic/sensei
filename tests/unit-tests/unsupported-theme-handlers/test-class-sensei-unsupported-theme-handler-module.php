@@ -1,6 +1,6 @@
 <?php
 
-include_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
+require_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
 
 class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 
@@ -55,9 +55,11 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 	public function testShouldNotHandleNonModulePage() {
 		// Set up the query to be for the Courses page.
 		global $wp_query;
-		$wp_query = new WP_Query( array(
-			'post_type' => 'course',
-		) );
+		$wp_query = new WP_Query(
+			array(
+				'post_type' => 'course',
+			)
+		);
 
 		$this->assertFalse( $this->handler->can_handle_request() );
 	}
@@ -179,10 +181,12 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 	private function setupModulePage() {
 		global $post, $wp_query, $wp_the_query;
 
-		$this->course = $this->factory->post->create_and_get( array(
-			'post_status' => 'publish',
-			'post_type'   => 'course',
-		) );
+		$this->course = $this->factory->post->create_and_get(
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
 
 		// Create a few modules.
 		$this->modules = array();
@@ -194,10 +198,13 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 			wp_set_object_terms( $this->course->ID, $module['term_id'], Sensei()->modules->taxonomy );
 
 			// Add two lessons to the course within the module.
-			$lesson_ids = $this->factory->post->create_many( 2, array(
-				'post_status' => 'publish',
-				'post_type'   => 'lesson',
-			) );
+			$lesson_ids = $this->factory->post->create_many(
+				2,
+				array(
+					'post_status' => 'publish',
+					'post_type'   => 'lesson',
+				)
+			);
 
 			foreach ( $lesson_ids as $lesson_id ) {
 				add_post_meta( $lesson_id, '_lesson_course', $this->course->ID );
@@ -222,9 +229,14 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 		$wp_the_query = $wp_query;
 
 		// Setup $post to be the first lesson.
-		$posts = get_posts( array_merge( $args, array(
-			'posts_per_page' => 1,
-		) ) );
+		$posts = get_posts(
+			array_merge(
+				$args,
+				array(
+					'posts_per_page' => 1,
+				)
+			)
+		);
 		$post  = $posts[0];
 	}
 }
