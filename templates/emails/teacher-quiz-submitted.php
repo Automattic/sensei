@@ -6,7 +6,9 @@
  * @package Sensei/Templates/Emails/HTML
  * @version 1.6.0
  */
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+} // Exit if accessed directly ?>
 
 <?php
 
@@ -15,9 +17,9 @@ global $sensei_email_data;
 extract( $sensei_email_data );
 
 // For gmail compatibility, including CSS styles in head/body are stripped out therefore styles need to be inline. These variables contain rules which are added to the template inline. !important; is a gmail hack to prevent styles being stripped if it doesn't like something.
-$small = "text-align: center !important;";
+$small = 'text-align: center !important;';
 
-$large = "text-align: center !important;font-size: 350% !important;line-height: 100% !important;";
+$large = 'text-align: center !important;font-size: 350% !important;line-height: 100% !important;';
 
 ?>
 
@@ -38,9 +40,13 @@ $large = "text-align: center !important;font-size: 350% !important;line-height: 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholders are an opening and closing <a> tag linking to the grading page for the quiz.
-printf( esc_html__( 'You can grade this quiz %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' .
+printf(
+	esc_html__( 'You can grade this quiz %1$shere%2$s.', 'woothemes-sensei' ),
+	'<a href="' .
 	esc_url( admin_url( 'admin.php?page=sensei_grading&user=' . $learner_id . '&quiz_id=' . $quiz_id ) ) .
-	'">', '</a>' );
+	'">',
+	'</a>'
+);
 ?>
 </p>
 

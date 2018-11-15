@@ -63,30 +63,32 @@ class Sensei_Usage_Tracking_Data {
 	 * @return array
 	 */
 	private static function get_quiz_stats() {
-		$query = new WP_Query( array(
-			'post_type'      => 'lesson',
-			'fields'         => 'ids',
-			'posts_per_page' => -1,
-			'no_found_rows'  => true,
-			'meta_query'     => array(
-				array(
-					'key'   => '_quiz_has_questions',
-					'value' => true,
+		$query = new WP_Query(
+			array(
+				'post_type'      => 'lesson',
+				'fields'         => 'ids',
+				'posts_per_page' => -1,
+				'no_found_rows'  => true,
+				'meta_query'     => array(
+					array(
+						'key'   => '_quiz_has_questions',
+						'value' => true,
+					),
+					array(
+						'key'     => '_lesson_course',
+						'value'   => '',
+						'compare' => '!=',
+					),
+					array(
+						'key'     => '_lesson_course',
+						'value'   => '0',
+						'compare' => '!=',
+					),
 				),
-				array(
-					'key'     => '_lesson_course',
-					'value'   => '',
-					'compare' => '!=',
-				),
-				array(
-					'key'     => '_lesson_course',
-					'value'   => '0',
-					'compare' => '!=',
-				),
-			),
-		) );
+			)
+		);
 
-		$stats = array(
+		$stats              = array(
 			'quiz_total'          => 0,
 			'questions_min'       => null,
 			'questions_max'       => null,
@@ -106,9 +108,9 @@ class Sensei_Usage_Tracking_Data {
 			if ( empty( $course_id ) || 'publish' !== get_post_status( $lesson_id ) || 'publish' !== get_post_status( $course_id ) ) {
 				continue;
 			}
-			$quiz_id              = Sensei()->lesson->lesson_quizzes( $lesson_id );
-			$quiz_question_posts  = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
-			$question_count = count( $quiz_question_posts );
+			$quiz_id             = Sensei()->lesson->lesson_quizzes( $lesson_id );
+			$quiz_question_posts = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+			$question_count      = count( $quiz_question_posts );
 			if ( 0 === $question_count ) {
 				continue;
 			}
@@ -165,7 +167,7 @@ class Sensei_Usage_Tracking_Data {
 		global $wpdb;
 
 		$published_quiz_ids = array_map( 'intval', $published_quiz_ids );
-		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT count(DISTINCT `post_id`) FROM {$wpdb->postmeta} WHERE `post_id` IN (" . implode( ',', $published_quiz_ids ) . ") AND `meta_key`=%s AND `meta_value`=%s", $meta_key, $meta_value ) );
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT count(DISTINCT `post_id`) FROM {$wpdb->postmeta} WHERE `post_id` IN (" . implode( ',', $published_quiz_ids ) . ') AND `meta_key`=%s AND `meta_value`=%s', $meta_key, $meta_value ) );
 	}
 
 	/**
@@ -177,19 +179,21 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int
 	 */
 	private static function get_category_question_count( $published_quiz_ids ) {
-		$multiple_question_query     = new WP_Query( array(
-			'post_type'        => 'multiple_question',
-			'posts_per_page'   => -1,
-			'fields'           => 'ids',
-			'no_found_rows'    => true,
-			'suppress_filters' => 1,
-			'meta_query'       => array(
-				array(
-					'key'   => '_quiz_id',
-					'value' => $published_quiz_ids,
+		$multiple_question_query = new WP_Query(
+			array(
+				'post_type'        => 'multiple_question',
+				'posts_per_page'   => -1,
+				'fields'           => 'ids',
+				'no_found_rows'    => true,
+				'suppress_filters' => 1,
+				'meta_query'       => array(
+					array(
+						'key'   => '_quiz_id',
+						'value' => $published_quiz_ids,
+					),
 				),
-			),
-		) );
+			)
+		);
 
 		return count( $multiple_question_query->posts );
 	}
@@ -539,7 +543,8 @@ class Sensei_Usage_Tracking_Data {
 		foreach ( $courses as $course ) {
 			// Get modules for this course.
 			$module_count = wp_count_terms(
-				'module', array(
+				'module',
+				array(
 					'object_ids' => $course,
 				)
 			);
@@ -572,10 +577,11 @@ class Sensei_Usage_Tracking_Data {
 		$courses       = $query->posts;
 		$total_courses = is_array( $courses ) ? count( $courses ) : 0;
 
-		for( $i = 0; $i < $total_courses; $i++ ) {
+		for ( $i = 0; $i < $total_courses; $i++ ) {
 			// Get modules for this course.
 			$module_count = wp_count_terms(
-				'module', array(
+				'module',
+				array(
 					'object_ids' => $courses[ $i ],
 				)
 			);

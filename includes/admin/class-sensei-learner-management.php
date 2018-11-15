@@ -155,11 +155,15 @@ class Sensei_Learner_Management {
 		wp_enqueue_script(
 			'sensei-learners-general',
 			Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
-			array( 'jquery', 'sensei-core-select2', 'sensei-chosen-ajax', 'jquery-ui-core', 'jquery-ui-datepicker' ), Sensei()->version, true
+			array( 'jquery', 'sensei-core-select2', 'sensei-chosen-ajax', 'jquery-ui-core', 'jquery-ui-datepicker' ),
+			Sensei()->version,
+			true
 		);
 
 		wp_localize_script(
-			'sensei-learners-general', 'slgL10n', array(
+			'sensei-learners-general',
+			'slgL10n',
+			array(
 				'inprogress' => __( 'In Progress', 'woothemes-sensei' ),
 			)
 		);
@@ -321,7 +325,8 @@ class Sensei_Learner_Management {
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
 					'view'      => 'learners',
-				), admin_url( 'admin.php' )
+				),
+				admin_url( 'admin.php' )
 			);
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
@@ -333,7 +338,8 @@ class Sensei_Learner_Management {
 			<h1>
 				<?php
 				echo wp_kses(
-					apply_filters( 'sensei_learners_nav_title', $title ), array(
+					apply_filters( 'sensei_learners_nav_title', $title ),
+					array(
 						'span' => array(
 							'class' => array(),
 						),
@@ -362,11 +368,13 @@ class Sensei_Learner_Management {
 		$course_cat = intval( $course_data['course_cat'] );
 
 		$redirect_url = apply_filters(
-			'sensei_ajax_redirect_url', add_query_arg(
+			'sensei_ajax_redirect_url',
+			add_query_arg(
 				array(
 					'page'       => $this->page_slug,
 					'course_cat' => $course_cat,
-				), admin_url( 'admin.php' )
+				),
+				admin_url( 'admin.php' )
 			)
 		);
 
@@ -541,12 +549,14 @@ class Sensei_Learner_Management {
 
 		$users_query = new WP_User_Query(
 			apply_filters(
-				'sensei_json_search_users_query', array(
+				'sensei_json_search_users_query',
+				array(
 					'fields'         => 'all',
 					'orderby'        => 'display_name',
 					'search'         => '*' . $term . '*',
 					'search_columns' => array( 'ID', 'user_login', 'user_email', 'user_nicename', 'user_firstname', 'user_lastname' ),
-				), $term
+				),
+				$term
 			)
 		);
 

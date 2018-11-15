@@ -12,11 +12,11 @@ class Sensei_Class_Lesson_Modules_Test extends WP_UnitTestCase {
 	/**
 	 * Constructor function
 	 */
-	public function __construct(){
+	public function __construct() {
 		parent::__construct();
 	}
 
-	public function setup(){
+	public function setup() {
 		parent::setup();
 
 		$this->factory = new Sensei_Factory();
@@ -25,8 +25,8 @@ class Sensei_Class_Lesson_Modules_Test extends WP_UnitTestCase {
 		$this->module_taxonomy = Sensei()->modules->taxonomy;
 
 		// Set up a new module to use for some tests
-		$new_term = wp_insert_term( 'My New Module', $this->module_taxonomy );
-		$this->module_id = $new_term[ 'term_id' ];
+		$new_term        = wp_insert_term( 'My New Module', $this->module_taxonomy );
+		$this->module_id = $new_term['term_id'];
 
 		// Fetch a lesson
 		$this->lesson_id = $this->factory->get_random_lesson_id();

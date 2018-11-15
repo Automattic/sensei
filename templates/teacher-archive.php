@@ -5,48 +5,47 @@
  *
  * Override this template by copying it to your_theme/sensei/teacher-archive.php
  *
- * @author 		Automattic
- * @package 	Sensei
+ * @author      Automattic
+ * @package     Sensei
  * @category    Templates
  * @version     1.9.0
  */
 ?>
 
-<?php  get_sensei_header();  ?>
+<?php get_sensei_header(); ?>
 
-    <?php
+	<?php
 
-        /**
-         * This action before teacher courses loop. This hook fires within the archive-course.php
-         * It fires even if the current archive has no posts.
-         *
-         * @since 1.9.0
-         *
-         */
-        do_action( 'sensei_teacher_archive_course_loop_before' );
+		/**
+		 * This action before teacher courses loop. This hook fires within the archive-course.php
+		 * It fires even if the current archive has no posts.
+		 *
+		 * @since 1.9.0
+		 */
+		do_action( 'sensei_teacher_archive_course_loop_before' );
 
-    ?>
+	?>
 
-    <?php if ( have_posts() ): ?>
+	<?php if ( have_posts() ) : ?>
 
-        <?php sensei_load_template( 'loop-course.php' ); ?>
+		<?php sensei_load_template( 'loop-course.php' ); ?>
 
-    <?php else: ?>
+	<?php else : ?>
 
-        <p><?php esc_html_e( 'There are no courses for this teacher.', 'woothemes-sensei' ); ?></p>
+		<p><?php esc_html_e( 'There are no courses for this teacher.', 'woothemes-sensei' ); ?></p>
 
-    <?php  endif; // End If Statement ?>
+	<?php endif; // End If Statement ?>
 
-    <?php
+	<?php
 
-        /**
-         * This action runs after including the teacher archive loop. This hook fires within the teacher-archive.php
-         * It fires even if the current archive has no posts.
-         *
-         * @since 1.9.0
-         */
-        do_action( 'sensei_teacher_archive_course_loop_after' );
+		/**
+		 * This action runs after including the teacher archive loop. This hook fires within the teacher-archive.php
+		 * It fires even if the current archive has no posts.
+		 *
+		 * @since 1.9.0
+		 */
+		do_action( 'sensei_teacher_archive_course_loop_after' );
 
-    ?>
+	?>
 
 <?php get_sensei_footer(); ?>

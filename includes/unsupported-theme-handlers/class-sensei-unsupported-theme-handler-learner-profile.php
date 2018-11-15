@@ -45,7 +45,7 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile
 		$learner_user = Sensei_Learner::find_by_query_var( get_query_var( 'learner_profile' ) );
 
 		if ( ! $learner_user ) {
-			$learner_user = new WP_User;
+			$learner_user = new WP_User();
 		}
 
 		// Render the learner profile page and output it as a Page.

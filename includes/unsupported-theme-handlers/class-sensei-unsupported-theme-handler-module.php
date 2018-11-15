@@ -47,10 +47,14 @@ class Sensei_Unsupported_Theme_Handler_Module
 
 		// Render the module page and output it as a Page.
 		$content = $this->render_module_page();
-		$this->output_content_as_page( $content, $course, array(
-			'post_title' => sanitize_text_field( $module->name ),
-			'post_name'  => $module->slug,
-		) );
+		$this->output_content_as_page(
+			$content,
+			$course,
+			array(
+				'post_title' => sanitize_text_field( $module->name ),
+				'post_name'  => $module->slug,
+			)
+		);
 
 		// Disable pagination.
 		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
@@ -78,8 +82,8 @@ class Sensei_Unsupported_Theme_Handler_Module
 	 * Prepare the WP query object for the imitated request.
 	 *
 	 * @param WP_Query $wp_query
-	 * @param WP_Post $post_to_copy
-	 * @param array $post_params
+	 * @param WP_Post  $post_to_copy
+	 * @param array    $post_params
 	 */
 	protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params ) {
 		$wp_query->is_tax = true;

@@ -69,7 +69,8 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 				<a href=\"%s\" target=\"_blank\">usage tracking data</a>.
 				No sensitive information is collected, and you can opt out at any time.",
 				'woothemes-sensei'
-			), self::SENSEI_TRACKING_INFO_URL
+			),
+			self::SENSEI_TRACKING_INFO_URL
 		);
 	}
 
@@ -113,7 +114,8 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 					<a href="%s" target="_blank">usage tracking data</a>.
 					No sensitive information is collected.',
 					'woothemes-sensei'
-				), self::SENSEI_TRACKING_INFO_URL
+				),
+				self::SENSEI_TRACKING_INFO_URL
 			),
 			'type'        => 'checkbox',
 			'default'     => false,

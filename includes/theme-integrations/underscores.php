@@ -5,38 +5,40 @@
  * Responsible for wrapping for the underscores theme
  * with the correct markup
  *
- *
  * @package Views
  * @subpackage Theme-Integration
  * @author Automattic
  *
  * @since 1.9.0
-*/
-Class Sensei__S {
+ */
+class Sensei__S {
 
-    /**
-     * Output opening wrappers
-     * @since 1.9.0
-     */
-    public function wrapper_start(){ ?>
-        <div id="primary" class="content-area">
-            <main id="main" class="site-main" role="main">
+	/**
+	 * Output opening wrappers
+	 *
+	 * @since 1.9.0
+	 */
+	public function wrapper_start(){ ?>
+		<div id="primary" class="content-area">
+			<main id="main" class="site-main" role="main">
 
-    <?php }
+		<?php
+	}
 
-    /**
-     * Output closing wrappers
-     *
-     * @since 1.9.0
-     */
-    public function wrapper_end(){ ?>
+	/**
+	 * Output closing wrappers
+	 *
+	 * @since 1.9.0
+	 */
+	public function wrapper_end() {
+		?>
 
-            </main> <!-- main-site -->
-          </div> <!-- content-area -->
+			</main> <!-- main-site -->
+		  </div> <!-- content-area -->
 
-	    <?php
+		<?php
 
-        get_sidebar();
+		get_sidebar();
 
-    }
+	}
 } // end class

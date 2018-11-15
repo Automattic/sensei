@@ -33,7 +33,7 @@ class Sensei_WC {
 		}
 
 		$woocommerce_hooks_file_path = Sensei()->plugin_path() . 'includes/hooks/woocommerce.php';
-		require_once( $woocommerce_hooks_file_path );
+		require_once $woocommerce_hooks_file_path;
 
 	}
 	/**
@@ -78,13 +78,15 @@ class Sensei_WC {
 
 		$course_product_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
 
-		$orders_query = new WP_Query( array(
-			'post_type'   => 'shop_order',
-			'posts_per_page' => -1,
-			'post_status' => array( 'wc-processing', 'wc-completed' ),
-			'meta_key' => '_customer_user',
-			'meta_value' => $user_id,
-		) );
+		$orders_query = new WP_Query(
+			array(
+				'post_type'      => 'shop_order',
+				'posts_per_page' => -1,
+				'post_status'    => array( 'wc-processing', 'wc-completed' ),
+				'meta_key'       => '_customer_user',
+				'meta_value'     => $user_id,
+			)
+		);
 
 		if ( 0 === $orders_query->post_count ) {
 			return false;
@@ -93,15 +95,15 @@ class Sensei_WC {
 		foreach ( $orders_query->get_posts() as $order ) {
 			$order = wc_get_order( $order->ID );
 			if ( false === $order ) {
-			    continue;
-            }
+				continue;
+			}
 			$items = $order->get_items();
 
 			foreach ( $items as $item ) {
 
 				// if the product id on the order and the one given to this function
 				// this order has been placed by the given user on the given course.
-				$item_product_id = Sensei_WC_Utils::get_item_id_from_item( $item );
+				$item_product_id   = Sensei_WC_Utils::get_item_id_from_item( $item );
 				$parent_product_id = Sensei_WC_Utils::get_item_id_from_item( $item, true );
 				if ( $course_product_id == $item_product_id || $check_parent_products && $parent_product_id == $course_product_id ) {
 					return Sensei_WC_Utils::get_order_id( $order );
@@ -133,18 +135,24 @@ class Sensei_WC {
 		}
 
 		$filter_links[] = array(
-			'id' => 'paid',
-			'url' => add_query_arg( array(
-				'course_filter' => 'paid',
-			), Sensei_Course::get_courses_page_url() ),
+			'id'    => 'paid',
+			'url'   => add_query_arg(
+				array(
+					'course_filter' => 'paid',
+				),
+				Sensei_Course::get_courses_page_url()
+			),
 			'title' => __( 'Paid', 'woothemes-sensei' ),
 		);
 
 		$filter_links[] = array(
-			'id' => 'free',
-			'url' => add_query_arg( array(
-				'course_filter' => 'free',
-			), Sensei_Course::get_courses_page_url() ),
+			'id'    => 'free',
+			'url'   => add_query_arg(
+				array(
+					'course_filter' => 'free',
+				),
+				Sensei_Course::get_courses_page_url()
+			),
 			'title' => __( 'Free', 'woothemes-sensei' ),
 		);
 
@@ -175,7 +183,7 @@ class Sensei_WC {
 
 			// don't show any paid courses
 			$courses = self::get_paid_courses();
-			$ids = array();
+			$ids     = array();
 			foreach ( $courses as $course ) {
 				$ids[] = $course->ID;
 			}
@@ -226,7 +234,7 @@ class Sensei_WC {
 	public static function do_single_course_wc_single_product_action() {
 		global $wp_query, $product;
 
-		if ( false === Sensei_WC::is_woocommerce_active() ) {
+		if ( false === self::is_woocommerce_active() ) {
 			return;
 		}
 
@@ -239,7 +247,7 @@ class Sensei_WC {
 			return;
 		}
 
-		$course_product_id = Sensei_WC::get_course_product_id( absint( $course->ID ) );
+		$course_product_id = self::get_course_product_id( absint( $course->ID ) );
 
 		if ( empty( $course_product_id ) ) {
 			// no need to proceed, as no product is related to this course
@@ -288,9 +296,9 @@ class Sensei_WC {
 		// check if the course has a valid product attached to it
 		// which the user should have purchased if they want to access
 		// the current lesson
-		$course_id = get_post_meta( $lesson_id , '_lesson_course', true );
+		$course_id  = get_post_meta( $lesson_id, '_lesson_course', true );
 		$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
-		$product = self::get_product_object( $wc_post_id );
+		$product    = self::get_product_object( $wc_post_id );
 		if ( isset( $product ) && is_object( $product ) ) {
 
 			// valid product found
@@ -319,14 +327,14 @@ class Sensei_WC {
 			return;
 		}
 
-		$in_my_courses = self::is_my_courses_page( $query );
+		$in_my_courses      = self::is_my_courses_page( $query );
 		$in_learner_profile = isset( $query->query_vars ) && isset( $query->query_vars['learner_profile'] );
 
 		if ( ! $in_learner_profile && ! $in_my_courses ) {
 			return;
 		}
 
-		$user_id = $in_learner_profile ? self::user_id_from_query( $query ) : ($in_my_courses ? self::current_user_id() : null);
+		$user_id = $in_learner_profile ? self::user_id_from_query( $query ) : ( $in_my_courses ? self::current_user_id() : null );
 
 		if ( ! $user_id ) {
 			return;
@@ -352,7 +360,7 @@ class Sensei_WC {
 			return false;
 		}
 
-		$object_id = absint( $queried_object->ID );
+		$object_id       = absint( $queried_object->ID );
 		$my_courses_page = Sensei()->settings->get( 'my_course_page' );
 		if ( false === $my_courses_page ) {
 			return false;
@@ -405,10 +413,10 @@ class Sensei_WC {
 		}
 
 		$order_id = get_query_var( 'order-received' );
-		$order = wc_get_order( $order_id );
+		$order    = wc_get_order( $order_id );
 		if ( false === $order ) {
-		    return;
-        }
+			return;
+		}
 		$status = Sensei_WC_Utils::get_order_status( $order );
 
 		// exit early if not wc-completed or wc-processing
@@ -430,8 +438,8 @@ class Sensei_WC {
 
 					foreach ( $courses as $course ) {
 
-						$title = $course->post_title;
-						$permalink = get_permalink( $course->ID );
+						$title           = $course->post_title;
+						$permalink       = get_permalink( $course->ID );
 						$course_links[] .= '<a href="' . esc_url( $permalink ) . '" >' . $title . '</a> ';
 
 					}
@@ -446,7 +454,8 @@ class Sensei_WC {
 				'You have purchased the following course:',
 				'You have purchased the following courses:',
 				count( $course_links ),
-				'Purchase thank you note on Checkout page. The course link(s) will be show', 'woothemes-sensei'
+				'Purchase thank you note on Checkout page. The course link(s) will be show',
+				'woothemes-sensei'
 			);
 
 			foreach ( $course_links as $link ) {
@@ -479,7 +488,7 @@ class Sensei_WC {
 			<div class="sensei-message info">
 				<?php
 				$checkout_url = Sensei_WC_Utils::get_checkout_url();
-				$cart_link = '<a class="cart-complete" href="' . esc_url( $checkout_url )
+				$cart_link    = '<a class="cart-complete" href="' . esc_url( $checkout_url )
 							  . '" title="' . esc_attr__( 'complete purchase', 'woothemes-sensei' ) . '">'
 							  . esc_html__( 'complete the purchase', 'woothemes-sensei' ) . '</a>';
 
@@ -488,7 +497,8 @@ class Sensei_WC {
 
 				?>
 			</div>
-		<?php }
+			<?php
+		}
 
 	} // End sensei_woocommerce_in_cart_message()
 
@@ -500,8 +510,8 @@ class Sensei_WC {
 	 */
 	public static function is_course_in_cart( $course_id ) {
 
-		$wc_post_id = absint( get_post_meta( $course_id, '_course_woocommerce_product', true ) );
-		$user_course_status_id = Sensei_Utils::user_started_course( $course_id , get_current_user_id() );
+		$wc_post_id            = absint( get_post_meta( $course_id, '_course_woocommerce_product', true ) );
+		$user_course_status_id = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
 
 		if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
 
@@ -539,7 +549,7 @@ class Sensei_WC {
 
 			foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
 
-				$cart_product = $values['data'];
+				$cart_product    = $values['data'];
 				$cart_product_id = Sensei_WC_Utils::get_product_id( $cart_product );
 				if ( $product_id == $cart_product_id ) {
 
@@ -564,22 +574,24 @@ class Sensei_WC {
 	 */
 	public static function get_free_product_ids() {
 
-		return  get_posts( array(
-			'post_type' => 'product',
-			'posts_per_page' => '1000',
-			'fields' => 'ids',
-			'meta_query' => array(
-				'relation' => 'OR',
-				array(
-					'key' => '_regular_price',
-					'value' => 0,
+		return get_posts(
+			array(
+				'post_type'      => 'product',
+				'posts_per_page' => '1000',
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					'relation' => 'OR',
+					array(
+						'key'   => '_regular_price',
+						'value' => 0,
+					),
+					array(
+						'key'   => '_sale_price',
+						'value' => 0,
+					),
 				),
-				array(
-					'key' => '_sale_price',
-					'value' => 0,
-				),
-			),
-		));
+			)
+		);
 
 	}//end get_free_product_ids()
 
@@ -595,12 +607,12 @@ class Sensei_WC {
 			'relation' => 'OR',
 			array(
 				'key'     => '_course_woocommerce_product',
-				'value' => '-',
+				'value'   => '-',
 				'compare' => '=',
 			),
 			array(
 				'key'     => '_course_woocommerce_product',
-				'value' => self::get_paid_product_ids(),
+				'value'   => self::get_paid_product_ids(),
 				'compare' => 'NOT IN',
 			),
 		);
@@ -622,7 +634,7 @@ class Sensei_WC {
 				'key'     => '_course_woocommerce_product',
 				// when empty we give a false post_id to ensure the caller doesn't get any courses for their
 				// query
-				'value' => empty( $paid_product_ids )? '-1000' : $paid_product_ids,
+				'value'   => empty( $paid_product_ids ) ? '-1000' : $paid_product_ids,
 				'compare' => 'IN',
 			),
 		);
@@ -637,18 +649,18 @@ class Sensei_WC {
 	 * @return array $product_query_args
 	 */
 	public static function get_paid_products_on_sale_query_args() {
-		$args = self::get_paid_products_base_query_args();
+		$args               = self::get_paid_products_base_query_args();
 		$args['meta_query'] = array(
 			'relation' => 'AND',
 			array(
-				'key' => '_regular_price',
+				'key'     => '_regular_price',
 				'compare' => '>',
-				'value' => 0,
+				'value'   => 0,
 			),
 			array(
-				'key' => '_sale_price',
+				'key'     => '_sale_price',
 				'compare' => '>',
-				'value' => 0,
+				'value'   => 0,
 			),
 		);
 
@@ -666,18 +678,18 @@ class Sensei_WC {
 	 * @return array
 	 */
 	public static function get_paid_products_not_on_sale_query_args() {
-		$args = self::get_paid_products_base_query_args();
+		$args               = self::get_paid_products_base_query_args();
 		$args['meta_query'] = array(
 			'relation' => 'AND',
 			array(
-				'key' => '_regular_price',
+				'key'     => '_regular_price',
 				'compare' => '>',
-				'value' => 0,
+				'value'   => 0,
 			),
 			array(
-				'key' => '_sale_price',
+				'key'     => '_sale_price',
 				'compare' => '=',
-				'value' => '',
+				'value'   => '',
 			),
 		);
 
@@ -685,18 +697,18 @@ class Sensei_WC {
 
 	} // get_paid_courses_meta_query
 
-    private static function get_paid_products_base_query_args() {
+	private static function get_paid_products_base_query_args() {
 		$args = array(
-			'post_type' 		=> array( 'product', 'product_variation' ),
-			'posts_per_page' 	=> 1000,
-			'orderby'         	=> 'date',
-			'order'           	=> 'DESC',
-			'suppress_filters' 	=> 0,
+			'post_type'        => array( 'product', 'product_variation' ),
+			'posts_per_page'   => 1000,
+			'orderby'          => 'date',
+			'order'            => 'DESC',
+			'suppress_filters' => 0,
 		);
 
-		$args['fields']     = 'ids';
+		$args['fields'] = 'ids';
 		return $args;
-    }
+	}
 	/**
 	 * Get all WooCommerce non-free product id's
 	 *
@@ -723,7 +735,7 @@ class Sensei_WC {
 
 			$variable_subscription_query_args['meta_query'] = array(
 				array(
-					'key' => '_subscription_sign_up_fee',
+					'key'     => '_subscription_sign_up_fee',
 					'compare' => 'EXISTS',
 				),
 			);
@@ -763,7 +775,7 @@ class Sensei_WC {
 	 */
 	public static function get_free_courses( $args = array() ) {
 
-		$free_course_query_args = Sensei_Course::get_default_query_args();
+		$free_course_query_args               = Sensei_Course::get_default_query_args();
 		$free_course_query_args['meta_query'] = self::get_free_courses_meta_query_args();
 
 		if ( ! empty( $args ) ) {
@@ -772,7 +784,7 @@ class Sensei_WC {
 
 		// don't show any paid courses
 		$courses = self::get_paid_courses();
-		$ids = array();
+		$ids     = array();
 		foreach ( $courses as $course ) {
 			$ids[] = $course->ID;
 		}
@@ -877,7 +889,8 @@ class Sensei_WC {
 
 			<input type="hidden" name="quantity" value="1" />
 
-			<?php if ( Sensei_WC_Utils::is_product_variation( $product ) ) {
+			<?php
+			if ( Sensei_WC_Utils::is_product_variation( $product ) ) {
 				$variation_data = Sensei_WC_Utils::get_product_variation_data( $product );
 				?>
 
@@ -895,7 +908,7 @@ class Sensei_WC {
 			<?php } ?>
 
 			<button type="submit" class="single_add_to_cart_button button alt">
-				<?php $button_text = Sensei_WC::purchase_course_default_button_text( $product ); ?>
+				<?php $button_text = self::purchase_course_default_button_text( $product ); ?>
 
 				<?php
 				/**
@@ -928,13 +941,13 @@ class Sensei_WC {
 	public static function alter_no_permissions_message( $message, $post_id ) {
 
 		if ( empty( $post_id ) || 'course' != get_post_type( $post_id ) ) {
-			return  $message;
+			return $message;
 		}
 
 		$product_id = self::get_course_product_id( $post_id );
 
 		if ( ! $product_id
-			|| ! self::has_customer_bought_product( get_current_user_id(),$product_id ) ) {
+			|| ! self::has_customer_bought_product( get_current_user_id(), $product_id ) ) {
 
 			return $message;
 
@@ -944,7 +957,7 @@ class Sensei_WC {
 		self::the_course_no_permissions_message( $post_id );
 		$woocommerce_course_no_permissions_message = ob_get_clean();
 
-		return $woocommerce_course_no_permissions_message ;
+		return $woocommerce_course_no_permissions_message;
 
 	}
 	/**
@@ -957,9 +970,9 @@ class Sensei_WC {
 
 		// login link
 		$my_courses_page_id = intval( Sensei()->settings->settings['my_course_page'] );
-		$login_link = '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' .
+		$login_link         = '<a href="' . esc_url( get_permalink( $my_courses_page_id ) ) . '">' .
 			esc_html__( 'log in', 'woothemes-sensei' ) . '</a>';
-		$wc_product_id = self::get_course_product_id( $course_id );
+		$wc_product_id      = self::get_course_product_id( $course_id );
 
 		if ( self::is_product_in_cart( $wc_product_id ) ) {
 
@@ -1028,8 +1041,8 @@ class Sensei_WC {
 
 			$order = wc_get_order( $order_id->ID );
 			if ( false === $order ) {
-			    continue;
-            }
+				continue;
+			}
 
 			// wc-active is the subscriptions complete status
 			$status = 'wc-' . $order->get_status();
@@ -1163,12 +1176,12 @@ class Sensei_WC {
 		}
 
 		$order_items = $order->get_items();
-		$order_id = Sensei_WC_Utils::get_order_id( $order );
+		$order_id    = Sensei_WC_Utils::get_order_id( $order );
 
 		// If object have items go through them all to find course
 		if ( 0 < sizeof( $order_items ) ) {
 
-			$course_details_html = '<h2>' . esc_html__( 'Course details', 'woothemes-sensei' ) . '</h2>';
+			$course_details_html    = '<h2>' . esc_html__( 'Course details', 'woothemes-sensei' ) . '</h2>';
 			$order_contains_courses = false;
 
 			foreach ( $order_items as $item ) {
@@ -1179,17 +1192,17 @@ class Sensei_WC {
 				if ( $user_id ) {
 
 					// Get all courses for product
-					$args = array(
+					$args    = array(
 						'posts_per_page' => -1,
-						'post_type' => 'course',
-						'meta_query' => array(
+						'post_type'      => 'course',
+						'meta_query'     => array(
 							array(
-								'key' => '_course_woocommerce_product',
+								'key'   => '_course_woocommerce_product',
 								'value' => $item_id,
 							),
 						),
-						'orderby' => 'menu_order date',
-						'order' => 'ASC',
+						'orderby'        => 'menu_order date',
+						'order'          => 'ASC',
 					);
 					$courses = get_posts( $args );
 
@@ -1197,8 +1210,8 @@ class Sensei_WC {
 
 						foreach ( $courses as $course ) {
 
-							$title = $course->post_title;
-							$permalink = get_permalink( $course->ID );
+							$title                  = $course->post_title;
+							$permalink              = get_permalink( $course->ID );
 							$order_contains_courses = true;
 							// translators: Placeholder is a link to the course.
 							$course_details_html .= '<p><strong>' . sprintf( __( 'View course: %1$s', 'woothemes-sensei' ), '</strong><a href="' . esc_url( $permalink ) . '">' . esc_html( $title ) . '</a>' ) . '</p>';
@@ -1230,15 +1243,15 @@ class Sensei_WC {
 		$order_user = array();
 
 		// Check for WooCommerce
-		if ( ! Sensei_WC::is_woocommerce_active() || empty( $order_id ) || ! is_numeric( $order_id ) ) {
+		if ( ! self::is_woocommerce_active() || empty( $order_id ) || ! is_numeric( $order_id ) ) {
 			return;
 		}
 
 		// Get order object
 		$order = wc_get_order( $order_id );
 		if ( false === $order ) {
-		    return;
-        }
+			return;
+		}
 		$order_status = Sensei_WC_Utils::get_order_status( $order );
 
 		/**
@@ -1248,16 +1261,16 @@ class Sensei_WC {
 		 *
 		 * @param array Currently accepted order statuses.
 		 */
-		if ( ! in_array( $order_status, apply_filters( 'sensei_wc_order_statuses',  array( 'wc-completed', 'wc-processing' ) ) ) ) {
+		if ( ! in_array( $order_status, apply_filters( 'sensei_wc_order_statuses', array( 'wc-completed', 'wc-processing' ) ) ) ) {
 			return;
 		}
 		$user = get_user_by( 'id', $order->get_user_id() );
 
 		if ( $user ) {
-			$order_user['ID'] = $user->ID;
+			$order_user['ID']         = $user->ID;
 			$order_user['user_login'] = $user->user_login;
 			$order_user['user_email'] = $user->user_email;
-			$order_user['user_url'] = $user->user_url;
+			$order_user['user_url']   = $user->user_url;
 		}
 
 		if ( 0 == sizeof( $order->get_items() ) ) {
@@ -1277,15 +1290,15 @@ class Sensei_WC {
 
 			$item_id = Sensei_WC_Utils::get_item_id_from_item( $item );
 
-			$_product = Sensei_WC::get_product_object( $item_id, $product_type );
+			$_product = self::get_product_object( $item_id, $product_type );
 
 			if ( ! $_product ) {
 				continue;
 			}
 
 			$_product_id = Sensei_WC_Utils::is_product_variation( $_product ) ?
-                Sensei_WC_Utils::get_product_variation_id( $_product ) :
-                Sensei_WC_Utils::get_product_id( $_product );
+				Sensei_WC_Utils::get_product_variation_id( $_product ) :
+				Sensei_WC_Utils::get_product_id( $_product );
 
 			// Get courses that use the WC product
 			$courses = Sensei()->course->get_product_courses( $_product_id );
@@ -1304,13 +1317,13 @@ class Sensei_WC {
 
 			if ( count( $courses ) > 0 ) {
 				$order_contains_courses = true;
-            }
+			}
 		} // End foreach().
 
-        if ( $order_contains_courses ) {
+		if ( $order_contains_courses ) {
 			// Add meta to indicate that payment has been completed successfully
 			update_post_meta( $order_id, 'sensei_payment_complete', '1' );
-        }
+		}
 
 	} // End sensei_woocommerce_complete_order()
 
@@ -1420,7 +1433,7 @@ class Sensei_WC {
 	 * @since  1.0.0
 	 * @since 1.9.0 move to class Sensei_WC
 	 *
-	 * @param  int 			 $course_id  (default: 0)
+	 * @param  int           $course_id  (default: 0)
 	 * @param  array/Object  $order_user (default: array()) Specific user's data.
 	 * @param  WC_Order|null $order The Order.
 	 *
@@ -1444,7 +1457,7 @@ class Sensei_WC {
 			$user_id = $order_user['ID'];
 		} else {
 			$user_id = empty( $current_user->ID ) ? $order_user['ID'] : $current_user->ID;
-			$user = get_user_by( 'id', $user_id );
+			$user    = get_user_by( 'id', $user_id );
 			if ( ! $user ) {
 				return false;
 			}
@@ -1484,7 +1497,7 @@ class Sensei_WC {
 			$has_payment_method = false;
 			$payment_method     = '';
 		}
-		$is_user_taking_course = Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
+		$is_user_taking_course       = Sensei_Utils::user_started_course( intval( $course_id ), intval( $user_id ) );
 		$currently_purchasing_course = $has_payment_method || ( null !== $order && is_a( $order, 'WC_Order' ) );
 		Sensei_WC_Utils::log( 'Sensei_WC::course_update: user_taking_course: ' . ( $is_user_taking_course ? 'yes' : 'no' ) );
 		if ( $has_payment_method ) {
@@ -1527,10 +1540,10 @@ class Sensei_WC {
 
 						$args = array(
 							'posts_per_page' => -1,
-							'post_type' => 'course',
-							'meta_query' => array(
+							'post_type'      => 'course',
+							'meta_query'     => array(
 								array(
-									'key' => '_course_woocommerce_product',
+									'key'   => '_course_woocommerce_product',
 									'value' => $product['product_id'],
 								),
 							),
@@ -1620,7 +1633,7 @@ class Sensei_WC {
 	 */
 	public static function get_subscription_permission( $user_access_permission, $user_id ) {
 		_deprecated_function( __FUNCTION__, esc_html( Sensei()->version ), 'Sensei_WC_Subscriptions::get_subscription_permission' );
-		return Sensei_WC_Subscriptions::get_subscription_permission( $user_access_permission , $user_id );
+		return Sensei_WC_Subscriptions::get_subscription_permission( $user_access_permission, $user_id );
 	}
 
 	/**
@@ -1677,10 +1690,10 @@ class Sensei_WC {
 
 		$args = array(
 			'posts_per_page' => 5000,
-			'post_type' => 'shop_order',
-			'meta_key'    => '_customer_user',
-			'meta_value'  => intval( $user_id ),
-			'post_status' => array( 'wc-completed', 'wc-processing' ),
+			'post_type'      => 'shop_order',
+			'meta_key'       => '_customer_user',
+			'meta_value'     => intval( $user_id ),
+			'post_status'    => array( 'wc-completed', 'wc-processing' ),
 		);
 
 		return get_posts( $args );
@@ -1728,9 +1741,9 @@ class Sensei_WC {
 	 * @hooked into woocommerce_add_to_cart
 	 *
 	 * @param mixed $cart_item_key Cart Item Key.
-	 * @param int $product_id Product ID.
+	 * @param int   $product_id Product ID.
 	 * @param mixed $quantity Quantity.
-	 * @param int $variation_id Variation ID.
+	 * @param int   $variation_id Variation ID.
 	 * @param mixed $variation Variation.
 	 * @param mixed $cart_item_data Cart Item Data.
 	 *
@@ -1782,10 +1795,13 @@ class Sensei_WC {
 	 */
 	private static function start_purchased_courses_for_user( $user_id ) {
 		// get current user's active courses.
-		$active_courses = Sensei_Utils::sensei_check_for_activity( array(
-			'user_id' => $user_id,
-			'type' => 'sensei_course_status',
-		), true );
+		$active_courses = Sensei_Utils::sensei_check_for_activity(
+			array(
+				'user_id' => $user_id,
+				'type'    => 'sensei_course_status',
+			),
+			true
+		);
 
 		if ( empty( $active_courses ) ) {
 			$active_courses = array();
@@ -1801,14 +1817,16 @@ class Sensei_WC {
 			$active_course_ids[] = $c->comment_post_ID;
 		}
 
-		$orders_query = new WP_Query(array(
-			'post_type' => 'shop_order',
-			'posts_per_page' => -1,
-			'post_status' => array( 'wc-processing', 'wc-completed' ),
-			'meta_key' => '_customer_user',
-			'meta_value' => $user_id,
-			'fields' => 'ids',
-		));
+		$orders_query = new WP_Query(
+			array(
+				'post_type'      => 'shop_order',
+				'posts_per_page' => -1,
+				'post_status'    => array( 'wc-processing', 'wc-completed' ),
+				'meta_key'       => '_customer_user',
+				'meta_value'     => $user_id,
+				'fields'         => 'ids',
+			)
+		);
 
 		// get user's processing and completed orders.
 		$user_order_ids = $orders_query->get_posts();
@@ -1824,10 +1842,10 @@ class Sensei_WC {
 		$user_orders = array();
 
 		foreach ( $user_order_ids as $order_data ) {
-		    $user_order = wc_get_order( $order_data );
-		    if ( false === $user_order ) {
-		        continue;
-            }
+			$user_order = wc_get_order( $order_data );
+			if ( false === $user_order ) {
+				continue;
+			}
 			$user_orders[] = $user_order;
 		}
 
@@ -1835,21 +1853,21 @@ class Sensei_WC {
 			foreach ( $user_order->get_items() as $item ) {
 				$item_id = Sensei_WC_Utils::get_item_id_from_item( $item );
 
-				$product_courses = self::get_courses_from_product_id( $item_id );
-				$is_variation = Sensei_WC_Utils::is_wc_item_variation( $item );
+				$product_courses                    = self::get_courses_from_product_id( $item_id );
+				$is_variation                       = Sensei_WC_Utils::is_wc_item_variation( $item );
 				$is_course_linked_to_parent_product = false;
 
 				if ( empty( $product_courses ) && $is_variation ) {
 					// if we get no products from a variable sub course.
 					// check if there are any courses linked to the parent product id.
-					$item_id = Sensei_WC_Utils::get_item_id_from_item( $item, true );
-					$product_courses = self::get_courses_from_product_id( $item_id );
+					$item_id                            = Sensei_WC_Utils::get_item_id_from_item( $item, true );
+					$product_courses                    = self::get_courses_from_product_id( $item_id );
 					$is_course_linked_to_parent_product = ! empty( $product_courses );
 				}
 
 				foreach ( $product_courses as $course ) {
 					$course_id = $course->ID;
-					$order_id = self::get_learner_course_active_order_id( $user_id, $course_id, $is_course_linked_to_parent_product );
+					$order_id  = self::get_learner_course_active_order_id( $user_id, $course_id, $is_course_linked_to_parent_product );
 
 					if ( in_array( $order_id, $user_order_ids, true ) &&
 						! in_array( $course_id, $active_course_ids, true )

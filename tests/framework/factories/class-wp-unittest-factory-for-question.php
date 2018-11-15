@@ -2,7 +2,7 @@
 
 class WP_UnitTest_Factory_For_Question extends WP_UnitTest_Factory_For_Post_Sensei {
 	private $generated_types = array();
-	private $question_count = 0;
+	private $question_count  = 0;
 
 	function __construct( $factory = null ) {
 		parent::__construct( $factory );
@@ -10,7 +10,7 @@ class WP_UnitTest_Factory_For_Question extends WP_UnitTest_Factory_For_Post_Sens
 	}
 
 	public function create_object( $args = array() ) {
-		$question_types = Sensei()->question->question_types();
+		$question_types      = Sensei()->question->question_types();
 		$question_type_slugs = array_keys( $question_types );
 
 		// If we have created a question for every type, then shuffle.
@@ -18,12 +18,12 @@ class WP_UnitTest_Factory_For_Question extends WP_UnitTest_Factory_For_Post_Sens
 			shuffle( $question_type_slugs );
 			$type = array_pop( $question_type_slugs );
 		} else {
-			$type = $question_type_slugs[ count( $this->generated_types ) ];
+			$type                    = $question_type_slugs[ count( $this->generated_types ) ];
 			$this->generated_types[] = $type;
 		}
 		$this->question_count++;
-		if ( isset( $args['quiz_id'] ) && ! isset( $args['post_author']  ) ) {
-			$args['post_author']  = get_post( $args['quiz_id'] )->post_author;
+		if ( isset( $args['quiz_id'] ) && ! isset( $args['post_author'] ) ) {
+			$args['post_author'] = get_post( $args['quiz_id'] )->post_author;
 		}
 		$args = array_merge( $this->get_sample_question_data( $type ), $args );
 		return Sensei()->lesson->lesson_save_question( $args );

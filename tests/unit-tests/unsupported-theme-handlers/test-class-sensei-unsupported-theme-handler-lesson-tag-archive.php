@@ -1,6 +1,6 @@
 <?php
 
-include_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
+require_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
 
 class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive_Test extends WP_UnitTestCase {
 
@@ -51,9 +51,11 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive_Test extends WP_UnitTe
 	public function testShouldNotHandleNonLessonTagArchivePage() {
 		// Set up the query to be for the Courses page.
 		global $wp_query;
-		$wp_query = new WP_Query( array(
-			'post_type' => 'post',
-		) );
+		$wp_query = new WP_Query(
+			array(
+				'post_type' => 'post',
+			)
+		);
 
 		$this->assertFalse( $this->handler->can_handle_request() );
 	}
@@ -113,7 +115,7 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive_Test extends WP_UnitTe
 		$this->assertEquals( 'page', $post->post_type, 'The dummy post type should be "page"' );
 
 		$copied_from_term = array(
-			'post_title'        => 'name',
+			'post_title' => 'name',
 		);
 		foreach ( $copied_from_term as $post_field => $term_field ) {
 			$this->assertEquals(
@@ -141,15 +143,15 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive_Test extends WP_UnitTe
 		wp_set_object_terms( $course_lessons['lesson_ids'][0], $this->term->term_id, 'lesson-tag' );
 
 		// Setup $wp_query to be simple post list.
-		$args         = array(
+		$args = array(
 			'post_type' => 'post',
 		);
 
-		$wp_query = new WP_Query( $args );
+		$wp_query     = new WP_Query( $args );
 		$wp_the_query = $wp_query;
 
-		$wp_query->is_tax               = 'lesson-tag';
-		$wp_query->queried_object       = $this->term;
-		$wp_query->queried_object_id    = $this->term->term_id;
+		$wp_query->is_tax            = 'lesson-tag';
+		$wp_query->queried_object    = $this->term;
+		$wp_query->queried_object_id = $this->term->term_id;
 	}
 }

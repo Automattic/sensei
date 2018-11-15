@@ -11,4 +11,4 @@
 ?>
 
 <div id="content" class="page col-full">
-    <div id="main" class="col-left">
+	<div id="main" class="col-left">
