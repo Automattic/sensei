@@ -1885,7 +1885,7 @@ class Sensei_Lesson {
 		}
 		$answer = $_GET['answer_value'];
 		$answer_id = $this->get_answer_id( $answer );
-		echo $answer_id;
+		echo esc_html( $answer_id );
 		wp_die();
 	}
 
@@ -2440,7 +2440,7 @@ class Sensei_Lesson {
 			}
 		}
 
-		echo $return;
+		echo esc_html( $return );
 
 		die( '' );
 	}

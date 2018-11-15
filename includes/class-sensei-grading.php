@@ -489,9 +489,15 @@ class Sensei_Grading {
 		// Get course ID.
 		$course_id = intval( $_GET['course_id'] );
 
-		// Output HTML.
-		$html = $this->lessons_drop_down_html( $course_id );
-		echo $html;
+		echo wp_kses(
+			$this->lessons_drop_down_html( $course_id ),
+			array(
+				'option' => array(
+					'selected' => array(),
+					'value' => array(),
+				),
+			)
+		);
 
 		wp_die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	}
@@ -711,12 +717,12 @@ class Sensei_Grading {
 		$lesson_id    = intval( $_GET['lesson_id'] );
 		$grading_view = ( isset( $_GET['view'] ) && $_GET['view'] ) ? $_GET['view'] : 'ungraded';
 
-		$redirect_url = '';
 		if ( 0 < $lesson_id && 0 < $course_id ) {
-			$redirect_url = esc_url_raw( apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id, 'course_id' => $course_id, 'view' => $grading_view ), admin_url( 'admin.php' ) ) ) );
-		} // End If Statement
+			echo esc_url_raw( apply_filters( 'sensei_ajax_redirect_url', add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $lesson_id, 'course_id' => $course_id, 'view' => $grading_view ), admin_url( 'admin.php' ) ) ) );
+		} else {
+			echo '';
+		}
 
-		echo $redirect_url;
 		wp_die();
 	}
 
