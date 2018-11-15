@@ -32,8 +32,8 @@ class Sensei_Domain_Models_Registry {
 	 */
 	private function __construct() {
 		$this->field_declarations_by_model = array();
-		$this->factories = array();
-		$this->data_stores = array();
+		$this->factories                   = array();
+		$this->data_stores                 = array();
 	}
 
 	/**
@@ -72,7 +72,7 @@ class Sensei_Domain_Models_Registry {
 	 * @return Sensei_Domain_Models_Model_Abstract Domain model.
 	 */
 	public function new_from_request( $klass, $request ) {
-		$fields = $this->get_field_declarations( $klass );
+		$fields     = $this->get_field_declarations( $klass );
 		$field_data = array();
 		foreach ( $fields as $field ) {
 			if ( isset( $request[ $field->name ] ) ) {
@@ -138,8 +138,8 @@ class Sensei_Domain_Models_Registry {
 	 * @return mixed
 	 */
 	private function call_fn() {
-		$args = func_get_args();
-		$klass = array_shift( $args );
+		$args    = func_get_args();
+		$klass   = array_shift( $args );
 		$fn_name = array_shift( $args );
 		return call_user_func_array( array( $this->get_domain_model_class( $klass ), $fn_name ), $args );
 	}
@@ -192,7 +192,7 @@ class Sensei_Domain_Models_Registry {
 		if ( ! isset( $this->field_declarations_by_model[ $klass ] ) ||
 			null === $this->field_declarations_by_model[ $klass ] ) {
 			// lazy-load model declarations when the first model if this type is constructed.
-			$fields = call_user_func( array( $klass, 'declare_fields' ) );
+			$fields                                      = call_user_func( array( $klass, 'declare_fields' ) );
 			$this->field_declarations_by_model[ $klass ] = call_user_func( array( $klass, 'initialize_field_map' ), $fields );
 		}
 		if ( null === $filter_by_type ) {

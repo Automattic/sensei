@@ -1,6 +1,6 @@
 <?php
 
-include_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
+require_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
 
 class Sensei_Unsupported_Theme_Handler_Course_Results_Test extends WP_UnitTestCase {
 
@@ -51,9 +51,11 @@ class Sensei_Unsupported_Theme_Handler_Course_Results_Test extends WP_UnitTestCa
 	public function testShouldNotHandleNonCourseResultsPage() {
 		// Set up the query to be for the Courses page.
 		global $wp_query;
-		$wp_query = new WP_Query( array(
-			'post_type' => 'course',
-		) );
+		$wp_query = new WP_Query(
+			array(
+				'post_type' => 'course',
+			)
+		);
 
 		$this->assertFalse( $this->handler->can_handle_request() );
 	}
@@ -141,19 +143,24 @@ class Sensei_Unsupported_Theme_Handler_Course_Results_Test extends WP_UnitTestCa
 		$this->course = get_post( $this->factory->get_course_with_modules() );
 
 		$posts = $this->factory->post->create_many( 2 );
-		
+
 		// Setup $wp_query to be simple post list with the course_results query arg.
 		$args         = array(
-			'post_type' => 'post',
+			'post_type'      => 'post',
 			'course_results' => $this->course->post_name,
 		);
 		$wp_query     = new WP_Query( $args );
 		$wp_the_query = $wp_query;
 
 		// Setup $post to be the first lesson.
-		$posts = get_posts( array_merge( $args, array(
-			'posts_per_page' => 1,
-		) ) );
+		$posts = get_posts(
+			array_merge(
+				$args,
+				array(
+					'posts_per_page' => 1,
+				)
+			)
+		);
 		$post  = $posts[0];
 	}
 }

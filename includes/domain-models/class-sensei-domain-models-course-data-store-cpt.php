@@ -26,7 +26,8 @@ class Sensei_Domain_Models_Course_Data_Store_Cpt implements Sensei_Domain_Models
 		$id = $course->get_id();
 
 		$args = wp_parse_args(
-			$args, array(
+			$args,
+			array(
 				'force_delete' => false,
 			)
 		);

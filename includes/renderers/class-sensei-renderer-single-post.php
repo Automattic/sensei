@@ -67,8 +67,8 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	 * }
 	 */
 	public function __construct( $post_id, $template, $options = array() ) {
-		$this->post_id = $post_id;
-		$this->template = $template;
+		$this->post_id         = $post_id;
+		$this->template        = $template;
 		$this->show_pagination = isset( $options['show_pagination'] ) ? $options['show_pagination'] : false;
 		$this->setup_post_query();
 	}

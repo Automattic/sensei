@@ -4,14 +4,14 @@
  *
  * Override this template by copying it to yourtheme/sensei/archive-message.php
  *
- * @author 		Automattic
- * @package 	Sensei
+ * @author      Automattic
+ * @package     Sensei
  * @category    Templates
  * @version     1.9.0
  */
 ?>
 
-<?php  get_sensei_header();  ?>
+<?php get_sensei_header(); ?>
 
 <?php
 /**
@@ -27,15 +27,15 @@ do_action( 'sensei_archive_before_message_loop' );
 
 <section id="main-sensei_message" class="sensei_message-container">
 
-    <?php if ( have_posts() ): ?>
+	<?php if ( have_posts() ) : ?>
 
-        <?php sensei_load_template('loop-message.php'); ?>
+		<?php sensei_load_template( 'loop-message.php' ); ?>
 
-    <?php else: ?>
+	<?php else : ?>
 
-        <p> <?php esc_html_e( 'You do not have any messages.','woothemes-sensei' ); ?> </p>
+		<p> <?php esc_html_e( 'You do not have any messages.', 'woothemes-sensei' ); ?> </p>
 
-    <?php  endif; // End If Statement ?>
+	<?php endif; // End If Statement ?>
 
 </section>
 

@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 /**
  *
  * Renders the [sensei_course_page] shortcode. Display a single course based on the ID parameter given
@@ -31,11 +33,11 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 	 * Setup the shortcode object
 	 *
 	 * @since 1.9.0
-	 * @param array $attributes
+	 * @param array  $attributes
 	 * @param string $content
 	 * @param string $shortcode the shortcode that was called for this instance
 	 */
-	public function __construct( $attributes, $content, $shortcode ){
+	public function __construct( $attributes, $content, $shortcode ) {
 		$this->id = isset( $attributes['id'] ) ? $attributes['id'] : '';
 
 		if ( $this->id ) {

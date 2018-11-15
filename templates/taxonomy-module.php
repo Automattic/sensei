@@ -22,7 +22,7 @@
 		do_action( 'sensei_taxonomy_module_content_before' );
 	?>
 
-	<?php if ( have_posts() ): ?>
+	<?php if ( have_posts() ) : ?>
 			<section class="module-container" >
 				<?php
 					/**

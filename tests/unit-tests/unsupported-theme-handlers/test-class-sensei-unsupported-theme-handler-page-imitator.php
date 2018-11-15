@@ -1,7 +1,7 @@
 <?php
 
 $test_dir = Sensei_Unit_Tests_Bootstrap::instance()->tests_dir;
-include_once $test_dir . '/framework/class-sensei-unsupported-theme-handler-faux-page-imitator.php';
+require_once $test_dir . '/framework/class-sensei-unsupported-theme-handler-faux-page-imitator.php';
 
 class Sensei_Unsupported_Theme_Handler_Page_Imitator_Test extends WP_UnitTestCase {
 
@@ -39,7 +39,7 @@ class Sensei_Unsupported_Theme_Handler_Page_Imitator_Test extends WP_UnitTestCas
 	public static function create_page_template() {
 		// Set up the page.php template.
 		$filename = get_template_directory() . '/page.php';
-		$handle = fopen( $filename, 'w' );
+		$handle   = fopen( $filename, 'w' );
 		fwrite( $handle, "<?php\n// Silence is golden\n" );
 		fclose( $handle );
 	}
@@ -163,9 +163,14 @@ class Sensei_Unsupported_Theme_Handler_Page_Imitator_Test extends WP_UnitTestCas
 		$wp_the_query = $wp_query;
 
 		// Setup $post to be the first post.
-		$posts = get_posts( array_merge( $args, array(
-			'posts_per_page' => 1,
-		) ) );
+		$posts = get_posts(
+			array_merge(
+				$args,
+				array(
+					'posts_per_page' => 1,
+				)
+			)
+		);
 		$post  = $posts[0];
 	}
 }

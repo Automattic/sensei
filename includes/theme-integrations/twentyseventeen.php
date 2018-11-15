@@ -11,32 +11,36 @@
  *
  * @since 1.9.10
  */
-class Sensei_Twentyseventeen extends Sensei__S  {
+class Sensei_Twentyseventeen extends Sensei__S {
 
 	/**
-     * Output opening wrappers
-     * @since 1.9.15
-     */
-    public function wrapper_start() {
-    ?>
+	 * Output opening wrappers
+	 *
+	 * @since 1.9.15
+	 */
+	public function wrapper_start() {
+		?>
 
-        <div class="wrap">
+		<div class="wrap">
 			<div id="primary" class="content-area">
 				<main id="main" class="site-main" role="main">
 
-    <?php }
+		<?php
+	}
 
-    /**
-     * Output closing wrappers
-     *
-     * @since 1.9.15
-     */
-    public function wrapper_end() { ?>
+	/**
+	 * Output closing wrappers
+	 *
+	 * @since 1.9.15
+	 */
+	public function wrapper_end() {
+		?>
 
 				</main><!-- #main -->
 			</div><!-- #primary -->
 		</div><!-- .wrap -->
 
-	<?php }
+		<?php
+	}
 
 }

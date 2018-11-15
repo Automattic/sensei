@@ -1,6 +1,6 @@
 <?php
 
-include_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
+require_once 'test-class-sensei-unsupported-theme-handler-page-imitator.php';
 
 class Sensei_Unsupported_Theme_Handler_Course_Archive_Test extends WP_UnitTestCase {
 
@@ -51,9 +51,11 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive_Test extends WP_UnitTestCa
 	public function testShouldNotHandleNonCourseArchivePage() {
 		// Set up the query to be for the Lessons page.
 		global $wp_query;
-		$wp_query = new WP_Query( array(
-			'post_type' => 'lesson',
-		) );
+		$wp_query = new WP_Query(
+			array(
+				'post_type' => 'lesson',
+			)
+		);
 
 		$this->assertFalse( $this->handler->can_handle_request() );
 	}
@@ -123,9 +125,12 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive_Test extends WP_UnitTestCa
 	private function setupCourseArchivePage() {
 		global $post, $wp_query, $wp_the_query;
 
-		$courses = $this->factory->post->create_many( 5, array(
-			'post_type' => 'course',
-		) );
+		$courses = $this->factory->post->create_many(
+			5,
+			array(
+				'post_type' => 'course',
+			)
+		);
 
 		// Setup the globals.
 		$args         = array(

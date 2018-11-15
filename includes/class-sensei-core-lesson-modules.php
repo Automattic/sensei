@@ -1,6 +1,7 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) { exit; }
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; }
 
 /**
  * Sensei Lesson Modules Class
@@ -32,7 +33,7 @@ class Sensei_Core_Lesson_Modules {
 	 * @param integer|string $module_id ID of the new module
 	 * @param integer|string $course_id (Optional) ID of the course to check against
 	 */
-	public function set_module( $module_id, $course_id = NULL ) {
+	public function set_module( $module_id, $course_id = null ) {
 
 		// Convert IDs to integers
 		if ( $module_id || ! empty( $module_id ) ) {

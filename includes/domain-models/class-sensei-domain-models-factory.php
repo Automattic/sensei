@@ -33,7 +33,7 @@ class Sensei_Domain_Models_Factory {
 	 */
 	public function __construct( $klass, $registry ) {
 		$this->registry = $registry;
-		$this->klass = $klass;
+		$this->klass    = $klass;
 	}
 
 	/**
@@ -43,7 +43,7 @@ class Sensei_Domain_Models_Factory {
 	 * @return Sensei_Domain_Models_Model_Abstract
 	 */
 	public function new_from_request( $request ) {
-		$fields = $this->registry->get_field_declarations( $this->klass );
+		$fields     = $this->registry->get_field_declarations( $this->klass );
 		$field_data = array();
 		foreach ( $fields as $field ) {
 			if ( isset( $request[ $field->name ] ) ) {

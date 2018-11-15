@@ -192,10 +192,10 @@ class Sensei_Main {
 
 		// Setup object data
 		$this->main_plugin_file_name = $main_plugin_file_name;
-		$this->plugin_url = trailingslashit( plugins_url( '', $plugin = $this->main_plugin_file_name ) );
-		$this->plugin_path = trailingslashit( dirname( $this->main_plugin_file_name ) );
-		$this->template_url	= apply_filters( 'sensei_template_url', 'sensei/' );
-		$this->version = isset( $args['version'] ) ? $args['version'] : null;
+		$this->plugin_url            = trailingslashit( plugins_url( '', $plugin = $this->main_plugin_file_name ) );
+		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
+		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
+		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
 
 		// Initialize the core Sensei functionality
 		$this->init();
@@ -264,7 +264,7 @@ class Sensei_Main {
 			// Sensei requires a reference to the main Sensei plugin file
 			$sensei_main_plugin_file = dirname( dirname( __FILE__ ) ) . '/woothemes-sensei.php';
 
-			self::$_instance = new self( $sensei_main_plugin_file, $args  );
+			self::$_instance = new self( $sensei_main_plugin_file, $args );
 
 		}
 
@@ -438,7 +438,7 @@ class Sensei_Main {
 		 * Load all Template hooks
 		 */
 		if ( ! is_admin() ) {
-			require_once( $this->resolve_path( 'includes/hooks/template.php' ) );
+			require_once $this->resolve_path( 'includes/hooks/template.php' );
 		}
 	}
 
@@ -467,16 +467,18 @@ class Sensei_Main {
 	 */
 	public function register_widgets() {
 		// Widget List (key => value is filename => widget class).
-		$widget_list = apply_filters( 'sensei_registered_widgets_list', array(
-			'course-component' 	=> 'Course_Component',
-				'lesson-component' 	=> 'Lesson_Component',
+		$widget_list = apply_filters(
+			'sensei_registered_widgets_list',
+			array(
+				'course-component'  => 'Course_Component',
+				'lesson-component'  => 'Lesson_Component',
 				'course-categories' => 'Course_Categories',
-				'category-courses' 	=> 'Category_Courses',
+				'category-courses'  => 'Category_Courses',
 			)
 		);
 		foreach ( $widget_list as $key => $value ) {
 			if ( file_exists( $this->plugin_path . 'widgets/widget-woothemes-sensei-' . $key . '.php' ) ) {
-				require_once( $this->plugin_path . 'widgets/widget-woothemes-sensei-' . $key . '.php' );
+				require_once $this->plugin_path . 'widgets/widget-woothemes-sensei-' . $key . '.php';
 				register_widget( 'WooThemes_Sensei_' . $value . '_Widget' );
 			}
 		} // End foreach().
@@ -600,7 +602,8 @@ class Sensei_Main {
 	 */
 	public function ensure_post_thumbnails_support() {
 
-		if ( ! current_theme_supports( 'post-thumbnails' ) ) { add_theme_support( 'post-thumbnails' ); }
+		if ( ! current_theme_supports( 'post-thumbnails' ) ) {
+			add_theme_support( 'post-thumbnails' ); }
 
 	} // End ensure_post_thumbnails_support()
 
@@ -702,7 +705,7 @@ class Sensei_Main {
 				} elseif ( ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
 
 					// users who haven't started the course are allowed to view it
-					$user_allowed                         = true;
+					$user_allowed = true;
 
 				} else {
 
@@ -712,10 +715,10 @@ class Sensei_Main {
 				break;
 			case 'lesson-single':
 				// Check for WC purchase
-				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course',true );
+				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
 
 				$update_course = Sensei_WC::course_update( $lesson_course_id );
-				$is_preview = Sensei_Utils::is_preview_lesson( $post->ID );
+				$is_preview    = Sensei_Utils::is_preview_lesson( $post->ID );
 
 				if ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
 					$user_allowed = true;
@@ -725,8 +728,8 @@ class Sensei_Main {
 
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'woothemes-sensei' );
-					$course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
-					$wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
+					$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+					$wc_post_id                         = get_post_meta( $lesson_course_id, '_course_woocommerce_product', true );
 					if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
 						if ( $is_preview ) {
 							// translators: The placeholder %1$s is a link to the Course.
@@ -747,14 +750,14 @@ class Sensei_Main {
 				} // End if().
 				break;
 			case 'quiz-single':
-				$lesson_id = get_post_meta( $post->ID, '_quiz_lesson',true );
-				$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course',true );
+				$lesson_id        = get_post_meta( $post->ID, '_quiz_lesson', true );
+				$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 
 				$update_course = Sensei_WC::course_update( $lesson_course_id );
 				if ( ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) || sensei_all_access() ) {
 
 					// Check for prerequisite lesson for this quiz
-					$lesson_prerequisite_id = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+					$lesson_prerequisite_id            = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 					$user_lesson_prerequisite_complete = Sensei_Utils::user_completed_lesson( $lesson_prerequisite_id, $current_user->ID );
 
 					// Handle restrictions
@@ -767,7 +770,7 @@ class Sensei_Main {
 						if ( 0 < absint( $lesson_prerequisite_id ) && ( ! $user_lesson_prerequisite_complete ) ) {
 
 							$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'woothemes-sensei' );
-							$lesson_link = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
+							$lesson_link                        = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'woothemes-sensei' ) . '</a>';
 							// translators: The placeholder %1$s is a link to the Lesson.
 							$this->permissions_message['message'] = sprintf( __( 'Please complete the previous %1$s before taking this Quiz.', 'woothemes-sensei' ), $lesson_link );
 
@@ -781,10 +784,10 @@ class Sensei_Main {
 					// Check if the user has started the course
 					if ( is_user_logged_in() && ! Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) && ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) ) {
 
-						$user_allowed = false;
+						$user_allowed                       = false;
 						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'woothemes-sensei' );
-						$course_link = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
-						$wc_post_id = get_post_meta( $lesson_course_id, '_course_woocommerce_product',true );
+						$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+						$wc_post_id                         = get_post_meta( $lesson_course_id, '_course_woocommerce_product', true );
 						if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
 							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
@@ -797,7 +800,7 @@ class Sensei_Main {
 					} // End if().
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'woothemes-sensei' );
-					$course_link = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
+					$course_link                        = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 					// translators: The placeholder %1$s is a link to the Course.
 					$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before taking this Quiz.', 'woothemes-sensei' ), $course_link );
 				} // End if().
@@ -851,7 +854,8 @@ class Sensei_Main {
 	 */
 	public function access_settings() {
 
-		if ( sensei_all_access() ) { return true;
+		if ( sensei_all_access() ) {
+			return true;
 		}
 
 		if ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) {
@@ -874,7 +878,7 @@ class Sensei_Main {
 	 */
 	public function load_class( $class_name = '' ) {
 		if ( '' != $class_name && '' != $this->token ) {
-			require_once( dirname( __FILE__ ) . '/class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php' );
+			require_once dirname( __FILE__ ) . '/class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php';
 		} // End if().
 	} // End load_class()
 
@@ -901,7 +905,7 @@ class Sensei_Main {
 		$statuses = array( '' ); // Default to the WP normal comments
 		// WC excludes these so exclude them too
 		$wc_statuses_to_exclude = array( 'order_note', 'webhook_delivery' );
-		$stati = $wpdb->get_results( "SELECT comment_type FROM {$wpdb->comments} GROUP BY comment_type", ARRAY_A );
+		$stati                  = $wpdb->get_results( "SELECT comment_type FROM {$wpdb->comments} GROUP BY comment_type", ARRAY_A );
 		foreach ( (array) $stati as $status ) {
 			if ( 'sensei_' != substr( $status['comment_type'], 0, 7 ) &&
 				! in_array( $status['comment_type'], $wc_statuses_to_exclude ) ) {
@@ -916,12 +920,12 @@ class Sensei_Main {
 
 		$count = $wpdb->get_results( "SELECT comment_approved, COUNT( * ) AS num_comments FROM {$wpdb->comments} {$where} GROUP BY comment_approved", ARRAY_A );
 
-		$total = 0;
+		$total    = 0;
 		$approved = array(
-			'0' => 'moderated',
-			'1' => 'approved',
-			'spam' => 'spam',
-			'trash' => 'trash',
+			'0'            => 'moderated',
+			'1'            => 'approved',
+			'spam'         => 'spam',
+			'trash'        => 'trash',
 			'post-trashed' => 'post-trashed',
 		);
 
@@ -960,10 +964,10 @@ class Sensei_Main {
 	 * @return void
 	 */
 	public function init_image_sizes() {
-		$course_archive_thumbnail 	= $this->get_image_size( 'course_archive_image' );
-		$course_single_thumbnail	= $this->get_image_size( 'course_single_image' );
-		$lesson_archive_thumbnail 	= $this->get_image_size( 'lesson_archive_image' );
-		$lesson_single_thumbnail	= $this->get_image_size( 'lesson_single_image' );
+		$course_archive_thumbnail = $this->get_image_size( 'course_archive_image' );
+		$course_single_thumbnail  = $this->get_image_size( 'course_single_image' );
+		$lesson_archive_thumbnail = $this->get_image_size( 'lesson_archive_image' );
+		$lesson_single_thumbnail  = $this->get_image_size( 'lesson_single_image' );
 
 		add_image_size( 'course_archive_thumbnail', $course_archive_thumbnail['width'], $course_archive_thumbnail['height'], $course_archive_thumbnail['crop'] );
 		add_image_size( 'course_single_thumbnail', $course_single_thumbnail['width'], $course_single_thumbnail['height'], $course_single_thumbnail['crop'] );
@@ -998,15 +1002,17 @@ class Sensei_Main {
 			$this->settings->settings[ $image_size . '_hard_crop' ] = false;
 		}
 
-		$size = array_filter( array(
-			'width' => $this->settings->settings[ $image_size . '_width' ],
-			'height' => $this->settings->settings[ $image_size . '_height' ],
-			'crop' => $this->settings->settings[ $image_size . '_hard_crop' ],
-		) );
+		$size = array_filter(
+			array(
+				'width'  => $this->settings->settings[ $image_size . '_width' ],
+				'height' => $this->settings->settings[ $image_size . '_height' ],
+				'crop'   => $this->settings->settings[ $image_size . '_hard_crop' ],
+			)
+		);
 
-		$size['width'] 	= isset( $size['width'] ) ? $size['width'] : '100';
+		$size['width']  = isset( $size['width'] ) ? $size['width'] : '100';
 		$size['height'] = isset( $size['height'] ) ? $size['height'] : '100';
-		$size['crop'] 	= isset( $size['crop'] ) ? $size['crop'] : 0;
+		$size['crop']   = isset( $size['crop'] ) ? $size['crop'] : 0;
 
 		return apply_filters( 'sensei_get_image_size_' . $image_size, $size );
 	}
@@ -1071,7 +1077,7 @@ class Sensei_Main {
 
 		if ( ! class_exists( 'Sensei_Modules' ) && 'Sensei_Modules' !== $class ) {
 			// Load the modules class.
-			require_once( dirname( __FILE__ ) . '/class-sensei-modules.php' );
+			require_once dirname( __FILE__ ) . '/class-sensei-modules.php';
 			$this->modules = new Sensei_Core_Modules( $this->main_plugin_file_name );
 
 		} else {
@@ -1088,11 +1094,11 @@ class Sensei_Main {
 	 * @since 1.8.0
 	 */
 	public function disable_sensei_modules_extension() {
-	?>
+		?>
 		<div class="notice updated fade">
 			<p>
 				<?php
-				$plugin_manage_url = admin_url() . 'plugins.php#sensei-modules';
+				$plugin_manage_url   = admin_url() . 'plugins.php#sensei-modules';
 				$plugin_link_element = '<a href="' . esc_url( $plugin_manage_url ) . '" >plugins page</a> ';
 				?>
 				<strong> Modules are now included in Sensei,</strong> so you no longer need the Sensei Modules extension.
@@ -1100,7 +1106,8 @@ class Sensei_Main {
 			</p>
 		</div>
 
-	<?php }//end disable_sensei_modules_extension()
+		<?php
+	}//end disable_sensei_modules_extension()
 
 	/**
 	 * Sensei wide rewrite flush call.
@@ -1231,7 +1238,7 @@ class Sensei_Main {
 	 *
 	 * @deprecated since 1.9.0
 	 * @since  1.0.0
-	 * @param  int 			$course_id  (default: 0).
+	 * @param  int          $course_id  (default: 0).
 	 * @param  array/Object $order_user (default: array()) Specific user's data.
 	 * @return bool|int
 	 */
@@ -1297,7 +1304,7 @@ class Sensei_Main {
 	 * @return string
 	 **/
 	public function virtual_order_payment_complete( $order_status, $order_id ) {
-		return  Sensei_WC::virtual_order_payment_complete( $order_status, $order_id );
+		return Sensei_WC::virtual_order_payment_complete( $order_status, $order_id );
 	}
 
 	/**
@@ -1420,7 +1427,7 @@ class Sensei_Main {
 		$this->updates->assign_role_caps();
 
 		// Flush rules.
-		add_action( 'activated_plugin' , array( __CLASS__, 'activation_flush_rules' ), 10 );
+		add_action( 'activated_plugin', array( __CLASS__, 'activation_flush_rules' ), 10 );
 	}
 
 	/**
@@ -1429,7 +1436,7 @@ class Sensei_Main {
 	 * @since 1.9.12
 	 */
 	public function sensei_load_template_functions() {
-		require_once( $this->resolve_path( 'includes/template-functions.php' ) );
+		require_once $this->resolve_path( 'includes/template-functions.php' );
 	}
 
 	/**

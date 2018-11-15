@@ -43,7 +43,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	 */
 	public function __construct( $data = array() ) {
 		$this->fields = self::get_field_declarations( get_class( $this ) );
-		$this->data = array();
+		$this->data   = array();
 
 		if ( is_array( $data ) ) {
 			$model_data = $data;
@@ -74,7 +74,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 		if ( is_numeric( $entity ) ) {
 			$data_store = $this->get_data_store();
 			return $data_store->get_entity( $entity );
-		} else if ( is_a( $entity, 'WP_Post' ) ) {
+		} elseif ( is_a( $entity, 'WP_Post' ) ) {
 			return $entity->to_array();
 		} else {
 			throw new Sensei_Domain_Models_Exception( 'does not understand entity' );
@@ -117,8 +117,8 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 			return;
 		}
 
-		$field_declaration = $this->fields[ $field ];
-		$val = $field_declaration->cast_value( $value );
+		$field_declaration                      = $this->fields[ $field ];
+		$val                                    = $field_declaration->cast_value( $value );
 		$this->data[ $field_declaration->name ] = $val;
 	}
 
@@ -130,7 +130,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	 * @return Sensei_Domain_Models_Model_Abstract
 	 */
 	public function merge_updates_from_request( $request, $updating = false ) {
-		$fields = self::get_field_declarations( get_class( $this ) );
+		$fields     = self::get_field_declarations( get_class( $this ) );
 		$field_data = array();
 		foreach ( $fields as $field ) {
 			if ( $field->is_derived_field() ) {
@@ -157,7 +157,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 		$map_from = $field_declaration->get_name_to_map_from();
 		if ( in_array( $map_from, $post_array_keys ) ) {
 			$this->set_value( $key, $model_data[ $map_from ] );
-		} else if ( in_array( $key, $post_array_keys ) ) {
+		} elseif ( in_array( $key, $post_array_keys ) ) {
 			$this->set_value( $key, $model_data[ $key ] );
 		} else {
 			$this->set_value( $key, $field_declaration->get_default_value() );
@@ -175,9 +175,9 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 			if ( $field_declaration->is_meta_field() ) {
 				$value = $this->get_data_store()->get_meta_field_value( $this, $field_declaration );
 				$this->set_value( $field_name, $value );
-			} else if ( $field_declaration->is_derived_field() ) {
+			} elseif ( $field_declaration->is_derived_field() ) {
 				$map_from = $field_declaration->get_name_to_map_from();
-				$value = call_user_func( array( $this, $map_from ) );
+				$value    = call_user_func( array( $this, $map_from ) );
 				$this->set_value( $field_name, $value );
 			} else {
 				// load the default value for the field.
@@ -192,7 +192,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	 * @return int|WP_Error Entity ID on success. Value 0 or WP_Error on failure.
 	 */
 	public function upsert() {
-		$fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field_Declaration::FIELD );
+		$fields      = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field_Declaration::FIELD );
 		$meta_fields = $this->map_field_types_for_upserting( Sensei_Domain_Models_Field_Declaration::META );
 		return $this->get_data_store()->upsert( $this, $fields, $meta_fields );
 	}
@@ -229,7 +229,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	private function map_field_types_for_upserting( $field_type ) {
 		$field_values_to_insert = array();
 		foreach ( self::get_field_declarations( get_class( $this ), $field_type ) as $field_declaration ) {
-			$what_to_map_to = $field_declaration->get_name_to_map_from(); // Field name.
+			$what_to_map_to                            = $field_declaration->get_name_to_map_from(); // Field name.
 			$field_values_to_insert[ $what_to_map_to ] = $this->get_value_for( $field_declaration->name );
 		}
 		return $field_values_to_insert;
@@ -292,15 +292,15 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 				// translators: Placeholder %s is the name of the field.
 				sprintf( __( '%s cannot be empty', 'woothemes-sensei' ), $field_declaration->name )
 			);
-		} else if ( ! $field_declaration->required && ! empty( $value ) ) {
+		} elseif ( ! $field_declaration->required && ! empty( $value ) ) {
 			foreach ( $field_declaration->validations as $method_name ) {
 				$result = call_user_func( array( $this, $method_name ), $value );
 				if ( is_wp_error( $result ) ) {
 					$result->add_data(
 						array(
 							'reason' => $result->get_error_messages(),
-							'field' => $field_declaration->name,
-							'value' => $value,
+							'field'  => $field_declaration->name,
+							'value'  => $value,
 						)
 					);
 					return $result;
@@ -319,7 +319,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	public static function initialize_field_map( $declared_field_builders ) {
 		$fields = array();
 		foreach ( $declared_field_builders as $field_builder ) {
-			$field = $field_builder->build();
+			$field                  = $field_builder->build();
 			$fields[ $field->name ] = $field;
 		}
 		return $fields;

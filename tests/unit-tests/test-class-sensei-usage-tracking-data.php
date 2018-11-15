@@ -152,7 +152,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetMinMaxQuestionsMinMaxSame() {
 		$this->factory->get_course_with_lessons(
 			array(
-				'lesson_count' => 1,
+				'lesson_count'   => 1,
 				'question_count' => 2,
 			)
 		);
@@ -173,14 +173,14 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$this->factory->get_course_with_lessons(
 			array(
-				'lesson_count' => 1,
+				'lesson_count'   => 1,
 				'question_count' => 0,
 			)
 		);
 		$this->factory->get_course_with_lessons(
 			array(
 				'question_count' => array( 1, 2 ),
-				'lesson_count' => 2,
+				'lesson_count'   => 2,
 			)
 		);
 		$this->factory->get_course_with_lessons(
@@ -427,7 +427,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_quiz_setting_non_empty_count
 	 */
 	public function testQuizSettingCountsWithBadLesson() {
-		$values = array(
+		$values           = array(
 			'_pass_required'         => '',
 			'_quiz_passmark'         => 70,
 			'_show_questions'        => '',
@@ -1096,7 +1096,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$enrolments = 5;
 
 		// Create course and users.
-		$course_id = $this->factory->post->create(
+		$course_id   = $this->factory->post->create(
 			array(
 				'post_status' => 'publish',
 				'post_type'   => 'course',
@@ -1108,9 +1108,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		foreach ( $subscribers as $subscriber ) {
 			$this->factory->comment->create(
 				array(
-					'user_id'          => $subscriber,
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
+					'user_id'         => $subscriber,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
 				)
 			);
 		}
@@ -1129,22 +1129,22 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$enrolments = 3;
 
 		// Create course and users.
-		$course_id = $this->factory->post->create(
+		$course_id      = $this->factory->post->create(
 			array(
 				'post_status' => 'publish',
 				'post_type'   => 'course',
 			)
 		);
 		$administrators = $this->factory->user->create_many( 2, array( 'role' => 'administrator' ) );
-		$subscribers = $this->factory->user->create_many( $enrolments, array( 'role' => 'subscriber' ) );
+		$subscribers    = $this->factory->user->create_many( $enrolments, array( 'role' => 'subscriber' ) );
 
 		// Enroll users in course.
 		foreach ( array_merge( $administrators, $subscribers ) as $user ) {
 			$this->factory->comment->create(
 				array(
-					'user_id'          => $user,
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
+					'user_id'         => $user,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
 				)
 			);
 		}
@@ -1160,10 +1160,10 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetCourseEnrolmentsPublishedCourses() {
 		// Create course and users.
-		$course_id = $this->factory->post->create(
+		$course_id   = $this->factory->post->create(
 			array(
 				'post_status' => 'draft',
-				'post_type' => 'course',
+				'post_type'   => 'course',
 			)
 		);
 		$subscribers = $this->factory->user->create_many( 5, array( 'role' => 'subscriber' ) );
@@ -1172,9 +1172,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		foreach ( $subscribers as $subscriber ) {
 			$this->factory->comment->create(
 				array(
-					'user_id'          => $subscriber,
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
+					'user_id'         => $subscriber,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
 				)
 			);
 		}
@@ -1192,7 +1192,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$last_enrolment_date = '2018-11-09 09:48:05';
 
 		// Create course and users.
-		$course_id = $this->factory->post->create(
+		$course_id   = $this->factory->post->create(
 			array(
 				'post_status' => 'publish',
 				'post_type'   => 'course',
@@ -1205,9 +1205,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		foreach ( $subscribers as $subscriber ) {
 			$comment_ids[] = $this->factory->comment->create(
 				array(
-					'user_id'          => $subscriber,
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
+					'user_id'         => $subscriber,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
 				)
 			);
 		}
@@ -1230,23 +1230,23 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$last_enrolment_date = '2017-05-23 10:59:00';
 
 		// Create course and users.
-		$course_id = $this->factory->post->create(
+		$course_id      = $this->factory->post->create(
 			array(
 				'post_status' => 'publish',
 				'post_type'   => 'course',
 			)
 		);
-		$subscribers = $this->factory->user->create_many( 1, array( 'role' => 'subscriber' ) );
+		$subscribers    = $this->factory->user->create_many( 1, array( 'role' => 'subscriber' ) );
 		$administrators = $this->factory->user->create_many( 2, array( 'role' => 'administrator' ) );
-		$comment_ids = array();
+		$comment_ids    = array();
 
 		// Enroll users in course.
 		foreach ( array_merge( $subscribers, $administrators ) as $user ) {
 			$comment_ids[] = $this->factory->comment->create(
 				array(
-					'user_id'          => $user,
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
+					'user_id'         => $user,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
 				)
 			);
 		}
@@ -1266,10 +1266,10 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetLastCourseEnrolmentPublishedCourses() {
 		// Create course and users.
-		$course_id = $this->factory->post->create(
+		$course_id   = $this->factory->post->create(
 			array(
 				'post_status' => 'draft',
-				'post_type' => 'course',
+				'post_type'   => 'course',
 			)
 		);
 		$subscribers = $this->factory->user->create_many( 3, array( 'role' => 'subscriber' ) );
@@ -1279,9 +1279,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		foreach ( $subscribers as $subscriber ) {
 			$comment_ids[] = $this->factory->comment->create(
 				array(
-					'user_id'          => $subscriber,
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
+					'user_id'         => $subscriber,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
 				)
 			);
 		}
@@ -1303,7 +1303,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$first_enrolment_date = '2017-04-13 19:07:43';
 
 		// Create course and users.
-		$course_id = $this->factory->post->create(
+		$course_id   = $this->factory->post->create(
 			array(
 				'post_status' => 'publish',
 				'post_type'   => 'course',
@@ -1316,9 +1316,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		foreach ( $subscribers as $subscriber ) {
 			$comment_ids[] = $this->factory->comment->create(
 				array(
-					'user_id'          => $subscriber,
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
+					'user_id'         => $subscriber,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
 				)
 			);
 		}
@@ -1341,23 +1341,23 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$first_enrolment_date = '2018-11-09 09:48:05';
 
 		// Create course and users.
-		$course_id = $this->factory->post->create(
+		$course_id      = $this->factory->post->create(
 			array(
 				'post_status' => 'publish',
 				'post_type'   => 'course',
 			)
 		);
 		$administrators = $this->factory->user->create_many( 2, array( 'role' => 'administrator' ) );
-		$subscribers = $this->factory->user->create_many( 1, array( 'role' => 'subscriber' ) );
-		$comment_ids = array();
+		$subscribers    = $this->factory->user->create_many( 1, array( 'role' => 'subscriber' ) );
+		$comment_ids    = array();
 
 		// Enroll users in course.
 		foreach ( array_merge( $administrators, $subscribers ) as $user ) {
 			$comment_ids[] = $this->factory->comment->create(
 				array(
-					'user_id'          => $user,
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
+					'user_id'         => $user,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
 				)
 			);
 		}
@@ -1377,10 +1377,10 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetFirstCourseEnrolmentPublishedCourses() {
 		// Create course and users.
-		$course_id = $this->factory->post->create(
+		$course_id   = $this->factory->post->create(
 			array(
 				'post_status' => 'draft',
-				'post_type' => 'course',
+				'post_type'   => 'course',
 			)
 		);
 		$subscribers = $this->factory->user->create_many( 3, array( 'role' => 'subscriber' ) );
@@ -1390,9 +1390,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		foreach ( $subscribers as $subscriber ) {
 			$comment_ids[] = $this->factory->comment->create(
 				array(
-					'user_id'          => $subscriber,
-					'comment_post_ID'  => $course_id,
-					'comment_type'     => 'sensei_course_status',
+					'user_id'         => $subscriber,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
 				)
 			);
 		}
