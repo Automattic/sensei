@@ -95,3 +95,8 @@ jobs:
       script:
         - composer install
         - ./vendor/bin/phpcs -sn --sniffs=WordPress.Security.NonceVerification .
+    - stage: test
+      php: 7.2
+      script:
+        - composer install
+        - ./scripts/linter-ci
