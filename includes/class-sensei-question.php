@@ -377,7 +377,7 @@ class Sensei_Question {
 	 * @param  array $request Current request
 	 * @return array          Modified request
 	 */
-	public function filter_actions( $request ) {
+	public function filter_actions($request) {
 		global $typenow;
 
 		if ( is_admin() && 'question' == $typenow ) {
