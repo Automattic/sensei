@@ -107,6 +107,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
 		$row_data         = apply_filters( 'sensei_learner_admin_get_row_data', $row_data, $item, $this );
 		$escaped_row_data = array();
 
+		add_filter( 'safe_style_css', array( $this, 'get_allowed_css' ) );
+
 		foreach ( $row_data as $key => $data ) {
 			$escaped_row_data[ $key ] = wp_kses(
 				$data,
@@ -129,6 +131,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
 				)
 			);
 		}
+
+		remove_filter( 'safe_style_css', array( $this, 'get_allowed_css' ) );
 
 		return $escaped_row_data;
 	}
@@ -286,6 +290,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
 
 			return $html . '<div class="learner-course-overview-detail" style="display:none">' . $courses . '</div>';
 		}
+	}
+
+	private function get_allowed_css( $style ) {
+		$styles[] = 'display';
+
+		return $styles;
 	}
 
 	public function parse_query_args() {
