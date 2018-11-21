@@ -1194,7 +1194,7 @@ class Sensei_Admin {
 									$new_course_order    = array();
 
 									$html .= '<form id="editgrouping" method="post" action="'
-										. admin_url( 'admin-post.php' ) . '" class="validate">' . "\n";
+										. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
 									$html .= '<ul class="sortable-course-list">' . "\n";
 									$count = 0;
 									foreach ( $all_course_ids as $course_id ) {
@@ -1227,6 +1227,7 @@ class Sensei_Admin {
 									$html .= wp_nonce_field( 'order_courses', '_wpnonce', true, false ) . "\n";
 									$html .= '<input type="hidden" name="course-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
 									$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save course order', 'woothemes-sensei' ) . '" />' . "\n";
+									$html .= '</form>';
 								}
 
 								echo wp_kses(
@@ -1234,6 +1235,13 @@ class Sensei_Admin {
 									array_merge(
 										wp_kses_allowed_html( 'post' ),
 										array(
+											// Explicitly allow form tag for WP.com.
+											'form'   => array(
+												'action' => array(),
+												'class'  => array(),
+												'id'     => array(),
+												'method' => array(),
+											),
 											'input' => array(
 												'class' => array(),
 												'name'  => array(),
@@ -1368,7 +1376,7 @@ class Sensei_Admin {
 										$order_string = $this->get_lesson_order( $course_id );
 
 										$html .= '<form id="editgrouping" method="post" action="'
-											. admin_url( 'admin-post.php' ) . '" class="validate">' . "\n";
+											. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
 
 										$displayed_lessons = array();
 
@@ -1489,40 +1497,48 @@ class Sensei_Admin {
 											$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
 											$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
 											$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
+											$html .= '</form>';
 										}
 									}
 								}
 
-																			echo wp_kses(
-																				$html,
-																				array_merge(
-																					wp_kses_allowed_html( 'post' ),
-																					array(
-																						'input'  => array(
-																							'class' => array(),
-																							'name'  => array(),
-																							'type'  => array(),
-																							'value' => array(),
-																						),
-																						'option' => array(
-																							'selected' => array(),
-																							'value'    => array(),
-																						),
-																						'select' => array(
-																							'id'   => array(),
-																							'name' => array(),
-																						),
-																						'span'   => array(
-																							'rel'   => array(),
-																							'style' => array(),
-																						),
-																						'ul'     => array(
-																							'class'          => array(),
-																							'data-module-id' => array(),
-																						),
-																					)
-																				)
-																			);
+								echo wp_kses(
+									$html,
+									array_merge(
+										wp_kses_allowed_html( 'post' ),
+										array(
+											// Explicitly allow form tag for WP.com.
+											'form'   => array(
+												'action' => array(),
+												'class'  => array(),
+												'id'     => array(),
+												'method' => array(),
+											),
+											'input'  => array(
+												'class' => array(),
+												'name'  => array(),
+												'type'  => array(),
+												'value' => array(),
+											),
+											'option' => array(
+												'selected' => array(),
+												'value'    => array(),
+											),
+											'select' => array(
+												'id'   => array(),
+												'name' => array(),
+											),
+											'span'   => array(
+												'rel'   => array(),
+												'style' => array(),
+											),
+											'ul'     => array(
+												'class'          => array(),
+												'data-module-id' => array(),
+											),
+										)
+									)
+								);
 
 								?>
 		</div>
