@@ -979,7 +979,7 @@ class Sensei_Core_Modules {
 											}
 
 											$html .= '<form id="editgrouping" method="post" action="'
-												. admin_url( 'admin-post.php' )
+												. esc_url( admin_url( 'admin-post.php' ) )
 												. '" class="validate">' . "\n";
 											$html .= '<ul class="sortable-module-list">' . "\n";
 											$count = 0;
@@ -1013,6 +1013,13 @@ class Sensei_Core_Modules {
 									array_merge(
 										wp_kses_allowed_html( 'post' ),
 										array(
+											// Explicitly allow form tag for WP.com.
+											'form'   => array(
+												'action' => array(),
+												'class'  => array(),
+												'id'     => array(),
+												'method' => array(),
+											),
 											'input'  => array(
 												'class' => array(),
 												'name'  => array(),
