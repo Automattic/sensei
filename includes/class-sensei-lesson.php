@@ -2012,6 +2012,10 @@ class Sensei_Lesson {
 						'type'        => array(),
 						'value'       => array(),
 					),
+					// Explicitly allow label tag for WP.com.
+					'label'    => array(
+						'for' => array(),
+					),
 					'option'   => array(
 						'selected' => array(),
 						'value'    => array(),
