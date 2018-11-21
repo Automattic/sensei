@@ -939,8 +939,8 @@ class Sensei_Lesson {
 				array(
 					'button' => array(
 						'class'                     => array(),
-						'data-uploader_button_text' => array(),
-						'data-uploader_title'       => array(),
+						'data-uploader-button-text' => array(),
+						'data-uploader-title'       => array(),
 						'id'                        => array(),
 					),
 					'input'  => array(
@@ -1159,7 +1159,7 @@ class Sensei_Lesson {
 							// Question media
 							$html     .= '<div>';
 								$html .= '<label for="question_' . esc_attr( $question_counter ) . '_media_button">' . esc_html__( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
-								$html .= '<button id="question_' . esc_attr( $question_counter ) . '_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . esc_attr__( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . esc_attr__( 'Add to question', 'woothemes-sensei' ) . '">' . esc_html( $question_media_add_button ) . '</button>';
+								$html .= '<button id="question_' . esc_attr( $question_counter ) . '_media_button" class="upload_media_file_button button-secondary" data-uploader-title="' . esc_attr__( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader-button-text="' . esc_attr__( 'Add to question', 'woothemes-sensei' ) . '">' . esc_html( $question_media_add_button ) . '</button>';
 								$html .= '<button id="question_' . esc_attr( $question_counter ) . '_media_button_delete" class="delete_media_file_button button-secondary ' . esc_attr( $question_media_delete_class ) . '">' . esc_html__( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
 								$html .= '<span id="question_' . esc_attr( $question_counter ) . '_media_link" class="question_media_link ' . esc_attr( $question_media_link_class ) . '">' . wp_kses_post( $question_media_link ) . '</span>';
 								$html .= '<br/><img id="question_' . esc_attr( $question_counter ) . '_media_preview" class="question_media_preview ' . esc_attr( $question_media_thumb_class ) . '" src="' . esc_url( $question_media_thumb ) . '" /><br/>';
@@ -1195,8 +1195,8 @@ class Sensei_Lesson {
 				array(
 					'button' => array(
 						'class'                     => array(),
-						'data-uploader_button_text' => array(),
-						'data-uploader_title'       => array(),
+						'data-uploader-button-text' => array(),
+						'data-uploader-title'       => array(),
 						'id'                        => array(),
 					),
 					'input'  => array(
@@ -1286,7 +1286,7 @@ class Sensei_Lesson {
 						// Question media
 						$html     .= '<p>';
 							$html .= '<label for="question_add_new_media_button">' . esc_html__( 'Question media:', 'woothemes-sensei' ) . '</label><br/>';
-							$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader_title="' . esc_attr__( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader_button_text="' . esc_attr__( 'Add to question', 'woothemes-sensei' ) . '">' . esc_html__( 'Add file', 'woothemes-sensei' ) . '</button>';
+							$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader-title="' . esc_attr__( 'Add file to question', 'woothemes-sensei' ) . '" data-uploader-button-text="' . esc_attr__( 'Add to question', 'woothemes-sensei' ) . '">' . esc_html__( 'Add file', 'woothemes-sensei' ) . '</button>';
 							$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . esc_html__( 'Delete file', 'woothemes-sensei' ) . '</button><br/>';
 							$html .= '<span id="question_add_new_media_link" class="question_media_link hidden"></span>';
 							$html .= '<br/><img id="question_add_new_media_preview" class="question_media_preview hidden" src="" /><br/>';
