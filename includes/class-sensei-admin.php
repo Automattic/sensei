@@ -1227,6 +1227,7 @@ class Sensei_Admin {
 									$html .= wp_nonce_field( 'order_courses', '_wpnonce', true, false ) . "\n";
 									$html .= '<input type="hidden" name="course-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
 									$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save course order', 'woothemes-sensei' ) . '" />' . "\n";
+									$html .= '</form>';
 								}
 
 								echo wp_kses(
@@ -1496,6 +1497,7 @@ class Sensei_Admin {
 											$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
 											$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
 											$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'woothemes-sensei' ) . '" />' . "\n";
+											$html .= '</form>';
 										}
 									}
 								}
