@@ -937,13 +937,13 @@ class Sensei_Lesson {
 			array_merge(
 				wp_kses_allowed_html( 'post' ),
 				array(
-					'button' => array(
+					'button'   => array(
 						'class'                     => array(),
 						'data-uploader_button_text' => array(),
 						'data-uploader_title'       => array(),
 						'id'                        => array(),
 					),
-					'input'  => array(
+					'input'    => array(
 						'checked'     => array(),
 						'class'       => array(),
 						'id'          => array(),
@@ -956,13 +956,20 @@ class Sensei_Lesson {
 						'type'        => array(),
 						'value'       => array(),
 					),
-					'option' => array(
+					'option'   => array(
 						'value' => array(),
 					),
-					'select' => array(
+					'select'   => array(
 						'class' => array(),
 						'id'    => array(),
 						'name'  => array(),
+					),
+					// Explicitly allow textarea tag for WP.com.
+					'textarea' => array(
+						'class' => array(),
+						'id'    => array(),
+						'name'  => array(),
+						'rows'  => array(),
 					),
 				)
 			)
@@ -1193,13 +1200,13 @@ class Sensei_Lesson {
 			array_merge(
 				wp_kses_allowed_html( 'post' ),
 				array(
-					'button' => array(
+					'button'   => array(
 						'class'                     => array(),
 						'data-uploader_button_text' => array(),
 						'data-uploader_title'       => array(),
 						'id'                        => array(),
 					),
-					'input'  => array(
+					'input'    => array(
 						'checked' => array(),
 						'class'   => array(),
 						'id'      => array(),
@@ -1209,6 +1216,13 @@ class Sensei_Lesson {
 						'size'    => array(),
 						'type'    => array(),
 						'value'   => array(),
+					),
+					// Explicitly allow textarea tag for WP.com.
+					'textarea' => array(
+						'class' => array(),
+						'id'    => array(),
+						'name'  => array(),
+						'rows'  => array(),
 					),
 				)
 			)
