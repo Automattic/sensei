@@ -1817,6 +1817,10 @@ class Sensei_Course {
 									'type'  => array(),
 									'value' => array(),
 								),
+								// Explicitly allow nav tag for WP.com.
+								'nav'   => array(
+									'class' => array(),
+								),
 							)
 						)
 					);
@@ -1848,9 +1852,18 @@ class Sensei_Course {
 
 				<?php
 				if ( '' != $complete_html ) {
-
-					echo wp_kses_post( $complete_html );
-
+					echo wp_kses(
+						$complete_html,
+						array_merge(
+							wp_kses_allowed_html( 'post' ),
+							array(
+								// Explicitly allow nav tag for WP.com.
+								'nav' => array(
+									'class' => array(),
+								),
+							)
+						)
+					);
 				} else {
 					?>
 
