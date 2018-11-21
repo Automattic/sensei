@@ -270,6 +270,13 @@ class Sensei_Messages {
 			array_merge(
 				wp_kses_allowed_html( 'post' ),
 				array(
+					// Explicitly allow form tag for WP.com.
+					'form'     => array(
+						'action' => array(),
+						'class'  => array(),
+						'method' => array(),
+						'name'   => array(),
+					),
 					'input'    => array(
 						'class' => array(),
 						'name'  => array(),

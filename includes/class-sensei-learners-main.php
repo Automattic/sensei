@@ -319,6 +319,10 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 							'data-post-type'  => array(),
 							'data-user-id'    => array(),
 						),
+						// Explicitly allow form tag for WP.com.
+						'form'  => array(
+							'class' => array(),
+						),
 						'input' => array(
 							'class' => array(),
 							'type'  => array(),

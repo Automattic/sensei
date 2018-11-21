@@ -1805,12 +1805,21 @@ class Sensei_Course {
 						array_merge(
 							wp_kses_allowed_html( 'post' ),
 							array(
+								// Explicitly allow form tag for WP.com.
+								'form'  => array(
+									'action' => array(),
+									'method' => array(),
+								),
 								'input' => array(
 									'class' => array(),
 									'id'    => array(),
 									'name'  => array(),
 									'type'  => array(),
 									'value' => array(),
+								),
+								// Explicitly allow nav tag for WP.com.
+								'nav'   => array(
+									'class' => array(),
 								),
 							)
 						)
@@ -1843,9 +1852,18 @@ class Sensei_Course {
 
 				<?php
 				if ( '' != $complete_html ) {
-
-					echo wp_kses_post( $complete_html );
-
+					echo wp_kses(
+						$complete_html,
+						array_merge(
+							wp_kses_allowed_html( 'post' ),
+							array(
+								// Explicitly allow nav tag for WP.com.
+								'nav' => array(
+									'class' => array(),
+								),
+							)
+						)
+					);
 				} else {
 					?>
 
@@ -2221,7 +2239,7 @@ class Sensei_Course {
 				<a href="<?php echo esc_url( get_permalink() ); ?>">
 					<?php esc_html_e( 'Preview this course', 'woothemes-sensei' ); ?>
 				</a>
-				- 
+				-
 				<?php
 					// translators: Placeholder is the number of preview lessons.
 					echo esc_html( sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ) );
