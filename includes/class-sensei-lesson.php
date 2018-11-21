@@ -1888,7 +1888,22 @@ class Sensei_Lesson {
 		$html .= '<textarea id="' . esc_attr( $field_name ) . '" name="' . esc_attr( $field_name ) . '" rows="4" cols="40" class="answer_feedback widefat">' . esc_textarea( $feedback ) . '</textarea>';
 		$html .= '</p>';
 
-		return wp_kses_post( $html );
+		return wp_kses(
+			$html,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					// Explicitly allow textarea tag for WP.com.
+					'textarea' => array(
+						'class' => array(),
+						'cols'  => array(),
+						'id'    => array(),
+						'name'  => array(),
+						'rows'  => array(),
+					),
+				)
+			)
+		);
 	}
 
 	public function question_get_answer_id() {
