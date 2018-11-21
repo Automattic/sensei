@@ -1837,7 +1837,7 @@ class Sensei_Lesson {
 			array_merge(
 				wp_kses_allowed_html( 'post' ),
 				array(
-					'input' => array(
+					'input'    => array(
 						'checked' => array(),
 						'class'   => array(),
 						'id'      => array(),
@@ -1846,6 +1846,14 @@ class Sensei_Lesson {
 						'size'    => array(),
 						'type'    => array(),
 						'value'   => array(),
+					),
+					// Explicitly allow textarea tag for WP.com.
+					'textarea' => array(
+						'class' => array(),
+						'cols'  => array(),
+						'id'    => array(),
+						'name'  => array(),
+						'rows'  => array(),
 					),
 				)
 			)
