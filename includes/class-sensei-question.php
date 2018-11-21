@@ -170,8 +170,8 @@ class Sensei_Question {
 				array(
 					'button' => array(
 						'class'                     => array(),
-						'data-uploader_button_text' => array(),
-						'data-uploader_title'       => array(),
+						'data-uploader-button-text' => array(),
+						'data-uploader-title'       => array(),
 						'id'                        => array(),
 					),
 					'input'  => array(
