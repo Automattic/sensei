@@ -455,11 +455,15 @@ class Sensei_Lesson {
 
 		 // Sanitize and setup the post data
 		$_POST = stripslashes_deep( $_POST );
+
+		// Retrieve the update lesson.
+		$lesson = get_post( $post_id );
+
 		if ( isset( $_POST['quiz_id'] ) && ( 0 < absint( $_POST['quiz_id'] ) ) ) {
 			$quiz_id = absint( $_POST['quiz_id'] );
 		} // End If Statement
-		$post_title   = esc_html( $_POST['post_title'] );
-		$post_status  = esc_html( $_POST['post_status'] );
+		$post_title   = esc_html( $lesson->post_title );
+		$post_status  = esc_html( $lesson->post_status );
 		$post_content = '';
 
 		// Setup Query Arguments
