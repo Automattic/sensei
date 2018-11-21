@@ -58,7 +58,7 @@ if ( have_posts() ) {
 
 				<p>
 
-					<?php echo esc_html( get_the_excerpt() ); ?>
+					<?php echo wp_kses_post( get_the_excerpt() ); ?>
 
 				</p>
 
