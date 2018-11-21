@@ -127,6 +127,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Tabl
 							'type'  => array(),
 							'value' => array(),
 						),
+						// Explicitly allow label tag for WP.com.
+						'label' => array(
+							'class' => array(),
+							'for'   => array(),
+						),
 					)
 				)
 			);
