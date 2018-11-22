@@ -3645,7 +3645,7 @@ class Sensei_Lesson {
 		$html .= '<span class="input-text-wrap">';
 		$html .= $field;
 		$html .= '</span>';
-		$html .= '</label></div>';
+		$html .= '</div>';
 
 		return wp_kses(
 			$html,
