@@ -198,6 +198,10 @@ class Sensei_Lesson {
 						'type'  => array(),
 						'value' => array(),
 					),
+					// Explicitly allow label tag for WP.com.
+					'label'    => array(
+						'for' => array(),
+					),
 					'option'   => array(
 						'selected' => array(),
 						'value'    => array(),
@@ -311,6 +315,10 @@ class Sensei_Lesson {
 						'name'    => array(),
 						'type'    => array(),
 						'value'   => array(),
+					),
+					// Explicitly allow label tag for WP.com.
+					'label' => array(
+						'for' => array(),
 					),
 				)
 			)
@@ -790,6 +798,10 @@ class Sensei_Lesson {
 						'type'  => array(),
 						'value' => array(),
 					),
+					// Explicitly allow label tag for WP.com.
+					'label'    => array(
+						'for' => array(),
+					),
 					'optgroup' => array(
 						'label' => array(),
 					),
@@ -956,7 +968,11 @@ class Sensei_Lesson {
 						'type'        => array(),
 						'value'       => array(),
 					),
-					'option'   => array(
+					// Explicitly allow label tag for WP.com.
+					'label'  => array(
+						'for' => array(),
+					),
+					'option' => array(
 						'value' => array(),
 					),
 					'select'   => array(
@@ -1217,13 +1233,16 @@ class Sensei_Lesson {
 						'type'    => array(),
 						'value'   => array(),
 					),
+					// Explicitly allow label tag for WP.com.
+					'label'  => array(
+						'for' => array(),
+					),
 					// Explicitly allow textarea tag for WP.com.
 					'textarea' => array(
 						'class' => array(),
 						'id'    => array(),
 						'name'  => array(),
 						'rows'  => array(),
-					),
 				)
 			)
 		);
