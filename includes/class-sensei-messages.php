@@ -190,6 +190,10 @@ class Sensei_Messages {
 						'type'        => array(),
 						'value'       => array(),
 					),
+					// Explicitly allow label tag for WP.com.
+					'label'    => array(
+						'for' => array(),
+					),
 					'option'   => array(
 						'selected' => array(),
 						'value'    => array(),

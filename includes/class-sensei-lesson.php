@@ -198,6 +198,10 @@ class Sensei_Lesson {
 						'type'  => array(),
 						'value' => array(),
 					),
+					// Explicitly allow label tag for WP.com.
+					'label'    => array(
+						'for' => array(),
+					),
 					'option'   => array(
 						'selected' => array(),
 						'value'    => array(),
@@ -311,6 +315,10 @@ class Sensei_Lesson {
 						'name'    => array(),
 						'type'    => array(),
 						'value'   => array(),
+					),
+					// Explicitly allow label tag for WP.com.
+					'label' => array(
+						'for' => array(),
 					),
 				)
 			)
@@ -794,6 +802,10 @@ class Sensei_Lesson {
 						'type'  => array(),
 						'value' => array(),
 					),
+					// Explicitly allow label tag for WP.com.
+					'label'    => array(
+						'for' => array(),
+					),
 					'optgroup' => array(
 						'label' => array(),
 					),
@@ -960,7 +972,12 @@ class Sensei_Lesson {
 						'type'        => array(),
 						'value'       => array(),
 					),
-					'option'   => array(
+					// Explicitly allow label tag for WP.com.
+					'label'  => array(
+						'class' => array(),
+						'for'   => array(),
+					),
+					'option' => array(
 						'value' => array(),
 					),
 					'select'   => array(
@@ -1220,6 +1237,11 @@ class Sensei_Lesson {
 						'size'    => array(),
 						'type'    => array(),
 						'value'   => array(),
+					),
+					// Explicitly allow label tag for WP.com.
+					'label'  => array(
+						'class' => array(),
+						'for'   => array(),
 					),
 					// Explicitly allow textarea tag for WP.com.
 					'textarea' => array(
@@ -1851,6 +1873,11 @@ class Sensei_Lesson {
 						'type'    => array(),
 						'value'   => array(),
 					),
+					// Explicitly allow label tag for WP.com.
+					'label' => array(
+						'class' => array(),
+						'for'   => array(),
+					),
 					// Explicitly allow textarea tag for WP.com.
 					'textarea' => array(
 						'class' => array(),
@@ -1897,6 +1924,10 @@ class Sensei_Lesson {
 			array_merge(
 				wp_kses_allowed_html( 'post' ),
 				array(
+					// Explicitly allow label tag for WP.com.
+					'label' => array(
+						'for' => array(),
+					),
 					// Explicitly allow textarea tag for WP.com.
 					'textarea' => array(
 						'class' => array(),
@@ -2015,6 +2046,10 @@ class Sensei_Lesson {
 						'placeholder' => array(),
 						'type'        => array(),
 						'value'       => array(),
+					),
+					// Explicitly allow label tag for WP.com.
+					'label'    => array(
+						'for' => array(),
 					),
 					'option'   => array(
 						'selected' => array(),
@@ -3613,7 +3648,7 @@ class Sensei_Lesson {
 		$html .= '<span class="input-text-wrap">';
 		$html .= $field;
 		$html .= '</span>';
-		$html .= '</label></div>';
+		$html .= '</div>';
 
 		return wp_kses(
 			$html,

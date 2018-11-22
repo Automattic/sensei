@@ -474,6 +474,11 @@ class Sensei_Course {
 				wp_kses_allowed_html( 'post' ),
 				self::$allowed_html,
 				array(
+					// Explicitly allow label tag for WP.com.
+					'label'    => array(
+						'class' => array(),
+						'for'   => array(),
+					),
 					'textarea' => array(
 						'cols'     => array(),
 						'id'       => array(),

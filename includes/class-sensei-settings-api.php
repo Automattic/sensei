@@ -626,6 +626,10 @@ class Sensei_Settings_API {
 				array_merge(
 					wp_kses_allowed_html( 'post' ),
 					array(
+						// Explicitly allow label tag for WP.com.
+						'label' => array(
+							'for' => array(),
+						),
 						'input' => array(
 							'checked' => array(),
 							'class'   => array(),
