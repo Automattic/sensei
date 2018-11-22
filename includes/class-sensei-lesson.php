@@ -2769,7 +2769,6 @@ class Sensei_Lesson {
 		} // End If Statement
 
 		$post_title  = $question_text;
-		$post_author = $data['post_author'];
 		$post_status = 'publish';
 		$post_type   = 'question';
 		// Handle the extended question text
