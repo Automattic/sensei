@@ -189,7 +189,8 @@ class Sensei_Question {
 					),
 					// Explicitly allow label tag for WP.com.
 					'label'  => array(
-						'for' => array(),
+						'class' => array(),
+						'for'   => array(),
 					),
 					'option' => array(
 						'value' => array(),
