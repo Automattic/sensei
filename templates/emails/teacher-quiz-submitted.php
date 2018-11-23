@@ -39,8 +39,8 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
-// translators: Placeholders are an opening and closing <a> tag linking to the grading page for the quiz.
 printf(
+	// translators: Placeholders are an opening and closing <a> tag linking to the grading page for the quiz.
 	esc_html__( 'You can grade this quiz %1$shere%2$s.', 'woothemes-sensei' ),
 	'<a href="' .
 	esc_url( admin_url( 'admin.php?page=sensei_grading&user=' . $learner_id . '&quiz_id=' . $quiz_id ) ) .
