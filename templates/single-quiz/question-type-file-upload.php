@@ -35,8 +35,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<p class="submitted_file">
 
 		<?php
-		// translators: Placeholder %1$s is a link to the submitted file.
 		printf(
+			// translators: Placeholder %1$s is a link to the submitted file.
 			esc_html__( 'Submitted file: %1$s', 'woothemes-sensei' ),
 			'<a href="' . esc_url( $question_data['answer_media_url'] )
 			. '" target="_blank">'
