@@ -819,6 +819,7 @@ class Sensei_Core_Modules {
 	 * @return mixed              Module progress percentage on success, false on failure
 	 */
 	public function get_user_module_progress( $module_id = 0, $course_id = 0, $user_id = 0 ) {
+		$this->save_user_module_progress ( $module_id, $course_id, $user_id);
 		$module_progress = get_user_meta( intval( $user_id ), '_module_progress_' . intval( $course_id ) . '_' . intval( $module_id ), true );
 		if ( $module_progress ) {
 			return (float) $module_progress;
