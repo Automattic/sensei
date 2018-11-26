@@ -605,19 +605,22 @@ class Sensei_Learner_Management {
 		}
 
 		$post_type = $_POST['add_post_type'];
-		$user_id   = absint( $_POST['add_user_id'] );
+		$user_id   =  $_REQUEST['add_user_id'] ;
 		$course_id = absint( $_POST['add_course_id'] );
 		$lesson_id = isset( $_POST['add_lesson_id'] ) ? $_POST['add_lesson_id'] : '';
 
 		switch ( $post_type ) {
 			case 'course':
-				$result = Sensei_Utils::user_start_course( $user_id, $course_id );
+				for ( $i = 0; $i < count($user_id); $i++ ) {
+					if ( $user_id[$i] !== 0 ) { //
+						$result = Sensei_Utils::user_start_course( $user_id[$i], $course_id );
 
 				// Complete each lesson if course is set to be completed.
-				if ( isset( $_POST['add_complete_course'] ) && 'yes' === $_POST['add_complete_course'] ) {
-					Sensei_Utils::force_complete_user_course( $user_id, $course_id );
-				}
-
+					if ( isset( $_POST['add_complete_course'] ) && 'yes' === $_POST['add_complete_course'] ) {
+						Sensei_Utils::force_complete_user_course( $user_id[$i], $course_id );
+					}
+					}
+				};
 				break;
 
 			case 'lesson':
@@ -626,8 +629,11 @@ class Sensei_Learner_Management {
 					$complete = true;
 				}
 
-				$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $complete );
-
+				for ( $i = 0; $i < count($user_id); $i++ ) {
+					if ( $user_id[$i] !== 0 ) {
+						$result = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id[$i], $complete ); //add user to lesson
+					}
+				};
 				break;
 		}
 
