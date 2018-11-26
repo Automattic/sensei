@@ -1,0 +1,89 @@
+#!/bin/bash
+
+set -e
+
+# Go to root code directory.
+cd `dirname $0`/..
+
+# Generate the filename in which to store the diff.
+function get_diff_filename() {
+	echo $1 | sed 's|/|--|g'
+}
+
+# Run phpcs on the changed files and store the results in the given directory.
+# This will store a version of the results file with line numbers stripped, so
+# it can be easily diff'ed with other branches.
+function do_phpcs() {
+	directory=${1:-branch}
+	for file in `cat diffs/changed-files`
+	do
+		echo "Running phpcs on $file"
+
+		./vendor/bin/phpcs --report-emacs $file \
+			> diffs/$directory/with-line-num-`get_diff_filename $file` \
+			|| true
+
+		cat diffs/$directory/with-line-num-`get_diff_filename $file` \
+			| sed 's/:[0-9:]\+:/:_:/g' \
+			> diffs/$directory/no-line-num-`get_diff_filename $file`
+	done
+}
+
+# Check for uncommitted changes and bail.
+if ! git diff-index --quiet HEAD --
+then
+	echo 'Bailing out. Please ensure all files are committed before re-running.'
+	exit 1
+fi
+
+# Cleanup and prep.
+rm -rf diffs/
+mkdir -p diffs/branch
+mkdir -p diffs/master
+
+# Get merge-base with master
+merge_base=`git merge-base HEAD master`
+
+if ! git diff $merge_base.. --name-only | grep '\.php$' > diffs/changed-files
+then
+	echo 'No PHP file changes were found!'
+	exit 0
+fi
+
+# Run phpcs for the current branch, and the master branch merge-base.
+do_phpcs
+
+git checkout $merge_base
+do_phpcs master
+git checkout -
+
+# Find any issues that have been added and output the diff.
+exit_code=0
+for file in `cat diffs/changed-files`
+do
+	master_filename=diffs/master/no-line-num-`get_diff_filename $file`
+	branch_filename=diffs/branch/no-line-num-`get_diff_filename $file`
+	branch_filename_with_lines=diffs/branch/with-line-num-`get_diff_filename $file`
+
+	# Get the line numbers of the issues that have been added.
+	line_numbers=`diff --unchanged-line-format="" --new-line-format="%dn " --old-line-format="" $master_filename $branch_filename || true`
+
+	# Print the lines from the report with the line numbers in it.
+	if [ -n "$line_numbers" ]
+	then
+		echo -e "\n============"
+		echo "New issues detected in $file:"
+		for n in `echo $line_numbers`
+		do
+			cat $branch_filename_with_lines | sed "${n}q;d"
+		done
+		exit_code=1
+	fi
+done
+
+if [ $exit_code = 0 ]
+then
+	echo -e "\nNo new issues found!"
+fi
+
+exit $exit_code
