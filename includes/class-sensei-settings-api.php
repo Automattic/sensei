@@ -610,13 +610,15 @@ class Sensei_Settings_API {
 
 				if ( isset( $options[ $args['key'] ] ) ) {
 					if ( in_array( $k, (array) $options[ $args['key'] ] ) ) {
-						$checked = 'checked'; }
+						$checked = ' checked="checked"';
+					}
 				} else {
 					if ( in_array( $k, $args['data']['defaults'] ) ) {
-						$checked = 'checked'; }
+						$checked = ' checked="checked"';
+					}
 				}
 				$html .= '<label for="checkbox-' . esc_attr( $k ) . '">' . "\n";
-				$html .= '<input type="checkbox" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . '][]" class="multicheck multicheck-' . esc_attr( $args['key'] ) . '" value="' . esc_attr( $k ) . '" id="checkbox-' . esc_attr( $k ) . '" checked="' . esc_attr( $checked ) . '" /> ' . esc_html( $v ) . "\n";
+				$html .= '<input type="checkbox" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . '][]" class="multicheck multicheck-' . esc_attr( $args['key'] ) . '" value="' . esc_attr( $k ) . '" id="checkbox-' . esc_attr( $k ) . '" ' . $checked . ' /> ' . esc_html( $v ) . "\n";
 				$html .= '</label><br />' . "\n";
 			}
 			$html .= '</div>' . "\n";
