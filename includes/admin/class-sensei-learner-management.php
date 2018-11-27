@@ -425,10 +425,7 @@ class Sensei_Learner_Management {
 		if ( false === $date ) {
 			exit( '' );
 		}
-		$mysql_date = date( 'Y-m-d H:i:s', $date->getTimestamp() );
-		if ( false === $mysql_date ) {
-			exit( '' );
-		}
+		$mysql_date = date( 'Y-m-d', $date->getTimestamp() );
 
 		$updated = update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
 
