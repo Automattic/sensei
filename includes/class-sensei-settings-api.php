@@ -447,7 +447,7 @@ class Sensei_Settings_API {
 
 		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
 		if ( isset( $args['data']['description'] ) ) {
-			echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
+			echo '<span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span>' . "\n";
 		}
 	} // End form_field_text()
 
@@ -465,7 +465,7 @@ class Sensei_Settings_API {
 		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" class="color" value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
 		echo '<div style="position:absolute;background:#FFF;z-index:99;border-radius:100%;" class="colorpicker"></div>';
 		if ( isset( $args['data']['description'] ) ) {
-			echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
+			echo '<span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span>' . "\n";
 		}
 	} // End form_field_text()
 
