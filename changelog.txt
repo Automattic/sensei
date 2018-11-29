@@ -1,6 +1,6 @@
 *** Sensei Changelog ***
 
-2018.11.28 - version 1.12.2
+2018.11.29 - version 1.12.2
 
 * New: Add usage tracking for course enrolments
 * Fix: PHP warnings when ordering courses, modules or lessons
@@ -10,7 +10,8 @@
 * Fix: Enable translating "more" text on Bulk Learner Actions screen
 * Fix: Show post content for paid courses on single course page
 * Fix: Show course categories in WordPress 5.0
-* Fix: Coding standard violations
+* Fix: Coding standard and security violations
+* Fix: Use updated lesson data when updating quiz
 * Tweak: Removed underscores from filenames
 
 2018.11.01 - version 1.12.1

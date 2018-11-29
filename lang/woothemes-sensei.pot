@@ -2283,12 +2283,12 @@ msgid "Override init_fields() in your class."
 msgstr ""
 
 #. translators: Placeholder is the field name.
-#: includes/class-sensei-settings-api.php:940
+#: includes/class-sensei-settings-api.php:942
 msgid "%s is a required field"
 msgstr ""
 
 #. translators: Placeholder is the name of the settings page.
-#: includes/class-sensei-settings-api.php:959
+#: includes/class-sensei-settings-api.php:961
 msgid "%s updated"
 msgstr ""
 
