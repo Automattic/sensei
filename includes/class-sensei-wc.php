@@ -1490,7 +1490,7 @@ class Sensei_WC {
 		 * for WOOCOMMERCE_CHECKOUT. If we're in the WooCommerce checkout
 		 * process, we can trust that nonce verification has already been done.
 		 */
-		if ( WOOCOMMERCE_CHECKOUT ) {
+		if ( defined( WOOCOMMERCE_CHECKOUT ) && WOOCOMMERCE_CHECKOUT ) {
 			$has_payment_method = isset( $_POST['payment_method'] ); // phpcs:ignore WordPress.Security.NonceVerification
 			$payment_method     = $has_payment_method ? sanitize_text_field( $_POST['payment_method'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 		} else {
