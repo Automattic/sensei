@@ -776,7 +776,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
-						<select name="add_user_id" id="add_learner_search" multiple="multiple" style="min-width:300px;">
+						<select name="add_user_id[]" id="add_learner_search" multiple="multiple" style="min-width:300px;">
 							<option value="0" selected="selected"><?php esc_html_e( 'Find learner', 'woothemes-sensei' ); ?></option>
 						</select>
 						<?php if ( 'lesson' == $form_post_type ) { ?>
