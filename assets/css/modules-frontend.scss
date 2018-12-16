@@ -69,8 +69,16 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 			padding: 0.6em 0 0.6em 20px;
 			margin: 0 !important;
 		}
+		@media only screen and (max-width: 768px)  {
+			h2 {
+				display: block;
+				float: left;
+				margin-right: 150px !important;
+			}
+		}
 	}
 	.module-description {
+		clear: both;
 		padding: 1em 20px;
 		background: rgba(0,0,0,0.015);
 		margin: 0;
@@ -147,9 +155,15 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 	}
 	.module-status {
 		position: absolute;
-		right: 20px;
+		right: 10px;
 		top: 1em;
 		margin: 0 !important;
-		font-size: inherit !important;
+		font-size: 1em !important;
+	}
+	@media only screen and (min-width: 768px)  {
+		.module-status {
+			display: block;
+			height: 37px;
+		}	
 	}
 }
