@@ -155,15 +155,14 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 	}
 	.module-status {
 		position: absolute;
-		right: 10px;
+		right: 15px;
 		top: 1em;
-		margin: 0 !important;
-		font-size: 1em !important;
+		margin: 0;
+		font-size: inherit !important;
 	}
 	@media only screen and (min-width: 768px)  {
 		.module-status {
 			display: block;
-			height: 37px;
 		}	
 	}
 }
