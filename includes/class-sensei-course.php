@@ -2280,7 +2280,10 @@ class Sensei_Course {
 		<?php } // End If Statement ?>
 
 		<span class="course-lesson-count">
-			<?php echo esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
+			<?php
+			$lesson_count = Sensei()->course->course_lesson_count( $course->ID );
+			printf( esc_html( _n( '%s Lesson', '%s Lessons', $lesson_count, 'woothemes-sensei' ) ), absint( $lesson_count ) );
+			?>
 		</span>
 
 		<?php if ( '' != $category_output ) { ?>
