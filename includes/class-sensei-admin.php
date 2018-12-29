@@ -1260,7 +1260,7 @@ class Sensei_Admin {
 		</div>
 		<?php
 
-		if ( $should_update_order ) {
+		if ( isset( $should_update_order ) && $should_update_order ) {
 			$this->save_course_order( implode( ',', $new_course_order ) );
 		}
 	}
