@@ -390,6 +390,11 @@ class Sensei_Course {
 	public function meta_box_save( $post_id ) {
 		global $post;
 
+		/* Check nonce exsit before verify. */
+		if ( ! isset( $_POST[ esc_attr( 'woo_' . $this->token . '_noonce' ) ] ) ) {
+			return $post_id;
+		}
+
 		/* Verify the nonce before proceeding. */
 		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename( __FILE__ ) ) ) {
 			return $post_id;
