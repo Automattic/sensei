@@ -1438,7 +1438,7 @@ class Sensei_Admin {
 										}
 
 										// Other Lessons
-										$lessons = Sensei()->course->course_lessons( $course_id );
+										$lessons = Sensei()->course->course_lessons( $course_id, array( 'publish', 'draft', 'future', 'private' ) );
 
 										if ( 0 < count( $lessons ) ) {
 
