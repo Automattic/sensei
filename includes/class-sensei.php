@@ -182,6 +182,15 @@ class Sensei_Main {
 	 */
 	public $feature_flags;
 
+	private static function is_sensei_wc_paid_courses_installed() {
+		$active_plugins = (array) get_option( 'active_plugins', array() );
+
+		if ( is_multisite() ) {
+			$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
+		}
+		return in_array( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins ) || array_key_exists( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins );
+	}
+
 	/**
 	 * Constructor method.
 	 *
@@ -189,6 +198,11 @@ class Sensei_Main {
 	 * @since  1.0.0
 	 */
 	private function __construct( $main_plugin_file_name, $args ) {
+
+		if ( ! self::is_sensei_wc_paid_courses_installed() ) {
+			error_log( 'Sensei WC Paid Courses not installed! Please install before using Sensei 2.0-dev' );
+			return;
+		}
 
 		// Setup object data
 		$this->main_plugin_file_name = $main_plugin_file_name;
