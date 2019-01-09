@@ -181,16 +181,6 @@ class Sensei_Autoloader {
 			'Sensei_Storefront'                          => 'theme-integrations/Storefront.php',
 
 			/**
-			 * WooCommerce
-			 */
-			'Sensei_WC'                                  => 'class-sensei-wc.php',
-
-			/**
-			 * WooCommerce Memberships
-			 */
-			'Sensei_WC_Memberships'                      => 'class-sensei-wc-memberships.php',
-
-			/**
 			* WPML
 			*/
 			'Sensei_WPML'                                => 'wpml/class-sensei-wpml.php',
