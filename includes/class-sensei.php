@@ -182,7 +182,13 @@ class Sensei_Main {
 	 */
 	public $feature_flags;
 
-	private static function is_sensei_wc_paid_courses_installed() {
+	/**
+	 * Check whether the Sensei WC Paid Courses extension is installed and
+	 * activated. This should be removed after Sensei 2.0 is launched.
+	 *
+	 * @return bool
+	 */
+	private static function is_sensei_wc_paid_courses_activated() {
 		$active_plugins = (array) get_option( 'active_plugins', array() );
 
 		if ( is_multisite() ) {
@@ -199,8 +205,9 @@ class Sensei_Main {
 	 */
 	private function __construct( $main_plugin_file_name, $args ) {
 
-		if ( ! self::is_sensei_wc_paid_courses_installed() ) {
-			error_log( 'Sensei WC Paid Courses not installed! Please install before using Sensei 2.0-dev' );
+		// Disable Sensei if WC Paid Courses is not installed and activated.
+		if ( ! self::is_sensei_wc_paid_courses_activated() ) {
+			error_log( 'Sensei WC Paid Courses not activated! Please activate before using Sensei 2.0-dev' );
 			return;
 		}
 
