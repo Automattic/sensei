@@ -25,7 +25,7 @@ var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
 
 var paths = {
-	scripts: [ 'assets/js/**/*.js' ],
+	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
 	css: [ 'assets/css/**/*.scss' ],
 	select2: [
 		'node_modules/select2/dist/css/select2.min.css',
