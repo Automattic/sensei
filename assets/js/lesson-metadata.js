@@ -609,13 +609,8 @@ jQuery(document).ready( function() {
 		if ( validInput ) {
 
 			// Setup data
-			var dataToPost = '';
-			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
-			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
-			dataToPost += '&course_category' + '=' + jQuery( '#course-category-options' ).val();
-			dataToPost += '&course_title' + '=' + encodeURIComponent( jQuery( '#course-title' ).attr( 'value' ) );
-			dataToPost += '&course_content' + '=' + encodeURIComponent( jQuery( '#course-content' ).attr( 'value' ) );
-			dataToPost += '&action=add';
+			var dataToPost = $( '#lesson-course-details' ).find( 'input, textarea, select' ).serialize();
+
 			// Perform the AJAX call.
 			jQuery.post(
 				ajaxurl,
