@@ -194,7 +194,9 @@ class Sensei_Main {
 		if ( is_multisite() ) {
 			$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
 		}
-		return in_array( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins ) || array_key_exists( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins );
+		return in_array( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins )
+			|| array_key_exists( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins )
+			|| defined( 'SENSEI_COMPAT_PLUGIN' ) && SENSEI_COMPAT_PLUGIN;
 	}
 
 	/**
