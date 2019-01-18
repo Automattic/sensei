@@ -44,8 +44,8 @@ class Sensei_Course {
 
 		$this->token = 'course';
 
-		// Setup meta fields for this post type
-		$this->meta_fields = array( 'course_prerequisite', 'course_featured', 'course_video_embed', 'course_woocommerce_product' );
+		add_action( 'init', array( $this, 'set_up_meta_fields' ) );
+
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
@@ -169,6 +169,20 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Sets up the meta fields used for courses.
+	 */
+	public function set_up_meta_fields() {
+		/**
+		 * Sets up the meta fields saved on course save in WP admin.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string[] $course_meta_fields Array of meta field key names to save on course save.
+		 */
+		$this->meta_fields = apply_filters( 'sensei_course_meta_fields', array( 'course_prerequisite', 'course_featured', 'course_video_embed' ) );
+	}
+
+	/**
 	 * meta_box_setup function.
 	 *
 	 * @access public
@@ -176,10 +190,6 @@ class Sensei_Course {
 	 */
 	public function meta_box_setup() {
 
-		if ( Sensei_WC::is_woocommerce_active() ) {
-			// Add Meta Box for WooCommerce Course
-			add_meta_box( 'course-wc-product', __( 'WooCommerce Product', 'woothemes-sensei' ), array( $this, 'course_woocommerce_product_meta_box_content' ), $this->token, 'side', 'default' );
-		} // End If Statement
 		// Add Meta Box for Prerequisite Course
 		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'woothemes-sensei' ), array( $this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Featured Course
@@ -197,155 +207,6 @@ class Sensei_Course {
 		add_meta_box( 'course-notifications', __( 'Course Notifications', 'woothemes-sensei' ), array( $this, 'course_notification_meta_box_content' ), 'course', 'normal', 'default' );
 
 	} // End meta_box_setup()
-
-	/**
-	 * course_woocommerce_product_meta_box_content function.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function course_woocommerce_product_meta_box_content() {
-		global $post;
-
-		$select_course_woocommerce_product = get_post_meta( $post->ID, '_course_woocommerce_product', true );
-
-		$post_args   = array(
-			'post_type'        => array( 'product', 'product_variation' ),
-			'posts_per_page'   => -1,
-			'orderby'          => 'title',
-			'order'            => 'DESC',
-			'exclude'          => $post->ID,
-			'post_status'      => array( 'publish', 'private', 'draft' ),
-			'tax_query'        => array(
-				array(
-					'taxonomy' => 'product_type',
-					'field'    => 'slug',
-					'terms'    => array( 'variable', 'grouped' ),
-					'operator' => 'NOT IN',
-				),
-			),
-			'suppress_filters' => 0,
-		);
-		$posts_array = get_posts( $post_args );
-
-		$html = '';
-
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
-
-		if ( count( $posts_array ) > 0 ) {
-
-			$html              .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
-			$html              .= '<option value="-">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
-				$prev_parent_id = 0;
-			foreach ( $posts_array as $post_item ) {
-
-				if ( 'product_variation' == $post_item->post_type ) {
-
-					$product_object = Sensei_WC_Utils::get_product( $post_item->ID );
-
-					if ( empty( $product_object ) ) {
-						// Product variation has been orphaned. Treat it like it has also been deleted.
-						continue;
-					}
-
-					$parent_id = wp_get_post_parent_id( $post_item->ID );
-
-					if ( sensei_check_woocommerce_version( '2.1' ) ) {
-						$formatted_variation = wc_get_formatted_variation( Sensei_WC_Utils::get_variation_data( $product_object ), true );
-
-					} else {
-						// fall back to pre wc 2.1
-						$formatted_variation = woocommerce_get_formatted_variation( Sensei_WC_Utils::get_variation_data( $product_object ), true );
-
-					}
-
-					$product_name = ucwords( $formatted_variation );
-					if ( empty( $product_name ) ) {
-						$product_name = __( 'Variation #', 'woothemes-sensei' ) . Sensei_WC_Utils::get_product_variation_id( $product_object );
-					}
-				} else {
-
-					$parent_id      = false;
-					$prev_parent_id = 0;
-					$product_name   = $post_item->post_title;
-
-				}
-
-				// Show variations in groups
-				if ( $parent_id && $parent_id != $prev_parent_id ) {
-
-					if ( 0 != $prev_parent_id ) {
-
-						$html .= '</optgroup>';
-
-					}
-					$html          .= '<optgroup label="' . esc_attr( get_the_title( $parent_id ) ) . '">';
-					$prev_parent_id = $parent_id;
-
-				} elseif ( ! $parent_id && 0 == $prev_parent_id ) {
-
-					$html .= '</optgroup>';
-
-				}
-
-				$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_woocommerce_product, false ) . '>' . esc_html( $product_name ) . '</option>' . "\n";
-
-			} // End For Loop
-
-			$html .= '</select>' . "\n";
-			if ( current_user_can( 'publish_product' ) ) {
-
-				$html     .= '<p>' . "\n";
-					$html .= '<a href="' . esc_url( admin_url( 'post-new.php?post_type=product' ) ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . esc_html__( 'Add a Product', 'woothemes-sensei' ) . '</a>' . "\n";
-				$html     .= '</p>' . "\n";
-
-			} // End If Statement
-		} else {
-
-			if ( current_user_can( 'publish_product' ) ) {
-
-				$html     .= '<p>' . "\n";
-					$html .= esc_html__( 'No products exist yet.', 'woothemes-sensei' ) . '&nbsp;<a href="' . esc_url( admin_url( 'post-new.php?post_type=product' ) ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . esc_html__( 'Please add some first', 'woothemes-sensei' ) . '</a>' . "\n";
-				$html     .= '</p>' . "\n";
-
-			} else {
-				if ( ! empty( $select_course_woocommerce_product ) ) {
-					$html .= '<input type="hidden" name="course_woocommerce_product" value="' . esc_attr( absint( $select_course_woocommerce_product ) ) . '">';
-				}
-				$html     .= '<p>' . "\n";
-					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . "\n";
-				$html     .= '</p>' . "\n";
-
-			} // End If Statement
-		} // End If Statement
-
-		echo wp_kses(
-			$html,
-			array_merge(
-				wp_kses_allowed_html( 'post' ),
-				array(
-					'input'    => array(
-						'id'    => array(),
-						'name'  => array(),
-						'type'  => array(),
-						'value' => array(),
-					),
-					'optgroup' => array(
-						'label' => array(),
-					),
-					'option'   => array(
-						'selected' => array(),
-						'value'    => array(),
-					),
-					'select'   => array(
-						'class' => array(),
-						'id'    => array(),
-						'name'  => array(),
-					),
-				)
-			)
-		);
-	} // End course_woocommerce_product_meta_box_content()
 
 	/**
 	 * course_prerequisite_meta_box_content function.
