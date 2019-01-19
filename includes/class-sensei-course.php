@@ -553,9 +553,6 @@ class Sensei_Course {
 		$new_columns['cb']                  = '<input type="checkbox" />';
 		$new_columns['title']               = _x( 'Course Title', 'column name', 'woothemes-sensei' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'woothemes-sensei' );
-		if ( Sensei_WC::is_woocommerce_active() ) {
-			$new_columns['course-woocommerce-product'] = _x( 'WooCommerce Product', 'column name', 'woothemes-sensei' );
-		} // End If Statement
 		$new_columns['course-category'] = _x( 'Category', 'column name', 'woothemes-sensei' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
@@ -594,35 +591,6 @@ class Sensei_Course {
 						. '</a>';
 				}
 
-				break;
-
-			case 'course-woocommerce-product':
-				if ( Sensei_WC::is_woocommerce_active() ) {
-					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true );
-					if ( 0 < absint( $course_woocommerce_product_id ) ) {
-						if ( 'product_variation' == get_post_type( $course_woocommerce_product_id ) ) {
-							$product_object = Sensei_WC_Utils::get_product( $course_woocommerce_product_id );
-							if ( sensei_check_woocommerce_version( '2.1' ) ) {
-								$formatted_variation = wc_get_formatted_variation( Sensei_WC_Utils::get_product_variation_data( $product_object ), true );
-							} else {
-								$formatted_variation = Sensei_WC_Utils::get_formatted_variation( Sensei_WC_Utils::get_product_variation_data( $product_object ), true );
-							}
-							$course_woocommerce_product_id = Sensei_WC_Utils::get_product_id( $product_object );
-							$parent                        = Sensei_WC_Utils::get_parent_product( $product_object );
-							$product_name                  = $parent->get_title() . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( $formatted_variation );
-						} else {
-							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
-						} // End If Statement
-						echo '<a href="'
-							. esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) )
-							. '" title="'
-							// translators: Placeholder is the product name.
-							. esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $product_name ) )
-							. '">'
-							. esc_html( $product_name )
-							. '</a>';
-					} // End If Statement
-				} // End If Statement
 				break;
 
 			case 'course-category':
