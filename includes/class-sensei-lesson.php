@@ -2684,23 +2684,15 @@ class Sensei_Lesson {
 			$course_woocommerce_product_id = absint( $data['course_woocommerce_product'] );
 			$course_category_id            = absint( $data['course_category'] );
 			if ( 0 == $course_woocommerce_product_id ) {
-				$course_woocommerce_product_id = '-'; }
-			// Insert or Update the Lesson Quiz
-			if ( 0 < $course_id ) {
-				$post_type_args['ID'] = $course_id;
-				$course_id            = wp_update_post( $post_type_args );
-				update_post_meta( $course_id, '_course_prerequisite', $course_prerequisite_id );
-				update_post_meta( $course_id, '_course_woocommerce_product', $course_woocommerce_product_id );
-				if ( 0 < $course_category_id ) {
-					wp_set_object_terms( $course_id, $course_category_id, 'course-category' );
-				} // End If Statement
-			} else {
-				$course_id = wp_insert_post( $post_type_args );
-				add_post_meta( $course_id, '_course_prerequisite', $course_prerequisite_id );
-				add_post_meta( $course_id, '_course_woocommerce_product', $course_woocommerce_product_id );
-				if ( 0 < $course_category_id ) {
-					wp_set_object_terms( $course_id, $course_category_id, 'course-category' );
-				} // End If Statement
+				$course_woocommerce_product_id = '-';
+			}
+			// Create the new course.
+			$course_id = wp_insert_post( $post_type_args );
+
+			add_post_meta( $course_id, '_course_prerequisite', $course_prerequisite_id );
+			add_post_meta( $course_id, '_course_woocommerce_product', $course_woocommerce_product_id );
+			if ( 0 < $course_category_id ) {
+				wp_set_object_terms( $course_id, $course_category_id, 'course-category' );
 			} // End If Statement
 		} // End If Statement
 		// Check that the insert or update saved by testing the post id
