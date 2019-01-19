@@ -2677,30 +2677,37 @@ class Sensei_Lesson {
 			'post_title'   => $post_title,
 			'post_type'    => $post_type,
 		);
-		// Only save if there is a valid title
+		// Only save if there is a valid title.
 		if ( $post_title != '' ) {
-			// Check for prerequisite courses & product id
+			// Check for prerequisite courses.
 			$course_prerequisite_id        = absint( $data['course_prerequisite'] );
-			$course_woocommerce_product_id = absint( $data['course_woocommerce_product'] );
 			$course_category_id            = absint( $data['course_category'] );
-			if ( 0 == $course_woocommerce_product_id ) {
-				$course_woocommerce_product_id = '-';
-			}
+
 			// Create the new course.
 			$course_id = wp_insert_post( $post_type_args );
 
 			add_post_meta( $course_id, '_course_prerequisite', $course_prerequisite_id );
-			add_post_meta( $course_id, '_course_woocommerce_product', $course_woocommerce_product_id );
+
+			/**
+			 * Triggers after a course was created from the lesson page meta box.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param int   $course_id Course ID that was just created.
+			 * @param array $data      Data that was sent when creating the course.
+			 */
+			do_action( 'sensei_lesson_course_created', $course_id, $data );
+
 			if ( 0 < $course_category_id ) {
 				wp_set_object_terms( $course_id, $course_category_id, 'course-category' );
-			} // End If Statement
-		} // End If Statement
-		// Check that the insert or update saved by testing the post id
+			} // End If Statement.
+		} // End If Statement.
+		// Check that the insert or update saved by testing the post id.
 		if ( 0 < $course_id ) {
 			$return = $course_id;
-		} // End If Statement
+		} // End If Statement.
 		return $return;
-	} // End lesson_save_course()
+	} // End lesson_save_course().
 
 
 	/**
