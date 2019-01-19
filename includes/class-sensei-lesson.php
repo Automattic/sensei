@@ -696,6 +696,16 @@ class Sensei_Lesson {
 				// Add a course input fields
 				$html     .= '<div id="lesson-course-details" class="hidden">';
 					$html .= '<p>';
+
+						/**
+						 * Allows plugins to add additional content at the top of the course create form.
+						 *
+						 * @since 2.0.0
+						 *
+						 * @param string $html Current HTML for the course meta box as it currently is set up.
+						 */
+						$html = apply_filters( 'sensei_lesson_course_create_form_top', $html );
+
 						// Course Title input
 						$html .= '<label>' . esc_html__( 'Course Title', 'woothemes-sensei' ) . '</label> ';
 						$html .= '<input type="text" id="course-title" name="course_title" value="" size="25" class="widefat" />';
@@ -710,63 +720,7 @@ class Sensei_Lesson {
 				$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '">' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 			} // End For Loop
 						$html .= '</select>' . "\n";
-						// Course Product
-			if ( Sensei_WC::is_woocommerce_active() ) {
-				$product_args       = array(
-					'post_type'        => array( 'product', 'product_variation' ),
-					'posts_per_page'   => -1,
-					'orderby'          => 'title',
-					'order'            => 'DESC',
-					'post_status'      => array( 'publish', 'private', 'draft' ),
-					'tax_query'        => array(
-						array(
-							'taxonomy' => 'product_type',
-							'field'    => 'slug',
-							'terms'    => array( 'variable', 'grouped' ),
-							'operator' => 'NOT IN',
-						),
-					),
-					'suppress_filters' => 0,
-				);
-				$products_array     = get_posts( $product_args );
-				$html              .= '<label>' . esc_html__( 'WooCommerce Product', 'woothemes-sensei' ) . '</label> ';
-				$html              .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat" style="width: 100%">' . "\n";
-					$html          .= '<option value="-">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
-					$prev_parent_id = 0;
-				foreach ( $products_array as $products_item ) {
 
-					if ( 'product_variation' == $products_item->post_type ) {
-						$product_object = Sensei_WC_Utils::get_product( $products_item->ID );
-						if ( empty( $product_object ) ) {
-							// Product variation has been orphaned. Treat it like it has also been deleted.
-							continue;
-						}
-						$parent_id    = Sensei_WC_Utils::get_product_id( $product_object );
-						$product_name = ucwords( Sensei_WC_Utils::get_formatted_variation( Sensei_WC_Utils::get_variation_data( $product_object ), true ) );
-					} else {
-						$parent_id      = false;
-						$prev_parent_id = 0;
-						$product_name   = $products_item->post_title;
-					}
-
-					// Show variations in groups
-					if ( $parent_id && $parent_id != $prev_parent_id ) {
-						if ( 0 != $prev_parent_id ) {
-							$html .= '</optgroup>';
-						}
-						$html          .= '<optgroup label="' . esc_attr( get_the_title( $parent_id ) ) . '">';
-						$prev_parent_id = $parent_id;
-					} elseif ( ! $parent_id && 0 == $prev_parent_id ) {
-						$html .= '</optgroup>';
-					}
-
-					$html .= '<option value="' . esc_attr( absint( $products_item->ID ) ) . '">' . esc_html( $product_name ) . '</option>' . "\n";
-				} // End For Loop
-				$html .= '</select>' . "\n";
-			} else {
-				// Default
-				$html .= '<input type="hidden" name="course_woocommerce_product" id="course-woocommerce-product-options" value="-" />';
-			}
 						// Course Category
 						$html    .= '<label>' . esc_html__( 'Course Category', 'woothemes-sensei' ) . '</label> ';
 						$cat_args = array(
@@ -780,6 +734,16 @@ class Sensei_Lesson {
 							'class'            => 'widefat',
 						);
 						$html    .= wp_dropdown_categories( apply_filters( 'widget_course_categories_dropdown_args', $cat_args ) ) . "\n";
+
+						/**
+						 * Allows plugins to add additional content at the bottom of the course create form.
+						 *
+						 * @since 2.0.0
+						 *
+						 * @param string $html Current HTML for the course meta box as it currently is set up.
+						 */
+						$html = apply_filters( 'sensei_lesson_course_create_form_bottom', $html );
+
 						// Save the course action button
 						$html .= '<a title="' . esc_attr__( 'Save Course', 'woothemes-sensei' ) . '" href="#add-course-metadata" class="lesson_course_save button button-highlighted">' . esc_html__( 'Add Course', 'woothemes-sensei' ) . '</a>';
 						$html .= '&nbsp;&nbsp;&nbsp;';
