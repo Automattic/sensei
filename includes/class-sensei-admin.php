@@ -77,9 +77,6 @@ class Sensei_Admin {
 		// warn users in case admin_email is not a real WP_User
 		add_action( 'admin_notices', array( $this, 'notify_if_admin_email_not_real_admin_user' ) );
 
-		// Allow Teacher access the admin area
-		add_filter( 'woocommerce_prevent_admin_access', array( $this, 'admin_access' ) );
-
 		// remove a course from course order when trashed
 		add_action( 'transition_post_status', array( $this, 'remove_trashed_course_from_course_order' ) );
 
@@ -1680,21 +1677,6 @@ class Sensei_Admin {
 					break;
 			}
 		}
-	}
-
-	/**
-	 * Set Sensei users access to the admin area when WooCommerce is installed
-	 * Allow Teachers to access the admin area
-	 *
-	 * @param  bool $prevent_access
-	 * @return bool
-	 */
-	public function admin_access( $prevent_access ) {
-		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			return false;
-		}
-
-		return $prevent_access;
 	}
 
 	/**
