@@ -701,10 +701,10 @@ class Sensei_Lesson {
 						 * Allows plugins to add additional content at the top of the course create form.
 						 *
 						 * @since 2.0.0
-						 *
-						 * @param string $html Current HTML for the course meta box as it currently is set up.
 						 */
-						$html = apply_filters( 'sensei_lesson_course_create_form_top', $html );
+						ob_start();
+						do_action( 'sensei_lesson_course_create_form_top' );
+						$html .= ob_get_clean();
 
 						// Course Title input
 						$html .= '<label>' . esc_html__( 'Course Title', 'woothemes-sensei' ) . '</label> ';
@@ -739,10 +739,10 @@ class Sensei_Lesson {
 						 * Allows plugins to add additional content at the bottom of the course create form.
 						 *
 						 * @since 2.0.0
-						 *
-						 * @param string $html Current HTML for the course meta box as it currently is set up.
 						 */
-						$html = apply_filters( 'sensei_lesson_course_create_form_bottom', $html );
+						ob_start();
+						do_action( 'sensei_lesson_course_create_form_bottom' );
+						$html .= ob_get_clean();
 
 						// Save the course action button
 						$html .= '<a title="' . esc_attr__( 'Save Course', 'woothemes-sensei' ) . '" href="#add-course-metadata" class="lesson_course_save button button-highlighted">' . esc_html__( 'Add Course', 'woothemes-sensei' ) . '</a>';
