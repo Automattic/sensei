@@ -553,7 +553,7 @@ class Sensei_Course {
 		$new_columns['cb']                  = '<input type="checkbox" />';
 		$new_columns['title']               = _x( 'Course Title', 'column name', 'woothemes-sensei' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'woothemes-sensei' );
-		$new_columns['course-category'] = _x( 'Category', 'column name', 'woothemes-sensei' );
+		$new_columns['course-category']     = _x( 'Category', 'column name', 'woothemes-sensei' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
