@@ -19,9 +19,14 @@ function do_phpcs() {
 	do
 		echo "Running phpcs on $file"
 
-		./vendor/bin/phpcs -q --report-emacs $file \
-			> diffs/$directory/with-line-num-`get_diff_filename $file` \
-			|| true
+		if [ -f $file ]
+		then
+			./vendor/bin/phpcs -q --report-emacs $file \
+				> diffs/$directory/with-line-num-`get_diff_filename $file` \
+				|| true
+		else
+			touch diffs/$directory/with-line-num-`get_diff_filename $file`
+		fi
 
 		cat diffs/$directory/with-line-num-`get_diff_filename $file` \
 			| sed 's/:[0-9:]\+:/:_:/g' \
