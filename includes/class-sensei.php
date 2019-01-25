@@ -205,10 +205,9 @@ class Sensei_Main {
 	 */
 	private function __construct( $main_plugin_file_name, $args ) {
 
-		// Disable Sensei if WC Paid Courses is not installed and activated.
+		// Stub Sensei_WC classes if WC Paid Courses is not installed and activated.
 		if ( ! self::is_sensei_wc_paid_courses_activated() ) {
-			error_log( 'Sensei WC Paid Courses not activated! Please activate before using Sensei 2.0-dev' );
-			return;
+			require_once dirname( __FILE__) . '/sensei-wc-stubs.php';
 		}
 
 		// Setup object data
