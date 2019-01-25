@@ -207,7 +207,7 @@ class Sensei_Main {
 
 		// Stub Sensei_WC classes if WC Paid Courses is not installed and activated.
 		if ( ! self::is_sensei_wc_paid_courses_activated() ) {
-			require_once dirname( __FILE__) . '/sensei-wc-stubs.php';
+			require_once dirname( __FILE__ ) . '/sensei-wc-stubs.php';
 		}
 
 		// Setup object data
