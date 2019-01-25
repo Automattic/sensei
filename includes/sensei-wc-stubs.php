@@ -1,8 +1,12 @@
 <?php
-/*
+/**
  * TODO: These are stub classes to make the tests pass while developing 2.0.
  * Before 2.0 is released, these should be removed.
+ *
+ * @package sensei
  */
+
+// phpcs:disable
 class Sensei_WC {
 	public static function is_woocommerce_active() { return false; }
 	public static function is_woocommerce_present() { return false; }
