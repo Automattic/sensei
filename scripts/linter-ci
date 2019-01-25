@@ -19,7 +19,7 @@ function do_phpcs() {
 	do
 		echo "Running phpcs on $file"
 
-		./vendor/bin/phpcs --report-emacs $file \
+		./vendor/bin/phpcs -q --report-emacs $file \
 			> diffs/$directory/with-line-num-`get_diff_filename $file` \
 			|| true
 
