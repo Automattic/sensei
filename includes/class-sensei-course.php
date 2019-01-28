@@ -1155,50 +1155,13 @@ class Sensei_Course {
 	 */
 	public function get_product_courses( $product_id = 0 ) {
 
-		$courses = array();
+		_deprecated_function( __CLASS__ .':'. __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses' );
 
-		if ( ! Sensei_WC::is_woocommerce_active() || empty( $product_id ) ) {
-			return $courses;
+		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses' ) ) {
+			return \Sensei_WC_Paid_Courses\Courses::get_product_courses( $product_id );
 		}
 
-		$product = wc_get_product( $product_id );
-
-		if ( ! is_object( $product ) ) {
-			return $courses;
-		}
-
-		$courses = get_posts( self::get_product_courses_query_args( $product_id ) );
-
-		switch ( $product->get_type() ) {
-			case 'subscription_variation':
-			case 'variation':
-				/**
-				 * Merge a product variation's courses with the parent's courses. Defaults to false.
-				 *
-				 * @since 1.10.0
-				 *
-				 * @param bool $merge_courses_with_parent_product True to merge with parent product's courses.
-				 */
-				if ( empty( $courses ) || apply_filters( 'sensei_merge_courses_with_parent_product', false ) ) {
-					$parent_product_courses = get_posts( self::get_product_courses_query_args( $product->get_parent_id() ) );
-					$courses                = array_merge( $courses, $parent_product_courses );
-				}
-				break;
-
-			case 'variable-subscription':
-			case 'variable':
-				$variations = $product->get_available_variations();
-
-				foreach ( $variations as $variation ) {
-
-					$variation_courses = get_posts( self::get_product_courses_query_args( $variation['variation_id'] ) );
-					$courses           = array_merge( $courses, $variation_courses );
-
-				}
-				break;
-		}
-
-		return $courses;
+		return array();
 
 	} // End get_product_courses()
 
@@ -1209,16 +1172,13 @@ class Sensei_Course {
 	 */
 	public static function get_product_courses_query_args( $product_id ) {
 
-		return array(
-			'post_type'        => 'course',
-			'posts_per_page'   => -1,
-			'meta_key'         => '_course_woocommerce_product',
-			'meta_value'       => $product_id,
-			'post_status'      => 'publish',
-			'suppress_filters' => 0,
-			'orderby'          => 'menu_order date',
-			'order'            => 'ASC',
-		);
+		_deprecated_function( __CLASS__ .':'. __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args' );
+
+		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses_query_args' ) ) {
+			return \Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args( $product_id );
+		}
+
+		return array();
 
 	}
 
