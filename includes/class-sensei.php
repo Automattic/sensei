@@ -204,10 +204,12 @@ class Sensei_Main {
 	 * @return bool
 	 */
 	private static function activating_sensei_wc_paid_courses() {
-		return '/wp-admin/plugins.php' === $_SERVER[ 'SCRIPT_NAME' ]
-			&& isset( $_GET[ 'action' ] ) && 'activate' === $_GET[ 'action' ]
-			&& isset( $_GET[ 'plugin' ] )
-			&& preg_match( '/sensei-wc-paid-courses\.php$/', $_GET[ 'plugin' ] );
+		// phpcs:disable WordPress.Security.NonceVerification
+		return '/wp-admin/plugins.php' === $_SERVER['SCRIPT_NAME']
+			&& isset( $_REQUEST['action'] ) && 'activate' === $_REQUEST['action']
+			&& isset( $_REQUEST['plugin'] )
+			&& preg_match( '/sensei-wc-paid-courses\.php$/', $_REQUEST['plugin'] );
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 	/**
