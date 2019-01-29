@@ -696,6 +696,12 @@ class Sensei_Course {
 				break;
 
 			case 'freecourses':
+				_doing_it_wrong(
+					__FUNCTION__,
+					sprintf( __( 'Queries for course type of %s is deprecated.', 'woothemes-sensei' ), 'freecourses' ),
+					'2.0.0'
+				);
+
 				$post_args = array(
 					'post_type'        => 'course',
 					'orderby'          => $orderby,
@@ -714,6 +720,12 @@ class Sensei_Course {
 				break;
 
 			case 'paidcourses':
+				_doing_it_wrong(
+					__FUNCTION__,
+					sprintf( __( 'Queries for course type of %s is deprecated.', 'woothemes-sensei' ), 'paidcourses' ),
+					'2.0.0'
+				);
+
 				$post_args = array(
 					'post_type'        => 'course',
 					'orderby'          => $orderby,
