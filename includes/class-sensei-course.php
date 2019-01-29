@@ -692,7 +692,9 @@ class Sensei_Course {
 					'exclude'          => $excludes,
 					'suppress_filters' => 0,
 				);
+
 				break;
+
 			case 'freecourses':
 				$post_args = array(
 					'post_type'        => 'course',
@@ -702,8 +704,12 @@ class Sensei_Course {
 					'exclude'          => $excludes,
 					'suppress_filters' => 0,
 				);
-				// Sub Query to get all WooCommerce Products that have Zero price
-				$post_args['meta_query'] = Sensei_WC::get_free_courses_meta_query_args();
+
+				// If WooCommerce Paid Courses is not active, we will display all courses.
+				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
+					// Sub Query to get all WooCommerce Products that have Zero price
+					$post_args['meta_query'] = Sensei_WC::get_free_courses_meta_query_args();
+				}
 
 				break;
 
@@ -717,8 +723,13 @@ class Sensei_Course {
 					'suppress_filters' => 0,
 				);
 
-				// Sub Query to get all WooCommerce Products that have price greater than zero
-				$post_args['meta_query'] = Sensei_WC::get_paid_courses_meta_query_args();
+				// If WooCommerce Paid Courses is not active, we will display no courses.
+				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
+					// Sub Query to get all WooCommerce Products that have price greater than zero
+					$post_args['meta_query'] = Sensei_WC::get_paid_courses_meta_query_args();
+				} else {
+					$post_args['post__in'] = array( -1 );
+				}
 
 				break;
 
