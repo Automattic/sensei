@@ -194,7 +194,22 @@ class Sensei_Main {
 		if ( is_multisite() ) {
 			$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
 		}
-		return in_array( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins ) || array_key_exists( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins );
+		return in_array( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins, true ) || array_key_exists( 'sensei-wc-paid-courses/sensei-wc-paid-courses.php', $active_plugins );
+	}
+
+	/**
+	 * Check whether the Sensei WC Paid Courses extension is currently being
+	 * activated. This should be removed after Sensei 2.0 is launched.
+	 *
+	 * @return bool
+	 */
+	private static function activating_sensei_wc_paid_courses() {
+		// phpcs:disable WordPress.Security.NonceVerification
+		return '/wp-admin/plugins.php' === $_SERVER['SCRIPT_NAME']
+			&& isset( $_REQUEST['action'] ) && 'activate' === $_REQUEST['action']
+			&& isset( $_REQUEST['plugin'] )
+			&& preg_match( '/sensei-wc-paid-courses\.php$/', $_REQUEST['plugin'] );
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 	/**
@@ -205,10 +220,14 @@ class Sensei_Main {
 	 */
 	private function __construct( $main_plugin_file_name, $args ) {
 
-		// Disable Sensei if WC Paid Courses is not installed and activated.
+		// Stub Sensei_WC classes if WC Paid Courses is not installed and activated.
 		if ( ! self::is_sensei_wc_paid_courses_activated() ) {
-			error_log( 'Sensei WC Paid Courses not activated! Please activate before using Sensei 2.0-dev' );
-			return;
+			if ( self::activating_sensei_wc_paid_courses() ) {
+				// Do not load Sensei until after WC Paid Courses is activated.
+				return;
+			} else {
+				require_once dirname( __FILE__ ) . '/sensei-wc-stubs.php';
+			}
 		}
 
 		// Setup object data

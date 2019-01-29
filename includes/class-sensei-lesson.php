@@ -2680,8 +2680,8 @@ class Sensei_Lesson {
 		// Only save if there is a valid title.
 		if ( $post_title != '' ) {
 			// Check for prerequisite courses.
-			$course_prerequisite_id        = absint( $data['course_prerequisite'] );
-			$course_category_id            = absint( $data['course_category'] );
+			$course_prerequisite_id = absint( $data['course_prerequisite'] );
+			$course_category_id     = absint( $data['course_category'] );
 
 			// Create the new course.
 			$course_id = wp_insert_post( $post_type_args );
