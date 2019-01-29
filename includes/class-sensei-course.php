@@ -1155,7 +1155,7 @@ class Sensei_Course {
 	 */
 	public function get_product_courses( $product_id = 0 ) {
 
-		_deprecated_function( __CLASS__ .':'. __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses' );
 
 		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses' ) ) {
 			return \Sensei_WC_Paid_Courses\Courses::get_product_courses( $product_id );
@@ -1172,7 +1172,7 @@ class Sensei_Course {
 	 */
 	public static function get_product_courses_query_args( $product_id ) {
 
-		_deprecated_function( __CLASS__ .':'. __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args' );
+		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args' );
 
 		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses_query_args' ) ) {
 			return \Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args( $product_id );
