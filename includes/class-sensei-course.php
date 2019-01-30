@@ -698,7 +698,8 @@ class Sensei_Course {
 			case 'freecourses':
 				_doing_it_wrong(
 					__FUNCTION__,
-					sprintf( __( 'Queries for course type of %s is deprecated.', 'woothemes-sensei' ), 'freecourses' ),
+					// translators: string argument is "freecourses" (the query type).
+					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'woothemes-sensei' ), 'freecourses' ),
 					'2.0.0'
 				);
 
@@ -722,7 +723,8 @@ class Sensei_Course {
 			case 'paidcourses':
 				_doing_it_wrong(
 					__FUNCTION__,
-					sprintf( __( 'Queries for course type of %s is deprecated.', 'woothemes-sensei' ), 'paidcourses' ),
+					// translators: string argument is "paidcourses" (the query type).
+					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'woothemes-sensei' ), 'paidcourses' ),
 					'2.0.0'
 				);
 
