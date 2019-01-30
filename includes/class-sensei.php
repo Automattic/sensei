@@ -225,7 +225,7 @@ class Sensei_Main {
 			if ( self::activating_sensei_wc_paid_courses() ) {
 				// Do not load Sensei until after WC Paid Courses is activated.
 				return;
-			} else {
+			} elseif ( ! defined( 'LOAD_WC_STUBS' ) || LOAD_WC_STUBS ) {
 				require_once dirname( __FILE__ ) . '/sensei-wc-stubs.php';
 			}
 		}
