@@ -27,13 +27,13 @@
 
 <channel>
 	<title>Sensei</title>
-	<link>http://demo2.woothemes.com/sensei</link>
-	<description>Just another WooThemes Demo site</description>
-	<pubDate>Tue, 26 May 2015 08:04:27 +0000</pubDate>
+	<link>http://demo.sensei.com</link>
+	<description>Just another Sensei site</description>
+	<pubDate>Thu, 31 Jan 2019 16:28:05 +0000</pubDate>
 	<language>en-US</language>
 	<wp:wxr_version>1.2</wp:wxr_version>
-	<wp:base_site_url>http://demo2.woothemes.com/</wp:base_site_url>
-	<wp:base_blog_url>http://demo2.woothemes.com/sensei</wp:base_blog_url>
+	<wp:base_site_url>http://demo.sensei.com/</wp:base_site_url>
+	<wp:base_blog_url>http://demo.sensei.com</wp:base_blog_url>
 
 	<wp:author><wp:author_id>1</wp:author_id><wp:author_login>wooadmin</wp:author_login><wp:author_email>jay@woothemes.com</wp:author_email><wp:author_display_name><![CDATA[WooThemes]]></wp:author_display_name><wp:author_first_name><![CDATA[WooThemes]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
 	<wp:author><wp:author_id>3</wp:author_id><wp:author_login>wooteam</wp:author_login><wp:author_email>team@woothemes.com</wp:author_email><wp:author_display_name><![CDATA[WooThemes]]></wp:author_display_name><wp:author_first_name><![CDATA[Woo]]></wp:author_first_name><wp:author_last_name><![CDATA[Themes]]></wp:author_last_name></wp:author>
@@ -66,10 +66,10 @@
 
 	<item>
 				<title>Your Friend, the Triad</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/your-friend-the-triad/</link>
+		<link>http://demo.sensei.com/lesson/your-friend-the-triad/</link>
 		<pubDate>Fri, 30 Jan 2015 11:21:53 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=7709</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=7709</guid>
 		<description></description>
 		<content:encoded><![CDATA[A triad is a 3-note chord, the most basic kind of chord. In this video you'll learn how to create a triad and play every chord in the key of C.
 
@@ -157,10 +157,10 @@ The content for this sample course is provided with permission by <a href="http:
 	</item>
 	<item>
 				<title>Introduction to Rhythm</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/introduction-to-rhythm/</link>
+		<link>http://demo.sensei.com/lesson/introduction-to-rhythm/</link>
 		<pubDate>Fri, 30 Jan 2015 11:23:20 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=7711</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=7711</guid>
 		<description></description>
 		<content:encoded><![CDATA[Some say the most recognizable parts of music are the melody and harmony. But the thing that brings music to life is the "Rhythm" — It truly is the Heartbeat of Music. Rhythm works behind the scenes to set a foundation from which harmony and melody can shine, by establishing and building upon "the beat."
 
@@ -240,10 +240,10 @@ The content for this sample course is provided with permission by <a href="http
 	</item>
 	<item>
 				<title>Introduction to Rhythm</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/introduction-to-rhythm/</link>
+		<link>http://demo.sensei.com/quiz/introduction-to-rhythm/</link>
 		<pubDate>Fri, 30 Jan 2015 11:23:20 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/introduction-to-rhythm/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/introduction-to-rhythm/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -311,10 +311,10 @@ The content for this sample course is provided with permission by <a href="http
 	</item>
 	<item>
 				<title>Subdividing - Musical Math</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/subdividing-musical-math/</link>
+		<link>http://demo.sensei.com/lesson/subdividing-musical-math/</link>
 		<pubDate>Fri, 30 Jan 2015 11:24:36 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=7713</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=7713</guid>
 		<description></description>
 		<content:encoded><![CDATA[In this lesson you'll learn about subdividing, dividing your beats into sections, resulting in smaller and faster notes.
 
@@ -390,10 +390,10 @@ The content for this sample course is provided with permission by <a href="http
 	</item>
 	<item>
 				<title>Subdividing - Musical Math</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/subdividing-musical-math/</link>
+		<link>http://demo.sensei.com/quiz/subdividing-musical-math/</link>
 		<pubDate>Fri, 30 Jan 2015 11:24:36 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/subdividing-musical-math/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/subdividing-musical-math/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -465,10 +465,10 @@ The content for this sample course is provided with permission by <a href="http
 	</item>
 	<item>
 				<title>Billie Jean by Michael Jackson</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/billie-jean-by-michael-jackson/</link>
+		<link>http://demo.sensei.com/lesson/billie-jean-by-michael-jackson/</link>
 		<pubDate>Fri, 30 Jan 2015 11:25:51 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=7715</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=7715</guid>
 		<description></description>
 		<content:encoded><![CDATA[Learn how to play the Verse &amp; Chorus of ‘Billie Jean’ by Michael Jackson.
 
@@ -540,10 +540,10 @@ The content for this sample course is provided with permission by <a href="http
 	</item>
 	<item>
 				<title>Billie Jean by Michael Jackson</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/billie-jean-by-michael-jackson/</link>
+		<link>http://demo.sensei.com/quiz/billie-jean-by-michael-jackson/</link>
 		<pubDate>Fri, 30 Jan 2015 11:25:51 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/billie-jean-by-michael-jackson/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/billie-jean-by-michael-jackson/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -611,10 +611,10 @@ The content for this sample course is provided with permission by <a href="http
 	</item>
 	<item>
 				<title>All of Me by John Legend</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/all-of-me-by-john-legend/</link>
+		<link>http://demo.sensei.com/lesson/all-of-me-by-john-legend/</link>
 		<pubDate>Fri, 30 Jan 2015 11:26:55 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=7717</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=7717</guid>
 		<description></description>
 		<content:encoded><![CDATA[Learn how to play the Intro &amp; Verse of ‘All Of Me’ by John Legend.
 
@@ -686,10 +686,10 @@ The content for this sample course is provided with permission by <a href="http:
 	</item>
 	<item>
 				<title>All of Me by John Legend</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/all-of-me-by-john-legend/</link>
+		<link>http://demo.sensei.com/quiz/all-of-me-by-john-legend/</link>
 		<pubDate>Fri, 30 Jan 2015 11:26:55 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/all-of-me-by-john-legend/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/all-of-me-by-john-legend/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -757,10 +757,10 @@ The content for this sample course is provided with permission by <a href="http:
 	</item>
 	<item>
 				<title>A Sky Full of Stars by Coldplay</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/a-sky-full-of-stars-by-coldplay/</link>
+		<link>http://demo.sensei.com/lesson/a-sky-full-of-stars-by-coldplay/</link>
 		<pubDate>Fri, 30 Jan 2015 11:27:49 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=7719</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=7719</guid>
 		<description></description>
 		<content:encoded><![CDATA[Learn how to play the Intro, Verse &amp; Chorus of ‘A Sky Full Of Stars’ by Coldplay.
 
@@ -832,10 +832,10 @@ The content for this sample course is provided with permission by <a href="http
 	</item>
 	<item>
 				<title>A Sky Full of Stars by Coldplay</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/a-sky-full-of-stars-by-coldplay/</link>
+		<link>http://demo.sensei.com/quiz/a-sky-full-of-stars-by-coldplay/</link>
 		<pubDate>Fri, 30 Jan 2015 11:27:49 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/a-sky-full-of-stars-by-coldplay/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/a-sky-full-of-stars-by-coldplay/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -903,10 +903,10 @@ The content for this sample course is provided with permission by <a href="http
 	</item>
 	<item>
 				<title>Imagine by John Lennon</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/imagine-by-john-lennon/</link>
+		<link>http://demo.sensei.com/lesson/imagine-by-john-lennon/</link>
 		<pubDate>Fri, 30 Jan 2015 11:28:32 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=7721</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=7721</guid>
 		<description></description>
 		<content:encoded><![CDATA[Learn how to play the Intro &amp; Verse of ‘Imagine’ by John Lennon.
 
@@ -978,10 +978,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Imagine by John Lennon</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/imagine-by-john-lennon/</link>
+		<link>http://demo.sensei.com/quiz/imagine-by-john-lennon/</link>
 		<pubDate>Fri, 30 Jan 2015 11:28:32 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/imagine-by-john-lennon/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/imagine-by-john-lennon/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1049,10 +1049,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>How many keys are there on a standard piano</title>
-		<link>http://demo2.woothemes.com/sensei/question/how-many-keys-are-there-on-a-standard-piano/</link>
+		<link>http://demo.sensei.com/question/how-many-keys-are-there-on-a-standard-piano/</link>
 		<pubDate>Fri, 30 Jan 2015 11:45:26 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/how-many-keys-are-there-on-a-standard-piano/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/how-many-keys-are-there-on-a-standard-piano/</guid>
 		<description></description>
 		<content:encoded><![CDATA[(Hint: The one in the lesson video is a standard piano)]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1138,10 +1138,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Where can you find C on the piano keyboard?</title>
-		<link>http://demo2.woothemes.com/sensei/question/where-can-you-find-c-on-the-piano-keyboard/</link>
+		<link>http://demo.sensei.com/question/where-can-you-find-c-on-the-piano-keyboard/</link>
 		<pubDate>Fri, 30 Jan 2015 11:47:57 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/where-can-you-find-c-on-the-piano-keyboard/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/where-can-you-find-c-on-the-piano-keyboard/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1227,10 +1227,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Which of these notes are in the C major scale?</title>
-		<link>http://demo2.woothemes.com/sensei/question/which-of-these-notes-are-in-the-c-major-scale/</link>
+		<link>http://demo.sensei.com/question/which-of-these-notes-are-in-the-c-major-scale/</link>
 		<pubDate>Fri, 30 Jan 2015 11:50:30 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/which-of-these-notes-are-in-the-c-major-scale/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/which-of-these-notes-are-in-the-c-major-scale/</guid>
 		<description></description>
 		<content:encoded><![CDATA[Select all correct answers.]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1316,10 +1316,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>What is a chord?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-is-a-chord/</link>
+		<link>http://demo.sensei.com/question/what-is-a-chord/</link>
 		<pubDate>Fri, 30 Jan 2015 15:33:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-is-a-chord/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-is-a-chord/</guid>
 		<description></description>
 		<content:encoded><![CDATA[Complete the sentence]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1397,10 +1397,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>How many notes are played together in a triad?</title>
-		<link>http://demo2.woothemes.com/sensei/question/how-many-notes-are-played-together-in-a-triad/</link>
+		<link>http://demo.sensei.com/question/how-many-notes-are-played-together-in-a-triad/</link>
 		<pubDate>Fri, 30 Jan 2015 15:38:47 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/how-many-notes-are-played-together-in-a-triad/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/how-many-notes-are-played-together-in-a-triad/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1482,10 +1482,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>What is a metronome?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-is-a-metronome/</link>
+		<link>http://demo.sensei.com/question/what-is-a-metronome/</link>
 		<pubDate>Fri, 30 Jan 2015 15:43:13 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-is-a-metronome/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-is-a-metronome/</guid>
 		<description></description>
 		<content:encoded><![CDATA[Complete the sentence]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1563,10 +1563,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>A dotted half note is held for 2 beats</title>
-		<link>http://demo2.woothemes.com/sensei/question/a-dotted-half-note-is-held-for-2-beats/</link>
+		<link>http://demo.sensei.com/question/a-dotted-half-note-is-held-for-2-beats/</link>
 		<pubDate>Fri, 30 Jan 2015 15:47:42 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/a-dotted-half-note-is-held-for-2-beats/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/a-dotted-half-note-is-held-for-2-beats/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1648,10 +1648,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Overview of Question Types Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/overview-of-question-types-quiz/</link>
+		<link>http://demo.sensei.com/quiz/overview-of-question-types-quiz/</link>
 		<pubDate>Wed, 05 Mar 2014 16:11:12 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5482</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5482</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1729,10 +1729,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Multiple Choice Questions Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/multiple-choice-questions-quiz/</link>
+		<link>http://demo.sensei.com/quiz/multiple-choice-questions-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5486</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5486</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1810,10 +1810,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>True or False Questions Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/true-or-false-questions-quiz/</link>
+		<link>http://demo.sensei.com/quiz/true-or-false-questions-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5497</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5497</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -1901,10 +1901,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Gap Fill Questions Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/gap-fill-questions-quiz/</link>
+		<link>http://demo.sensei.com/quiz/gap-fill-questions-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5566</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5566</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2194,10 +2194,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Single Line Questions Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/single-line-questions-quiz/</link>
+		<link>http://demo.sensei.com/quiz/single-line-questions-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 14:47:52 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5569</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5569</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2263,10 +2263,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>File Upload Question Type Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/file-upload-question-type-quiz/</link>
+		<link>http://demo.sensei.com/quiz/file-upload-question-type-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5572</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5572</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2332,10 +2332,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Multi Line question type Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/multi-line-question-type-quiz/</link>
+		<link>http://demo.sensei.com/quiz/multi-line-question-type-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5575</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5575</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2415,10 +2415,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Sensei Certificates Extension Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/sensei-certificates-extension-quiz/</link>
+		<link>http://demo.sensei.com/quiz/sensei-certificates-extension-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5584</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5584</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2492,10 +2492,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Sensei Modules Extension Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/sensei-modules-extension-quiz/</link>
+		<link>http://demo.sensei.com/quiz/sensei-modules-extension-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5588</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5588</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2569,10 +2569,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>The Grading Dashboard Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/the-grading-dashboard-quiz/</link>
+		<link>http://demo.sensei.com/quiz/the-grading-dashboard-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5595</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5595</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2744,10 +2744,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Grading a Quiz Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/grading-a-quiz-quiz/</link>
+		<link>http://demo.sensei.com/quiz/grading-a-quiz-quiz/</link>
 		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5600</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5600</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2821,10 +2821,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Lesson Prerequisites Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/lesson-prerequisites-quiz/</link>
+		<link>http://demo.sensei.com/quiz/lesson-prerequisites-quiz/</link>
 		<pubDate>Tue, 18 Mar 2014 13:08:44 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5673</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5673</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2898,10 +2898,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Course Prerequisites Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/course-prerequisites-quiz/</link>
+		<link>http://demo.sensei.com/quiz/course-prerequisites-quiz/</link>
 		<pubDate>Tue, 18 Mar 2014 13:15:43 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5678</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5678</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -2979,10 +2979,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Question Bank Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/question-bank-quiz/</link>
+		<link>http://demo.sensei.com/quiz/question-bank-quiz/</link>
 		<pubDate>Tue, 18 Mar 2014 15:43:24 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5683</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5683</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -3056,10 +3056,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Question/Answer Ordering Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/questionanswer-ordering-quiz/</link>
+		<link>http://demo.sensei.com/quiz/questionanswer-ordering-quiz/</link>
 		<pubDate>Tue, 18 Mar 2014 15:55:39 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5693</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5693</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -3133,10 +3133,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>Adding Media to Questions Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/adding-media-to-questions-quiz/</link>
+		<link>http://demo.sensei.com/quiz/adding-media-to-questions-quiz/</link>
 		<pubDate>Tue, 18 Mar 2014 16:24:19 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=quiz&#038;p=5698</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5698</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -3214,10 +3214,10 @@ The content for this sample course is provided with permission by <a title="HDp
 	</item>
 	<item>
 				<title>The Key of C</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/the-key-of-c/</link>
+		<link>http://demo.sensei.com/lesson/the-key-of-c/</link>
 		<pubDate>Fri, 30 Jan 2015 11:20:30 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=7706</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=7706</guid>
 		<description></description>
 		<content:encoded><![CDATA[From classical music to punk rock, from disco to jazz, harmony plays a crucial role in a song’s identity. Chords are groups of notes that form harmony, and when combined in certain ways, they can inspire art or instill rage. Most songs follow the same, basic chord formulas, and we’ve broken them down here for you to learn.
 
@@ -3321,10 +3321,10 @@ The content for this sample course is provided with permission by <a href="http
 	</item>
 	<item>
 				<title>How to Play the Piano</title>
-		<link>http://demo2.woothemes.com/sensei/course/how-to-play-the-piano/</link>
+		<link>http://demo.sensei.com/course/how-to-play-the-piano/</link>
 		<pubDate>Fri, 30 Jan 2015 11:18:49 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/course/how-to-play-the-piano/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/course/how-to-play-the-piano/</guid>
 		<description></description>
 		<content:encoded><![CDATA[This introductory course will teach you the basics of playing the piano, starting with chords and rhythm, before moving on to playing full songs.
 
@@ -3524,10 +3524,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>The Key of C</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/the-key-of-c/</link>
+		<link>http://demo.sensei.com/quiz/the-key-of-c/</link>
 		<pubDate>Fri, 30 Jan 2015 11:20:30 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/the-key-of-c/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/the-key-of-c/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -3599,10 +3599,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>Your Friend, the Triad</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/your-friend-the-triad/</link>
+		<link>http://demo.sensei.com/quiz/your-friend-the-triad/</link>
 		<pubDate>Fri, 30 Jan 2015 11:21:53 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/your-friend-the-triad/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/your-friend-the-triad/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -3678,10 +3678,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>Which strings are not required when playing a D Major Chord?</title>
-		<link>http://demo2.woothemes.com/sensei/question/which-strings-are-not-required-when-playing-a-d-major-chord/</link>
+		<link>http://demo.sensei.com/question/which-strings-are-not-required-when-playing-a-d-major-chord/</link>
 		<pubDate>Mon, 21 Jan 2013 11:25:08 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/which-strings-are-not-required-when-playing-a-d-major-chord/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/which-strings-are-not-required-when-playing-a-d-major-chord/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -3770,10 +3770,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What instrument are you learning in this series?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-instrument-are-you-learning-in-this-series/</link>
+		<link>http://demo.sensei.com/question/what-instrument-are-you-learning-in-this-series/</link>
 		<pubDate>Mon, 21 Jan 2013 11:29:12 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-instrument-are-you-learning-in-this-series/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-instrument-are-you-learning-in-this-series/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -3898,10 +3898,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What can happen if you hold your guitar incorrectly?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-can-happen-if-you-hold-your-guitar-incorrectly/</link>
+		<link>http://demo.sensei.com/question/what-can-happen-if-you-hold-your-guitar-incorrectly/</link>
 		<pubDate>Mon, 21 Jan 2013 11:30:24 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-can-happen-if-you-hold-your-guitar-incorrectly/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-can-happen-if-you-hold-your-guitar-incorrectly/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4026,10 +4026,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What can you do to combat fatigue from playing the guitar?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-can-you-do-to-combat-fatigue-from-playing-the-guitar/</link>
+		<link>http://demo.sensei.com/question/what-can-you-do-to-combat-fatigue-from-playing-the-guitar/</link>
 		<pubDate>Mon, 21 Jan 2013 11:31:33 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-can-you-do-to-combat-fatigue-from-playing-the-guitar/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-can-you-do-to-combat-fatigue-from-playing-the-guitar/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4150,10 +4150,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What should you use to press the strings of your guitar?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-should-you-use-to-press-the-strings-of-your-guitar/</link>
+		<link>http://demo.sensei.com/question/what-should-you-use-to-press-the-strings-of-your-guitar/</link>
 		<pubDate>Mon, 21 Jan 2013 11:33:17 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-should-you-use-to-press-the-strings-of-your-guitar/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-should-you-use-to-press-the-strings-of-your-guitar/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4252,10 +4252,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What is not an most important thing to remember when playing?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-is-not-an-most-important-thing-to-remember-when-playing/</link>
+		<link>http://demo.sensei.com/question/what-is-not-an-most-important-thing-to-remember-when-playing/</link>
 		<pubDate>Mon, 21 Jan 2013 11:34:56 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-is-not-an-most-important-thing-to-remember-when-playing/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-is-not-an-most-important-thing-to-remember-when-playing/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4354,10 +4354,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What part of the guitar lies at the end of the neck?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-part-of-the-guitar-lies-at-the-end-of-the-neck/</link>
+		<link>http://demo.sensei.com/question/what-part-of-the-guitar-lies-at-the-end-of-the-neck/</link>
 		<pubDate>Mon, 21 Jan 2013 11:37:27 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-part-of-the-guitar-lies-at-the-end-of-the-neck/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-part-of-the-guitar-lies-at-the-end-of-the-neck/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4446,10 +4446,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What function do tuning pegs perform?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-function-do-tuning-pegs-perform/</link>
+		<link>http://demo.sensei.com/question/what-function-do-tuning-pegs-perform/</link>
 		<pubDate>Mon, 21 Jan 2013 11:39:06 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-function-do-tuning-pegs-perform/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-function-do-tuning-pegs-perform/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4538,10 +4538,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What can you use to keep your guitar in tune?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-can-you-use-to-keep-your-guitar-in-tune/</link>
+		<link>http://demo.sensei.com/question/what-can-you-use-to-keep-your-guitar-in-tune/</link>
 		<pubDate>Mon, 21 Jan 2013 11:40:50 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-can-you-use-to-keep-your-guitar-in-tune/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-can-you-use-to-keep-your-guitar-in-tune/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4630,10 +4630,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What part of the guitar do you adjust when tuning it?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-part-of-the-guitar-do-you-adjust-when-tuning-it/</link>
+		<link>http://demo.sensei.com/question/what-part-of-the-guitar-do-you-adjust-when-tuning-it/</link>
 		<pubDate>Mon, 21 Jan 2013 11:41:41 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-part-of-the-guitar-do-you-adjust-when-tuning-it/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-part-of-the-guitar-do-you-adjust-when-tuning-it/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4722,10 +4722,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What can you commonly use to strum your guitar?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-can-you-commonly-use-to-strum-your-guitar/</link>
+		<link>http://demo.sensei.com/question/what-can-you-commonly-use-to-strum-your-guitar/</link>
 		<pubDate>Mon, 21 Jan 2013 11:43:30 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-can-you-commonly-use-to-strum-your-guitar/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-can-you-commonly-use-to-strum-your-guitar/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4814,10 +4814,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>Name a disadvantage of using a pick?</title>
-		<link>http://demo2.woothemes.com/sensei/question/name-a-disadvantage-of-using-a-pick/</link>
+		<link>http://demo.sensei.com/question/name-a-disadvantage-of-using-a-pick/</link>
 		<pubDate>Mon, 21 Jan 2013 11:44:32 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/name-a-disadvantage-of-using-a-pick/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/name-a-disadvantage-of-using-a-pick/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -4906,10 +4906,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What is the next step after learning to play single notes?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-is-the-next-step-after-learning-to-play-single-notes/</link>
+		<link>http://demo.sensei.com/question/what-is-the-next-step-after-learning-to-play-single-notes/</link>
 		<pubDate>Mon, 21 Jan 2013 11:46:30 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-is-the-next-step-after-learning-to-play-single-notes/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-is-the-next-step-after-learning-to-play-single-notes/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5002,10 +5002,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>What are power chords?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-are-power-chords/</link>
+		<link>http://demo.sensei.com/question/what-are-power-chords/</link>
 		<pubDate>Mon, 21 Jan 2013 11:47:57 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-are-power-chords/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-are-power-chords/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5094,10 +5094,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>Auto Graded Questions Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/auto-graded-questions-quiz/</link>
+		<link>http://demo.sensei.com/quiz/auto-graded-questions-quiz/</link>
 		<pubDate>Wed, 29 May 2013 13:16:18 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/auto-graded-questions-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/auto-graded-questions-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5199,10 +5199,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>Manual Grading Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/manual-grading-quiz/</link>
+		<link>http://demo.sensei.com/quiz/manual-grading-quiz/</link>
 		<pubDate>Wed, 29 May 2013 13:24:25 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/manual-grading-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/manual-grading-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5294,10 +5294,10 @@ The content for this sample course is provided with permission by <a title="HDpi
 	</item>
 	<item>
 				<title>Lesson with no Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/lesson-with-no-quiz/</link>
+		<link>http://demo.sensei.com/lesson/lesson-with-no-quiz/</link>
 		<pubDate>Wed, 23 Oct 2013 14:08:36 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=4864</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=4864</guid>
 		<description></description>
 		<content:encoded><![CDATA[This is a simple lesson with no Quiz.
 
@@ -5374,10 +5374,10 @@ Feel free to complete it.]]></content:encoded>
 	</item>
 	<item>
 				<title>Lesson with no Quiz Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/lesson-with-no-quiz-quiz/</link>
+		<link>http://demo.sensei.com/quiz/lesson-with-no-quiz-quiz/</link>
 		<pubDate>Wed, 23 Oct 2013 14:08:37 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/lesson-with-no-quiz-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/lesson-with-no-quiz-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5481,10 +5481,10 @@ Feel free to complete it.]]></content:encoded>
 	</item>
 	<item>
 				<title>Auto Graded Questions Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/auto-graded-questions-quiz-2/</link>
+		<link>http://demo.sensei.com/quiz/auto-graded-questions-quiz-2/</link>
 		<pubDate>Wed, 05 Mar 2014 13:34:04 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/auto-graded-questions-quiz-2/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/auto-graded-questions-quiz-2/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5566,10 +5566,10 @@ Feel free to complete it.]]></content:encoded>
 	</item>
 	<item>
 				<title>Manually Graded Questions Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/manual-grading-quiz-2/</link>
+		<link>http://demo.sensei.com/quiz/manual-grading-quiz-2/</link>
 		<pubDate>Wed, 05 Mar 2014 13:41:09 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/manual-grading-quiz-2/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/manual-grading-quiz-2/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5651,10 +5651,10 @@ Feel free to complete it.]]></content:encoded>
 	</item>
 	<item>
 				<title>What hook runs before the loop in Sensei?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-hook-runs-before-the-loop-in-sensei/</link>
+		<link>http://demo.sensei.com/question/what-hook-runs-before-the-loop-in-sensei/</link>
 		<pubDate>Fri, 11 Jan 2013 10:17:01 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-hook-runs-before-the-loop-in-sensei/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-hook-runs-before-the-loop-in-sensei/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5693,10 +5693,10 @@ Feel free to complete it.]]></content:encoded>
 	</item>
 	<item>
 				<title>What page does the sensei_comments hook run?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-page-does-the-sensei_comments-hook-run/</link>
+		<link>http://demo.sensei.com/question/what-page-does-the-sensei_comments-hook-run/</link>
 		<pubDate>Fri, 11 Jan 2013 10:17:48 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-page-does-the-sensei_comments-hook-run/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-page-does-the-sensei_comments-hook-run/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5735,10 +5735,10 @@ Feel free to complete it.]]></content:encoded>
 	</item>
 	<item>
 				<title>What plugin is Sensei&#039;s templating structure similar to?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-plugin-is-senseis-templating-structure-similar-to/</link>
+		<link>http://demo.sensei.com/question/what-plugin-is-senseis-templating-structure-similar-to/</link>
 		<pubDate>Fri, 11 Jan 2013 10:18:29 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-plugin-is-senseis-templating-structure-similar-to/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-plugin-is-senseis-templating-structure-similar-to/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5777,10 +5777,10 @@ Feel free to complete it.]]></content:encoded>
 	</item>
 	<item>
 				<title>How to play the guitar</title>
-		<link>http://demo2.woothemes.com/sensei/course/how-to-play-the-guitar/</link>
+		<link>http://demo.sensei.com/course/how-to-play-the-guitar/</link>
 		<pubDate>Wed, 16 Jan 2013 11:16:24 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=course&#038;p=2607</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=course&#038;p=2607</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[A collection of introductory videos for learning how to play the guitar and become a rockstar.]]></excerpt:encoded>
@@ -6034,10 +6034,10 @@ Feel free to complete it.]]></content:encoded>
 	</item>
 	<item>
 				<title>How to hold the guitar</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/how-to-hold-the-guitar/</link>
+		<link>http://demo.sensei.com/lesson/how-to-hold-the-guitar/</link>
 		<pubDate>Wed, 16 Jan 2013 11:17:23 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2608</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2608</guid>
 		<description></description>
 		<content:encoded><![CDATA[The guitar can be played in many positions, but some positions are clearly more efficient than others. The choice of position is personal, but clear guidelines exist. Some basic considerations in determining a chosen playing position include:
 <ul>
@@ -6215,10 +6215,10 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 	</item>
 	<item>
 				<title>How to hold the guitar Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/how-to-hold-the-guitar-quiz/</link>
+		<link>http://demo.sensei.com/quiz/how-to-hold-the-guitar-quiz/</link>
 		<pubDate>Wed, 16 Jan 2013 11:17:23 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/how-to-hold-the-guitar-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/how-to-hold-the-guitar-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -6344,10 +6344,10 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 	</item>
 	<item>
 				<title>Using the Fretboard</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/using-the-fretboard/</link>
+		<link>http://demo.sensei.com/lesson/using-the-fretboard/</link>
 		<pubDate>Wed, 16 Jan 2013 11:18:12 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2610</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2610</guid>
 		<description></description>
 		<content:encoded><![CDATA[The most important things to remember when playing are to keep your hand loose, avoid unnecessary movements and finger spreading, and not to smother the strings. Having good flexibility in your hand is one thing, but trying to reach too far can be exhausting. Keep your fingers tight together, but not cramped. In general, when playing acoustic instruments you should always use the tips of your left hand fingers and not the pads to press the strings. If you use the pads, you risk muffling the sound coming from adjacent strings, which may be required to be heard. The greater sustaining properties of electric guitars often requires that such strings be damped so this rule does not always apply. Ideally your left elbow should be extended from your body, and your left hand should curl in towards your body. Your fingers should be like little hammers hitting down on the strings, and this way you will use the tips to push the strings down into the frets.
 Regardless of where you are playing on the fretboard, you always have to make sure that you're pressing down in the best spot to get the best sound. You should always be fretting down the string slightly behind the fret of the note you want to play. Press the string down firmly to the fretboard, close to the metal fret. If the finger is too far away from the fret, then the pressure is not sufficient to press the string down completely on the frets, and the note will buzz. If you are pressing too close to the fret you will sometimes accidentally play a note too high. You'll have to practice to get the right amount of pressure to use and the right distance at which to hold your arm.
@@ -6527,10 +6527,10 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 	</item>
 	<item>
 				<title>Using the Fretboard Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/finger-and-fret-numbers-quiz/</link>
+		<link>http://demo.sensei.com/quiz/finger-and-fret-numbers-quiz/</link>
 		<pubDate>Wed, 16 Jan 2013 11:18:12 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/finger-and-fret-numbers-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/finger-and-fret-numbers-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -6646,10 +6646,10 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 	</item>
 	<item>
 				<title>Parts of the guitar</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/parts-of-the-guitar/</link>
+		<link>http://demo.sensei.com/lesson/parts-of-the-guitar/</link>
 		<pubDate>Wed, 16 Jan 2013 11:19:07 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2612</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2612</guid>
 		<description></description>
 		<content:encoded><![CDATA[For any guitar player, it is important to know the proper terminology for the various parts of a guitar's anatomy.
 
@@ -6795,10 +6795,10 @@ Content Credit: h<a href="http://en.wikibooks.org/wiki/Guitar/Anatomy_of_a_Guita
 	</item>
 	<item>
 				<title>Parts of the guitar Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/parts-of-the-guitar-quiz/</link>
+		<link>http://demo.sensei.com/quiz/parts-of-the-guitar-quiz/</link>
 		<pubDate>Wed, 16 Jan 2013 11:19:07 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/parts-of-the-guitar-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/parts-of-the-guitar-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -6900,10 +6900,10 @@ Content Credit: h<a href="http://en.wikibooks.org/wiki/Guitar/Anatomy_of_a_Guita
 	</item>
 	<item>
 				<title>How to use an electronic tuner</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/how-to-use-an-electronic-tuner/</link>
+		<link>http://demo.sensei.com/lesson/how-to-use-an-electronic-tuner/</link>
 		<pubDate>Wed, 16 Jan 2013 11:22:53 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2614</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2614</guid>
 		<description></description>
 		<content:encoded><![CDATA[Tuning using an electronic guitar tuner makes tuning your guitar a breeze. Now that you know the names of the open strings, tuning the guitar is a matter of playing the open string, with the tuner turned on, and seeing how the tuner reacts.
 
@@ -7030,10 +7030,10 @@ From there, move the appropriate tuning peg either up or down until the needle/l
 	</item>
 	<item>
 				<title>How to use an electronic tuner Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/how-to-use-an-electronic-tuner-quiz/</link>
+		<link>http://demo.sensei.com/quiz/how-to-use-an-electronic-tuner-quiz/</link>
 		<pubDate>Wed, 16 Jan 2013 11:22:53 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/how-to-use-an-electronic-tuner-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/how-to-use-an-electronic-tuner-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7135,10 +7135,10 @@ From there, move the appropriate tuning peg either up or down until the needle/l
 	</item>
 	<item>
 				<title>Right hand guitar technique</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/right-hand-guitar-technique/</link>
+		<link>http://demo.sensei.com/lesson/right-hand-guitar-technique/</link>
 		<pubDate>Wed, 16 Jan 2013 11:23:41 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2616</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2616</guid>
 		<description></description>
 		<content:encoded><![CDATA[<h3>Using a pick</h3>
 The primary advantages of the pick are its speed, its ease of striking large chords and, because the fingernails and fingertips are not involved, its preservation of player's picking hand. Furthermore, use of a pick makes a louder and brighter sound. Its primary disadvantage is its imprecision, making muting strings necessary. Also, if the player wishes to switch to the tapping style, he or she can tap with or with out the pick: to tap with the pick just put it on its side and tap it on the desired fret. However, tapping with a pick makes it harder to tap on multiple strings.
@@ -7266,10 +7266,10 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/">http://en.wikiboo
 	</item>
 	<item>
 				<title>Right hand guitar technique Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/right-hand-guitar-technique-quiz/</link>
+		<link>http://demo.sensei.com/quiz/right-hand-guitar-technique-quiz/</link>
 		<pubDate>Wed, 16 Jan 2013 11:23:41 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/right-hand-guitar-technique-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/right-hand-guitar-technique-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7371,10 +7371,10 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/">http://en.wikiboo
 	</item>
 	<item>
 				<title>Left hand guitar technique</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/left-hand-guitar-technique/</link>
+		<link>http://demo.sensei.com/lesson/left-hand-guitar-technique/</link>
 		<pubDate>Wed, 16 Jan 2013 11:24:50 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2618</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2618</guid>
 		<description></description>
 		<content:encoded><![CDATA[For the beginner guitarist, harmonic intervals are the next step up from playing single notes. A harmonic interval (also called a double stop, dyad, or less commonly couplet) are two notes played at the same time. The distance between the two notes is called an interval.
 A predominant type of harmonic interval know as the power chord consist of the root note of the chord and a fifth. An advantage to understanding power chords is their shape can be used to quickly determine the location of perfect intervals. This improves ones overall understanding of the location of notes on the fingerboard by relation to one another and builds the groundwork for understanding scales.
@@ -7501,10 +7501,10 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/Intervals_and_Power
 	</item>
 	<item>
 				<title>Left hand guitar technique Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/left-hand-guitar-technique-quiz/</link>
+		<link>http://demo.sensei.com/quiz/left-hand-guitar-technique-quiz/</link>
 		<pubDate>Wed, 16 Jan 2013 11:24:50 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/left-hand-guitar-technique-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/left-hand-guitar-technique-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7606,10 +7606,10 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/Intervals_and_Power
 	</item>
 	<item>
 				<title>G and D major guitar chords</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/g-and-d-major-guitar-chords/</link>
+		<link>http://demo.sensei.com/lesson/g-and-d-major-guitar-chords/</link>
 		<pubDate>Wed, 16 Jan 2013 11:25:38 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2620</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2620</guid>
 		<description></description>
 		<content:encoded><![CDATA[<h3>G Major</h3>
 There are two common ways to play a G major, a three finger method (Frets: 320003) and a four finger method (Frets: 320033), both with a slight difference in sonority. In either way, the notes are a combination of G, B and D. From this point forward, the fingerings will be shown in parentheses for the sake of simplicity.
@@ -7726,10 +7726,10 @@ Use your first finger on the third string, third finger on the second string, an
 	</item>
 	<item>
 				<title>G and D major guitar chords Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/g-and-d-major-guitar-chords-quiz/</link>
+		<link>http://demo.sensei.com/quiz/g-and-d-major-guitar-chords-quiz/</link>
 		<pubDate>Wed, 16 Jan 2013 11:25:38 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/g-and-d-major-guitar-chords-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/g-and-d-major-guitar-chords-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7817,10 +7817,10 @@ Use your first finger on the third string, third finger on the second string, an
 	</item>
 	<item>
 				<title>How to play guitar</title>
-		<link>http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2622</link>
+		<link>http://demo.sensei.com/?post_type=lesson&#038;p=2622</link>
 		<pubDate>Wed, 30 Nov -0001 00:00:00 +0000</pubDate>
 		<dc:creator><![CDATA[wooteam]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2622</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2622</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7843,10 +7843,10 @@ Use your first finger on the third string, third finger on the second string, an
 	</item>
 	<item>
 				<title>Which notes are not part of a G Major Chord?</title>
-		<link>http://demo2.woothemes.com/sensei/question/which-otes-are-not-part-of-a-g-major-chord/</link>
+		<link>http://demo.sensei.com/question/which-otes-are-not-part-of-a-g-major-chord/</link>
 		<pubDate>Mon, 21 Jan 2013 11:23:42 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/which-otes-are-not-part-of-a-g-major-chord/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/which-otes-are-not-part-of-a-g-major-chord/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7939,10 +7939,10 @@ Use your first finger on the third string, third finger on the second string, an
 	</item>
 	<item>
 				<title>Customize the Sensei Templates</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/customize-the-sensei-templates/</link>
+		<link>http://demo.sensei.com/lesson/customize-the-sensei-templates/</link>
 		<pubDate>Fri, 11 Jan 2013 08:54:01 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2555</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2555</guid>
 		<description></description>
 		<content:encoded><![CDATA[This lesson will show you the basics of Sensei's templating system, how it is structured, and how to integrate it with your themes.
 <h3>Plugin structure</h3>
@@ -8013,10 +8013,10 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 	</item>
 	<item>
 				<title>Sensei Theming 101</title>
-		<link>http://demo2.woothemes.com/sensei/course/sensei-theming-101/</link>
+		<link>http://demo.sensei.com/course/sensei-theming-101/</link>
 		<pubDate>Fri, 11 Jan 2013 08:53:39 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/course/sensei-theming-101/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/course/sensei-theming-101/</guid>
 		<description></description>
 		<content:encoded><![CDATA[An introduction to theming with Sensei. Learn how to integrate your themes with Sensei and extend the templating system. This Course will show you where the template files are located and how to add them to your theme.]]></content:encoded>
 		<excerpt:encoded><![CDATA[An introduction to theming with Sensei. Learn how to integrate your themes with Sensei and extend the templating system.]]></excerpt:encoded>
@@ -8058,10 +8058,10 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 	</item>
 	<item>
 				<title>Customize the Sensei Templates Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/customize-the-sensei-templates-quiz/</link>
+		<link>http://demo.sensei.com/quiz/customize-the-sensei-templates-quiz/</link>
 		<pubDate>Fri, 11 Jan 2013 08:54:01 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/customize-the-sensei-templates-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/customize-the-sensei-templates-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -8121,10 +8121,10 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 	</item>
 	<item>
 				<title>The Woo Team</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/the-woo-team/</link>
+		<link>http://demo.sensei.com/lesson/the-woo-team/</link>
 		<pubDate>Fri, 11 Jan 2013 08:59:03 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2558</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2558</guid>
 		<description></description>
 		<content:encoded><![CDATA[Embedded Video:
 [embed]http://vimeo.com/17759954 [/embed]
@@ -8274,10 +8274,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>The Woo Team Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/the-woo-team-quiz/</link>
+		<link>http://demo.sensei.com/quiz/the-woo-team-quiz/</link>
 		<pubDate>Fri, 11 Jan 2013 08:59:03 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/the-woo-team-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/the-woo-team-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -8361,10 +8361,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>WooThemes 101</title>
-		<link>http://demo2.woothemes.com/sensei/course/woothemes-101/</link>
+		<link>http://demo.sensei.com/course/woothemes-101/</link>
 		<pubDate>Fri, 11 Jan 2013 09:00:04 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/course/woothemes-101/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/course/woothemes-101/</guid>
 		<description></description>
 		<content:encoded><![CDATA[This Course will help you learn some interesting information about the WooTeam and the WooThemes ecosystem. Once you have completed the Course you will know where some of the Co Founders are based, who a Super Hero is, and who built Sensei...]]></content:encoded>
 		<excerpt:encoded><![CDATA[This Course will help you learn some interesting information about the WooTeam and the WooThemes ecosystem.]]></excerpt:encoded>
@@ -8538,10 +8538,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Which of the Co Founders are based in Norway?</title>
-		<link>http://demo2.woothemes.com/sensei/question/which-of-the-co-founders-are-based-in-norway/</link>
+		<link>http://demo.sensei.com/question/which-of-the-co-founders-are-based-in-norway/</link>
 		<pubDate>Fri, 11 Jan 2013 09:16:27 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/which-of-the-co-founders-are-based-in-norway/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/which-of-the-co-founders-are-based-in-norway/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -8644,10 +8644,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Which of the Support Technicians are from Poland?</title>
-		<link>http://demo2.woothemes.com/sensei/question/which-of-the-support-technicians-are-from-poland/</link>
+		<link>http://demo.sensei.com/question/which-of-the-support-technicians-are-from-poland/</link>
 		<pubDate>Fri, 11 Jan 2013 09:18:00 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/which-of-the-support-technicians-are-from-poland/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/which-of-the-support-technicians-are-from-poland/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -8750,10 +8750,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Who is our resident Super Hero?</title>
-		<link>http://demo2.woothemes.com/sensei/question/who-is-our-resident-super-hero/</link>
+		<link>http://demo.sensei.com/question/who-is-our-resident-super-hero/</link>
 		<pubDate>Fri, 11 Jan 2013 09:18:44 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/who-is-our-resident-super-hero/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/who-is-our-resident-super-hero/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -8856,10 +8856,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Which of the Developers built Sensei?</title>
-		<link>http://demo2.woothemes.com/sensei/question/which-of-the-developers-built-sensei/</link>
+		<link>http://demo.sensei.com/question/which-of-the-developers-built-sensei/</link>
 		<pubDate>Fri, 11 Jan 2013 09:19:55 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/which-of-the-developers-built-sensei/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/which-of-the-developers-built-sensei/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -8962,10 +8962,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Where can you purchase the Sensei plugin?</title>
-		<link>http://demo2.woothemes.com/sensei/question/where-can-you-purchase-the-sensei-plugin/</link>
+		<link>http://demo.sensei.com/question/where-can-you-purchase-the-sensei-plugin/</link>
 		<pubDate>Fri, 11 Jan 2013 09:33:10 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/where-can-you-purchase-the-sensei-plugin/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/where-can-you-purchase-the-sensei-plugin/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9132,10 +9132,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Where can you download the Sensei plugin after purchase?</title>
-		<link>http://demo2.woothemes.com/sensei/question/where-can-you-download-the-sensei-plugin-after-purchase/</link>
+		<link>http://demo.sensei.com/question/where-can-you-download-the-sensei-plugin-after-purchase/</link>
 		<pubDate>Fri, 11 Jan 2013 09:34:14 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/where-can-you-download-the-sensei-plugin-after-purchase/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/where-can-you-download-the-sensei-plugin-after-purchase/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9302,10 +9302,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>How do you activate the plugin?</title>
-		<link>http://demo2.woothemes.com/sensei/question/how-do-you-activate-the-plugin/</link>
+		<link>http://demo.sensei.com/question/how-do-you-activate-the-plugin/</link>
 		<pubDate>Fri, 11 Jan 2013 09:35:01 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/how-do-you-activate-the-plugin/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/how-do-you-activate-the-plugin/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9472,10 +9472,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Which box can you create a Course in?</title>
-		<link>http://demo2.woothemes.com/sensei/question/which-box-can-you-create-a-course-in/</link>
+		<link>http://demo.sensei.com/question/which-box-can-you-create-a-course-in/</link>
 		<pubDate>Fri, 11 Jan 2013 09:47:16 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/which-box-can-you-create-a-course-in/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/which-box-can-you-create-a-course-in/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9596,10 +9596,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Can you add a Quiz Question before saving your Lesson?</title>
-		<link>http://demo2.woothemes.com/sensei/question/can-you-add-a-quiz-question-before-saving-your-lesson/</link>
+		<link>http://demo.sensei.com/question/can-you-add-a-quiz-question-before-saving-your-lesson/</link>
 		<pubDate>Fri, 11 Jan 2013 09:48:10 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/can-you-add-a-quiz-question-before-saving-your-lesson/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/can-you-add-a-quiz-question-before-saving-your-lesson/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9702,10 +9702,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Where can I view the Average Grade in the WordPress admin?</title>
-		<link>http://demo2.woothemes.com/sensei/question/where-can-i-view-the-average-grade-in-the-wordpress-admin/</link>
+		<link>http://demo.sensei.com/question/where-can-i-view-the-average-grade-in-the-wordpress-admin/</link>
 		<pubDate>Fri, 11 Jan 2013 09:54:56 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/where-can-i-view-the-average-grade-in-the-wordpress-admin/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/where-can-i-view-the-average-grade-in-the-wordpress-admin/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9808,10 +9808,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>What plugin are we using to create Products?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-plugin-are-we-using-to-create-products/</link>
+		<link>http://demo.sensei.com/question/what-plugin-are-we-using-to-create-products/</link>
 		<pubDate>Fri, 11 Jan 2013 09:59:38 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-plugin-are-we-using-to-create-products/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-plugin-are-we-using-to-create-products/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9882,10 +9882,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Which of the following are not required fields for our product?</title>
-		<link>http://demo2.woothemes.com/sensei/question/which-of-the-following-are-not-required-fields-for-our-product/</link>
+		<link>http://demo.sensei.com/question/which-of-the-following-are-not-required-fields-for-our-product/</link>
 		<pubDate>Fri, 11 Jan 2013 10:00:47 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/which-of-the-following-are-not-required-fields-for-our-product/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/which-of-the-following-are-not-required-fields-for-our-product/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9956,10 +9956,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>What folder in Sensei are the template files found?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-folder-in-sensei-are-the-template-files-found/</link>
+		<link>http://demo.sensei.com/question/what-folder-in-sensei-are-the-template-files-found/</link>
 		<pubDate>Fri, 11 Jan 2013 10:15:52 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-folder-in-sensei-are-the-template-files-found/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-folder-in-sensei-are-the-template-files-found/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -10002,10 +10002,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>What folder must you create in your theme for your new template files?</title>
-		<link>http://demo2.woothemes.com/sensei/question/what-folder-must-you-create-in-your-theme-for-your-new-template-files/</link>
+		<link>http://demo.sensei.com/question/what-folder-must-you-create-in-your-theme-for-your-new-template-files/</link>
 		<pubDate>Fri, 11 Jan 2013 10:16:24 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/question/what-folder-must-you-create-in-your-theme-for-your-new-template-files/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/question/what-folder-must-you-create-in-your-theme-for-your-new-template-files/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -10044,10 +10044,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Purchase &amp; Activate Sensei</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/purchase-activate-sensei/</link>
+		<link>http://demo.sensei.com/lesson/purchase-activate-sensei/</link>
 		<pubDate>Fri, 11 Jan 2013 07:32:13 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2540</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2540</guid>
 		<description></description>
 		<content:encoded><![CDATA[Setting up online Courses in your WordPress powered website has become even easier now. All you need to do is purchase the Sensei plugin by WooThemes and upload it to your WordPress powered website. Follows the steps below and you will have setup Sensei in 5 minutes!
 <ol>
@@ -10260,10 +10260,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Create an Online Course</title>
-		<link>http://demo2.woothemes.com/sensei/course/create-an-online-course/</link>
+		<link>http://demo.sensei.com/course/create-an-online-course/</link>
 		<pubDate>Fri, 11 Jan 2013 07:31:24 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/course/create-an-online-course-with-sensei/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/course/create-an-online-course-with-sensei/</guid>
 		<description></description>
 		<content:encoded><![CDATA[Learn how to create an Online Course with the latest plugin from WooThemes - Sensei. This 3 part series will show you how to create Courses, Lessons, and add a Quiz to assess your learners.]]></content:encoded>
 		<excerpt:encoded><![CDATA[Learn how to create an Online Course with the latest plugin from WooThemes, Sensei.]]></excerpt:encoded>
@@ -10432,10 +10432,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Purchase &amp; Activate Sensei Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/purchase-activate-sensei-quiz/</link>
+		<link>http://demo.sensei.com/quiz/purchase-activate-sensei-quiz/</link>
 		<pubDate>Fri, 11 Jan 2013 07:32:13 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/purchase-activate-sensei-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/purchase-activate-sensei-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -10561,10 +10561,10 @@ Pay particular attention to where they are from and what their roles are for the
 	</item>
 	<item>
 				<title>Create Course Content</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/create-course-content/</link>
+		<link>http://demo.sensei.com/lesson/create-course-content/</link>
 		<pubDate>Fri, 11 Jan 2013 07:36:05 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2543</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2543</guid>
 		<description></description>
 		<content:encoded><![CDATA[This lesson will show you how to create Courses and add Lessons, it will even show you how to create Quizzes for learner assessment.
 
@@ -10783,10 +10783,10 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 	</item>
 	<item>
 				<title>Create Course Content Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/create-course-content-quiz/</link>
+		<link>http://demo.sensei.com/quiz/create-course-content-quiz/</link>
 		<pubDate>Fri, 11 Jan 2013 07:36:05 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/create-course-content-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/create-course-content-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -10860,10 +10860,10 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 	</item>
 	<item>
 				<title>User Analytics</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/user-analytics/</link>
+		<link>http://demo.sensei.com/lesson/user-analytics/</link>
 		<pubDate>Fri, 11 Jan 2013 07:39:20 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2545</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2545</guid>
 		<description></description>
 		<content:encoded><![CDATA[This lesson will show you where to view stats for your learning site and learners. Follow the steps below to view your stats:
 <ol>
@@ -11004,10 +11004,10 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 	</item>
 	<item>
 				<title>User Analytics Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/user-analytics-quiz/</link>
+		<link>http://demo.sensei.com/quiz/user-analytics-quiz/</link>
 		<pubDate>Fri, 11 Jan 2013 07:39:20 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/user-analytics-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/user-analytics-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -11081,10 +11081,10 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 	</item>
 	<item>
 				<title>Create a Product</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/create-a-product/</link>
+		<link>http://demo.sensei.com/lesson/create-a-product/</link>
 		<pubDate>Fri, 11 Jan 2013 08:39:37 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2547</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2547</guid>
 		<description></description>
 		<content:encoded><![CDATA[This lesson will show you how to create a basic WooCommerce product for  use with your Courses. Follow the steps below to add a WooCommerce Product:
 <ol>
@@ -11148,10 +11148,10 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 	</item>
 	<item>
 				<title>Sell your Course</title>
-		<link>http://demo2.woothemes.com/sensei/course/sell-your-course/</link>
+		<link>http://demo.sensei.com/course/sell-your-course/</link>
 		<pubDate>Fri, 11 Jan 2013 08:39:20 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/course/sell-your-course/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/course/sell-your-course/</guid>
 		<description></description>
 		<content:encoded><![CDATA[This Course will show you how to integrate Sensei with WooCommerce in order to sell your Courses. Make sure you have downloaded and setup WooCommerce before beginning this course.]]></content:encoded>
 		<excerpt:encoded><![CDATA[Learn how to integrate Sensei with WooCommerce in order to sell your Courses.]]></excerpt:encoded>
@@ -11192,10 +11192,10 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 	</item>
 	<item>
 				<title>Create a Product Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/create-a-product-quiz/</link>
+		<link>http://demo.sensei.com/quiz/create-a-product-quiz/</link>
 		<pubDate>Fri, 11 Jan 2013 08:39:37 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/create-a-product-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/create-a-product-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -11269,10 +11269,10 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 	</item>
 	<item>
 				<title>Assign the Product to a Course</title>
-		<link>http://demo2.woothemes.com/sensei/lesson/assign-the-product-to-a-course/</link>
+		<link>http://demo.sensei.com/lesson/assign-the-product-to-a-course/</link>
 		<pubDate>Fri, 11 Jan 2013 08:40:46 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/?post_type=lesson&#038;p=2550</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2550</guid>
 		<description></description>
 		<content:encoded><![CDATA[This lesson will show you how to assign a WooCommerce Product to a Course. This will make the Course available for sale on the frontend of the website. Follow the steps below to assign a WooCommerce Product to a Course:
 <ol>
@@ -11332,10 +11332,10 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 	</item>
 	<item>
 				<title>Assign the Product to a Course Quiz</title>
-		<link>http://demo2.woothemes.com/sensei/quiz/assign-the-product-to-a-course-quiz/</link>
+		<link>http://demo.sensei.com/quiz/assign-the-product-to-a-course-quiz/</link>
 		<pubDate>Fri, 11 Jan 2013 08:40:46 +0000</pubDate>
 		<dc:creator><![CDATA[wooadmin]]></dc:creator>
-		<guid isPermaLink="false">http://demo2.woothemes.com/sensei/quiz/assign-the-product-to-a-course-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/assign-the-product-to-a-course-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
