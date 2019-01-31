@@ -2877,8 +2877,7 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 	 * @since 1.9.0
 	 */
 	public static function the_course_enrolment_actions() {
-
-		global $post;
+		global $post, $current_user;
 
 		if ( 'course' != $post->post_type ) {
 			return;
@@ -2887,8 +2886,7 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 		?>
 		<section class="course-meta course-enrolment">
 		<?php
-		global  $post, $current_user;
-		$is_user_taking_course        = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
+		$is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
 
 		// If user is taking course, display progress.
 		if ( $is_user_taking_course ) {
@@ -2916,10 +2914,13 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 						echo wp_kses_post( $results_link );
 						?>
 						</p>
-				<?php } ?>
-			<?php } else { ?>
+					<?php
+				}
+			} else {
+				?>
 				<div class="status in-progress"><?php echo esc_html__( 'In Progress', 'woothemes-sensei' ); ?></div>
-			<?php }
+				<?php
+			}
 		} else {
 			// User is not taking the course, so display the enrolment actions.
 			do_action( 'sensei_output_course_enrolment_actions' );
@@ -3000,9 +3001,9 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 					wp_register( '<div class="status register">', '</div>' );
 
 				}
-			} // end if user can register
-		} // End If Statement
-	}//end the_course_enrolment_actions()
+			}
+		}
+	}
 
 	/**
 	 * Output the course video inside the loop.
