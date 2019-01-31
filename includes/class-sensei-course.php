@@ -2641,50 +2641,44 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 	public static function single_course_content( $content ) {
 
 		if ( ! is_singular( 'course' ) ) {
-
 			return $content;
-
 		}
 
 		// Content Access Permissions
-		$access_permission = false;
+		$is_login_required = true;
+		$has_full_access   = sensei_all_access();
 
-		if ( ! Sensei()->settings->get( 'access_permission' ) || sensei_all_access() ) {
-
-			$access_permission = true;
-
+		if ( ! Sensei()->settings->get( 'access_permission' ) ) {
+			$is_login_required = false;
 		} // End If Statement
 
-		// Check if the user is taking the course
-		$is_user_taking_course = Sensei_Utils::user_started_course( get_the_ID(), get_current_user_id() );
+		// By default, show content to admins (`$has_full_access`) and when login isn't required.
+		$has_access_to_content = ! $is_login_required || $has_full_access;
 
-		if ( Sensei_WC::is_woocommerce_active() ) {
-
-			$wc_post_id = get_post_meta( get_the_ID(), '_course_woocommerce_product', true );
-			$product    = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
-
-			$has_product_attached = isset( $product ) && is_object( $product );
-
-		} else {
-
-			$has_product_attached = false;
-
+		// Logged in visitors who are enrolled can see the course content.
+		$is_user_taking_course = false;
+		if ( is_user_logged_in() ) {
+			$is_user_taking_course = Sensei_Utils::user_started_course( get_the_ID(), get_current_user_id() );
+			$has_access_to_content = true;
 		}
 
-		if ( ( is_user_logged_in() && $is_user_taking_course ) // Logged in and taking course.
-			|| ( $access_permission && ! $has_product_attached ) // Not required to be logged in & no product attached.
-			|| ( ! $access_permission && $has_product_attached ) ) { // Required to be logged in and product attached.
-			// compensate for core providing and empty $content
+		/**
+		 * Access check for the course content.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param bool $has_access_to_content Filtered variable for if the visitor has access to view the content.
+		 * @param bool $is_login_required     Boolean for if the setting is enabled to restrict course content to logged in visitors.
+		 * @param bool $is_user_taking_course Boolean for if the visitor is currently enrolled in the course.
+		 */
+		if ( apply_filters( 'sensei_course_content_has_access', $has_access_to_content, $is_login_required, $is_user_taking_course ) ) {
 			if ( empty( $content ) ) {
 				remove_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 				$course = get_post( get_the_ID() );
 
 				$content = apply_filters( 'the_content', $course->post_content );
-
 			}
-
 			return $content;
-
 		} else {
 			return '<p class="course-excerpt">' . get_post( get_the_ID() )->post_excerpt . '</p>';
 		}
