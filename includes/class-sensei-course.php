@@ -692,8 +692,17 @@ class Sensei_Course {
 					'exclude'          => $excludes,
 					'suppress_filters' => 0,
 				);
+
 				break;
+
 			case 'freecourses':
+				_doing_it_wrong(
+					__FUNCTION__,
+					// translators: string argument is "freecourses" (the query type).
+					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'woothemes-sensei' ), 'freecourses' ),
+					'2.0.0'
+				);
+
 				$post_args = array(
 					'post_type'        => 'course',
 					'orderby'          => $orderby,
@@ -702,12 +711,23 @@ class Sensei_Course {
 					'exclude'          => $excludes,
 					'suppress_filters' => 0,
 				);
-				// Sub Query to get all WooCommerce Products that have Zero price
-				$post_args['meta_query'] = Sensei_WC::get_free_courses_meta_query_args();
+
+				// If WooCommerce Paid Courses is not active, we will display all courses.
+				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
+					// Sub Query to get all WooCommerce Products that have Zero price
+					$post_args['meta_query'] = Sensei_WC::get_free_courses_meta_query_args();
+				}
 
 				break;
 
 			case 'paidcourses':
+				_doing_it_wrong(
+					__FUNCTION__,
+					// translators: string argument is "paidcourses" (the query type).
+					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'woothemes-sensei' ), 'paidcourses' ),
+					'2.0.0'
+				);
+
 				$post_args = array(
 					'post_type'        => 'course',
 					'orderby'          => $orderby,
@@ -717,8 +737,13 @@ class Sensei_Course {
 					'suppress_filters' => 0,
 				);
 
-				// Sub Query to get all WooCommerce Products that have price greater than zero
-				$post_args['meta_query'] = Sensei_WC::get_paid_courses_meta_query_args();
+				// If WooCommerce Paid Courses is not active, we will display no courses.
+				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
+					// Sub Query to get all WooCommerce Products that have price greater than zero
+					$post_args['meta_query'] = Sensei_WC::get_paid_courses_meta_query_args();
+				} else {
+					$post_args['post__in'] = array( -1 );
+				}
 
 				break;
 
