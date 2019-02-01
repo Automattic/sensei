@@ -92,6 +92,9 @@ class Sensei_Course {
 		// the course meta
 		add_action( 'sensei_course_content_inside_before', array( $this, 'the_course_meta' ) );
 
+		// The course enrolment actions.
+		add_action( 'sensei_output_course_enrolment_actions', array( __CLASS__, 'output_course_enrolment_actions' ) );
+
 		// backwards compatible template hooks
 		add_action( 'sensei_course_content_inside_before', array( $this, 'content_before_backwards_compatibility_hooks' ) );
 		add_action( 'sensei_loop_course_before', array( $this, 'loop_before_backwards_compatibility_hooks' ) );
@@ -2841,13 +2844,14 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 	}
 
 	/**
-	 * Output the course actions like start taking course, register, add to cart etc.
+	 * If the user is already taking the course, show a progress indicator.
+	 * Otherwise, output the course actions like start taking course, register,
+	 * etc.
 	 *
 	 * @since 1.9.0
 	 */
 	public static function the_course_enrolment_actions() {
-
-		global $post;
+		global $post, $current_user;
 
 		if ( 'course' != $post->post_type ) {
 			return;
@@ -2856,29 +2860,10 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 		?>
 		<section class="course-meta course-enrolment">
 		<?php
-		global  $post, $current_user;
-		$is_user_taking_course        = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
-		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
+		$is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
 
-		if ( is_user_logged_in() && ! $is_user_taking_course ) {
-
-			// Check for woocommerce
-			if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) ) {
-
-				// Get the product ID
-				Sensei_WC::the_add_to_cart_button_html( $post->ID );
-
-			} else {
-				$should_display_start_course_form = (bool) apply_filters( 'sensei_display_start_course_form', true, $post->ID );
-				if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
-					self::add_course_access_permission_message( '' );
-				}
-				if ( $should_display_start_course_form ) {
-					sensei_start_course_form( $post->ID );
-				}
-			} // End If Statement
-		} elseif ( is_user_logged_in() ) {
-
+		// If user is taking course, display progress.
+		if ( $is_user_taking_course ) {
 			// Check if course is completed
 			$user_course_status = Sensei_Utils::user_course_status( $post->ID, $current_user->ID );
 			$completed_course   = Sensei_Utils::user_completed_course( $user_course_status );
@@ -2903,80 +2888,101 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 						echo wp_kses_post( $results_link );
 						?>
 						</p>
-				<?php } ?>
-			<?php } else { ?>
+					<?php
+				}
+			} else {
+				?>
 				<div class="status in-progress"><?php echo esc_html__( 'In Progress', 'woothemes-sensei' ); ?></div>
 				<?php
-}
+			}
 		} else {
-
-			// Check for woocommerce
-			if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) ) {
-
-				$login_link = '<a href="' . sensei_user_login_url() . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
-				// translators: Placeholder is a link to log in.
-				$message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
-				Sensei()->notices->add_notice( $message, 'info' );
-				Sensei_WC::the_add_to_cart_button_html( $post->ID );
-
-			} else {
-
-				if ( get_option( 'users_can_register' ) ) {
-
-					// set the permissions message
-					$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
-					$anchor_after  = '</a>';
-					$notice        = sprintf(
-						// translators: Placeholders are an opening and closing <a> tag linking to the login URL.
-						__( 'or %1$slog in%2$s to view this course.', 'woothemes-sensei' ),
-						$anchor_before,
-						$anchor_after
-					);
-
-					self::add_course_access_permission_message( $notice );
-
-					$my_courses_page_id = '';
-
-					/**
-					 * Filter to force Sensei to output the default WordPress user
-					 * registration link.
-					 *
-					 * @since 1.9.0
-					 * @param bool $wp_register_link default false
-					 */
-
-					$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
-
-					$settings = Sensei()->settings->get_settings();
-					if ( isset( $settings['my_course_page'] )
-						&& 0 < intval( $settings['my_course_page'] ) ) {
-
-						$my_courses_page_id = $settings['my_course_page'];
-
-					}
-
-					// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
-					// is false, link to My Courses. If not, link to default WordPress registration page.
-					if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
-						if ( true === (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
-							$my_courses_url = get_permalink( $my_courses_page_id );
-							echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-								esc_html__( 'Register', 'woothemes-sensei' ) . '</a></div>';
-						}
-					} else {
-
-						wp_register( '<div class="status register">', '</div>' );
-
-					}
-				} // end if user can register
-			} // End If Statement
-		} // End If Statement
+			/**
+			 * Action to output the course enrolment buttons. When this is
+			 * called, we know that the user is not taking the course, but do
+			 * not know whether the user is logged in.
+			 *
+			 * @since 2.0.0
+			 */
+			do_action( 'sensei_output_course_enrolment_actions' );
+		}
 		?>
 
 		</section>
 		<?php
+	}
 
-	}//end the_course_enrolment_actions()
+	/**
+	 * Output the course actions like start taking course, register, etc. Note
+	 * that this expects that the user is not already taking the course; that
+	 * check is done in `the_course_enrolment_actions`.
+	 *
+	 * @access private
+	 *
+	 * @since 2.0.0
+	 */
+	public static function output_course_enrolment_actions() {
+		global $post;
+
+		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
+
+		if ( is_user_logged_in() ) {
+			$should_display_start_course_form = (bool) apply_filters( 'sensei_display_start_course_form', true, $post->ID );
+			if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
+				self::add_course_access_permission_message( '' );
+			}
+			if ( $should_display_start_course_form ) {
+				sensei_start_course_form( $post->ID );
+			}
+		} else {
+			if ( get_option( 'users_can_register' ) ) {
+
+				// set the permissions message
+				$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
+				$anchor_after  = '</a>';
+				$notice        = sprintf(
+					// translators: Placeholders are an opening and closing <a> tag linking to the login URL.
+					__( 'or %1$slog in%2$s to view this course.', 'woothemes-sensei' ),
+					$anchor_before,
+					$anchor_after
+				);
+
+				self::add_course_access_permission_message( $notice );
+
+				$my_courses_page_id = '';
+
+				/**
+				 * Filter to force Sensei to output the default WordPress user
+				 * registration link.
+				 *
+				 * @since 1.9.0
+				 * @param bool $wp_register_link default false
+				 */
+				$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
+
+				$settings = Sensei()->settings->get_settings();
+				if ( isset( $settings['my_course_page'] )
+					&& 0 < intval( $settings['my_course_page'] ) ) {
+
+					$my_courses_page_id = $settings['my_course_page'];
+
+				}
+
+				// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
+				// is false, link to My Courses. If not, link to default WordPress registration page.
+				if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
+					if ( true === (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+						$my_courses_url = get_permalink( $my_courses_page_id );
+						echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
+							esc_html__( 'Register', 'woothemes-sensei' ) . '</a></div>';
+					}
+				} else {
+
+					wp_register( '<div class="status register">', '</div>' );
+
+				}
+			}
+		}
+	}
 
 	/**
 	 * Output the course video inside the loop.
