@@ -2643,21 +2643,15 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 			return $content;
 		}
 
-		// Check if user is enrolled in course for filter context.
-		$is_user_taking_course = false;
-		if ( is_user_logged_in() ) {
-			$is_user_taking_course = Sensei_Utils::user_started_course( get_the_ID(), get_current_user_id() );
-		}
-
 		/**
 		 * Access check for the course content.
 		 *
 		 * @since 2.0.0
 		 *
 		 * @param bool $has_access_to_content Filtered variable for if the visitor has access to view the content.
-		 * @param bool $is_user_taking_course Boolean for if the visitor is currently enrolled in the course.
+		 * @param int  $course_id             Post ID for the course.
 		 */
-		if ( apply_filters( 'sensei_course_content_has_access', true, $is_user_taking_course ) ) {
+		if ( apply_filters( 'sensei_course_content_has_access', true, get_the_ID() ) ) {
 			if ( empty( $content ) ) {
 				remove_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 				$course = get_post( get_the_ID() );
