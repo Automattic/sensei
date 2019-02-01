@@ -37,7 +37,9 @@ class Sensei_Admin {
 
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
-		add_action( 'admin_footer', array( $this, 'init_select2' ) );
+		if ( isset( $_GET['page'] ) && 'lesson-order' === $_GET['page'] ) {
+			add_action( 'admin_footer', array( $this, 'init_select2' ) );
+		}
 
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
