@@ -204,7 +204,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['access_permission'] = array(
 			'name'        => __( 'Access Permissions', 'woothemes-sensei' ),
-			'description' => __( 'Users must be logged in to view Lesson content.', 'woothemes-sensei' ),
+			'description' => __( 'Users must be logged in to view lesson content.', 'woothemes-sensei' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'default-settings',
