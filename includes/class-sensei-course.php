@@ -2630,10 +2630,9 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 
 
 	/**
-	 * Filter the single course content
-	 * taking into account if the user has access.
+	 * Filter the single course content taking into account if the user has access.
 	 *
-	 * @1.9.0
+	 * @since 1.9.0
 	 *
 	 * @param string $content
 	 * @return string $content or $excerpt
@@ -2641,50 +2640,25 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 	public static function single_course_content( $content ) {
 
 		if ( ! is_singular( 'course' ) ) {
-
 			return $content;
-
 		}
 
-		// Content Access Permissions
-		$access_permission = false;
-
-		if ( ! Sensei()->settings->get( 'access_permission' ) || sensei_all_access() ) {
-
-			$access_permission = true;
-
-		} // End If Statement
-
-		// Check if the user is taking the course
-		$is_user_taking_course = Sensei_Utils::user_started_course( get_the_ID(), get_current_user_id() );
-
-		if ( Sensei_WC::is_woocommerce_active() ) {
-
-			$wc_post_id = get_post_meta( get_the_ID(), '_course_woocommerce_product', true );
-			$product    = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
-
-			$has_product_attached = isset( $product ) && is_object( $product );
-
-		} else {
-
-			$has_product_attached = false;
-
-		}
-
-		if ( ( is_user_logged_in() && $is_user_taking_course ) // Logged in and taking course.
-			|| ( $access_permission && ! $has_product_attached ) // Not required to be logged in & no product attached.
-			|| ( ! $access_permission && $has_product_attached ) ) { // Required to be logged in and product attached.
-			// compensate for core providing and empty $content
+		/**
+		 * Access check for the course content.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param bool $has_access_to_content Filtered variable for if the visitor has access to view the content.
+		 * @param int  $course_id             Post ID for the course.
+		 */
+		if ( apply_filters( 'sensei_course_content_has_access', true, get_the_ID() ) ) {
 			if ( empty( $content ) ) {
 				remove_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 				$course = get_post( get_the_ID() );
 
 				$content = apply_filters( 'the_content', $course->post_content );
-
 			}
-
 			return $content;
-
 		} else {
 			return '<p class="course-excerpt">' . get_post( get_the_ID() )->post_excerpt . '</p>';
 		}
