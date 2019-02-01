@@ -37,27 +37,27 @@
 
 	<wp:author><wp:author_id>1</wp:author_id><wp:author_login>sensei</wp:author_login><wp:author_email>sensei@example.com</wp:author_email><wp:author_display_name><![CDATA[Sensei]]></wp:author_display_name><wp:author_first_name><![CDATA[Sensei]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
 
-	<wp:term><wp:term_id>121</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>boolean</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[boolean (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>132</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>chords-101-the-building-blocks-of-music</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Chords 101 - The Building Blocks of Music (WooThemes) ]]></wp:term_name><wp:term_description><![CDATA[Chords are groups of notes that form harmony. Most songs follow the same, basic chord formulas, and we’ve broken them down here for you to learn.]]></wp:term_description></wp:term>
-	<wp:term><wp:term_id>123</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>essay-paste</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[essay-paste (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>126</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>file-upload</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[file-upload (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>122</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>gap-fill</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[gap-fill (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>128</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>grading</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Grading (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>115</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>guitar</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Guitar (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>125</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>multi-line</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[multi-line (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>112</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>multiple-choice</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[multiple-choice (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>135</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>music</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Music (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>136</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>piano</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Piano (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>130</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>prerequisites</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Prerequisites (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>131</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>quiz-features</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Quiz Features (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>127</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>quizzes-and-question-types</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Quizzes and Question Types (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>133</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>rhythm-101-the-heartbeat-of-music</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rhythm 101 - The Heartbeat of Music (WooThemes) ]]></wp:term_name><wp:term_description><![CDATA[In this module, we’re going to dig deeper into the beat behind the song, and we’ll learn the rhythmic structures and formulas that all songs follow.]]></wp:term_description></wp:term>
-	<wp:term><wp:term_id>120</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>sensei-2</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Sensei (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>129</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>sensei-extensions</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Sensei Extensions (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>124</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>single-line</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[single-line (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>117</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>theming</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Theming (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>119</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>tutorials</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Tutorials (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>134</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>your-first-songs</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Your First Songs (WooThemes) ]]></wp:term_name><wp:term_description><![CDATA[Learn to play a selection of popular songs on the piano using our game-based hybrid video lessons.]]></wp:term_description></wp:term>
+	<wp:term><wp:term_id>121</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>boolean</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[boolean]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>132</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>chords-101-the-building-blocks-of-music</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Chords 101 - The Building Blocks of Music]]></wp:term_name><wp:term_description><![CDATA[Chords are groups of notes that form harmony. Most songs follow the same, basic chord formulas, and we’ve broken them down here for you to learn.]]></wp:term_description></wp:term>
+	<wp:term><wp:term_id>123</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>essay-paste</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[essay-paste]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>126</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>file-upload</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[file-upload]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>122</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>gap-fill</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[gap-fill]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>128</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>grading</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Grading]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>115</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>guitar</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Guitar]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>125</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>multi-line</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[multi-line]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>112</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>multiple-choice</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[multiple-choice]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>135</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>music</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Music]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>136</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>piano</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Piano]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>130</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>prerequisites</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Prerequisites]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>131</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>quiz-features</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Quiz Features]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>127</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>quizzes-and-question-types</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Quizzes and Question Types]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>133</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>rhythm-101-the-heartbeat-of-music</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rhythm 101 - The Heartbeat of Music]]></wp:term_name><wp:term_description><![CDATA[In this module, we’re going to dig deeper into the beat behind the song, and we’ll learn the rhythmic structures and formulas that all songs follow.]]></wp:term_description></wp:term>
+	<wp:term><wp:term_id>120</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>sensei-2</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Sensei]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>129</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>sensei-extensions</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Sensei Extensions]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>124</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>single-line</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[single-line]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>117</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>theming</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Theming]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>119</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>tutorials</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Tutorials]]></wp:term_name></wp:term>
+	<wp:term><wp:term_id>134</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>your-first-songs</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Your First Songs]]></wp:term_name><wp:term_description><![CDATA[Learn to play a selection of popular songs on the piano using our game-based hybrid video lessons.]]></wp:term_description></wp:term>
 
 	<generator>http://wordpress.org/?v=4.1.2</generator>
 
@@ -1712,7 +1712,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>203135</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:33:27</wp:comment_date>
@@ -1793,7 +1793,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>218085</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-29 20:39:45</wp:comment_date>
@@ -1870,8 +1870,8 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>138993</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-10 16:18:25</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-10 16:18:25</wp:comment_date_gmt>
@@ -1884,7 +1884,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>191378</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-15 10:48:50</wp:comment_date>
@@ -1953,8 +1953,8 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>138999</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-10 16:18:53</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-10 16:18:53</wp:comment_date_gmt>
@@ -1967,7 +1967,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>179583</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-15 10:48:39</wp:comment_date>
@@ -1981,7 +1981,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>179763</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-07-23 11:11:14</wp:comment_date>
@@ -1995,7 +1995,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>180415</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-07-25 16:13:37</wp:comment_date>
@@ -2009,7 +2009,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>180717</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-07-26 19:03:30</wp:comment_date>
@@ -2023,7 +2023,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>181426</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-07-29 08:19:28</wp:comment_date>
@@ -2037,7 +2037,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>181641</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-07-29 22:53:06</wp:comment_date>
@@ -2051,7 +2051,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>182581</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-02 19:00:10</wp:comment_date>
@@ -2065,7 +2065,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>183168</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-05 12:31:57</wp:comment_date>
@@ -2079,7 +2079,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>183315</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-05 16:23:34</wp:comment_date>
@@ -2093,7 +2093,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184049</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-08 14:06:43</wp:comment_date>
@@ -2107,7 +2107,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184301</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-09 17:44:50</wp:comment_date>
@@ -2121,7 +2121,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184385</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-09 19:23:39</wp:comment_date>
@@ -2135,7 +2135,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184798</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-11 15:16:51</wp:comment_date>
@@ -2149,7 +2149,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184800</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-11 15:16:56</wp:comment_date>
@@ -2163,7 +2163,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184852</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-11 18:11:51</wp:comment_date>
@@ -2177,7 +2177,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>185512</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-13 20:55:12</wp:comment_date>
@@ -2246,7 +2246,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>215413</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-15 10:48:02</wp:comment_date>
@@ -2315,7 +2315,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>211659</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 19:38:09</wp:comment_date>
@@ -2384,7 +2384,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>217310</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:34:15</wp:comment_date>
@@ -2398,7 +2398,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>218641</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:34:15</wp:comment_date>
@@ -2475,7 +2475,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>186199</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 04:26:33</wp:comment_date>
@@ -2552,7 +2552,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>196621</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 04:27:14</wp:comment_date>
@@ -2629,7 +2629,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>180969</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-25 03:07:29</wp:comment_date>
@@ -2643,7 +2643,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>183219</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-05 12:58:28</wp:comment_date>
@@ -2657,7 +2657,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>183825</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-07 18:15:07</wp:comment_date>
@@ -2671,7 +2671,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184340</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-09 17:47:23</wp:comment_date>
@@ -2685,7 +2685,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184408</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-09 20:12:26</wp:comment_date>
@@ -2699,7 +2699,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184536</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-10 09:20:17</wp:comment_date>
@@ -2713,7 +2713,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184892</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-11 18:16:48</wp:comment_date>
@@ -2727,7 +2727,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>184989</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-08-11 19:56:03</wp:comment_date>
@@ -2804,7 +2804,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>191907</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-10 02:08:01</wp:comment_date>
@@ -2881,7 +2881,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>216172</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-29 20:48:25</wp:comment_date>
@@ -2962,7 +2962,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>213145</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-29 20:48:50</wp:comment_date>
@@ -3039,7 +3039,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>217897</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-29 20:44:12</wp:comment_date>
@@ -3116,7 +3116,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>211475</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-29 20:45:02</wp:comment_date>
@@ -3197,7 +3197,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:comment>
 			<wp:comment_id>218537</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-29 20:45:51</wp:comment_date>
@@ -3721,7 +3721,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51295</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:51</wp:comment_date>
@@ -3735,7 +3735,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>186126</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:51</wp:comment_date>
@@ -3817,7 +3817,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>50937</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:14:32</wp:comment_date>
@@ -3849,8 +3849,8 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>137263</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:37:56</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:37:56</wp:comment_date_gmt>
@@ -3863,7 +3863,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>185671</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:14:32</wp:comment_date>
@@ -3945,7 +3945,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>50938</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:14:32</wp:comment_date>
@@ -3977,8 +3977,8 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>137264</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:37:56</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:37:56</wp:comment_date_gmt>
@@ -3991,7 +3991,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>185672</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:14:32</wp:comment_date>
@@ -4069,7 +4069,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>50939</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:14:32</wp:comment_date>
@@ -4101,8 +4101,8 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>137265</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:37:56</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:37:56</wp:comment_date_gmt>
@@ -4115,7 +4115,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>185673</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:14:32</wp:comment_date>
@@ -4193,8 +4193,8 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>50904</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:22:01</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:22:01</wp:comment_date_gmt>
@@ -4221,7 +4221,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51065</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:15</wp:comment_date>
@@ -4235,7 +4235,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>185814</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:15</wp:comment_date>
@@ -4295,8 +4295,8 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>50905</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:22:01</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:22:01</wp:comment_date_gmt>
@@ -4323,7 +4323,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51066</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:15</wp:comment_date>
@@ -4337,7 +4337,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>185815</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:15</wp:comment_date>
@@ -4397,7 +4397,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51332</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:28</wp:comment_date>
@@ -4411,7 +4411,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>186089</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:28</wp:comment_date>
@@ -4489,7 +4489,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51333</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:28</wp:comment_date>
@@ -4503,7 +4503,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>186090</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:28</wp:comment_date>
@@ -4581,7 +4581,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51339</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:36</wp:comment_date>
@@ -4595,7 +4595,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>186100</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:36</wp:comment_date>
@@ -4673,7 +4673,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51340</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:36</wp:comment_date>
@@ -4687,7 +4687,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>186101</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:36</wp:comment_date>
@@ -4765,7 +4765,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51346</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:33:52</wp:comment_date>
@@ -4779,7 +4779,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>186107</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:33:52</wp:comment_date>
@@ -4857,7 +4857,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51347</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:33:52</wp:comment_date>
@@ -4871,7 +4871,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>186108</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:33:52</wp:comment_date>
@@ -4953,7 +4953,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51140</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:12</wp:comment_date>
@@ -4967,7 +4967,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>186118</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:12</wp:comment_date>
@@ -5045,7 +5045,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>51141</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:12</wp:comment_date>
@@ -5059,7 +5059,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>186119</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:12</wp:comment_date>
@@ -5154,8 +5154,8 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>138805</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-10 10:05:23</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-10 10:05:23</wp:comment_date_gmt>
@@ -5168,8 +5168,8 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>138806</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-10 10:05:23</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-10 10:05:23</wp:comment_date_gmt>
@@ -5182,7 +5182,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>138988</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-10 16:02:27</wp:comment_date>
@@ -5263,8 +5263,8 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>137256</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:33:19</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:33:19</wp:comment_date_gmt>
@@ -5277,7 +5277,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:comment>
 			<wp:comment_id>138867</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-10 12:26:26</wp:comment_date>
@@ -5339,7 +5339,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:comment>
 			<wp:comment_id>194056</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 02:15:53</wp:comment_date>
@@ -5422,7 +5422,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:comment>
 			<wp:comment_id>151960</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-04-21 21:46:28</wp:comment_date>
@@ -5436,7 +5436,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:comment>
 			<wp:comment_id>152069</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-04-22 09:17:52</wp:comment_date>
@@ -5450,7 +5450,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:comment>
 			<wp:comment_id>152113</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-04-22 13:08:38</wp:comment_date>
@@ -5464,7 +5464,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:comment>
 			<wp:comment_id>152163</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-04-22 17:24:12</wp:comment_date>
@@ -5549,7 +5549,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:comment>
 			<wp:comment_id>218140</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-29 20:35:52</wp:comment_date>
@@ -5634,7 +5634,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:comment>
 			<wp:comment_id>217970</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-28 13:21:37</wp:comment_date>
@@ -5817,7 +5817,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:comment>
 			<wp:comment_id>196</wp:comment_id>
 			<wp:comment_author><![CDATA[learner]]></wp:comment_author>
-			<wp:comment_author_email>learner@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>learner@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-01-16 23:57:53</wp:comment_date>
@@ -5887,8 +5887,8 @@ Feel free to complete it.]]></content:encoded>
 		<wp:comment>
 			<wp:comment_id>45523</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-11 11:54:17</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-11 11:54:17</wp:comment_date_gmt>
@@ -6122,8 +6122,8 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>137258</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:37:55</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:37:55</wp:comment_date_gmt>
@@ -6136,8 +6136,8 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>137267</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:37:56</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:37:56</wp:comment_date_gmt>
@@ -6150,7 +6150,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>192282</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:14:32</wp:comment_date>
@@ -6299,8 +6299,8 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>137262</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:37:56</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:37:56</wp:comment_date_gmt>
@@ -6313,8 +6313,8 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>137266</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:37:56</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:37:56</wp:comment_date_gmt>
@@ -6327,7 +6327,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>217985</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:14:32</wp:comment_date>
@@ -6438,8 +6438,8 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>50906</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -6452,8 +6452,8 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>137227</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2014-03-05 12:22:01</wp:comment_date>
 			<wp:comment_date_gmt>2014-03-05 12:22:01</wp:comment_date_gmt>
@@ -6466,7 +6466,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>192288</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:15</wp:comment_date>
@@ -6615,8 +6615,8 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>22236</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-02-28 18:31:59</wp:comment_date>
 			<wp:comment_date_gmt>2013-02-28 18:31:59</wp:comment_date_gmt>
@@ -6629,7 +6629,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:comment>
 			<wp:comment_id>218620</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:15</wp:comment_date>
@@ -6752,7 +6752,7 @@ Content Credit: h<a href="http://en.wikibooks.org/wiki/Guitar/Anatomy_of_a_Guita
 		<wp:comment>
 			<wp:comment_id>192360</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:28</wp:comment_date>
@@ -6883,7 +6883,7 @@ Content Credit: h<a href="http://en.wikibooks.org/wiki/Guitar/Anatomy_of_a_Guita
 		<wp:comment>
 			<wp:comment_id>216186</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:28</wp:comment_date>
@@ -6987,7 +6987,7 @@ From there, move the appropriate tuning peg either up or down until the needle/l
 		<wp:comment>
 			<wp:comment_id>192365</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:36</wp:comment_date>
@@ -7118,7 +7118,7 @@ From there, move the appropriate tuning peg either up or down until the needle/l
 		<wp:comment>
 			<wp:comment_id>209776</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 06:15:36</wp:comment_date>
@@ -7223,7 +7223,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/">http://en.wikiboo
 		<wp:comment>
 			<wp:comment_id>192509</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:33:52</wp:comment_date>
@@ -7354,7 +7354,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/">http://en.wikiboo
 		<wp:comment>
 			<wp:comment_id>208213</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:33:52</wp:comment_date>
@@ -7458,7 +7458,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/Intervals_and_Power
 		<wp:comment>
 			<wp:comment_id>194024</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:12</wp:comment_date>
@@ -7589,7 +7589,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/Intervals_and_Power
 		<wp:comment>
 			<wp:comment_id>198640</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:12</wp:comment_date>
@@ -7683,7 +7683,7 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:comment>
 			<wp:comment_id>192518</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:51</wp:comment_date>
@@ -7800,7 +7800,7 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:comment>
 			<wp:comment_id>216858</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:51</wp:comment_date>
@@ -7890,7 +7890,7 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:comment>
 			<wp:comment_id>51294</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:51</wp:comment_date>
@@ -7904,7 +7904,7 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:comment>
 			<wp:comment_id>186125</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-27 08:34:51</wp:comment_date>
@@ -8143,7 +8143,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_right_answer</wp:meta_key>
-			<wp:meta_value><![CDATA[WooThemes.com]]></wp:meta_value>
+			<wp:meta_value><![CDATA[WooCommerce.com]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
@@ -8164,8 +8164,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>50926</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -8196,7 +8196,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>51116</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -8224,7 +8224,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>185681</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -8313,7 +8313,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_right_answer</wp:meta_key>
-			<wp:meta_value><![CDATA[Your WooThemes Account dashboard]]></wp:meta_value>
+			<wp:meta_value><![CDATA[Your WooCommerce Account dashboard]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
@@ -8334,8 +8334,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>50927</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -8366,7 +8366,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>51117</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -8394,7 +8394,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>185682</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -8504,8 +8504,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>50928</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -8536,7 +8536,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>51118</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -8564,7 +8564,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>185683</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -8674,8 +8674,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>50921</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -8688,7 +8688,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>51744</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:31:11</wp:comment_date>
@@ -8720,7 +8720,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>185689</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:31:11</wp:comment_date>
@@ -8798,8 +8798,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>50922</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -8812,7 +8812,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>51745</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:31:11</wp:comment_date>
@@ -8826,7 +8826,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>185690</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:31:11</wp:comment_date>
@@ -8904,8 +8904,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>50918</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -8918,7 +8918,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>51756</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 02:15:44</wp:comment_date>
@@ -8932,7 +8932,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>185723</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 02:15:44</wp:comment_date>
@@ -9039,7 +9039,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
-			<wp:meta_value><![CDATA[a:3:{i:0;s:9:"woothemes";i:1;s:11:"woocommerce";i:2;s:9:"templates";}]]></wp:meta_value>
+			<wp:meta_value><![CDATA[a:3:{i:0;s:9:"assets";i:1;s:11:"woocommerce";i:2;s:9:"templates";}]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_grade</wp:meta_key>
@@ -9057,16 +9057,15 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<dc:creator><![CDATA[sensei]]></dc:creator>
 		<guid isPermaLink="false">http://demo.sensei.com/?post_type=lesson&#038;p=2540</guid>
 		<description></description>
-		<content:encoded><![CDATA[Setting up online Courses in your WordPress powered website has become even easier now. All you need to do is purchase the Sensei plugin by WooThemes and upload it to your WordPress powered website. Follows the steps below and you will have setup Sensei in 5 minutes!
+		<content:encoded><![CDATA[Setting up online Courses in your WordPress powered website has become even easier now. All you need to do is purchase the Sensei plugin and upload it to your WordPress powered website. Follows the steps below and you will have setup Sensei in 5 minutes!
 <ol>
-	<li>Visit the Sensei landing page on woothemes.com</li>
-	<li>Purchase the plugin</li>
-	<li>Download the plugin from your WooThemes account dashboard</li>
-	<li>Upload the plugin to your WordPress website either using FTP or using the plugin upload function</li>
-	<li>Once the plugin is uploaded, you can click the "<em>Activate Plugin</em>" button</li>
+	<li>Visit the Sensei landing page at wordpress.org/plugins/sensei.</li>
+	<li>Download the plugin.</li>
+	<li>Upload the plugin to your WordPress website either using FTP or using the plugin upload function.</li>
+	<li>Once the plugin is uploaded, you can click the "<em>Activate Plugin</em>" button.</li>
 	<li>That's it! Sensei is now activated!</li>
 </ol>]]></content:encoded>
-		<excerpt:encoded><![CDATA[Setting up online Courses in your WordPress powered website has become even easier now. All you need to do is purchase the Sensei plugin by WooThemes and upload it to your WordPress powered website.]]></excerpt:encoded>
+		<excerpt:encoded><![CDATA[Setting up online Courses in your WordPress powered website has become even easier now. All you need to do is download the Sensei plugin and upload it to your WordPress powered website.]]></excerpt:encoded>
 		<wp:post_id>2540</wp:post_id>
 		<wp:post_date>2013-01-11 07:32:13</wp:post_date>
 		<wp:post_date_gmt>2013-01-11 07:32:13</wp:post_date_gmt>
@@ -9114,8 +9113,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>175</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-01-11 09:59:07</wp:comment_date>
 			<wp:comment_date_gmt>2013-01-11 09:59:07</wp:comment_date_gmt>
@@ -9128,8 +9127,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>50929</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -9156,7 +9155,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>192251</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -9184,7 +9183,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>218637</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -9273,8 +9272,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<dc:creator><![CDATA[sensei]]></dc:creator>
 		<guid isPermaLink="false">http://demo.sensei.com/course/create-an-online-course-with-sensei/</guid>
 		<description></description>
-		<content:encoded><![CDATA[Learn how to create an Online Course with the latest plugin from WooThemes - Sensei. This 3 part series will show you how to create Courses, Lessons, and add a Quiz to assess your learners.]]></content:encoded>
-		<excerpt:encoded><![CDATA[Learn how to create an Online Course with the latest plugin from WooThemes, Sensei.]]></excerpt:encoded>
+		<content:encoded><![CDATA[Learn how to create an online course with Sensei. This 3 part series will show you how to create Courses, Lessons, and add a Quiz to assess your learners.]]></content:encoded>
+		<excerpt:encoded><![CDATA[Learn how to create an Online Course with Sensei.]]></excerpt:encoded>
 		<wp:post_id>2541</wp:post_id>
 		<wp:post_date>2013-01-11 07:31:24</wp:post_date>
 		<wp:post_date_gmt>2013-01-11 07:31:24</wp:post_date_gmt>
@@ -9320,8 +9319,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>172</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-01-11 09:58:11</wp:comment_date>
 			<wp:comment_date_gmt>2013-01-11 09:58:11</wp:comment_date_gmt>
@@ -9348,7 +9347,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>218631</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:29:25</wp:comment_date>
@@ -9499,8 +9498,8 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>174</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-01-11 09:59:07</wp:comment_date>
 			<wp:comment_date_gmt>2013-01-11 09:59:07</wp:comment_date_gmt>
@@ -9541,7 +9540,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>218635</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -9555,7 +9554,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:comment>
 			<wp:comment_id>218636</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:30:17</wp:comment_date>
@@ -9645,8 +9644,8 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>50923</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -9659,8 +9658,8 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>96680</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-09-25 21:59:03</wp:comment_date>
 			<wp:comment_date_gmt>2013-09-25 21:59:03</wp:comment_date_gmt>
@@ -9673,8 +9672,8 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>106621</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-10-23 13:06:45</wp:comment_date>
 			<wp:comment_date_gmt>2013-10-23 13:06:45</wp:comment_date_gmt>
@@ -9687,8 +9686,8 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>106623</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-10-23 13:06:46</wp:comment_date>
 			<wp:comment_date_gmt>2013-10-23 13:06:46</wp:comment_date_gmt>
@@ -9701,8 +9700,8 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>106624</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-10-23 13:07:42</wp:comment_date>
 			<wp:comment_date_gmt>2013-10-23 13:07:42</wp:comment_date_gmt>
@@ -9715,8 +9714,8 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>106625</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-10-23 13:07:42</wp:comment_date>
 			<wp:comment_date_gmt>2013-10-23 13:07:42</wp:comment_date_gmt>
@@ -9729,7 +9728,7 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>192263</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 09:31:11</wp:comment_date>
@@ -9854,8 +9853,8 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>106622</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-10-23 13:07:42</wp:comment_date>
 			<wp:comment_date_gmt>2013-10-23 13:07:42</wp:comment_date_gmt>
@@ -9940,8 +9939,8 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>50919</wp:comment_id>
 			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@woothemes.com</wp:comment_author_email>
-			<wp:comment_author_url>http://www.woothemes.com</wp:comment_author_url>
+			<wp:comment_author_email>team@example.com</wp:comment_author_email>
+			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2013-05-27 12:57:04</wp:comment_date>
 			<wp:comment_date_gmt>2013-05-27 12:57:04</wp:comment_date_gmt>
@@ -9954,7 +9953,7 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>192376</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 02:15:44</wp:comment_date>
@@ -10075,7 +10074,7 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:comment>
 			<wp:comment_id>218540</wp:comment_id>
 			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@woothemes.com</wp:comment_author_email>
+			<wp:comment_author_email>student@example.com</wp:comment_author_email>
 			<wp:comment_author_url></wp:comment_author_url>
 			<wp:comment_author_IP></wp:comment_author_IP>
 			<wp:comment_date>2015-01-30 02:15:44</wp:comment_date>
