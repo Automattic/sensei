@@ -2983,7 +2983,6 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 				 * @since 1.9.0
 				 * @param bool $wp_register_link default false
 				 */
-
 				$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
 
 				$settings = Sensei()->settings->get_settings();
