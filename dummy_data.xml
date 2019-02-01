@@ -57,8 +57,6 @@
 	<wp:term><wp:term_id>124</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>single-line</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[single-line (WooThemes) ]]></wp:term_name></wp:term>
 	<wp:term><wp:term_id>117</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>theming</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Theming (WooThemes) ]]></wp:term_name></wp:term>
 	<wp:term><wp:term_id>119</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>tutorials</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Tutorials (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>118</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>woocommerce</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[WooCommerce (WooThemes) ]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>116</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>woothemes</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[WooThemes (WooThemes) ]]></wp:term_name></wp:term>
 	<wp:term><wp:term_id>134</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>your-first-songs</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Your First Songs (WooThemes) ]]></wp:term_name><wp:term_description><![CDATA[Learn to play a selection of popular songs on the piano using our game-based hybrid video lessons.]]></wp:term_description></wp:term>
 
 	<generator>http://wordpress.org/?v=4.1.2</generator>
