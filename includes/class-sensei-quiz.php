@@ -1133,14 +1133,12 @@ class Sensei_Quiz {
 
 			$title_with_no_quizzes = $title;
 
-			// if the title has quiz, remove it: legacy titles have the word quiz stored.
-			if ( 1 < substr_count( strtoupper( $title_with_no_quizzes ), 'QUIZ' ) ) {
-
-				// remove all possible appearances of quiz
+			// Handle legacy titles that contain the word "quiz".
+			if ( 1 <= substr_count( strtoupper( $title_with_no_quizzes ), 'QUIZ' ) ) {
+				// Remove all possible appearances of "quiz".
 				$title_with_no_quizzes = str_replace( 'quiz', '', $title );
 				$title_with_no_quizzes = str_replace( 'Quiz', '', $title_with_no_quizzes );
 				$title_with_no_quizzes = str_replace( 'QUIZ', '', $title_with_no_quizzes );
-
 			}
 
 			// translators: Placeholder is the quiz name with any instance of the word "quiz" removed.
