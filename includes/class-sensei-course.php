@@ -2922,7 +2922,13 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 				<?php
 			}
 		} else {
-			// User is not taking the course, so display the enrolment actions.
+			/**
+			 * Action to output the course enrolment buttons. When this is
+			 * called, we know that the user is not taking the course, but do
+			 * not know whether the user is logged in.
+			 *
+			 * @since 2.0.0
+			 */
 			do_action( 'sensei_output_course_enrolment_actions' );
 		}
 		?>
