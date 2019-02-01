@@ -2630,10 +2630,9 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 
 
 	/**
-	 * Filter the single course content
-	 * taking into account if the user has access.
+	 * Filter the single course content taking into account if the user has access.
 	 *
-	 * @1.9.0
+	 * @since 1.9.0
 	 *
 	 * @param string $content
 	 * @return string $content or $excerpt
@@ -2644,22 +2643,10 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 			return $content;
 		}
 
-		// Content Access Permissions
-		$is_login_required = true;
-		$has_full_access   = sensei_all_access();
-
-		if ( ! Sensei()->settings->get( 'access_permission' ) ) {
-			$is_login_required = false;
-		} // End If Statement
-
-		// By default, show content to admins (`$has_full_access`) and when login isn't required.
-		$has_access_to_content = ! $is_login_required || $has_full_access;
-
-		// Logged in visitors who are enrolled can see the course content.
+		// Check if user is enrolled in course for filter context.
 		$is_user_taking_course = false;
 		if ( is_user_logged_in() ) {
 			$is_user_taking_course = Sensei_Utils::user_started_course( get_the_ID(), get_current_user_id() );
-			$has_access_to_content = true;
 		}
 
 		/**
@@ -2668,10 +2655,9 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 		 * @since 2.0.0
 		 *
 		 * @param bool $has_access_to_content Filtered variable for if the visitor has access to view the content.
-		 * @param bool $is_login_required     Boolean for if the setting is enabled to restrict course content to logged in visitors.
 		 * @param bool $is_user_taking_course Boolean for if the visitor is currently enrolled in the course.
 		 */
-		if ( apply_filters( 'sensei_course_content_has_access', $has_access_to_content, $is_login_required, $is_user_taking_course ) ) {
+		if ( apply_filters( 'sensei_course_content_has_access', true, $is_user_taking_course ) ) {
 			if ( empty( $content ) ) {
 				remove_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 				$course = get_post( get_the_ID() );
