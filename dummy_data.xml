@@ -3349,10 +3349,6 @@ The content for this sample course is provided with permission by <a title="HDpi
 			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_course_woocommerce_product</wp:meta_key>
-			<wp:meta_value><![CDATA[-]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_thumbnail_id</wp:meta_key>
 			<wp:meta_value><![CDATA[7723]]></wp:meta_value>
 		</wp:postmeta>
@@ -5799,10 +5795,6 @@ Feel free to complete it.]]></content:encoded>
 			<wp:meta_value><![CDATA[3]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_course_woocommerce_product</wp:meta_key>
-			<wp:meta_value><![CDATA[-]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_thumbnail_id</wp:meta_key>
 			<wp:meta_value><![CDATA[2630]]></wp:meta_value>
 		</wp:postmeta>
@@ -8037,10 +8029,6 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_course_woocommerce_product</wp:meta_key>
-			<wp:meta_value><![CDATA[2554]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
 			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
@@ -9291,10 +9279,6 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:postmeta>
 			<wp:meta_key>_course_prerequisite</wp:meta_key>
 			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_course_woocommerce_product</wp:meta_key>
-			<wp:meta_value><![CDATA[-]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
