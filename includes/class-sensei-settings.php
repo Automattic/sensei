@@ -130,20 +130,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Settings for public Learner Profiles.', 'woothemes-sensei' ),
 		);
 
-		if ( Sensei_WC::is_woocommerce_present() ) {
-			$sections['woocommerce-settings'] = array(
-				'name'        => __( 'WooCommerce', 'woothemes-sensei' ),
-				'description' => __( 'Optional settings for WooCommerce functions.', 'woothemes-sensei' ),
-			);
-		} // End If Statement
-
-		if ( Sensei_WC_Memberships::is_wc_memberships_active() ) {
-			$sections['sensei-wc-memberships-settings'] = array(
-				'name'        => __( 'WooCommerce Memberships', 'woothemes-sensei' ),
-				'description' => __( 'Optional settings for WooCommerce Memberships functions.', 'woothemes-sensei' ),
-			);
-		} // End If Statement
-
 		if ( 'en_US' !== get_locale() ) {
 			$sections['language-settings'] = array(
 				'name'        => __( 'Language', 'woothemes-sensei' ),
@@ -632,43 +618,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'email-notification-settings',
 			'required'    => 1,
 		);
-
-		if ( Sensei_WC::is_woocommerce_present() ) {
-			// WooCommerce Settings
-			$fields['woocommerce_enabled'] = array(
-				'name'        => __( 'Enable WooCommerce Courses', 'woothemes-sensei' ),
-				'description' => __( 'Use WooCommerce to sell Courses by linking a Product to a Course.', 'woothemes-sensei' ),
-				'type'        => 'checkbox',
-				'default'     => true,
-				'section'     => 'woocommerce-settings',
-			);
-
-			$fields['woocommerce_enable_sensei_debugging'] = array(
-				'name'        => __( 'Enable Sensei WooCommerce Integration Debugging', 'woothemes-sensei' ),
-				'description' => __( 'Advanced: Log Sensei/WooCommerce integration events (Uses WC_Logger, logs events at `notice` level)', 'woothemes-sensei' ),
-				'type'        => 'checkbox',
-				'default'     => false,
-				'section'     => 'woocommerce-settings',
-			);
-
-		} // End If Statement
-
-		if ( Sensei_WC_Memberships::is_wc_memberships_active() ) {
-			$fields['sensei_wc_memberships_restrict_course_video'] = array(
-				'name'        => __( 'Restrict course video', 'woothemes-sensei' ),
-				'description' => __( 'Used when you don\'t want the course video to be viewable by non-members', 'woothemes-sensei' ),
-				'type'        => 'checkbox',
-				'default'     => false,
-				'section'     => 'sensei-wc-memberships-settings',
-			);
-			$fields['sensei_wc_memberships_auto_start_courses']    = array(
-				'name'        => __( 'Auto-start courses belonging to a membership', 'woothemes-sensei' ),
-				'description' => __( 'Automatically start courses belonging to a WC Membership when activated', 'woothemes-sensei' ),
-				'type'        => 'checkbox',
-				'default'     => false,
-				'section'     => 'sensei-wc-memberships-settings',
-			);
-		}
 
 		if ( 'en_US' !== get_locale() ) {
 			$fields['install_language_pack'] = array(
