@@ -1479,6 +1479,24 @@ class Sensei_Frontend {
 	} // End sensei_search_results_excerpt()
 
 	/**
+	 * Remove active course when an order is refunded or cancelled.
+	 *
+	 * @deprecated 2.0.0 Moved to WCPC plugin. Use \Sensei_WC_Paid_Courses\Courses::remove_active_course
+	 *
+	 * @param  integer $order_id ID of order.
+	 * @return void
+	 */
+	public function remove_active_course( $order_id ) {
+		_deprecated_function( __METHOD__, '2.0.0', '\Sensei_WC_Paid_Courses\Courses::remove_active_course' );
+
+		if ( ! method_exists( 'Sensei_WC_Paid_Courses\Courses', 'remove_active_course' ) ) {
+			return;
+		}
+
+		\Sensei_WC_Paid_Courses\Courses::remove_active_course( $order_id );
+	}
+
+	/**
 	 * Activate all purchased courses for user.
 	 *
 	 * @since  1.4.8
