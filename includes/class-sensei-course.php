@@ -1404,7 +1404,7 @@ class Sensei_Course {
 					} // End If Statement
 
 					$course_purchased = false;
-					if ( Sensei_WC::is_woocommerce_active() ) {
+					if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() ) {
 
 						// Get the product ID
 						$wc_post_id = get_post_meta( absint( $course_item->ID ), '_course_woocommerce_product', true );
@@ -1418,7 +1418,13 @@ class Sensei_Course {
 					/**
 					 * documented in class-sensei-course.php the_course_action_buttons function
 					 */
-					$show_delete_course_button = apply_filters( 'sensei_show_delete_course_button', false );
+					$show_delete_course_button = apply_filters_deprecated(
+						'sensei_show_delete_course_button',
+						[ false ],
+						'2.0.0',
+						null,
+						'Sensei "Delete Course" button will be removed in version 2.1.0.'
+					);
 
 					if ( false == $course_purchased && $show_delete_course_button ) {
 
@@ -2193,7 +2199,7 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 					} // End If Statement
 
 					$course_purchased = false;
-					if ( Sensei_WC::is_woocommerce_active() ) {
+					if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() ) {
 						// Get the product ID
 						$wc_post_id = get_post_meta( intval( $course->ID ), '_course_woocommerce_product', true );
 						if ( 0 < $wc_post_id ) {
@@ -2213,7 +2219,13 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 					 * @since 1.9.0
 					 * @param bool $show_delete_course_button defaults to false
 					 */
-					$show_delete_course_button = apply_filters( 'sensei_show_delete_course_button', false );
+					$show_delete_course_button = apply_filters_deprecated(
+						'sensei_show_delete_course_button',
+						[ false ],
+						'2.0.0',
+						null,
+						'Sensei "Delete Course" button will be removed in version 2.1.0.'
+					);
 
 					if ( ! $course_purchased
 						 && ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
