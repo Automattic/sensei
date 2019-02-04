@@ -1440,24 +1440,18 @@ class Sensei_Frontend {
 	 * the course.
 	 *
 	 * @since 1.0.2
-	 * @return void;
+	 * @deprecated 2.0.0 Replaced with WCPC plugin's Sensei_WC::course_in_cart_message method.
+	 *
+	 * @return void
 	 */
 	public function sensei_woocommerce_in_cart_message() {
-		global $post, $woocommerce;
+		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC::course_in_cart_message' );
 
-		$wc_post_id            = absint( get_post_meta( $post->ID, '_course_woocommerce_product', true ) );
-		$user_course_status_id = Sensei_Utils::user_started_course( $post->ID, get_current_user_id() );
-		if ( 0 < intval( $wc_post_id ) && ! $user_course_status_id ) {
+		if ( ! method_exists( 'Sensei_WC', 'course_in_cart_message' ) ) {
+			return;
+		}
 
-			if ( Sensei_WC::is_product_in_cart( $wc_post_id ) ) {
-				echo '<div class="sensei-message info">' . sprintf(
-					// translators: Placeholder is a link to complete the purchase.
-					esc_html__( 'You have already added this Course to your cart. Please %1$s to access the course.', 'woothemes-sensei' ) . '</div>',
-					'<a class="cart-complete" href="' . esc_url( $woocommerce->cart->get_checkout_url() ) . '" title="' . esc_attr__( 'complete the purchase', 'woothemes-sensei' ) . '">' . esc_html__( 'complete the purchase', 'woothemes-sensei' ) . '</a>'
-				);
-			} // End If Statement
-		} // End If Statement
-
+		Sensei_WC::course_in_cart_message();
 	} // End sensei_woocommerce_in_cart_message()
 
 	// Deprecated.
