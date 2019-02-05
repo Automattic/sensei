@@ -4085,7 +4085,7 @@ class Sensei_Lesson {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param bool $show_course_signup_notice Should we show course sign up notice?
+		 * @param bool $show_course_signup_notice True if we should show the signup notice to the user.
 		 * @param int  $course_id                 Post ID for the course.
 		 */
 		if ( apply_filters( 'sensei_lesson_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
@@ -4102,7 +4102,7 @@ class Sensei_Lesson {
 			 *
 			 * @since 2.0.0
 			 *
-			 * @param string $message     Should we show course sign up notice?
+			 * @param string $message     Message to show user.
 			 * @param int    $course_id   Post ID for the course.
 			 * @param string $course_link Generated HTML link to the course.
 			 */
