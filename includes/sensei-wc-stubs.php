@@ -18,4 +18,5 @@ class Sensei_WC_Memberships {
 }
 class Sensei_WC_Subscriptions {
 	public static function load_wc_subscriptions_integration_hooks() {}
+	public static function has_user_bought_subscription_but_cancelled() {}
 }
