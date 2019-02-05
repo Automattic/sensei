@@ -100,14 +100,6 @@ class Sensei_Frontend {
 		// Use WooCommerce filter to show admin bar to Teachers.
 		add_action( 'init', array( $this, 'sensei_show_admin_bar' ) );
 
-		// Remove course from active courses if an order is cancelled or refunded.
-		add_action( 'woocommerce_order_status_processing_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
-		add_action( 'woocommerce_order_status_completed_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
-		add_action( 'woocommerce_order_status_on-hold_to_cancelled', array( $this, 'remove_active_course' ), 10, 1 );
-		add_action( 'woocommerce_order_status_processing_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
-		add_action( 'woocommerce_order_status_completed_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
-		add_action( 'woocommerce_order_status_on-hold_to_refunded', array( $this, 'remove_active_course' ), 10, 1 );
-
 		// Make sure correct courses are marked as active for users.
 		add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'activate_purchased_single_course' ), 10 );
@@ -1489,56 +1481,20 @@ class Sensei_Frontend {
 	/**
 	 * Remove active course when an order is refunded or cancelled.
 	 *
+	 * @deprecated 2.0.0 Moved to WCPC plugin. Use \Sensei_WC_Paid_Courses\Courses::remove_active_course
+	 *
 	 * @param  integer $order_id ID of order.
 	 * @return void
 	 */
 	public function remove_active_course( $order_id ) {
-		$order = new WC_Order( $order_id );
+		_deprecated_function( __METHOD__, '2.0.0', '\Sensei_WC_Paid_Courses\Courses::remove_active_course' );
 
-		foreach ( $order->get_items() as $item ) {
-			if ( isset( $item['variation_id'] ) && ( 0 < $item['variation_id'] ) ) {
-				// If item has variation_id then its a variation of the product.
-				$item_id = $item['variation_id'];
-			} else {
-				// Than its real product set it's id to item_id.
-				$item_id = $item['product_id'];
-			}
+		if ( ! method_exists( 'Sensei_WC_Paid_Courses\Courses', 'remove_active_course' ) ) {
+			return;
+		}
 
-			if ( $item_id > 0 ) {
-
-				$user_id = get_post_meta( $order_id, '_customer_user', true );
-
-				if ( $user_id ) {
-
-					// Get all courses for product.
-					$args       = array(
-						'posts_per_page' => -1,
-						'post_type'      => 'course',
-						'meta_query'     => array(
-							array(
-								'key'   => '_course_woocommerce_product',
-								'value' => $item_id,
-							),
-						),
-						'orderby'        => 'menu_order date',
-						'order'          => 'ASC',
-						'fields'         => 'ids',
-					);
-					$course_ids = get_posts( $args );
-
-					if ( $course_ids && count( $course_ids ) > 0 ) {
-						foreach ( $course_ids as $course_id ) {
-
-							// Remove all course user meta.
-							Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
-
-						} // End For Loop
-					} // End If Statement
-				} // End If Statement
-			} // End If Statement
-		} // End For Loop
-	} // End remove_active_course()
-
+		\Sensei_WC_Paid_Courses\Courses::remove_active_course( $order_id );
+	}
 
 	/**
 	 * Activate all purchased courses for user.
