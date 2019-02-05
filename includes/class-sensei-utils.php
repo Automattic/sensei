@@ -1435,21 +1435,23 @@ class Sensei_Utils {
 		} else {
 
 			$course_id  = Sensei()->lesson->get_course_id( $lesson_id );
-			$a_element  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' ) . '">';
-			$a_element .= esc_html__( 'course', 'woothemes-sensei' );
-			$a_element .= '</a>';
+			$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' ) . '">';
+			$course_link .= esc_html__( 'course', 'woothemes-sensei' );
+			$course_link .= '</a>';
 
-			if ( Sensei_WC::is_course_purchasable( $course_id ) ) {
+			// translators: Placeholder is a link to the course permalink.
+			$message_default = sprintf( __( 'Please sign up for the %1$s before taking this quiz.', 'woothemes-sensei' ), $course_link );
 
-				// translators: Placeholder is a link to the course permalink.
-				$message = sprintf( __( 'Please purchase the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
-
-			} else {
-
-				// translators: Placeholder is a link to the course permalink.
-				$message = sprintf( __( 'Please sign up for the %1$s before taking this quiz.', 'woothemes-sensei' ), $a_element );
-
-			}
+			/**
+			 * Filter the course sign up notice message on the quiz page.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param string $message     Message to show user.
+			 * @param int    $course_id   Post ID for the course.
+			 * @param string $course_link Generated HTML link to the course.
+			 */
+			$message = apply_filters( 'sensei_quiz_course_signup_notice_message', $message_default, $course_id, $course_link );
 		}
 
 		// Legacy filter
