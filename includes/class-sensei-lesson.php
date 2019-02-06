@@ -2843,6 +2843,10 @@ class Sensei_Lesson {
 		$post_title  = $question_text;
 		$post_status = 'publish';
 		$post_type   = 'question';
+		// Check that insert or update saved from question page related to issue #1701
+		if ( isset( $data['post_status'] ) && ! empty( $data['post_status'] ) ) {
+			$post_status = $data['post_status'];
+		}
 		// Handle the extended question text
 		if ( isset( $data['question_description'] ) && ( '' != $data['question_description'] ) ) {
 			$post_content = $data['question_description'];
