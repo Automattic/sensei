@@ -1434,7 +1434,7 @@ class Sensei_Utils {
 			}
 		} else {
 
-			$course_id  = Sensei()->lesson->get_course_id( $lesson_id );
+			$course_id    = Sensei()->lesson->get_course_id( $lesson_id );
 			$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' ) . '">';
 			$course_link .= esc_html__( 'course', 'woothemes-sensei' );
 			$course_link .= '</a>';
