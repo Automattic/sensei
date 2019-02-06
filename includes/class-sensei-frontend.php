@@ -1320,16 +1320,7 @@ class Sensei_Frontend {
 	} // sensei_lesson_meta()
 
 	public function sensei_lesson_preview_title_text( $course_id ) {
-
 		$preview_text = __( 'Preview', 'woothemes-sensei' );
-
-		// if this is a paid course.
-		if ( Sensei_WC::is_woocommerce_active() ) {
-			$wc_post_id = get_post_meta( $course_id, '_course_woocommerce_product', true );
-			if ( 0 < $wc_post_id ) {
-				$preview_text = __( 'Free Preview', 'woothemes-sensei' );
-			} // End If Statement
-		}
 
 		/**
 		 * The lesson preview indicator text. Defaults to "Preview" or "Free
