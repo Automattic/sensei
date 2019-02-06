@@ -155,38 +155,16 @@ function sensei_check_if_product_is_in_cart( $wc_product_id = 0 ) {
 	/**
 	 * sensei_simple_course_price function.
 	 *
-	 * @access public
+	 * @deprecated 2.0.0 Use `\Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price()` if it exists.
 	 * @param mixed $post_id
 	 * @return void
 	 */
 function sensei_simple_course_price( $post_id ) {
-
-	global $wp_the_query;
-
-	// check for the my courses shortcode
-	if ( strpos( $wp_the_query->post->post_content, 'sensei_user_courses' ) || strpos( $wp_the_query->post->post_content, 'usercourses' ) ) {
+	if ( ! method_exists( 'Sensei_WC_Paid_Courses\Frontend\Courses', 'output_course_price' ) ) {
+		_deprecated_function( __FUNCTION__, '2.0.0', 'Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price()' );
 		return;
 	}
-
-	$wc_post_id = get_post_meta( $post_id, '_course_woocommerce_product', true );
-	if ( ! Sensei_WC::is_woocommerce_active() || empty( $wc_post_id ) || false ) {
-		return;
-	}
-
-	// Get the product
-	$product = Sensei_WC::get_product_object( $wc_post_id );
-
-	if ( isset( $product ) && ! empty( $product ) && $product->is_purchasable()
-		 && $product->is_in_stock() && ! sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
-		?>
-
-			<span class="course-price">
-				<?php echo wp_kses_post( $product->get_price_html() ); ?>
-			</span>
-
-		<?php
-	} // End If Statement
-
+	\Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price( $post_id );
 } // End sensei_simple_course_price()
 
 	/**
