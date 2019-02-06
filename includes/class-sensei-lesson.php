@@ -4089,7 +4089,6 @@ class Sensei_Lesson {
 		 * @param int  $course_id                 Post ID for the course.
 		 */
 		if ( apply_filters( 'sensei_lesson_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
-			echo '<section class="course-signup lesson-meta">';
 			$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' ) . '">';
 			$course_link .= esc_html__( 'course', 'woothemes-sensei' );
 			$course_link .= '</a>';
@@ -4118,7 +4117,6 @@ class Sensei_Lesson {
 			 */
 			$notice_level = apply_filters( 'sensei_lesson_course_signup_notice_level', 'alert', $course_id );
 			Sensei()->notices->add_notice( $message, $notice_level );
-			echo '</section>';
 		}
 
 	}//end course_signup_link()
