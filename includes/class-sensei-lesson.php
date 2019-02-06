@@ -4074,74 +4074,51 @@ class Sensei_Lesson {
 
 		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
 
-		if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( get_the_ID() ) ) {
-
+		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( get_the_ID() ) ) {
 			return;
-
 		}
 
-		?>
+		$show_course_signup_notice = sensei_is_login_required() && ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
 
-		<section class="course-signup lesson-meta">
+		/**
+		 * Filter for if we should show the course sign up notice on the lesson page.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param bool $show_course_signup_notice True if we should show the signup notice to the user.
+		 * @param int  $course_id                 Post ID for the course.
+		 */
+		if ( apply_filters( 'sensei_lesson_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
+			$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' ) . '">';
+			$course_link .= esc_html__( 'course', 'woothemes-sensei' );
+			$course_link .= '</a>';
 
-			<?php
+			// translators: Placeholder is a link to the Course.
+			$message_default = sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link );
 
-			global $current_user;
-			$wc_post_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
+			/**
+			 * Filter the course sign up notice message on the lesson page.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param string $message     Message to show user.
+			 * @param int    $course_id   Post ID for the course.
+			 * @param string $course_link Generated HTML link to the course.
+			 */
+			$message = apply_filters( 'sensei_lesson_course_signup_notice_message', $message_default, $course_id, $course_link );
 
-			if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $course_id ) ) {
+			/**
+			 * Filter the course sign up notice message alert level on the lesson page.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param string $notice_level Notice level to use for the shown alert (alert, tick, download, info).
+			 * @param int    $course_id    Post ID for the course.
+			 */
+			$notice_level = apply_filters( 'sensei_lesson_course_signup_notice_level', 'info', $course_id );
+			Sensei()->notices->add_notice( $message, $notice_level );
+		}
 
-				if ( is_user_logged_in() && ! Sensei_Utils::user_started_course( $course_id, $current_user->ID ) ) {
-
-						$a_element  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' ) . '">';
-						$a_element .= esc_html__( 'course', 'woothemes-sensei' );
-						$a_element .= '</a>';
-
-						// translators: Placeholder is a link to the Course.
-						$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
-
-						Sensei()->notices->add_notice( $message, 'info' );
-
-				}
-
-				if ( ! is_user_logged_in() ) {
-
-					$a_element  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' ) . '">';
-					$a_element .= esc_html__( 'course', 'woothemes-sensei' );
-					$a_element .= '</a>';
-
-					// translators: Placeholder is a link to the Course.
-					$message = sprintf( esc_html__( 'Please purchase the %1$s before starting the lesson.', 'woothemes-sensei' ), $a_element );
-
-					Sensei()->notices->add_notice( $message, 'alert' );
-
-				}
-			} else {
-				?>
-
-							<?php if ( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) && sensei_is_login_required() ) : ?>
-
-					<div class="sensei-message alert">
-								<?php
-								$course_link = '<a href="'
-											. esc_url( get_permalink( $course_id ) )
-											. '" title="' . esc_attr__( 'Sign Up', 'woothemes-sensei' )
-											. '">' . esc_html__( 'course', 'woothemes-sensei' )
-										. '</a>';
-
-								// translators: Placeholder is a link to the Course.
-								echo wp_kses_post( sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'woothemes-sensei' ), $course_link ) );
-
-								?>
-					</div>
-
-				<?php endif; ?>
-
-						<?php } // End If Statement ?>
-
-		</section>
-
-		<?php
 	}//end course_signup_link()
 
 	/**
