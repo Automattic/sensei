@@ -4115,7 +4115,7 @@ class Sensei_Lesson {
 			 * @param string $notice_level Notice level to use for the shown alert (alert, tick, download, info).
 			 * @param int    $course_id    Post ID for the course.
 			 */
-			$notice_level = apply_filters( 'sensei_lesson_course_signup_notice_level', 'alert', $course_id );
+			$notice_level = apply_filters( 'sensei_lesson_course_signup_notice_level', 'info', $course_id );
 			Sensei()->notices->add_notice( $message, $notice_level );
 		}
 
