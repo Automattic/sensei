@@ -2085,6 +2085,9 @@ class Sensei_Course {
 		$category_output     = get_the_term_list( $course->ID, 'course-category', '', ', ', '' );
 		$author_display_name = get_the_author_meta( 'display_name', $course->post_author );
 
+		/** This action is documented in includes/class-sensei-frontend.php */
+		do_action( 'sensei_course_meta_inside_before', $course->ID );
+
 		if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
 			?>
 
@@ -2100,7 +2103,7 @@ class Sensei_Course {
 			<?php echo esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
 		</span>
 
-		<?php if ( '' != $category_output ) { ?>
+		<?php if ( '' !== $category_output ) { ?>
 
 			<span class="course-category">
 				<?php
@@ -2110,20 +2113,20 @@ class Sensei_Course {
 </span>
 
 			<?php
-} // End If Statement
+		} // End If Statement
 
 		// number of completed lessons
-if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
+		if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 			|| Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() ) ) {
 
 			$completed    = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
 			$lesson_count = count( $this->course_lessons( $course->ID ) );
 			// translators: Placeholders are the number of lessons completed and the total number of lessons, respectively.
 			echo '<span class="course-lesson-progress">' . esc_html( sprintf( __( '%1$d of %2$d lessons completed', 'woothemes-sensei' ), $completed, $lesson_count ) ) . '</span>';
+		}
 
-}
-
-		sensei_simple_course_price( $course->ID );
+		/** This action is documented in includes/class-sensei-frontend.php */
+		do_action( 'sensei_course_meta_inside_after', $course->ID );
 
 		echo '</p>';
 	} // end the course meta

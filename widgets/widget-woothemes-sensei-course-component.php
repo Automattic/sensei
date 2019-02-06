@@ -302,6 +302,10 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 					</a>
 					<br />
 
+					<?php
+					/** This action is documented in includes/class-sensei-frontend.php */
+					do_action( 'sensei_course_meta_inside_before', $post_id );
+					?>
 					<?php if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) { ?>
 						<span class="course-author">
 							<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
@@ -318,7 +322,10 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 					<br />
 
-					<?php sensei_simple_course_price( $post_id ); ?>
+					<?php
+					/** This action is documented in includes/class-sensei-frontend.php */
+					do_action( 'sensei_course_meta_inside_after', $post_id );
+					?>
 
 				</li>
 
