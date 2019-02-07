@@ -137,6 +137,15 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	}
 
 	private function should_filter_course_by_status( $course_status, $user_id ) {
+		/**
+		 * Filters courses processed by the course query in the
+		 * [sensei_user_courses] shortcode.
+		 *
+		 * @param bool       $should_filter Whether the course should be filtered out.
+		 * @param WP_Comment $course_status The current course statue record.
+		 * @param int        $user_id       The user ID.
+		 * @return bool
+		 */
 		return (bool) apply_filters(
 			'sensei_setup_course_query_should_filter_course_by_status',
 			false,
