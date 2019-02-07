@@ -101,11 +101,16 @@ class Sensei_Question {
 				break;
 
 			case 'question-category':
-				$output = strip_tags( get_the_term_list( $id, 'question-category', '', ', ', '' ) );
-				if ( ! $output ) {
-					$output = '&mdash;';
+				$terms  = get_the_terms( $id, 'question-category' );
+				$output = '&mdash;';
+				if ( $terms && ! is_wp_error( $terms ) ) {
+					$output = array();
+					foreach ( $terms as $term ) {
+						$output[] = '<a href="' . esc_url( get_edit_tag_link( $term->term_id, 'question-category' ) ) . '">' . esc_attr( $term->name ) . '</a>';
+					}
+					$output = join( __( ', ' ), $output );
 				}
-				echo esc_html( $output );
+				echo wp_kses_post( $output );
 				break;
 
 			default:
