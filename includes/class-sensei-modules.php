@@ -1437,11 +1437,6 @@ class Sensei_Core_Modules {
 		wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-chosen' ), Sensei()->version, true );
 		wp_enqueue_script( $this->taxonomy . '-admin', esc_url( $this->assets_url ) . 'js/modules-admin' . $suffix . '.js', array( 'jquery', 'sensei-chosen', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'sensei-core-select2' ), Sensei()->version, true );
 
-		// WooCommerce 2.6.x Select2 compatibility
-		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '3.0', '<' ) ) {
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_dequeue_scripts' ), 11 );
-		}
-
 		// localized module data
 		$localize_modulesAdmin = array(
 			'search_courses_nonce'  => wp_create_nonce( 'search-courses' ),
@@ -1450,17 +1445,6 @@ class Sensei_Core_Modules {
 		);
 
 		wp_localize_script( $this->taxonomy . '-admin', 'modulesAdmin', $localize_modulesAdmin );
-	}
-
-	/**
-	 * WooCommerce 2.6.x Select2 compatibility
-	 *
-	 * @since 1.9.17
-	 *
-	 * @return void
-	 */
-	public function admin_dequeue_scripts( $hook ) {
-		wp_dequeue_script( 'select2' );
 	}
 
 	/**
