@@ -2103,14 +2103,16 @@ class Sensei_Course {
 			<?php echo esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
 		</span>
 
-		<?php if ( ! empty( $category_output ) ) { ?>
+		<?php
+		if ( ! empty( $category_output ) ) {
+			?>
 
 			<span class="course-category">
 				<?php
 				// translators: Placeholder is a comma-separated list of the course categories.
 				echo wp_kses_post( sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) );
 				?>
-</span>
+			</span>
 
 			<?php
 		} // End If Statement
