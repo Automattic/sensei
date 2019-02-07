@@ -1101,19 +1101,44 @@ class Sensei_Frontend {
 		?>
 		<section class="entry">
 			<p class="sensei-course-meta">
-			<?php if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) { ?>
+				<?php
+				/**
+				 * Fires before course meta is displayed.
+				 *
+				 * @since 2.0.0
+				 *
+				 * @params int $course_id Course post ID.
+				 */
+				do_action( 'sensei_course_meta_inside_before', $post_id );
+
+				if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
+					?>
 			   <span class="course-author"><?php esc_html_e( 'by', 'woothemes-sensei' ); ?><?php the_author_link(); ?></span>
-			<?php } // End If Statement ?>
+					<?php
+				} // End If Statement
+				?>
 			   <span class="course-lesson-count"><?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?></span>
-			<?php if ( '' != $category_output ) { ?>
+			<?php
+			if ( ! empty( $category_output ) ) {
+				?>
 				<span class="course-category">
 					<?php
 					// translators: Placeholder is a comma-separated list of course categories.
 					echo sprintf( esc_html__( 'in %s', 'woothemes-sensei' ), wp_kses_post( $category_output ) );
 					?>
 				</span>
-			<?php } // End If Statement ?>
-			<?php sensei_simple_course_price( $post_id ); ?>
+				<?php
+			} // End If Statement
+
+			/**
+			 * Fires after course meta is displayed.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @params int $course_id Course post ID.
+			 */
+			do_action( 'sensei_course_meta_inside_after', $post_id );
+			?>
 			</p>
 			<p class="course-excerpt"><?php the_excerpt(); ?></p>
 			<?php

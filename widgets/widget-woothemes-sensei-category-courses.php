@@ -211,7 +211,12 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 					<?php do_action( 'sensei_course_image', $post_id ); ?>
 					<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" title="<?php echo esc_attr( $post_title ); ?>"><?php echo esc_html( $post_title ); ?></a>
 					<br />
-					<?php if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) { ?>
+					<?php
+					/** This action is documented in includes/class-sensei-frontend.php */
+					do_action( 'sensei_course_meta_inside_before', $post_id );
+
+					if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
+						?>
 						<span class="course-author">
 							<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
 							<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
@@ -222,7 +227,10 @@ class WooThemes_Sensei_Category_Courses_Widget extends WP_Widget {
 					<?php } // End If Statement ?>
 					<span class="course-lesson-count"><?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?></span>
 					<br />
-					<?php sensei_simple_course_price( $post_id ); ?>
+					<?php
+					/** This action is documented in includes/class-sensei-frontend.php */
+					do_action( 'sensei_course_meta_inside_after', $post_id );
+					?>
 				</li>
 			<?php } // End For Loop ?>
 			</ul>

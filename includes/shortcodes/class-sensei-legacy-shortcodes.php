@@ -347,6 +347,11 @@ class Sensei_Legacy_Shortcodes {
 
 					<p class="sensei-course-meta">
 
+						<?php
+						/** This action is documented in includes/class-sensei-frontend.php */
+						do_action( 'sensei_course_meta_inside_before', $course_id );
+						?>
+
 						<?php if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) { ?>
 							<span class="course-author">
 								<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
@@ -360,7 +365,7 @@ class Sensei_Legacy_Shortcodes {
 									<?php echo esc_html( Sensei()->course->course_lesson_count( $course_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
 								</span>
 
-						<?php if ( '' != $category_output ) { ?>
+						<?php if ( ! empty( $category_output ) ) { ?>
 							<span class="course-category">
 								<?php
 								// translators: Placeholder is a comma-separated list of categories.
@@ -369,7 +374,10 @@ class Sensei_Legacy_Shortcodes {
 							</span>
 						<?php } // End If Statement ?>
 
-						<?php sensei_simple_course_price( $course_id ); ?>
+						<?php
+						/** This action is documented in includes/class-sensei-frontend.php */
+						do_action( 'sensei_course_meta_inside_after', $course_id );
+						?>
 
 					</p>
 
