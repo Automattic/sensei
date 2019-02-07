@@ -100,10 +100,6 @@ class Sensei_Frontend {
 		// Use WooCommerce filter to show admin bar to Teachers.
 		add_action( 'init', array( $this, 'sensei_show_admin_bar' ) );
 
-		// Make sure correct courses are marked as active for users.
-		add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'activate_purchased_single_course' ), 10 );
-
 		// Lesson tags.
 		add_action( 'sensei_lesson_meta_extra', array( $this, 'lesson_tags_display' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'lesson_tag_archive_filter' ), 10, 1 );
