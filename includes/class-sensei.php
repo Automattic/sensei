@@ -703,10 +703,12 @@ class Sensei_Main {
 	 *
 	 * @access public
 	 * @param string $page (default: '')
+	 * @deprecated 2.0.0
 	 *
 	 * @return bool
 	 */
 	public function check_user_permissions( $page = '' ) {
+		_deprecated_function( __METHOD__, '2.0.0', null );
 
 		global $current_user, $post;
 
@@ -716,7 +718,10 @@ class Sensei_Main {
 			case 'course-single':
 				// check for prerequisite course or lesson,
 				$course_prerequisite_id = (int) get_post_meta( $post->ID, '_course_prerequisite', true );
-				$update_course          = Sensei_WC::course_update( $post->ID );
+
+				if ( method_exists( 'Sensei_WC', 'course_update' ) ) {
+					Sensei_WC::course_update( $post->ID );
+				}
 
 				// Count completed lessons
 				if ( 0 < absint( $course_prerequisite_id ) ) {
@@ -736,7 +741,7 @@ class Sensei_Main {
 					// translators: The placeholder %s is a link to the course.
 					$this->notices->add_notice( sprintf( __( 'Please complete the previous %1$s before taking this course.', 'woothemes-sensei' ), $course_link ), 'info' );
 
-				} elseif ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) && ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
+				} elseif ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) && ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
 
 					// translators: The placeholders are the opening and closing tags for a link to log in.
 					$message = sprintf( __( 'Or %1$s login %2$s to access your purchased courses', 'woothemes-sensei' ), '<a href="' . sensei_user_login_url() . '">', '</a>' );
@@ -757,8 +762,10 @@ class Sensei_Main {
 				// Check for WC purchase
 				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
 
-				$update_course = Sensei_WC::course_update( $lesson_course_id );
-				$is_preview    = Sensei_Utils::is_preview_lesson( $post->ID );
+				if ( method_exists( 'Sensei_WC', 'course_update' ) ) {
+					Sensei_WC::course_update( $post->ID );
+				}
+				$is_preview = Sensei_Utils::is_preview_lesson( $post->ID );
 
 				if ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
 					$user_allowed = true;
@@ -770,7 +777,7 @@ class Sensei_Main {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'woothemes-sensei' );
 					$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 					$wc_post_id                         = get_post_meta( $lesson_course_id, '_course_woocommerce_product', true );
-					if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
+					if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
 						if ( $is_preview ) {
 							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'woothemes-sensei' ), $course_link );
@@ -793,7 +800,9 @@ class Sensei_Main {
 				$lesson_id        = get_post_meta( $post->ID, '_quiz_lesson', true );
 				$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 
-				$update_course = Sensei_WC::course_update( $lesson_course_id );
+				if ( method_exists( 'Sensei_WC', 'course_update' ) ) {
+					Sensei_WC::course_update( $post->ID );
+				}
 				if ( ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) || sensei_all_access() ) {
 
 					// Check for prerequisite lesson for this quiz
@@ -828,7 +837,7 @@ class Sensei_Main {
 						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'woothemes-sensei' );
 						$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'woothemes-sensei' ) . '</a>';
 						$wc_post_id                         = get_post_meta( $lesson_course_id, '_course_woocommerce_product', true );
-						if ( Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
+						if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
 							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Quiz.', 'woothemes-sensei' ), $course_link );
 						} else {
