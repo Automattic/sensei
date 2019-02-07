@@ -100,10 +100,6 @@ class Sensei_Frontend {
 		// Use WooCommerce filter to show admin bar to Teachers.
 		add_action( 'init', array( $this, 'sensei_show_admin_bar' ) );
 
-		// Make sure correct courses are marked as active for users.
-		add_action( 'sensei_before_my_courses', array( $this, 'activate_purchased_courses' ), 10, 1 );
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'activate_purchased_single_course' ), 10 );
-
 		// Lesson tags.
 		add_action( 'sensei_lesson_meta_extra', array( $this, 'lesson_tags_display' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'lesson_tag_archive_filter' ), 10, 1 );
@@ -1489,102 +1485,13 @@ class Sensei_Frontend {
 	 * @return void
 	 */
 	public function activate_purchased_courses( $user_id = 0 ) {
+		_deprecated_function( __METHOD__, '2.0.0', '\Sensei_WC_Paid_Courses\Courses::activate_purchased_courses' );
 
-		if ( $user_id ) {
-
-			if ( Sensei_WC::is_woocommerce_active() ) {
-
-				// Get all user's orders.
-				$order_args = array(
-					'post_type'      => 'shop_order',
-					'post_status'    => array( 'wc-processing', 'wc-completed' ),
-					'posts_per_page' => -1,
-					'meta_query'     => array(
-						array(
-							'key'   => '_customer_user',
-							'value' => $user_id,
-						),
-					),
-				);
-
-				$orders = get_posts( $order_args );
-
-				$product_ids = array();
-				$order_ids   = array();
-
-				foreach ( $orders as $post_id ) {
-
-					// Only process each order once.
-					$processed = get_post_meta( $post_id, 'sensei_products_processed', true );
-
-					if ( $processed && $processed == 'processed' ) {
-						continue;
-					}
-
-					// Get course product IDs from order.
-					$order = new WC_Order( $post_id );
-
-					$items = $order->get_items();
-					foreach ( $items as $item ) {
-						if ( isset( $item['variation_id'] ) && $item['variation_id'] > 0 ) {
-							$item_id      = $item['variation_id'];
-							$product_type = 'variation';
-						} else {
-							$item_id = $item['product_id'];
-						}
-
-											$product_ids[] = $item_id;
-					}
-
-					$order_ids[] = $post_id;
-				}
-
-				if ( count( $product_ids ) > 0 ) {
-
-					// Get all courses from user's orders.
-					$course_args = array(
-						'post_type'      => 'course',
-						'posts_per_page' => -1,
-						'meta_query'     => array(
-							array(
-								'key'     => '_course_woocommerce_product',
-								'value'   => $product_ids,
-								'compare' => 'IN',
-							),
-						),
-						'orderby'        => 'menu_order date',
-						'order'          => 'ASC',
-						'fields'         => 'ids',
-					);
-					$course_ids  = get_posts( $course_args );
-
-					foreach ( $course_ids as $course_id ) {
-
-						$user_course_status = Sensei_Utils::user_course_status( intval( $course_id ), $user_id );
-
-						// Ignore course if already completed.
-						if ( Sensei_Utils::user_completed_course( $user_course_status ) ) {
-							continue;
-						}
-
-						// Ignore course if already started.
-						if ( $user_course_status ) {
-							continue;
-						}
-
-						// Mark course as started by user.
-						Sensei_Utils::user_start_course( $user_id, $course_id );
-					}
-				}
-
-				if ( count( $order_ids ) > 0 ) {
-					foreach ( $order_ids as $order_id ) {
-						// Mark order as processed.
-						update_post_meta( $order_id, 'sensei_products_processed', 'processed' );
-					}
-				}
-			}
+		if ( ! method_exists( '\Sensei_WC_Paid_Courses\Courses', 'activate_purchased_courses' ) ) {
+			return;
 		}
+
+		\Sensei_WC_Paid_Courses\Courses::instance()->activate_purchased_courses( $user_id );
 	} // End activate_purchased_courses()
 
 	/**
@@ -1593,85 +1500,13 @@ class Sensei_Frontend {
 	 * @return void
 	 */
 	public function activate_purchased_single_course() {
-		global $post, $current_user;
+		_deprecated_function( __METHOD__, '2.0.0', '\Sensei_WC_Paid_Courses\Courses::activate_purchased_single_course' );
 
-		if ( Sensei_WC::is_woocommerce_active() ) {
-
-			if ( ! is_user_logged_in() ) {
-				return;
-			}
-			if ( ! isset( $post->ID ) ) {
-				return;
-			}
-
-			$user_id           = $current_user->ID;
-			$course_id         = $post->ID;
-			$course_product_id = (int) get_post_meta( $course_id, '_course_woocommerce_product', true );
-			if ( ! $course_product_id ) {
-				return;
-			}
-
-			$user_course_status = Sensei_Utils::user_course_status( intval( $course_id ), $user_id );
-
-			// Ignore course if already completed.
-			if ( Sensei_Utils::user_completed_course( $user_course_status ) ) {
-
-				return;
-			}
-
-			// Ignore course if already started.
-			if ( $user_course_status ) {
-				return;
-			}
-
-			// Get all user's orders.
-			$order_args = array(
-				'post_type'      => 'shop_order',
-				'posts_per_page' => -1,
-				'post_status'    => array( 'wc-processing', 'wc-completed' ),
-				'meta_query'     => array(
-					array(
-						'key'   => '_customer_user',
-						'value' => $user_id,
-					),
-				),
-				'fields'         => 'ids',
-			);
-			$orders     = get_posts( $order_args );
-
-			foreach ( $orders as $order_post_id ) {
-
-				// Get course product IDs from order.
-				$order = new WC_Order( $order_post_id );
-
-				$items = $order->get_items();
-				foreach ( $items as $item ) {
-					$product_id = Sensei_WC_Utils::get_item_id_from_item( $item );
-					$product    = wc_get_product( $product_id );
-
-					// handle product bundles.
-					if ( is_object( $product ) && $product->is_type( 'bundle' ) ) {
-
-						$bundled_product = new WC_Product_Bundle( Sensei_WC_Utils::get_product_id( $product ) );
-						$bundled_items   = $bundled_product->get_bundled_items();
-
-						foreach ( $bundled_items as $bundled_item ) {
-							if ( $bundled_item->product_id == $course_product_id ) {
-								Sensei_Utils::user_start_course( $user_id, $course_id );
-								return;
-							}
-						}
-					} else {
-
-						// handle regular products.
-						if ( $item['product_id'] == $course_product_id ) {
-							Sensei_Utils::user_start_course( $user_id, $course_id );
-							return;
-						}
-					}
-				}
-			}
+		if ( ! method_exists( '\Sensei_WC_Paid_Courses\Courses', 'activate_purchased_single_course' ) ) {
+			return;
 		}
+
+		\Sensei_WC_Paid_Courses\Courses::instance()->activate_purchased_single_course();
 	} // End activate_purchased_single_course()
 
 	/**
