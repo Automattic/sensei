@@ -160,10 +160,12 @@ function sensei_check_if_product_is_in_cart( $wc_product_id = 0 ) {
 	 * @return void
 	 */
 function sensei_simple_course_price( $post_id ) {
+	_deprecated_function( __FUNCTION__, '2.0.0', 'Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price()' );
+
 	if ( ! method_exists( 'Sensei_WC_Paid_Courses\Frontend\Courses', 'output_course_price' ) ) {
-		_deprecated_function( __FUNCTION__, '2.0.0', 'Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price()' );
 		return;
 	}
+
 	\Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price( $post_id );
 } // End sensei_simple_course_price()
 
