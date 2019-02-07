@@ -1812,7 +1812,6 @@ class Sensei_Utils {
 					case 'graded':
 					case 'passed':
 						return true;
-						break;
 
 					case 'failed':
 						// This may be 'completed' depending on...
@@ -1829,7 +1828,6 @@ class Sensei_Utils {
 							}
 						}
 						return false;
-						break;
 				}
 			} // End If Statement
 		}
