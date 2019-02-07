@@ -1480,6 +1480,7 @@ class Sensei_Frontend {
 	/**
 	 * Activate all purchased courses for user.
 	 *
+	 * @deprecated 2.0.0 Use `\Sensei_WC_Paid_Courses\Courses::activate_purchased_courses()` if it exists.
 	 * @since  1.4.8
 	 * @param  integer $user_id User ID.
 	 * @return void
@@ -1497,6 +1498,7 @@ class Sensei_Frontend {
 	/**
 	 * Activate single course if already purchases.
 	 *
+	 * @deprecated 2.0.0 Use `\Sensei_WC_Paid_Courses\Courses::activate_purchased_single_course()` if it exists.
 	 * @return void
 	 */
 	public function activate_purchased_single_course() {
