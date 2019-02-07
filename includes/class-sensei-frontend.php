@@ -1123,7 +1123,7 @@ class Sensei_Frontend {
 				?>
 			   <span class="course-lesson-count"><?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?></span>
 			<?php
-			if ( '' !== $category_output ) {
+			if ( ! empty( $category_output ) ) {
 				?>
 				<span class="course-category">
 					<?php

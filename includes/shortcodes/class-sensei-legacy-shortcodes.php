@@ -365,7 +365,7 @@ class Sensei_Legacy_Shortcodes {
 									<?php echo esc_html( Sensei()->course->course_lesson_count( $course_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
 								</span>
 
-						<?php if ( '' !== $category_output ) { ?>
+						<?php if ( ! empty( $category_output ) ) { ?>
 							<span class="course-category">
 								<?php
 								// translators: Placeholder is a comma-separated list of categories.

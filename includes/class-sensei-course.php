@@ -2103,7 +2103,7 @@ class Sensei_Course {
 			<?php echo esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
 		</span>
 
-		<?php if ( '' !== $category_output ) { ?>
+		<?php if ( ! empty( $category_output ) ) { ?>
 
 			<span class="course-category">
 				<?php
