@@ -36,7 +36,12 @@ class Sensei_Utils {
 	 * @return bool
 	 */
 	public static function sensei_is_woocommerce_present() {
-		_deprecated_function( __FUNCTION__, esc_html( Sensei()->version ), 'Sensei_WC::is_woocommerce_present' );
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::is_woocommerce_present' );
+
+		if ( ! method_exists( 'Sensei_WC', 'is_woocommerce_present' ) ) {
+			return false;
+		}
+
 		return Sensei_WC::is_woocommerce_present();
 
 	} // End sensei_is_woocommerce_present()
@@ -51,6 +56,11 @@ class Sensei_Utils {
 	 * @return boolean
 	 */
 	public static function sensei_is_woocommerce_activated() {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::is_woocommerce_active' );
+
+		if ( ! method_exists( 'Sensei_WC', 'is_woocommerce_active' ) ) {
+			return false;
+		}
 
 		return Sensei_WC::is_woocommerce_active();
 
@@ -365,6 +375,11 @@ class Sensei_Utils {
 	 * @return bool
 	 */
 	public static function sensei_customer_bought_product( $customer_email, $user_id, $product_id ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::has_customer_bought_product($user_id, $product_id)' );
+
+		if ( ! method_exists( 'Sensei_WC', 'has_customer_bought_product' ) ) {
+			return false;
+		}
 
 		$emails = array();
 
