@@ -1319,8 +1319,7 @@ class Sensei_Frontend {
 		$preview_text = __( 'Preview', 'woothemes-sensei' );
 
 		/**
-		 * The lesson preview indicator text. Defaults to "Preview" or "Free
-		 * Preview" when the course is attached to a product.
+		 * The lesson preview indicator text. Defaults to "Preview".
 		 *
 		 * @since 1.11.0
 		 *
