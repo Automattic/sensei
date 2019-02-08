@@ -142,7 +142,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		 * [sensei_user_courses] shortcode.
 		 *
 		 * @param bool       $should_filter Whether the course should be filtered out.
-		 * @param WP_Comment $course_status The current course statue record.
+		 * @param WP_Comment $course_status The current course status record.
 		 * @param int        $user_id       The user ID.
 		 * @return bool
 		 */
