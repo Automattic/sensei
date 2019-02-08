@@ -927,6 +927,9 @@ class Sensei_Frontend {
 					break;
 
 				/**
+				 * Handle the Delete Course button. This is deprecated and will
+				 * be removed.
+				 *
 				 * @deprecated 2.0.0
 				 */
 				case __( 'Delete Course', 'woothemes-sensei' ):

@@ -2249,7 +2249,7 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 							esc_html__( 'View results', 'woothemes-sensei' ) . '</a>';
 					}
 
-					// Output only if there is content to display
+					// Output only if there is content to display.
 					if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
 						?>
 
