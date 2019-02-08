@@ -52,7 +52,7 @@ class Sensei_Course {
 			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			// Custom Write Panel Columns
-			add_filter( 'manage_edit-course_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_filter( 'manage_edit-course-category_custom_columns', array( $this, 'add_column_headings' ), 10, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 		} else {
 			$this->my_courses_page = false;
