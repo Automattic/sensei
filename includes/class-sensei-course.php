@@ -2205,7 +2205,7 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 						if ( 0 < $wc_post_id ) {
 
 							$user             = wp_get_current_user();
-							$course_purchased = Sensei_Utils::sensei_customer_bought_product( $user->user_email, $user->ID, $wc_post_id );
+							$course_purchased = Sensei_WC::has_customer_bought_product( $user->ID, $wc_post_id );
 
 						} // End If Statement
 					} // End If Statement
