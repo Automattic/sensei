@@ -224,16 +224,12 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes.
 		if ( ! empty( $instance['limit'] ) && intval( $instance['limit'] ) >= 1 && intval( $instance['limit'] ) < count( $courses ) ) {
-
 			$courses = array_slice( $courses, 0, intval( $instance['limit'] ) );
-
 		}
 
 		if ( empty( $courses ) && 0 !== $instance['limit'] ) {
-
 			$this->display_no_courses_message();
 			return;
-
 		}
 
 		$this->display_courses( $courses );
@@ -249,22 +245,22 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	 */
 	public function display_no_courses_message() {
 
-		if ( 'featuredcourses' == $this->instance['component'] ) {
-
+		if ( 'featuredcourses' === $this->instance['component'] ) {
 			esc_html_e( 'You have no featured courses.', 'woothemes-sensei' );
-
-		} elseif ( 'activecourses' == $this->instance['component'] ) {
-
+		} elseif ( 'activecourses' === $this->instance['component'] ) {
 			esc_html_e( 'You have no active courses.', 'woothemes-sensei' );
-
-		} elseif ( 'completedcourses' == $this->instance['component'] ) {
-
+		} elseif ( 'completedcourses' === $this->instance['component'] ) {
 			esc_html_e( 'You have no completed courses.', 'woothemes-sensei' );
-
 		} else {
-
-			esc_html_e( 'You have no courses.', 'woothemes-sensei' );
-
+			/**
+			 * Filter on the no courses message.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param string $message  No course message to display.
+			 * @param array  $instance Widget instance arguments.
+			 */
+			echo esc_html( apply_filters( 'sensei_widget_course_component_no_courses_message_' . $this->instance['component'], __( 'You have no courses.', 'woothemes-sensei' ), $this->instance ) );
 		}
 	}
 
