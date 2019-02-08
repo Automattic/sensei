@@ -1417,6 +1417,8 @@ class Sensei_Course {
 
 					/**
 					 * documented in class-sensei-course.php the_course_action_buttons function
+					 *
+					 * @deprecated 2.0.0
 					 */
 					$show_delete_course_button = apply_filters_deprecated(
 						'sensei_show_delete_course_button',
@@ -2217,6 +2219,9 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 					 * cases. For other instances the button will be hidden.
 					 *
 					 * @since 1.9.0
+					 *
+					 * @deprecated 2.0.0
+					 *
 					 * @param bool $show_delete_course_button defaults to false
 					 */
 					$show_delete_course_button = apply_filters_deprecated(
