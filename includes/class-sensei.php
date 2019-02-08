@@ -763,7 +763,7 @@ class Sensei_Main {
 				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
 
 				if ( method_exists( 'Sensei_WC', 'course_update' ) ) {
-					Sensei_WC::course_update( $post->ID );
+					Sensei_WC::course_update( $lesson_course_id );
 				}
 				$is_preview = Sensei_Utils::is_preview_lesson( $post->ID );
 
@@ -801,7 +801,7 @@ class Sensei_Main {
 				$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 
 				if ( method_exists( 'Sensei_WC', 'course_update' ) ) {
-					Sensei_WC::course_update( $post->ID );
+					Sensei_WC::course_update( $lesson_course_id );
 				}
 				if ( ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) || sensei_all_access() ) {
 
