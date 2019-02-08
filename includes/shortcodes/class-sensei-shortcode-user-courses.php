@@ -137,14 +137,18 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	}
 
 	private function should_filter_course_by_status( $course_status, $user_id ) {
-		$should_filter = Sensei_WC_Subscriptions::has_user_bought_subscription_but_cancelled(
-			$course_status->comment_post_ID,
-			$user_id
-		);
-
+		/**
+		 * Filters courses processed by the course query in the
+		 * [sensei_user_courses] shortcode.
+		 *
+		 * @param bool       $should_filter Whether the course should be filtered out.
+		 * @param WP_Comment $course_status The current course status record.
+		 * @param int        $user_id       The user ID.
+		 * @return bool
+		 */
 		return (bool) apply_filters(
 			'sensei_setup_course_query_should_filter_course_by_status',
-			$should_filter,
+			false,
 			$course_status,
 			$user_id
 		);
