@@ -36,10 +36,10 @@ class Sensei_Shortcode_Loader {
 	public function __construct() {
 
 		// create a list of shortcodes and the class that handles them
-		$this->setup_shortcode_class_map();
+		add_action( 'init', array( $this, 'setup_shortcode_class_map' ), 11 );
 
 		// setup all the shortcodes and load the listener into WP
-		$this->initialize_shortcodes();
+		add_action( 'init', array( $this, 'initialize_shortcodes' ), 11 );
 
 		// add sensei body class for shortcodes
 		add_filter( 'body_class', array( $this, 'possibly_add_body_class' ) );
@@ -83,7 +83,6 @@ class Sensei_Shortcode_Loader {
 				'sensei_course_page'         => 'Sensei_Shortcode_Course_Page',
 				'sensei_lesson_page'         => 'Sensei_Shortcode_Lesson_Page',
 				'sensei_course_categories'   => 'Sensei_Shortcode_Course_Categories',
-				'sensei_unpurchased_courses' => 'Sensei_Shortcode_Unpurchased_Courses',
 			)
 		);
 
