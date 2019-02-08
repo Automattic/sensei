@@ -36,10 +36,10 @@ class Sensei_Shortcode_Loader {
 	public function __construct() {
 
 		// create a list of shortcodes and the class that handles them
-		$this->setup_shortcode_class_map();
+		add_action( 'init', array( $this, 'setup_shortcode_class_map' ), 11 );
 
 		// setup all the shortcodes and load the listener into WP
-		$this->initialize_shortcodes();
+		add_action( 'init', array( $this, 'initialize_shortcodes' ), 11 );
 
 		// add sensei body class for shortcodes
 		add_filter( 'body_class', array( $this, 'possibly_add_body_class' ) );
@@ -61,16 +61,29 @@ class Sensei_Shortcode_Loader {
 	 */
 	public function setup_shortcode_class_map() {
 
-		$this->shortcode_classes = array(
-			'sensei_featured_courses'    => 'Sensei_Shortcode_Featured_Courses',
-			'sensei_user_courses'        => 'Sensei_Shortcode_User_Courses',
-			'sensei_courses'             => 'Sensei_Shortcode_Courses',
-			'sensei_teachers'            => 'Sensei_Shortcode_Teachers',
-			'sensei_user_messages'       => 'Sensei_Shortcode_User_Messages',
-			'sensei_course_page'         => 'Sensei_Shortcode_Course_Page',
-			'sensei_lesson_page'         => 'Sensei_Shortcode_Lesson_Page',
-			'sensei_course_categories'   => 'Sensei_Shortcode_Course_Categories',
-			'sensei_unpurchased_courses' => 'Sensei_Shortcode_Unpurchased_Courses',
+		/**
+		 * Filter the array of shortcodes and their handler classes.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $shortcode_classes {
+		 *     Array of shortcodes and their handler classes.
+		 *
+		 *     @type string ${$shortcode_slug}  Shortcode class name that implements Sensei_Shortcode_Interface.
+		 * }
+		 */
+		$this->shortcode_classes = apply_filters(
+			'sensei_shortcode_classes',
+			array(
+				'sensei_featured_courses'  => 'Sensei_Shortcode_Featured_Courses',
+				'sensei_user_courses'      => 'Sensei_Shortcode_User_Courses',
+				'sensei_courses'           => 'Sensei_Shortcode_Courses',
+				'sensei_teachers'          => 'Sensei_Shortcode_Teachers',
+				'sensei_user_messages'     => 'Sensei_Shortcode_User_Messages',
+				'sensei_course_page'       => 'Sensei_Shortcode_Course_Page',
+				'sensei_lesson_page'       => 'Sensei_Shortcode_Lesson_Page',
+				'sensei_course_categories' => 'Sensei_Shortcode_Course_Categories',
+			)
 		);
 
 		// legacy shortcode handling:
