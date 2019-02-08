@@ -31,11 +31,25 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		$this->woo_widget_idbase      = 'sensei_course_component';
 		$this->woo_widget_title       = __( 'Sensei - Course Component', 'woothemes-sensei' );
 
-		$this->woo_widget_componentslist = array(
-			'usercourses'      => __( 'New Courses', 'woothemes-sensei' ),
-			'featuredcourses'  => __( 'Featured Courses', 'woothemes-sensei' ),
-			'activecourses'    => __( 'My Active Courses', 'woothemes-sensei' ),
-			'completedcourses' => __( 'My Completed Courses', 'woothemes-sensei' ),
+		/**
+		 * Allows filtering of the widget's component list.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $components_list {
+		 *     Array of course components to allow in the widget.
+		 *
+		 *     @type string ${$component_name} Label for the component.
+		 * }
+		 */
+		$this->woo_widget_componentslist = apply_filters(
+			'sensei_widget_course_component_components_list',
+			array(
+				'usercourses'      => __( 'New Courses', 'woothemes-sensei' ),
+				'featuredcourses'  => __( 'Featured Courses', 'woothemes-sensei' ),
+				'activecourses'    => __( 'My Active Courses', 'woothemes-sensei' ),
+				'completedcourses' => __( 'My Completed Courses', 'woothemes-sensei' ),
+			)
 		);
 
 		// Add support for the WooCommerce shelf.
