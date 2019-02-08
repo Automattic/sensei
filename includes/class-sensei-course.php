@@ -2182,90 +2182,92 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 				<form method="POST" action="<?php echo esc_url( remove_query_arg( array( 'active_page', 'completed_page' ) ) ); ?>">
 
 					<input type="hidden"
-						   name="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
-						   id="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
-						   value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
+							name="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
+							id="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
+							value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
 						/>
 
 					<input type="hidden" name="course_complete_id" id="course-complete-id" value="<?php echo esc_attr( intval( $course->ID ) ); ?>" />
 
-					<?php
-					if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
-						&& Sensei()->settings->settings['course_completion'] == 'complete'
-						&& ! Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
-						?>
-
-						<span><input name="course_complete" type="submit" class="course-complete" value="<?php esc_attr_e( 'Mark as Complete', 'woothemes-sensei' ); ?>" /></span>
-
-						<?php
-					} // End If Statement
-
-					$course_purchased = false;
-					if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() ) {
-						// Get the product ID
-						$wc_post_id = get_post_meta( intval( $course->ID ), '_course_woocommerce_product', true );
-						if ( 0 < $wc_post_id ) {
-
-							$user             = wp_get_current_user();
-							$course_purchased = Sensei_WC::has_customer_bought_product( $user->ID, $wc_post_id );
-
-						} // End If Statement
-					} // End If Statement
-
-					/**
-					 * Hide or show the delete course button.
-					 *
-					 * This button on shows in certain instances, but this filter will hide it in those
-					 * cases. For other instances the button will be hidden.
-					 *
-					 * @since 1.9.0
-					 *
-					 * @deprecated 2.0.0
-					 *
-					 * @param bool $show_delete_course_button defaults to false
-					 */
-					$show_delete_course_button = apply_filters_deprecated(
-						'sensei_show_delete_course_button',
-						[ false ],
-						'2.0.0',
-						null,
-						'Sensei "Delete Course" button will be removed on or after 2019-11-01.'
-					);
-
-					if ( ! $course_purchased
-						 && ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
-						 && $show_delete_course_button ) {
+			<?php
+			if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
+				&& Sensei()->settings->settings['course_completion'] == 'complete'
+				&& ! Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
 				?>
 
-						<span><input name="course_complete" type="submit" class="course-delete" value="<?php echo esc_attr__( 'Delete Course', 'woothemes-sensei' ); ?>"/></span>
+					<span><input name="course_complete" type="submit" class="course-complete" value="<?php esc_attr_e( 'Mark as Complete', 'woothemes-sensei' ); ?>" /></span>
 
-										<?php
-					} // End If Statement
+				<?php
+			} // End If Statement
 
-					$has_quizzes  = Sensei()->course->course_quizzes( $course->ID, true );
-					$results_link = '';
-					if ( $has_quizzes ) {
-						$results_link = '<a class="button view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $course->ID ) ) . '">' .
-							esc_html__( 'View results', 'woothemes-sensei' ) . '</a>';
-					}
+			$course_purchased = false;
+			if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() ) {
+				// Get the product ID
+				$wc_post_id = get_post_meta( intval( $course->ID ), '_course_woocommerce_product', true );
+				if ( 0 < $wc_post_id ) {
 
-					// Output only if there is content to display.
-					if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
-						?>
+					$user             = wp_get_current_user();
+					$course_purchased = Sensei_WC::has_customer_bought_product( $user->ID, $wc_post_id );
 
-						<p class="sensei-results-links">
-							<?php
-							/**
-							 * Filter the results links
-							 *
-							 * @param string $results_links_html
-							 * @param integer $course_id
-							 */
-							echo wp_kses_post( apply_filters( 'sensei_results_links', $results_link, $course->ID ) );
-							?>
-						</p>
+				} // End If Statement
+			} // End If Statement
 
-										<?php } // end if has filter ?>
+			/**
+			 * Hide or show the delete course button.
+			 *
+			 * This button on shows in certain instances, but this filter will hide it in those
+			 * cases. For other instances the button will be hidden.
+			 *
+			 * @since 1.9.0
+			 *
+			 * @deprecated 2.0.0
+			 *
+			 * @param bool $show_delete_course_button defaults to false
+			 */
+			$show_delete_course_button = apply_filters_deprecated(
+				'sensei_show_delete_course_button',
+				[ false ],
+				'2.0.0',
+				null,
+				'Sensei "Delete Course" button will be removed on or after 2019-11-01.'
+			);
+
+			if ( ! $course_purchased
+					&& ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
+					&& $show_delete_course_button ) {
+				?>
+
+					<span><input name="course_complete" type="submit" class="course-delete" value="<?php echo esc_attr__( 'Delete Course', 'woothemes-sensei' ); ?>"/></span>
+
+				<?php
+			} // End If Statement
+
+			$has_quizzes  = Sensei()->course->course_quizzes( $course->ID, true );
+			$results_link = '';
+			if ( $has_quizzes ) {
+				$results_link = '<a class="button view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $course->ID ) ) . '">' .
+					esc_html__( 'View results', 'woothemes-sensei' ) . '</a>';
+			}
+
+			// Output only if there is content to display.
+			if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+				?>
+
+					<p class="sensei-results-links">
+				<?php
+				/**
+				 * Filter the results links
+				 *
+				 * @param string $results_links_html
+				 * @param integer $course_id
+				 */
+				echo wp_kses_post( apply_filters( 'sensei_results_links', $results_link, $course->ID ) );
+				?>
+					</p>
+
+				<?php
+			} // end if has filter
+			?>
 				</form>
 			</section>
 
