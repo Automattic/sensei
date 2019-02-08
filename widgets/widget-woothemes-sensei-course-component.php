@@ -196,49 +196,34 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	 * @return void
 	 */
 	protected function load_component( $instance ) {
+		$component = esc_attr( $instance['component'] );
 
-		$courses = array();
-
-		if ( 'usercourses' == esc_attr( $instance['component'] ) ) {
-			// usercourses == new courses
+		if ( 'usercourses' === $component ) {
 			$courses = $this->get_new_courses();
-
-		} elseif ( 'activecourses' == esc_attr( $instance['component'] ) ) {
-
+		} elseif ( 'activecourses' === $component ) {
 			$courses = $this->get_active_courses();
-
-		} elseif ( 'completedcourses' == esc_attr( $instance['component'] ) ) {
-
+		} elseif ( 'completedcourses' === $component ) {
 			$courses = $this->get_completed_courses();
-
-		} elseif ( 'featuredcourses' == esc_attr( $instance['component'] ) ) {
-
+		} elseif ( 'featuredcourses' === $component ) {
 			$courses = $this->get_featured_courses();
-
-		} elseif ( 'paidcourses' == esc_attr( $instance['component'] ) ) {
-
+		} elseif ( 'paidcourses' === $component ) {
 			$args    = array( 'posts_per_page' => $this->instance['limit'] );
 			$courses = Sensei_WC::get_paid_courses( $args );
-
-		} elseif ( 'freecourses' == esc_attr( $instance['component'] ) ) {
-
+		} elseif ( 'freecourses' === $component ) {
 			$args    = array( 'posts_per_page' => $this->instance['limit'] );
 			$courses = Sensei_WC::get_free_courses( $args );
-
 		} else {
-
 			return;
-
 		}
 
-		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes
+		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes.
 		if ( ! empty( $instance['limit'] ) && intval( $instance['limit'] ) >= 1 && intval( $instance['limit'] ) < count( $courses ) ) {
 
 			$courses = array_slice( $courses, 0, intval( $instance['limit'] ) );
 
 		}
 
-		if ( empty( $courses ) && $instance['limit'] != 0 ) {
+		if ( empty( $courses ) && 0 !== $instance['limit'] ) {
 
 			$this->display_no_courses_message();
 			return;
