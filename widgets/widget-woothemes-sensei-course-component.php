@@ -206,14 +206,20 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 			$courses = $this->get_completed_courses();
 		} elseif ( 'featuredcourses' === $component ) {
 			$courses = $this->get_featured_courses();
-		} elseif ( 'paidcourses' === $component ) {
-			$args    = array( 'posts_per_page' => $this->instance['limit'] );
-			$courses = Sensei_WC::get_paid_courses( $args );
-		} elseif ( 'freecourses' === $component ) {
-			$args    = array( 'posts_per_page' => $this->instance['limit'] );
-			$courses = Sensei_WC::get_free_courses( $args );
 		} else {
-			return;
+			if ( ! has_filter( 'sensei_widget_course_component_get_courses_' . $component ) ) {
+				return;
+			}
+
+			/**
+			 * Get the courses for a custom component.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param WP_Post[] $courses  List of course post objects.
+			 * @param array     $instance Widget instance arguments.
+			 */
+			$courses = apply_filters( 'sensei_widget_course_component_get_courses_' . $component, array(), $instance );
 		}
 
 		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes.
