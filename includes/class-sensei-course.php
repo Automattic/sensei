@@ -1423,7 +1423,7 @@ class Sensei_Course {
 						[ false ],
 						'2.0.0',
 						null,
-						'Sensei "Delete Course" button will be removed in version 2.1.0.'
+						'Sensei "Delete Course" button will be removed on or after 2019-11-01.'
 					);
 
 					if ( false == $course_purchased && $show_delete_course_button ) {
@@ -2224,7 +2224,7 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 						[ false ],
 						'2.0.0',
 						null,
-						'Sensei "Delete Course" button will be removed in version 2.1.0.'
+						'Sensei "Delete Course" button will be removed on or after 2019-11-01.'
 					);
 
 					if ( ! $course_purchased
