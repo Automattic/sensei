@@ -6921,7 +6921,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
-			<wp:meta_value><![CDATA[a:3:{i:0;s:9:"assets";i:1;s:11:"woocommerce";i:2;s:9:"templates";}]]></wp:meta_value>
+			<wp:meta_value><![CDATA[a:3:{i:0;s:6:"assets";i:1;s:11:"woocommerce";i:2;s:9:"templates";}]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_grade</wp:meta_key>
