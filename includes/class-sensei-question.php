@@ -106,7 +106,7 @@ class Sensei_Question {
 				if ( $terms && ! is_wp_error( $terms ) ) {
 					$output = array();
 					foreach ( $terms as $term ) {
-						$output[] = '<a href="' . esc_url( get_edit_tag_link( $term->term_id, 'question-category' ) ) . '">' . esc_attr( $term->name ) . '</a>';
+						$output[] = '<a href="' . esc_url( get_edit_tag_link( $term->term_id, 'question-category' ) ) . '">' . esc_html( $term->name ) . '</a>';
 					}
 					$output = join( __( ', ' ), $output );
 				}
