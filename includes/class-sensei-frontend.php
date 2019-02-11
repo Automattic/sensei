@@ -935,7 +935,7 @@ class Sensei_Frontend {
 				case __( 'Delete Course', 'woothemes-sensei' ):
 					_doing_it_wrong(
 						'Sensei_Frontend::sensei_complete_course',
-						'Handling for "Delete Course" button will be removed on or after 2019-11-01.',
+						'Handling for "Delete Course" button will be removed in version 4.0.',
 						'2.0.0'
 					);
 					Sensei_Utils::sensei_remove_user_from_course( $sanitized_course_id, $current_user->ID );
