@@ -202,7 +202,7 @@ class Sensei_Legacy_Shortcodes {
 			$after = '</section>';
 
 			// assemble
-			$content .= $before . $courses . $after;
+			$content = $before . $courses . $after;
 
 		}
 
