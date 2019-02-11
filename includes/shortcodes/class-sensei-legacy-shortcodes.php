@@ -43,7 +43,7 @@ class Sensei_Legacy_Shortcodes {
 		$message = sprintf(
 			// translators: %1$s is the name of the shortcode; %2$s is page URL with shortcode; %3$s is URL for shortcode documentation.
 			__(
-				'The shortcode `[%1$s]` (used on: %2$s) has been deprecated since Sensei v1.9.0. Please visit %3$s for alternatives.',
+				'The shortcode `[%1$s]` (used on: %2$s) has been deprecated since Sensei v1.9.0. Check %3$s for alternatives.',
 				'woothemes-sensei'
 			),
 			$shortcode,
