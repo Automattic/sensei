@@ -55,6 +55,38 @@ class Sensei_Legacy_Shortcodes {
 	}
 
 	/**
+	 * Output message on frontend to warn those with the privileges on the site.
+	 *
+	 * @param string $shortcode Shortcode that was deprecated.
+	 */
+	private static function output_deprecation_notice( $shortcode ) {
+		if ( ! is_user_logged_in() || ! current_user_can( 'edit_posts' ) ) {
+			return;
+		}
+		echo '<div class="sensei"><div class="sensei-message alert">';
+		$message = sprintf(
+			// translators: %1$s is the name of the shortcode; %2$s is the link to Sensei documentation.
+			__(
+				'The Sensei shortcode <strong>[%1$s]</strong> has been deprecated and will soon be removed. Check <a href="%2$s" rel="noopener">Sensei documentation</a> for alternatives.',
+				'woothemes-sensei'
+			),
+			$shortcode,
+			self::DOCS_SHORTCODE_URL
+		);
+		echo wp_kses(
+			$message,
+			array(
+				'a'      => array(
+					'href' => array(),
+					'rel'  => array(),
+				),
+				'strong' => array(),
+			)
+		);
+		echo '</div></div>';
+	}
+
+	/**
 	 * all_courses shortcode output function.
 	 *
 	 * The function should only be called indirectly through do_shortcode()
@@ -155,6 +187,9 @@ class Sensei_Legacy_Shortcodes {
 
 		// loop and get all courses html
 		ob_start();
+
+		self::output_deprecation_notice( $shortcode_specific_override );
+
 		self::initialise_legacy_course_loop();
 		$courses = ob_get_clean();
 
@@ -193,6 +228,8 @@ class Sensei_Legacy_Shortcodes {
 		$shortcode_override = 'usercourses';
 
 		ob_start();
+
+		self::output_deprecation_notice( 'usercourses' );
 
 		if ( is_user_logged_in() ) {
 
