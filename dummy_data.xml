@@ -1794,10 +1794,6 @@ The content for this sample course is provided with permission by <a title="HDpi
 			<wp:meta_key>_course_featured</wp:meta_key>
 			<wp:meta_value><![CDATA[featured]]></wp:meta_value>
 		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_course_video_embed</wp:meta_key>
-			<wp:meta_value><![CDATA[&lt;iframe width=&quot;853&quot; height=&quot;480&quot; src=&quot;//www.youtube.com/embed/qR0l_tyJ9O8?rel=0&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;]]></wp:meta_value>
-		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>218692</wp:comment_id>
 			<wp:comment_author><![CDATA[]]></wp:comment_author>
